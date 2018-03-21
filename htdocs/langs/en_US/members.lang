@@ -180,3 +180,7 @@ NameOrCompany=Name or company
 SubscriptionRecorded=Subscription recorded
 NoEmailSentToMember=No email sent to member
 EmailSentToMember=Email sent to member at %s
+SendReminderForExpiredSubscriptionTitle=Send reminder by email for expired subscription
+SendReminderForExpiredSubscription=Send reminder by email to members when subscription is about to expire (parameter is number of days before end of subscription to send the remind)
+YourSubscriptionHasExpired=Your subscription has expired
+ThisIsContentOfSubscriptionReminderEmail=This is a email to remind you that your subscription is about to expire. 

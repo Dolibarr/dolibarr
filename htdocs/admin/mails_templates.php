@@ -646,7 +646,7 @@ if ($resql)
         elseif ($value == 'lang')
         {
         	print '<td class="liste_titre">';
-        	print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1);
+        	print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth150');
         	print '</td>';
         }
         elseif ($value == 'fk_user')
@@ -661,7 +661,7 @@ if ($resql)
         elseif ($value == 'topic') print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
         elseif ($value == 'type_template')
         {
-        	print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100onsmartphone').'</td>';
+        	print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200 maxwidth100onsmartphone').'</td>';
         }
         elseif (! in_array($value, array('content', 'content_lines'))) print '<td class="liste_titre"></td>';
     }
@@ -867,7 +867,7 @@ if ($resql)
                 print "</td>";
 
                 // Modify link / Delete link
-                print '<td align="center" width="64">';
+                print '<td class="center nowraponall" width="64">';
                 if ($canbemodified) print '<a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a>';
                 if ($iserasable)
                 {
@@ -1016,7 +1016,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}
 			else
 			{
-				print $form->selectarray('type_template', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1);
+				print $form->selectarray('type_template', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200');
 			}
 			print '</td>';
 		}

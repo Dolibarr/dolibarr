@@ -994,9 +994,9 @@ class FormMail extends Form
 	 *
 	 * 		@param	DoliDB		$db				Database handler
 	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
-	 *      @param	string		$user			Use template public or limited to this user
+	 *      @param	string		$user			Get template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
-	 *      @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position or -2 for exact match with label (no aswer if not found)
+	 *      @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @param	string		$label			Label of template
 	 *      @return ModelMail
@@ -1011,7 +1011,7 @@ class FormMail extends Form
 			return -1;
 		}
 
-		$sql = "SELECT label, topic, joinfiles, content, content_lines, lang";
+		$sql = "SELECT rowid, label, topic, joinfiles, content, content_lines, lang";
 		$sql.= " FROM ".MAIN_DB_PREFIX.'c_email_templates';
 		$sql.= " WHERE (type_template='".$db->escape($type_template)."' OR type_template='all')";
 		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
@@ -1033,6 +1033,7 @@ class FormMail extends Form
 			$obj = $db->fetch_object($resql);
 
 			if ($obj) {
+				$ret->id = $obj->rowid;
 				$ret->label = $obj->label;
 				$ret->lang = $obj->lang;
 				$ret->topic = $obj->topic;
