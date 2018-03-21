@@ -627,6 +627,9 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.cursordefault {
+	cursor: default;
+}
 .cursorpointer {
 	cursor: pointer;
 }
