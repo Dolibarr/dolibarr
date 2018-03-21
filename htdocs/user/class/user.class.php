@@ -115,7 +115,7 @@ class User extends CommonObject
 	public $lastsearch_values_tmp;  // To store current search criterias for user
 	public $lastsearch_values;      // To store last saved search criterias for user
 
-	public $users = array();					// To store all tree of users hierarchy
+	public $users = array();		// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.
 	private $cache_childids;
 
@@ -3012,11 +3012,11 @@ class User extends CommonObject
 	}
 
 	/**
-	 *  Return property of contact from its id
+	 *  Return property of user from its id
 	 *
 	 *  @param	int		$rowid      id of contact
 	 *  @param  string	$mode       'email' or 'mobile'
-	 *  @return string  			Email of contact with format: "Full name <email>"
+	 *  @return string  			Email of user with format: "Full name <email>"
 	 */
 	function user_get_property($rowid,$mode)
 	{
@@ -3049,7 +3049,7 @@ class User extends CommonObject
 	}
 
 	/**
-	 *	Load all objects into $this->lines
+	 *	Load all objects into $this->users
 	 *
 	 *  @param	string		$sortorder    sort order
 	 *  @param	string		$sortfield    sort field
@@ -3061,7 +3061,6 @@ class User extends CommonObject
 	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array())
 	{
 		global $conf;
-
 
 		$sql="SELECT t.rowid";
 		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
