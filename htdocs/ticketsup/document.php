@@ -33,12 +33,10 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 
-$langs->load("companies");
-$langs->load('other');
-$langs->load("ticketsup");
+$langs->loadLangs(array("companies","other","ticketsup"));
 
-$action = GETPOST('action');
-$confirm = GETPOST('confirm');
+$action = GETPOST('action','alpha');
+$confirm = GETPOST('confirm','alpha');
 $id = GETPOST('id', 'int');
 $track_id = GETPOST('track_id', 'alpha');
 $ref = GETPOST('ref', 'alpha');
@@ -61,7 +59,6 @@ $pagenext = $page + 1;
 if (!$sortorder) {
     $sortorder = "ASC";
 }
-
 if (!$sortfield) {
     $sortfield = "name";
 }
@@ -75,21 +72,21 @@ $object->ref = $object->track_id;
 
 
 if ($result < 0) {
-    setEventMessage($object->error, 'errors');
+	setEventMessages($object->error, $object->errors, 'errors');
 } else {
     $upload_dir = $conf->ticketsup->dir_output . "/" . dol_sanitizeFileName($object->track_id);
 }
 
+
 /*
  * Actions
  */
-// Included file moved into Dolibarr 4, keep it for compatibility
-$res=@include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
-if (! $res) {
-    include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_pre_headers.tpl.php';
-}
+
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 $object->ref = $old_ref;
+
+
 
 /*
  * View
@@ -155,10 +152,12 @@ if ($object->id) {
     foreach ($filearray as $key => $file) {
         $totalsize += $file['size'];
     }
+
     // For compatibility we use track ID for directory
     $object->ref = $object->track_id;
     $modulepart = 'ticketsup';
   	$permission = $user->rights->ticketsup->write;
+  	$permtoedit = $user->rights->ticketsup->write;
   	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 

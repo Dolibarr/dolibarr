@@ -1154,7 +1154,7 @@ function complete_dictionary_with_modules(&$taborder,&$tabname,&$tablib,&$tabsql
 }
 
 /**
- *  Activate external modules mandatroy when country is country_code
+ *  Activate external modules mandatory when country is country_code
  *
  * 	@param		string		$country_code	CountryCode
  * 	@return		int			1
@@ -1610,6 +1610,33 @@ function phpinfo_array()
 		}
 	}
 	return $info_arr;
+}
+
+/**
+ *  Return array head with list of tabs to view object informations.
+ *
+ *  @return	array   	    		    head array with tabs
+ */
+function company_admin_prepare_head()
+{
+	global $langs, $conf, $user;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/company.php";
+	$head[$h][1] = $langs->trans("Company");
+	$head[$h][2] = 'company';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT."/admin/accountant.php";
+	$head[$h][1] = $langs->trans("Accountant");
+	$head[$h][2] = 'accountant';
+	$h++;
+
+	complete_head_from_modules($conf,$langs,null,$head,$h,'company_admin','remove');
+
+	return $head;
 }
 
 /**

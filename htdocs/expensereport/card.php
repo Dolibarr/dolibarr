@@ -593,7 +593,7 @@ if (empty($reshook))
 
 			// FROM
    			$expediteur = new User($db);
-   			$expediteur->fetch($object->fk_user_valid);
+   			$expediteur->fetch($object->fk_user_approve > 0 ? $object->fk_user_approve : $object->fk_user_validator);
    			$emailFrom = $expediteur->email;
 
    			if ($emailFrom && $emailTo)

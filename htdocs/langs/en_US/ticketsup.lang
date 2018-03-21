@@ -25,7 +25,7 @@ Permission56001=See tickets
 Permission56002=Modify tickets
 Permission56003=Delete tickets
 Permission56004=Manage tickets
-Permission56005=See tickets of all thirdparties (not effective for external users, always be limited to the thirdparty they depend on)
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the thirdparty they depend on)
 
 TicketsupDictType=Tickets type
 TicketsupDictCategory=Tickets categories

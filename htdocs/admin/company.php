@@ -295,6 +295,10 @@ $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst")
 
 print load_fiche_titre($langs->trans("CompanyFoundation"),'','title_setup');
 
+$head = company_admin_prepare_head();
+
+dol_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
+
 print $langs->trans("CompanyFundationDesc")."<br>\n";
 print "<br>\n";
 
@@ -1134,8 +1138,6 @@ else
 	print '<div class="tabsAction">';
 	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a></div>';
 	print '</div>';
-
-	print '<br>';
 }
 
 

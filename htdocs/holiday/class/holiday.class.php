@@ -50,7 +50,7 @@ class Holiday extends CommonObject
 	var $date_fin='';			// Date end in PHP server TZ
 	var $date_debut_gmt='';		// Date start in GMT
 	var $date_fin_gmt='';		// Date end in GMT
-	var $halfday='';
+	var $halfday='';			// 0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
 	var $statut='';				// 1=draft, 2=validated, 3=approved
 	var $fk_validator;
 	var $date_valid='';
@@ -957,10 +957,11 @@ class Holiday extends CommonObject
 	/**
 	 *   Affiche un select HTML des statuts de congés payés
 	 *
-	 *   @param 	int		$selected   int du statut séléctionné par défaut
-	 *   @return    string				affiche le select des statuts
+	 *   @param 	int		$selected   	Id of preselected status
+	 *   @param		string	$htmlname		Name of HTML select field
+	 *   @return    string					Show select of status
 	 */
-	function selectStatutCP($selected='') {
+	function selectStatutCP($selected='', $htmlname='select_statut') {
 
 		global $langs;
 
@@ -969,7 +970,7 @@ class Holiday extends CommonObject
 		$nb = count($name)+1;
 
 		// Select HTML
-		$statut = '<select name="select_statut" class="flat">'."\n";
+		$statut = '<select name="'.$htmlname.'" class="flat">'."\n";
 		$statut.= '<option value="-1">&nbsp;</option>'."\n";
 
 		// Boucle des statuts

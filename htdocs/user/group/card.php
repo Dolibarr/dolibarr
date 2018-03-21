@@ -460,7 +460,7 @@ else
 						if (! empty($user->admin))
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
-							print img_delete($langs->trans("RemoveFromGroup"));
+							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';
 						}
 						else
