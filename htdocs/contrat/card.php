@@ -872,12 +872,27 @@ if (empty($reshook))
 	        if ($result < 0) {
 	            setEventMessages($object->error, $object->errors, 'errors');
 	        }
-	
+			
+			$old_ref = $object->ref;
 	        $result = $object->setValueFrom('ref', GETPOST('ref','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 	        if ($result < 0) {
 	            setEventMessages($object->error, $object->errors, 'errors');
 	            $action = 'editref';
 	        } else {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				$old_filedir = $conf->contrat->dir_output . '/' . dol_sanitizeFileName($old_ref);
+				$new_filedir = $conf->contrat->dir_output . '/' . dol_sanitizeFileName($object->ref);
+				
+				$files = dol_dir_list($old_filedir);
+				if (!empty($files))
+				{
+					if (!is_dir($new_filedir)) dol_mkdir($new_filedir);
+					foreach ($files as $file)
+					{
+						dol_move($file['fullname'], $new_filedir.'/'.$file['name']);
+					}
+				}
+				
 	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
 	            exit;
 	        }
