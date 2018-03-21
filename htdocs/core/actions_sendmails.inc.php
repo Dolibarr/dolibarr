@@ -195,7 +195,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				if ($val == 'thirdparty') // Id of third party
 				{
 					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
-				} elseif ($val)	// Id du contact
+				}
+				elseif ($val)	// Id du contact
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					$sendtoid[] = $val;
