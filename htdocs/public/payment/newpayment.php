@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
-$langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox"));     // File with generic data
+$langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox","paypal"));     // File with generic data
 
 $action=GETPOST('action','aZ09');
 
@@ -157,8 +157,6 @@ $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
 if (! empty($conf->paypal->enabled))
 {
-	$langs->load("paypal");
-
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
 

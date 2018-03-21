@@ -190,7 +190,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
-	if ($type == 'membersubscription')
+	if ($type == 'member' || $type == 'membersubscription')
 	{
 		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='member_ref';
