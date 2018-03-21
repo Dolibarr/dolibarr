@@ -1623,7 +1623,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		if (! is_object($form)) $form=new Form($db);
 		$selected=-1;
 		$usedbyinclude=1;
-		include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';	// This set $arrayresult
 
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
