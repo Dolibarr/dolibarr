@@ -2614,7 +2614,7 @@ class Adherent extends CommonObject
 		else
 		{
 			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
-			$this->output.= ' Send successfull to '.$nbok.' members';
+			$this->output.= ' Send email successfuly to '.$nbok.' members';
 			if ($nbko) $this->output.= ' - Canceled for '.$nbko.' member (no email or email sending error)';
 		}
 

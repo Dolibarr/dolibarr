@@ -311,8 +311,8 @@ if ($action == 'execute')
 $arrayofmassactions =  array(
 //'presend'=>$langs->trans("SendByMail"),
 //'builddoc'=>$langs->trans("PDFMerge"),
-	'enable'=>$langs->trans("Enable"),
-	'disable'=>$langs->trans("Disable"),
+	'enable'=>$langs->trans("CronStatusActiveBtn"),
+	'disable'=>$langs->trans("CronStatusInactiveBtn"),
 );
 if ($user->rights->mymodule->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
