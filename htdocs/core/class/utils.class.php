@@ -47,7 +47,7 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string		$choice		Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
+	 *  @param	string		$choice		Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
 	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	function purgeFiles($choice='tempfilesold')
@@ -129,7 +129,7 @@ class Utils
 				}
 				elseif ($filesarray[$key]['type'] == 'file')
 				{
-					// If (file that is not logfile) or (if logfile with option logfile)
+					// If (file that is not logfile) or (if mode is logfile)
 					if ($filesarray[$key]['fullname'] != $filelog || $choice=='logfile')
 					{
 						$result=dol_delete_file($filesarray[$key]['fullname'], 1, 1);
@@ -138,7 +138,10 @@ class Utils
 							$count++;
 							$countdeleted++;
 						}
-						else $counterror++;
+						else
+						{
+							$counterror++;
+						}
 					}
 				}
 			}
@@ -672,8 +675,8 @@ class Utils
 	/**
 	 * This saves syslog files and compresses older ones
 	 * Used from cronjob
-	 * 
-	 * @return	int		 0 if OK, < 0 if KO 
+	 *
+	 * @return	int		 0 if OK, < 0 if KO
 	 */
 	function compressSyslogs() {
 		global $conf;
