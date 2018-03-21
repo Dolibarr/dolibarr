@@ -135,7 +135,6 @@ class User extends CommonObject
 	public $default_c_exp_tax_cat;
 	public $default_range;
 
-
 	/**
 	 *    Constructor de la classe
 	 *
