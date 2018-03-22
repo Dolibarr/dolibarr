@@ -2,6 +2,74 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+
+***** ChangeLog for 7.0.1 compared to 7.0.0 *****
+FIX: #8139 User search does not work if MAIN_USE_OLD_SEARCH_FORM, missing list.php
+FIX: #8200
+FIX: #8219
+FIX: #8232
+FIX: #8269
+FIX: #8277
+FIX: #8285 Extrafields now reported by /api/index.php/agendaevents/{id}
+FIX: #8289 add a configuration for stock calculation
+FIX: Activate all also if there are inactive services
+FIX: add planned delivery to order exports
+FIX: approval date was not visible if leave was canceled after
+FIX: avoid "Array" on screen
+FIX: Avoid empty value to fk_multicurrency attribute
+FIX: Bad var for substitution of free text
+FIX: Can't activate tasks on projects configuration
+FIX: Can use odx templates that does not include lines tags
+FIX: check shipping on delete order
+FIX: check verif exped on delete order
+FIX: comment on tasks
+FIX: country must not be mandatory for accounting report groups
+FIX: css
+FIX: Delete tasks on project delete will now trigger TASK_DELETE
+FIX: Do not lose filter when editing comment of a time spent in task view
+FIX: duplicate confirm message. Missing reposition class
+FIX: Duplicate product_type asignement on order addline
+FIX: email use the validate user instead of approver in holiday approval
+FIX: Error management in leave request
+FIX: for nondisplay of  fk_element 's id in  REST API response
+FIX: Generic substitution of constant disabled for sensitive constant
+FIX: if we make a mistake with situation_percent, now we can correct it. before situation_final was always set to 1 and no way to go back
+FIX: Import process must stop after ending line nb to import
+FIX: Infinite loop on deletion of temp file when there is symbolic links
+FIX: Input of holiday for subordinates was ko
+FIX: invoice creation fails when next date not defined
+FIX: Label of event show twice
+FIX: letter for month March
+FIX: Look and feel v7
+FIX: Make a redirect after the remove_file action to avoid deletion done
+FIX: migration script for product photo
+FIX: missing email of customer in stripe info payments
+FIX: missing object entity in fetch
+FIX: Missing restore_lastsearch_values
+FIX: multicompany compatibility and fix reports
+FIX: natural search double quote
+FIX: navigation and filters on holiday list
+FIX: Parameter must be an array or an object that implements Countable
+FIX: Payment mode not correctly set in donation and document
+FIX: Permission in list of holiday
+FIX: Properties updated if update successfull.
+FIX: reverse field to have object loaded in doaction
+FIX: Saving wrong localtax on order addline
+FIX: Search criteria on vat
+FIX: security report by DIGITEMIS CYBERSECURITY & PRIVACY
+FIX: show status on societe banner
+FIX: solve column mismatch in user card with multicompany transverse mode + code cleanup
+FIX: Subscription events not recorded into agenda
+FIX: Subscription not correctly log in blockedlog
+FIX: Temporary dir for mail files must be cleaned at beginning of form
+FIX: Trad and creation date in subscription create
+FIX: translation of holiday types
+FIX: Unknown column 'pl.amount_requested' in compta/prelevement/factures.php
+FIX: Useless clean of tree
+FIX: Use of undefined constant _ROWS_2
+FIX: warning when adding ECM files using old photo path
+
+
 ***** ChangeLog for 7.0.0 compared to 6.0.5 *****
 For users:
 NEW: Add a preview icon after files that can be previewed (pdf + images)
