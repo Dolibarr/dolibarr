@@ -114,7 +114,7 @@ class AgendaEvents extends DolibarrApi
 
         // If the internal user must only see his customers, force searching by him
         $search_sale = 0;
-        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;
+        if (! DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) $search_sale = DolibarrApiAccess::$user->id;  // TODO problem to see action if not use thirdparty module !
 
         $sql = "SELECT t.id as rowid";
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
