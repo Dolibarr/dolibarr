@@ -760,7 +760,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("projects");
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("ProjectModifieddInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
 
             $object->sendtoid=0;
