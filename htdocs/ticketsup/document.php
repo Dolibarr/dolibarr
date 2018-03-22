@@ -64,7 +64,7 @@ if (!$sortfield) {
 }
 
 $object = new Ticketsup($db);
-$result = $object->fetch($id, $track_id, $ref);
+$result = $object->fetch($id, $ref, $track_id);
 
 // to match  document rules and compatibility
 $old_ref = $object->ref;
