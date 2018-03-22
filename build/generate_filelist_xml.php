@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       build/generate_filecheck_xml.php
+ *      \file       build/generate_filelist_xml.php
  *		\ingroup    dev
  * 		\brief      This script create a xml checksum file
  */
@@ -66,6 +66,12 @@ while ($i < $argc)
         $includeconstants[$tmp[0]][$tmp[1]] = $tmp[2];
     }
     $i++;
+}
+
+// If release is auto, we take current version
+if ($release == 'auto')
+{
+	$release = DOL_VERSION;
 }
 
 if (empty($includecustom))
