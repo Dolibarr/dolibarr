@@ -1530,8 +1530,8 @@ class Commande extends CommonOrder
              {
              $prod = new Product($this->db);
              $prod->fetch($idproduct);
-             $prod -> get_sousproduits_arbo ();
-             $prods_arbo = $prod->get_each_prod();
+             $prod -> get_sousproduits_arbo();
+             $prods_arbo = $prod->get_arbo_each_prod();
              if(count($prods_arbo) > 0)
              {
              foreach($prods_arbo as $key => $value)

@@ -3303,28 +3303,8 @@ class Product extends CommonObject
 	}
 
 	/**
-	 *  fonction recursive uniquement utilisee par get_each_prod, ajoute chaque sousproduits dans le tableau res
-	 *
-	 *	@param	array	$prod	Products array
-	 *  @return void
-	 */
-	function fetch_prods($prod)
-	{
-		$this->res;
-		foreach($prod as $nom_pere => $desc_pere)
-		{
-			// on est dans une sous-categorie
-			if(is_array($desc_pere))
-			$this->res[]= array($desc_pere[1],$desc_pere[0]);
-			if(count($desc_pere) >1)
-			{
-				$this->fetch_prods($desc_pere);
-			}
-		}
-	}
-
-	/**
-	 *  reconstruit l'arborescence des produits sous la forme d'un tableau
+	 *  Build the tree of subproducts into an array
+	 *  this->sousprods is loaded by this->get_sousproduits_arbo()
 	 *
 	 *	@param		int		$multiply		Because each sublevel must be multiplicated by parent nb
 	 *  @return 	array 					$this->res
@@ -3342,26 +3322,6 @@ class Product extends CommonObject
 		//var_dump($this->res);
 		return $this->res;
 	}
-
-	/**
-	 *  Renvoie tous les sousproduits dans le tableau res, chaque ligne de res contient : id -> qty
-	 *
-	 *  @return array $this->res
-	 */
-	function get_each_prod()
-	{
-		$this->res = array();
-		if (is_array($this->sousprods))
-		{
-			foreach($this->sousprods as $nom_pere => $desc_pere)
-			{
-				if (count($desc_pere) >1) $this->fetch_prods($desc_pere);
-			}
-			sort($this->res);
-		}
-		return $this->res;
-	}
-
 
 	/**
 	 *  Return all parent products for current product (first level only)
