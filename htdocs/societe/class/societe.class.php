@@ -1819,9 +1819,10 @@ class Societe extends CommonObject
 	 *  Return array of sales representatives
 	 *
 	 *  @param	User	$user		Object user
+	 *  @param	int		$mode		0=Array with properties, 1=Array of id.
 	 *  @return array       		Array of sales representatives of third party
 	 */
-	function getSalesRepresentatives(User $user)
+	function getSalesRepresentatives(User $user, $mode=0)
 	{
 		global $conf;
 
@@ -1849,14 +1850,22 @@ class Societe extends CommonObject
 			while ($i < $num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$reparray[$i]['id']=$obj->rowid;
-				$reparray[$i]['lastname']=$obj->lastname;
-				$reparray[$i]['firstname']=$obj->firstname;
-				$reparray[$i]['email']=$obj->email;
-				$reparray[$i]['statut']=$obj->statut;
-				$reparray[$i]['entity']=$obj->entity;
-				$reparray[$i]['login']=$obj->login;
-				$reparray[$i]['photo']=$obj->photo;
+
+				if (empty($mode))
+				{
+					$reparray[$i]['id']=$obj->rowid;
+					$reparray[$i]['lastname']=$obj->lastname;
+					$reparray[$i]['firstname']=$obj->firstname;
+					$reparray[$i]['email']=$obj->email;
+					$reparray[$i]['statut']=$obj->statut;
+					$reparray[$i]['entity']=$obj->entity;
+					$reparray[$i]['login']=$obj->login;
+					$reparray[$i]['photo']=$obj->photo;
+				}
+				else
+				{
+					$reparray[]=$obj->rowid;
+				}
 				$i++;
 			}
 			return $reparray;
@@ -3921,22 +3930,22 @@ class Societe extends CommonObject
 	}
 
 	/**
-	 * Sets company to supplied users.
+	 * Sets sales representatives of the thirdparty
 	 *
-	 * @param 	int[]|int 	$users		 	User ID or array of user IDs
+	 * @param 	int[]|int 	$salesrep	 	User ID or array of user IDs
 	 * @return	int							<0 if KO, >0 if OK
 	 */
 	public function setSalesRep($salesrep)
 	{
 		global $user;
-		
+
 		// Handle single user
 		if (!is_array($salesrep)) {
 			$salesrep = array($salesrep);
 		}
 
 		// Get current users
-		$existing = $this->get_users();
+		$existing = $this->getSalesRepresentatives($user, 1);
 
 		// Diff
 		if (is_array($existing)) {
@@ -3965,26 +3974,6 @@ class Societe extends CommonObject
 		}
 
 		return $error ? -1 : 1;
-	}
-	
-	/**
-	 * Get all linked user to company
-	 *
-	 * @return	Array
-	 */
-	public function get_users() {
-		$sql = 'SELECT fk_user FROM '.MAIN_DB_PREFIX.'societe_commerciaux ';
-		$sql.= 'WHERE fk_soc = '.$this->id;
-		
-		$resql = $this->db->query($sql);
-		
-		$users = array();
-		
-		while ($obj = $this->db->fetch_object($resql)) {
-			$users[] = $obj->fk_user;
-		}
-		
-		return $users;
 	}
 
 

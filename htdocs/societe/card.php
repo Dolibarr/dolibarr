@@ -538,7 +538,7 @@ if (empty($reshook))
 							$error++;
 						}
 					}
-					
+
 					// Links with users
 					$salesreps = GETPOST('commercial', 'array');
 					$result = $object->setSalesRep($salesreps);
@@ -676,7 +676,7 @@ if (empty($reshook))
                     setEventMessages($object->error, $object->errors, 'errors');
                   	$error++;
                 }
-				
+
 				// Links with users
 				$salesreps = GETPOST('commercial', 'array');
 				$result = $object->setSalesRep($salesreps);
@@ -1949,14 +1949,14 @@ else
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
 	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
-			
+
 			// Assign a Name
             print '<tr>';
             print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
             print '<td colspan="3" class="maxwidthonsmartphone">';
 			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
 			$arrayselected = GETPOST('commercial', 'array');
-			if(empty($arrayselected)) $arrayselected = $object->get_users();
+			if (empty($arrayselected)) $arrayselected = $object->getSalesRepresentatives($user, 1);
             print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
             print '</td></tr>';
 
