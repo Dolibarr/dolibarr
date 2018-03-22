@@ -1530,9 +1530,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.=getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
 		$out.='</tr>';
 
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+		$caction=new CActionComm($db);
+		$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
+
         foreach ($histo as $key=>$value)
         {
 			$actionstatic->fetch($histo[$key]['id']);    // TODO Do we need this, we already have a lot of data of line into $histo
+
+			$actionstatic->type_picto=$histo[$key]['apicto'];
+			$actionstatic->type_code=$histo[$key]['acode'];
 
             $out.='<tr class="oddeven">';
 
@@ -1564,26 +1571,26 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='<td>';
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
             {
-            	if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
+            	if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
             	else {
-            		if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
-            		if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
-            		if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
+            		if ($actionstatic->type_code == 'AC_RDV')       $out.= img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif ($actionstatic->type_code == 'AC_TEL')   $out.= img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif ($actionstatic->type_code == 'AC_FAX')   $out.= img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif ($actionstatic->type_code == 'AC_EMAIL') $out.= img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif ($actionstatic->type_code == 'AC_INT')   $out.= img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif (! preg_match('/_AUTO/', $actionstatic->type_code)) $out.= img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
             	}
-            	$out.=$actionstatic->type;
             }
-            else {
-            	$typelabel = $actionstatic->type;
-            	if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL");
-            	$out.=$typelabel;
-            }
+            $labeltype=$actionstatic->type_code;
+            if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype='AC_OTH';
+            if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
+            $out.= dol_trunc($labeltype,28);
             $out.='</td>';
 
             // Title
             $out.='<td>';
             if (isset($histo[$key]['type']) && $histo[$key]['type']=='action')
             {
-                $actionstatic->type_code=$histo[$key]['acode'];
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
                 $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['alabel']);
                 //$actionstatic->libelle=$libelle;
@@ -1635,7 +1642,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                         $propalstatic->type=$histo[$key]['ftype'];
                         $out.=$propalstatic->getNomUrl(1);
                     } else {
-                        $out.= $langs->trans("ProposalDeleted");
+                        //$out.= '<span class="opacitymedium">'.$langs->trans("ProposalDeleted").'</span>';
                     }
              	}
             	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
@@ -1646,7 +1653,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                         $orderstatic->type=$histo[$key]['ftype'];
                         $out.=$orderstatic->getNomUrl(1);
                     } else {
-                        $out.= $langs->trans("OrderDeleted");
+                    	//$out.= '<span class="opacitymedium">'.$langs->trans("OrderDeleted").'<span>';
                     }
              	}
             	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
@@ -1657,7 +1664,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                         $facturestatic->type=$histo[$key]['ftype'];
                         $out.=$facturestatic->getNomUrl(1,'compta');
                     } else {
-                        $out.= $langs->trans("InvoiceDeleted");
+                    	//$out.= '<span class="opacitymedium">'.$langs->trans("InvoiceDeleted").'</span>';
                     }
             	}
             	else $out.='&nbsp;';

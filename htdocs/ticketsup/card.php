@@ -545,7 +545,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
 
 
-        if (! empty($conf->global->TICKETSUP_SHOW_CONTACT_ON_MAIN_TAB))
+        if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
         {
 	        print load_fiche_titre($langs->trans('Contacts'), '', 'title_companies.png');
 
