@@ -2745,18 +2745,14 @@ class User extends CommonObject
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 		// TODO add hook
-		if (! empty($conf->multicompany->enabled)) {
-			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
-					$sql.= " WHERE u.entity IS NOT NULL"; // Show all users
-				} else {
-					$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-					$sql.= " WHERE (ug.fk_user = u.rowid";
-					$sql.= " AND ug.entity IN (".getEntity('user')."))";
-					$sql.= " OR u.entity = 0"; // Show always superadmin
-				}
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+				$sql.= " WHERE u.entity IS NOT NULL"; // Show all users
 			} else {
-				$sql.= " WHERE u.entity IN (".getEntity('user').")";
+				$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+				$sql.= " WHERE (ug.fk_user = u.rowid";
+				$sql.= " AND ug.entity IN (".getEntity('user')."))";
+				$sql.= " OR u.entity = 0"; // Show always superadmin
 			}
 		} else {
 			$sql.= " WHERE u.entity IN (".getEntity('user').")";

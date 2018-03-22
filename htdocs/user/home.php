@@ -102,18 +102,14 @@ $sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 // TODO add hook
-if (! empty($conf->multicompany->enabled)) {
-	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
-			$sql.= " WHERE u.entity IS NOT NULL"; // Show all users
-		} else {
-			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql.= " WHERE (ug.fk_user = u.rowid";
-			$sql.= " AND ug.entity IN (".getEntity('user')."))";
-			$sql.= " OR u.entity = 0"; // Show always superadmin
-		}
+if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+	if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+		$sql.= " WHERE u.entity IS NOT NULL"; // Show all users
 	} else {
-		$sql.= " WHERE u.entity IN (".getEntity('user').")";
+		$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+		$sql.= " WHERE (ug.fk_user = u.rowid";
+		$sql.= " AND ug.entity IN (".getEntity('user')."))";
+		$sql.= " OR u.entity = 0"; // Show always superadmin
 	}
 } else {
 	$sql.= " WHERE u.entity IN (".getEntity('user').")";
