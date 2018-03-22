@@ -137,6 +137,7 @@ ProjectReportDate=Change task dates according to new project start date
 ErrorShiftTaskDate=Impossible to shift task date according to new project start date
 ProjectsAndTasksLines=Projects and tasks
 ProjectCreatedInDolibarr=Project %s created
+ProjectValidatedInDolibarr=Project %s validated
 ProjectModifiedInDolibarr=Project %s modified
 TaskCreatedInDolibarr=Task %s created
 TaskModifiedInDolibarr=Task %s modified
@@ -216,7 +217,6 @@ LatestProjects=Latest %s projects
 LatestModifiedProjects=Latest %s modified projects
 OtherFilteredTasks=Other filtered tasks
 NoAssignedTasks=No assigned tasks (assign project/tasks the current user from the top select box to enter time on it)
-ProjectValidatedInDolibarr=Project validated
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects
