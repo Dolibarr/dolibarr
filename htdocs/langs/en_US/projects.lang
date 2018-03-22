@@ -216,6 +216,7 @@ LatestProjects=Latest %s projects
 LatestModifiedProjects=Latest %s modified projects
 OtherFilteredTasks=Other filtered tasks
 NoAssignedTasks=No assigned tasks (assign project/tasks the current user from the top select box to enter time on it)
+ProjectValidatedInDolibarr=Project validated
 # Comments trans
 AllowCommentOnTask=Allow user comments on tasks
 AllowCommentOnProject=Allow user comments on projects
