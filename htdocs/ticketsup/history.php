@@ -16,9 +16,9 @@
  */
 
 /**
- *    History of ticket
- *
- *    @package ticketsup
+ *		\file       htdocs/ticketsup/history.php
+ *    	\ingroup	ticketsup
+ *    	\brief		History of ticket
  */
 
 require '../main.inc.php';

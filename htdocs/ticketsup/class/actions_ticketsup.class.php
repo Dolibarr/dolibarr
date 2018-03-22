@@ -335,7 +335,7 @@ class ActionsTicketsup
 
             /*if (! ($usertoassign > 0)) {
                 $error++;
-                array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("UserAssignedTo")));
+                array_push($this->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("AssignedTo")));
                 $action = 'view';
             }*/
 

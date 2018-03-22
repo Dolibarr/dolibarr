@@ -16,9 +16,8 @@
  */
 
 /**
- *     Index page for ticket module
- *
- *    @package ticketsup
+ *    \file     htdocs/ticketsup/history.php
+ *    \ingroup	ticketsup
  */
 
 require '../main.inc.php';

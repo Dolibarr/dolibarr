@@ -19,9 +19,9 @@
  */
 
 /**
- *       \file       ticketsup/contact.php
- *        \ingroup    ticketsup
- *        \brief      Contacts of tickets
+ *       \file       htdocs/ticketsup/contact.php
+ *       \ingroup    ticketsup
+ *       \brief      Contacts of tickets
  */
 
 require '../main.inc.php';

@@ -17,8 +17,8 @@
  */
 
 /**
- *    Card of ticket
- *    @ingroup ticketsup
+ *    \file     htdocs/ticketsup/card.php
+ *    \ingroup 	ticketsup
  */
 
 require '../main.inc.php';
@@ -343,7 +343,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         print '</td></tr>';
 
         // User assigned
-        print '<tr><td>' . $langs->trans("UserAssignedTo") . '</td><td>';
+        print '<tr><td>' . $langs->trans("AssignedTo") . '</td><td>';
         if ($object->fk_user_assign > 0) {
             $userstat->fetch($object->fk_user_assign);
             print $userstat->getNomUrl(1);

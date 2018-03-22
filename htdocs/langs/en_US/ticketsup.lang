@@ -163,7 +163,6 @@ SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
 TicketCloseOn=Clotured on
-UserAssignedTo=User assigned
 MarkAsRead=Mark ticket as read
 TicketMarkedAsReadButLogActionNotSaved=Ticket marked as closed but no action saved
 TicketHistory=Ticket history
