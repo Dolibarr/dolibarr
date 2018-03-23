@@ -877,11 +877,11 @@ class FormMail extends Form
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 					$langs->load('paypal');
 					$typeforonlinepayment='free';
-					if ($this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
-					if ($this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
-					if ($this->param["models"]=='member_send')  $typeforonlinepayment='member';		// TODO use detection on something else than template
+					if ($this->param["models"]=='order'   || $this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
+					if ($this->param["models"]=='invoice' || $this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
+					if ($this->param["models"]=='member') $typeforonlinepayment='member';												// TODO use detection on something else than template
 					$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
-		   			$paymenturl=$url;
+					$paymenturl=$url;
 				}
 				$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$langs->trans("PredefinedMailContentLink", $paymenturl):'');
 				$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
