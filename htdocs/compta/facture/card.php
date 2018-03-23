@@ -914,19 +914,25 @@ if (empty($reshook))
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
 				$object->type = Facture::TYPE_CREDIT_NOTE;
 				
+				$facture_source = new Facture($db); // fetch origin object
+				if ($facture_source->fetch($object->fk_facture_source)>0)
+				{
+				    if ($facture_source->type == Facture::TYPE_SITUATION)
+				    {
+				        $object->situation_counter =  $facture_source->situation_counter;
+				        $object->situation_cycle_ref = $facture_source->situation_cycle_ref;
+				        $facture_source->fetchPreviousNextSituationInvoice();
+				    }
+				}
+				
 				$id = $object->create($user);
 
 				if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0)
 				{
-					$facture_source = new Facture($db); // fetch origin object
-					if ($facture_source->fetch($object->fk_facture_source)>0)
+				    
+					if (!empty($facture_source->lines))
 					{
 						$fk_parent_line = 0;
-						if ($facture_source->type == Facture::TYPE_SITUATION)
-						{
-						    $facture_source->fetchPreviousNextSituationInvoice();
-						}
-						
 
 						foreach($facture_source->lines as $line)
 						{
@@ -946,6 +952,7 @@ if (empty($reshook))
 							
 							if($facture_source->type == Facture::TYPE_SITUATION)
 							{
+							   
 							    if(!empty($facture_source->tab_previous_situation_invoice))
 							    {
 							        $lineIndex = count($facture_source->tab_previous_situation_invoice) - 1;
@@ -973,7 +980,7 @@ if (empty($reshook))
 							        }
 							        
 							        // prorata
-							        $line->qty = $line->qty * $maxPrevSituationPercent / 100;
+							        $line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
 							    }
 							    
 							   
