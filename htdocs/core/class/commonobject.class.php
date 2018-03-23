@@ -2650,7 +2650,7 @@ abstract class CommonObject
 			$this->multicurrency_total_ttc  += isset($this->revenuestamp)?($this->revenuestamp * $multicurrency_tx):0;
 
 			// Situations totals
-			if ($this->situation_cycle_ref && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits'))
+			if ($this->situation_cycle_ref && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits') && $this->type != $this::TYPE_CREDIT_NOTE )
 			{
 				$prev_sits = $this->get_prev_sits();
 
@@ -2694,7 +2694,7 @@ abstract class CommonObject
 						$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
 				$sql .= ' WHERE rowid = '.$this->id;
 
-				//print "xx".$sql;
+				print "xx".$sql;
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)
