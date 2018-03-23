@@ -281,6 +281,11 @@ if ($ispaymentok)
 
 	if (in_array('MEM', array_keys($tmptag)))
 	{
+		// Validate member
+		// Create subscription
+		// Create complementary actions (this include creation of thirdparty)
+		// Send confirmation email
+
 		$defaultdelay=1;
 		$defaultdelayunit='y';
 
@@ -384,7 +389,9 @@ if ($ispaymentok)
 
 				if (! $error)
 				{
-					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, 1);
+					$autocreatethirdparty = 1;
+
+					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty);
 					if ($result < 0)
 					{
 						$error++;
@@ -400,6 +407,49 @@ if ($ispaymentok)
 						$ispostactionok = 1;
 
 						// If an invoice was created, it is into $object->invoice
+					}
+				}
+
+				if (! $error)
+				{
+					if ($paymentmethod == 'stripe' && $autocreatethirdparty && $option == 'bankviainvoice')
+					{
+						$thirdparty_id = $object->fk_soc;
+
+						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+
+						$service = 'StripeTest';
+						$servicestatus = 0;
+						if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+						{
+							$service = 'StripeLive';
+							$servicestatus = 1;
+						}
+						$stripeacc = null;	// No Oauth/connect use for public pages
+
+						$thirdparty = new Societe($db);
+						$thirdparty->fetch($thirdparty_id);
+
+						include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+						$stripe = new Stripe($db);
+						$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
+
+						if (! $customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
+						{
+							$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
+							$stripecu = $ch->customer;							// value 'cus_....'
+
+							$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
+							$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', " . $servicestatus . ", " . $conf->entity . ", '".$db->idate(dol_now())."', 0)";
+							$resql = $db->query($sql);
+							if (! $resql)
+							{
+								$error++;
+								$errmsg='Failed to save customer stripe id in database ; '.$db->lasterror();
+								$postactionmessages[] = $errmsg;
+								$ispostactionok = -1;
+							}
+						}
 					}
 				}
 

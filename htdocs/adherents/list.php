@@ -593,7 +593,6 @@ while ($i < min($num, $limit))
 	$memberstatic->ref=$obj->rowid;
 	$memberstatic->lastname=$obj->lastname;
 	$memberstatic->firstname=$obj->firstname;
-	$memberstatic->societe=$obj->company;
 	$memberstatic->statut=$obj->statut;
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
@@ -605,6 +604,7 @@ while ($i < min($num, $limit))
 	} else {
 		$companyname=$obj->company;
 	}
+	$memberstatic->societe = $companyname;
 
 	print '<tr class="oddeven">';
 

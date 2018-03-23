@@ -1331,7 +1331,7 @@ class Adherent extends CommonObject
 	 *	Do complementary actions after subscription recording.
 	 *
 	 *	@param	int			$subscriptionid			Id of created subscription
-	 *  @param	string		$option					Which action ('bankdirect', 'invoiceonly', ...)
+	 *  @param	string		$option					Which action ('bankdirect', 'bankviainvoice', 'invoiceonly', ...)
 	 *	@param	int			$accountid				Id bank account
 	 *	@param	int			$datesubscription		Date of subscription
 	 *	@param	int			$paymentdate			Date of payment
@@ -1341,7 +1341,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom			Name of cheque writer
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
-	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty.
+	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty and we request an option that generate invoice.
 	 *	@return int									<0 if KO, >0 if OK
 	 */
 	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
@@ -1351,6 +1351,8 @@ class Adherent extends CommonObject
 		$error = 0;
 
 		$this->invoice = null;	// This will contains invoice if an invoice is created
+
+		dol_syslog("subscriptionComplementaryActions subscriptionid=".$subscriptionid." option=".$option." accountid=".$accountid." datesubscription=".$datesubscription." paymentdate=".$paymentdate." label=".$label." amount=".$amount." num_chq=".$num_chq." autocreatethirdparty=".$autocreatethirdparty);
 
 		// Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
 		if ($option == 'bankdirect' && $accountid)
@@ -1407,7 +1409,7 @@ class Adherent extends CommonObject
 
 			if (! $error)
 			{
-				if (! ($this->fk_soc > 0))
+				if (! ($this->fk_soc > 0))	// If not yet linked to a company
 				{
 					if ($autocreatethirdparty)
 					{
@@ -1894,6 +1896,8 @@ class Adherent extends CommonObject
 			$label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($this->firstname) || ! empty($this->lastname))
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
+		if (! empty($this->societe))
+			$label.= '<br><b>' . $langs->trans('Company') . ':</b> ' . $this->societe;
 		$label.='</div>';
 
 		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;

@@ -6462,7 +6462,7 @@ class Form
 		else if ($object->element == 'member')
 		{
 			$fullname=$object->getFullName($langs);
-			if ($object->morphy == 'mor') {
+			if ($object->morphy == 'mor' && $object->societe) {
 				$ret.= dol_htmlentities($object->societe) . ((! empty($fullname) && $object->societe != $fullname)?' ('.dol_htmlentities($fullname).')':'');
 			} else {
 				$ret.= dol_htmlentities($fullname) . ((! empty($object->societe) && $object->societe != $fullname)?' ('.dol_htmlentities($object->societe).')':'');
