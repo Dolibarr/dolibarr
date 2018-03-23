@@ -2556,7 +2556,7 @@ class Adherent extends CommonObject
 
 					// Send reminder email
 					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-					include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+					$formmail=new FormMail($db);
 
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
@@ -2578,6 +2578,7 @@ class Adherent extends CommonObject
 						$from = $conf->global->ADHERENT_MAIL_FROM;
 						$to = $adherent->email;
 
+						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
 						$result = $cmail->sendfile();
 						if (! $result)

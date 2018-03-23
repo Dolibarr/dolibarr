@@ -499,7 +499,7 @@ class AdherentType extends CommonObject
 	/**
 	 *     getMailOnValid
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail content of type or empty
 	 */
 	function getMailOnValid()
 	{
@@ -509,16 +509,14 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_valid;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_VALID;
-		}
+
+		return '';
 	}
 
 	/**
 	 *     getMailOnSubscription
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail content of type or empty
 	 */
 	function getMailOnSubscription()
 	{
@@ -529,16 +527,14 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_subscription;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_COTIS;
-		}
+
+		return '';
 	}
 
 	/**
 	 *     getMailOnResiliate
 	 *
-	 *     @return string     Return mail model
+	 *     @return string     Return mail model content of type or empty
 	 */
 	function getMailOnResiliate()
 	{
@@ -549,10 +545,8 @@ class AdherentType extends CommonObject
 		{
 			return $this->mail_resiliate;
 		}
-		else
-		{
-			return $conf->global->ADHERENT_MAIL_RESIL;
-		}
+
+		return '';
 	}
 
 }
