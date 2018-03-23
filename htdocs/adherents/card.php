@@ -1353,7 +1353,7 @@ else
 			$subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_VALID_SUBJECT);
 			$texttosend=$object->makeSubstitution($adht->getMailOnValid());
 
-			$tmp=$langs->trans("SendAnEMailToMember");
+			$tmp=$langs->trans("SendingAnEMailToMember");
 			$tmp.='<br>'.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
 			$tmp.='<br>'.$langs->trans("MailRecipient").': <b>'.$object->email.'</b>';
 			$helpcontent='';
@@ -1395,7 +1395,7 @@ else
 			$subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_RESIL_SUBJECT);
 			$texttosend=$object->makeSubstitution($adht->getMailOnResiliate());
 
-			$tmp=$langs->trans("SendAnEMailToMember");
+			$tmp=$langs->trans("SendingAnEMailToMember");
 			$tmp.='<br>('.$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b>, ';
 			$tmp.=$langs->trans("MailRecipient").': <b>'.$object->email.'</b>)';
 			$helpcontent='';

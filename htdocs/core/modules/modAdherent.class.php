@@ -83,34 +83,7 @@ class modAdherent extends DolibarrModules
         $this->const[$r][4] = 0;
         $r++;
 
-        $this->const[$r][0] = "ADHERENT_MAIL_RESIL";
-        $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "Votre adhésion vient d'être résiliée.\r\nNous espérons vous revoir très bientôt";
-        $this->const[$r][3] = "Mail de résiliation";
-        $this->const[$r][4] = 0;
-        $r++;
-
-        $this->const[$r][0] = "ADHERENT_MAIL_VALID";
-        $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "Votre adhésion vient d'être validée. \r\nVoici le rappel de vos coordonnées (toute information erronée entrainera la non validation de votre inscription) :\r\n\r\n__INFOS__\r\n\r\n";
-        $this->const[$r][3] = "Mail de validation";
-        $this->const[$r][4] = 0;
-        $r++;
-
-        $this->const[$r][0] = "ADHERENT_MAIL_VALID_SUBJECT";
-        $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "Votre adhésion a été validée";
-        $this->const[$r][3] = "Sujet du mail de validation";
-        $this->const[$r][4] = 0;
-        $r++;
-
-        $this->const[$r][0] = "ADHERENT_MAIL_RESIL_SUBJECT";
-        $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "Résiliation de votre adhésion";
-        $this->const[$r][3] = "Sujet du mail de résiliation";
-        $this->const[$r][4] = 0;
-        $r++;
-
+        // For emails
         $this->const[$r][0] = "ADHERENT_MAIL_FROM";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "";
@@ -118,20 +91,35 @@ class modAdherent extends DolibarrModules
         $this->const[$r][4] = 0;
         $r++;
 
-        $this->const[$r][0] = "ADHERENT_MAIL_COTIS";
-        $this->const[$r][1] = "texte";
-        $this->const[$r][2] = "Bonjour __FIRSTNAME__,\r\nCet email confirme que votre cotisation a été reçue\r\net enregistrée";
-        $this->const[$r][3] = "Mail de validation de cotisation";
+        $this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER";
+        $this->const[$r][1] = "emailtemplate:member";
+        $this->const[$r][2] = "(SendingEmailOnAutoSubscription)";
+        $this->const[$r][3] = "";
         $this->const[$r][4] = 0;
         $r++;
 
-        $this->const[$r][0] = "ADHERENT_MAIL_COTIS_SUBJECT";
-        $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "Reçu de votre cotisation";
-        $this->const[$r][3] = "Sujet du mail de validation de cotisation";
+        $this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION";
+        $this->const[$r][1] = "emailtemplate:member";
+        $this->const[$r][2] = "(SendingEmailOnNewSubscription)";
+        $this->const[$r][3] = "";
         $this->const[$r][4] = 0;
         $r++;
 
+        $this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION";
+        $this->const[$r][1] = "emailtemplate:member";
+        $this->const[$r][2] = "(SendingReminderForExpiredSubscription)";
+        $this->const[$r][3] = "";
+        $this->const[$r][4] = 0;
+        $r++;
+
+        $this->const[$r][0] = "ADHERENT_EMAIL_TEMPLATE_CANCELATION";
+        $this->const[$r][1] = "emailtemplate:member";
+        $this->const[$r][2] = "(SendingEmailOnCancelation)";
+        $this->const[$r][3] = "";
+        $this->const[$r][4] = 0;
+        $r++;
+
+        // For cards
         $this->const[$r][0] = "ADHERENT_CARD_HEADER_TEXT";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "__YEAR__";
@@ -160,20 +148,6 @@ class modAdherent extends DolibarrModules
         $this->const[$r][4] = 0;
         $r++;
 
-        $this->const[$r][0] = "ADHERENT_BANK_ACCOUNT";
-        $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "";
-        $this->const[$r][3] = "ID du Compte banquaire utilise";
-        $this->const[$r][4] = 0;
-        $r++;
-
-        $this->const[$r][0] = "ADHERENT_BANK_CATEGORIE";
-        $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "";
-        $this->const[$r][3] = "ID de la catégorie bancaire des cotisations";
-        $this->const[$r][4] = 0;
-        $r++;
-
         $this->const[$r][0] = "ADHERENT_ETIQUETTE_TYPE";
         $this->const[$r][1] = "chaine";
         $this->const[$r][2] = "L7163";
@@ -187,6 +161,22 @@ class modAdherent extends DolibarrModules
         $this->const[$r][3] = "Text to print on member address sheets";
         $this->const[$r][4] = 0;
         $r++;
+
+        // For subscriptions
+        $this->const[$r][0] = "ADHERENT_BANK_ACCOUNT";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "";
+        $this->const[$r][3] = "ID of bank account to use";
+        $this->const[$r][4] = 0;
+        $r++;
+
+        $this->const[$r][0] = "ADHERENT_BANK_CATEGORIE";
+        $this->const[$r][1] = "chaine";
+        $this->const[$r][2] = "";
+        $this->const[$r][3] = "ID of bank transaction category to use";
+        $this->const[$r][4] = 0;
+        $r++;
+
 
         // Boxes
         //-------

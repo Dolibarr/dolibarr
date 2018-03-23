@@ -998,7 +998,7 @@ class FormMail extends Form
 	 *      @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
 	 *      @param  int         $active         1=Only active template, 0=Only disabled, -1=All
 	 *      @param	string		$label			Label of template
-	 *      @return ModelMail
+	 *      @return ModelMail					One instance of ModelMail
 	 */
 	public function getEMailTemplate($db, $type_template, $user, $outputlangs, $id=0, $active=1, $label='')
 	{
@@ -1153,6 +1153,7 @@ class FormMail extends Form
 				$line->topic=$obj->topic;
 				$line->content=$obj->content;
 				$line->content_lines=$obj->content_lines;
+
 				$this->lines_model[]=$line;
 			}
 			$this->db->free($resql);

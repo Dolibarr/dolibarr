@@ -2562,9 +2562,12 @@ class Adherent extends CommonObject
 					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
 					$outputlangs->loadLangs(array("main", "members"));
 
-					$arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, '(SendReminderForExpiredSubscriptionTitle)');
+					$arraydefaultmessage=null;
+					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION;
 
-					if (is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+					if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+					if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
 					{
 						$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $adherent);
 						//if (is_array($adherent->thirdparty)) $substitutionarraycomp = ...
@@ -2591,7 +2594,7 @@ class Adherent extends CommonObject
 					}
 					else
 					{
-						$blockingerrormsg="Can't find email template '(SendReminderForExpiredSubscriptionTitle)'";
+						$blockingerrormsg="Can't find email template, defined into member module setup, to use for reminding";
 						$nbko++;
 						break;
 					}
