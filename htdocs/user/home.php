@@ -108,28 +108,11 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
-$sql.=$hookmanager->resPrint;
-/*
-if (! empty($conf->multicompany->enabled)) {
-	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		if (! empty($user->admin) && empty($user->entity)) {
-			if ($conf->entity == 1) {
-				$sql.= " WHERE u.entity IS NOT NULL";
-			} else {
-				$sql.= " WHERE u.entity IN (".getEntity('user').")";
-			}
-		} else {
-			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql.= " WHERE ug.fk_user = u.rowid";
-			$sql.= " AND ug.entity IN (".getEntity('user').")";
-		}
-	} else {
-		$sql.= " WHERE u.entity IN (".getEntity('user').")";
-	}
+if ($reshook > 0) {
+	$sql.=$hookmanager->resPrint;
 } else {
 	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
-*/
 if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
 $sql.= $db->order("u.datec","DESC");
 $sql.= $db->plimit($max);
