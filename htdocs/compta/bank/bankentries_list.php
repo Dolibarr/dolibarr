@@ -1032,7 +1032,15 @@ if ($resql)
 				print '<td align="right">';
             	print price(price2num($balance, 'MT'), 1, $langs);
 				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+3).'">';
+				print '<td align="center">';
+				print '<input type="checkbox" id="selectAll" />';
+				print ' <script type="text/javascript">
+						$("input#selectAll").change(function() {
+							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
+						});
+						</script>';
+				print '</td>';
+				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
 				print '</td>';
             	print '</tr>';
             }
