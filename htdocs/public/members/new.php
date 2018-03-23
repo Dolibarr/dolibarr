@@ -142,12 +142,17 @@ function llxFooterVierge()
 // Action called when page is submitted
 if ($action == 'add')
 {
+	$error = 0;
+	$urlback='';
+
+	$db->begin();
+
     // test if login already exists
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
         if(! GETPOST('login'))
         {
-            $error+=1;
+            $error++;
             $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"))."<br>\n";
         }
         $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape(GETPOST('login'))."'";
@@ -158,52 +163,52 @@ if ($action == 'add')
         }
         if ($num !=0)
         {
-            $error+=1;
+            $error++;
             $langs->load("errors");
             $errmsg .= $langs->trans("ErrorLoginAlreadyExists")."<br>\n";
         }
         if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"])
         {
-            $error+=1;
+            $error++;
             $langs->load("errors");
             $errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
         }
         if (! GETPOST("email"))
         {
-            $error+=1;
+            $error++;
             $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("EMail"))."<br>\n";
         }
     }
     if (GETPOST('type') <= 0)
     {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"))."<br>\n";
     }
     if (! in_array(GETPOST('morphy'),array('mor','phy')))
     {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Nature'))."<br>\n";
     }
     if (empty($_POST["lastname"]))
     {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Lastname"))."<br>\n";
     }
     if (empty($_POST["firstname"]))
     {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Firstname"))."<br>\n";
     }
     if (GETPOST("email") && ! isValidEmail(GETPOST("email")))
     {
-        $error+=1;
+        $error++;
         $langs->load("errors");
         $errmsg .= $langs->trans("ErrorBadEMail",GETPOST("email"))."<br>\n";
     }
     $birthday=dol_mktime($_POST["birthhour"],$_POST["birthmin"],$_POST["birthsec"],$_POST["birthmonth"],$_POST["birthday"],$_POST["birthyear"]);
     if ($_POST["birthmonth"] && empty($birthday))
     {
-        $error+=1;
+        $error++;
         $langs->load("errors");
         $errmsg .= $langs->trans("ErrorBadDateFormat")."<br>\n";
     }
@@ -211,7 +216,7 @@ if ($action == 'add')
     {
         if (GETPOST("morphy") == 'mor' && GETPOST('budget') <= 0)
         {
-            $error+=1;
+            $error++;
             $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("TurnoverOrBudget"))."<br>\n";
         }
     }
@@ -258,6 +263,9 @@ if ($action == 'add')
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
             $object = $adh;
 
+            $adht = new AdherentType($db);
+            $adht->fetch($object->typeid);
+
             if ($object->email)
             {
             	$subject = '';
@@ -302,10 +310,23 @@ if ($action == 'add')
             if (! empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && ! empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
                   ! empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL) )
             {
+            	// Define link to login card
+            	$appli=constant('DOL_APPLICATION_TITLE');
+            	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+            	{
+            		$appli=$conf->global->MAIN_APPLICATION_TITLE;
+            		if (preg_match('/\d\.\d/', $appli))
+            		{
+            			if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+            		}
+            		else $appli.=" ".DOL_VERSION;
+            	}
+            	else $appli.=" ".DOL_VERSION;
+
             	$to=$adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
             	$from=$conf->global->ADHERENT_MAIL_FROM;
 				$mailfile = new CMailFile(
-					$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+					'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
 					$to,
 					$from,
 					$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
@@ -332,7 +353,7 @@ if ($action == 'add')
             }
             else $urlback=$_SERVER["PHP_SELF"]."?action=added";
 
-            if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
+            if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1')
             {
                 if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all')
                 {
@@ -343,7 +364,7 @@ if ($action == 'add')
                     {
                         if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
@@ -377,7 +398,7 @@ if ($action == 'add')
                     {
                         if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
                         {
-                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
@@ -394,7 +415,7 @@ if ($action == 'add')
                     {
                         if (! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
                         {
-                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->STRIPE_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->STRIPE_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
@@ -411,13 +432,24 @@ if ($action == 'add')
 
             if (! empty($entity)) $urlback.='&entity='.$entity;
             dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-            Header("Location: ".$urlback);
-            exit;
         }
         else
         {
+        	$error++;
             $errmsg .= join('<br>',$adh->errors);
         }
+    }
+
+    if (! $error)
+    {
+    	$db->commit();
+
+    	Header("Location: ".$urlback);
+    	exit;
+    }
+    else
+    {
+    	$db->rollback();
     }
 }
 

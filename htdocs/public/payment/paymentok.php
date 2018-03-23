@@ -312,13 +312,26 @@ if ($ispaymentok)
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (! empty($FinalPaymentAmt) && $paymentTypeId > 0)
 			{
+				$result = $object->validate($user);
+				if ($result < 0 || empty($object->datevalid))
+				{
+					$error++;
+					$errmsg=$object->error;
+					$postactionmessages[] = $errmsg;
+					$postactionmessages = array_merge($postactionmessages, $object->errors);
+					$ispostactionok = -1;
+				}
+
 				// Subscription informations
 				$datesubscription=$object->datevalid;
 				if ($object->datefin > 0)
 				{
 					$datesubscription=dol_time_plus_duree($object->datefin,1,'d');
 				}
-				$datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription,$defaultdelay,$defaultdelayunit),-1,'d');
+
+				$datesubend = null;
+				if ($datesubscription && $defaultdelay && $defaultdelayunit) $datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit),-1,'d');
+
 				$paymentdate=$now;
 				$amount = $FinalPaymentAmt;
 				$label='Online subscription '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
@@ -328,6 +341,14 @@ if ($ispaymentok)
 				if ($paymentmethod == 'paybox') $accountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
 				if ($paymentmethod == 'paypal') $accountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
 				if ($paymentmethod == 'stripe') $accountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+				if ($accountid < 0)
+				{
+					$error++;
+					$errmsg='Setup of bank accout to use for payment is not correctly done for payment method '.$paymentmethod;
+					$postactionmessages[] = $errmsg;
+					$ispostactionok = -1;
+				}
+
 				$operation=$paymentType; // Payment mode code
 				$num_chq='';
 				$emetteur_nom='';
@@ -344,18 +365,21 @@ if ($ispaymentok)
 				$db->begin();
 
 				// Create subscription
-				$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
-				if ($crowid <= 0)
+				if (! $error)
 				{
-					$error++;
-					$errmsg=$object->error;
-					$postactionmessages[] = $errmsg;
-					$ispostactionok = -1;
-				}
-				else
-				{
-					$postactionmessages[]='Subscription created';
-					$ispostactionok=1;
+					$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+					if ($crowid <= 0)
+					{
+						$error++;
+						$errmsg=$object->error;
+						$postactionmessages[] = $errmsg;
+						$ispostactionok = -1;
+					}
+					else
+					{
+						$postactionmessages[]='Subscription created';
+						$ispostactionok=1;
+					}
 				}
 
 				if (! $error)
@@ -404,7 +428,7 @@ if ($ispaymentok)
 						$outputlangs = new Translate('', $conf);
 						$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 						$outputlangs->loadLangs(array("main", "members"));
-						// Get email content fro mtemplae
+						// Get email content from templae
 						$arraydefaultmessage=null;
 						$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
 

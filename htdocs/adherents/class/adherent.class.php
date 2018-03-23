@@ -1668,6 +1668,8 @@ class Adherent extends CommonObject
 			if ($result < 0) { $error++; $this->db->rollback(); return -1; }
 			// End call triggers
 
+			$this->datevalid = $now;
+
 			$this->db->commit();
 			return 1;
 		}
