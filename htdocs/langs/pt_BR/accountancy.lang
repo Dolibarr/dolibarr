@@ -109,7 +109,6 @@ ACCOUNTING_PRODUCT_BUY_ACCOUNT=Conta contábil padrão para produtos comprados (
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Conta contábil padrão para os produtos vendidos (usado se não estiver definido na folha do produto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Conta contábil padrão para os serviços comprados (se não for definido na listagem de serviços)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Conta contábil padrão para os serviços vendidos (se não for definido na listagem de serviços)
-Code_tiers=Terceiro
 LabelAccount=Conta rótulo
 LabelOperation=Operação de etiqueta
 Sens=Significado

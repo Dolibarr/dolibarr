@@ -883,6 +883,7 @@ class FormMail extends Form
 					$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
 		   			$paymenturl=$url;
 				}
+				$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$langs->trans("PredefinedMailContentLink", $paymenturl):'');
 				$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
 
 				//Add lines substitution key from each line
