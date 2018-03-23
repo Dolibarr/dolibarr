@@ -2744,7 +2744,11 @@ class User extends CommonObject
 	 */
 	function get_full_tree($deleteafterid=0, $filter='')
 	{
-		global $conf,$user;
+		global $conf, $user;
+		global $hookmanager;
+
+		// Actions hooked (by external module)
+		$hookmanager->initHooks(array('userdao'));
 
 		$this->users = array();
 
@@ -2754,7 +2758,11 @@ class User extends CommonObject
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		// TODO add hook
+		// Add fields from hooks
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+		$sql.=$hookmanager->resPrint;
+		/*
 		if (! empty($conf->multicompany->enabled)) {
 			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 				if (! empty($user->admin) && empty($user->entity)) {
@@ -2774,6 +2782,7 @@ class User extends CommonObject
 		} else {
 			$sql.= " WHERE u.entity IN (".getEntity('user').")";
 		}
+		*/
 		if ($filter) $sql.=" AND ".$filter;
 
 		dol_syslog(get_class($this)."::get_full_tree get user list", LOG_DEBUG);

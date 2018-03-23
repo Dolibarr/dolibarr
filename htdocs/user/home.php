@@ -46,6 +46,10 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
 
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$contextpage=array('userhome');
+$hookmanager->initHooks($contextpage);
+
 
 /*
  * View
@@ -101,7 +105,11 @@ $sql.= ", s.code_client";
 $sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
-// TODO add hook
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+/*
 if (! empty($conf->multicompany->enabled)) {
 	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
 		if (! empty($user->admin) && empty($user->entity)) {
@@ -121,6 +129,7 @@ if (! empty($conf->multicompany->enabled)) {
 } else {
 	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
+*/
 if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
 $sql.= $db->order("u.datec","DESC");
 $sql.= $db->plimit($max);
@@ -225,7 +234,7 @@ if ($canreadperms)
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+	if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 	{
 		$sql.= " WHERE g.entity IS NOT NULL";
 	}
