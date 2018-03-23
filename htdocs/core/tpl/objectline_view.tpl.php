@@ -276,9 +276,13 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	<td class="linecoldelete" align="center"><?php $coldisplay++; ?>
 		<?php
 		if (($this->situation_counter == 1 || !$this->situation_cycle_ref) && empty($disableremove)) {
-			print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=ask_deleteline&amp;lineid=' . $line->id . '">';
+			print '<a'.($conf->use_javascript_ajax?' class="butActionFormConfirm" data-action-confirm="ask_deleteline"':'').' href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action='.($conf->use_javascript_ajax?'confirm_deleteline':'ask_deleteline').'&amp;lineid=' . $line->id . '">';
 			print img_delete();
 			print '</a>';
+
+			if($conf->use_javascript_ajax) {
+				print $formconfirm['ask_deleteline'];
+			}
 		}
 		?>
 	</td>
