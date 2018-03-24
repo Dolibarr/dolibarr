@@ -2500,7 +2500,6 @@ class Adherent extends CommonObject
 
 
 
-
 	/**
 	 * Send reminders by emails before subscription end
 	 * CAN BE A CRON TASK
@@ -2512,6 +2511,7 @@ class Adherent extends CommonObject
 	{
 		global $conf, $langs, $mysoc, $user;
 
+		$error = 0;
 		$this->output = '';
 		$this->error='';
 
@@ -2561,9 +2561,6 @@ class Adherent extends CommonObject
 					$adherent->fetch_thirdparty();
 
 					// Send reminder email
-					include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
-					$formmail=new FormMail($db);
-
 					$outputlangs = new Translate('', $conf);
 					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
 					$outputlangs->loadLangs(array("main", "members"));

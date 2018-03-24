@@ -470,14 +470,23 @@ class MyObject extends CommonObject
 	{
 		global $conf, $langs;
 
+		//$conf->global->SYSLOG_FILE = 'DOL_DATA_ROOT/dolibarr_mydedicatedlofile.log';
+
+		$error = 0;
 		$this->output = '';
 		$this->error='';
 
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
+		$now = dol_now();
+
+		$this->db->begin();
+
 		// ...
 
-		return 0;
+		$this->db->commit();
+
+		return $error;
 	}
 }
 
