@@ -6111,7 +6111,7 @@ abstract class CommonObject
 	 *
 	 * @return array
 	 */
-	private function set_save_query()
+	protected function set_save_query()
 	{
 		global $conf;
 
@@ -6165,7 +6165,7 @@ abstract class CommonObject
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
-	private function setVarsFromFetchObj(&$obj)
+	protected function setVarsFromFetchObj(&$obj)
 	{
 		foreach ($this->fields as $field => $info)
 		{
@@ -6210,7 +6210,7 @@ abstract class CommonObject
 	 *
 	 * @return string
 	 */
-	private function get_field_list()
+	protected function get_field_list()
 	{
 		$keys = array_keys($this->fields);
 		return implode(',', $keys);
