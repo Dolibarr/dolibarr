@@ -38,10 +38,6 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
-// Other parameters
-$list = array (
-		'ACCOUNTING_VAT_PAY_ACCOUNT'
-);
 
 
 /*
@@ -237,51 +233,21 @@ else
 print "<br>\n";
 
 
-
-/*
- *  Others params
- */
-
-print load_fiche_titre($langs->trans("OtherOptions"),'','');
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td class="titlefield">' . $langs->trans('Parameters') . '</td>';
-print '<td><td>';
-print "</tr>\n";
-
-foreach ($list as $key)
-{
-	print '<tr class="oddeven value">';
-
-	// Param
-	$label = $langs->trans($key);
-	print '<td><label for="'.$key.'">'.$label.'</label></td>';
-
-	// Value
-	print '<td>';
-	if (! empty($conf->accounting->enabled))
-	{
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	}
-	else
-	{
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-	}
-	print '</td></tr>';
-}
-
-print '</table>';
-
-
-//dol_fiche_end();
-
-
 print '<div class="center">';
 print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="button">';
 print '</div>';
 
 print '</form>';
+
+
+
+
+if (! empty($conf->accounting->enabled))
+{
+	$langs->load("accountancy");
+	print '<br><br><span class="opacitymedium">'.$langs->trans("AccountingAccountForSalesTaxAreDefinedInto", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup")).'</span>';
+}
+
 
 llxFooter();
 $db->close();
