@@ -85,8 +85,8 @@ LICENSE
     POSSIBILITY OF SUCH DAMAGE.
 */
 
-class EvalMath {
-
+class EvalMath
+{
     var $suppress_errors = false;
     var $last_error = null;
     var $last_error_code = null;
@@ -136,7 +136,8 @@ class EvalMath {
             }
             $args = explode(",", preg_replace("/\s+/", "", $matches[2])); // get the arguments
             if (($stack = $this->nfx($matches[3])) === false) return false; // see if it can be converted to postfix
-            for ($i = 0; $i<count($stack); $i++) { // freeze the state of the non-argument variables
+            $nbstack = count($stack);
+            for ($i = 0; $i < $nbstack; $i++) { // freeze the state of the non-argument variables
                 $token = $stack[$i];
                 if (preg_match('/^[a-z]\w*$/', $token) and !in_array($token, $args)) {
                     if (array_key_exists($token, $this->v)) {
@@ -370,8 +371,8 @@ class EvalMath {
 /**
   * Class for internal use
   */
-class EvalMathStack {
-
+class EvalMathStack
+{
     var $stack = array();
     var $count = 0;
 
