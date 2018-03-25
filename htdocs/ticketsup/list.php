@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2018    Jean-François FERRY    <hello@librethic.io>
- *                    2016         Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2018    Jean-François FERRY <hello@librethic.io>
+ * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,8 @@
  */
 
 /**
- *    Tickets List
- *
- *    @package ticketsup
+ *    \file     htdocs/ticketsup/list.php
+ *    \ingroup	ticketsup
  */
 
 require '../main.inc.php';
@@ -437,7 +436,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="' . $mode . '" >';
 
-$buttontocreate = '<div class="inline-block divButAction"><a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a></div>';
+$buttontocreate = '<a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
 
 print_barre_liste($langs->trans('TicketList'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_ticketsup', 0, $buttontocreate, '', $limit);
 

@@ -1345,7 +1345,8 @@ div.nopadding {
     vertical-align: text-bottom;
 }
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
-.fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit {
+.fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
+.tagtdnote span.pictoedit {
     opacity: 0.4;
 }
 .colorthumb {

@@ -2841,7 +2841,6 @@ abstract class CommonObject
 			$sql.= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
 		}
 		$sql .= ' ORDER BY sourcetype';
-		//print $sql;
 
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -3086,9 +3085,10 @@ abstract class CommonObject
 	 *      @param	int		$status			Status to set
 	 *      @param	int		$elementId		Id of element to force (use this->id by default)
 	 *      @param	string	$elementType	Type of element to force (use this->table_element by default)
+	 *      @param	string	$trigkey		Trigger key to use for trigger
 	 *      @return int						<0 if KO, >0 if OK
 	 */
-	function setStatut($status,$elementId=null,$elementType='')
+	function setStatut($status, $elementId=null, $elementType='', $trigkey='')
 	{
 		global $user,$langs,$conf;
 
@@ -3100,6 +3100,7 @@ abstract class CommonObject
 		$this->db->begin();
 
 		$fieldstatus="fk_statut";
+		if ($elementTable == 'facture_rec') $fieldstatus="suspended";
 		if ($elementTable == 'mailing') $fieldstatus="statut";
 		if ($elementTable == 'cronjob') $fieldstatus="status";
 		if ($elementTable == 'user') $fieldstatus="statut";
@@ -3117,13 +3118,16 @@ abstract class CommonObject
 		{
 			$error = 0;
 
-			$trigkey='';
-			if ($this->element == 'supplier_proposal' && $status == 2) $trigkey='SUPPLIER_PROPOSAL_SIGN';   // 2 = SupplierProposal::STATUS_SIGNED. Can't use constant into this generic class
-			if ($this->element == 'supplier_proposal' && $status == 3) $trigkey='SUPPLIER_PROPOSAL_REFUSE'; // 3 = SupplierProposal::STATUS_REFUSED. Can't use constant into this generic class
-			if ($this->element == 'supplier_proposal' && $status == 4) $trigkey='SUPPLIER_PROPOSAL_CLOSE';  // 4 = SupplierProposal::STATUS_CLOSED. Can't use constant into this generic class
-			if ($this->element == 'fichinter' && $status == 3) $trigkey='FICHINTER_CLASSIFY_DONE';
-			if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
-			if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
+			// Try autoset of trigkey
+			if (empty($trigkey))
+			{
+				if ($this->element == 'supplier_proposal' && $status == 2) $trigkey='SUPPLIER_PROPOSAL_SIGN';   // 2 = SupplierProposal::STATUS_SIGNED. Can't use constant into this generic class
+				if ($this->element == 'supplier_proposal' && $status == 3) $trigkey='SUPPLIER_PROPOSAL_REFUSE'; // 3 = SupplierProposal::STATUS_REFUSED. Can't use constant into this generic class
+				if ($this->element == 'supplier_proposal' && $status == 4) $trigkey='SUPPLIER_PROPOSAL_CLOSE';  // 4 = SupplierProposal::STATUS_CLOSED. Can't use constant into this generic class
+				if ($this->element == 'fichinter' && $status == 3) $trigkey='FICHINTER_CLASSIFY_DONE';
+				if ($this->element == 'fichinter' && $status == 2) $trigkey='FICHINTER_CLASSIFY_BILLED';
+				if ($this->element == 'fichinter' && $status == 1) $trigkey='FICHINTER_CLASSIFY_UNBILLED';
+			}
 
 			if ($trigkey)
 			{
@@ -6004,7 +6008,7 @@ abstract class CommonObject
 					{
 						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
 					}
-					
+
 					if (empty($onetrtd)) $out .= '<td>';
 					else $out .= '<td'.($colspan?' colspan="'.($colspan+1).'"':'').'>';
 
@@ -6194,6 +6198,243 @@ abstract class CommonObject
 		return $buyPrice;
 	}
 
+	/**
+	 *  Show photos of an object (nbmax maximum), into several columns
+	 *
+	 *  @param		string	$modulepart		'product', 'ticketsup', ...
+	 *  @param      string	$sdir        	Directory to scan (full absolute path)
+	 *  @param      int		$size        	0=original size, 1='small' use thumbnail if possible
+	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
+	 *  @param      int		$nbbyrow     	Number of image per line or -1 to use div. Used only if size=1.
+	 * 	@param		int		$showfilename	1=Show filename
+	 * 	@param		int		$showaction		1=Show icon with action links (resize, delete)
+	 * 	@param		int		$maxHeight		Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
+	 * 	@param		int		$maxWidth		Max width of original image when size='small'
+	 *  @param      int     $nolink         Do not add a href link to view enlarged imaged into a new tab
+	 *  @param      int     $notitle        Do not add title tag on image
+	 *  @param		int		$usesharelink	Use the public shared link of image (if not available, the 'nophoto' image will be shown instead)
+	 *  @return     string					Html code to show photo. Number of photos shown is saved in this->nbphoto
+	 */
+	function show_photos($modulepart, $sdir, $size=0, $nbmax=0, $nbbyrow=5, $showfilename=0, $showaction=0, $maxHeight=120, $maxWidth=160, $nolink=0, $notitle=0, $usesharelink=0)
+	{
+		global $conf,$user,$langs;
+
+		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT .'/core/lib/images.lib.php';
+
+		$sortfield='position_name';
+		$sortorder='asc';
+
+		$dir = $sdir . '/';
+		$pdir = '/';
+		if ($modulepart == 'ticketsup')
+		{
+			$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';
+			$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';
+		}
+		else
+		{
+			$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
+			$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->ref.'/';
+		}
+
+		// For backward compatibility
+		if ($modulepart == 'product' && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
+		{
+			$dir = $sdir . '/'. get_exdir($this->id,2,0,0,$this,$modulepart) . $this->id ."/photos/";
+			$pdir = '/' . get_exdir($this->id,2,0,0,$this,$modulepart) . $this->id ."/photos/";
+		}
+
+		// Defined relative dir to DOL_DATA_ROOT
+		$relativedir = '';
+		if ($dir)
+		{
+			$relativedir = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $dir);
+			$relativedir = preg_replace('/^[\\/]/','',$relativedir);
+			$relativedir = preg_replace('/[\\/]$/','',$relativedir);
+		}
+
+		$dirthumb = $dir.'thumbs/';
+		$pdirthumb = $pdir.'thumbs/';
+
+		$return ='<!-- Photo -->'."\n";
+		$nbphoto=0;
+
+		$filearray=dol_dir_list($dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+
+		/*if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+		 {
+		 $filearrayold=dol_dir_list($dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		 $filearray=array_merge($filearray, $filearrayold);
+		 }*/
+
+		completeFileArrayWithDatabaseInfo($filearray, $relativedir);
+
+		if (count($filearray))
+		{
+			if ($sortfield && $sortorder)
+			{
+				$filearray=dol_sort_array($filearray, $sortfield, $sortorder);
+			}
+
+			foreach($filearray as $key => $val)
+			{
+				$photo='';
+				$file = $val['name'];
+
+				//if (! utf8_check($file)) $file=utf8_encode($file);	// To be sure file is stored in UTF8 in memory
+
+				//if (dol_is_file($dir.$file) && image_format_supported($file) >= 0)
+				if (image_format_supported($file) >= 0)
+				{
+					$nbphoto++;
+					$photo = $file;
+					$viewfilename = $file;
+
+					if ($size == 1 || $size == 'small') {   // Format vignette
+
+						// Find name of thumb file
+						$photo_vignette=basename(getImageFileNameForSize($dir.$file, '_small'));
+						if (! dol_is_file($dirthumb.$photo_vignette)) $photo_vignette='';
+
+						// Get filesize of original file
+						$imgarray=dol_getImageSize($dir.$photo);
+
+						if ($nbbyrow > 0)
+						{
+							if ($nbphoto == 1) $return.= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
+
+							if ($nbphoto % $nbbyrow == 1) $return.= '<tr align=center valign=middle border=1>';
+							$return.= '<td width="'.ceil(100/$nbbyrow).'%" class="photo">';
+						}
+						else if ($nbbyrow < 0) $return .= '<div class="inline-block">';
+
+						$return.= "\n";
+
+						$relativefile=preg_replace('/^\//', '', $pdir.$photo);
+						if (empty($nolink))
+						{
+							$urladvanced=getAdvancedPreviewUrl($modulepart, $relativefile, 0, 'entity='.$this->entity);
+							if ($urladvanced) $return.='<a href="'.$urladvanced.'">';
+							else $return.= '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" class="aphoto" target="_blank">';
+						}
+
+						// Show image (width height=$maxHeight)
+						// Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
+						$alt=$langs->transnoentitiesnoconv('File').': '.$relativefile;
+						$alt.=' - '.$langs->transnoentitiesnoconv('Size').': '.$imgarray['width'].'x'.$imgarray['height'];
+						if ($notitle) $alt='';
+
+						if ($usesharelink)
+						{
+							if ($val['share'])
+							{
+								if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+								{
+									$return.= '<!-- Show original file (thumb not yet available with shared links) -->';
+									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+								}
+								else {
+									$return.= '<!-- Show original file -->';
+									$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?hashp='.urlencode($val['share']).'" title="'.dol_escape_htmltag($alt).'">';
+								}
+							}
+							else
+							{
+								$return.= '<!-- Show nophoto file (because file is not shared) -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/public/theme/common/nophoto.png" title="'.dol_escape_htmltag($alt).'">';
+							}
+						}
+						else
+						{
+							if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight)
+							{
+								$return.= '<!-- Show thumb -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdirthumb.$photo_vignette).'" title="'.dol_escape_htmltag($alt).'">';
+							}
+							else {
+								$return.= '<!-- Show original file -->';
+								$return.= '<img class="photo photowithmargin" border="0" height="'.$maxHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'" title="'.dol_escape_htmltag($alt).'">';
+							}
+						}
+
+						if (empty($nolink)) $return.= '</a>';
+						$return.="\n";
+
+						if ($showfilename) $return.= '<br>'.$viewfilename;
+						if ($showaction)
+						{
+							$return.= '<br>';
+							// On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
+							if ($photo_vignette && (image_format_supported($photo) > 0) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight))
+							{
+								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_picto($langs->trans('GenerateThumb'),'refresh').'&nbsp;&nbsp;</a>';
+							}
+							// Special cas for product
+							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer))
+							{
+								// Link to resize
+								$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
+
+								// Link to delete
+								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return.= img_delete().'</a>';
+							}
+						}
+						$return.= "\n";
+
+						if ($nbbyrow > 0)
+						{
+							$return.= '</td>';
+							if (($nbphoto % $nbbyrow) == 0) $return.= '</tr>';
+						}
+						else if ($nbbyrow < 0) $return.='</div>';
+					}
+
+					if (empty($size)) {     // Format origine
+						$return.= '<img class="photo photowithmargin" border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$this->entity.'&file='.urlencode($pdir.$photo).'">';
+
+						if ($showfilename) $return.= '<br>'.$viewfilename;
+						if ($showaction)
+						{
+							// Special case for product
+							if ($modulepart == 'product' && ($user->rights->produit->creer || $user->rights->service->creer))
+							{
+								// Link to resize
+								$return.= '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode('produit|service').'&id='.$this->id.'&amp;file='.urlencode($pdir.$viewfilename).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"), 'resize', '').'</a> &nbsp; ';
+
+								// Link to delete
+								$return.= '<a href="'.$_SERVER["PHP_SELF"].'?id='.$this->id.'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+								$return.= img_delete().'</a>';
+							}
+						}
+					}
+
+					// On continue ou on arrete de boucler ?
+					if ($nbmax && $nbphoto >= $nbmax) break;
+				}
+			}
+
+			if ($size==1 || $size=='small')
+			{
+				if ($nbbyrow > 0)
+				{
+					// Ferme tableau
+					while ($nbphoto % $nbbyrow)
+					{
+						$return.= '<td width="'.ceil(100/$nbbyrow).'%">&nbsp;</td>';
+						$nbphoto++;
+					}
+
+					if ($nbphoto) $return.= '</table>';
+				}
+			}
+		}
+
+		$this->nbphoto = $nbphoto;
+
+		return $return;
+	}
 
 
 	/**
@@ -6227,7 +6468,6 @@ abstract class CommonObject
 		}
 		else return false;
 	}
-
 
 	/**
 	 * Function test if type is date
@@ -6311,7 +6551,7 @@ abstract class CommonObject
 	 *
 	 * @return array
 	 */
-	private function set_save_query()
+	protected function set_save_query()
 	{
 		global $conf;
 
@@ -6365,7 +6605,7 @@ abstract class CommonObject
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
-	private function setVarsFromFetchObj(&$obj)
+	protected function setVarsFromFetchObj(&$obj)
 	{
 		foreach ($this->fields as $field => $info)
 		{
@@ -6410,7 +6650,7 @@ abstract class CommonObject
 	 *
 	 * @return string
 	 */
-	private function get_field_list()
+	protected function get_field_list()
 	{
 		$keys = array_keys($this->fields);
 		return implode(',', $keys);

@@ -1327,7 +1327,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$showimage=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
 		$maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
 		if ($conf->browser->phone) $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$object->entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
 		else
 		{
 			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
@@ -1346,7 +1346,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$showimage=$object->is_photo_available($conf->ticketsup->dir_output.'/'.$object->track_id);
 		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
 		if ($conf->browser->phone) $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->ticketsup->dir_output,'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticketsup', $conf->ticketsup->dir_output,'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
 		else
 		{
 			if (!empty($conf->global->TICKETSUP_NODISPLAYIFNOPHOTO)) {
@@ -5686,6 +5686,7 @@ function dol_textishtml($msg,$option=0)
 		elseif (preg_match('/<h[0-9]>/i',$msg))			return true;
 		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
+
 		return false;
 	}
 }
@@ -5775,6 +5776,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
 		));
 	}
+
 	if (($onlykey || is_object($object)) && (empty($exclude) || ! in_array('object', $exclude)))
 	{
 		if ($onlykey)
@@ -5789,8 +5791,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
 			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
-			if (is_object($object) && $object->element == 'shipping')
+			if (is_object($object) && $object->element == 'member')
 			{
+				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
@@ -5804,7 +5807,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 			$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
 
-			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'LinkToPayOnlineIfApplicable';
+			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
+			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
 			$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
 			$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
@@ -5829,6 +5833,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 			$birthday = dol_print_date($object->birth,'day');
 
+			$substitutionarray['__MEMBER_ID__']=$object->id;
 			if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
 			$substitutionarray['__MEMBER_FIRSTNAME__']=$msgishtml?dol_htmlentitiesbr($object->firstname):$object->firstname;
 			$substitutionarray['__MEMBER_LASTNAME__']=$msgishtml?dol_htmlentitiesbr($object->lastname):$object->lastname;
@@ -5920,6 +5925,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 				$paymenturl=$url;
 			}
 
+			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$outputlangs->trans("PredefinedMailContentLink", $paymenturl):'');
 			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
 		}
 	}
@@ -5985,8 +5991,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 }
 
 /**
- *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
- *  Texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
+ *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval),
+ *  and texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
  *  Example of usage:
  *  $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $thirdparty);
  *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);

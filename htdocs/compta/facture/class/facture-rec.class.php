@@ -68,6 +68,13 @@ class FactureRec extends CommonInvoice
 
 	var $usenewprice=0;
 
+	var $suspended;			// status
+
+	const STATUS_NOTSUSPENDED = 0;
+	const STATUS_SUSPENDED = 1;
+
+
+
 	/**
 	 *	Constructor
 	 *
@@ -95,6 +102,7 @@ class FactureRec extends CommonInvoice
 		// Clean parameters
 		$this->titre=trim($this->titre);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
+		if (empty($this->suspended)) $this->suspended=0;
 
 		// No frequency defined then no next date to execution
 		if (empty($this->frequency))
@@ -147,6 +155,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", fk_multicurrency";
 			$sql.= ", multicurrency_code";
 			$sql.= ", multicurrency_tx";
+			$sql.= ", suspended";
 			$sql.= ") VALUES (";
 			$sql.= "'".$this->db->escape($this->titre)."'";
 			$sql.= ", ".$facsrc->socid;
@@ -167,13 +176,14 @@ class FactureRec extends CommonInvoice
 			$sql.= ", '".$this->db->escape($this->unit_frequency)."'";
 			$sql.= ", ".(!empty($this->date_when)?"'".$this->db->idate($this->date_when)."'":'NULL');
 			$sql.= ", ".(!empty($this->date_last_gen)?"'".$this->db->idate($this->date_last_gen)."'":'NULL');
-			$sql.= ", ".$this->nb_gen_done;
-			$sql.= ", ".$this->nb_gen_max;
-			$sql.= ", ".$this->auto_validate;
-			$sql.= ", ".$this->generate_pdf;
-			$sql.= ", ".$facsrc->fk_multicurrency;
-			$sql.= ", '".$facsrc->multicurrency_code."'";
-			$sql.= ", ".$facsrc->multicurrency_tx;
+			$sql.= ", ".$this->db->escape($this->nb_gen_done);
+			$sql.= ", ".$this->db->escape($this->nb_gen_max);
+			$sql.= ", ".$this->db->escape($this->auto_validate);
+			$sql.= ", ".$this->db->escape($this->generate_pdf);
+			$sql.= ", ".$this->db->escape($facsrc->fk_multicurrency);
+			$sql.= ", '".$this->db->escape($facsrc->multicurrency_code)."'";
+			$sql.= ", ".$this->db->escape($facsrc->multicurrency_tx);
+			$sql.= ", ".$this->db->escape($this->suspended);
 			$sql.= ")";
 
 			if ($this->db->query($sql))
@@ -1149,49 +1159,69 @@ class FactureRec extends CommonInvoice
 			$prefix='';
 			if ($recur)
 			{
-				if ($status == 1) return $langs->trans('Disabled');       // credit note
+				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
 				else return $langs->trans('Active');
 			}
-			else return $langs->trans("Draft");
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
+				else return $langs->trans("Draft");
+			}
 		}
 		if ($mode == 1)
 		{
 			$prefix='Short';
 			if ($recur)
 			{
-				if ($status == 1) return $langs->trans('Disabled');
+				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
 				else return $langs->trans('Active');
 			}
-			else return $langs->trans("Draft");
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
+				else return $langs->trans("Draft");
+			}
 		}
 		if ($mode == 2)
 		{
 			if ($recur)
 			{
-				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
 				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
 			}
-			else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
+				else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+			}
 		}
 		if ($mode == 3)
 		{
 			if ($recur)
 			{
 				$prefix='Short';
-				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6');
 				else return img_picto($langs->trans('Active'),'statut4');
 			}
-			else return img_picto($langs->trans('Draft'),'statut0');
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6');
+				else return img_picto($langs->trans('Draft'),'statut0');
+			}
 		}
 		if ($mode == 4)
 		{
 			$prefix='';
 			if ($recur)
 			{
-				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
 				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
 			}
-			else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
+				else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+			}
 		}
 		if ($mode == 5 || $mode == 6)
 		{
@@ -1199,10 +1229,14 @@ class FactureRec extends CommonInvoice
 			if ($mode == 5) $prefix='Short';
 			if ($recur)
 			{
-				if ($status == 1) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
+				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
 				else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'),'statut4');
 			}
-			else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'),'statut0');
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
+				else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'),'statut0');
+			}
 		}
 	}
 

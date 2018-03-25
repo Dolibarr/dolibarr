@@ -397,7 +397,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 
 	$stripeToken = GETPOST("stripeToken",'alpha');
 	$email = GETPOST("email",'alpha');
-	$thirdparty_id=GETPOST('thirdparty_id', 'int');
+	$thirdparty_id=GETPOST('thirdparty_id', 'int');		// Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
 	$vatnumber = GETPOST('vatnumber','alpha');
 
 	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
@@ -419,7 +419,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 
 		if ($thirdparty_id > 0)
 		{
-			dol_syslog("Search existing customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+			dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
 
 			$service = 'StripeTest';
 			$servicestatus = 0;

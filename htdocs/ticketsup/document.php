@@ -20,7 +20,7 @@
  */
 
 /**
- *  \file       /ticketsup/document.php
+ *  \file       htdocs/ticketsup/document.php
  *  \ingroup    ticketsup
  *  \brief      files linked to a ticket
  */
@@ -33,13 +33,13 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 
-$langs->loadLangs(array("companies","other","ticketsup"));
+$langs->loadLangs(array("companies","other","ticketsup","mails"));
 
-$action = GETPOST('action','alpha');
-$confirm = GETPOST('confirm','alpha');
-$id = GETPOST('id', 'int');
+$id       = GETPOST('id', 'int');
+$ref      = GETPOST('ref', 'alpha');
 $track_id = GETPOST('track_id', 'alpha');
-$ref = GETPOST('ref', 'alpha');
+$action   = GETPOST('action','alpha');
+$confirm  = GETPOST('confirm','alpha');
 
 // Security check
 if (!$user->rights->ticketsup->read) {
@@ -50,21 +50,15 @@ if (!$user->rights->ticketsup->read) {
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if ($page == -1) {
-    $page = 0;
-}
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (!$sortorder) {
-    $sortorder = "ASC";
-}
-if (!$sortfield) {
-    $sortfield = "name";
-}
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="position_name";
 
 $object = new Ticketsup($db);
-$result = $object->fetch($id, $track_id, $ref);
+$result = $object->fetch($id, $ref, $track_id);
 
 // to match  document rules and compatibility
 $old_ref = $object->ref;
@@ -97,15 +91,11 @@ $form = new Form($db);
 $help_url = '';
 llxHeader('', $langs->trans("TicketDocumentsLinked") . ' - ' . $langs->trans("Files"), $help_url);
 
-if ($object->id) {
-    /*
-     * Affichage onglets
-     */
-    if (!empty($conf->notification->enabled)) {
-        $langs->load("mails");
-    }
-
-    $form = new Form($db);
+if ($object->id)
+{
+	/*
+	 * Show tabs
+	 */
     if ($socid > 0) {
         $object->fetch_thirdparty();
         $head = societe_prepare_head($object->thirdparty);
@@ -119,6 +109,7 @@ if ($object->id) {
     } elseif ($user->societe_id > 0) {
         $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
     }
+
     $head = ticketsup_prepare_head($object);
 
     dol_fiche_head($head, 'tabTicketDocument', $langs->trans("Ticket"), 0, 'ticketsup');
@@ -153,16 +144,16 @@ if ($object->id) {
         $totalsize += $file['size'];
     }
 
-    // For compatibility we use track ID for directory
-    $object->ref = $object->track_id;
+    $object->ref = $object->track_id;	// For compatibility we use track ID for directory
     $modulepart = 'ticketsup';
   	$permission = $user->rights->ticketsup->write;
   	$permtoedit = $user->rights->ticketsup->write;
+  	$param = '&id=' . $object->id;
+
   	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
-
-
-    print "<br><br>";
-} else {
+}
+else
+{
     accessforbidden('', 0, 0);
 }
 

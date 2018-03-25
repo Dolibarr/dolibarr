@@ -808,7 +808,7 @@ class FormTicketsup
 
 
         // External users can't send message email
-        if ($user->rights->ticketsup->write && !$user->societe_id) {
+        if ($user->rights->ticketsup->write && !$user->socid) {
             print '<tr><td width="30%"></td><td colspan="2">';
             $checkbox_selected = ( GETPOST('send_email') == "1" ? ' checked' : '');
             print '<input type="checkbox" name="send_email" value="1" id="send_msg_email" '.$checkbox_selected.'/> ';
@@ -839,7 +839,7 @@ class FormTicketsup
                 print "</td></tr>";
             }
 
-            if (!$user->societe_id) {
+            if (! $user->socid) {
                 print '<tr><td width="30%"></td><td>';
                 $checkbox_selected = ( GETPOST('private_message') == "1" ? ' checked' : '');
                 print '<input type="checkbox" name="private_message" value="1" id="private_message" '.$checkbox_selected.'/> ';
@@ -902,7 +902,7 @@ class FormTicketsup
 
         // Intro
         // External users can't send message email
-        if ($user->rights->ticketsup->write && !$user->societe_id) {
+        if ($user->rights->ticketsup->write && !$user->socid) {
             $mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKETS_MESSAGE_MAIL_INTRO;
             print '<tr class="email_line"><td><label for="mail_intro">' . $langs->trans("TicketMessageMailIntro") . '</label>';
 
@@ -945,7 +945,7 @@ class FormTicketsup
         $doleditor = new DolEditor('message', $defaultmessage, '100%', 350, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_SOCIETE, ROWS_2, 70);
         $doleditor->Create();
         print '</td><td align="center">';
-        if ($user->rights->ticketsup->write && !$user->societe_id) {
+        if ($user->rights->ticketsup->write && !$user->socid) {
             print $form->textwithpicto('', $langs->trans("TicketMessageHelp"), 1, 'help');
         }
 
@@ -953,7 +953,7 @@ class FormTicketsup
 
         // Signature
         // External users can't send message email
-        if ($user->rights->ticketsup->write && !$user->societe_id) {
+        if ($user->rights->ticketsup->write && !$user->socid) {
             $mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE;
             print '<tr class="email_line"><td><label for="mail_intro">' . $langs->trans("TicketMessageMailSignature") . '</label>';
 

@@ -45,7 +45,7 @@ dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/myobject.lib.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule@mymodule","companies","other"));
+$langs->loadLangs(array("mymodule@mymodule","companies","other","mails"));
 
 
 $action=GETPOST('action','aZ09');
@@ -68,6 +68,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
+//if (! $sortfield) $sortfield="position_name";
 
 // Initialize technical objects
 $object=new MyObject($db);
@@ -108,7 +109,6 @@ if ($object->id)
 	/*
 	 * Show tabs
 	 */
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = myobjectPrepareHead($object);
 
 	dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, 'myobject@mymodule');

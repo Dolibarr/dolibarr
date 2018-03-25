@@ -553,7 +553,7 @@ class Holiday extends CommonObject
 		} else {
 			$error++;
 		}
-	   	$sql.= " halfday = ".$this->halfday.",";
+		$sql.= " halfday = ".$this->halfday.",";
 		if(!empty($this->statut) && is_numeric($this->statut)) {
 			$sql.= " statut = ".$this->statut.",";
 		} else {
@@ -714,10 +714,10 @@ class Holiday extends CommonObject
 			if ($infos_CP['statut'] == 4) continue;		// ignore not validated holidays
 			if ($infos_CP['statut'] == 5) continue;		// ignore not validated holidays
 			/*
-			var_dump("--");
-			var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
-			var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
-			*/
+			 var_dump("--");
+			 var_dump("old: ".dol_print_date($infos_CP['date_debut'],'dayhour').' '.dol_print_date($infos_CP['date_fin'],'dayhour').' '.$infos_CP['halfday']);
+			 var_dump("new: ".dol_print_date($dateStart,'dayhour').' '.dol_print_date($dateEnd,'dayhour').' '.$halfday);
+			 */
 
 			if ($halfday == 0)
 			{
@@ -797,7 +797,7 @@ class Holiday extends CommonObject
 		$sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 		$sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = ".(int) $fk_user;
-   		$sql.= " AND date_debut <= '".$this->db->idate($timestamp)."' AND date_fin >= '".$this->db->idate($timestamp)."'";
+		$sql.= " AND date_debut <= '".$this->db->idate($timestamp)."' AND date_fin >= '".$this->db->idate($timestamp)."'";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -837,7 +837,7 @@ class Holiday extends CommonObject
 		}
 		else dol_print_error($this->db);
 
-   		return array('morning'=>$isavailablemorning, 'afternoon'=>$isavailableafternoon);
+		return array('morning'=>$isavailablemorning, 'afternoon'=>$isavailableafternoon);
 	}
 
 
@@ -860,10 +860,10 @@ class Holiday extends CommonObject
 
 		//if ($option != 'nolink')
 		//{
-			// Add param to save lastsearch_values or not
-			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
-			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
-			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+		if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 		//}
 
 		$linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
@@ -1147,15 +1147,15 @@ class Holiday extends CommonObject
 				}
 
 				if ($result)
-			   	{
+				{
 					$this->db->commit();
 					return 1;
-			   	}
-			   	else
-			  	{
-			   		$this->db->rollback();
+				}
+				else
+				{
+					$this->db->rollback();
 					return -1;
-			   	}
+				}
 			}
 
 			return 0;
@@ -1210,7 +1210,7 @@ class Holiday extends CommonObject
 				return 1;
 			}
 			else
-		   {
+			{
 				return -1;
 			}
 		}
@@ -1395,7 +1395,7 @@ class Holiday extends CommonObject
 			}
 			else
 			{
-		   		// We want only list of vacation balance for user ids
+				// We want only list of vacation balance for user ids
 				$sql = "SELECT DISTINCT cpu.fk_user";
 				$sql.= " FROM ".MAIN_DB_PREFIX."holiday_users as cpu, ".MAIN_DB_PREFIX."user as u";
 				$sql.= " WHERE cpu.fk_user = u.user";
@@ -1427,7 +1427,7 @@ class Holiday extends CommonObject
 					return $stringlist;
 				}
 				else
-			  {
+				{
 					// Erreur SQL
 					$this->error="Error ".$this->db->lasterror();
 					return -1;
@@ -1454,46 +1454,46 @@ class Holiday extends CommonObject
 				else
 					$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
 
-				$sql.= " AND u.statut > 0";
-				if ($filters) $sql.=$filters;
+					$sql.= " AND u.statut > 0";
+					if ($filters) $sql.=$filters;
 
-				$resql=$this->db->query($sql);
+					$resql=$this->db->query($sql);
 
-				// Si pas d'erreur SQL
-				if ($resql)
-				{
-					$i = 0;
-					$tab_result = $this->holiday;
-					$num = $this->db->num_rows($resql);
+					// Si pas d'erreur SQL
+					if ($resql)
+					{
+						$i = 0;
+						$tab_result = $this->holiday;
+						$num = $this->db->num_rows($resql);
 
-					// Boucles du listage des utilisateurs
-					while($i < $num) {
+						// Boucles du listage des utilisateurs
+						while($i < $num) {
 
-						$obj = $this->db->fetch_object($resql);
+							$obj = $this->db->fetch_object($resql);
 
-						$tab_result[$i]['rowid'] = $obj->rowid;
-						$tab_result[$i]['name'] = $obj->lastname;       // deprecated
-						$tab_result[$i]['lastname'] = $obj->lastname;
-						$tab_result[$i]['firstname'] = $obj->firstname;
-						$tab_result[$i]['gender'] = $obj->gender;
-						$tab_result[$i]['status'] = $obj->statut;
-						$tab_result[$i]['employee'] = $obj->employee;
-						$tab_result[$i]['photo'] = $obj->photo;
-						$tab_result[$i]['fk_user'] = $obj->fk_user;
-						//$tab_result[$i]['type'] = $obj->type;
-						//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
+							$tab_result[$i]['rowid'] = $obj->rowid;
+							$tab_result[$i]['name'] = $obj->lastname;       // deprecated
+							$tab_result[$i]['lastname'] = $obj->lastname;
+							$tab_result[$i]['firstname'] = $obj->firstname;
+							$tab_result[$i]['gender'] = $obj->gender;
+							$tab_result[$i]['status'] = $obj->statut;
+							$tab_result[$i]['employee'] = $obj->employee;
+							$tab_result[$i]['photo'] = $obj->photo;
+							$tab_result[$i]['fk_user'] = $obj->fk_user;
+							//$tab_result[$i]['type'] = $obj->type;
+							//$tab_result[$i]['nb_holiday'] = $obj->nb_holiday;
 
-						$i++;
+							$i++;
+						}
+						// Retoune le tableau des utilisateurs
+						return $tab_result;
 					}
-					// Retoune le tableau des utilisateurs
-					return $tab_result;
-				}
-				else
-				{
-					// Erreur SQL
-					$this->errors[]="Error ".$this->db->lasterror();
-					return -1;
-				}
+					else
+					{
+						// Erreur SQL
+						$this->errors[]="Error ".$this->db->lasterror();
+						return -1;
+					}
 			}
 			else
 			{
@@ -1637,32 +1637,32 @@ class Holiday extends CommonObject
 		$sql.= ")";
 
 		$resql=$this->db->query($sql);
-	   	if (! $resql)
-	   	{
-	   		$error++; $this->errors[]="Error ".$this->db->lasterror();
-	   	}
+		if (! $resql)
+		{
+			$error++; $this->errors[]="Error ".$this->db->lasterror();
+		}
 
-	   	if (! $error)
-	   	{
-	   		$this->optRowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday_logs");
-	   	}
+		if (! $error)
+		{
+			$this->optRowid = $this->db->last_insert_id(MAIN_DB_PREFIX."holiday_logs");
+		}
 
-	   	// Commit or rollback
-	   	if ($error)
-	   	{
-	   		foreach($this->errors as $errmsg)
-	   		{
-   				dol_syslog(get_class($this)."::addLogCP ".$errmsg, LOG_ERR);
-   				$this->error.=($this->error?', '.$errmsg:$errmsg);
-	   		}
-	   		$this->db->rollback();
-	   		return -1*$error;
-	   	}
-	   	else
-	   	{
-	   		$this->db->commit();
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::addLogCP ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
 			return $this->optRowid;
-	   	}
+		}
 	}
 
 	/**
@@ -1702,43 +1702,43 @@ class Holiday extends CommonObject
 		$resql=$this->db->query($sql);
 
 		// Si pas d'erreur SQL
-  		if ($resql) {
+		if ($resql) {
 
-  			$i = 0;
-  			$tab_result = $this->logs;
-  			$num = $this->db->num_rows($resql);
+			$i = 0;
+			$tab_result = $this->logs;
+			$num = $this->db->num_rows($resql);
 
-  			// Si pas d'enregistrement
-  			if(!$num) {
+			// Si pas d'enregistrement
+			if(!$num) {
 				return 2;
-  			}
+			}
 
-  			// On liste les résultats et on les ajoutent dans le tableau
-  			while($i < $num) {
+			// On liste les résultats et on les ajoutent dans le tableau
+			while($i < $num) {
 
-  				$obj = $this->db->fetch_object($resql);
+				$obj = $this->db->fetch_object($resql);
 
-  				$tab_result[$i]['rowid'] = $obj->rowid;
-  				$tab_result[$i]['date_action'] = $obj->date_action;
-  				$tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
-  				$tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
-  				$tab_result[$i]['type_action'] = $obj->type_action;
-  				$tab_result[$i]['prev_solde'] = $obj->prev_solde;
-  				$tab_result[$i]['new_solde'] = $obj->new_solde;
-  				$tab_result[$i]['fk_type'] = $obj->fk_type;
+				$tab_result[$i]['rowid'] = $obj->rowid;
+				$tab_result[$i]['date_action'] = $obj->date_action;
+				$tab_result[$i]['fk_user_action'] = $obj->fk_user_action;
+				$tab_result[$i]['fk_user_update'] = $obj->fk_user_update;
+				$tab_result[$i]['type_action'] = $obj->type_action;
+				$tab_result[$i]['prev_solde'] = $obj->prev_solde;
+				$tab_result[$i]['new_solde'] = $obj->new_solde;
+				$tab_result[$i]['fk_type'] = $obj->fk_type;
 
-  				$i++;
-  			}
-  			// Retourne 1 et ajoute le tableau à la variable
-  			$this->logs = $tab_result;
-  			return 1;
-  		}
-  		else
-  		{
-  			// Erreur SQL
-  			$this->error="Error ".$this->db->lasterror();
-  			return -1;
-  		}
+				$i++;
+			}
+			// Retourne 1 et ajoute le tableau à la variable
+			$this->logs = $tab_result;
+			return 1;
+		}
+		else
+		{
+			// Erreur SQL
+			$this->error="Error ".$this->db->lasterror();
+			return -1;
+		}
 	}
 
 

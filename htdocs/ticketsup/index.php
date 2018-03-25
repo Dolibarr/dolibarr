@@ -16,9 +16,8 @@
  */
 
 /**
- *     Index page for ticket module
- *
- *    @package ticketsup
+ *    \file     htdocs/ticketsup/history.php
+ *    \ingroup	ticketsup
  */
 
 require '../main.inc.php';
@@ -216,7 +215,7 @@ print '<tr class="liste_titre"><th >' . $langs->trans("Statistics") . ' ' . img_
 print '<tr><td>';
 
 // don't display graph if no series
-if (count($dataseries) >1) {
+if (! empty($dataseries) && count($dataseries) > 1) {
     $data = array();
     foreach ($dataseries as $key => $value) {
         $data[] = array($value['label'], $value['data']);

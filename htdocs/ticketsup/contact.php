@@ -19,9 +19,9 @@
  */
 
 /**
- *       \file       ticketsup/contact.php
- *        \ingroup    ticketsup
- *        \brief      Contacts of tickets
+ *       \file       htdocs/ticketsup/contact.php
+ *       \ingroup    ticketsup
+ *       \brief      Contacts of tickets
  */
 
 require '../main.inc.php';
@@ -70,7 +70,7 @@ $object = new Ticketsup($db);
  */
 
 if ($action == 'addcontact' && $user->rights->ticketsup->write) {
-    $result = $object->fetch($id, $track_id);
+    $result = $object->fetch($id, '', $track_id);
 
     if ($result > 0 && ($id > 0 || (!empty($track_id)))) {
         $contactid = (GETPOST('userid', 'int') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
@@ -92,7 +92,7 @@ if ($action == 'addcontact' && $user->rights->ticketsup->write) {
 
 // bascule du statut d'un contact
 if ($action == 'swapstatut' && $user->rights->ticketsup->write) {
-    if ($object->fetch($id, $track_id)) {
+    if ($object->fetch($id, '', $track_id)) {
         $result = $object->swapContactStatus($ligne);
     } else {
         dol_print_error($db, $object->error);
@@ -101,7 +101,7 @@ if ($action == 'swapstatut' && $user->rights->ticketsup->write) {
 
 // Efface un contact
 if ($action == 'deletecontact' && $user->rights->ticketsup->write) {
-    if ($object->fetch($id, $track_id)) {
+    if ($object->fetch($id, '', $track_id)) {
         $result = $object->delete_contact($lineid);
 
         if ($result >= 0) {
@@ -129,7 +129,7 @@ $userstatic = new User($db);
 /* *************************************************************************** */
 
 if ($id > 0 || !empty($track_id) || !empty($ref)) {
-    if ($object->fetch($id, $track_id, $ref) > 0)
+	if ($object->fetch($id, $ref, $track_id) > 0)
     {
         if ($socid > 0) {
             $object->fetch_thirdparty();

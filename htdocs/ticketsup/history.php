@@ -16,9 +16,9 @@
  */
 
 /**
- *    History of ticket
- *
- *    @package ticketsup
+ *		\file       htdocs/ticketsup/history.php
+ *    	\ingroup	ticketsup
+ *    	\brief		History of ticket
  */
 
 require '../main.inc.php';
@@ -57,7 +57,7 @@ if (!$action) {
 }
 
 $object = new Ticketsup($db);
-$object->fetch($id, $track_id, $ref);
+$object->fetch($id, $ref, $track_id);
 
 
 /*
@@ -83,7 +83,7 @@ $form = new Form($db);
 $formticket = new FormTicketsup($db);
 
 if ($action == 'view') {
-    $res = $object->fetch($id, $track_id, $ref);
+	$res = $object->fetch($id, $ref, $track_id);
 
     if ($res > 0) {
         // restrict access for externals users

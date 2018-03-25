@@ -345,6 +345,12 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $input='<a class="azerty" href="https://xxx.com/aaa/image.png" />';
         $after=dol_textishtml($input);
         $this->assertTrue($after, 'Test with a tag');
+        $input='This is a text with&nbsp;html spaces';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after, 'Test with a &nbsp;');
+        $input='This is a text with accent &eacute;';
+        $after=dol_textishtml($input);
+        $this->assertTrue($after, 'Test with a &eacute;');
 
         // False
         $input='xxx < br>';

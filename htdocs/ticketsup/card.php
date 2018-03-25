@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) - 2013-2016 Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016        Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2016 Jean-François FERRY <hello@librethic.io>
+ * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,8 @@
  */
 
 /**
- *     Card of ticket
- *
- *    @package ticketsup
+ *    \file     htdocs/ticketsup/card.php
+ *    \ingroup 	ticketsup
  */
 
 require '../main.inc.php';
@@ -71,7 +70,7 @@ if (GETPOST('modelselected')) {
 $url_page_current = DOL_URL_ROOT.'/ticketsup/card.php';
 
 if ($id || $track_id || $ref) {
-	$res = $object->fetch($id, $track_id, $ref);
+	$res = $object->fetch($id, $ref, $track_id);
 }
 
 // Security check
@@ -99,6 +98,7 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be inc
 $userstat = new User($db);
 $form = new Form($db);
 $formticket = new FormTicketsup($db);
+$formproject = new FormProjets($db);
 
 if ($action == 'view' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen' || $action == 'editsubject' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
 
@@ -234,6 +234,40 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         	$morehtmlref .= '<br>' . $langs->trans("CreatedBy") . ' ';
         	$morehtmlref .= $object->origin_email . ' <small>(' . $langs->trans("TicketEmailOriginIssuer") . ')</small>';
         }
+
+        // Project
+        if (! empty($conf->projet->enabled))
+        {
+        	$langs->load("projects");
+        	$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+        	if ($user->rights->ticketsup->write)
+        	{
+        		if ($action != 'classify')
+        			$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+       			if ($action == 'classify') {
+       				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+       				$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+       				$morehtmlref.='<input type="hidden" name="action" value="classin">';
+       				$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+       				$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', 0, 0, 1, 0, 1, 0, 0, '', 1);
+       				$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+       				$morehtmlref.='</form>';
+       			} else {
+       				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+        		}
+        	} else {
+        		if (! empty($object->fk_project)) {
+        			$proj = new Project($db);
+        			$proj->fetch($object->fk_project);
+        			$morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+        			$morehtmlref.=$proj->ref;
+        			$morehtmlref.='</a>';
+        		} else {
+        			$morehtmlref.='';
+        		}
+        	}
+        }
+
         $morehtmlref.='</div>';
 
         $linkback = '<a href="' . dol_buildpath('/ticketsup/list.php', 1) . '"><strong>' . $langs->trans("BackToList") . '</strong></a> ';
@@ -308,29 +342,8 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
         print '</td></tr>';
 
-        // Project
-        if (!empty($conf->projet->enabled)) {
-            $langs->load('projects');
-            print '<tr><td height="10">';
-            print '<table class="nobordernopadding" width="100%"><tr><td>';
-            print $langs->trans('Project');
-            print '</td>';
-            if ($action != 'classify' && $user->rights->ticketsup->write) {
-                print '<td align="right"><a href="' . $url_page_current . '?action=classify&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('SetProject')) . '</a></td>';
-            }
-
-            print '</tr></table>';
-            print '</td><td colspan="3">';
-            if ($action == 'classify') {
-                $form->form_project($url_page_current . '?track_id=' . $object->track_id, $object->socid, $object->fk_project, 'projectid');
-            } else {
-                $form->form_project($url_page_current . '?track_id=' . $object->track_id, $object->socid, $object->fk_project, 'none');
-            }
-            print '</td></tr>';
-        }
-
         // User assigned
-        print '<tr><td>' . $langs->trans("UserAssignedTo") . '</td><td>';
+        print '<tr><td>' . $langs->trans("AssignedTo") . '</td><td>';
         if ($object->fk_user_assign > 0) {
             $userstat->fetch($object->fk_user_assign);
             print $userstat->getNomUrl(1);
@@ -339,17 +352,17 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
 
         // Show user list to assignate one if status is "read"
-        if (GETPOST('set') == "assign_ticket" && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticketsup->write) {
+        if (GETPOST('set','alpha') == "assign_ticket" && $object->fk_statut < 8 && !$user->societe_id && $user->rights->ticketsup->write) {
             print '<form method="post" name="ticketsup" enctype="multipart/form-data" action="' . $url_page_current . '">';
             print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
             print '<input type="hidden" name="action" value="assign_user">';
             print '<input type="hidden" name="track_id" value="' . $object->track_id . '">';
             print '<label for="fk_user_assign">' . $langs->trans("AssignUser") . '</label> ';
-            print $form->select_dolusers($user->id, 'fk_user_assign', 0);
+            print $form->select_dolusers($user->id, 'fk_user_assign', 1);
             print ' <input class="button" type="submit" name="btn_assign_user" value="' . $langs->trans("Validate") . '" />';
             print '</form>';
         }
-        if ($object->fk_statut < 8 && GETPOST('set') != "assign_ticket" && $user->rights->ticketsup->manage) {
+        if ($object->fk_statut < 8 && GETPOST('set','alpha') != "assign_ticket" && $user->rights->ticketsup->manage) {
             print '<a href="' . $url_page_current . '?track_id=' . $object->track_id . '&action=view&set=assign_ticket">' . img_picto('', 'edit') . ' ' . $langs->trans('Modify') . '</a>';
         }
         print '</td></tr>';
@@ -425,12 +438,13 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         print '</table>';
 
 
-        // View Original message
-        $actionobject->viewTicketOriginalMessage($user, $action);
-
-
         // Fin colonne gauche et début colonne droite
         print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+
+        // View Original message
+        $actionobject->viewTicketOriginalMessage($user, $action, $object);
+
 
         /***************************************************
          *
@@ -440,7 +454,8 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         /*
          * Ticket properties
          */
-        print '<table class="border" style="width:100%;" >';
+        print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+        print '<table class="border centpercent margintable">';
         print '<tr class="liste_titre">';
         print '<td colspan="2">';
         print $langs->trans('Properties');
@@ -496,31 +511,32 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             // Type
             print '<tr><td width="40%">' . $langs->trans("Type") . '</td><td>';
             print $object->type_label;
-            if ($user->admin && !$noadmininfo) {
+            /*if ($user->admin && !$noadmininfo) {
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-            }
+            }*/
 
             print '</td></tr>';
 
             // Category
             print '<tr><td>' . $langs->trans("Category") . '</td><td>';
             print $object->category_label;
-            if ($user->admin && !$noadmininfo) {
+            /*if ($user->admin && !$noadmininfo) {
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-            }
+            }*/
 
             print '</td></tr>';
 
             // Severity
             print '<tr><td>' . $langs->trans("TicketSeverity") . '</td><td>';
             print $object->severity_label;
-            if ($user->admin && !$noadmininfo) {
+            /*if ($user->admin && !$noadmininfo) {
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
-            }
+            }*/
 
             print '</td></tr>';
         }
         print '</table>'; // End table actions
+		print '</div>';
 
         // Display navbar with links to change ticket status
         print '<!-- navbar with status -->';
@@ -529,116 +545,119 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
 
 
-        print load_fiche_titre($langs->trans('Contacts'), '', 'title_companies.png');
+        if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
+        {
+	        print load_fiche_titre($langs->trans('Contacts'), '', 'title_companies.png');
 
-        print '<div class="div-table-responsive-no-min">';
-        print '<div class="tagtable centpercent noborder allwidth">';
-        print '<div class="tagtr liste_titre">';
+	        print '<div class="div-table-responsive-no-min">';
+	        print '<div class="tagtable centpercent noborder allwidth">';
 
-        print '<div class="tagtd ">' . $langs->trans("Source") . '</div>
-		<div class="tagtd">' . $langs->trans("Company") . '</div>
-		<div class="tagtd">' . $langs->trans("Contacts") . '</div>
-		<div class="tagtd">' . $langs->trans("ContactType") . '</div>
-		<div class="tagtd">' . $langs->trans("Phone") . '</div>
-		<div class="tagtd" align="center">' . $langs->trans("Status") . '</div>';
-        print '</div><!-- tagtr -->';
+	        print '<div class="tagtr liste_titre">';
+	        print '<div class="tagtd">' . $langs->trans("Source") . '</div>
+			<div class="tagtd">' . $langs->trans("Company") . '</div>
+			<div class="tagtd">' . $langs->trans("Contacts") . '</div>
+			<div class="tagtd">' . $langs->trans("ContactType") . '</div>
+			<div class="tagtd">' . $langs->trans("Phone") . '</div>
+			<div class="tagtd" align="center">' . $langs->trans("Status") . '</div>';
+	        print '</div><!-- tagtr -->';
 
-        // Contact list
-        $companystatic = new Societe($db);
-        $contactstatic = new Contact($db);
-        $userstatic = new User($db);
-        foreach (array('internal', 'external') as $source) {
-            $tmpobject = $object;
-            $tab = $tmpobject->listeContact(-1, $source);
-            $num = count($tab);
-            $i = 0;
-            while ($i < $num) {
-                $var = !$var;
-                print '<div class="tagtr ' . ($var ? 'pair' : 'impair') . '">';
+	        // Contact list
+	        $companystatic = new Societe($db);
+	        $contactstatic = new Contact($db);
+	        $userstatic = new User($db);
+	        foreach (array('internal', 'external') as $source) {
+	            $tmpobject = $object;
+	            $tab = $tmpobject->listeContact(-1, $source);
+	            $num = count($tab);
+	            $i = 0;
+	            while ($i < $num) {
+	                $var = !$var;
+	                print '<div class="tagtr ' . ($var ? 'pair' : 'impair') . '">';
 
-                print '<div class="tagtd" align="left">';
-                if ($tab[$i]['source'] == 'internal') {
-                    echo $langs->trans("User");
-                }
+	                print '<div class="tagtd" align="left">';
+	                if ($tab[$i]['source'] == 'internal') {
+	                    echo $langs->trans("User");
+	                }
 
-                if ($tab[$i]['source'] == 'external') {
-                    echo $langs->trans("ThirdPartyContact");
-                }
+	                if ($tab[$i]['source'] == 'external') {
+	                    echo $langs->trans("ThirdPartyContact");
+	                }
 
-                print '</div>';
-                print '<div class="tagtd" align="left">';
+	                print '</div>';
+	                print '<div class="tagtd" align="left">';
 
-                if ($tab[$i]['socid'] > 0) {
-                    $companystatic->fetch($tab[$i]['socid']);
-                    echo $companystatic->getNomUrl(1);
-                }
-                if ($tab[$i]['socid'] < 0) {
-                    echo $conf->global->MAIN_INFO_SOCIETE_NOM;
-                }
-                if (!$tab[$i]['socid']) {
-                    echo '&nbsp;';
-                }
-                print '</div>';
+	                if ($tab[$i]['socid'] > 0) {
+	                    $companystatic->fetch($tab[$i]['socid']);
+	                    echo $companystatic->getNomUrl(1);
+	                }
+	                if ($tab[$i]['socid'] < 0) {
+	                    echo $conf->global->MAIN_INFO_SOCIETE_NOM;
+	                }
+	                if (!$tab[$i]['socid']) {
+	                    echo '&nbsp;';
+	                }
+	                print '</div>';
 
-                print '<div class="tagtd">';
-                if ($tab[$i]['source'] == 'internal') {
-                	if ($userstatic->fetch($tab[$i]['id'])) {
-	                    print $userstatic->getNomUrl(1);
-                	}
-                }
-                if ($tab[$i]['source'] == 'external') {
-                	if ($contactstatic->fetch($tab[$i]['id'])) {
-	                    print $contactstatic->getNomUrl(1);
-                	}
-                }
-                print ' </div>
-				<div class="tagtd">' . $tab[$i]['libelle'] . '</div>';
+	                print '<div class="tagtd">';
+	                if ($tab[$i]['source'] == 'internal') {
+	                	if ($userstatic->fetch($tab[$i]['id'])) {
+		                    print $userstatic->getNomUrl(1);
+	                	}
+	                }
+	                if ($tab[$i]['source'] == 'external') {
+	                	if ($contactstatic->fetch($tab[$i]['id'])) {
+		                    print $contactstatic->getNomUrl(1);
+	                	}
+	                }
+	                print ' </div>
+					<div class="tagtd">' . $tab[$i]['libelle'] . '</div>';
 
-                print '<div class="tagtd">';
+	                print '<div class="tagtd">';
 
-                print dol_print_phone($tab[$i]['phone'], '', '', '', AC_TEL).'<br>';
+	                print dol_print_phone($tab[$i]['phone'], '', '', '', AC_TEL).'<br>';
 
-                if (! empty($tab[$i]['phone_perso'])) {
-                    //print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
-                    print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', '', '', AC_TEL).'<br>';
-                }
-                if (! empty($tab[$i]['phone_mobile'])) {
-                    //print img_picto($langs->trans('PhoneMobile'),'object_phoning.png','',0,0,0).' ';
-                    print dol_print_phone($tab[$i]['phone_mobile'], '', '', '', AC_TEL).'<br>';
-                }
-                print '</div>';
+	                if (! empty($tab[$i]['phone_perso'])) {
+	                    //print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
+	                    print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', '', '', AC_TEL).'<br>';
+	                }
+	                if (! empty($tab[$i]['phone_mobile'])) {
+	                    //print img_picto($langs->trans('PhoneMobile'),'object_phoning.png','',0,0,0).' ';
+	                    print dol_print_phone($tab[$i]['phone_mobile'], '', '', '', AC_TEL).'<br>';
+	                }
+	                print '</div>';
 
-                print '<div class="tagtd" align="center">';
-                if ($object->statut >= 0) {
-                    echo '<a href="contact.php?track_id=' . $object->track_id . '&amp;action=swapstatut&amp;ligne=' . $tab[$i]['rowid'] . '">';
-                }
+	                print '<div class="tagtd" align="center">';
+	                if ($object->statut >= 0) {
+	                    echo '<a href="contact.php?track_id=' . $object->track_id . '&amp;action=swapstatut&amp;ligne=' . $tab[$i]['rowid'] . '">';
+	                }
 
-                if ($tab[$i]['source'] == 'internal') {
-                    $userstatic->id = $tab[$i]['id'];
-                    $userstatic->lastname = $tab[$i]['lastname'];
-                    $userstatic->firstname = $tab[$i]['firstname'];
-                    echo $userstatic->LibStatut($tab[$i]['statuscontact'], 3);
-                }
-                if ($tab[$i]['source'] == 'external') {
-                    $contactstatic->id = $tab[$i]['id'];
-                    $contactstatic->lastname = $tab[$i]['lastname'];
-                    $contactstatic->firstname = $tab[$i]['firstname'];
-                    echo $contactstatic->LibStatut($tab[$i]['statuscontact'], 3);
-                }
-                if ($object->statut >= 0) {
-                    echo '</a>';
-                }
+	                if ($tab[$i]['source'] == 'internal') {
+	                    $userstatic->id = $tab[$i]['id'];
+	                    $userstatic->lastname = $tab[$i]['lastname'];
+	                    $userstatic->firstname = $tab[$i]['firstname'];
+	                    echo $userstatic->LibStatut($tab[$i]['statuscontact'], 3);
+	                }
+	                if ($tab[$i]['source'] == 'external') {
+	                    $contactstatic->id = $tab[$i]['id'];
+	                    $contactstatic->lastname = $tab[$i]['lastname'];
+	                    $contactstatic->firstname = $tab[$i]['firstname'];
+	                    echo $contactstatic->LibStatut($tab[$i]['statuscontact'], 3);
+	                }
+	                if ($object->statut >= 0) {
+	                    echo '</a>';
+	                }
 
-                print '</div>';
+	                print '</div>';
 
-                print '</div><!-- tagtr -->';
+	                print '</div><!-- tagtr -->';
 
-                $i++;
-            }
+	                $i++;
+	            }
+	        }
+
+	        print '</div><!-- contact list -->';
+			print '</div>';
         }
-
-        print '</div><!-- contact list -->';
-		print '</div>';
 
         // Contract
         if ($action == 'sel_contract') {
@@ -706,8 +725,7 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         print '</div>';
 
         if ($action == 'view' || $action == 'edit_message_init') {
-            print '<div class="fichecenter">'
-                . '<div class="">';
+            print '<div class="fichecenter"><div class="">';
 
             //print '<div style="float: left; width:49%; margin-right: 1%;">';
             // Message list
@@ -716,7 +734,6 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
             $actionobject->viewTicketTimelineMessages($show_private_message, true, $object);
 
             print '</div><!-- fichehalfleft --> ';
-
             print '</div><!-- fichecenter -->';
             print '<br style="clear: both">';
         } elseif ($action == 'add_message') {
