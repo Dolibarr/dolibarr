@@ -194,8 +194,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 if (empty($conf->global->FICHINTER_DISABLE_DETAILS)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."fichinterdet as fd ON fd.fk_fichinter = f.rowid";
 if (! $user->rights->societe->client->voir && empty($socid)) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-$sql.= " WHERE f.fk_soc = s.rowid ";
-$sql.= " AND f.entity = ".$conf->entity;
+$sql.= " WHERE f.entity IN (".getEntity('intervention').")";
+$sql.= " AND f.fk_soc = s.rowid";
 if ($search_ref) {
 	$sql .= natural_search('f.ref', $search_ref);
 }

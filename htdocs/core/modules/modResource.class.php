@@ -228,7 +228,7 @@ class modResource extends DolibarrModules
 			'langs'=> 'resource',
 			'position'=> 101,
 			'enabled'=> '1',
-			'perms'=> '$user->rights->resource->read',
+			'perms'=> '$user->rights->resource->write',
 			'target'=> '',
 			'user'=> 0
 		);
