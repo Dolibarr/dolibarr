@@ -1546,10 +1546,12 @@ FailedToInitializeMenu=Failed to initialize menu
 ##### Tax #####
 TaxSetup=Taxes, social or fiscal taxes and dividends module setup
 OptionVatMode=VAT due 
-OptionVATDefault=Cash basis
+OptionVATDefault=Standard basis
 OptionVATDebitOption=Accrual basis
 OptionVatDefaultDesc=VAT is due:<br>- on delivery for goods (we use invoice date)<br>- on payments for services
 OptionVatDebitOptionDesc=VAT is due:<br>- on delivery for goods (we use invoice date)<br>- on invoice (debit) for services
+OptionPaymentForProductAndServices=Cash basis for products and services
+OptionPaymentForProductAndServicesDesc=VAT is due:<br>- on payment for goods<br>- on payments for services
 SummaryOfVatExigibilityUsedByDefault=Time of VAT exigibility by default according to chosen option: 
 OnDelivery=On delivery
 OnPayment=On payment
