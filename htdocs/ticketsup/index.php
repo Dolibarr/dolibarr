@@ -67,6 +67,7 @@ $object = new Ticketsup($db);
  */
 
 $form = new Form($db);
+$tickesupstatic = new Ticketsup($db);
 
 llxHeader('', $langs->trans('TicketsIndex'), '');
 
@@ -264,8 +265,8 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last tickets
  */
 $max = 15;
-$sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code";
-$sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
+$sql = "SELECT t.rowid, t.ref, t.track_id, t.datec, t.subject, t.type_code, t.category_code, t.severity_code, t.fk_statut, t.progress,";
+$sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
 $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup as t";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_type as type ON type.code=t.type_code";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_category as category ON category.code=t.category_code";
@@ -308,15 +309,21 @@ if ($result) {
     print '<th>' . $langs->trans('Type') . '</th>';
     print '<th>' . $langs->trans('Category') . '</th>';
     print '<th>' . $langs->trans('Severity') . '</th>';
+    print '<th></th>';
     print '</tr>';
     if ($num > 0) {
-        $var = true;
 
         while ($i < $num) {
             $objp = $db->fetch_object($result);
 
-            $var = !$var;
-            print "<tr $bc[$var]>";
+            $tickesupstatic->id = $objp->rowid;
+            $tickesupstatic->ref = $objp->ref;
+            $tickesupstatic->track_id = $objp->track_id;
+            $tickesupstatic->fk_statut = $objp->fk_statut;
+            $tickesupstatic->progress = $objp->progress;
+            $tickesupstatic->subject = $objp->subject;
+
+            print '<tr class="oddeven">';
             // Creation date
             print '<td align="left">';
             print dol_print_date($db->jdate($objp->datec), 'dayhour');
@@ -324,7 +331,7 @@ if ($result) {
 
             // Ref
             print '<td class="nowrap">';
-            print '<a href="card.php?track_id=' . $objp->track_id . '">' . $objp->ref . '</a>';
+            print $tickesupstatic->getNomUrl(1);
             print "</td>\n";
 
             // Subject
@@ -346,6 +353,11 @@ if ($result) {
             print '<td class="nowrap">';
             print $objp->severity_label;
             print "</td>";
+
+            print '<td class="nowrap">';
+            print $tickesupstatic->getLibStatut(3);
+            print "</td>";
+
             print "</tr>\n";
             $i++;
         }
