@@ -1292,7 +1292,8 @@ function dol_get_fiche_end($notab=0)
  */
 function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='rowid', $fieldref='ref', $morehtmlref='', $moreparam='', $nodbprefix=0, $morehtmlleft='', $morehtmlstatus='', $onlybanner=0, $morehtmlright='')
 {
-	global $conf, $form, $user, $langs;
+	global $conf, $user, $langs;
+	global $form, $hookmanager;
 
 	$error = 0;
 
@@ -1551,6 +1552,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 		$morehtmlref.=$langs->trans("TechnicalID").': '.$object->id;
 		$morehtmlref.='</div>';
 	}
+
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('moreHtmlRef', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
+	if (empty($reshook)) $morehtmlref.=$hookmanager->resPrint;
+	elseif ($reshook > 0) $morehtmlref=$hookmanager->resPrint;
 
 	print '<div class="'.($onlybanner?'arearefnobottom ':'arearef ').'heightref valignmiddle" width="100%">';
 	print $form->showrefnav($object, $paramid, $morehtml, $shownav, $fieldid, $fieldref, $morehtmlref, $moreparam, $nodbprefix, $morehtmlleft, $morehtmlstatus, $morehtmlright);
