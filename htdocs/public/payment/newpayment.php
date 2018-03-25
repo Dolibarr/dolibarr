@@ -84,7 +84,7 @@ if (! $action)
 }
 
 
-$paymentmethod='';
+$paymentmethod=GETPOST('paymentmethod','alphanohtml')?GETPOST('paymentmethod','alphanohtml'):'';	// Empty in most cases. Defined when a payment mode is forced
 $validpaymentmethod=array();
 
 // Detect $paymentmethod
@@ -155,7 +155,7 @@ $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
 // Find valid payment methods
 
-if (! empty($conf->paypal->enabled))
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
 	require_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypalfunctions.lib.php';
@@ -184,7 +184,7 @@ if (! empty($conf->paypal->enabled))
 	$validpaymentmethod['paypal']='valid';
 }
 
-if (! empty($conf->paybox->enabled))
+if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
 {
 	$langs->load("paybox");
 
@@ -193,7 +193,7 @@ if (! empty($conf->paybox->enabled))
 	$validpaymentmethod['paybox']='valid';
 }
 
-if (! empty($conf->stripe->enabled))
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 {
 	$langs->load("stripe");
 
@@ -237,7 +237,11 @@ if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
 	}
 }
 
-
+if (! empty($paymentmethod) && empty($validpaymentmethod[$paymentmethod]))
+{
+	print 'Payment module for payment method '.$paymentmethod.' is not active';
+	exit;
+}
 if (empty($validpaymentmethod))
 {
 	print 'No active payment module (Paypal, Stripe, Paybox, ...)';
@@ -609,11 +613,11 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 
 
 // Show sandbox warning
-if (! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha')))		// We can force sand box with param 'forcesandbox'
+if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled) && (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha')))		// We can force sand box with param 'forcesandbox'
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Paypal'),'','warning');
 }
-if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
+if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
 }
@@ -1401,19 +1405,19 @@ if ($action != 'dopayment')
 		{
 			// Buttons for all payments registration methods
 
-			if (! empty($conf->paybox->enabled))
+			if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of paybox
 				print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->PAYBOX_PICTO_FOR_PAYMENT)?'paybox':$conf->global->PAYBOX_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_paybox" value="'.$langs->trans("PayBoxDoPayment").'">';
 			}
 
-			if (! empty($conf->stripe->enabled))
+			if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
 			{
 				// If STRIPE_PICTO_FOR_PAYMENT is 'cb' we show a picto of a crdit card instead of stripe
 				print '<br><input class="button buttonpayment buttonpayment'.(empty($conf->global->STRIPE_PICTO_FOR_PAYMENT)?'stripe':$conf->global->STRIPE_PICTO_FOR_PAYMENT).'" type="submit" name="dopayment_stripe" value="'.$langs->trans("StripeDoPayment").'">';
 			}
 
-			if (! empty($conf->paypal->enabled))
+			if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
 			{
 				if (empty($conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY)) $conf->global->PAYPAL_API_INTEGRAL_OR_PAYPALONLY='integral';
 
