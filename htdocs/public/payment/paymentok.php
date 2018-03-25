@@ -512,6 +512,7 @@ if ($ispaymentok)
 						}
 
 						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
+
 						if ($result < 0)
 						{
 							$errmsg=$object->error;

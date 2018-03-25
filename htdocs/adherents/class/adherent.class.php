@@ -147,8 +147,10 @@ class Adherent extends CommonObject
 		if ($msgishtml == -1)
 		{
 			$msgishtml = 0;
-			if (dol_textishtml($text,1)) $msgishtml = 1;
+			if (dol_textishtml($text,0)) $msgishtml = 1;
 		}
+
+		dol_syslog('send_an_email msgishtml='.$msgishtml);
 
 		$texttosend=$this->makeSubstitution($text);
 		$subjecttosend=$this->makeSubstitution($subject);
