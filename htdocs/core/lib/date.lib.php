@@ -179,11 +179,12 @@ function convertSecondToTime($iSecond, $format='all', $lengthOfDay=86400, $lengt
 	{
 		if ((int) $iSecond === 0) return '0';	// This is to avoid having 0 return a 12:00 AM for en_US
 
-        $sTime='';
-        $sDay=0;
-        $sWeek=0;
+		$sTime='';
+		$sDay=0;
+		$sWeek=0;
 
-		if ($iSecond >= $lengthOfDay)
+		// if $lengthOfDay != 86400 allhour and allhourmin return wrong value
+		if ($iSecond >= $lengthOfDay && $format != 'allhour' && $format != 'allhourmin')
 		{
 			for($i = $iSecond; $i >= $lengthOfDay; $i -= $lengthOfDay )
 			{
