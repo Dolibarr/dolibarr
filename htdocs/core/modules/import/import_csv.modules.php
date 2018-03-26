@@ -590,6 +590,7 @@ class ImportCsv extends ModeleImports
 						$insertdone = false;
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
+
 							if (empty($lastinsertid)) {
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
 								
@@ -603,7 +604,7 @@ class ImportCsv extends ModeleImports
 									$filters[] = $col.' = '.$data[$key];
 								}
 								$sqlSelect.= ' WHERE '.implode(' AND ', $where);
-								
+
 								$resql=$this->db->query($sqlSelect);
 								if($resql) {
 									$res = $this->db->fetch_object($resql);
@@ -625,8 +626,33 @@ class ImportCsv extends ModeleImports
 									$this->errors[$error]['type']='SQL';
 									$error++;
 								}
+							} else {
+								// We have a last INSERT ID. Check if we have a row referencing this foreign key.
+								$sqlSelect = 'SELECT rowid FROM '.$tablename;
+
+								if(empty($keyfield)) $keyfield = 'rowid';
+								$sqlSelect .= ' WHERE '.$keyfield.' = '.$lastinsertid;
+
+								$resql=$this->db->query($sqlSelect);
+								if($resql) {
+									$res = $this->db->fetch_object($resql);
+									if($resql->num_rows == 1) {
+										// We have a row referencing this last foreign key, continue with UPDATE.
+									} else {
+										// No record found referencing this last foreign key,
+										// force $lastinsertid to 0 so we INSERT below.
+										$lastinsertid = 0;
+									}
+								}
+								else
+								{
+									//print 'E';
+									$this->errors[$error]['lib']=$this->db->lasterror();
+									$this->errors[$error]['type']='SQL';
+									$error++;
+								}
 							}
-							
+
 							if (!empty($lastinsertid)) {
 								// Build SQL UPDATE request
 								$sqlstart = 'UPDATE '.$tablename;
@@ -640,7 +666,7 @@ class ImportCsv extends ModeleImports
 								
 								if(empty($keyfield)) $keyfield = 'rowid';
 								$sqlend = ' WHERE '.$keyfield.' = '.$lastinsertid;
-								
+
 								$sql = $sqlstart.$sqlend;
 								
 								// Run update request
