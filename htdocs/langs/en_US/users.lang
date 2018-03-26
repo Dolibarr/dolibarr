@@ -93,6 +93,7 @@ NameToCreate=Name of third party to create
 YourRole=Your roles
 YourQuotaOfUsersIsReached=Your quota of active users is reached !
 NbOfUsers=Nb of users
+NbOfPermissions=Nb of permissions
 DontDowngradeSuperAdmin=Only a superadmin can downgrade a superadmin
 HierarchicalResponsible=Supervisor
 HierarchicView=Hierarchical view
