@@ -164,10 +164,10 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
 $sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
 $sql .= " , " . MAIN_DB_PREFIX . "expensereport_det as erd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
-$sql .= " WHERE er.rowid = erd.fk_expensereport and er.fk_statut >= 5 AND erd.fk_code_ventilation <> 0 ";
+$sql .= " WHERE er.rowid = erd.fk_expensereport and er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <> 0 ";
 $sql .= " AND aa.rowid = erd.fk_code_ventilation";
 if (strlen(trim($search_expensereport))) {
-	$sql .= " AND er.ref like '%" . $search_expensereport . "%'";
+	$sql .= natural_search("er.ref", $search_expensereport);
 }
 if (strlen(trim($search_label))) {
 	$sql .= natural_search("f.label", $search_label);
