@@ -42,6 +42,8 @@ DROP TABLE llx_c_accountingaccount;
 
 -- For 8.0
 
+ALTER TABLE llx_c_type_fees ADD COLUMN llx_c_type_fees integer DEFAULT 0;
+
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 
 ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;
