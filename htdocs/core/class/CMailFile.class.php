@@ -753,7 +753,7 @@ class CMailFile
                     $domainName = $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
                     $selector = $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
                     $signer = new Swift_Signers_DKIMSigner($privateKey, $domainName, $selector);
-                    $this->message->attachSigner($signer);
+                    $this->message->attachSigner($signer->ignoreHeader('Return-Path'));
                 }
 
                 if (! empty($conf->global->MAIN_MAIL_DEBUG)) {
