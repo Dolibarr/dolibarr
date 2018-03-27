@@ -144,8 +144,8 @@ $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )
 {
-    $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
-    $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
+	$coll_listsell = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'sell', $m);
+	$coll_listbuy = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'buy', $m);
 
     $action = "tva";
     $object = array(&$coll_listsell, &$coll_listbuy);
