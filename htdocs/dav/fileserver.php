@@ -21,6 +21,17 @@
  *      \brief      Server DAV
  */
 
+//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
+//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
+//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
+define("NOLOGIN",1);		// This means this output page does not require to be logged.
+define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+
 require ("../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
@@ -38,18 +49,49 @@ if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 $langs->loadLangs(array("main","other"));
 
 
-//if(empty($conf->dav->enabled))
-//	accessforbidden();
-
-// If you want to run the SabreDAV server in a custom location (using mod_rewrite for instance)
-// You can override the baseUri here.
-$baseUri = DOL_URL_ROOT.'/dav/fileserver.php';
+if(empty($conf->dav->enabled))
+	accessforbidden();
 
 
 // settings
 $publicDir = $conf->dav->dir_output.'/public';
 $tmpDir = $conf->dav->dir_output.'/tmp';
 
+// Authentication callback function
+$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password)
+{
+	global $user;
+	global $conf;
+	global $dolibarr_main_authentication;
+
+	if (empty($user->login))
+		return false;
+	if ($user->socid > 0)
+		return false;
+	if ($user->login != $username)
+		return false;
+
+	// Authentication mode
+	if (empty($dolibarr_main_authentication))
+		$dolibarr_main_authentication='http,dolibarr';
+	$authmode = explode(',',$dolibarr_main_authentication);
+	$entity = (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
+
+	if (checkLoginPassEntity($username,$password,$entity,$authmode) != $username)
+		return false;
+
+	return true;
+});
+
+$authBackend->setRealm('Dolibarr');
+
+
+
+
+
+/*
+ * Actions and View
+ */
 
 // Create the root node
 // Setting up the directory tree //
@@ -67,8 +109,13 @@ $nodes = array(
 // The rootnode needs in turn to be passed to the server class
 $server = new \Sabre\DAV\Server($nodes);
 
-if (isset($baseUri))
-    $server->setBaseUri($baseUri);
+// If you want to run the SabreDAV server in a custom location (using mod_rewrite for instance)
+// You can override the baseUri here.
+$baseUri = DOL_URL_ROOT.'/dav/fileserver.php/';
+if (isset($baseUri)) $server->setBaseUri($baseUri);
+
+// Add authentication function
+$server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
 
 // Support for LOCK and UNLOCK
 $lockBackend = new \Sabre\DAV\Locks\Backend\File($tmpDir . '/.locksdb');
@@ -79,18 +126,12 @@ $server->addPlugin($lockPlugin);
 $browser = new \Sabre\DAV\Browser\Plugin();
 $server->addPlugin($browser);
 
+// Automatically guess (some) contenttypes, based on extension
+//$server->addPlugin(new \Sabre\DAV\Browser\GuessContentType());
+
 //$server->addPlugin(new \Sabre\CardDAV\Plugin());
 //$server->addPlugin(new \Sabre\CalDAV\Plugin());
 //$server->addPlugin(new \Sabre\DAVACL\Plugin());
-
-// Automatically guess (some) contenttypes, based on extension
-$server->addPlugin(new \Sabre\DAV\Browser\GuessContentType());
-
-// Authentication backend
-/*$authBackend = new \Sabre\DAV\Auth\Backend\File('.htdigest');
-$auth = new \Sabre\DAV\Auth\Plugin($authBackend);
-$server->addPlugin($auth);
-*/
 
 // Temporary file filter
 /*$tempFF = new \Sabre\DAV\TemporaryFileFilterPlugin($tmpDir);
