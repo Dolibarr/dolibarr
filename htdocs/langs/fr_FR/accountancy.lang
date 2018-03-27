@@ -149,7 +149,6 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Compte comptable par défaut pour les services v
 Doctype=Type de documents
 Docdate=Date
 Docref=Référence
-Code_tiers=Tiers
 LabelAccount=Libellé du compte
 LabelOperation=Libellé opération
 Sens=Sens
@@ -180,7 +179,7 @@ ProductAccountNotDefined=Compte pour le produit non défini
 FeeAccountNotDefined=Compte de charge non défini
 BankAccountNotDefined=Compte pour la banque non défini
 CustomerInvoicePayment=Paiement de facture client
-ThirdPartyAccount=Comptes de tiers
+ThirdPartyAccount=Third party account
 NewAccountingMvt=Nouvelle transaction
 NumMvts=Numéro de transaction
 ListeMvts=Liste des mouvements
@@ -220,7 +219,7 @@ ErrorAccountancyCodeIsAlreadyUse=Erreur, vous ne pouvez pas détruire de compte 
 MvtNotCorrectlyBalanced=Mouvement non équilibré. Crédit = %s. Débit = %s
 FicheVentilation=Fiche lien
 GeneralLedgerIsWritten=Les transactions sont enregistrées dans le grand livre
-GeneralLedgerSomeRecordWasNotRecorded=Certaines des opérations n'ont pu être enregistrées. S'il n'y a pas d'autres messages, c'est probablement car elles sont déjà enregistrées.
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
 NoNewRecordSaved=Plus d'enregistrements à journaliser
 ListOfProductsWithoutAccountingAccount=Liste des produits non liés à un compte comptable
 ChangeBinding=Changer les liens
@@ -243,6 +242,7 @@ AccountingJournalType4=Banque
 AccountingJournalType5=Note de frais
 AccountingJournalType9=A-nouveaux
 ErrorAccountingJournalIsAlreadyUse=Le journal est déjà utilisé
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 
 ## Export
 ExportDraftJournal=Exporter le journal brouillon
@@ -284,6 +284,8 @@ Formula=Formule
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Certaines étapes obligatoires de la configuration n'ont pas été réalisées, merci de compléter cette dernière
 ErrorNoAccountingCategoryForThisCountry=Pas de catégories de regroupement comptable disponibles pour le pays %s (Voir Accueil - Configuration - Dictionnaires)
+ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
+ErrorInvoiceContainsLinesNotYetBoundedShort=Certaines lignes sur la facture ne sont pas liées au compte comptable.
 ExportNotSupported=Le format de l'export n'est pas supporté par cette page
 BookeppingLineAlreayExists=Lignes dejà existantes dans le grand livre
 NoJournalDefined=Pas de journal défini

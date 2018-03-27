@@ -1546,10 +1546,12 @@ FailedToInitializeMenu=Échec à inisialiser le menu
 ##### Tax #####
 TaxSetup=Configuration du module TVA, charges fiscales ou sociales et dividendes
 OptionVatMode=Option d'exigibilité de TVA par défaut
-OptionVATDefault=Standard
+OptionVATDefault=Standard basis
 OptionVATDebitOption=Option services sur Débit
 OptionVatDefaultDesc=TVA sur encaissement, l'exigibilité de la TVA est:<br>- sur livraison pour les biens (en pratique on utilise la date de facturation)<br>- sur paiement pour les services
 OptionVatDebitOptionDesc=TVA sur débit, l'exigibilité de la TVA est:<br>- sur livraison pour les biens (en pratique on utilise la date de facturation)<br>- sur facturation (débit) pour les services
+OptionPaymentForProductAndServices=Cash basis for products and services
+OptionPaymentForProductAndServicesDesc=VAT is due:<br>- on payment for goods<br>- on payments for services
 SummaryOfVatExigibilityUsedByDefault=Moment d'exigibilité par défaut de la TVA pour l'option choisie:
 OnDelivery=Sur livraison
 OnPayment=Sur paiement
@@ -1775,6 +1777,7 @@ MAIN_PDF_MARGIN_TOP=Marge haute sur les PDF
 MAIN_PDF_MARGIN_BOTTOM=Marge bas sur les PDF
 SetToYesIfGroupIsComputationOfOtherGroups=Set this to yes if this group is a computation of other groups
 EnterCalculationRuleIfPreviousFieldIsYes=Enter calculcation rule if previous field was set to Yes (For example 'CODEGRP1+CODEGRP2')
+SeveralLangugeVariatFound=Several language variants found
 ##### Resource ####
 ResourceSetup=Configuration du module Ressource
 UseSearchToSelectResource=Utilisez un champ avec auto-complétion pour choisir les ressources (plutôt qu'une liste déroulante).
