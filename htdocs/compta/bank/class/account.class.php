@@ -332,7 +332,7 @@ class Account extends CommonObject
 	 *      @param  int         $fk_bank    To search using bank transaction id
 	 *      @param  int         $url_id     To search using link to
 	 *      @param  string      $type       To search using type
-	 *      @return array|-1                Array of links or -1 on error
+	 *      @return array|-1                Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
 	function get_url($fk_bank='', $url_id='', $type='')
 	{
