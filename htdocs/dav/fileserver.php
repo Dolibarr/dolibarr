@@ -35,9 +35,10 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 require ("../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-
-// Files we need
+require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
+require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/sabre/autoload.php';
+
 
 $user = new User($db);
 if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
@@ -83,7 +84,7 @@ $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $p
 	return true;
 });
 
-$authBackend->setRealm('Dolibarr');
+$authBackend->setRealm(constant('DOL_APPLICATION_TITLE'));
 
 
 
@@ -95,16 +96,24 @@ $authBackend->setRealm('Dolibarr');
 
 // Create the root node
 // Setting up the directory tree //
-$nodes = array(
-	// /principals
-	//new \Sabre\DAVACL\PrincipalCollection($principalBackend),
-	// /addressbook
-	//new \Sabre\CardDAV\AddressBookRoot($principalBackend, $carddavBackend),
-	// /calendars
-	//new \Sabre\CalDAV\CalendarRoot($principalBackend, $caldavBackend),
-	// / Public docs
-	new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public')
-);
+$nodes = array();
+
+// Enable directories and features according to DAV setup
+// / Public docs
+$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public');
+
+// Principals Backend
+//$principalBackend = new \Sabre\DAVACL\PrincipalBackend\Dolibarr($user,$db);
+// /principals
+//$nodes[] = new \Sabre\DAVACL\PrincipalCollection($principalBackend);
+// CardDav & CalDav Backend
+//$carddavBackend   = new \Sabre\CardDAV\Backend\Dolibarr($user,$db,$langs);
+//$caldavBackend    = new \Sabre\CalDAV\Backend\Dolibarr($user,$db,$langs, $cdavLib);
+// /addressbook
+//$nodes[] = new \Sabre\CardDAV\AddressBookRoot($principalBackend, $carddavBackend);
+// /calendars
+//$nodes[] = new \Sabre\CalDAV\CalendarRoot($principalBackend, $caldavBackend);
+
 
 // The rootnode needs in turn to be passed to the server class
 $server = new \Sabre\DAV\Server($nodes);
