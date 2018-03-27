@@ -1278,6 +1278,7 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
 						$result=dol_delete_file("$dir/$item", 1, $nophperrors);
 						$count++;
 						if ($result) $countdeleted++;
+						//else print 'Error on '.$item."\n";
 					}
 				}
 			}
@@ -1288,6 +1289,7 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
 				$result=dol_delete_dir($dir, $nophperrors);
 				$count++;
 				if ($result) $countdeleted++;
+				//else print 'Error on '.$dir."\n";
 			}
 		}
 	}

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Espace Ordres de prélèvement
 SuppliersStandingOrdersArea=Espace ordre de virements
-StandingOrders=Ordres de prélèvement
-StandingOrder=Ordre de prélèvement
+StandingOrdersPayment=Ordres de prélèvement
+StandingOrderPayment=Ordre de prélèvement
 NewStandingOrder=Nouveau prélèvement
 StandingOrderToProcess=À traiter
 WithdrawalsReceipts=Bons de prélèvements
@@ -26,7 +26,7 @@ LastWithdrawalReceipt=Les %s derniers bons de prélèvements
 MakeWithdrawRequest=Faire une demande de prélèvement
 WithdrawRequestsDone=%s demandes de prélèvements enregistrées
 ThirdPartyBankCode=Code banque du tiers
-NoInvoiceCouldBeWithdrawed=Aucune facture percevable, prélevée avec succès. Vérifiez que les factures sont sur des sociétés  dont le compte bancaire par défaut est correctement renseigné.
+NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoices are on companies with a valid default BAN and that BAN has a RUM with mode <strong>%s</strong>.
 ClassCredited=Classer crédité
 ClassCreditedConfirm=Êtes-vous sûr de vouloir classer ce bon de prélèvement comme crédité sur votre compte bancaire ?
 TransData=Date de transmission
@@ -78,7 +78,7 @@ ThisWillAlsoAddPaymentOnInvoice=Cette action enregistrera les règlements des fa
 StatisticsByLineStatus=Statistiques par statut des lignes
 RUM=RUM
 RUMLong=Référence Unique de Mandat
-RUMWillBeGenerated=Le numéro de RUM sera généré une fois les informations de compte bancaire sont enregistrées
+RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved
 WithdrawMode=Mode de prélévement (FRST ou RECUR)
 WithdrawRequestAmount=Montant de la demande de prélèvement
 WithdrawRequestErrorNilAmount=Impossible de créer une demande de prélèvement pour un montant nul
@@ -98,6 +98,10 @@ ModeFRST=Paiement unitaire
 PleaseCheckOne=Cocher un choix uniquement
 DirectDebitOrderCreated=Ordre de prélèvement %s créé
 AmountRequested=Montant réclamé
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Execution date
+CreateForSepa=Create direct debit file
 
 ### Notifications
 InfoCreditSubject=Crédit prélèvement %s à la banque

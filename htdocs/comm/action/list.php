@@ -32,10 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
-$langs->load("users");
-$langs->load("companies");
-$langs->load("agenda");
-$langs->load("commercial");
+$langs->loadLangs(array("users","companies","agenda","commercial"));
 
 $action=GETPOST('action','alpha');
 $resourceid=GETPOST("resourceid","int");
@@ -57,6 +54,7 @@ else
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+$search_id=GETPOST('search_id','alpha');
 $search_title=GETPOST('search_title','alpha');
 
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth','int'), GETPOST('dateselectday','int'), GETPOST('dateselectyear','int'));
@@ -170,7 +168,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     //$actioncode='';
-    $search_title='';
+    $search_id='';
+	$search_title='';
     $datestart='';
     $dateend='';
     $status='';
@@ -199,24 +198,25 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 $listofextcals=array();
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($actioncode != '') {
 	if(is_array($actioncode)) {
-		foreach($actioncode as $str_action) $param.="&actioncode[]=".$str_action;
-	} else $param.="&actioncode=".$actioncode;
+		foreach($actioncode as $str_action) $param.="&actioncode[]=".urlencode($str_action);
+	} else $param.="&actioncode=".urlencode($actioncode);
 }
-if ($resourceid > 0) $param.="&resourceid=".$resourceid;
-if ($status != '' && $status > -1) $param.="&status=".$status;
-if ($filter) $param.="&filter=".$filter;
-if ($filtert) $param.="&filtert=".$filtert;
-if ($socid) $param.="&socid=".$socid;
+if ($resourceid > 0) $param.="&resourceid=".urlencode($resourceid);
+if ($status != '' && $status > -1) $param.="&status=".urlencode($status);
+if ($filter) $param.="&filter=".urlencode($filter);
+if ($filtert) $param.="&filtert=".urlencode($filtert);
+if ($socid) $param.="&socid=".urlencode($socid);
 if ($showbirthday) $param.="&showbirthday=1";
-if ($pid) $param.="&projectid=".$pid;
-if ($type) $param.="&type=".$type;
-if ($usergroup) $param.="&usergroup=".$usergroup;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
-if ($search_title != '') $param.='&search_title='.$search_title;
+if ($pid) $param.="&projectid=".urlencode($pid);
+if ($type) $param.="&type=".urlencode($type);
+if ($usergroup) $param.="&usergroup=".urlencode($usergroup);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+if ($search_id != '') $param.='&search_title='.urlencode($search_id);
+if ($search_title != '') $param.='&search_title='.urlencode($search_title);
 if (GETPOST('datestartday','int')) $param.='&datestartday='.GETPOST('datestartday','int');
 if (GETPOST('datestartmonth','int')) $param.='&datestartmonth='.GETPOST('datestartmonth','int');
 if (GETPOST('datestartyear','int')) $param.='&datestartyear='.GETPOST('datestartyear','int');
@@ -293,6 +293,7 @@ if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// R
 if ($status == '100') { $sql.= " AND a.percent = 100"; }
 if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
 if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+if ($search_id) $sql.=natural_search("a.id", $search_id, 1);
 if ($search_title) $sql.=natural_search("a.label", $search_title);
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
@@ -421,7 +422,7 @@ if ($resql)
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
-	if (! empty($arrayfields['a.id']['checked']))		print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['a.id']['checked']))		print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
 	if (! empty($arrayfields['owner']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
@@ -492,7 +493,6 @@ if ($resql)
 	$caction=new CActionComm($db);
 	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
 
-	$var=true;
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);

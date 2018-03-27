@@ -349,8 +349,32 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
             // Send confirmation Email
             if ($object->email && $sendalsoemail)
             {
-                $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-                $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+            	$subject = '';
+            	$msg= '';
+
+            	// Send subscription email
+            	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            	$formmail=new FormMail($db);
+            	// Set output language
+            	$outputlangs = new Translate('', $conf);
+            	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	$outputlangs->loadLangs(array("main", "members"));
+            	// Get email content fro mtemplae
+            	$arraydefaultmessage=null;
+            	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+            	if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            	if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            	{
+            		$subject = $arraydefaultmessage->topic;
+            		$msg     = $arraydefaultmessage->content;
+            	}
+
+            	$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            	complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            	$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            	$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
 
                 // Attach a file ?
                 $file='';
@@ -1018,8 +1042,33 @@ if ($rowid > 0)
             $adht = new AdherentType($db);
             $adht->fetch($object->typeid);
 
-            $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-            $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+            // Send subscription email
+            $subject = '';
+            $msg= '';
+
+            // Send subscription email
+            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            $formmail=new FormMail($db);
+            // Set output language
+            $outputlangs = new Translate('', $conf);
+            $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            $outputlangs->loadLangs(array("main", "members"));
+            // Get email content fro mtemplae
+            $arraydefaultmessage=null;
+            $labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+            if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            {
+            	$subject = $arraydefaultmessage->topic;
+            	$msg     = $arraydefaultmessage->content;
+            }
+
+            $substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            $subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            $texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
 
             $tmp='<input name="sendmail" type="checkbox"'.(GETPOST('sendmail','alpha')?' checked':(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?' checked':'')).'>';
             $helpcontent='';

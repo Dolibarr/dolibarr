@@ -1209,12 +1209,10 @@ class pdf_einstein extends ModelePDFCommandes
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="PdfOrderTitle")
 	{
 		global $conf,$langs,$hookmanager;
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "bills", "propal", "orders", "companies"));
 
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("propal");
-		$outputlangs->load("companies");
-		$outputlangs->load("orders");
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);

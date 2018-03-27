@@ -108,6 +108,7 @@ if ($action == 'presend')
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
+
 	$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 	$formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
 
@@ -178,13 +179,7 @@ if ($action == 'presend')
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 	$formmail->param['fileinit'] = array($file);
 
-	// Init list of files
-	/*if (GETPOST('mode','alpha') == 'init')
-	{
-		$formmail->clear_attached_files();
-
-		$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-	}*/
+	$formmail->withsubstit = 1;
 
 	// Show form
 	print $formmail->get_form();

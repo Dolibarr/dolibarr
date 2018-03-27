@@ -147,8 +147,10 @@ class Adherent extends CommonObject
 		if ($msgishtml == -1)
 		{
 			$msgishtml = 0;
-			if (dol_textishtml($text,1)) $msgishtml = 1;
+			if (dol_textishtml($text,0)) $msgishtml = 1;
 		}
+
+		dol_syslog('send_an_email msgishtml='.$msgishtml);
 
 		$texttosend=$this->makeSubstitution($text);
 		$subjecttosend=$this->makeSubstitution($subject);
@@ -1331,7 +1333,7 @@ class Adherent extends CommonObject
 	 *	Do complementary actions after subscription recording.
 	 *
 	 *	@param	int			$subscriptionid			Id of created subscription
-	 *  @param	string		$option					Which action ('bankdirect', 'invoiceonly', ...)
+	 *  @param	string		$option					Which action ('bankdirect', 'bankviainvoice', 'invoiceonly', ...)
 	 *	@param	int			$accountid				Id bank account
 	 *	@param	int			$datesubscription		Date of subscription
 	 *	@param	int			$paymentdate			Date of payment
@@ -1341,7 +1343,7 @@ class Adherent extends CommonObject
 	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
 	 *	@param	string		$emetteur_nom			Name of cheque writer
 	 *	@param	string		$emetteur_banque		Name of bank of cheque
-	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty.
+	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty and we request an option that generate invoice.
 	 *	@return int									<0 if KO, >0 if OK
 	 */
 	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
@@ -1351,6 +1353,8 @@ class Adherent extends CommonObject
 		$error = 0;
 
 		$this->invoice = null;	// This will contains invoice if an invoice is created
+
+		dol_syslog("subscriptionComplementaryActions subscriptionid=".$subscriptionid." option=".$option." accountid=".$accountid." datesubscription=".$datesubscription." paymentdate=".$paymentdate." label=".$label." amount=".$amount." num_chq=".$num_chq." autocreatethirdparty=".$autocreatethirdparty);
 
 		// Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
 		if ($option == 'bankdirect' && $accountid)
@@ -1407,7 +1411,7 @@ class Adherent extends CommonObject
 
 			if (! $error)
 			{
-				if (! ($this->fk_soc > 0))
+				if (! ($this->fk_soc > 0))	// If not yet linked to a company
 				{
 					if ($autocreatethirdparty)
 					{
@@ -1668,6 +1672,8 @@ class Adherent extends CommonObject
 			if ($result < 0) { $error++; $this->db->rollback(); return -1; }
 			// End call triggers
 
+			$this->datevalid = $now;
+
 			$this->db->commit();
 			return 1;
 		}
@@ -1892,6 +1898,8 @@ class Adherent extends CommonObject
 			$label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($this->firstname) || ! empty($this->lastname))
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
+		if (! empty($this->societe))
+			$label.= '<br><b>' . $langs->trans('Company') . ':</b> ' . $this->societe;
 		$label.='</div>';
 
 		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
@@ -2490,6 +2498,136 @@ class Adherent extends CommonObject
 		$now = dol_now();
 
 		return $this->datefin < ($now - $conf->adherent->subscription->warning_delay);
+	}
+
+
+
+	/**
+	 * Send reminders by emails before subscription end
+	 * CAN BE A CRON TASK
+	 *
+	 * @param	int			$daysbeforeend		Nb of days before end of subscription (negative number = after subscription)
+	 * @return	int								0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForExpiredSubscription($daysbeforeend=10)
+	{
+		global $conf, $langs, $mysoc, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error='';
+
+		$blockingerrormsg = '';
+
+		/*if (empty($conf->global->MEMBER_REMINDER_EMAIL))
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
+			return 0;
+		}*/
+
+		$now = dol_now();
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$tmp=dol_getdate($now);
+		$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year']), -1 * $daysbeforeend, 'd');
+
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
+		$sql.= " WHERE datefin = '".$this->db->idate($datetosearchfor)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $this->db->num_rows($resql);
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$adherent = new Adherent($this->db);
+			$formmail=new FormMail($db);
+
+			$i=0;
+			$nbok = 0;
+			$nbko = 0;
+			while ($i < $num_rows)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$adherent->fetch($obj->rowid);
+
+				if (empty($adherent->email))
+				{
+					$nbko++;
+				}
+				else
+				{
+					$adherent->fetch_thirdparty();
+
+					// Send reminder email
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+					$outputlangs->loadLangs(array("main", "members"));
+
+					$arraydefaultmessage=null;
+					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION;
+
+					if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+					if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+					{
+						$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $adherent);
+						//if (is_array($adherent->thirdparty)) $substitutionarraycomp = ...
+						complete_substitutions_array($substitutionarray, $outputlangs, $adherent);
+
+						$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+						$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+						$from = $conf->global->ADHERENT_MAIL_FROM;
+						$to = $adherent->email;
+
+						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
+						$result = $cmail->sendfile();
+						if (! $result)
+						{
+							$error++;
+							$this->error = $cmail->error;
+							$this->errors += $cmail->errors;
+							$nbko++;
+						}
+						else
+						{
+							$nbok++;
+						}
+					}
+					else
+					{
+						$blockingerrormsg="Can't find email template, defined into member module setup, to use for reminding";
+						$nbko++;
+						break;
+					}
+				}
+
+				$i++;
+			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return 1;
+		}
+
+		if ($blockingerrormsg)
+		{
+			$this->error = $blockingerrormsg;
+			return 1;
+		}
+		else
+		{
+			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
+			$this->output.= ' Send email successfuly to '.$nbok.' members';
+			if ($nbko) $this->output.= ' - Canceled for '.$nbko.' member (no email or email sending error)';
+		}
+
+		return 0;
 	}
 
 }

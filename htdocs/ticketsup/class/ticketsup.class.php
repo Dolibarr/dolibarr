@@ -43,6 +43,10 @@ class Ticketsup extends CommonObject
      */
     public $table_element = 'ticketsup';
     /**
+     * @var string Name of field for link to tickets
+     */
+    public $fk_element='fk_ticket';
+    /**
      * @var int  Does ticketsupcore support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      */
     public $ismultientitymanaged = 0;
@@ -174,11 +178,11 @@ class Ticketsup extends CommonObject
     	'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
         'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-2, 'enabled'=>0, 'position'=>20, 'notnull'=>1, 'index'=>1),
         'track_id' => array('type'=>'varchar(255)', 'label'=>'TrackID', 'visible'=>0, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
-        'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty"),
+	    'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>1, 'enabled'=>1, 'position'=>49, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
+    	'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty"),
         'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToProject"),
-        'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>1, 'enabled'=>1, 'position'=>11, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
         'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
-        'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AuthorAssign', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
+        'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
         'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>12, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
         'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>60, 'notnull'=>-1,),
         'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-2, 'enabled'=>1, 'position'=>40, 'notnull'=>1),
@@ -427,12 +431,12 @@ class Ticketsup extends CommonObject
     /**
      *  Load object in memory from the database
      *
-     *  @param  int        $id    Id object
-     *  @return int              <0 if KO, >0 if OK
+     *  @param  int        	$id    		Id object
+     *  @param	string		$ref		Ref
+     *  @param	string		$track_id	Track id, a hash like ref
+     *  @return int              		<0 if KO, >0 if OK
      */
-
-    // possible to change the order of value, standard welcome is = id, ref, track_id ???
-    public function fetch($id = '', $track_id = '', $ref = '')
+    public function fetch($id = '', $ref = '', $track_id = '')
     {
         global $langs;
 
@@ -524,15 +528,7 @@ class Ticketsup extends CommonObject
                 $this->date_close = $this->db->jdate($obj->date_close);
                 $this->tms = $this->db->jdate($obj->tms);
 
-                if (!class_exists('ExtraFields')) {
-                    include_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
-                }
-
-                $extrafields = new ExtraFields($this->db);
-                $extralabels = $extrafields->fetch_name_optionals_label($this->table_element, true);
-                if (count($extralabels) > 0) {
-                    $this->fetch_optionals($this->id, $extralabels);
-                }
+                $this->fetch_optionals();
             }
             $this->db->free($resql);
 
@@ -1042,7 +1038,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_types_tickets)) {
+        if (! empty($this->cache_types_tickets) && count($this->cache_types_tickets)) {
             return 0;
         }
         // Cache deja charge
@@ -1082,7 +1078,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_category_tickets)) {
+        if (! empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
             return 0;
         }
         // Cache deja charge
@@ -1122,7 +1118,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_severity_tickets)) {
+        if (! empty($this->cache_severity_tickets) && count($this->cache_severity_tickets)) {
             return 0;
         }
         // Cache deja charge
@@ -1318,42 +1314,70 @@ class Ticketsup extends CommonObject
         }
     }
 
+
     /**
-     * Return clickable link to object
+     *  Return a link to the object card (with optionaly the picto)
      *
-     * @param        int		  $withpicto      0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-     * @param        string		$option         Sur quoi pointe le lien
-     * @return       string     			        Chaine avec URL
+     *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+     *	@param	string	$option						On what the link point to ('nolink', ...)
+     *  @param	int  	$notooltip					1=Disable tooltip
+     *  @param  string  $morecss            		Add more css on link
+     *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *	@return	string								String with URL
      */
-    public function getNomUrl($withpicto = 0, $option = '')
+    function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
     {
-        global $langs;
+    	global $db, $conf, $langs;
+    	global $dolibarr_main_authentication, $dolibarr_main_demo;
+    	global $menumanager;
 
-        $result = '';
+    	if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-        $lien = '<a href="' . dol_buildpath("/ticketsup/card.php?track_id=" . $this->track_id, 1) . '">';
-        $lienfin = '</a>';
+    	$result = '';
+    	$companylink = '';
 
-        $picto = 'ticketsup';
-        if (!$this->public) {
-            $picto = 'ticketsup';
-        }
+    	$label = '<u>' . $langs->trans("ShowTicket") . '</u>';
+    	$label.= '<br>';
+    	$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref.'<br>';
+    	$label.= '<b>' . $langs->trans('TicketTrackId') . ':</b> ' . $this->track_id.'<br>';
+    	$label.= '<b>' . $langs->trans('Subject') . ':</b> ' . $this->subject;
 
-        $label = $langs->trans("ShowTicket") . ': ' . $this->ref . ' - ' . $this->subject;
-        if ($withpicto) {
-            $result .= ($lien . img_object($label, $picto) . $lienfin);
-        }
+    	$url = dol_buildpath('/ticketsup/card.php',1).'?id='.$this->id;
 
-        if ($withpicto && $withpicto != 2) {
-            $result .= ' ';
-        }
+    	if ($option != 'nolink')
+    	{
+    		// Add param to save lastsearch_values or not
+    		$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+    		if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+    		if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+    	}
 
-        if ($withpicto != 2) {
-            $result .= $lien . $this->ref . ' - ' . dol_trunc($this->subject) . $lienfin;
-        }
+    	$linkclose='';
+    	if (empty($notooltip))
+    	{
+    		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+    		{
+    			$label=$langs->trans("ShowTicket");
+    			$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+    		}
+    		$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+    		$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+    	}
+    	else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
-        return $result;
+    	$linkstart = '<a href="'.$url.'"';
+    	$linkstart.=$linkclose.'>';
+    	$linkend='</a>';
+
+    	$result .= $linkstart;
+    	if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+    	if ($withpicto != 2) $result.= $this->ref;
+    	$result .= $linkend;
+    	//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+    	return $result;
     }
+
 
     /**
      *    Mark a message as read
@@ -1404,60 +1428,63 @@ class Ticketsup extends CommonObject
         }
     }
 
-    /**
-     *    Mark a message as read
-     *
-     *    @param    User	$user				Object user
-     *    @param    int 	$id_assign_user		ID of user assigned
-     *    @param    int 	$notrigger        	Disable trigger
-     *    @return   int							<0 if KO, 0=Nothing done, >0 if OK
-     */
-    public function assignUser($user, $id_assign_user, $notrigger = 0)
-    {
-        global $conf, $langs;
+	/**
+	 *    Mark a message as read
+	 *
+	 *    @param    User	$user				Object user
+	 *    @param    int 	$id_assign_user		ID of user assigned
+	 *    @param    int 	$notrigger        	Disable trigger
+	 *    @return   int							<0 if KO, 0=Nothing done, >0 if OK
+	 */
+	public function assignUser($user, $id_assign_user, $notrigger = 0)
+	{
+		global $conf, $langs;
 
-        if ($id_assign_user > 0) {
-            $this->db->begin();
+		$this->db->begin();
 
-            $sql = "UPDATE " . MAIN_DB_PREFIX . "ticketsup";
-            $sql .= " SET fk_user_assign=" . $id_assign_user;
-            $sql .= " , fk_statut=4";
-            $sql .= " WHERE rowid = " . $this->id;
+		$sql = "UPDATE " . MAIN_DB_PREFIX . "ticketsup";
+		if ($id_assign_user > 0)
+		{
+			$sql .= " SET fk_user_assign=".$id_assign_user.", fk_statut=4";
+		}
+		else
+		{
+			$sql .= " SET fk_user_assign=null, fk_statut=1";
+		}
+		$sql .= " WHERE rowid = " . $this->id;
 
-            dol_syslog(get_class($this) . "::assignUser sql=" . $sql);
-            $resql = $this->db->query($sql);
-            if ($resql)
-            {
-            	$this->fk_user_assign = $id_assign_user;	// May be used by trigger
+		dol_syslog(get_class($this) . "::assignUser sql=" . $sql);
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$this->fk_user_assign = $id_assign_user; // May be used by trigger
 
-                if (!$notrigger) {
-                	// Call trigger
-                	$result=$this->call_trigger('TICKET_ASSIGNED', $user);
-                	if ($result < 0) {
-                        $error++;
-                    }
-                	// End call triggers
-                }
+			if (! $notrigger) {
+				// Call trigger
+				$result = $this->call_trigger('TICKET_ASSIGNED', $user);
+				if ($result < 0) {
+					$error ++;
+				}
+				// End call triggers
+			}
 
-                if (!$error) {
-                    $this->db->commit();
-                    return 1;
-                } else {
-                    $this->db->rollback();
-                    $this->error = join(',', $this->errors);
-                    dol_syslog(get_class($this) . "::assignUser " . $this->error, LOG_ERR);
-                    return -1;
-                }
-            } else {
-                $this->db->rollback();
-                $this->error = $this->db->lasterror();
-                dol_syslog(get_class($this) . "::assignUser " . $this->error, LOG_ERR);
-                return -1;
-            }
-        }
+			if (! $error) {
+				$this->db->commit();
+				return 1;
+			} else {
+				$this->db->rollback();
+				$this->error = join(',', $this->errors);
+				dol_syslog(get_class($this) . "::assignUser " . $this->error, LOG_ERR);
+				return - 1;
+			}
+		} else {
+			$this->db->rollback();
+			$this->error = $this->db->lasterror();
+			dol_syslog(get_class($this) . "::assignUser " . $this->error, LOG_ERR);
+			return - 1;
+		}
 
-        return 0;
-    }
+		return 0;
+	}
 
     /**
      *   Create log for the ticket
@@ -2446,182 +2473,6 @@ class Ticketsup extends CommonObject
         return false;
     }
 
-    /**
-     *  Show photos of a product (nbmax maximum), into several columns
-     *    TODO Move this into html.formproduct.class.php
-     *
-     *  @param 	string $sdir         Directory to scan
-     *  @param 	int    $size         0=original size, 1='small' use thumbnail if possible
-     *  @param 	int    $nbmax        Nombre maximum de photos (0=pas de max)
-     *  @param 	int    $nbbyrow      Number of image per line or -1 to use div. Used only if size=1.
-     *  @param 	int    $showfilename 1=Show filename
-     *  @param 	int    $showaction   1=Show icon with action links (resize, delete)
-     *  @param 	int    $maxHeight    Max height of original image when size='small' (so we can use original even if small requested). If 0, always use 'small' thumb image.
-     *  @param 	int    $maxWidth     Max width of original image when size='small'
-     *  @param 	int    $nolink       Do not add a href link to view enlarged imaged into a new tab
-     *  @return string                    Html code to show photo. Number of photos shown is saved in this->nbphoto
-     */
-    function show_photos($sdir, $size = 0, $nbmax = 0, $nbbyrow = 5, $showfilename = 0, $showaction = 0, $maxHeight = 120, $maxWidth = 160, $nolink = 0)
-    {
-        global $conf, $user, $langs;
-
-        include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-        include_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
-
-        $dir = $sdir . '/';
-        $pdir = '/';
-        $dir .= get_exdir(0, 0, 0, 0, $this, 'ticketsup') . $this->track_id . '/';
-        $pdir .= get_exdir(0, 0, 0, 0, $this, 'ticketsup') . $this->track_id . '/';
-
-        $dirthumb = $dir . 'thumbs/';
-        $pdirthumb = $pdir . 'thumbs/';
-
-        $return = '<!-- Photo -->' . "\n";
-        $nbphoto = 0;
-
-        $dir_osencoded = dol_osencode($dir);
-        if (file_exists($dir_osencoded)) {
-            $handle = opendir($dir_osencoded);
-            if (is_resource($handle)) {
-                while (($file = readdir($handle)) != false) {
-                    $photo = '';
-
-                    if (!utf8_check($file)) {
-                        $file = utf8_encode($file);
-                    }
-                    // To be sure file is stored in UTF8 in memory
-                    if (dol_is_file($dir . $file) && preg_match('/(' . $this->regeximgext . ')$/i', $dir . $file)) {
-                        $nbphoto++;
-                        $photo = $file;
-                        $viewfilename = $file;
-
-                        if ($size == 1 || $size == 'small') { // Format vignette
-                            // Find name of thumb file
-                            $photo_vignette = basename(getImageFileNameForSize($dir . $file, '_small', '.png'));
-                            if (!dol_is_file($dirthumb . $photo_vignette)) {
-                                $photo_vignette = '';
-                            }
-
-                            // Get filesize of original file
-                            $imgarray = dol_getImageSize($dir . $photo);
-
-                            if ($nbbyrow > 0) {
-                                if ($nbphoto == 1) {
-                                    $return .= '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
-                                }
-
-                                if ($nbphoto % $nbbyrow == 1) {
-                                    $return .= '<tr align=center valign=middle border=1>';
-                                }
-
-                                $return .= '<td width="' . ceil(100 / $nbbyrow) . '%" class="photo">';
-                            } elseif ($nbbyrow < 0) {
-                                $return .= '<div class="inline-block">';
-                            }
-
-                            $return .= "\n";
-                            if (empty($nolink)) {
-                                $return .= '<a href="' . DOL_URL_ROOT . '/viewimage.php?modulepart=ticketsup&entity=' . $this->entity . '&file=' . urlencode($pdir . $photo) . '" class="aphoto" target="_blank">';
-                            }
-
-                            // Show image (width height=$maxHeight)
-                            // Si fichier vignette disponible et image source trop grande, on utilise la vignette, sinon on utilise photo origine
-                            $alt = $langs->transnoentitiesnoconv('File') . ': ' . $pdir . $photo;
-                            $alt .= ' - ' . $langs->transnoentitiesnoconv('Size') . ': ' . $imgarray['width'] . 'x' . $imgarray['height'];
-
-                            if (empty($maxHeight) || $photo_vignette && $imgarray['height'] > $maxHeight) {
-                                $return .= '<!-- Show thumb -->';
-                                $return .= '<img class="photo photowithmargin" border="0" ' . ($conf->dol_use_jmobile ? 'max-height' : 'height') . '="' . $maxHeight . '" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=ticketsup&entity=' . $this->entity . '&file=' . urlencode($pdirthumb . $photo_vignette) . '" title="' . dol_escape_htmltag($alt) . '">';
-                            } else {
-                                $return .= '<!-- Show original file -->';
-                                $return .= '<img class="photo photowithmargin" border="0" ' . ($conf->dol_use_jmobile ? 'max-height' : 'height') . '="' . $maxHeight . '" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=ticketsup&entity=' . $this->entity . '&file=' . urlencode($pdir . $photo) . '" title="' . dol_escape_htmltag($alt) . '">';
-                            }
-
-                            if (empty($nolink)) {
-                                $return .= '</a>';
-                            }
-
-                            $return .= "\n";
-
-                            if ($showfilename) {
-                                $return .= '<br>' . $viewfilename;
-                            }
-
-                            if ($showaction) {
-                                $return .= '<br>';
-                                // On propose la generation de la vignette si elle n'existe pas et si la taille est superieure aux limites
-                                if ($photo_vignette && preg_match('/(' . $this->regeximgext . ')$/i', $photo) && ($this->imgWidth > $maxWidth || $this->imgHeight > $maxHeight)) {
-                                    $return .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=addthumb&amp;file=' . urlencode($pdir . $viewfilename) . '">' . img_picto($langs->trans('GenerateThumb'), 'refresh') . '&nbsp;&nbsp;</a>';
-                                }
-                                if ($user->rights->produit->creer || $user->rights->service->creer) {
-                                    // Link to resize
-                                    $return .= '<a href="' . DOL_URL_ROOT . '/core/photos_resize.php?modulepart=' . urlencode('ticketsup') . '&id=' . $this->id . '&amp;file=' . urlencode($pdir . $viewfilename) . '" title="' . dol_escape_htmltag($langs->trans("Resize")) . '">' . img_picto($langs->trans("Resize"), 'resize', '') . '</a> &nbsp; ';
-
-                                    // Link to delete
-                                    $return .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=delete&amp;file=' . urlencode($pdir . $viewfilename) . '">';
-                                    $return .= img_delete() . '</a>';
-                                }
-                            }
-                            $return .= "\n";
-
-                            if ($nbbyrow > 0) {
-                                $return .= '</td>';
-                                if (($nbphoto % $nbbyrow) == 0) {
-                                    $return .= '</tr>';
-                                }
-                            } elseif ($nbbyrow < 0) {
-                                $return .= '</div>';
-                            }
-                        }
-
-                        if (empty($size)) { // Format origine
-                            $return .= '<img class="photo photowithmargin" border="0" src="' . DOL_URL_ROOT . '/viewimage.php?modulepart=ticketsup&entity=' . $this->entity . '&file=' . urlencode($pdir . $photo) . '">';
-
-                            if ($showfilename) {
-                                $return .= '<br>' . $viewfilename;
-                            }
-
-                            if ($showaction) {
-                                if ($user->rights->produit->creer || $user->rights->service->creer) {
-                                    // Link to resize
-                                    $return .= '<a href="' . DOL_URL_ROOT . '/core/photos_resize.php?modulepart=' . urlencode('ticketsup') . '&id=' . $this->id . '&amp;file=' . urlencode($pdir . $viewfilename) . '" title="' . dol_escape_htmltag($langs->trans("Resize")) . '">' . img_picto($langs->trans("Resize"), 'resize', '') . '</a> &nbsp; ';
-
-                                    // Link to delete
-                                    $return .= '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $this->id . '&amp;action=delete&amp;file=' . urlencode($pdir . $viewfilename) . '">';
-                                    $return .= img_delete() . '</a>';
-                                }
-                            }
-                        }
-
-                        // On continue ou on arrete de boucler ?
-                        if ($nbmax && $nbphoto >= $nbmax) {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if ($size == 1 || $size == 'small') {
-                if ($nbbyrow > 0) {
-                    // Ferme tableau
-                    while ($nbphoto % $nbbyrow) {
-                        $return .= '<td width="' . ceil(100 / $nbbyrow) . '%">&nbsp;</td>';
-                        $nbphoto++;
-                    }
-
-                    if ($nbphoto) {
-                        $return .= '</table>';
-                    }
-                }
-            }
-
-            closedir($handle);
-        }
-
-        $this->nbphoto = $nbphoto;
-
-        return $return;
-    }
 }
 
 

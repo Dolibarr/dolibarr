@@ -48,6 +48,18 @@ $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectl
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
+$childids = $user->getAllChildIds(1);
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0)	// Protection if external user
+{
+	//$socid = $user->societe_id;
+	accessforbidden();
+}
+$result = restrictedArea($user, 'holiday', $id, '');
+$id = GETPOST('id','int');
+
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -71,7 +83,6 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 if (! $sortfield) $sortfield="cp.rowid";
 if (! $sortorder) $sortorder="DESC";
 
-$id = GETPOST('id','int');
 
 $sall                = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref          = GETPOST('search_ref','alpha');
@@ -159,9 +170,6 @@ $formother = new FormOther($db);
 $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
 $fuser = new User($db);
-
-$childids = $user->getAllChildIds();
-$childids[]=$user->id;
 
 // Update sold
 $result = $holiday->updateBalance();
@@ -266,14 +274,16 @@ if ($id > 0)
 	$search_employee = $user_id;
 }
 
-// Récupération des congés payés de l'utilisateur ou de tous les users
+// Récupération des congés payés de l'utilisateur ou de tous les users de sa hierarchy
+// Load array $holiday->holiday
 if (empty($user->rights->holiday->read_all) || $id > 0)
 {
-	$result = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
+	if ($id > 0) $result = $holiday->fetchByUser($id, $order, $filter);
+	else  $result = $holiday->fetchByUser(join(',',$childids), $order, $filter);
 }
 else
 {
-    $result = $holiday->fetchAll($order,$filter);	// Load array $holiday->holiday
+    $result = $holiday->fetchAll($order, $filter);
 }
 // Si erreur SQL
 if ($result == '-1')
@@ -302,7 +312,7 @@ if ($search_year_create)         $param.='&search_year_create='.urlencode($searc
 if ($search_search_day_start)    $param.='&search_day_start='.urlencode($search_day_start);
 if ($search_month_start)         $param.='&search_month_start='.urlencode($search_month_start);
 if ($search_year_start)          $param.='&search_year_start='.urlencode($search_year_start);
-if ($day_end)             $param.='&day_end='.urlencode($day_end);
+if ($search_day_end)             $param.='&search_day_end='.urlencode($search_day_end);
 if ($search_month_end)           $param.='&search_month_end='.urlencode($search_month_end);
 if ($search_year_end)            $param.='&search_year_end='.urlencode($search_year_end);
 if ($search_employee > 0) $param.='&search_employee='.urlencode($search_employee);
@@ -401,23 +411,35 @@ print '<input class="flat" type="text" size="1" maxlength="2" name="search_month
 $formother->select_year($search_year_create,'search_year_create',1, $min_year, 0);
 print '</td>';
 
+
+$morefilter = 'AND employee = 1';
+if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+
 // User
-if ($user->rights->holiday->write_all)
+$disabled=0;
+// If into the tab holiday of a user ($id is set in such a case)
+if ($id && ! GETPOSTISSET('search_employee'))
 {
-    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($search_employee,"search_employee",1,"",0,'','',0,0,0,'',0,'','maxwidth200');
+	$search_employee=$id;
+	$disabled=1;
+}
+if (! empty($user->rights->holiday->read_all))	// Can see all
+{
+	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee','int');
+	print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+	print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 else
 {
-    //print '<td class="liste_titre">&nbsp;</td>';
+	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee','int');
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($user->id,"search_employee",1,"",1,'','',0,0,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 
 // Approve
-if($user->rights->holiday->write_all)
+if ($user->rights->holiday->read_all)
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
 
@@ -426,7 +448,7 @@ if($user->rights->holiday->write_all)
     $valideurobjects = $validator->listUsersForGroup($excludefilter);
     $valideurarray = array();
     foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
-    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 0, 0, '', 0, '', 'maxwidth200');
+    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 else
@@ -481,7 +503,7 @@ print_liste_field_titre("DateCreateCP",$_SERVER["PHP_SELF"],"cp.date_create","",
 print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("ValidatorCP",$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
-print_liste_field_titre("Duration",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("NbUseDaysCPShort",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre("DateDebCP",$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("DateFinCP",$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
@@ -490,8 +512,16 @@ print "</tr>\n";
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
+
+// If we ask a dedicated card and not allow to see it, we forc on user.
+if ($id && empty($user->rights->holiday->read_all) && ! in_array($id, $childids))
+{
+	$langs->load("errors");
+	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
+	$result = 0;
+}
 // Lines
-if (! empty($holiday->holiday))
+elseif (! empty($holiday->holiday))
 {
 	$userstatic = new User($db);
 	$approbatorstatic = new User($db);
@@ -527,7 +557,7 @@ if (! empty($holiday->holiday))
 
 		print '<tr class="oddeven">';
 		print '<td>';
-		print $holidaystatic->getNomUrl(1);
+		print $holidaystatic->getNomUrl(1, 1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';

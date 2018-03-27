@@ -281,6 +281,11 @@ if ($ispaymentok)
 
 	if (in_array('MEM', array_keys($tmptag)))
 	{
+		// Validate member
+		// Create subscription
+		// Create complementary actions (this include creation of thirdparty)
+		// Send confirmation email
+
 		$defaultdelay=1;
 		$defaultdelayunit='y';
 
@@ -312,13 +317,26 @@ if ($ispaymentok)
 			// Do action only if $FinalPaymentAmt is set (session variable is cleaned after this page to avoid duplicate actions when page is POST a second time)
 			if (! empty($FinalPaymentAmt) && $paymentTypeId > 0)
 			{
+				$result = $object->validate($user);
+				if ($result < 0 || empty($object->datevalid))
+				{
+					$error++;
+					$errmsg=$object->error;
+					$postactionmessages[] = $errmsg;
+					$postactionmessages = array_merge($postactionmessages, $object->errors);
+					$ispostactionok = -1;
+				}
+
 				// Subscription informations
 				$datesubscription=$object->datevalid;
 				if ($object->datefin > 0)
 				{
 					$datesubscription=dol_time_plus_duree($object->datefin,1,'d');
 				}
-				$datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription,$defaultdelay,$defaultdelayunit),-1,'d');
+
+				$datesubend = null;
+				if ($datesubscription && $defaultdelay && $defaultdelayunit) $datesubend=dol_time_plus_duree(dol_time_plus_duree($datesubscription, $defaultdelay, $defaultdelayunit),-1,'d');
+
 				$paymentdate=$now;
 				$amount = $FinalPaymentAmt;
 				$label='Online subscription '.dol_print_date($now, 'standard').' using '.$paymentmethod.' from '.$ipaddress.' - Transaction ID = '.$TRANSACTIONID;
@@ -328,6 +346,14 @@ if ($ispaymentok)
 				if ($paymentmethod == 'paybox') $accountid = $conf->global->PAYBOX_BANK_ACCOUNT_FOR_PAYMENTS;
 				if ($paymentmethod == 'paypal') $accountid = $conf->global->PAYPAL_BANK_ACCOUNT_FOR_PAYMENTS;
 				if ($paymentmethod == 'stripe') $accountid = $conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS;
+				if ($accountid < 0)
+				{
+					$error++;
+					$errmsg='Setup of bank accout to use for payment is not correctly done for payment method '.$paymentmethod;
+					$postactionmessages[] = $errmsg;
+					$ispostactionok = -1;
+				}
+
 				$operation=$paymentType; // Payment mode code
 				$num_chq='';
 				$emetteur_nom='';
@@ -344,23 +370,28 @@ if ($ispaymentok)
 				$db->begin();
 
 				// Create subscription
-				$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
-				if ($crowid <= 0)
+				if (! $error)
 				{
-					$error++;
-					$errmsg=$object->error;
-					$postactionmessages[] = $errmsg;
-					$ispostactionok = -1;
-				}
-				else
-				{
-					$postactionmessages[]='Subscription created';
-					$ispostactionok=1;
+					$crowid=$object->subscription($datesubscription, $amount, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
+					if ($crowid <= 0)
+					{
+						$error++;
+						$errmsg=$object->error;
+						$postactionmessages[] = $errmsg;
+						$ispostactionok = -1;
+					}
+					else
+					{
+						$postactionmessages[]='Subscription created';
+						$ispostactionok=1;
+					}
 				}
 
 				if (! $error)
 				{
-					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, 1);
+					$autocreatethirdparty = 1;
+
+					$result = $object->subscriptionComplementaryActions($crowid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom, $emetteur_banque, $autocreatethirdparty);
 					if ($result < 0)
 					{
 						$error++;
@@ -381,6 +412,49 @@ if ($ispaymentok)
 
 				if (! $error)
 				{
+					if ($paymentmethod == 'stripe' && $autocreatethirdparty && $option == 'bankviainvoice')
+					{
+						$thirdparty_id = $object->fk_soc;
+
+						dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
+
+						$service = 'StripeTest';
+						$servicestatus = 0;
+						if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+						{
+							$service = 'StripeLive';
+							$servicestatus = 1;
+						}
+						$stripeacc = null;	// No Oauth/connect use for public pages
+
+						$thirdparty = new Societe($db);
+						$thirdparty->fetch($thirdparty_id);
+
+						include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+						$stripe = new Stripe($db);
+						$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 0);
+
+						if (! $customer && $TRANSACTIONID)	// Not linked to a stripe customer, we make the link
+						{
+							$ch = \Stripe\Charge::retrieve($TRANSACTIONID);		// contains the charge id
+							$stripecu = $ch->customer;							// value 'cus_....'
+
+							$sql = "INSERT INTO " . MAIN_DB_PREFIX . "societe_account (fk_soc, login, key_account, site, status, entity, date_creation, fk_user_creat)";
+							$sql .= " VALUES (".$object->fk_soc.", '', '".$db->escape($stripecu)."', 'stripe', " . $servicestatus . ", " . $conf->entity . ", '".$db->idate(dol_now())."', 0)";
+							$resql = $db->query($sql);
+							if (! $resql)
+							{
+								$error++;
+								$errmsg='Failed to save customer stripe id in database ; '.$db->lasterror();
+								$postactionmessages[] = $errmsg;
+								$ispostactionok = -1;
+							}
+						}
+					}
+				}
+
+				if (! $error)
+				{
 					$db->commit();
 				}
 				else
@@ -394,8 +468,32 @@ if ($ispaymentok)
 					// Send confirmation Email
 					if ($object->email && $sendalsoemail)
 					{
-						$subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-						$texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+						$subject = '';
+						$msg= '';
+
+						// Send subscription email
+						include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+						$formmail=new FormMail($db);
+						// Set output language
+						$outputlangs = new Translate('', $conf);
+						$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+						$outputlangs->loadLangs(array("main", "members"));
+						// Get email content from templae
+						$arraydefaultmessage=null;
+						$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+						if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+						if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+						{
+							$subject = $arraydefaultmessage->topic;
+							$msg     = $arraydefaultmessage->content;
+						}
+
+						$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+						complete_substitutions_array($substitutionarray, $outputlangs, $object);
+						$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+						$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
 
 						// Attach a file ?
 						$file='';
@@ -414,6 +512,7 @@ if ($ispaymentok)
 						}
 
 						$result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
+
 						if ($result < 0)
 						{
 							$errmsg=$object->error;
@@ -430,7 +529,7 @@ if ($ispaymentok)
 			}
 			else
 			{
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" or "payment type" to record the payment of subscription for member '.$tmptag['MEM'];
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" or "payment type" to record the payment of subscription for member '.$tmptag['MEM'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		}
@@ -547,7 +646,7 @@ if ($ispaymentok)
 			}
 			else
 			{
-				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['INV'];
+				$postactionmessages[] = 'Failed to get a valid value for "amount paid" ('.$FinalPaymentAmt.') or "payment type" ('.$paymentType.') to record the payment of invoice '.$tmptag['INV'].'. May be payment was already recorded.';
 				$ispostactionok = -1;
 			}
 		}

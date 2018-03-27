@@ -93,7 +93,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
     /**
      *      Function called when a Dolibarrr business event is done.
-     *      All functions "run_trigger" are triggered if file is inside directory htdocs/core/triggers
+     *      All functions "runTrigger" are triggered if file is inside directory htdocs/core/triggers
      *
      *      @param  string    $action Event action code
      *      @param  Object    $object Object

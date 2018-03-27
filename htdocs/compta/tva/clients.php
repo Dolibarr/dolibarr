@@ -37,6 +37,7 @@ $langs->load("compta");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("other");
+$langs->load("admin");
 
 // Date range
 $year=GETPOST("year");
@@ -132,24 +133,28 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
+$description='';
+
+$calcmode='';
+if ($modetax == 0) $calcmode=$langs->trans('OptionVATDefault');
+if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
+if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
+$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description.=$langs->trans("RulesVATInProducts");
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description.='<br>'.$langs->trans("RulesVATDueServices");
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') $description.='<br>'.$langs->trans("RulesVATInServices");
+if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
+}
+if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
+
 // Affiche en-tete du rapport
 if ($modetax==1) {	// Calculate on invoice for goods and services
 	$name=$langs->trans("VATReportByCustomersInDueDebtMode");
-	$calcmode=$langs->trans("CalcModeVATDebt");
-	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-	//$name.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
-	$description=$langs->trans("RulesVATDueServices");
-	$description.='<br>';
-	$description.=$langs->trans("RulesVATDueProducts");
-	//if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-	//if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
-	} else {
-		$description.='<br>'.$langs->trans("DepositsAreIncluded");
-	}
 	$description.=$fsearch;
 	$description.='<br>'
 		. '<input type="radio" name="extra_report" value="0" '.($special_report?'':'checked="checked"').'> '
@@ -178,20 +183,8 @@ if ($modetax==1) {	// Calculate on invoice for goods and services
 }
 if ($modetax==0) {	// Invoice for goods, payment for services
 	$name=$langs->trans("VATReportByCustomersInInputOutputMode");
-	$calcmode=$langs->trans("CalcModeVATEngagement");
-	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-	//$name.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	//$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
-	$description=$langs->trans("RulesVATInServices");
-	$description.=' '.$langs->trans("DepositsAreIncluded");
-	$description.='<br>';
-	$description.=$langs->trans("RulesVATInProducts");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$description .= ' ' . $langs->trans("DepositsAreNotIncluded");
-	} else {
-		$description .= ' ' . $langs->trans("DepositsAreIncluded");
-	}
 	//if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	//if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
 	$description.=$fsearch;

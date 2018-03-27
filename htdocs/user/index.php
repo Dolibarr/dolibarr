@@ -191,23 +191,11 @@ $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user_extrafields as ef on (u.rowid = ef.fk_object)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u2 ON u.fk_user = u2.rowid";
-// TODO add hook
-if (! empty($conf->multicompany->enabled)) {
-	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-		if (! empty($user->admin) && empty($user->entity)) {
-			if ($conf->entity == 1) {
-				$sql.= " WHERE u.entity IS NOT NULL";
-			} else {
-				$sql.= " WHERE u.entity IN (".getEntity('user').")";
-			}
-		} else {
-			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-			$sql.= " WHERE ug.fk_user = u.rowid";
-			$sql.= " AND ug.entity IN (".getEntity('user').")";
-		}
-	} else {
-		$sql.= " WHERE u.entity IN (".getEntity('user').")";
-	}
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+if ($reshook > 0) {
+	$sql.=$hookmanager->resPrint;
 } else {
 	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }

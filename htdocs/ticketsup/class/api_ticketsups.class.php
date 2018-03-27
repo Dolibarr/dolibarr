@@ -90,7 +90,7 @@ class Ticketsups extends DolibarrApi
             throw new RestException(401, 'Wrong parameters');
         }
 
-        $result = $this->ticketsup->fetch($id, $track_id, $ref);
+        $result = $this->ticketsup->fetch($id, $ref, $track_id);
         if (! $result) {
             throw new RestException(404, 'Ticketsup not found');
         }
@@ -344,7 +344,7 @@ class Ticketsups extends DolibarrApi
             $this->ticketsup->$field = $value;
         }
         $ticketMessageText = $this->ticketsup->message;
-        $result = $this->ticketsup->fetch('', $this->ticketsup->track_id);
+        $result = $this->ticketsup->fetch('', '', $this->ticketsup->track_id);
         if (! $result) {
             throw new RestException(404, 'Ticketsup not found');
         }

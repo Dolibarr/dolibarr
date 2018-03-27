@@ -104,7 +104,7 @@ function ticketsup_prepare_head($object)
 
     // History
     $head[$h][0] = DOL_URL_ROOT.'/ticketsup/history.php?track_id=' . $object->track_id;
-    $head[$h][1] = $langs->trans('TicketHistory');
+    $head[$h][1] = $langs->trans('Events');
     $head[$h][2] = 'tabTicketLogs';
     $h++;
 
