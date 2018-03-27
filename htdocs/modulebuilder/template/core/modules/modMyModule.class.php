@@ -100,7 +100,7 @@ class modMyModule extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp","/mymodule/subdir");
-		$this->dirs = array();
+		$this->dirs = array("/mymodule/temp");
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
 		$this->config_page_url = array("setup.php@mymodule");
