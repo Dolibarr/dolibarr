@@ -395,6 +395,8 @@ class DiscountAbsolute
      */
     function unlink_invoice()
     {
+		global $user, $langs, $conf;
+		
         $sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
 		if(! empty($this->discount_type)) {
        		$sql.=" SET fk_invoice_supplier_line = NULL, fk_invoice_supplier = NULL";
@@ -407,6 +409,15 @@ class DiscountAbsolute
         $resql = $this->db->query($sql);
         if ($resql)
         {
+            require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+            $interface = new Interfaces($this->db);
+            $result = $interface->run_triggers('DISCOUNT_UNLINK_INVOICE', $this, $user, $langs, $conf);
+			if ($result < 0)
+			{
+				$this->errors=$interface->errors;
+				return -1;
+			}
+			
             return 1;
         }
         else
