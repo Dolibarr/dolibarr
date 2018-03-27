@@ -385,7 +385,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 			if ($mailfile->error)
 			{
-				setEventMessage($mailfile->error, 'errors');
+				setEventMessages($mailfile->error, $mailfile->errors, 'errors');
 				$action='presend';
 			}
 			else
