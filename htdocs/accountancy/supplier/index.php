@@ -207,7 +207,7 @@ $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
 $sql .= " WHERE ff.datef >= '" . $db->idate($search_date_start) . "'";
 $sql .= "  AND ff.datef <= '" . $db->idate($search_date_end) . "'";
-$sql .= "  AND ff.fk_statut > 0 ";
+$sql .= "  AND ff.fk_statut > 0";
 $sql .= " AND ff.entity IN (" . getEntity('facture_fourn', 0) . ")";     // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
@@ -277,7 +277,7 @@ $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = ffd.fk_code_ventilation";
 $sql .= " WHERE ff.datef >= '" . $db->idate($search_date_start) . "'";
 $sql .= "  AND ff.datef <= '" . $db->idate($search_date_end) . "'";
-$sql .= "  AND ff.fk_statut > 0 ";
+$sql .= "  AND ff.fk_statut > 0";
 $sql .= " AND ff.entity IN (" . getEntity('facture_fourn', 0) . ")";     // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY ffd.fk_code_ventilation,aa.account_number,aa.label";
@@ -347,7 +347,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture_fourn as ff ON ff.rowid = ffd.fk_facture_fourn";
     $sql .= " WHERE ff.datef >= '" . $db->idate($search_date_start) . "'";
     $sql .= "  AND ff.datef <= '" . $db->idate($search_date_end) . "'";
-    $sql .= "  AND ff.fk_statut > 0 ";
+    $sql .= "  AND ff.fk_statut > 0";
     $sql .= " AND ff.entity IN (" . getEntity('facture_fourn', 0) . ")";     // We don't share object for accountancy
 
     dol_syslog('htdocs/accountancy/supplier/index.php');

@@ -27,6 +27,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
 // Langs
 $langs->load("compta");
@@ -208,7 +209,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " WHERE er.date_debut >= '" . $db->idate($search_date_start) . "'";
 $sql .= " AND er.date_debut <= '" . $db->idate($search_date_end) . "'";
-$sql .= " AND er.fk_statut > 0";
+$sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";     // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
@@ -278,7 +279,7 @@ $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = erd.fk_code_ventilation";
 $sql .= " WHERE er.date_debut >= '" . $db->idate($search_date_start) . "'";
 $sql .= " AND er.date_debut <= '" . $db->idate($search_date_end) . "'";
-$sql .= " AND er.fk_statut > 0 ";
+$sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
 $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";     // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NOT NULL";
 $sql .= " GROUP BY erd.fk_code_ventilation,aa.account_number,aa.label";
@@ -321,7 +322,7 @@ print '</div>';
 
 
 
-if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. Why showing a report that should rely on result of this step ?
+if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. Why showing a report where results depends on next step (so not yet available) ?
 {
     print '<br>';
     print '<br>';
@@ -349,7 +350,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
     $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "expensereport as er ON er.rowid = erd.fk_expensereport";
     $sql .= " WHERE er.date_debut >= '" . $db->idate($search_date_start) . "'";
     $sql .= " AND er.date_debut <= '" . $db->idate($search_date_end) . "'";
-    $sql .= " AND er.fk_statut > 0 ";
+    $sql .= " AND er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.")";
     $sql .= " AND er.entity IN (" . getEntity('expensereport', 0) . ")";     // We don't share object for accountancy
 
     dol_syslog('htdocs/accountancy/expensereport/index.php');
