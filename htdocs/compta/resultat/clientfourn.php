@@ -255,6 +255,7 @@ if ($modecompta == 'BOOKKEEPING')
 	$sql.= " WHERE f.numero_compte = aa.account_number";
 	//$sql.= " AND fk_statut in (1,2)";
 	$sql.= " AND ".$predefinedgroupwhere;
+	$sql.= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 	$sql.= " AND f.entity = ".$conf->entity;
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
@@ -295,7 +296,7 @@ if ($modecompta == 'BOOKKEEPING')
 				if ($showaccountdetail != 'no')
 				{
 					$tmppredefinedgroupwhere="pcg_type = '".$db->escape($objp->pcg_type)."' AND pcg_subtype = '".$db->escape($objp->pcg_subtype)."'";
-					$tmppredefinedgroupwhere.= " AND fk_pcg_version = '".$charofaccountstring."'";
+					$tmppredefinedgroupwhere.= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 					//$tmppredefinedgroupwhere.= " AND thirdparty_code = '".$db->escape($objp->name)."'";
 
 					// Get cpts of category/group
@@ -312,7 +313,7 @@ if ($modecompta == 'BOOKKEEPING')
 						}
 
 
-						if ($showaccountdetail == 'all' || $resultN > 0)
+						if ($showaccountdetail == 'all' || $resultN <> 0)
 						{
 							print '<tr>';
 							print '<td></td>';
