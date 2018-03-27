@@ -301,10 +301,19 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
         foreach($object->fields as $key => $val)
         {
             $i++;
-            if ($val['index'])
+            if (! empty($val['index']))
             {
                 $texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
                 $texttoinsert.= "\n";
+            }
+            if (! empty($val['foreignkey']))
+            {
+            	$tmp=explode('.',$val['foreignkey']);
+            	if (! empty($tmp[0]) && ! empty($tmp[1]))
+            	{
+            		$texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES ".$tmp[0]."(".$tmp[1].");";
+            		$texttoinsert.= "\n";
+            	}
             }
         }
     }
