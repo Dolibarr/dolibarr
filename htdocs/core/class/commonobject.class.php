@@ -4787,6 +4787,7 @@ abstract class CommonObject
 			if (! $resql)
 			{
 				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this) . "::".__METHOD__ . $this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -5804,7 +5805,7 @@ abstract class CommonObject
 					{
 						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
 					}
-					
+
 					if (empty($onetrtd)) $out .= '<td>';
 					else $out .= '<td'.($colspan?' colspan="'.($colspan+1).'"':'').'>';
 
