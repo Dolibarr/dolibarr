@@ -675,7 +675,8 @@ class Contrat extends CommonObject
 	}
 
 	/**
-	 *  Load lines array into this->lines
+	 *  Load lines array into this->lines.
+	 *  This set also nbofserviceswait, nbofservicesopened, nbofservicesexpired and nbofservicesclosed
 	 *
 	 *  @return ContratLigne[]   Return array of contract lines
 	 */
