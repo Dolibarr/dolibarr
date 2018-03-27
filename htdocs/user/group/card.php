@@ -309,8 +309,6 @@ else
 {
     if ($id)
     {
-        $object->fetch($id);
-
         $head = group_prepare_head($object);
         $title = $langs->trans("Group");
 

@@ -56,10 +56,10 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         	// We add subscription if we change category (new category may means more mailing-list to subscribe)
-    		if (is_object($object->linkto) && method_exists($object->linkto, 'add_to_abo') && $object->linkto->add_to_abo() < 0)
+        	if (is_object($object->context['linkto']) && method_exists($object->context['linkto'], 'add_to_abo') && $object->context['linkto']->add_to_abo() < 0)
     		{
-    			$this->error=$object->linkto->error;
-    			$this->errors=$object->linkto->errors;
+    			$this->error=$object->context['linkto']->error;
+    			$this->errors=$object->context['linkto']->errors;
     			$return=-1;
     		}
 			else

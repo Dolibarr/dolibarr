@@ -706,7 +706,6 @@ class Categorie extends CommonObject
 
 
             // Call trigger
-			$this->linkto=$obj;						// Deprecated. Save object we want to link category to into category instance to provide information to trigger
 			$this->context=array('linkto'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
 			$result=$this->call_trigger('CATEGORY_LINK',$user);
             if ($result < 0) { $error++; }

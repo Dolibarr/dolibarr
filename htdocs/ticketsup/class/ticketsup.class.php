@@ -1038,7 +1038,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_types_tickets)) {
+        if (! empty($this->cache_types_tickets) && count($this->cache_types_tickets)) {
             return 0;
         }
         // Cache deja charge
@@ -1078,7 +1078,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_category_tickets)) {
+        if (! empty($this->cache_category_ticket) && count($this->cache_category_tickets)) {
             return 0;
         }
         // Cache deja charge
@@ -1118,7 +1118,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_severity_tickets)) {
+        if (! empty($this->cache_severity_tickets) && count($this->cache_severity_tickets)) {
             return 0;
         }
         // Cache deja charge
@@ -1339,7 +1339,7 @@ class Ticketsup extends CommonObject
     	$label = '<u>' . $langs->trans("ShowTicket") . '</u>';
     	$label.= '<br>';
     	$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref.'<br>';
-    	$label.= '<b>' . $langs->trans('TrackID') . ':</b> ' . $this->track_id.'<br>';
+    	$label.= '<b>' . $langs->trans('TicketTrackId') . ':</b> ' . $this->track_id.'<br>';
     	$label.= '<b>' . $langs->trans('Subject') . ':</b> ' . $this->subject;
 
     	$url = dol_buildpath('/ticketsup/card.php',1).'?id='.$this->id;

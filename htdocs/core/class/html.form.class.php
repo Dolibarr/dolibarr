@@ -3597,7 +3597,7 @@ class Form
 	 *     @param 	string		$action      	   	Action
 	 *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
 	 *												type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', ...
-	 * 	   @param  	string		$selectedchoice  	"" or "no" or "yes"
+	 * 	   @param  	string		$selectedchoice  	'' or 'no' or 'yes' or '1' or '0'
 	 * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int			$height          	Force height of box
 	 *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
@@ -5421,23 +5421,23 @@ class Form
 	 *	Return a HTML select string, built from an array of key+value.
 	 *  Note: Do not apply langs->trans function on returned content, content may be entity encoded twice.
 	 *
-	 *	@param	string			$htmlname       Name of html select area. Must start with "multi" if this is a multiselect
-	 *	@param	array			$array          Array (key => value)
-	 *	@param	string|string[]	$id             Preselected key or preselected keys for multiselect
-	 *	@param	int|string		$show_empty     0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
-	 *	@param	int				$key_in_label   1 to show key into label with format "[key] value"
-	 *	@param	int				$value_as_key   1 to use value as key
-	 *	@param  string			$moreparam      Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
-	 *	@param  int				$translate		1=Translate and encode value
-	 * 	@param	int				$maxlen			Length maximum for labels
-	 * 	@param	int				$disabled		Html select box is disabled
-	 *  @param	string			$sort			'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
-	 *  @param	string			$morecss		Add more class to css styles
-	 *  @param	int				$addjscombo		    Add js combo
-	 *  @param  string          $moreparamonempty   Add more param on the empty option line. Not used if show_empty not set
-	 *  @param  int             $disablebademail    Check if an email is found into value and if not disable and colorize entry
-	 *  @param  int             $nohtmlescape       No html escaping.
-	 * 	@return	string							    HTML select string.
+	 *	@param	string			$htmlname			Name of html select area. Must start with "multi" if this is a multiselect
+	 *	@param	array			$array				Array (key => value)
+	 *	@param	string|string[]	$id					Preselected key or preselected keys for multiselect
+	 *	@param	int|string		$show_empty			0 no empty value allowed, 1 or string to add an empty value into list (key is -1 and value is '' or '&nbsp;' if 1, key is -1 and value is text if string), <0 to add an empty value with key that is this value.
+	 *	@param	int				$key_in_label		1 to show key into label with format "[key] value"
+	 *	@param	int				$value_as_key		1 to use value as key
+	 *	@param  string			$moreparam			Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
+	 *	@param  int				$translate			1=Translate and encode value
+	 * 	@param	int				$maxlen				Length maximum for labels
+	 * 	@param	int				$disabled			Html select box is disabled
+	 *  @param	string			$sort				'ASC' or 'DESC' = Sort on label, '' or 'NONE' or 'POS' = Do not sort, we keep original order
+	 *  @param	string			$morecss			Add more class to css styles
+	 *  @param	int				$addjscombo			Add js combo
+	 *  @param  string          $moreparamonempty	Add more param on the empty option line. Not used if show_empty not set
+	 *  @param  int             $disablebademail	Check if an email is found into value and if not disable and colorize entry
+	 *  @param  int             $nohtmlescape		No html escaping.
+	 * 	@return	string								HTML select string.
 	 *  @see multiselectarray
 	 */
 	static function selectarray($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $moreparam='', $translate=0, $maxlen=0, $disabled=0, $sort='', $morecss='', $addjscombo=0, $moreparamonempty='',$disablebademail=0, $nohtmlescape=0)
@@ -6444,6 +6444,11 @@ class Form
 		else $morehtmlstatus=$hookmanager->resPrint;
 		if ($morehtmlstatus) $ret.='<div class="statusref">'.$morehtmlstatus.'</div>';
 
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('moreHtmlRef', $parameters, $object); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $morehtmlref.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $morehtmlref=$hookmanager->resPrint;
+
 		// Left part of banner
 		if ($morehtmlleft)
 		{
@@ -6462,7 +6467,7 @@ class Form
 		else if ($object->element == 'member')
 		{
 			$fullname=$object->getFullName($langs);
-			if ($object->morphy == 'mor') {
+			if ($object->morphy == 'mor' && $object->societe) {
 				$ret.= dol_htmlentities($object->societe) . ((! empty($fullname) && $object->societe != $fullname)?' ('.dol_htmlentities($fullname).')':'');
 			} else {
 				$ret.= dol_htmlentities($fullname) . ((! empty($object->societe) && $object->societe != $fullname)?' ('.dol_htmlentities($object->societe).')':'');

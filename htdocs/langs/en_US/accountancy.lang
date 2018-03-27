@@ -242,6 +242,7 @@ AccountingJournalType4=Bank
 AccountingJournalType5=Expenses report
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 
 ## Export
 ExportDraftJournal=Export draft journal

@@ -30,7 +30,6 @@ WelcomeEMail=Begrüssungsemail
 SubscriptionRequired=Abonnement notwendig
 VoteAllowed=Abstimmen erlaubt
 ShowSubscription=Abonnement anzeigen
-SendAnEMailToMember=Informationsemail dem Mitglied senden
 HTPasswordExport=htpassword Datei generieren
 MembersAndSubscriptions=Mitglieder und Abonnemente
 SubscriptionPayment=Zahlung des Mitgliedsbeitrags

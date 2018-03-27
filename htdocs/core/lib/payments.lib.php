@@ -210,7 +210,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 	}
 
 	// For multicompany
-	if (! empty($out)) $out.="&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
+	if (! empty($out) && ! empty($conf->multicompany->enabled)) $out.="&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 
 	return $out;
 }
@@ -227,7 +227,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
  * @param	Object		$object			Object related to payment
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suffix='',$object=null)
+function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $suffix='', $object=null)
 {
     global $conf;
 

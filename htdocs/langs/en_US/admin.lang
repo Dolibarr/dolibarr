@@ -1546,10 +1546,12 @@ FailedToInitializeMenu=Failed to initialize menu
 ##### Tax #####
 TaxSetup=Taxes, social or fiscal taxes and dividends module setup
 OptionVatMode=VAT due 
-OptionVATDefault=Cash basis
+OptionVATDefault=Standard basis
 OptionVATDebitOption=Accrual basis
 OptionVatDefaultDesc=VAT is due:<br>- on delivery for goods (we use invoice date)<br>- on payments for services
 OptionVatDebitOptionDesc=VAT is due:<br>- on delivery for goods (we use invoice date)<br>- on invoice (debit) for services
+OptionPaymentForProductAndServices=Cash basis for products and services
+OptionPaymentForProductAndServicesDesc=VAT is due:<br>- on payment for goods<br>- on payments for services
 SummaryOfVatExigibilityUsedByDefault=Time of VAT exigibility by default according to chosen option: 
 OnDelivery=On delivery
 OnPayment=On payment
@@ -1775,6 +1777,7 @@ MAIN_PDF_MARGIN_TOP=Top margin on PDF
 MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
 SetToYesIfGroupIsComputationOfOtherGroups=Set this to yes if this group is a computation of other groups
 EnterCalculationRuleIfPreviousFieldIsYes=Enter calculcation rule if previous field was set to Yes (For example 'CODEGRP1+CODEGRP2')
+SeveralLangugeVariatFound=Several language variants found
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).

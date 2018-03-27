@@ -531,7 +531,7 @@ class Paiement extends CommonObject
         {
         	if ($accountid <= 0)
         	{
-        		$this->error='Bad value for parameter accountid';
+        		$this->error='Bad value for parameter accountid='.$accountid;
         		dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
         		return -1;
         	}
