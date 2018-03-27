@@ -6444,6 +6444,11 @@ class Form
 		else $morehtmlstatus=$hookmanager->resPrint;
 		if ($morehtmlstatus) $ret.='<div class="statusref">'.$morehtmlstatus.'</div>';
 
+		$parameters = array();
+		$reshook = $hookmanager->executeHooks('moreHtmlRef', $parameters, $object); // Note that $action and $object may have been modified by hook
+		if (empty($reshook)) $morehtmlref.=$hookmanager->resPrint;
+		elseif ($reshook > 0) $morehtmlref=$hookmanager->resPrint;
+
 		// Left part of banner
 		if ($morehtmlleft)
 		{
