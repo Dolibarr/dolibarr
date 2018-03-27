@@ -85,13 +85,14 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
 
-// $date_start and $date_end are defined. We force $start_year and $nbofyear
+// $date_start and $date_end are defined. We force $year_start and $nbofyear
 $tmps=dol_getdate($date_start);
-$start_year = $tmps['year'];
+$year_start = $tmps['year'];
 $tmpe=dol_getdate($date_end);
 $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $start_year) + 1;
-//var_dump($start_year." ".$end_year." ".$nbofyear);
+//var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
+
 
 // Security check
 $socid = GETPOST('socid','int');
