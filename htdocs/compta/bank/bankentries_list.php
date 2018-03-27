@@ -455,7 +455,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ";
-if ($search_bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
+if ($search_bid>0) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_extrafields as ef on (b.rowid = ef.fk_object)";
