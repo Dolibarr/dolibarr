@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
- * Copyright (C) 2016		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2016-2017	Ferran Marcet		<fmarcet@2byte.es>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -938,9 +938,9 @@ class FormFile
 		    if ($object->element == 'project_task') $relativepath='Call_not_supported_._Call_function_using_a_defined_relative_path_.';
 		}
 		// For backward compatiblity, we detect file is stored into an old path
-		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $file['level1name'] == 'photos')
+		if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && $filearray[0]['level1name'] == 'photos')
 		{
-		    $relativepath=preg_replace('/^.*\/produit\//','',$file['path']).'/';
+		    $relativepath=preg_replace('/^.*\/produit\//','',$filearray[0]['path']).'/';
 		}
 		// Defined relative dir to DOL_DATA_ROOT
 		$relativedir = '';
@@ -1018,7 +1018,17 @@ class FormFile
 			// Get list of files stored into database for same relative directory
 			if ($relativedir)
 			{
-                $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+				$filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+
+				if($modulepart == 'produit' && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && ! empty($object->id)) {
+					if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+					else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+
+					$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dirold);
+					$relativedirold = preg_replace('/^[\\/]/','',$relativedirold);
+
+					$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
+				}
 
                 //var_dump($filearray);
                 //var_dump($filearrayindatabase);

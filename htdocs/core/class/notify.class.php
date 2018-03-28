@@ -58,7 +58,7 @@ class Notify
         'SHIPPING_VALIDATE'
     );
 
-    
+
     /**
 	 *	Constructor
 	 *
@@ -85,14 +85,14 @@ class Notify
 		$langs->load("mails");
 
 		$listofnotiftodo=$this->getNotificationsArray($action,$socid,$object,0);
-		
+
 		$nb=-1;
 		if (is_array($listofnotiftodo)) $nb=count($listofnotiftodo);
 		if ($nb < 0)  $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ErrorFailedToGetListOfNotificationsToSend");
 		if ($nb == 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
    		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
    		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
-		
+
    		if (is_array($listofnotiftodo))
    		{
     		$i=0;
@@ -106,7 +106,7 @@ class Notify
     		}
     		if ($i) $texte.=')';
    		}
-   		
+
 		return $texte;
 	}
 
@@ -149,9 +149,9 @@ class Notify
     	        }
     	        $sql.= " AND s.entity IN (".getEntity('societe').")";
     	        if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
-    
+
     			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
-    
+
     	        $resql = $this->db->query($sql);
     	        if ($resql)
     	        {
@@ -176,7 +176,7 @@ class Notify
     			}
             }
         }
-        
+
         if (! $error)
         {
             if ($userid >= 0 && in_array('user', $scope))
@@ -194,9 +194,9 @@ class Notify
     			}
     			$sql.= " AND c.entity IN (".getEntity('user').")";
     			if ($userid > 0) $sql.= " AND c.rowid = ".$userid;
-    			
+
     			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
-    			
+
     			$resql = $this->db->query($sql);
     			if ($resql)
     			{
@@ -237,10 +237,10 @@ class Notify
     		    	{
     		    		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_.*_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
     		    	}
-    
+
         			$threshold = (float) $reg[1];
         			if ($valueforthreshold < $threshold) continue;
-    
+
     		    	$tmpemail=explode(',',$val);
     		    	foreach($tmpemail as $key2 => $val2)
     		    	{
@@ -295,7 +295,7 @@ class Notify
 	        $hookmanager=new HookManager($this->db);
 	    }
 	    $hookmanager->initHooks(array('notification'));
-	    
+
 	    dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
     	$langs->load("other");
@@ -342,7 +342,7 @@ class Notify
         $sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
         if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
         else $sql.= " AND a.code = '".$notifcode."'";	// New usage
-        
+
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -369,7 +369,7 @@ class Notify
 	                	}
 
 	                	$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
-	                	
+
 	                    switch ($notifcode) {
 							case 'BILL_VALIDATE':
 								$link='/compta/facture/card.php?facid='.$object->id;
@@ -397,13 +397,13 @@ class Notify
 								break;
 							case 'FICHINTER_ADD_CONTACT':
 								$link='/fichinter/card.php?id='.$object->id;
-								$dir_output = $conf->facture->dir_output;
+								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact",$object->ref);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link='/fichinter/card.php?id='.$object->id;
-								$dir_output = $conf->facture->dir_output;
+								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
 								break;
@@ -462,7 +462,7 @@ class Notify
 	                        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
 	                        if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
 	                    }
-	                     
+
 	                    $mailfile = new CMailFile(
 	                        $subject,
 	                        $sendto,
@@ -478,16 +478,16 @@ class Notify
 	                    );
 
 	                    if ($mailfile->sendfile())
-	                    {   
+	                    {
 	                        if ($obj->type_target == 'touserid') {
      	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
     	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-                           
+
                             }
                             else {
     	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
     	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-                                
+
                             }
 	                        if (! $this->db->query($sql))
 	                        {
@@ -651,8 +651,9 @@ class Notify
 		        	}
 		        	dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
 		        	$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
-		        	$sendto = preg_replace('/^[\s,]+/','',$sendto);	// Clean start of string
-		        	$sendto = preg_replace('/[\s,]+$/','',$sendto);	// Clean end of string
+		        	$sendto = preg_replace('/,\s*,/', ',', $sendto);	// in some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
+		        	$sendto = preg_replace('/^[\s,]+/', '', $sendto);	// Clean start of string
+		        	$sendto = preg_replace('/[\s,]+$/', '', $sendto);	// Clean end of string
 		        }
 
 		        if ($sendto)
@@ -664,7 +665,7 @@ class Notify
 		    	        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
 		        	    if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
 			        }
-		        
+
 		            $mailfile = new CMailFile(
 		        		$subject,
 		        		$sendto,

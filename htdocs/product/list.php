@@ -66,7 +66,7 @@ $search_tobatch = GETPOST("search_tobatch",'int');
 $search_accountancy_code_sell = GETPOST("search_accountancy_code_sell",'alpha');
 $search_accountancy_code_buy = GETPOST("search_accountancy_code_buy",'alpha');
 $optioncss = GETPOST('optioncss','alpha');
-$type=(int) GETPOST("type","int");
+$type=GETPOST("type","int");
 
 //Show/hide child products. Hidden by default
 if (!$_POST) {
@@ -251,7 +251,7 @@ else
 
 	if ($search_type != '' && $search_type != '-1')
 	{
-		if ($search_type==1)
+		if ($search_type == 1)
 		{
 			$texte = $langs->trans("Services");
 		}
@@ -821,7 +821,7 @@ else
     							if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
     							{
     								$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-    								print $form->textwithpicto(price($product_fourn->fourn_unitprice).' '.$langs->trans("HT"),$htmltext);
+    								print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise).' '.$langs->trans("HT"),$htmltext);
     							}
     							else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
     						}

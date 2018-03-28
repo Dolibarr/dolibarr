@@ -1329,6 +1329,8 @@ if ($id > 0)
 		print '</div>';
 		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
 		{
+			//var_dump($object->userassigned);
+			//var_dump($listofuserid);
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 			print '</div>';

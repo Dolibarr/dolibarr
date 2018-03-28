@@ -413,6 +413,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						$object->trackid        = $trackid;
 						$object->fk_element		= $object->id;
 						$object->elementtype	= $object->element;
+						$object->attachedfiles	= $attachedfiles;
 
 						// Call of triggers
 						if (! empty($trigger_name))

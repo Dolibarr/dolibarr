@@ -20,9 +20,9 @@
  */
 
 /**
- *		\file       htdocs/core/modules/import/import_csv.modules.php
+ *		\file       htdocs/core/modules/import/import_xlsx.modules.php
  *		\ingroup    import
- *		\brief      File to load import files with CSV format
+ *		\brief      File to load import files with Excel format
  */
 
 require_once DOL_DOCUMENT_ROOT .'/core/modules/import/modules_import.php';
@@ -54,10 +54,10 @@ class ImportXlsx extends ModeleImports
 
 	var $cacheconvert=array();      // Array to cache list of value found after a convertion
 	var $cachefieldtable=array();   // Array to cache list of value found into fields@tables
-  
+
 	var $workbook; // temporary import file
 	var $record; // current record
-	var $headers; 
+	var $headers;
 
 
 	/**
@@ -95,7 +95,7 @@ class ImportXlsx extends ModeleImports
 		if (preg_match('/^societe_/',$datatoimport)) $this->thirpartyobject=new Societe($this->db);
 	}
 
-	
+
 	/**
 	 * 	Output header of an example file for this format
 	 *
@@ -144,7 +144,7 @@ class ImportXlsx extends ModeleImports
     foreach($headerlinefields as $field) {
       $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, 1, $outputlangs->transnoentities($field));
       // set autowidth
-      //$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($col + 1))->setAutoSize(true); 
+      //$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($col + 1))->setAutoSize(true);
       $col++;
     }
 		return ''; // final output will be generated in footer
@@ -211,10 +211,10 @@ class ImportXlsx extends ModeleImports
 		return $ret;
 	}
 
-	
+
 	/**
 	 * 	Return nb of records. File must be closed.
-	 * 
+	 *
 	 *	@param	string	$file		Path of filename
 	 * 	@return		int		<0 if KO, >=0 if OK
 	 */
@@ -222,15 +222,15 @@ class ImportXlsx extends ModeleImports
 	{
 		$reader = new PHPExcel_Reader_Excel2007();
 		$this->workbook = $reader->load($file);
-	    
+
 	    $rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
-	    
+
 	    $this->workbook->disconnectWorksheets();
 	    unset($this->workbook);
-	    
+
 		return $rowcount;
     }
-    
+
 
 	/**
 	 * 	Input header line from file
@@ -399,7 +399,7 @@ class ImportXlsx extends ModeleImports
                                     if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i',$newval)) $isidorref='ref';
                                     $newval=preg_replace('/^(id|ref):/i','',$newval);    // Remove id: or ref: that was used to force if field is id or ref
                                     //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
-                                    
+
                                     if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
                                     {
                                         $file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
@@ -502,9 +502,9 @@ class ImportXlsx extends ModeleImports
                                     }
                                     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
                                     $newval=$defaultref;
-                                }                                
-                                
-                                
+                                }
+
+
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='numeric')
                                 {
                                     $newval = price2num($newval);
@@ -616,7 +616,7 @@ class ImportXlsx extends ModeleImports
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 							if (empty($lastinsertid)) {
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
-								
+
 								$data = array_combine($listfields, $listvalues);
 								$where = array();
 								$filters = array();
@@ -627,7 +627,7 @@ class ImportXlsx extends ModeleImports
 									$filters[] = $col.' = '.$data[$key];
 								}
 								$sqlSelect.= ' WHERE '.implode(' AND ', $where);
-								
+
 								$resql=$this->db->query($sqlSelect);
 								if($resql) {
 									$res = $this->db->fetch_object($resql);
@@ -650,23 +650,23 @@ class ImportXlsx extends ModeleImports
 									$error++;
 								}
 							}
-							
+
 							if (!empty($lastinsertid)) {
 								// Build SQL UPDATE request
 								$sqlstart = 'UPDATE '.$tablename;
-								
+
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
 									$set[] = $key.' = '.$val;
 								}
 								$sqlstart.= ' SET '.implode(', ', $set);
-								
+
 								if(empty($keyfield)) $keyfield = 'rowid';
 								$sqlend = ' WHERE '.$keyfield.' = '.$lastinsertid;
-								
+
 								$sql = $sqlstart.$sqlend;
-								
+
 								// Run update request
 								$resql=$this->db->query($sql);
 								if($resql) {
@@ -691,14 +691,14 @@ class ImportXlsx extends ModeleImports
 							if (! empty($tablewithentity_cache[$tablename])) {
 								$sqlstart.= ', entity';
 								$sqlend.= ', '.$conf->entity;
-							} 
+							}
 							if (! empty($objimport->array_import_tables_creator[0][$alias])) {
 								$sqlstart.= ', '.$objimport->array_import_tables_creator[0][$alias];
 								$sqlend.=', '.$user->id;
 							}
 							$sql = $sqlstart.$sqlend.')';
 							dol_syslog("import_xlsx.modules", LOG_DEBUG);
-							
+
 							// Run insert request
 							if ($sql)
 							{

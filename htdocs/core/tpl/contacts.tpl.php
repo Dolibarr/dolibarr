@@ -21,6 +21,14 @@
  * $withproject (if we are on task contact)
  */
 
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
@@ -193,18 +201,12 @@ if ($permission) {
 
 			if ($tab[$i]['source']=='internal')
 			{
-				$userstatic->id=$tab[$i]['id'];
-				$userstatic->lastname=$tab[$i]['lastname'];
-				$userstatic->firstname=$tab[$i]['firstname'];
-				$userstatic->photo=$tab[$i]['photo'];
-				$userstatic->login=$tab[$i]['login'];
+				$userstatic->fetch($tab[$i]['id']);
 				echo $userstatic->getNomUrl(-1);
 			}
 			if ($tab[$i]['source']=='external')
 			{
-				$contactstatic->id=$tab[$i]['id'];
-				$contactstatic->lastname=$tab[$i]['lastname'];
-				$contactstatic->firstname=$tab[$i]['firstname'];
+				$contactstatic->fetch($tab[$i]['id']);
 				echo $contactstatic->getNomUrl(1);
 			}
 			?>
@@ -215,16 +217,10 @@ if ($permission) {
 			<?php
 			if ($tab[$i]['source']=='internal')
 			{
-				$userstatic->id=$tab[$i]['id'];
-				$userstatic->lastname=$tab[$i]['lastname'];
-				$userstatic->firstname=$tab[$i]['firstname'];
 				echo $userstatic->LibStatut($tab[$i]['statuscontact'],3);
 			}
 			if ($tab[$i]['source']=='external')
 			{
-				$contactstatic->id=$tab[$i]['id'];
-				$contactstatic->lastname=$tab[$i]['lastname'];
-				$contactstatic->firstname=$tab[$i]['firstname'];
 				echo $contactstatic->LibStatut($tab[$i]['statuscontact'],3);
 			}
 			?>

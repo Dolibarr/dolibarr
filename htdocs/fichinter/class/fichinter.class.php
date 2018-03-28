@@ -140,7 +140,7 @@ class Fichinter extends CommonObject
 	 */
 	function create($user, $notrigger=0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
 
@@ -1169,6 +1169,8 @@ class Fichinter extends CommonObject
 	 */
 	function fetch_lines()
 	{
+		$this->lines = array();
+
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC, date ASC' ;

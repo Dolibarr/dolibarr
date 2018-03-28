@@ -367,6 +367,14 @@ if ($mode == 'searchkey')
         	foreach($filearray as $file)
         	{
         		$tmpfile=preg_replace('/.lang/i', '', basename($file['name']));
+        		//Detect if trans coming from extranl module
+        		foreach ($conf->file->dol_document_root as $keyconf=>$dirconfalt) {
+        			if (($keyconf!='main') && (preg_match('$'.preg_quote($dirconfalt).'$i', $file['fullname']))) {
+        				//In this case load modulename@nmodulename
+        				$tmpfile=$tmpfile.'@'.$tmpfile;
+        				break;
+        			}
+        		}
         		$newlang->load($tmpfile, 0, 0, '', 0);                              // Load translation files + database overwrite
         		$newlangfileonly->load($tmpfile, 0, 0, '', 1);                      // Load translation files only
         		//print 'After loading lang '.$tmpfile.', newlang has '.count($newlang->tab_translate).' records<br>'."\n";

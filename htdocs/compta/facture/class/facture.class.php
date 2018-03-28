@@ -244,7 +244,7 @@ class Facture extends CommonInvoice
 		$this->brouillon = 1;
         if (empty($this->entity)) $this->entity = $conf->entity;
 
-		// Multicurrency (test on $this->multicurrency_tx because we sould take the default rate only if not using origin rate)
+		// Multicurrency (test on $this->multicurrency_tx because we should take the default rate only if not using origin rate)
 		if (!empty($this->multicurrency_code) && empty($this->multicurrency_tx)) list($this->fk_multicurrency,$this->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($this->db, $this->multicurrency_code);
 		else $this->fk_multicurrency = MultiCurrency::getIdFromCode($this->db, $this->multicurrency_code);
 		if (empty($this->fk_multicurrency))
@@ -539,6 +539,15 @@ class Facture extends CommonInvoice
 						}
 
 						$newinvoiceline->fk_parent_line=$fk_parent_line;
+
+						if($this->type === Facture::TYPE_REPLACEMENT && $newinvoiceline->fk_remise_except){
+                            $discount = new DiscountAbsolute($this->db);
+                            $discount->fetch($newinvoiceline->fk_remise_except);
+
+						    $discountId = $soc->set_remise_except($discount->amount_ht, $user, $discount->description, $discount->tva_tx);
+						    $newinvoiceline->fk_remise_except = $discountId;
+                        }
+
 						$result=$newinvoiceline->insert();
 
 						// Defined the new fk_parent_line
@@ -575,11 +584,15 @@ class Facture extends CommonInvoice
 							$fk_parent_line = 0;
 						}
 
+						// Complete vat rate with code
+						$vatrate = $line->tva_tx;
+						if ($line->vat_src_code && ! preg_match('/\(.*\)/', $vatrate)) $vatrate.=' ('.$line->vat_src_code.')';
+
 						$result = $this->addline(
 							$line->desc,
 							$line->subprice,
 							$line->qty,
-							$line->tva_tx,
+							$vatrate,
 							$line->localtax1_tx,
 							$line->localtax2_tx,
 							$line->fk_product,
@@ -935,7 +948,8 @@ class Facture extends CommonInvoice
 		{
 			$this->db->commit();
 			return $this->id;
-		}
+
+		   }
 		else
 		{
 			$this->db->rollback();
@@ -985,6 +999,8 @@ class Facture extends CommonInvoice
 			$line->special_code		= $object->lines[$i]->special_code;
 			$line->fk_parent_line	= $object->lines[$i]->fk_parent_line;
 			$line->fk_unit			= $object->lines[$i]->fk_unit;
+			$line->date_start 	= $object->lines[$i]->date_start;
+			$line->date_end 	= $object->lines[$i]->date_end;
 
 			$line->fk_fournprice	= $object->lines[$i]->fk_fournprice;
 			$marginInfos			= getMarginInfos($object->lines[$i]->subprice, $object->lines[$i]->remise_percent, $object->lines[$i]->tva_tx, $object->lines[$i]->localtax1_tx, $object->lines[$i]->localtax2_tx, $object->lines[$i]->fk_fournprice, $object->lines[$i]->pa_ht);
@@ -2190,6 +2206,7 @@ class Facture extends CommonInvoice
 							else $result=$mouvP->livraison($user, $this->lines[$i]->fk_product, $idwarehouse, $this->lines[$i]->qty, $this->lines[$i]->subprice, $langs->trans("InvoiceValidatedInDolibarr",$num));
 							if ($result < 0) {
 								$error++;
+								$this->error = $mouvP->error;
 							}
 						}
 					}
@@ -2266,9 +2283,12 @@ class Facture extends CommonInvoice
     					$final = ($this->lines[$i]->situation_percent == 100);
     					$i++;
     				}
-    				if ($final) {
-    					$this->setFinal($user);
-    				}
+
+    				if (empty($final)) $this->situation_final = 0;
+    				else $this->situation_final = 1;
+
+				$this->setFinal($user);
+
                 }
 			}
 		}
@@ -2427,8 +2447,8 @@ class Facture extends CommonInvoice
 	 * 		@param    	double		$pu_ht              Unit price without tax (> 0 even for credit note)
 	 * 		@param    	double		$qty             	Quantity
 	 * 		@param    	double		$txtva           	Force Vat rate, -1 for auto (Can contain the vat_src_code too with syntax '9.9 (CODE)')
-	 * 		@param		double		$txlocaltax1		Local tax 1 rate (deprecated)
-	 *  	@param		double		$txlocaltax2		Local tax 2 rate (deprecated)
+	 * 		@param		double		$txlocaltax1		Local tax 1 rate (deprecated, use instead txtva with code inside)
+	 *  	@param		double		$txlocaltax2		Local tax 2 rate (deprecated, use instead txtva with code inside)
 	 *		@param    	int			$fk_product      	Id of predefined product/service
 	 * 		@param    	double		$remise_percent  	Percent of discount on line
 	 * 		@param    	int	$date_start      	Date start of service
@@ -2911,6 +2931,9 @@ class Facture extends CommonInvoice
 		$line->total_ttc = $tabprice[2];
 		$line->total_localtax1 = $tabprice[9];
 		$line->total_localtax2 = $tabprice[10];
+		$line->multicurrency_total_ht  = $tabprice[16];
+		$line->multicurrency_total_tva = $tabprice[17];
+		$line->multicurrency_total_ttc = $tabprice[18];
 		$line->update($user);
 		$this->update_price(1);
 		$this->db->commit();
@@ -4086,7 +4109,6 @@ class Facture extends CommonInvoice
 
 		$this->db->begin();
 
-		$this->situation_final = 1;
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'facture SET situation_final = ' . $this->situation_final . ' where rowid = ' . $this->id;
 
 		dol_syslog(__METHOD__, LOG_DEBUG);

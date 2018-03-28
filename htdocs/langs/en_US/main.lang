@@ -366,6 +366,7 @@ TotalLT1IN=Total CGST
 TotalLT2IN=Total SGST
 HT=Net of tax
 TTC=Inc. tax
+INCVATONLY=Inc. VAT
 INCT=Inc. all taxes
 VAT=Sales tax
 VATIN=IGST

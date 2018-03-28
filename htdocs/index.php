@@ -367,7 +367,7 @@ $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 $dashboardlines=array();
 
 // Do not include sections without management permission
-require DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
 // Number of actions to do (late)
 if (! empty($conf->agenda->enabled) && $user->rights->agenda->myactions->read)
@@ -499,6 +499,14 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
+$object=new stdClass();
+$parameters=array();
+$action='';
+$reshook=$hookmanager->executeHooks('addOpenElementsDashboardLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook == 0) {
+	$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
+}
+
 // Calculate total nb of late
 $totallate=0;
 $var=true;
@@ -548,7 +556,7 @@ if (! empty($valid_dashboardlines))
 	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
     foreach($valid_dashboardlines as $board)
     {
-        if (empty($boad->nbtodo)) $nbworkboardempty++;
+        if (empty($board->nbtodo)) $nbworkboardempty++;
 
         $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
         $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';

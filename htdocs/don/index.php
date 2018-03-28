@@ -54,7 +54,7 @@ $nb=array();
 $somme=array();
 
 $sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut";
-$sql.= " FROM ".MAIN_DB_PREFIX."don as d";
+$sql.= " FROM ".MAIN_DB_PREFIX."don as d WHERE d.entity IN (".getEntity('donation').")";
 $sql.= " GROUP BY d.fk_statut";
 $sql.= " ORDER BY d.fk_statut";
 

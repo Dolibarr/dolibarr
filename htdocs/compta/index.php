@@ -63,6 +63,7 @@ if ($user->societe_id > 0)
 
 $max=3;
 
+$hookmanager->initHooks(array('invoiceindex'));
 
 /*
  * Actions
@@ -152,7 +153,11 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		$sql .= " AND f.fk_soc = $socid";
 	}
-
+	// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerDraft',$parameters);    
+	$sql.=$hookmanager->resPrint;
+	
 	$resql = $db->query($sql);
 
 	if ( $resql )
@@ -228,9 +233,12 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND f.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)	$sql.= " AND f.fk_soc = ".$socid;
-
+		// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhereSupplierDraft',$parameters);    
+	$sql.=$hookmanager->resPrint;
 	$resql = $db->query($sql);
-
+	
 	if ( $resql )
 	{
 		$num = $db->num_rows($resql);
@@ -310,6 +318,11 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql.= " AND f.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+		// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerLastModified',$parameters);    
+	$sql.=$hookmanager->resPrint;
+	
 	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement, s.nom, s.rowid, s.code_client";
 	$sql.= " ORDER BY f.tms DESC ";
 	$sql.= $db->plimit($max, 0);
@@ -419,6 +432,11 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
+		// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhereSupplierLastModified',$parameters);    
+	$sql.=$hookmanager->resPrint;
+	
 	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.tms, ff.paye, s.nom, s.rowid, s.code_fournisseur";
 	$sql.= " ORDER BY ff.tms DESC ";
 	$sql.= $db->plimit($max, 0);
@@ -498,6 +516,11 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 	$sql = "SELECT d.rowid, d.lastname, d.firstname, d.societe, d.datedon as date, d.tms as dm, d.amount, d.fk_statut";
 	$sql.= " FROM ".MAIN_DB_PREFIX."don as d";
 	$sql.= " WHERE d.entity = ".$conf->entity;
+		// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhereLastDonations',$parameters);    
+	$sql.=$hookmanager->resPrint;
+	
 	$sql.= $db->order("d.tms","DESC");
 	$sql.= $db->plimit($max, 0);
 
@@ -569,6 +592,11 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$sql.= " WHERE c.fk_type = cc.id";
 		$sql.= " AND c.entity = ".$conf->entity;
 		$sql.= " AND c.paye = 0";
+			// Add where from hooks
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('printFieldListWhereSocialContributions',$parameters);    
+		$sql.=$hookmanager->resPrint;
+	
 		$sql.= " GROUP BY c.rowid, c.amount, c.date_ech, c.paye, cc.libelle";
 
 		$resql = $db->query($sql);
@@ -652,6 +680,11 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 	if ($socid)	$sql.= " AND c.fk_soc = ".$socid;
 	$sql.= " AND c.fk_statut = 3";
 	$sql.= " AND c.facture = 0";
+		// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerOrderToBill',$parameters);    
+	$sql.=$hookmanager->resPrint;
+	
 	$sql.= " GROUP BY s.nom, s.rowid, s.code_client, c.rowid, c.ref, c.facture, c.fk_statut, c.tva, c.total_ht, c.total_ttc";
 
 	$resql = $db->query($sql);
@@ -756,6 +789,11 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql.= " AND f.entity = ".$conf->entity;
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND f.fk_soc = ".$socid;
+		// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerUnpaid',$parameters);    
+	$sql.=$hookmanager->resPrint;
+	
 	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement, s.nom, s.rowid, s.code_client";
 	$sql.= " ORDER BY f.datef ASC, f.facnumber ASC";
 
@@ -879,6 +917,11 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$sql.= " AND ff.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = ".$user->id;
 	if ($socid) $sql.= " AND ff.fk_soc = ".$socid;
+		// Add where from hooks
+	$parameters=array();
+	$reshook=$hookmanager->executeHooks('printFieldListWhereSupplierUnpaid',$parameters);    
+	$sql.=$hookmanager->resPrint;
+	
 	$sql.= " GROUP BY ff.rowid, ff.ref, ff.fk_statut, ff.libelle, ff.total_ht, ff.tva, ff.total_tva, ff.total_ttc, ff.paye,";
 	$sql.= " s.nom, s.rowid, s.code_client, s.code_fournisseur, ff.date_lim_reglement";
 	$sql.= " ORDER BY ff.date_lim_reglement ASC";
@@ -987,3 +1030,4 @@ print '</div></div></div>';
 llxFooter();
 
 $db->close();
+

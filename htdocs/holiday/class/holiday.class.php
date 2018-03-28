@@ -989,7 +989,7 @@ class Holiday extends CommonObject
 		                while ($i < $nbUser)
 		                {
 		                    $now_holiday = $this->getCPforUser($users[$i]['rowid'], $val['rowid']);
-		                    $new_solde = $now_holiday + $this->getConfCP('nbHolidayEveryMonth');
+		                    $new_solde = $now_holiday + $nb_holiday;
 
 		                    // We add a log for each user
 		                    $this->addLogCP($user->id, $users[$i]['rowid'], $langs->trans('HolidaysMonthlyUpdate'), $new_solde, $val['rowid']);
@@ -1309,15 +1309,15 @@ class Holiday extends CommonObject
             // List for Dolibarr users
             if ($type)
             {
-                $sql = "SELECT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut";
+                $sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.gender, u.photo, u.employee, u.statut";
                 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 
                 if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
                 {
                 	$sql.= ", ".MAIN_DB_PREFIX."usergroup_user as ug";
-                	$sql.= " WHERE (ug.fk_user = u.rowid";
+                	$sql.= " WHERE ((ug.fk_user = u.rowid";
                 	$sql.= " AND ug.entity = ".$conf->entity.")";
-                	$sql.= " OR u.admin = 1";
+                	$sql.= " OR u.admin = 1)";
                 }
                 else
                 	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";

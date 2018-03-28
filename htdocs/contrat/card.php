@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
- * Copyright (C) 2010-2015	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Ferran Marcet		  	<fmarcet@2byte.es>
@@ -509,6 +509,9 @@ if (empty($reshook))
 							$pu_ttc = price($prodcustprice->lines [0]->price_ttc);
 							$price_base_type = $prodcustprice->lines [0]->price_base_type;
 							$tva_tx = $prodcustprice->lines [0]->tva_tx;
+							if ($prodcustprice->lines[0]->default_vat_code && ! preg_match('/\(.*\)/', $tva_tx)) $tva_tx.= ' ('.$prodcustprice->lines[0]->default_vat_code.')';
+							$tva_npr = $prodcustprice->lines[0]->recuperableonly;
+							if (empty($tva_tx)) $tva_npr=0;
 						}
 					}
 				}
@@ -750,6 +753,30 @@ if (empty($reshook))
 	else if ($action == 'confirm_valid' && $confirm == 'yes' && $user->rights->contrat->creer)
 	{
 	    $result = $object->validate($user);
+
+		if ($result > 0)
+		{
+			// Define output language
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+			{
+				$outputlangs = $langs;
+				$newlang = '';
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
+				}
+				$model=$object->modelpdf;
+				$ret = $object->fetch($id); // Reload to get new records
+
+				$object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			}
+		}
+		else
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
 	}
 
 	else if ($action == 'reopen' && $user->rights->contrat->creer)
@@ -1837,7 +1864,7 @@ else
                         {
                             $tmpaction='unactivateline';
                             $tmpactionpicto='playstop';
-                            $tmpactiontext=$langs->trans("Unactivate");
+                            $tmpactiontext=$langs->trans("Disable");
                         }
 						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver))
 						{
@@ -1979,7 +2006,7 @@ else
                 print '<tr '.$bc[false].'>';
                 print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
                 print '<td class="nohover right">';
-                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Unactivate").'"> &nbsp; ';
+                print '<input type="submit" class="button" name="close" value="'.$langs->trans("Disable").'"> &nbsp; ';
                 print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                 print '</td>';
                 print '</tr>';

@@ -322,7 +322,11 @@ class Contrat extends CommonObject
 		$result=$this->thirdparty->set_as_client();
 
 		// Define new ref
-		if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
+		if ($force_number)
+		{
+			$num = $force_number;
+		}
+		else if (! $error && (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref))) // empty should not happened, but when it occurs, the test save life
 		{
 			$num = $this->getNextNumRef($this->thirdparty);
 		}
@@ -2983,7 +2987,16 @@ class ContratLigne extends CommonObjectLine
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'contratdet');
 
-			// FIXME Missing insert of extrafields
+			// Insert of extrafields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+			{
+				$result = $this->insertExtraFields();
+				if ($result < 0)
+				{
+					$this->db->rollback();
+					return -1;
+				}
+			}
 
 			if (!$notrigger)
 			{
