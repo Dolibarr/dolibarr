@@ -1071,7 +1071,7 @@ elseif ($object->id > 0)
 																							  // modified by hook
 	if (empty($reshook))
 	{
-		if ($action != "edit" )
+		if ($action != "edit" && $action != 'presend' )
 		{
 
 			// Create event
@@ -1224,6 +1224,10 @@ elseif ($object->id > 0)
 	}
 
 	print "</div>";
+
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
 
 	if ($action != 'presend')
 	{
