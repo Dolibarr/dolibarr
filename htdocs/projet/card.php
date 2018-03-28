@@ -1083,7 +1083,10 @@ elseif ($object->id > 0)
 			}*/
 
 			// Send
-			print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail').'</a></div>';
+			if ($object->statut != 2)
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail').'</a></div>';
+			}
 
 		// Modify
 			if ($object->statut != 2 && $user->rights->projet->creer)
