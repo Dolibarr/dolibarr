@@ -292,6 +292,7 @@ if (empty($reshook))
             $object->country_id              = GETPOST('country_id');
             $object->duration_value     	 = $duration_value;
             $object->duration_unit      	 = $duration_unit;
+            $object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
             $object->seuil_stock_alerte 	 = GETPOST('seuil_stock_alerte')?GETPOST('seuil_stock_alerte'):0;
             $object->desiredstock            = GETPOST('desiredstock')?GETPOST('desiredstock'):0;
             $object->canvas             	 = GETPOST('canvas');
@@ -390,6 +391,7 @@ if (empty($reshook))
                 $object->status_buy             = GETPOST('statut_buy');
                 $object->status_batch	        = GETPOST('status_batch');
                 // removed from update view so GETPOST always empty
+                $object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
                 /*
                 $object->seuil_stock_alerte     = GETPOST('seuil_stock_alerte');
                 $object->desiredstock           = GETPOST('desiredstock');
@@ -995,9 +997,14 @@ else
 		print '<input type="text" name="url" class="quatrevingtpercent" value="'.GETPOST('url').'">';
         print '</td></tr>';
 
-        // Stock min level
         if ($type != 1 && ! empty($conf->stock->enabled))
         {
+            // Default warehouse
+            print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+            print $formproduct->selectWarehouses(GETPOST('fk_default_warehouse'), 'fk_default_warehouse', 'warehouseopen', 1);
+            print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id.'&action=edit').'">'.$langs->trans("AddWarehouse").'</a>';
+            print '</td>';
+            // Stock min level
             print '<tr><td>'.$form->textwithpicto($langs->trans("StockLimit"), $langs->trans("StockLimitDesc"), 1).'</td><td>';
             print '<input name="seuil_stock_alerte" class="maxwidth50" value="'.GETPOST('seuil_stock_alerte').'">';
             print '</td>';
@@ -1351,9 +1358,14 @@ else
             print '</td></tr>';
 
             // Stock
-            /*
             if ($object->isProduct() && ! empty($conf->stock->enabled))
             {
+                // Default warehouse
+                print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+                print $formproduct->selectWarehouses($object->fk_default_warehouse, 'fk_default_warehouse', 'warehouseopen', 1);
+                print ' <a href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create&amp;backtopage='.urlencode($_SERVER['PHP_SELF'].'?action=create&type='.GETPOST('type', 'int')).'">'.$langs->trans("AddWarehouse").'</a>';
+                print '</td>';
+                /*
                 print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td>';
                 print '<input name="seuil_stock_alerte" size="4" value="'.$object->seuil_stock_alerte.'">';
                 print '</td>';
@@ -1361,7 +1373,9 @@ else
                 print '<td>'.$langs->trans("DesiredStock").'</td><td>';
                 print '<input name="desiredstock" size="4" value="'.$object->desiredstock.'">';
                 print '</td></tr>';
+                */
             }
+            /*
             else
             {
                 print '<input name="seuil_stock_alerte" type="hidden" value="'.$object->seuil_stock_alerte.'">';
@@ -1756,6 +1770,17 @@ else
             print '<tr><td>'.$langs->trans("PublicUrl").'</td><td colspan="2">';
 			print dol_print_url($object->url);
             print '</td></tr>';
+
+            // Default warehouse
+            if ($object->isProduct() && ! empty($conf->stock->enabled))
+            {
+                $warehouse = new Entrepot($db);
+                $warehouse->fetch($object->fk_default_warehouse);
+
+                print '<tr><td>'.$langs->trans("DefaultWarehouse").'</td><td>';
+                print (! empty($warehouse->id) ? $warehouse->getNomUrl(1) : '');
+                print '</td>';
+            }
 
             //Parent product.
             if (!empty($conf->variants->enabled) && $object->isProduct()) {

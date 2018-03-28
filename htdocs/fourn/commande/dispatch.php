@@ -484,7 +484,7 @@ if ($id > 0 || ! empty($ref)) {
 		}
 
 		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, SUM(l.qty) as qty,";
-		$sql .= " p.ref, p.label, p.tobatch";
+		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON l.fk_product=p.rowid";
 		$sql .= " WHERE l.fk_commande = " . $object->id;
@@ -676,9 +676,9 @@ if ($id > 0 || ! empty($ref)) {
 						// Warehouse
 						print '<td align="right">';
 						if (count($listwarehouses) > 1) {
-							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix), "entrepot" . $suffix, '', 1, 0, $objp->fk_product, '', 1);
+							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 1, 0, $objp->fk_product, '', 1);
 						} elseif (count($listwarehouses) == 1) {
-							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix), "entrepot" . $suffix, '', 0, 0, $objp->fk_product, '', 1);
+							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 0, 0, $objp->fk_product, '', 1);
 						} else {
 							$langs->load("errors");
 							print $langs->trans("ErrorNoWarehouseDefined");
