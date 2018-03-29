@@ -2307,11 +2307,13 @@ abstract class CommonObject
 
 		if (! $this->table_element)
 		{
+			$this->error='update_note was called on objet with property table_element not defined';
 			dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 		if (! in_array($suffix,array('','_public','_private')))
 		{
+			$this->error='update_note Parameter suffix must be empty, \'_private\' or \'_public\'';
 			dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
@@ -4787,6 +4789,7 @@ abstract class CommonObject
 			if (! $resql)
 			{
 				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this) . "::".__METHOD__ . $this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
