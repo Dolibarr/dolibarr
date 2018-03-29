@@ -38,23 +38,78 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_aurore extends ModelePDFSupplierProposal
 {
-	var $db;
-	var $name;
-	var $description;
-	var $type;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+	
+	/**
+     * @var string model name
+     */
+    public $name;
+	
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+	
+	/**
+     * @var string document type
+     */
+    public $type;
 
-	var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-	var $version = 'dolibarr';
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+     */
+	public $phpmin = array(5, 2); 
+	
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
 
-	var $page_largeur;
-	var $page_hauteur;
-	var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+	
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+	
+	/**
+     * @var array format
+     */
+    public $format;
+	
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+	
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+	
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+	
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
 
-	var $emetteur;	// Objet societe qui emet
+	/**
+	* Issuer
+	* @var Societe
+	*/
+	public $emetteur;
 
 
 	/**
@@ -62,9 +117,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	 */
-	function __construct($db)
+	public function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
+		global $conf, $langs, $mysoc;
 		
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
@@ -146,13 +201,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("supplier_proposal");
-		$outputlangs->load("products");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "supplier_proposal"));
 
 		$nblignes = count($object->lines);
 
@@ -1188,11 +1239,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
-
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("supplier_proposal");
-		$outputlangs->load("companies");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "bills", "supplier_proposal", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
