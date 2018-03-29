@@ -48,9 +48,6 @@ $subscriptionstatic=new Subscription($db);
 
 print load_fiche_titre($langs->trans("MembersArea"));
 
-
-$var=True;
-
 $Adherents=array();
 $AdherentsAValider=array();
 $MemberUpToDate=array();
@@ -255,7 +252,6 @@ print '<th align="right">'.$langs->trans("AmountTotal").'</th>';
 print '<th align="right">'.$langs->trans("AmountAverage").'</th>';
 print "</tr>\n";
 
-$var=true;
 krsort($Total);
 foreach ($Total as $key=>$value)
 {
