@@ -2511,21 +2511,16 @@ class Societe extends CommonObject
 
         if (! empty($conf->global->SOCIETE_CODECOMPTA_ADDON))
         {
-        	$file='';
+		$res=false;
             $dirsociete=array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
-            	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.".php"))
-            	{
-            		$file=$dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.".php";
-            		break;
-            	}
+				$res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.'.php');
+				if ($res) break;
             }
 
-            if (! empty($file))
+            if ($res)
             {
-            	dol_include_once($file);
-
             	$classname = $conf->global->SOCIETE_CODECOMPTA_ADDON;
             	$mod = new $classname;
 
