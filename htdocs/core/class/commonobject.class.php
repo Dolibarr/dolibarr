@@ -6114,7 +6114,7 @@ abstract class CommonObject
 	 *
 	 * @return array
 	 */
-	protected function set_save_query()
+	protected function setSaveQuery()
 	{
 		global $conf;
 
@@ -6213,7 +6213,7 @@ abstract class CommonObject
 	 *
 	 * @return string
 	 */
-	protected function get_field_list()
+	protected function getFieldList()
 	{
 		$keys = array_keys($this->fields);
 		return implode(',', $keys);
@@ -6248,7 +6248,7 @@ abstract class CommonObject
 
 		$now=dol_now();
 
-		$fieldvalues = $this->set_save_query();
+		$fieldvalues = $this->setSaveQuery();
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
@@ -6340,7 +6340,7 @@ abstract class CommonObject
 	{
 		if (empty($id) && empty($ref)) return false;
 
-		$sql = 'SELECT '.$this->get_field_list();
+		$sql = 'SELECT '.$this->getFieldList();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
 		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
@@ -6383,7 +6383,7 @@ abstract class CommonObject
 
 		$now=dol_now();
 
-		$fieldvalues = $this->set_save_query();
+		$fieldvalues = $this->setSaveQuery();
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) $fieldvalues['date_modification']=$this->db->idate($now);
 		if (array_key_exists('fk_user_modif', $fieldvalues) && ! ($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.
