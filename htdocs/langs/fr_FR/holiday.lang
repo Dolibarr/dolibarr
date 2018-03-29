@@ -85,6 +85,10 @@ EmployeeFirstname=Prénom du salarié
 TypeWasDisabledOrRemoved=Le type de congés (id %s) a été désactivé ou supprimé
 LastHolidays=Les %s dernières demandes de congés
 AllHolidays=Toutes les demandes de congés
+LEAVE_PAID=Congé payés
+LEAVE_SICK=Arrêt maladie
+LEAVE_OTHER=Autre congé
+LEAVE_PAID_FR=congé payés
 
 ## Configuration du Module ##
 LastUpdateCP=Dernière mise à jour automatique de l'allocation des congés

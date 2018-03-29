@@ -110,27 +110,37 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
 
+	if (! (GETPOST('account_parent','int') >= 0))
+	{
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
+	}
+
 	$db->begin();
 
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
-	$sql1 .= " SET l.fk_code_ventilation=" . GETPOST('account_parent','int');
-	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
+	if (! $error)
+	{
+		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
+		$sql1 .= " SET l.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
+		$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
 
-	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		setEventMessages($db->lasterror(), null, 'errors');
-	}
-	if (! $error) {
-		$db->commit();
-		setEventMessages($langs->trans('Save'), null, 'mesgs');
-	} else {
-		$db->rollback();
-		setEventMessages($db->lasterror(), null, 'errors');
+		dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
+		$resql1 = $db->query($sql1);
+		if (! $resql1) {
+			$error ++;
+			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		if (! $error) {
+			$db->commit();
+			setEventMessages($langs->trans('Save'), null, 'mesgs');
+		} else {
+			$db->rollback();
+			setEventMessages($db->lasterror(), null, 'errors');
+		}
+
+		$account_parent = '';   // Protection to avoid to mass apply it a second time
 	}
 
-	$account_parent = '';   // Protection to avoid to mass apply it a second time
 }
 
 
@@ -272,7 +282,7 @@ if ($result) {
 	print $langs->trans("DescVentilDoneCustomer") . '<br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
-	print $formaccounting->select_account($account_parent, 'account_parent', 1);
+	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '"/></div>';
 
 	$moreforfilter = '';
