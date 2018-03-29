@@ -1049,13 +1049,15 @@ class Adherent extends CommonObject
 	/**
 	 *	Load member from database
 	 *
-	 *	@param	int		$rowid      Id of object to load
-	 * 	@param	string	$ref		To load member from its ref
-	 * 	@param	int		$fk_soc		To load member from its link to third party
-	 * 	@param	string	$ref_ext	External reference
-	 *	@return int         		>0 if OK, 0 if not found, <0 if KO
+	 *	@param	int		$rowid      			Id of object to load
+	 * 	@param	string	$ref					To load member from its ref
+	 * 	@param	int		$fk_soc					To load member from its link to third party
+	 * 	@param	string	$ref_ext				External reference
+	 *  @param	bool	$fetch_optionals		To load optionals (extrafields)
+	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
+	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
+	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='',$fetch_optionals=true,$fetch_subscriptions=true)
 	{
 		global $langs;
 
@@ -1160,10 +1162,14 @@ class Adherent extends CommonObject
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				$this->fetch_optionals();
+				if ($fetch_optionals) {
+					$this->fetch_optionals();
+				}
 
 				// Load other properties
-				$result=$this->fetch_subscriptions();
+				if ($fetch_subscriptions) {
+					$result=$this->fetch_subscriptions();
+				}
 
 				return $this->id;
 			}
