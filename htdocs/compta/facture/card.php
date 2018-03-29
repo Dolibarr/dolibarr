@@ -3014,19 +3014,19 @@ else if ($id > 0 || ! empty($ref))
 
 	dol_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
-	$formconfirm = '';
+	$formconfirm = array();
 
 	// Confirmation de la conversion de l'avoir en reduc
-	if ($action == 'converttoreduc') {
+	//if ($action == 'converttoreduc') {
 		if($object->type == Facture::TYPE_STANDARD) $type_fac = 'ExcessReceived';
 		elseif($object->type == Facture::TYPE_CREDIT_NOTE) $type_fac = 'CreditNote';
 		elseif($object->type == Facture::TYPE_DEPOSIT) $type_fac = 'Deposit';
 		$text = $langs->trans('ConfirmConvertToReduc', strtolower($langs->transnoentities($type_fac)));
-		$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 2);
-	}
+		$formconfirm['converttoreduc'] = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('ConvertToReduc'), $text, 'confirm_converttoreduc', '', "yes", 'converttoreduc');
+	//}
 
 	// Confirmation to delete invoice
-	if ($action == 'delete') {
+	//if ($action == 'delete') {
 		$text = $langs->trans('ConfirmDeleteBill', $object->ref);
 		$formquestion = array();
 
@@ -3050,15 +3050,15 @@ else if ($id > 0 || ! empty($ref))
 								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 								// => 1),
 								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"))));
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 1);
+			$formconfirm['delete'] = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 'delete');
 		} else {
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', '', 1);
+			$formconfirm['delete'] = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', '', 'delete');
 		}
-	}
+	//}
 
 	// Confirmation of validation
-	if ($action == 'valid')
-	{
+	//if ($action == 'valid')
+	//{
 		// we check object has a draft number
 		$objectref = substr($object->ref, 1, 4);
 		if ($objectref == 'PROV') {
@@ -3116,11 +3116,11 @@ else if ($id > 0 || ! empty($ref))
 		{
 			$text .= '<br>' . img_warning() . ' ' . $langs->trans("ErrorInvoiceOfThisTypeMustBePositive");
 		}
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, (($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) ? "no" : "yes"), 2);
-	}
+		$formconfirm['valid'] = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ValidateBill'), $text, 'confirm_valid', $formquestion, (($object->type != Facture::TYPE_CREDIT_NOTE && $object->total_ttc < 0) ? "no" : "yes"), 'valid');
+	//}
 
 	// Confirm back to draft status
-	if ($action == 'modif') {
+	//if ($action == 'modif') {
 		$text = $langs->trans('ConfirmUnvalidateBill', $object->ref);
 		$formquestion = array();
 
@@ -3153,14 +3153,14 @@ else if ($id > 0 || ! empty($ref))
 								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $value));
 		}
 
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 1);
-	}
+		$formconfirm['modif'] = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('UnvalidateBill'), $text, 'confirm_modif', $formquestion, "yes", 'modif');
+	//}
 
 	// Confirmation du classement paye
-	if ($action == 'paid' && $resteapayer <= 0) {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 1);
-	}
-	if ($action == 'paid' && $resteapayer > 0) {
+	if (/*$action == 'paid' && */$resteapayer <= 0) {
+		$formconfirm['paid'] = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidBill', $object->ref), 'confirm_paid', '', "yes", 'paid');
+	} else {
+	//if ($action == 'paid' $resteapayer > 0) {
 		// Code
 		$i = 0;
 		$close [$i] ['code'] = 'discount_vat';	// escompte
@@ -3187,11 +3187,11 @@ else if ($id > 0 || ! empty($ref))
 		// Cree un tableau formulaire
 		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"),array('type' => 'radio','name' => 'close_code','label' => $langs->trans("Reason"),'values' => $arrayreasons),array('type' => 'text','name' => 'close_note','label' => $langs->trans("Comment"),'value' => '','size' => '100'));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes");
+		$formconfirm['paid'] = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 'paid');
 	}
 
 	// Confirmation du classement abandonne
-	if ($action == 'canceled') {
+	//if ($action == 'canceled') {
 		// S'il y a une facture de remplacement pas encore validee (etat brouillon),
 		// on ne permet pas de classer abandonner la facture.
 		if ($objectidnext) {
@@ -3218,44 +3218,54 @@ else if ($id > 0 || ! empty($ref))
 			// Cree un tableau formulaire
 			$formquestion = array('text' => $langs->trans("ConfirmCancelBillQuestion"),array('type' => 'radio','name' => 'close_code','label' => $langs->trans("Reason"),'values' => $arrayreasons),array('type' => 'text','name' => 'close_note','label' => $langs->trans("Comment"),'value' => '','size' => '100'));
 
-			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes");
+			$formconfirm['canceled'] = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('CancelBill'), $langs->trans('ConfirmCancelBill', $object->ref), 'confirm_canceled', $formquestion, "yes");
 		}
-	}
+	//}
 
-	if ($action == 'deletepaiement')
-	{
+	//if ($action == 'deletepaiement')
+	//{
 		$payment_id = GETPOST('paiement_id');
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 0, 1);
+		$formconfirm['deletepaiement'] = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id.'&paiement_id='.$payment_id, $langs->trans('DeletePayment'), $langs->trans('ConfirmDeletePayment'), 'confirm_delete_paiement', '', 0, 'deletepaiement');
 
-	}
+	//}
 
 	// Confirmation de la suppression d'une ligne produit
-	if ($action == 'ask_deleteline') {
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 1);
-	}
+	//if ($action == 'ask_deleteline') {
+		$formconfirm['ask_deleteline'] = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&lineid=' . $lineid, $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline', '', 'no', 'ask_deleteline');
+	//}
 
 	// Clone confirmation
-	if ($action == 'clone')
-	{
+	//if ($action == 'clone')
+	//{
 		// Create an array for form
 		$formquestion = array(
 							// 'text' => $langs->trans("ConfirmClone"),
 							// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1)
 							array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company($object->socid, 'socid', '(s.client=1 OR s.client=2 OR s.client=3)', 1)));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
-	}
+		$formconfirm['clone'] = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 'clone');
+	//}
 
-	if (! $formconfirm)
+
+	if (! empty($formconfirm[$action]))
 	{
 		$parameters = array('lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
-		elseif ($reshook > 0) $formconfirm=$hookmanager->resPrint;
-	}
+		if (empty($reshook)) $formconfirm[$action].=$hookmanager->resPrint;
+		elseif ($reshook > 0) $formconfirm[$action]=$hookmanager->resPrint;
 
-	// Print form confirm
-	print $formconfirm;
+		// Print form confirm
+		print $formconfirm[$action];
+		print '
+			<script type="text/javascript">
+				$(document).ready(function() {
+					$(function() {
+						console.log("BLBL");
+						$("#dialog-confirm-'.$action.'").dialog("open");
+					});
+				});
+			</script>';
+	}
 
 	// Invoice content
 
@@ -3904,9 +3914,13 @@ else if ($id > 0 || ! empty($ref))
 				print '<td align="center">';
 				if ($object->statut == Facture::STATUS_VALIDATED && $object->paye == 0 && $user->societe_id == 0)
 				{
-					print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
+					print '<a'.($conf->use_javascript_ajax?' class="butActionFormConfirm" data-action-confirm="deletepaiement"':'').' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=deletepaiement&paiement_id='.$objp->rowid.'">';
 					print img_delete();
 					print '</a>';
+
+					if($conf->use_javascript_ajax) {
+						print $formconfirm['deletepaiement'];
+					}
 				}
 				print '</td>';
 				print '</tr>';
@@ -4198,7 +4212,11 @@ else if ($id > 0 || ! empty($ref))
 							if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
 		   						|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
 							{
-								print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
+								print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="modif':'').'" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=modif">' . $langs->trans('Modify') . '</a></div>';
+
+								if($conf->use_javascript_ajax) {
+									print $formconfirm['modif'];
+								}
 							} else {
 								print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("NotEnoughPermissions") . '">' . $langs->trans('Modify') . '</span></div>';
 							}
@@ -4238,7 +4256,11 @@ else if ($id > 0 || ! empty($ref))
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
 		  		|| (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->validate)))
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=valid">' . $langs->trans('Validate') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="valid':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=valid">' . $langs->trans('Validate') . '</a></div>';
+
+					if($conf->use_javascript_ajax) {
+						print $formconfirm['valid'];
+					}
 				}
 			}
 
@@ -4310,16 +4332,28 @@ else if ($id > 0 || ! empty($ref))
 				// For standard invoice with excess received
 				if ($object->type == Facture::TYPE_STANDARD && empty($object->paye) && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) < 0 && $user->rights->facture->creer && empty($discount->id))
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="converttoreduc':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertExcessReceivedToReduc').'</a></div>';
+
+					if($conf->use_javascript_ajax) {
+						print $formconfirm['converttoreduc'];
+					}
 				}
 				// For credit note
 				if ($object->type == Facture::TYPE_CREDIT_NOTE && $object->statut == 1 && $object->paye == 0 && $user->rights->facture->creer && $object->getSommePaiement() == 0) {
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="modif':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
+
+					if($conf->use_javascript_ajax) {
+						print $formconfirm['converttoreduc'];
+					}
 				}
 				// For deposit invoice
 				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && empty($discount->id))
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="modif':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
+
+					if($conf->use_javascript_ajax) {
+						print $formconfirm['converttoreduc'];
+					}
 				}
 			}
 
@@ -4328,7 +4362,11 @@ else if ($id > 0 || ! empty($ref))
 				|| ($object->type == Facture::TYPE_DEPOSIT && $object->paye == 0 && $object->total_ttc > 0 && $resteapayer == 0 && $user->rights->facture->paiement && empty($discount->id))
 			)
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="paid':'').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=paid">'.$langs->trans('ClassifyPaid').'</a></div>';
+
+				if($conf->use_javascript_ajax) {
+					print $formconfirm['paid'];
+				}
 			}
 
 			// Classify 'closed not completely paid' (possible si validee et pas encore classee payee)
@@ -4338,7 +4376,11 @@ else if ($id > 0 || ! empty($ref))
 				if ($totalpaye > 0 || $totalcreditnotes > 0)
 				{
 					// If one payment or one credit note was linked to this invoice
-					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=paid">' . $langs->trans('ClassifyPaidPartially') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="paid':'').'" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=paid">' . $langs->trans('ClassifyPaidPartially') . '</a></div>';
+					
+					if($conf->use_javascript_ajax) {
+						print $formconfirm['paid'];
+					}
 				}
 				else
 				{
@@ -4359,7 +4401,11 @@ else if ($id > 0 || ! empty($ref))
 			// Clone
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $user->rights->facture->creer)
 			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=clone&amp;object=invoice">' . $langs->trans("ToClone") . '</a></div>';
+				print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="clone':'').'" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=clone&amp;object=invoice">' . $langs->trans("ToClone") . '</a></div>';
+
+				if($conf->use_javascript_ajax) {
+					print $formconfirm['clone'];
+				}
 			}
 
 			// Clone as predefined / Create template
@@ -4418,7 +4464,11 @@ else if ($id > 0 || ! empty($ref))
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete'.($conf->use_javascript_ajax?' butActionFormConfirm" data-action-confirm="delete':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=delete">' . $langs->trans('Delete') . '</a></div>';
+
+					if($conf->use_javascript_ajax) {
+						print $formconfirm['delete'];
+					}
 				}
 			} else {
 				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("NotAllowed") . '">' . $langs->trans('Delete') . '</a></div>';
