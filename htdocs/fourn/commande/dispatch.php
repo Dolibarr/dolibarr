@@ -736,7 +736,7 @@ if ($id > 0 || ! empty($ref)) {
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";
 	$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
-	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
+	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status, cfd.datec";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product as p,";
 	$sql .= " " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";
 	$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "entrepot as e ON cfd.fk_entrepot = e.rowid";
@@ -770,6 +770,7 @@ if ($id > 0 || ! empty($ref)) {
 			print '<td>' . $langs->trans("Comment") . '</td>';
 			if (! empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS))
 				print '<td align="center" colspan="2">' . $langs->trans("Status") . '</td>';
+			print '<td>' . $langs->trans("Date") . '</td>';
 			print "</tr>\n";
 
 			$var = false;
@@ -841,7 +842,9 @@ if ($id > 0 || ! empty($ref)) {
 					}
 					print '</td>';
 				}
-
+				// date
+				print '<td>' . dol_print_date($objp->datec) . '</td>';
+				
 				print "</tr>\n";
 
 				$i ++;
