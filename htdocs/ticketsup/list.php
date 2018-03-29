@@ -113,8 +113,8 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-if ($socid > 0) unset($arrayfields['t.fk_soc']);
-if ($projectid > 0) unset($arrayfields['t.fk_project']);
+//if ($socid > 0) $arrayfields['t.fk_soc']['enabled']=0;
+//if ($projectid > 0) $arrayfields['t.fk_project']['enabled']=0;
 
 
 // Security check
