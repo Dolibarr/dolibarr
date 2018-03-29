@@ -299,12 +299,12 @@ CREATE TABLE llx_societe_account(
 ALTER TABLE llx_const MODIFY type varchar(64) DEFAULT 'string';
 
 UPDATE llx_const set type = 'text' where type = 'texte';
-UPDATE llx_const set type = 'html' where name in ('ADHERENT_AUTOREGISTER_NOTIF_MAIL','ADHERENT_AUTOREGISTER_MAIL','ADHERENT_MAIL_VALID','ADHERENT_MAIL_COTIS','ADHERENT_MAIL_RESIL');
+UPDATE llx_const set type = 'html' where name in (__ENCRYPT('ADHERENT_AUTOREGISTER_NOTIF_MAIL')__,__ENCRYPT('ADHERENT_AUTOREGISTER_MAIL')__,__ENCRYPT('ADHERENT_MAIL_VALID')__,__ENCRYPT('ADHERENT_MAIL_COTIS')__,__ENCRYPT('ADHERENT_MAIL_RESIL')__);
 
---UPDATE llx_const SET value = '', type = 'emailtemplate:member' WHERE name = 'ADHERENT_AUTOREGISTER_MAIL' AND type != 'emailtemplate:member';
---UPDATE llx_const SET value = '', type = 'emailtemplate:member' WHERE name = 'ADHERENT_MAIL_VALID' AND type != 'emailtemplate:member';
---UPDATE llx_const SET value = '', type = 'emailtemplate:member' WHERE name = 'ADHERENT_MAIL_COTIS' AND type != 'emailtemplate:member';
---UPDATE llx_const SET value = '', type = 'emailtemplate:member' WHERE name = 'ADHERENT_MAIL_RESIL' AND type != 'emailtemplate:member';
+--UPDATE llx_const SET value = '', type = 'emailtemplate:member' WHERE name = __ENCRYPT('ADHERENT_AUTOREGISTER_MAIL')__ AND type != 'emailtemplate:member';
+--UPDATE llx_const SET value = '', type = 'emailtemplate:member' WHERE name = __ENCRYPT('ADHERENT_MAIL_VALID')__ AND type != 'emailtemplate:member';
+--UPDATE llx_const SET value = '', type = 'emailtemplate:member' WHERE name = __ENCRYPT('ADHERENT_MAIL_COTIS')__ AND type != 'emailtemplate:member';
+--UPDATE llx_const SET value = '', type = 'emailtemplate:member' WHERE name = __ENCRYPT('ADHERENT_MAIL_RESIL')__ AND type != 'emailtemplate:member';
 
 ALTER TABLE llx_societe_account ADD COLUMN key_account varchar(128);
 
