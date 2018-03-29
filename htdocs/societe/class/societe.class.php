@@ -2511,7 +2511,7 @@ class Societe extends CommonObject
 
         if (! empty($conf->global->SOCIETE_CODECOMPTA_ADDON))
         {
-        	$file='';
+		$res=false;
             $dirsociete=array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
             foreach ($dirsociete as $dirroot)
             {
