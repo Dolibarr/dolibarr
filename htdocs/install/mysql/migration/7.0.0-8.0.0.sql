@@ -39,6 +39,8 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
 
+update llx_propal set fk_statut = 1 where fk_statut = -1;
+
 
 -- For 8.0
 
