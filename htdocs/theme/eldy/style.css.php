@@ -1939,6 +1939,16 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 	color: #<?php echo $colortextbackhmenu; ?> !important;
 	font-weight: normal !important;
 }
+.login_block_getinfo {
+	text-align: center;
+}
+.login_block_getinfo div.login_block_user {
+	display: block;
+}
+.login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
+	color: #333 !important;
+	font-weight: normal !important;
+}
 .alogin, .alogin:hover {
 	font-weight: normal !important;
 	font-size: <?php echo $fontsizesmaller; ?>px !important;

@@ -23,10 +23,8 @@
 
 
 /**
- * Define Common function to access calendar items
- * And format it in vCalendar
- * */
-
+ * Define Common function to access calendar items and format it in vCalendar
+ */
 class CdavLib
 {
 
@@ -46,8 +44,9 @@ class CdavLib
 	/**
 	 * Base sql request for calendar events
 	 *
-	 * @param int calendar user id
-	 * @param int actioncomm object id
+	 * @param 	int 		$calid 			Calendard id
+	 * @param 	int|boolean	$oid			Oid
+	 * @param	int|boolean	$ouri			Ouri
 	 * @return string
 	 */
 	public function getSqlCalEvents($calid, $oid=false, $ouri=false)
@@ -113,14 +112,14 @@ class CdavLib
 	/**
 	 * Convert calendar row to VCalendar string
 	 *
-	 * @param row object
+	 * @param 	int		$calid		Calendar id
+	 * @param	Object	$obj		Object id
 	 * @return string
 	 */
 	public function toVCalendar($calid, $obj)
 	{
-
-		$categ = [];
-		/*if($obj->soc_client)
+		/*$categ = array();
+		if($obj->soc_client)
 		{
 			$nick[] = $obj->soc_code_client;
 			$categ[] = $this->langs->transnoentitiesnoconv('Customer');
@@ -240,11 +239,17 @@ class CdavLib
 		return $caldata;
 	}
 
+	/**
+	 * getFullCalendarObjects
+	 *
+	 * @param int	 	$calendarId			Calendar id
+	 * @param int		$bCalendarData		Add calendar data
+	 * @return array|string[][]|unknown[][]|NULL[][]
+	 */
 	public function getFullCalendarObjects($calendarId, $bCalendarData)
 	{
-
 		$calid = ($calendarId*1);
-		$calevents = [] ;
+		$calevents = array();
 
 		if(! $this->user->rights->agenda->myactions->read)
 			return $calevents;
@@ -264,7 +269,7 @@ class CdavLib
 
 				if($bCalendarData)
 				{
-					$calevents[] = [
+					$calevents[] = array(
 						'calendardata' => $calendardata,
 						'uri' => $obj->id.'-ev-'.CDAV_URI_KEY,
 						'lastmodified' => strtotime($obj->lastupd),
@@ -272,11 +277,11 @@ class CdavLib
 						'calendarid'   => $calendarId,
 						'size' => strlen($calendardata),
 						'component' => strpos($calendardata, 'BEGIN:VEVENT')>0 ? 'vevent' : 'vtodo',
-					];
+					);
 				}
 				else
 				{
-					$calevents[] = [
+					$calevents[] = array(
 						// 'calendardata' => $calendardata,  not necessary because etag+size are present
 						'uri' => $obj->id.'-ev-'.CDAV_URI_KEY,
 						'lastmodified' => strtotime($obj->lastupd),
@@ -284,7 +289,7 @@ class CdavLib
 						'calendarid'   => $calendarId,
 						'size' => strlen($calendardata),
 						'component' => strpos($calendardata, 'BEGIN:VEVENT')>0 ? 'vevent' : 'vtodo',
-					];
+					);
 				}
 			}
 		}
