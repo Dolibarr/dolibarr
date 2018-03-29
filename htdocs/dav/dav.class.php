@@ -118,9 +118,8 @@ class CdavLib
 	 */
 	public function toVCalendar($calid, $obj)
 	{
-
-		$categ = [];
-		/*if($obj->soc_client)
+		/*$categ = array();
+		if($obj->soc_client)
 		{
 			$nick[] = $obj->soc_code_client;
 			$categ[] = $this->langs->transnoentitiesnoconv('Customer');
