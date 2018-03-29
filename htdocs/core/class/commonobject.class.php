@@ -1436,7 +1436,9 @@ abstract class CommonObject
 
 		// Special case
 		if ($table == 'product' && $field == 'note_private') $field='note';
-		if ($table == 'adherent') $fk_user_field = 'fk_user_mod';
+		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
+			$fk_user_field = 'fk_user_mod';
+		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 		if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
