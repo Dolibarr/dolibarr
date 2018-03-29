@@ -49,10 +49,10 @@ $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
 $id			= GETPOST('id','int');
-
 $msg_id = GETPOST('msg_id', 'int');
 $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
+$search_fk_soc=GETPOST('$search_fk_soc','int')?GETPOST('$search_fk_soc','int'):GETPOST('socid','int');
 $search_fk_project=GETPOST('search_fk_project','int')?GETPOST('search_fk_project','int'):GETPOST('projectid','int');
 $search_fk_status = GETPOST('search_fk_status', 'alpha');
 $mode = GETPOST('mode', 'alpha');
@@ -113,22 +113,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
-if ($projectid > 0)
-{
-	unset($arrayfields['t.fk_project']);
-}
+if ($socid > 0) unset($arrayfields['t.fk_soc']);
+if ($projectid > 0) unset($arrayfields['t.fk_project']);
 
-
-// Filters
-// $search_soc = GETPOST("search_soc");
-// $search_fk_status = GETPOST("search_fk_status", 'alpha');
-// $search_subject = GETPOST("search_subject");
-// $search_type = GETPOST("search_type", 'alpha');
-// $search_category = GETPOST("search_category", 'alpha');
-// $search_severity = GETPOST("search_severity", 'alpha');
-// $search_fk_project = GETPOST("search_fk_project", 'int');
-// $search_fk_user_create = GETPOST("search_fk_user_create", 'int');
-// $search_fk_user_assign = GETPOST("search_fk_user_assign", 'int');
 
 // Security check
 if (!$user->rights->ticketsup->read) {
@@ -223,6 +210,7 @@ foreach($search as $key => $val)
     if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'fk_statut')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
+if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project);
 if (!$user->societe_id && ($mode == "my_assign" || (!$user->admin && $conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND t.fk_user_assign=".$user->id;
@@ -419,6 +407,8 @@ foreach($search as $key => $val)
 if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+if ($socid)     $param.='&socid='.urlencode($socid);
+if ($projectid) $param.='&projectid='.urlencode($projectid);
 
 // List of mass actions available
 $arrayofmassactions =  array(
@@ -440,6 +430,8 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="' . $mode . '" >';
+if ($socid)     print '<input type="hidden" name="socid" value="' . $socid . '" >';
+if ($projectid) print '<input type="hidden" name="projectid" value="' . $projectid . '" >';
 
 $buttontocreate = '<a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
 
@@ -460,7 +452,6 @@ if ($sall)
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
     print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
-
 
 if ($search_fk_status == 'non_closed') {
     print '<div><a href="' . $url_page_current . '?search_fk_status=-1' . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewAllTickets') . '</a></div>';
