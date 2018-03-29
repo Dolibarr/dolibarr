@@ -41,7 +41,7 @@ $month=GETPOST("month",'int');
 $day=GETPOST("day",'int');
 $pid=GETPOST("projectid",'int',3);
 $status=GETPOST("status",'alpha');
-$type=GETPOST('type');
+$type=GETPOST('type','alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('actioncode','array'))
@@ -355,7 +355,7 @@ if ($resql)
 	//if ($actioncode)    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 	//if ($resourceid)      $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
 	if ($filter)          $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-	if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+	//if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
 	//if ($socid)           $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
 	if ($showbirthday)    $nav.='<input type="hidden" name="showbirthday" value="1">';
 	//if ($pid)             $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';

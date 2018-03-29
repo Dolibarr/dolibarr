@@ -616,7 +616,7 @@ if (empty($reshook))
 	// Close proposal
 	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel','alpha'))
 	{
-		if (! GETPOST('statut','int')) {
+		if (! (GETPOST('statut','int') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
