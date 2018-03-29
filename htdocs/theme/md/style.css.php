@@ -1201,6 +1201,16 @@ div.login_block {
 	/* position: initial !important;*/
 	display: none;
 }
+.login_block_getinfo {
+	text-align: center;
+}
+.login_block_getinfo div.login_block_user {
+	display: block;
+}
+.login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
+	color: #333 !important;
+	font-weight: normal !important;
+}
 #id-right {
 	padding-left: 0 ! important;
 }
