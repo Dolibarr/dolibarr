@@ -23,10 +23,8 @@
 
 
 /**
- * Define Common function to access calendar items
- * And format it in vCalendar
- * */
-
+ * Define Common function to access calendar items and format it in vCalendar
+ */
 class CdavLib
 {
 
@@ -46,8 +44,9 @@ class CdavLib
 	/**
 	 * Base sql request for calendar events
 	 *
-	 * @param int calendar user id
-	 * @param int actioncomm object id
+	 * @param 	int 		$calid 			Calendard id
+	 * @param 	int|boolean	$oid			Oid
+	 * @param	int|boolean	$ouri			Ouri
 	 * @return string
 	 */
 	public function getSqlCalEvents($calid, $oid=false, $ouri=false)
@@ -113,7 +112,8 @@ class CdavLib
 	/**
 	 * Convert calendar row to VCalendar string
 	 *
-	 * @param row object
+	 * @param 	int		$calid		Calendar id
+	 * @param	Object	$obj		Object id
 	 * @return string
 	 */
 	public function toVCalendar($calid, $obj)
@@ -239,11 +239,17 @@ class CdavLib
 		return $caldata;
 	}
 
+	/**
+	 * getFullCalendarObjects
+	 *
+	 * @param int	 	$calendarId			Calendar id
+	 * @param int		$bCalendarData		Add calendar data
+	 * @return array|string[][]|unknown[][]|NULL[][]
+	 */
 	public function getFullCalendarObjects($calendarId, $bCalendarData)
 	{
-
 		$calid = ($calendarId*1);
-		$calevents = [] ;
+		$calevents = array();
 
 		if(! $this->user->rights->agenda->myactions->read)
 			return $calevents;

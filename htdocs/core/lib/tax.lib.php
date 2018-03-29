@@ -236,11 +236,7 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	$total_localtax1='total_localtax1';
 	$total_localtax2='total_localtax2';
 
-<<<<<<< HEAD
     // CAS DES BIENS/PRODUITS
-=======
-    // CAS DES BIENS
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 
     // Define sql request
     $sql='';
