@@ -269,7 +269,7 @@ class CdavLib
 
 				if($bCalendarData)
 				{
-					$calevents[] = [
+					$calevents[] = array(
 						'calendardata' => $calendardata,
 						'uri' => $obj->id.'-ev-'.CDAV_URI_KEY,
 						'lastmodified' => strtotime($obj->lastupd),
@@ -277,11 +277,11 @@ class CdavLib
 						'calendarid'   => $calendarId,
 						'size' => strlen($calendardata),
 						'component' => strpos($calendardata, 'BEGIN:VEVENT')>0 ? 'vevent' : 'vtodo',
-					];
+					);
 				}
 				else
 				{
-					$calevents[] = [
+					$calevents[] = array(
 						// 'calendardata' => $calendardata,  not necessary because etag+size are present
 						'uri' => $obj->id.'-ev-'.CDAV_URI_KEY,
 						'lastmodified' => strtotime($obj->lastupd),
@@ -289,7 +289,7 @@ class CdavLib
 						'calendarid'   => $calendarId,
 						'size' => strlen($calendardata),
 						'component' => strpos($calendardata, 'BEGIN:VEVENT')>0 ? 'vevent' : 'vtodo',
-					];
+					);
 				}
 			}
 		}
