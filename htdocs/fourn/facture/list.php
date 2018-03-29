@@ -271,7 +271,7 @@ $sql.= " s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.c
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " country.code as country_code,";
-$sql.= " p.rowid as project_id, p.ref as project_ref";
+$sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (! $search_all) $sql.= ', SUM(pf.amount) as dynamount_payed';
@@ -925,6 +925,7 @@ if ($resql)
 				{
 					$projectstatic->id=$obj->project_id;
 					$projectstatic->ref=$obj->project_ref;
+					$projectstatic->title=$obj->project_label;
 					print $projectstatic->getNomUrl(1);
 				}
 				print '</td>';
