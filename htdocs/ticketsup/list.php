@@ -71,7 +71,10 @@ $pagenext = $page + 1;
 $object=new Ticketsup($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->ticketsup->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('ticketsuplist'));     // Note that conf->hooks_modules contains array
+if ($socid > 0)       $hookmanager->initHooks(array('thirdpartyticket'));
+elseif ($project > 0) $hookmanager->initHooks(array('projectticket'));
+else $hookmanager->initHooks(array('ticketsuplist'));
+
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('ticketsup');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
