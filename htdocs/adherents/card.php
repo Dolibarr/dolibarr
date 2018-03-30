@@ -301,7 +301,7 @@ if (empty($reshook))
 			$object->phone       = trim(GETPOST("phone",'alpha'));
 			$object->phone_perso = trim(GETPOST("phone_perso",'alpha'));
 			$object->phone_mobile= trim(GETPOST("phone_mobile",'alpha'));
-			$object->email       = trim(str_replace(' ','',GETPOST("member_email",'alpha')));
+			$object->email       = preg_replace('/\s+/', '', GETPOST("member_email",'alpha'));
 			$object->skype       = trim(GETPOST("skype",'alpha'));
 			$object->birth       = $birthdate;
 
@@ -445,7 +445,7 @@ if (empty($reshook))
 		$phone_perso=GETPOST("phone_perso",'alpha');
 		$phone_mobile=GETPOST("phone_mobile",'alpha');
 		$skype=GETPOST("member_skype",'alpha');
-		$email=str_replace(' ','',GETPOST("member_email",'alpha'));
+		$email=preg_replace('/\s+/', '', GETPOST("member_email",'alpha'));
 		$login=GETPOST("member_login",'alpha');
 		$pass=GETPOST("password",'alpha');
 		$photo=GETPOST("photo",'alpha');

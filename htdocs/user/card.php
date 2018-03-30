@@ -203,7 +203,7 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alpha');
 			$object->user_mobile = GETPOST("user_mobile");
 			$object->skype = GETPOST("skype", 'alpha');
-			$object->email = str_replace(' ','',GETPOST("email", 'alpha'));
+			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature");
 			$object->accountancy_code = GETPOST("accountancy_code");
@@ -347,7 +347,7 @@ if (empty($reshook)) {
 				$object->office_fax = GETPOST("office_fax", 'alpha');
 				$object->user_mobile = GETPOST("user_mobile");
 				$object->skype = GETPOST("skype", 'alpha');
-				$object->email = str_replace(' ','',GETPOST("email", 'alpha'));
+				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature");
 				$object->accountancy_code = GETPOST("accountancy_code");
