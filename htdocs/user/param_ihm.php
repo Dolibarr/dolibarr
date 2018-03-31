@@ -40,6 +40,7 @@ $canreaduser=($user->admin || $user->rights->user->user->lire);
 
 $id = GETPOST('id','int');
 $action = GETPOST('action','alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userihm';   // To manage different context of search
 
 if ($id)
 {
@@ -79,8 +80,7 @@ $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','userihm','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','userihm','globalcard'));
 
 
 /*

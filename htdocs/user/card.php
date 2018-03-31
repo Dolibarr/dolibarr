@@ -50,10 +50,11 @@ if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categor
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','aZ09');
 $mode		= GETPOST('mode','alpha');
-$confirm		= GETPOST('confirm','alpha');
+$confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
 $cancel		= GETPOST('cancel','alpha');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'useracard';   // To manage different context of search
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -101,8 +102,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$contextpage=array('usercard','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','globalcard');
 
 
 

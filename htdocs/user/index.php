@@ -34,6 +34,8 @@ $langs->load("users");
 $langs->load("companies");
 $langs->load('hrm');
 
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userlist';   // To manage different context of search
+
 // Security check (for external users)
 $socid=0;
 if ($user->societe_id > 0)
@@ -54,11 +56,9 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 
-// Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new User($db);
+$hookmanager->initHooks(array('userlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels

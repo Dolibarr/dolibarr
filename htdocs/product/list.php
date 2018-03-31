@@ -95,7 +95,7 @@ if ((string) $type == '0') { $contextpage='productlist'; if ($search_type=='') $
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $object=new Product($db);
-$hookmanager->initHooks(array($contextpage));
+$hookmanager->initHooks(array('productservicelist'));
 $extrafields = new ExtraFields($db);
 $form=new Form($db);
 
