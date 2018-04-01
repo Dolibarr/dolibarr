@@ -55,7 +55,7 @@ $search_lang=GETPOST('search_lang','alpha');
 $search_fk_user=GETPOST('search_fk_user','intcomma');
 $search_topic=GETPOST('search_topic','alpha');
 
-if ($user->socid) accessforbidden();
+if (! empty($user->socid)) accessforbidden();
 
 $acts[0] = "activate";
 $acts[1] = "disable";
