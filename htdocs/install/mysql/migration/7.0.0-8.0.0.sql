@@ -335,3 +335,37 @@ INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_u
 ALTER TABLE llx_product ADD COLUMN fk_default_warehouse integer DEFAULT NULL;
 ALTER TABLE  llx_product ADD CONSTRAINT fk_product_default_warehouse FOREIGN KEY (fk_default_warehouse) REFERENCES llx_entrepot (rowid);
 
+-- Assets
+CREATE TABLE llx_assets(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	ref varchar(128) NOT NULL,
+	entity integer DEFAULT 1 NOT NULL,
+	label varchar(255),
+	amount double(24,8) DEFAULT NULL,
+	fk_soc integer,
+	description text,
+	note_public text,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	import_key varchar(14),
+	status integer NOT NULL
+) ENGINE=innodb;
+
+ALTER TABLE llx_assets ADD INDEX idx_assets_rowid (rowid);
+ALTER TABLE llx_assets ADD INDEX idx_assets_ref (ref);
+ALTER TABLE llx_assets ADD INDEX idx_assets_entity (entity);
+ALTER TABLE llx_assets ADD INDEX idx_assets_fk_soc (fk_soc);
+ALTER TABLE llx_assets ADD INDEX idx_assets_status (status);
+
+create table llx_assets_extrafields
+(
+  rowid integer AUTO_INCREMENT PRIMARY KEY,
+  tms timestamp,
+  fk_object integer NOT NULL,
+  import_key varchar(14)
+) ENGINE=innodb;
+
+INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (7,'INV', 'Inventory journal', 8, 1);
