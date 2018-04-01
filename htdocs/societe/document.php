@@ -69,6 +69,10 @@ if ($id > 0 || ! empty($ref))
 	$courrier_dir = $conf->societe->multidir_output[$object->entity] . "/courrier/" . get_exdir($object->id,0,0,0,$object,'thirdparty');
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('thirdpartydocument','globalcard'));
+
+
 
 /*
  * Actions

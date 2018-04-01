@@ -53,6 +53,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'proposallist';
 
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -95,9 +96,6 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='p.ref';
 if (! $sortorder) $sortorder='DESC';
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'proposallist';
-
 // Security check
 $module='propal';
 $dbtable='';
@@ -114,6 +112,7 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 $diroutputmassaction=$conf->propal->multidir_output[$conf->entity] . '/temp/massgeneration/'.$user->id;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Propal($db);
 $hookmanager->initHooks(array('propallist'));
 $extrafields = new ExtraFields($db);
 
