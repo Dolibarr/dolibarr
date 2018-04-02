@@ -55,6 +55,11 @@ function AssetsAdminPrepareHead()
 	$head[$h][2] = 'attributes';
 	$h++;
 
+	$head[$h][0] = DOL_URL_ROOT . '/assets/admin/assets_type_extrafields.php';
+	$head[$h][1] = $langs->trans("ExtraFieldsAssetsType");
+	$head[$h][2] = 'attributes_type';
+	$h++;
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assets_admin', 'remove');
 
 	return $head;

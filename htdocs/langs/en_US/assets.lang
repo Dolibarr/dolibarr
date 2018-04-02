@@ -33,10 +33,16 @@ ModuleAssetsDesc = Assets description
 AssetsSetup = Assets setup
 Settings = Settings
 AssetsSetupPage = Assets setup page
+ExtraFieldsAssetsType = Complementary attributes (Assets type)
+AssetsType=Asset type
+AssetsTypeId=Asset type id
+AssetsTypeLabel=Asset type label
+AssetsTypes=Assets types
 
 #
 # Menu
 #
 MenuAssets = Assets
 MenuNewAsset = New asset
+MenuTypeAssets = Type
 MenuListAssets = List

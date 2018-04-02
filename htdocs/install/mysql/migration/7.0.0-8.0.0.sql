@@ -368,4 +368,35 @@ create table llx_assets_extrafields
   import_key varchar(14)
 ) ENGINE=innodb;
 
+create table llx_assets_type
+(
+  rowid                                 integer AUTO_INCREMENT PRIMARY KEY,
+  entity                                integer DEFAULT 1 NOT NULL,	-- multi company id
+  tms                                   timestamp,
+  statut                                smallint NOT NULL DEFAULT 0,
+  label                                 varchar(50) NOT NULL,
+  accountancy_code_asset                varchar(32),
+  accountancy_code_depreciation_asset   varchar(32),
+  accountancy_code_depreciation_expense varchar(32),
+  note                                  text
+)ENGINE=innodb;
+
+ALTER TABLE llx_assets_type ADD UNIQUE INDEX uk_asset_type_label (label, entity);
+
+create table llx_assets_type_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
+
+ALTER TABLE llx_assets_type_extrafields ADD INDEX idx_assets_type_extrafields (fk_object);
+
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (7,'INV', 'Inventory journal', 8, 1);
+
+insert into llx_menu (module, enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('', '$conf->assets->enabled', __HANDLER__, 'left', 2800__+MAX_llx_menu__, 'accountancy', 'assets', 10__+MAX_llx_menu__, '/assets/list.php?leftmenu=assets&amp;mainmenu=accountancy', 'MenuAssets', 0, 'assets', '$user->rights->assets->read', '', 2, 4, __ENTITY__);
+insert into llx_menu (module, enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('', '$conf->assets->enabled && $leftmenu=="assets"', __HANDLER__, 'left', 2801__+MAX_llx_menu__, 'accountancy', '', 2800__+MAX_llx_menu__, '/assets/card.php?leftmenu=assets&amp;mainmenu=accountancy&amp;action=create', 'MenuNewAsset', 1, 'assets', '$user->rights->assets->write', '', 2, 0, __ENTITY__);
+insert into llx_menu (module, enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('', '$conf->assets->enabled && $leftmenu=="assets"', __HANDLER__, 'left', 2802__+MAX_llx_menu__, 'accountancy', '', 2800__+MAX_llx_menu__, '/assets/type.php?leftmenu=assets&amp;mainmenu=accountancy&amp;action=create', 'MenuTypeAssets', 1, 'assets', '$user->rights->assets->write', '', 2, 0, __ENTITY__);
+insert into llx_menu (module, enabled, menu_handler, type, rowid, mainmenu, leftmenu, fk_menu, url, titre, level, langs, perms, target, usertype, position, entity) values ('', '$conf->assets->enabled && $leftmenu=="assets"', __HANDLER__, 'left', 2803__+MAX_llx_menu__, 'accountancy', '', 2800__+MAX_llx_menu__, '/assets/list.php?leftmenu=assets&amp;mainmenu=accountancy', 'MenuListAssets', 1, 'assets', '$user->rights->assets->read', '', 2, 1, __ENTITY__);
+
