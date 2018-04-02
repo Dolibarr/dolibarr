@@ -24,6 +24,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userhome';   // To manage different context of search
+
 if (! $user->rights->user->user->lire && ! $user->admin)
 {
 	// Redirection vers la page de l'utilisateur
@@ -47,8 +49,7 @@ $companystatic = new Societe($db);
 $fuserstatic = new User($db);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$contextpage=array('userhome');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('userhome'));
 
 
 /*

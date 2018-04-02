@@ -35,6 +35,7 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 $langs->loadLangs(array("users","companies","agenda","commercial"));
 
 $action=GETPOST('action','alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'actioncommlist';   // To manage different context of search
 $resourceid=GETPOST("resourceid","int");
 $year=GETPOST("year",'int');
 $month=GETPOST("month",'int');
@@ -67,8 +68,6 @@ $filter = GETPOST("filter",'',3);
 $filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
-
-$contextpage='actioncommlist';
 
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
@@ -114,6 +113,7 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new ActionComm($db);
 $hookmanager->initHooks(array('agendalist'));
 
 $arrayfields=array(

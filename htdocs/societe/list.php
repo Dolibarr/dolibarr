@@ -45,6 +45,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'thirdpartylist';
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -106,18 +107,13 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='thirdpartylist';
-/*if ($search_type == '1,3') { $contextpage='customerlist'; $type='c'; }
-if ($search_type == '2,3') { $contextpage='prospectlist'; $type='p'; }
-if ($search_type == '4') { $contextpage='supplierlist'; $type='f'; }
-*/
 if ($type == 'c') { $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
 if ($type == 'p') { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
 if ($type == 'f') { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Societe($db);
+$hookmanager->initHooks(array('thirdpartylist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels

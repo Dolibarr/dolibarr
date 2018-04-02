@@ -49,6 +49,8 @@ delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
 delete from llx_usergroup_rights where fk_usergroup not in (select rowid from llx_usergroup);
 delete from llx_usergroup_rights where fk_id not in (select id from llx_rights_def);
 
+ALTER TABLE llx_inventory ADD COLUMN fk_product integer DEFAULT NULL;
+ALTER TABLE llx_inventory MODIFY COLUMN fk_warehouse integer DEFAULT NULL;
 
 ALTER TABLE llx_c_type_fees ADD COLUMN llx_c_type_fees integer DEFAULT 0;
 

@@ -27,11 +27,9 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-if (!empty($conf->projet->enabled)) {
-    include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-    include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
-}
+include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("ticketsup","companies","other","projects"));
