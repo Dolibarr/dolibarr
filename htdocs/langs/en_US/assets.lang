@@ -18,6 +18,9 @@
 #
 Assets = Assets
 NewAsset = New asset
+AccountancyAccountAsset = Accounting code (asset)
+AccountancyAccountDepreciationAsset = Accounting code (depreciation asset account)
+AccountancyAccountDepreciationExpense = Accounting code (depreciation expense account) 
 
 # Module label 'ModuleAssetsName'
 ModuleAssetsName = Assets
