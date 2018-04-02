@@ -41,6 +41,12 @@ DROP TABLE llx_c_accountingaccount;
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;
 
+ALTER TABLE llx_inventory ADD COLUMN fk_user_author integer;
+ALTER TABLE llx_inventory CHANGE COLUMN fk_user_author fk_user_creat integer;
+ALTER TABLE llx_inventory ADD COLUMN fk_user_modif integer;
+ALTER TABLE llx_inventory ADD COLUMN fk_user_valid integer;
+ALTER TABLE llx_inventory ADD COLUMN import_key varchar(14);
+
 
 -- For 8.0
 

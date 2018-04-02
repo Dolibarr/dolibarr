@@ -43,7 +43,7 @@ $sortorder = GETPOST("sortorder");
 if (! $sortfield) $sortfield="e.ref";
 if (! $sortorder) $sortorder="ASC";
 $page = GETPOST("page");
-if ($page < 0) $page = 0;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 
 $year = strftime("%Y",time());

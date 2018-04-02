@@ -6466,27 +6466,30 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 	// Clean parameters
 	$order=strtolower($order);
 
-	$sizearray=count($array);
-	if (is_array($array) && $sizearray>0)
+	if (is_array($array))
 	{
-		$temp = array();
-		foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
-
-		if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
-		else
+		$sizearray=count($array);
+		if ($sizearray>0)
 		{
-			($case_sensitive) ? natsort($temp) : natcasesort($temp);
-			if($order!='asc') $temp=array_reverse($temp,TRUE);
+			$temp = array();
+			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+
+			if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
+			else
+			{
+				($case_sensitive) ? natsort($temp) : natcasesort($temp);
+				if($order!='asc') $temp=array_reverse($temp,TRUE);
+			}
+
+			$sorted = array();
+
+			foreach(array_keys($temp) as $key)
+			{
+				(is_numeric($key) && empty($keepindex)) ? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+			}
+
+			return $sorted;
 		}
-
-		$sorted = array();
-
-		foreach(array_keys($temp) as $key)
-		{
-			(is_numeric($key) && empty($keepindex)) ? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
-		}
-
-		return $sorted;
 	}
 	return $array;
 }

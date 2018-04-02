@@ -278,7 +278,9 @@ else
 		$sql .= ', pac.rowid prod_comb_id';
 	}
 	// Add fields from extrafields
-	foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+	if (! empty($extrafields->attributes[$object->element]['label'])) {
+		foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+	}
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -335,7 +337,9 @@ else
 		$sql .= ', pac.rowid';
 	}
 	// Add fields from extrafields
-	foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ",ef.".$key : '');
+	if (! empty($extrafields->attributes[$object->element]['label'])) {
+		foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ",ef.".$key : '');
+	}
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldSelect',$parameters);    // Note that $action and $object may have been modified by hook
