@@ -77,6 +77,7 @@ $duration_unit = GETPOST('duration_unit');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
 $object = new Product($db);
+$object->type = $type;
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -94,8 +95,6 @@ if ($id > 0 || ! empty($ref))
         if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
         else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
     }
-} else {
-	$object->type = $type;
 }
 
 $modulepart='product';
