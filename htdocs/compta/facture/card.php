@@ -2820,7 +2820,8 @@ if ($action == 'create')
 	print '<td colspan="2">';
 	include_once DOL_DOCUMENT_ROOT . '/core/modules/facture/modules_facture.php';
 	$liste = ModelePDFFactures::liste_modeles($db);
-	$curent = !empty($conf->global->{'FACTURE_ADDON_PDF_'.$object->type})?$conf->global->{'FACTURE_ADDON_PDF_'.$object->type}:$conf->global->FACTURE_ADDON_PDF;
+	$paramkey='FACTURE_ADDON_PDF_'.$object->type;
+	$curent = !empty($conf->global->$paramkey)?$conf->global->$paramkey:$conf->global->FACTURE_ADDON_PDF;
 	print $form->selectarray('model', $liste, $curent);
 	print "</td></tr>";
 
