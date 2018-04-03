@@ -3071,68 +3071,124 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 {
 	global $conf, $langs;
 
+	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
+	$url = DOL_URL_ROOT;
+	$theme = $conf->theme;
+	$path = 'theme/'.$theme;
+
 	// Define fullpathpicto to use into src
-	if ($pictoisfullpath)
-	{
+	if ($pictoisfullpath) {
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
-		$fullpathpicto = $picto;
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) {
+			$picto .= '.png';
+		}
+		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
-	else
-	{
+	else {
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (in_array($pictowithoutext, array('bank', 'delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow')))
-		{
-			$fakey = $pictowithoutext; $facolor=''; $fasize='';
-			if ($pictowithoutext == 'switch_off')     { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
-			elseif ($pictowithoutext == 'switch_on')  { $fakey = 'fa-toggle-on';  $facolor='#227722'; $fasize='2em'; }
-			elseif ($pictowithoutext == 'off')        { $fakey = 'fa-square-o';   $fasize='1.3em'; }
-			elseif ($pictowithoutext == 'on')         { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
-			elseif ($pictowithoutext == 'bank')       { $fakey = 'fa-bank';      $facolor='#444'; }
-			elseif ($pictowithoutext == 'delete')     { $fakey = 'fa-trash';      $facolor='#444'; }
-			elseif ($pictowithoutext == 'edit')       { $fakey = 'fa-pencil';     $facolor='#444'; }
-			elseif ($pictowithoutext == 'printer')    { $fakey = 'fa-print';      $fasize='1.2em'; $facolor='#444'; }
-			elseif ($pictowithoutext == 'resize')     { $fakey = 'fa-crop';       $facolor='#444'; }
-			elseif ($pictowithoutext == 'uparrow')    { $fakey = 'fa-mail-forward';       $facolor='#555'; }
-			elseif ($pictowithoutext == 'unlink')     { $fakey = 'fa-chain-broken';       $facolor='#555'; }
-			elseif ($pictowithoutext == 'playdisabled') { $fakey = 'fa-play';       $facolor='#ccc'; }
-			else { $fakey = 'fa-'.$pictowithoutext; $facolor='#444'; }
+		if (in_array($pictowithoutext, array('bank', 'delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow'))) {
+			$fakey = $pictowithoutext;
+			$facolor = '';
+			$fasize = '';
+			if ($pictowithoutext == 'switch_off') {
+				$fakey = 'fa-toggle-off';
+				$facolor = '#999';
+				$fasize = '2em';
+			}
+			elseif ($pictowithoutext == 'switch_on') {
+				$fakey = 'fa-toggle-on';
+				$facolor = '#227722';
+				$fasize = '2em';
+			}
+			elseif ($pictowithoutext == 'off') {
+				$fakey = 'fa-square-o';
+				$fasize = '1.3em';
+			}
+			elseif ($pictowithoutext == 'on') {
+				$fakey = 'fa-check-square-o';
+				$fasize = '1.3em';
+			}
+			elseif ($pictowithoutext == 'bank') {
+				$fakey = 'fa-bank';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'delete') {
+				$fakey = 'fa-trash';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'edit') {
+				$fakey = 'fa-pencil';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'printer') {
+				$fakey = 'fa-print';
+				$fasize = '1.2em';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'resize') {
+				$fakey = 'fa-crop';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'uparrow') {
+				$fakey = 'fa-mail-forward';
+				$facolor = '#555';
+			}
+			elseif ($pictowithoutext == 'unlink')     {
+				$fakey = 'fa-chain-broken';
+				$facolor = '#555';
+			}
+			elseif ($pictowithoutext == 'playdisabled') {
+				$fakey = 'fa-play';
+				$facolor = '#ccc';
+			}
+			else {
+				$fakey = 'fa-'.$pictowithoutext;
+				$facolor = '#444';
+			}
 
-			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) { $morecss.=($morecss?' ':'').$reg[1]; }
-			$enabledisablehtml ='<span class="fa '.$fakey.' marginleftonly valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
-			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$titlealt;
-			$enabledisablehtml.='</span>';
+			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+				$morecss.= ($morecss?' ':'').$reg[1];
+			}
+			$enabledisablehtml = '<span class="fa '.$fakey.' marginleftonly valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$enabledisablehtml.= $titlealt;
+			}
+			$enabledisablehtml.= '</span>';
 
 			return $enabledisablehtml;
 		}
 
-		// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
-		$url = DOL_URL_ROOT;
-		$theme = $conf->theme;
-
-		$path = 'theme/'.$theme;
-		if (! empty($conf->global->MAIN_OVERWRITE_THEME_PATH)) $path = $conf->global->MAIN_OVERWRITE_THEME_PATH.'/theme/'.$theme;	// If the theme does not have the same name as the module
-		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
-		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) $path = $theme.'/theme/'.$theme;	// If the theme have the same name as the module
+		if (! empty($conf->global->MAIN_OVERWRITE_THEME_PATH)) {
+			$path = $conf->global->MAIN_OVERWRITE_THEME_PATH.'/theme/'.$theme;	// If the theme does not have the same name as the module
+		}
+		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) {
+			$path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
+		}
+		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) {
+			$path = $theme.'/theme/'.$theme;	// If the theme have the same name as the module
+		}
 
 		// If we ask an image into $url/$mymodule/img (instead of default path)
-		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
-		{
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) {
 			$picto = $regs[1];
 			$path = $regs[2];	// $path is $mymodule
 		}
 
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) {
+			$picto .= '.png';
+		}
 		// If alt path are defined, define url where img file is, according to physical path
-		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
-		{
-			if ($type == 'main') continue;
-			if (file_exists($dirroot.'/'.$path.'/img/'.$picto))	// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
-			{
-				$url=DOL_URL_ROOT.$conf->file->dol_url_root[$type];
+		// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
+		foreach ($conf->file->dol_document_root as $type => $dirroot) {
+			if ($type == 'main') {
+				continue;
+			}
+			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
+			if (file_exists($dirroot.'/'.$path.'/img/'.$picto)) {
+				$url = DOL_URL_ROOT.$conf->file->dol_url_root[$type];
 				break;
 			}
 		}
@@ -3141,15 +3197,16 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
-	if ($srconly) return $fullpathpicto;
-	else
-	{
+	if ($srconly) {
+		return $fullpathpicto;
+	}
+	else {
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for bind people
 		//$tmparray=array(0=>$titlealt);
 		//if (empty($notitle) && preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		//$title=$tmparray[0];
 		//$alt=empty($tmparray[1])?'':$tmparray[1];
-		$title=$titlealt;
+		$title = $titlealt;
 		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
