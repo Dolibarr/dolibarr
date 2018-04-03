@@ -2147,6 +2147,65 @@ if (empty($reshook))
 		header('Location: ' . $_SERVER["PHP_SELF"] . '?facid=' . $id); // Pour reaffichage de la fiche en cours d'edition
 		exit();
 	}
+	
+	// Outing situation invoice from cycle 
+	elseif ($action == 'confirm_situationout' && $confirm == 'yes' && $user->rights->facture->creer)
+	{
+	    $object->fetch($id);
+	    
+	    if ($object->statut == Facture::STATUS_VALIDATED
+	        && $user->rights->facture->creer
+	        && !$objectidnext
+	        && $object->is_last_in_cycle()
+	        && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+	            || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
+	        //&& ($object->total_ttc - $totalcreditnotes) == 0
+	        ) 
+	    {
+	        $outingError = 0;
+	        $newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
+	        if($newCycle > 1)
+	        {
+	            $lastCycle = $object->situation_cycle_ref;
+	            $object->situation_cycle_ref = $newCycle;
+	            $object->situation_counter = 1;
+	            $object->situation_final = 1;
+	            if($object->update($user) > 0)
+	            {
+	                
+	                // now, credit note must follow
+	                $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
+	                $sql.= ' SET situation_cycle_ref='.intval($newCycle);
+	                $sql.= ' AND situation_counter='.$object->situation_counter;
+                    $sql.= ' WHERE situation_cycle_ref='.intval($lastCycle);
+                    //$sql.= ' AND situation_counter='.$object->situation_counter;
+                    $sql.= ' AND fk_facture_source='.$object->id;
+                    $sql.= ' AND type='.Facture::TYPE_CREDIT_NOTE;
+                    
+                    // TODO : change each progression persent on each lines
+                    
+                    $resql=$db->query($sql);
+                    if ($resql)
+                    {
+                        setEventMessages($langs->trans('Updated'));
+                        header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+                    }
+                    else
+                    {
+                        setEventMessages($langs->trans('ErrorOutingSituationInvoiceCreditNote'), array(), 'errors');
+                    }
+	            }
+	            else 
+	            {
+	                setEventMessages($langs->trans('ErrorOutingSituationInvoiceOnUpdate'), array(), 'errors');
+	            }
+	        }
+	        else
+	        {
+	            setEventMessages($langs->trans('ErrorFindNextSituationInvoice'), array(), 'errors');
+	        }
+	    }
+	}
 
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
@@ -3108,6 +3167,24 @@ else if ($id > 0 || ! empty($ref))
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', 'no', 1);
 		}
 	}
+	
+	// Confirmation to remove invoice from cycle
+	if ($action == 'situationout') {
+	    $text = $langs->trans('ConfirmRemoveSituationFromCycle', $object->ref);
+	    $label = $langs->trans("ConfirmOuting");
+	    $formquestion = array();
+	    // remove situation from cycle
+	    if ($object->statut == Facture::STATUS_VALIDATED
+	        && $user->rights->facture->creer
+	        && !$objectidnext
+	        && $object->is_last_in_cycle()
+	        && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+	            || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
+	        )
+	    {
+	        $formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
+	    }
+	}
 
 	// Confirmation of validation
 	if ($action == 'valid')
@@ -3798,23 +3875,27 @@ else if ($id > 0 || ! empty($ref))
 
 	if ($object->type == Facture::TYPE_SITUATION && ! empty($conf->global->INVOICE_USE_SITUATION))
 	{
-		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
-			print '<table class="noborder situationstable" width="100%">';
+		
+		print '<table class="noborder situationstable" width="100%">';
 
+			
+		print '<tr class="liste_titre">';
+		print '<td>' . $langs->trans('ListOfSituationInvoices') . '</td>';
+		print '<td></td>';
+		print '<td align="center">' . $langs->trans('Situation') . '</td>';
+		if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+		print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+		print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+		print '<td width="18">&nbsp;</td>';
+		print '</tr>';
+		
+		
+		$total_prev_ht = $total_prev_ttc = 0;
+		$total_global_ht = $total_global_ttc = 0;
+		
 		if (count($object->tab_previous_situation_invoice) > 0) {
 			// List of previous invoices
-			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans('ListOfSituationInvoices') . '</td>';
-			print '<td></td>';
-			print '<td align="center">' . $langs->trans('Situation') . '</td>';
-			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
-			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
-			print '<td width="18">&nbsp;</td>';
-			print '</tr>';
 			
-			$total_prev_ht = $total_prev_ttc = 0;
-			$total_global_ht = $total_global_ttc = 0;
 			$current_situation_counter = array();
 			foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
 				$totalpaye = $prev_invoice->getSommePaiement();
@@ -3904,8 +3985,7 @@ else if ($id > 0 || ! empty($ref))
 			print '</tr>';
 		}
 
-		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
-			print '</table>';
+		print '</table>';
 	}
 
 
@@ -4483,18 +4563,19 @@ else if ($id > 0 || ! empty($ref))
 			if ($object->statut == Facture::STATUS_VALIDATED
 			    && $user->rights->facture->creer
 			    && !$objectidnext
+			    && $object->situation_counter > 1
 			    && $object->is_last_in_cycle()
 			    && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
 			        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
 			    )
 			{
-			    if(($object->total_ttc - $totalcreditnotes) == 0 && false)
+			    if(($object->total_ttc ) == 0 || true)
 			    {
-			        print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=situationOut">' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
+			        print '<div class="inline-block divButAction"><a id="butSituationOut" class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=situationout">' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
 			    }
 			    else 
 			    {
-			        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotEnouthCreditNote") . '" >' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
+			        print '<div class="inline-block divButAction"><a id="butSituationOutRefused" class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotEnouthCreditNote") . '" >' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
 			    }
 			    
 			}
