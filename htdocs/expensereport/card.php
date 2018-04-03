@@ -1126,11 +1126,17 @@ if (empty($reshook))
     		$error++;
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PriceUTTC")), null, 'errors');
     	}
+    	// Warning if date out of range
+    	if ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1)))
+    	{
+    		$langs->load("errors");
+    		setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
+    	}
 
     	// S'il y'a eu au moins une erreur
     	if (! $error)
     	{
-    		$type = 0;	// TODO What if service ?
+    		$type = 0;	// TODO What if service ? We should take the type product/service from the type of expense report llx_c_type_fees
 
 			// Insert line
 			$result = $object->addline($qty,$value_unit,$fk_c_type_fees,$vatrate,$date,$comments,$fk_projet,$fk_c_exp_tax_cat,$type);
@@ -1241,6 +1247,12 @@ if (empty($reshook))
     		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Vat")), null, 'errors');
     		$action='';
     	}
+    	// Warning if date out of range
+		if ($date < $object->date_debut || $date > ($object->date_fin + (24 * 3600 - 1)))
+    	{
+    		$langs->load("errors");
+    		setEventMessages($langs->trans("WarningDateOfLineMustBeInExpenseReportRange"), null, 'warnings');
+    	}
 
     	if (! $error)
     	{
@@ -1270,8 +1282,8 @@ if (empty($reshook))
 
     			$result = $object->recalculer($id);
 
-    			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
-    			exit;
+    			//header("Location: ".$_SERVER["PHP_SELF"]."?id=".$id);
+    			//exit;
     		}
     		else
     		{
@@ -2076,7 +2088,7 @@ else
 								if (! empty($conf->projet->enabled))
 								{
 									print '<td>';
-									$formproject->select_projects(-1, $line->fk_projet,'fk_projet', 0, 0, 1, 1);
+									$formproject->select_projects(-1, $line->fk_projet,'fk_projet', 0, 0, 1, 1, 0, 0, 0, '', 0, 0, 'maxwidth300');
 									print '</td>';
 								}
 

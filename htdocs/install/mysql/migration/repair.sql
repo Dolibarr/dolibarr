@@ -344,6 +344,8 @@ update llx_facturedet set product_type = 1 where product_type = 2;
 --update llx_commandedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 --update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 
+update llx_propal set fk_statut = 1 where fk_statut = -1;
+
 delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or fk_commandefourndet IS NULL;
 
 

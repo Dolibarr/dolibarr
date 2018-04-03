@@ -261,21 +261,28 @@ if ($action == 'update')
 
 			// Update
 			$verif = $object->update($user);
-            if ($verif > 0)
-            {
-                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-                exit;
-            }
-            else
-           {
-                // Otherwise we display the request form with the SQL error message
-                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit&error=SQL_Create&msg='.$object->error);
-                exit;
-            }
+
+			if ($verif <= 0)
+			{
+				setEventMessages($object->error, $object->errors, 'warnings');
+				$action='edit';
+			}
+			else
+			{
+				header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+				exit;
+			}
         }
-    } else {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-        exit;
+        else
+        {
+        	setEventMessages($langs->trans("NotEnoughPermissions"), null, 'errors');
+        	$action='';
+        }
+    }
+    else
+    {
+    	setEventMessages($langs->trans("ErrorBadStatus"), null, 'errors');
+    	$action='';
     }
 }
 
@@ -299,7 +306,9 @@ if ($action == 'confirm_delete' && GETPOST('confirm') == 'yes' && $user->rights-
 		}
 		else
 		{
-			$error = $langs->trans('ErrorCantDeleteCP');
+			$error++;
+			setEventMessages($langs->trans('ErrorCantDeleteCP'), null, 'errors');
+			$action='';
 		}
 	}
 
@@ -393,24 +402,26 @@ if ($action == 'confirm_send')
 
             $trackid='leav'.$object->id;
 
-            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
 
             if (!$result)
             {
-                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=mail&error_content='.$mail->error);
-                exit;
+                setEventMessages($mail->error, $mail->errors, 'warnings');
+                $action='';
             }
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-            exit;
+            else
+            {
+            	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+            	exit;
+            }
         }
         else
         {
-            // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=SQL_Create&msg='.$object->error);
-            exit;
+        	setEventMessages($object->error, $object->errors, 'errors');
+        	$action='';
         }
     }
 }
@@ -481,31 +492,33 @@ if ($action == 'confirm_valid')
 
             $trackid='leav'.$object->id;
 
-            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
 
-            if (!$result) {
-                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=mail&error_content='.$mail->error);
-                exit;
+            if (!$result)
+            {
+            	setEventMessages($mail->error, $mail->errors, 'warnings');
+            	$action='';
             }
-
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-            exit;
-        } else {
-            // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=SQL_Create&msg='.$object->error);
-            exit;
+            else
+            {
+            	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+            	exit;
+            }
         }
-
+        else
+        {
+        	setEventMessages($object->error, $object->errors, 'errors');
+        	$action='';
+        }
     }
-
 }
 
-if ($action == 'confirm_refuse')
+if ($action == 'confirm_refuse' && GETPOST('confirm','alpha') == 'yes')
 {
-    if (! empty($_POST['detail_refuse']))
+	if (! empty($_POST['detail_refuse']))
     {
         $object = new Holiday($db);
         $object->fetch($id);
@@ -513,10 +526,10 @@ if ($action == 'confirm_refuse')
         // Si statut en attente de validation et valideur = utilisateur
         if ($object->statut == 2 && $user->id == $object->fk_validator)
         {
-            $object->date_refuse = date('Y-m-d H:i:s', time());
+            $object->date_refuse = dol_print_date('dayhour', dol_now());
             $object->fk_user_refuse = $user->id;
             $object->statut = 5;
-            $object->detail_refuse = $_POST['detail_refuse'];
+            $object->detail_refuse = GETPOST('detail_refuse','alphanohtml');
 
             $verif = $object->update($user);
 
@@ -558,29 +571,31 @@ if ($action == 'confirm_refuse')
 
 	            $trackid='leav'.$object->id;
 
-	            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
+	            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
                 // Envoi du mail
                 $result=$mail->sendfile();
 
-                if(!$result) {
-                    header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=mail&error_content='.$mail->error);
-                    exit;
+                if (!$result)
+                {
+                	setEventMessages($mail->error, $mail->errors, 'warnings');
+                	$action='';
                 }
-
-                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-                exit;
-            } else {
-                // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
-                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=SQL_Create&msg='.$object->error);
-                exit;
+                else
+                {
+                	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+                	exit;
+                }
             }
-
+            else
+            {
+            	setEventMessages($object->error, $object->errors, 'errors');
+            	$action='';
+            }
         }
-
     } else {
-        header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=NoMotifRefuse');
-        exit;
+    	setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("DetailRefusCP")), null, 'errors');
+    	$action='refuse';
     }
 }
 
@@ -588,6 +603,8 @@ if ($action == 'confirm_refuse')
 // Si Validation de la demande
 if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes')
 {
+	$error = 0;
+
     $object = new Holiday($db);
     $object->fetch($id);
 
@@ -597,7 +614,8 @@ if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes')
     $result = $object->update($user);
     if ($result < 0)
     {
-        $error = $langs->trans('ErrorBackToDraft');
+    	$error++;
+    	setEventMessages($langs->trans('ErrorBackToDraft').' '.$object->error, $object->errors, 'errors');
     }
 
     if (! $error)
@@ -616,6 +634,8 @@ if ($action == 'confirm_draft' && GETPOST('confirm') == 'yes')
 // Si Validation de la demande
 if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 {
+	$error = 0;
+
     $object = new Holiday($db);
     $object->fetch($id);
 
@@ -647,7 +667,8 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 
         	if ($result1 < 0 || $result2 < 0)
         	{
-        		$error = $langs->trans('ErrorCantDeleteCP');
+        		$error++;
+        		setEventMessages($langs->trans('ErrorCantDeleteCP').' '.$object->error, $object->errors, 'errors');
         	}
         }
 
@@ -697,27 +718,22 @@ if ($action == 'confirm_cancel' && GETPOST('confirm') == 'yes')
 
             $trackid='leav'.$object->id;
 
-            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, null, null, null, '', '', 0, 0, '', '', $trackid);
+            $mail = new CMailFile($subject, $emailTo, $emailFrom, $message, array(), array(), array(), '', '', 0, 0, '', '', $trackid);
 
             // Envoi du mail
             $result=$mail->sendfile();
 
-            if(!$result)
+            if (!$result)
             {
-                header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=mail&error_content='.$mail->error);
-                exit;
+            	setEventMessages($mail->error, $mail->errors, 'warnings');
+            	$action='';
             }
-
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
-            exit;
+            else
+            {
+            	header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id);
+            	exit;
+            }
         }
-        else
-        {
-            // Sinon on affiche le formulaire de demande avec le message d'erreur SQL
-            header('Location: '.$_SERVER["PHP_SELF"].'?id='.$object->id.'&error=SQL_Create&msg='.$object->error);
-            exit;
-        }
-
     }
 
 }
@@ -1010,47 +1026,7 @@ else
             // On vérifie si l'utilisateur à le droit de lire cette demande
             if ($cancreate)
             {
-                if ($action == 'delete')
-                {
-                    if ($user->rights->holiday->delete)
-                    {
-                        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
-                    }
-                }
-
-                // Si envoi en validation
-                if ($action == 'sendToValidate' && $object->statut == 1)
-                {
-                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
-                }
-
-                // Si validation de la demande
-                if ($action == 'valid')
-                {
-                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
-                }
-
-                // Si refus de la demande
-                if ($action == 'refuse')
-                {
-                    $array_input = array(array('type'=>"text",'label'=> $langs->trans('DetailRefusCP'),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
-                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
-                }
-
-                // Si annulation de la demande
-                if ($action == 'cancel')
-                {
-                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
-                }
-
-                // Si back to draft
-                if ($action == 'backtodraft')
-                {
-                    print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleSetToDraft"),$langs->trans("ConfirmSetToDraft"),"confirm_draft", '', 1, 1);
-                }
-
                 $head=holiday_prepare_head($object);
-
 
                 if ($action == 'edit' && $object->statut == 1)
                 {
@@ -1240,6 +1216,47 @@ else
                 print '<div class="clearboth"></div>';
 
                 dol_fiche_end();
+
+
+                // Confirmation messages
+                if ($action == 'delete')
+                {
+                	if ($user->rights->holiday->delete)
+                	{
+                		print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleDeleteCP"),$langs->trans("ConfirmDeleteCP"),"confirm_delete", '', 0, 1);
+                	}
+                }
+
+                // Si envoi en validation
+                if ($action == 'sendToValidate' && $object->statut == 1)
+                {
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleToValidCP"),$langs->trans("ConfirmToValidCP"),"confirm_send", '', 1, 1);
+                }
+
+                // Si validation de la demande
+                if ($action == 'valid')
+                {
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleValidCP"),$langs->trans("ConfirmValidCP"),"confirm_valid", '', 1, 1);
+                }
+
+                // Si refus de la demande
+                if ($action == 'refuse')
+                {
+                	$array_input = array(array('type'=>"text",'label'=> $langs->trans('DetailRefusCP'),'name'=>"detail_refuse",'size'=>"50",'value'=>""));
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id."&action=confirm_refuse", $langs->trans("TitleRefuseCP"), $langs->trans('ConfirmRefuseCP'), "confirm_refuse", $array_input, 1, 0);
+                }
+
+                // Si annulation de la demande
+                if ($action == 'cancel')
+                {
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleCancelCP"),$langs->trans("ConfirmCancelCP"),"confirm_cancel", '', 1, 1);
+                }
+
+                // Si back to draft
+                if ($action == 'backtodraft')
+                {
+                	print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("TitleSetToDraft"),$langs->trans("ConfirmSetToDraft"),"confirm_draft", '', 1, 1);
+                }
 
 
                 if ($action == 'edit' && $object->statut == 1)

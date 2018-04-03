@@ -260,8 +260,8 @@ $i=0;
 $columns = 6;
 
 // Load arrays of datas
-$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
-$x_paye = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy');
+$x_coll = tax_by_date('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = tax_by_date('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 if (!is_array($x_coll) || !is_array($x_paye)) {
 	$langs->load("errors");
