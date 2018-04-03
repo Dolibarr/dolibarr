@@ -4478,7 +4478,26 @@ else if ($id > 0 || ! empty($ref))
 			        print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("NotEnoughPermissions") . '">' . $langs->trans("CreateCreditNote") . '</span></div>';
 			    } 
 			}
-
+			
+			// remove situation from cycle
+			if ($object->statut == Facture::STATUS_VALIDATED
+			    && $user->rights->facture->creer
+			    && !$objectidnext
+			    && $object->is_last_in_cycle()
+			    && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+			        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
+			    )
+			{
+			    if(($object->total_ttc - $totalcreditnotes) == 0 && false)
+			    {
+			        print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=situationOut">' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
+			    }
+			    else 
+			    {
+			        print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotEnouthCreditNote") . '" >' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
+			    }
+			    
+			}
 
 			// Create next situation invoice
 			if ($user->rights->facture->creer && ($object->type == 5) && ($object->statut == 1 || $object->statut == 2)) {
