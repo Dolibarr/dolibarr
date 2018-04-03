@@ -68,9 +68,9 @@ class pdf_azur extends ModelePDFPropales
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "azur";
@@ -230,7 +230,7 @@ class pdf_azur extends ModelePDFPropales
 
 		if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 
-		if ($conf->propal->dir_output)
+		if ($conf->propal->multidir_output[$conf->entity])
 		{
 			$object->fetch_thirdparty();
 
@@ -239,13 +239,13 @@ class pdf_azur extends ModelePDFPropales
 			// Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->propal->dir_output;
+				$dir = $conf->propal->multidir_output[$conf->entity];
 				$file = $dir . "/SPECIMEN.pdf";
 			}
 			else
 			{
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->propal->dir_output . "/" . $objectref;
+				$dir = $conf->propal->multidir_output[$object->entity] . "/" . $objectref;
 				$file = $dir . "/" . $objectref . ".pdf";
 			}
 
@@ -1501,7 +1501,7 @@ class pdf_azur extends ModelePDFPropales
 		{
 			$top_shift = $pdf->getY() - $current_y;
 		}
-		
+
 		if ($showaddress)
 		{
 			// Sender properties
@@ -1515,7 +1515,7 @@ class pdf_azur extends ModelePDFPropales
 		 		$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$labelbeforecontactname." ".$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
 		 	}
 
-		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+		 	$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42+$top_shift;

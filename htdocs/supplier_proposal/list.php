@@ -57,6 +57,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'supplierproposallist';
 
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -97,9 +98,6 @@ if ($object_statut != '') $search_status=$object_statut;
 // Nombre de ligne pour choix de produit/service predefinis
 $NBLINES=4;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='supplierproposallist';
-
 // Security check
 $module='supplier_proposal';
 $dbtable='';
@@ -116,6 +114,7 @@ $result = restrictedArea($user, $module, $objectid, $dbtable);
 $diroutputmassaction=$conf->supplier_proposal->dir_output . '/temp/massgeneration/'.$user->id;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new SupplierProposal($db);
 $hookmanager->initHooks(array('supplier_proposallist'));
 $extrafields = new ExtraFields($db);
 
@@ -599,7 +598,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['sp.datec']['checked']))     print_liste_field_titre($arrayfields['sp.datec']['label'],$_SERVER["PHP_SELF"],"sp.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);

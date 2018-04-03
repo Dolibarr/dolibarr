@@ -34,11 +34,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 $langs->load("users");
 $langs->load('other');
 
-
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
 $id=(GETPOST('userid','int') ? GETPOST('userid','int') : GETPOST('id','int'));
 $ref = GETPOST('ref', 'alpha');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userdoc';   // To manage different context of search
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -94,8 +94,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','userdoc','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','userdoc','globalcard');
 
 
 /*

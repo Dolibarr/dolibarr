@@ -48,7 +48,7 @@ class BookKeeping extends CommonObject
 	 */
 	public $table_element = 'accounting_bookkeeping';
 
-	public $entity = 1;
+	public $entity;
 
 	/**
 	 * @var BookKeepingLine[] Lines
@@ -295,7 +295,7 @@ class BookKeeping extends CommonObject
 				$sql .= ",'" . $this->db->escape($this->code_journal) . "'";
 				$sql .= ",'" . $this->db->escape($this->journal_label) . "'";
 				$sql .= "," . $this->db->escape($this->piece_num);
-				$sql .= ", " . (! isset($this->entity) ? '1' : $this->entity);
+				$sql .= ", " . (! isset($this->entity) ? $conf->entity : $this->entity);
 				$sql .= ")";
 
 				dol_syslog(get_class($this) . ":: create sql=" . $sql, LOG_DEBUG);
@@ -363,6 +363,8 @@ class BookKeeping extends CommonObject
 	 * @return int				 <0 if KO, Id of created object if OK
 	 */
 	public function createStd(User $user, $notrigger = false, $mode='') {
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$error = 0;
@@ -486,7 +488,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
 		$sql .= ' ' . (empty($this->journal_label) ? 'NULL' : "'" . $this->db->escape($this->journal_label) . "'") . ',';
 		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
-		$sql .= ' ' . (! isset($this->entity) ? '1' : $this->entity);
+		$sql .= ' ' . (! isset($this->entity) ? $conf->entity : $this->entity);
 		$sql .= ')';
 
 		$this->db->begin();
@@ -499,7 +501,7 @@ class BookKeeping extends CommonObject
 		}
 
 		if (! $error) {
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element . $mode);
 
 			if (! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
@@ -1099,7 +1101,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX .  $this->table_element . $mode . " as ab";
-		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$value."'");
+		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$this->db->escape($value)."'");
 		$sql .= ' WHERE ab.piece_num=' . $piece_num ;
 		$resql = $this->db->query($sql);
 
@@ -1182,7 +1184,7 @@ class BookKeeping extends CommonObject
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE import_key = '" . $importkey . "'";
+		$sql .= " WHERE import_key = '" . $this->db->escape($importkey) . "'";
 
 		$resql = $this->db->query($sql);
 
@@ -1220,7 +1222,7 @@ class BookKeeping extends CommonObject
 		$sql.= " FROM " . MAIN_DB_PREFIX . $this->table_element.$mode;
 		$sql.= " WHERE 1 = 1";
 		if (! empty($delyear)) $sql.= " AND YEAR(doc_date) = " . $delyear;		 // FIXME Must use between
-		if (! empty($journal)) $sql.= " AND code_journal = '".$journal."'";
+		if (! empty($journal)) $sql.= " AND code_journal = '".$this->db->escape($journal)."'";
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 		$resql = $this->db->query($sql);
 
@@ -1252,7 +1254,7 @@ class BookKeeping extends CommonObject
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE piece_num = " . $piecenum;
+		$sql .= " WHERE piece_num = " . (int) $piecenum;
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 
 		$resql = $this->db->query($sql);

@@ -1137,9 +1137,12 @@ foreach ($listofreferent as $key => $value)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else // error
+		else
 		{
-			print $elementarray;
+			if (! is_array($elementarray))	// error
+			{
+				print $elementarray;
+			}
 		}
 		print "</table>";
 		print "<br>\n";

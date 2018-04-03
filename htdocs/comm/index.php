@@ -266,7 +266,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1,'customer',16);
+                print $companystatic->getNomUrl(1,'supplier',16);
                 print '</td>';
                 print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
                 $i++;
@@ -676,8 +676,8 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 {
 	$langs->load("propal");
 
-	$sql = "SELECT s.nom as name, s.rowid, p.rowid as propalid, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
-    $sql.= ", s.code_client";
+	$sql = "SELECT s.nom as name, s.rowid, s.code_client";
+	$sql.= ", p.rowid as propalid, p.entity, p.total as total_ttc, p.total_ht, p.tva as total_tva, p.ref, p.ref_client, p.fk_statut, p.datep as dp, p.fin_validite as dfv";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= ", ".MAIN_DB_PREFIX."propal as p";
 	if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -726,7 +726,7 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 				print '</td>';
 				print '<td width="16" align="center" class="nobordernopadding">';
 				$filename=dol_sanitizeFileName($obj->ref);
-				$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+				$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->propalid;
 				print $formfile->getDocumentsLink($propalstatic->element, $filename, $filedir);
 				print '</td></tr></table>';

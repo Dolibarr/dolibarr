@@ -42,23 +42,23 @@ $toselect = GETPOST('toselect', 'array');
 // Security check
 $result=restrictedArea($user,'adherent');
 
-$filter=GETPOST("filter");
-$statut=GETPOST("statut");
-$search=GETPOST("search");
-$search_ref=GETPOST("search_ref");
-$search_lastname=GETPOST("search_lastname");
-$search_firstname=GETPOST("search_firstname");
-$search_login=GETPOST("search_login");
-$search_address=GETPOST("search_address");
-$search_zip=GETPOST("search_zip");
-$search_town=GETPOST("search_town");
-$search_state=GETPOST("search_state");
-$search_country=GETPOST("search_country");
-$search_phone=GETPOST("search_phone");
-$search_phone_perso=GETPOST("search_phone_perso");
-$search_phone_mobile=GETPOST("search_phone_mobile");
-$search_type=GETPOST("search_type");
-$search_email=GETPOST("search_email");
+$filter=GETPOST("filter",'alpha');
+$statut=GETPOST("statut",'alpha');
+$search=GETPOST("search",'alpha');
+$search_ref=GETPOST("search_ref",'alpha');
+$search_lastname=GETPOST("search_lastname",'alpha');
+$search_firstname=GETPOST("search_firstname",'alpha');
+$search_login=GETPOST("search_login",'alpha');
+$search_address=GETPOST("search_address",'alpha');
+$search_zip=GETPOST("search_zip",'alpha');
+$search_town=GETPOST("search_town",'alpha');
+$search_state=GETPOST("search_state",'alpha');
+$search_country=GETPOST("search_country",'alpha');
+$search_phone=GETPOST("search_phone",'alpha');
+$search_phone_perso=GETPOST("search_phone_perso",'alpha');
+$search_phone_mobile=GETPOST("search_phone_mobile",'alpha');
+$search_type=GETPOST("search_type",'alpha');
+$search_email=GETPOST("search_email",'alpha');
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
 $optioncss = GETPOST('optioncss','alpha');
@@ -79,6 +79,7 @@ if (! $sortorder) { $sortorder=($filter=='outofdate'?"DESC":"ASC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Adherent($db);
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
@@ -288,7 +289,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $titre=$langs->trans("MembersList");
-if (isset($_GET["statut"]))
+if (GETPOSTISSET("statut"))
 {
 	if ($statut == '-1,1') { $titre=$langs->trans("MembersListQualified"); }
 	if ($statut == '-1')   { $titre=$langs->trans("MembersListToValid"); }
@@ -574,7 +575,7 @@ if (! empty($arrayfields['d.datefin']['checked']))        print_liste_field_titr
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['d.datec']['checked']))     print_liste_field_titre($arrayfields['d.datec']['label'],$_SERVER["PHP_SELF"],"d.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -593,7 +594,6 @@ while ($i < min($num, $limit))
 	$memberstatic->ref=$obj->rowid;
 	$memberstatic->lastname=$obj->lastname;
 	$memberstatic->firstname=$obj->firstname;
-	$memberstatic->societe=$obj->company;
 	$memberstatic->statut=$obj->statut;
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
@@ -605,6 +605,7 @@ while ($i < min($num, $limit))
 	} else {
 		$companyname=$obj->company;
 	}
+	$memberstatic->societe = $companyname;
 
 	print '<tr class="oddeven">';
 

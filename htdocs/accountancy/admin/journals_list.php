@@ -177,6 +177,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 	    	$msg .= $langs->transnoentities('ErrorFieldFormat', $langs->transnoentities('Code')).'<br>';
 	    }*/
 	}
+	if (! GETPOST('label','alpha'))
+	{
+		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+		$ok=0;
+	}
 
 	// Clean some parameters
 	if ($_POST["accountancy_code"] <= 0) $_POST["accountancy_code"]='';	// If empty, we force to null
@@ -208,7 +213,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 		if ($tabrowid[$id] && ! in_array($tabrowid[$id],$listfieldinsert))
 			$sql.= $tabrowid[$id].",";
 		$sql.= $tabfieldinsert[$id];
-		$sql.=",active)";
+		$sql.=",active,entity)";
 		$sql.= " VALUES(";
 
 		// List of values
@@ -221,11 +226,11 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 				$_POST[$listfieldvalue[$i]] = $conf->entity;
 			}
 			if ($i) $sql.=",";
-			if ($_POST[$listfieldvalue[$i]] == '' && ! ($listfieldvalue[$i] == 'code' && $id == 10)) $sql.="null";  // For vat, we want/accept code = ''
+			if ($_POST[$listfieldvalue[$i]] == '') $sql.="null";  // For vat, we want/accept code = ''
 			else $sql.="'".$db->escape($_POST[$listfieldvalue[$i]])."'";
 			$i++;
 		}
-		$sql.=",1)";
+		$sql.=",1,".$conf->entity.")";
 
 		dol_syslog("actionadd", LOG_DEBUG);
 		$result = $db->query($sql);
@@ -275,6 +280,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
 			$i++;
 		}
 		$sql.= " WHERE ".$rowidcol." = '".$rowid."'";
+		$sql.=" AND entity = ".$conf->entity;
 
 		dol_syslog("actionmodify", LOG_DEBUG);
 		//print $sql;
@@ -298,6 +304,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 	else { $rowidcol="rowid"; }
 
 	$sql = "DELETE from ".$tabname[$id]." WHERE ".$rowidcol."='".$rowid."'";
+	$sql.=" AND entity = ".$conf->entity;
 
 	dol_syslog("delete", LOG_DEBUG);
 	$result = $db->query($sql);
@@ -326,6 +333,7 @@ if ($action == $acts[0])
 	elseif ($code) {
 		$sql = "UPDATE ".$tabname[$id]." SET active = 1 WHERE code='".$code."'";
 	}
+	$sql.=" AND entity = ".$conf->entity;
 
 	$result = $db->query($sql);
 	if (!$result)
@@ -346,6 +354,7 @@ if ($action == $acts[1])
 	elseif ($code) {
 		$sql = "UPDATE ".$tabname[$id]." SET active = 0 WHERE code='".$code."'";
 	}
+	$sql.=" AND entity = ".$conf->entity;
 
 	$result = $db->query($sql);
 	if (!$result)
@@ -389,13 +398,7 @@ if ($id)
 {
 	// Complete requete recherche valeurs avec critere de tri
 	$sql=$tabsql[$id];
-
-	if ($search_country_id > 0)
-	{
-		if (preg_match('/ WHERE /',$sql)) $sql.= " AND ";
-		else $sql.=" WHERE ";
-		$sql.= " c.rowid = ".$search_country_id;
-	}
+	$sql.= " WHERE a.entity = ".$conf->entity;
 
 	if ($sortfield)
 	{
@@ -416,7 +419,6 @@ if ($id)
 	}
 	$sql.=$tabsqlsort[$id];
 	$sql.=$db->plimit($listlimit+1,$offset);
-	//print $sql;
 
 	$fieldlist=explode(',',$tabfield[$id]);
 
@@ -655,13 +657,7 @@ if ($id)
 					// Active
 					print '<td align="center" class="nowrap">';
 					if ($canbedisabled) print '<a href="'.$url.'action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-					else
-				 	{
-				 		if (in_array($obj->code, array('AC_OTH','AC_OTH_AUTO'))) print $langs->trans("AlwaysActive");
-				 		else if (isset($obj->type) && in_array($obj->type, array('systemauto')) && empty($obj->active)) print $langs->trans("Deprecated");
-				  		else if (isset($obj->type) && in_array($obj->type, array('system')) && ! empty($obj->active) && $obj->code != 'AC_OTH') print $langs->trans("UsedOnlyWithTypeOption");
-						else print $langs->trans("AlwaysActive");
-					}
+					else print $langs->trans("AlwaysActive");
 					print "</td>";
 
 					// Modify link

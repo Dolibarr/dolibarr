@@ -561,8 +561,8 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ' t.fk_multicurrency, t.multicurrency_code, t.multicurrency_tx, t.multicurrency_total_ht, t.multicurrency_total_tva, t.multicurrency_total_ttc';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as t';
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (t.fk_soc = s.rowid)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON t.fk_cond_reglement = cr.rowid AND cr.entity IN (".getEntity('c_payment_term').")";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON t.fk_mode_reglement = p.id AND p.entity IN (".getEntity('c_paiement').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_payment_term as cr ON t.fk_cond_reglement = cr.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON t.fk_mode_reglement = p.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON t.fk_incoterms = i.rowid';
         if ($id)  $sql.= " WHERE t.rowid=".$id;
         if ($ref) $sql.= " WHERE t.ref='".$this->db->escape($ref)."'";
@@ -894,6 +894,107 @@ class FactureFournisseur extends CommonInvoice
         }
     }
 
+    /**
+     *    Add a discount line into an invoice (as an invoice line) using an existing absolute discount (Consume the discount)
+     *
+     *    @param     int	$idremise	Id of absolute discount
+     *    @return    int          		>0 if OK, <0 if KO
+     */
+    function insert_discount($idremise)
+    {
+    	global $langs;
+    	
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
+    	include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+    	
+    	$this->db->begin();
+    	
+    	$remise=new DiscountAbsolute($this->db);
+    	$result=$remise->fetch($idremise);
+    	
+    	if ($result > 0)
+    	{
+    		if ($remise->fk_invoice_supplier)	// Protection against multiple submission
+    		{
+    			$this->error=$langs->trans("ErrorDiscountAlreadyUsed");
+    			$this->db->rollback();
+    			return -5;
+    		}
+    		
+    		$facligne=new SupplierInvoiceLine($this->db);
+    		$facligne->fk_facture_fourn=$this->id;
+    		$facligne->fk_remise_except=$remise->id;
+    		$facligne->desc=$remise->description;   	// Description ligne
+    		$facligne->vat_src_code=$remise->vat_src_code;
+    		$facligne->tva_tx=$remise->tva_tx;
+    		$facligne->subprice = -$remise->amount_ht;
+    		$facligne->fk_product=0;					// Id produit predefini
+    		$facligne->product_type=0;
+    		$facligne->qty=1;
+    		$facligne->remise_percent=0;
+    		$facligne->rang=-1;
+    		$facligne->info_bits=2;
+    		
+    		// Get buy/cost price of invoice that is source of discount
+    		if ($remise->fk_invoice_supplier_source > 0)
+    		{
+    			$srcinvoice=new FactureFournisseur($this->db);
+    			$srcinvoice->fetch($remise->fk_invoice_supplier_source);
+    			$totalcostpriceofinvoice=0;
+    			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmargin.class.php';  // TODO Move this into commonobject
+    			$formmargin=new FormMargin($this->db);
+    			$arraytmp=$formmargin->getMarginInfosArray($srcinvoice, false);
+    			$facligne->pa_ht = $arraytmp['pa_total'];
+    		}
+    		
+    		$facligne->total_ht  = -$remise->amount_ht;
+    		$facligne->total_tva = -$remise->amount_tva;
+    		$facligne->total_ttc = -$remise->amount_ttc;
+    		
+    		$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
+    		$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;
+    		$facligne->multicurrency_total_tva = -$remise->multicurrency_total_tva;
+    		$facligne->multicurrency_total_ttc = -$remise->multicurrency_total_ttc;
+    		
+    		$lineid=$facligne->insert();
+    		if ($lineid > 0)
+    		{
+    			$result=$this->update_price(1);
+    			if ($result > 0)
+    			{
+    				// Create link between discount and invoice line
+    				$result=$remise->link_to_invoice($lineid,0,'supplier');
+    				if ($result < 0)
+    				{
+    					$this->error=$remise->error;
+    					$this->db->rollback();
+    					return -4;
+    				}
+    				
+    				$this->db->commit();
+    				return 1;
+    			}
+    			else
+    			{
+    				$this->error=$facligne->error;
+    				$this->db->rollback();
+    				return -1;
+    			}
+    		}
+    		else
+    		{
+    			$this->error=$facligne->error;
+    			$this->db->rollback();
+    			return -2;
+    		}
+    	}
+    	else
+    	{
+    		$this->db->rollback();
+    		return -3;
+    	}
+    }
+    
 
     /**
      *	Delete invoice from database
@@ -926,6 +1027,33 @@ class FactureFournisseur extends CommonInvoice
             }
             // Fin appel triggers
         }
+
+		if (! $error) {
+			// If invoice was converted into a discount not yet consumed, we remove discount
+			$sql = 'DELETE FROM ' . MAIN_DB_PREFIX . 'societe_remise_except';
+			$sql .= ' WHERE fk_invoice_supplier_source = ' . $rowid;
+			$sql .= ' AND fk_invoice_supplier_line IS NULL';
+			$resql = $this->db->query($sql);
+
+			// If invoice has consumned discounts
+			$this->fetch_lines();
+			$list_rowid_det = array ();
+			foreach ($this->lines as $key => $invoiceline) {
+				$list_rowid_det[] = $invoiceline->rowid;
+			}
+
+			// Consumned discounts are freed
+			if (count($list_rowid_det)) {
+				$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'societe_remise_except';
+				$sql .= ' SET fk_invoice_supplier = NULL, fk_invoice_supplier_line = NULL';
+				$sql .= ' WHERE fk_invoice_supplier_line IN (' . join(',', $list_rowid_det) . ')';
+
+				dol_syslog(get_class($this) . "::delete", LOG_DEBUG);
+				if (! $this->db->query($sql)) {
+					$error ++;
+				}
+			}
+		}
 
         if (! $error)
         {
@@ -1387,7 +1515,7 @@ class FactureFournisseur extends CommonInvoice
     {
         dol_syslog(get_class($this)."::addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$price_base_type,$type,$fk_unit", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-        global $mysoc;
+        global $mysoc, $conf;
 
         // Clean parameters
         if (empty($remise_percent)) $remise_percent=0;
@@ -1415,6 +1543,10 @@ class FactureFournisseur extends CommonInvoice
         $txtva=price2num($txtva);
         $txlocaltax1=price2num($txlocaltax1);
         $txlocaltax2=price2num($txlocaltax2);
+
+        if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+            $pu = 0;
+        }
 
         $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
         $total_ht  = $tabprice[0];
@@ -1664,6 +1796,22 @@ class FactureFournisseur extends CommonInvoice
 	        $rowid = $this->id;
         }
 
+		$this->db->begin();
+
+		// Libere remise liee a ligne de facture
+		$sql = 'UPDATE ' . MAIN_DB_PREFIX . 'societe_remise_except';
+		$sql .= ' SET fk_invoice_supplier_line = NULL';
+		$sql .= ' WHERE fk_invoice_supplier_line = ' . $rowid;
+
+		dol_syslog(get_class($this) . "::deleteline", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if (! $result)
+		{
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return - 2;
+		}
+
 	    $line = new SupplierInvoiceLine($this->db);
 
 	    if ($line->fetch($rowid) < 1) {
@@ -1673,12 +1821,24 @@ class FactureFournisseur extends CommonInvoice
 	    $res = $line->delete($notrigger);
 
 	    if ($res < 1) {
-		    $this->errors[] = $line->error;
+			$this->errors[] = $line->error;
+			$this->db->rollback();
+			return - 3;
 	    } else {
-		    $res = $this->update_price();
-	    }
+			$res = $this->update_price();
 
-    	return $res;
+			if ($res > 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error = $this->db->lasterror();
+				return - 4;
+			}
+	    }
     }
 
 

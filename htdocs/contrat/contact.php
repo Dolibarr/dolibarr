@@ -49,8 +49,13 @@ $result=restrictedArea($user,'contrat',$id);
 
 $object = new Contrat($db);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
 
-// Add new contact
+
+/*
+ * Actions
+ */
 
 if ($action == 'addcontact' && $user->rights->contrat->creer)
 {

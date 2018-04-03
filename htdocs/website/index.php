@@ -35,9 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("website");
+$langs->loadLangs(array("admin","other","website"));
 
 if (! $user->admin) accessforbidden();
 
@@ -60,18 +58,18 @@ $type_container=GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 $section_dir = GETPOST('section_dir', 'alpha');
 $file_manager = GETPOST('file_manager', 'alpha');
 
-if (GETPOST('delete')) { $action='delete'; }
-if (GETPOST('preview')) $action='preview';
-if (GETPOST('createsite')) { $action='createsite'; }
-if (GETPOST('createcontainer')) { $action='createcontainer'; }
-if (GETPOST('editcss')) { $action='editcss'; }
-if (GETPOST('editmenu')) { $action='editmenu'; }
-if (GETPOST('setashome')) { $action='setashome'; }
-if (GETPOST('editmeta')) { $action='editmeta'; }
-if (GETPOST('editsource')) { $action='editsource'; }
-if (GETPOST('editcontent')) { $action='editcontent'; }
-if (GETPOST('createfromclone')) { $action='createfromclone'; }
-if (GETPOST('createpagefromclone')) { $action='createpagefromclone'; }
+if (GETPOST('delete','alpha')) { $action='delete'; }
+if (GETPOST('preview','alpha')) $action='preview';
+if (GETPOST('createsite','alpha')) { $action='createsite'; }
+if (GETPOST('createcontainer','alpha')) { $action='createcontainer'; }
+if (GETPOST('editcss','alpha')) { $action='editcss'; }
+if (GETPOST('editmenu','alpha')) { $action='editmenu'; }
+if (GETPOST('setashome','alpha')) { $action='setashome'; }
+if (GETPOST('editmeta','alpha')) { $action='editmeta'; }
+if (GETPOST('editsource','alpha')) { $action='editsource'; }
+if (GETPOST('editcontent','alpha')) { $action='editcontent'; }
+if (GETPOST('createfromclone','alpha')) { $action='createfromclone'; }
+if (GETPOST('createpagefromclone','alpha')) { $action='createpagefromclone'; }
 if (empty($action) && $file_manager) $action='file_manager';
 
 // Load variable for pagination
@@ -331,6 +329,9 @@ if ($action == 'addcontainer')
 	   				$objectpage->pageurl=$tmpdomain.'-home';
 	   			}
 
+	   			$objectpage->aliasalt = '';
+	   			if (preg_match('/^(\d+)\-/', basename($urltograb), $reg)) $objectpage->aliasalt = $reg[1];
+
 				if (preg_match('/<title>(.*)<\/title>/ims', $head, $regtmp))
 				{
 					$objectpage->title = $regtmp[1];
@@ -542,8 +543,9 @@ if ($action == 'addcontainer')
 	else
 	{
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER','alpha');
-		$objectpage->title = GETPOST('WEBSITE_TITLE','alpha');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME','alpha');
+		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT','alpha');
+		$objectpage->title = GETPOST('WEBSITE_TITLE','alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS','alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG','aZ09');
@@ -914,16 +916,7 @@ if ($action == 'setashome')
 
 		// Generate the index.php page to be the home page
 		//-------------------------------------------------
-		dol_mkdir($pathofwebsite);
-		dol_delete_file($fileindex);
-
-		$indexcontent = '<?php'."\n";
-		$indexcontent.= '// File generated to provide a shortcut to the Home Page - DO NOT MODIFY - It is just an include.'."\n";
-		$indexcontent.= "include_once './".basename($filetpl)."'\n";
-		$indexcontent.= '?>'."\n";
-		$result = file_put_contents($fileindex, $indexcontent);
-		if (! empty($conf->global->MAIN_UMASK))
-			@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+		$result = dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl);
 
 		if ($result) setEventMessages($langs->trans("Saved"), null, 'mesgs');
 		else setEventMessages('Failed to write file '.$fileindex, null, 'errors');
@@ -967,6 +960,7 @@ if ($action == 'updatemeta')
 
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
+		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
 		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
@@ -1273,7 +1267,7 @@ $moreheadcss='';
 $moreheadjs='';
 
 $arrayofjs[]='includes/jquery/plugins/blockUI/jquery.blockUI.js';
-$arrayofjs[]='core/js/blockUI.js';	// Used by ecm/tpl/enabledfiletreeajax.tpl.pgp
+$arrayofjs[]='core/js/blockUI.js';	// Used by ecm/tpl/enabledfiletreeajax.tpl.php
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $arrayofjs[]="includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js";
 
 $moreheadjs.='<script type="text/javascript">'."\n";
@@ -1437,6 +1431,9 @@ if (count($object->records) > 0)
 		print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
 		//print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
 		$htmltext =$langs->trans("SetHereVirtualHost", $dataroot);
+		$htmltext.='<br>';
+		$htmltext.='<br>';
+		$htmltext.=$langs->trans("YouCanAlsoTestWithPHPS", $dataroot);
 		$htmltext.='<br>';
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
@@ -2000,7 +1997,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 	if ($action != 'createcontainer')
 	{
-		print '<tr><td class="titlefield fieldrequired">';
+		print '<tr><td class="titlefield">';
 		print $langs->trans('IDOfPage');
 		print '</td><td>';
 		print $pageid;
@@ -2022,6 +2019,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 
 		$type_container=$objectpage->type_container;
 		$pageurl=$objectpage->pageurl;
+		$pagealiasalt=$objectpage->aliasalt;
 		$pagetitle=$objectpage->title;
 		$pagedescription=$objectpage->description;
 		$pagekeywords=$objectpage->keywords;
@@ -2029,11 +2027,18 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagehtmlheader=$objectpage->htmlheader;
 	}
 	if (GETPOST('WEBSITE_PAGENAME','alpha'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
+	if (GETPOST('WEBSITE_ALIASALT','alpha'))    $pagealiasalt=GETPOST('WEBSITE_ALIASALT','alpha');
 	if (GETPOST('WEBSITE_TITLE','alpha'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
 	if (GETPOST('WEBSITE_DESCRIPTION','alpha')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION','alpha');
 	if (GETPOST('WEBSITE_KEYWORDS','alpha'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
 	if (GETPOST('WEBSITE_LANG','aZ09'))         $pagelang=GETPOST('WEBSITE_LANG','aZ09');
 	if (GETPOST('htmlheader','none'))			$pagehtmlheader=GETPOST('htmlheader','none');
+
+	print '<tr><td class="titlefieldcreate fieldrequired">';
+	print $langs->trans('WEBSITE_PAGENAME');
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '</td></tr>';
 
 	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
@@ -2041,17 +2046,14 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER')?GETPOST('WEBSITE_TYPE_CONTAINER'):'page'));
 	print '</td></tr>';
 
-	print '<tr><td class="titlefield fieldrequired">';
-	print $langs->trans('WEBSITE_PAGE_EXAMPLE');
-	print '</td><td>';
-	print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample')?GETPOST('sample'):'corporatehomepage'));
-	print '</td></tr>';
-
-	print '<tr><td class="titlefieldcreate fieldrequired">';
-	print $langs->trans('WEBSITE_PAGENAME');
-	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
-	print '</td></tr>';
+	if ($action == 'createcontainer')
+	{
+		print '<tr><td class="titlefield fieldrequired">';
+		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
+		print '</td><td>';
+		print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample')?GETPOST('sample'):'corporatehomepage'));
+		print '</td></tr>';
+	}
 
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('WEBSITE_TITLE');
@@ -2075,6 +2077,12 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print $langs->trans('Language');
 	print '</td><td>';
 	print $formadmin->select_language($pagelang?$pagelang:$langs->defaultlang, 'WEBSITE_LANG', 0, null, '1');
+	print '</td></tr>';
+
+	print '<tr><td class="titlefieldcreate">';
+	print $langs->trans('WEBSITE_ALIASALT');
+	print '</td><td>';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_ALIASALT" value="'.dol_escape_htmltag($pagealiasalt).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';

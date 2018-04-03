@@ -91,17 +91,17 @@ $tabsqlsort[25]="label ASC, lang ASC, position ASC";
 
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield=array();
-$tabfield[25]= "label,type_template,lang,fk_user,private,position,topic,joinfiles,content";
+$tabfield[25]= "label,lang,type_template,fk_user,private,position,topic,joinfiles,content";
 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfield[25].=',content_lines';
 
 // Nom des champs d'edition pour modification d'un enregistrement
 $tabfieldvalue=array();
-$tabfieldvalue[25]= "label,type_template,fk_user,lang,private,position,topic,joinfiles,content";
+$tabfieldvalue[25]= "label,lang,type_template,fk_user,private,position,topic,joinfiles,content";
 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfieldvalue[25].=',content_lines';
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[25]= "label,type_template,fk_user,lang,private,position,topic,joinfiles,content";
+$tabfieldinsert[25]= "label,lang,type_template,fk_user,private,position,topic,joinfiles,content";
 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES)) $tabfieldinsert[25].=',content_lines';
 $tabfieldinsert[25].=',entity';     // Must be at end because not into other arrays
 
@@ -233,8 +233,7 @@ if (empty($reshook))
                 $ok=0;
                 $fieldnamekey=$listfield[$f];
                 // We take translate key of field
-                if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Label';
-                if ($fieldnamekey == 'libelle_facture') $fieldnamekey = 'LabelOnDocuments';
+                if ($fieldnamekey == 'libelle' || ($fieldnamekey == 'label'))  $fieldnamekey='Code';
                 if ($fieldnamekey == 'code') $fieldnamekey = 'Code';
                 if ($fieldnamekey == 'note') $fieldnamekey = 'Note';
                 if ($fieldnamekey == 'type_template') $fieldnamekey = 'TypeOfTemplate';
@@ -478,7 +477,7 @@ foreach ($fieldlist as $field => $value)
         if ($fieldlist[$field]=='lang')            { $valuetoshow=(empty($conf->global->MAIN_MULTILANGS) ? '&nbsp;' : $langs->trans("Language")); }
         if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
         if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-        if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label"); }
+        if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Code"); }
         if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
     	if ($fieldlist[$field]=='private')         { $align='center'; }
     	if ($fieldlist[$field]=='position')        { $align='center'; }
@@ -646,7 +645,7 @@ if ($resql)
         elseif ($value == 'lang')
         {
         	print '<td class="liste_titre">';
-        	print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1);
+        	print $formadmin->select_language($search_lang, 'search_lang', 0, null, 1, 0, 0, 'maxwidth150');
         	print '</td>';
         }
         elseif ($value == 'fk_user')
@@ -661,7 +660,7 @@ if ($resql)
         elseif ($value == 'topic') print '<td class="liste_titre"><input type="text" name="search_topic" value="'.dol_escape_htmltag($search_topic).'"></td>';
         elseif ($value == 'type_template')
         {
-        	print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth100onsmartphone').'</td>';
+        	print '<td class="liste_titre">'.$form->selectarray('search_type_template', $elementList, $search_type_template, 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200 maxwidth100onsmartphone').'</td>';
         }
         elseif (! in_array($value, array('content', 'content_lines'))) print '<td class="liste_titre"></td>';
     }
@@ -695,7 +694,7 @@ if ($resql)
         if ($fieldlist[$field]=='fk_user')         { $valuetoshow=$langs->trans("Owner"); }
         if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
         if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
-        if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label"); }
+        if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Code"); }
     	if ($fieldlist[$field]=='type_template')   { $valuetoshow=$langs->trans("TypeOfTemplate"); }
 		if ($fieldlist[$field]=='private')         { $align='center'; }
 		if ($fieldlist[$field]=='position')        { $align='center'; }
@@ -867,7 +866,7 @@ if ($resql)
                 print "</td>";
 
                 // Modify link / Delete link
-                print '<td align="center" width="64">';
+                print '<td class="center nowraponall" width="64">';
                 if ($canbemodified) print '<a class="reposition" href="'.$url.'action=edit">'.img_edit().'</a>';
                 if ($iserasable)
                 {
@@ -990,7 +989,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			{
 				$selectedlang = $langs->defaultlang;
 				if ($context == 'edit') $selectedlang = $obj->{$fieldlist[$field]};
-				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1);
+				print $formadmin->select_language($selectedlang, 'langcode', 0, null, 1, 0, 0, 'maxwidth150');
 			}
 			else
 			{
@@ -1016,7 +1015,7 @@ function fieldList($fieldlist, $obj='', $tabname='', $context='')
 			}
 			else
 			{
-				print $form->selectarray('type_template', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1);
+				print $form->selectarray('type_template', $elementList, (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), 1, 0, 0, '', 0, 0, 0, '', 'maxwidth200');
 			}
 			print '</td>';
 		}

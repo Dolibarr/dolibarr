@@ -225,13 +225,13 @@ session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on s
 if (! defined('NOSESSION'))
 {
 	session_start();
-	if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
+	/*if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
 	{
 		foreach ($_SESSION as $key=>$value)
 		{
 			if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
 		}
-	}
+	}*/
 }
 
 // Init the 5 global objects, this include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc
@@ -499,15 +499,17 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
-		$passwordtotest	= GETPOST('password','none',2);
+		$allowedmethodtopostusername = 2;
+		if (defined('MAIN_AUTHENTICATION_POST_METHOD')) $allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');
+		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",$allowedmethodtopostusername));
+		$passwordtotest	= GETPOST('password','none',$allowedmethodtopostusername);
 		$entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
 
 		// Define if we received data to test the login.
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
 		if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
-		if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
+		if (GETPOST("username","alpha",$allowedmethodtopostusername) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
 		if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
 		{
@@ -1114,12 +1116,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 	if (empty($conf->css)) $conf->css = '/theme/eldy/style.css.php';	// If not defined, eldy by default
 
-	if (! empty($conf->global->MAIN_ACTIVATE_HTML4)) {
-		$doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-	}else {
-		$doctype = '<!doctype html>';
-	}
-	print $doctype."\n";
+	print '<!doctype html>'."\n";
+
 	if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html lang="'.substr($langs->defaultlang,0,2).'" manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
 	else print '<html lang="'.substr($langs->defaultlang,0,2).'">'."\n";
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
@@ -1570,7 +1568,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 		print $toprightmenu;
 
-		print "</div>\n";
+		print "</div>\n";		// end div class="login_block"
+
 		print '</div></div>';
 
 		//unset($form);
@@ -1617,19 +1616,19 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		if ($conf->browser->layout == 'phone') $conf->global->MAIN_USE_OLD_SEARCH_FORM=1;	// Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
 
 		print "\n";
+
+		if (! is_object($form)) $form=new Form($db);
+		$selected=-1;
+		$usedbyinclude=1;
+		include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';	// This set $arrayresult
+
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
-			if (! is_object($form)) $form=new Form($db);
-			$selected=-1;
-			$searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+			//$searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 		}
 		else
 		{
-			if (! is_object($form)) $form=new Form($db);
-			$selected=-1;
-			$usedbyinclude=1;
-			include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
-
 			foreach($arrayresult as $key => $val)
 			{
 				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleft', img_picto('',$val['img']));

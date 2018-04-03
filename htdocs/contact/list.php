@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI          <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,8 @@ else if ($type == "o")
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Contact($db);
+$hookmanager->initHooks(array('contactlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -133,6 +135,7 @@ $fieldstosearchall = array(
 	'p.firstname'=>'Firstname',
 	'p.email'=>'EMail',
 	's.nom'=>"ThirdParty",
+	'p.phone'=>"Phone",
 );
 
 // Definition of fields for list

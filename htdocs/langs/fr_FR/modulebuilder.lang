@@ -94,3 +94,4 @@ YouCanUseTranslationKey=You can use here a key that is the translation key found
 DropTableIfEmpty=(Supprimer la table si vide)
 TableDoesNotExists=La table %s n'existe pas
 TableDropped=La table %s a été supprimée
+InitStructureFromExistingTable=Build the structure array string of an existing table

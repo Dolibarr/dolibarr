@@ -339,14 +339,14 @@ if (empty($user->societe_id))
 	    }
     }
 
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
-    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"><div class="boxstatsempty"></div></a>';
 
     $boxstat.='</td></tr>';
     $boxstat.='</table>';
@@ -583,12 +583,12 @@ if (! empty($valid_dashboardlines))
         $boxwork .="\n";
     }
 
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
-    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats150empty"></div></div>';
     $boxwork .='</td></tr>';
 }
 else

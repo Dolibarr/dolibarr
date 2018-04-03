@@ -37,7 +37,7 @@ $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
-
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupperms';   // To manage different context of search
 
 // Defini si peux lire les permissions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -60,8 +60,7 @@ $object->fetch($id);
 $entity=$conf->entity;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('groupcard','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks('groupperms','globalcard');
 
 
 /**

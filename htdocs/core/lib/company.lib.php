@@ -9,6 +9,7 @@
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,7 +168,7 @@ function societe_prepare_head(Societe $object)
 	}
 
 	// Related items
-    if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->fournisseur->enabled))
+    if (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->ficheinter->enabled) || ! empty($conf->fournisseur->enabled))
     {
         $head[$h][0] = DOL_URL_ROOT.'/societe/consumption.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Referers");
@@ -175,14 +176,28 @@ function societe_prepare_head(Societe $object)
         $h++;
     }
 
-    // Bank accounrs
+    // Bank accounts
     if (empty($conf->global->SOCIETE_DISABLE_BANKACCOUNT))
     {
-        $langs->load("banks");
+    	$nbBankAccount=0;
+		$foundonexternalonlinesystem=0;
+    	$langs->load("banks");
 
-        $nbBankAccount=0;
-        $head[$h][0] = DOL_URL_ROOT .'/societe/rib.php?socid='.$object->id;
-        $head[$h][1] = $langs->trans("BankAccounts");
+        $title = $langs->trans("BankAccounts");
+		if (! empty($conf->stripe->enabled))
+		{
+			$langs->load("stripe");
+			$title = $langs->trans("BankAccountsAndGateways");
+
+			$servicestatus = 0;
+			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha')) $servicestatus = 1;
+
+			include_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
+			$societeaccount = new SocieteAccount($db);
+			$stripecu = $societeaccount->getCustomerAccount($object->id, 'stripe', $servicestatus);		// Get thirdparty cu_...
+			if ($stripecu) $foundonexternalonlinesystem++;
+		}
+
         $sql = "SELECT COUNT(n.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_rib as n";
         $sql.= " WHERE fk_soc = ".$object->id;
@@ -201,7 +216,13 @@ function societe_prepare_head(Societe $object)
         else {
             dol_print_error($db);
         }
-		if ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
+
+        //if (! empty($conf->stripe->enabled) && $nbBankAccount > 0) $nbBankAccount = '...';	// No way to know exact number
+
+        $head[$h][0] = DOL_URL_ROOT .'/societe/paymentmodes.php?socid='.$object->id;
+        $head[$h][1] = $title;
+        if ($foundonexternalonlinesystem) $head[$h][1].= ' <span class="badge">...</span>';
+       	elseif ($nbBankAccount > 0) $head[$h][1].= ' <span class="badge">'.$nbBankAccount.'</span>';
         $head[$h][2] = 'rib';
         $h++;
     }
@@ -453,22 +474,29 @@ function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entc
 /**
  *    Return state translated from an id. Return value is always utf8 encoded and without entities.
  *
- *    @param	int			$id         	id of state (province/departement)
+ *    @param    int			$id         	id of state (province/departement)
  *    @param    int			$withcode   	'0'=Return label,
  *    										'1'=Return string code + label,
  *    						  				'2'=Return code,
  *    						  				'all'=return array('id'=>,'code'=>,'label'=>)
  *    @param	DoliDB		$dbtouse		Database handler (using in global way may fail because of conflicts with some autoload features)
- *    @return   string      				String with state code or state name (Return value is always utf8 encoded and without entities)
+ *    @param    int			$withregion   	'0'=Ignores region,
+ *    										'1'=Add region name/code/id as needed to output,
+ *    @param    Translate	$outputlangs	Langs object for output translation, not fully implemented yet
+ *    @param    int		    $entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
+ *    @return   mixed       				String with state code or state name or Array('id','code','label')/Array('id','code','label','region_code','region')
  */
-function getState($id,$withcode='',$dbtouse=0)
+function getState($id,$withcode='',$dbtouse=0,$withregion=0,$outputlangs='',$entconv=1)
 {
     global $db,$langs;
 
     if (! is_object($dbtouse)) $dbtouse=$db;
 
-    $sql = "SELECT rowid, code_departement as code, nom as label FROM ".MAIN_DB_PREFIX."c_departements";
-    $sql.= " WHERE rowid=".$id;
+    $sql = "SELECT d.rowid as id, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.code_region as region_code, r.nom as region_name FROM";
+    $sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
+    $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid and d.rowid=".$id;
+    $sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
+    $sql .= " ORDER BY c.code, d.code_departement";
 
     dol_syslog("Company.lib::getState", LOG_DEBUG);
     $resql=$dbtouse->query($sql);
@@ -477,11 +505,46 @@ function getState($id,$withcode='',$dbtouse=0)
         $obj = $dbtouse->fetch_object($resql);
         if ($obj)
         {
-            $label=$obj->label;
-            if ($withcode == '1') return $label=$obj->code?"$obj->code":"$obj->code - $label";
-            else if ($withcode == '2') return $label=$obj->code;
-            else if ($withcode == 'all') return array('id'=>$obj->rowid,'code'=>$obj->code,'label'=>$label);
-            else return $label;
+            $label=((! empty($obj->name) && $obj->name!='-')?$obj->name:'');
+            if (is_object($outputlangs))
+            {
+                $outputlangs->load("dict");
+                if ($entconv) $label=($obj->code && ($outputlangs->trans("State".$obj->code)!="State".$obj->code))?$outputlangs->trans("State".$obj->code):$label;
+                else $label=($obj->code && ($outputlangs->transnoentitiesnoconv("State".$obj->code)!="State".$obj->code))?$outputlangs->transnoentitiesnoconv("State".$obj->code):$label;
+            }
+
+            if ($withcode == 1) {
+                if ($withregion == 1) {
+                    return $label = $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+                }
+                else {
+                    return $label = $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+                }
+            }
+            else if ($withcode == 2) {
+                if ($withregion == 1) {
+                    return $label = $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+                }
+                else {
+                    return $label = ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+                }
+            }
+            else if ($withcode === 'all') {
+                if ($withregion == 1) {
+                    return array('id'=>$obj->id,'code'=>$obj->code,'label'=>$label,'region_code'=>$obj->region_code,'region'=>$obj->region_name);
+                }
+                else {
+                    return array('id'=>$obj->id,'code'=>$obj->code,'label'=>$label);
+                }
+            }
+            else {
+                if ($withregion == 1) {
+                    return $label = $obj->region_name . ' - ' . $label;
+                }
+                else {
+                    return $label;
+                }
+            }
         }
         else
         {
@@ -1467,9 +1530,16 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.=getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
 		$out.='</tr>';
 
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/cactioncomm.class.php';
+		$caction=new CActionComm($db);
+		$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
+
         foreach ($histo as $key=>$value)
         {
 			$actionstatic->fetch($histo[$key]['id']);    // TODO Do we need this, we already have a lot of data of line into $histo
+
+			$actionstatic->type_picto=$histo[$key]['apicto'];
+			$actionstatic->type_code=$histo[$key]['acode'];
 
             $out.='<tr class="oddeven">';
 
@@ -1501,26 +1571,26 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='<td>';
             if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
             {
-            	if ($histo[$key]['apicto']) $out.=img_picto('', $histo[$key]['apicto']);
+            	if ($actionstatic->type_picto) print img_picto('', $actionstatic->type_picto);
             	else {
-            		if ($histo[$key]['acode'] == 'AC_TEL')   $out.=img_picto('', 'object_phoning').' ';
-            		if ($histo[$key]['acode'] == 'AC_FAX')   $out.=img_picto('', 'object_phoning_fax').' ';
-            		if ($histo[$key]['acode'] == 'AC_EMAIL') $out.=img_picto('', 'object_email').' ';
+            		if ($actionstatic->type_code == 'AC_RDV')       $out.= img_picto('', 'object_group', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif ($actionstatic->type_code == 'AC_TEL')   $out.= img_picto('', 'object_phoning', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif ($actionstatic->type_code == 'AC_FAX')   $out.= img_picto('', 'object_phoning_fax', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif ($actionstatic->type_code == 'AC_EMAIL') $out.= img_picto('', 'object_email', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif ($actionstatic->type_code == 'AC_INT')   $out.= img_picto('', 'object_intervention', '', false, 0, 0, '', 'paddingright').' ';
+            		elseif (! preg_match('/_AUTO/', $actionstatic->type_code)) $out.= img_picto('', 'object_action', '', false, 0, 0, '', 'paddingright').' ';
             	}
-            	$out.=$actionstatic->type;
             }
-            else {
-            	$typelabel = $actionstatic->type;
-            	if ($histo[$key]['acode'] != 'AC_OTH_AUTO') $typelabel = $langs->trans("ActionAC_MANUAL");
-            	$out.=$typelabel;
-            }
+            $labeltype=$actionstatic->type_code;
+            if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && empty($arraylist[$labeltype])) $labeltype='AC_OTH';
+            if (! empty($arraylist[$labeltype])) $labeltype=$arraylist[$labeltype];
+            $out.= dol_trunc($labeltype,28);
             $out.='</td>';
 
             // Title
             $out.='<td>';
             if (isset($histo[$key]['type']) && $histo[$key]['type']=='action')
             {
-                $actionstatic->type_code=$histo[$key]['acode'];
                 $transcode=$langs->trans("Action".$histo[$key]['acode']);
                 $libelle=($transcode!="Action".$histo[$key]['acode']?$transcode:$histo[$key]['alabel']);
                 //$actionstatic->libelle=$libelle;
@@ -1572,7 +1642,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                         $propalstatic->type=$histo[$key]['ftype'];
                         $out.=$propalstatic->getNomUrl(1);
                     } else {
-                        $out.= $langs->trans("ProposalDeleted");
+                        //$out.= '<span class="opacitymedium">'.$langs->trans("ProposalDeleted").'</span>';
                     }
              	}
             	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
@@ -1583,7 +1653,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                         $orderstatic->type=$histo[$key]['ftype'];
                         $out.=$orderstatic->getNomUrl(1);
                     } else {
-                        $out.= $langs->trans("OrderDeleted");
+                    	//$out.= '<span class="opacitymedium">'.$langs->trans("OrderDeleted").'<span>';
                     }
              	}
             	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
@@ -1594,7 +1664,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
                         $facturestatic->type=$histo[$key]['ftype'];
                         $out.=$facturestatic->getNomUrl(1,'compta');
                     } else {
-                        $out.= $langs->trans("InvoiceDeleted");
+                    	//$out.= '<span class="opacitymedium">'.$langs->trans("InvoiceDeleted").'</span>';
                     }
             	}
             	else $out.='&nbsp;';
@@ -1706,4 +1776,6 @@ function show_subsidiaries($conf,$langs,$db,$object)
 
 	return $i;
 }
+
+
 

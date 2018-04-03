@@ -39,7 +39,7 @@ $langs->load("members");
 if (! $user->admin) accessforbidden();
 
 
-$type=array('yesno','texte','chaine');
+$oldtypetonewone=array('texte'=>'text','chaine'=>'string');	// old type to new ones
 
 $action = GETPOST('action','alpha');
 
@@ -53,20 +53,7 @@ if ($action == 'updateall')
 {
     $db->begin();
     $res1=$res2=$res3=$res4=$res5=$res6=0;
-    $res1=dolibarr_set_const($db, 'ADHERENT_LOGIN_NOT_REQUIRED', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res2=dolibarr_set_const($db, 'ADHERENT_MAIL_REQUIRED', GETPOST('ADHERENT_MAIL_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res3=dolibarr_set_const($db, 'ADHERENT_DEFAULT_SENDINFOBYMAIL', GETPOST('ADHERENT_DEFAULT_SENDINFOBYMAIL', 'alpha'), 'chaine', 0, '', $conf->entity);
-    $res4=dolibarr_set_const($db, 'ADHERENT_BANK_USE', GETPOST('ADHERENT_BANK_USE', 'alpha'), 'chaine', 0, '', $conf->entity);
-    // Use vat for invoice creation
-    if ($conf->facture->enabled)
-    {
-        $res4=dolibarr_set_const($db, 'ADHERENT_VAT_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_VAT_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        $res5=dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        if (! empty($conf->product->enabled) || ! empty($conf->service->enabled))
-        {
-            $res6=dolibarr_set_const($db, 'ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', GETPOST('ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS', 'alpha'), 'chaine', 0, '', $conf->entity);
-        }
-    }
+    $res1=dolibarr_set_const($db, 'XXXX', GETPOST('ADHERENT_LOGIN_NOT_REQUIRED', 'alpha'), 'chaine', 0, '', $conf->entity);
     if ($res1 < 0 || $res2 < 0 || $res3 < 0 || $res4 < 0 || $res5 < 0 || $res6 < 0)
     {
         setEventMessages('ErrorFailedToSaveDate', null, 'errors');
@@ -82,19 +69,16 @@ if ($action == 'updateall')
 // Action mise a jour ou ajout d'une constante
 if ($action == 'update' || $action == 'add')
 {
+	$constlineid = GETPOST('rowid','int');
 	$constname=GETPOST('constname','alpha');
-	$constvalue=(GETPOST('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname) : GETPOST('constvalue'));
 
-	if (($constname=='ADHERENT_CARD_TYPE' || $constname=='ADHERENT_ETIQUETTE_TYPE' || $constname=='ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS') && $constvalue == -1) $constvalue='';
-	if ($constname=='ADHERENT_LOGIN_NOT_REQUIRED') // Invert choice
-	{
-		if ($constvalue) $constvalue=0;
-		else $constvalue=1;
-	}
+	$constvalue=(GETPOSTISSET('constvalue_'.$constname) ? GETPOST('constvalue_'.$constname, 'alpha') : GETPOST('constvalue'));
+	$consttype=(GETPOSTISSET('consttype_'.$constname) ? GETPOST('consttype_'.$constname, 'alphanohtml') : GETPOST('consttype'));
+	$constnote=(GETPOSTISSET('constnote_'.$constname) ? GETPOST('constnote_'.$constname, 'none') : GETPOST('constnote'));
 
-	$consttype=GETPOST('consttype','alpha');
-	$constnote=GETPOST('constnote');
-	$res=dolibarr_set_const($db,$constname,$constvalue,$type[$consttype],0,$constnote,$conf->entity);
+	$typetouse = empty($oldtypetonewone[$consttype]) ? $consttype : $oldtypetonewone[$consttype];
+
+	$res=dolibarr_set_const($db,$constname, $constvalue, $typetouse, 0, $constnote, $conf->entity);
 
 	if (! $res > 0) $error++;
 
@@ -111,7 +95,7 @@ if ($action == 'update' || $action == 'add')
 // Action activation d'un sous module du module adherent
 if ($action == 'set')
 {
-    $result=dolibarr_set_const($db, GETPOST('name','alpha'),GETPOST('value'),'',0,'',$conf->entity);
+    $result=dolibarr_set_const($db, GETPOST('name','alpha'), GETPOST('value'), '', 0, '', $conf->entity);
     if ($result < 0)
     {
         print $db->error();
@@ -141,7 +125,7 @@ $help_url='EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Mie
 llxHeader('',$langs->trans("MembersSetup"),$help_url);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("MembersSetup"),$linkback,'title_setup');
 
 
@@ -157,23 +141,15 @@ print '<input type="hidden" name="action" value="updateall">';
  * Editing global variables not related to a specific theme
  */
 $constantes=array(
-		'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT',
-		'ADHERENT_AUTOREGISTER_NOTIF_MAIL',
-		'ADHERENT_AUTOREGISTER_MAIL_SUBJECT',
-		'ADHERENT_AUTOREGISTER_MAIL',
-		'ADHERENT_MAIL_VALID_SUBJECT',
-		'ADHERENT_MAIL_VALID',
-		'ADHERENT_MAIL_COTIS_SUBJECT',
-		'ADHERENT_MAIL_COTIS',
-		'ADHERENT_MAIL_RESIL_SUBJECT',
-		'ADHERENT_MAIL_RESIL',
-		'ADHERENT_MAIL_FROM',
-		);
-
-$helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
-$helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';
-$helptext.='__COMPANY__, __ADDRESS__, __ZIP__, __TOWN__, __COUNTRY__, __EMAIL__, __BIRTH__, __PHOTO__, __TYPE__, ';
-$helptext.='__YEAR__, __MONTH__, __DAY__';
+	'ADHERENT_MAIL_FROM'=>'string',
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT'=>'string',
+	'ADHERENT_AUTOREGISTER_NOTIF_MAIL'=>'html',
+	'ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER'		=>'emailtemplate:member',		/* old was ADHERENT_AUTOREGISTER_MAIL */
+	'ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION'	=>'emailtemplate:member',		/* old was ADHERENT_MAIL_VALID */
+	'ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION'		=>'emailtemplate:member',		/* old was ADHERENT_MAIL_COTIS */
+	'ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION' =>'emailtemplate:member',
+	'ADHERENT_EMAIL_TEMPLATE_CANCELATION'		=>'emailtemplate:member',		/* old was ADHERENT_MAIL_RESIL */
+);
 
 $helptext='*'.$langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 $helptext.='__DOL_MAIN_URL_ROOT__, __ID__, __FIRSTNAME__, __LASTNAME__, __FULLNAME__, __LOGIN__, __PASSWORD__, ';

@@ -216,7 +216,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
+	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -361,7 +361,7 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		/*
 		 * Confirmation suppression
@@ -692,7 +692,7 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		$head = member_type_prepare_head($object);
 

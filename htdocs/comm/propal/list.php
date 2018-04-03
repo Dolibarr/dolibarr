@@ -12,6 +12,7 @@
  * Copyright (C) 2015      Jean-François Ferry     <jfefe@aternatik.fr>
  * Copyright (C) 2016      Ferran Marcet	 <fmarcet@2byte.es>
  * Copyright (C) 2017      Charlene Benke	 <charlie@patas-monkey.com>
+ * Copyright (C) 2018	   Nicolas ZABOURI	 <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +53,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'proposallist';
 
 $search_user=GETPOST('search_user','int');
 $search_sale=GETPOST('search_sale','int');
@@ -94,9 +96,6 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='p.ref';
 if (! $sortorder) $sortorder='DESC';
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'proposallist';
-
 // Security check
 $module='propal';
 $dbtable='';
@@ -110,9 +109,10 @@ if (! empty($socid))
 }
 $result = restrictedArea($user, $module, $objectid, $dbtable);
 
-$diroutputmassaction=$conf->propal->dir_output . '/temp/massgeneration/'.$user->id;
+$diroutputmassaction=$conf->propal->multidir_output[$conf->entity] . '/temp/massgeneration/'.$user->id;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Propal($db);
 $hookmanager->initHooks(array('propallist'));
 $extrafields = new ExtraFields($db);
 
@@ -214,7 +214,8 @@ if (empty($reshook))
 	$objectlabel='Proposals';
 	$permtoread = $user->rights->propal->lire;
 	$permtodelete = $user->rights->propal->supprimer;
-	$uploaddir = $conf->propal->dir_output;
+	$permtoclose = $user->rights->propal->cloturer;
+	$uploaddir = $conf->propal->multidir_output[$conf->entity];
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -242,7 +243,7 @@ if ($sall || $search_product_category > 0) $sql = 'SELECT DISTINCT';
 $sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client, ';
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
-$sql.= ' p.rowid, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
+$sql.= ' p.rowid, p.entity, p.note_private, p.total_ht, p.tva as total_vat, p.total as total_ttc, p.localtax1, p.localtax2, p.ref, p.ref_client, p.fk_statut, p.fk_user_author, p.datep as dp, p.fin_validite as dfv,';
 $sql.= ' p.datec as date_creation, p.tms as date_update,';
 $sql.= " pr.rowid as project_id, pr.ref as project_ref,";
 if (! $user->rights->societe->client->voir && ! $socid) $sql .= " sc.fk_soc, sc.fk_user,";
@@ -389,7 +390,8 @@ if ($resql)
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
 	if ($user->rights->propal->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+	if ($user->rights->propal->cloturer) $arrayofmassactions['closed']=$langs->trans("Closed");
+	if (in_array($massaction, array('presend','predelete','closed'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	// Lignes des champs de filtre
@@ -462,7 +464,7 @@ if ($resql)
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+	$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -614,7 +616,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['p.datec']['checked']))     print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -663,7 +665,7 @@ if ($resql)
 			// Other picto tool
 			print '<td width="16" align="right" class="nobordernopadding">';
 			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->propal->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+			$filedir=$conf->propal->multidir_output[$obj->entity] . '/' . dol_sanitizeFileName($obj->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
 			print $formfile->getDocumentsLink($objectstatic->element, $filename, $filedir);
 			print '</td></tr></table>';

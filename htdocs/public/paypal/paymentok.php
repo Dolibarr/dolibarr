@@ -212,7 +212,7 @@ if ($PAYPALTOKEN)
 				if (! empty($tmptag['MEM']))
 				{
 					$langs->load("members");
-					$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+					$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
 					$content.=$langs->trans("PaymentSubscription")."<br>\n";
 					$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
 					$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";

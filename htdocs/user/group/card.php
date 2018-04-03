@@ -49,6 +49,7 @@ $id=GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $userid=GETPOST('user', 'int');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupcard';   // To manage different context of search
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
@@ -71,8 +72,9 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$contextpage=array('groupcard','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('groupcard','globalcard'));
+
+
 
 /**
  * Actions
@@ -91,7 +93,7 @@ if (empty($reshook)) {
 		{
 			$object->fetch($id);
 			$object->delete();
-			header("Location: index.php");
+			header("Location: index.php?restore_lastsearch_values=1");
 			exit;
 		}
 		else
@@ -309,8 +311,6 @@ else
 {
     if ($id)
     {
-        $object->fetch($id);
-
         $head = group_prepare_head($object);
         $title = $langs->trans("Group");
 
@@ -460,7 +460,7 @@ else
 						if (! empty($user->admin))
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
-							print img_delete($langs->trans("RemoveFromGroup"));
+							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';
 						}
 						else

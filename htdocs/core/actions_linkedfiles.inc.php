@@ -176,11 +176,11 @@ elseif ($action == 'confirm_updateline' && GETPOST('save','alpha') && GETPOST('l
 }
 elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 {
-    // For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
-    if (! empty($upload_dir))
-    {
-        $filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
-        $filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
+	// For documents pages, upload_dir contains already path to file from module dir, so we clean path into urlfile.
+	if (! empty($upload_dir))
+	{
+		$filenamefrom=dol_sanitizeFileName(GETPOST('renamefilefrom','alpha'), '_', 0);	// Do not remove accents
+		$filenameto=dol_sanitizeFileName(GETPOST('renamefileto','alpha'), '_', 0);		// Do not remove accents
 
         if ($filenamefrom != $filenameto)
         {
@@ -197,23 +197,38 @@ elseif ($action == 'renamefile' && GETPOST('renamefilesave','alpha'))
 	            $srcpath = $upload_dir.'/'.$filenamefrom;
 	            $destpath = $upload_dir.'/'.$filenameto;
 
-	            $result = dol_move($srcpath, $destpath);
-	            if ($result)
+	            $reshook=$hookmanager->initHooks(array('actionlinkedfiles'));
+	            $parameters=array('filenamefrom' => $filenamefrom, 'filenameto' => $filenameto, 'upload_dir' => $upload_dir);
+	            $reshook=$hookmanager->executeHooks('renameUploadedFile', $parameters, $object);
+
+	            if (empty($reshook))
 	            {
-	            	if ($object->id)
+	            	if (! file_exists($destpath))
 	            	{
-	                	$object->addThumbs($destpath);
+	            		$result = dol_move($srcpath, $destpath);
+			            if ($result)
+			            {
+			            	if ($object->id)
+			            	{
+			                	$object->addThumbs($destpath);
+			            	}
+
+			                // TODO Add revert function of addThumbs to remove for old name
+			                //$object->delThumbs($srcpath);
+
+			                setEventMessages($langs->trans("FileRenamed"), null);
+			            }
+			            else
+			            {
+			                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+			                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+			            }
 	            	}
-
-	                // TODO Add revert function of addThumbs to remove for old name
-	                //$object->delThumbs($srcpath);
-
-	                setEventMessages($langs->trans("FileRenamed"), null);
-	            }
-	            else
-	            {
-	                $langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
-	                setEventMessages($langs->trans("ErrorFailToRenameFile", $filenamefrom, $filenameto), null, 'errors');
+	            	else
+	            	{
+	            		$langs->load("errors"); // key must be loaded because we can't rely on loading during output, we need var substitution to be done now.
+	            		setEventMessages($langs->trans("ErrorDestinationAlreadyExists", $filenameto), null, 'errors');
+	            	}
 	            }
 	        }
         }

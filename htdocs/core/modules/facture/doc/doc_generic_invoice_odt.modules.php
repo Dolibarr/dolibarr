@@ -361,20 +361,22 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				{
 				}
 
-				// Make substitutions into odt
+				// Define substitution array
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				$array_object_from_properties=$this->get_substitutionarray_each_var_object($object, $outputlangs);
+				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_propal=is_object($propal_object)?$this->get_substitutionarray_object($propal_object,$outputlangs,'propal'):array();
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-		                // retrieve contact information for use in invoice as contact_xxx tags
-                		$array_thirdparty_contact = array();
-                		if ($usecontact)
-                    			$array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				// retrieve contact information for use in invoice as contact_xxx tags
+				$array_thirdparty_contact = array();
+				if ($usecontact) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal,$array_other,$array_thirdparty_contact);
+				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_propal,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+
 				// Call the ODTSubstitution hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -401,30 +403,42 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				// Replace tags of lines
 				try
 				{
-					$listlines = $odfHandler->setSegment('lines');
-					foreach ($object->lines as $line)
-					{
-						$tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
-						complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
-						// Call the ODTSubstitutionLine hook
-						$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
-						$reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-						foreach($tmparray as $key => $val)
-						{
-							try
-							{
-								$listlines->setVars($key, $val, true, 'UTF-8');
-							}
-							catch(OdfException $e)
-							{
-							}
-							catch(SegmentException $e)
-							{
-							}
-						}
-						$listlines->merge();
+					$foundtagforlines = 1;
+					try {
+						$listlines = $odfHandler->setSegment('lines');
 					}
-					$odfHandler->mergeSegment($listlines);
+					catch(OdfException $e)
+					{
+						// We may arrive here if tags for lines not present into template
+						$foundtagforlines = 0;
+						dol_syslog($e->getMessage(), LOG_INFO);
+					}
+					if ($foundtagforlines)
+					{
+						foreach ($object->lines as $line)
+						{
+							$tmparray=$this->get_substitutionarray_lines($line,$outputlangs);
+							complete_substitutions_array($tmparray, $outputlangs, $object, $line, "completesubstitutionarray_lines");
+							// Call the ODTSubstitutionLine hook
+							$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray,'line'=>$line);
+							$reshook=$hookmanager->executeHooks('ODTSubstitutionLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+							foreach($tmparray as $key => $val)
+							{
+								try
+								{
+									$listlines->setVars($key, $val, true, 'UTF-8');
+								}
+								catch(OdfException $e)
+								{
+								}
+								catch(SegmentException $e)
+								{
+								}
+							}
+							$listlines->merge();
+						}
+						$odfHandler->mergeSegment($listlines);
+					}
 				}
 				catch(OdfException $e)
 				{
@@ -475,7 +489,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else

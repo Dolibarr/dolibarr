@@ -12,9 +12,19 @@ namespace Stripe;
  *
  * @package Stripe
  */
-class Collection extends ApiResource
+class Collection extends StripeObject
 {
-    protected $_requestParams = array();
+    use ApiOperations\Request;
+
+    protected $_requestParams = [];
+
+    /**
+     * @return string The base URL for the given class.
+     */
+    public static function baseUrl()
+    {
+        return Stripe::$apiBase;
+    }
 
     public function setRequestParams($params)
     {
@@ -56,7 +66,7 @@ class Collection extends ApiResource
     }
 
     /**
-     * @return AutoPagingIterator An iterator that can be used to iterate
+     * @return Util\AutoPagingIterator An iterator that can be used to iterate
      *    across all objects across all pages. As page boundaries are
      *    encountered, the next page will be fetched automatically for
      *    continued iteration.
@@ -76,12 +86,11 @@ class Collection extends ApiResource
         if (isset($url['query'])) {
             // If the URL contains a query param, parse it out into $params so they
             // don't interact weirdly with each other.
-            $query = array();
+            $query = [];
             parse_str($url['query'], $query);
-            // PHP 5.2 doesn't support the ?: operator :(
-            $params = array_merge($params ? $params : array(), $query);
+            $params = array_merge($params ?: [], $query);
         }
 
-        return array($url['path'], $params);
+        return [$url['path'], $params];
     }
 }

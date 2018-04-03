@@ -86,8 +86,10 @@ $formfile->form_attach_new_file(
 	$savingdocmask
 );
 
+// Drag and drop for up and down allowed on product, thirdparty, ...
+// The drag and drop call the page core/ajax/row.php
 $disablemove=1;
-if (in_array($modulepart, array('product', 'produit', 'societe', 'user'))) $disablemove=0;		// Drag and drop for up and down allowed on product, thirdparty, ...
+if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticketsup'))) $disablemove=0;
 
 // List of document
 $formfile->list_of_documents(

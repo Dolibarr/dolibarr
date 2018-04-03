@@ -196,7 +196,7 @@ else if (GETPOST('downloadcsv','alpha'))
 				$block_static->user_fullname = $obj->user_fullname;
 				$block_static->fk_user = $obj->fk_user;
 				$block_static->signature = $obj->signature;
-				$block_static->object_data = unserialize($obj->object_data);
+				$block_static->object_data = $block_static->dolDecodeBlockedData($obj->object_data);
 
 				$checksignature = $block_static->checkSignature($previoushash);	// If $previoushash is not defined, checkSignature will search it
 
@@ -474,7 +474,7 @@ if (is_array($blocks))
 		   	print '<td class="nowrap">'.$block->ref_object.'</td>';
 
 		   	// Link to source object
-		   	print '<td>'.$object_link.'</td>';
+		   	print '<td><!-- object_link -->'.$object_link.'</td>';
 
 		   	// Amount
 		   	print '<td align="right">'.price($block->amounts).'</td>';
@@ -501,7 +501,7 @@ if (is_array($blocks))
 
 		   	print '</td>';
 
-		   	// Status note
+		   	// Note
 		   	print '<td class="center">';
 		   	if (! $checkresult[$block->id] || ($loweridinerror && $block->id >= $loweridinerror))	// If error
 		   	{

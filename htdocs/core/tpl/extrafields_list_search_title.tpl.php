@@ -8,16 +8,17 @@ if (empty($conf) || ! is_object($conf))
 }
 
 // Loop to show all columns of extrafields for the title line
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->element]['label']) && count($extrafields->attributes[$object->element]['label']))
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$object->element]['label'] as $key => $val)
 	{
 		if (! empty($arrayfields["ef.".$key]['checked']))
 		{
 			$align=$extrafields->getAlignFlag($key);
 			$sortonfield = "ef.".$key;
-			if (! empty($extrafields->attribute_computed[$key])) $sortonfield='';
-			print getTitleFieldOfList($langs->trans($extralabels[$key]), 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder)."\n";
+			if (! empty($extrafields->attributes[$object->element]['computed'][$key])) $sortonfield='';
+			if ($extrafields->attributes[$object->element]['type'][$key] == 'separate') print '<th class="liste_titre thseparator"></th>';
+			else print getTitleFieldOfList($langs->trans($extralabels[$key]), 0, $_SERVER["PHP_SELF"], $sortonfield, "", $param, ($align?'align="'.$align.'"':''), $sortfield, $sortorder)."\n";
 		}
 	}
 }
