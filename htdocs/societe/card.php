@@ -46,11 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("bills");
-$langs->load("banks");
-$langs->load("users");
+$langs->loadLangs(array("companies","commercial","bills","banks","users"));
 if (! empty($conf->categorie->enabled)) $langs->load("categories");
 if (! empty($conf->incoterm->enabled)) $langs->load("incoterm");
 if (! empty($conf->notification->enabled)) $langs->load("mails");
@@ -543,6 +539,15 @@ if (empty($reshook))
 						}
 					}
 
+					// Links with users
+					$salesreps = GETPOST('commercial', 'array');
+					$result = $object->setSalesRep($salesreps);
+					if ($result < 0)
+					{
+						$error++;
+						setEventMessages($object->error, $object->errors, 'errors');
+					}
+
 					// Customer categories association
 					$custcats = GETPOST('custcats', 'array');
 					$result = $object->setCategories($custcats, 'customer');
@@ -671,6 +676,15 @@ if (empty($reshook))
                     setEventMessages($object->error, $object->errors, 'errors');
                   	$error++;
                 }
+
+				// Links with users
+				$salesreps = GETPOST('commercial', 'array');
+				$result = $object->setSalesRep($salesreps);
+				if ($result < 0)
+				{
+					$error++;
+					setEventMessages($object->error, $object->errors, 'errors');
+				}
 
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
 				if (! $error && !empty($user->rights->categorie->lire))
@@ -1364,7 +1378,8 @@ else
             print '<tr>';
             print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
             print '<td colspan="3" class="maxwidthonsmartphone">';
-            print $form->select_dolusers((! empty($object->commercial_id)?$object->commercial_id:$user->id),'commercial_id',1); // Add current user by default
+			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+            print $form->multiselectarray('commercial', $userlist, GETPOST('commercial', 'array'), null, null, null, null, "90%");
             print '</td></tr>';
         }
 
@@ -1934,6 +1949,16 @@ else
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
 	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
+
+			// Assign a Name
+            print '<tr>';
+            print '<td>'.fieldLabel('AllocateCommercial','commercial_id').'</td>';
+            print '<td colspan="3" class="maxwidthonsmartphone">';
+			$userlist = $form->select_dolusers('', '', 0, null, 0, '', '', 0, 0, 0, '', 0, '', '', 0, 1);
+			$arrayselected = GETPOST('commercial', 'array');
+			if (empty($arrayselected)) $arrayselected = $object->getSalesRepresentatives($user, 1);
+            print $form->multiselectarray('commercial', $userlist, $arrayselected, null, null, null, null, "90%");
+            print '</td></tr>';
 
             // Default language
             if (! empty($conf->global->MAIN_MULTILANGS))

@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $action=GETPOST('action','aZ09');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'admincompany';   // To manage different context of search
 
 $langs->load("admin");
 $langs->load("companies");
@@ -47,8 +48,7 @@ if (! $user->admin) accessforbidden();
 $error=0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('admincompany','globaladmin');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('admincompany','globaladmin'));
 
 /*
  * Actions
@@ -294,6 +294,10 @@ $formcompany=new FormCompany($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
 print load_fiche_titre($langs->trans("CompanyFoundation"),'','title_setup');
+
+$head = company_admin_prepare_head();
+
+dol_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
 
 print $langs->trans("CompanyFundationDesc")."<br>\n";
 print "<br>\n";
@@ -1134,8 +1138,6 @@ else
 	print '<div class="tabsAction">';
 	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a></div>';
 	print '</div>';
-
-	print '<br>';
 }
 
 

@@ -2109,7 +2109,7 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
-	 *  @param  integer $infologin      			Add complete info tooltip
+	 *  @param  integer $infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
 	 *  @param	int		$hidethirdpartylogo			Hide logo of thirdparty if user is external user
@@ -2136,6 +2136,7 @@ class User extends CommonObject
 			$label.= '</div><div style="clear: both;"></div>';
 		}
 
+		// Info Login
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'');
@@ -2144,20 +2145,18 @@ class User extends CommonObject
 		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
 		if (! empty($this->admin))
 			$label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
-		if (! empty($this->societe_id) )	// Add thirdparty for external users
+		if (! empty($this->socid) )	// Add thirdparty for external users
 		{
 			$thirdpartystatic = new Societe($db);
-			$thirdpartystatic->fetch($this->societe_id);
+			$thirdpartystatic->fetch($this->socid);
 			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink')?'nolink':''));	// picto only of company
 			$company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 		}
-		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
+		$type=($this->socid?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
 		$label.= '<br><b>' . $langs->trans("Status").'</b>: '.$this->getLibStatut(0);
 		$label.='</div>';
-
-		// Info Login
-		if ($infologin)
+		if ($infologin > 0)
 		{
 			$label.= '<br>';
 			$label.= '<br><u>'.$langs->trans("Connection").'</u>';
@@ -2176,6 +2175,7 @@ class User extends CommonObject
 			if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 		}
+		if ($infologin < 0) $label='';
 
 		$url = DOL_URL_ROOT.'/user/card.php?id='.$this->id;
 		if ($option == 'leave') $url = DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
@@ -2744,7 +2744,11 @@ class User extends CommonObject
 	 */
 	function get_full_tree($deleteafterid=0, $filter='')
 	{
-		global $conf,$user;
+		global $conf, $user;
+		global $hookmanager;
+
+		// Actions hooked (by external module)
+		$hookmanager->initHooks(array('userdao'));
 
 		$this->users = array();
 
@@ -2754,23 +2758,11 @@ class User extends CommonObject
 		// Init $this->users array
 		$sql = "SELECT DISTINCT u.rowid, u.firstname, u.lastname, u.fk_user, u.fk_soc, u.login, u.email, u.gender, u.admin, u.statut, u.photo, u.entity";	// Distinct reduce pb with old tables with duplicates
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		// TODO add hook
-		if (! empty($conf->multicompany->enabled)) {
-			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				if (! empty($user->admin) && empty($user->entity)) {
-					if ($conf->entity == 1) {
-						$sql.= " WHERE u.entity IS NOT NULL";
-					} else {
-						$sql.= " WHERE u.entity IN (".getEntity('user').")";
-					}
-				} else {
-					$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-					$sql.= " WHERE ug.fk_user = u.rowid";
-					$sql.= " AND ug.entity IN (".getEntity('user').")";
-				}
-			} else {
-				$sql.= " WHERE u.entity IN (".getEntity('user').")";
-			}
+		// Add fields from hooks
+		$parameters=array();
+		$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+		if ($reshook > 0) {
+			$sql.=$hookmanager->resPrint;
 		} else {
 			$sql.= " WHERE u.entity IN (".getEntity('user').")";
 		}

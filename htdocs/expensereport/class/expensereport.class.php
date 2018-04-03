@@ -44,7 +44,6 @@ class ExpenseReport extends CommonObject
 
     public $date_fin;
 
-    var $fk_user_validator;
     var $status;
     var $fk_statut;     // -- 0=draft, 2=validated (attente approb), 4=canceled, 5=approved, 6=payed, 99=denied
     var $fk_c_paiement;
@@ -78,14 +77,16 @@ class ExpenseReport extends CommonObject
     var $detail_cancel;
     var $fk_user_cancel;
 
+    var $fk_user_validator;	// User that is defined to approve
+
     // Validation
-    var $date_valid;
+    var $date_valid;		// User making validation
     var $fk_user_valid;
     var $user_valid_infos;
 
     // Approve
     var $date_approve;
-    var $fk_user_approve;
+    var $fk_user_approve;	// User that has approved
 
     // Paiement
     var $user_paid_infos;
@@ -179,6 +180,7 @@ class ExpenseReport extends CommonObject
         $sql.= ",date_create";
         $sql.= ",fk_user_author";
         $sql.= ",fk_user_validator";
+        $sql.= ",fk_user_approve";
         $sql.= ",fk_user_modif";
         $sql.= ",fk_statut";
         $sql.= ",fk_c_paiement";
@@ -196,6 +198,7 @@ class ExpenseReport extends CommonObject
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", ".$fuserid;
         $sql.= ", ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
+        $sql.= ", ".($this->fk_user_approve > 0 ? $this->fk_user_approve:"null");
         $sql.= ", ".($this->fk_user_modif > 0 ? $this->fk_user_modif:"null");
         $sql.= ", ".($this->fk_statut > 1 ? $this->fk_statut:0);
         $sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
@@ -386,6 +389,7 @@ class ExpenseReport extends CommonObject
         }
         $sql.= " , fk_user_validator = ".($this->fk_user_validator > 0 ? $this->fk_user_validator:"null");
         $sql.= " , fk_user_valid = ".($this->fk_user_valid > 0 ? $this->fk_user_valid:"null");
+        $sql.= " , fk_user_approve = ".($this->fk_user_approve > 0 ? $this->fk_user_approve:"null");
         $sql.= " , fk_user_modif = ".$user->id;
         $sql.= " , fk_statut = ".($this->fk_statut >= 0 ? $this->fk_statut:'0');
         $sql.= " , fk_c_paiement = ".($this->fk_c_paiement > 0 ? $this->fk_c_paiement:"null");
@@ -495,7 +499,8 @@ class ExpenseReport extends CommonObject
                 $this->user_author_infos = dolGetFirstLastname($user_author->firstname, $user_author->lastname);
 
                 $user_approver = new User($this->db);
-                if ($this->fk_user_validator > 0) $user_approver->fetch($this->fk_user_validator);
+                if ($this->fk_user_approve > 0) $user_approver->fetch($this->fk_user_approve);
+                elseif ($this->fk_user_validator > 0) $user_approver->fetch($this->fk_user_validator);		// For backward compatibility
                 $this->user_validator_infos = dolGetFirstLastname($user_approver->firstname, $user_approver->lastname);
 
                 $this->fk_statut                = $obj->status;
@@ -744,9 +749,9 @@ class ExpenseReport extends CommonObject
         $this->fk_statut = 5;
 
         $this->fk_user_author = $user->id;
+        $this->fk_user_validator = $user->id;
         $this->fk_user_valid = $user->id;
         $this->fk_user_approve = $user->id;
-        $this->fk_user_validator = $user->id;
 
         $this->note_private='Private note';
         $this->note_public='SPECIMEN';

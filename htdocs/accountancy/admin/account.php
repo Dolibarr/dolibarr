@@ -40,6 +40,7 @@ $action = GETPOST('action','aZ09');
 $cancel = GETPOST('cancel','alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accountingaccountlist';   // To manage different context of search
 
 $search_account = GETPOST("search_account");
 $search_label = GETPOST("search_label");
@@ -74,8 +75,6 @@ $arrayfields=array(
 
 $accounting = new AccountingAccount($db);
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accountingaccountlist';
 
 
 /*

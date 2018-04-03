@@ -17,9 +17,8 @@
  */
 
 /**
- * Display form to add new ticket
- *
- * @package ticketsup
+ * 	\file       htdocs/ticketsup/new.php
+ *  \ingroup	ticketsup
  */
 
 require '../main.inc.php';

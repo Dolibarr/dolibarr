@@ -48,6 +48,18 @@ $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectl
 $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated page
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
+$childids = $user->getAllChildIds(1);
+
+// Security check
+$socid=0;
+if ($user->societe_id > 0)	// Protection if external user
+{
+	//$socid = $user->societe_id;
+	accessforbidden();
+}
+$result = restrictedArea($user, 'holiday', $id, '');
+$id = GETPOST('id','int');
+
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -71,20 +83,22 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 if (! $sortfield) $sortfield="cp.rowid";
 if (! $sortorder) $sortorder="DESC";
 
-$id = GETPOST('id','int');
 
-$sall            = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_ref      = GETPOST('search_ref');
-$month_create    = GETPOST('month_create');
-$year_create     = GETPOST('year_create');
-$month_start     = GETPOST('month_start');
-$year_start      = GETPOST('year_start');
-$month_end       = GETPOST('month_end');
-$year_end        = GETPOST('year_end');
-$search_employee = GETPOST('search_employee');
-$search_valideur = GETPOST('search_valideur');
-$search_statut   = GETPOST('select_statut');
-$search_type     = GETPOST('search_type','int');
+$sall                = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
+$search_ref          = GETPOST('search_ref','alpha');
+$search_day_create   = GETPOST('search_day_create','int');
+$search_month_create = GETPOST('search_month_create','int');
+$search_year_create  = GETPOST('search_year_create','int');
+$search_day_start    = GETPOST('search_day_start','int');
+$search_month_start  = GETPOST('search_month_start','int');
+$search_year_start   = GETPOST('search_year_start','int');
+$search_day_end      = GETPOST('search_day_end','int');
+$search_month_end    = GETPOST('search_month_end','int');
+$search_year_end     = GETPOST('search_year_end','int');
+$search_employee     = GETPOST('search_employee','int');
+$search_valideur     = GETPOST('search_valideur','int');
+$search_statut       = GETPOST('search_statut','int');
+$search_type         = GETPOST('search_type','int');
 
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array(
@@ -115,12 +129,12 @@ if (empty($reshook))
 	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 	{
 		$search_ref="";
-		$month_create="";
-		$year_create="";
-	    $month_start="";
-		$year_start="";
-		$month_end="";
-		$year_end="";
+		$search_month_create="";
+		$search_year_create="";
+	    $search_month_start="";
+		$search_year_start="";
+		$search_month_end="";
+		$search_year_end="";
 		$search_employee="";
 		$search_valideur="";
 		$search_statut="";
@@ -157,9 +171,6 @@ $holiday = new Holiday($db);
 $holidaystatic=new Holiday($db);
 $fuser = new User($db);
 
-$childids = $user->getAllChildIds();
-$childids[]=$user->id;
-
 // Update sold
 $result = $holiday->updateBalance();
 
@@ -178,47 +189,47 @@ if(!empty($search_ref))
 }
 
 // Start date
-if($year_start > 0) {
-    if($month_start > 0) {
-    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,$month_start,1))."' AND '".$db->idate(dol_get_last_day($year_start,$month_start,1))."')";
-    	//$filter.= " AND date_format(cp.date_debut, '%Y-%m') = '$year_start-$month_start'";
+if($search_year_start > 0) {
+    if($search_month_start > 0) {
+    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($search_year_start,$search_month_start,1))."' AND '".$db->idate(dol_get_last_day($search_year_start,$search_month_start,1))."')";
+    	//$filter.= " AND date_format(cp.date_debut, '%Y-%m') = '$search_year_start-$search_month_start'";
     } else {
-    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($year_start,1,1))."' AND '".$db->idate(dol_get_last_day($year_start,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_debut, '%Y') = '$year_start'";
+    	$filter .= " AND (cp.date_debut BETWEEN '".$db->idate(dol_get_first_day($search_year_start,1,1))."' AND '".$db->idate(dol_get_last_day($search_year_start,12,1))."')";
+    	//$filter.= " AND date_format(cp.date_debut, '%Y') = '$search_year_start'";
     }
 } else {
-    if($month_start > 0) {
-        $filter.= " AND date_format(cp.date_debut, '%m') = '".$db->escape($month_start)."'";
+    if($search_month_start > 0) {
+        $filter.= " AND date_format(cp.date_debut, '%m') = '".$db->escape($search_month_start)."'";
     }
 }
 
 // End date
-if($year_end > 0) {
-    if($month_end > 0) {
-    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,$month_end,1))."' AND '".$db->idate(dol_get_last_day($year_end,$month_end,1))."')";
-    	//$filter.= " AND date_format(cp.date_fin, '%Y-%m') = '$year_end-$month_end'";
+if($search_year_end > 0) {
+    if($search_month_end > 0) {
+    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($search_year_end,$search_month_end,1))."' AND '".$db->idate(dol_get_last_day($search_year_end,$search_month_end,1))."')";
+    	//$filter.= " AND date_format(cp.date_fin, '%Y-%m') = '$search_year_end-$search_month_end'";
     } else {
-    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($year_end,1,1))."' AND '".$db->idate(dol_get_last_day($year_end,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_fin, '%Y') = '$year_end'";
+    	$filter .= " AND (cp.date_fin BETWEEN '".$db->idate(dol_get_first_day($search_year_end,1,1))."' AND '".$db->idate(dol_get_last_day($search_year_end,12,1))."')";
+    	//$filter.= " AND date_format(cp.date_fin, '%Y') = '$search_year_end'";
     }
 } else {
-    if($month_end > 0) {
-        $filter.= " AND date_format(cp.date_fin, '%m') = '".$db->escape($month_end)."'";
+    if($search_month_end > 0) {
+        $filter.= " AND date_format(cp.date_fin, '%m') = '".$db->escape($search_month_end)."'";
     }
 }
 
 // Create date
-if($year_create > 0) {
-    if($month_create > 0) {
-    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,$month_create,1))."' AND '".$db->idate(dol_get_last_day($year_create,$month_create,1))."')";
-    	//$filter.= " AND date_format(cp.date_create, '%Y-%m') = '$year_create-$month_create'";
+if($search_year_create > 0) {
+    if($search_month_create > 0) {
+    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($search_year_create,$search_month_create,1))."' AND '".$db->idate(dol_get_last_day($search_year_create,$search_month_create,1))."')";
+    	//$filter.= " AND date_format(cp.date_create, '%Y-%m') = '$search_year_create-$search_month_create'";
     } else {
-    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($year_create,1,1))."' AND '".$db->idate(dol_get_last_day($year_create,12,1))."')";
-    	//$filter.= " AND date_format(cp.date_create, '%Y') = '$year_create'";
+    	$filter .= " AND (cp.date_create BETWEEN '".$db->idate(dol_get_first_day($search_year_create,1,1))."' AND '".$db->idate(dol_get_last_day($search_year_create,12,1))."')";
+    	//$filter.= " AND date_format(cp.date_create, '%Y') = '$search_year_create'";
     }
 } else {
-    if($month_create > 0) {
-        $filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($month_create)."'";
+    if($search_month_create > 0) {
+        $filter.= " AND date_format(cp.date_create, '%m') = '".$db->escape($search_month_create)."'";
     }
 }
 
@@ -263,14 +274,16 @@ if ($id > 0)
 	$search_employee = $user_id;
 }
 
-// Récupération des congés payés de l'utilisateur ou de tous les users
+// Récupération des congés payés de l'utilisateur ou de tous les users de sa hierarchy
+// Load array $holiday->holiday
 if (empty($user->rights->holiday->read_all) || $id > 0)
 {
-	$result = $holiday->fetchByUser($user_id,$order,$filter);	// Load array $holiday->holiday
+	if ($id > 0) $result = $holiday->fetchByUser($id, $order, $filter);
+	else  $result = $holiday->fetchByUser(join(',',$childids), $order, $filter);
 }
 else
 {
-    $result = $holiday->fetchAll($order,$filter);	// Load array $holiday->holiday
+    $result = $holiday->fetchAll($order, $filter);
 }
 // Si erreur SQL
 if ($result == '-1')
@@ -289,9 +302,23 @@ $num = count($holiday->holiday);
 $arrayofselected=is_array($toselect)?$toselect:array();
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
+if ($search_ref)          $param.='&search_ref='.urlencode($search_ref);
+if ($search_day_create)          $param.='&search_day_create='.urlencode($search_day_create);
+if ($search_month_create)        $param.='&search_month_create='.urlencode($search_month_create);
+if ($search_year_create)         $param.='&search_year_create='.urlencode($search_year_create);
+if ($search_search_day_start)    $param.='&search_day_start='.urlencode($search_day_start);
+if ($search_month_start)         $param.='&search_month_start='.urlencode($search_month_start);
+if ($search_year_start)          $param.='&search_year_start='.urlencode($search_year_start);
+if ($search_day_end)             $param.='&search_day_end='.urlencode($search_day_end);
+if ($search_month_end)           $param.='&search_month_end='.urlencode($search_month_end);
+if ($search_year_end)            $param.='&search_year_end='.urlencode($search_year_end);
+if ($search_employee > 0) $param.='&search_employee='.urlencode($search_employee);
+if ($search_valideur > 0) $param.='&search_valideur='.urlencode($search_valideur);
+if ($search_type > 0)     $param.='&search_type='.urlencode($search_type);
+if ($search_statut > 0)   $param.='&search_statut='.urlencode($search_statut);
 
 // List of mass actions available
 $arrayofmassactions =  array(
@@ -380,27 +407,39 @@ print '</td>';
 
 // Create date
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_create" value="'.dol_escape_htmltag($month_create).'">';
-$formother->select_year($year_create,'year_create',1, $min_year, 0);
+print '<input class="flat" type="text" size="1" maxlength="2" name="search_month_create" value="'.dol_escape_htmltag($search_month_create).'">';
+$formother->select_year($search_year_create,'search_year_create',1, $min_year, 0);
 print '</td>';
 
+
+$morefilter = 'AND employee = 1';
+if (! empty($conf->global->HOLIDAY_FOR_NON_SALARIES_TOO)) $morefilter = '';
+
 // User
-if ($user->rights->holiday->write_all)
+$disabled=0;
+// If into the tab holiday of a user ($id is set in such a case)
+if ($id && ! GETPOSTISSET('search_employee'))
 {
-    print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($search_employee,"search_employee",1,"",0,'','',0,0,0,'',0,'','maxwidth200');
+	$search_employee=$id;
+	$disabled=1;
+}
+if (! empty($user->rights->holiday->read_all))	// Can see all
+{
+	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee','int');
+	print '<td class="liste_titre maxwidthonsmartphone" align="left">';
+	print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 else
 {
-    //print '<td class="liste_titre">&nbsp;</td>';
+	if (GETPOSTISSET('search_employee')) $search_employee=GETPOST('search_employee','int');
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
-    print $form->select_dolusers($user->id,"search_employee",1,"",1,'','',0,0,0,'',0,'','maxwidth200');
+    print $form->select_dolusers($search_employee, "search_employee", 1, "", $disabled, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 
 // Approve
-if($user->rights->holiday->write_all)
+if ($user->rights->holiday->read_all)
 {
     print '<td class="liste_titre maxwidthonsmartphone" align="left">';
 
@@ -409,7 +448,7 @@ if($user->rights->holiday->write_all)
     $valideurobjects = $validator->listUsersForGroup($excludefilter);
     $valideurarray = array();
     foreach($valideurobjects as $val) $valideurarray[$val->id]=$val->id;
-    print $form->select_dolusers($search_valideur,"search_valideur",1,"",0,$valideurarray,'', 0, 0, 0, '', 0, '', 'maxwidth200');
+    print $form->select_dolusers($search_valideur, "search_valideur", 1, "", 0, $valideurarray, '', 0, 0, 0, $morefilter, 0, '', 'maxwidth200');
     print '</td>';
 }
 else
@@ -423,7 +462,7 @@ $typeleaves=$holidaystatic->getTypes(1,-1);
 $arraytypeleaves=array();
 foreach($typeleaves as $key => $val)
 {
-    $labeltoshow = $val['label'];
+	$labeltoshow = ($langs->trans($val['code'])!=$val['code'] ? $langs->trans($val['code']) : $val['label']);
     //$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
     $arraytypeleaves[$val['rowid']]=$labeltoshow;
 }
@@ -435,19 +474,19 @@ print '<td class="liste_titre">&nbsp;</td>';
 
 // Start date
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.dol_escape_htmltag($month_start).'">';
-$formother->select_year($year_start,'year_start',1, $min_year, $max_year);
+print '<input class="flat" type="text" size="1" maxlength="2" name="search_month_start" value="'.dol_escape_htmltag($search_month_start).'">';
+$formother->select_year($search_year_start,'search_year_start',1, $min_year, $max_year);
 print '</td>';
 
 // End date
 print '<td class="liste_titre" align="center">';
-print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.dol_escape_htmltag($month_end).'">';
-$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
+print '<input class="flat" type="text" size="1" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
+$formother->select_year($search_year_end,'search_year_end',1, $min_year, $max_year);
 print '</td>';
 
 // Status
 print '<td class="liste_titre maxwidthonsmartphone maxwidth200" align="right">';
-$holiday->selectStatutCP($search_statut);
+$holiday->selectStatutCP($search_statut, 'search_statut');
 print '</td>';
 
 // Actions
@@ -464,17 +503,25 @@ print_liste_field_titre("DateCreateCP",$_SERVER["PHP_SELF"],"cp.date_create","",
 print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"cp.fk_user","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("ValidatorCP",$_SERVER["PHP_SELF"],"cp.fk_validator","",$param,'',$sortfield,$sortorder);
 print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'','',$param,'',$sortfield,$sortorder);
-print_liste_field_titre("Duration",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("NbUseDaysCPShort",$_SERVER["PHP_SELF"],'','',$pram,'align="right"',$sortfield,$sortorder);
 print_liste_field_titre("DateDebCP",$_SERVER["PHP_SELF"],"cp.date_debut","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("DateFinCP",$_SERVER["PHP_SELF"],"cp.date_fin","",$param,'align="center"',$sortfield,$sortorder);
 print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"cp.statut","",$param,'align="right"',$sortfield,$sortorder);
-print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
+print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'',$param,'align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
 print "</tr>\n";
 
 $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
+
+// If we ask a dedicated card and not allow to see it, we forc on user.
+if ($id && empty($user->rights->holiday->read_all) && ! in_array($id, $childids))
+{
+	$langs->load("errors");
+	print '<tr class="oddeven opacitymediuem"><td colspan="10">'.$langs->trans("NotEnoughPermissions").'</td></tr>';
+	$result = 0;
+}
 // Lines
-if (! empty($holiday->holiday))
+elseif (! empty($holiday->holiday))
 {
 	$userstatic = new User($db);
 	$approbatorstatic = new User($db);
@@ -510,13 +557,14 @@ if (! empty($holiday->holiday))
 
 		print '<tr class="oddeven">';
 		print '<td>';
-		print $holidaystatic->getNomUrl(1);
+		print $holidaystatic->getNomUrl(1, 1);
 		print '</td>';
 		print '<td style="text-align: center;">'.dol_print_date($date,'day').'</td>';
 		print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
 		print '<td>'.$approbatorstatic->getNomUrl(-1).'</td>';
 		print '<td>';
-		print empty($typeleaves[$infos_CP['fk_type']]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$infos_CP['fk_type']) : $typeleaves[$infos_CP['fk_type']]['label'];
+		$labeltypeleavetoshow = ($langs->trans($typeleaves[$infos_CP['fk_type']]['code'])!=$typeleaves[$infos_CP['fk_type']]['code'] ? $langs->trans($typeleaves[$infos_CP['fk_type']]['code']) : $typeleaves[$infos_CP['fk_type']]['label']);
+		print empty($typeleaves[$infos_CP['fk_type']]['label']) ? $langs->trans("TypeWasDisabledOrRemoved",$infos_CP['fk_type']) : $labeltypeleavetoshow;
 		print '</td>';
 		print '<td align="right">';
 		$nbopenedday=num_open_day($infos_CP['date_debut_gmt'], $infos_CP['date_fin_gmt'], 0, 1, $infos_CP['halfday']);

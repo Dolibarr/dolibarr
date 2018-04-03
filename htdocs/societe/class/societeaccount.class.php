@@ -504,40 +504,4 @@ class SocieteAccount extends CommonObject
 	{
 		$this->initAsSpecimenCommon();
 	}
-
-
-	/**
-	 * Action executed by scheduler
-	 * CAN BE A CRON TASK
-	 *
-	 * @return	int			0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
-	 */
-	public function doScheduledJob()
-	{
-		global $conf, $langs;
-
-		$this->output = '';
-		$this->error='';
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-
-		// ...
-
-		return 0;
-	}
 }
-
-/**
- * Class societeAccountLine. You can also remove this and generate a CRUD class for lines objects.
- */
-/*
-class societeAccountLine
-{
-	// @var int ID
-	public $id;
-	// @var mixed Sample line property 1
-	public $prop1;
-	// @var mixed Sample line property 2
-	public $prop2;
-}
-*/

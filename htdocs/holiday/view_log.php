@@ -117,7 +117,7 @@ foreach($cp->logs as $logs_CP)
    	print '<td>'.$user_update->getNomUrl(-1).'</td>';
    	print '<td>'.$logs_CP['type_action'].'</td>';
    	print '<td>';
-	$label=$alltypeleaves[$logs_CP['fk_type']]['label'];
+   	$label = (($alltypeleaves[$logs_CP['fk_type']]['code'] && $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code'])!=$alltypeleaves[$logs_CP['fk_type']]['code']) ? $langs->trans($alltypeleaves[$logs_CP['fk_type']]['code']) : $alltypeleaves[$logs_CP['fk_type']]['label']);
 	print $label?$label:$logs_CP['fk_type'];
    	print '</td>';
    	print '<td style="text-align: right;">'.price2num($logs_CP['prev_solde'],5).' '.$langs->trans('days').'</td>';

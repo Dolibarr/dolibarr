@@ -31,7 +31,7 @@ $langs->load("bills");
 $langs->load("banks");
 $langs->load("trips");
 
-$chid=GETPOST("id",'int');
+$id=GETPOST("id",'int');
 $ref=GETPOST('ref','alpha');
 $action=GETPOST('action','aZ09');
 $amounts = array();
@@ -55,13 +55,18 @@ if ($action == 'add_payment')
 
 	if ($_POST["cancel"])
 	{
-		$loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$chid;
+		$loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
 		header("Location: ".$loc);
 		exit;
 	}
 
 	$expensereport = new ExpenseReport($db);
-	$expensereport->fetch($chid, $ref);
+	$result = $expensereport->fetch($id, $ref);
+	if (! $result)
+	{
+		$error++;
+		setEventMessages($expensereport->error, $expensereport->errors, 'errors');
+	}
 
 	$datepaid = dol_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
@@ -108,7 +113,7 @@ if ($action == 'add_payment')
 
     		// Create a line of payments
     		$payment = new PaymentExpenseReport($db);
-    		$payment->chid           = $chid;
+    		$payment->chid           = $expensereport->id;
     		$payment->datepaid       = $datepaid;
     		$payment->amounts        = $amounts;   // Tableau de montant
     		$payment->total          = $total;
@@ -121,7 +126,7 @@ if ($action == 'add_payment')
     		    $paymentid = $payment->create($user);
                 if ($paymentid < 0)
                 {
-                    $errmsg=$payment->error;
+                	setEventMessages($payment->error, $payment->errors, 'errors');
                     $error++;
                 }
     		}
@@ -131,7 +136,7 @@ if ($action == 'add_payment')
                 $result=$payment->addPaymentToBank($user,'payment_expensereport','(ExpenseReportPayment)',$accountid,'','');
                 if (! $result > 0)
                 {
-                    $errmsg=$payment->error;
+                	setEventMessages($payment->error, $payment->errors, 'errors');
                     $error++;
                 }
             }
@@ -141,7 +146,7 @@ if ($action == 'add_payment')
                 if ($expensereport->total_ttc - $payment->amount == 0) {
                     $result = $expensereport->set_paid($expensereport->id, $user);
                     if (!$result > 0) {
-                        $errmsg = $payment->error;
+                    	setEventMessages($payment->error, $payment->errors, 'errors');
                         $error++;
                     }
                 }
@@ -151,7 +156,7 @@ if ($action == 'add_payment')
     	    if (! $error)
             {
                 $db->commit();
-                $loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$chid;
+                $loc = DOL_URL_ROOT.'/expensereport/card.php?id='.$id;
                 header('Location: '.$loc);
                 exit;
             }
@@ -179,7 +184,7 @@ $form=new Form($db);
 if ($action == 'create' || empty($action))
 {
 	$expensereport = new ExpenseReport($db);
-	$expensereport->fetch($chid, $ref);
+	$expensereport->fetch($id, $ref);
 
 	$total = $expensereport->total_ttc;
 
@@ -187,8 +192,8 @@ if ($action == 'create' || empty($action))
 
 	print '<form name="add_payment" action="'.$_SERVER['PHP_SELF'].'" method="post">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="id" value="'.$chid.'">';
-	print '<input type="hidden" name="chid" value="'.$chid.'">';
+	print '<input type="hidden" name="id" value="'.$expensereport->id.'">';
+	print '<input type="hidden" name="chid" value="'.$expensereport->id.'">';
 	print '<input type="hidden" name="action" value="add_payment">';
 
     dol_fiche_head(null, '0', '', -1);
@@ -208,7 +213,7 @@ if ($action == 'create' || empty($action))
 
 	$sql = "SELECT sum(p.amount) as total";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as p, ".MAIN_DB_PREFIX."expensereport as e";
-	$sql.= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$chid;
+	$sql.= " WHERE p.fk_expensereport = e.rowid AND p.fk_expensereport = ".$id;
     $sql.= ' AND e.entity IN ('.getEntity('expensereport').')';
 	$resql = $db->query($sql);
 	if ($resql)

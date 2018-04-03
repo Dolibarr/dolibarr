@@ -38,10 +38,6 @@ if (!$user->admin) accessforbidden();
 
 $action = GETPOST('action','alpha');
 
-// Other parameters
-$list = array (
-		'ACCOUNTING_VAT_PAY_ACCOUNT'
-);
 
 
 /*
@@ -76,34 +72,37 @@ if ($action == 'update') {
 	switch ($tax_mode)
 	{
 		case 0:
-			$value = 'payment';
+			$valuesellproduct = 'invoice';
+			$valuebuyproduct = 'invoice';
+			$valuesellservice = 'payment';
+			$valuebuyservice = 'payment';
 			break;
 		case 1:
-			$value = 'invoice';
+			$valuesellproduct = 'invoice';
+			$valuebuyproduct = 'invoice';
+			$valuesellservice = 'invoice';
+			$valuebuyservice = 'invoice';
+			break;
+		case 2:
+			$valuesellproduct = 'payment';
+			$valuebuyproduct = 'payment';
+			$valuesellservice = 'payment';
+			$valuebuyservice = 'payment';
 			break;
 	}
 
-	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_PRODUCT', $valuesellproduct,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', 'invoice','chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_PRODUCT', $valuebuyproduct,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $value,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_SELL_SERVICE', $valuesellservice, 'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $value,'chaine',0,'',$conf->entity);
+	$res = dolibarr_set_const($db, 'TAX_MODE_BUY_SERVICE', $valuebuyservice, 'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
 
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva",'alpha'),'chaine',0,'',$conf->entity);
 
 	dolibarr_set_const($db, "MAIN_INFO_VAT_RETURN", GETPOST("MAIN_INFO_VAT_RETURN",'alpha'),'chaine',0,'',$conf->entity);
-
-	// Others options
-	foreach ($list as $constname) {
-		$constvalue = GETPOST($constname, 'alpha');
-
-		if (!dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-			$error++;
-		}
-	}
 
 	if (! $error) {
 		$db->commit();
@@ -157,10 +156,11 @@ else
 	else
 	{
 		print '<td width="120">';
-		$listval=array('0'=>$langs->trans(""),
-		'1'=>$langs->trans("Monthly"),
-		'2'=>$langs->trans("Quarterly"),
-		'3'=>$langs->trans("Annual"),
+		$listval=array(
+			'0'=>$langs->trans(""),
+			'1'=>$langs->trans("Monthly"),
+			'2'=>$langs->trans("Quarterly"),
+			'3'=>$langs->trans("Annual"),
 		);
 		print $form->selectarray("MAIN_INFO_VAT_RETURN", $listval, $conf->global->MAIN_INFO_VAT_RETURN);
 		print "</td>";
@@ -177,54 +177,77 @@ else
 	print '<tr class="liste_titre">';
 	print '<td class="titlefield">'.$langs->trans('OptionVatMode').'</td><td>'.$langs->trans('Description').'</td>';
 	print "</tr>\n";
-	print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="0"'.($tax_mode != 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
+	// Standard
+	print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="0"'.(empty($tax_mode) ? ' checked' : '').'> '.$langs->trans('OptionVATDefault').'</td>';
 	print '<td>'.nl2br($langs->trans('OptionVatDefaultDesc'));
 	print "</td></tr>\n";
-	print '<tr class="oddeven"><td width="200"><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
+	// On debit for services
+	print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="1"'.($tax_mode == 1 ? ' checked' : '').'> '.$langs->trans('OptionVATDebitOption').'</td>';
 	print '<td>'.nl2br($langs->trans('OptionVatDebitOptionDesc'))."</td></tr>\n";
-
+	// On payment for both products and services
+	if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		print '<tr class="oddeven"><td><input type="radio" name="tax_mode" value="2"'.($tax_mode == 2 ? ' checked' : '').'> '.$langs->trans('OptionPaymentForProductAndServices').'</td>';
+		print '<td>'.nl2br($langs->trans('OptionPaymentForProductAndServicesDesc'))."</td></tr>\n";
+	}
 	print "</table>\n";
 
 	print '<br>';
-	print ' -> '.$langs->trans("SummaryOfVatExigibilityUsedByDefault");
+	print load_fiche_titre('', '', '', 0, 0, '', '-> '.$langs->trans("SummaryOfVatExigibilityUsedByDefault"));
 	//print ' ('.$langs->trans("CanBeChangedWhenMakingInvoice").')';
 
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td class="titlefield">&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
+	print '<tr class="oddeven"><td class="titlefield">&nbsp;</td><td>'.$langs->trans("Buy").'</td><td>'.$langs->trans("Sell").'</td></tr>';
 
 	// Products
 	print '<tr class="oddeven"><td>'.$langs->trans("Product").'</td>';
 	print '<td>';
-	print $langs->trans("OnDelivery");
-	print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
+	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment')
+	{
+		print $langs->trans("OnPayment");
+		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	}
+	else
+	{
+		print $langs->trans("OnDelivery");
+		print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
+	}
 	print '</td>';
 	print '<td>';
-	print $langs->trans("OnDelivery");
-	print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
+	if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment')
+	{
+		print $langs->trans("OnPayment");
+		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
+	}
+	else
+	{
+		print $langs->trans("OnDelivery");
+		print ' ('.$langs->trans("SupposedToBeInvoiceDate").')';
+	}
 	print '</td></tr>';
 
 	// Services
 	print '<tr class="oddeven"><td>'.$langs->trans("Services").'</td>';
 	print '<td>';
-	if ($tax_mode == 0)
+	if ($conf->global->TAX_MODE_BUY_SERVICE == 'payment')
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	}
-	if ($tax_mode == 1)
+	else
 	{
 		print $langs->trans("OnInvoice");
 		print ' ('.$langs->trans("InvoiceDateUsed").')';
 	}
 	print '</td>';
 	print '<td>';
-	if ($tax_mode == 0)
+	if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment')
 	{
 		print $langs->trans("OnPayment");
 		print ' ('.$langs->trans("SupposedToBePaymentDate").')';
 	}
-	if ($tax_mode == 1)
+	else
 	{
 		print $langs->trans("OnInvoice");
 		print ' ('.$langs->trans("InvoiceDateUsed").')';
@@ -237,51 +260,21 @@ else
 print "<br>\n";
 
 
-
-/*
- *  Others params
- */
-
-print load_fiche_titre($langs->trans("OtherOptions"),'','');
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td class="titlefield">' . $langs->trans('Parameters') . '</td>';
-print '<td><td>';
-print "</tr>\n";
-
-foreach ($list as $key)
-{
-	print '<tr class="oddeven value">';
-
-	// Param
-	$label = $langs->trans($key);
-	print '<td><label for="'.$key.'">'.$label.'</label></td>';
-
-	// Value
-	print '<td>';
-	if (! empty($conf->accounting->enabled))
-	{
-		print $formaccounting->select_account($conf->global->$key, $key, 1, '', 1, 1);
-	}
-	else
-	{
-		print '<input type="text" size="20" id="'.$key.'" name="'.$key.'" value="'.$conf->global->$key.'">';
-	}
-	print '</td></tr>';
-}
-
-print '</table>';
-
-
-//dol_fiche_end();
-
-
 print '<div class="center">';
 print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="button">';
 print '</div>';
 
 print '</form>';
+
+
+
+
+if (! empty($conf->accounting->enabled))
+{
+	$langs->load("accountancy");
+	print '<br><br><span class="opacitymedium">'.$langs->trans("AccountingAccountForSalesTaxAreDefinedInto", $langs->transnoentitiesnoconv("MenuAccountancy"), $langs->transnoentitiesnoconv("Setup")).'</span>';
+}
+
 
 llxFooter();
 $db->close();

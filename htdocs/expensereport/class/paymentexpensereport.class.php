@@ -92,6 +92,7 @@ class PaymentExpenseReport extends CommonObject
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
+		if (! empty($this->fk_expensereport)) $this->chid = $this->fk_expensereport;
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -108,9 +109,6 @@ class PaymentExpenseReport extends CommonObject
 
 		$this->db->begin();
 
-                //Fix me fields
-                $this->chid = $this->fk_expensereport;
-        
 		if ($totalamount != 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."payment_expensereport (fk_expensereport, datec, datep, amount,";
@@ -515,7 +513,7 @@ class PaymentExpenseReport extends CommonObject
             //Fix me field
             $this->total = $this->amount;
             $total = $this->total;
-            
+
             if ($mode == 'payment_expensereport') $amount=$total;
 
             // Insert payment into llx_bank

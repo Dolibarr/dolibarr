@@ -82,7 +82,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('commcard','globalcard'));
+$hookmanager->initHooks(array('thirdpartycomm','globalcard'));
 
 
 /*
@@ -660,8 +660,6 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 	{
-		$propal_static = new Propal($db);
-
 		$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht";
         $sql.= ", p.tva as total_tva";
         $sql.= ", p.total as total_ttc";
@@ -676,9 +674,9 @@ if ($object->id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
-			$num = $db->num_rows($resql);
+			$propal_static = new Propal($db);
 
+			$num = $db->num_rows($resql);
             if ($num > 0)
             {
 		        print '<table class="noborder" width="100%">';
@@ -727,8 +725,6 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 	{
-		$commande_static=new Commande($db);
-
         $sql = "SELECT s.nom, s.rowid";
         $sql.= ", c.rowid as cid, c.total_ht";
         $sql.= ", c.tva as total_tva";
@@ -744,9 +740,9 @@ if ($object->id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
-			$num = $db->num_rows($resql);
+			$commande_static=new Commande($db);
 
+			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
 				// Check if there are orders billable
@@ -808,9 +804,8 @@ if ($object->id > 0)
     /*
      *   Last shipments
      */
-    if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
-        $sendingstatic = new Expedition($db);
-
+    if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire)
+    {
         $sql = 'SELECT e.rowid as id';
         $sql.= ', e.ref';
         $sql.= ', e.date_creation';
@@ -829,10 +824,11 @@ if ($object->id > 0)
         $sql.= " ORDER BY e.date_creation DESC";
 
         $resql = $db->query($sql);
-        if ($resql) {
-            $var = true;
-            $num = $db->num_rows($resql);
-            $i = 0;
+        if ($resql)
+        {
+        	$sendingstatic = new Expedition($db);
+
+        	$num = $db->num_rows($resql);
             if ($num > 0) {
                 print '<table class="noborder" width="100%">';
 
@@ -843,12 +839,16 @@ if ($object->id > 0)
                 print '</tr>';
             }
 
-            while ($i < $num && $i < $MAXLIST) {
+            $i = 0;
+            while ($i < $num && $i < $MAXLIST)
+            {
                 $objp = $db->fetch_object($resql);
-                print '<tr class="oddeven">';
-                print '<td class="nowrap">';
+
                 $sendingstatic->id = $objp->id;
                 $sendingstatic->ref = $objp->ref;
+
+                print '<tr class="oddeven">';
+                print '<td class="nowrap">';
                 print $sendingstatic->getNomUrl(1);
                 print '</td>';
                 if ($objp->date_creation > 0) {
@@ -875,9 +875,7 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->contrat->enabled) && $user->rights->contrat->lire)
 	{
-		$contratstatic=new Contrat($db);
-
-		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc, c.date_contrat as dcon, c.ref_supplier as refsup";
+		$sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, c.datec as dc, c.date_contrat as dcon, c.ref_customer as refcus, c.ref_supplier as refsup";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
 		$sql.= " WHERE c.fk_soc = s.rowid ";
 		$sql.= " AND s.rowid = ".$object->id;
@@ -887,9 +885,10 @@ if ($object->id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
+			$contrat=new Contrat($db);
+
 			$num = $db->num_rows($resql);
-			if ($num >0 )
+			if ($num >0)
 			{
 		        print '<table class="noborder" width="100%">';
 
@@ -900,17 +899,19 @@ if ($object->id > 0)
 				print '</tr></table></td>';
 				print '</tr>';
 			}
+
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
-				$contrat=new Contrat($db);
-
 				$objp = $db->fetch_object($resql);
+
+				$contrat->id=$objp->id;
+				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
+				$contrat->ref_customer=$objp->refcus;
+				$contrat->ref_supplier=$objp->refsup;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
-				$contrat->id=$objp->id;
-				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
 				print $contrat->getNomUrl(1,12);
 				print "</td>\n";
 				print '<td class="nowrap">'.dol_trunc($objp->refsup,12)."</td>\n";
@@ -946,12 +947,11 @@ if ($object->id > 0)
 		$sql.= " AND f.entity = ".$conf->entity;
 		$sql.= " ORDER BY f.tms DESC";
 
-		$fichinter_static=new Fichinter($db);
-
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
+			$fichinter_static=new Fichinter($db);
+
 			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
@@ -962,8 +962,8 @@ if ($object->id > 0)
 				print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/fichinter/stats/index.php?socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
 				print '</tr></table></td>';
 				print '</tr>';
-
 			}
+
 			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
@@ -996,8 +996,6 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-		$invoicetemplate = new FactureRec($db);
-
 		$sql = 'SELECT f.rowid as id, f.titre as ref, f.amount';
 		$sql.= ', f.total as total_ht';
 		$sql.= ', f.tva as total_tva';
@@ -1020,9 +1018,9 @@ if ($object->id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
+			$invoicetemplate = new FactureRec($db);
+
 			$num = $db->num_rows($resql);
-			$i = 0;
 			if ($num > 0)
 			{
 				print '<table class="noborder" width="100%">';
@@ -1033,12 +1031,11 @@ if ($object->id > 0)
 				print '</tr>';
 			}
 
+			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
 				$invoicetemplate->id = $objp->id;
 				$invoicetemplate->ref = $objp->ref;
 				$invoicetemplate->suspended = $objp->suspended;
@@ -1047,6 +1044,9 @@ if ($object->id > 0)
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
 				print $invoicetemplate->getNomUrl(1);
 				print '</td>';
 				if ($objp->frequency && $objp->date_last_gen > 0)
@@ -1097,8 +1097,6 @@ if ($object->id > 0)
 	 */
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
-		$facturestatic = new Facture($db);
-
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount';
         $sql.= ', f.total as total_ht';
         $sql.= ', f.tva as total_tva';
@@ -1118,9 +1116,9 @@ if ($object->id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
+			$facturestatic = new Facture($db);
+
 			$num = $db->num_rows($resql);
-			$i = 0;
 			if ($num > 0)
 			{
 		        print '<table class="noborder" width="100%">';
@@ -1132,18 +1130,20 @@ if ($object->id > 0)
 				print '</tr>';
 			}
 
+			$i = 0;
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$objp = $db->fetch_object($resql);
 
-				print '<tr class="oddeven">';
-				print '<td class="nowrap">';
 				$facturestatic->id = $objp->facid;
 				$facturestatic->ref = $objp->facnumber;
 				$facturestatic->type = $objp->type;
-                $facturestatic->total_ht = $objp->total_ht;
-                $facturestatic->total_tva = $objp->total_tva;
-                $facturestatic->total_ttc = $objp->total_ttc;
+				$facturestatic->total_ht = $objp->total_ht;
+				$facturestatic->total_tva = $objp->total_tva;
+				$facturestatic->total_ttc = $objp->total_ttc;
+
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
 				print $facturestatic->getNomUrl(1);
 				print '</td>';
 				if ($objp->df > 0)

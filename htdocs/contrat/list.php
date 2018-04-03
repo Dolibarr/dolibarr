@@ -45,6 +45,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'contractlist';   // To manage different context of search
 
 $search_name=GETPOST('search_name');
 $search_email=GETPOST('search_email');
@@ -95,10 +96,8 @@ $staticcontratligne=new ContratLigne($db);
 if ($search_status == '') $search_status=1;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='contractlist';
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Contrat($db);
+$hookmanager->initHooks(array('contractlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -205,8 +204,6 @@ $formother = new FormOther($db);
 $socstatic = new Societe($db);
 $contracttmp = new Contrat($db);
 
-llxHeader('', $langs->trans("Contracts"));
-
 $sql = 'SELECT';
 $sql.= " c.rowid, c.ref, c.datec as date_creation, c.tms as date_update, c.date_contrat, c.statut, c.ref_customer, c.ref_supplier, c.note_private, c.note_public,";
 $sql.= ' s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.client, s.code_client,';
@@ -309,489 +306,504 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 $sql.= $db->plimit($limit + 1, $offset);
 
 $resql=$db->query($sql);
-if ($resql)
+if (! $resql)
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
+	dol_print_error($db);
+	exit;
+}
 
-	$arrayofselected=is_array($toselect)?$toselect:array();
+$num = $db->num_rows($resql);
 
-	if ($socid > 0)
+// Direct jump if only one record found
+if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && $sall)
+{
+	$obj = $db->fetch_object($resql);
+	$id = $obj->rowid;
+	header("Location: ".DOL_URL_ROOT.'/contrat/card.php?id='.$id);
+	exit;
+}
+
+
+// Output page
+// --------------------------------------------------------------------
+
+llxHeader('', $langs->trans("Contracts"));
+
+$i = 0;
+
+$arrayofselected=is_array($toselect)?$toselect:array();
+
+if ($socid > 0)
+{
+	$soc = new Societe($db);
+	$soc->fetch($socid);
+	if (empty($search_name)) $search_name = $soc->name;
+}
+
+$param='';
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if ($sall != '')                $param.='&sall='.urlencode($sall);
+if ($search_contract != '')     $param.='&search_contract='.urlencode($search_contract);
+if ($search_name != '')         $param.='&search_name='.urlencode($search_name);
+if ($search_email != '')        $param.='&search_email='.urlencode($search_email);
+if ($search_ref_customer != '') $param.='&search_ref_customer='.urlencode($search_ref_customer);
+if ($search_ref_supplier != '') $param.='&search_ref_supplier='.urlencode($search_ref_supplier);
+if ($search_op2df != '') 		$param.='&search_op2df='.urlencode($search_op2df);
+if ($search_dfyear != '')       $param.='&search_dfyear='.urlencode($search_dfyear);
+if ($search_dfmonth != '')      $param.='&search_dfmonth='.urlencode($search_dfmonth);
+if ($search_sale != '')         $param.='&search_sale=' .urlencode($search_sale);
+if ($search_user != '')			$param.='&search_user=' .urlencode($search_user);
+if ($search_product_category != '')	$param.='&search_product_category=' .urlencode($search_product_category);
+if ($show_files)                $param.='&show_files=' .urlencode($show_files);
+if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
+// Add $param from extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+
+// List of mass actions available
+$arrayofmassactions =  array(
+	'presend'=>$langs->trans("SendByMail"),
+	'builddoc'=>$langs->trans("PDFMerge"),
+);
+if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
+print '<input type="hidden" name="action" value="list">';
+print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
+
+print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
+
+$topicmail="SendContractRef";
+$modelmail="contract";
+$objecttmp=new Contrat($db);
+$trackid='con'.$object->id;
+include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
+if ($sall)
+{
+	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+}
+
+$moreforfilter='';
+
+// If the user can view prospects other than his'
+if ($user->rights->societe->client->voir || $socid)
+{
+	$langs->load("commercial");
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
+	$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user,0,1,'maxwidth200');
+	$moreforfilter.='</div>';
+}
+// If the user can view other users
+if ($user->rights->user->user->lire)
+{
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
+	$moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
+ 	$moreforfilter.='</div>';
+}
+// If the user can view categories of products
+if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
+{
+	include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
+	$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
+	$moreforfilter.='</div>';
+}
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
+else $moreforfilter = $hookmanager->resPrint;
+
+if (! empty($moreforfilter))
+{
+	print '<div class="liste_titre liste_titre_bydiv centpercent">';
+	print $moreforfilter;
+	print '</div>';
+}
+
+$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+
+print '<div class="div-table-responsive">';
+print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
+print '<tr class="liste_titre_filter">';
+if (! empty($arrayfields['c.ref']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['c.ref_customer']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" size="6" name="search_ref_customer" value="'.dol_escape_htmltag($search_ref_customer).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['c.ref_supplier']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" size="6" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['s.nom']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['s.email']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input type="text" class="flat" size="6" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
+	print '</td>';
+}
+// Town
+if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+// Zip
+if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+// State
+if (! empty($arrayfields['state.nom']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+	print '</td>';
+}
+// Country
+if (! empty($arrayfields['country.code_iso']['checked']))
+{
+	print '<td class="liste_titre" align="center">';
+	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
+	print '</td>';
+}
+// Company type
+if (! empty($arrayfields['typent.code']['checked']))
+{
+	print '<td class="liste_titre maxwidthonsmartphone" align="center">';
+	print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+	print '</td>';
+}
+if (! empty($arrayfields['sale_representative']['checked']))
+{
+	print '<td class="liste_titre"></td>';
+}
+if (! empty($arrayfields['c.date_contrat']['checked']))
+{
+	// Date contract
+	print '<td class="liste_titre center nowraponall">';
+	//print $langs->trans('Month').': ';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	//print '&nbsp;'.$langs->trans('Year').': ';
+	$syear = $year;
+	print $formother->selectyear($syear,'year',1, 20, 5, 0, 0, '', 'widthauto');
+	print '</td>';
+}
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
+
+// Fields from hook
+$parameters=array('arrayfields'=>$arrayfields);
+$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+// Date creation
+if (! empty($arrayfields['c.datec']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+// Date modification
+if (! empty($arrayfields['c.tms']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '</td>';
+}
+// First end date
+if (! empty($arrayfields['lower_planned_end_date']['checked']))
+{
+		print '<td class="liste_titre" align="center">';
+		$arrayofoperators=array('0'=>'','='=>'=','<='=>'<=','>='=>'>=');
+		print $form->selectarray('search_op2df',$arrayofoperators,$search_op2df,0);
+		print '</br>';
+		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1);
+		print ' ';
+		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5);
+		print '</td>';
+}
+// Status
+if (! empty($arrayfields['status']['checked']))
+{
+	print '<td class="liste_titre" colspan="4" align="right"></td>';
+}
+print '<td class="liste_titre" align="middle">';
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
+print '</td>';
+print "</tr>\n";
+
+print '<tr class="liste_titre">';
+if (! empty($arrayfields['c.ref']['checked']))               print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref","","$param",'',$sortfield,$sortorder);
+if (! empty($arrayfields['c.ref_customer']['checked']))      print_liste_field_titre($arrayfields['c.ref_customer']['label'], $_SERVER["PHP_SELF"], "c.ref_customer","","$param",'',$sortfield,$sortorder);
+if (! empty($arrayfields['c.ref_supplier']['checked']))      print_liste_field_titre($arrayfields['c.ref_supplier']['label'], $_SERVER["PHP_SELF"], "c.ref_supplier","","$param",'',$sortfield,$sortorder);
+if (! empty($arrayfields['s.nom']['checked']))               print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom","","$param",'',$sortfield,$sortorder);
+if (! empty($arrayfields['s.email']['checked']))             print_liste_field_titre($arrayfields['s.email']['label'], $_SERVER["PHP_SELF"], "s.email","","$param",'',$sortfield,$sortorder);
+if (! empty($arrayfields['s.town']['checked']))              print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['s.zip']['checked']))               print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['country.code_iso']['checked']))    print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['typent.code']['checked']))         print_liste_field_titre($arrayfields['typent.code']['label'],$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
+if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "","","$param",'',$sortfield,$sortorder);
+if (! empty($arrayfields['c.date_contrat']['checked']))      print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
+// Extra fields
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
+// Hook fields
+$parameters=array('arrayfields'=>$arrayfields);
+$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['lower_planned_end_date']['checked']))       print_liste_field_titre($arrayfields['lower_planned_end_date']['label'],$_SERVER["PHP_SELF"],"lower_planned_end_date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
+if (! empty($arrayfields['status']['checked']))
+{
+	print_liste_field_titre($staticcontratligne->LibStatut(0,3), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(4,3,0), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(4,3,1), '', '', '', '', 'width="16"');
+	print_liste_field_titre($staticcontratligne->LibStatut(5,3), '', '', '', '', 'width="16"');
+}
+print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+print "</tr>\n";
+
+while ($i < min($num,$limit))
+{
+	$obj = $db->fetch_object($resql);
+
+	$contracttmp->ref=$obj->ref;
+	$contracttmp->id=$obj->rowid;
+	$contracttmp->ref_customer=$obj->ref_customer;
+	$contracttmp->ref_supplier=$obj->ref_supplier;
+
+	if ($obj->socid > 0)
 	{
-		$soc = new Societe($db);
-		$soc->fetch($socid);
-		if (empty($search_name)) $search_name = $soc->name;
+		$result=$socstatic->fetch($obj->socid);
 	}
 
-	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($sall != '')                $param.='&sall='.urlencode($sall);
-	if ($search_contract != '')     $param.='&search_contract='.urlencode($search_contract);
-	if ($search_name != '')         $param.='&search_name='.urlencode($search_name);
-	if ($search_email != '')        $param.='&search_email='.urlencode($search_email);
-	if ($search_ref_customer != '') $param.='&search_ref_customer='.urlencode($search_ref_customer);
-	if ($search_ref_supplier != '') $param.='&search_ref_supplier='.urlencode($search_ref_supplier);
-	if ($search_op2df != '') 		$param.='&search_op2df='.urlencode($search_op2df);
-	if ($search_dfyear != '')       $param.='&search_dfyear='.urlencode($search_dfyear);
-	if ($search_dfmonth != '')      $param.='&search_dfmonth='.urlencode($search_dfmonth);
-	if ($search_sale != '')         $param.='&search_sale=' .urlencode($search_sale);
-	if ($search_user != '')			$param.='&search_user=' .urlencode($search_user);
-	if ($search_product_category != '')	$param.='&search_product_category=' .urlencode($search_product_category);
-	if ($show_files)                $param.='&show_files=' .urlencode($show_files);
-	if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
-	// Add $param from extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
-
-	// List of mass actions available
-	$arrayofmassactions =  array(
-		'presend'=>$langs->trans("SendByMail"),
-		'builddoc'=>$langs->trans("PDFMerge"),
-	);
-	if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
-	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
-	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
-
-	print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
-	print '<input type="hidden" name="action" value="list">';
-	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
-	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	print '<input type="hidden" name="page" value="'.$page.'">';
-
-	print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
-
-	$topicmail="SendContractRef";
-	$modelmail="contract";
-	$objecttmp=new Contrat($db);
-	$trackid='con'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
-
-	if ($sall)
-	{
-		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
-	}
-
-	$moreforfilter='';
-
-	// If the user can view prospects other than his'
-	if ($user->rights->societe->client->voir || $socid)
-	{
-		$langs->load("commercial");
-		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.=$langs->trans('ThirdPartiesOfSaleRepresentative'). ': ';
-		$moreforfilter.=$formother->select_salesrepresentatives($search_sale,'search_sale',$user,0,1,'maxwidth200');
-		$moreforfilter.='</div>';
-	}
-	// If the user can view other users
-	if ($user->rights->user->user->lire)
-	{
-		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.=$langs->trans('LinkedToSpecificUsers'). ': ';
-		$moreforfilter.=$form->select_dolusers($search_user, 'search_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
-	 	$moreforfilter.='</div>';
-	}
-	// If the user can view categories of products
-	if ($conf->categorie->enabled && ($user->rights->produit->lire || $user->rights->service->lire))
-	{
-		include_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-		$moreforfilter.='<div class="divsearchfield">';
-		$moreforfilter.=$langs->trans('IncludingProductWithTag'). ': ';
-		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
-		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
-		$moreforfilter.='</div>';
-	}
-
-	$parameters=array();
-	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook)) $moreforfilter .= $hookmanager->resPrint;
-	else $moreforfilter = $hookmanager->resPrint;
-
-	if (! empty($moreforfilter))
-	{
-		print '<div class="liste_titre liste_titre_bydiv centpercent">';
-		print $moreforfilter;
-		print '</div>';
-	}
-
-	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
-	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
-
-	print '<div class="div-table-responsive">';
-	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-
-	print '<tr class="liste_titre_filter">';
+	print '<tr class="oddeven">';
 	if (! empty($arrayfields['c.ref']['checked']))
 	{
-		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" size="3" name="search_contract" value="'.dol_escape_htmltag($search_contract).'">';
+		print '<td class="nowrap">';
+		print $contracttmp->getNomUrl(1);
+		if ($obj->nb_late) print img_warning($langs->trans("Late"));
+		if (!empty($obj->note_private) || !empty($obj->note_public))
+		{
+			print ' <span class="note">';
+			print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
+			print '</span>';
+		}
+
+		$filename=dol_sanitizeFileName($obj->ref);
+		$filedir=$conf->contrat->dir_output . '/' . dol_sanitizeFileName($obj->ref);
+		$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+		print $formfile->getDocumentsLink($contracttmp->element, $filename, $filedir);
+		print '</td>';
+
 		print '</td>';
 	}
 	if (! empty($arrayfields['c.ref_customer']['checked']))
 	{
-		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" size="6" name="search_ref_customer" value="'.dol_escape_htmltag($search_ref_customer).'">';
-		print '</td>';
+		print '<td>'.$obj->ref_customer.'</td>';
 	}
 	if (! empty($arrayfields['c.ref_supplier']['checked']))
 	{
-		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" size="6" name="search_ref_supplier" value="'.dol_escape_htmltag($search_ref_supplier).'">';
-		print '</td>';
+		print '<td>'.$obj->ref_supplier.'</td>';
 	}
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
-		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" size="8" name="search_name" value="'.dol_escape_htmltag($search_name).'">';
+		print '<td>';
+		//print '<a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a>';
+		if ($obj->socid > 0)
+		{
+			print $socstatic->getNomUrl(1, '');
+		}
 		print '</td>';
 	}
 	if (! empty($arrayfields['s.email']['checked']))
 	{
-		print '<td class="liste_titre">';
-		print '<input type="text" class="flat" size="6" name="search_email" value="'.dol_escape_htmltag($search_email).'">';
-		print '</td>';
+		print '<td>'.$obj->email.'</td>';
 	}
 	// Town
-	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
+	if (! empty($arrayfields['s.town']['checked']))
+	{
+		print '<td class="nocellnopadd">';
+		print $obj->town;
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
 	// Zip
-	if (! empty($arrayfields['s.zip']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_zip" value="'.$search_zip.'"></td>';
+	if (! empty($arrayfields['s.zip']['checked']))
+	{
+		print '<td class="nocellnopadd">';
+		print $obj->zip;
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
 	// State
 	if (! empty($arrayfields['state.nom']['checked']))
 	{
-		print '<td class="liste_titre">';
-		print '<input class="flat" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
-		print '</td>';
+		print "<td>".$obj->state_name."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Country
 	if (! empty($arrayfields['country.code_iso']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		print $form->select_country($search_country,'search_country','',0,'maxwidth100');
+		print '<td align="center">';
+		$tmparray=getCountry($obj->fk_pays,'all');
+		print $tmparray['label'];
 		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
 	}
-	// Company type
+	// Type ent
 	if (! empty($arrayfields['typent.code']['checked']))
 	{
-		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
-		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print '<td align="center">';
+		if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
+		print $typenArray[$obj->typent_code];
 		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['sale_representative']['checked']))
 	{
-		print '<td class="liste_titre"></td>';
-	}
-	if (! empty($arrayfields['c.date_contrat']['checked']))
-	{
-		// Date contract
-		print '<td class="liste_titre center nowraponall">';
-		//print $langs->trans('Month').': ';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-		//print '&nbsp;'.$langs->trans('Year').': ';
-		$syear = $year;
-		print $formother->selectyear($syear,'year',1, 20, 5, 0, 0, '', 'widthauto');
+		// Sales representatives
+		print '<td>';
+		if ($obj->socid > 0)
+		{
+			$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
+			if ($listsalesrepresentatives < 0) dol_print_error($db);
+			$nbofsalesrepresentative=count($listsalesrepresentatives);
+			if ($nbofsalesrepresentative > 3)   // We print only number
+			{
+				print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
+				print $nbofsalesrepresentative;
+				print '</a>';
+			}
+			else if ($nbofsalesrepresentative > 0)
+			{
+				$userstatic=new User($db);
+				$j=0;
+				foreach($listsalesrepresentatives as $val)
+				{
+					$userstatic->id=$val['id'];
+					$userstatic->lastname=$val['lastname'];
+					$userstatic->firstname=$val['firstname'];
+					$userstatic->email=$val['email'];
+					$userstatic->statut=$val['statut'];
+					$userstatic->entity=$val['entity'];
+					$userstatic->photo=$val['photo'];
+
+					//print '<div class="float">':
+					print $userstatic->getNomUrl(-2);
+					$j++;
+					if ($j < $nbofsalesrepresentative) print ' ';
+					//print '</div>';
+				}
+			}
+			//else print $langs->trans("NoSalesRepresentativeAffected");
+		}
+		else
+		{
+			print '&nbsp';
+		}
 		print '</td>';
 	}
+	// Date
+	if (! empty($arrayfields['c.date_contrat']['checked']))
+	{
+		print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
+	}
 	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-
+	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 	// Fields from hook
-	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
+	$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
+	$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	// Date creation
 	if (! empty($arrayfields['c.datec']['checked']))
 	{
-		print '<td class="liste_titre">';
+		print '<td align="center" class="nowrap">';
+		print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
 		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Date modification
 	if (! empty($arrayfields['c.tms']['checked']))
 	{
-		print '<td class="liste_titre">';
+		print '<td align="center" class="nowrap">';
+		print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
 		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
 	}
-	// First end date
+	// Date lower end date
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))
 	{
-			print '<td class="liste_titre" align="center">';
-			$arrayofoperators=array('0'=>'','='=>'=','<='=>'<=','>='=>'>=');
-			print $form->selectarray('search_op2df',$arrayofoperators,$search_op2df,0);
-			print '</br>';
-			print $formother->select_month($search_dfmonth, 'search_dfmonth', 1);
-			print ' ';
-			$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5);
-			print '</td>';
+		print '<td align="center" class="nowrap">';
+		print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
+		print '</td>';
+		if (! $i) $totalarray['nbfield']++;
 	}
 	// Status
 	if (! empty($arrayfields['status']['checked']))
 	{
-		print '<td class="liste_titre" colspan="4" align="right"></td>';
+		print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
+		print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
+		print '<td align="center">'.($obj->nb_expired>0?$obj->nb_expired:'').'</td>';
+		print '<td align="center">'.($obj->nb_closed>0 ?$obj->nb_closed:'').'</td>';
 	}
-	print '<td class="liste_titre" align="middle">';
-	$searchpicto=$form->showFilterButtons();
-	print $searchpicto;
+	// Action column
+	print '<td class="nowrap" align="center">';
+	if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
+	{
+		$selected=0;
+		if (in_array($obj->rowid, $arrayofselected)) $selected=1;
+		print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
+	}
 	print '</td>';
+	if (! $i) $totalarray['nbfield']++;
+
 	print "</tr>\n";
-
-	print '<tr class="liste_titre">';
-	if (! empty($arrayfields['c.ref']['checked']))               print_liste_field_titre($arrayfields['c.ref']['label'], $_SERVER["PHP_SELF"], "c.ref","","$param",'',$sortfield,$sortorder);
-	if (! empty($arrayfields['c.ref_customer']['checked']))      print_liste_field_titre($arrayfields['c.ref_customer']['label'], $_SERVER["PHP_SELF"], "c.ref_customer","","$param",'',$sortfield,$sortorder);
-	if (! empty($arrayfields['c.ref_supplier']['checked']))      print_liste_field_titre($arrayfields['c.ref_supplier']['label'], $_SERVER["PHP_SELF"], "c.ref_supplier","","$param",'',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.nom']['checked']))               print_liste_field_titre($arrayfields['s.nom']['label'], $_SERVER["PHP_SELF"], "s.nom","","$param",'',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.email']['checked']))             print_liste_field_titre($arrayfields['s.email']['label'], $_SERVER["PHP_SELF"], "s.email","","$param",'',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.town']['checked']))              print_liste_field_titre($arrayfields['s.town']['label'],$_SERVER["PHP_SELF"],'s.town','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['s.zip']['checked']))               print_liste_field_titre($arrayfields['s.zip']['label'],$_SERVER["PHP_SELF"],'s.zip','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['country.code_iso']['checked']))    print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"country.code_iso","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['typent.code']['checked']))         print_liste_field_titre($arrayfields['typent.code']['label'],$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
-	if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "","","$param",'',$sortfield,$sortorder);
-	if (! empty($arrayfields['c.date_contrat']['checked']))      print_liste_field_titre($arrayfields['c.date_contrat']['label'], $_SERVER["PHP_SELF"], "c.date_contrat","","$param",'align="center"',$sortfield,$sortorder);
-	// Extra fields
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
-	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
-	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
-	print $hookmanager->resPrint;
-	if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['c.tms']['checked']))       print_liste_field_titre($arrayfields['c.tms']['label'],$_SERVER["PHP_SELF"],"c.tms","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['lower_planned_end_date']['checked']))       print_liste_field_titre($arrayfields['lower_planned_end_date']['label'],$_SERVER["PHP_SELF"],"lower_planned_end_date","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
-	if (! empty($arrayfields['status']['checked']))
-	{
-		print_liste_field_titre($staticcontratligne->LibStatut(0,3), '', '', '', '', 'width="16"');
-		print_liste_field_titre($staticcontratligne->LibStatut(4,3,0), '', '', '', '', 'width="16"');
-		print_liste_field_titre($staticcontratligne->LibStatut(4,3,1), '', '', '', '', 'width="16"');
-		print_liste_field_titre($staticcontratligne->LibStatut(5,3), '', '', '', '', 'width="16"');
-	}
-	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
-
-	while ($i < min($num,$limit))
-	{
-		$obj = $db->fetch_object($resql);
-
-		$contracttmp->ref=$obj->ref;
-		$contracttmp->id=$obj->rowid;
-		$contracttmp->ref_customer=$obj->ref_customer;
-		$contracttmp->ref_supplier=$obj->ref_supplier;
-
-		if ($obj->socid > 0)
-		{
-			$result=$socstatic->fetch($obj->socid);
-		}
-
-		print '<tr class="oddeven">';
-		if (! empty($arrayfields['c.ref']['checked']))
-		{
-			print '<td class="nowrap">';
-			print $contracttmp->getNomUrl(1);
-			if ($obj->nb_late) print img_warning($langs->trans("Late"));
-			if (!empty($obj->note_private) || !empty($obj->note_public))
-			{
-				print ' <span class="note">';
-				print '<a href="'.DOL_URL_ROOT.'/contrat/note.php?id='.$obj->rowid.'">'.img_picto($langs->trans("ViewPrivateNote"),'object_generic').'</a>';
-				print '</span>';
-			}
-
-			$filename=dol_sanitizeFileName($obj->ref);
-			$filedir=$conf->contrat->dir_output . '/' . dol_sanitizeFileName($obj->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
-			print $formfile->getDocumentsLink($contracttmp->element, $filename, $filedir);
-			print '</td>';
-
-			print '</td>';
-		}
-		if (! empty($arrayfields['c.ref_customer']['checked']))
-		{
-			print '<td>'.$obj->ref_customer.'</td>';
-		}
-		if (! empty($arrayfields['c.ref_supplier']['checked']))
-		{
-			print '<td>'.$obj->ref_supplier.'</td>';
-		}
-		if (! empty($arrayfields['s.nom']['checked']))
-		{
-			print '<td>';
-			//print '<a href="../comm/card.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->name.'</a>';
-			if ($obj->socid > 0)
-			{
-				print $socstatic->getNomUrl(1, '');
-			}
-			print '</td>';
-		}
-		if (! empty($arrayfields['s.email']['checked']))
-		{
-			print '<td>'.$obj->email.'</td>';
-		}
-		// Town
-		if (! empty($arrayfields['s.town']['checked']))
-		{
-			print '<td class="nocellnopadd">';
-			print $obj->town;
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-		// Zip
-		if (! empty($arrayfields['s.zip']['checked']))
-		{
-			print '<td class="nocellnopadd">';
-			print $obj->zip;
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-		// State
-		if (! empty($arrayfields['state.nom']['checked']))
-		{
-			print "<td>".$obj->state_name."</td>\n";
-			if (! $i) $totalarray['nbfield']++;
-		}
-		// Country
-		if (! empty($arrayfields['country.code_iso']['checked']))
-		{
-			print '<td align="center">';
-			$tmparray=getCountry($obj->fk_pays,'all');
-			print $tmparray['label'];
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-		// Type ent
-		if (! empty($arrayfields['typent.code']['checked']))
-		{
-			print '<td align="center">';
-			if (count($typenArray)==0) $typenArray = $formcompany->typent_array(1);
-			print $typenArray[$obj->typent_code];
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-		if (! empty($arrayfields['sale_representative']['checked']))
-		{
-			// Sales representatives
-			print '<td>';
-			if ($obj->socid > 0)
-			{
-				$listsalesrepresentatives=$socstatic->getSalesRepresentatives($user);
-				if ($listsalesrepresentatives < 0) dol_print_error($db);
-				$nbofsalesrepresentative=count($listsalesrepresentatives);
-				if ($nbofsalesrepresentative > 3)   // We print only number
-				{
-					print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$socstatic->id.'">';
-					print $nbofsalesrepresentative;
-					print '</a>';
-				}
-				else if ($nbofsalesrepresentative > 0)
-				{
-					$userstatic=new User($db);
-					$j=0;
-					foreach($listsalesrepresentatives as $val)
-					{
-						$userstatic->id=$val['id'];
-						$userstatic->lastname=$val['lastname'];
-						$userstatic->firstname=$val['firstname'];
-						$userstatic->email=$val['email'];
-						$userstatic->statut=$val['statut'];
-						$userstatic->entity=$val['entity'];
-						$userstatic->photo=$val['photo'];
-
-						//print '<div class="float">':
-						print $userstatic->getNomUrl(-2);
-						$j++;
-						if ($j < $nbofsalesrepresentative) print ' ';
-						//print '</div>';
-					}
-				}
-				//else print $langs->trans("NoSalesRepresentativeAffected");
-			}
-			else
-			{
-				print '&nbsp';
-			}
-			print '</td>';
-		}
-		// Date
-		if (! empty($arrayfields['c.date_contrat']['checked']))
-		{
-			print '<td align="center">'.dol_print_date($db->jdate($obj->date_contrat), 'day', 'tzuser').'</td>';
-		}
-		// Extra fields
-		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
-		// Fields from hook
-		$parameters=array('arrayfields'=>$arrayfields, 'obj'=>$obj);
-		$reshook=$hookmanager->executeHooks('printFieldListValue',$parameters);    // Note that $action and $object may have been modified by hook
-		print $hookmanager->resPrint;
-		// Date creation
-		if (! empty($arrayfields['c.datec']['checked']))
-		{
-			print '<td align="center" class="nowrap">';
-			print dol_print_date($db->jdate($obj->date_creation), 'dayhour', 'tzuser');
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-		// Date modification
-		if (! empty($arrayfields['c.tms']['checked']))
-		{
-			print '<td align="center" class="nowrap">';
-			print dol_print_date($db->jdate($obj->date_update), 'dayhour', 'tzuser');
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-		// Date lower end date
-		if (! empty($arrayfields['lower_planned_end_date']['checked']))
-		{
-			print '<td align="center" class="nowrap">';
-			print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
-		// Status
-		if (! empty($arrayfields['status']['checked']))
-		{
-			print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
-			print '<td align="center">'.($obj->nb_running>0?$obj->nb_running:'').'</td>';
-			print '<td align="center">'.($obj->nb_expired>0?$obj->nb_expired:'').'</td>';
-			print '<td align="center">'.($obj->nb_closed>0 ?$obj->nb_closed:'').'</td>';
-		}
-		// Action column
-		print '<td class="nowrap" align="center">';
-		if ($massactionbutton || $massaction)   // If we are in select mode (massactionbutton defined) or if we have already selected and sent an action ($massaction) defined
-		{
-			$selected=0;
-			if (in_array($obj->rowid, $arrayofselected)) $selected=1;
-			print '<input id="cb'.$obj->rowid.'" class="flat checkforselect" type="checkbox" name="toselect[]" value="'.$obj->rowid.'"'.($selected?' checked="checked"':'').'>';
-		}
-		print '</td>';
-		if (! $i) $totalarray['nbfield']++;
-
-		print "</tr>\n";
-		$i++;
-	}
-	$db->free($resql);
-
-	print '</table>';
-	print '</div>';
-
-	print '</form>';
-
-	$hidegeneratedfilelistifempty=1;
-	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
-
-	// Show list of available documents
-	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-	$urlsource.=str_replace('&amp;','&',$param);
-
-	$filedir=$diroutputmassaction;
-	$genallowed=$user->rights->contrat->lire;
-	$delallowed=$user->rights->contrat->lire;
-
-	print $formfile->showdocuments('massfilesarea_contract','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
+	$i++;
 }
-else
-{
-	dol_print_error($db);
-}
+$db->free($resql);
+
+print '</table>';
+print '</div>';
+
+print '</form>';
+
+$hidegeneratedfilelistifempty=1;
+if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
+
+// Show list of available documents
+$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+$urlsource.=str_replace('&amp;','&',$param);
+
+$filedir=$diroutputmassaction;
+$genallowed=$user->rights->contrat->lire;
+$delallowed=$user->rights->contrat->lire;
+
+print $formfile->showdocuments('massfilesarea_contract','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 
 
 llxFooter();

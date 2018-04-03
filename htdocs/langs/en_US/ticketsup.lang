@@ -25,7 +25,7 @@ Permission56001=See tickets
 Permission56002=Modify tickets
 Permission56003=Delete tickets
 Permission56004=Manage tickets
-Permission56005=See tickets of all thirdparties (not effective for external users, always be limited to the thirdparty they depend on)
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the thirdparty they depend on)
 
 TicketsupDictType=Tickets type
 TicketsupDictCategory=Tickets categories
@@ -52,6 +52,7 @@ TypeContact_ticketsup_internal_SUPPORTTEC=Assigned user
 TypeContact_ticketsup_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticketsup_external_CONTRIBUTOR=External contributor
 
+OriginEmail=Email source
 Notify_TICKETMESSAGE_SENTBYMAIL=Send ticket answer by email
 
 # Status
@@ -163,7 +164,6 @@ SeeTicket=See ticket
 TicketMarkedAsRead=Ticket has been marked as read
 TicketReadOn=Read on
 TicketCloseOn=Clotured on
-UserAssignedTo=User assigned
 MarkAsRead=Mark ticket as read
 TicketMarkedAsReadButLogActionNotSaved=Ticket marked as closed but no action saved
 TicketHistory=Ticket history

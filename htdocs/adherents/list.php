@@ -79,6 +79,7 @@ if (! $sortorder) { $sortorder=($filter=='outofdate'?"DESC":"ASC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Adherent($db);
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
@@ -593,7 +594,6 @@ while ($i < min($num, $limit))
 	$memberstatic->ref=$obj->rowid;
 	$memberstatic->lastname=$obj->lastname;
 	$memberstatic->firstname=$obj->firstname;
-	$memberstatic->societe=$obj->company;
 	$memberstatic->statut=$obj->statut;
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
@@ -605,6 +605,7 @@ while ($i < min($num, $limit))
 	} else {
 		$companyname=$obj->company;
 	}
+	$memberstatic->societe = $companyname;
 
 	print '<tr class="oddeven">';
 

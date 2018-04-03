@@ -1654,7 +1654,8 @@ class ActionComm extends CommonObject
     {
     	global $conf, $langs;
 
-		$this->output = '';
+    	$error = 0;
+    	$this->output = '';
 		$this->error='';
 
     	if (empty($conf->global->AGENDA_REMINDER_EMAIL))
@@ -1668,6 +1669,8 @@ class ActionComm extends CommonObject
 
     	dol_syslog(__METHOD__, LOG_DEBUG);
 
+    	$this->db->begin();
+
 		// TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
 
 
@@ -1676,7 +1679,9 @@ class ActionComm extends CommonObject
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
 		$this->db->query($sql);
 
-    	return 0;
+		$this->db->commit();
+
+    	return $error;
     }
 
 }
