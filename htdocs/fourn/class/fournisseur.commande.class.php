@@ -1948,6 +1948,8 @@ class CommandeFournisseur extends CommonOrder
 
     /**
 	 * Return array of dispathed lines waiting to be approved for this order
+     *
+     * @since 8.0 Return dispatched quantity (qty).
 	 *
 	 * @param	int		$status		Filter on stats (-1 = no filter, 0 = lines draft to be approved, 1 = approved lines)
 	 * @return	array				Array of lines
