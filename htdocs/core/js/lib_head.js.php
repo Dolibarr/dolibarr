@@ -1090,13 +1090,4 @@ $(document).ready(function() {
 });
 <?php } ?>
 
-
-$(document).ready(function() {
-	$(document).on('click', 'a.butActionFormConfirm', function() {
-		var action = $(this).data('action-confirm');
-		$('#dialog-confirm-'+action).dialog('open');
-		return false;
-	});
-});
-
 // End of lib_head.js.php

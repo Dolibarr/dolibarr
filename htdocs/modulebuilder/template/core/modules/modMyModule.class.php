@@ -127,6 +127,11 @@ class modMyModule extends DolibarrModules
 			1=>array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
+		// Some keys to add into the overwriting translation tables
+		/*$this->overwrite_translation = array(
+			'en_US:ParentCompany'=>'Parent company or reseller',
+			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
+		)*/
 
 		if (! isset($conf->mymodule) || ! isset($conf->mymodule->enabled))
 		{

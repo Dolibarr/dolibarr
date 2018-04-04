@@ -40,6 +40,7 @@ $langs->load("other");
 $def = array();
 $actiontest=GETPOST('test','alpha');
 $actionsave=GETPOST('save','alpha');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'useragenda';   // To manage different context of search
 
 if (empty($conf->global->AGENDA_EXT_NB)) $conf->global->AGENDA_EXT_NB=5;
 $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
@@ -68,8 +69,7 @@ if (($object->id != $user->id) && (! $user->rights->user->user->lire))
   accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','useragenda','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','useragenda','globalcard');
 
 /*
  * Actions

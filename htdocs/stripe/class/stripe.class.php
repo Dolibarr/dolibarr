@@ -86,7 +86,7 @@ class Stripe extends CommonObject
     		dol_print_error($this->db);
     	}
 
-    	dol_syslog("No dedicated Stipe Connect account available for entity".$conf->entity);
+    	dol_syslog("No dedicated Stripe Connect account available for entity ".$conf->entity);
 		return $key;
 	}
 
@@ -119,6 +119,12 @@ class Stripe extends CommonObject
 	public function customerStripe(Societe $object, $key='', $status=0, $createifnotlinkedtostripe=0)
 	{
 		global $conf, $user;
+
+		if (empty($object->id))
+		{
+			dol_syslog("customerStripe is called with param object not loaded");
+			return null;
+		}
 
 		$customer = null;
 

@@ -32,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->loadLangs(array("sendings","deliveries",'companies','bills'));
 
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'shipmentlist';   // To manage different context of search
+
 $socid=GETPOST('socid','int');
 // Security check
 $expeditionid = GETPOST('id','int');
@@ -63,9 +65,6 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='shipmentlist';
 
 $viewstatut=GETPOST('viewstatut');
 

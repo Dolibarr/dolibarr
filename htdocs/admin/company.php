@@ -38,6 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
 $action=GETPOST('action','aZ09');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'admincompany';   // To manage different context of search
 
 $langs->load("admin");
 $langs->load("companies");
@@ -47,8 +48,7 @@ if (! $user->admin) accessforbidden();
 $error=0;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('admincompany','globaladmin');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('admincompany','globaladmin'));
 
 /*
  * Actions

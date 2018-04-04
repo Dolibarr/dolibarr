@@ -54,6 +54,7 @@ $ref = GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
+$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
@@ -119,10 +120,6 @@ if ($id > 0 || ! empty($ref))
     $search_account = $object->id;     // Force the search field on id of account
 }
 
-
-// Initialize technical object to manage context to save list fields
-$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
-//var_dump($contextpage);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
