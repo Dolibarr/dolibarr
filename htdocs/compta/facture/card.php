@@ -955,7 +955,23 @@ if (empty($reshook))
 							   
 							    if(!empty($facture_source->tab_previous_situation_invoice))
 							    {
+							        // search the last invoice in cycle
 							        $lineIndex = count($facture_source->tab_previous_situation_invoice) - 1;
+							        $searchPreviousInvoice = true;
+							        while( $searchPreviousInvoice )
+							        {
+							            if($facture_source->tab_previous_situation_invoice[$lineIndex]->type  == Facture::TYPE_SITUATION || $lineIndex < 1)
+							            {
+							                $searchPreviousInvoice=false; // find, exit;
+							                break;
+							            }
+							            else 
+							            {
+							                $lineIndex--; // go to previous invoice in cycle 
+							            }
+							        }
+							        
+							        
 							        $maxPrevSituationPercent = 0;
 							        foreach($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
 							        {
@@ -981,12 +997,10 @@ if (empty($reshook))
 							        
 							        // prorata
 							        $line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
+							       
+							       
 							    }
 							    
-							   
-							    
-							    // $sql.= ", situation_cycle_ref, situation_counter, situation_final";
-							    // situation_percent
 							}
 							
 							$line->fk_facture = $object->id;
@@ -3668,7 +3682,7 @@ else if ($id > 0 || ! empty($ref))
 	print '</tr>';
 
 	// Situations
-	if (! empty($conf->global->INVOICE_USE_SITUATION))
+	/*if (! empty($conf->global->INVOICE_USE_SITUATION))
 	{
 		if ($object->type == 5 && ($object->situation_counter > 1))
 		{
@@ -3714,8 +3728,136 @@ else if ($id > 0 || ! empty($ref))
 				print '</td></tr>';
 			}
 		}
-	}
+	}*/
 
+	
+	// List of previous situation invoices
+	if (($object->situation_cycle_ref > 0) && ! empty($conf->global->INVOICE_USE_SITUATION))
+	{
+	    
+	    print '<table class="noborder situationstable" width="100%">';
+	    
+	    
+	    print '<tr class="liste_titre">';
+	    print '<td>' . $langs->trans('ListOfSituationInvoices') . '</td>';
+	    print '<td></td>';
+	    print '<td align="center">' . $langs->trans('Situation') . '</td>';
+	    if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	    print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+	    print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+	    print '<td width="18">&nbsp;</td>';
+	    print '</tr>';
+	    
+	    
+	    $total_prev_ht = $total_prev_ttc = 0;
+	    $total_global_ht = $total_global_ttc = 0;
+	    
+	    if (count($object->tab_previous_situation_invoice) > 0) {
+	        // List of previous invoices
+	        
+	        $current_situation_counter = array();
+	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
+	            $totalpaye = $prev_invoice->getSommePaiement();
+	            $total_prev_ht += $prev_invoice->total_ht;
+	            $total_prev_ttc += $prev_invoice->total_ttc;
+	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?-1:1) * $prev_invoice->situation_counter;
+	            print '<tr class="oddeven">';
+	            print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
+	            print '<td></td>';
+	            print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $prev_invoice->situation_counter.'</td>';
+	            if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	            print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
+	            print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
+	            print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
+	            print '</tr>';
+	            
+	        }
+	    }
+	    
+	    
+	    $total_global_ht += $total_prev_ht ;
+	    $total_global_ttc += $total_prev_ttc ;
+	    $total_global_ht += $object->total_ht;
+	    $total_global_ttc += $object->total_ttc;
+	    $current_situation_counter[] = (($object->type == Facture::TYPE_CREDIT_NOTE)?-1:1) * $object->situation_counter;
+	    print '<tr class="oddeven">';
+	    print '<td>' . $object->getNomUrl(1) . '</td>';
+	    print '<td></td>';
+	    print '<td align="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $object->situation_counter.'</td>';
+	    if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	    print '<td align="right">' . price($object->total_ht) . '</td>';
+	    print '<td align="right">' . price($object->total_ttc) . '</td>';
+	    print '<td align="right">' . $object->getLibStatut(3, $object->getSommePaiement()) . '</td>';
+	    print '</tr>';
+	    
+	    
+	    print '<tr class="oddeven">';
+	    print '<td colspan="2" align="left"><b>' . $langs->trans('CurrentSituationTotal') . '</b></td>';
+	    print '<td>';
+	    $i =0;
+	    foreach ($current_situation_counter as $sit)
+	    {
+	        $curSign = $sit>0?'+':'-';
+	        $curType = $sit>0?$langs->trans('situationInvoiceShortcode_S'):$langs->trans('situationInvoiceShortcode_AS');
+	        if($i>0) print ' '.$curSign.' ';
+	        print $curType . abs($sit);
+	        $i++;
+	    }
+	    print '</td>';
+	    if (! empty($conf->banque->enabled)) print '<td></td>';
+	    print '<td align="right"><b>' . price($total_global_ht) . '</b></td>';
+	    print '<td align="right"><b>' . price($total_global_ttc) . '</b></td>';
+	    print '<td width="18">&nbsp;</td>';
+	    print '</tr>';
+	    
+	    
+	    if (count($object->tab_next_situation_invoice) > 0) {
+	        // List of next invoices
+	        /*print '<tr class="liste_titre">';
+	         print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
+	         print '<td></td>';
+	         print '<td></td>';
+	         if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	         print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+	         print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+	         print '<td width="18">&nbsp;</td>';
+	         print '</tr>';*/
+	        
+	        $total_next_ht = $total_next_ttc = 0;
+	        
+	        foreach ($object->tab_next_situation_invoice as $next_invoice) {
+	            $totalpaye = $next_invoice->getSommePaiement();
+	            $total_next_ht += $next_invoice->total_ht;
+	            $total_next_ttc += $next_invoice->total_ttc;
+	            
+	            print '<tr class="oddeven">';
+	            print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
+	            print '<td></td>';
+	            print '<td align="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $next_invoice->situation_counter.'</td>';
+	            if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	            print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
+	            print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
+	            print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
+	            print '</tr>';
+	            
+	        }
+	        
+	        $total_global_ht += $total_next_ht;
+	        $total_global_ttc += $total_next_ttc;
+	        
+	        print '<tr class="oddeven">';
+	        print '<td colspan="3" align="right"></td>';
+	        if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	        print '<td align="right"><b>' . price($total_global_ht) . '</b></td>';
+	        print '<td align="right"><b>' . price($total_global_ttc) . '</b></td>';
+	        print '<td width="18">&nbsp;</td>';
+	        print '</tr>';
+	    }
+	    
+	    print '</table>';
+	}
+	
+	
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
 	{
@@ -3850,8 +3992,6 @@ else if ($id > 0 || ! empty($ref))
 	print '</table>';
 
 
-	// List of previous situation invoices
-
 	$sign = 1;
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = - 1;
 	$nbrows = 8;
@@ -3872,121 +4012,6 @@ else if ($id > 0 || ! empty($ref))
 		$nbrows += 5;
 	if (! empty($conf->incoterm->enabled))
 		$nbrows += 1;
-
-	if ($object->type == Facture::TYPE_SITUATION && ! empty($conf->global->INVOICE_USE_SITUATION))
-	{
-		
-		print '<table class="noborder situationstable" width="100%">';
-
-			
-		print '<tr class="liste_titre">';
-		print '<td>' . $langs->trans('ListOfSituationInvoices') . '</td>';
-		print '<td></td>';
-		print '<td align="center">' . $langs->trans('Situation') . '</td>';
-		if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-		print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
-		print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
-		print '<td width="18">&nbsp;</td>';
-		print '</tr>';
-		
-		
-		$total_prev_ht = $total_prev_ttc = 0;
-		$total_global_ht = $total_global_ttc = 0;
-		
-		if (count($object->tab_previous_situation_invoice) > 0) {
-			// List of previous invoices
-			
-			$current_situation_counter = array();
-			foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-				$totalpaye = $prev_invoice->getSommePaiement();
-				$total_prev_ht += $prev_invoice->total_ht;
-				$total_prev_ttc += $prev_invoice->total_ttc;
-				$current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?'A':'S') . $prev_invoice->situation_counter;
-				print '<tr class="oddeven">';
-				print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
-				print '<td></td>';
-				print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?'A':'S') . $prev_invoice->situation_counter.'</td>';
-				if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-				print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
-				print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
-				print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
-				print '</tr>';
-
-			}
-		}
-		
-		
-		$total_global_ht += $total_prev_ht ;
-		$total_global_ttc += $total_prev_ttc ;
-		$total_global_ht += $object->total_ht;
-		$total_global_ttc += $object->total_ttc;
-		$current_situation_counter[] = (($object->type == Facture::TYPE_CREDIT_NOTE)?'A':'S') . $object->situation_counter;
-		print '<tr class="oddeven">';
-		print '<td>' . $object->getNomUrl(1) . '</td>';
-		print '<td></td>';
-		print '<td align="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE)?'A':'S') . $object->situation_counter.'</td>';
-		if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-		print '<td align="right">' . price($object->total_ht) . '</td>';
-		print '<td align="right">' . price($object->total_ttc) . '</td>';
-		print '<td align="right">' . $object->getLibStatut(3, $object->getSommePaiement()) . '</td>';
-		print '</tr>';
-		
-		
-		print '<tr class="oddeven">';
-		print '<td colspan="2" align="left"><b>' . $langs->trans('CurrentSituationTotal') . '</b></td>';
-		print '<td>'.implode(' + ', $current_situation_counter).'</td>';
-		if (! empty($conf->banque->enabled)) print '<td></td>';
-		print '<td align="right"><b>' . price($total_global_ht) . '</b></td>';
-		print '<td align="right"><b>' . price($total_global_ttc) . '</b></td>';
-		print '<td width="18">&nbsp;</td>';
-		print '</tr>';
-		
-
-		if (count($object->tab_next_situation_invoice) > 0) {
-			// List of next invoices
-			/*print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
-			print '<td></td>';
-			print '<td></td>';
-			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
-			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
-			print '<td width="18">&nbsp;</td>';
-			print '</tr>';*/
-
-			$total_next_ht = $total_next_ttc = 0;
-
-			foreach ($object->tab_next_situation_invoice as $next_invoice) {
-				$totalpaye = $next_invoice->getSommePaiement();
-				$total_next_ht += $next_invoice->total_ht;
-				$total_next_ttc += $next_invoice->total_ttc;
-				
-				print '<tr class="oddeven">';
-				print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
-				print '<td></td>';
-				print '<td align="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE)?'AS':'S') . $next_invoice->situation_counter.'</td>';
-				if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-				print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
-				print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
-				print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
-				print '</tr>';
-
-			}
-			
-			$total_global_ht += $total_next_ht;
-			$total_global_ttc += $total_next_ttc;
-			
-			print '<tr class="oddeven">';
-			print '<td colspan="3" align="right"></td>';
-			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-			print '<td align="right"><b>' . price($total_global_ht) . '</b></td>';
-			print '<td align="right"><b>' . price($total_global_ttc) . '</b></td>';
-			print '<td width="18">&nbsp;</td>';
-			print '</tr>';
-		}
-
-		print '</table>';
-	}
 
 
 	// List of payments already done
@@ -4569,7 +4594,7 @@ else if ($id > 0 || ! empty($ref))
 			        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
 			    )
 			{
-			    if(($object->total_ttc ) == 0 || true)
+			    if(($object->total_ttc - $totalcreditnotes  ) == 0 )
 			    {
 			        print '<div class="inline-block divButAction"><a id="butSituationOut" class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=situationout">' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
 			    }

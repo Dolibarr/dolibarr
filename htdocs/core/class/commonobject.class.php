@@ -2694,7 +2694,7 @@ abstract class CommonObject
 						$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
 				$sql .= ' WHERE rowid = '.$this->id;
 
-				print "xx".$sql;
+				
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)

@@ -1357,8 +1357,8 @@ class Facture extends CommonInvoice
 				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
-
-				if ($this->type == self::TYPE_SITUATION && $fetch_situation)
+				
+				if (($this->type == self::TYPE_SITUATION || ($this->type == self::TYPE_CREDIT_NOTE && $this->situation_cycle_ref > 0))  && $fetch_situation)
 				{
 					$this->fetchPreviousNextSituationInvoice();
 				}
