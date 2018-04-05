@@ -1339,7 +1339,7 @@ class Ticketsup extends CommonObject
     	$label = '<u>' . $langs->trans("ShowTicket") . '</u>';
     	$label.= '<br>';
     	$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref.'<br>';
-    	$label.= '<b>' . $langs->trans('TrackID') . ':</b> ' . $this->track_id.'<br>';
+    	$label.= '<b>' . $langs->trans('TicketTrackId') . ':</b> ' . $this->track_id.'<br>';
     	$label.= '<b>' . $langs->trans('Subject') . ':</b> ' . $this->subject;
 
     	$url = dol_buildpath('/ticketsup/card.php',1).'?id='.$this->id;

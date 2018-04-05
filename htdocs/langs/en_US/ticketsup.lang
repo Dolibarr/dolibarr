@@ -52,6 +52,7 @@ TypeContact_ticketsup_internal_SUPPORTTEC=Assigned user
 TypeContact_ticketsup_external_SUPPORTCLI=Customer contact / incident tracking
 TypeContact_ticketsup_external_CONTRIBUTOR=External contributor
 
+OriginEmail=Email source
 Notify_TICKETMESSAGE_SENTBYMAIL=Send ticket answer by email
 
 # Status

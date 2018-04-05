@@ -86,7 +86,7 @@ class Stripe extends CommonObject
     		dol_print_error($this->db);
     	}
 
-    	dol_syslog("No dedicated Stipe Connect account available for entity".$conf->entity);
+    	dol_syslog("No dedicated Stripe Connect account available for entity ".$conf->entity);
 		return $key;
 	}
 
@@ -119,6 +119,12 @@ class Stripe extends CommonObject
 	public function customerStripe(Societe $object, $key='', $status=0, $createifnotlinkedtostripe=0)
 	{
 		global $conf, $user;
+
+		if (empty($object->id))
+		{
+			dol_syslog("customerStripe is called with param object not loaded");
+			return null;
+		}
 
 		$customer = null;
 
@@ -194,12 +200,12 @@ class Stripe extends CommonObject
 	 *
 	 * @param	\Stripe\StripeCustomer	$cu								Object stripe customer
 	 * @param	CompanyPaymentMode		$object							Object companypaymentmode to check, or create on stripe (create on stripe also update the societe_rib table for current entity)
-	 * @param	string					$key							''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
+	 * @param	string					$stripeacc						''=Use common API. If not '', it is the Stripe connect account 'acc_....' to use Stripe connect
 	 * @param	int						$status							Status (0=test, 1=live)
 	 * @param	int						$createifnotlinkedtostripe		1=Create the stripe card and the link if the card is not yet linked to a stripe card
 	 * @return 	\Stripe\StripeCard|null 								Stripe Card or null if not found
 	 */
-	public function cardStripe($cu, CompanyPaymentMode $object, $key='', $status=0, $createifnotlinkedtostripe=0)
+	public function cardStripe($cu, CompanyPaymentMode $object, $stripeacc='', $status=0, $createifnotlinkedtostripe=0)
 	{
 		global $conf, $user;
 
@@ -222,10 +228,10 @@ class Stripe extends CommonObject
 				if ($cardref)
 				{
 					try {
-						if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->retrieve($cardref);
 						} else {
-							$card = $cu->sources->retrieve($cardref, array("stripe_account" => $key));
+							$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));
 						}
 					}
 					catch(Exception $e)
@@ -249,12 +255,12 @@ class Stripe extends CommonObject
 					);
 
 					//$a = \Stripe\Stripe::getApiKey();
-					//var_dump($a);var_dump($key);exit;
+					//var_dump($a);var_dump($stripeacc);exit;
 					try {
-						if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
+						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->create($dataforcard);
 						} else {
-							$card = $cu->sources->create($dataforcard, array("stripe_account" => $key));
+							$card = $cu->sources->create($dataforcard, array("stripe_account" => $stripeacc));
 						}
 
 						if ($card)

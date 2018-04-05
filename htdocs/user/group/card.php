@@ -49,6 +49,7 @@ $id=GETPOST('id', 'int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $userid=GETPOST('user', 'int');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupcard';   // To manage different context of search
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
@@ -71,8 +72,9 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$contextpage=array('groupcard','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('groupcard','globalcard'));
+
+
 
 /**
  * Actions
@@ -309,8 +311,6 @@ else
 {
     if ($id)
     {
-        $object->fetch($id);
-
         $head = group_prepare_head($object);
         $title = $langs->trans("Group");
 

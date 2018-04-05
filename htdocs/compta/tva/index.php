@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->loadLangs(array("other","compta","banks","bills","companies"));
+$langs->loadLangs(array("other","compta","banks","bills","companies","admin"));
 
 $year=GETPOST("year","int");
 if ($year == 0)
@@ -107,9 +107,23 @@ function pt ($db, $sql, $date)
 $tva = new Tva($db);
 
 $name = $langs->trans("ReportByMonth");
-$description = $langs->trans("VATSummary");
-$calcmode = $langs->trans("VATReportBuildWithOptionDefinedInModule").' ';
-$calcmode.= '('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+
+$calcmode='';
+if ($modetax == 0) $calcmode=$langs->trans('OptionVATDefault');
+if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
+if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
+$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+
+$description = $langs->trans("VATSummary").'<br>';
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description.=$langs->trans("RulesVATInProducts");
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description.='<br>'.$langs->trans("RulesVATDueServices");
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') $description.='<br>'.$langs->trans("RulesVATInServices");
+if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
+}
+if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
+
 $builddate=dol_now();
 
 llxHeader('', $name);
@@ -146,8 +160,8 @@ $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )
 {
-    $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
-    $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
+	$coll_listsell = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'sell', $m);
+	$coll_listbuy = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'buy', $m);
 
     $action = "tva";
     $object = array(&$coll_listsell, &$coll_listbuy);

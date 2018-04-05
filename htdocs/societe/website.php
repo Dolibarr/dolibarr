@@ -59,15 +59,12 @@ $object=new Societe($db);
 $objectwebsiteaccount=new WebsiteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('websiteaccountlist'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('websitethirdpartylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('websiteaccount');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 unset($objectwebsiteaccount->fields['fk_soc']);		// Remove this field, we are already on the thirdparty
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('websitethirdparty'));
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all",'alpha'));

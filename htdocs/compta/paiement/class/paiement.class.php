@@ -59,6 +59,7 @@ class Paiement extends CommonObject
 	// de llx_paiement qui est lie aux types de
 	//paiement de llx_c_paiement
 	var $num_paiement;	// Numero du CHQ, VIR, etc...
+	var $num_payment;	// Numero du CHQ, VIR, etc...
 	var $bank_account;	// Id compte bancaire du paiement
 	var $bank_line;     // Id de la ligne d'ecriture bancaire
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
@@ -88,7 +89,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
-		$sql.= ' p.num_paiement, p.note,';
+		$sql.= ' p.num_paiement as num_payment, p.note,';
 		$sql.= ' b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -110,7 +111,9 @@ class Paiement extends CommonObject
 				$this->ref            = $obj->ref?$obj->ref:$obj->rowid;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->numero         = $obj->num_paiement;
+				$this->numero         = $obj->num_payment;	// deprecated
+				$this->num_paiement   = $obj->num_payment;	// deprecated
+				$this->num_payment    = $obj->num_payment;
 				$this->montant        = $obj->amount;   // deprecated
 				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;

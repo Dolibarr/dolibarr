@@ -1,0 +1,9 @@
+vendor
+composer.lock
+tests/cov
+.*.swp
+
+# Composer binaries
+bin/phpunit
+bin/php-cs-fixer
+bin/sabre-cs-fixer

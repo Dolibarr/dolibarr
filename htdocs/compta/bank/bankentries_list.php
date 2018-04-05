@@ -54,6 +54,7 @@ $ref = GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
+$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
@@ -119,10 +120,6 @@ if ($id > 0 || ! empty($ref))
     $search_account = $object->id;     // Force the search field on id of account
 }
 
-
-// Initialize technical object to manage context to save list fields
-$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
-//var_dump($contextpage);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
@@ -455,7 +452,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ";
-if ($search_bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
+if ($search_bid>0) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_extrafields as ef on (b.rowid = ef.fk_object)";
@@ -1032,7 +1029,15 @@ if ($resql)
 				print '<td align="right">';
             	print price(price2num($balance, 'MT'), 1, $langs);
 				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+3).'">';
+				print '<td align="center">';
+				print '<input type="checkbox" id="selectAll" />';
+				print ' <script type="text/javascript">
+						$("input#selectAll").change(function() {
+							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
+						});
+						</script>';
+				print '</td>';
+				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
 				print '</td>';
             	print '</tr>';
             }

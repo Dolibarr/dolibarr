@@ -25,7 +25,7 @@ Permission56001=Voir tickets
 Permission56002=Modifier des billets
 Permission56003=Supprimer tickets
 Permission56004=Gérer les tickets
-Permission56005=Voir les tickets de tous les tiers (sauf pour les utilisateurs externes, toujours limité au tiers dont ils dépendent)
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the thirdparty they depend on)
 
 TicketsupDictType=Type de ticket
 TicketsupDictCategory=Catégories de tickets
@@ -44,8 +44,8 @@ TicketSeverityShortBLOCKING=Critique/Bloquant
 
 ErrorBadEmailAddress=Field '%s' incorrect
 MenuTicketsupMyAssign=Mes tickets
-MenuTicketsupMyAssignNonClosed=Mes tickets ouverts
-MenuListNonClosed=Tickets non fermés
+MenuTicketsupMyAssignNonClosed=My open tickets
+MenuListNonClosed=Open tickets
 
 TypeContact_ticketsup_internal_CONTRIBUTOR=Contributeur
 TypeContact_ticketsup_internal_SUPPORTTEC=Utilisateur assigné
@@ -123,7 +123,7 @@ TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create
 TicketsAutoAssignTicket=Automatically assign the user who created the ticket
 TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
 TicketSupNumberingModules=Tickets numbering module
-TicketNotNotifyTiersAtCreate=Do not notify the company to the creation
+TicketNotifyTiersAtCreation=Notify thirdparty at creation
 
 #
 # About page
@@ -143,8 +143,8 @@ TicketList=Liste des tickets
 TicketAssignedToMeInfos=Cette page présente la liste des tickets assignés à l'utilisateur actuel
 NoTicketsFound=Aucun ticket trouvé
 TicketViewAllTickets=Voir tous les tickets
-TicketViewNonClosedOnly=Voir seulement les tickets non fermés
-TicketStatByStatus=Billets par statut
+TicketViewNonClosedOnly=View only open tickets
+TicketStatByStatus=Tickets by status
 
 #
 # Ticket card
@@ -163,7 +163,6 @@ SeeTicket=Voir le ticket
 TicketMarkedAsRead=Le ticket a été marqué comme lu
 TicketReadOn=Read on
 TicketCloseOn=Fermé le
-UserAssignedTo=Utilisateur assigné
 MarkAsRead=Mark ticket as read
 TicketMarkedAsReadButLogActionNotSaved=Ticket marked as closed but no action saved
 TicketHistory=Historique de billets
@@ -180,7 +179,7 @@ TicketMessageSuccessfullyAdded=Message ajouté avec succès
 TicketMessagesList=Message list
 NoMsgForThisTicket=Pas de message pour ce ticket
 Properties=Classification
-LatestNewTickets=Last %s tickets newest (not read)
+LatestNewTickets=Latest %s newest tickets (not read)
 TicketSeverity=Sévérité
 ShowTicket=Voir le ticket
 RelatedTickets=Tickets liés
@@ -224,14 +223,14 @@ TicketEmailOriginIssuer=Issuer at origin of the tickets
 InitialMessage=Message initial
 LinkToAContract=Link to a contract
 TicketSupPleaseSelectAContract=Sélectionner un contrat
-UnableToCreateInterIfNoSocid=Can not create a response file without defining a thirdparty
+UnableToCreateInterIfNoSocid=Can not create an intervention when no third party are defined
 TicketMailExchanges=Mail exchanges
 TicketInitialMessageModified=Message initial modifié
 TicketMessageSuccesfullyUpdated=Message successfully updated
 TicketChangeStatus=Changer l'état
 TicketConfirmChangeStatus=Confirm the status change : %s ?
 TicketLogStatusChanged=Status changed : %s to %s
-TicketNotNotifyTiersAtCreate=Do not notify the company to the creation
+TicketNotNotifyTiersAtCreate=Not notify company at create
 
 #
 # Logs
@@ -291,11 +290,11 @@ TicketNotificationNumberEmailSent=Email de notification envoyé: %s
 #
 # Boxes
 #
-BoxLastTicketsup=Les derniers tickets
-BoxLastTicketsupDescription=Last %s tickets saved
+BoxLastTicketsup=Latest created tickets
+BoxLastTicketsupDescription=Latest %s created tickets
 BoxLastTicketsupContent=
 BoxLastTicketsupNoRecordedTickets=Pas de ticket non lu
-BoxLastModifiedTicketsup=Last modified tickets
-BoxLastModifiedTicketsupDescription=Last %s tickets modified
+BoxLastModifiedTicketsup=Latest modified tickets
+BoxLastModifiedTicketsupDescription=Latest %s modified tickets
 BoxLastModifiedTicketsupContent=
 BoxLastModifiedTicketsupNoRecordedTickets=Pas de tickets modifiés récemment

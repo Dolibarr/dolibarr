@@ -1327,7 +1327,6 @@ class Societe extends CommonObject
 
 				$result = 1;
 
-				// Retreive all extrafield
 				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 			}

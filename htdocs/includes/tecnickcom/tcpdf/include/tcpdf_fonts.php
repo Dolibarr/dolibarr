@@ -665,7 +665,7 @@ class TCPDF_FONTS {
 								$glyphIdArray[$k] = TCPDF_STATIC::_getUSHORT($font, $offset);
 								$offset += 2;
 							}
-							for ($k = 0; $k < $segCount; ++$k) {
+							for ($k = 0; $k < $segCount - 1; ++$k) {
 								for ($c = $startCount[$k]; $c <= $endCount[$k]; ++$c) {
 									if ($idRangeOffset[$k] == 0) {
 										$g = ($idDelta[$k] + $c) % 65536;

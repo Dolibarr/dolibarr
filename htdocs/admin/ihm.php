@@ -46,12 +46,10 @@ $langs->load("agenda");
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','aZ09');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'adminihm';   // To manage different context of search
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('adminihm','globaladmin');
-$hookmanager->initHooks($contextpage);
 
 
 /*

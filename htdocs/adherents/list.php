@@ -79,6 +79,7 @@ if (! $sortorder) { $sortorder=($filter=='outofdate'?"DESC":"ASC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Adherent($db);
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 

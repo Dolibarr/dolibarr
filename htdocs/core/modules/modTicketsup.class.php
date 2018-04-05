@@ -93,7 +93,7 @@ class modTicketsup extends DolibarrModules
             // Set this to 1 if module has its own models directory
             'models' => 1,
             // Set this to relative path of css if module has its own css file
-            'css' => '/ticketsup/css/ticketsup.css',
+            //'css' => '',
             // Set here all hooks context managed by module
             'hooks' => array('admin')
             // Set here all workflow context managed by module

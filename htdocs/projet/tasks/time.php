@@ -72,6 +72,7 @@ if (! $sortfield) $sortfield='t.task_date,t.task_datehour,t.rowid';
 if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+//$object = new TaskTime($db);
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $object = new Task($db);
