@@ -3735,6 +3735,14 @@ abstract class CommonObject
 
 			print '<td class="linecolmove" width="10"></td>';
 
+			if($action == 'selectlines')
+			{
+			    print '<td class="linecolcheckall" align="center">';
+			    print '<input type="checkbox" class="linecheckboxtoggle" />';
+			    print '<script type="text/javascript">$(document).ready(function() {$(".linecheckboxtoggle").click(function() {var checkBoxes = $(".linecheckbox");checkBoxes.prop("checked", this.checked);})});</script>';
+			    print '</td>';
+			}
+
 			print "</tr>\n";
 		}
 
@@ -5986,18 +5994,28 @@ abstract class CommonObject
 				else
 				{
 					$csstyle='';
-					$class=(!empty($extrafields->attribute_hidden[$key]) ? 'class="hideobject" ' : '');
+					$class=(!empty($extrafields->attribute_hidden[$key]) ? 'hideobject ' : '');
 					if (is_array($params) && count($params)>0) {
 						if (array_key_exists('style',$params)) {
 							$csstyle=$params['style'];
 						}
 					}
 
-					$out .= '<tr '.$class.$csstyle.' class="'.$this->element.'_extras_'.$key.'">';
-					if (empty($onetrtd))
+					// add html5 elements
+					$domData  = ' data-element="extrafield"';
+					$domData .= ' data-targetelement="'.$this->element.'"';
+					$domData .= ' data-targetid="'.$this->id.'"';
+					
+					$html_id = !empty($this->id) ? 'extrarow-'.$this->element.'_'.$key.'_'.$this->id : '';
+					
+					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.'" '.$domData.' >';
+					
+					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
 						if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
 					}
+
+					if($action == 'selectlines'){  $colspan++; }
 
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
@@ -6017,16 +6035,10 @@ abstract class CommonObject
 						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
 					}
 
-					if (empty($onetrtd)) $out .= '<td>';
-					else $out .= '<td'.($colspan?' colspan="'.($colspan+1).'"':'').'>';
-
-					$out .= $labeltoshow;
-
-					if (empty($onetrtd)) $out .= '</td><td'.($colspan?' colspan="'.($colspan).'"':'').'>';
-					else $out.=' ';
+					$out .= '<td>'.$labeltoshow.'</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
-					$out .='<span id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'">';
+					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
 
 					switch($mode) {
 						case "view":
@@ -6038,8 +6050,9 @@ abstract class CommonObject
 					}
 
 					$out .= '</td>';
-					$out .= '</tr>';
 
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && (($e % 2) == 1)) $out .= '</tr>';
+					else $out .= '</tr>';
 					$e++;
 				}
 			}
@@ -6051,7 +6064,7 @@ abstract class CommonObject
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{
-				    		var val = $("select[name="+parent_list+"]").val();
+				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
 				    		var parentVal = parent_list + ":" + val;
 							if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();
