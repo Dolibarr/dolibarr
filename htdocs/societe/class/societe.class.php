@@ -2592,8 +2592,6 @@ class Societe extends CommonObject
 
 			if ($res)
 			{
-				dol_include_once($file);
-
 				$classname = $conf->global->SOCIETE_CODECOMPTA_ADDON;
 				$mod = new $classname;
 
