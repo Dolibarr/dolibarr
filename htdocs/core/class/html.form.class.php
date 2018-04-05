@@ -1703,7 +1703,7 @@ class Form
 			$userstatic->fetch($value['id']);
 			$out.= $userstatic->getNomUrl(-1);
 			if ($i == 0) { $ownerid = $value['id']; $out.=' ('.$langs->trans("Owner").')'; }
-			if ($nbassignetouser > 1 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+			if ($nbassignetouser > 1 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 1, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
 			// Show my availability
 			if ($showproperties)
 			{
