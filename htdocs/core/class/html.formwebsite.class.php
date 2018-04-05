@@ -164,7 +164,7 @@ class FormWebsite
      *
      *  @param  string	$htmlname          	Name of select zone
      *  @param	string	$selected			Selected value
-     *  @param  int		$useempty          	1=Add an empty value in list, 2=Add an empty value in list only if there is more than 2 entries.
+     *  @param  int		$useempty          	1=Add an empty value in list
      *  @param  string  $moreattrib         More attributes on HTML select tag
      * 	@return	void
      */
@@ -177,9 +177,9 @@ class FormWebsite
     	$arrayofsamples=array('corporatehome'=>'CorporateHomePage', 'empty'=>'EmptyPage');
 
     	$out = '';
-
     	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';
-    	if ($useempty == 1 || ($useempty == 2 && $num > 1))
+
+    	if ($useempty == 1 || $useempty == 2)
     	{
     		$out .= '<option value="-1">&nbsp;</option>';
     	}
@@ -196,7 +196,6 @@ class FormWebsite
     		}
     		$out .= $langs->trans($val);
     		$out .= '</option>';
-    		$i++;
     	}
     	$out .= "</select>";
 

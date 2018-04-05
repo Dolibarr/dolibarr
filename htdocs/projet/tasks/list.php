@@ -71,7 +71,8 @@ $search_eyear	= GETPOST('search_eyear','int');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'tasklist';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Task($db);
+$hookmanager->initHooks(array('tasklist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -130,8 +131,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
 	}
 }
-
-$object = new Task($db);
 
 
 /*

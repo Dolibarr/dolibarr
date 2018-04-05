@@ -16,6 +16,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
+-- Type of expense report
 -- ========================================================================
 
 create table llx_c_type_fees
@@ -23,6 +24,7 @@ create table llx_c_type_fees
   id        		integer      AUTO_INCREMENT PRIMARY KEY,
   code      		varchar(12)  NOT NULL,
   label				varchar(30),
+  type				integer DEFAULT 0,		-- 0=type product, 1=type service
   accountancy_code	varchar(32) NULL,
   active    		tinyint DEFAULT 1   NOT NULL,
   module    		varchar(32) NULL,

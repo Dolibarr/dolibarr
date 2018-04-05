@@ -80,6 +80,8 @@ class AgendaEvents extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$result = $this->actioncomm->fetch_optionals();
+
         $this->actioncomm->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->actioncomm);
     }
@@ -319,7 +321,6 @@ class AgendaEvents extends DolibarrApi
 
     	unset($object->usermod);
     	unset($object->libelle);
-    	unset($object->array_options);
     	unset($object->context);
     	unset($object->canvas);
     	unset($object->contact);

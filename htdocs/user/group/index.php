@@ -99,9 +99,10 @@ if (empty($reshook))
 
 llxHeader();
 
-$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb";
+$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec, COUNT(DISTINCT ugu.fk_user) as nb, COUNT(DISTINCT ugr.fk_id) as nbpermissions";
 $sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ugu ON ugu.fk_usergroup = g.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_rights as ugr ON ugr.fk_usergroup = g.rowid";
 if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 {
 	$sql.= " WHERE g.entity IS NOT NULL";
@@ -110,11 +111,8 @@ else
 {
 	$sql.= " WHERE g.entity IN (0,".$conf->entity.")";
 }
-if (! empty($search_group))
-{
-    $sql .= " AND (g.nom LIKE '%".$db->escape($search_group)."%' OR g.note LIKE '%".$db->escape($search_group)."%')";
-}
-if ($sall) $sql.= " AND (g.nom LIKE '%".$db->escape($sall)."%' OR g.note LIKE '%".$db->escape($sall)."%')";
+if (! empty($search_group)) natural_search(array("g.nom", "g.note"), $search_group);
+if ($sall) $sql.= natural_search(array("g.nom", "g.note"), $sall);
 $sql.= " GROUP BY g.rowid, g.nom, g.note, g.entity, g.datec";
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -172,6 +170,7 @@ if ($resql)
     	print_liste_field_titre("Entity",$_SERVER["PHP_SELF"],"g.entity",$param,"",'align="center"',$sortfield,$sortorder);
     }
     print_liste_field_titre("NbOfUsers",$_SERVER["PHP_SELF"],"nb",$param,"",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("NbOfPermissions",$_SERVER["PHP_SELF"],"nbpermissions",$param,"",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre("DateCreationShort",$_SERVER["PHP_SELF"],"g.datec",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
@@ -200,6 +199,7 @@ if ($resql)
             print '<td align="center">'.$mc->label.'</td>';
         }
         print '<td align="center">'.$obj->nb.'</td>';
+        print '<td align="center">'.$obj->nbpermissions.'</td>';
         print '<td align="right" class="nowrap">'.dol_print_date($db->jdate($obj->datec),"dayhour").'</td>';
         print "</tr>\n";
         $i++;

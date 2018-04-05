@@ -68,6 +68,13 @@ class FactureRec extends CommonInvoice
 
 	var $usenewprice=0;
 
+	var $suspended;			// status
+
+	const STATUS_NOTSUSPENDED = 0;
+	const STATUS_SUSPENDED = 1;
+
+
+
 	/**
 	 *	Constructor
 	 *
@@ -95,6 +102,7 @@ class FactureRec extends CommonInvoice
 		// Clean parameters
 		$this->titre=trim($this->titre);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
+		if (empty($this->suspended)) $this->suspended=0;
 
 		// No frequency defined then no next date to execution
 		if (empty($this->frequency))
@@ -147,6 +155,7 @@ class FactureRec extends CommonInvoice
 			$sql.= ", fk_multicurrency";
 			$sql.= ", multicurrency_code";
 			$sql.= ", multicurrency_tx";
+			$sql.= ", suspended";
 			$sql.= ") VALUES (";
 			$sql.= "'".$this->db->escape($this->titre)."'";
 			$sql.= ", ".$facsrc->socid;
@@ -167,13 +176,14 @@ class FactureRec extends CommonInvoice
 			$sql.= ", '".$this->db->escape($this->unit_frequency)."'";
 			$sql.= ", ".(!empty($this->date_when)?"'".$this->db->idate($this->date_when)."'":'NULL');
 			$sql.= ", ".(!empty($this->date_last_gen)?"'".$this->db->idate($this->date_last_gen)."'":'NULL');
-			$sql.= ", ".$this->nb_gen_done;
-			$sql.= ", ".$this->nb_gen_max;
-			$sql.= ", ".$this->auto_validate;
-			$sql.= ", ".$this->generate_pdf;
-			$sql.= ", ".$facsrc->fk_multicurrency;
-			$sql.= ", '".$facsrc->multicurrency_code."'";
-			$sql.= ", ".$facsrc->multicurrency_tx;
+			$sql.= ", ".$this->db->escape($this->nb_gen_done);
+			$sql.= ", ".$this->db->escape($this->nb_gen_max);
+			$sql.= ", ".$this->db->escape($this->auto_validate);
+			$sql.= ", ".$this->db->escape($this->generate_pdf);
+			$sql.= ", ".$this->db->escape($facsrc->fk_multicurrency);
+			$sql.= ", '".$this->db->escape($facsrc->multicurrency_code)."'";
+			$sql.= ", ".$this->db->escape($facsrc->multicurrency_tx);
+			$sql.= ", ".$this->db->escape($this->suspended);
 			$sql.= ")";
 
 			if ($this->db->query($sql))
@@ -304,8 +314,8 @@ class FactureRec extends CommonInvoice
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
 		//$sql.= ', el.fk_source';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_rec as f';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid AND c.entity IN ('.getEntity('c_payment_term').')';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id AND p.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = f.rowid AND el.targettype = 'facture'";
 		$sql.= ' WHERE f.entity IN ('.getEntity('facture').')';
 		if ($rowid) $sql.= ' AND f.rowid='.$rowid;
@@ -439,7 +449,7 @@ class FactureRec extends CommonInvoice
 
 		$sql = 'SELECT l.rowid, l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx, ';
 		$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
-		$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
+		$sql.= ' l.info_bits, l.date_start_fill, l.date_end_fill, l.total_ht, l.total_tva, l.total_ttc,';
 		//$sql.= ' l.situation_percent, l.fk_prev_id,';
 		//$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise_percent, l.fk_remise_except, l.subprice,';
 		$sql.= ' l.rang, l.special_code,';
@@ -487,6 +497,8 @@ class FactureRec extends CommonInvoice
 				$line->remise_percent   = $objp->remise_percent;
 				$line->fk_remise_except = $objp->fk_remise_except;
 				$line->fk_product       = $objp->fk_product;
+				$line->date_start_fill  = $objp->date_start_fill;
+				$line->date_end_fill    = $objp->date_end_fill;
 				$line->info_bits        = $objp->info_bits;
 				$line->total_ht         = $objp->total_ht;
 				$line->total_tva        = $objp->total_tva;
@@ -602,15 +614,17 @@ class FactureRec extends CommonInvoice
      *	@param		string		$label				Label of the line
      *	@param		string		$fk_unit			Unit
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
+	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
+	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
      *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null, $pu_ht_devise=0)
+	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null, $pu_ht_devise=0, $date_start_fill=0, $date_end_fill=0)
 	{
 	    global $mysoc;
 
 		$facid=$this->id;
 
-		dol_syslog(get_class($this)."::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit,pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
+		dol_syslog(get_class($this)."::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit,pu_ht_devise=$pu_ht_devise,date_start_fill=$date_start_fill,date_end_fill=$date_end_fill", LOG_DEBUG);
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
 		// Check parameters
@@ -700,6 +714,8 @@ class FactureRec extends CommonInvoice
 			$sql.= ", total_localtax1";
 			$sql.= ", total_localtax2";
 			$sql.= ", total_ttc";
+			$sql.= ", date_start_fill";
+			$sql.= ", date_end_fill";
 			$sql.= ", info_bits";
 			$sql.= ", rang";
 			$sql.= ", special_code";
@@ -727,6 +743,8 @@ class FactureRec extends CommonInvoice
 			$sql.= ", ".price2num($total_localtax1);
 			$sql.= ", ".price2num($total_localtax2);
 			$sql.= ", ".price2num($total_ttc);
+			$sql.= ", ".(int) $date_start_fill;
+			$sql.= ", ".(int) $date_end_fill;
 			$sql.= ", ".$info_bits;
 			$sql.= ", ".$rang;
 			$sql.= ", ".$special_code;
@@ -778,9 +796,11 @@ class FactureRec extends CommonInvoice
 	 *	@param		string		$fk_unit			Unit
 	 * 	@param		double		$pu_ht_devise		Unit price in currency
 	 * 	@param		int			$notrigger			disable line update trigger
+	 *  @param		int			$date_start_fill	1=Flag to fill start date when generating invoice
+	 *  @param		int			$date_end_fill		1=Flag to fill end date when generating invoice
 	 *	@return    	int             				<0 if KO, Id of line if OK
 	 */
-	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null, $pu_ht_devise = 0, $notrigger=0)
+	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null, $pu_ht_devise = 0, $notrigger=0, $date_start_fill=0, $date_end_fill=0)
 	{
 	    global $mysoc;
 
@@ -883,6 +903,8 @@ class FactureRec extends CommonInvoice
 	        $sql.= ", total_localtax1='".price2num($total_localtax1)."'";
 	        $sql.= ", total_localtax2='".price2num($total_localtax2)."'";
 	        $sql.= ", total_ttc='".price2num($total_ttc)."'";
+	        $sql.= ", date_start_fill=".((int) $date_start_fill);
+	        $sql.= ", date_end_fill=".((int) $date_end_fill);
 	        $sql.= ", info_bits=".$info_bits;
 	        $sql.= ", rang=".$rang;
 	        $sql.= ", special_code=".$special_code;
@@ -948,7 +970,7 @@ class FactureRec extends CommonInvoice
 	 *  Create all recurrents invoices (for all entities if multicompany is used).
 	 *  A result may also be provided into this->output.
 	 *
-	 *  WARNING: This method change context $conf->entity to be in correct context for each recurring invoice found.
+	 *  WARNING: This method change temporarly context $conf->entity to be in correct context for each recurring invoice found.
 	 *
 	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
@@ -1006,7 +1028,7 @@ class FactureRec extends CommonInvoice
 
 			    $facture->type = self::TYPE_STANDARD;
 			    $facture->brouillon = 1;
-			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
+			    $facture->date = (empty($facturerec->date_when)?$now:$facturerec->date_when);	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
 
 			    $invoiceidgenerated = $facture->create($user);
@@ -1137,49 +1159,69 @@ class FactureRec extends CommonInvoice
 			$prefix='';
 			if ($recur)
 			{
-				if ($status == 1) return $langs->trans('Disabled');       // credit note
+				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
 				else return $langs->trans('Active');
 			}
-			else return $langs->trans("Draft");
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
+				else return $langs->trans("Draft");
+			}
 		}
 		if ($mode == 1)
 		{
 			$prefix='Short';
 			if ($recur)
 			{
-				if ($status == 1) return $langs->trans('Disabled');
+				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
 				else return $langs->trans('Active');
 			}
-			else return $langs->trans("Draft");
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return $langs->trans('Disabled');
+				else return $langs->trans("Draft");
+			}
 		}
 		if ($mode == 2)
 		{
 			if ($recur)
 			{
-				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
 				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
 			}
-			else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
+				else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+			}
 		}
 		if ($mode == 3)
 		{
 			if ($recur)
 			{
 				$prefix='Short';
-				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6');
 				else return img_picto($langs->trans('Active'),'statut4');
 			}
-			else return img_picto($langs->trans('Draft'),'statut0');
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6');
+				else return img_picto($langs->trans('Draft'),'statut0');
+			}
 		}
 		if ($mode == 4)
 		{
 			$prefix='';
 			if ($recur)
 			{
-				if ($status == 1) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
 				else return img_picto($langs->trans('Active'),'statut4').' '.$langs->trans('Active');
 			}
-			else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return img_picto($langs->trans('Disabled'),'statut6').' '.$langs->trans('Disabled');
+				else return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+			}
 		}
 		if ($mode == 5 || $mode == 6)
 		{
@@ -1187,10 +1229,14 @@ class FactureRec extends CommonInvoice
 			if ($mode == 5) $prefix='Short';
 			if ($recur)
 			{
-				if ($status == 1) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
+				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
 				else return '<span class="xhideonsmartphone">'.$langs->trans('Active').' </span>'.img_picto($langs->trans('Active'),'statut4');
 			}
-			else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'),'statut0');
+			else
+			{
+				if ($status == self::STATUS_SUSPENDED) return '<span class="xhideonsmartphone">'.$langs->trans('Disabled').' </span>'.img_picto($langs->trans('Disabled'),'statut6');
+				else return $langs->trans('Draft').' '.img_picto($langs->trans('Active'),'statut0');
+			}
 		}
 	}
 
@@ -1561,6 +1607,10 @@ class FactureLigneRec extends CommonInvoiceLine
 	public $element='facturedetrec';
 	public $table_element='facturedet_rec';
 
+	var $date_start_fill;
+	var $date_end_fill;
+
+
     /**
      * 	Delete line in database
      *
@@ -1615,7 +1665,7 @@ class FactureLigneRec extends CommonInvoiceLine
     {
     	$sql = 'SELECT l.rowid, l.fk_facture ,l.fk_product, l.product_type, l.label as custom_label, l.description, l.product_type, l.price, l.qty, l.vat_src_code, l.tva_tx,';
     	$sql.= ' l.localtax1_tx, l.localtax2_tx, l.localtax1_type, l.localtax2_type, l.remise, l.remise_percent, l.subprice,';
-    	$sql.= ' l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
+    	$sql.= ' l.date_start_fill, l.date_end_fill, l.info_bits, l.total_ht, l.total_tva, l.total_ttc,';
     	$sql.= ' l.rang, l.special_code,';
     	$sql.= ' l.fk_unit, l.fk_contract_line,';
     	$sql.= ' p.ref as product_ref, p.fk_product_type as fk_product_type, p.label as product_label, p.description as product_desc';
@@ -1655,6 +1705,8 @@ class FactureLigneRec extends CommonInvoiceLine
     		$this->remise_percent   = $objp->remise_percent;
     		$this->fk_remise_except = $objp->fk_remise_except;
     		$this->fk_product       = $objp->fk_product;
+    		$this->date_start_fill  = $objp->date_start_fill;
+    		$this->date_end_fill    = $objp->date_end_fill;
     		$this->info_bits        = $objp->info_bits;
     		$this->total_ht         = $objp->total_ht;
     		$this->total_tva        = $objp->total_tva;
@@ -1711,6 +1763,9 @@ class FactureLigneRec extends CommonInvoiceLine
     	$sql.= ", product_type=".$this->product_type;
     	$sql.= ", remise_percent='".price2num($this->remise_percent)."'";
     	$sql.= ", subprice='".price2num($this->subprice)."'";
+    	$sql.= ", info_bits='".price2num($this->info_bits)."'";
+    	$sql.= ", date_start_fill=".(int) $this->date_start_fill;
+    	$sql.= ", date_end_fill=".(int) $this->date_end_fill;
     	$sql.= ", total_ht='".price2num($this->total_ht)."'";
     	$sql.= ", total_tva='".price2num($this->total_tva)."'";
     	$sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";

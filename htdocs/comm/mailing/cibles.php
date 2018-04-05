@@ -260,7 +260,7 @@ if ($object->fetch($id) >= 0)
 		print load_fiche_titre($langs->trans("ToAddRecipientsChooseHere"), ($user->admin?info_admin($langs->trans("YouCanAddYourOwnPredefindedListHere"),1):''), 'title_generic');
 
 		//print '<table class="noborder" width="100%">';
-		print '<div class="tagtable centpercent liste_titre_bydiv" id="tablelines">';
+		print '<div class="tagtable centpercent liste_titre_bydiv borderbottom" id="tablelines">';
 
 		//print '<tr class="liste_titre">';
 		print '<div class="tagtr liste_titre">';

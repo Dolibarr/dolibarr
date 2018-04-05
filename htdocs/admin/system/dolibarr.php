@@ -116,7 +116,7 @@ if (function_exists('curl_init'))
     }
     else
     {
-        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="button">' .$langs->trans("Check").'</a>';
+        print $langs->trans("LastStableVersion").' : <a href="'.$_SERVER["PHP_SELF"].'?action=getlastversion" class="butAction">' .$langs->trans("Check").'</a>';
     }
 }
 
@@ -220,7 +220,6 @@ print '<tr class="oddeven"><td>&nbsp; => price(1234.56)</td><td>'.price(1234.56)
 $txt =$langs->trans("OSTZ").' (variable system TZ): '.(! empty($_ENV["TZ"])?$_ENV["TZ"]:$langs->trans("NotDefined")).'<br>'."\n";
 $txt.=$langs->trans("PHPTZ").' (php.ini date.timezone): '.(ini_get("date.timezone")?ini_get("date.timezone"):$langs->trans("NotDefined")).''."<br>\n"; // date.timezone must be in valued defined in http://fr3.php.net/manual/en/timezones.europe.php
 $txt.=$langs->trans("Dolibarr constant MAIN_SERVER_TZ").': '.(empty($conf->global->MAIN_SERVER_TZ)?$langs->trans("NotDefined"):$conf->global->MAIN_SERVER_TZ);
-//$txt.=$langs->trans("YouCanEditPHPTZ"); // deprecated
 print '<tr class="oddeven"><td>'.$langs->trans("CurrentTimeZone").'</td><td>';	// Timezone server PHP
 $a=getServerTimeZoneInt('now');
 $b=getServerTimeZoneInt('winter');
@@ -325,13 +324,14 @@ $configfileparameters=array(
 		'?dolibarr_font_DOL_DEFAULT_TTF_BOLD' => 'dolibarr_font_DOL_DEFAULT_TTF_BOLD',
 		'separator4' => '',
 		'dolibarr_main_prod' => 'Production mode (Hide all error messages)',
+		'dolibarr_main_restrict_os_commands' => 'Restrict CLI commands for backups',
+		'dolibarr_main_restrict_ip' => 'Restrict access to some IPs only',
 		'?dolibarr_mailing_limit_sendbyweb' => 'Limit nb of email sent by page',
 		'?dolibarr_mailing_limit_sendbycli' => 'Limit nb of email sent by cli',
-        '?dolibarr_strict_mode' => 'Strict mode is on/off',
-		'?dolibarr_pdf_force_fpdf' => 'Force fpdf usage to generate PDF'
+		'?dolibarr_strict_mode' => 'Strict mode is on/off',
+		'?dolibarr_nocsrfcheck' => 'Disable CSRF security checks'
 );
 
-$var=true;
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -441,8 +441,8 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		print '<tr class="oddeven">';
-		print '<td class="tdoverflow">'.$obj->name.'</td>'."\n";
-		print '<td class="tdoverflow">'.$obj->value.'</td>'."\n";
+		print '<td class="tdoverflowmax300">'.$obj->name.'</td>'."\n";
+		print '<td class="tdoverflowmax300">'.dol_escape_htmltag($obj->value).'</td>'."\n";
 		if (empty($conf->multicompany->enabled) || !$user->entity) print '<td align="center" width="80px">'.$obj->entity.'</td>'."\n";	// If superadmin or multicompany disabled
 		print "</tr>\n";
 

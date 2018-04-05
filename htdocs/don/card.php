@@ -98,20 +98,21 @@ if ($action == 'update')
 	{
 		$object->fetch($id);
 
-		$object->firstname   = GETPOST("firstname");
-		$object->lastname    = GETPOST("lastname");
-		$object->societe     = GETPOST("societe");
-		$object->address     = GETPOST("address");
-		$object->amount      = price2num(GETPOST("amount"));
-		$object->town        = GETPOST("town");
-        $object->zip         = GETPOST("zipcode");
+		$object->firstname   = GETPOST("firstname",'alpha');
+		$object->lastname    = GETPOST("lastname",'alpha');
+		$object->societe     = GETPOST("societe",'alpha');
+		$object->address     = GETPOST("address",'alpha');
+		$object->amount      = price2num(GETPOST("amount",'alpha'));
+		$object->town        = GETPOST("town",'alpha');
+		$object->zip         = GETPOST("zipcode",'alpha');
         $object->country_id  = GETPOST('country_id', 'int');
-        $object->email       = GETPOST("email");
+        $object->email       = GETPOST("email",'alpha');
 		$object->date        = $donation_date;
-		$object->public      = GETPOST("public");
-		$object->fk_project  = GETPOST("fk_project");
-		$object->note_private= GETPOST("note_private");
-		$object->note_public = GETPOST("note_public");
+		$object->public      = GETPOST("public",'alpha');
+		$object->fk_project  = GETPOST("fk_project",'alpha');
+		$object->note_private= GETPOST("note_private",'none');
+		$object->note_public = GETPOST("note_public",'none');
+		$object->modepaymentid = GETPOST('modepayment','int');
 
 		// Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -151,20 +152,21 @@ if ($action == 'add')
 
 	if (! $error)
 	{
-		$object->firstname   = GETPOST("firstname");
-		$object->lastname    = GETPOST("lastname");
-		$object->societe     = GETPOST("societe");
-		$object->address     = GETPOST("address");
-		$object->amount      = price2num(GETPOST("amount"));
-        $object->zip         = GETPOST("zipcode");
-        $object->town        = GETPOST("town");
+		$object->firstname   = GETPOST("firstname",'alpha');
+		$object->lastname    = GETPOST("lastname",'alpha');
+		$object->societe     = GETPOST("societe",'alpha');
+		$object->address     = GETPOST("address",'alpha');
+		$object->amount      = price2num(GETPOST("amount",'alpha'));
+		$object->zip         = GETPOST("zipcode",'alpha');
+		$object->town        = GETPOST("town",'alpha');
         $object->country_id  = GETPOST('country_id', 'int');
-		$object->email       = GETPOST("email");
+        $object->email       = GETPOST("email",'alpha');
 		$object->date        = $donation_date;
-		$object->note_private= GETPOST("note_private");
-		$object->note_public = GETPOST("note_public");
-		$object->public      = GETPOST("public");
-		$object->fk_project  = GETPOST("fk_project");
+		$object->note_private= GETPOST("note_private",'none');
+		$object->note_public = GETPOST("note_public",'none');
+		$object->public      = GETPOST("public",'alpha');
+		$object->fk_project  = GETPOST("fk_project",'alpha');
+		$object->modepaymentid = GETPOST('modepayment','int');
 
 		// Fill array 'array_options' with data from add form
         $ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -348,6 +350,12 @@ if ($action == 'create')
 
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
 
+	// Payment mode
+	print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
+	$selected = GETPOST('modepayment','int');
+	$form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1);
+	print "</td></tr>\n";
+
 	// Public note
 	print '<tr>';
 	print '<td class="tdtop">' . $langs->trans('NotePublic') . '</td>';
@@ -480,14 +488,14 @@ if (! empty($id) && $action == 'edit')
 
 	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'"></td></tr>';
 
+	// Payment mode
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
-
     if ($object->modepaymentid) $selected = $object->modepaymentid;
     else $selected = '';
-
     $form->select_types_paiements($selected, 'modepayment', 'CRDT', 0, 1);
     print "</td></tr>\n";
 
+    // Status
 	print "<tr>".'<td>'.$langs->trans("Status").'</td><td>'.$object->getLibStatut(4).'</td></tr>';
 
     // Project
@@ -635,8 +643,9 @@ if (! empty($id) && $action != 'edit')
 	 * Payments
 	 */
 	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-	$sql.= " c.code as type_code,c.libelle as paiement_type";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON c.entity IN (".getEntity('c_paiement').")";
+	$sql.= "c.code as type_code,c.libelle as paiement_type";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
+	$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql.= ", ".MAIN_DB_PREFIX."don as d";
 	$sql.= " WHERE d.rowid = '".$id."'";
 	$sql.= " AND p.fk_donation = d.rowid";
@@ -764,7 +773,7 @@ if (! empty($id) && $action != 'edit')
 	$filename	=	dol_sanitizeFileName($object->id);
 	$filedir	=	$conf->don->dir_output . "/" . dol_sanitizeFileName($object->id);
 	$urlsource	=	$_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	=	($object->statut == 2 && ($object->paid == 0 || $user->admin) && $user->rights->don->lire);
+	$genallowed	=	(($object->paid == 0 || $user->admin) && $user->rights->don->lire);
 	$delallowed	=	$user->rights->don->creer;
 
 	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);

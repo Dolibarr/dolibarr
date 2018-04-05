@@ -52,7 +52,7 @@ class modSyslog extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Activate debug logs (syslog)";
 		// Can be enabled / disabled only in the main company
-		$this->core_enabled = true;
+		$this->core_enabled = 1;
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
@@ -79,5 +79,10 @@ class modSyslog extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'syslog';
+
+		// Cronjobs
+		$this->cronjobs = array(
+		    0=>array('label'=>'CompressSyslogs', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'compressSyslogs', 'parameters'=>'', 'comment'=>'Compress and archive log files', 'frequency'=>1, 'unitfrequency'=> 3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>true),
+		);
 	}
 }

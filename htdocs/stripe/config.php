@@ -15,40 +15,38 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Set Stripe environment: set the ApiKey and AppInfo
  */
 
 /**
-*  \file       htdocs/public/stripe/config.php
+*  \file       htdocs/stripe/config.php
 *  \ingroup    Stripe
 *  \brief      Page to move config in api
 */
 
-require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/stripe/lib/Stripe.php';
 
 global $stripe;
 global $conf;
 
-//use \includes\stripe as stripe;
-$stripe = array();
 
+$stripearrayofkeys = array();
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
 {
-	$stripe = array(
+	$stripearrayofkeys = array(
 		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
 		"publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
 	);
 }
 else
 {
-	$stripe = array(
+	$stripearrayofkeys = array(
 		"secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
 		"publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
 	);
 }
 
-require_once DOL_DOCUMENT_ROOT."/includes/stripe/lib/Stripe.php";
-require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-
-\Stripe\Stripe::setApiKey($stripe['secret_key']);
+\Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
+\Stripe\Stripe::setAppInfo("Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version

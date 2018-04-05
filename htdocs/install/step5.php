@@ -189,6 +189,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
                     else
                         dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                           // All entities
     			}
+
+    			dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
 		    }
 
 		    // Create user used to create the admin user

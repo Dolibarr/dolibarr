@@ -66,22 +66,8 @@ if ($action == "create" || $action == "add") $objecttype = '';
 $result = restrictedArea($user, 'facture', $id, $objecttype);
 $projectid = GETPOST('projectid','int');
 
-$search_ref=GETPOST('search_ref');
-$search_societe=GETPOST('search_societe');
-$search_montant_ht=GETPOST('search_montant_ht');
-$search_montant_vat=GETPOST('search_montant_vat');
-$search_montant_ttc=GETPOST('search_montant_ttc');
-$search_payment_mode=GETPOST('search_payment_mode');
-$search_payment_term=GETPOST('search_payment_term');
-$day=GETPOST('day');
-$year=GETPOST('year');
-$month=GETPOST('month');
-$day_date_when=GETPOST('day_date_when');
 $year_date_when=GETPOST('year_date_when');
 $month_date_when=GETPOST('month_date_when');
-$search_recurring=GETPOST('search_recurring','int');
-$search_frequency=GETPOST('search_frequency','alpha');
-$search_unit_frequency=GETPOST('search_unit_frequency','alpha');
 
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -116,6 +102,8 @@ $permissionnote = $user->rights->facture->creer; // Used by the include of actio
 $permissiondellink=$user->rights->facture->creer;	// Used by the include of actions_dellink.inc.php
 $permissiontoedit = $user->rights->facture->creer; // Used by the include of actions_lineupdonw.inc.php
 
+$now = dol_now();
+
 
 /*
  * Actions
@@ -141,28 +129,6 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';	// Must be include, not include_once
-
-	// Do we click on purge search criteria ?
-	if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
-	{
-		$search_ref='';
-		$search_societe='';
-		$search_montant_ht='';
-		$search_montant_vat='';
-		$search_montant_ttc='';
-		$search_montant_mode='';
-		$search_montant_term='';
-		$day='';
-		$year='';
-		$month='';
-		$day_date_when='';
-		$year_date_when='';
-		$month_date_when='';
-		$search_recurring='';
-		$search_frequency='';
-		$search_unit_frequency='';
-		$search_array_options=array();
-	}
 
 	// Mass actions
 	/*$objectclass='MyObject';
@@ -684,6 +650,9 @@ if (empty($reshook))
 			$fk_unit= GETPOST('units', 'alpha');
 		}
 
+		$date_start_fill = GETPOST('date_start_fill','int');
+		$date_end_fill = GETPOST('date_end_fill','int');
+
 		// Margin
 		$fournprice = price2num(GETPOST('fournprice' . $predef) ? GETPOST('fournprice' . $predef) : '');
 		$buyingprice = price2num(GETPOST('buying_price' . $predef) != '' ? GETPOST('buying_price' . $predef) : '');    // If buying_price is '0', we must keep this value
@@ -704,7 +673,7 @@ if (empty($reshook))
 		else
 		{
 			// Insert line
-			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx,$localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit);
+			$result = $object->addline($desc, $pu_ht, $qty, $tva_tx,$localtax1_tx, $localtax2_tx, $idprod, $remise_percent, $price_base_type, $info_bits, '', $pu_ttc, $type, - 1, $special_code, $label, $fk_unit, 0, $date_start_fill, $date_end_fill);
 
 			if ($result > 0)
 			{
@@ -759,6 +728,9 @@ if (empty($reshook))
 				unset($_POST['date_endday']);
 				unset($_POST['date_endmonth']);
 				unset($_POST['date_endyear']);
+
+				unset($_POST['date_start_fill']);
+				unset($_POST['date_end_fill']);
 
 				unset($_POST['situations']);
 				unset($_POST['progress']);
@@ -881,6 +853,9 @@ if (empty($reshook))
 			$error ++;
 		}
 
+		$date_start_fill = GETPOST('date_start_fill','int');
+		$date_end_fill = GETPOST('date_end_fill','int');
+
 		// Update line
 		if (! $error)
 		{
@@ -903,7 +878,10 @@ if (empty($reshook))
 				$special_code,
 				$label,
 				GETPOST('units'),
-				$pu_ht_devise
+				$pu_ht_devise,
+				0,
+				$date_start_fill,
+				$date_end_fill
 			);
 
 			if ($result >= 0)
@@ -1133,7 +1111,7 @@ if ($action == 'create')
 		print "<input type='text' name='frequency' value='".GETPOST('frequency', 'int')."' size='4' />&nbsp;".$form->selectarray('unit_frequency', array('d'=>$langs->trans('Day'), 'm'=>$langs->trans('Month'), 'y'=>$langs->trans('Year')), (GETPOST('unit_frequency')?GETPOST('unit_frequency'):'m'));
 		print "</td></tr>";
 
-		// First date of execution for cron
+		// Date next run
 		print "<tr><td>".$langs->trans('NextDateToExecution')."</td><td>";
 		$date_next_execution = isset($date_next_execution) ? $date_next_execution : (GETPOST('remonth') ? dol_mktime(12, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear')) : -1);
 		print $form->select_date($date_next_execution, '', 1, 1, '', "add", 1, 1, 1);
@@ -1187,7 +1165,7 @@ if ($action == 'create')
 			$disableedit=1;
 			$disablemove=1;
 			$disableremove=1;
-			$ret = $object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
+			$object->printObjectLines('', $mysoc, $object->thirdparty, $lineid, 0);      // No date selector for template invoice
 		}
 
 		print "</table>\n";
@@ -1533,6 +1511,8 @@ else
 		{
 			print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 		}
+		//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
+		if ($action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
 		print '</td>';
 		print '</tr>';
 

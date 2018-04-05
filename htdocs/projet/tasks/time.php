@@ -72,6 +72,7 @@ if (! $sortfield) $sortfield='t.task_date,t.task_datehour,t.rowid';
 if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+//$object = new TaskTime($db);
 $hookmanager->initHooks(array('projecttaskcard','globalcard'));
 
 $object = new Task($db);
@@ -436,7 +437,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	if (empty($projectidforalltimes))
 	{
 		$head=task_prepare_head($object);
-		dol_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask');
+		dol_fiche_head($head, 'task_time', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 		if ($action == 'deleteline')
 		{
@@ -534,7 +535,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 		print load_fiche_titre($title, $linktocreatetime, 'title_generic.png');
 
-
 		/*
 		 * Form to add time spent on task
 		 */
@@ -548,6 +548,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="noborder nohover" width="100%">';
 
 			print '<tr class="liste_titre">';
@@ -604,7 +605,10 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
 			print '</td></tr>';
 
-			print '</table></form>';
+			print '</table>';
+			print '</div>';
+
+			print '</form>';
 
 			print '<br>';
 		}
@@ -612,7 +616,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 	if ($projectstatic->id > 0)
 	{
-		if ($action == 'deleteline')
+		if ($action == 'deleteline' && ! empty($projectidforalltimes))
 		{
 			print $form->formconfirm($_SERVER["PHP_SELF"]."?".($object->id>0?"id=".$object->id:'projectid='.$projectstatic->id).'&lineid='.GETPOST('lineid','int').($withproject?'&withproject=1':''),$langs->trans("DeleteATimeSpent"),$langs->trans("ConfirmDeleteATimeSpent"),"confirm_delete",'','',1);
 		}
@@ -1093,13 +1097,14 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			{
 				if ($task_time->fk_user == $user->id || in_array($task_time->fk_user, $childids) || $user->rights->projet->all->creer)
 				{
+					//$param = ($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'.($withproject?'&amp;withproject=1':'');
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=editline&amp;lineid='.$task_time->rowid.$param.'">';
 					print img_edit();
 					print '</a>';
 
 					print '&nbsp;';
-					print '<a href="'.$_SERVER["PHP_SELF"].'?'.($projectidforalltimes?'projectid='.$projectidforalltimes.'&amp;':'').'id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.($withproject?'&amp;withproject=1':'').'">';
+					print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$task_time->fk_task.'&amp;action=deleteline&amp;lineid='.$task_time->rowid.$param.'">';
 					print img_delete();
 					print '</a>';
 			    }

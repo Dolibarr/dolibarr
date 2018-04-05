@@ -142,12 +142,17 @@ function llxFooterVierge()
 // Action called when page is submitted
 if ($action == 'add')
 {
+	$error = 0;
+	$urlback='';
+
+	$db->begin();
+
     // test if login already exists
     if (empty($conf->global->ADHERENT_LOGIN_NOT_REQUIRED))
     {
         if(! GETPOST('login'))
         {
-            $error+=1;
+            $error++;
             $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Login"))."<br>\n";
         }
         $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$db->escape(GETPOST('login'))."'";
@@ -158,52 +163,52 @@ if ($action == 'add')
         }
         if ($num !=0)
         {
-            $error+=1;
+            $error++;
             $langs->load("errors");
             $errmsg .= $langs->trans("ErrorLoginAlreadyExists")."<br>\n";
         }
         if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"])
         {
-            $error+=1;
+            $error++;
             $langs->load("errors");
             $errmsg .= $langs->trans("ErrorPasswordsMustMatch")."<br>\n";
         }
         if (! GETPOST("email"))
         {
-            $error+=1;
+            $error++;
             $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("EMail"))."<br>\n";
         }
     }
     if (GETPOST('type') <= 0)
     {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Type"))."<br>\n";
     }
     if (! in_array(GETPOST('morphy'),array('mor','phy')))
     {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv('Nature'))."<br>\n";
     }
     if (empty($_POST["lastname"]))
     {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Lastname"))."<br>\n";
     }
     if (empty($_POST["firstname"]))
     {
-        $error+=1;
+        $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Firstname"))."<br>\n";
     }
     if (GETPOST("email") && ! isValidEmail(GETPOST("email")))
     {
-        $error+=1;
+        $error++;
         $langs->load("errors");
         $errmsg .= $langs->trans("ErrorBadEMail",GETPOST("email"))."<br>\n";
     }
     $birthday=dol_mktime($_POST["birthhour"],$_POST["birthmin"],$_POST["birthsec"],$_POST["birthmonth"],$_POST["birthday"],$_POST["birthyear"]);
     if ($_POST["birthmonth"] && empty($birthday))
     {
-        $error+=1;
+        $error++;
         $langs->load("errors");
         $errmsg .= $langs->trans("ErrorBadDateFormat")."<br>\n";
     }
@@ -211,7 +216,7 @@ if ($action == 'add')
     {
         if (GETPOST("morphy") == 'mor' && GETPOST('budget') <= 0)
         {
-            $error+=1;
+            $error++;
             $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("TurnoverOrBudget"))."<br>\n";
         }
     }
@@ -256,21 +261,72 @@ if ($action == 'add')
         if ($result > 0)
         {
 			require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+            $object = $adh;
 
-            // Send email to say it has been created and will be validated soon...
-            if (! empty($conf->global->ADHERENT_AUTOREGISTER_MAIL) && ! empty($conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT))
+            $adht = new AdherentType($db);
+            $adht->fetch($object->typeid);
+
+            if ($object->email)
             {
-                $result=$adh->send_an_email($conf->global->ADHERENT_AUTOREGISTER_MAIL,$conf->global->ADHERENT_AUTOREGISTER_MAIL_SUBJECT,array(),array(),array(),"","",0,-1);
+            	$subject = '';
+            	$msg= '';
+
+            	// Send subscription email
+            	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            	$formmail=new FormMail($db);
+            	// Set output language
+            	$outputlangs = new Translate('', $conf);
+            	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	$outputlangs->loadLangs(array("main", "members"));
+            	// Get email content fro mtemplae
+            	$arraydefaultmessage=null;
+            	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_AUTOREGISTER;
+
+            	if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            	if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            	{
+            		$subject = $arraydefaultmessage->topic;
+            		$msg     = $arraydefaultmessage->content;
+            	}
+
+            	$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            	complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            	$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            	$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnValid()), $substitutionarray, $outputlangs);
+
+            	if ($subjecttosend && $texttosend)
+            	{
+            		$result=$object->send_an_email($texttosend, $subjecttosend, array(), array(), array(), "", "", 0, -1);
+            	}
+            	/*if ($result < 0)
+            	{
+            		$error++;
+            		setEventMessages($object->error, $object->errors, 'errors');
+            	}*/
             }
 
             // Send email to the foundation to say a new member subscribed with autosubscribe form
             if (! empty($conf->global->MAIN_INFO_SOCIETE_MAIL) && ! empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT) &&
                   ! empty($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL) )
             {
+            	// Define link to login card
+            	$appli=constant('DOL_APPLICATION_TITLE');
+            	if (! empty($conf->global->MAIN_APPLICATION_TITLE))
+            	{
+            		$appli=$conf->global->MAIN_APPLICATION_TITLE;
+            		if (preg_match('/\d\.\d/', $appli))
+            		{
+            			if (! preg_match('/'.preg_quote(DOL_VERSION).'/', $appli)) $appli.=" (".DOL_VERSION.")";	// If new title contains a version that is different than core
+            		}
+            		else $appli.=" ".DOL_VERSION;
+            	}
+            	else $appli.=" ".DOL_VERSION;
+
             	$to=$adh->makeSubstitution($conf->global->MAIN_INFO_SOCIETE_MAIL);
             	$from=$conf->global->ADHERENT_MAIL_FROM;
 				$mailfile = new CMailFile(
-					$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
+					'['.$appli.'] '.$conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT,
 					$to,
 					$from,
 					$adh->makeSubstitution($conf->global->ADHERENT_AUTOREGISTER_NOTIF_MAIL),
@@ -297,7 +353,7 @@ if ($action == 'add')
             }
             else $urlback=$_SERVER["PHP_SELF"]."?action=added";
 
-            if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE))
+            if (! empty($conf->global->MEMBER_NEWFORM_PAYONLINE) && $conf->global->MEMBER_NEWFORM_PAYONLINE != '-1')
             {
                 if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all')
                 {
@@ -308,7 +364,7 @@ if ($action == 'add')
                     {
                         if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
@@ -342,7 +398,7 @@ if ($action == 'add')
                     {
                         if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
                         {
-                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
@@ -359,7 +415,7 @@ if ($action == 'add')
                     {
                         if (! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
                         {
-                    	   $urlback.='&securekey='.urlencode(dol_hash($conf->global->STRIPE_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->STRIPE_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
@@ -376,13 +432,24 @@ if ($action == 'add')
 
             if (! empty($entity)) $urlback.='&entity='.$entity;
             dol_syslog("member ".$adh->ref." was created, we redirect to ".$urlback);
-            Header("Location: ".$urlback);
-            exit;
         }
         else
         {
+        	$error++;
             $errmsg .= join('<br>',$adh->errors);
         }
+    }
+
+    if (! $error)
+    {
+    	$db->commit();
+
+    	Header("Location: ".$urlback);
+    	exit;
+    }
+    else
+    {
+    	$db->rollback();
     }
 }
 
@@ -418,10 +485,12 @@ $extrafields->fetch_name_optionals_label('adherent');    // fetch optionals attr
 llxHeaderVierge($langs->trans("NewSubscription"));
 
 
-print load_fiche_titre($langs->trans("NewSubscription"));
+print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
 
+print '<div class="center subscriptionformhelptext">';
 if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
+print '</div>';
 
 dol_htmloutput_errors($errmsg);
 

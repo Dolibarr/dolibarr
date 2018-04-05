@@ -40,10 +40,10 @@ if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 $langs->load("other");
 $langs->load("products");
 
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
+$action = GETPOST('action','alpha');
+$confirm= GETPOST('confirm','alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -93,7 +93,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	//Delete line if product propal merge is linked to a file
+	// Delete line if product propal merge is linked to a file
 	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 	{
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
@@ -346,7 +346,6 @@ if ($object->id)
     		print  '</form>';
     	}
     }
-
 }
 else
 {

@@ -196,6 +196,7 @@ class Project extends CommonObject
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
         $sql.= ", " . (strcmp($this->opp_amount,'') ? price2num($this->opp_amount) : 'null');
         $sql.= ", " . (strcmp($this->budget_amount,'') ? price2num($this->budget_amount) : 'null');
+        $sql.= ", " . ($this->bill_time ? 1 : 0);
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -647,45 +648,13 @@ class Project extends CommonObject
 	        }
         }
 
-        // Delete tasks
-        if (! $error)
-        {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_time";
-	        $sql.= " WHERE fk_task IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+		// Fetch tasks
+		$this->getLinesArray($user);
 
-	        $resql = $this->db->query($sql);
-	        if (!$resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
-        }
-
-        if (! $error)
-        {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
-	        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
-
-	        $resql = $this->db->query($sql);
-	        if (!$resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
-        }
-
-        if (! $error)
-        {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
-	        $sql.= " WHERE fk_projet=" . $this->id;
-
-	        $resql = $this->db->query($sql);
-	        if (!$resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
-        }
+		// Delete tasks
+		foreach($this->lines as &$task) {
+			$task->delete($user);
+		}
 
         // Delete project
         if (! $error)
@@ -1020,17 +989,18 @@ class Project extends CommonObject
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
 
-		if (! is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
+			/*if (! is_object($hookmanager)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($this->db);
+			}
+			$hookmanager->initHooks(array('projectdao'));
+			$parameters=array('id'=>$this->id);
+			// Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
+			if ($reshook > 0)
+				$linkclose = $hookmanager->resPrint;
+			*/
 		}
-		$hookmanager->initHooks(array('projectdao'));
-		$parameters=array('id'=>$this->id);
-		// Note that $action and $object may have been modified by some hooks
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
-		if ($reshook > 0)
-			$linkclose = $hookmanager->resPrint;
-        }
 
         $picto = 'projectpub';
         if (! $this->public) $picto = 'project';
@@ -1044,6 +1014,18 @@ class Project extends CommonObject
         if ($withpicto != 2) $result.= $this->ref;
         $result .= $linkend;
         if ($withpicto != 2) $result.=(($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+        global $action;
+        if (! is_object($hookmanager))
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+        	$hookmanager=new HookManager($this->db);
+        }
+        $hookmanager->initHooks(array('projectdao'));
+        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) $result = $hookmanager->resPrint;
+        else $result .= $hookmanager->resPrint;
 
         return $result;
     }

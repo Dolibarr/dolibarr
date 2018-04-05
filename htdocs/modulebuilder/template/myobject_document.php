@@ -45,7 +45,7 @@ dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/myobject.lib.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule@mymodule","companies","other"));
+$langs->loadLangs(array("mymodule@mymodule","companies","other","mails"));
 
 
 $action=GETPOST('action','aZ09');
@@ -68,12 +68,13 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
+//if (! $sortfield) $sortfield="position_name";
 
 // Initialize technical objects
 $object=new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectdocument'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('myobjectdocument','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('myobject');
 
@@ -82,7 +83,6 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 
 //if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->id);
 if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/packages/" . dol_sanitizeFileName($object->ref);
-
 
 
 /*
@@ -108,7 +108,6 @@ if ($object->id)
 	/*
 	 * Show tabs
 	 */
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = myobjectPrepareHead($object);
 
 	dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, 'myobject@mymodule');

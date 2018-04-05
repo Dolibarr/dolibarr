@@ -165,47 +165,71 @@ function dolWebsiteSaveContent($content)
 
 
 /**
- * Make a redirect to another container
+ * Make a redirect to another container.
  *
- * @param 	string	$containeralias		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
+ * @param 	string	$containerref		Ref of container to redirect to (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php').
+ * @param 	string	$containeraliasalt	Ref of alternative aliases to redirect to.
+ * @param 	int		$containerid		Id of container.
  * @return  void
  */
-function redirectToContainer($containeralias)
+function redirectToContainer($containerref, $containeraliasalt='',$containerid=0)
 {
 	global $db, $website;
 
 	$newurl = '';
+	$result=0;
+
+	// We make redirect using the alternative alias, we must find the real $containerref
+	if ($containeraliasalt)
+	{
+		include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+		$tmpwebsitepage=new WebsitePage($db);
+		$result = $tmpwebsitepage->fetch(0, $website->id, '', $containeraliasalt);
+		if ($result > 0)
+		{
+			$containerref = $tmpwebsitepage->pageurl;
+		}
+		else
+		{
+			print "Error, page contains a redirect to the alternative alias '".$containeraliasalt."' that does not exists in web site (".$website->id." / ".$website->ref.")";
+			exit;
+		}
+	}
 
 	if (defined('USEDOLIBARRSERVER'))	// When page called from Dolibarr server
 	{
 		// Check new container exists
-		$tmpwebsitepage=new WebsitePage($db);
-		$result = $tmpwebsitepage->fetch(0, $website->id, $containeralias);
-		unset($tmpwebsitepage);
+		if (! $containeraliasalt)	// If containeraliasalt set, we already did the test
+		{
+			include_once DOL_DOCUMENT_ROOT.'/website/class/websitepage.class.php';
+			$tmpwebsitepage=new WebsitePage($db);
+			$result = $tmpwebsitepage->fetch(0, $website->id, $containerref);
+			unset($tmpwebsitepage);
+		}
 		if ($result > 0)
 		{
 			$currenturi = $_SERVER["REQUEST_URI"];
 			if (preg_match('/&pageref=([^&]+)/', $currenturi, $regtmp))
 			{
-				if ($regtmp[0] == $containeralias)
+				if ($regtmp[0] == $containerref)
 				{
-					print "Error, page with uri '.$currenturi.' try a redirect to the same alias page '".$containeralias."' in web site '".$website->ref."'";
+					print "Error, page with uri '.$currenturi.' try a redirect to the same alias page '".$containerref."' in web site '".$website->ref."'";
 					exit;
 				}
 				else
 				{
-					$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containeralias, $currenturi);
+					$newurl = preg_replace('/&pageref=([^&]+)/', '&pageref='.$containerref, $currenturi);
 				}
 			}
 			else
 			{
-				$newurl = $currenturi.'&pageref='.urlencode($containeralias);
+				$newurl = $currenturi.'&pageref='.urlencode($containerref);
 			}
 		}
 	}
 	else								// When page called from virtual host server
 	{
-		$newurl = '/'.$containeralias.'.php';
+		$newurl = '/'.$containerref.'.php';
 	}
 
 	if ($newurl)
@@ -215,7 +239,7 @@ function redirectToContainer($containeralias)
 	}
 	else
 	{
-		print "Error, page contains a redirect to the alias page '".$containeralias."' that does not exists in web site '".$website->ref."'";
+		print "Error, page contains a redirect to the alias page '".$containerref."' that does not exists in web site (".$website->id." / ".$website->ref.")";
 		exit;
 	}
 }
@@ -225,10 +249,10 @@ function redirectToContainer($containeralias)
  * Clean an HTML page to report only content, so we can include it into another page.
  * It outputs content of file sanitized from html and body part.
  *
- * @param 	string	$containeralias		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
+ * @param 	string	$containerref		Path to file to include (must be a page from website root. Example: 'mypage.php' means 'mywebsite/mypage.php')
  * @return  void
  */
-function includeContainer($containeralias)
+function includeContainer($containerref)
 {
 	global $conf, $db, $langs, $mysoc, $user, $website;
 	global $includehtmlcontentopened;
@@ -236,9 +260,9 @@ function includeContainer($containeralias)
 
 	$MAXLEVEL=20;
 
-	if (! preg_match('/\.php$/i', $containeralias)) $containeralias.='.php';
+	if (! preg_match('/\.php$/i', $containerref)) $containerref.='.php';
 
-	$fullpathfile=DOL_DATA_ROOT.'/website/'.$websitekey.'/'.$containeralias;
+	$fullpathfile=DOL_DATA_ROOT.'/website/'.$websitekey.'/'.$containerref;
 
 	if (empty($includehtmlcontentopened)) $includehtmlcontentopened=0;
 	$includehtmlcontentopened++;
@@ -261,7 +285,7 @@ function includeContainer($containeralias)
 
 	if (! $res)
 	{
-		print 'ERROR: FAILED TO INCLUDE PAGE '.$containeralias.".\n";
+		print 'ERROR: FAILED TO INCLUDE PAGE '.$containerref.".\n";
 	}
 
 	$includehtmlcontentopened--;
@@ -547,6 +571,42 @@ function dolSavePageContent($filetpl, $object, $objectpage)
 		@chmod($filetpl, octdec($conf->global->MAIN_UMASK));
 
 		return $result;
+}
+
+
+/**
+ * Save content of the index.php page
+ *
+ * @param	string		$pathofwebsite			Path of website root
+ * @param	string		$fileindex				Full path of file index.php
+ * @param	string		$filetpl				File tpl to index.php page redirect to
+ * @return	boolean								True if OK
+ */
+function dolSaveIndexPage($pathofwebsite, $fileindex, $filetpl)
+{
+	global $conf;
+
+	$result=0;
+
+	dol_mkdir($pathofwebsite);
+	dol_delete_file($fileindex);
+
+	$indexcontent = '<?php'."\n";
+	$indexcontent.= "// BEGIN PHP File generated to provide an index.php as Home Page or alias redirector - DO NOT MODIFY - It is just a generated wrapper.\n";
+	$indexcontent.= '$websitekey=basename(dirname(__FILE__));'."\n";
+	$indexcontent.= "if (! defined('USEDOLIBARRSERVER')) { require_once './master.inc.php'; } // Load master if not already loaded\n";
+	$indexcontent.= 'if (! empty($_GET[\'pageref\']) || ! empty($_GET[\'pagealiasalt\']) || ! empty($_GET[\'pageid\'])) {'."\n";
+	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/lib/website.lib.php';\n";
+	$indexcontent.= "	require_once DOL_DOCUMENT_ROOT.'/core/website.inc.php';\n";
+	$indexcontent.= '	redirectToContainer($_GET[\'pageref\'], $_GET[\'pagealiasalt\'], $_GET[\'pageid\']);'."\n";
+	$indexcontent.= "}\n";
+	$indexcontent.= "include_once './".basename($filetpl)."'\n";
+	$indexcontent.= '// END PHP ?>'."\n";
+	$result = file_put_contents($fileindex, $indexcontent);
+	if (! empty($conf->global->MAIN_UMASK))
+		@chmod($fileindex, octdec($conf->global->MAIN_UMASK));
+
+	return $result;
 }
 
 

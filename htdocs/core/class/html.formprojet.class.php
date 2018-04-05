@@ -91,7 +91,7 @@ class FormProjets
 		}
 		else
 		{
-			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid);
+			$out.=$this->select_projects_list($socid, $selected, $htmlname, $maxlength, $option_only, $show_empty, $discard_closed, $forcefocus, $disabled, 0, $filterkey, 1, $forceaddid, $htmlid, $morecss);
 		}
 		if ($discard_closed)
 		{
@@ -177,7 +177,7 @@ class FormProjets
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 	           	$comboenhancement = ajax_combobox($htmlid, array(), 0, $forcefocus);
             	$out.=$comboenhancement;
-            	$morecss='minwidth100 maxwidth500';
+            	$morecss.=' minwidth100';
 			}
 
 			if (empty($option_only)) {

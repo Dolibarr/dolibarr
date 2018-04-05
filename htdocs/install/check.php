@@ -76,8 +76,8 @@ if (! empty($useragent))
 
 
 // Check PHP version
-$arrayphpminversionerror = array(5,3,0);
-$arrayphpminversionwarning = array(5,3,0);
+$arrayphpminversionerror = array(5,4,0);
+$arrayphpminversionwarning = array(5,4,0);
 if (versioncompare(versionphparray(),$arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));

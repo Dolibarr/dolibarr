@@ -43,7 +43,7 @@ $langs->load("accountancy");
 $langs->load("trips");
 $langs->load("productbatch");
 
-$account_parent = GETPOST('account_parent');
+$account_parent = GETPOST('account_parent','int');
 $changeaccount = GETPOST('changeaccount');
 // Search Getpost
 $search_expensereport = GETPOST('search_expensereport', 'alpha');
@@ -103,27 +103,36 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
 
+	if (! (GETPOST('account_parent','int') >= 0))
+	{
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
+	}
+
 	$db->begin();
 
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-	$sql1 .= " SET erd.fk_code_ventilation=" . GETPOST('account_parent','int');
-	$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
+	if (! $error)
+	{
+		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
+		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
+		$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
 
-	dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= ' . $sql1);
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		setEventMessages($db->lasterror(), null, 'errors');
-	}
-	if (! $error) {
-		$db->commit();
-		setEventMessages($langs->trans('Save'), null, 'mesgs');
-	} else {
-		$db->rollback();
-		setEventMessages($db->lasterror(), null, 'errors');
-	}
+		dol_syslog('accountancy/expensereport/lines.php::changeaccount sql= ' . $sql1);
+		$resql1 = $db->query($sql1);
+		if (! $resql1) {
+			$error ++;
+			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		if (! $error) {
+			$db->commit();
+			setEventMessages($langs->trans('Save'), null, 'mesgs');
+		} else {
+			$db->rollback();
+			setEventMessages($db->lasterror(), null, 'errors');
+		}
 
-	$account_parent = '';   // Protection to avoid to mass apply it a second time
+		$account_parent = '';   // Protection to avoid to mass apply it a second time
+	}
 }
 
 
@@ -164,10 +173,10 @@ $sql .= " FROM " . MAIN_DB_PREFIX . "expensereport as er";
 $sql .= " , " . MAIN_DB_PREFIX . "accounting_account as aa";
 $sql .= " , " . MAIN_DB_PREFIX . "expensereport_det as erd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_fees as f ON f.id = erd.fk_c_type_fees";
-$sql .= " WHERE er.rowid = erd.fk_expensereport and er.fk_statut >= 5 AND erd.fk_code_ventilation <> 0 ";
+$sql .= " WHERE er.rowid = erd.fk_expensereport and er.fk_statut IN (".ExpenseReport::STATUS_APPROVED.", ".ExpenseReport::STATUS_CLOSED.") AND erd.fk_code_ventilation <> 0 ";
 $sql .= " AND aa.rowid = erd.fk_code_ventilation";
 if (strlen(trim($search_expensereport))) {
-	$sql .= " AND er.ref like '%" . $search_expensereport . "%'";
+	$sql .= natural_search("er.ref", $search_expensereport);
 }
 if (strlen(trim($search_label))) {
 	$sql .= natural_search("f.label", $search_label);
@@ -246,7 +255,7 @@ if ($result) {
 	print $langs->trans("DescVentilDoneExpenseReport") . '<br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
-	print $formaccounting->select_account(GETPOST('account_parent'), 'account_parent', 1);
+	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '" /></div>';
 
 	$moreforfilter = '';

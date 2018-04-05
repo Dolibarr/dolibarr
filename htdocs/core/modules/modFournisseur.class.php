@@ -72,7 +72,7 @@ class modFournisseur extends DolibarrModules
 		// Dependencies
 		$this->depends = array("modSociete");
 		$this->requiredby = array();
-		$this->langfiles = array('bills', 'companies', 'suppliers', 'orders');
+		$this->langfiles = array('bills', 'companies', 'suppliers', 'orders', 'sendings');
 
 		// Config pages
 		$this->config_page_url = array("supplier_order.php");
@@ -453,14 +453,14 @@ class modFournisseur extends DolibarrModules
 		$this->export_label[$r]='Commandes fournisseurs et lignes de commandes';
 		$this->export_icon[$r]='order';
 		$this->export_permission[$r]=array(array("fournisseur","commande","export"));
-		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','s.tva_intra'=>'VATIntra','f.rowid'=>"OrderId",'f.ref'=>"Ref",'f.ref_supplier'=>"RefSupplier",'f.date_creation'=>"DateCreation",'f.date_commande'=>"OrderDate",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.fk_statut'=>'Status','f.date_approve'=>'DateApprove','f.date_approve2'=>'DateApprove2','f.note_public'=>"NotePublic",'f.note_private'=>"NotePrivate",'ua1.login'=>'ApprovedBy','ua2.login'=>'ApprovedBy2','fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_tx'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.remise_percent'=>"Discount",'fd.total_ht'=>"LineTotalHT",'fd.total_ttc'=>"LineTotalTTC",'fd.total_tva'=>"LineTotalVAT",'fd.product_type'=>'TypeOfLineServiceOrProduct','fd.fk_product'=>'ProductId',
+		$this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','c.code'=>'CountryCode','s.phone'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','s.idprof5'=>'ProfId5','s.idprof6'=>'ProfId6','s.tva_intra'=>'VATIntra','f.rowid'=>"OrderId",'f.ref'=>"Ref",'f.ref_supplier'=>"RefSupplier",'f.date_creation'=>"DateCreation",'f.date_commande'=>"OrderDate",'f.date_livraison'=>"DateDeliveryPlanned",'f.total_ht'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.fk_statut'=>'Status','f.date_approve'=>'DateApprove','f.date_approve2'=>'DateApprove2','f.note_public'=>"NotePublic",'f.note_private'=>"NotePrivate",'ua1.login'=>'ApprovedBy','ua2.login'=>'ApprovedBy2','fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.tva_tx'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.remise_percent'=>"Discount",'fd.total_ht'=>"LineTotalHT",'fd.total_ttc'=>"LineTotalTTC",'fd.total_tva'=>"LineTotalVAT",'fd.product_type'=>'TypeOfLineServiceOrProduct','fd.fk_product'=>'ProductId',
 											  'p.ref'=>'ProductRef','p.label'=>'ProductLabel','project.rowid'=>'ProjectId','project.ref'=>'ProjectRef','project.title'=>'ProjectLabel');
 		if (empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
 		{
 			unset($this->export_fields_array['f.date_approve2']);
 			unset($this->export_fields_array['ua2.login']);
 		}
-		$this->export_TypeFields_array[$r]=array('s.rowid'=>"company",'s.nom'=>'Text','s.address'=>'Text','s.cp'=>'Text','s.ville'=>'Text','c.code'=>'Text','s.tel'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.date_creation'=>"Date",'f.date_commande'=>"Date",'f.total_ht'=>"Numeric",'f.total_ttc'=>"Numeric",'f.tva'=>"Numeric",'f.fk_statut'=>'Status','f.date_approve'=>'Date','f.date_approve2'=>'Date','f.note_public'=>"Text",'f.note_private'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Numeric",'fd.qty'=>"Numeric",'fd.remise_percent'=>"Numeric",'fd.total_ht'=>"Numeric",'fd.total_ttc'=>"Numeric",'fd.total_tva'=>"Numeric",'fd.product_type'=>'Numeric','fd.fk_product'=>'List:product:label',
+		$this->export_TypeFields_array[$r]=array('s.rowid'=>"company",'s.nom'=>'Text','s.address'=>'Text','s.cp'=>'Text','s.ville'=>'Text','c.code'=>'Text','s.tel'=>'Text','s.siren'=>'Text','s.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",'f.date_creation'=>"Date",'f.date_commande'=>"Date",'f.date_livraison'=>"Date",'f.total_ht'=>"Numeric",'f.total_ttc'=>"Numeric",'f.tva'=>"Numeric",'f.fk_statut'=>'Status','f.date_approve'=>'Date','f.date_approve2'=>'Date','f.note_public'=>"Text",'f.note_private'=>"Text",'fd.description'=>"Text",'fd.tva_tx'=>"Numeric",'fd.qty'=>"Numeric",'fd.remise_percent'=>"Numeric",'fd.total_ht'=>"Numeric",'fd.total_ttc'=>"Numeric",'fd.total_tva'=>"Numeric",'fd.product_type'=>'Numeric','fd.fk_product'=>'List:product:label',
 		                                          'p.ref'=>'Text','p.label'=>'Text','project.ref'=>'Text','project.title'=>'Text');
 		$this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','s.tva_intra'=>'company','ua1.login'=>'user','ua2.login'=>'user','fd.rowid'=>'order_line','fd.description'=>"order_line",'fd.tva_tx'=>"order_line",'fd.qty'=>"order_line",'fd.remise_percent'=>"order_line",'fd.total_ht'=>"order_line",'fd.total_ttc'=>"order_line",'fd.total_tva'=>"order_line",'fd.product_type'=>'order_line','fd.fk_product'=>'product',
 		                                         'p.ref'=>'product','p.label'=>'product','project.rowid'=>'project','project.ref'=>'project','project.title'=>'project');
@@ -530,7 +530,11 @@ class modFournisseur extends DolibarrModules
 					case 'sellist':
 						$tmp='';
 						$tmpparam=unserialize($obj->param);	// $tmp ay be array 'options' => array 'c_currencies:code_iso:code_iso' => null
-						if ($tmpparam['options'] && is_array($tmpparam['options'])) $tmp=array_shift(array_keys($tmpparam['options']));
+
+						if ($tmpparam['options'] && is_array($tmpparam['options'])) {
+							$tmpparam_param_key=array_keys($tmpparam['options']);
+							$tmp=array_shift($tmpparam_param_key);
+						}
 						if (preg_match('/[a-z0-9_]+:[a-z0-9_]+:[a-z0-9_]+/', $tmp)) $typeFilter="List:".$tmp;
 						break;
 				}

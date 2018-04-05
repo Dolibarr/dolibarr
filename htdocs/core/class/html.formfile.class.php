@@ -299,6 +299,9 @@ class FormFile
 			return $this->getDocumentsLink($modulepart, $modulesubdir, $filedir);
 		}
 
+		// Add entity in $param
+		$param.= 'entity='.(!empty($object->entity)?$object->entity:$conf->entity);
+
 		$printer=0;
 		if (in_array($modulepart,array('facture','supplier_proposal','propal','proposal','order','commande','expedition', 'commande_fournisseur', 'expensereport')))	// The direct print feature is implemented only for such elements
 		{
@@ -613,7 +616,7 @@ class FormFile
 			$out.= '<tr class="liste_titre">';
 
 			$addcolumforpicto=($delallowed || $printer || $morepicto);
-			$out.= '<th align="center" colspan="'.(3+($addcolumforpicto?'2':'1')).'" class="formdoc liste_titre maxwidthonsmartphone">';
+			$out.= '<th align="center" colspan="'.(3+($addcolumforpicto?1:0)).'" class="formdoc liste_titre maxwidthonsmartphone">';
 
 			// Model
 			if (! empty($modellist))
@@ -699,7 +702,8 @@ class FormFile
 			$out.= '<!-- html.formfile::showdocuments -->'."\n";
 
 			// Show title of array if not already shown
-			if ((! empty($file_list) || ! empty($link_list) || preg_match('/^massfilesarea/', $modulepart)) && ! $headershown)
+			if ((! empty($file_list) || ! empty($link_list) || preg_match('/^massfilesarea/', $modulepart))
+				&& ! $headershown)
 			{
 				$headershown=1;
 				$out.= '<div class="titre">'.$titletoshow.'</div>'."\n";
@@ -744,14 +748,14 @@ class FormFile
 
 					if ($delallowed || $printer || $morepicto)
 					{
-						$out.= '<td align="right">';
+						$out.= '<td class="right nowraponall">';
 						if ($delallowed)
 						{
 							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
 							$out.= ($param?'&amp;'.$param:'');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
-							$out.= '">'.img_picto($langs->trans("Delete"), 'delete.png').'</a>';
+							$out.= '">'.img_picto($langs->trans("Delete"), 'delete').'</a>';
 						}
 						if ($printer)
 						{
@@ -774,7 +778,7 @@ class FormFile
 						$res = $hookmanager->executeHooks('formBuilddocLineOptions',$parameters,$file);
 						if (empty($res))
 						{
-							$out .= $hookmanager->resPrint;		// Complete line
+							$out.= $hookmanager->resPrint;		// Complete line
 							$out.= '</tr>';
 						}
 						else $out = $hookmanager->resPrint;		// Replace line
@@ -807,7 +811,7 @@ class FormFile
 
 		 	if (count($file_list) == 0 && count($link_list) == 0 && $headershown)
 			{
-				$out.='<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
+				$out.='<tr><td colspan="'.(3+($addcolumforpicto?1:0)).'" class="opacitymedium">'.$langs->trans("None").'</td></tr>'."\n";
 			}
 
 		}
@@ -846,6 +850,17 @@ class FormFile
 
 		$out='';
 		$this->infofiles=array('nboffiles'=>0,'extensions'=>array(),'files'=>array());
+
+		// Get object entity
+		if (empty($conf->multicompany->enabled))
+		{
+			$entity = $conf->entity;
+		}
+		else
+		{
+			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir).'$/', $filedir, $regs);
+			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
+		}
 
 		$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
 
@@ -900,7 +915,7 @@ class FormFile
 				}
 
 				// Download
-				$tmpout.= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'"';
+				$tmpout.= '<li class="nowrap"><a class="pictopreview nowrap" href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;entity='.$entity.'&amp;file='.urlencode($relativepath).'"';
 				$mime=dol_mimetype($relativepath,'',0);
 				if (preg_match('/text/',$mime)) $tmpout.= ' target="_blank"';
 				$tmpout.= '>';
@@ -1211,14 +1226,14 @@ class FormFile
 							if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
 
 							$disablecrop=1;
-							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','project','user'))) $disablecrop=0;
+							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticketsup','user'))) $disablecrop=0;
 
 							if (! $disablecrop && image_format_supported($file['name']) > 0)
 							{
 								if ($permtoeditline)
 								{
 	   								// Link to resize
-	   						   		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("Resize")).'">'.img_picto($langs->trans("Resize"),DOL_URL_ROOT.'/theme/common/transform-crop-and-resize','class="paddingrightonly"',1).'</a>';
+	   						   		print '<a href="'.DOL_URL_ROOT.'/core/photos_resize.php?modulepart='.urlencode($newmodulepart).'&id='.$object->id.'&file='.urlencode($relativepath.$fileinfo['filename'].'.'.strtolower($fileinfo['extension'])).'" title="'.dol_escape_htmltag($langs->trans("ResizeOrCrop")).'">'.img_picto($langs->trans("ResizeOrCrop"),'resize','class="paddingrightonly"').'</a>';
 								}
 							}
 

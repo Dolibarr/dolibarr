@@ -69,7 +69,7 @@ class Don extends CommonObject
         global $langs;
 
         $this->db = $db;
-        $this->modepaiementid = 0;
+        $this->modepaymentid = 0;
 
         $langs->load("donations");
         $this->labelstatut[-1]=$langs->trans("Canceled");
@@ -338,7 +338,6 @@ class Don extends CommonObject
         $sql.= ", address";
         $sql.= ", zip";
         $sql.= ", town";
-        // $sql.= ", country"; -- Deprecated
         $sql.= ", fk_country";
         $sql.= ", public";
         $sql.= ", fk_projet";
@@ -354,7 +353,7 @@ class Don extends CommonObject
         $sql.= " '".$this->db->idate($now)."'";
         $sql.= ", ".$conf->entity;
         $sql.= ", ".price2num($this->amount);
-        $sql.= ", ".($this->modepaiementid?$this->modepaiementid:"null");
+        $sql.= ", ".($this->modepaymentid?$this->modepaymentid:"null");
         $sql.= ", '".$this->db->escape($this->firstname)."'";
         $sql.= ", '".$this->db->escape($this->lastname)."'";
         $sql.= ", '".$this->db->escape($this->societe)."'";
@@ -605,13 +604,14 @@ class Don extends CommonObject
 
         $sql = "SELECT d.rowid, d.datec, d.date_valid, d.tms as datem, d.datedon,";
         $sql.= " d.firstname, d.lastname, d.societe, d.amount, d.fk_statut, d.address, d.zip, d.town, ";
-        $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, cp.libelle, d.email, d.phone, ";
+        $sql.= " d.fk_country, d.country as country_olddata, d.public, d.amount, d.fk_payment, d.paid, d.note_private, d.note_public, d.email, d.phone, ";
         $sql.= " d.phone_mobile, d.fk_projet as fk_project, d.model_pdf,";
         $sql.= " p.ref as project_ref,";
+        $sql.= " cp.libelle as payment_label, cp.code as payment_code,";
         $sql.= " c.code as country_code, c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet as p ON p.rowid = d.fk_projet";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment AND cp.entity IN (".getEntity('c_paiement').")";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as cp ON cp.id = d.fk_payment";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.fk_country = c.rowid";
         $sql.= " WHERE d.entity IN (".getEntity('donation').")";
         if (! empty($id))
@@ -657,7 +657,8 @@ class Don extends CommonObject
                 $this->fk_project     = $obj->fk_project;
                 $this->public         = $obj->public;
                 $this->modepaymentid  = $obj->fk_payment;
-                $this->modepayment    = $obj->libelle;
+                $this->modepaymentcode = $obj->payment_code;
+                $this->modepayment    = $obj->payment_label;
 				$this->paid			  = $obj->paid;
                 $this->amount         = $obj->amount;
                 $this->note_private	  = $obj->note_private;

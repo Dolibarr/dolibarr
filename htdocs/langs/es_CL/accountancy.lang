@@ -110,7 +110,6 @@ ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta de contabilidad por defecto para productos
 ACCOUNTING_PRODUCT_SOLD_ACCOUNT=Cuenta de contabilidad por defecto para los productos vendidos (utilizada si no está definida en la hoja del producto)
 ACCOUNTING_SERVICE_BUY_ACCOUNT=Cuenta de contabilidad por defecto para los servicios comprados (se usa si no se define en la hoja de servicio)
 ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta de contabilidad por defecto para los servicios vendidos (utilizada si no está definida en la hoja de servicio)
-Code_tiers=Socio de Negocio
 LabelAccount=Cuenta
 LabelOperation=Operación de etiqueta
 Sens=Significado

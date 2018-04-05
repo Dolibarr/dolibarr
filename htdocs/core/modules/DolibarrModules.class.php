@@ -263,7 +263,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	public $always_enabled;
 
 	/**
-	 * @var bool Module is enabled globally (Multicompany support)
+	 * @var int Module is enabled globally (Multicompany support)
 	 */
 	public $core_enabled;
 
@@ -1049,7 +1049,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					{
 						if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
 						{
-							$result=run_sql($dir.$file,1,'',1);
+							$result=run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG)?1:0, '', 1);
 							if ($result <= 0) $error++;
 						}
 					}
@@ -1067,7 +1067,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					{
 						if (preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'llx_' && substr($file,0,4) != 'data')
 						{
-							$result=run_sql($dir.$file,1,'',1);
+							$result=run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG)?1:0, '', 1);
 							if ($result <= 0) $error++;
 						}
 					}
@@ -1085,7 +1085,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					{
 						if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,4) == 'data')
 						{
-							$result=run_sql($dir.$file,1,'',1);
+							$result=run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG)?1:0, '', 1);
 							if ($result <= 0) $error++;
 						}
 					}
@@ -1103,7 +1103,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					{
 						if (preg_match('/\.sql$/i',$file) && ! preg_match('/\.key\.sql$/i',$file) && substr($file,0,6) == 'update')
 						{
-							$result=run_sql($dir.$file,1,'',1);
+							$result=run_sql($dir.$file, empty($conf->global->MAIN_DISPLAY_SQL_INSTALL_LOG)?1:0, '', 1);
 							if ($result <= 0) $error++;
 						}
 					}

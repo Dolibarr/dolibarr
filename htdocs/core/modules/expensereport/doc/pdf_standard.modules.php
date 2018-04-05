@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2015 Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro     <aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2016 Philippe Grand	 	 <philippe.grand@atoo-net.com>
+ * Copyright (C) 2016-2018 Philippe Grand	 <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +38,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class pdf_standard extends ModeleExpenseReport
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+     /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+
+	/**
+     * @var string model name
+     */
+    public $name;
+
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+    
+	/**
+     * @var string document type
+     */
+    public $type;
 
     var $phpmin = array(4,3,0); // Minimum version of PHP required by module
     var $version = 'dolibarr';
@@ -64,11 +79,10 @@ class pdf_standard extends ModeleExpenseReport
 	 */
 	function __construct($db)
 	{
-		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("trips");
-		$langs->load("projects");
+		global $conf, $langs, $mysoc;
+		
+		// Translations
+		$langs->loadLangs(array("main", "trips", "projects"));
 
 		$this->db = $db;
 		$this->name = "";
@@ -154,11 +168,9 @@ class pdf_standard extends ModeleExpenseReport
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("trips");
-		$outputlangs->load("projects");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
 
 		$nblignes = count($object->lines);
 
@@ -515,10 +527,10 @@ class pdf_standard extends ModeleExpenseReport
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$hookmanager;
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "trips", "companies"));
 
-		$outputlangs->load("main");
-		$outputlangs->load("trips");
-		$outputlangs->load("companies");
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
 		/*

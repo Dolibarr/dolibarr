@@ -77,10 +77,14 @@ if ($object->id > 0)
 $upload_dir = $conf->contrat->dir_output.'/'.dol_sanitizeFileName($object->ref);
 $modulepart='contract';
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
+
 
 /*
  * Actions
  */
+
 include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 

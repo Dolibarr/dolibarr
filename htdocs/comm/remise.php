@@ -56,7 +56,14 @@ if (GETPOST('action','aZ09') == 'setremise')
 {
 	$object = new Societe($db);
 	$object->fetch($id);
-	$result=$object->set_remise_client(price2num(GETPOST("remise")),GETPOST("note"),$user);
+
+	$discount_type = GETPOST('discount_type', 'int');
+
+	if(! empty($discount_type)) {
+		$result=$object->set_remise_supplier(price2num(GETPOST("remise")),GETPOST("note"),$user);
+	} else {
+		$result=$object->set_remise_client(price2num(GETPOST("remise")),GETPOST("note"),$user);
+	}
 
 	if ($result > 0)
 	{
@@ -100,33 +107,72 @@ if ($socid > 0)
 
 	$head = societe_prepare_head($object);
 
-
+	$isCustomer = $object->client == 1 || $object->client == 3;
+	$isSupplier = $object->fournisseur == 1;
 
 	print '<form method="POST" action="remise.php?id='.$object->id.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="setremise">';
     print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 
-	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), 0, 'company');
+	dol_fiche_head($head, 'relativediscount', $langs->trans("ThirdParty"), -1, 'company');
 
     dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
 
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
+    
+    if(! $isCustomer && ! $isSupplier) {
+    	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
+    	
+    	dol_fiche_end();
+    	
+    	print '</form>';
+    	
+    	llxFooter();
+    	$db->close();
+    	exit;
+    }
+
 	print '<table class="border centpercent">';
 
-	// Discount
-	print '<tr><td class="titlefield">';
-	print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
+	if($isCustomer) {
+		// Customer discount
+		print '<tr><td class="titlefield">';
+		print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
+	}
+	
+	if($isSupplier) {
+		// Supplier discount
+		print '<tr><td class="titlefield">';
+		print $langs->trans("SupplierRelativeDiscount").'</td><td>'.price2num($object->remise_supplier_percent)."%</td></tr>";
+	}
+
 	print '</table>';
 	print '<br>';
 
 	print load_fiche_titre($langs->trans("NewRelativeDiscount"),'','');
 
 	print '<div class="underbanner clearboth"></div>';
+
+	if($isCustomer && ! $isSupplier) {
+		print '<input type="hidden" name="discount_type" value="0" />';
+	}
+	
+	if(! $isCustomer && $isSupplier) {
+		print '<input type="hidden" name="discount_type" value="1" />';
+	}
 	
 	print '<table class="border centpercent">';
+
+	if($isCustomer && $isSupplier) {
+		// Discount type
+		print '<tr><td class="titlefield fieldrequired">'.$langs->trans('DiscountType').'</td>';
+		print '<td><input type="radio" name="discount_type" id="discount_type_0" selected value="0"/> <label for="discount_type_0">'.$langs->trans('Customer').'</label>';
+		print ' <input type="radio" name="discount_type" id="discount_type_1" selected value="1"/> <label for="discount_type_1">'.$langs->trans('Supplier').'</label>';
+		print '</td></tr>';
+	}
 
 	// New value
 	print '<tr><td class="titlefield fieldrequired">';
@@ -155,57 +201,128 @@ if ($socid > 0)
 
 	print '<br>';
 
+	if($isCustomer) {
+		if($isSupplier) {
+			print '<div class="fichecenter">';
+			print '<div class="fichehalfleft">';
+			print load_fiche_titre($langs->trans("CustomerDiscounts"), '', '');
+		}
 
-	/*
-	 * List log of all percent discounts
-	 */
-	$sql  = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
-	$sql.= " u.login, u.rowid as user_id";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
-	$sql.= " WHERE rc.fk_soc = " . $object->id;
-	$sql.= " AND rc.entity = " . $conf->entity;
-	$sql.= " AND u.rowid = rc.fk_user_author";
-	$sql.= " ORDER BY rc.datec DESC";
-
-	$resql=$db->query($sql);
-	if ($resql)
-	{
-		print '<table class="noborder" width="100%">';
-		$tag = !$tag;
-		print '<tr class="liste_titre">';
-		print '<td width="160">'.$langs->trans("Date").'</td>';
-		print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
-		print '<td align="left">'.$langs->trans("NoteReason").'</td>';
-		print '<td align="center">'.$langs->trans("User").'</td>';
-		print '</tr>';
-		$num = $db->num_rows($resql);
-        if ($num > 0)
-        {
-		    $i = 0;
-            while ($i < $num)
-    		{
-    			$obj = $db->fetch_object($resql);
-    			print '<tr class="oddeven">';
-    			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
-    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
-    			print '<td align="left">'.$obj->note.'</td>';
-    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
-    			print '</tr>';
-    			$i++;
-    		}
+		/*
+		 * List log of all customer percent discounts
+		 */
+		$sql  = "SELECT rc.rowid, rc.remise_client as remise_percent, rc.note, rc.datec as dc,";
+		$sql.= " u.login, u.rowid as user_id";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE rc.fk_soc = " . $object->id;
+		$sql.= " AND rc.entity = " . $conf->entity;
+		$sql.= " AND u.rowid = rc.fk_user_author";
+		$sql.= " ORDER BY rc.datec DESC";
+	
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			print '<table class="noborder" width="100%">';
+			$tag = !$tag;
+			print '<tr class="liste_titre">';
+			print '<td width="160">'.$langs->trans("Date").'</td>';
+			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
+			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+			print '<td align="center">'.$langs->trans("User").'</td>';
+			print '</tr>';
+			$num = $db->num_rows($resql);
+	        if ($num > 0)
+	        {
+			    $i = 0;
+	            while ($i < $num)
+	    		{
+	    			$obj = $db->fetch_object($resql);
+	    			print '<tr class="oddeven">';
+	    			print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+	    			print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+	    			print '<td align="left">'.$obj->note.'</td>';
+	    			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+	    			print '</tr>';
+	    			$i++;
+	    		}
+			}
+			else
+			{
+			    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			}		
+			$db->free($resql);
+			print "</table>";
 		}
 		else
 		{
-		    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-		}		
-		$db->free($resql);
-		print "</table>";
-	}
-	else
-	{
-		dol_print_error($db);
+			dol_print_error($db);
+		}
 	}
 
+	if($isSupplier) {
+		if($isCustomer) {
+			print '</div>'; // class="fichehalfleft"
+			print '<div class="fichehalfright">';
+			print '<div class="ficheaddleft">';
+			print load_fiche_titre($langs->trans("SupplierDiscounts"), '', '');
+		}
+
+		/*
+		 * List log of all supplier percent discounts
+		 */
+		$sql  = "SELECT rc.rowid, rc.remise_supplier as remise_percent, rc.note, rc.datec as dc,";
+		$sql.= " u.login, u.rowid as user_id";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_supplier as rc, ".MAIN_DB_PREFIX."user as u";
+		$sql.= " WHERE rc.fk_soc = " . $object->id;
+		$sql.= " AND rc.entity = " . $conf->entity;
+		$sql.= " AND u.rowid = rc.fk_user_author";
+		$sql.= " ORDER BY rc.datec DESC";
+		
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			print '<table class="noborder" width="100%">';
+			$tag = !$tag;
+			print '<tr class="liste_titre">';
+			print '<td width="160">'.$langs->trans("Date").'</td>';
+			print '<td width="160" align="center">'.$langs->trans("CustomerRelativeDiscountShort").'</td>';
+			print '<td align="left">'.$langs->trans("NoteReason").'</td>';
+			print '<td align="center">'.$langs->trans("User").'</td>';
+			print '</tr>';
+			$num = $db->num_rows($resql);
+			if ($num > 0)
+			{
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $db->fetch_object($resql);
+					print '<tr class="oddeven">';
+					print '<td>'.dol_print_date($db->jdate($obj->dc),"dayhour").'</td>';
+					print '<td align="center">'.price2num($obj->remise_percent).'%</td>';
+					print '<td align="left">'.$obj->note.'</td>';
+					print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+					print '</tr>';
+					$i++;
+				}
+			}
+			else
+			{
+				print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			}
+			$db->free($resql);
+			print "</table>";
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+
+		if($isCustomer) {
+			print '</div>'; // class="ficheaddleft"
+			print '</div>'; // class="fichehalfright"
+			print '</div>'; // class="fichecenter"
+		}
+	}
 }
 
 llxFooter();
