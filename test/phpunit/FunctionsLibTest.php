@@ -830,8 +830,7 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         $s=img_picto('title', 'delete', '', 0, 1);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto3');
-
+        $this->assertEquals('/theme/eldy/img/delete.png',$s,'testImgPicto5');
     }
 
     /**
