@@ -175,7 +175,7 @@ class HookManager
 				'formatEvent',
                 'printObjectLine',
                 'printObjectSubLine',
-				'createDictionaryFieldList',
+				'createDictionaryFieldlist',
 				'editDictionaryFieldlist',
 				'getFormMail',
 			    'showLinkToObjectBlock'

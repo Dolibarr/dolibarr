@@ -234,7 +234,7 @@ $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype,";
 $sql.= " c.code as type_code, c.libelle as type_label,";
-$sql.= " sp.lastname, sp.firstname";
+$sql.= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -606,9 +606,14 @@ if ($resql)
 			print '<td>';
 			if ($obj->fk_contact > 0)
 			{
+				$contactstatic->id=$obj->fk_contact;
+				$contactstatic->email=$obj->email;
 				$contactstatic->lastname=$obj->lastname;
 				$contactstatic->firstname=$obj->firstname;
-				$contactstatic->id=$obj->fk_contact;
+				$contactstatic->phone_pro=$obj->phone_pro;
+				$contactstatic->phone_mobile=$obj->phone_mobile;
+				$contactstatic->phone_perso=$obj->phone_perso;
+				$contactstatic->country_id=$obj->country_id;
 				print $contactstatic->getNomUrl(1,'',28);
 			}
 			else

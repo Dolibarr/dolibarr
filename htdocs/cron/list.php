@@ -187,7 +187,7 @@ $sql.= " t.nbrun,";
 $sql.= " t.libname,";
 $sql.= " t.test";
 $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
-$sql.= " WHERE 1 = 1";
+$sql.= " WHERE entity IN (0,".$conf->entity.")";
 if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
 if ($status == 2) $sql.= " AND t.status = 2";
 //Manage filter
