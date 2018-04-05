@@ -77,6 +77,7 @@ $duration_unit = GETPOST('duration_unit');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
 $object = new Product($db);
+$object->type = $type;	// so test later to fill $usercancxxx is correct
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
