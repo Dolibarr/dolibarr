@@ -4586,6 +4586,7 @@ else if ($id > 0 || ! empty($ref))
 			
 			// remove situation from cycle
 			if ($object->statut == Facture::STATUS_VALIDATED
+			    && $object->type == Facture::TYPE_SITUATION
 			    && $user->rights->facture->creer
 			    && !$objectidnext
 			    && $object->situation_counter > 1

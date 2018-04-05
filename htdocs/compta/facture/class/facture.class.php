@@ -1530,8 +1530,16 @@ class Facture extends CommonInvoice
 				$invoice = new Facture($this->db);
 				if ($invoice->fetch($objp->rowid) > 0)
 				{
-					if ($objp->situation_counter < $this->situation_counter) $this->tab_previous_situation_invoice[] = $invoice;
-					else $this->tab_next_situation_invoice[] = $invoice;
+				    if ($objp->situation_counter < $this->situation_counter 
+				        || ($objp->situation_counter == $this->situation_counter && $objp->rowid < $this->id) // This case appear when there are credit notes
+				       ) 
+					{
+					    $this->tab_previous_situation_invoice[] = $invoice;
+					}
+					else
+					{
+					    $this->tab_next_situation_invoice[] = $invoice;
+					}
 				}
 			}
 		}
