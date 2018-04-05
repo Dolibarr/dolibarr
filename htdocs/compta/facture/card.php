@@ -2168,12 +2168,12 @@ if (empty($reshook))
 	    $object->fetch($id,'', '','', TRUE);
 	    
 	    if ($object->statut == Facture::STATUS_VALIDATED
+	        && $object->type == Facture::TYPE_SITUATION
 	        && $user->rights->facture->creer
 	        && !$objectidnext
 	        && $object->is_last_in_cycle()
 	        && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
 	            || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
-	        //&& ($object->total_ttc - $totalcreditnotes) == 0
 	        ) 
 	    {
 	        $outingError = 0;
@@ -2212,11 +2212,52 @@ if (empty($reshook))
 	                    $sql.= ' , situation_counter='.$object->situation_counter;
 	                    $sql.= ' WHERE rowid IN ('.implode(',',$linkedCreditNotesList).')';
 	                    
-	                    // TODO : change each progression persent on each lines
-	                    
 	                    $resql=$db->query($sql);
 	                    if (!$resql) $errors++;
 	                    
+	                    // Change each progression persent on each lines
+	                    foreach($object->lines as $line)
+	                    {
+	                        
+	                        // no traitement for special product
+	                        if ($line->product_type == 9 )  continue;
+	                        
+	                        
+	                        if(!empty($object->tab_previous_situation_invoice))
+	                        {
+                                // search the last invoice in cycle
+	                            $lineIndex = count($object->tab_previous_situation_invoice) - 1;
+                                $searchPreviousInvoice = true;
+                                while( $searchPreviousInvoice )
+                                {
+                                    if($object->tab_previous_situation_invoice[$lineIndex]->type  == Facture::TYPE_SITUATION || $lineIndex < 1)
+                                    {
+                                        $searchPreviousInvoice=false; // find, exit;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        $lineIndex--; // go to previous invoice in cycle
+                                    }
+                                }
+	                                
+	                                
+                                $maxPrevSituationPercent = 0;
+                                foreach($object->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
+                                {
+                                    if($prevLine->id == $line->fk_prev_id)
+                                    {
+                                        $maxPrevSituationPercent = max($maxPrevSituationPercent,$prevLine->situation_percent);
+                                    }
+                                }
+                                
+                                
+                                $line->situation_percent = $line->situation_percent - $maxPrevSituationPercent;
+                                
+                                if($line->update()<0) $errors++;
+	                                
+	                        }
+	                    }
 	                }
 	                
                     if (!$errors)
