@@ -94,7 +94,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','userdoc','globalcard');
+$hookmanager->initHooks(array('usercard','userdoc','globalcard'));
 
 
 /*

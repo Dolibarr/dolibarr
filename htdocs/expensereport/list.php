@@ -465,7 +465,14 @@ if ($resql)
 	else
 	{
 		$title = $langs->trans("ListTripsAndExpenses");
-		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+
+		$newcardbutton='';
+		if ($user->rights->expensereport->creer)
+		{
+			$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create">'.$langs->trans('NewTrip').'</a>';
+		}
+
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 	}
 
 	$topicmail="SendExpenseReport";
