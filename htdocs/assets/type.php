@@ -1,10 +1,5 @@
 <?php
-/* Copyright (C) 2001-2002	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +16,18 @@
  */
 
 /**
- *      \file       htdocs/adherents/type.php
- *      \ingroup    member
- *      \brief      Member's type setup
+ *  \file       htdocs/assets/type.php
+ *  \ingroup    assets
+ *  \brief      Asset's type setup
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/assets/class/assets.class.php';
+require_once DOL_DOCUMENT_ROOT.'/assets/class/assets_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("members");
+$langs->load("assets");
 
 $rowid  = GETPOST('rowid','int');
 $action = GETPOST('action','alpha');
@@ -43,7 +38,6 @@ $search_lastname	= GETPOST('search_lastname','alpha');
 $search_login		= GETPOST('search_login','alpha');
 $search_email		= GETPOST('search_email','alpha');
 $type				= GETPOST('type','alpha');
-$status				= GETPOST('status','alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -63,14 +57,14 @@ $comment=GETPOST("comment");
 $mail_valid=GETPOST("mail_valid");
 
 // Security check
-$result=restrictedArea($user,'adherent',$rowid,'adherent_type');
+$result=restrictedArea($user,'assets',$rowid,'assets_type');
 
-$object = new AdherentType($db);
+$object = new AssetsType($db);
 
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
-$extralabels=$extrafields->fetch_name_optionals_label('adherent_type');
+$extralabels=$extrafields->fetch_name_optionals_label('assets_type');
 
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
@@ -83,7 +77,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter_x',
 
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('membertypecard','globalcard'));
+$hookmanager->initHooks(array('assetstypecard','globalcard'));
 
 
 /*
@@ -101,13 +95,13 @@ if ($cancel) {
 	}
 }
 
-if ($action == 'add' && $user->rights->adherent->configurer)
+if ($action == 'add' && $user->rights->assets->write)
 {
-	$object->label			= trim($label);
-	$object->subscription	= (int) trim($subscription);
-	$object->note			= trim($comment);
-	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->label									= trim($label);
+	$object->accountancy_code_asset					= trim($accountancy_code_asset);
+	$object->accountancy_code_depreciation_asset	= trim($accountancy_code_depreciation_asset);
+	$object->accountancy_code_depreciation_expense	= trim($accountancy_code_depreciation_expense);
+	$object->note									= trim($comment);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -118,7 +112,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 		setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")), null, 'errors');
 	}
 	else {
-		$sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."adherent_type WHERE libelle='".$db->escape($object->label)."'";
+		$sql = "SELECT label FROM ".MAIN_DB_PREFIX."assets_type WHERE label='".$db->escape($object->label)."'";
 		$result = $db->query($sql);
 		if ($result) {
 			$num = $db->num_rows($result);
@@ -150,17 +144,17 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	}
 }
 
-if ($action == 'update' && $user->rights->adherent->configurer)
+if ($action == 'update' && $user->rights->assets->write)
 {
 	$object->fetch($rowid);
 
 	$object->oldcopy = clone $object;
 
-	$object->label			= trim($label);
-	$object->subscription	= (int) trim($subscription);
-	$object->note			= trim($comment);
-	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= (boolean) trim($vote);
+	$object->label									= trim($label);
+	$object->accountancy_code_asset					= trim($accountancy_code_asset);
+	$object->accountancy_code_depreciation_asset	= trim($accountancy_code_depreciation_asset);
+	$object->accountancy_code_depreciation_expense	= trim($accountancy_code_depreciation_expense);
+	$object->note									= trim($comment);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -170,7 +164,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 
 	if ($ret >= 0 && ! count($object->errors))
 	{
-		setEventMessages($langs->trans("MemberTypeModified"), null, 'mesgs');
+		setEventMessages($langs->trans("AssetsTypeModified"), null, 'mesgs');
 	}
 	else
 	{
@@ -181,20 +175,20 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	exit;
 }
 
-if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
+if ($action == 'confirm_delete' && $user->rights->assets->write)
 {
 	$object->fetch($rowid);
 	$res=$object->delete();
 
 	if ($res > 0)
 	{
-		setEventMessages($langs->trans("MemberTypeDeleted"), null, 'mesgs');
+		setEventMessages($langs->trans("AssetsTypeDeleted"), null, 'mesgs');
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
 	else
 	{
-		setEventMessages($langs->trans("MemberTypeCanNotBeDeleted"), null, 'errors');
+		setEventMessages($langs->trans("AssetsTypeCanNotBeDeleted"), null, 'errors');
 		$action='';
 	}
 }
@@ -205,18 +199,18 @@ if ($action == 'confirm_delete' && $user->rights->adherent->configurer)
  */
 
 $form=new Form($db);
+$helpurl='';
+llxHeader('',$langs->trans("AssetsTypeSetup"),$helpurl);
 
-llxHeader('',$langs->trans("MembersTypeSetup"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
-
-// List of members type
+// List of assets type
 if (! $rowid && $action != 'create' && $action != 'edit')
 {
 	//dol_fiche_head('');
 
-	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
-	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
+	$sql = "SELECT d.rowid, d.label as label, d.accountancy_code_asset, d.accountancy_code_depreciation_asset, d.accountancy_code_depreciation_expense, d.note";
+	$sql.= " FROM ".MAIN_DB_PREFIX."assets_type as d";
+	$sql.= " WHERE d.entity IN (".getEntity('assets_type').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -237,7 +231,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
         print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	    print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+	    print_barre_liste($langs->trans("AssetsTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
 
 		$moreforfilter = '';
 
@@ -252,19 +246,19 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
-		$membertype = new AdherentType($db);
+		$assetstype = new AssetsType($db);
 
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
 
-			$membertype->id = $objp->rowid;
-			$membertype->ref = $objp->rowid;
-			$membertype->label = $objp->rowid;
+			$assetstype->id = $objp->rowid;
+			$assetstype->ref = $objp->rowid;
+			$assetstype->label = $objp->rowid;
 
 			print '<tr class="oddeven">';
 			print '<td>';
-			print $membertype->getNomUrl(1);
+			print $assetstype->getNomUrl(1);
 			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
@@ -432,7 +426,7 @@ if ($rowid > 0)
 
 		// Show list of members (nearly same code than in page list.php)
 
-		$membertypestatic=new AdherentType($db);
+		$assetstypestatic=new AdherentType($db);
 
 		$now=dol_now();
 
@@ -514,9 +508,9 @@ if ($rowid > 0)
 
 		    if ($type > 0)
 		    {
-				$membertype=new AdherentType($db);
-		        $result=$membertype->fetch($type);
-				$titre.=" (".$membertype->label.")";
+				$assetstype=new AdherentType($db);
+		        $result=$assetstype->fetch($type);
+				$titre.=" (".$assetstype->label.")";
 		    }
 
 		    $param="&rowid=".$object->id;
@@ -603,9 +597,9 @@ if ($rowid > 0)
 
 		        // Type
 		        /*print '<td class="nowrap">';
-		        $membertypestatic->id=$objp->type_id;
-		        $membertypestatic->label=$objp->type;
-		        print $membertypestatic->getNomUrl(1,12);
+		        $assetstypestatic->id=$objp->type_id;
+		        $assetstypestatic->label=$objp->type;
+		        print $assetstypestatic->getNomUrl(1,12);
 		        print '</td>';
 				*/
 

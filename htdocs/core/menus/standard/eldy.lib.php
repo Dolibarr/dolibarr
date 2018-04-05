@@ -1143,7 +1143,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				$langs->load("assets");
 				$newmenu->add("/assets/list.php?leftmenu=assets&amp;mainmenu=accountancy",$langs->trans("MenuAssets"), 0, $user->rights->assets->read, '', $mainmenu, 'assets');
 				$newmenu->add("/assets/card.php?leftmenu=assets&amp;action=create",$langs->trans("MenuNewAsset"), 1, $user->rights->assets->write);
-				$newmenu->add("/assets/type.php?leftmenu=assets&amp;action=create",$langs->trans("MenuTypeAssets"), 1, $user->rights->assets->write);
+				$newmenu->add("/assets/type.php?leftmenu=assets",$langs->trans("MenuTypeAssets"), 1, $user->rights->assets->read, '', $mainmenu, 'assets_type');
+				$newmenu->add("/assets/type.php?leftmenu=assets_type&amp;action=create",$langs->trans("MenuNewTypeAssets"), 1, $user->rights->assets->write);
+				$newmenu->add("/assets/type.php?leftmenu=assets_type",$langs->trans("MenuListTypeAssets"), 1, $user->rights->assets->read);
 				$newmenu->add("/assets/list.php?leftmenu=assets",$langs->trans("MenuListAssets"), 1, $user->rights->assets->read);
 			}
 		}

@@ -18,7 +18,6 @@ create table llx_assets_type
   rowid                                 integer AUTO_INCREMENT PRIMARY KEY,
   entity                                integer DEFAULT 1 NOT NULL,	-- multi company id
   tms                                   timestamp,
-  statut                                smallint NOT NULL DEFAULT 0,
   label                                 varchar(50) NOT NULL,
   accountancy_code_asset                varchar(32),
   accountancy_code_depreciation_asset   varchar(32),
