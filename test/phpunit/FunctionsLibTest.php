@@ -465,6 +465,10 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $after=dol_string_nohtmltag($text,1);
         $this->assertEquals("DEF",$after,"test7");
 
+        $text='<a href="/myurl" title="<u>A title</u>">HIJ</a>';
+        $after=dol_string_nohtmltag($text,0);
+        $this->assertEquals("HIJ",$after,"test8");
+
         return true;
     }
 
