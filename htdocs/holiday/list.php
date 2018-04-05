@@ -377,7 +377,10 @@ else
 	$nbtotalofrecords = count($holiday->holiday);
    	//print $num;
     //print count($holiday->holiday);
-	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, '', '', $limit);
+
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request">'.$langs->trans('MenuAddCP').'</a>';
+
+	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, $newcardbutton, '', $limit);
 
 	$topicmail="Information";
 	$modelmail="leaverequest";
