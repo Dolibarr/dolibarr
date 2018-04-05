@@ -1240,7 +1240,7 @@ else
 			$linkback = '';
 
 			if ($user->rights->user->user->lire || $user->admin) {
-				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 			}
 		}
 

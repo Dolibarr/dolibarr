@@ -380,7 +380,7 @@ if ($resql)
 	if ($id > 0)		// For user tab
 	{
 		$title = $langs->trans("User");
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$head = user_prepare_head($fuser);
 
 		dol_fiche_head($head, 'expensereport', $title, -1, 'user');

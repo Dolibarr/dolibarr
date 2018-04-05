@@ -190,7 +190,7 @@ if ($object->id > 0)
     	dol_print_error($db);
     }
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
