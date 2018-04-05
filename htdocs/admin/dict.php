@@ -1117,7 +1117,7 @@ if ($id)
 
         $tmpaction = 'create';
         $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-        $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+        $reshook=$hookmanager->executeHooks('createDictionaryFieldList',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
         $error=$hookmanager->error; $errors=$hookmanager->errors;
 
         if ($id == 3) unset($fieldlist[2]); // Remove field ??? if dictionary Regions
