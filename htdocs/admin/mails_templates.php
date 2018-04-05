@@ -521,7 +521,7 @@ $parameters = array(
 	'fieldlist' => $fieldlist,
 	'tabname' => $tabname[$id]
 );
-$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('createEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 $error = $hookmanager->error;
 $errors = $hookmanager->errors;
 
@@ -732,7 +732,7 @@ if ($resql)
             {
             	$tmpaction='edit';
                 $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('editEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                 // Show fields
@@ -791,7 +791,7 @@ if ($resql)
             {
               	$tmpaction = 'view';
                 $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('viewEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
                 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
