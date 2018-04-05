@@ -820,13 +820,18 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $this->assertContains('theme',$s,'testImgPicto2');
         $this->assertContains('style="float: right"',$s,'testImgPicto2');
 
-        $s=img_picto('title','/fullpath/img.png','',1);
+        $s=img_picto('title', '/fullpath/img.png', '', 1);
         print __METHOD__." s=".$s."\n";
         $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto3');
 
-        $s=img_picto('title','/fullpath/img.png','',true);
+        $s=img_picto('title', '/fullpath/img.png', '', true);
         print __METHOD__." s=".$s."\n";
         $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto4');
+
+        $s=img_picto('title', 'delete', '', 0, 1);
+        print __METHOD__." s=".$s."\n";
+        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto3');
+
     }
 
     /**
