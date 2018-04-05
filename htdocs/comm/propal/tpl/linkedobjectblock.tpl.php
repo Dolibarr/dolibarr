@@ -52,18 +52,18 @@ foreach($linkedObjectBlock as $key => $objectlink)
     $trclass=($var?'pair':'impair');
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
-    <tr class="<?php echo $trclass; ?>">
-        <td><?php echo $langs->trans("Proposal"); ?></td>
-        <td><?php echo $objectlink->getNomUrl(1); ?></td>
-    	<td><?php echo $objectlink->ref_client; ?></td>
-    	<td align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
-    	<td align="right"><?php
+    <tr class="<?php echo $trclass; ?>"  data-element="<?php echo $objectlink->element; ?>"  data-id="<?php echo $objectlink->id; ?>" >
+        <td class="linkedcol-element" ><?php echo $langs->trans("Proposal"); ?></td>
+        <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
+    	<td class="linkedcol-ref" ><?php echo $objectlink->ref_client; ?></td>
+    	<td class="linkedcol-date" align="center"><?php echo dol_print_date($objectlink->date,'day'); ?></td>
+    	<td class="linkedcol-amount" align="right"><?php
     		if ($user->rights->propale->lire) {
     			$total = $total + $objectlink->total_ht;
     			echo price($objectlink->total_ht);
     		} ?></td>
-    	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+    	<td class="linkedcol-statut" align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td class="linkedcol-action" align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     </tr>
 <?php
 }

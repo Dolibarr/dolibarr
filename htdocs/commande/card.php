@@ -2451,7 +2451,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		/*
 		 * Form to add new line
 		 */
-		if ($object->statut == Commande::STATUS_DRAFT && $user->rights->commande->creer)
+		if ($object->statut == Commande::STATUS_DRAFT && $user->rights->commande->creer && $action != 'selectlines')
 		{
 			if ($action != 'editline')
 			{
