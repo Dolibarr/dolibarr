@@ -1418,8 +1418,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		 */
 		if ($mainmenu == 'tools')
 		{
-			$langs->load("mails");
-			$newmenu->add("/admin/mails_templates.php?leftmenu=email_templates", $langs->trans("EMailTemplates"), 0, 1, '', $mainmenu, 'email_templates');
+			if (empty($user->socid)) // limit to internal users
+			{
+				$langs->load("mails");
+				$newmenu->add("/admin/mails_templates.php?leftmenu=email_templates", $langs->trans("EMailTemplates"), 0, 1, '', $mainmenu, 'email_templates');
+			}
 
 			if (! empty($conf->mailing->enabled))
 			{
