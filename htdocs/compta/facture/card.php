@@ -2165,7 +2165,7 @@ if (empty($reshook))
 	// Outing situation invoice from cycle 
 	elseif ($action == 'confirm_situationout' && $confirm == 'yes' && $user->rights->facture->creer)
 	{
-	    $object->fetch($id);
+	    $object->fetch($id,'', '','', TRUE);
 	    
 	    if ($object->statut == Facture::STATUS_VALIDATED
 	        && $user->rights->facture->creer
@@ -2180,26 +2180,46 @@ if (empty($reshook))
 	        $newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
 	        if($newCycle > 1)
 	        {
+	            // Search credit notes 
 	            $lastCycle = $object->situation_cycle_ref;
+	            $lastSituationCounter = $object->situation_counter;
+	            $linkedCreditNotesList = array();
+	            
+                if (count($object->tab_next_situation_invoice) > 0) {
+                    foreach ($object->tab_next_situation_invoice as $next_invoice) {
+                        if($next_invoice->type == Facture::TYPE_CREDIT_NOTE 
+                            && $next_invoice->situation_counter == $object->situation_counter
+                            && $next_invoice->fk_facture_source == $object->id
+                          )
+                        {
+                            $linkedCreditNotesList[] = $next_invoice->id ;
+                        }
+                    }
+                }
+                
 	            $object->situation_cycle_ref = $newCycle;
 	            $object->situation_counter = 1;
-	            $object->situation_final = 1;
+	            $object->situation_final = 0;
 	            if($object->update($user) > 0)
 	            {
+	                $errors = 0;
+	                if(count($linkedCreditNotesList) > 0)
+	                {
+	                    // now, credit note must follow
+	                    $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
+	                    $sql.= ' SET situation_cycle_ref='.$newCycle;
+	                    $sql.= ' , situation_final=0';
+	                    $sql.= ' , situation_counter='.$object->situation_counter;
+	                    $sql.= ' WHERE rowid IN ('.implode(',',$linkedCreditNotesList).')';
+	                    
+	                    // TODO : change each progression persent on each lines
+	                    
+	                    $resql=$db->query($sql);
+	                    if (!$resql) $errors++;
+	                    
+	                }
 	                
-	                // now, credit note must follow
-	                $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
-	                $sql.= ' SET situation_cycle_ref='.intval($newCycle);
-	                $sql.= ' AND situation_counter='.$object->situation_counter;
-                    $sql.= ' WHERE situation_cycle_ref='.intval($lastCycle);
-                    //$sql.= ' AND situation_counter='.$object->situation_counter;
-                    $sql.= ' AND fk_facture_source='.$object->id;
-                    $sql.= ' AND type='.Facture::TYPE_CREDIT_NOTE;
-                    
-                    // TODO : change each progression persent on each lines
-                    
-                    $resql=$db->query($sql);
-                    if ($resql)
+                    if (!$errors)
                     {
                         setEventMessages($langs->trans('Updated'));
                         header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
