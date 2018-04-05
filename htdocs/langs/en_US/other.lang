@@ -246,3 +246,4 @@ WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=Title
 WEBSITE_DESCRIPTION=Description
 WEBSITE_KEYWORDS=Keywords
+LinesToImport=Lines to import

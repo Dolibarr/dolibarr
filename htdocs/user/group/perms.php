@@ -60,7 +60,7 @@ $object->fetch($id);
 $entity=$conf->entity;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks('groupperms','globalcard');
+$hookmanager->initHooks(array('groupperms','globalcard'));
 
 
 /**

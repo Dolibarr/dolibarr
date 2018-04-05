@@ -446,6 +446,13 @@ if (empty($reshook))
 			$comefromclone=true;
 		}
 	}
+
+	// Actions to send emails
+	$trigger_name='PROJECT_SENTBYMAIL';
+	$paramname='id';
+	$autocopy='MAIN_MAIL_AUTOCOPY_ORDER_TO';		// used to know the automatic BCC to add
+	$trackid='proj'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -1064,7 +1071,7 @@ elseif ($object->id > 0)
 																							  // modified by hook
 	if (empty($reshook))
 	{
-		if ($action != "edit" )
+		if ($action != "edit" && $action != 'presend' )
 		{
 
 			// Create event
@@ -1074,6 +1081,12 @@ elseif ($object->id > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '&amp;projectid=' . $object->id . '">' . $langs->trans("AddAction") . '</a></div>';
 			}*/
+
+			// Send
+			if ($object->statut != 2)
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail').'</a></div>';
+			}
 
 		// Modify
 			if ($object->statut != 2 && $user->rights->projet->creer)
@@ -1212,6 +1225,10 @@ elseif ($object->id > 0)
 
 	print "</div>";
 
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -1243,6 +1260,14 @@ elseif ($object->id > 0)
 
 		print '</div></div></div>';
 	}
+
+	// Presend form
+	$modelmail='project';
+	$defaulttopic='SendProjectRef';
+	$diroutput = $conf->projet->dir_output;
+	$trackid = 'proj'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 
 	// Hook to add more things on page
 	$parameters=array();

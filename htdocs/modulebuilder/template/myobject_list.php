@@ -211,7 +211,8 @@ foreach($object->fields as $key => $val)
 	$sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
-foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+if (! empty($extrafields->attributes[$object->element]['label']))
+	foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $object);    // Note that $action and $object may have been modified by hook
@@ -242,7 +243,8 @@ foreach($object->fields as $key => $val)
     $sql.='t.'.$key.', ';
 }
 // Add fields from extrafields
-foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ",ef.".$key : '');
+if (! empty($extrafields->attributes[$object->element]['label'])) {
+	foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ",ef.".$key : '');
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook

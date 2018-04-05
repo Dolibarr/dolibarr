@@ -148,12 +148,13 @@ if (empty($reshook))
 {
 	// Mass actions. Controls on number of lines checked
 	$maxformassaction=1000;
-	if (! empty($massaction) && count($toselect) < 1)
+	$numtoselect = (is_array($toselect)?count($toselect):0);
+	if (! empty($massaction) && $numtoselect < 1)
 	{
 		$error++;
 		setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
 	}
-	if (! $error && count($toselect) > $maxformassaction)
+	if (! $error && $numtoselect > $maxformassaction)
 	{
 		setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
 		$error++;
@@ -264,6 +265,12 @@ if ($resql)
 
 	//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
+	$newcardbutton='';
+	if ($user->rights->expedition->creer)
+	{
+		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2">'.$langs->trans('NewSending').'</a>';
+	}
+
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -274,7 +281,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
 	if ($sall)
 	{
@@ -541,7 +548,7 @@ if ($resql)
 		{
 			$shipment->fetchObjectLinked($shipment->id,$shipment->element);
 			$receiving='';
-			if (count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
+			if (is_array($shipment->linkedObjects['delivery']) && count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
 
 			if (! empty($arrayfields['l.ref']['checked']))
 			{
