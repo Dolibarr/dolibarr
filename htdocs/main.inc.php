@@ -73,7 +73,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  *
  * @param		string		$val		Value
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		int						>0 if there is an injection
+ * @return		int						>0 if there is an injection, 0 if none
  */
 function test_sql_and_script_inject($val, $type)
 {
@@ -128,17 +128,17 @@ function test_sql_and_script_inject($val, $type)
  *
  * @param		string			$var		Variable name
  * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean||null				true if there is an injection. Stop code if injection found.
+ * @return		boolean|null				true if there is no injection. Stop code if injection found.
  */
 function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 {
 	if (is_array($var))
 	{
-		foreach ($var as $key => $value)
+		foreach ($var as $key => $value)	// Warning, $key may also be used for attacks
 		{
-			if (analyseVarsForSqlAndScriptsInjection($value,$type))
+			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type))
 			{
-				$var[$key] = $value;
+				//$var[$key] = $value;	// This is useless
 			}
 			else
 			{
@@ -150,7 +150,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 	}
 	else
 	{
-		return (test_sql_and_script_inject($var,$type) <= 0);
+		return (test_sql_and_script_inject($var, $type) <= 0);
 	}
 }
 
