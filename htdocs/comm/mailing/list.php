@@ -103,7 +103,10 @@ if ($result)
 
 	$title=$langs->trans("ListOfEMailings");
 	if ($filteremail) $title.=' ('.$langs->trans("SentTo",$filteremail).')';
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,"",$num);
+
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create">'.$langs->trans('NewMailing').'</a>';
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '',$num, '', 'title_generic.png', 0, $newcardbutton);
 
 	$i = 0;
 

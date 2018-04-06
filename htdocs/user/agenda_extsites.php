@@ -69,7 +69,7 @@ if (($object->id != $user->id) && (! $user->rights->user->user->lire))
   accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','useragenda','globalcard');
+$hookmanager->initHooks(array('usercard','useragenda','globalcard'));
 
 /*
  * Actions
@@ -158,7 +158,7 @@ dol_fiche_head($head, 'extsites', $langs->trans("User"), -1, 'user');
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 }
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);

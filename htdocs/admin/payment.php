@@ -257,17 +257,6 @@ print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS",$con
 print '</td><td align="right">';
 print "</td></tr>\n";
 
-// Add js auto fill amount on paiement form
-/* always on now
-$var=! $var;
-print '<tr class="oddeven"><td>';
-print $langs->trans("JSOnPaimentBill");
-print '</td><td width="60" align="center">';
-print $form->selectyesno("INVOICE_AUTO_FILLJS",$conf->global->INVOICE_AUTO_FILLJS,1);
-print '</td><td align="right">';
-print "</td></tr>\n";
-*/
-
 print '</table>';
 
 print '<center>';

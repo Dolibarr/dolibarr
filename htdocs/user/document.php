@@ -94,7 +94,7 @@ if ($id > 0 || ! empty($ref))
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','userdoc','globalcard');
+$hookmanager->initHooks(array('usercard','userdoc','globalcard'));
 
 
 /*
@@ -133,7 +133,7 @@ if ($object->id)
 
 	$linkback = '';
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);

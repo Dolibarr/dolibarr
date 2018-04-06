@@ -776,7 +776,8 @@ class CMailFile
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
 				} else {
-					$this->error = sprintf ("Sent %d messages\n", $result);
+                    $this->error = $langs->trans("SentXXXmessages", $result);
+					$this->errors[] = $langs->trans("SentXXXmessages", $result);
 				}
 			}
 			else
