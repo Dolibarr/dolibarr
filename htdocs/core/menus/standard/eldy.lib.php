@@ -1597,7 +1597,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			// Begin of new left menu block
 			if (empty($menu_array[$i]['level']) && $showmenu)
 			{
-			    $altok++;
+				$altok++;
 				$blockvmenuopened=true;
 				$lastopened=true;
 				for($j = ($i + 1); $j < $num; $j++)
@@ -1630,8 +1630,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
 			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
 
-			$url = $shorturl = $menu_array[$i]['url'];
-
+			$url = $shorturl = $shorturlwithoutparam = $menu_array[$i]['url'];
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$menu_array[$i]['url']))
 			{
 			    $tmp=explode('?',$menu_array[$i]['url'],2);
@@ -1649,9 +1648,9 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			    }
 			    //$url.="idmenu=".$menu_array[$i]['rowid'];    // Already done by menuLoad
 			    $url = dol_buildpath($url,1).($param?'?'.$param:'');
+			    $shorturlwithoutparam = $shorturl;
 			    $shorturl = $shorturl.($param?'?'.$param:'');
 			}
-			//var_dump($url);
 
 
 			print '<!-- Process menu entry with mainmenu='.$menu_array[$i]['mainmenu'].', leftmenu='.$menu_array[$i]['leftmenu'].', level='.$menu_array[$i]['level'].' enabled='.$menu_array[$i]['enabled'].', position='.$menu_array[$i]['position'].' -->'."\n";
@@ -1661,7 +1660,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			{
 				if ($menu_array[$i]['enabled'])     // Enabled so visible
 				{
-					print '<div class="menu_titre">'.$tabstring.'<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>'.($menu_array[$i]['prefix']?$menu_array[$i]['prefix']:'').$menu_array[$i]['titre'].'</a></div>'."\n";
+					print '<div class="menu_titre">'.$tabstring;
+					if ($shorturlwithoutparam) print '<a class="vmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					else print '<span class="vmenu">';
+					print ($menu_array[$i]['prefix']?$menu_array[$i]['prefix']:'').$menu_array[$i]['titre'];
+					if ($shorturlwithoutparam) print '</a>';
+					else print '</span>';
+					print '</div>'."\n";
 					$lastlevel0='enabled';
 				}
 				else if ($showmenu)                 // Not enabled but visible (so greyed)
@@ -1688,10 +1693,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($menu_array[$i]['enabled'] && $lastlevel0 == 'enabled')     // Enabled so visible, except if parent was not enabled.
 				{
 					print '<div class="menu_contenu'.$cssmenu.'">'.$tabstring;
-					if ($menu_array[$i]['url']) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
+					if ($shorturlwithoutparam) print '<a class="vsmenu" href="'.$url.'"'.($menu_array[$i]['target']?' target="'.$menu_array[$i]['target'].'"':'').'>';
 					else print '<span class="vsmenu">';
 					print $menu_array[$i]['titre'];
-					if ($menu_array[$i]['url']) print '</a>';
+					if ($shorturlwithoutparam) print '</a>';
 					else print '</span>';
 					// If title is not pure text and contains a table, no carriage return added
 					if (! strstr($menu_array[$i]['titre'],'<table')) print '<br>';
