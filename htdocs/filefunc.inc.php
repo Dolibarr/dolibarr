@@ -159,11 +159,11 @@ if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
     	{
     		$tmpa=parse_url($_SERVER['HTTP_HOST']);
     		$tmpb=parse_url($_SERVER['HTTP_REFERER']);
-    		if ($tmpa['host'] != $tmpb['host']) $csrfattack=true;
+    		if ((empty($tmpa['host'])?$tmpa['path']:$tmpa['host']) != (empty($tmpb['host'])?$tmpb['path']:$tmpb['host'])) $csrfattack=true;
     	}
     	if ($csrfattack)
     	{
-    		//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
+    		//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
     		print "Access refused by CSRF protection in main.inc.php. Referer of form is outside server that serve the POST.\n";
         	print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
     		die;
