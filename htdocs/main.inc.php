@@ -332,7 +332,8 @@ if (! defined('NOTOKENRENEWAL'))
 	$token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
 }
-if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))	// Check validity of token, only if option enabled (this option breaks some features sometimes)
+if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
+	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOST('token','alpha')) // Note, offender can still send request by GET
 	{
