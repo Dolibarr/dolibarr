@@ -24,8 +24,8 @@
  */
 
 /**
- *	\file       htdocs/compta/paiement.php
- *	\ingroup    facture
+ *	\file       htdocs/stripe/payment.php
+ *	\ingroup    stripe
  *	\brief      Payment page for customers invoices
  */
 
@@ -72,7 +72,7 @@ if (! empty($conf->stripe->enabled))
 	{
 		$service = 'StripeLive';
 		$servicestatus = 0;
-	} 
+	}
 
 	$stripe = new Stripe($db);
 	$stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
@@ -119,7 +119,7 @@ if (empty($reshook))
 	    $atleastonepaymentnotnull = 0;
 
 	    // Generate payment array and check if there is payment higher than invoice and payment date before invoice date
-	    $tmpinvoice=new Facture($db); 
+	    $tmpinvoice=new Facture($db);
 	    foreach ($_POST as $key => $value)
 	    {
 	        if (substr($key,0,7) == 'amount_')
@@ -208,7 +208,7 @@ if (empty($reshook))
 //	        setEventMessages($langs->transnoentities('ErrorFieldRequired',$langs->transnoentities('Date')), null, 'errors');
 //	        $error++;
 //	    }
-		
+
 		// Check if payments in both currency
 		if ($totalpayment > 0 && $multicurrency_totalpayment > 0)
 		{
@@ -223,10 +223,10 @@ if (empty($reshook))
 	if ($action == 'add_paiement')
 	{
 	    if ($error)
-	    { 
+	    {
       $action = 'create';
       if (!$source)
-	    {   
+	    {
 			setEventMessages($langs->transnoentities('NoSource'), null, 'errors');
 	    }
 	        $error++;
@@ -254,7 +254,7 @@ if (empty($reshook))
 		    	$newvalue = price2num($value,'MT');
 		    	$amounts[$key] = -$newvalue;
 		    }
-			
+
 			foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatch
 		    {
 		    	$newvalue = price2num($value,'MT');
@@ -273,12 +273,13 @@ if (empty($reshook))
 	    }
 $facture = new Facture($db);
 $facture->fetch($facid);
- 
+$facture->fetch_thirdparty();
+
  $error = 0;
 
 		if (is_object($stripe) && $stripeacc)
 		{
-			$customerstripe=$stripe->customerStripe($object->socid, $stripeacc, $servicestatus);
+			$customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
 
 			if ($customerstripe->id) {
 				$listofsources=$customerstripe->sources->data;
@@ -287,7 +288,7 @@ $facture->fetch($facid);
 
 $stripeamount=0;
 		    foreach ($amounts as $key => $value)	// How payment is dispatch
-		    {         
+		    {
 $stripeamount+=price2num($value,'MT');
 }
 
@@ -312,7 +313,7 @@ $societe->fetch($facture->socid);
         dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
 
 $charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$source,$customer->id,$stripe->getStripeAccount($conf->entity));
-    
+
     if (!$error)
     {
 	    // Creation of payment line
@@ -327,7 +328,7 @@ $charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$sourc
 
 	    if (! $error)
 	    {
-      
+
 	    	$paiement_id = $paiement->create($user, 0);
 	    	if ($paiement_id < 0)
 	        {
@@ -349,8 +350,8 @@ $charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$sourc
 
 				$facture->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 
-			}    
-         
+			}
+
 	    }
 
 	    if (! $error)
@@ -364,14 +365,14 @@ $charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$sourc
 	            $error++;
 	        }
           elseif (GETPOST('closepaidinvoices')=='on') {
-          $facture->set_paid($user);  
+          $facture->set_paid($user);
           }
 	    }
 
 	    if (! $error)
 	    {
 	        $db->commit();
-       
+
 	        // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
 	        $invoiceid=0;
 	        foreach ($paiement->amounts as $key => $amount)
@@ -394,7 +395,7 @@ $charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$sourc
 	        $db->rollback();
           header('Location: '.$loc);
 	    }
-  
+
 	}
 }
 
@@ -403,21 +404,23 @@ $charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$sourc
  * View
  */
 
+$form=new Form($db);
+
 llxHeader();
 
-	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
-	{
-		$service = 'StripeLive';
-		$servicestatus = 0;
-	}
-  else {
-dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');  
-  }
-
-$form=new Form($db);
-if (GETPOST('error')){
-setEventMessages(GETPOST('error'), NULL, 'errors');
+if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+{
+	$service = 'StripeLive';
+	$servicestatus = 0;
 }
+else {
+	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
+}
+
+if (GETPOST('error')){
+	setEventMessages(GETPOST('error'), NULL, 'errors');
+}
+
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
 {
 	$facture = new Facture($db);
@@ -484,7 +487,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 							{
 								subJson[n["name"]] = n["value"];
 							});
-							
+
 							return subJson;
 						}
 						function callForResult(imgId)
@@ -557,7 +560,13 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 
 		print '<table class="border" width="100%">';
 
-        // Third party
+		// Invoice
+		/*if ($facture->id > 0)
+		{
+			print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans('Invoice').'</span></td><td>'.$facture->getNomUrl(4)."</td></tr>\n";
+		}*/
+
+		// Third party
         print '<tr><td class="titlefieldcreate"><span class="fieldrequired">'.$langs->trans('Company').'</span></td><td>'.$facture->thirdparty->getNomUrl(4)."</td></tr>\n";
 
         // Bank account
@@ -592,27 +601,28 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
 		print '<td class="tdtop">';
-		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment').'</textarea></td></tr>';
-        
+		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment','none').'</textarea></td></tr>';
+
         print '</table>';
 
 		dol_fiche_end();
 
 
-$customerstripe=$stripe->customerStripe($facture->socid, $stripeacc, $servicestatus);
- print '<br>';
-    print_barre_liste($langs->trans('StripeSourceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
+		$customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
 
-    print '<table class="liste" width="100%">'."\n";
-    // Titles with sort buttons
-    print '<tr class="liste_titre">';
-    print '<td align="left"></td>';
-    print '<td align="left">'.$langs->trans('Type').'</td>';
-    print '<td align="left">'.$langs->trans('Informations').'</td>';
-    print '<td align="left"></td>';
-    print "<td></td></tr>\n";
-    foreach ($customerstripe->sources->data as $src) {
-print '<tr>';
+		 print '<br>';
+		    print_barre_liste($langs->trans('StripeSourceList').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, '', '');
+
+		    print '<table class="liste" width="100%">'."\n";
+		    // Titles with sort buttons
+		    print '<tr class="liste_titre">';
+		    print '<td align="left"></td>';
+		    print '<td align="left">'.$langs->trans('Type').'</td>';
+		    print '<td align="left">'.$langs->trans('Informations').'</td>';
+		    print '<td align="left"></td>';
+		    print "<td></td></tr>\n";
+		    foreach ($customerstripe->sources->data as $src) {
+		print '<tr>';
 
             print '<td align="center" width="20" ';
 if (($action == 'add_paiement' && $src->id!=$source) or ($src->object=='source' && $src->card->three_d_secure=='required')) { print'class="opacitymedium"';}
@@ -705,66 +715,68 @@ print '</tr>';
 //$account=\Stripe\Account::retrieve("".$stripe->getStripeCustomerAccount($facture->socid)."");
 //}
 
-if (($account->type=='custom' or $account->type=='express') && $entity==1) {
-print '<tr '.$bc[0].'>';
+	if (($account->type=='custom' or $account->type=='express') && $entity==1) {
+	print '<tr '.$bc[0].'>';
 
-            print '<td align="center" width="20" ';
-if ($action == 'add_paiement' && $stripe->getStripeCustomerAccount($facture->socid)!=$source) { print'class="opacitymedium"';}
-print'><input type="radio" id="source_id" class="flat" name="source_id"  value="'.$conf->global->STRIPE_EXTERNAL_ACCOUNT.'"';
-            if ((empty($input) && $action != 'add_paiement') or ($source==$conf->global->STRIPE_EXTERNAL_ACCOUNT && $action == 'add_paiement')) {
-                print ' checked';
-            } elseif ($action == 'add_paiement' && $conf->global->STRIPE_EXTERNAL_ACCOUNT!=$source) {
-                print ' disabled';
-            }
-            print '></td><td ';
-if ($action == 'add_paiement' && $stripe->getStripeCustomerAccount($facture->socid)!=$source) { print'class="opacitymedium"';}            
-            print '><span class="fa fa-cc-stripe fa-3x fa-fw"></span></td>';
+	            print '<td align="center" width="20" ';
+	if ($action == 'add_paiement' && $stripe->getStripeCustomerAccount($facture->socid)!=$source) { print'class="opacitymedium"';}
+	print'><input type="radio" id="source_id" class="flat" name="source_id"  value="'.$conf->global->STRIPE_EXTERNAL_ACCOUNT.'"';
+	            if ((empty($input) && $action != 'add_paiement') or ($source==$conf->global->STRIPE_EXTERNAL_ACCOUNT && $action == 'add_paiement')) {
+	                print ' checked';
+	            } elseif ($action == 'add_paiement' && $conf->global->STRIPE_EXTERNAL_ACCOUNT!=$source) {
+	                print ' disabled';
+	            }
+	            print '></td><td ';
+	if ($action == 'add_paiement' && $stripe->getStripeCustomerAccount($facture->socid)!=$source) { print'class="opacitymedium"';}
+	            print '><span class="fa fa-cc-stripe fa-3x fa-fw"></span></td>';
 
-print '<td ';
-if ($action == 'add_paiement' && $stripe->getStripeCustomerAccount($facture->socid)!=$source) { print'class="opacitymedium"';}
-print'>'.$langs->trans('sold');
-print'</td><td ';
-if ($action == 'add_paiement' && $src->id!=$source) { print'class="opacitymedium"';}
-print'>';
+	print '<td ';
+	if ($action == 'add_paiement' && $stripe->getStripeCustomerAccount($facture->socid)!=$source) { print'class="opacitymedium"';}
+	print'>'.$langs->trans('sold');
+	print'</td><td ';
+	if ($action == 'add_paiement' && $src->id!=$source) { print'class="opacitymedium"';}
+	print'>';
 
-print '</td>';
-            // Default
-            print '<td align="center" width="50" ';
-if ($action == 'add_paiement' && $src->id!=$source) { print'class="opacitymedium"';}
-print'>';
-//            if (($customer->default_source!=$src->id)) {
-//                print img_picto($langs->trans("Disabled"),'off');
-//            } else {
-//                print img_picto($langs->trans("Default"),'on');
-//            }
-            print '</td>';
-print '</tr>';
-}
-if (empty($input)&&!$stripe->getStripeCustomerAccount($facture->socid))
-{
-print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</td></tr>';
-}	
+	print '</td>';
+	            // Default
+	            print '<td align="center" width="50" ';
+	if ($action == 'add_paiement' && $src->id!=$source) { print'class="opacitymedium"';}
+	print'>';
+	//            if (($customer->default_source!=$src->id)) {
+	//                print img_picto($langs->trans("Disabled"),'off');
+	//            } else {
+	//                print img_picto($langs->trans("Default"),'on');
+	//            }
+	            print '</td>';
+	print '</tr>';
+	}
+	if (empty($input)&&!$stripe->getStripeCustomerAccount($facture->socid))
+	{
+	print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("None").'</td></tr>';
+	}
 
-	print "</table>";		
+	print "</table>";
+
+
         /*
          * List of unpaid invoices
          */
-		
+
         $sql = 'SELECT f.rowid as facid, f.facnumber, f.total_ttc, f.multicurrency_code, f.multicurrency_total_ttc, f.type, ';
         $sql.= ' f.datef as df, f.fk_soc as socid';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-		
+
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS)) {
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON (f.fk_soc = s.rowid)';
 		}
-		
+
 		$sql.= ' WHERE f.entity = '.$conf->entity;
         $sql.= ' AND (f.fk_soc = '.$facture->socid;
-        
+
 		if(!empty($conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS) && !empty($facture->thirdparty->parent)) {
 			$sql.= ' OR f.fk_soc IN (SELECT rowid FROM '.MAIN_DB_PREFIX.'societe WHERE parent = '.$facture->thirdparty->parent.')';
 		}
-		
+
         $sql.= ') AND f.paye = 0';
         $sql.= ' AND f.fk_statut = 1'; // Statut=0 => not validated, Statut=2 => canceled
         if ($facture->type != 2)
@@ -838,9 +850,9 @@ print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</
                     $deposits=$invoice->getSumDepositsUsed();
                     $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
                     $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-					
+
 					// Multicurrency Price
-					if (!empty($conf->multicurrency->enabled)) 
+					if (!empty($conf->multicurrency->enabled))
 					{
 						$multicurrency_payment = $invoice->getSommePaiement(1);
 						$multicurrency_creditnotes=$invoice->getSumCreditNotesUsed(1);
@@ -848,7 +860,7 @@ print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</
 						$multicurrency_alreadypayed=price2num($multicurrency_payment + $multicurrency_creditnotes + $multicurrency_deposits,'MT');
 	                    $multicurrency_remaintopay=price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits,'MT');
 					}
-					
+
                     print '<tr '.$bc[$var].'>';
 
                     print '<td>';
@@ -858,36 +870,36 @@ print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</
 
                     // Date
                     print '<td align="center">'.dol_print_date($db->jdate($objp->df),'day')."</td>\n";
-                    
+
                     // Currency
                     if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$objp->multicurrency_code."</td>\n";
-                    
+
 					// Multicurrency Price
-					if (!empty($conf->multicurrency->enabled)) 
+					if (!empty($conf->multicurrency->enabled))
 					{
 					    print '<td align="right">';
 					    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) print price($sign * $objp->multicurrency_total_ttc);
 					    print '</td>';
-					
+
                     	// Multicurrency Price
 						print '<td align="right">';
-						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) 
+						if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
 						{
 						    print price($sign * $multicurrency_payment);
     		                if ($multicurrency_creditnotes) print '+'.price($multicurrency_creditnotes);
     		                if ($multicurrency_deposits) print '+'.price($multicurrency_deposits);
 						}
 		                print '</td>';
-					
+
     					// Multicurrency Price
     				    print '<td align="right">';
     				    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency) print price($sign * $multicurrency_remaintopay);
     				    print '</td>';
 					}
-					
+
 					// Price
                     print '<td align="right">'.price($sign * $objp->total_ttc).'</td>';
-					
+
                     // Received or paid back
                     print '<td align="right">'.price($sign * $paiement);
                     if ($creditnotes) print '+'.price($creditnotes);
@@ -920,14 +932,14 @@ print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</
                     print "</td>";
 
 					// Multicurrency Price
-					if (! empty($conf->multicurrency->enabled)) 
+					if (! empty($conf->multicurrency->enabled))
 					{
 						print '<td align="right">';
-						
+
 						// Add remind multicurrency amount
 	                    $namef = 'multicurrency_amount_'.$objp->facid;
 	                    $nameRemain = 'multicurrency_remain_'.$objp->facid;
-	
+
 	                    if ($objp->multicurrency_code && $objp->multicurrency_code != $conf->currency)
 	                    {
     	                    if ($action != 'add_paiement')
@@ -947,7 +959,7 @@ print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</
 					}
 
                     // Warning
-                    print '<td align="center" width="16">'; 
+                    print '<td align="center" width="16">';
                     //print "xx".$amounts[$invoice->id]."-".$amountsresttopay[$invoice->id]."<br>";
                     if ($amounts[$invoice->id] && (abs($amounts[$invoice->id]) > abs($amountsresttopay[$invoice->id]))
                     	|| $multicurrency_amounts[$invoice->id] && (abs($multicurrency_amounts[$invoice->id]) > abs($multicurrency_amountsresttopay[$invoice->id])))
@@ -1024,7 +1036,7 @@ print '<tr><td class="opacitymedium" colspan="5">'.$langs->trans("NoSource").'</
 
             print '<br>';
             if (!empty($totalpayment)) $text=$langs->trans('ConfirmCustomerPayment',$totalpayment,$langs->trans("Currency".$conf->currency));
-			if (!empty($multicurrency_totalpayment)) 
+			if (!empty($multicurrency_totalpayment))
 			{
 				$text.='<br />'.$langs->trans('ConfirmCustomerPayment',$multicurrency_totalpayment,$langs->trans("paymentInInvoiceCurrency"));
 			}
