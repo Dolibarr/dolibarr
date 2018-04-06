@@ -267,6 +267,7 @@ Prospect=Prospect
 CustomerCard=Customer Card
 Customer=Customer
 CustomerRelativeDiscount=Relative customer discount
+SupplierRelativeDiscount=Relative supplier discount
 CustomerRelativeDiscountShort=Relative discount
 CustomerAbsoluteDiscountShort=Absolute discount
 CompanyHasRelativeDiscount=This customer has a default discount of <b>%s%%</b>
