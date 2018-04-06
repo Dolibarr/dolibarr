@@ -745,7 +745,7 @@ else
 	{
 		if (function_exists('fsockopen') && $port && $server)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect#formmailbeforetitle">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 	}
 	else
@@ -753,11 +753,11 @@ else
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSend").'</a>';
 
 	if (! empty($conf->fckeditor->enabled))
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSendHTML").'</a>';
 	}
 
 	print '</div>';
@@ -834,7 +834,7 @@ else
 		$formmail->fromalsorobot=1;
 		$formmail->fromtype=(GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
 		$formmail->withfromreadonly=1;
-		$formmail->withsubstit=0;
+		$formmail->withsubstit=1;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;
 		$formmail->withto=(! empty($_POST['sendto'])?$_POST['sendto']:($user->email?$user->email:1));

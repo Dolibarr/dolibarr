@@ -776,6 +776,7 @@ if ($resql)
                         }
                         if ($tmpfieldlist == 'content')
                         {
+                        	print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist) . '<br>';
                         	$okforextended = true;
                         	if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $okforextended = false;
                         	$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');

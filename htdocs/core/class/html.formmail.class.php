@@ -240,13 +240,13 @@ class FormMail extends Form
 	 *	Get the form to input an email
 	 *  this->withfile: 0=No attaches files, 1=Show attached files, 2=Can add new attached files
 	 *  this->withfile
-	 *  this->param:	Contains more parameteres like email templates info
+	 *  this->param:	Contains more parameters like email templates info
 	 *
 	 *	@param	string	$addfileaction		Name of action when posting file attachments
 	 *	@param	string	$removefileaction	Name of action when removing file attachments
 	 *	@return string						Form to show
 	 */
-	function get_form($addfileaction='addfile',$removefileaction='removefile')
+	function get_form($addfileaction='addfile', $removefileaction='removefile')
 	{
 		global $conf, $langs, $user, $hookmanager, $form;
 
@@ -409,18 +409,19 @@ class FormMail extends Form
 
 			$out.= '<table class="tableforemailform boxtablenotop" width="100%">'."\n";
 
-			// Substitution array
+			// Substitution array/string
+			$helpforsubstitution='';
+			if (is_array($this->substit) && count($this->substit)) $helpforsubstitution.=$langs->trans('AvailableVariables').' :<br>'."\n";
+			foreach($this->substit as $key => $val)
+			{
+				$helpforsubstitution.=$key.' -> '.$langs->trans(dol_string_nohtmltag($val)).'<br>';
+			}
 			if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
 			{
 				$out.= '<tr><td colspan="2" align="right">';
 				//$out.='<div class="floatright">';
-				$help="";
-				foreach($this->substit as $key => $val)
-				{
-					$help.=$key.' -> '.$langs->trans(dol_string_nohtmltag($val)).'<br>';
-				}
-				if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $help, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
-				else $out.= $form->textwithpicto($langs->trans('AvailableVariables'), $help, 1, 'help', '', 0, 2, 'substittooltip');															// New usage
+				if (is_numeric($this->withsubstit)) $out.= $form->textwithpicto($langs->trans("EMailTestSubstitutionReplacedByGenericValues"), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltip');	// Old usage
+				else $out.= $form->textwithpicto($langs->trans('AvailableVariables'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltip');															// New usage
 				$out.= "</td></tr>\n";
 				//$out.='</div>';
 			}
@@ -773,7 +774,9 @@ class FormMail extends Form
 				$defaulttopic=make_substitutions($defaulttopic,$this->substit);
 
 				$out.= '<tr>';
-				$out.= '<td class="fieldrequired">'.$langs->trans("MailTopic").'</td>';
+				$out.= '<td class="fieldrequired">';
+				$out.=$form->textwithpicto($langs->trans('MailTopic'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfromtopic');
+				$out.='</td>';
 				$out.= '<td>';
 				if ($this->withtopicreadonly)
 				{
@@ -917,7 +920,9 @@ class FormMail extends Form
 				}
 
 				$out.= '<tr>';
-				$out.= '<td valign="top">'.$langs->trans("MailText").'</td>';
+				$out.= '<td valign="top">';
+				$out.=$form->textwithpicto($langs->trans('MailText'), $helpforsubstitution, 1, 'help', '', 0, 2, 'substittooltipfrombody');
+				$out.='</td>';
 				$out.= '<td>';
 				if ($this->withbodyreadonly)
 				{
