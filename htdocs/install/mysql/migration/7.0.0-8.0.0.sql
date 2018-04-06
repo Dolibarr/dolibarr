@@ -340,15 +340,16 @@ INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_u
 INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines,joinfiles) VALUES (0,'adherent','member','',0,null,null,'(SendingAnEMailToMember)'               ,60,1,1,'[__[MAIN_INFO_SOCIETE_NOM]__] __(CardContent)__',                     '__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br>\n__(Lastname)__ : __MEMBER_LASTNAME__<br>\n__(Fullname)__ : __MEMBER_FULLNAME__<br>\n__(Company)__ : __MEMBER_COMPANY__<br>\n__(Address)__ : __MEMBER_ADDRESS__<br>\n__(Zip)__ : __MEMBER_ZIP__<br>\n__(Town)__ : __MEMBER_TOWN__<br>\n__(Country)__ : __MEMBER_COUNTRY__<br>\n__(Email)__ : __MEMBER_EMAIL__<br>\n__(Birthday)__ : __MEMBER_BIRTH__<br>\n__(Photo)__ : __MEMBER_PHOTO__<br>\n__(Login)__ : __MEMBER_LOGIN__<br>\n__(Password)__ : __MEMBER_PASSWORD__<br>\n__(Phone)__ : __MEMBER_PHONE__<br>\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br>\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null, 1);
 
 ALTER TABLE llx_product ADD COLUMN fk_default_warehouse integer DEFAULT NULL;
-ALTER TABLE  llx_product ADD CONSTRAINT fk_product_default_warehouse FOREIGN KEY (fk_default_warehouse) REFERENCES llx_entrepot (rowid);
+ALTER TABLE llx_product ADD CONSTRAINT fk_product_default_warehouse FOREIGN KEY (fk_default_warehouse) REFERENCES llx_entrepot (rowid);
 
 -- Assets
-CREATE TABLE llx_assets(
+CREATE TABLE llx_asset(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	ref varchar(128) NOT NULL,
 	entity integer DEFAULT 1 NOT NULL,
 	label varchar(255),
 	amount double(24,8) DEFAULT NULL,
+	fk_asset_type integer NOT NULL,
 	fk_soc integer,
 	description text,
 	note_public text,
@@ -361,13 +362,15 @@ CREATE TABLE llx_assets(
 	status integer NOT NULL
 ) ENGINE=innodb;
 
-ALTER TABLE llx_assets ADD INDEX idx_assets_rowid (rowid);
-ALTER TABLE llx_assets ADD INDEX idx_assets_ref (ref);
-ALTER TABLE llx_assets ADD INDEX idx_assets_entity (entity);
-ALTER TABLE llx_assets ADD INDEX idx_assets_fk_soc (fk_soc);
-ALTER TABLE llx_assets ADD INDEX idx_assets_status (status);
+ALTER TABLE llx_asset ADD INDEX idx_asset_rowid (rowid);
+ALTER TABLE llx_asset ADD INDEX idx_asset_ref (ref);
+ALTER TABLE llx_asset ADD INDEX idx_asset_entity (entity);
+ALTER TABLE llx_asset ADD INDEX idx_asset_fk_soc (fk_soc);
 
-create table llx_assets_extrafields
+ALTER TABLE llx_asset ADD INDEX idx_asset_fk_asset_type (fk_asset_type);
+ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_asset_type FOREIGN KEY (fk_asset_type)    REFERENCES llx_asset_type (rowid);
+
+create table llx_asset_extrafields
 (
   rowid integer AUTO_INCREMENT PRIMARY KEY,
   tms timestamp,
@@ -375,12 +378,11 @@ create table llx_assets_extrafields
   import_key varchar(14)
 ) ENGINE=innodb;
 
-create table llx_assets_type
+create table llx_asset_type
 (
   rowid                                 integer AUTO_INCREMENT PRIMARY KEY,
   entity                                integer DEFAULT 1 NOT NULL,	-- multi company id
   tms                                   timestamp,
-  statut                                smallint NOT NULL DEFAULT 0,
   label                                 varchar(50) NOT NULL,
   accountancy_code_asset                varchar(32),
   accountancy_code_depreciation_asset   varchar(32),
@@ -388,9 +390,9 @@ create table llx_assets_type
   note                                  text
 )ENGINE=innodb;
 
-ALTER TABLE llx_assets_type ADD UNIQUE INDEX uk_asset_type_label (label, entity);
+ALTER TABLE llx_asset_type ADD UNIQUE INDEX uk_asset_type_label (label, entity);
 
-create table llx_assets_type_extrafields
+create table llx_asset_type_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
   tms                       timestamp,
@@ -398,6 +400,6 @@ create table llx_assets_type_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
-ALTER TABLE llx_assets_type_extrafields ADD INDEX idx_assets_type_extrafields (fk_object);
+ALTER TABLE llx_asset_type_extrafields ADD INDEX idx_asset_type_extrafields (fk_object);
 
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (7,'INV', 'Inventory journal', 8, 1);

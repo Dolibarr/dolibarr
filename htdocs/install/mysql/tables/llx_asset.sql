@@ -14,8 +14,21 @@
 -- along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
-ALTER TABLE llx_assets ADD INDEX idx_assets_rowid (rowid);
-ALTER TABLE llx_assets ADD INDEX idx_assets_ref (ref);
-ALTER TABLE llx_assets ADD INDEX idx_assets_entity (entity);
-ALTER TABLE llx_assets ADD INDEX idx_assets_fk_soc (fk_soc);
-ALTER TABLE llx_assets ADD INDEX idx_assets_status (status);
+CREATE TABLE llx_asset(
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL,
+	ref varchar(128) NOT NULL,
+	entity integer DEFAULT 1 NOT NULL,
+	label varchar(255),
+	amount double(24,8) DEFAULT NULL,
+	fk_asset_type integer NOT NULL,
+	fk_soc integer,
+	description text,
+	note_public text,
+	note_private text,
+	date_creation datetime NOT NULL,
+	tms timestamp NOT NULL,
+	fk_user_creat integer NOT NULL,
+	fk_user_modif integer,
+	import_key varchar(14),
+	status integer NOT NULL
+) ENGINE=innodb;

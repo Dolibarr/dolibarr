@@ -11,13 +11,7 @@
 -- GNU General Public License for more details.
 --
 -- You should have received a copy of the GNU General Public License
--- along with this program. If not, see http://www.gnu.org/licenses/.
+-- along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-create table llx_assets_extrafields
-(
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
 
+ALTER TABLE llx_asset_type_extrafields ADD INDEX idx_asset_type_extrafields (fk_object);

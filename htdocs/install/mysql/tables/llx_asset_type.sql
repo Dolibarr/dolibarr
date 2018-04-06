@@ -13,11 +13,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-create table llx_assets_type_extrafields
+create table llx_asset_type
 (
-  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
-  tms                       timestamp,
-  fk_object                 integer NOT NULL,
-  import_key                varchar(14)                          		-- import key
-) ENGINE=innodb;
-
+  rowid                                 integer AUTO_INCREMENT PRIMARY KEY,
+  entity                                integer DEFAULT 1 NOT NULL,	-- multi company id
+  tms                                   timestamp,
+  label                                 varchar(50) NOT NULL,
+  accountancy_code_asset                varchar(32),
+  accountancy_code_depreciation_asset   varchar(32),
+  accountancy_code_depreciation_expense varchar(32),
+  note                                  text
+)ENGINE=innodb;
