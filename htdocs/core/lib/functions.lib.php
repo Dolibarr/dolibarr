@@ -5408,26 +5408,27 @@ function picto_required()
 /**
  *	Clean a string from all HTML tags and entities.
  *  This function differs from strip_tags because:
- *  - <br> are replace with \n
- *  - if entities are found, they are decoded before the strip
- *  - you can decide to convert line feed into spaces
+ *  - <br> are replaced with \n if removelinefeed=0 or 1
+ *  - if entities are found, they are decoded BEFORE the strip
+ *  - you can decide to convert line feed into a space
  *
  *	@param	string	$stringtoclean		String to clean
- *	@param	integer	$removelinefeed		1=Replace also new lines by a space, 0=Only last one are removed
+ *	@param	integer	$removelinefeed		1=Replace all new lines by 1 space, 0=Only ending new lines are removed others are replaced with \n, 2=Ending new lines are removed but others are kept with a same number of \n than nb of <br> when there is both "...<br>\n..."
  *  @param  string	$pagecodeto      	Encoding of input/output string
- *  @param	integer	$strip_tags			1=Use strip_tags php function, 0=Use internal pattern
+ *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag)
  *	@return string	    				String cleaned
  *
  * 	@see	dol_escape_htmltag strip_tags
  */
-function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-8',$strip_tags=0)
+function dol_string_nohtmltag($stringtoclean, $removelinefeed=1, $pagecodeto='UTF-8', $strip_tags=0)
 {
+	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>\n+/ims', '<br>', $stringtoclean);
+	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
+
 	if ($strip_tags) {
-		$temp = strip_tags($stringtoclean);
+		$temp = strip_tags($temp);
 	} else {
 		$pattern = "/<[^<>]+>/";
-		$temp = preg_replace('/<br[^>]*>/', "\n", $stringtoclean);
-
 		// Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
 		$temp = preg_replace($pattern,"",$temp);    // pass 1
 		// $temp after pass 1: <a href="/myurl" title="A title">0000-021
@@ -5438,7 +5439,7 @@ function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-
 	$temp = dol_html_entity_decode($temp,ENT_COMPAT,$pagecodeto);
 
 	// Supprime aussi les retours
-	if ($removelinefeed) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
+	if ($removelinefeed == 1) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
 
 	// et les espaces doubles
 	while (strpos($temp,"  "))
