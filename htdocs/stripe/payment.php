@@ -1038,7 +1038,7 @@ print '</tr>';
             if (!empty($totalpayment)) $text=$langs->trans('ConfirmCustomerPayment',$totalpayment,$langs->trans("Currency".$conf->currency));
 			if (!empty($multicurrency_totalpayment))
 			{
-				$text.='<br />'.$langs->trans('ConfirmCustomerPayment',$multicurrency_totalpayment,$langs->trans("paymentInInvoiceCurrency"));
+				$text.='<br>'.$langs->trans('ConfirmCustomerPayment',$multicurrency_totalpayment,$langs->trans("paymentInInvoiceCurrency"));
 			}
             if (GETPOST('closepaidinvoices'))
             {
@@ -1056,6 +1056,7 @@ print '</tr>';
 /**
  *  Show list of payments
  */
+
 if (! GETPOST('action'))
 {
     if ($page == -1) $page = 0 ;
@@ -1088,10 +1089,10 @@ if (! GETPOST('action'))
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans('Invoice'),$_SERVER["PHP_SELF"],'facnumber','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'dp','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Type'),$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
-        print_liste_field_titre($langs->trans('Amount'),$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
+        print_liste_field_titre('Invoice',$_SERVER["PHP_SELF"],'facnumber','','','',$sortfield,$sortorder);
+        print_liste_field_titre('Date',$_SERVER["PHP_SELF"],'dp','','','',$sortfield,$sortorder);
+        print_liste_field_titre('Type',$_SERVER["PHP_SELF"],'libelle','','','',$sortfield,$sortorder);
+        print_liste_field_titre('Amount',$_SERVER["PHP_SELF"],'fa_amount','','','align="right"',$sortfield,$sortorder);
 		print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
         print "</tr>\n";
 
