@@ -549,10 +549,10 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
-		case 'nohtml':
+		case 'nohtml':		// Recommended for most scalar parameters
 			$out=dol_string_nohtmltag($out, 0);
 			break;
-		case 'alphanohtml':	// Recommended for search params
+		case 'alphanohtml':	// Recommended for search parameters
 			if (! is_array($out))
 			{
 				$out=trim($out);

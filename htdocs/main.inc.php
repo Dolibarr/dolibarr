@@ -101,6 +101,7 @@ function test_sql_and_script_inject($val, $type)
 	// More on https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
 	$inj += preg_match('/<script/i', $val);
 	$inj += preg_match('/<iframe/i', $val);
+	$inj += preg_match('/<audio/i', $val);
 	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
 	if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
 	$inj += preg_match('/base[\s]+href/si', $val);
@@ -108,6 +109,7 @@ function test_sql_and_script_inject($val, $type)
 	$inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
 	$inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
 	$inj += preg_match('/onload\s*=/i', $val);        // onload can be set on svg tag <svg/onload=alert(1)> or other tag like body <body onload=alert(1)>
+	$inj += preg_match('/onloadstart\s*=/i', $val);   // onload can be set on audio tag <audio onloadstart=alert(1)>
 	$inj += preg_match('/onclick\s*=/i', $val);       // onclick can be set on img text html tag like <img onclick = alert(1)>
 	$inj += preg_match('/onscroll\s*=/i', $val);      // onscroll can be on textarea
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
