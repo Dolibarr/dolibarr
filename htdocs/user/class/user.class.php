@@ -2408,7 +2408,7 @@ class User extends CommonObject
 		if ($this->address && ! empty($conf->global->LDAP_FIELD_ADDRESS))			$info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_FIELD_ZIP))					$info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
 		if ($this->town && ! empty($conf->global->LDAP_FIELD_TOWN))					$info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
-		if ($this->note_public && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))	$info[$conf->global->LDAP_FIELD_DESCRIPTION] = html_entity_decode(strip_tags($this->note_public));
+		if ($this->note_public && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))	$info[$conf->global->LDAP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_public, 0, 'UTF-8', 1);
 		if ($this->socid > 0)
 		{
 			$soc = new Societe($this->db);
