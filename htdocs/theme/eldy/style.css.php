@@ -836,7 +836,7 @@ div.fiche>div.tabBar>form>div.div-table-responsive {
     min-height: 392px;
 }
 div.fiche {
-	text-align: justify;
+	/* text-align: justify; */
 }
 
 .flexcontainer {
