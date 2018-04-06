@@ -71,9 +71,9 @@ if (empty($stripeaccount))
 	print $langs->trans('ErrorStripeAccountNotDefined');
 }
 
-if (! $rowid && $stripeaccount) {
+if (! $rowid) {
 
-	print '<FORM method="GET" action="' . $_SERVER["PHP_SELF"] . '">';
+	print '<FORM method="POST" action="' . $_SERVER["PHP_SELF"] . '">';
 	if ($optioncss != '')
 		print '<INPUT type="hidden" name="optioncss" value="' . $optioncss . '">';
 	print '<INPUT type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
@@ -83,7 +83,10 @@ if (! $rowid && $stripeaccount) {
 	print '<INPUT type="hidden" name="sortorder" value="' . $sortorder . '">';
 	print '<INPUT type="hidden" name="page" value="' . $page . '">';
 
-	print_barre_liste($langs->trans("StripeTransactionList"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+	$title=$langs->trans("StripeTransactionList");
+	$title.=($stripeaccount?' (Stripe connection with Stripe OAuth Connect account '.$stripeaccount.')':' (Stripe connection with keys from Stripe module setup)');
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
 
 	print '<DIV class="div-table-responsive">';
 	print '<TABLE class="tagtable liste' . ($moreforfilter ? " listwithfilterbefore" : "") . '">' . "\n";
@@ -101,9 +104,14 @@ if (! $rowid && $stripeaccount) {
 
 	print "</TR>\n";
 
-	$stripeaccount = $stripe->getStripeAccount($service);
-
-	$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeaccount));
+	if ($stripeaccount)
+	{
+		$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit), array("stripe_account" => $stripeaccount));
+	}
+	else
+	{
+		$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
+	}
 
 	foreach ($txn->data as $txn) {
 		print '<TR class="oddeven">';

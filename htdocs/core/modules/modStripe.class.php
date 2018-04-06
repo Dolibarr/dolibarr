@@ -113,10 +113,10 @@ class modStripe extends DolibarrModules
 			'titre'=>'StripeAccount',
 			'mainmenu'=>'bank',
 			'leftmenu'=>'stripe',
-			'url' => '/stripe/charge.php',
+			'url' => '',
 			'langs' => 'stripe',
 			'position' => 100,
-			'enabled' => '$conf->global->MAIN_FEATURES_LEVEL >= 2',
+			'enabled' => '$conf->global->MAIN_FEATURES_LEVEL >= 1',
 			'perms' => '$user->rights->banque->configurer',
 			'target' => '',
 			'user' => 0
