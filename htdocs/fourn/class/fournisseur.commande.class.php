@@ -1963,7 +1963,7 @@ class CommandeFournisseur extends CommonOrder
     	// List of already dispatched lines
 		$sql = "SELECT p.ref, p.label,";
 		$sql.= " e.rowid as warehouse_id, e.ref as entrepot,";
-		$sql.= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
+		$sql.= " cfd.rowid as dispatchedlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p,";
 		$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur_dispatch as cfd";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e ON cfd.fk_entrepot = e.rowid";
@@ -1981,7 +1981,15 @@ class CommandeFournisseur extends CommonOrder
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($resql);
-				if ($objp) $ret[]=array('id'=>$objp->dispatchedlineid, 'productid'=>$objp->fk_product, 'warehouseid'=>$objp->warehouse_id);
+				if ($objp)
+				{
+					$ret[] = array(
+						'id' => $objp->dispatchedlineid,
+						'productid' => $objp->fk_product,
+						'warehouseid' => $objp->warehouse_id,
+						'qty' => $objp->qty,
+					);
+				}
 
 				$i++;
 			}

@@ -1358,19 +1358,24 @@ abstract class CommonObject
 		if (empty($format))   $format='text';
 		if (empty($id_field)) $id_field='rowid';
 
+		$fk_user_field = 'fk_user_modif';
+
 		$error=0;
 
 		$this->db->begin();
 
 		// Special case
 		if ($table == 'product' && $field == 'note_private') $field='note';
+		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
+			$fk_user_field = 'fk_user_mod';
+		}
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
 		if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
 		else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
 		else if ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
-		if (! empty($fuser) && is_object($fuser)) $sql.=", fk_user_modif = ".$fuser->id;
-		elseif (empty($fuser) || $fuser != 'none') $sql.=", fk_user_modif = ".$user->id;
+		if (! empty($fuser) && is_object($fuser)) $sql.=", ".$fk_user_field." = ".$fuser->id;
+		elseif (empty($fuser) || $fuser != 'none') $sql.=", ".$fk_user_field." = ".$user->id;
 		$sql.= " WHERE ".$id_field." = ".$id;
 
 		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
@@ -2307,11 +2312,13 @@ abstract class CommonObject
 
 		if (! $this->table_element)
 		{
+			$this->error='update_note was called on objet with property table_element not defined';
 			dol_syslog(get_class($this)."::update_note was called on objet with property table_element not defined", LOG_ERR);
 			return -1;
 		}
 		if (! in_array($suffix,array('','_public','_private')))
 		{
+			$this->error='update_note Parameter suffix must be empty, \'_private\' or \'_public\'';
 			dol_syslog(get_class($this)."::update_note Parameter suffix must be empty, '_private' or '_public'", LOG_ERR);
 			return -2;
 		}
@@ -4787,6 +4794,7 @@ abstract class CommonObject
 			if (! $resql)
 			{
 				$this->error=$this->db->lasterror();
+				dol_syslog(get_class($this) . "::".__METHOD__ . $this->error, LOG_ERR);
 				$this->db->rollback();
 				return -1;
 			}
@@ -5804,7 +5812,7 @@ abstract class CommonObject
 					{
 						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
 					}
-					
+
 					if (empty($onetrtd)) $out .= '<td>';
 					else $out .= '<td'.($colspan?' colspan="'.($colspan+1).'"':'').'>';
 
@@ -6111,7 +6119,7 @@ abstract class CommonObject
 	 *
 	 * @return array
 	 */
-	private function set_save_query()
+	protected function setSaveQuery()
 	{
 		global $conf;
 
@@ -6165,7 +6173,7 @@ abstract class CommonObject
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
 	 */
-	private function setVarsFromFetchObj(&$obj)
+	protected function setVarsFromFetchObj(&$obj)
 	{
 		foreach ($this->fields as $field => $info)
 		{
@@ -6210,7 +6218,7 @@ abstract class CommonObject
 	 *
 	 * @return string
 	 */
-	private function get_field_list()
+	protected function getFieldList()
 	{
 		$keys = array_keys($this->fields);
 		return implode(',', $keys);
@@ -6245,7 +6253,7 @@ abstract class CommonObject
 
 		$now=dol_now();
 
-		$fieldvalues = $this->set_save_query();
+		$fieldvalues = $this->setSaveQuery();
 		if (array_key_exists('date_creation', $fieldvalues) && empty($fieldvalues['date_creation'])) $fieldvalues['date_creation']=$this->db->idate($now);
 		if (array_key_exists('fk_user_creat', $fieldvalues) && ! ($fieldvalues['fk_user_creat'] > 0)) $fieldvalues['fk_user_creat']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into insert.
@@ -6337,7 +6345,7 @@ abstract class CommonObject
 	{
 		if (empty($id) && empty($ref)) return false;
 
-		$sql = 'SELECT '.$this->get_field_list();
+		$sql = 'SELECT '.$this->getFieldList();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
 		if(!empty($id)) $sql.= ' WHERE rowid = '.$id;
@@ -6380,7 +6388,7 @@ abstract class CommonObject
 
 		$now=dol_now();
 
-		$fieldvalues = $this->set_save_query();
+		$fieldvalues = $this->setSaveQuery();
 		if (array_key_exists('date_modification', $fieldvalues) && empty($fieldvalues['date_modification'])) $fieldvalues['date_modification']=$this->db->idate($now);
 		if (array_key_exists('fk_user_modif', $fieldvalues) && ! ($fieldvalues['fk_user_modif'] > 0)) $fieldvalues['fk_user_modif']=$user->id;
 		unset($fieldvalues['rowid']);	// The field 'rowid' is reserved field name for autoincrement field so we don't need it into update.

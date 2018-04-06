@@ -77,6 +77,7 @@ $duration_unit = GETPOST('duration_unit');
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 
 $object = new Product($db);
+$object->type = $type;	// so test later to fill $usercancxxx is correct
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -1240,8 +1241,8 @@ else
     else if ($object->id > 0)
     {
         // Fiche en mode edition
-        	if ($action == 'edit' && $usercancreate)
-        {
+		if ($action == 'edit' && $usercancreate)
+		{
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -1302,11 +1303,15 @@ else
             print '</td></tr>';
 
 			// Batch number managment
-			if ($conf->productbatch->enabled) {
-				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
-				$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
-				print $form->selectarray('status_batch',$statutarray,$object->status_batch);
-				print '</td></tr>';
+			if ($conf->productbatch->enabled) 
+			{
+				if ($object->isProduct() || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+				{
+					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
+					$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+					print $form->selectarray('status_batch',$statutarray,$object->status_batch);
+					print '</td></tr>';
+				}
 			}
 
             // Barcode
@@ -1391,7 +1396,6 @@ else
                 print '<input name="duration_unit" type="radio" value="m"'.($object->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
                 print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="y"'.($object->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
-
                 print '</td></tr>';
             }
             else
@@ -1612,7 +1616,7 @@ else
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
                     $formbarcode = new FormBarCode($db);
-		}
+				}
                 if ($action == 'editbarcodetype')
                 {
                     $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
@@ -1718,35 +1722,19 @@ else
 			}
 			print '</td></tr>';
 
-            // Status (to sell)
-            /*
-            print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
-            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-                print ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
-            } else {
-                print $object->getLibStatut(2,0);
-            }
-            print '</td></tr>';
-
-            // Status (to buy)
-            print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-                print ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
-            } else {
-                print $object->getLibStatut(2,1);
-            }
-            print '</td></tr>';
-            */
-
             // Batch number management (to batch)
-            if (! empty($conf->productbatch->enabled)) {
-                print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
-                if (! empty($conf->use_javascript_ajax) && $usercancreate && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-                    print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
-                } else {
-                    print $object->getLibStatut(0,2);
-                }
-                print '</td></tr>';
+            if (! empty($conf->productbatch->enabled)) 
+            {
+				if ($object->isProduct() || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+				{
+            		print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
+            	    if (! empty($conf->use_javascript_ajax) && $usercancreate && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            	        print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
+            	    } else {
+            	        print $object->getLibStatut(0,2);
+            	    }
+            	    print '</td></tr>';
+				}
             }
 
             // Description

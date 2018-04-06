@@ -1313,6 +1313,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		{
 			foreach ($this->cronjobs as $key => $value)
 			{
+				$entity  = isset($this->cronjobs[$key]['entity'])?$this->cronjobs[$key]['entity']:$conf->entity;
 				$label  = isset($this->cronjobs[$key]['label'])?$this->cronjobs[$key]['label']:'';
 				$jobtype  = isset($this->cronjobs[$key]['jobtype'])?$this->cronjobs[$key]['jobtype']:'';
 				$class  = isset($this->cronjobs[$key]['class'])?$this->cronjobs[$key]['class']:'';
@@ -1334,7 +1335,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				if ($objectname) $sql.= " AND objectname = '".$this->db->escape($objectname)."'";
 				if ($method) $sql.= " AND methodename = '".$this->db->escape($method)."'";
 				if ($command) $sql.= " AND command = '".$this->db->escape($command)."'";
-				$sql.= " AND entity = ".$conf->entity;
+				$sql.= " AND entity = ".$entity;	// Must be exact entity
 
 				$now=dol_now();
 
@@ -1371,7 +1372,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 							if(is_int($unitfrequency)){ $sql.= "'".$this->db->escape($unitfrequency)."', "; }
 							if(is_int($priority)) {$sql.= "'".$this->db->escape($priority)."', ";}
 							if(is_int($status)){ $sql.= "'".$this->db->escape($status)."', "; }
-							$sql.= $conf->entity.",";
+							$sql.= $entity.",";
 							$sql.= "'".$this->db->escape($test)."'";
 							$sql.= ")";
 
