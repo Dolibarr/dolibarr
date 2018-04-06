@@ -916,9 +916,9 @@ if (empty($reshook))
 
 				$id = $object->create($user);
 
+	            $facture_source = new Facture($db); // fetch origin object
 				if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0)
 				{
-					$facture_source = new Facture($db); // fetch origin object
 					if ($facture_source->fetch($object->fk_facture_source)>0)
 					{
 						$fk_parent_line = 0;
@@ -969,7 +969,6 @@ if (empty($reshook))
 
 				if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0)
 				{
-					$facture_source = new Facture($db); // fetch origin object if not previously defined
 					if ($facture_source->fetch($object->fk_facture_source)>0)
 					{
 						$totalpaye = $facture_source->getSommePaiement();
@@ -979,6 +978,20 @@ if (empty($reshook))
 
 						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'),$remain_to_pay,1,0,0,0,0,0,'','','TTC');
 					}
+				}
+
+				// Add link between credit note and origin
+				if(! empty($object->fk_facture_source)) {
+					$facture_source->fetch($object->fk_facture_source);
+				}
+				$facture_source->fetchObjectLinked();
+
+				if(! empty($facture_source->linkedObjectsIds)) {
+					$linkedObjectIds = $facture_source->linkedObjectsIds;
+					$sourcetype = key($linkedObjectIds);
+					$fk_origin = current($facture_source->linkedObjectsIds[$sourcetype]);
+
+					$object->add_object_linked($sourcetype, $fk_origin);
 				}
 			}
 		}
