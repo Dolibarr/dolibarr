@@ -112,7 +112,7 @@ if (empty($reshook)) {
 			} else {
 				$object->name	= trim(GETPOST("nom",'nohtml'));
 				$object->nom	= $object->name;	// For backward compatibility
-				$object->note	= trim(GETPOST("nom",'none'));
+				$object->note	= trim(GETPOST("note",'none'));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
