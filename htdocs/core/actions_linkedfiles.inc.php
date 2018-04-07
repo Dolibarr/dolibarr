@@ -27,7 +27,7 @@
 
 
 // Submit file/link
-if (GETPOST('sendit','none') && ! empty($conf->global->MAIN_UPLOAD_DOC))
+if (GETPOST('sendit','alpha') && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
 	if (! empty($_FILES))
 	{

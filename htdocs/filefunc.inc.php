@@ -151,13 +151,23 @@ if (empty($dolibarr_strict_mode)) $dolibarr_strict_mode=0; // For debug in php s
 // Note about $_SERVER[HTTP_HOST/SERVER_NAME]: http://shiflett.org/blog/2006/mar/server-name-versus-http-host
 if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck))
 {
-    if (! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST'])
-    && (empty($_SERVER['HTTP_REFERER']) || ! preg_match('/'.preg_quote($_SERVER['HTTP_HOST'],'/').'/i', $_SERVER['HTTP_REFERER'])))
+	if (! empty($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] != 'GET' && ! empty($_SERVER['HTTP_HOST']))
     {
-    	//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_POST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
-    	print "Access refused by CSRF protection in main.inc.php. Referer of form is outside server that serve the POST.\n";
-        print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
-    	die;
+    	$csrfattack=false;
+    	if (empty($_SERVER['HTTP_REFERER'])) $csrfattack=true;	// An evil browser was used
+    	else
+    	{
+    		$tmpa=parse_url($_SERVER['HTTP_HOST']);
+    		$tmpb=parse_url($_SERVER['HTTP_REFERER']);
+    		if ((empty($tmpa['host'])?$tmpa['path']:$tmpa['host']) != (empty($tmpb['host'])?$tmpb['path']:$tmpb['host'])) $csrfattack=true;
+    	}
+    	if ($csrfattack)
+    	{
+    		//print 'NOCSRFCHECK='.defined('NOCSRFCHECK').' REQUEST_METHOD='.$_SERVER['REQUEST_METHOD'].' HTTP_HOST='.$_SERVER['HTTP_HOST'].' HTTP_REFERER='.$_SERVER['HTTP_REFERER'];
+    		print "Access refused by CSRF protection in main.inc.php. Referer of form is outside server that serve the POST.\n";
+        	print "If you access your server behind a proxy using url rewriting, you might check that all HTTP header is propagated (or add the line \$dolibarr_nocsrfcheck=1 into your conf.php file).\n";
+    		die;
+    	}
     }
     // Another test is done later on token if option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
 }
