@@ -992,12 +992,12 @@ if ($resql)
             {
             	$tmpnbfieldbeforebalance=0;
             	$tmpnbfieldafterbalance=0;
-            	$balancefieldfound=false;
+            	$balancefieldfound=0;
             	foreach($arrayfields as $key => $val)
             	{
             		if ($key == 'balancebefore' || $key == 'balance')
             		{
-            			$balancefieldfound=true;
+            			$balancefieldfound++;
             			continue;
             		}
            			if (! empty($arrayfields[$key]['checked']))
@@ -1028,10 +1028,22 @@ if ($resql)
             		print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
             		print '</td>';
             	}
-				print '<td align="right">';
-            	print price(price2num($balance, 'MT'), 1, $langs);
+            	if (! empty($arrayfields['balancebefore']['checked']))
+            	{
+	            	print '<td align="right">';
+	            	print price(price2num($balance, 'MT'), 1, $langs);
+	            	print '</td>';
+            	}
+            	if (! empty($arrayfields['balance']['checked']))
+            	{
+            		print '<td align="right">';
+					print price(price2num($balance, 'MT'), 1, $langs);
+					print '</td>';
+            	}
+
+				print '<td align="center">';
 				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+3).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
 				print '</td>';
             	print '</tr>';
             }
@@ -1456,7 +1468,7 @@ if ($resql)
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
 	        elseif ($i == $posconciliatecol)
 	        {
-	        	print '<td>';
+	        	print '<td class="center">';
 	        	if ($user->rights->banque->consolidate && $action == 'reconcile') print '<input class="button" name="confirm_reconcile" type="submit" value="' . $langs->trans("Conciliate") . '">';
 	        	print '</td>';
 	        }
