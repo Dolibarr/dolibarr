@@ -67,6 +67,7 @@ $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectcard';   // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects

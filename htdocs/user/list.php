@@ -271,6 +271,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $text = $langs->trans("ListOfUsers");
 
+$newcardbutton='';
+if ($user->rights->propal->creer)
+{
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=">'.$langs->trans('NewUser').'</a>';
+}
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -281,7 +287,9 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+
+
+print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
 
 if ($sall)
 {

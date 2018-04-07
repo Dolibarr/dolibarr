@@ -45,11 +45,13 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 $langs->load("users");
 $langs->load("other");
 
-$id=GETPOST('id', 'int');
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$userid=GETPOST('user', 'int');
+$id         = GETPOST('id', 'int');
+$action     = GETPOST('action', 'alpha');
+$cancel     = GETPOST('cancel', 'aZ09');
+$confirm    = GETPOST('confirm', 'alpha');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupcard';   // To manage different context of search
+
+$userid     = GETPOST('user', 'int');
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
@@ -85,6 +87,21 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
+
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		else
+		{
+			header("Location: ".DOL_URL_ROOT.'/user/group/list.php');
+			exit;
+		}
+		$action='';
+	}
 
 	// Action remove group
 	if ($action == 'confirm_delete' && $confirm == "yes")
@@ -296,7 +313,11 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    print '<div class="center"><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></div>';
+    print '<div class="center">';
+    print '<input class="button" value="'.$langs->trans("CreateGroup").'" type="submit">';
+    print ' &nbsp; ';
+    print '<input class="button" value="'.$langs->trans("Cancel").'" name="cancel" type="submit">';
+    print '</div>';
 
     print "</form>";
 }
