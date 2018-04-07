@@ -381,7 +381,8 @@ if (dol_strlen($search_dv_start) > 0) $param .= '&search_start_dvmonth=' . GETPO
 if (dol_strlen($search_dv_end) > 0)   $param .= '&search_end_dvmonth=' . GETPOST('search_end_dvmonth', 'int') . '&search_end_dvday=' . GETPOST('search_end_dvday', 'int') . '&search_end_dvyear=' . GETPOST('search_end_dvyear', 'int');
 if ($search_req_nb) $param.='&req_nb='.urlencode($search_req_nb);
 if (GETPOST("search_thirdparty",'int')) $param.='&thirdparty='.urlencode(GETPOST("search_thirdparty",'int'));
-if ($optioncss != '')      $param.='&optioncss='.urlencode($optioncss);
+if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
+if ($action == 'reconcile') $param.='&action=reconcile';
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -420,19 +421,17 @@ if ($id > 0 || ! empty($ref))
 
     if ($action != 'reconcile')
     {
-        //print '<div class="tabsAction">';
-
         if ($object->canBeConciliated() > 0)
         {
             // If not cash account and can be reconciliate
             if ($user->rights->banque->consolidate) {
-            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$param.'">'.$langs->trans("Conciliate").'</a>';
+            	$newparam = $param;
+            	$newparam = preg_replace('/search_conciliated=\d+/i','',$newparam);
+            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
             } else {
             	$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
         }
-
-        //print '</div>';
     }
 }
 else
