@@ -989,12 +989,12 @@ if ($resql)
             {
             	$tmpnbfieldbeforebalance=0;
             	$tmpnbfieldafterbalance=0;
-            	$balancefieldfound=false;
+            	$balancefieldfound=0;
             	foreach($arrayfields as $key => $val)
             	{
             		if ($key == 'balancebefore' || $key == 'balance')
             		{
-            			$balancefieldfound=true;
+            			$balancefieldfound++;
             			continue;
             		}
            			if (! empty($arrayfields[$key]['checked']))
@@ -1025,9 +1025,20 @@ if ($resql)
             		print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
             		print '</td>';
             	}
-				print '<td align="right">';
-            	print price(price2num($balance, 'MT'), 1, $langs);
-				print '</td>';
+
+            	if (! empty($arrayfields['balancebefore']['checked']))
+            	{
+	            	print '<td align="right">';
+	            	print price(price2num($balance, 'MT'), 1, $langs);
+	            	print '</td>';
+            	}
+            	if (! empty($arrayfields['balance']['checked']))
+            	{
+            		print '<td align="right">';
+					print price(price2num($balance, 'MT'), 1, $langs);
+					print '</td>';
+            	}
+
 				print '<td align="center">';
 				print '<input type="checkbox" id="selectAll" />';
 				print ' <script type="text/javascript">
