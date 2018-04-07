@@ -305,7 +305,7 @@ class modDav extends DolibarrModules
 	 */
 	public function init($options='')
 	{
-		$this->_load_tables();
+		//$this->_load_tables('/dav/sql/');
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
