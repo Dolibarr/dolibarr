@@ -49,6 +49,9 @@ ALTER TABLE llx_inventory ADD COLUMN import_key varchar(14);
 
 -- For 8.0
 
+-- delete old permission no more used
+DELETE FROM llx_rights_def WHERE perms = 'main' and module = 'commercial';
+
 delete from llx_rights_def where perms IS NULL;
 delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
 delete from llx_usergroup_rights where fk_usergroup not in (select rowid from llx_usergroup);
