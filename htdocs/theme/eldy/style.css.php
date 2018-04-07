@@ -414,6 +414,9 @@ td.leftborder, td.hide0 {
 td.leftborder, td.hide6 {
 	border-right: 1px solid #ccc;
 }
+td.rightborder {
+	border-right: 1px solid #ccc;
+}
 
 td.actionbuttons a {
     padding-left: 6px;

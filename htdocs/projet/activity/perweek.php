@@ -314,6 +314,7 @@ $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
 $thirdpartystatic = new Societe($db);
+$holiday = new Holiday($db);
 
 $title=$langs->trans("TimeSpent");
 
@@ -417,6 +418,38 @@ print '</div>';
 print '<div class="clearboth" style="padding-bottom: 8px;"></div>';
 
 
+
+$startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['first_day'], $startdayarray['first_year']);
+
+// Get if user is available or not for each day
+$isavailable=array();
+if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
+{
+	$tmparray=explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
+	if (count($tmparray) >= 2)
+	{
+		$numstartworkingday = $tmparray[0];
+		$numendworkingday = $tmparray[1];
+	}
+}
+
+for ($idw=0; $idw<7; $idw++)
+{
+	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd');	// $firstdaytoshow is a date with hours = 0
+	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
+
+	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
+	//$tmparray = dol_getdate($dayinloop);
+	//$dayinloopwithouthours=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
+	//print dol_print_date($dayinloop, 'dayhour').' ';
+	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';
+	//print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour').'<br>';
+
+	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow);
+	$isavailable[$dayinloopfromfirstdaytoshow]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
+}
+
+
 $moreforfilter='';
 
 // Filter on categories
@@ -448,7 +481,6 @@ if (! empty($moreforfilter))
 	print '</div>';
 }
 
-
 print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
@@ -461,7 +493,7 @@ print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
-for($idw=0;$idw<7;$idw++)
+for ($idw=0;$idw<7;$idw++)
 {
 	print '<td class="liste_titre"></td>';
 }
@@ -485,36 +517,10 @@ print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").
 print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").'<br>('.$langs->trans("Everybody").')</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("TimeSpent").($usertoprocess->firstname?'<br>('.$usertoprocess->firstname.')':'').'</td>';
 
-$startday=dol_mktime(12, 0, 0, $startdayarray['first_month'], $startdayarray['first_day'], $startdayarray['first_year']);
-
-// Get if user is available or not for each day
-$holiday = new Holiday($db);
-
-$isavailable=array();
-if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
-{
-	$tmparray=explode('-', $conf->global->MAIN_DEFAULT_WORKING_DAYS);
-	if (count($tmparray) >= 2)
-	{
-		$numstartworkingday = $tmparray[0];
-		$numendworkingday = $tmparray[1];
-	}
-}
-
 for ($idw=0; $idw<7; $idw++)
 {
 	$dayinloopfromfirstdaytoshow = dol_time_plus_duree($firstdaytoshow, $idw, 'd');	// $firstdaytoshow is a date with hours = 0
 	$dayinloop = dol_time_plus_duree($startday, $idw, 'd');
-
-	// Useless because $dayinloopwithouthours should be same than $dayinloopfromfirstdaytoshow
-	//$tmparray = dol_getdate($dayinloop);
-	//$dayinloopwithouthours=dol_mktime(0, 0, 0, $tmparray['mon'], $tmparray['mday'], $tmparray['year']);
-	//print dol_print_date($dayinloop, 'dayhour').' ';
-	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';
-	//print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour').'<br>';
-
-	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow);
-	$isavailable[$dayinloopfromfirstdaytoshow]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
 	$cssweekend='';
 	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
@@ -522,7 +528,14 @@ for ($idw=0; $idw<7; $idw++)
 		$cssweekend='weekend';
 	}
 
-	print '<td width="6%" align="center" class="bold hide'.$idw.($cssweekend?' '.$cssweekend:'').'">'.dol_print_date($dayinloopfromfirstdaytoshow, '%a').'<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</td>';
+	$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+
+	$cssonholiday='';
+	if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
+	elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
+	elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+	print '<td width="6%" align="center" class="bold hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.dol_print_date($dayinloopfromfirstdaytoshow, '%a').'<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</td>';
 }
 print '<td></td>';
 print "</tr>\n";
@@ -540,12 +553,19 @@ if ($conf->use_javascript_ajax)
 	for ($idw = 0; $idw < 7; $idw++)
 	{
 		$cssweekend='';
-		/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 		{
 			$cssweekend='weekend';
-		}*/
+		}
 
-		print '<td class="liste_total hide'.$idw.($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+		$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+
+		$cssonholiday='';
+		if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
+		elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
+		elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+		print '<td class="liste_total hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 	}
 	print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>';
 	print '</tr>';
@@ -651,12 +671,19 @@ if (count($tasksarray) > 0)
 				for ($idw = 0; $idw < 7; $idw++)
 				{
 					$cssweekend='';
-					/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+					if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 					{
 						$cssweekend='weekend';
-					}*/
+					}
 
-					print '<td class="liste_total hide'.$idw.($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
+					$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+
+					$cssonholiday='';
+					if (! $isavailable[$tmpday]['morning'] && ! $isavailable[$tmpday]['afternoon'])   $cssonholiday.='onholidayallday ';
+					elseif (! $isavailable[$tmpday]['morning'])   $cssonholiday.='onholidaymorning ';
+					elseif (! $isavailable[$tmpday]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+					print '<td class="liste_total hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'" align="center"><div class="totalDay'.$idw.'">&nbsp;</div></td>';
 				}
                 print '<td class="liste_total center"><div class="totalDayAll">&nbsp;</div></td>
     	</tr>';
