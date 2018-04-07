@@ -1472,7 +1472,7 @@ if ($resql)
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
 	        elseif ($i == $posconciliatecol)
 	        {
-	        	print '<td>';
+	        	print '<td class="center">';
 	        	if ($user->rights->banque->consolidate && $action == 'reconcile') print '<input class="button" name="confirm_reconcile" type="submit" value="' . $langs->trans("Conciliate") . '">';
 	        	print '</td>';
 	        }
