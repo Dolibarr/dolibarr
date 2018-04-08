@@ -682,32 +682,33 @@ if (! defined('NOLOGIN'))
 		}
 		else
 		{
-		   // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-		   $hookmanager->initHooks(array('main'));
+		    // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		    $hookmanager->initHooks(array('main'));
 
-		   // Code for search criteria persistence.
-		   if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
-		   {
-			   $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
-			   $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
-			   // Clean $relativepathstring
-   			   if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-			   $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-			   $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-			   //var_dump($relativepathstring);
+		    // Code for search criteria persistence.
+		    if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
+		    {
+			    $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
+			    $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
+			    // Clean $relativepathstring
+   			    if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+			    $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+			    $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+			    //var_dump($relativepathstring);
 
-			   if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
-			   {
-				   $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
-				   unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
-			   }
-		   }
+			    // We click on a link that leave a page we have to save search criteria. We save them from tmp to no tmp
+			    if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
+			    {
+				    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
+				    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
+			    }
+		    }
 
-		   $action = '';
-		   $reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
-		   if ($reshook < 0) {
-			   setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-		   }
+		    $action = '';
+		    $reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
+		    if ($reshook < 0) {
+			    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		    }
 		}
 	}
 
@@ -1882,8 +1883,8 @@ if (! function_exists("llxFooter"))
 			// Clean data
 			foreach($user->lastsearch_values_tmp as $key => $val)
 			{
-				unset($_SESSION['lastsearch_values_tmp_'.$key]);
-				if (count($val))
+				unset($_SESSION['lastsearch_values_tmp_'.$key]);			// Clean arry to rebuild it just after
+				if (count($val) && empty($_POST['button_removefilter']))	// If there is search criteria to save and we did not click on 'Clear filter' button
 				{
 					if (empty($val['sortfield'])) unset($val['sortfield']);
 					if (empty($val['sortorder'])) unset($val['sortorder']);
