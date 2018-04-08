@@ -732,7 +732,7 @@ print '</div>';
 
 // TODO Replace this with mass delete action
 print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a>';
+print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DeleteMvt") . '</a>';
 print '</div>';
 
 
