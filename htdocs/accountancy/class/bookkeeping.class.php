@@ -865,13 +865,14 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
 				} elseif ($key == 't.tms>=' || $key == 't.tms<=') {
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.credit' || $key == 't.debit') {
+					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} else {
-					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}
 			}
 		}
-		$sql.= ' WHERE 1 = 1';
-		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
+		$sql.= ' WHERE entity IN (' . getEntity('accountancy') . ')';
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ' . implode(' ' . $filtermode . ' ', $sqlwhere);
 		}
