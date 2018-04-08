@@ -39,8 +39,8 @@ $action = GETPOST('action', 'alpha');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type");
 $search_doc_ref = GETPOST("search_doc_ref");
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmonth', 'int'), GETPOST('date_creation_startday', 'int'), GETPOST('date_creation_startyear', 'int'));
 $search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
@@ -181,12 +181,12 @@ $filter = array ();
 if (! empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
 	$tmp=dol_getdate($search_date_start);
-	$param .= '&date_startmonth=' . $tmp['mon'] . '&date_startday=' . $tmp['mday'] . '&date_startyear=' . $tmp['year'];
+	$param .= '&search_date_startmonth=' . $tmp['mon'] . '&search_date_startday=' . $tmp['mday'] . '&search_date_startyear=' . $tmp['year'];
 }
 if (! empty($search_date_end)) {
 	$filter['t.doc_date<='] = $search_date_end;
 	$tmp=dol_getdate($search_date_end);
-	$param .= '&date_endmonth=' . $tmp['mon'] . '&date_endday=' . $tmp['mday'] . '&date_endyear=' . $tmp['year'];
+	$param .= '&search_date_endmonth=' . $tmp['mon'] . '&search_date_endday=' . $tmp['mday'] . '&search_date_endyear=' . $tmp['year'];
 }
 if (! empty($search_doc_date)) {
 	$filter['t.doc_date'] = $search_doc_date;
@@ -460,11 +460,11 @@ if (! empty($arrayfields['t.doc_date']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1);
+	print $form->select_date($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1);
+	print $form->select_date($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }
@@ -612,7 +612,12 @@ if ($num > 0)
 		// Piece number
 		if (! empty($arrayfields['t.piece_num']['checked']))
 		{
-			print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
+			print '<td>';
+			$object->id = $line->id;
+			$object->piece_num = $line->piece_num;
+			print $object->getNomUrl(1,'',0,'',1);
+			//print '<a href="./card.php?piece_num=' . $line->piece_num . '&save_lastsearch_values=1">' . $line->piece_num . '</a>';
+			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
