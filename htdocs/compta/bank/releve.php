@@ -753,7 +753,7 @@ else
 					while ($ii < $numc)
 					{
 						$objc = $db->fetch_object($resc);
-						print "<br>-&nbsp;<i>$objc->label</i>";
+						print "<br>-&nbsp;<i>".$objc->label."</i>";
 						$ii++;
 					}
 				}
@@ -776,7 +776,7 @@ else
 				print '<td>&nbsp;</td><td align="right" class="nowrap">'.price($objp->amount)."</td>\n";
 			}
 
-			print '<td align="right" class="nowrap">'.price($total)."</td>\n";
+			print '<td align="right" class="nowrap">'.price(price2num($total, 'MT'))."</td>\n";
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
@@ -798,8 +798,9 @@ else
 	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
-	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
-	print '<td class="right"><b>'.price($total)."</b></td><td>&nbsp;</td>";
+	print "\n<tr>";
+	print "<td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
+	print '<td class="right"><b>'.price(price2num($total, 'MT'))."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table>";
 	print "</div>";
