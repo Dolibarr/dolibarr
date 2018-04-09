@@ -3146,6 +3146,17 @@ class Societe extends CommonObject
 	}
 
 	/**
+	 *  Return if a company is inside the EEC (European Economic Community)
+	 *
+	 *  @return     boolean		true = country inside EEC, false = country outside EEC
+	 */
+	function isInEEC()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+		return isInEEC($this);
+	}
+
+	/**
 	 *  Charge la liste des categories fournisseurs
 	 *
 	 *  @return    int      0 if success, <> 0 if error

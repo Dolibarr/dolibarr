@@ -3576,19 +3576,6 @@ abstract class CommonObject
 	}
 
 
-	/**
-	 *  Return if a country is inside the EEC (European Economic Community)
-	 *  @deprecated	Use function isInEEC function instead
-	 *
-	 *  @return     boolean		true = country inside EEC, false = country outside EEC
-	 */
-	function isInEEC()
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-		return isInEEC($this);
-	}
-
-
 	// --------------------
 	// TODO: All functions here must be redesigned and moved as they are not business functions but output functions
 	// --------------------
@@ -6005,11 +5992,11 @@ abstract class CommonObject
 					$domData  = ' data-element="extrafield"';
 					$domData .= ' data-targetelement="'.$this->element.'"';
 					$domData .= ' data-targetid="'.$this->id.'"';
-					
+
 					$html_id = !empty($this->id) ? 'extrarow-'.$this->element.'_'.$key.'_'.$this->id : '';
-					
+
 					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.'" '.$domData.' >';
-					
+
 					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
 						if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
