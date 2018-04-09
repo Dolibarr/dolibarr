@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
@@ -50,10 +50,11 @@ if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categor
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','aZ09');
 $mode		= GETPOST('mode','alpha');
-$confirm		= GETPOST('confirm','alpha');
+$confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
 $cancel		= GETPOST('cancel','alpha');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'useracard';   // To manage different context of search
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -101,8 +102,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$contextpage=array('usercard','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 
 
@@ -203,7 +203,7 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alpha');
 			$object->user_mobile = GETPOST("user_mobile");
 			$object->skype = GETPOST("skype", 'alpha');
-			$object->email = GETPOST("email", 'alpha');
+			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature");
 			$object->accountancy_code = GETPOST("accountancy_code");
@@ -347,7 +347,7 @@ if (empty($reshook)) {
 				$object->office_fax = GETPOST("office_fax", 'alpha');
 				$object->user_mobile = GETPOST("user_mobile");
 				$object->skype = GETPOST("skype", 'alpha');
-				$object->email = GETPOST("email", 'alpha');
+				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature");
 				$object->accountancy_code = GETPOST("accountancy_code");
@@ -1240,7 +1240,7 @@ else
 			$linkback = '';
 
 			if ($user->rights->user->user->lire || $user->admin) {
-				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 			}
 		}
 

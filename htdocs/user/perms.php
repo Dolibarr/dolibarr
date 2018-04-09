@@ -38,6 +38,7 @@ $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userperms';   // To manage different context of search
 
 if (! isset($id) || empty($id)) accessforbidden();
 
@@ -73,8 +74,7 @@ $object->getrights();
 $entity=$conf->entity;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','userperms','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','userperms','globalcard'));
 
 
 /**
@@ -239,7 +239,7 @@ else
 $linkback = '';
 
 if ($user->rights->user->user->lire || $user->admin) {
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 }
 
 dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);

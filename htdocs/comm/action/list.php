@@ -35,13 +35,14 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 $langs->loadLangs(array("users","companies","agenda","commercial"));
 
 $action=GETPOST('action','alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'actioncommlist';   // To manage different context of search
 $resourceid=GETPOST("resourceid","int");
 $year=GETPOST("year",'int');
 $month=GETPOST("month",'int');
 $day=GETPOST("day",'int');
 $pid=GETPOST("projectid",'int',3);
 $status=GETPOST("status",'alpha');
-$type=GETPOST('type');
+$type=GETPOST('type','alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('actioncode','array'))
@@ -67,8 +68,6 @@ $filter = GETPOST("filter",'',3);
 $filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
-
-$contextpage='actioncommlist';
 
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
@@ -114,6 +113,7 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new ActionComm($db);
 $hookmanager->initHooks(array('agendalist'));
 
 $arrayfields=array(
@@ -234,7 +234,7 @@ $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype,";
 $sql.= " c.code as type_code, c.libelle as type_label,";
-$sql.= " sp.lastname, sp.firstname";
+$sql.= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -355,7 +355,7 @@ if ($resql)
 	//if ($actioncode)    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 	//if ($resourceid)      $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
 	if ($filter)          $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-	if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+	//if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
 	//if ($socid)           $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
 	if ($showbirthday)    $nav.='<input type="hidden" name="showbirthday" value="1">';
 	//if ($pid)             $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
@@ -602,9 +602,14 @@ if ($resql)
 			print '<td>';
 			if ($obj->fk_contact > 0)
 			{
+				$contactstatic->id=$obj->fk_contact;
+				$contactstatic->email=$obj->email;
 				$contactstatic->lastname=$obj->lastname;
 				$contactstatic->firstname=$obj->firstname;
-				$contactstatic->id=$obj->fk_contact;
+				$contactstatic->phone_pro=$obj->phone_pro;
+				$contactstatic->phone_mobile=$obj->phone_mobile;
+				$contactstatic->phone_perso=$obj->phone_perso;
+				$contactstatic->country_id=$obj->country_id;
 				print $contactstatic->getNomUrl(1,'',28);
 			}
 			else

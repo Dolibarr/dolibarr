@@ -739,11 +739,26 @@ class ExtraFields
 		// To avoid conflicts with external modules. TODO Remove this.
 		if (!$forceload && !empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) return $array_name_label;
 
+		// Set array of label of entity
+		// TODO Remove completely loading of label. This should be done by presentation.
+		$labelmulticompany=array();
+		if (!empty($conf->multicompany->enabled))
+		{
+			$sql_entity_name='SELECT rowid, label FROM '.MAIN_DB_PREFIX.'entity WHERE rowid in (0,'.$conf->entity.')';
+			$resql_entity_name=$this->db->query($sql_entity_name);
+			if ($resql_entity_name)
+			{
+				while ($obj = $this->db->fetch_object($resql_entity_name))
+				{
+					$labelmulticompany[$obj->rowid]=$obj->label;
+				}
+			}
+		}
+
 		// We should not have several time this log. If we have, there is some optimization to do by calling a simple $object->fetch_optionals() that include cache management.
 		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed";
-		$sql.= ",entity";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
@@ -778,6 +793,7 @@ class ExtraFields
 					$this->attribute_langfile[$tab->name]=$tab->langs;
 					$this->attribute_list[$tab->name]=$tab->list;
 					$this->attribute_entityid[$tab->name]=$tab->entity;
+					$this->attribute_entitylabel[$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 
 					// New usage
 					$this->attributes[$tab->elementtype]['type'][$tab->name]=$tab->type;
@@ -795,23 +811,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name]=$tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
-
-					if (!empty($conf->multicompany->enabled))
-					{
-						$sql_entity_name='SELECT label FROM '.MAIN_DB_PREFIX.'entity WHERE rowid='.$tab->entity;
-						$resql_entity_name=$this->db->query($sql_entity_name);
-						if ($resql_entity_name)
-						{
-							if ($this->db->num_rows($resql_entity_name))
-							{
-								if ($obj = $this->db->fetch_object($resql_entity_name))
-								{
-									$this->attribute_entitylabel[$tab->name]=$obj->label;	// Old usage
-									$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=$obj->label;
-								}
-							}
-						}
-					}
+					$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 
 					$this->attributes[$tab->elementtype]['loaded']=1;
 				}
@@ -1743,7 +1743,7 @@ class ExtraFields
 	 */
 	function showSeparator($key)
 	{
-		$out = '<tr class="trextrafieldseparator"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
+		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
 		return $out;
 	}
 

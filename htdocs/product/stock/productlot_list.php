@@ -81,6 +81,7 @@ if ($user->societe_id > 0)
 }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$object = new Productlot($db);
 $hookmanager->initHooks(array('product_lotlist'));
 $extrafields = new ExtraFields($db);
 
@@ -119,7 +120,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 
 // Load object if id or ref is provided as parameter
-$object=new Productlot($db);
 if (($id > 0 || ! empty($ref)) && $action != 'add')
 {
 	$result=$object->fetch($id,$ref);

@@ -27,14 +27,12 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
-if (!empty($conf->projet->enabled)) {
-    include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
-    include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
-}
+include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("ticketsup","companies","other"));
+$langs->loadLangs(array("ticketsup","companies","other","projects"));
 
 
 // Get parameters
@@ -49,10 +47,11 @@ $backtopage = GETPOST('backtopage','alpha');											// Go back to a dedicated
 $optioncss  = GETPOST('optioncss','aZ');												// Option for the css output (always '' except when 'print')
 
 $id			= GETPOST('id','int');
-
 $msg_id = GETPOST('msg_id', 'int');
 $socid = GETPOST('socid', 'int');
 $projectid = GETPOST('projectid', 'int');
+$search_fk_soc=GETPOST('$search_fk_soc','int')?GETPOST('$search_fk_soc','int'):GETPOST('socid','int');
+$search_fk_project=GETPOST('search_fk_project','int')?GETPOST('search_fk_project','int'):GETPOST('projectid','int');
 $search_fk_status = GETPOST('search_fk_status', 'alpha');
 $mode = GETPOST('mode', 'alpha');
 
@@ -70,7 +69,10 @@ $pagenext = $page + 1;
 $object=new Ticketsup($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->ticketsup->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('ticketsuplist'));     // Note that conf->hooks_modules contains array
+if ($socid > 0)       $hookmanager->initHooks(array('thirdpartyticket'));
+elseif ($project > 0) $hookmanager->initHooks(array('projectticket'));
+else $hookmanager->initHooks(array('ticketsuplist'));
+
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('ticketsup');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
@@ -112,18 +114,9 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
 }
 $object->fields = dol_sort_array($object->fields, 'position');
 $arrayfields = dol_sort_array($arrayfields, 'position');
+//if ($socid > 0) $arrayfields['t.fk_soc']['enabled']=0;
+//if ($projectid > 0) $arrayfields['t.fk_project']['enabled']=0;
 
-
-// Filters
-// $search_soc = GETPOST("search_soc");
-// $search_fk_status = GETPOST("search_fk_status", 'alpha');
-// $search_subject = GETPOST("search_subject");
-// $search_type = GETPOST("search_type", 'alpha');
-// $search_category = GETPOST("search_category", 'alpha');
-// $search_severity = GETPOST("search_severity", 'alpha');
-// $search_project = GETPOST("search_project", 'int');
-// $search_fk_user_create = GETPOST("search_fk_user_create", 'int');
-// $search_fk_user_assign = GETPOST("search_fk_user_assign", 'int');
 
 // Security check
 if (!$user->rights->ticketsup->read) {
@@ -218,7 +211,8 @@ foreach($search as $key => $val)
     if ($search[$key] != '') $sql.=natural_search($key, $search[$key], (($key == 'fk_statut')?2:$mode_search));
 }
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
-
+if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc);
+if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project);
 if (!$user->societe_id && ($mode == "my_assign" || (!$user->admin && $conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND t.fk_user_assign=".$user->id;
 }
@@ -336,10 +330,13 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
     }
 }
 
-if ($projectid) {
+if ($projectid > 0) {
     $projectstat = new Project($db);
     if ($projectstat->fetch($projectid) > 0) {
         $projectstat->fetch_thirdparty();
+
+        $savobject = $object;
+        $object = $projectstat;
 
         // To verify role of users
         //$userAccess = $object->restrictedProjectArea($user,'read');
@@ -348,55 +345,52 @@ if ($projectid) {
         //print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
 
         $head = project_prepare_head($projectstat);
-        dol_fiche_head($head, 'ticketsup', $langs->trans("Project"), 0, ($projectstat->public ? 'projectpub' : 'project'));
+        dol_fiche_head($head, 'ticketsup', $langs->trans("Project"), -1, ($projectstat->public ? 'projectpub' : 'project'));
 
-        /*
-         *   Projet synthese pour rappel
-         */
+        // Project card
+
+        $linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+        $morehtmlref='<div class="refidno">';
+        // Title
+        $morehtmlref.=$object->title;
+        // Thirdparty
+        if ($object->thirdparty->id > 0)
+        {
+        	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
+        }
+        $morehtmlref.='</div>';
+
+        // Define a complementary filter for search of next/prev ref.
+        if (! $user->rights->projet->all->lire)
+        {
+        	$objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
+        	$object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+        }
+
+        dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+        print '<div class="fichecenter">';
+        print '<div class="underbanner clearboth"></div>';
+
         print '<table class="border" width="100%">';
 
-        $linkback = '<a href="' . DOL_URL_ROOT . '/projet/list.php">' . $langs->trans("BackToList") . '</a>';
-
-        // Ref
-        print '<tr><td class="titlefield">' . $langs->trans('Ref') . '</td><td>';
-        // Define a complementary filter for search of next/prev ref.
-        if (!$user->rights->projet->all->lire) {
-            $objectsListId = $projectstat->getProjectsAuthorizedForUser($user, $mine, 0);
-            $projectstat->next_prev_filter = " rowid in (" . (count($objectsListId) ? join(',', array_keys($objectsListId)) : '0') . ")";
-        }
-        print $form->showrefnav($projectstat, 'ref', $linkback, 1, 'ref', 'ref', '');
-        print '</td></tr>';
-
-        // Label
-        print '<tr><td>' . $langs->trans("Label") . '</td><td>' . $projectstat->title . '</td></tr>';
-
-        // Customer
-        print "<tr><td>" . $langs->trans("ThirdParty") . "</td>";
-        print '<td>';
-        if ($projectstat->thirdparty->id > 0) {
-            print $projectstat->thirdparty->getNomUrl(1);
-        } else {
-            print '&nbsp;';
-        }
-
-        print '</td></tr>';
-
         // Visibility
-        print '<tr><td>' . $langs->trans("Visibility") . '</td><td>';
+        print '<tr><td class="titlefield">' . $langs->trans("Visibility") . '</td><td>';
         if ($projectstat->public) {
             print $langs->trans('SharedProject');
         } else {
             print $langs->trans('PrivateProject');
         }
-
         print '</td></tr>';
-
-        // Statut
-        print '<tr><td>' . $langs->trans("Status") . '</td><td>' . $projectstat->getLibStatut(4) . '</td></tr>';
 
         print "</table>";
 
         print '</div>';
+        dol_fiche_end();
+
+        $object = $savobject;
+
     } else {
         print "ErrorRecordNotFound";
     }
@@ -414,6 +408,8 @@ foreach($search as $key => $val)
 if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
+if ($socid)     $param.='&socid='.urlencode($socid);
+if ($projectid) $param.='&projectid='.urlencode($projectid);
 
 // List of mass actions available
 $arrayofmassactions =  array(
@@ -435,6 +431,8 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 print '<input type="hidden" name="mode" value="' . $mode . '" >';
+if ($socid)     print '<input type="hidden" name="socid" value="' . $socid . '" >';
+if ($projectid) print '<input type="hidden" name="projectid" value="' . $projectid . '" >';
 
 $buttontocreate = '<a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
 
@@ -455,7 +453,6 @@ if ($sall)
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
     print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
-
 
 if ($search_fk_status == 'non_closed') {
     print '<div><a href="' . $url_page_current . '?search_fk_status=-1' . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewAllTickets') . '</a></div>';
@@ -591,24 +588,24 @@ while ($i < min($num, $limit))
     print '<tr class="oddeven">';
     foreach($object->fields as $key => $val)
     {
-        $align='';
-        if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
-        if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
-        if ($key == 'status') $align.=($align?' ':'').'center';
-        if (! empty($arrayfields['t.'.$key]['checked']))
-        {
-            print '<td';
-            if ($align) print ' class="'.$align.'"';
-            print '>';
-            print $object->showOutputField($val, $key, $obj->$key, '');
-            print '</td>';
-            if (! $i) $totalarray['nbfield']++;
-            if (! empty($val['isameasure']))
-            {
-                if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
-                $totalarray['val']['t.'.$key] += $obj->$key;
-            }
-        }
+    	$align='';
+    	if (in_array($val['type'], array('date','datetime','timestamp'))) $align.=($align?' ':'').'center';
+    	if (in_array($val['type'], array('timestamp'))) $align.=($align?' ':'').'nowrap';
+    	if ($key == 'status') $align.=($align?' ':'').'center';
+    	if (! empty($arrayfields['t.'.$key]['checked']))
+    	{
+    		print '<td';
+    		if ($align) print ' class="'.$align.'"';
+    		print '>';
+    		print $object->showOutputField($val, $key, $obj->$key, '');
+    		print '</td>';
+    		if (! $i) $totalarray['nbfield']++;
+    		if (! empty($val['isameasure']))
+    		{
+    			if (! $i) $totalarray['pos'][$totalarray['nbfield']]='t.'.$key;
+    			$totalarray['val']['t.'.$key] += $obj->$key;
+    		}
+    	}
     }
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';

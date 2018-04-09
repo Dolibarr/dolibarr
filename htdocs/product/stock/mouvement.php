@@ -53,6 +53,8 @@ $msid=GETPOST('msid','int');
 $product_id=GETPOST("product_id");
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'movementlist';
+
 $idproduct = GETPOST('idproduct','int');
 $year = GETPOST("year");
 $month = GETPOST("month");
@@ -70,18 +72,16 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-if ($page < 0) $page = 0;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
 $pdluoid=GETPOST('pdluoid','int');
 
-// Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'movementlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new MouvementStock($db);
+$hookmanager->initHooks(array('movementlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -107,7 +107,6 @@ $arrayfields=array(
     //'m.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500)
 );
 
-$object = new MouvementStock($db);	// To be passed as parameter of executeHooks that need
 
 
 /*
@@ -818,10 +817,10 @@ if ($resql)
     	print '&nbsp; ';
     	print '</td>';
     }
-	
+
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-  
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -860,7 +859,7 @@ if ($resql)
     if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'],$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'],$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
     if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'],$_SERVER["PHP_SELF"], "m.price","",$param,'align="right"',$sortfield,$sortorder);
-    
+
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
@@ -891,7 +890,7 @@ if ($resql)
         $productstatic->label=$objp->produit;
         $productstatic->type=$objp->type;
         $productstatic->entity=$objp->entity;
-        $productstatic->status_batch=$objp->tobatch; 
+        $productstatic->status_batch=$objp->tobatch;
 
         $productlot->id = $objp->lotid;
         $productlot->batch= $objp->batch;

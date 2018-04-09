@@ -1049,13 +1049,15 @@ class Adherent extends CommonObject
 	/**
 	 *	Load member from database
 	 *
-	 *	@param	int		$rowid      Id of object to load
-	 * 	@param	string	$ref		To load member from its ref
-	 * 	@param	int		$fk_soc		To load member from its link to third party
-	 * 	@param	string	$ref_ext	External reference
-	 *	@return int         		>0 if OK, 0 if not found, <0 if KO
+	 *	@param	int		$rowid      			Id of object to load
+	 * 	@param	string	$ref					To load member from its ref
+	 * 	@param	int		$fk_soc					To load member from its link to third party
+	 * 	@param	string	$ref_ext				External reference
+	 *  @param	bool	$fetch_optionals		To load optionals (extrafields)
+	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
+	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
+	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='',$fetch_optionals=true,$fetch_subscriptions=true)
 	{
 		global $langs;
 
@@ -1160,10 +1162,14 @@ class Adherent extends CommonObject
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				$this->fetch_optionals();
+				if ($fetch_optionals) {
+					$this->fetch_optionals();
+				}
 
 				// Load other properties
-				$result=$this->fetch_subscriptions();
+				if ($fetch_subscriptions) {
+					$result=$this->fetch_subscriptions();
+				}
 
 				return $this->id;
 			}
@@ -2310,15 +2316,15 @@ class Adherent extends CommonObject
 		if ($this->societe && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->societe;
 		if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))				$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))						$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
-		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))					$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
+		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
 		if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
 		if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))					$info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
 		if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
 		if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO))		$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE))			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))						$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
-		if ($this->note_private && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION))		$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note_private;
-		if ($this->note_public && ! empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC))		$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = $this->note_public;
+		if ($this->note_private && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION))		$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
+		if ($this->note_public && ! empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC))		$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = dol_string_nohtmltag($this->note_public, 2);
 		if ($this->birth && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))				$info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth,'dayhourldap');
 		if (isset($this->statut) && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))			$info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
 		if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))	$info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');

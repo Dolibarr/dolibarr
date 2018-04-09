@@ -115,30 +115,8 @@ if ($action == 'validatehistory') {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
-} elseif ($action == 'cleanaccountancycode') {
-	$error = 0;
-	$db->begin();
-
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as fd";
-	$sql1.= " SET fk_code_ventilation = 0";
-	$sql1.= " WHERE fd.fk_facture_fourn IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture_fourn as f";
-	$sql1.= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
-	$sql1.= " AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "'";
-	$sql1.= " AND f.entity IN (" . getEntity('accountancy') . ")";
-	$sql1.= ")";
-
-	dol_syslog("htdocs/accountancy/customer/index.php cleanaccountancycode", LOG_DEBUG);
-
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
-	} else {
-		$db->commit();
-		setEventMessage($langs->trans('Done'), 'mesgs');
-	}
 }
+
 
 /*
  * View
@@ -178,8 +156,6 @@ print '<br>';
 $y = $year_current;
 
 $buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
-$buttonreset = '';
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2) $buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
 
 
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
@@ -252,7 +228,7 @@ print '</div>';
 print '<br>';
 
 
-print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), $buttonreset, '');
+print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
 
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';

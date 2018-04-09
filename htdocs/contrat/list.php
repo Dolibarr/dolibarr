@@ -45,6 +45,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'contractlist';   // To manage different context of search
 
 $search_name=GETPOST('search_name');
 $search_email=GETPOST('search_email');
@@ -95,10 +96,8 @@ $staticcontratligne=new ContratLigne($db);
 if ($search_status == '') $search_status=1;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='contractlist';
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Contrat($db);
+$hookmanager->initHooks(array('contractlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -370,6 +369,12 @@ if ($user->rights->contrat->supprimer) $arrayofmassactions['predelete']=$langs->
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->contrat->creer)
+{
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create">'.$langs->trans('NewContractSubscription').'</a>';
+}
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -379,7 +384,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, '', '', $limit);
+print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, $newcardbutton, '', $limit);
 
 $topicmail="SendContractRef";
 $modelmail="contract";

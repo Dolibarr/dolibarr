@@ -55,6 +55,7 @@ $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
 $optioncss = GETPOST('optioncss','alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'supplierinvoicelist';
 
 $socid = GETPOST('socid','int');
 
@@ -118,16 +119,12 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef,f.rowid";
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'supplierinvoicelist';
-
 $diroutputmassaction=$conf->fournisseur->facture->dir_output . '/temp/massgeneration/'.$user->id;
-
-$object=new FactureFournisseur($db);
 
 $now=dol_now();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new FactureFournisseur($db);
 $hookmanager->initHooks(array('supplierinvoicelist'));
 $extrafields = new ExtraFields($db);
 
@@ -271,7 +268,7 @@ $sql.= " s.rowid as socid, s.nom as name, s.email, s.town, s.zip, s.fk_pays, s.c
 $sql.= " typent.code as typent_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " country.code as country_code,";
-$sql.= " p.rowid as project_id, p.ref as project_ref";
+$sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (! $search_all) $sql.= ', SUM(pf.amount) as dynamount_payed';
@@ -474,6 +471,12 @@ if ($resql)
 	if (in_array($massaction, array('presend','predelete','createbills'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+	$newcardbutton='';
+	if ($user->rights->fournisseur->facture->creer)
+	{
+		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create">'.$langs->trans('NewBill').'</a>';
+	}
+
 	$i = 0;
 	print '<form method="POST" name="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -486,7 +489,7 @@ if ($resql)
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 	print '<input type="hidden" name="socid" value="'.$socid.'">';
 
-	print_barre_liste($langs->trans("BillsSuppliers").($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, '', '', $limit);
+	print_barre_liste($langs->trans("BillsSuppliers").($socid?' '.$soc->name:''), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 	$topicmail="SendBillRef";
 	$modelmail="supplier_invoice_send";
@@ -877,7 +880,7 @@ if ($resql)
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 			}
-			
+
 			// Type
 			if (! empty($arrayfields['f.type']['checked']))
 			{
@@ -925,6 +928,7 @@ if ($resql)
 				{
 					$projectstatic->id=$obj->project_id;
 					$projectstatic->ref=$obj->project_ref;
+					$projectstatic->title=$obj->project_label;
 					print $projectstatic->getNomUrl(1);
 				}
 				print '</td>';

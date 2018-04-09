@@ -54,6 +54,7 @@ $ref = GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
 $confirm=GETPOST('confirm','alpha');
+$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
@@ -119,10 +120,6 @@ if ($id > 0 || ! empty($ref))
     $search_account = $object->id;     // Force the search field on id of account
 }
 
-
-// Initialize technical object to manage context to save list fields
-$contextpage='banktransactionlist'.(empty($object->ref)?'':'-'.$object->id);
-//var_dump($contextpage);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('banktransactionlist', $contextpage));
@@ -384,7 +381,8 @@ if (dol_strlen($search_dv_start) > 0) $param .= '&search_start_dvmonth=' . GETPO
 if (dol_strlen($search_dv_end) > 0)   $param .= '&search_end_dvmonth=' . GETPOST('search_end_dvmonth', 'int') . '&search_end_dvday=' . GETPOST('search_end_dvday', 'int') . '&search_end_dvyear=' . GETPOST('search_end_dvyear', 'int');
 if ($search_req_nb) $param.='&req_nb='.urlencode($search_req_nb);
 if (GETPOST("search_thirdparty",'int')) $param.='&thirdparty='.urlencode(GETPOST("search_thirdparty",'int'));
-if ($optioncss != '')      $param.='&optioncss='.urlencode($optioncss);
+if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
+if ($action == 'reconcile') $param.='&action=reconcile';
 // Add $param from extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -423,19 +421,17 @@ if ($id > 0 || ! empty($ref))
 
     if ($action != 'reconcile')
     {
-        //print '<div class="tabsAction">';
-
         if ($object->canBeConciliated() > 0)
         {
             // If not cash account and can be reconciliate
             if ($user->rights->banque->consolidate) {
-            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$param.'">'.$langs->trans("Conciliate").'</a>';
+            	$newparam = $param;
+            	$newparam = preg_replace('/search_conciliated=\d+/i','',$newparam);
+            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
             } else {
             	$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
         }
-
-        //print '</div>';
     }
 }
 else
@@ -455,7 +451,7 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 $sql.= " FROM ";
-if ($search_bid) $sql.= MAIN_DB_PREFIX."bank_class as l,";
+if ($search_bid>0) $sql.= MAIN_DB_PREFIX."bank_class as l,";
 $sql.= " ".MAIN_DB_PREFIX."bank_account as ba,";
 $sql.= " ".MAIN_DB_PREFIX."bank as b";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_extrafields as ef on (b.rowid = ef.fk_object)";
@@ -993,12 +989,12 @@ if ($resql)
             {
             	$tmpnbfieldbeforebalance=0;
             	$tmpnbfieldafterbalance=0;
-            	$balancefieldfound=false;
+            	$balancefieldfound=0;
             	foreach($arrayfields as $key => $val)
             	{
             		if ($key == 'balancebefore' || $key == 'balance')
             		{
-            			$balancefieldfound=true;
+            			$balancefieldfound++;
             			continue;
             		}
            			if (! empty($arrayfields[$key]['checked']))
@@ -1029,10 +1025,29 @@ if ($resql)
             		print '<td colspan="'.$tmpnbfieldbeforebalance.'">';
             		print '</td>';
             	}
-				print '<td align="right">';
-            	print price(price2num($balance, 'MT'), 1, $langs);
+
+            	if (! empty($arrayfields['balancebefore']['checked']))
+            	{
+	            	print '<td align="right">';
+	            	print price(price2num($balance, 'MT'), 1, $langs);
+	            	print '</td>';
+            	}
+            	if (! empty($arrayfields['balance']['checked']))
+            	{
+            		print '<td align="right">';
+					print price(price2num($balance, 'MT'), 1, $langs);
+					print '</td>';
+            	}
+
+				print '<td align="center">';
+				print '<input type="checkbox" id="selectAll" />';
+				print ' <script type="text/javascript">
+						$("input#selectAll").change(function() {
+							$("input[type=checkbox][name^=rowid]").prop("checked", $(this).is(":checked"));
+						});
+						</script>';
 				print '</td>';
-				print '<td colspan="'.($tmpnbfieldafterbalance+3).'">';
+				print '<td colspan="'.($tmpnbfieldafterbalance+2).'">';
 				print '</td>';
             	print '</tr>';
             }
@@ -1457,7 +1472,7 @@ if ($resql)
 	        elseif ($totalarray['totalcredfield'] == $i) print '<td align="right">'.price($totalarray['totalcred']).'</td>';
 	        elseif ($i == $posconciliatecol)
 	        {
-	        	print '<td>';
+	        	print '<td class="center">';
 	        	if ($user->rights->banque->consolidate && $action == 'reconcile') print '<input class="button" name="confirm_reconcile" type="submit" value="' . $langs->trans("Conciliate") . '">';
 	        	print '</td>';
 	        }

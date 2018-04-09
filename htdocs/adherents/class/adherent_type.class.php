@@ -332,7 +332,9 @@ class AdherentType extends CommonObject
 	 * 	Return array of Member objects for member type this->id (or all if this->id not defined)
 	 *
 	 * 	@param	string	$excludefilter		Filter to exclude
-	 *  @param	int		$mode				0=Return array of member instance, 1=Return array of members id only
+	 *  @param	int		$mode				0=Return array of member instance
+	 *  									1=Return array of member instance without extra data
+	 *  									2=Return array of members id only
 	 * 	@return	mixed						Array of members or -1 on error
 	 */
 	function listMembersForMemberType($excludefilter='', $mode=0)
@@ -355,10 +357,14 @@ class AdherentType extends CommonObject
 			{
 				if (! array_key_exists($obj->rowid, $ret))
 				{
-					if ($mode != 1)
+					if ($mode < 2)
 					{
 						$memberstatic=new Adherent($this->db);
-						$memberstatic->fetch($obj->rowid);
+						if ($mode == 1) {
+							$memberstatic->fetch($obj->rowid,'','','',false, false);
+						} else {
+							$memberstatic->fetch($obj->rowid);
+						}
 						$ret[$obj->rowid]=$memberstatic;
 					}
 					else $ret[$obj->rowid]=$obj->rowid;
@@ -450,14 +456,14 @@ class AdherentType extends CommonObject
 
 		// Champs
 		if ($this->label && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_FULLNAME] = $this->label;
-		if ($this->note && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = $this->note;
+		if ($this->note && ! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_MEMBER_TYPE_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note, 0, 'UTF-8', 1);
 		if (! empty($conf->global->LDAP_MEMBER_TYPE_FIELD_GROUPMEMBERS))
 		{
 			$valueofldapfield=array();
 			foreach($this->members as $key=>$val)    // This is array of users for group into dolibarr database.
 			{
 				$member=new Adherent($this->db);
-				$member->fetch($val->id);
+				$member->fetch($val->id,'','','',false,false);
 				$info2 = $member->_load_ldap_info();
 				$valueofldapfield[] = $member->_load_ldap_dn($info2);
 			}

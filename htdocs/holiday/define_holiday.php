@@ -34,6 +34,7 @@ $langs->load('users');
 $langs->load('hrm');
 
 $action=GETPOST('action','aZ09');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'defineholidaylist';
 
 $search_name=GETPOST('search_name', 'alpha');
 $search_supervisor=GETPOST('search_supervisor', 'int');
@@ -57,9 +58,6 @@ if ($user->societe_id > 0) accessforbidden();
 // If the user does not have perm to read the page
 if (!$user->rights->holiday->read) accessforbidden();
 
-
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'defineholidaylist';
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
 $hookmanager->initHooks(array('defineholidaylist'));
@@ -357,7 +355,7 @@ else
         print '<td>';
         if ($canedit) print '<input type="text"'.($canedit?'':' disabled="disabled"').' class="maxwidthonsmartphone" value="" name="note_holiday['.$users['rowid'].']" size="30"/>';
         print '</td>';
-        
+
         // Button modify
         print '<td>';
         if (! empty($user->rights->holiday->define_holiday))	// Allowed to set the balance of any user

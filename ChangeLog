@@ -18,6 +18,8 @@ Following changes may create regressions for some external modules, but were nec
 * Remove the old deprecated code of doActions and getInstanceDao in canvas. The doActions of standard hooks are
   already available and are better.
 * Removed method fetch_prods() and get_each_prod() not used, keep only get_arbo_each_prod() that is better.
+* The hook contaxt commcard has been renamed thirdpartycomm
+* The hook contaxt thirdpartycard has been renamed thirdpartycontact
 
 
 ***** ChangeLog for 7.0.1 compared to 7.0.0 *****

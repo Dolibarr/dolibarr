@@ -39,6 +39,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'projectlist';
 
 $title = $langs->trans("Projects");
 
@@ -95,12 +96,9 @@ $search_eyear	= GETPOST('search_eyear','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
-
-// Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'projectlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Project($db);
+$hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -141,7 +139,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
-$object = new Project($db);
 
 
 /*
@@ -441,6 +438,12 @@ if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=arr
 
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->projet->creer)
+{
+	$newcardbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?action=create">'.$langs->trans('NewProject').'</a>';
+}
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -452,7 +455,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
 
 // Show description of content
 print '<div class="opacitymedium">';

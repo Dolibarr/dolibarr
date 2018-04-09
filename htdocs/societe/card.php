@@ -1280,7 +1280,7 @@ else
         // Vat is used
         print '<tr><td>'.fieldLabel('VATIsUsed','assujtva_value').'</td>';
         print '<td>';
-        print $form->selectyesno('assujtva_value', GETPOST('assujtva_value','int'), 1);     // Assujeti par defaut en creation
+        print $form->selectyesno('assujtva_value', GETPOSTISSET('assujtva_value')?GETPOST('assujtva_value','int'):1, 1);     // Assujeti par defaut en creation
         print '</td>';
         print '<td class="nowrap">'.fieldLabel('VATIntra','intra_vat').'</td>';
         print '<td class="nowrap">';
@@ -1643,6 +1643,7 @@ else
             print '<input type="hidden" name="action" value="update">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="socid" value="'.$object->id.'">';
+            print '<input type="hidden" name="entity" value="'.$object->entity.'">';
             if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
 

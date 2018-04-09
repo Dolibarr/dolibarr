@@ -169,7 +169,7 @@ class Form
 				$ret.='<input type="hidden" name="action" value="set'.$htmlname.'">';
 				$ret.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				$ret.='<input type="hidden" name="'.$paramid.'" value="'.$object->id.'">';
-				if (empty($notabletag)) $ret.='<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
+				if (empty($notabletag)) $ret.='<table class="nobordernopadding centpercent" cellpadding="0" cellspacing="0">';
 				if (empty($notabletag)) $ret.='<tr><td>';
 				if (preg_match('/^(string|email)/',$typeofdata))
 				{
@@ -1072,11 +1072,11 @@ class Form
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.entity IN (".getEntity('societe').")";
-		if (! empty($user->societe_id)) $sql.= " AND s.rowid = ".$user->societe_id;
+		if (! empty($user->socid)) $sql.= " AND s.rowid = ".$user->socid;
 		if ($filter) $sql.= " AND (".$filter.")";
-		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		if (!$user->rights->societe->client->voir && !$user->socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if (! empty($conf->global->COMPANY_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND s.status <> 0";
 		// Add criteria
 		if ($filterkey && $filterkey != '')
@@ -1703,7 +1703,10 @@ class Form
 			$userstatic->fetch($value['id']);
 			$out.= $userstatic->getNomUrl(-1);
 			if ($i == 0) { $ownerid = $value['id']; $out.=' ('.$langs->trans("Owner").')'; }
-			if ($nbassignetouser > 1 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+			if ($nbassignetouser > 1 && $action != 'view')
+			{
+				$out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+			}
 			// Show my availability
 			if ($showproperties)
 			{
@@ -3596,8 +3599,8 @@ class Form
 	 *     @param	string		$question    	   	Question
 	 *     @param 	string		$action      	   	Action
 	 *	   @param  	array		$formquestion	   	An array with complementary inputs to add into forms: array(array('label'=> ,'type'=> , ))
-	 *												type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', ...
-	 * 	   @param  	string		$selectedchoice  	'' or 'no' or 'yes' or '1' or '0'
+	 *												type can be 'hidden', 'text', 'password', 'checkbox', 'radio', 'date', 'morecss', ...
+	 * 	   @param  	string		$selectedchoice  	'' or 'no', or 'yes' or '1' or '0'
 	 * 	   @param  	int			$useajax		   	0=No, 1=Yes, 2=Yes but submit page with &confirm=no if choice is No, 'xxx'=Yes and preoutput confirm box with div id=dialog-confirm-xxx
 	 *     @param  	int			$height          	Force height of box
 	 *     @param	int			$width				Force width of box ('999' or '90%'). Ignored and forced to 90% on smartphones.
@@ -5985,9 +5988,10 @@ class Form
 	 *
 	 *  @param	CommonObject	$object		      Object we want to show links to
 	 *  @param  string          $morehtmlright    More html to show on right of title
+	 *  @param  array           $compatibleImportElementsList  Array of compatibles elements object for "import from" action
 	 *  @return	int							      <0 if KO, >=0 if OK
 	 */
-	function showLinkedObjectBlock($object, $morehtmlright='')
+	function showLinkedObjectBlock($object, $morehtmlright='',$compatibleImportElementsList=false)
 	{
 		global $conf,$langs,$hookmanager;
 		global $bc;
@@ -5996,7 +6000,9 @@ class Form
 
 		// Bypass the default method
 		$hookmanager->initHooks(array('commonobject'));
-		$parameters=array();
+		$parameters=array(
+		    'compatibleImportElementsList' =>& $compatibleImportElementsList,
+		);
 		$reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 		if (empty($reshook))
@@ -6008,7 +6014,7 @@ class Form
 
 
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder allwidth">';
+			print '<table class="noborder allwidth" data-block="showLinkedObject" data-element="'.$object->element.'"  data-elementid="'.$object->id.'"   >';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Type").'</td>';
@@ -6025,7 +6031,13 @@ class Form
 			foreach($object->linkedObjects as $objecttype => $objects)
 			{
 				$tplpath = $element = $subelement = $objecttype;
-
+                
+				// to display inport button on tpl
+				$showImportButton=false;
+				if(!empty($compatibleImportElementsList) && in_array($element,$compatibleImportElementsList)){
+				    $showImportButton=true;
+				}
+				
 				if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
 				{
 					$element = $regs[1];
@@ -6085,7 +6097,7 @@ class Form
 						global $noMoreLinkedObjectBlockAfter;
 						$noMoreLinkedObjectBlockAfter=1;
 					}
-
+					
 					$res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
 					if ($res)
 					{
@@ -6101,6 +6113,13 @@ class Form
 			}
 
 			print '</table>';
+			
+			if(!empty($compatibleImportElementsList))
+			{
+			    $res=@include dol_buildpath('core/tpl/ajax/objectlinked_lineimport.tpl.php');
+			}
+			
+			
 			print '</div>';
 
 			return $nbofdifferenttypes;

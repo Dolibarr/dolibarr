@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/user/index.php
+ *      \file       htdocs/user/list.php
  * 		\ingroup	core
  *      \brief      Page of users
  */
@@ -33,6 +33,8 @@ if (! $user->rights->user->user->lire && ! $user->admin)
 $langs->load("users");
 $langs->load("companies");
 $langs->load('hrm');
+
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userlist';   // To manage different context of search
 
 // Security check (for external users)
 $socid=0;
@@ -54,11 +56,9 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 
-// Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new User($db);
+$hookmanager->initHooks(array('userlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -271,6 +271,12 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $text = $langs->trans("ListOfUsers");
 
+$newcardbutton='';
+if ($user->rights->propal->creer)
+{
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=">'.$langs->trans('NewUser').'</a>';
+}
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -281,7 +287,9 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+
+
+print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
 
 if ($sall)
 {

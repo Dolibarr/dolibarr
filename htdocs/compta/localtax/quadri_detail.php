@@ -38,10 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
-$langs->load("bills");
-$langs->load("compta");
-$langs->load("companies");
-$langs->load("products");
+$langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 $local=GETPOST('localTaxType', 'int');
 // Date range
@@ -63,29 +60,31 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 	$q=GETPOST("q");
 	if (empty($q))
 	{
-		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,$_REQUEST["month"],false); }
+		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
 		else
 		{
-            $month_current = strftime("%m",dol_now());
-            if ($month_current >= 10) $q=4;
-            elseif ($month_current >= 7) $q=3;
-            elseif ($month_current >= 4) $q=2;
-            else $q=1;
+			$date_start=dol_get_first_day($year_start,empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START,false);
+			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	else
+	{
+		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	}
 }
 
-$min = GETPOST("min");
+$min = price2num(GETPOST("min","alpha"));
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
-// 0=normal, 1=option vat for services is on debit
+// 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
+if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax",'int');
 if (empty($modetax)) $modetax=0;
 
 // Security check
@@ -118,11 +117,11 @@ $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch.='  <input type="hidden" name="localTaxType" value="'.$local.'">';
 
+$name=$langs->transcountry($local==1?"LT1ReportByQuarters":"LT2ReportByQuarters", $mysoc->country_code);
 $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 
 if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice for goods and services
 {
-    $nom=$langs->trans($local==1?"LT1ReportByQuartersInDueDebtMode":"LT2ReportByQuartersInDueDebtMode");
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -151,7 +150,6 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
 }
 if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
 {
-    $nom=$langs->trans($local==1?"LT1ReportByQuartersInInputOutputMode":"LT2ReportByQuartersInInputOutputMode");
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);

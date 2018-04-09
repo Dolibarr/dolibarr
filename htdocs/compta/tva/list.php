@@ -35,7 +35,7 @@ $langs->load("compta");
 $langs->load("bills");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -148,6 +148,11 @@ if ($result)
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 
+	$newcardbutton='';
+	if ($user->rights->tax->charges->creer)
+	{
+		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/tva/card.php?action=create">'.$langs->trans('NewVATPayment').'</a>';
+	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -157,7 +162,7 @@ if ($result)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit);
+	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';

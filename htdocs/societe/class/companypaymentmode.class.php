@@ -203,7 +203,9 @@ class CompanyPaymentMode extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
-		return $this->createCommon($user, $notrigger);
+		$idpayment =  $this->createCommon($user, $notrigger);
+
+		return $idpayment;
 	}
 
 	/**

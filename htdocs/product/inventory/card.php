@@ -27,7 +27,7 @@ include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("inventory","other"));
+$langs->loadLangs(array("stocks","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');

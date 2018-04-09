@@ -258,6 +258,7 @@ function GETPOSTISSET($paramname)
  *                                  ''=no check (deprecated)
  *                                  'none'=no check (only for param that should have very rich content)
  *                                  'int'=check it's numeric (integer or float)
+ *                                  'intcomma'=check it's integer+comma ('1,2,3,4...')
  *                                  'alpha'=check it's text and sign
  *                                  'aZ'=check it's a-z only
  *                                  'aZ09'=check it's simple alpha string (recommended for keys)
@@ -544,10 +545,10 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
-		case 'nohtml':
+		case 'nohtml':		// Recommended for most scalar parameters
 			$out=dol_string_nohtmltag($out, 0);
 			break;
-		case 'alphanohtml':	// Recommended for search params
+		case 'alphanohtml':	// Recommended for search parameters
 			if (! is_array($out))
 			{
 				$out=trim($out);
@@ -3059,7 +3060,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *                                  			Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  			Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@param		string		$moreatt			Add more attribute on img tag (For example 'style="float: right"')
- *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *	@param		boolean|int	$pictoisfullpath	If true or 1, image path is a full path
  *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt				Force alt for bind peoplae
@@ -3071,67 +3072,124 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 {
 	global $conf, $langs;
 
+	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
+	$url = DOL_URL_ROOT;
+	$theme = $conf->theme;
+	$path = 'theme/'.$theme;
+
 	// Define fullpathpicto to use into src
-	if ($pictoisfullpath)
-	{
+	if ($pictoisfullpath) {
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) {
+			$picto .= '.png';
+		}
 		$fullpathpicto = $picto;
 	}
-	else
-	{
+	else {
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (in_array($pictowithoutext, array('delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow')))
-		{
-			$fakey = $pictowithoutext; $facolor=''; $fasize='';
-			if ($pictowithoutext == 'switch_off')     { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
-			elseif ($pictowithoutext == 'switch_on')  { $fakey = 'fa-toggle-on';  $facolor='#227722'; $fasize='2em'; }
-			elseif ($pictowithoutext == 'off')        { $fakey = 'fa-square-o';   $fasize='1.3em'; }
-			elseif ($pictowithoutext == 'on')         { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
-			elseif ($pictowithoutext == 'delete')     { $fakey = 'fa-trash';      $facolor='#444'; }
-			elseif ($pictowithoutext == 'edit')       { $fakey = 'fa-pencil';     $facolor='#444'; }
-			elseif ($pictowithoutext == 'printer')    { $fakey = 'fa-print';      $fasize='1.2em'; $facolor='#444'; }
-			elseif ($pictowithoutext == 'resize')     { $fakey = 'fa-crop';       $facolor='#444'; }
-			elseif ($pictowithoutext == 'uparrow')    { $fakey = 'fa-mail-forward';       $facolor='#555'; }
-			elseif ($pictowithoutext == 'unlink')     { $fakey = 'fa-chain-broken';       $facolor='#555'; }
-			elseif ($pictowithoutext == 'playdisabled') { $fakey = 'fa-play';       $facolor='#ccc'; }
-			else { $fakey = 'fa-'.$pictowithoutext; $facolor='#444'; }
+		if (empty($srconly) && in_array($pictowithoutext, array('bank', 'delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow'))) {
+			$fakey = $pictowithoutext;
+			$facolor = '';
+			$fasize = '';
+			if ($pictowithoutext == 'switch_off') {
+				$fakey = 'fa-toggle-off';
+				$facolor = '#999';
+				$fasize = '2em';
+			}
+			elseif ($pictowithoutext == 'switch_on') {
+				$fakey = 'fa-toggle-on';
+				$facolor = '#227722';
+				$fasize = '2em';
+			}
+			elseif ($pictowithoutext == 'off') {
+				$fakey = 'fa-square-o';
+				$fasize = '1.3em';
+			}
+			elseif ($pictowithoutext == 'on') {
+				$fakey = 'fa-check-square-o';
+				$fasize = '1.3em';
+			}
+			elseif ($pictowithoutext == 'bank') {
+				$fakey = 'fa-bank';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'delete') {
+				$fakey = 'fa-trash';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'edit') {
+				$fakey = 'fa-pencil';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'printer') {
+				$fakey = 'fa-print';
+				$fasize = '1.2em';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'resize') {
+				$fakey = 'fa-crop';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'uparrow') {
+				$fakey = 'fa-mail-forward';
+				$facolor = '#555';
+			}
+			elseif ($pictowithoutext == 'unlink')     {
+				$fakey = 'fa-chain-broken';
+				$facolor = '#555';
+			}
+			elseif ($pictowithoutext == 'playdisabled') {
+				$fakey = 'fa-play';
+				$facolor = '#ccc';
+			}
+			else {
+				$fakey = 'fa-'.$pictowithoutext;
+				$facolor = '#444';
+			}
 
-			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) { $morecss.=($morecss?' ':'').$reg[1]; }
-			$enabledisablehtml ='<span class="fa '.$fakey.' marginleftonly valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
-			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$titlealt;
-			$enabledisablehtml.='</span>';
+			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+				$morecss.= ($morecss?' ':'').$reg[1];
+			}
+			$enabledisablehtml = '<span class="fa '.$fakey.' marginleftonly valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'>';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$enabledisablehtml.= $titlealt;
+			}
+			$enabledisablehtml.= '</span>';
 
 			return $enabledisablehtml;
 		}
 
-		// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
-		$url = DOL_URL_ROOT;
-		$theme = $conf->theme;
-
-		$path = 'theme/'.$theme;
-		if (! empty($conf->global->MAIN_OVERWRITE_THEME_PATH)) $path = $conf->global->MAIN_OVERWRITE_THEME_PATH.'/theme/'.$theme;	// If the theme does not have the same name as the module
-		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
-		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) $path = $theme.'/theme/'.$theme;	// If the theme have the same name as the module
+		if (! empty($conf->global->MAIN_OVERWRITE_THEME_PATH)) {
+			$path = $conf->global->MAIN_OVERWRITE_THEME_PATH.'/theme/'.$theme;	// If the theme does not have the same name as the module
+		}
+		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) {
+			$path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
+		}
+		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) {
+			$path = $theme.'/theme/'.$theme;	// If the theme have the same name as the module
+		}
 
 		// If we ask an image into $url/$mymodule/img (instead of default path)
-		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
-		{
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) {
 			$picto = $regs[1];
 			$path = $regs[2];	// $path is $mymodule
 		}
 
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) {
+			$picto .= '.png';
+		}
 		// If alt path are defined, define url where img file is, according to physical path
-		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
-		{
-			if ($type == 'main') continue;
-			if (file_exists($dirroot.'/'.$path.'/img/'.$picto))	// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
-			{
-				$url=DOL_URL_ROOT.$conf->file->dol_url_root[$type];
+		// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
+		foreach ($conf->file->dol_document_root as $type => $dirroot) {
+			if ($type == 'main') {
+				continue;
+			}
+			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
+			if (file_exists($dirroot.'/'.$path.'/img/'.$picto)) {
+				$url = DOL_URL_ROOT.$conf->file->dol_url_root[$type];
 				break;
 			}
 		}
@@ -3140,15 +3198,16 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
-	if ($srconly) return $fullpathpicto;
-	else
-	{
+	if ($srconly) {
+		return $fullpathpicto;
+	}
+	else {
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for bind people
 		//$tmparray=array(0=>$titlealt);
 		//if (empty($notitle) && preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		//$title=$tmparray[0];
 		//$alt=empty($tmparray[1])?'':$tmparray[1];
-		$title=$titlealt;
+		$title = $titlealt;
 		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
@@ -5350,35 +5409,41 @@ function picto_required()
 /**
  *	Clean a string from all HTML tags and entities.
  *  This function differs from strip_tags because:
- *  - <br> are replace with \n
- *  - if entities are found, they are decoded before the strip
- *  - you can decide to convert line feed into spaces
+ *  - <br> are replaced with \n if removelinefeed=0 or 1
+ *  - if entities are found, they are decoded BEFORE the strip
+ *  - you can decide to convert line feed into a space
  *
  *	@param	string	$stringtoclean		String to clean
- *	@param	integer	$removelinefeed		1=Replace also new lines by a space, 0=Only last one are removed
+ *	@param	integer	$removelinefeed		1=Replace all new lines by 1 space, 0=Only ending new lines are removed others are replaced with \n, 2=Ending new lines are removed but others are kept with a same number of \n than nb of <br> when there is both "...<br>\n..."
  *  @param  string	$pagecodeto      	Encoding of input/output string
+ *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag)
  *	@return string	    				String cleaned
  *
  * 	@see	dol_escape_htmltag strip_tags
  */
-function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-8')
+function dol_string_nohtmltag($stringtoclean, $removelinefeed=1, $pagecodeto='UTF-8', $strip_tags=0)
 {
-	// TODO Try to replace with  strip_tags($stringtoclean)
-	$pattern = "/<[^<>]+>/";
-	$stringtoclean = preg_replace('/<br[^>]*>/', "\n", $stringtoclean);
-	$temp = dol_html_entity_decode($stringtoclean,ENT_COMPAT,$pagecodeto);
+	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>\n+/ims', '<br>', $stringtoclean);
+	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
-	// Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
-	$temp = preg_replace($pattern,"",$temp);    // pass 1
-	// $temp after pass 1: <a href="/myurl" title="A title">0000-021
-	$temp = preg_replace($pattern,"",$temp);    // pass 2
-	// $temp after pass 2: 0000-021
+	if ($strip_tags) {
+		$temp = strip_tags($temp);
+	} else {
+		$pattern = "/<[^<>]+>/";
+		// Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
+		$temp = preg_replace($pattern,"",$temp);    // pass 1
+		// $temp after pass 1: <a href="/myurl" title="A title">0000-021
+		$temp = preg_replace($pattern,"",$temp);    // pass 2
+		// $temp after pass 2: 0000-021
+	}
+
+	$temp = dol_html_entity_decode($temp,ENT_COMPAT,$pagecodeto);
 
 	// Supprime aussi les retours
-	if ($removelinefeed) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
+	if ($removelinefeed == 1) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
 
 	// et les espaces doubles
-	while(strpos($temp,"  "))
+	while (strpos($temp,"  "))
 	{
 		$temp = str_replace("  "," ",$temp);
 	}
@@ -6465,27 +6530,30 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 	// Clean parameters
 	$order=strtolower($order);
 
-	$sizearray=count($array);
-	if (is_array($array) && $sizearray>0)
+	if (is_array($array))
 	{
-		$temp = array();
-		foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
-
-		if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
-		else
+		$sizearray=count($array);
+		if ($sizearray>0)
 		{
-			($case_sensitive) ? natsort($temp) : natcasesort($temp);
-			if($order!='asc') $temp=array_reverse($temp,TRUE);
+			$temp = array();
+			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+
+			if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
+			else
+			{
+				($case_sensitive) ? natsort($temp) : natcasesort($temp);
+				if($order!='asc') $temp=array_reverse($temp,TRUE);
+			}
+
+			$sorted = array();
+
+			foreach(array_keys($temp) as $key)
+			{
+				(is_numeric($key) && empty($keepindex)) ? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+			}
+
+			return $sorted;
 		}
-
-		$sorted = array();
-
-		foreach(array_keys($temp) as $key)
-		{
-			(is_numeric($key) && empty($keepindex)) ? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
-		}
-
-		return $sorted;
 	}
 	return $array;
 }

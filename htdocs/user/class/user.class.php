@@ -2109,7 +2109,7 @@ class User extends CommonObject
 	 *
 	 *	@param	int		$withpictoimg				Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto, -1=Include photo into link, -2=Only picto photo, -3=Only photo very small)
 	 *	@param	string	$option						On what the link point to ('leave', 'nolink', )
-	 *  @param  integer $infologin      			Add complete info tooltip
+	 *  @param  integer $infologin      			0=Add default info tooltip, 1=Add complete info tooltip, -1=No info tooltip
 	 *  @param	integer	$notooltip					1=Disable tooltip on picto and name
 	 *  @param	int		$maxlen						Max length of visible user name
 	 *  @param	int		$hidethirdpartylogo			Hide logo of thirdparty if user is external user
@@ -2136,6 +2136,7 @@ class User extends CommonObject
 			$label.= '</div><div style="clear: both;"></div>';
 		}
 
+		// Info Login
 		$label.= '<div class="centpercent">';
 		$label.= '<u>' . $langs->trans("User") . '</u><br>';
 		$label.= '<b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs,'');
@@ -2144,20 +2145,18 @@ class User extends CommonObject
 		$label.= '<br><b>' . $langs->trans("EMail").':</b> '.$this->email;
 		if (! empty($this->admin))
 			$label.= '<br><b>' . $langs->trans("Administrator").'</b>: '.yn($this->admin);
-		if (! empty($this->societe_id) )	// Add thirdparty for external users
+		if (! empty($this->socid) )	// Add thirdparty for external users
 		{
 			$thirdpartystatic = new Societe($db);
-			$thirdpartystatic->fetch($this->societe_id);
+			$thirdpartystatic->fetch($this->socid);
 			if (empty($hidethirdpartylogo)) $companylink = ' '.$thirdpartystatic->getNomUrl(2, (($option == 'nolink')?'nolink':''));	// picto only of company
 			$company=' ('.$langs->trans("Company").': '.$thirdpartystatic->name.')';
 		}
-		$type=($this->societe_id?$langs->trans("External").$company:$langs->trans("Internal"));
+		$type=($this->socid?$langs->trans("External").$company:$langs->trans("Internal"));
 		$label.= '<br><b>' . $langs->trans("Type") . ':</b> ' . $type;
 		$label.= '<br><b>' . $langs->trans("Status").'</b>: '.$this->getLibStatut(0);
 		$label.='</div>';
-
-		// Info Login
-		if ($infologin)
+		if ($infologin > 0)
 		{
 			$label.= '<br>';
 			$label.= '<br><u>'.$langs->trans("Connection").'</u>';
@@ -2176,6 +2175,7 @@ class User extends CommonObject
 			if (! empty($conf->browser->phone)) $label.= '<br><b>'.$langs->trans("Phone").':</b> '.$conf->browser->phone;
 			if (! empty($_SESSION["disablemodules"])) $label.= '<br><b>'.$langs->trans("DisabledModules").':</b> <br>'.join(', ',explode(',',$_SESSION["disablemodules"]));
 		}
+		if ($infologin < 0) $label='';
 
 		$url = DOL_URL_ROOT.'/user/card.php?id='.$this->id;
 		if ($option == 'leave') $url = DOL_URL_ROOT.'/holiday/list.php?id='.$this->id;
@@ -2407,8 +2407,8 @@ class User extends CommonObject
 		}
 		if ($this->address && ! empty($conf->global->LDAP_FIELD_ADDRESS))			$info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_FIELD_ZIP))					$info[$conf->global->LDAP_FIELD_ZIP] = $this->zip;
-		if ($this->town && ! empty($conf->global->LDAP_FIELD_TOWN))				$info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
-		if ($this->note_public && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))	$info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note_public;
+		if ($this->town && ! empty($conf->global->LDAP_FIELD_TOWN))					$info[$conf->global->LDAP_FIELD_TOWN] = $this->town;
+		if ($this->note_public && ! empty($conf->global->LDAP_FIELD_DESCRIPTION))	$info[$conf->global->LDAP_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_public, 2);
 		if ($this->socid > 0)
 		{
 			$soc = new Societe($this->db);

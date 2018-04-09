@@ -78,6 +78,7 @@ ResultOfMailSending=Result of mass EMail sending
 NbSelected=Nb selected
 NbIgnored=Nb ignored
 NbSent=Nb sent
+SentXXXmessages=%s message(s) sent.
 ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
 MailingModuleDescContactsWithThirdpartyFilter=Contact with customer filters
 MailingModuleDescContactsByCompanyCategory=Contacts by third party category

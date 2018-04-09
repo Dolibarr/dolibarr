@@ -79,6 +79,7 @@ if (! $sortorder) { $sortorder=($filter=='outofdate'?"DESC":"ASC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Adherent($db);
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
@@ -344,6 +345,12 @@ if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs-
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->adherent->creer)
+{
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create">'.$langs->trans('NewMember').'</a>';
+}
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -354,7 +361,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="member";

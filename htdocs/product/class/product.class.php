@@ -886,6 +886,7 @@ class Product extends CommonObject
 			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->db->escape($this->surface_units)."'" : 'null');
 			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->db->escape($this->volume)."'" : 'null');
 			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
+			$sql.= ", fk_default_warehouse = " . (! empty($this->fk_default_warehouse) ? $this->db->escape($this->fk_default_warehouse) : 'null');
 			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->db->escape($this->seuil_stock_alerte)."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
@@ -1864,7 +1865,7 @@ class Product extends CommonObject
 
 		$sql = "SELECT rowid, ref, ref_ext, label, description, url, note as note_private, customcode, fk_country, price, price_ttc,";
 		$sql.= " price_min, price_min_ttc, price_base_type, cost_price, default_vat_code, tva_tx, recuperableonly as tva_npr, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type, tosell,";
-		$sql.= " tobuy, fk_product_type, duration, seuil_stock_alerte, canvas, weight, weight_units,";
+		$sql.= " tobuy, fk_product_type, duration, fk_default_warehouse, seuil_stock_alerte, canvas, weight, weight_units,";
 		$sql.= " length, length_units, width, width_units, height, height_units,";
 		$sql.= " surface, surface_units, volume, volume_units, barcode, fk_barcode_type, finished,";
 		$sql.= " accountancy_code_buy, accountancy_code_sell, accountancy_code_sell_intra, accountancy_code_sell_export, stock, pmp,";
@@ -1946,6 +1947,7 @@ class Product extends CommonObject
 				$this->accountancy_code_sell_intra	= $obj->accountancy_code_sell_intra;
 				$this->accountancy_code_sell_export	= $obj->accountancy_code_sell_export;
 
+				$this->fk_default_warehouse			= $obj->fk_default_warehouse;
 				$this->seuil_stock_alerte			= $obj->seuil_stock_alerte;
 				$this->desiredstock					= $obj->desiredstock;
 				$this->stock_reel					= $obj->stock;
@@ -3516,6 +3518,17 @@ class Product extends CommonObject
         if ($this->type == Product::TYPE_SERVICE)
         {
             //
+        }
+        if (! empty($conf->accounting->enabled) && $this->status)
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+        	$label.= '<br><b>' . $langs->trans('ProductAccountancySellCode') . ':</b> '. length_accountg($this->accountancy_code_sell);
+        	$label.= '<br><b>' . $langs->trans('ProductAccountancySellIntraCode') . ':</b> '. length_accountg($this->accountancy_code_sell_export);
+        	$label.= '<br><b>' . $langs->trans('ProductAccountancySellExportCode') . ':</b> '. length_accountg($this->accountancy_code_sell_intra);
+        }
+        if (! empty($conf->accounting->enabled) && $this->status_buy)
+        {
+        	$label.= '<br><b>' . $langs->trans('ProductAccountancyBuyCode') . ':</b> '. length_accountg($this->accountancy_code_buy);
         }
         if (! empty($this->entity))
         {

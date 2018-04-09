@@ -131,9 +131,9 @@ if ($resql)
     //if ($page > 0) $param.= '&page='.$page;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create">'.$langs->trans('NewDonation').'</a>';
 
-    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
@@ -142,7 +142,9 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-    if ($search_all)
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
+
+	if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);

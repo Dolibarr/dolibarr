@@ -45,6 +45,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'thirdpartylist';
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -106,18 +107,13 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='thirdpartylist';
-/*if ($search_type == '1,3') { $contextpage='customerlist'; $type='c'; }
-if ($search_type == '2,3') { $contextpage='prospectlist'; $type='p'; }
-if ($search_type == '4') { $contextpage='supplierlist'; $type='f'; }
-*/
 if ($type == 'c') { $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
 if ($type == 'p') { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
 if ($type == 'f') { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Societe($db);
+$hookmanager->initHooks(array('thirdpartylist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -573,6 +569,23 @@ if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->societe->creer)
+{
+	$typefilter='';
+	$label='MenuNewThirdParty';
+
+	if(! empty($type))
+	{
+		$typefilter = '&amp;type='.$type;
+		if($type == 'p') $label='MenuNewProspect';
+		if($type == 'c') $label='MenuNewCustomer';
+		if($type == 'f') $label='NewSupplier';
+	}
+
+	$newcardbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'">'.$langs->trans($label).'</a>';
+}
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -581,7 +594,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
 $langs->load("other");
 $textprofid=array();

@@ -67,13 +67,14 @@ $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectcard';   // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
 $object=new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectcard'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('myobjectcard','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('myobject');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
