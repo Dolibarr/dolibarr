@@ -614,6 +614,22 @@ else
 	print $langs->trans($object->note);
 	print "</td></tr>";
 
+	if (! empty($conf->multicompany->enabled))
+	{
+		print '<tr><td>';
+		print $langs->trans('Entity')."</td><td>";
+		if (! $object->entity)
+		{
+			print $langs->trans("AllEntities");
+		}
+		else
+		{
+			$mc->getInfo($obj->entity);
+			print $mc->label;
+		}
+		print "</td></tr>";
+	}
+
 	print '</table>';
     print '</div>';
 

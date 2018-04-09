@@ -19,7 +19,7 @@
  */
 
 /**
- *      \file       htdocs/user/group/index.php
+ *      \file       htdocs/user/group/list.php
  * 		\ingroup	core
  *      \brief      Page of user groups
  */

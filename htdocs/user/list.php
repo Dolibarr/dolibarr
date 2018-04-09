@@ -20,7 +20,7 @@
  */
 
 /**
- *      \file       htdocs/user/index.php
+ *      \file       htdocs/user/list.php
  * 		\ingroup	core
  *      \brief      Page of users
  */

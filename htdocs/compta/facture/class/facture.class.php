@@ -769,10 +769,16 @@ class Facture extends CommonInvoice
 					}
 					else if ($reshook < 0) $error++;*/
 
-                    // Call trigger
-                    $result=$this->call_trigger('BILL_CREATE',$user);
-                    if ($result < 0) $error++;
-                    // End call triggers
+          if (! $error)
+          {
+            if (! $notrigger)
+            {
+              // Call trigger
+              $result=$this->call_trigger('BILL_CREATE',$user);
+              if ($result < 0) $error++;
+              // End call triggers
+            }
+          }
 
 					if (! $error)
 					{

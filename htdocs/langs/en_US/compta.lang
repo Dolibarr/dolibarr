@@ -103,6 +103,7 @@ LT2PaymentsES=IRPF Payments
 VATPayment=Sales tax payment
 VATPayments=Sales tax payments
 VATRefund=Sales tax refund
+NewVATPayment=New sales tax payment
 Refund=Refund
 SocialContributionsPayments=Social/fiscal taxes payments
 ShowVatPayment=Show VAT payment

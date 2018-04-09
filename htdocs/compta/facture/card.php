@@ -913,7 +913,7 @@ if (empty($reshook))
 				// Proprietes particulieres a facture avoir
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
 				$object->type = Facture::TYPE_CREDIT_NOTE;
-				
+
 				$facture_source = new Facture($db); // fetch origin object
 				if ($facture_source->fetch($object->fk_facture_source)>0)
 				{
@@ -924,12 +924,11 @@ if (empty($reshook))
 				        $facture_source->fetchPreviousNextSituationInvoice();
 				    }
 				}
-				
 				$id = $object->create($user);
 
-				if ((GETPOST('invoiceAvoirWithLines', 'int')==1 || $object->situation_cycle_ref>0 ) && $id>0)
+	            $facture_source = new Facture($db); // fetch origin object
+				if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0)
 				{
-				    
 					if (!empty($facture_source->lines))
 					{
 						$fk_parent_line = 0;
@@ -1000,12 +999,11 @@ if (empty($reshook))
 							       
 							       
 							    }
-							    
 							}
-							
+
 							$line->fk_facture = $object->id;
 							$line->fk_parent_line = $fk_parent_line;
-							
+
 							$line->subprice = -$line->subprice; // invert price for object
 							$line->pa_ht = $line->pa_ht;       // we choosed to have buy/cost price always positive, so no revert of sign here
 							$line->total_ht = -$line->total_ht;
@@ -1013,7 +1011,7 @@ if (empty($reshook))
 							$line->total_ttc = -$line->total_ttc;
 							$line->total_localtax1 = -$line->total_localtax1;
 							$line->total_localtax2 = -$line->total_localtax2;
-							
+
 							$line->multicurrency_subprice = -$line->multicurrency_subprice;
 							$line->multicurrency_total_ht = -$line->multicurrency_total_ht;
 							$line->multicurrency_total_tva = -$line->multicurrency_total_tva;
@@ -1036,7 +1034,6 @@ if (empty($reshook))
 
 				if(GETPOST('invoiceAvoirWithPaymentRestAmount', 'int')==1 && $id>0)
 				{
-					$facture_source = new Facture($db); // fetch origin object if not previously defined
 					if ($facture_source->fetch($object->fk_facture_source)>0)
 					{
 						$totalpaye = $facture_source->getSommePaiement();
@@ -1046,6 +1043,20 @@ if (empty($reshook))
 
 						$object->addline($langs->trans('invoiceAvoirLineWithPaymentRestAmount'),$remain_to_pay,1,0,0,0,0,0,'','','TTC');
 					}
+				}
+
+				// Add link between credit note and origin
+				if(! empty($object->fk_facture_source)) {
+					$facture_source->fetch($object->fk_facture_source);
+				}
+				$facture_source->fetchObjectLinked();
+
+				if(! empty($facture_source->linkedObjectsIds)) {
+					$linkedObjectIds = $facture_source->linkedObjectsIds;
+					$sourcetype = key($linkedObjectIds);
+					$fk_origin = current($facture_source->linkedObjectsIds[$sourcetype]);
+
+					$object->add_object_linked($sourcetype, $fk_origin);
 				}
 			}
 		}
@@ -2300,6 +2311,82 @@ if (empty($reshook))
 	    }
 	}
 
+	// add lines from objectlinked
+	elseif($action == 'import_lines_from_object'
+	    && $user->rights->facture->creer
+	    && $object->statut == Facture::STATUS_DRAFT
+	    && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION))
+	{
+	    $fromElement = GETPOST('fromelement');
+	    $fromElementid = GETPOST('fromelementid');
+	    $importLines = GETPOST('line_checkbox');
+	    
+	    if(!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
+	    {
+	        if($fromElement == 'commande')
+	        {
+	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class');
+	            $lineClassName = 'OrderLine';
+	        }
+	        $nextRang = count($object->lines) + 1;
+	        $importCount = 0;
+	        $error = 0;
+	        foreach($importLines as $lineId)
+	        {
+	            $lineId = intval($lineId);
+                $originLine = new $lineClassName($db);
+                if(intval($fromElementid) > 0 && $originLine->fetch( $lineId ) > 0)
+                {
+                    $originLine->fetch_optionals($lineId);
+                    $desc = $originLine->desc;
+                    $pu_ht = $originLine->subprice;
+                    $qty = $originLine->qty;
+                    $txtva = $originLine->tva_tx;
+                    $txlocaltax1 = $originLine->localtax1_tx;
+                    $txlocaltax2 = $originLine->localtax2_tx;
+                    $fk_product = $originLine->fk_product;
+                    $remise_percent = $originLine->remise_percent;
+                    $date_start = $originLine->date_start;
+                    $date_end = $originLine->date_end;
+                    $ventil = 0;
+                    $info_bits = $originLine->info_bits;
+                    $fk_remise_except = $originLine->fk_remise_except;
+                    $price_base_type='HT';
+                    $pu_ttc=0;
+                    $type = $originLine->product_type;
+                    $rang=$nextRang++;
+                    $special_code = $originLine->special_code;
+                    $origin = $originLine->element;
+                    $origin_id = $originLine->id;
+                    $fk_parent_line=0;
+                    $fk_fournprice=$originLine->fk_fournprice;
+                    $pa_ht = $originLine->pa_ht;
+                    $label = $originLine->label;
+                    $array_options = $originLine->array_options;
+                    $situation_percent = 100;
+                    $fk_prev_id = '';
+                    $fk_unit = $originLine->fk_unit;
+                    $pu_ht_devise = $originLine->multicurrency_subprice;
+                    
+                    $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $ventil, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit,$pu_ht_devise);
+                    if($res > 0){
+                        $importCount++;
+                    }else{
+                        $error++;
+                    }
+                }
+                else{ 
+                    $error++; 
+                }
+	        }
+	        
+	        if($error)
+	        {
+	            setEventMessage($langs->trans('ErrorsOnXLines',$error), 'errors');
+	        }
+	    }
+	}
+
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
@@ -3276,7 +3363,7 @@ else if ($id > 0 || ! empty($ref))
 	        )
 	    {
 	        $formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
-	    }
+		}
 	}
 
 	// Confirmation of validation
@@ -3849,8 +3936,7 @@ else if ($id > 0 || ! empty($ref))
 	            print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
 	            print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
 	            print '</tr>';
-	            
-	        }
+			}
 	    }
 	    
 	    
@@ -3935,8 +4021,7 @@ else if ($id > 0 || ! empty($ref))
 	    
 	    print '</table>';
 	}
-	
-	
+
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
 	{
@@ -4071,6 +4156,8 @@ else if ($id > 0 || ! empty($ref))
 	print '</table>';
 
 
+	// List of previous situation invoices
+
 	$sign = 1;
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = - 1;
 	$nbrows = 8;
@@ -4091,6 +4178,90 @@ else if ($id > 0 || ! empty($ref))
 		$nbrows += 5;
 	if (! empty($conf->incoterm->enabled))
 		$nbrows += 1;
+
+	if ($object->type == Facture::TYPE_SITUATION && ! empty($conf->global->INVOICE_USE_SITUATION))
+	{
+		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
+			print '<table class="noborder situationstable" width="100%">';
+
+		if (count($object->tab_previous_situation_invoice) > 0) {
+			// List of previous invoices
+			print '<tr class="liste_titre">';
+			print '<td>' . $langs->trans('ListOfPreviousSituationInvoices') . '</td>';
+			print '<td></td>';
+			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+
+			$total_prev_ht = $total_prev_ttc = 0;
+			foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
+				$totalpaye = $prev_invoice->getSommePaiement();
+				$total_prev_ht += $prev_invoice->total_ht;
+				$total_prev_ttc += $prev_invoice->total_ttc;
+				print '<tr class="oddeven">';
+				print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
+				print '<td></td>';
+				if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+				print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
+				print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
+				print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
+				print '</tr>';
+
+			}
+
+			print '<tr class="oddeven">';
+			print '<td></td>';
+			print '<td></td>';
+			if (! empty($conf->banque->enabled)) print '<td></td>';
+			print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
+			print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+		}
+
+		if (count($object->tab_next_situation_invoice) > 0) {
+			// List of next invoices
+			print '<tr class="liste_titre">';
+			print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
+			print '<td></td>';
+			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+
+			$total_next_ht = $total_next_ttc = 0;
+
+			foreach ($object->tab_next_situation_invoice as $next_invoice) {
+				$totalpaye = $next_invoice->getSommePaiement();
+				$total_next_ht += $next_invoice->total_ht;
+				$total_next_ttc += $next_invoice->total_ttc;
+				print '<tr class="oddeven">';
+				print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
+				print '<td></td>';
+				if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+				print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
+				print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
+				print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
+				print '</tr>';
+
+			}
+
+			print '<tr class="oddeven">';
+			print '<td colspan="2" align="right"></td>';
+			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+
+			print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
+			print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
+			print '<td width="18">&nbsp;</td>';
+			print '</tr>';
+		}
+
+		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
+			print '</table>';
+	}
 
 
 	// List of payments already done
@@ -4421,7 +4592,7 @@ else if ($id > 0 || ! empty($ref))
 	// Form to add new line
 	if ($object->statut == 0 && $user->rights->facture->creer && $action != 'valid' && $action != 'editline' && ($object->is_first() || !$object->situation_cycle_ref))
 	{
-		if ($action != 'editline')
+	    if ($action != 'editline' && $action != 'selectlines')
 		{
 			// Add free products/services
 			$object->formAddObjectLine(1, $mysoc, $soc);
@@ -4635,7 +4806,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid=' . $object->id . '&amp;action=create">' . $langs->trans("ChangeIntoRepeatableInvoice") . '</a></div>';
 				}
 			}
-			
+
 			// Create a credit note
 			if (($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA) && $object->statut > 0 && $user->rights->facture->creer)
 			{
@@ -4682,7 +4853,6 @@ else if ($id > 0 || ! empty($ref))
 			    {
 			        print '<div class="inline-block divButAction"><a id="butSituationOutRefused" class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotEnouthCreditNote") . '" >' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
 			    }
-			    
 			}
 
 			// Create next situation invoice
@@ -4753,7 +4923,14 @@ else if ($id > 0 || ! empty($ref))
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice'));
-		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
+		$compatibleImportElementsList = false;
+		if($user->rights->facture->creer 
+		    && $object->statut == Facture::STATUS_DRAFT 
+		    && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) )
+		{
+		    $compatibleImportElementsList = array('commande'); // import from linked elements
+		}
+		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem,$compatibleImportElementsList);
 
 
 		// Show online payment link

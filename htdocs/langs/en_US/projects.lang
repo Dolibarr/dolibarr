@@ -226,3 +226,4 @@ AllowCommentOnProject=Allow user comments on projects
 DontHavePermissionForCloseProject=You do not have permissions to close the project %s
 DontHaveTheValidateStatus=The project %s must be open to be closed
 RecordsClosed=%s project(s) closed
+SendProjectRef=About project %s

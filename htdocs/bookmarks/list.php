@@ -81,7 +81,9 @@ $userstatic=new User($db);
 
 llxHeader('', $langs->trans("ListOfBookmarks"));
 
-print load_fiche_titre($langs->trans("ListOfBookmarks"));
+$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create">'.$langs->trans('NewBookmark').'</a>';
+
+print_barre_liste($langs->trans("ListOfBookmarks"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', -1, '', 'title_generic.png', 0, $newcardbutton);
 
 $sql = "SELECT b.rowid, b.dateb, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";
@@ -203,16 +205,6 @@ else
 	dol_print_error($db);
 }
 
-
-
-print "<div class=\"tabsAction\">\n";
-
-if ($user->rights->bookmark->creer)
-{
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create">'.$langs->trans("NewBookmark").'</a>';
-}
-
-print '</div>';
 
 llxFooter();
 $db->close();
