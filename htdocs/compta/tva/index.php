@@ -179,7 +179,7 @@ print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("Year")." ".$y.'</td>';
 print '<td align="right">'.$langs->trans("VATToPay").'</td>';
 print '<td align="right">'.$langs->trans("VATToCollect").'</td>';
-print '<td align="right">'.$langs->trans("TotalToPay").'</td>';
+print '<td align="right">'.$langs->trans("Balance").'</td>';
 print '<td>&nbsp;</td>'."\n";
 print '</tr>'."\n";
 
