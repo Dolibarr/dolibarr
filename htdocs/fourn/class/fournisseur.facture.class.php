@@ -285,9 +285,9 @@ class FactureFournisseur extends CommonInvoice
         $sql.= ", ".$this->socid;
         $sql.= ", '".$this->db->idate($now)."'";
         $sql.= ", '".$this->db->idate($this->date)."'";
-		$sql.= ", ".(isset($this->fk_project)?$this->fk_project:"null");
-		$sql.= ", ".(isset($this->cond_reglement_id)?$this->cond_reglement_id:"null");
-		$sql.= ", ".(isset($this->mode_reglement_id)?$this->mode_reglement_id:"null");
+		$sql.= ", ".($this->fk_project > 0 ? $this->fk_project:"null");
+		$sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id:"null");
+		$sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id:"null");
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
@@ -903,15 +903,15 @@ class FactureFournisseur extends CommonInvoice
     function insert_discount($idremise)
     {
     	global $langs;
-    	
+
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
     	include_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
-    	
+
     	$this->db->begin();
-    	
+
     	$remise=new DiscountAbsolute($this->db);
     	$result=$remise->fetch($idremise);
-    	
+
     	if ($result > 0)
     	{
     		if ($remise->fk_invoice_supplier)	// Protection against multiple submission
@@ -920,7 +920,7 @@ class FactureFournisseur extends CommonInvoice
     			$this->db->rollback();
     			return -5;
     		}
-    		
+
     		$facligne=new SupplierInvoiceLine($this->db);
     		$facligne->fk_facture_fourn=$this->id;
     		$facligne->fk_remise_except=$remise->id;
@@ -934,7 +934,7 @@ class FactureFournisseur extends CommonInvoice
     		$facligne->remise_percent=0;
     		$facligne->rang=-1;
     		$facligne->info_bits=2;
-    		
+
     		// Get buy/cost price of invoice that is source of discount
     		if ($remise->fk_invoice_supplier_source > 0)
     		{
@@ -946,16 +946,16 @@ class FactureFournisseur extends CommonInvoice
     			$arraytmp=$formmargin->getMarginInfosArray($srcinvoice, false);
     			$facligne->pa_ht = $arraytmp['pa_total'];
     		}
-    		
+
     		$facligne->total_ht  = -$remise->amount_ht;
     		$facligne->total_tva = -$remise->amount_tva;
     		$facligne->total_ttc = -$remise->amount_ttc;
-    		
+
     		$facligne->multicurrency_subprice = -$remise->multicurrency_subprice;
     		$facligne->multicurrency_total_ht = -$remise->multicurrency_total_ht;
     		$facligne->multicurrency_total_tva = -$remise->multicurrency_total_tva;
     		$facligne->multicurrency_total_ttc = -$remise->multicurrency_total_ttc;
-    		
+
     		$lineid=$facligne->insert();
     		if ($lineid > 0)
     		{
@@ -970,7 +970,7 @@ class FactureFournisseur extends CommonInvoice
     					$this->db->rollback();
     					return -4;
     				}
-    				
+
     				$this->db->commit();
     				return 1;
     			}
@@ -994,7 +994,7 @@ class FactureFournisseur extends CommonInvoice
     		return -3;
     	}
     }
-    
+
 
     /**
      *	Delete invoice from database

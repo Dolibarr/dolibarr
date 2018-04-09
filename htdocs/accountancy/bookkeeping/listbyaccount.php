@@ -40,8 +40,8 @@ $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
 $sortfield = GETPOST("sortfield");
 $action = GETPOST('action', 'alpha');
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 
 
@@ -51,8 +51,8 @@ $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha
 if ($search_accountancy_code_start == - 1) {
 	$search_accountancy_code_start = '';
 }
-$search_label_account = GETPOST('search_label_account', 'alpha');
-$search_mvt_label = GETPOST('search_mvt_label', 'alpha');
+$search_doc_ref = GETPOST('search_doc_ref', 'alpha');
+$search_label_operation = GETPOST('search_label_operation', 'alpha');
 $search_direction = GETPOST('search_direction', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 
@@ -102,11 +102,11 @@ $filter = array ();
 
 if (! empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
-	$options .= '&date_startmonth=' . GETPOST('date_startmonth', 'int') . '&date_startday=' . GETPOST('date_startday', 'int') . '&date_startyear=' . GETPOST('date_startyear', 'int');
+	$options .= '&search_date_startmonth=' . GETPOST('search_date_startmonth', 'int') . '&search_date_startday=' . GETPOST('search_date_startday', 'int') . '&search_date_startyear=' . GETPOST('search_date_startyear', 'int');
 }
 if (! empty($search_date_end)) {
 	$filter['t.doc_date<='] = $search_date_end;
-	$options .= '&date_endmonth=' . GETPOST('date_endmonth', 'int') . '&date_endday=' . GETPOST('date_endday', 'int') . '&date_endyear=' . GETPOST('date_endyear', 'int');
+	$options .= '&search_date_endmonth=' . GETPOST('search_date_endmonth', 'int') . '&search_date_endday=' . GETPOST('search_date_endday', 'int') . '&search_date_endyear=' . GETPOST('search_date_endyear', 'int');
 }
 if (! empty($search_doc_date)) {
 	$filter['t.doc_date'] = $search_doc_date;
@@ -120,12 +120,16 @@ if (! GETPOST('button_removefilter_x','alpha') && ! GETPOST('button_removefilter
   	$options .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
   }
   if (! empty($search_label_account)) {
-  	$filter['t.label_operation'] = $search_label_account;
-  	$options .= '&search_label_account=' . urlencode($search_label_account);
+  	$filter['t.label_compte'] = $search_label_account;
+  	$options .= '&search_label_compte=' . urlencode($search_label_account);
   }
-  if (! empty($search_mvt_label)) {
-  	$filter['t.label_operation'] = $search_mvt_label;
-  	$options .= '&search_mvt_label=' . urlencode($search_mvt_label);
+  if (! empty($search_doc_ref)) {
+  	$filter['t.doc_ref'] = $search_doc_ref;
+  	$options .= '&search_doc_ref=' . urlencode($search_doc_ref);
+  }
+  if (! empty($search_label_operation)) {
+  	$filter['t.label_operation'] = $search_label_operation;
+  	$options .= '&search_label_operation=' . urlencode($search_label_operation);
   }
   if (! empty($search_direction)) {
   	$filter['t.sens'] = $search_direction;
@@ -148,9 +152,18 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_accountancy_code = '';
 	$search_accountancy_code_start = '';
     $search_label_account = '';
-	$search_mvt_label = '';
+    $search_doc_ref = '';
+	$search_label_operation = '';
 	$search_direction = '';
 	$search_ledger_code = '';
+	$search_date_start='';
+	$search_date_end='';
+	$search_date_startyear='';
+	$search_date_startmonth='';
+	$search_date_startday='';
+	$search_date_endyear='';
+	$search_date_endmonth='';
+	$search_date_endday='';
 }
 
 if ($action == 'delmouvconfirm') {
@@ -251,16 +264,16 @@ print '<td class="liste_titre">' . $object->select_account($search_accountancy_c
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre" align="center">';
 print $langs->trans('From') . ': ';
-print $form->select_date($search_date_start, 'date_start', 0, 0, 1);
+print $form->select_date($search_date_start, 'search_date_start', 0, 0, 1);
 print '<br>';
 print $langs->trans('to') . ': ';
-print $form->select_date($search_date_end, 'date_end', 0, 0, 1);
+print $form->select_date($search_date_end, 'search_date_end', 0, 0, 1);
 print '</td>';
-print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_mvt_label" value="' . $search_mvt_label . '"/></td>';
-print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_account" value="' . $search_label_account . '"/></td>';
+print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_doc_ref" value="' . dol_escape_htmltag($search_doc_ref) . '"/></td>';
+print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="' . dol_escape_htmltag($search_label_operation) . '"/></td>';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
-print '<td class="liste_titre" align="center"><input type="text" name="search_ledger_code" size="3" value="' . $search_ledger_code . '"></td>';
+print '<td class="liste_titre" align="center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
 print '<td class="liste_titre" align="right" colspan="2">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
@@ -270,7 +283,7 @@ print '<tr class="liste_titre">';
 print_liste_field_titre("AccountAccountingShort", $_SERVER['PHP_SELF']);
 print_liste_field_titre("TransactionNumShort", $_SERVER['PHP_SELF'], "t.piece_num", "", $options, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("Docdate", $_SERVER['PHP_SELF'], "t.doc_date", "", $options, 'align="center"', $sortfield, $sortorder);
-print_liste_field_titre("Docref", $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
+print_liste_field_titre("Piece", $_SERVER['PHP_SELF'], "t.doc_ref", "", $options, "", $sortfield, $sortorder);
 print_liste_field_titre("Label");
 print_liste_field_titre("Debit", $_SERVER['PHP_SELF'], "t.debit", "", $options, 'align="right"', $sortfield, $sortorder);
 print_liste_field_titre("Credit", $_SERVER['PHP_SELF'], "t.credit", "", $options, 'align="right"', $sortfield, $sortorder);

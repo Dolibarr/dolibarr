@@ -16,7 +16,7 @@
  */
 
 /**
- *	    \file       htdocs/compta/localtax/reglement.php
+ *	    \file       htdocs/compta/localtax/list.php
  *      \ingroup    tax
  *		\brief      List of IRPF payments
  */
@@ -25,13 +25,13 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
 $langs->load("compta");
-$langs->load("compta");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt=GETPOST("localTaxType");
+
 
 /*
  * View
@@ -41,7 +41,13 @@ llxHeader();
 
 $localtax_static = new Localtax($db);
 
-print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments",$mysoc->country_code));
+$newcardbutton='';
+if ($user->rights->tax->charges->creer)
+{
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt.'">'.$langs->trans('NewVATPayment').'</a>';
+}
+
+print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments",$mysoc->country_code), $newcardbutton);
 
 $sql = "SELECT rowid, amount, label, f.datev as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f ";
@@ -66,7 +72,7 @@ if ($result)
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
-        
+
         print '<tr class="oddeven">';
 
 		$localtax_static->id=$obj->rowid;

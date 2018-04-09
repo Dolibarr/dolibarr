@@ -55,8 +55,7 @@ $search_lang=GETPOST('search_lang','alpha');
 $search_fk_user=GETPOST('search_fk_user','intcomma');
 $search_topic=GETPOST('search_topic','alpha');
 
-$allowed=1;
-if (! $allowed) accessforbidden();
+if (! empty($user->socid)) accessforbidden();
 
 $acts[0] = "activate";
 $acts[1] = "disable";
@@ -168,6 +167,7 @@ if ($conf->fournisseur->enabled)       $elementList['invoice_supplier_send']=$la
 if ($conf->societe->enabled)           $elementList['thirdparty']=$langs->trans('MailToThirdparty');
 if ($conf->adherent->enabled)          $elementList['member']=$langs->trans('MailToMember');
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
+if ($conf->projet->enabled)            $elementList['project']=$langs->trans('MailToProject');
 $elementList['user']=$langs->trans('MailToUser');
 $elementList['all'] =$langs->trans('VisibleEverywhere');
 $elementList['none']=$langs->trans('VisibleNowhere');
@@ -521,7 +521,7 @@ $parameters = array(
 	'fieldlist' => $fieldlist,
 	'tabname' => $tabname[$id]
 );
-$reshook = $hookmanager->executeHooks('createDictionaryFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
+$reshook = $hookmanager->executeHooks('createEmailTemplateFieldlist', $parameters, $obj, $tmpaction); // Note that $action and $object may have been modified by some hooks
 $error = $hookmanager->error;
 $errors = $hookmanager->errors;
 
@@ -732,7 +732,7 @@ if ($resql)
             {
             	$tmpaction='edit';
                 $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('editEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                 $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                 // Show fields
@@ -776,6 +776,7 @@ if ($resql)
                         }
                         if ($tmpfieldlist == 'content')
                         {
+                        	print $form->textwithpicto($langs->trans("Content"), $tabhelp[$id][$tmpfieldlist], 1, 'help', '', 0, 2, $tmpfieldlist) . '<br>';
                         	$okforextended = true;
                         	if (empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $okforextended = false;
                         	$doleditor = new DolEditor($tmpfieldlist.'-'.$rowid, (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : ''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_6, '90%');
@@ -791,7 +792,7 @@ if ($resql)
             {
               	$tmpaction = 'view';
                 $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                $reshook=$hookmanager->executeHooks('viewEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
                 $error=$hookmanager->error; $errors=$hookmanager->errors;
 

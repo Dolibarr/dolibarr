@@ -302,7 +302,7 @@ $projectstatic=new Project($db);
 $project = new Project($db);
 $taskstatic = new Task($db);
 $thirdpartystatic = new Societe($db);
-
+$holiday = new Holiday($db);
 
 $prev = dol_getdate($daytoparse - (24 * 3600));
 $prev_year  = $prev['year'];
@@ -487,8 +487,6 @@ print '<td class="center leftborder">'.$langs->trans("HourStart").'</td>';
 $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED)?1:0);
 
 // Get if user is available or not for each day
-$holiday = new Holiday($db);
-
 $isavailable=array();
 if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 {
@@ -512,7 +510,14 @@ if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This 
 	$cssweekend='weekend';
 }
 
-print '<td class="center'.($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</td>';
+$tmpday=dol_time_plus_duree($firstdaytoshow, $idw, 'd');
+
+$cssonholiday='';
+if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['afternoon'])   $cssonholiday.='onholidayallday ';
+elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
+elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+print '<td class="center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">'.$langs->trans("Duration").'</td>';
 print '<td class="center">'.$langs->trans("Note").'</td>';
 print '<td class="center"></td>';
 print "</tr>\n";
@@ -522,8 +527,10 @@ $colspan = 8;
 if ($conf->use_javascript_ajax)
 {
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="'.$colspan.'">';
+	print '<td class="liste_total" colspan="'.($colspan-1).'">';
 	print $langs->trans("Total");
+	print '</td>';
+	print '<td class="liste_total leftborder">';
 	//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 	print '</td>';
 
@@ -531,12 +538,17 @@ if ($conf->use_javascript_ajax)
 	$idw = $tmparray['wday'];
 
 	$cssweekend='';
-	/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+	if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 	{
 		$cssweekend='weekend';
-	}*/
+	}
 
-	print '<td class="liste_total center'.($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
+	$cssonholiday='';
+	if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['afternoon'])   $cssonholiday.='onholidayallday ';
+	elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
+	elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+	print '<td class="liste_total center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
 
 	print '<td class="liste_total"></td>
                 <td class="liste_total"></td>
@@ -620,8 +632,10 @@ if (count($tasksarray) > 0)
 	if ($conf->use_javascript_ajax)
 	{
 		print '<tr class="liste_total">';
-		print '<td class="liste_total" colspan="'.$colspan.'">';
+		print '<td class="liste_total" colspan="'.($colspan-1).'">';
 		print $langs->trans("Total");
+		print '</td>';
+		print '<td class="liste_total leftborder">';
 		//print '  - '.$langs->trans("ExpectedWorkedHours").': <strong>'.price($usertoprocess->weeklyhours, 1, $langs, 0, 0).'</strong>';
 		print '</td>';
 
@@ -629,12 +643,17 @@ if (count($tasksarray) > 0)
 		$idw = $tmparray['wday'];
 
 		$cssweekend='';
-		/*if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+		if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
 		{
 			$cssweekend='weekend';
-		}*/
+		}
 
-		print '<td class="liste_total center'.($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
+		$cssonholiday='';
+		if (! $isavailable[$daytoparse]['morning'] && ! $isavailable[$daytoparse]['afternoon'])   $cssonholiday.='onholidayallday ';
+		elseif (! $isavailable[$daytoparse]['morning'])   $cssonholiday.='onholidaymorning ';
+		elseif (! $isavailable[$daytoparse]['afternoon']) $cssonholiday.='onholidayafternoon ';
+
+		print '<td class="liste_total center'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'"><div class="totalDay0">&nbsp;</div></td>';
 
 		print '<td class="liste_total"></td>
                 <td class="liste_total"></td>

@@ -38,13 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
-$langs->load("bills");
-$langs->load("compta");
-$langs->load("companies");
-$langs->load("products");
-$langs->load("trips");
-$langs->load("other");
-$langs->load("admin");
+$langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 // Date range
 $year=GETPOST("year","int");
@@ -67,26 +61,28 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,GETPOST("month"),false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
 		else
 		{
-			$month_current = strftime("%m",dol_now());
-			if ($month_current >= 10) $q=4;
-			elseif ($month_current >= 7) $q=3;
-			elseif ($month_current >= 4) $q=2;
-			else $q=1;
+			$date_start=dol_get_first_day($year_start,empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START,false);
+			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	else
+	{
+		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	}
 }
 
-$min = GETPOST("min");
+$min = price2num(GETPOST("min","alpha"));
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
-// 0=normal, 1=option vat for services is on debit
+// 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
+if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax",'int');
 if (empty($modetax)) $modetax=0;
 
 // Security check
@@ -527,7 +523,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	// Print table headers for this quadri - expenses now
 	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td align="left">'.$elementsup.'</td>';
-	print '<td align="left">'.$langs->trans("Date").'</td>';
+	print '<td align="left">'.$langs->trans("DateInvoice").'</td>';
 	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') print '<td align="left">'.$langs->trans("DatePayment").'</td>';
 	else print '<td></td>';
 	print '<td align="left">'.$namesup.'</td>';

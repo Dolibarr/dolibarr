@@ -772,9 +772,10 @@ class Societe extends CommonObject
 
 		// Clean parameters
 		$this->id			= $id;
+		$this->entity		= ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
 		$this->name			= $this->name?trim($this->name):trim($this->nom);
 		$this->nom			= $this->name;	// For backward compatibility
-		$this->name_alias = trim($this->name_alias);
+		$this->name_alias	= trim($this->name_alias);
 		$this->ref_ext		= trim($this->ref_ext);
 		$this->address		= $this->address?trim($this->address):trim($this->address);
 		$this->zip			= $this->zip?trim($this->zip):trim($this->zip);
@@ -789,9 +790,9 @@ class Societe extends CommonObject
 		$this->fax			= preg_replace("/\./","",$this->fax);
 		$this->email		= trim($this->email);
 		$this->skype		= trim($this->skype);
-		$this->url		= $this->url?clean_url($this->url,0):'';
-		$this->note_private 	= trim($this->note_private);
-		$this->note_public  	= trim($this->note_public);
+		$this->url			= $this->url?clean_url($this->url,0):'';
+		$this->note_private = trim($this->note_private);
+		$this->note_public  = trim($this->note_public);
 		$this->idprof1		= trim($this->idprof1);
 		$this->idprof2		= trim($this->idprof2);
 		$this->idprof3		= trim($this->idprof3);
@@ -896,7 +897,8 @@ class Societe extends CommonObject
 			dol_syslog(get_class($this)."::update verify ok or not done");
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql .= "nom = '" . $this->db->escape($this->name) ."'"; // Required
+			$sql .= "entity = " . $this->entity;
+			$sql .= ",nom = '" . $this->db->escape($this->name) ."'"; // Required
 			$sql .= ",name_alias = '" . $this->db->escape($this->name_alias) ."'";
 			$sql .= ",ref_ext = " .(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext) ."'":"null");
 			$sql .= ",address = '" . $this->db->escape($this->address) ."'";
@@ -2694,21 +2696,16 @@ class Societe extends CommonObject
 
 		if (! empty($conf->global->SOCIETE_CODECOMPTA_ADDON))
 		{
-			$file='';
+			$res=false;
 			$dirsociete=array_merge(array('/core/modules/societe/'), $conf->modules_parts['societe']);
 			foreach ($dirsociete as $dirroot)
 			{
-				if (file_exists(DOL_DOCUMENT_ROOT.'/'.$dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.".php"))
-				{
-					$file=$dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.".php";
-					break;
-				}
+				$res=dol_include_once($dirroot.$conf->global->SOCIETE_CODECOMPTA_ADDON.'.php');
+				if ($res) break;
 			}
 
-			if (! empty($file))
+			if ($res)
 			{
-				dol_include_once($file);
-
 				$classname = $conf->global->SOCIETE_CODECOMPTA_ADDON;
 				$mod = new $classname;
 
@@ -3146,6 +3143,17 @@ class Societe extends CommonObject
 		else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE','TE_GROUP'))) $isacompany=1;
 
 		return $isacompany;
+	}
+
+	/**
+	 *  Return if a company is inside the EEC (European Economic Community)
+	 *
+	 *  @return     boolean		true = country inside EEC, false = country outside EEC
+	 */
+	function isInEEC()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+		return isInEEC($this);
 	}
 
 	/**

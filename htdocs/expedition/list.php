@@ -148,12 +148,13 @@ if (empty($reshook))
 {
 	// Mass actions. Controls on number of lines checked
 	$maxformassaction=1000;
-	if (! empty($massaction) && count($toselect) < 1)
+	$numtoselect = (is_array($toselect)?count($toselect):0);
+	if (! empty($massaction) && $numtoselect < 1)
 	{
 		$error++;
 		setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
 	}
-	if (! $error && count($toselect) > $maxformassaction)
+	if (! $error && $numtoselect > $maxformassaction)
 	{
 		setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
 		$error++;
@@ -547,7 +548,7 @@ if ($resql)
 		{
 			$shipment->fetchObjectLinked($shipment->id,$shipment->element);
 			$receiving='';
-			if (count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
+			if (is_array($shipment->linkedObjects['delivery']) && count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
 
 			if (! empty($arrayfields['l.ref']['checked']))
 			{

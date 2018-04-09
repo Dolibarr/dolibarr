@@ -32,7 +32,7 @@ $langs->load("bills");
 
 $id=GETPOST("id",'int');
 
-$socid = GETPOST('id','int');
+$socid = GETPOST('id','int')?GETPOST('id','int'):GETPOST('socid','int');
 // Security check
 if ($user->societe_id > 0)
 {
@@ -122,14 +122,14 @@ if ($socid > 0)
     print '<div class="fichecenter">';
 
     print '<div class="underbanner clearboth"></div>';
-    
+
     if(! $isCustomer && ! $isSupplier) {
     	print '<p class="opacitymedium">'.$langs->trans('ThirdpartyIsNeitherCustomerNorClientSoCannotHaveDiscounts').'</p>';
-    	
+
     	dol_fiche_end();
-    	
+
     	print '</form>';
-    	
+
     	llxFooter();
     	$db->close();
     	exit;
@@ -142,7 +142,7 @@ if ($socid > 0)
 		print '<tr><td class="titlefield">';
 		print $langs->trans("CustomerRelativeDiscount").'</td><td>'.price2num($object->remise_percent)."%</td></tr>";
 	}
-	
+
 	if($isSupplier) {
 		// Supplier discount
 		print '<tr><td class="titlefield">';
@@ -159,11 +159,11 @@ if ($socid > 0)
 	if($isCustomer && ! $isSupplier) {
 		print '<input type="hidden" name="discount_type" value="0" />';
 	}
-	
+
 	if(! $isCustomer && $isSupplier) {
 		print '<input type="hidden" name="discount_type" value="1" />';
 	}
-	
+
 	print '<table class="border centpercent">';
 
 	if($isCustomer && $isSupplier) {
@@ -218,7 +218,7 @@ if ($socid > 0)
 		$sql.= " AND rc.entity = " . $conf->entity;
 		$sql.= " AND u.rowid = rc.fk_user_author";
 		$sql.= " ORDER BY rc.datec DESC";
-	
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -249,7 +249,7 @@ if ($socid > 0)
 			else
 			{
 			    print '<tr><td colspan="8" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
-			}		
+			}
 			$db->free($resql);
 			print "</table>";
 		}
@@ -277,7 +277,7 @@ if ($socid > 0)
 		$sql.= " AND rc.entity = " . $conf->entity;
 		$sql.= " AND u.rowid = rc.fk_user_author";
 		$sql.= " ORDER BY rc.datec DESC";
-		
+
 		$resql=$db->query($sql);
 		if ($resql)
 		{

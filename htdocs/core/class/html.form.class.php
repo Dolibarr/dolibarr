@@ -1703,7 +1703,10 @@ class Form
 			$userstatic->fetch($value['id']);
 			$out.= $userstatic->getNomUrl(-1);
 			if ($i == 0) { $ownerid = $value['id']; $out.=' ('.$langs->trans("Owner").')'; }
-			if ($nbassignetouser > 1 && $action != 'view') $out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+			if ($nbassignetouser > 1 && $action != 'view')
+			{
+				$out.=' <input type="image" style="border: 0px;" src="'.img_picto($langs->trans("Remove"), 'delete', '', 0, 1).'" value="'.$userstatic->id.'" class="removedassigned" id="removedassigned_'.$userstatic->id.'" name="removedassigned_'.$userstatic->id.'">';
+			}
 			// Show my availability
 			if ($showproperties)
 			{
@@ -5985,9 +5988,10 @@ class Form
 	 *
 	 *  @param	CommonObject	$object		      Object we want to show links to
 	 *  @param  string          $morehtmlright    More html to show on right of title
+	 *  @param  array           $compatibleImportElementsList  Array of compatibles elements object for "import from" action
 	 *  @return	int							      <0 if KO, >=0 if OK
 	 */
-	function showLinkedObjectBlock($object, $morehtmlright='')
+	function showLinkedObjectBlock($object, $morehtmlright='',$compatibleImportElementsList=false)
 	{
 		global $conf,$langs,$hookmanager;
 		global $bc;
@@ -5996,7 +6000,9 @@ class Form
 
 		// Bypass the default method
 		$hookmanager->initHooks(array('commonobject'));
-		$parameters=array();
+		$parameters=array(
+		    'compatibleImportElementsList' =>& $compatibleImportElementsList,
+		);
 		$reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
 		if (empty($reshook))
@@ -6008,7 +6014,7 @@ class Form
 
 
 			print '<div class="div-table-responsive-no-min">';
-			print '<table class="noborder allwidth">';
+			print '<table class="noborder allwidth" data-block="showLinkedObject" data-element="'.$object->element.'"  data-elementid="'.$object->id.'"   >';
 
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Type").'</td>';
@@ -6025,7 +6031,13 @@ class Form
 			foreach($object->linkedObjects as $objecttype => $objects)
 			{
 				$tplpath = $element = $subelement = $objecttype;
-
+                
+				// to display inport button on tpl
+				$showImportButton=false;
+				if(!empty($compatibleImportElementsList) && in_array($element,$compatibleImportElementsList)){
+				    $showImportButton=true;
+				}
+				
 				if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
 				{
 					$element = $regs[1];
@@ -6085,7 +6097,7 @@ class Form
 						global $noMoreLinkedObjectBlockAfter;
 						$noMoreLinkedObjectBlockAfter=1;
 					}
-
+					
 					$res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
 					if ($res)
 					{
@@ -6101,6 +6113,13 @@ class Form
 			}
 
 			print '</table>';
+			
+			if(!empty($compatibleImportElementsList))
+			{
+			    $res=@include dol_buildpath('core/tpl/ajax/objectlinked_lineimport.tpl.php');
+			}
+			
+			
 			print '</div>';
 
 			return $nbofdifferenttypes;

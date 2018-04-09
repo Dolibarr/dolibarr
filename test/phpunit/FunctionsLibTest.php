@@ -437,17 +437,21 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
      */
     public function testDolStringNohtmltag()
     {
-        $text="A\nstring\n";
+        $text="A\nstring\n\nand more\n";
         $after=dol_string_nohtmltag($text,0);
-        $this->assertEquals("A\nstring",$after,"test1");
+        $this->assertEquals("A\nstring\n\nand more",$after,"test1a");
 
-        $text="A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
+        $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 0);
-        $this->assertEquals("A string\n\nwith html tag and '<' chars",$after,"test2");
+        $this->assertEquals("A string\n\n\n\n\nwith html tag",$after,"test2a 2 br and 3 \n give 5 \n");
 
-        $text="A <b>string<b>\n\nwith tag with < chars<br>\n";
+        $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
         $after=dol_string_nohtmltag($text, 1);
-        $this->assertEquals("A string with tag with < chars",$after,"test3");
+        $this->assertEquals("A string with html tag",$after,"test2b 2 br and 3 \n give 1 space");
+
+        $text="A <b>string<b><br>\n<br>\n\nwith html tag<br>\n";
+        $after=dol_string_nohtmltag($text, 2);
+        $this->assertEquals("A string\n\nwith html tag",$after,"test2c 2 br and 3 \n give 2 \n");
 
         $text="A string<br>Another string";
         $after=dol_string_nohtmltag($text,0);
@@ -464,6 +468,18 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $text='<a href="/myurl" title="&lt;u&gt;Afficher projet&lt;/u&gt;">DEF</a>';
         $after=dol_string_nohtmltag($text,1);
         $this->assertEquals("DEF",$after,"test7");
+
+        $text='<a href="/myurl" title="<u>A title</u>">HIJ</a>';
+        $after=dol_string_nohtmltag($text,0);
+        $this->assertEquals("HIJ",$after,"test8");
+
+        $text="A <b>string<b>\n\nwith html tag and '<' chars<br>\n";
+        $after=dol_string_nohtmltag($text, 0);
+        $this->assertEquals("A string\n\nwith html tag and '<' chars",$after,"test9");
+
+        $text="A <b>string<b>\n\nwith tag with < chars<br>\n";
+        $after=dol_string_nohtmltag($text, 1);
+        $this->assertEquals("A string with tag with < chars",$after,"test10");
 
         return true;
     }
@@ -816,13 +832,17 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
         $this->assertContains('theme',$s,'testImgPicto2');
         $this->assertContains('style="float: right"',$s,'testImgPicto2');
 
-        $s=img_picto('title','/fullpath/img.png','',1);
+        $s=img_picto('title', '/fullpath/img.png', '', 1);
         print __METHOD__." s=".$s."\n";
         $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto3');
 
-        $s=img_picto('title','/fullpath/img.png','',true);
+        $s=img_picto('title', '/fullpath/img.png', '', true);
         print __METHOD__." s=".$s."\n";
         $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto4');
+
+        $s=img_picto('title', 'delete', '', 0, 1);
+        print __METHOD__." s=".$s."\n";
+        $this->assertEquals(DOL_URL_ROOT.'/theme/eldy/img/delete.png',$s,'testImgPicto5');
     }
 
     /**

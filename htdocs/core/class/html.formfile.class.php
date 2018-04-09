@@ -862,9 +862,17 @@ class FormFile
 			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
 		}
 
-		$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
-
-		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
+		// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files and get only generated files)
+		// @TODO Why not showing by default all files by just removing the '[^\-]+' at end of regex ?
+		if (! empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP))
+		{
+			$filterforfilesearch = preg_quote(basename($modulesubdir),'/');
+		}
+		else
+		{
+			$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
+		}
+		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// We also discard .meta and .png preview
 
 		//var_dump($file_list);
 		// For ajax treatment

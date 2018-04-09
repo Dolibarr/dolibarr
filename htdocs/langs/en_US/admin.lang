@@ -470,6 +470,7 @@ WatermarkOnDraftExpenseReports=Watermark on draft expense reports
 AttachMainDocByDefault=Set this to 1 if you want to attach main document to email by default (if applicable)
 FilesAttachedToEmail=Attach file
 SendEmailsReminders=Send agenda reminders by emails
+davDescription=Add a component to be a DAV server
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users / Employees and Groups management
@@ -1729,6 +1730,7 @@ MailToSendContract=To send a contract
 MailToThirdparty=To send email from third party page
 MailToMember=To send email from member page
 MailToUser=To send email from user page
+MailToProject= To send email from project page
 ByDefaultInList=Show by default on list view
 YouUseLastStableVersion=You use the latest stable version
 TitleExampleForMajorRelease=Example of message you can use to announce this major release (feel free to use it on your web sites)
@@ -1778,6 +1780,7 @@ MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
 SetToYesIfGroupIsComputationOfOtherGroups=Set this to yes if this group is a computation of other groups
 EnterCalculationRuleIfPreviousFieldIsYes=Enter calculcation rule if previous field was set to Yes (For example 'CODEGRP1+CODEGRP2')
 SeveralLangugeVariatFound=Several language variants found
+WebDavServer=URL of %s server : %s
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
