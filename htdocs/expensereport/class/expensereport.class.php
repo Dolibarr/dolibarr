@@ -1241,7 +1241,7 @@ class ExpenseReport extends CommonObject
 		$error = 0;
 
         // date approval
-        $this->date_approve = $this->db->idate($now);
+        $this->date_approve = $now;
         if ($this->fk_statut != 5)
         {
 			$this->db->begin();

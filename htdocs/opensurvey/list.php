@@ -79,7 +79,13 @@ llxHeader('', $langs->trans("OpenSurveyArea"));
 $param='';
 $fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':'lastname';
 
-print load_fiche_titre($langs->trans("OpenSurveyArea"));
+$newcardbutton='';
+if ($user->rights->opensurvey->read)
+{
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php">'.$langs->trans('NewSurvey').'</a>';
+}
+
+print_barre_liste($langs->trans("OpenSurveyArea"), $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', -1, '', 'title_generic.png', 0, $newcardbutton);
 
 // List of surveys into database
 

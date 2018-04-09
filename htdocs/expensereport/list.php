@@ -380,7 +380,7 @@ if ($resql)
 	if ($id > 0)		// For user tab
 	{
 		$title = $langs->trans("User");
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$head = user_prepare_head($fuser);
 
 		dol_fiche_head($head, 'expensereport', $title, -1, 'user');
@@ -465,7 +465,14 @@ if ($resql)
 	else
 	{
 		$title = $langs->trans("ListTripsAndExpenses");
-		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+
+		$newcardbutton='';
+		if ($user->rights->expensereport->creer)
+		{
+			$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create">'.$langs->trans('NewTrip').'</a>';
+		}
+
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 	}
 
 	$topicmail="SendExpenseReport";

@@ -49,7 +49,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
 ?>
     <tr class="<?php echo $trclass; ?>" >
         <td class="linkedcol-element" ><?php echo $langs->trans("CustomerOrder"); ?>
-        <?php if(!empty($showImportButton)) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0,'',0,1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
+        <?php if(!empty($showImportButton) && $conf->global->MAIN_ENABLE_IMPORT_LINKED_OBJECT_LINES) print '<a class="objectlinked_importbtn" href="'.$objectlink->getNomUrl(0,'',0,1).'&amp;action=selectlines"  data-element="'.$objectlink->element.'"  data-id="'.$objectlink->id.'"  > <i class="fa fa-indent"></i> </a';  ?>
         </td>
         <td class="linkedcol-name" ><?php echo $objectlink->getNomUrl(1); ?></td>
     	<td class="linkedcol-ref" align="center"><?php echo $objectlink->ref_client; ?></td>

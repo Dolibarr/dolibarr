@@ -342,7 +342,7 @@ if ($id > 0) print '<input type="hidden" name="id" value="'.$id.'">';
 if ($id > 0)		// For user tab
 {
 	$title = $langs->trans("User");
-	$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 	$head = user_prepare_head($fuser);
 
 	dol_fiche_head($head, 'paidholidays', $title, -1, 'user');
@@ -377,7 +377,10 @@ else
 	$nbtotalofrecords = count($holiday->holiday);
    	//print $num;
     //print count($holiday->holiday);
-	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, '', '', $limit);
+
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request">'.$langs->trans('MenuAddCP').'</a>';
+
+	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, $newcardbutton, '', $limit);
 
 	$topicmail="Information";
 	$modelmail="leaverequest";

@@ -111,6 +111,12 @@ if ($resql)
     if ($search_amount) $param.="&amp;search_amount=".urlencode($search_amount_ht);
     if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
+    $newcardbutton='';
+    if ($user->rights->loan->write)
+    {
+    	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?action=create">'.$langs->trans('NewLoan').'</a>';
+    }
+
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -120,7 +126,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-    print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
