@@ -54,7 +54,8 @@ $optioncss = GETPOST('optioncss','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque');
+if (! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with list of banks accounting account allowed to manager of chart account
+if (! $allowed) $result=restrictedArea($user,'banque');
 
 $diroutputmassaction=$conf->bank->dir_output . '/temp/massgeneration/'.$user->id;
 
