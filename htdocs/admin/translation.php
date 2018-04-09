@@ -552,7 +552,9 @@ if ($mode == 'searchkey')
             if (! empty($conf->global->MAIN_FEATURES_LEVEL))
             {
             	$transifexlangfile='$';		// $ means 'All'
-            	$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
+            	//$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?key='.$key;
+            	$transifexurl = 'https://www.transifex.com/dolibarr-association/dolibarr/translate/#'.$langcode.'/'.$transifexlangfile.'?q=key%3A'.$key;
+
             	print ' &nbsp; <a href="'.$transifexurl.'" target="transifex">'.img_picto('FixOnTransifex', 'object_globe').'</a>';
             }
         }
