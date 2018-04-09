@@ -36,26 +36,28 @@ $langs->load("accountancy");
 $langs->load("bills");
 $langs->load("compta");
 
+$action = GETPOST('action','aZ09');
+
+$id = GETPOST('id', 'int');					// id of record
+$mode = GETPOST('mode','aZ09');		 		// '' or 'tmp'
+$piece_num = GETPOST("piece_num",'int');	// id of transaction (several lines share the same transaction id)
+
 // Security check
-$id = GETPOST('id', 'int');
 if ($user->societe_id > 0) {
 	accessforbidden();
 }
-$action = GETPOST('action','aZ09');
-$mode = GETPOST('mode','aZ09');		 // '' or 'tmp'
-$piece_num = GETPOST("piece_num");
 
 $mesg = '';
 
-$account_number = GETPOST('account_number');
-$subledger_account = GETPOST('subledger_account');
+$account_number = GETPOST('account_number','alphanohtml');
+$subledger_account = GETPOST('subledger_account','alphanohtml');
 if ($subledger_account == - 1) {
 	$subledger_account = null;
 }
-$label_compte = GETPOST('label_compte');
-$label_operation= GETPOST('label_operation');
-$debit = price2num(GETPOST('debit'));
-$credit = price2num(GETPOST('credit'));
+$label_compte = GETPOST('label_compte','alphanohtml');
+$label_operation= GETPOST('label_operation','alphanohtml');
+$debit = price2num(GETPOST('debit','alpha'));
+$credit = price2num(GETPOST('credit','alpha'));
 
 $save = GETPOST('save','alpha');
 if (! empty($save)) $action = 'add';
@@ -153,13 +155,13 @@ else if ($action == "add") {
 		$book->label_operation= $label_operation;
 		$book->debit = $debit;
 		$book->credit = $credit;
-		$book->doc_date = GETPOST('doc_date');
-		$book->doc_type = GETPOST('doc_type');
+		$book->doc_date = GETPOST('doc_date','alpha');
+		$book->doc_type = GETPOST('doc_type','alpha');
 		$book->piece_num = $piece_num;
-		$book->doc_ref = GETPOST('doc_ref');
-		$book->code_journal = GETPOST('code_journal');
-		$book->fk_doc = GETPOST('fk_doc');
-		$book->fk_docdet = GETPOST('fk_docdet');
+		$book->doc_ref = GETPOST('doc_ref','alpha');
+		$book->code_journal = GETPOST('code_journal','alpha');
+		$book->fk_doc = GETPOST('fk_doc','alpha');
+		$book->fk_docdet = GETPOST('fk_docdet','alpha');
 
 		if (floatval($debit) != 0.0) {
 			$book->montant = $debit;
@@ -210,7 +212,7 @@ else if ($action == "confirm_create") {
 
 	$book = new BookKeeping($db);
 
-	if (! GETPOST('code_journal') || GETPOST('code_journal') == '-1') {
+	if (! GETPOST('code_journal','alpha') || GETPOST('code_journal','alpha') == '-1') {
 		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Journal")), null, 'errors');
 		$action='create';
 		$error++;
@@ -226,11 +228,11 @@ else if ($action == "confirm_create") {
 		$book->label_compte = '';
 		$book->debit = 0;
 		$book->credit = 0;
-		$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth'), GETPOST('doc_dateday'), GETPOST('doc_dateyear'));
-		$book->doc_type = GETPOST('doc_type');
-		$book->piece_num = GETPOST('next_num_mvt');
-		$book->doc_ref = GETPOST('doc_ref');
-		$book->code_journal = GETPOST('code_journal');
+		$book->doc_date = $date_start = dol_mktime(0, 0, 0, GETPOST('doc_datemonth','int'), GETPOST('doc_dateday','int'), GETPOST('doc_dateyear','int'));
+		$book->doc_type = GETPOST('doc_type','alpha');
+		$book->piece_num = GETPOST('next_num_mvt','alpha');
+		$book->doc_ref = GETPOST('doc_ref','alpha');
+		$book->code_journal = GETPOST('code_journal','alpha');
 		$book->fk_doc = 0;
 		$book->fk_docdet = 0;
 		$book->montant = 0;
@@ -265,8 +267,8 @@ if ($action == 'setdate') {
 }
 
 if ($action == 'setjournal') {
-	$journaldoc = trim(GETPOST('code_journal'));
-	$result = $object->updateByMvt($piece_num,'code_journal',$journaldoc,$mode);
+	$journaldoc = trim(GETPOST('code_journal','alpha'));
+	$result = $object->updateByMvt($piece_num, 'code_journal', $journaldoc, $mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
 	} else {
@@ -279,7 +281,7 @@ if ($action == 'setjournal') {
 }
 
 if ($action == 'setdocref') {
-	$refdoc = trim(GETPOST('doc_ref'));
+	$refdoc = trim(GETPOST('doc_ref','alpha'));
 	$result = $object->updateByMvt($piece_num,'doc_ref',$refdoc,$mode);
 	if ($result < 0) {
 		setEventMessages($object->error, $object->errors, 'errors');
@@ -340,13 +342,14 @@ if ($action == 'create')
 	dol_fiche_head();
 
 	print '<table class="border" width="100%">';
-	print '<tr>';
+
+	/*print '<tr>';
 	print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("NumPiece") . '</td>';
 	print '<td>' . $next_num_mvt . '</td>';
-	print '</tr>';
+	print '</tr>';*/
 
 	print '<tr>';
-	print '<td class="fieldrequired">' . $langs->trans("Docdate") . '</td>';
+	print '<td class="titlefieldcreate fieldrequired">' . $langs->trans("Docdate") . '</td>';
 	print '<td>';
 	print $html->select_date('', 'doc_date', '', '', '', "create_mvt", 1, 1);
 	print '</td>';
@@ -389,7 +392,7 @@ if ($action == 'create')
 
 	if (! empty($book->piece_num))
 	{
-		$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php">' . $langs->trans('BackToList') . '</a>';
+		$backlink = '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?restore_lastsearch_values=1">' . $langs->trans('BackToList') . '</a>';
 
 		print load_fiche_titre($langs->trans("UpdateMvts"), $backlink);
 
@@ -422,7 +425,7 @@ if ($action == 'create')
 		print $langs->trans('Docdate');
 		print '</td>';
 		if ($action != 'editdate')
-		print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $book->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'),1).'</a></td>';
+		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate&amp;piece_num='. $book->piece_num .'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('SetDate'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td colspan="3">';
 		if ($action == 'editdate') {
@@ -445,7 +448,7 @@ if ($action == 'create')
 		print $langs->trans('Codejournal');
 		print '</td>';
 		if ($action != 'editjournal')
-		print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$book->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editjournal&amp;piece_num='.$book->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editjournal') {
@@ -468,7 +471,7 @@ if ($action == 'create')
 		print $langs->trans('Docref');
 		print '</td>';
 		if ($action != 'editdocref')
-		print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$book->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
+		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdocref&amp;piece_num='.$book->piece_num.'&amp;mode='. $mode .'">'.img_edit($langs->transnoentitiesnoconv('Edit'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
 		if ($action == 'editdocref') {
@@ -476,11 +479,11 @@ if ($action == 'create')
 			print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="setdocref">';
 			print '<input type="hidden" name="mode" value="'.$mode.'">';
-			print '<input type="text" size="20" name="doc_ref" value="'.$book->doc_ref.'">';
+			print '<input type="text" size="20" name="doc_ref" value="'.dol_escape_htmltag($book->doc_ref).'">';
 			print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 			print '</form>';
 		} else {
-		print $book->doc_ref ;
+			print $book->doc_ref ;
 		}
 		print '</td>';
 		print '</tr>';
@@ -594,7 +597,7 @@ if ($action == 'create')
 
 				print "</tr>\n";
 
-				foreach ( $book->linesmvt as $line ) {
+				foreach ($book->linesmvt as $line) {
 					print '<tr class="oddeven">';
 					$total_debit += $line->debit;
 					$total_credit += $line->credit;
@@ -673,10 +676,10 @@ if ($action == 'create')
 						print '<input type="text" name="subledger_account" value="">';
 					}
 					print '</td>';
-					print '<td><input type="text" class="minwidth100" name="label_compte" value="' . $line->label_compte . '"/></td>';
-					print '<td><input type="text" class="minwidth300" name="label_operation" value="' . $line->label_operation. '"/></td>';
-					print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . ($debit ? price($debit) : '') . '"/></td>';
-					print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . ($credit ? price($credit) : '') . '"/></td>';
+					print '<td><input type="text" class="minwidth100" name="label_compte" value=""/></td>';
+					print '<td><input type="text" class="minwidth300" name="label_operation" value=""/></td>';
+					print '<td align="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
+					print '<td align="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
 					print '</tr>';
 				}

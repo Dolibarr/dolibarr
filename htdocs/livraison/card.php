@@ -165,7 +165,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->expeditio
 	{
 		$db->commit();
 		if (! empty($backtopage)) header("Location: ".$backtopage);
-		else header("Location: ".DOL_URL_ROOT.'/expedition/index.php');
+		else header("Location: ".DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else
@@ -193,9 +193,11 @@ elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 // Update extrafields
 if ($action == 'update_extras')
 {
+	$object->oldcopy = dol_clone($object);
+
 	// Fill array 'array_options' with data from update form
 	$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 	if ($ret < 0) $error++;
 
 	if (! $error)

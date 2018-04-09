@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI          <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +121,8 @@ else if ($type == "o")
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Contact($db);
+$hookmanager->initHooks(array('contactlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -133,6 +135,7 @@ $fieldstosearchall = array(
 	'p.firstname'=>'Firstname',
 	'p.email'=>'EMail',
 	's.nom'=>"ThirdParty",
+	'p.phone'=>"Phone",
 );
 
 // Definition of fields for list
@@ -409,6 +412,12 @@ if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->societe->contact->creer)
+{
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/contact/card.php?action=create">'.$langs->trans('NewContactAddress').'</a>';
+}
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -418,7 +427,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies.png', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="contact";

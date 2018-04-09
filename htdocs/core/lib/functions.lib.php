@@ -121,11 +121,6 @@ function getEntity($element, $shared=1, $forceentity=null)
 {
 	global $conf, $mc;
 
-	// For backward compatibilty
-	if ($element == 'actioncomm') $element='agenda';
-	if ($element == 'fichinter')  $element='intervention';
-	if ($element == 'categorie')  $element='category';
-
 	if (is_object($mc))
 	{
 		return $mc->getEntity($element, $shared, $forceentity);
@@ -263,6 +258,7 @@ function GETPOSTISSET($paramname)
  *                                  ''=no check (deprecated)
  *                                  'none'=no check (only for param that should have very rich content)
  *                                  'int'=check it's numeric (integer or float)
+ *                                  'intcomma'=check it's integer+comma ('1,2,3,4...')
  *                                  'alpha'=check it's text and sign
  *                                  'aZ'=check it's a-z only
  *                                  'aZ09'=check it's simple alpha string (recommended for keys)
@@ -549,10 +545,10 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
-		case 'nohtml':
+		case 'nohtml':		// Recommended for most scalar parameters
 			$out=dol_string_nohtmltag($out, 0);
 			break;
-		case 'alphanohtml':	// Recommended for search params
+		case 'alphanohtml':	// Recommended for search parameters
 			if (! is_array($out))
 			{
 				$out=trim($out);
@@ -1077,11 +1073,12 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
+ *  @param	string	$morecss			More Css
  * 	@return	void
  */
-function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='')
+function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='', $morecss='')
 {
-	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath, $morehtmlright);
+	print dol_get_fiche_head($links, $active, $title, $notab, $picto, $pictoisfullpath, $morehtmlright, $morecss);
 }
 
 /**
@@ -1094,9 +1091,10 @@ function dol_fiche_head($links=array(), $active='0', $title='', $notab=0, $picto
  * 	@param	string	$picto				Add a picto on tab title
  *	@param	int		$pictoisfullpath	If 1, image path is a full path. If you set this to 1, you can use url returned by dol_buildpath('/mymodyle/img/myimg.png',1) for $picto.
  *  @param	string	$morehtmlright		Add more html content on right of tabs title
+ *  @param	string	$morecss			More Css
  * 	@return	string
  */
-function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='')
+function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $picto='', $pictoisfullpath=0, $morehtmlright='', $morecss='')
 {
 	global $conf, $langs, $hookmanager;
 
@@ -1161,7 +1159,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 			{
 				if (!empty($links[$i][0]))
 				{
-					$out.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$out.='<a class="tabimage'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				}
 				else
 				{
@@ -1173,13 +1171,13 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 				//print "x $i $active ".$links[$i][2]." z";
 				if ($isactive)
 				{
-					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block" href="'.$links[$i][0].'">';
+					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabactive tab inline-block'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">';
 					$out.=$links[$i][1];
 					$out.='</a>'."\n";
 				}
 				else
 				{
-					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabunactive tab inline-block" href="'.$links[$i][0].'">';
+					$out.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="tabunactive tab inline-block'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">';
 					$out.=$links[$i][1];
 					$out.='</a>'."\n";
 				}
@@ -1198,14 +1196,14 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 			if (isset($links[$i][2]) && $links[$i][2] == 'image')
 			{
 				if (!empty($links[$i][0]))
-					$outmore.='<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+					$outmore.='<a class="tabimage'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 				else
 					$outmore.='<span class="tabspan">'.$links[$i][1].'</span>'."\n";
 
 			}
 			else if (! empty($links[$i][1]))
 			{
-				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="wordwrap inline-block" href="'.$links[$i][0].'">';
+				$outmore.='<a'.(! empty($links[$i][2])?' id="'.$links[$i][2].'"':'').' class="wordwrap inline-block'.($morecss?' '.$morecss:'').'" href="'.$links[$i][0].'">';
 				$outmore.=preg_replace('/([a-z])\/([a-z])/i', '\\1 / \\2', $links[$i][1]);	// Replace x/y with x / y to allow wrap on long composed texts.
 				$outmore.='</a>'."\n";
 			}
@@ -1224,7 +1222,7 @@ function dol_get_fiche_head($links=array(), $active='', $title='', $notab=0, $pi
 
 		$tabsname=str_replace("@", "", $picto);
 		$out.='<div id="moretabs'.$tabsname.'" class="inline-block tabsElem">';
-		$out.='<a href="#" class="tab moretab inline-block tabunactive">'.$langs->trans("More").'... ('.$nbintab.')</a>';
+		$out.='<a href="#" class="tab moretab inline-block tabunactive reposition">'.$langs->trans("More").'... ('.$nbintab.')</a>';
 		$out.='<div id="moretabsList'.$tabsname.'" style="position: absolute; '.$left.': -999em; text-align: '.$left.'; margin:0px; padding:2px">';
 		$out.=$outmore;
 		$out.='</div>';
@@ -1301,6 +1299,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 
 	$maxvisiblephotos=1;
 	$showimage=1;
+	$entity=(empty($object->entity)?$conf->entity:$object->entity);
 	$showbarcode=empty($conf->barcode->enabled)?0:($object->barcode?1:0);
 	if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
 	$modulepart='unknown';
@@ -1327,10 +1326,10 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	if ($object->element == 'product')
 	{
 		$width=80; $cssclass='photoref';
-		$showimage=$object->is_photo_available($conf->product->multidir_output[$object->entity]);
+		$showimage=$object->is_photo_available($conf->product->multidir_output[$entity]);
 		$maxvisiblephotos=(isset($conf->global->PRODUCT_MAX_VISIBLE_PHOTO)?$conf->global->PRODUCT_MAX_VISIBLE_PHOTO:5);
 		if ($conf->browser->phone) $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos($conf->product->multidir_output[$object->entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('product', $conf->product->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
 		else
 		{
 			if (!empty($conf->global->PRODUCT_NODISPLAYIFNOPHOTO)) {
@@ -1340,6 +1339,25 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
 				$nophoto='/public/theme/common/nophoto.png';
 				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
+			//}
+		}
+	}
+	elseif ($object->element == 'ticketsup')
+	{
+		$width=80; $cssclass='photoref';
+		$showimage=$object->is_photo_available($conf->ticketsup->multidir_output[$entity].'/'.$object->track_id);
+		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
+		if ($conf->browser->phone) $maxvisiblephotos=1;
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticketsup', $conf->ticketsup->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		else
+		{
+			if (!empty($conf->global->TICKETSUP_NODISPLAYIFNOPHOTO)) {
+				$nophoto='';
+				$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"></div>';
+			}
+			//elseif ($conf->browser->layout != 'phone') {    // Show no photo link
+			$nophoto='/public/theme/common/nophoto.png';
+			$morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref"><img class="photo'.$modulepart.($cssclass?' '.$cssclass:'').'" alt="No photo" border="0"'.($width?' width="'.$width.'"':'').' src="'.DOL_URL_ROOT.$nophoto.'"></div>';
 			//}
 		}
 	}
@@ -1354,7 +1372,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick"))
 				{
 					$objectref = dol_sanitizeFileName($object->ref);
-					$dir_output = $conf->$modulepart->dir_output . "/";
+					$dir_output = $conf->$modulepart->multidir_output[$entity] . "/";
 					if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
 					{
 						$subdir = get_exdir($object->id, 2, 0, 0, $object, $modulepart).$objectref;		// the objectref dir is not include into get_exdir when used with level=2, so we add it here
@@ -1488,6 +1506,14 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	{
 		if ($object->frequency == 0) $morehtmlstatus.=$object->getLibStatut(2);
 		else $morehtmlstatus.=$object->getLibStatut(5);
+	}
+	elseif ($object->element == 'project_task')
+	{
+		$object->fk_statut = 1;
+		if ($object->progress > 0) $object->fk_statut = 2;
+		if ($object->progress >= 100) $object->fk_statut = 3;
+		$tmptxt=$object->getLibStatut(5);
+		$morehtmlstatus.=$tmptxt;		// No status on task
 	}
 	else { // Generic case
 		$tmptxt=$object->getLibStatut(6);
@@ -1999,7 +2025,7 @@ function dol_now($mode='gmt')
 	}*/
 	else if ($mode == 'tzuser')				// Time for now with user timezone added
 	{
-		//print 'eeee'.time().'-'.mktime().'-'.gmmktime();
+		//print 'time: '.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
 		$ret=(int) dol_now('gmt')+($offsettz+$offsetdst);
@@ -2085,7 +2111,7 @@ function dol_print_url($url,$target='_blank',$max=32,$withpicto=0)
  */
 function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=1,$withpicto=0)
 {
-	global $conf,$user,$langs;
+	global $conf,$user,$langs,$hookmanager;
 
 	$newemail=$email;
 
@@ -2120,7 +2146,15 @@ function dol_print_email($email,$cid=0,$socid=0,$addlink=0,$max=64,$showinvalid=
 			$newemail.=img_warning($langs->trans("ErrorBadEMail",$email));
 		}
 	}
-	return '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("EMail"), 'object_email.png').' ':'').$newemail.'</div>';
+
+	$rep = '<div class="nospan float" style="margin-right: 10px">'.($withpicto?img_picto($langs->trans("EMail"), 'object_email.png').' ':'').$newemail.'</div>';
+	if ($hookmanager) {
+		$parameters = array('cid' => $cid, 'socid' => $socid,'addlink' => $addlink, 'picto' => $withpicto);
+		$reshook = $hookmanager->executeHooks('printEmail', $parameters, $email);
+		$rep.=$hookmanager->resPrint;
+	}
+
+	return $rep;
 }
 
 /**
@@ -2530,12 +2564,12 @@ function dol_print_phone($phone,$countrycode='',$cid=0,$socid=0,$addlink='',$sep
 	$rep='';
 
 	if ($hookmanager) {
-            $parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
-            $reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
-            $rep.=$hookmanager->resPrint;
-        }
-	 if (empty($reshook))
-        {
+		$parameters = array('countrycode' => $countrycode, 'cid' => $cid, 'socid' => $socid,'titlealt' => $titlealt, 'picto' => $withpicto);
+		$reshook = $hookmanager->executeHooks('printPhone', $parameters, $phone);
+		$rep.=$hookmanager->resPrint;
+	}
+	if (empty($reshook))
+	{
 		$picto = '';
 		if($withpicto){
 			if($withpicto=='fax'){
@@ -3026,7 +3060,7 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *                                  			Example: picto.png@mymodule         if picto.png is stored into htdocs/mymodule/img
  *                                  			Example: /mydir/mysubdir/picto.png  if picto.png is stored into htdocs/mydir/mysubdir (pictoisfullpath must be set to 1)
  *	@param		string		$moreatt			Add more attribute on img tag (For example 'style="float: right"')
- *	@param		int			$pictoisfullpath	If 1, image path is a full path
+ *	@param		boolean|int	$pictoisfullpath	If true or 1, image path is a full path
  *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
  *  @param		string		$alt				Force alt for bind peoplae
@@ -3038,55 +3072,124 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 {
 	global $conf, $langs;
 
+	// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
+	$url = DOL_URL_ROOT;
+	$theme = $conf->theme;
+	$path = 'theme/'.$theme;
+
 	// Define fullpathpicto to use into src
-	if ($pictoisfullpath)
-	{
+	if ($pictoisfullpath) {
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) {
+			$picto .= '.png';
+		}
 		$fullpathpicto = $picto;
 	}
-	else
-	{
+	else {
+		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
+
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		{
-			$fakey = $picto; $facolor=''; $fasize='';
-			if ($picto == 'switch_off') { $fakey = 'fa-toggle-off'; $facolor='#999';    $fasize='2em'; }
-			if ($picto == 'switch_on')  { $fakey = 'fa-toggle-on';  $facolor='#227722'; $fasize='2em'; }
-			if ($picto == 'off') { $fakey = 'fa-square-o'; $fasize='1.3em'; }
-			if ($picto == 'on')  { $fakey = 'fa-check-square-o'; $fasize='1.3em'; }
-			$enabledisablehtml='';
-			$enabledisablehtml.='<span class="fa '.$fakey.' valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'">';
-			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) $enabledisablehtml.=$titlealt;
-			$enabledisablehtml.='</span>';
+		if (empty($srconly) && in_array($pictowithoutext, array('bank', 'delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow'))) {
+			$fakey = $pictowithoutext;
+			$facolor = '';
+			$fasize = '';
+			if ($pictowithoutext == 'switch_off') {
+				$fakey = 'fa-toggle-off';
+				$facolor = '#999';
+				$fasize = '2em';
+			}
+			elseif ($pictowithoutext == 'switch_on') {
+				$fakey = 'fa-toggle-on';
+				$facolor = '#227722';
+				$fasize = '2em';
+			}
+			elseif ($pictowithoutext == 'off') {
+				$fakey = 'fa-square-o';
+				$fasize = '1.3em';
+			}
+			elseif ($pictowithoutext == 'on') {
+				$fakey = 'fa-check-square-o';
+				$fasize = '1.3em';
+			}
+			elseif ($pictowithoutext == 'bank') {
+				$fakey = 'fa-bank';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'delete') {
+				$fakey = 'fa-trash';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'edit') {
+				$fakey = 'fa-pencil';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'printer') {
+				$fakey = 'fa-print';
+				$fasize = '1.2em';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'resize') {
+				$fakey = 'fa-crop';
+				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'uparrow') {
+				$fakey = 'fa-mail-forward';
+				$facolor = '#555';
+			}
+			elseif ($pictowithoutext == 'unlink')     {
+				$fakey = 'fa-chain-broken';
+				$facolor = '#555';
+			}
+			elseif ($pictowithoutext == 'playdisabled') {
+				$fakey = 'fa-play';
+				$facolor = '#ccc';
+			}
+			else {
+				$fakey = 'fa-'.$pictowithoutext;
+				$facolor = '#444';
+			}
+
+			if (preg_match('/class="([^"]+)"/', $moreatt, $reg)) {
+				$morecss.= ($morecss?' ':'').$reg[1];
+			}
+			$enabledisablehtml = '<span class="fa '.$fakey.' marginleftonly valignmiddle'.($morecss?' '.$morecss:'').'" style="'.($fasize?('font-size: '.$fasize.';'):'').($facolor?(' color: '.$facolor.';'):'').'" alt="'.dol_escape_htmltag($titlealt).'" title="'.dol_escape_htmltag($titlealt).'"'.($moreatt?' '.$moreatt:'').'>';
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER)) {
+				$enabledisablehtml.= $titlealt;
+			}
+			$enabledisablehtml.= '</span>';
+
 			return $enabledisablehtml;
 		}
 
-		// We forge fullpathpicto for image to $path/img/$picto. By default, we take DOL_URL_ROOT/theme/$conf->theme/img/$picto
-		$url = DOL_URL_ROOT;
-		$theme = $conf->theme;
-
-		$path = 'theme/'.$theme;
-		if (! empty($conf->global->MAIN_OVERWRITE_THEME_PATH)) $path = $conf->global->MAIN_OVERWRITE_THEME_PATH.'/theme/'.$theme;	// If the theme does not have the same name as the module
-		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) $path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
-		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) $path = $theme.'/theme/'.$theme;	// If the theme have the same name as the module
+		if (! empty($conf->global->MAIN_OVERWRITE_THEME_PATH)) {
+			$path = $conf->global->MAIN_OVERWRITE_THEME_PATH.'/theme/'.$theme;	// If the theme does not have the same name as the module
+		}
+		else if (! empty($conf->global->MAIN_OVERWRITE_THEME_RES)) {
+			$path = $conf->global->MAIN_OVERWRITE_THEME_RES.'/theme/'.$conf->global->MAIN_OVERWRITE_THEME_RES;  // To allow an external module to overwrite image resources whatever is activated theme
+		}
+		else if (! empty($conf->modules_parts['theme']) && array_key_exists($theme, $conf->modules_parts['theme'])) {
+			$path = $theme.'/theme/'.$theme;	// If the theme have the same name as the module
+		}
 
 		// If we ask an image into $url/$mymodule/img (instead of default path)
-		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs))
-		{
+		if (preg_match('/^([^@]+)@([^@]+)$/i',$picto,$regs)) {
 			$picto = $regs[1];
 			$path = $regs[2];	// $path is $mymodule
 		}
 
 		// Clean parameters
-		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) $picto .= '.png';
+		if (! preg_match('/(\.png|\.gif|\.svg)$/i',$picto)) {
+			$picto .= '.png';
+		}
 		// If alt path are defined, define url where img file is, according to physical path
-		foreach ($conf->file->dol_document_root as $type => $dirroot)	// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
-		{
-			if ($type == 'main') continue;
-			if (file_exists($dirroot.'/'.$path.'/img/'.$picto))	// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
-			{
-				$url=DOL_URL_ROOT.$conf->file->dol_url_root[$type];
+		// ex: array(["main"]=>"/home/maindir/htdocs", ["alt0"]=>"/home/moddir0/htdocs", ...)
+		foreach ($conf->file->dol_document_root as $type => $dirroot) {
+			if ($type == 'main') {
+				continue;
+			}
+			// This need a lot of time, that's why enabling alternative dir like "custom" dir is not recommanded
+			if (file_exists($dirroot.'/'.$path.'/img/'.$picto)) {
+				$url = DOL_URL_ROOT.$conf->file->dol_url_root[$type];
 				break;
 			}
 		}
@@ -3095,15 +3198,16 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$fullpathpicto = $url.'/'.$path.'/img/'.$picto;
 	}
 
-	if ($srconly) return $fullpathpicto;
-	else
-	{
+	if ($srconly) {
+		return $fullpathpicto;
+	}
+	else {
 		// tag title is used for tooltip on <a>, tag alt can be used with very simple text on image for bind people
 		//$tmparray=array(0=>$titlealt);
 		//if (empty($notitle) && preg_match('/:[^\s0-9]/',$titlealt)) $tmparray=explode(':',$titlealt);		// We explode if we have TextA:TextB. Not if we have TextA: TextB
 		//$title=$tmparray[0];
 		//$alt=empty($tmparray[1])?'':$tmparray[1];
-		$title=$titlealt;
+		$title = $titlealt;
 		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
@@ -3301,6 +3405,7 @@ function img_delete($titlealt = 'default', $other = 'class="pictodelete"')
 	if ($titlealt == 'default') $titlealt = $langs->trans('Delete');
 
 	return img_picto($titlealt, 'delete.png', $other);
+	//return '<span class="fa fa-trash fa-2x fa-fw" style="font-size: 1.7em;" title="'.$titlealt.'"></span>';
 }
 
 /**
@@ -3520,6 +3625,24 @@ function img_allow($allow, $titlealt = 'default')
 	return '-';
 }
 
+/**
+ *	Return image of a credit card according to its brand name
+ *
+ *	@param	string	$brand		Brand name of credit card
+ *	@return string     			Return img tag
+ */
+function img_credit_card($brand)
+{
+	if ($brand == 'Visa') {$brand='cc-visa';}
+	elseif ($brand == 'MasterCard') {$brand='cc-mastercard';}
+	elseif ($brand == 'American Express') {$brand='cc-amex';}
+	elseif ($brand == 'Discover') {$brand='cc-discover';}
+	elseif ($brand == 'JCB') {$brand='cc-jcb';}
+	elseif ($brand == 'Diners Club') {$brand='cc-diners-club';}
+	elseif (! in_array($brand, array('cc-visa','cc-mastercard','cc-amex','cc-discover','cc-jcb','cc-diners-club'))) {$brand='credit-card';}
+
+	return '<span class="fa fa-'.$brand.' fa-2x fa-fw"></span>';
+}
 
 /**
  *	Show MIME img of a file
@@ -3984,7 +4107,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 	}
 	if (dol_strlen($morehtmlright))
 	{
-		$return.= '<td class="nobordernopadding titre_right" align="right" valign="middle">'.$morehtmlright.'</td>';
+		$return.= '<td class="nobordernopadding titre_right wordbreak" align="right" valign="middle">'.$morehtmlright.'</td>';
 	}
 	$return.= '</tr></table>'."\n";
 
@@ -4664,7 +4787,7 @@ function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
 {
 	global $db, $mysoc;
 
-	dol_syslog("getTaxesFromId vatrowid=".$vatrate);
+	dol_syslog("getTaxesFromId vat id or rate = ".$vatrate);
 
 	// Search local taxes
 	$sql = "SELECT t.rowid, t.code, t.taux as rate, t.recuperableonly as npr, t.accountancy_code_sell, t.accountancy_code_buy";
@@ -4681,8 +4804,9 @@ function getTaxesFromId($vatrate, $buyer=null, $seller=null, $firstparamisid=1)
 		}
 
 		$sql.=", ".MAIN_DB_PREFIX."c_country as c";
-		if ($mysoc->country_code == 'ES') $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // local tax in spain use the buyer country ??
-		else $sql .= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
+		/*if ($mysoc->country_code == 'ES') $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$buyer->country_code."'";    // vat in spain use the buyer country ??
+		else $sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";*/
+		$sql.= " WHERE t.fk_pays = c.rowid AND c.code = '".$seller->country_code."'";
 		$sql.= " AND t.taux = ".((float) $vatratecleaned)." AND t.active = 1";
 		if ($vatratecode) $sql.= " AND t.code = '".$vatratecode."'";
 	}
@@ -5285,35 +5409,41 @@ function picto_required()
 /**
  *	Clean a string from all HTML tags and entities.
  *  This function differs from strip_tags because:
- *  - <br> are replace with \n
- *  - if entities are found, they are decoded before the strip
- *  - you can decide to convert line feed into spaces
+ *  - <br> are replaced with \n if removelinefeed=0 or 1
+ *  - if entities are found, they are decoded BEFORE the strip
+ *  - you can decide to convert line feed into a space
  *
  *	@param	string	$stringtoclean		String to clean
- *	@param	integer	$removelinefeed		1=Replace also new lines by a space, 0=Only last one are removed
+ *	@param	integer	$removelinefeed		1=Replace all new lines by 1 space, 0=Only ending new lines are removed others are replaced with \n, 2=Ending new lines are removed but others are kept with a same number of \n than nb of <br> when there is both "...<br>\n..."
  *  @param  string	$pagecodeto      	Encoding of input/output string
+ *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag)
  *	@return string	    				String cleaned
  *
  * 	@see	dol_escape_htmltag strip_tags
  */
-function dol_string_nohtmltag($stringtoclean,$removelinefeed=1,$pagecodeto='UTF-8')
+function dol_string_nohtmltag($stringtoclean, $removelinefeed=1, $pagecodeto='UTF-8', $strip_tags=0)
 {
-	// TODO Try to replace with  strip_tags($stringtoclean)
-	$pattern = "/<[^<>]+>/";
-	$stringtoclean = preg_replace('/<br[^>]*>/', "\n", $stringtoclean);
-	$temp = dol_html_entity_decode($stringtoclean,ENT_COMPAT,$pagecodeto);
+	if ($removelinefeed == 2) $stringtoclean = preg_replace('/<br[^>]*>\n+/ims', '<br>', $stringtoclean);
+	$temp = preg_replace('/<br[^>]*>/i', "\n", $stringtoclean);
 
-	// Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
-	$temp = preg_replace($pattern,"",$temp);    // pass 1
-	// $temp after pass 1: <a href="/myurl" title="A title">0000-021
-	$temp = preg_replace($pattern,"",$temp);    // pass 2
-	// $temp after pass 2: 0000-021
+	if ($strip_tags) {
+		$temp = strip_tags($temp);
+	} else {
+		$pattern = "/<[^<>]+>/";
+		// Exemple of $temp: <a href="/myurl" title="<u>A title</u>">0000-021</a>
+		$temp = preg_replace($pattern,"",$temp);    // pass 1
+		// $temp after pass 1: <a href="/myurl" title="A title">0000-021
+		$temp = preg_replace($pattern,"",$temp);    // pass 2
+		// $temp after pass 2: 0000-021
+	}
+
+	$temp = dol_html_entity_decode($temp,ENT_COMPAT,$pagecodeto);
 
 	// Supprime aussi les retours
-	if ($removelinefeed) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
+	if ($removelinefeed == 1) $temp=str_replace(array("\r\n","\r","\n")," ",$temp);
 
 	// et les espaces doubles
-	while(strpos($temp,"  "))
+	while (strpos($temp,"  "))
 	{
 		$temp = str_replace("  "," ",$temp);
 	}
@@ -5622,6 +5752,7 @@ function dol_textishtml($msg,$option=0)
 		elseif (preg_match('/<h[0-9]>/i',$msg))			return true;
 		elseif (preg_match('/&[A-Z0-9]{1,6};/i',$msg))	return true;    // Html entities names (http://www.w3schools.com/tags/ref_entities.asp)
 		elseif (preg_match('/&#[0-9]{2,3};/i',$msg))	return true;    // Html entities numbers (http://www.w3schools.com/tags/ref_entities.asp)
+
 		return false;
 	}
 }
@@ -5665,11 +5796,31 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 	$substitutionarray=array();
 
-	if (empty($exclude) || ! in_array('system', $exclude))
+	if (empty($exclude) || ! in_array('user', $exclude))
 	{
-		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
-		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
-		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
+		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
+		// this will include signature content first and then replace var found into content of signature
+		$signature = $user->signature;
+		$substitutionarray=array_merge($substitutionarray, array(
+		'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
+		)
+			);
+		// For backward compatibility
+		if ($onlykey != 2)
+		{
+			$substitutionarray['__SIGNATURE__'] = (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '');
+		}
+
+		$substitutionarray=array_merge($substitutionarray, array(
+		'__USER_ID__' => (string) $user->id,
+		'__USER_LOGIN__' => (string) $user->login,
+		'__USER_LASTNAME__' => (string) $user->lastname,
+		'__USER_FIRSTNAME__' => (string) $user->firstname,
+		'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
+		'__USER_SUPERVISOR_ID__' => (string) ($user->fk_user ? $user->fk_user : '0'),
+		'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
+		)
+			);
 	}
 	if ((empty($exclude) || ! in_array('mycompany', $exclude)) && is_object($mysoc))
 	{
@@ -5691,6 +5842,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			'__MYCOMPANY_COUNTRY_ID__' => $mysoc->country_id
 		));
 	}
+
 	if (($onlykey || is_object($object)) && (empty($exclude) || ! in_array('object', $exclude)))
 	{
 		if ($onlykey)
@@ -5703,9 +5855,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 			$substitutionarray['__THIRDPARTY_ID__'] = '__THIRDPARTY_ID__';
 			$substitutionarray['__THIRDPARTY_NAME__'] = '__THIRDPARTY_NAME__';
+			$substitutionarray['__THIRDPARTY_EMAIL__'] = '__THIRDPARTY_EMAIL__';
 
-			if (is_object($object) && $object->element == 'shipping')
+			if (is_object($object) && $object->element == 'member')
 			{
+				$substitutionarray['__MEMBER_ID__'] = '__MEMBER_ID__';
 				$substitutionarray['__MEMBER_CIVILITY__'] = '__MEMBER_CIVILITY__';
 				$substitutionarray['__MEMBER_FIRSTNAME__'] = '__MEMBER_FIRSTNAME__';
 				$substitutionarray['__MEMBER_LASTNAME__'] = '__MEMBER_LASTNAME__';
@@ -5719,7 +5873,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATE__'] = 'Lowest data for planned expiration of service';
 			$substitutionarray['__CONTRACT_LOWEST_EXPIRATION_DATETIME__'] = 'Lowest date and hour for planned expiration of service';
 
-			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'LinkToPayOnlineIfApplicable';
+			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'UrlToPayOnlineIfApplicable';
+			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__'] = 'TextAndUrlToPayOnlineIfApplicable';
 			$substitutionarray['__SECUREKEYPAYMENT__'] = 'Security key (if key is not unique per record)';
 			$substitutionarray['__SECUREKEYPAYMENT_MEMBER__'] = 'Security key for payment on a member subscription (one key per member)';
 			$substitutionarray['__SECUREKEYPAYMENT_ORDER__'] = 'Security key for payment on an order';
@@ -5739,11 +5894,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			$substitutionarray['__REFCLIENT__'] = (isset($object->ref_client) ? $object->ref_client : (isset($object->ref_customer) ? $object->ref_customer : ''));
 			$substitutionarray['__REFSUPPLIER__'] = (isset($object->ref_supplier) ? $object->ref_supplier : '');
 
-			// TODO USe this ?
+			// TODO Use this ?
 			$msgishtml = 0;
 
 			$birthday = dol_print_date($object->birth,'day');
 
+			$substitutionarray['__MEMBER_ID__']=$object->id;
 			if (method_exists($object, 'getCivilityLabel')) $substitutionarray['__MEMBER_CIVILITY__'] = $object->getCivilityLabel();
 			$substitutionarray['__MEMBER_FIRSTNAME__']=$msgishtml?dol_htmlentitiesbr($object->firstname):$object->firstname;
 			$substitutionarray['__MEMBER_LASTNAME__']=$msgishtml?dol_htmlentitiesbr($object->lastname):$object->lastname;
@@ -5766,11 +5922,15 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object)?$object->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object)?$object->name:'');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object)?$object->name_alias:'');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object)?$object->email:'');
 			}
 			elseif (is_object($object->thirdparty) && $object->thirdparty->id > 0)
 			{
 				$substitutionarray['__THIRDPARTY_ID__'] = (is_object($object->thirdparty)?$object->thirdparty->id:'');
 				$substitutionarray['__THIRDPARTY_NAME__'] = (is_object($object->thirdparty)?$object->thirdparty->name:'');
+				$substitutionarray['__THIRDPARTY_NAME_ALIAS__'] = (is_object($object->thirdparty)?$object->thirdparty->name_alias:'');
+				$substitutionarray['__THIRDPARTY_EMAIL__'] = (is_object($object->thirdparty)?$object->thirdparty->email:'');
 			}
 
 			if (is_object($object->projet) && $object->projet->id > 0)
@@ -5812,7 +5972,27 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 				}
 			}
 
-			$substitutionarray['__ONLINE_PAYMENT_URL__'] = 'TODO';
+			// Complete substitution array with the url to make online payment
+			$paymenturl='';
+			if (empty($substitutionarray['__REF__']))
+			{
+				$paymenturl='';
+			}
+			else
+			{
+				// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+				$outputlangs->load('paypal');
+				$typeforonlinepayment='free';
+				if (is_object($object) && $object->element == 'commande') $typeforonlinepayment='order';
+				if (is_object($object) && $object->element == 'facture')  $typeforonlinepayment='invoice';
+				if (is_object($object) && $object->element == 'member')   $typeforonlinepayment='member';
+				$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $substitutionarray['__REF__']);
+				$paymenturl=$url;
+			}
+
+			$substitutionarray['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$outputlangs->trans("PredefinedMailContentLink", $paymenturl):'');
+			$substitutionarray['__ONLINE_PAYMENT_URL__']=$paymenturl;
 		}
 	}
 	if (empty($exclude) || ! in_array('objectamount', $exclude))
@@ -5862,31 +6042,11 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 		));
 	}
 
-	if (empty($exclude) || ! in_array('user', $exclude))
+	if (empty($exclude) || ! in_array('system', $exclude))
 	{
-		// Add SIGNATURE into substitutionarray first, so, when we will make the substitution,
-		// this will also replace var found into content of signature
-		$signature = $user->signature;
-		$substitutionarray=array_merge($substitutionarray, array(
-			'__USER_SIGNATURE__' => (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '')
-		)
-			);
-		// For backward compatibility
-		if ($onlykey != 2)
-		{
-			$substitutionarray['__SIGNATURE__'] = (string) (($signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN)) ? ($onlykey == 2 ? dol_trunc(dol_string_nohtmltag($signature), 30) : $signature) : '');
-		}
-
-		$substitutionarray=array_merge($substitutionarray, array(
-			'__USER_ID__' => (string) $user->id,
-			'__USER_LOGIN__' => (string) $user->login,
-			'__USER_LASTNAME__' => (string) $user->lastname,
-			'__USER_FIRSTNAME__' => (string) $user->firstname,
-			'__USER_FULLNAME__' => (string) $user->getFullName($outputlangs),
-			'__USER_SUPERVISOR_ID__' => (string) $user->fk_user,
-			'__USER_REMOTE_IP__' => (string) $_SERVER['REMOTE_ADDR']
-			)
-		);
+		$substitutionarray['__(AnyTranslationKey)__']=$outputlangs->trans('TranslationOfKey');
+		$substitutionarray['__[AnyConstantKey]__']=$outputlangs->trans('ValueOfConstant');
+		$substitutionarray['__DOL_MAIN_URL_ROOT__']=DOL_MAIN_URL_ROOT;
 	}
 	if (! empty($conf->multicompany->enabled))
 	{
@@ -5897,8 +6057,8 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 }
 
 /**
- *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval).
- *  Texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
+ *  Make substitution into a text string, replacing keys with vals from $substitutionarray (oldval=>newval),
+ *  and texts like __(TranslationKey|langfile)__ and __[ConstantKey]__ are also replaced.
  *  Example of usage:
  *  $substitutionarray = getCommonSubstitutionArray($langs, 0, null, $thirdparty);
  *  complete_substitutions_array($substitutionarray, $langs, $thirdparty);
@@ -5942,7 +6102,8 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 		if (dol_textishtml($text,1)) $msgishtml = 1;
 
 		$keyfound = $reg[1];
-		$newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
+		if (preg_match('/(_pass|password|secret|_key|key$)/i', $keyfound)) $newval = '*****forbidden*****';
+		else $newval=empty($conf->global->$keyfound)?'':$conf->global->$keyfound;
 		$text = preg_replace('/__\['.preg_quote($keyfound, '/').'\]__/', $msgishtml?dol_htmlentitiesbr($newval):$newval, $text);
 	}
 
@@ -6138,12 +6299,19 @@ function setEventMessage($mesgs, $style='mesgs')
  */
 function setEventMessages($mesg, $mesgs, $style='mesgs')
 {
-	if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
-	if (empty($mesgs)) setEventMessage($mesg, $style);
+	if (empty($mesg) && empty($mesgs))
+	{
+		dol_syslog("Try to add a message in stack with empty message", LOG_WARNING);
+	}
 	else
 	{
-		if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
-		setEventMessage($mesgs, $style);
+		if (! in_array((string) $style, array('mesgs','warnings','errors'))) dol_print_error('','Bad parameter style='.$style.' for setEventMessages');
+		if (empty($mesgs)) setEventMessage($mesg, $style);
+		else
+		{
+			if (! empty($mesg) && ! in_array($mesg, $mesgs)) setEventMessage($mesg, $style);	// Add message string if not already into array
+			setEventMessage($mesgs, $style);
+		}
 	}
 }
 
@@ -6362,27 +6530,30 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 	// Clean parameters
 	$order=strtolower($order);
 
-	$sizearray=count($array);
-	if (is_array($array) && $sizearray>0)
+	if (is_array($array))
 	{
-		$temp = array();
-		foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
-
-		if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
-		else
+		$sizearray=count($array);
+		if ($sizearray>0)
 		{
-			($case_sensitive) ? natsort($temp) : natcasesort($temp);
-			if($order!='asc') $temp=array_reverse($temp,TRUE);
+			$temp = array();
+			foreach(array_keys($array) as $key) $temp[$key]=$array[$key][$index];
+
+			if (!$natsort) ($order=='asc') ? asort($temp) : arsort($temp);
+			else
+			{
+				($case_sensitive) ? natsort($temp) : natcasesort($temp);
+				if($order!='asc') $temp=array_reverse($temp,TRUE);
+			}
+
+			$sorted = array();
+
+			foreach(array_keys($temp) as $key)
+			{
+				(is_numeric($key) && empty($keepindex)) ? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
+			}
+
+			return $sorted;
 		}
-
-		$sorted = array();
-
-		foreach(array_keys($temp) as $key)
-		{
-			(is_numeric($key) && empty($keepindex)) ? $sorted[]=$array[$key] : $sorted[$key]=$array[$key];
-		}
-
-		return $sorted;
 	}
 	return $array;
 }
@@ -6980,6 +7151,8 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 				$i3 = 0;
 				foreach($tmpcrits as $tmpcrit)
 				{
+					if(empty($tmpcrit)) continue;
+
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
 					if (preg_match('/\.(id|rowid)$/', $field))	// Special case for rowid that is sometimes a ref so used as a search field
@@ -7102,7 +7275,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
 
 	if ($alldata == 1)
 	{
-		if ($num_mime !== false) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath), 'mime'=>dol_mimetype($relativepath), );
+		if ($num_mime !== false) return array('target'=>'_blank', 'css'=>'documentpreview', 'url'=>DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&attachment=0&file='.urlencode($relativepath).($param?'&'.$param:''), 'mime'=>dol_mimetype($relativepath), );
 		else return array();
 	}
 

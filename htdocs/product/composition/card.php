@@ -370,7 +370,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '</td>';
 
-					    $totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise), 'MT');
+					    $totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) - $product_fourn->fourn_remise), 'MT');
 						$total+=$totalline;
 
 						print '<td align="right">';
@@ -473,7 +473,7 @@ if ($id > 0 || ! empty($ref))
 			}
 			else
 			{
-				$colspan=6;
+				$colspan=8;
 				if (! empty($conf->stock->enabled)) $colspan++;
 
 				print '<tr class="impair">';
@@ -511,7 +511,8 @@ if ($id > 0 || ! empty($ref))
 			{
 				require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
 				print '<div class="inline-block">'.$langs->trans("CategoryFilter").': ';
-				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent).' &nbsp; </div>';
+				print $form->select_all_categories(Categorie::TYPE_PRODUCT, $parent, 'parent').' &nbsp; </div>';
+				print ajax_combobox('parent');
 			}
 			print '<div class="inline-block">';
 			print '<input type="submit" class="button" value="'.$langs->trans("Search").'">';

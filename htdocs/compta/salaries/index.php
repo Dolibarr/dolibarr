@@ -105,7 +105,7 @@ $sql.= " s.rowid, s.fk_user, s.amount, s.salary, s.label, s.datep as datep, s.da
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id AND pst.entity IN (".getEntity('c_paiement').")";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON s.fk_typepayment = pst.id";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid,";
 $sql.= " ".MAIN_DB_PREFIX."user as u";
@@ -150,6 +150,8 @@ if ($result)
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create">'.$langs->trans('NewSalaryPayment').'</a>';
+
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -159,7 +161,7 @@ if ($result)
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+    print_barre_liste($langs->trans("SalariesPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
@@ -179,7 +181,7 @@ if ($result)
 	print '<td class="liste_titre">&nbsp;</td>';
 	// Type
 	print '<td class="liste_titre" align="left">';
-	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
+	$form->select_types_paiements($typeid,'typeid','',0,1,1,16);
 	print '</td>';
 	// Account
 	if (! empty($conf->banque->enabled))

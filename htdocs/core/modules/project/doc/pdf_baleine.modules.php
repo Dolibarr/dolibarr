@@ -48,10 +48,9 @@ class pdf_baleine extends ModelePDFProjects
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("projects");
-		$langs->load("companies");
+		
+		// Translations
+		$langs->loadLangs(array("main", "projects", "companies"));
 
 		$this->db = $db;
 		$this->name = "baleine";

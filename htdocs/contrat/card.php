@@ -6,7 +6,7 @@
  * Copyright (C) 2010-2017	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2013-2014  Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2014-2016	Ferran Marcet		  	<fmarcet@2byte.es>
+ * Copyright (C) 2014-2018	Ferran Marcet		  	<fmarcet@2byte.es>
  * Copyright (C) 2014-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry		<jfefe@aternatik.fr>
  *
@@ -842,7 +842,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result >= 0)
 		{
-			header("Location: index.php");
+			header("Location: list.php?restore_lastsearch_values=1");
 			return;
 		}
 		else
@@ -880,7 +880,7 @@ if (empty($reshook))
 
 		// Fill array 'array_options' with data from update form
 		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
 		if (! $error) {
@@ -955,19 +955,35 @@ if (empty($reshook))
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
 
-			$result = $object->setValueFrom('ref', GETPOST('ref','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-				$action = 'editref';
-			} else {
-				header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
-				exit;
-			}
-		}
-		else {
-			header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
-			exit;
-		}
+			$old_ref = $object->ref;
+
+	        $result = $object->setValueFrom('ref', GETPOST('ref','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
+	        if ($result < 0) {
+	            setEventMessages($object->error, $object->errors, 'errors');
+	            $action = 'editref';
+	        } else {
+				require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+				$old_filedir = $conf->contrat->dir_output . '/' . dol_sanitizeFileName($old_ref);
+				$new_filedir = $conf->contrat->dir_output . '/' . dol_sanitizeFileName($object->ref);
+
+				$files = dol_dir_list($old_filedir);
+				if (!empty($files))
+				{
+					if (!is_dir($new_filedir)) dol_mkdir($new_filedir);
+					foreach ($files as $file)
+					{
+						dol_move($file['fullname'], $new_filedir.'/'.$file['name']);
+					}
+				}
+
+	            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $object->id);
+	            exit;
+	        }
+	    }
+	    else {
+	        header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id);
+	        exit;
+	    }
 	}
 	elseif ($action=='setdate_contrat')
 	{
@@ -1527,10 +1543,10 @@ else
 		// Title line for service
 		$cursorline=1;
 		print '<div id="contrat-lines-container" data-contractid="'.$object->id.'"  data-element="'.$object->element.'" >';
-        	while ($cursorline <= $nbofservices)
+		while ($cursorline <= $nbofservices)
 		{
 			print '<div id="contrat-line-container'.$object->lines[$cursorline-1]->id.'" data-contratlineid = "'.$object->lines[$cursorline-1]->id.'" data-element="'.$object->lines[$cursorline-1]->element.'" >';
-            		print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
+			print '<form name="update" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'" method="post">';
 			print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 			print '<input type="hidden" name="action" value="updateline">';
 			print '<input type="hidden" name="elrowid" value="'.$object->lines[$cursorline-1]->id.'">';
@@ -1640,13 +1656,14 @@ else
 					print '<td align="right" class="nowrap">';
 					if ($user->rights->contrat->creer && count($arrayothercontracts) && ($object->statut >= 0))
 					{
-						print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
+						print '<!-- link to move service line into another contract -->';
+						print '<a class="reposition" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=move&amp;rowid='.$objp->rowid.'">';
 						print img_picto($langs->trans("MoveToAnotherContract"),'uparrow');
 						print '</a>';
 					}
 					if ($user->rights->contrat->creer && ($object->statut >= 0))
 					{
-						print '<a style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+						print '<a class="reposition" style="padding-left: 5px;" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
@@ -1704,14 +1721,11 @@ else
 						print '</tr>';
 					}
 
-
 					// Display lines extrafields
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
-						print '<tr '.$bcnd[$var].'>';
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
-						print '</tr>';
+						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
 				}
 				// Ligne en mode update
@@ -1766,7 +1780,8 @@ else
 					print '<input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
-
+					print '</tr>';
+					
 					$colspan=6;
 					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
 					if($conf->global->PRODUCT_USE_UNITS) $colspan++;
@@ -1779,16 +1794,13 @@ else
 					print ' &nbsp;&nbsp;'.$langs->trans("DateEndPlanned").' ';
 					$form->select_date($db->jdate($objp->date_fin),"date_end_update",$usehm,$usehm,($db->jdate($objp->date_fin)>0?0:1),"update");
 					print '</td>';
+					print '</tr>';
 
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
-						print '<tr '.$bcnd[$var].'>';
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan));
-						print '</tr>';
+						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
-
-					print '</tr>';
 				}
 
 				$db->free($result);
@@ -1875,7 +1887,7 @@ else
 			// Area with status and activation info of line
 			if ($object->statut > 0)
 			{
-				print '<table class="notopnoleftnoright tableforservicepart2" width="100%">';
+				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ?' boxtablenobottom':'').'" width="100%">';
 
 				print '<tr '.$bcnd[$var].'>';
 				print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
@@ -1895,7 +1907,7 @@ else
 						}
 						if (($tmpaction=='activateline' && $user->rights->contrat->activer) || ($tmpaction=='unactivateline' && $user->rights->contrat->desactiver))
 						{
-							print '<a href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
+							print '<a class="reposition" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&amp;ligne=' . $object->lines[$cursorline - 1]->id . '&amp;action=' . $tmpaction . '">';
 							print img_picto($tmpactiontext, $tmpactionpicto);
 							print '</a>';
 						}
@@ -1926,7 +1938,7 @@ else
 					print $langs->trans("DateEndReal").': ';
 					print dol_print_date($objp->date_fin_reelle, 'day');
 				}
-				if (! empty($objp->comment)) print "<br>".$objp->comment;
+				if (! empty($objp->comment)) print " &nbsp;-&nbsp; ".$objp->comment;
 				print '</td>';
 
 				print '<td align="center">&nbsp;</td>';
@@ -1996,7 +2008,7 @@ else
 				print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 				print '<input type="hidden" name="action" value="closeline">';
 
-				print '<table class="noborder tableforservicepart2 boxtablenobottom" width="100%">';
+				print '<table class="noborder tableforservicepart2'.($cursorline < $nbofservices ?' boxtablenobottom':'').'" width="100%">';
 
 				// Definie date debut et fin par defaut
 				$dateactstart = $objp->date_debut_reelle;
@@ -2108,9 +2120,9 @@ else
 				// Send
 				if ($object->statut == 1) {
 					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send)) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				if ($object->statut == 0 && $nbofservices)
@@ -2143,7 +2155,7 @@ else
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=' . $object->element . '">' . $langs->trans("ToClone") . '</a></div>';
 				}
 
-				if ($object->nbofservicesclosed > 0)
+				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0)
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
 				}

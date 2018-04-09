@@ -103,7 +103,7 @@ $dol_no_mouse_hover=$conf->dol_no_mouse_hover;
 //var_dump($user->conf->THEME_ELDY_RGB);
 
 $useboldtitle=(isset($conf->global->THEME_ELDY_USEBOLDTITLE)?$conf->global->THEME_ELDY_USEBOLDTITLE:1);
-$borderwith=2;
+$borderwidth=2;
 
 // Case of option always editable
 if (! isset($conf->global->THEME_ELDY_BACKBODY)) $conf->global->THEME_ELDY_BACKBODY=$colorbackbody;
@@ -153,7 +153,7 @@ if (! empty($user->conf->THEME_ELDY_ENABLE_PERSONALIZED))
     $colorbacklinepairhover=((! isset($user->conf->THEME_ELDY_USE_HOVER) || $user->conf->THEME_ELDY_USE_HOVER === '0')?'':($user->conf->THEME_ELDY_USE_HOVER === '1'?'edf4fb':$user->conf->THEME_ELDY_USE_HOVER));
 }
 
-//if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
+if (empty($colortopbordertitle1)) $colortopbordertitle1=$colorbackhmenu1;
 
 
 // Set text color to black or white
@@ -290,7 +290,11 @@ textarea.cke_source:focus
 
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
-.liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create] {
+.liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
+.liste_titre input[name=search_month_lim], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end], .liste_titre input[name=search_month_create],
+.liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
+.liste_titre input[name=search_month_create], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end]
+{
 	margin-right: 4px;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -410,6 +414,12 @@ td.actionbuttons a {
 }
 td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
+}
+td.leftborder, td.hide6 {
+	border-right: 1px solid #ccc;
+}
+td.rightborder {
+	border-right: 1px solid #ccc;
 }
 
 select.flat, form.flat select {
@@ -592,7 +602,7 @@ textarea.centpercent {
 .liste_titre .nowrap {
 	white-space: nowrap;
 }
-.nowraponall {
+.nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
 }
 .wordwrap {
@@ -621,6 +631,9 @@ textarea.centpercent {
 }
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
+}
+.cursordefault {
+	cursor: default;
 }
 .cursorpointer {
 	cursor: pointer;
@@ -797,6 +810,9 @@ select.flat.selectlimit {
 .fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
 	color: #505;
 }
+.fa-trash, .fa-crop, .fa-pencil {
+	font-size: 1.4em;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
@@ -860,7 +876,9 @@ select.selectarrowonleft option {
 /* rule for not too small screen only */
 @media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
 {
+	.width25  { width: 25px; }
     .width50  { width: 50px; }
+    .width75  { width: 75px; }
     .width100 { width: 100px; }
     .width200 { width: 200px; }
 	.minwidth100 { min-width: 100px; }
@@ -876,8 +894,11 @@ select.selectarrowonleft option {
 	.minwidth400imp { min-width: 400px !important; }
 	.minwidth500imp { min-width: 500px !important; }
 }
+.widthauto { width: auto; }
 .width25  { width: 25px; }
+.width75  { width: 75px; }
 .width50  { width: 50px; }
+.width75  { width: 75px; }
 .width100 { width: 100px; }
 .width200 { width: 200px; }
 .maxwidth25  { max-width: 25px; }
@@ -971,10 +992,15 @@ select.selectarrowonleft option {
     	width: 95%;
     }
 
+	select {
+		padding-top: 4px;
+		padding-bottom: 5px;
+	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     	min-height: 1.4em;
     	line-height: 1.4em;
+		font-size: <?php print $fontsize+3; ?>px;
     	/* padding: .4em .1em; */
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this */
@@ -1179,6 +1205,16 @@ div.login_block {
 	/* position: initial !important;*/
 	display: none;
 }
+.login_block_getinfo {
+	text-align: center;
+}
+.login_block_getinfo div.login_block_user {
+	display: block;
+}
+.login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
+	color: #333 !important;
+	font-weight: normal !important;
+}
 #id-right {
 	padding-left: 0 ! important;
 }
@@ -1200,7 +1236,7 @@ div.fiche {
 
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
-	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'16':'6')); ?>px;
+	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'22':'6')); ?>px;
 	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
 	margin-bottom: 15px;
 }
@@ -1324,8 +1360,13 @@ table.noborder tr.liste_titre td {
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
-.pictoedit, .pictowarning, .pictodelete {
+.pictowarning {
     vertical-align: text-bottom;
+}
+.fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
+.fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
+.tagtdnote span.pictoedit {
+    opacity: 0.9;
 }
 img.hideonsmartphone.pictoactionview {
     vertical-align: bottom;
@@ -1409,7 +1450,7 @@ img.photorefnoborder {
 .underrefbanner {
 }
 .underbanner {
-	border-bottom: <?php echo $borderwith; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
+	border-bottom: <?php echo $borderwidth; ?>px solid rgb(<?php echo $colortopbordertitle1 ?>);
 }
 .tdhrthin {
 	margin: 0;
@@ -1673,6 +1714,10 @@ div.mainmenu.project {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1) ?>);
 }
 
+div.mainmenu.ticketsup {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticketsup.png',1) ?>);
+}
+
 div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
@@ -1687,7 +1732,7 @@ div.mainmenu.website {
 $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
 	'produit'=>'products','service'=>'products','stock'=>'products',
 	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-	'contrat'=>'commercial','ficheinter'=>'commercial','deplacement'=>'commercial',
+	'contrat'=>'commercial','ficheinter'=>'commercial','ticketsup'=>'ticketsup','deplacement'=>'commercial',
 	'fournisseur'=>'companies',
 	'barcode'=>'','fckeditor'=>'','categorie'=>'',
 );
@@ -1703,7 +1748,7 @@ $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
 $divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
 // Put here list of menu entries we are sure we don't want
-$divnotrequired=array('multicurrency','salaries','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
+$divnotrequired=array('multicurrency','salaries','ticketsup','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -1930,7 +1975,7 @@ img.login, img.printer, img.entity {
 	color: white;
 	font-weight: bold;
 }
-.userimgatoplogin img.userphoto {		/* size for user photo in login bar */
+.userimg.atoplogin img.userphoto, .userimgatoplogin img.userphoto {		/* size for user photo in login bar */
 	border-radius: 8px;
 	width: 16px;
 	height: 16px;
@@ -1996,7 +2041,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2189,6 +2234,9 @@ div.tabBarWithBottom {
 }
 div.tabBar table.tableforservicepart2:last-child {
     border-bottom: 1px solid #aaa;
+}
+.tableforservicepart1 .tdhrthin {
+	height: unset;
 }
 
 /* ============================================================================== */
@@ -2462,7 +2510,7 @@ tr.nocellnopadd td.nobordernopadding, tr.nocellnopadd td.nocellnopadd
 }
 
 
-table.border, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
+table.border, table.bordernooddeven, table.dataTable, .table-border, .table-border-col, .table-key-border-col, .table-val-border-col, div.border {
 	border: 1px solid #f4f4f4;
 	border-collapse: collapse !important;
 	padding: 1px 2px 1px 3px;			/* t r b l */
@@ -2470,9 +2518,11 @@ table.border, table.dataTable, .table-border, .table-border-col, .table-key-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
-
-.border tbody tr, .border tbody tr td, div.tabBar table.border tr {
+.border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
 	height: 22px;
+}
+tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
+    height: 22px;
 }
 
 table.border td, div.border div div.tagtd {
@@ -2498,9 +2548,19 @@ td.border, div.tagtable div div.border {
 
 
 /* Main boxes */
-.noborderbottom {
+.nobordertop, .nobordertop tr:first-of-type td {
+    border-top: none !important;
+}
+.noborderbottom, .noborderbottom tr:last-of-type td {
     border-bottom: none !important;
 }
+.bordertop {
+	border-top: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+.borderbottom {
+	border-bottom: 1px solid rgb(<?php echo $colortopbordertitle1 ?>);
+}
+
 .ficheaddleft table.noborder {
 	margin: 0px 0px 0px 0px;
 }
@@ -2520,7 +2580,7 @@ table.liste, table.noborder, table.formdoc, div.noborder {
 	border-collapse: separate !important;
 	border-spacing: 0px;
 
-	border-top-width: <?php echo $borderwith ?>px;
+	border-top-width: <?php echo $borderwidth ?>px;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
 	border-top-style: solid;
 
@@ -2581,7 +2641,7 @@ tr.liste_titre_filter td.liste_titre {
 table.liste th, table.noborder th, table.noborder tr.liste_titre td {
 	padding: 8px 6px 8px 6px;			/* t r b l */
 }
-table.noborder td, div.noborder form, div.noborder form div {
+table.noborder td, div.noborder form, div.noborder form div, table.tableforservicepart1 td, table.tableforservicepart2 td {
 	padding: 4px 6px 4px 6px;			/* t r b l */
 }
 
@@ -2716,7 +2776,7 @@ div.pagination li span:focus {
     color: #000;
     background-color: #eee;
     border-color: #ddd;
-  	padding-top: 8px;
+  	/* padding-top: 8px; */
 }
 div.pagination li .active a,
 div.pagination li .active span,
@@ -2880,7 +2940,7 @@ div.liste_titre {
 	border-top-style: solid;
 }
 div.liste_titre_bydiv {
-	border-top-width: <?php echo $borderwith ?>px;
+	border-top-width: <?php echo $borderwidth ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 
@@ -2923,7 +2983,7 @@ tr.liste_titre th a, th.liste_titre a, tr.liste_titre td a, td.liste_titre a, fo
 	text-shadow: none !important;
 }
 tr.liste_titre_topborder td {
-	border-top-width: <?php echo $borderwith; ?>px;
+	border-top-width: <?php echo $borderwidth; ?>px;
     border-top-color: rgb(<?php echo $colortopbordertitle1 ?>);
     border-top-style: solid;
 }
@@ -2983,7 +3043,7 @@ tr.liste_sub_total, tr.liste_sub_total td {
 }
 
 .paymenttable, .margintable {
-	border-top-width: <?php echo $borderwith ?>px !important;
+	border-top-width: <?php echo $borderwidth ?>px !important;
 	border-top-color: rgb(<?php echo $colortopbordertitle1 ?>) !important;
 	border-top-style: solid !important;
 	margin: 0px 0px 0px 0px !important;
@@ -2991,6 +3051,9 @@ tr.liste_sub_total, tr.liste_sub_total td {
 .paymenttable tr td:first-child, .margintable tr td:first-child
 {
 	padding-left: 2px;
+}
+.paymenttable, .margintable tr td {
+	height: 22px;
 }
 
 /* Disable shadows */
@@ -3011,6 +3074,9 @@ div .tdtop {
 
 #tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid #AAA !important;
+}
+#tablelines tr td {
+    height: unset;
 }
 
 
@@ -3055,7 +3121,7 @@ div .tdtop {
 }
 .boxstats, .boxstats130 {
     display: inline-block;
-    margin: 3px;
+    margin: 8px;
     /* border: 1px solid #CCC; */
     text-align: center;
     border-radius: 2px;
@@ -3078,6 +3144,12 @@ div .tdtop {
 }
 @media only screen and (max-width: 767px)
 {
+	.boxstats, .boxstats130 {
+		margin: 3px;
+	    border: 1px solid #ddd;
+    	box-shadow: none;
+    	background: #ddd;
+    }
 	.thumbstat {
 		flex: 1 1 110px;
 	}
@@ -3139,6 +3211,9 @@ span.dashboardlineko {
     margin-bottom: 8px !important;
     border-bottom-width: 1px;
 }
+.boxtablenotop {
+    /* border-top-width: 0 !important; */
+}
 .boxtablenobottom {
     /* border-bottom-width: 0 !important; */
 }
@@ -3149,8 +3224,8 @@ span.dashboardlineko {
 	text-align: center;
 }
 .boxworkingboard .tdboxstats {
-	padding-left: 0px !important;
-	padding-right: 0px !important;
+	padding-left: 1px !important;
+	padding-right: 1px !important;
 }
 a.valignmiddle.dashboardlineindicator {
     line-height: 30px;
@@ -3185,10 +3260,6 @@ tr.box_titre td.boxclose {
 }
 img.boxhandle, img.boxclose {
 	padding-left: 5px;
-}
-
-.noborderbottom {
-	border-bottom: none !important;
 }
 
 .formboxfilter {
@@ -3493,6 +3564,13 @@ div.ui-tooltip {
 /* Calendar                                                                       */
 /* ============================================================================== */
 
+.ui-datepicker-calendar .ui-state-default, .ui-datepicker-calendar .ui-widget-content .ui-state-default,
+.ui-datepicker-calendar .ui-widget-header .ui-state-default, .ui-datepicker-calendar .ui-button,
+html .ui-datepicker-calendar .ui-button.ui-state-disabled:hover, html .ui-button.ui-state-disabled:active
+{
+    border: unset;
+}
+
 img.datecallink { padding-left: 2px !important; padding-right: 2px !important; }
 
 .ui-datepicker-trigger {
@@ -3696,10 +3774,11 @@ table.cal_event    { border: none; border-collapse: collapse; margin-bottom: 1px
 table.cal_event td { border: none; padding-<?php print $left; ?>: 2px; padding-<?php print $right; ?>: 2px; padding-top: 0px; padding-bottom: 0px; }
 table.cal_event td.cal_event { padding: 4px 4px !important; }
 table.cal_event td.cal_event_right { padding: 4px 4px !important; }
-.cal_event a:link    { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:visited { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event a:active  { color: #111111; font-size: 11px; font-weight: normal !important; }
-.cal_event_busy a:hover   { color: #111111; font-size: 11px; font-weight: normal !important; color:rgba(255,255,255,.75); }
+.cal_event              { font-size: 1em; }
+.cal_event a:link       { color: #111111; font-weight: normal !important; }
+.cal_event a:visited    { color: #111111; font-weight: normal !important; }
+.cal_event a:active     { color: #111111; font-weight: normal !important; }
+.cal_event_busy a:hover { color: #111111; font-weight: normal !important; color:rgba(255,255,255,.75); }
 .cal_event_busy      { }
 .cal_peruserviewname { max-width: 140px; height: 22px; }
 
@@ -5019,6 +5098,275 @@ border-top-right-radius: 6px;
     background: #ddd
 }​
 
+
+
+/* ============================================================================== */
+/* Ticket module                                                                  */
+/* ============================================================================== */
+
+#cd-timeline {
+  position: relative;
+  padding: 2em 0;
+  margin-bottom: 2em;
+}
+#cd-timeline::before {
+  /* this is the vertical line */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18px;
+  height: 100%;
+  width: 4px;
+  background: #d7e4ed;
+}
+@media only screen and (min-width: 1170px) {
+  #cd-timeline {
+    margin-bottom: 3em;
+  }
+  #cd-timeline::before {
+    left: 50%;
+    margin-left: -2px;
+  }
+}
+
+.cd-timeline-block {
+  position: relative;
+  margin: 2em 0;
+}
+.cd-timeline-block:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.cd-timeline-block:first-child {
+  margin-top: 0;
+}
+.cd-timeline-block:last-child {
+  margin-bottom: 0;
+}
+@media only screen and (min-width: 1170px) {
+  .cd-timeline-block {
+    margin: 4em 0;
+  }
+  .cd-timeline-block:first-child {
+    margin-top: 0;
+  }
+  .cd-timeline-block:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.cd-timeline-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px white, inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 3px 0 4px rgba(0, 0, 0, 0.05);
+  background: #d7e4ed;
+}
+.cd-timeline-img img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  margin-left: -12px;
+  margin-top: -12px;
+}
+.cd-timeline-img.cd-picture {
+  background: #75ce66;
+}
+.cd-timeline-img.cd-movie {
+  background: #c03b44;
+}
+.cd-timeline-img.cd-location {
+  background: #f0ca45;
+}
+@media only screen and (min-width: 1170px) {
+  .cd-timeline-img {
+    width: 60px;
+    height: 60px;
+    left: 50%;
+    margin-left: -30px;
+    /* Force Hardware Acceleration in WebKit */
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+  }
+  .cssanimations .cd-timeline-img.is-hidden {
+    visibility: hidden;
+  }
+  .cssanimations .cd-timeline-img.bounce-in {
+    visibility: visible;
+    -webkit-animation: cd-bounce-1 0.6s;
+    -moz-animation: cd-bounce-1 0.6s;
+    animation: cd-bounce-1 0.6s;
+  }
+}
+
+@-webkit-keyframes cd-bounce-1 {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: scale(1.2);
+  }
+
+  100% {
+    -webkit-transform: scale(1);
+  }
+}
+@-moz-keyframes cd-bounce-1 {
+  0% {
+    opacity: 0;
+    -moz-transform: scale(0.5);
+  }
+
+  60% {
+    opacity: 1;
+    -moz-transform: scale(1.2);
+  }
+
+  100% {
+    -moz-transform: scale(1);
+  }
+}
+@keyframes cd-bounce-1 {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+    -moz-transform: scale(0.5);
+    -ms-transform: scale(0.5);
+    -o-transform: scale(0.5);
+    transform: scale(0.5);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    transform: scale(1.2);
+  }
+
+  100% {
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+  }
+}
+.cd-timeline-content {
+  position: relative;
+  margin-left: 60px;
+  background: white;
+  border-radius: 0.25em;
+  padding: 1em;
+  background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+}
+.cd-timeline-content:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.cd-timeline-content h2 {
+  color: #303e49;
+}
+.cd-timeline-content .cd-date {
+  font-size: 13px;
+  font-size: 0.8125rem;
+}
+.cd-timeline-content .cd-date {
+  display: inline-block;
+}
+.cd-timeline-content p {
+  margin: 1em 0;
+  line-height: 1.6;
+}
+
+.cd-timeline-content .cd-date {
+  float: left;
+  padding: .2em 0;
+  opacity: .7;
+}
+.cd-timeline-content::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: 100%;
+  height: 0;
+  width: 0;
+  border: 7px solid transparent;
+  border-right: 7px solid white;
+}
+@media only screen and (min-width: 768px) {
+  .cd-timeline-content h2 {
+    font-size: 20px;
+    font-size: 1.25rem;
+  }
+  .cd-timeline-content {
+    font-size: 16px;
+    font-size: 1rem;
+  }
+  .cd-timeline-content .cd-read-more, .cd-timeline-content .cd-date {
+    font-size: 14px;
+    font-size: 0.875rem;
+  }
+}
+@media only screen and (min-width: 1170px) {
+  .cd-timeline-content {
+    margin-left: 0;
+    padding: 1.6em;
+    width: 43%;
+  }
+  .cd-timeline-content::before {
+    top: 24px;
+    left: 100%;
+    border-color: transparent;
+    border-left-color: white;
+  }
+  .cd-timeline-content .cd-read-more {
+    float: left;
+  }
+  .cd-timeline-content .cd-date {
+    position: absolute;
+    width: 55%;
+    left: 115%;
+    top: 6px;
+    font-size: 16px;
+    font-size: 1rem;
+  }
+  .cd-timeline-block:nth-child(even) .cd-timeline-content {
+    float: right;
+  }
+  .cd-timeline-block:nth-child(even) .cd-timeline-content::before {
+    top: 24px;
+    left: auto;
+    right: 100%;
+    border-color: transparent;
+    border-right-color: white;
+  }
+  .cd-timeline-block:nth-child(even) .cd-timeline-content .cd-read-more {
+    float: right;
+  }
+  .cd-timeline-block:nth-child(even) .cd-timeline-content .cd-date {
+    left: auto;
+    right: 115%;
+    text-align: right;
+  }
+
+}
 
 
 

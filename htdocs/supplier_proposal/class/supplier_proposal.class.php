@@ -367,13 +367,14 @@ class SupplierProposal extends CommonObject
 	 * 		@param		int			$fk_unit			Id of the unit to use.
 	 * 		@param		string		$origin				'order', 'supplier_proposal', ...
 	 * 		@param		int			$origin_id			Id of origin line
+     * 		@param		double		$pu_ht_devise		Amount in currency
      *    	@return    	int         	    			>0 if OK, <0 if KO
      *
      *    	@see       	add_product
      */
-    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$array_option=0, $ref_fourn='', $fk_unit='', $origin='', $origin_id=0)
+    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$array_option=0, $ref_fourn='', $fk_unit='', $origin='', $origin_id=0, $pu_ht_devise=0)
     {
-    	global $mysoc;
+    	global $mysoc, $conf;
 
         dol_syslog(get_class($this)."::addline supplier_proposalid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc, info_bits=$info_bits, type=$type");
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
@@ -384,6 +385,7 @@ class SupplierProposal extends CommonObject
         if (empty($info_bits)) $info_bits=0;
         if (empty($rang)) $rang=0;
         if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line=0;
+        if (empty($pu_ht)) $pu_ht=0;
 
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
@@ -417,17 +419,23 @@ class SupplierProposal extends CommonObject
             $localtaxes_type=getLocalTaxesFromRate($txtva,0,$this->thirdparty,$mysoc);
             $txtva = preg_replace('/\s*\(.*\)/','',$txtva);  // Remove code into vatrate.
 
-            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx);
+            if ($conf->multicurrency->enabled && $pu_ht_devise > 0) {
+                $pu = 0;
+            }
+
+            $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx, $pu_ht_devise);
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
             $total_localtax1 = $tabprice[9];
             $total_localtax2 = $tabprice[10];
+            $pu = $pu_ht = $tabprice[3];
 
 			// MultiCurrency
 			$multicurrency_total_ht  = $tabprice[16];
             $multicurrency_total_tva = $tabprice[17];
             $multicurrency_total_ttc = $tabprice[18];
+            $pu_ht_devise = $tabprice[19];
 
             // Rang to use
             $rangtouse = $rang;
@@ -492,7 +500,7 @@ class SupplierProposal extends CommonObject
 			// Multicurrency
 			$this->line->fk_multicurrency			= $this->fk_multicurrency;
 			$this->line->multicurrency_code			= $this->multicurrency_code;
-			$this->line->multicurrency_subprice		= price2num($pu_ht * $this->multicurrency_tx);
+            $this->line->multicurrency_subprice		= $pu_ht_devise;
 			$this->line->multicurrency_total_ht 	= $multicurrency_total_ht;
             $this->line->multicurrency_total_tva 	= $multicurrency_total_tva;
             $this->line->multicurrency_total_ttc 	= $multicurrency_total_ttc;
@@ -1127,7 +1135,7 @@ class SupplierProposal extends CommonObject
     {
         global $conf;
 
-        $sql = "SELECT p.rowid, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+        $sql = "SELECT p.rowid, p.entity, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
         $sql.= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
         $sql.= ", p.datec";
         $sql.= ", p.date_valid as datev";
@@ -1145,8 +1153,8 @@ class SupplierProposal extends CommonObject
         $sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
         $sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."supplier_proposal as p";
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
-        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
         if ($ref) $sql.= " AND p.ref='".$ref."'";
@@ -1161,6 +1169,7 @@ class SupplierProposal extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id                   = $obj->rowid;
+                $this->entity               = $obj->entity;
 
                 $this->ref                  = $obj->ref;
                 $this->remise               = $obj->remise;

@@ -57,17 +57,17 @@ $amount = GETPOST('amount');
 $restrictive = GETPOST('restrictive');
 
 $object = new ExpenseReportRule($db);
-if (!empty($id)) 
+if (!empty($id))
 {
 	$result = $object->fetch($id);
 	if ($result < 0) dol_print_error('', $object->error, $object->errors);
 }
-	
+
 // TODO do action
 if ($action == 'save')
 {
 	$error = 0;
-	
+
 	// check parameters
 	if (empty($apply_to)) {
 		$error++;
@@ -93,11 +93,11 @@ if ($action == 'save')
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("ExpenseReportLimitAmount")), null, 'errors');
 	}
-	
+
 	if (empty($error))
 	{
 		$object->setValues($_POST);
-		
+
 		if($apply_to=='U'){
 			$object->fk_user=$fk_user;
 			$object->fk_usergroup=0;
@@ -114,13 +114,13 @@ if ($action == 'save')
 
 		$object->dates = $dates;
 		$object->datee = $datee;
-		
+
 		$object->entity = $conf->entity;
 
 		$res = $object->create($user);
 		if ($res > 0) setEventMessages($langs->trans('ExpenseReportRuleSave'), null);
 		else dol_print_error($object->db);
-		
+
 		header('Location: '.$_SERVER['PHP_SELF']);
 		exit;
 	}
@@ -129,7 +129,7 @@ elseif ($action == 'delete')
 {
 	// TODO add confirm
 	$res = $object->delete($user);
-	
+
 	if ($res < 0) dol_print_error($object->db);
 
 	header('Location: '.$_SERVER['PHP_SELF']);
@@ -145,11 +145,11 @@ $tab_rules_type = array('EX_DAY' => $langs->trans('Day'), 'EX_MON' => $langs->tr
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("ExpenseReportsSetup"));
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExpenseReportsRulesSetup"),$linkback,'title_setup');
 
 $head=expensereport_admin_prepare_head();
@@ -194,7 +194,7 @@ if ($action != 'edit')
 	echo '</tr>';
 
 	echo '</table>';
-	echo '</form>';	
+	echo '</form>';
 }
 
 
@@ -224,7 +224,7 @@ $var=true;
 foreach ($rules as $rule)
 {
 	echo '<tr '.$bc[$var].'>';
-	
+
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
@@ -240,8 +240,8 @@ foreach ($rules as $rule)
 		elseif ($rule->fk_user > 0) echo $tab_apply['U'].' ('.$rule->getUserName().')';
 	}
 	echo '</td>';
-	
-	
+
+
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
@@ -250,7 +250,7 @@ foreach ($rules as $rule)
 	else
 	{
 		if ($rule->fk_c_type_fees == -1) echo $langs->trans('AllExpenseReport');
-		else 
+		else
 		{
 			$key = getDictvalue(MAIN_DB_PREFIX.'c_type_fees', 'code', $rule->fk_c_type_fees, false, 'id');
 			if ($key != $langs->trans($key)) echo $langs->trans($key);
@@ -258,9 +258,9 @@ foreach ($rules as $rule)
 		}
 	}
 	echo '</td>';
-	
-	
-	
+
+
+
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
@@ -271,8 +271,8 @@ foreach ($rules as $rule)
 		echo $tab_rules_type[$rule->code_expense_rules_type];
 	}
 	echo '</td>';
-	
-	
+
+
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
@@ -283,8 +283,8 @@ foreach ($rules as $rule)
 		echo dol_print_date($rule->dates, 'day');
 	}
 	echo '</td>';
-	
-	
+
+
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
@@ -295,8 +295,8 @@ foreach ($rules as $rule)
 		echo dol_print_date($rule->datee, 'day');
 	}
 	echo '</td>';
-	
-	
+
+
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
@@ -307,8 +307,8 @@ foreach ($rules as $rule)
 		echo price($rule->amount, 0, $langs, 1, -1, -1, $conf->currency);
 	}
 	echo '</td>';
-	
-	
+
+
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
 	{
@@ -319,8 +319,8 @@ foreach ($rules as $rule)
 		echo yn($rule->restrictive, 1, 1);
 	}
 	echo '</td>';
-	
-	
+
+
 	echo '<td>';
 	if ($object->id != $rule->id)
 	{
@@ -333,7 +333,7 @@ foreach ($rules as $rule)
 		echo '<a href="'.$_SERVER['PHP_SELF'].'" class="button">'.$langs->trans('Cancel').'</a>';
 	}
 	echo '</td>';
-	
+
 	echo '</tr>';
 	$var=!$var;
 }
@@ -355,9 +355,9 @@ echo '<script type="text/javascript"> $(function() {
 			$("#user").hide();
 		}
 	});
-	
+
 	$("#apply_to").change();
-	
+
 }); </script>';
 
 dol_fiche_end();

@@ -40,6 +40,7 @@ $canreaduser=($user->admin || $user->rights->user->user->lire);
 
 $id = GETPOST('id','int');
 $action = GETPOST('action','alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userihm';   // To manage different context of search
 
 if ($id)
 {
@@ -79,8 +80,7 @@ $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('usercard','userihm','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','userihm','globalcard'));
 
 
 /*
@@ -162,7 +162,7 @@ if (! empty($conf->societe->enabled)) $tmparray['societe/index.php?mainmenu=comp
 if (! empty($conf->projet->enabled)) $tmparray['projet/index.php?mainmenu=project&leftmenu=']='ProjectsArea';
 if (! empty($conf->holiday->enabled) || ! empty($conf->expensereport->enabled)) $tmparray['hrm/index.php?mainmenu=hrm&leftmenu=']='HRMArea';   // TODO Complete list with first level of menus
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) $tmparray['product/index.php?mainmenu=products&leftmenu=']='ProductsAndServicesArea';
-if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->fichinter->enabled) || ! empty($conf->contrat->enabled)) $tmparray['comm/index.php?mainmenu=commercial&leftmenu=']='CommercialArea';
+if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->ficheinter->enabled) || ! empty($conf->contrat->enabled)) $tmparray['comm/index.php?mainmenu=commercial&leftmenu=']='CommercialArea';
 if (! empty($conf->compta->enabled) || ! empty($conf->accounting->enabled)) $tmparray['compta/index.php?mainmenu=compta&leftmenu=']='AccountancyTreasuryArea';
 if (! empty($conf->adherent->enabled)) $tmparray['adherents/index.php?mainmenu=members&leftmenu=']='MembersArea';
 if (! empty($conf->agenda->enabled)) $tmparray['comm/action/index.php?mainmenu=agenda&leftmenu=']='Agenda';
@@ -187,7 +187,7 @@ if ($action == 'edit')
 	$linkback = '';
 
 	if ($user->rights->user->user->lire || $user->admin) {
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 	}
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
@@ -302,7 +302,7 @@ else
 {
     dol_fiche_head($head, 'guisetup', $title, -1, 'user');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 

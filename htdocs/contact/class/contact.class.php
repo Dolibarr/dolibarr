@@ -220,15 +220,15 @@ class Contact extends CommonObject
 		$sql.= ", import_key";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."',";
-		if ($this->socid > 0) $sql.= " ".$this->socid.",";
+		if ($this->socid > 0) $sql.= " ".$this->db->escape($this->socid).",";
 		else $sql.= "null,";
 		$sql.= "'".$this->db->escape($this->lastname)."',";
         $sql.= "'".$this->db->escape($this->firstname)."',";
-		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
-		$sql.= " ".$this->priv.",";
-		$sql.= " ".$this->statut.",";
+        $sql.= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"null").",";
+		$sql.= " ".$this->db->escape($this->priv).",";
+		$sql.= " ".$this->db->escape($this->statut).",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$entity.",";
+        $sql.= " ".$this->db->escape($entity).",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
@@ -349,7 +349,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
 		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
-		$sql .= ", statut = ".$this->statut;
+		$sql .= ", statut = ".$this->db->escape($this->statut);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->db->escape($this->default_lang)."'":"NULL");
 		$sql .= ", no_email=".($this->no_email?"'".$this->db->escape($this->no_email)."'":"0");
@@ -530,7 +530,7 @@ class Contact extends CommonObject
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_CONTACT_FIELD_FAX))	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
         if ($this->skype && ! empty($conf->global->LDAP_CONTACT_FIELD_SKYPE))	    $info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
-		if ($this->note_private && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note_private;
+        if ($this->note_private && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
 		if ($this->email && ! empty($conf->global->LDAP_CONTACT_FIELD_MAIL))     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
@@ -1078,9 +1078,10 @@ class Contact extends CommonObject
 	 *	@param		int			$maxlen						Max length of
 	 *  @param		string		$moreparam					Add more param into URL
      *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param		int			$notooltip					1=Disable tooltip
 	 *	@return		string									String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1, $notooltip=0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1112,15 +1113,18 @@ class Contact extends CommonObject
 
         $linkstart = '<a href="'.$url.'"';
         $linkclose="";
-    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-        {
-            $label=$langs->trans("ShowContact");
-            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-        }
-       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-       	$linkclose.= ' class="classfortooltip">';
+		if (empty($notooltip)) {
+	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+    	    {
+        	    $label=$langs->trans("ShowContact");
+            	$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+    	   	$linkclose.= ' class="classfortooltip"';
+		}
+		$linkclose.='>';
 
-		if (! is_object($hookmanager))
+		/*if (! is_object($hookmanager))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager=new HookManager($this->db);
@@ -1128,7 +1132,7 @@ class Contact extends CommonObject
 		$hookmanager->initHooks(array('contactdao'));
 		$parameters=array('id'=>$this->id);
 		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+		if ($reshook > 0) $linkclose = $hookmanager->resPrint;*/
 
 		$linkstart.=$linkclose;
 		$linkend='</a>';
@@ -1139,11 +1143,22 @@ class Contact extends CommonObject
 			$linkend='</a>';
 		}
 
-
 		$result.=$linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs));
 		$result.=$linkend;
+
+		global $action;
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('contactdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
 		return $result;
 	}

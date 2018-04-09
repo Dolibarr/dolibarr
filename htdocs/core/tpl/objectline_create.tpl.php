@@ -58,6 +58,37 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 $colspan = 3;	// Col total ht + col edit + col delete
 if (in_array($object->element,array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
+
+// Lines for extrafield
+$objectline = null;
+if (!empty($extrafieldsline))
+{
+	if ($this->table_element_line=='commandedet') {
+		$objectline = new OrderLine($this->db);
+	}
+	elseif ($this->table_element_line=='propaldet') {
+		$objectline = new PropaleLigne($this->db);
+	}
+	elseif ($this->table_element_line=='supplier_proposaldet') {
+		$objectline = new SupplierProposalLine($this->db);
+	}
+	elseif ($this->table_element_line=='facturedet') {
+		$objectline = new FactureLigne($this->db);
+	}
+	elseif ($this->table_element_line=='contratdet') {
+		$objectline = new ContratLigne($this->db);
+	}
+	elseif ($this->table_element_line=='commande_fournisseurdet') {
+		$objectline = new CommandeFournisseurLigne($this->db);
+	}
+	elseif ($this->table_element_line=='facture_fourn_det') {
+		$objectline = new SupplierInvoiceLine($this->db);
+	}
+	elseif ($this->table_element_line=='facturedet_rec') {
+		$objectline = new FactureLigneRec($this->db);
+	}
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -131,7 +162,7 @@ if ($nolinesbefore) {
 if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 	$coldisplay=2;
 	?>
-	<td class="nobottom linecolnum" align="center" width="5">
+	<td class="nobottom linecolnum" align="center" width="5"></td>
 	<?php
 }
 else {
@@ -142,7 +173,7 @@ else {
 	<td class="nobottom linecoldescription minwidth500imp">
 
 	<?php
-	
+
 	$freelines = false;
 	if (empty($conf->global->MAIN_DISABLE_FREE_LINES))
 	{
@@ -153,7 +184,7 @@ else {
 			if (empty($conf->product->enabled) && empty($conf->service->enabled) && empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $forceall=-1;	// With contract, by default, no choice at all, except if CONTRACT_SUPPORT_PRODUCTS is set
 			else $forceall=0;
 		}
-	
+
 		// Free line
 		echo '<span class="prod_entry_mode_free">';
 		// Show radio free line
@@ -180,9 +211,9 @@ else {
 				echo ' ';
 			}
 		}
-	
+
 		echo $form->select_type_of_lines(isset($_POST["type"])?GETPOST("type",'alpha',2):-1,'type',1,1,$forceall);
-	
+
 		echo '</span>';
 	}
 
@@ -283,6 +314,18 @@ else {
 	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
 	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,$toolbarname,'',false,true,$enabled,$nbrows,'98%');
 	$doleditor->Create();
+
+	// Show autofill date for recuring invoices
+	if (! empty($conf->service->enabled) && $object->element == 'facturerec')
+	{
+		echo '<div class="divlinefordates"><br>';
+		echo $langs->trans('AutoFillDateFrom').' ';
+		echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
+		echo ' - ';
+		echo $langs->trans('AutoFillDateTo').' ';
+		echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
+		echo '</div>';
+	}
 	?>
 	</td>
 
@@ -322,8 +365,12 @@ else {
 		print $form->selectUnits($line->fk_unit, "units");
 		print '</td>';
 	}
+	$remise_percent = $buyer->remise_percent;
+	if($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier') {
+		$remise_percent = $seller->remise_supplier_percent;
+	}
 	?>
-	<td class="nobottom nowrap linecoldiscount" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$buyer->remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
+	<td class="nobottom nowrap linecoldiscount" align="right"><input type="text" size="1" name="remise_percent" id="remise_percent" class="flat right" value="<?php echo (isset($_POST["remise_percent"])?GETPOST("remise_percent",'alpha',2):$remise_percent); ?>"><span class="hideonsmartphone">%</span></td>
 	<?php
 	if ($this->situation_cycle_ref) {
 		$coldisplay++;
@@ -368,46 +415,23 @@ else {
 	<td class="nobottom linecoledit" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
-	<?php
-	// Lines for extrafield
-	if (!empty($extrafieldsline))
-	{
-		if ($this->table_element_line=='commandedet') {
-			$newline = new OrderLine($this->db);
-		}
-		elseif ($this->table_element_line=='propaldet') {
-			$newline = new PropaleLigne($this->db);
-		}
-		elseif ($this->table_element_line=='supplier_proposaldet') {
-			$newline = new SupplierProposalLine($this->db);
-		}
-		elseif ($this->table_element_line=='facturedet') {
-			$newline = new FactureLigne($this->db);
-		}
-		elseif ($this->table_element_line=='contratdet') {
-			$newline = new ContratLigne($this->db);
-		}
-		elseif ($this->table_element_line=='commande_fournisseurdet') {
-			$newline = new CommandeFournisseurLigne($this->db);
-		}
-		elseif ($this->table_element_line=='facture_fourn_det') {
-			$newline = new SupplierInvoiceLine($this->db);
-		}
-		elseif ($this->table_element_line=='facturedet_rec') {
-			$newline = new FactureLigneRec($this->db);
-		}
-		if (is_object($newline)) {
-			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
-		}
-	}
-	?>
 </tr>
+
+<?php
+if (is_object($objectline)) {
+	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+}
+?>
 
 <?php
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
 {
 	$colspan = 6;
 
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
+		$colspan++;
+	}
 	if ($this->situation_cycle_ref) {
 		$colspan++;
 	}
@@ -586,8 +610,17 @@ jQuery(document).ready(function() {
    				if (editor) { editor.focus(); }
 			}
 		}
-		if (jQuery('#select_type').val() == '0') jQuery('#trlinefordates').hide();
-		else jQuery('#trlinefordates').show();
+		console.log("Hide/show date according to product type");
+		if (jQuery('#select_type').val() == '0')
+		{
+			jQuery('#trlinefordates').hide();
+			jQuery('.divlinefordates').hide();
+		}
+		else
+		{
+			jQuery('#trlinefordates').show();
+			jQuery('.divlinefordates').show();
+		}
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
@@ -595,7 +628,7 @@ jQuery(document).ready(function() {
 		setforpredef();
 		jQuery('#trlinefordates').show();
 	});
-	
+
 	<?php
 	if(!$freelines) { ?>
 		$("#prod_entry_mode_predef").click();
@@ -721,10 +754,11 @@ jQuery(document).ready(function() {
         ?>
 
         /* To process customer price per quantity */
-        var pbq = $('option:selected', this).attr('data-pbq');
-        var pbqqty = $('option:selected', this).attr('data-pbqqty');
-        var pbqpercent = $('option:selected', this).attr('data-pbqpercent');
-        if (jQuery('#idprod').val() > 0 && typeof pbq !== "undefined")
+        var pbq = parseInt($('option:selected', this).attr('data-pbq'));
+        var pbqqty = parseFloat($('option:selected', this).attr('data-pbqqty'));
+        var pbqpercent = parseFloat($('option:selected', this).attr('data-pbqpercent'));
+
+        if ((jQuery('#idprod').val() > 0 || jQuery('#idprodfournprice').val()) && typeof pbq !== "undefined")
         {
             console.log("We choose a price by quanty price_by_qty id = "+pbq+" price_by_qty qty = "+pbqqty+" price_by_qty percent = "+pbqpercent);
             jQuery("#pbq").val(pbq);
@@ -778,7 +812,6 @@ function setforfree() {
 	jQuery("#tva_tx").show();
 	jQuery("#buying_price").val('').show();
 	jQuery("#fournprice_predef").hide();
-	jQuery("#title_fourn_ref").show();
 	jQuery("#title_vat").show();
 	jQuery("#title_up_ht").show();
 	jQuery("#title_up_ht_currency").show();
@@ -791,7 +824,7 @@ function setforfree() {
 	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
-	console.log("Call setforpredef. We hide some fields");
+	console.log("Call setforpredef. We hide some fields and show dates");
 	jQuery("#select_type").val(-1);
 
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
@@ -802,7 +835,6 @@ function setforpredef() {
 	jQuery("#fourn_ref").hide();
 	jQuery("#tva_tx").hide();
 	jQuery("#buying_price").show();
-	jQuery("#title_fourn_ref").hide();
 	jQuery("#title_vat").hide();
 	jQuery("#title_up_ht").hide();
 	jQuery("#title_up_ht_currency").hide();
@@ -813,6 +845,9 @@ function setforpredef() {
 	jQuery(".np_marginRate").hide();	// May no exists
 	jQuery(".np_markRate").hide();	// May no exists
 	jQuery("#units, #title_units").hide();
+
+	jQuery('#trlinefordates').show();
+	jQuery('.divlinefordates').show();
 }
 
 </script>

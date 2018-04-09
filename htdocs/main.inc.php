@@ -73,7 +73,7 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  *
  * @param		string		$val		Value
  * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		int						>0 if there is an injection
+ * @return		int						>0 if there is an injection, 0 if none
  */
 function test_sql_and_script_inject($val, $type)
 {
@@ -101,6 +101,7 @@ function test_sql_and_script_inject($val, $type)
 	// More on https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet
 	$inj += preg_match('/<script/i', $val);
 	$inj += preg_match('/<iframe/i', $val);
+	$inj += preg_match('/<audio/i', $val);
 	$inj += preg_match('/Set\.constructor/i', $val);	// ECMA script 6
 	if (! defined('NOSTYLECHECK')) $inj += preg_match('/<style/i', $val);
 	$inj += preg_match('/base[\s]+href/si', $val);
@@ -108,6 +109,7 @@ function test_sql_and_script_inject($val, $type)
 	$inj += preg_match('/onerror\s*=/i', $val);       // onerror can be set on img or any html tag like <img title='...' onerror = alert(1)>
 	$inj += preg_match('/onfocus\s*=/i', $val);       // onfocus can be set on input text html tag like <input type='text' value='...' onfocus = alert(1)>
 	$inj += preg_match('/onload\s*=/i', $val);        // onload can be set on svg tag <svg/onload=alert(1)> or other tag like body <body onload=alert(1)>
+	$inj += preg_match('/onloadstart\s*=/i', $val);   // onload can be set on audio tag <audio onloadstart=alert(1)>
 	$inj += preg_match('/onclick\s*=/i', $val);       // onclick can be set on img text html tag like <img onclick = alert(1)>
 	$inj += preg_match('/onscroll\s*=/i', $val);      // onscroll can be on textarea
 	//$inj += preg_match('/on[A-Z][a-z]+\*=/', $val);   // To lock event handlers onAbort(), ...
@@ -128,17 +130,17 @@ function test_sql_and_script_inject($val, $type)
  *
  * @param		string			$var		Variable name
  * @param		string			$type		1=GET, 0=POST, 2=PHP_SELF
- * @return		boolean||null				true if there is an injection. Stop code if injection found.
+ * @return		boolean|null				true if there is no injection. Stop code if injection found.
  */
 function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 {
 	if (is_array($var))
 	{
-		foreach ($var as $key => $value)
+		foreach ($var as $key => $value)	// Warning, $key may also be used for attacks
 		{
-			if (analyseVarsForSqlAndScriptsInjection($value,$type))
+			if (analyseVarsForSqlAndScriptsInjection($key, $type) && analyseVarsForSqlAndScriptsInjection($value, $type))
 			{
-				$var[$key] = $value;
+				//$var[$key] = $value;	// This is useless
 			}
 			else
 			{
@@ -150,7 +152,7 @@ function analyseVarsForSqlAndScriptsInjection(&$var, $type)
 	}
 	else
 	{
-		return (test_sql_and_script_inject($var,$type) <= 0);
+		return (test_sql_and_script_inject($var, $type) <= 0);
 	}
 }
 
@@ -225,13 +227,13 @@ session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on s
 if (! defined('NOSESSION'))
 {
 	session_start();
-	if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
+	/*if (ini_get('register_globals'))    // Deprecated in 5.3 and removed in 5.4. To solve bug in using $_SESSION
 	{
 		foreach ($_SESSION as $key=>$value)
 		{
 			if (isset($GLOBALS[$key])) unset($GLOBALS[$key]);
 		}
-	}
+	}*/
 }
 
 // Init the 5 global objects, this include will make the new and set properties for: $conf, $db, $langs, $user, $mysoc
@@ -351,7 +353,8 @@ if (! defined('NOTOKENRENEWAL'))
 	$token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
 }
-if (! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))	// Check validity of token, only if option enabled (this option breaks some features sometimes)
+if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
+	|| defined('CSRFCHECK_WITH_TOKEN'))	// Check validity of token, only if option MAIN_SECURITY_CSRF_WITH_TOKEN enabled or if constant CSRFCHECK_WITH_TOKEN is set
 {
 	if ($_SERVER['REQUEST_METHOD'] == 'POST' && ! GETPOST('token','alpha')) // Note, offender can still send request by GET
 	{
@@ -499,15 +502,17 @@ if (! defined('NOLOGIN'))
 			}
 		}
 
-		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",2));
-		$passwordtotest	= GETPOST('password','none',2);
+		$allowedmethodtopostusername = 2;
+		if (defined('MAIN_AUTHENTICATION_POST_METHOD')) $allowedmethodtopostusername = constant('MAIN_AUTHENTICATION_POST_METHOD');
+		$usertotest		= (! empty($_COOKIE['login_dolibarr']) ? $_COOKIE['login_dolibarr'] : GETPOST("username","alpha",$allowedmethodtopostusername));
+		$passwordtotest	= GETPOST('password','none',$allowedmethodtopostusername);
 		$entitytotest	= (GETPOST('entity','int') ? GETPOST('entity','int') : (!empty($conf->entity) ? $conf->entity : 1));
 
 		// Define if we received data to test the login.
 		$goontestloop=false;
 		if (isset($_SERVER["REMOTE_USER"]) && in_array('http',$authmode)) $goontestloop=true;
 		if ($dolibarr_main_authentication == 'forceuser' && ! empty($dolibarr_auto_user)) $goontestloop=true;
-		if (GETPOST("username","alpha",2) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
+		if (GETPOST("username","alpha",$allowedmethodtopostusername) || ! empty($_COOKIE['login_dolibarr']) || GETPOST('openid_mode','alpha',1)) $goontestloop=true;
 
 		if (! is_object($langs)) // This can occurs when calling page with NOREQUIRETRAN defined, however we need langs for error messages.
 		{
@@ -698,32 +703,33 @@ if (! defined('NOLOGIN'))
 		}
 		else
 		{
-		   // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-		   $hookmanager->initHooks(array('main'));
+		    // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+		    $hookmanager->initHooks(array('main'));
 
-		   // Code for search criteria persistence.
-		   if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
-		   {
-			   $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
-			   $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
-			   // Clean $relativepathstring
-   			   if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
-			   $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
-			   $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
-			   //var_dump($relativepathstring);
+		    // Code for search criteria persistence.
+		    if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
+		    {
+			    $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
+			    $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
+			    // Clean $relativepathstring
+   			    if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+			    $relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+			    $relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+			    //var_dump($relativepathstring);
 
-			   if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
-			   {
-				   $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
-				   unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
-			   }
-		   }
+			    // We click on a link that leave a page we have to save search criteria. We save them from tmp to no tmp
+			    if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
+			    {
+				    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
+				    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
+			    }
+		    }
 
-		   $action = '';
-		   $reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
-		   if ($reshook < 0) {
-			   setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-		   }
+		    $action = '';
+		    $reshook = $hookmanager->executeHooks('updateSession', array(), $user, $action);
+		    if ($reshook < 0) {
+			    setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+		    }
 		}
 	}
 
@@ -1114,12 +1120,8 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 	if (empty($conf->css)) $conf->css = '/theme/eldy/style.css.php';	// If not defined, eldy by default
 
-	if (! empty($conf->global->MAIN_ACTIVATE_HTML4)) {
-		$doctype = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-	}else {
-		$doctype = '<!doctype html>';
-	}
-	print $doctype."\n";
+	print '<!doctype html>'."\n";
+
 	if (! empty($conf->global->MAIN_USE_CACHE_MANIFEST)) print '<html lang="'.substr($langs->defaultlang,0,2).'" manifest="'.DOL_URL_ROOT.'/cache.manifest">'."\n";
 	else print '<html lang="'.substr($langs->defaultlang,0,2).'">'."\n";
 	//print '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">'."\n";
@@ -1570,7 +1572,8 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 		print $toprightmenu;
 
-		print "</div>\n";
+		print "</div>\n";		// end div class="login_block"
+
 		print '</div></div>';
 
 		//unset($form);
@@ -1617,19 +1620,19 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		if ($conf->browser->layout == 'phone') $conf->global->MAIN_USE_OLD_SEARCH_FORM=1;	// Select into select2 is awfull on smartphone. TODO Is this still true with select2 v4 ?
 
 		print "\n";
+
+		if (! is_object($form)) $form=new Form($db);
+		$selected=-1;
+		$usedbyinclude=1;
+		include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';	// This set $arrayresult
+
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
-			if (! is_object($form)) $form=new Form($db);
-			$selected=-1;
-			$searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+			//$searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 		}
 		else
 		{
-			if (! is_object($form)) $form=new Form($db);
-			$selected=-1;
-			$usedbyinclude=1;
-			include_once DOL_DOCUMENT_ROOT.'/core/ajax/selectsearchbox.php';
-
 			foreach($arrayresult as $key => $val)
 			{
 				//$searchform.=printSearchForm($val['url'], $val['url'], $val['label'], 'maxwidth100', 'sall', $val['shortcut'], 'searchleft', img_picto('',$val['img']));
@@ -1898,8 +1901,8 @@ if (! function_exists("llxFooter"))
 			// Clean data
 			foreach($user->lastsearch_values_tmp as $key => $val)
 			{
-				unset($_SESSION['lastsearch_values_tmp_'.$key]);
-				if (count($val))
+				unset($_SESSION['lastsearch_values_tmp_'.$key]);			// Clean arry to rebuild it just after
+				if (count($val) && empty($_POST['button_removefilter']))	// If there is search criteria to save and we did not click on 'Clear filter' button
 				{
 					if (empty($val['sortfield'])) unset($val['sortfield']);
 					if (empty($val['sortorder'])) unset($val['sortorder']);

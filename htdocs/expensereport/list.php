@@ -43,6 +43,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'expensereportlist';
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -72,7 +73,7 @@ $search_user  = GETPOST('search_user','int');
 $search_amount_ht = GETPOST('search_amount_ht','alpha');
 $search_amount_vat = GETPOST('search_amount_vat','alpha');
 $search_amount_ttc = GETPOST('search_amount_ttc','alpha');
-$search_status = (GETPOST('search_status','alpha')!=''?GETPOST('search_status','alpha'):GETPOST('statut','alpha'));
+$search_status = (GETPOST('search_status','intcomma')!=''?GETPOST('search_status','intcomma'):GETPOST('statut','intcomma'));
 $month_start  = GETPOST("month_start","int");
 $year_start   = GETPOST("year_start","int");
 $month_end    = GETPOST("month_end","int");
@@ -82,10 +83,8 @@ $optioncss    = GETPOST('optioncss','alpha');
 if ($search_status == '') $search_status=-1;
 if ($search_user == '') $search_user=-1;
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'expensereportlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new ExpenseReport($db);
 $hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
 
@@ -305,11 +304,7 @@ if ($search_amount_ttc != '') $sql.= natural_search('d.total_ttc', $search_amoun
 // User
 if ($search_user != '' && $search_user >= 0) $sql.= " AND u.rowid = '".$db->escape($search_user)."'";
 // Status
-if ($search_status != '' && $search_status >= 0)
-{
-	if (strstr($search_status, ',')) $sql.=" AND d.fk_statut IN (".$db->escape($search_status).")";
-	else $sql.=" AND d.fk_statut = ".$search_status;
-}
+if ($search_status != '' && $search_status >= 0) $sql.=" AND d.fk_statut IN (".$db->escape($search_status).")";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
@@ -381,7 +376,7 @@ if ($resql)
 	if ($id > 0)		// For user tab
 	{
 		$title = $langs->trans("User");
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$head = user_prepare_head($fuser);
 
 		dol_fiche_head($head, 'expensereport', $title, -1, 'user');
@@ -466,7 +461,14 @@ if ($resql)
 	else
 	{
 		$title = $langs->trans("ListTripsAndExpenses");
-		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+
+		$newcardbutton='';
+		if ($user->rights->expensereport->creer)
+		{
+			$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create">'.$langs->trans('NewTrip').'</a>';
+		}
+
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 	}
 
 	$topicmail="SendExpenseReport";

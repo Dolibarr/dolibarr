@@ -161,6 +161,7 @@ if (empty($reshook))
 			$object->statut          = $status;
 			$object->opp_status      = $opp_status;
 			$object->opp_percent     = $opp_percent;
+			$object->bill_time       = (GETPOST('bill_time','alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -261,6 +262,7 @@ if (empty($reshook))
 			if (isset($_POST['budget_amount'])) $object->budget_amount= price2num(GETPOST('budget_amount','alpha'));
 			if (isset($_POST['opp_status']))    $object->opp_status   = $opp_status;
 			if (isset($_POST['opp_percent']))   $object->opp_percent  = $opp_percent;
+			$object->bill_time       = (GETPOST('bill_time','alpha')=='on'?1:0);
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -407,7 +409,7 @@ if (empty($reshook))
 		if ($result > 0)
 		{
 			setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-			header("Location: index.php");
+			header("Location: list.php?restore_lastsearch_values=1");
 			exit;
 		}
 		else
@@ -444,6 +446,13 @@ if (empty($reshook))
 			$comefromclone=true;
 		}
 	}
+
+	// Actions to send emails
+	$trigger_name='PROJECT_SENTBYMAIL';
+	$paramname='id';
+	$autocopy='MAIN_MAIL_AUTOCOPY_ORDER_TO';		// used to know the automatic BCC to add
+	$trackid='proj'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
 
@@ -598,6 +607,14 @@ if ($action == 'create' && $user->rights->projet->creer)
 	print '<td>';
 	print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag(GETPOST("description",'none')).'</textarea>';
 	print '</td></tr>';
+
+	// Bill time
+	if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+	{
+		print '<tr><td>'.$langs->trans("BillTime").'</td>';
+		print '<td><input type="checkbox" name="bill_time"'.(GETPOST('bill_time','alpha')!=''?' checked="checked"':'').'"></td>';
+		print '</tr>';
+	}
 
 	if ($conf->categorie->enabled) {
 		// Categories
@@ -826,6 +843,14 @@ elseif ($object->id > 0)
 		print '<textarea name="description" wrap="soft" class="centpercent" rows="'.ROWS_3.'">'.$object->description.'</textarea>';
 		print '</td></tr>';
 
+		// Bill time
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<tr><td>'.$langs->trans("BillTime").'</td>';
+			print '<td><input type="checkbox" name="bill_time"'.((GETPOSTISSET('bill_time')?GETPOST('bill_time','alpha'):$object->bill_time) ? ' checked="checked"' : '').'"></td>';
+			print '</tr>';
+		}
+
 		// Tags-Categories
 		if ($conf->categorie->enabled)
 		{
@@ -948,6 +973,14 @@ elseif ($object->id > 0)
 		print nl2br($object->description);
 		print '</td></tr>';
 
+		// Bill time
+		if (! empty($conf->global->PROJECT_BILL_TIME_SPENT))
+		{
+			print '<tr><td>'.$langs->trans("BillTime").'</td>';
+			print '<td>'.yn($object->bill_time).'</td>';
+			print '</tr>';
+		}
+
 		// Categories
 		if($conf->categorie->enabled) {
 			print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
@@ -1014,11 +1047,21 @@ elseif ($object->id > 0)
                         jQuery("#divtocloseproject").hide();
                     }
 
-                    /* Change percent of default percent of new status is higher */
-                    if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
+                    /* Change percent with default percent (defaultpercent) if new status (defaultpercent) is higher than current (jQuery("#opp_percent").val()) */
+                    console.log("oldpercent="+oldpercent);
+                    if (oldpercent != \'\' && (parseFloat(defaultpercent) < parseFloat(oldpercent)))
                     {
                         if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+oldpercent+\' %\');
-                        jQuery("#opp_percent").val(defaultpercent);
+                        if (parseFloat(oldpercent) != 100) { jQuery("#opp_percent").val(oldpercent); }
+                        else { jQuery("#opp_percent").val(defaultpercent); }
+                    }
+                    else 
+                    {
+                    	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent)));
+                    	{
+                        	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+oldpercent+\' %\');
+                        	jQuery("#opp_percent").val(defaultpercent);
+                    	}
                     }
             	}
 
@@ -1038,7 +1081,7 @@ elseif ($object->id > 0)
 																							  // modified by hook
 	if (empty($reshook))
 	{
-		if ($action != "edit" )
+		if ($action != "edit" && $action != 'presend' )
 		{
 
 			// Create event
@@ -1048,6 +1091,12 @@ elseif ($object->id > 0)
 			{
 				print '<div class="inline-block divButAction"><a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&amp;origin=' . $object->element . '&amp;originid=' . $object->id . '&amp;socid=' . $object->socid . '&amp;projectid=' . $object->id . '">' . $langs->trans("AddAction") . '</a></div>';
 			}*/
+
+			// Send
+			if ($object->statut != 2)
+			{
+				print '<div class="inline-block divButAction"><a class="butAction" href="card.php?id='.$object->id.'&amp;action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail').'</a></div>';
+			}
 
 		// Modify
 			if ($object->statut != 2 && $user->rights->projet->creer)
@@ -1186,6 +1235,10 @@ elseif ($object->id > 0)
 
 	print "</div>";
 
+	if (GETPOST('modelselected')) {
+		$action = 'presend';
+	}
+
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -1217,6 +1270,14 @@ elseif ($object->id > 0)
 
 		print '</div></div></div>';
 	}
+
+	// Presend form
+	$modelmail='project';
+	$defaulttopic='SendProjectRef';
+	$diroutput = $conf->projet->dir_output;
+	$trackid = 'proj'.$object->id;
+
+	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 
 	// Hook to add more things on page
 	$parameters=array();

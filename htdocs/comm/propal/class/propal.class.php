@@ -1316,7 +1316,7 @@ class Propal extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 
-		$sql = "SELECT p.rowid, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql.= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql.= ", p.datec";
 		$sql.= ", p.date_valid as datev";
@@ -1343,8 +1343,8 @@ class Propal extends CommonObject
 		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
@@ -1362,6 +1362,7 @@ class Propal extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id                   = $obj->rowid;
+				$this->entity               = $obj->entity;
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
@@ -1748,8 +1749,8 @@ class Propal extends CommonObject
 				// to  not lose the linked files
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->propal->dir_output.'/'.$oldref;
-				$dirdest = $conf->propal->dir_output.'/'.$newref;
+				$dirsource = $conf->propal->multidir_output[$this->entity].'/'.$oldref;
+				$dirdest = $conf->propal->multidir_output[$this->entity].'/'.$newref;
 
 				if (file_exists($dirsource))
 				{
@@ -1758,7 +1759,7 @@ class Propal extends CommonObject
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+						$listoffiles=dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref,'/'));
 						foreach($listoffiles as $fileentry)
 						{
 							$dirsource=$fileentry['name'];
@@ -2528,21 +2529,6 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Class invoiced the Propal
-	 *
-	 *	@return     int     	<0 si ko, >0 si ok
-	 *  @deprecated
-	 *  @see classifyBilled()
-	 */
-	function classer_facturee()
-	{
-		global $user;
-		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-		return $this->classifyBilled($user);
-	}
-
-	/**
 	 *	Set draft status
 	 *
 	 *	@param		User	$user		Object user that modify
@@ -2814,9 +2800,9 @@ class Propal extends CommonObject
 					{
 						// We remove directory
 						$ref = dol_sanitizeFileName($this->ref);
-						if ($conf->propal->dir_output && !empty($this->ref))
+						if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref))
 						{
-							$dir = $conf->propal->dir_output . "/" . $ref ;
+							$dir = $conf->propal->multidir_output[$this->entity] . "/" . $ref ;
 							$file = $dir . "/" . $ref . ".pdf";
 							if (file_exists($file))
 							{

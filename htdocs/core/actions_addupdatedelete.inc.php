@@ -93,8 +93,16 @@ if ($action == 'update' && ! empty($permissiontoadd))
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
 		// Set value to update
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) $value = GETPOST($key,'none');
-		else $value = GETPOST($key,'alpha');
+		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
+			$value = GETPOST($key,'none');
+		}
+		elseif ($object->fields[$key]['type']=='date') {
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type']=='datetime') {
+			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} else {
+			$value = GETPOST($key,'alpha');
+		}
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 

@@ -125,7 +125,7 @@ if ($action == 'confirm_delete' && $confirm == "yes" && $user->rights->projet->s
 
 		if ($object->delete($user) > 0)
 		{
-			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.($withproject?'&withproject=1':''));
+			header('Location: '.DOL_URL_ROOT.'/projet/tasks.php?restore_lastsearch_values=1&id='.$projectstatic->id.($withproject?'&withproject=1':''));
 			exit;
 		}
 		else
@@ -221,7 +221,7 @@ if ($id > 0 || ! empty($ref))
 			// Tabs for project
 			$tab='tasks';
 			$head=project_prepare_head($projectstatic);
-			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
+			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'), 0, '', '');
 
 			$param=($mode=='mine'?'&mode=mine':'');
 
@@ -352,7 +352,7 @@ if ($id > 0 || ! empty($ref))
 			print '<input type="hidden" name="withproject" value="'.$withproject.'">';
 			print '<input type="hidden" name="id" value="'.$object->id.'">';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"),0,'projecttask');
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"), 0, 'projecttask', 0, '', '');
 
 			print '<table class="border" width="100%">';
 
@@ -437,7 +437,7 @@ if ($id > 0 || ! empty($ref))
 			$param=($withproject?'&withproject=1':'');
 			$linkback=$withproject?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'&restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>':'';
 
-			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask');
+			dol_fiche_head($head, 'task_task', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 			if ($action == 'delete')
 			{
@@ -586,7 +586,7 @@ if ($id > 0 || ! empty($ref))
 				    }
 				    else
 				    {
-				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("ProjecHasChild").'">'.$langs->trans('Delete').'</a>';
+				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				    }
 				}
 				else

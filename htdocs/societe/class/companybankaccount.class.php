@@ -72,7 +72,7 @@ class CompanyBankAccount extends Account
 		$now	= dol_now();
 		$error	= 0;
 		// Correct default_rib to be sure to have always one default
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe_rib where fk_soc = ".$this->socid." AND default_rib = 1 AND type = 'ban'";
    		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -81,8 +81,8 @@ class CompanyBankAccount extends Account
 			if (empty($this->default_rib) && $numrows == 0) $this->default_rib = 1;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, datec)";
-		$sql.= " VALUES (".$this->socid.", '".$this->db->idate($now)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_rib (fk_soc, type, datec)";
+		$sql.= " VALUES (".$this->socid.", 'ban', '".$this->db->idate($now)."')";
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -197,18 +197,18 @@ class CompanyBankAccount extends Account
 	 * 	Load record from database
 	 *
 	 *	@param	int		$id			Id of record
-	 * 	@param	int		$socid		Id of company. If this is filled, function will return the default RIB of company
+	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first default RIB of company
 	 * 	@return	int					<0 if KO, >0 if OK
 	 */
 	function fetch($id, $socid=0)
 	{
 		if (empty($id) && empty($socid)) return -1;
 
-		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
+		$sql = "SELECT rowid, type, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
 		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id)    $sql.= " WHERE rowid = ".$id;
-		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1";
+		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1 AND type ='ban'";
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -220,6 +220,7 @@ class CompanyBankAccount extends Account
 				$this->ref             = $obj->fk_soc.'-'.$obj->label;      // Generate an artificial ref
 
 				$this->id			   = $obj->rowid;
+				$this->type			   = $obj->type;
 				$this->socid           = $obj->fk_soc;
 				$this->bank            = $obj->bank;
 				$this->code_banque     = $obj->code_banque;
@@ -321,7 +322,7 @@ class CompanyBankAccount extends Account
 	}
 
 	/**
-	 * Set RIB as Default
+	 * Set a BAN as Default
 	 *
 	 * @param   int     $rib    RIB id
 	 * @return  int             0 if KO, 1 if OK
@@ -345,13 +346,13 @@ class CompanyBankAccount extends Account
 
 				$this->db->begin();
 
-				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0 ";
-				$sql2.= "WHERE fk_soc = ".$obj->fk_soc;
+				$sql2 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 0";
+				$sql2.= " WHERE type = 'ban' AND fk_soc = ".$obj->fk_soc;
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result2 = $this->db->query($sql2);
 
-				$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1 ";
-				$sql3.= "WHERE rowid = ".$obj->id;
+				$sql3 = "UPDATE ".MAIN_DB_PREFIX."societe_rib SET default_rib = 1";
+				$sql3.= " WHERE rowid = ".$obj->id;
 				dol_syslog(get_class($this).'::setAsDefault', LOG_DEBUG);
 				$result3 = $this->db->query($sql3);
 

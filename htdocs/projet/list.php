@@ -39,6 +39,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'projectlist';
 
 $title = $langs->trans("Projects");
 
@@ -95,12 +96,9 @@ $search_eyear	= GETPOST('search_eyear','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
-
-// Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'projectlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Project($db);
+$hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -141,7 +139,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
-$object = new Project($db);
 
 
 /*
@@ -195,6 +192,52 @@ if (empty($reshook))
 	$permtodelete = $user->rights->projet->supprimer;
 	$uploaddir = $conf->projet->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+    // Close records
+    if (! $error && $massaction == 'close' && $user->rights->projet->creer)
+    {
+        $db->begin();
+
+        $objecttmp=new $objectclass($db);
+        $nbok = 0;
+        foreach($toselect as $toselectid)
+        {
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $userWrite  = $object->restrictedProjectArea($user,'write');
+                if ($userWrite > 0 && $objecttmp->statut == 1) {
+                    $result = $objecttmp->setClose($user);
+                    if ($result <= 0) {
+                        setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                        $error++;
+                        break;
+                    } else $nbok++;
+                } elseif($userWrite <= 0) {
+                    setEventMessages($langs->trans("DontHavePermissionForCloseProject", $objecttmp->ref), null, 'warnings');
+                } else {
+                    setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
+                }
+            }
+            else
+            {
+                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                $error++;
+                break;
+            }
+        }
+
+        if (! $error)
+        {
+            if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+            else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+            $db->commit();
+        }
+        else
+        {
+            $db->rollback();
+        }
+    }
 }
 
 
@@ -389,9 +432,17 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+if ($user->rights->projet->creer) $arrayofmassactions['close']=$langs->trans("Close");
 if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
+$newcardbutton='';
+if ($user->rights->projet->creer)
+{
+	$newcardbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?action=create">'.$langs->trans('NewProject').'</a>';
+}
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -404,7 +455,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
 
 // Show description of content
 print '<div class="opacitymedium">';
@@ -508,19 +559,19 @@ if (! empty($arrayfields['commercial']['checked']))
 // Start date
 if (! empty($arrayfields['p.dateo']['checked']))
 {
-	print '<td class="liste_titre center">';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
-	$formother->select_year($search_syear?$search_syear:-1,'search_syear',1, 20, 5);
+	print '<td class="liste_titre center nowraponall">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_sday" value="'.dol_escape_htmltag($search_sday).'">';
+	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_smonth" value="'.dol_escape_htmltag($search_smonth).'">';
+	$formother->select_year($search_syear?$search_syear:-1,'search_syear',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 	print '</td>';
 }
 // End date
 if (! empty($arrayfields['p.datee']['checked']))
 {
-	print '<td class="liste_titre center">';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
-	$formother->select_year($search_eyear?$search_eyear:-1,'search_eyear',1, 20, 5);
+	print '<td class="liste_titre center nowraponall">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_eday" value="'.dol_escape_htmltag($search_eday).'">';
+	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_emonth" value="'.dol_escape_htmltag($search_emonth).'">';
+	$formother->select_year($search_eyear?$search_eyear:-1,'search_eyear',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 	print '</td>';
 }
 if (! empty($arrayfields['p.public']['checked']))

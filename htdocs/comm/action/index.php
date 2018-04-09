@@ -589,6 +589,7 @@ if ($resql)
         $event->type_color=$obj->type_color;
 
         $event->libelle=$obj->label;
+        $event->label=$obj->label;
         $event->percentage=$obj->percent;
         $event->authorid=$obj->fk_user_author;		// user id of creator
         $event->userownerid=$obj->fk_user_action;	// user id of owner
@@ -601,7 +602,9 @@ if ($resql)
         $event->elementtype=$obj->elementtype;
 
         $event->societe->id=$obj->fk_soc;
+        $event->thirdparty_id=$obj->fk_soc;
         $event->contact->id=$obj->fk_contact;
+        $event->contact_id=$obj->fk_contact;
 
         // Defined date_start_in_calendar and date_end_in_calendar property
         // They are date start and end of action but modified to not be outside calendar view.
@@ -1176,19 +1179,72 @@ else    // View by day
     $timestamp=dol_mktime(12,0,0,$month,$day,$year);
     $arraytimestamp=dol_getdate($timestamp);
 
-    print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
-    echo '<table width="100%" class="noborder nocellnopadd cal_pannel cal_month">';
-    echo ' <tr class="liste_titre">';
-    echo '  <td align="center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
-    echo " </tr>\n";
-    echo " <tr>\n";
-    echo '  <td class="'.$style.'" width="14%" valign="top">';
-    $maxnbofchar=80;
-    show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300);
-    echo "</td>\n";
-    echo " </tr>\n";
+    //echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month">';
+    echo '<table class="tagtable centpercent noborder nocellnopadd cal_pannel cal_month noborderbottom" style="margin-bottom: 5px !important;">';
+
+    echo ' <tr class="tagtr liste_titre">';
+    echo '  <td class="tagtd width100"></td>';
+    echo '  <td class="tagtd center">'.$langs->trans("Day".$arraytimestamp['wday'])."</td>\n";
+    echo " </td>\n";
+
+    /*
+    echo ' <div class="tagtr">';
+    echo '  <div class="tagtd width100"></div>';
+    echo '  <div class="tagtd center">';
+    echo show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, -1);
+    echo '  </div>'."\n";
+    echo " </div>\n";
+	*/
+
     echo '</table>';
-    print '</div>';
+
+    /* WIP View per hour */
+    $useviewhour = 0;
+    if ($useviewhour)
+    {
+    	print '<div class="div-table-responsive-no-min borderbottom">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+
+    	$maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheight"] > 500)?($_SESSION["dol_screenheight"]-200):660;	// Also into index.php file
+
+	    echo '<div style="max-height: '.$maxheightwin.'px;">';
+		echo '<div class="tagtable centpercent calendarviewcontainer">';
+
+	    $maxnbofchar=80;
+
+	    $tmp = explode('-', $conf->global->MAIN_DEFAULT_WORKING_HOURS);
+	    $minhour = round($tmp[0],0);
+	    $maxhour = round($tmp[1],0);
+	    if ($minhour > 23) $minhour = 23;
+	    if ($maxhour < 1)  $maxhour = 1;
+	    if ($maxhour <= $minhour) { $maxhour = $minhour + 1; }
+
+	    $i = 0;
+	    $j = 0;
+		while ($i < 24)
+		{
+		    echo ' <div class="tagtr calendarviewcontainertr">'."\n";
+		    echo '  <div class="tagtd width100 tdtop">'.dol_print_date($i*3600, 'hour', 'gmt').'</div>';
+		    echo '  <div class="tagtd '.$style.' tdtop">';
+		    echo "  </div>\n";
+		    echo " </div>\n";
+		    $i++;
+		    $j++;
+		}
+
+		echo '</div></div>';
+
+		show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 1);
+
+		print '</div>';
+    }
+    else
+    {
+    	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
+
+    	show_day_events($db, $day, $month, $year, $month, $style, $eventarray, 0, $maxnbofchar, $newparam, 1, 300, 0);
+
+    	print '</div>';
+    }
 }
 
 print "\n".'</form>';
@@ -1213,9 +1269,10 @@ $db->close();
  * @param   string	$newparam        Parameters on current URL
  * @param   int		$showinfo        Add extended information (used by day and week view)
  * @param   int		$minheight       Minimum height for each event. 60px by default.
+ * @param	string	$nonew			 0=Add "new entry button", 1=No "new entry button", -1=Only "new entry button"
  * @return	void
  */
-function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60)
+function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventarray, $maxprint=0, $maxnbofchar=16, $newparam='', $showinfo=0, $minheight=60, $nonew=0)
 {
     global $user, $conf, $langs;
     global $action, $filter, $filtert, $status, $actioncode;	// Filters used into search form
@@ -1230,26 +1287,35 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
     $curtime = dol_mktime(0, 0, 0, $month, $day, $year);
     print '<div id="dayevent_'.$dateint.'" class="dayevent tagtable centpercent nobordernopadding">'."\n";
 
-    print '<div class="tagtr"><div class="nowrap float">';
-    print '<a style="color: #666" href="'.DOL_URL_ROOT.'/comm/action/index.php?';
-    print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
-    print $newparam;
-    print '">';
-    if ($showinfo) print dol_print_date($curtime,'daytextshort');
-    else print dol_print_date($curtime,'%d');
-    print '</a>';
-    print '</div><div class="floatright nowrap">';
-    if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
+    if ($nonew <= 0)
     {
-    	$newparam.='&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
+	    print '<div class="tagtr"><div class="nowrap float">';
+	    print '<a style="color: #666" href="'.DOL_URL_ROOT.'/comm/action/index.php?';
+	    print 'action=show_day&day='.str_pad($day, 2, "0", STR_PAD_LEFT).'&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
+	    print $newparam;
+	    print '">';
+	    if ($showinfo) print dol_print_date($curtime,'daytextshort');
+	    else print dol_print_date($curtime,'%d');
+	    print '</a>';
+	    print '</div><div class="floatright nowrap">';
+	    if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
+	    {
+	    	$newparam.='&month='.str_pad($month, 2, "0", STR_PAD_LEFT).'&year='.$year;
 
-        //$param='month='.$monthshown.'&year='.$year;
-        $hourminsec='100000';
-        print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
-        print img_picto($langs->trans("NewAction"),'edit_add.png');
-        print '</a>';
+	        //$param='month='.$monthshown.'&year='.$year;
+	        $hourminsec='100000';
+	        print '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$year,$month,$day).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
+	        print img_picto($langs->trans("NewAction"),'edit_add.png');
+	        print '</a>';
+	    }
+	    print '</div></div>'."\n";
     }
-    print '</div></div>'."\n";
+
+    if ($nonew < 0)
+    {
+    	print '</div>';
+    	return;
+    }
 
     // Line with td contains all div of each events
     print '<div class="tagtr">';
@@ -1390,6 +1456,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                     //print ' position: absolute; top: 40px; width: 50%;';
                     //print '"';
                     print '>';
+
                     //var_dump($event->userassigned);
                     //var_dump($event->transparency);
                     print '<table class="centpercent cal_event'.(empty($event->transparency)?' cal_event_notbusy':' cal_event_busy').'" style="'.$h;
@@ -1475,10 +1542,12 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                         if ($event->type_code == 'ICALEVENT') print $titletoshow;
                         else
                         {
-                            $savlabel=$event->libelle;
-                            $event->libelle=$titletoshow;
-                            print $event->getNomUrl(0,$maxnbofchar,'cal_event','',0,1);
-                            $event->libelle=$savlabel;
+                        	$savlabel=$event->label?$event->label:$event->libelle;
+                        	$event->label=$titletoshow;
+                        	$event->libelle=$titletoshow;
+                        	print $event->getNomUrl(0,$maxnbofchar,'cal_event','',0,1);
+                        	$event->label=$savlabel;
+                        	$event->libelle=$savlabel;
                         }
 
                         // Loop on each assigned user
@@ -1495,7 +1564,7 @@ function show_day_events($db, $day, $month, $year, $monthshown, $style, &$eventa
                                 $cacheusers[$tmpid]=$newuser;
                             }
 
-                            $listofusertoshow.=$cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'valigntextbottom');
+                            $listofusertoshow.=$cacheusers[$tmpid]->getNomUrl(-3, '', 0, 0, 0, 0, '', 'paddingright valigntextbottom');
                         }
                         print $listofusertoshow;
 

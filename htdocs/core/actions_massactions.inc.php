@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +47,7 @@ if (! empty($massaction) && count($toselect) < 1)
 	$error++;
 	setEventMessages($langs->trans("NoRecordSelected"), null, "warnings");
 }
-if (! $error && count($toselect) > $maxformassaction)
+if (! $error && is_array($toselect) && count($toselect) > $maxformassaction)
 {
 	setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
 	$error++;
@@ -686,6 +687,35 @@ if ($massaction == 'confirm_createbills')
 	{
 		$db->commit();
 		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+
+		// Make a redirect to avoid to bill twice if we make a refresh or back
+		$param='';
+		if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+		if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+		if ($sall)					$param.='&sall='.urlencode($sall);
+		if ($socid > 0)             $param.='&socid='.urlencode($socid);
+		if ($viewstatut != '')      $param.='&viewstatut='.urlencode($viewstatut);
+		if ($search_orderday)      		$param.='&search_orderday='.urlencode($search_orderday);
+		if ($search_ordermonth)      		$param.='&search_ordermonth='.urlencode($search_ordermonth);
+		if ($search_orderyear)       		$param.='&search_orderyear='.urlencode($search_orderyear);
+		if ($search_deliveryday)   		$param.='&search_deliveryday='.urlencode($search_deliveryday);
+		if ($search_deliverymonth)   		$param.='&search_deliverymonth='.urlencode($search_deliverymonth);
+		if ($search_deliveryyear)    		$param.='&search_deliveryyear='.urlencode($search_deliveryyear);
+		if ($search_ref)      		$param.='&search_ref='.urlencode($search_ref);
+		if ($search_company)  		$param.='&search_company='.urlencode($search_company);
+		if ($search_ref_customer)	$param.='&search_ref_customer='.urlencode($search_ref_customer);
+		if ($search_user > 0) 		$param.='&search_user='.urlencode($search_user);
+		if ($search_sale > 0) 		$param.='&search_sale='.urlencode($search_sale);
+		if ($search_total_ht != '') $param.='&search_total_ht='.urlencode($search_total_ht);
+		if ($search_total_vat != '') $param.='&search_total_vat='.urlencode($search_total_vat);
+		if ($search_total_ttc != '') $param.='&search_total_ttc='.urlencode($search_total_ttc);
+		if ($search_project_ref >= 0)  	$param.="&search_project_ref=".urlencode($search_project_ref);
+		if ($show_files)            $param.='&show_files=' .urlencode($show_files);
+		if ($optioncss != '')       $param.='&optioncss='.urlencode($optioncss);
+		if ($billed != '')			$param.='&billed='.urlencode($billed);
+
+		header("Location: ".$_SERVER['PHP_SELF'].'?'.$param);
+		exit;
 	}
 	else
 	{
@@ -944,7 +974,41 @@ if (! $error && $massaction == 'validate' && $permtocreate)
 		//var_dump($listofobjectthirdparties);exit;
 	}
 }
+// Closed records
+if (!$error && $massaction == 'closed' && $objectclass == "Propal" && $permtoclose) {
+    $db->begin();
 
+    $objecttmp = new $objectclass($db);
+    $nbok = 0;
+    foreach ($toselect as $toselectid) {
+        $result = $objecttmp->fetch($toselectid);
+        if ($result > 0) {
+            $result = $objecttmp->cloture($user, 3);
+            if ($result <= 0) {
+                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                $error++;
+                break;
+            } else
+                $nbok++;
+        }
+        else {
+            setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+            $error++;
+            break;
+        }
+    }
+
+    if (!$error) {
+        if ($nbok > 1)
+            setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+        else
+            setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+        $db->commit();
+    }
+    else {
+        $db->rollback();
+    }
+}
 // Delete record from mass action (massaction = 'delete' for direct delete, action/confirm='delete'/'yes' with a confirmation step before)
 if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 'yes')) && $permtodelete)
 {

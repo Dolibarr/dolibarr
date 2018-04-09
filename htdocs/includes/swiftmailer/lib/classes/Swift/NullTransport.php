@@ -15,9 +15,6 @@
  */
 class Swift_NullTransport extends Swift_Transport_NullTransport
 {
-    /**
-     * Create a new NullTransport.
-     */
     public function __construct()
     {
         call_user_func_array(
@@ -25,15 +22,5 @@ class Swift_NullTransport extends Swift_Transport_NullTransport
             Swift_DependencyContainer::getInstance()
                 ->createDependenciesFor('transport.null')
         );
-    }
-
-    /**
-     * Create a new NullTransport instance.
-     *
-     * @return Swift_NullTransport
-     */
-    public static function newInstance()
-    {
-        return new self();
     }
 }

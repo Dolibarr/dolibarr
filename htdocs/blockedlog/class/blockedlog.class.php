@@ -18,10 +18,23 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
+
+
+
+/*ini_set('unserialize_callback_func', 'mycallback');
+
+function mycallback($classname)
+{
+	//var_dump($classname);
+	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+}*/
+
+
+
 /**
  *	Class to manage Blocked Log
  */
-
 class BlockedLog
 {
 	/**
@@ -90,6 +103,7 @@ class BlockedLog
 	public $ref_object = '';
 
 	public $object_data = null;
+	public $user_fullname='';
 
 	/**
 	 * Array of tracked event codes
@@ -239,6 +253,17 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+		else if($this->element === 'subscription') {
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+
+			$object = new Subscription($this->db);
+			if ($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
 		else if ($this->action == 'MODULE_SET')
 		{
 			return '<i class="opacitymedium">System to track events into unalterable logs were enabled</i>';
@@ -313,6 +338,10 @@ class BlockedLog
 		{
 			$this->date_object = $object->datepaid?$object->datepaid:$object->datep;
 		}
+		elseif ($object->element=='subscription')
+		{
+			$this->date_object = $object->dateh;
+		}
 		else {
 			$this->date_object = $object->date;
 		}
@@ -323,7 +352,10 @@ class BlockedLog
 		// id of object
 		$this->fk_object = $object->id;
 
+
+		// Set object_data
 		$this->object_data=new stdClass();
+		$arrayoffieldstoexclude = array('table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','modelpdf','table_element_line','linkedObjectsIds','linkedObjects','fk_delivery_address');
 
 		// Add thirdparty info
 		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();
@@ -333,7 +365,7 @@ class BlockedLog
 
 			foreach($object->thirdparty as $key=>$value)
 			{
-				if (in_array($key, array('fields'))) continue;	// Discard some properties
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
 				'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -349,7 +381,7 @@ class BlockedLog
 
 			foreach($mysoc as $key=>$value)
 			{
-				if (in_array($key, array('fields'))) continue;	// Discard some properties
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
 				'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -366,12 +398,11 @@ class BlockedLog
 		}
 
 		// Field specific to object
-
 		if ($this->element == 'facture')
 		{
 			foreach($object as $key=>$value)
 			{
-				if (in_array($key, array('fields'))) continue;	// Discard some properties
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
 				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
 				))) continue;									// Discard if not into a dedicated list
@@ -402,7 +433,7 @@ class BlockedLog
 		{
 			foreach($object as $key=>$value)
 			{
-				if (in_array($key, array('fields'))) continue;	// Discard some properties
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
 				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 				))) continue;									// Discard if not into a dedicated list
@@ -498,7 +529,7 @@ class BlockedLog
 					$paymentpart->thirdparty = new stdClass();
 					foreach($tmpobject->thirdparty as $key=>$value)
 					{
-						if (in_array($key, array('fields'))) continue;	// Discard some properties
+						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 						if (! in_array($key, array(
 						'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 						'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -515,7 +546,7 @@ class BlockedLog
 				{
 					foreach($tmpobject as $key=>$value)
 					{
-						if (in_array($key, array('fields'))) continue;	// Discard some properties
+						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 						if (! in_array($key, array(
 						'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 						))) continue;									// Discard if not into a dedicated list
@@ -539,6 +570,29 @@ class BlockedLog
 		elseif($this->element == 'payment_salary')
 		{
 			$this->object_data->amounts = array($object->amount);
+
+			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
+		}
+		elseif($this->element == 'subscription')
+		{
+			foreach($object as $key=>$value)
+			{
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
+				if (! in_array($key, array(
+					'id','datec','dateh','datef','fk_adherent','amount','import_key','statut','note'
+				))) continue;									// Discard if not into a dedicated list
+				if (!is_object($value)) $this->object_data->{$key} = $value;
+			}
+
+			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
+		}
+		else 	// Generic case
+		{
+			foreach($object as $key=>$value)
+			{
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
+				if (!is_object($value)) $this->object_data->{$key} = $value;
+			}
 
 			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
@@ -596,7 +650,7 @@ class BlockedLog
 				$this->fk_user 			= $obj->fk_user;
 				$this->user_fullname	= $obj->user_fullname;
 
-				$this->object_data		= unserialize($obj->object_data);
+				$this->object_data		= $this->dolDecodeBlockedData($obj->object_data);
 
 				$this->signature		= $obj->signature;
 				$this->signature_line	= $obj->signature_line;
@@ -617,6 +671,31 @@ class BlockedLog
 		}
 
 	}
+
+
+	/**
+	 * Decode data
+	 *
+	 * @param	string	$data	Data to unserialize
+	 * @param	string	$mode	0=unserialize, 1=json_decode
+	 * @return 	string			Value unserialized
+	 */
+	public function dolDecodeBlockedData($data, $mode=0)
+	{
+		try
+		{
+			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$aaa = unserialize($data);
+			//$aaa = unserialize($data);
+		}
+		catch(Exception $e)
+		{
+			//print $e->getErrs);
+		}
+		return $aaa;
+	}
+
 
 	/**
 	 *	Set block certified by authority
@@ -667,11 +746,12 @@ class BlockedLog
 			return -2;
 		}
 
-		if (empty($this->action) || empty($this->fk_user) || empty($this->user_fullname)) {
+		if (empty($this->action)) {
 			$this->error=$langs->trans("BadParameterWhenCallingCreateOfBlockedLog");
 			dol_syslog($this->error, LOG_WARNING);
 			return -3;
 		}
+		if (empty($this->fk_user)) $this->user_fullname='(Anonymous)';
 
 		$this->date_creation = dol_now();
 

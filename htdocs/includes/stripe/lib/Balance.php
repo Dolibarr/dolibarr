@@ -6,9 +6,9 @@ namespace Stripe;
  * Class Balance
  *
  * @property string $object
- * @property mixed $available
- * @property bool $livedmode
- * @property mixed $pending
+ * @property array $available
+ * @property bool $livemode
+ * @property array $pending
  *
  * @package Stripe
  */

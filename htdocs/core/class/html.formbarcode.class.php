@@ -122,13 +122,13 @@ class FormBarCode
 
             if ($useempty && $num > 0)
             {
-                print '<select class="flat" name="'.$htmlname.'" id="select_'.$htmlname.'">';
+                print '<select class="flat minwidth75imp" name="'.$htmlname.'" id="select_'.$htmlname.'">';
                 print '<option value="0">&nbsp;</option>';
             }
             else
             {
                 $langs->load("errors");
-                print '<select disabled class="flat" name="'.$htmlname.'" id="select_'.$htmlname.'">';
+                print '<select disabled class="flat minwidth75imp" name="'.$htmlname.'" id="select_'.$htmlname.'">';
                 print '<option value="0" selected>'.$langs->trans('ErrorNoActivatedBarcode').'</option>';
             }
 

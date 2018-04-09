@@ -1003,7 +1003,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	$freetextheight=0;
 	if ($line)	// Free text
 	{
-		//$line="eee<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
+		//$line="sample text<br>\nfd<strong>sf</strong>sdf<br>\nghfghg<br>";
 	    if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 		{
 			$width=20000; $align='L';	// By default, ask a manual break: We use a large value 20000, to not have automatic wrap. This make user understand, he need to add CR on its text.
@@ -1236,13 +1236,15 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
+			$sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$sourceref);
 		}
 		elseif ($desc == '(DEPOSIT)' && $object->lines[$i]->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
+			$sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$sourceref);
 			// Add date of deposit
 			if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
@@ -1251,6 +1253,12 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived",$discount->ref_facture_source);
+		}
+		elseif ($desc == '(EXCESS PAID)' && $object->lines[$i]->fk_remise_except)
+		{
+			$discount=new DiscountAbsolute($db);
+			$discount->fetch($object->lines[$i]->fk_remise_except);
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid",$discount->ref_invoice_supplier_source);
 		}
 		else
 		{

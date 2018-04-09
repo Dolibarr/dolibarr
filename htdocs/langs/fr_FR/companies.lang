@@ -43,6 +43,7 @@ Individual=Individu privé
 ToCreateContactWithSameName=Crée automatiquement un contact/adresse, sous le tiers, avec la même information que le tiers. Dans la plupart des cas, même si votre tiers est une personne physique, la création d'un tiers seul suffit.
 ParentCompany=Maison mère
 Subsidiaries=Filiales
+ReportByMonth=Rapport par mois
 ReportByCustomers=Rapport par client
 ReportByQuarter=Rapport par taux
 CivilityCode=Code civilité

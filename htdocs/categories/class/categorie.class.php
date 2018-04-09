@@ -653,18 +653,6 @@ class Categorie extends CommonObject
 
 		if ($this->id == -1) return -2;
 
-		// For backward compatibility
-		if ($type == 'societe')
-		{
-			$type = 'customer';
-			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
-		}
-		elseif ($type == 'fournisseur')
-		{
-			$type = 'supplier';
-			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
-		}
-
         $this->db->begin();
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type];
@@ -715,11 +703,11 @@ class Categorie extends CommonObject
 				}
 			}
 
-			// Save object we want to link category to into category instance to provide information to trigger
-			$this->linkto=$obj;
+
 
             // Call trigger
-            $result=$this->call_trigger('CATEGORY_LINK',$user);
+			$this->context=array('linkto'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
+			$result=$this->call_trigger('CATEGORY_LINK',$user);
             if ($result < 0) { $error++; }
             // End call triggers
 
@@ -1203,6 +1191,8 @@ class Categorie extends CommonObject
 	 */
 	function get_all_categories($type=null, $parent=false)
 	{
+		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE entity IN (".getEntity('category').")";
 		if (! is_null($type))

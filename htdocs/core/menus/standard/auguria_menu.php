@@ -237,9 +237,16 @@ class MenuManager
        					{
        						$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
        						$substitarray['__USERID__'] = $user->id;	// For backward compatibility
-       						$val2['url'] = make_substitutions($val2['url'], $substitarray);
+       						$val2['url'] = make_substitutions($val2['url'], $substitarray);		// Make also substitution of __(XXX)__ and __[XXX]__
 
-	        				$relurl2=dol_buildpath($val2['url'],1);
+       						if (! preg_match("/^(http:\/\/|https:\/\/)/i", $val2['url']))
+       						{
+       							$relurl2=dol_buildpath($val2['url'],1);
+       						}
+       						else
+       						{
+       							$relurl2=$val2['url'];
+       						}
 	        				$canonurl2=preg_replace('/\?.*$/','',$val2['url']);
 	        				//var_dump($val2['url'].' - '.$canonurl2.' - '.$val2['level']);
 	        				if (in_array($canonurl2,array('/admin/index.php','/admin/tools/index.php','/core/tools.php'))) $relurl2='';
