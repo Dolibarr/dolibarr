@@ -5706,6 +5706,9 @@ function make_substitutions($text, $substitutionarray, $outputlangs=null)
 		if ($key == '__SIGNATURE__' && (! empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) $value='';		// Protection
 		if ($key == '__USER_SIGNATURE__' && (! empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))) $value='';	// Protection
 
+		if (strpos($key,'__AMOUNT')!==false) {
+			$value=price($value);
+		}
 		$text=str_replace("$key","$value",$text);	// We must keep the " to work when value is 123.5 for example
 	}
 
