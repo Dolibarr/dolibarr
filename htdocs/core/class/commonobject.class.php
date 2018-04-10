@@ -6792,14 +6792,16 @@ abstract class CommonObject
 	 */
 	public function fetchCommon($id, $ref = null, $morewhere = '')
 	{
-		if (empty($id) && empty($ref)) return false;
+		if (empty($id) && empty($ref) && empty($morewhere)) return -1;
 
 		$sql = 'SELECT '.$this->getFieldList();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
-		if (!empty($id)) $sql.= ' WHERE rowid = '.$id;
-		else $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
-		if ($morewhere) $sql.=$morewhere;
+		if (!empty($id))  $sql.= ' WHERE rowid = '.$id;
+		elseif (!empty($ref)) $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
+		else $sql.=' WHERE 1 = 1';	// usage with empty id and empty ref is very rare
+		if ($morewhere)   $sql.= $morewhere;
+		$sql.=' LIMIT 1';	// This is a fetch, to be sure to get only one record
 
 		$res = $this->db->query($sql);
 		if ($res)
