@@ -4208,7 +4208,7 @@ class OrderLine extends CommonOrderLine
 				}
 			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 	            // Call trigger
 	            $result=$this->call_trigger('LINEORDER_UPDATE',$user);

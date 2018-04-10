@@ -955,32 +955,19 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('supplierorderdao'));
-			$parameters=array('id'=>$object->id);
-
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
-
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
+				if ($result < 0)
 				{
-					$result=$object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
-
-					if ($result < 0)
-					{
-						$error++;
-					}
-
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 		}
-		else
-		{
+
+		if ($error)
 			$action = 'edit_extras';
-		}
 	}
 
 	/*

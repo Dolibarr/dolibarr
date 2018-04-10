@@ -411,3 +411,5 @@ UPDATE llx_accounting_account set account_parent = 0 WHERE account_parent = '' O
 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_parent (account_parent);
 
+ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
+

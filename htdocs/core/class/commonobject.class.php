@@ -5938,8 +5938,16 @@ abstract class CommonObject
 			$e = 0;
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
-				if (empty($extrafields->attribute_list[$key])) continue;												// 0 = Never visible field
-				if (($mode == 'create' || $mode == 'edit') && abs($extrafields->attribute_list[$key]) != 1 && abs($extrafields->attribute_list[$key]) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				$enabled = $extrafields->attribute_list[$key];
+				if (empty($enabled)) continue;												// 0 = Never visible field
+				if (! is_numeric($enabled))
+				{
+					$enabled=dol_eval($enabled, 1);
+					if (empty($enabled)) continue;
+					else $enabled = 1;
+				}
+
+				if (($mode == 'create' || $mode == 'edit') && abs($enabled) != 1 && abs($enabled) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 
 				// Load language if required
 				if (! empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
