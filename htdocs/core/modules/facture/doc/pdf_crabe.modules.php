@@ -214,29 +214,61 @@ class pdf_crabe extends ModelePDFFactures
 	    $realpatharray=array();
 	    if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
 	    {
+	        $objphoto = new Product($this->db);
+	        
 	        for ($i = 0 ; $i < $nblignes ; $i++)
 	        {
 	            if (empty($object->lines[$i]->fk_product)) continue;
 	            
-	            $objphoto = new Product($this->db);
 	            $objphoto->fetch($object->lines[$i]->fk_product);
-	            
-	            $pdir = get_exdir($object->lines[$i]->fk_product,2,0,0,$objphoto,'product') . $object->lines[$i]->fk_product ."/photos/";
-	            $dir = $conf->product->dir_output.'/'.$pdir;
-	            
-	            $realpath='';
-	            foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+	            //var_dump($objphoto->ref);exit;
+	            if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))
 	            {
-	                $filename=$obj['photo'];
-	                //if ($obj['photo_vignette']) $filename='thumbs/'.$obj['photo_vignette'];
-	                $realpath = $dir.$filename;
-	                break;
+	                $pdir[0] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";
+	                $pdir[1] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';
+	            }
+	            else
+	            {
+	                $pdir[0] = get_exdir(0,0,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';				// default
+	                $pdir[1] = get_exdir($objphoto->id,2,0,0,$objphoto,'product') . $objphoto->id ."/photos/";	// alternative
 	            }
 	            
-	            if ($realpath) $realpatharray[$i]=$realpath;
+	            $arephoto = false;
+	            foreach ($pdir as $midir)
+	            {
+	                if (! $arephoto)
+	                {
+	                    $dir = $conf->product->dir_output.'/'.$midir;
+	                    
+	                    foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
+	                    {
+	                        if (empty($conf->global->CAT_HIGH_QUALITY_IMAGES))		// If CAT_HIGH_QUALITY_IMAGES not defined, we use thumb if defined and then original photo
+	                        {
+	                            if ($obj['photo_vignette'])
+	                            {
+	                                $filename= $obj['photo_vignette'];
+	                            }
+	                            else
+	                            {
+	                                $filename=$obj['photo'];
+	                            }
+	                        }
+	                        else
+	                        {
+	                            $filename=$obj['photo'];
+	                        }
+	                        
+	                        $realpath = $dir.$filename;
+	                        $arephoto = true;
+	                    }
+	                }
+	            }
+	            
+	            if ($realpath && $arephoto) $realpatharray[$i]=$realpath;
 	        }
 	    }
-	    if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
+	    
+	    //if (count($realpatharray) == 0) $this->posxpicture=$this->posxtva;
 	    
 	    if ($conf->facture->dir_output)
 	    {
