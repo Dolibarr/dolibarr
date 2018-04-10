@@ -148,6 +148,8 @@ class pdf_crabe extends ModelePDFFactures
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1; // used for notes ans other stuff
 		
+		//  Use new system for position of columns, view  $this->defineColumnField() 
+		
 		/*if($conf->global->PRODUCT_USE_UNITS)
 		{
 			$this->posxtva=101;
