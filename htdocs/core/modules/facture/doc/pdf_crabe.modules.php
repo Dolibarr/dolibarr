@@ -435,7 +435,7 @@ class pdf_crabe extends ModelePDFFactures
 				$curY = $tab_top + 7;
 				$nexY = $tab_top + 7;
 				
-				$this->preparArrayColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
+				$this->prepareArrayColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
 
 				
 				// Loop on each lines
@@ -1435,12 +1435,6 @@ class pdf_crabe extends ModelePDFFactures
 
 		foreach ($this->linesArrayFields as $colKey => $colDef)
 		{
-		    if(!empty($colDef['title'])){ 
-		        $colDef['title'] = array_replace($this->defaultTitlesFieldsStyle, $colDef['title']);
-		    }
-		    else{
-		        $colDef['title'] = $this->defaultTitlesFieldsStyle;
-		    }
 		    
 		    // get title label
 		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
@@ -1762,7 +1756,6 @@ class pdf_crabe extends ModelePDFFactures
 	 *      @return	int								Return compare result
 	 */
 	function columnSort($a, $b) {
-	    // TODO: add hook here;
 	    
 	    if(empty($a['rang'])){ $a['rang'] = 0; }
 	    if(empty($b['rang'])){ $b['rang'] = 0; }
@@ -1773,14 +1766,67 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	}
 	
-	function preparArrayColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
+	/**
+	 *   	Prepare Array Column Field
+	 *
+	 *   	@param	object			$object    		common object
+	 *   	@param	outputlangs		$outputlangs    langs
+	 *      @return	null
+	 */
+	function prepareArrayColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
 	    
 	    global $conf;
 	    
+	    $this->defineColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
 	    
-	    /* TODO: Add user acces to this conf :
-	     * $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='0,230,230';
-	     */
+	    
+	    // Sorting
+	    uasort ( $this->linesArrayFields , array( $this, 'columnSort' ) );
+	    
+	    // Positionning
+	    $curX = $this->page_largeur-$this->marge_droite; // start from right
+	    
+	    foreach ($this->linesArrayFields as $colKey =>& $colDef)
+	    {
+	        // setting empty conf with default
+	        if(!empty($colDef['title'])){
+	            $colDef['title'] = array_replace($this->defaultTitlesFieldsStyle, $colDef['title']);
+	        }
+	        else{
+	            $colDef['title'] = $this->defaultTitlesFieldsStyle;
+	        }
+	        
+	        // setting empty conf with default
+	        if(!empty($colDef['content'])){
+	            $colDef['content'] = array_replace($this->defaultContentsFieldsStyle, $colDef['content']);
+	        }
+	        else{
+	            $colDef['content'] = $this->defaultContentsFieldsStyle;
+	        }
+	        
+	        // Set positions
+	        $lastX = $curX;
+	        $curX = $lastX - $colDef['width'];
+	        if(empty($colDef['width'])){
+	            $curX = $this->marge_gauche;
+	            $colDef['width'] = $lastX - $curX;
+	        }
+	        $colDef['xStartPos'] = $curX;
+	        $colDef['xEndPos']   = $lastX;
+	    }
+	}
+	
+	
+	/**
+	 *   	Define Array Column Field
+	 *
+	 *   	@param	object			$object    		common object
+	 *   	@param	outputlangs		$outputlangs    langs
+	 *      @return	null
+	 */
+	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
+	    
+	    global $conf;
 	    
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
@@ -1792,17 +1838,17 @@ class pdf_crabe extends ModelePDFFactures
 	    );
 	    
 	    $this->linesArrayFields['desc'] = array(
-	            'rang' => 0,
-	            'width' => false, // only for desc
-	            'title' => array(
-	                'textkey' => 'Designation',
-	                'align' => 'L',
-	            ),
-	            'content' => array(
-	                'align' => 'L',
-	            ),
-	        );
-	        
+	        'rang' => 0,
+	        'width' => false, // only for desc
+	        'title' => array(
+	            'textkey' => 'Designation',
+	            'align' => 'L',
+	        ),
+	        'content' => array(
+	            'align' => 'L',
+	        ),
+	    );
+	    
 	    if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
 	    {
 	        $this->linesArrayFields['photo'] = array(
@@ -1816,30 +1862,30 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
 	    {
-    	    $this->linesArrayFields['vat'] = array(
-                'rang' => 10,
-                'width' => 15, // in mm
-                'title' => array(
-                    'textkey' => 'VAT',
-                ),
-            );
+	        $this->linesArrayFields['vat'] = array(
+	            'rang' => 10,
+	            'width' => 15, // in mm
+	            'title' => array(
+	                'textkey' => 'VAT',
+	            ),
+	        );
 	    }
 	    
 	    $this->linesArrayFields['subprice'] = array(
-            'rang' => 20,
-            'width' => 15, // in mm
-            'title' => array(
-                'textkey' => 'PriceUHT',
-            ),
-        );
-	        
+	        'rang' => 20,
+	        'width' => 15, // in mm
+	        'title' => array(
+	            'textkey' => 'PriceUHT',
+	        ),
+	    );
+	    
 	    $this->linesArrayFields['qty'] = array(
-            'rang' => 50,
-            'width' => 15, // in mm
-            'title' => array(
-                'textkey' => 'Qty',
-            ),
-        );
+	        'rang' => 50,
+	        'width' => 15, // in mm
+	        'title' => array(
+	            'textkey' => 'Qty',
+	        ),
+	    );
 	    
 	    if($conf->global->PRODUCT_USE_UNITS){
 	        $this->linesArrayFields['unit'] = array(
@@ -1873,33 +1919,16 @@ class pdf_crabe extends ModelePDFFactures
 	    }
 	    
 	    $this->linesArrayFields['total'] = array(
-            'rang' => 9000,
-            'width' => 20, // in mm
-            'title' => array(
-                'textkey' => 'TotalHT',
-            ),
-        );
+	        'rang' => 9000,
+	        'width' => 20, // in mm
+	        'title' => array(
+	            'textkey' => 'TotalHT',
+	        ),
+	    );
 	    
 	    
-	    // Sorting
-	    uasort ( $this->linesArrayFields , array( $this, 'columnSort' ) );
+	    // TODO: add hook here;
 	    
-	    // Positionning
-	    $curX = $this->page_largeur-$this->marge_droite; // start from right
-	    
-	    foreach ($this->linesArrayFields as $colKey =>& $colDef)
-	    {
-	        
-	        // Set positions
-	        $lastX = $curX;
-	        $curX = $lastX - $colDef['width'];
-	        if(empty($colDef['width'])){
-	            $curX = $this->marge_gauche;
-	            $colDef['width'] = $lastX - $curX;
-	        }
-	        $colDef['xStartPos'] = $curX;
-	        $colDef['xEndPos']   = $lastX;
-	    }
 	}
 	
 }
