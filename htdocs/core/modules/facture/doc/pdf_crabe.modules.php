@@ -1432,9 +1432,6 @@ class pdf_crabe extends ModelePDFFactures
 		// Output Rect
 		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
-	
-		
-		$curX = $this->page_largeur-$this->marge_droite; // start from right
 
 		foreach ($this->linesArrayFields as $colKey => $colDef)
 		{
@@ -1448,20 +1445,13 @@ class pdf_crabe extends ModelePDFFactures
 		    // get title label
 		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
 		    
-		    // Set positions	    
-		    $lastX = $curX;
-		    $curX = $lastX - $colDef['width'];
-		    if(empty($colDef['width'])){
-		        $curX = $this->marge_gauche;
-		        $colDef['width'] = $lastX - $curX;
-		    }
 		    
 		    // Add column separator
-		    $pdf->line($curX, $tab_top, $curX, $tab_top + $tab_height);
+		    $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 		    
 		    if (empty($hidetop))
 		    {
-		      $pdf->SetXY($curX + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
+		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
 		    
 		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
 		      $pdf->MultiCell( $textWidth ,2, $colDef['title']['label'],'',$colDef['title']['align']);
@@ -1893,6 +1883,23 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    // Sorting
 	    uasort ( $this->linesArrayFields , array( $this, 'columnSort' ) );
+	    
+	    // Positionning
+	    $curX = $this->page_largeur-$this->marge_droite; // start from right
+	    
+	    foreach ($this->linesArrayFields as $colKey =>& $colDef)
+	    {
+	        
+	        // Set positions
+	        $lastX = $curX;
+	        $curX = $lastX - $colDef['width'];
+	        if(empty($colDef['width'])){
+	            $curX = $this->marge_gauche;
+	            $colDef['width'] = $lastX - $curX;
+	        }
+	        $colDef['xStartPos'] = $curX;
+	        $colDef['xEndPos']   = $lastX;
+	    }
 	}
 	
 }
