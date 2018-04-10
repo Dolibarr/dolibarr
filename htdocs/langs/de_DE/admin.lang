@@ -1062,7 +1062,7 @@ TriggerAlwaysActive=Trigger in dieser Datei sind unabhängig der Modulkonfigurat
 TriggerActiveAsModuleActive=Trigger in dieser Datei sind durch das übergeordnete Modul <b>%s</b> aktiviert.
 GeneratedPasswordDesc=Definieren Sie hier das Schema nach dem automatisch generierte Passwörter erstellt werden sollen.
 DictionaryDesc=Alle Standardwerte einfügen. Sie können eigene Werte zu den Standartwerten hinzufügen.
-ConstDesc=Diese Seite erlaubt es alle anderen Parameter einzustellen, die auf den vorherigen Seiten nicht verfügbar sind. Dies sind meist reservierte Parameter für Entwickler oder für die erweiterte Fehlersuche. Für eine Liste von Optionen <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site-öffnet sich in einem neuen Fenster" target="_blank"> hier überprüfen </ </a>.
+ConstDesc=Diese Seite erlaubt es alle anderen Parameter einzustellen, die auf den vorherigen Seiten nicht verfügbar sind. Dies sind meist reservierte Parameter für Entwickler oder für die erweiterte Fehlersuche. Für eine Liste von Optionen <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="External Site-öffnet sich in einem neuen Fenster" target="_blank"> hier überprüfen </a>.
 MiscellaneousDesc=Alle anderen sicherheitsrelevanten Parameter werden hier eingestellt.
 LimitsSetup=Limits und Genauigkeit Einstellungen
 LimitsDesc=Hier können Sie Grenzwerte, Genauigkeitseinstellungen und das Rundungsverhalten einstellen.
