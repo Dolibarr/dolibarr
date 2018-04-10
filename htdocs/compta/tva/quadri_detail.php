@@ -523,7 +523,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 	// Print table headers for this quadri - expenses now
 	print '<tr class="liste_titre liste_titre_topborder">';
 	print '<td align="left">'.$elementsup.'</td>';
-	print '<td align="left">'.$langs->trans("Date").'</td>';
+	print '<td align="left">'.$langs->trans("DateInvoice").'</td>';
 	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') print '<td align="left">'.$langs->trans("DatePayment").'</td>';
 	else print '<td></td>';
 	print '<td align="left">'.$namesup.'</td>';

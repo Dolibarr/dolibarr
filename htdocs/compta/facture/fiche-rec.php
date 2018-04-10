@@ -417,7 +417,8 @@ if (empty($reshook))
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
-		if (! $error) {
+		if (! $error)
+		{
 			$result = $object->insertExtraFields('BILLREC_MODIFY');
 			if ($result < 0)
 			{

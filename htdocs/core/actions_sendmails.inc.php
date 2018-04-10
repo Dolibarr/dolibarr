@@ -191,7 +191,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') // Id of third party
 				{
-					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{
@@ -221,7 +221,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				// Recipient was provided from combo list
 				if ($val == 'thirdparty') // Id of third party
 				{
-					$tmparray[] = $thirdparty->name.' <'.$thirdparty->email.'>';
+					$tmparray[] = dol_string_nospecial($thirdparty->name, ' ', array(",")).' <'.$thirdparty->email.'>';
 				}
 				elseif ($val)	// Id du contact
 				{
@@ -245,13 +245,13 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 
 			$fromtype = GETPOST('fromtype','alpha');
 			if ($fromtype === 'robot') {
-				$from = $conf->global->MAIN_MAIL_EMAIL_FROM .' <'.$conf->global->MAIN_MAIL_EMAIL_FROM.'>';
+				$from = dol_string_nospecial($conf->global->MAIN_MAIL_EMAIL_FROM, ' ', array(",")) .' <'.$conf->global->MAIN_MAIL_EMAIL_FROM.'>';
 			}
 			elseif ($fromtype === 'user') {
-				$from = $user->getFullName($langs) .' <'.$user->email.'>';
+				$from = dol_string_nospecial($user->getFullName($langs), ' ', array(",")) .' <'.$user->email.'>';
 			}
 			elseif ($fromtype === 'company') {
-				$from = $conf->global->MAIN_INFO_SOCIETE_NOM .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
+				$from = dol_string_nospecial($conf->global->MAIN_INFO_SOCIETE_NOM, ' ', array(",")) .' <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
 			}
 			elseif (preg_match('/user_aliases_(\d+)/', $fromtype, $reg)) {
 				$tmp=explode(',', $user->email_aliases);
@@ -267,14 +267,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				$obj = $db->fetch_object($resql);
 				if ($obj)
 				{
-					$from = $obj->label.' <'.$obj->email.'>';
+					$from = dol_string_nospecial($obj->label, ' ', array(",")).' <'.$obj->email.'>';
 				}
 			}
 			else {
-				$from = $_POST['fromname'] . ' <' . $_POST['frommail'] .'>';
+				$from = dol_string_nospecial($_POST['fromname'], ' ', array(",")) . ' <' . $_POST['frommail'] .'>';
 			}
 
-			$replyto = $_POST['replytoname']. ' <' . $_POST['replytomail'].'>';
+			$replyto = dol_string_nospecial($_POST['replytoname'], ' ', array(",")). ' <' . $_POST['replytomail'].'>';
 			$message = GETPOST('message','none');
 			$subject = GETPOST('subject','none');
 

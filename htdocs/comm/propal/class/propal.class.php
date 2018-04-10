@@ -1114,12 +1114,8 @@ class Propal extends CommonObject
 					{
 						$action='update';
 
-						// Actions on extra fields (by external module or standard code)
-						// TODO le hook fait double emploi avec le trigger !!
-						$hookmanager->initHooks(array('propaldao'));
-						$parameters=array('socid'=>$this->id);
-						$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-						if (empty($reshook))
+						// Actions on extra fields
+						if (! $error)
 						{
 							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 							{
@@ -1130,9 +1126,8 @@ class Propal extends CommonObject
 								}
 							}
 						}
-						else if ($reshook < 0) $error++;
 
-						if (! $notrigger)
+						if (! $error && ! $notrigger)
 						{
 							// Call trigger
 							$result=$this->call_trigger('PROPAL_CREATE',$user);
@@ -3953,7 +3948,7 @@ class PropaleLigne extends CommonObjectLine
 				}
 			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINEPROPAL_INSERT',$user);
@@ -4136,7 +4131,7 @@ class PropaleLigne extends CommonObjectLine
 				}
 			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINEPROPAL_UPDATE',$user);

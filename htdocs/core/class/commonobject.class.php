@@ -3576,19 +3576,6 @@ abstract class CommonObject
 	}
 
 
-	/**
-	 *  Return if a country is inside the EEC (European Economic Community)
-	 *  @deprecated	Use function isInEEC function instead
-	 *
-	 *  @return     boolean		true = country inside EEC, false = country outside EEC
-	 */
-	function isInEEC()
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-		return isInEEC($this);
-	}
-
-
 	// --------------------
 	// TODO: All functions here must be redesigned and moved as they are not business functions but output functions
 	// --------------------
@@ -5951,8 +5938,16 @@ abstract class CommonObject
 			$e = 0;
 			foreach($extrafields->attribute_label as $key=>$label)
 			{
-				if (empty($extrafields->attribute_list[$key])) continue;												// 0 = Never visible field
-				if (($mode == 'create' || $mode == 'edit') && abs($extrafields->attribute_list[$key]) != 1 && abs($extrafields->attribute_list[$key]) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				$enabled = $extrafields->attribute_list[$key];
+				if (empty($enabled)) continue;												// 0 = Never visible field
+				if (! is_numeric($enabled))
+				{
+					$enabled=dol_eval($enabled, 1);
+					if (empty($enabled)) continue;
+					else $enabled = 1;
+				}
+
+				if (($mode == 'create' || $mode == 'edit') && abs($enabled) != 1 && abs($enabled) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
 
 				// Load language if required
 				if (! empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
@@ -6005,11 +6000,11 @@ abstract class CommonObject
 					$domData  = ' data-element="extrafield"';
 					$domData .= ' data-targetelement="'.$this->element.'"';
 					$domData .= ' data-targetid="'.$this->id.'"';
-					
+
 					$html_id = !empty($this->id) ? 'extrarow-'.$this->element.'_'.$key.'_'.$this->id : '';
-					
+
 					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.'" '.$domData.' >';
-					
+
 					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
 						if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
@@ -6797,14 +6792,16 @@ abstract class CommonObject
 	 */
 	public function fetchCommon($id, $ref = null, $morewhere = '')
 	{
-		if (empty($id) && empty($ref)) return false;
+		if (empty($id) && empty($ref) && empty($morewhere)) return -1;
 
 		$sql = 'SELECT '.$this->getFieldList();
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element;
 
-		if (!empty($id)) $sql.= ' WHERE rowid = '.$id;
-		else $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
-		if ($morewhere) $sql.=$morewhere;
+		if (!empty($id))  $sql.= ' WHERE rowid = '.$id;
+		elseif (!empty($ref)) $sql.= " WHERE ref = ".$this->quote($ref, $this->fields['ref']);
+		else $sql.=' WHERE 1 = 1';	// usage with empty id and empty ref is very rare
+		if ($morewhere)   $sql.= $morewhere;
+		$sql.=' LIMIT 1';	// This is a fetch, to be sure to get only one record
 
 		$res = $this->db->query($sql);
 		if ($res)

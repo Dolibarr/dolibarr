@@ -406,3 +406,10 @@ create table llx_asset_type_extrafields
 ALTER TABLE llx_asset_type_extrafields ADD INDEX idx_asset_type_extrafields (fk_object);
 
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (7,'INV', 'Inventory journal', 8, 1);
+
+UPDATE llx_accounting_account set account_parent = 0 WHERE account_parent = '' OR account_parent IS NULL;
+ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_parent (account_parent);
+
+ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
+
