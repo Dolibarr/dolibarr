@@ -6727,6 +6727,27 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 					$i2++;	// a criteria was added to string
 				}
 			}
+			else if ($mode == 4)
+			{
+			    $tmparray=explode(',',trim($crit));
+			    
+			    if (count($tmparray))
+			    {
+			        $listofcodes='';
+			        
+			        foreach($tmparray as $val)
+			        {
+			            if ($val)
+			            {
+			                $newres .= ($i2 > 0 ? ' OR ' : '') . $field . ' LIKE \'' . $db->escape(trim($val)) . ',%\'';
+			                $newres .= ' OR '. $field . ' = \'' . $db->escape(trim($val)) . '\''; 
+			                $newres .= ' OR '. $field . ' LIKE \'%,' . $db->escape(trim($val)) . '\'';
+			                $newres .= ' OR '. $field . ' LIKE \'%,' . $db->escape(trim($val)) . ',%\'';
+			                $i2++;
+			            }
+			        }
+			    }
+			}
 			else    // $mode=0
 			{
 				$textcrit = '';
