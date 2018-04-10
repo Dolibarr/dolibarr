@@ -473,7 +473,6 @@ class pdf_crabe extends ModelePDFFactures
 	            // Loop on each lines
 	            for ($i = 0; $i < $nblignes; $i++)
 	            {
-	                $curentPageNumb
 	                
 	                $curY = $nexY;
 	                $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
@@ -715,11 +714,7 @@ class pdf_crabe extends ModelePDFFactures
 	                            $pagenb++;
 	                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 	                        }
-	                        
-	                  if($pdf->getPage() > $pageposbefore)
-	                  {
-	                      
-	                  }
+	                  
 	            }
 	            
 	            // Show square
