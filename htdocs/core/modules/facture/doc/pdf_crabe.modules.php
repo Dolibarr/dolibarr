@@ -413,7 +413,7 @@ class pdf_crabe extends ModelePDFFactures
 	                    
 	                    $pdf->SetFont('','', $default_font_size - 1);
 	                    $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
-	                    $nexY = $pdf->GetY();
+	                    $nexY = max($pdf->GetY(),$nexY);
 	                    $height_incoterms=$nexY-$tab_top;
 	                    
 	                    // Rect prend une longueur en 3eme param
@@ -473,6 +473,8 @@ class pdf_crabe extends ModelePDFFactures
 	            // Loop on each lines
 	            for ($i = 0; $i < $nblignes; $i++)
 	            {
+	                $curentPageNumb
+	                
 	                $curY = $nexY;
 	                $pdf->SetFont('','', $default_font_size - 1);   // Into loop to work with multipage
 	                $pdf->SetTextColor(0,0,0);
@@ -555,7 +557,7 @@ class pdf_crabe extends ModelePDFFactures
 	                
 	                // We suppose that a too long description or photo were moved completely on next page
 	                if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
-	                    $pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+	                    $pdf->setPage($pageposafter); $curY = $tab_top_newpage; 
 	                }
 	                
 	                $pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
@@ -565,6 +567,7 @@ class pdf_crabe extends ModelePDFFactures
 	                {
 	                    $vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
+	                    $nexY = max($pdf->GetY(),$nexY);
 	                }
 	                
 	                // Unit price before discount
@@ -572,6 +575,7 @@ class pdf_crabe extends ModelePDFFactures
 	                {
 	                    $up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
+	                    $nexY = max($pdf->GetY(),$nexY);
 	                }
 	                
 	                // Quantity
@@ -580,6 +584,7 @@ class pdf_crabe extends ModelePDFFactures
 	                {
 	                    $qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'qty', $qty);
+	                    $nexY = max($pdf->GetY(),$nexY);
 	                }
 	                
 	                // Situation progress
@@ -587,6 +592,7 @@ class pdf_crabe extends ModelePDFFactures
 	                {
 	                    $progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'progress', $progress);
+	                    $nexY = max($pdf->GetY(),$nexY);
 	                }
 	                
 	                // Unit
@@ -594,6 +600,7 @@ class pdf_crabe extends ModelePDFFactures
 	                {
 	                    $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 	                    $this->printStdColumnContent($pdf, $curY, 'unit', $unit);
+	                    $nexY = max($pdf->GetY(),$nexY);
 	                }
 	                
 	                // Discount on line
@@ -601,6 +608,7 @@ class pdf_crabe extends ModelePDFFactures
 	                {
 	                    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
+	                    $nexY = max($pdf->GetY(),$nexY);
 	                }
 	                
 	                // Total HT line
@@ -608,6 +616,7 @@ class pdf_crabe extends ModelePDFFactures
 	                {
 	                    $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
+	                    $nexY = max($pdf->GetY(),$nexY);
 	                }
 	                
 	                
@@ -657,7 +666,7 @@ class pdf_crabe extends ModelePDFFactures
 	                        if (! isset($this->tva[$vatrate])) 				$this->tva[$vatrate]=0;
 	                        $this->tva[$vatrate] += $tvaligne;
 	                        
-	                        if ($posYAfterImage > $posYAfterDescription) $nexY=$posYAfterImage;
+	                        $nexY = max($nexY,$posYAfterImage);
 	                        
 	                        // Add line
 	                        if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblignes - 1))
@@ -706,6 +715,11 @@ class pdf_crabe extends ModelePDFFactures
 	                            $pagenb++;
 	                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 	                        }
+	                        
+	                  if($pdf->getPage() > $pageposbefore)
+	                  {
+	                      
+	                  }
 	            }
 	            
 	            // Show square
@@ -1435,9 +1449,10 @@ class pdf_crabe extends ModelePDFFactures
 		    // get title label
 		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
 		    
-		    
 		    // Add column separator
-		    $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+		    if(!empty($colDef['border'])){
+		        $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+		    }
 		    
 		    if (empty($hidetop))
 		    {
@@ -1672,8 +1687,6 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->SetFont('','', $default_font_size - 1);
 			$pdf->MultiCell($widthrecbox-2, 4, $carac_emetteur, 0, 'L');
 
-
-
 			// If BILLING contact defined on invoice, we use it
 			$usecontact=false;
 			$arrayidcontact=$object->getIdContact('external','BILLING');
@@ -1829,7 +1842,7 @@ class pdf_crabe extends ModelePDFFactures
 	        'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 	    $this->defaultTitlesFieldsStyle = array(
-	        'align' => 'C', // R,C,L
+	        'align' => 'C', // R,C,L 
 	        'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 	    
@@ -1849,10 +1862,15 @@ class pdf_crabe extends ModelePDFFactures
 	    {
 	        $this->linesArrayFields['photo'] = array(
 	            'rang' => 1,
-	            'width' => 15, // in mm
+	            'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
 	            'title' => array(
 	                'textkey' => 'Photo',
+	                'label' => ' '
 	            ),
+	            'content' => array(
+	                'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	            ),
+	            'border' => false, // remove left line separator
 	        );
 	    }
 	    
@@ -1862,8 +1880,9 @@ class pdf_crabe extends ModelePDFFactures
 	            'rang' => 10,
 	            'width' => 15, // in mm
 	            'title' => array(
-	                'textkey' => 'VAT',
+	                'textkey' => 'VAT'
 	            ),
+	            'border' => true, // add left line separator
 	        );
 	    }
 	    
@@ -1871,16 +1890,18 @@ class pdf_crabe extends ModelePDFFactures
 	        'rang' => 20,
 	        'width' => 15, // in mm
 	        'title' => array(
-	            'textkey' => 'PriceUHT',
+	            'textkey' => 'PriceUHT'
 	        ),
+	        'border' => true, // add left line separator
 	    );
 	    
 	    $this->linesArrayFields['qty'] = array(
 	        'rang' => 50,
 	        'width' => 15, // in mm
 	        'title' => array(
-	            'textkey' => 'Qty',
+	            'textkey' => 'Qty'
 	        ),
+	        'border' => true, // add left line separator
 	    );
 	    
 	    if($conf->global->PRODUCT_USE_UNITS){
@@ -1888,8 +1909,9 @@ class pdf_crabe extends ModelePDFFactures
 	            'rang' => 60,
 	            'width' => 10, // in mm
 	            'title' => array(
-	                'textkey' => 'Unit',
+	                'textkey' => 'Unit'
 	            ),
+	            'border' => true, // add left line separator
 	        );
 	    }
 	    
@@ -1899,8 +1921,9 @@ class pdf_crabe extends ModelePDFFactures
 	            'rang' => 70,
 	            'width' => 20, // in mm
 	            'title' => array(
-	                'textkey' => 'Progress',
+	                'textkey' => 'Progress'
 	            ),
+	            'border' => true, // add left line separator
 	        );
 	    }
 	    
@@ -1909,8 +1932,9 @@ class pdf_crabe extends ModelePDFFactures
 	            'rang' => 80,
 	            'width' => 20, // in mm
 	            'title' => array(
-	                'textkey' => 'Discount',
+	                'textkey' => 'Discount'
 	            ),
+	            'border' => true, // add left line separator
 	        );
 	    }
 	    
@@ -1918,8 +1942,9 @@ class pdf_crabe extends ModelePDFFactures
 	        'rang' => 9000,
 	        'width' => 20, // in mm
 	        'title' => array(
-	            'textkey' => 'TotalHT',
+	            'textkey' => 'TotalHT'
 	        ),
+	        'border' => true, // add left line separator
 	    );
 	    
 	    
@@ -1948,6 +1973,7 @@ class pdf_crabe extends ModelePDFFactures
 	    $colDef = $this->linesArrayFields[$colKey];
 	    $pdf->MultiCell( $this->getColumnContentWidth($colKey) ,2, $columnText,'',$colDef['content']['align']);
 	}
+	
 	
 }
 
