@@ -400,7 +400,7 @@ class Ticketsup extends CommonObject
             }
 
             //Update extrafield
-            if (!$error) {
+            if (! $error) {
                 if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
                     $result = $this->insertExtraFields();
                     if ($result < 0) {
@@ -822,30 +822,23 @@ class Ticketsup extends CommonObject
             $this->errors[] = "Error " . $this->db->lasterror();
         }
 
-        if (!$error) {
-            // FIXME le hook fait double emploi avec le trigger !!
-            $hookmanager->initHooks(array('TicketSupDao'));
-            $parameters = array('ticketsupid' => $this->id);
-            $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook)) {
-                if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
-                    $result = $this->insertExtraFields();
-                    if ($result < 0) {
-                        $error++;
-                    }
-                }
-            } elseif ($reshook < 0) {
-                $error++;
-            }
-
-            if (!$notrigger) {
-            	// Call trigger
-            	$result=$this->call_trigger('TICKET_MODIFY', $user);
-            	if ($result < 0) {
+        if (! $error) {
+            // Update extrafields
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
+                $result = $this->insertExtraFields();
+                if ($result < 0) {
                     $error++;
                 }
-            	// End call triggers
             }
+        }
+
+        if (! $error && ! $notrigger) {
+        	// Call trigger
+        	$result=$this->call_trigger('TICKET_MODIFY', $user);
+        	if ($result < 0) {
+                $error++;
+            }
+          	// End call triggers
         }
 
         // Commit or rollback

@@ -338,28 +338,23 @@ class Categorie extends CommonObject
 
 				$action='create';
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO the hook duplicates the trigger !!
-				$hookmanager->initHooks(array('HookModuleNamedao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
-                // Call trigger
-                $result=$this->call_trigger('CATEGORY_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				if (! $error)
+				{
+	                // Call trigger
+    	            $result=$this->call_trigger('CATEGORY_CREATE',$user);
+        	        if ($result < 0) { $error++; }
+            	    // End call triggers
+				}
 
                 if ( ! $error )
                 {
@@ -432,28 +427,23 @@ class Categorie extends CommonObject
 		{
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			// TODO the hook duplicates the trigger !!
-			$hookmanager->initHooks(array('HookCategorydao'));
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
-            // Call trigger
-            $result=$this->call_trigger('CATEGORY_MODIFY',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
+			if (! $error)
+			{
+	            // Call trigger
+    	        $result=$this->call_trigger('CATEGORY_MODIFY',$user);
+        	    if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            	// End call triggers
+			}
 
 			$this->db->commit();
 

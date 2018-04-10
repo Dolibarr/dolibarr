@@ -3259,7 +3259,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
 
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-
                 $result=$this->insertExtraFields();
                 if ($result < 0)
                 {
@@ -3347,7 +3346,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
         {
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-
                 $result=$this->insertExtraFields();
                 if ($result < 0)
                 {

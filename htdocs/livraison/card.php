@@ -202,20 +202,13 @@ if ($action == 'update_extras')
 
 	if (! $error)
 	{
-		// Actions on extra fields (by external module or standard code)
-		// TODO le hook fait double emploi avec le trigger !!
-		$hookmanager->initHooks(array('livraisondao'));
-		$parameters = array('id' => $object->id);
-		$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook)) {
-			$result = $object->insertExtraFields('DELIVERY_MODIFY');
-			if ($result < 0)
-			{
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
-			}
-		} else if ($reshook < 0)
+		// Actions on extra fields
+		$result = $object->insertExtraFields('DELIVERY_MODIFY');
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
 			$error++;
+		}
 	}
 
 	if ($error)

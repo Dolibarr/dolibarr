@@ -121,11 +121,13 @@ if (empty($reshook))
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 
         if ($ret < 0) $error++;
+
         if (! $error)
         {
             $result = $object->insertExtraFields('COMPANY_MODIFY');
             if ($result < 0) $error++;
         }
+
         if ($error) $action = 'edit_extras';
     }
 }

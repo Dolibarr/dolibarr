@@ -366,11 +366,8 @@ class Contact extends CommonObject
 
 		    $action='update';
 
-		    // Actions on extra fields (by external module or standard code)
-		    $hookmanager->initHooks(array('contactdao'));
-		    $parameters=array('socid'=>$this->id);
-		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		    if (empty($reshook))
+		    // Actions on extra fields
+		    if (! $error)
 		    {
 		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 		    	{
@@ -381,7 +378,6 @@ class Contact extends CommonObject
 		    		}
 		    	}
 		    }
-		    else if ($reshook < 0) $error++;
 
 			if (! $error && $this->user_id > 0)
 			{
