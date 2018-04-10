@@ -58,16 +58,15 @@ class ActionsStripe
 	{
 		global $db,$conf,$user,$langs,$form;
 
-      if (! empty($conf->stripe->enabled) && (empty($conf->global->STRIPE_LIVE) || empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
+      if (!empty($conf->stripe->enabled) && empty($conf->global->STRIPE_LIVE) || ! empty($conf->stripeconnect->enabled) && empty($conf->global->STRIPECONNECT_LIVE) || GETPOST('forcesandbox','alpha')))
 {
 	$service = 'StripeTest';
 	dol_htmloutput_mesg($langs->trans('YouAreCurrentlyInSandboxMode','Stripe'),'','warning');
-}
-else
-{
+}	
+else 
+{	      
 	$service = 'StripeLive';
 }
-
 		if (is_array($parameters) && ! empty($parameters))
 		{
 			foreach($parameters as $key=>$value)
