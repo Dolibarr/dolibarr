@@ -259,8 +259,8 @@ $sql.=$db->order($sortfield,$sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
 }
 // if total resultset is smaller then paging size (filtering), goto and load page 0
 if (($page * $limit) > $nbtotalofrecords)
