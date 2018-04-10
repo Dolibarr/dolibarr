@@ -4251,7 +4251,6 @@ ul.ecmjqft li {
 	padding: 0px;
 	padding-left: 20px;
 	margin: 0px;
-	white-space: nowrap;
 	display: block;
 }
 
