@@ -674,7 +674,7 @@ if ($type == Categorie::TYPE_PROJECT)
 			{
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
-				print $project->getNomUrl(1,0);
+				print $project->getNomUrl(1);
 				print "</td>\n";
 				print '<td class="tdtop">'.$project->ref."</td>\n";
 				print '<td class="tdtop">'.$project->title."</td>\n";
