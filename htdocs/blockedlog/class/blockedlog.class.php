@@ -313,11 +313,14 @@ class BlockedLog
 	 *      @param		Object		$object     object to store
 	 *      @param		string		$action     action
 	 *      @param		string		$amounts    amounts
+	 *      @param		User		$fuser		User object (forced)
 	 *      @return		int						>0 if OK, <0 if KO
 	 */
-	public function setObjectData(&$object, $action, $amounts)
+	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
 		global $langs, $user, $mysoc;
+
+		if (is_object($fuser)) $user = $fuser;
 
 		// Generic fields
 
