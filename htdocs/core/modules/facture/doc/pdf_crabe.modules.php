@@ -1791,6 +1791,22 @@ class pdf_crabe extends ModelePDFFactures
 	    // Positionning
 	    $curX = $this->page_largeur-$this->marge_droite; // start from right
 	    
+	    // Array witdh
+	    $arrayWidth = $this->page_largeur-$this->marge_droite-$this->marge_gauche;
+	    
+	    // Count flexible column
+	    $totalDefinedColWidth = 0;
+	    $countFlexCol = 0;
+	    foreach ($this->linesArrayFields as $colKey =>& $colDef)
+	    {
+	        if(empty($colDef['width'])){
+	            $countFlexCol++;
+	        }
+	        else{
+	            $totalDefinedColWidth += $colDef['width'];
+	        }
+	    }
+	    
 	    foreach ($this->linesArrayFields as $colKey =>& $colDef)
 	    {
 	        // setting empty conf with default
@@ -1809,13 +1825,14 @@ class pdf_crabe extends ModelePDFFactures
 	            $colDef['content'] = $this->defaultContentsFieldsStyle;
 	        }
 	        
+	        // In case of flexible column
+	        if(empty($colDef['width'])){
+	            $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
+	        }
+	        
 	        // Set positions
 	        $lastX = $curX;
 	        $curX = $lastX - $colDef['width'];
-	        if(empty($colDef['width'])){
-	            $curX = $this->marge_gauche;
-	            $colDef['width'] = $lastX - $curX;
-	        }
 	        $colDef['xStartPos'] = $curX;
 	        $colDef['xEndPos']   = $lastX;
 	    }
@@ -1839,15 +1856,16 @@ class pdf_crabe extends ModelePDFFactures
 	    );
 	    $this->defaultTitlesFieldsStyle = array(
 	        'align' => 'C', // R,C,L 
-	        'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        'padding' => array(0.5,0,0.5,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
-	    
+	    $rang=0;
 	    $this->linesArrayFields['desc'] = array(
 	        'rang' => 0,
 	        'width' => false, // only for desc
 	        'title' => array(
 	            'textkey' => 'Designation',
 	            'align' => 'L',
+	            'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
 	            'align' => 'L',
@@ -1857,7 +1875,7 @@ class pdf_crabe extends ModelePDFFactures
 	    if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
 	    {
 	        $this->linesArrayFields['photo'] = array(
-	            'rang' => 1,
+	            'rang' => 10,
 	            'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
 	            'title' => array(
 	                'textkey' => 'Photo',
@@ -1873,8 +1891,8 @@ class pdf_crabe extends ModelePDFFactures
 	    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
 	    {
 	        $this->linesArrayFields['vat'] = array(
-	            'rang' => 10,
-	            'width' => 15, // in mm
+	            'rang' => 20,
+	            'width' => 17, // in mm
 	            'title' => array(
 	                'textkey' => 'VAT'
 	            ),
@@ -1883,8 +1901,8 @@ class pdf_crabe extends ModelePDFFactures
 	    }
 	    
 	    $this->linesArrayFields['subprice'] = array(
-	        'rang' => 20,
-	        'width' => 15, // in mm
+	        'rang' => 30,
+	        'width' => 17, // in mm
 	        'title' => array(
 	            'textkey' => 'PriceUHT'
 	        ),
@@ -1893,31 +1911,31 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    $this->linesArrayFields['qty'] = array(
 	        'rang' => 50,
-	        'width' => 15, // in mm
+	        'width' => 16, // in mm
 	        'title' => array(
 	            'textkey' => 'Qty'
 	        ),
 	        'border' => true, // add left line separator
 	    );
 	    
-	    if($conf->global->PRODUCT_USE_UNITS){
-	        $this->linesArrayFields['unit'] = array(
-	            'rang' => 60,
-	            'width' => 10, // in mm
-	            'title' => array(
-	                'textkey' => 'Unit'
-	            ),
-	            'border' => true, // add left line separator
-	        );
-	    }
-	    
 	    if($this->situationinvoice)
 	    {
 	        $this->linesArrayFields['progress'] = array(
-	            'rang' => 70,
-	            'width' => 20, // in mm
+	            'rang' => 60,
+	            'width' => 10, // in mm
 	            'title' => array(
 	                'textkey' => 'Progress'
+	            ),
+	            'border' => false, // add left line separator
+	        );
+	    }
+	    
+	    if($conf->global->PRODUCT_USE_UNITS){
+	        $this->linesArrayFields['unit'] = array(
+	            'rang' => 70,
+	            'width' => 10, // in mm
+	            'title' => array(
+	                'textkey' => 'Unit'
 	            ),
 	            'border' => true, // add left line separator
 	        );
