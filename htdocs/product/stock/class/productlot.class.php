@@ -156,7 +156,24 @@ class Productlot extends CommonObject
 		if (!$error) {
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX . $this->table_element);
 
-			if (!$notrigger) {
+			// Actions on extra fields (by external module or standard code)
+			$hookmanager->initHooks(array('productlotdao'));
+			$parameters=array('id'=>$this->id);
+			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if (empty($reshook))
+			{
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				{
+					$result=$this->insertExtraFields();
+					if ($result < 0)
+					{
+						$error++;
+					}
+				}
+			}
+			else if ($reshook < 0) $error++;
+			
+			if (!$error AND !$notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
 
