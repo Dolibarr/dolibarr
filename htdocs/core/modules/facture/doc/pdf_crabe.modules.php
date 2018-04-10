@@ -146,8 +146,9 @@ class pdf_crabe extends ModelePDFFactures
 		if (empty($this->emetteur->country_code)) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default, if was not defined
 
 		// Define position of columns
-		$this->posxdesc=$this->marge_gauche+1;
-		if($conf->global->PRODUCT_USE_UNITS)
+		$this->posxdesc=$this->marge_gauche+1; // used for notes ans other stuff
+		
+		/*if($conf->global->PRODUCT_USE_UNITS)
 		{
 			$this->posxtva=101;
 			$this->posxup=118;
@@ -175,7 +176,7 @@ class pdf_crabe extends ModelePDFFactures
 		    $this->posxdiscount-=20;
 		    $this->posxprogress-=20;
 		    $this->postotalht-=20;
-		}
+		}*/
 
 		$this->tva=array();
 		$this->localtax1=array();
@@ -360,7 +361,7 @@ class pdf_crabe extends ModelePDFFactures
 	                    $this->atleastonediscount++;
 	                }
 	            }
-	            if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))    // retreive space not used by discount
+	            /*if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))    // retreive space not used by discount
 	            {
 	                $this->posxpicture+=($this->postotalht - $this->posxdiscount);
 	                $this->posxtva+=($this->postotalht - $this->posxdiscount);
@@ -382,9 +383,9 @@ class pdf_crabe extends ModelePDFFactures
 	                if(empty($conf->global->PRODUCT_USE_UNITS)) {
 	                    $this->posxprogress += $progress_width;
 	                }
-	                /*$this->posxdiscount -= $progress_width;
-	                 $this->posxprogress -= $progress_width;*/
-	            }
+	                //$this->posxdiscount -= $progress_width;
+	                 //$this->posxprogress -= $progress_width;
+	            }*/
 	            
 	            // New page
 	            $pdf->AddPage();
@@ -504,14 +505,12 @@ class pdf_crabe extends ModelePDFFactures
 	                
 	                if (isset($imglinesize['width']) && isset($imglinesize['height']))
 	                {
-	                    $curX = $this->posxpicture-1;
 	                    $pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
 	                    // $pdf->Image does not increase value return by getY, so we save it manually
 	                    $posYAfterImage=$curY+$imglinesize['height'];
 	                }
 	                
 	                // Description of product line
-	                $curX = $this->posxdesc-1;
 	                
 	                $pdf->startTransaction();
 	                pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
