@@ -67,7 +67,7 @@ if ($conf->multicompany->enabled)  {
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-if (count($extrafields->attributes[$elementtype]['type']))
+if (!empty($extrafields->attributes[$elementtype]['type']))
 {
 	foreach($extrafields->attributes[$elementtype]['type'] as $key => $value)
 	{
