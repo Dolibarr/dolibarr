@@ -43,7 +43,7 @@ CronNoJobs=No jobs registered
 CronPriority=Priority
 CronLabel=Label
 CronNbRun=Nb. launch
-CronMaxRun=Max nb. launch
+CronMaxRun=Max number launch
 CronEach=Every
 JobFinished=Job launched and finished
 #Page card
