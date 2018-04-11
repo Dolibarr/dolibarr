@@ -564,7 +564,7 @@ class pdf_crabe extends ModelePDFFactures
 	                $pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 	                
 	                // VAT Rate
-	                if (!empty($this->linesArrayFields['vat']))
+	                if (!empty($this->cols['vat']))
 	                {
 	                    $vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
@@ -572,7 +572,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Unit price before discount
-	                if (!empty($this->linesArrayFields['subprice']))
+	                if (!empty($this->cols['subprice']))
 	                {
 	                    $up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
@@ -581,7 +581,7 @@ class pdf_crabe extends ModelePDFFactures
 	                
 	                // Quantity
 	                // Enough for 6 chars
-	                if (!empty($this->linesArrayFields['qty']))
+	                if (!empty($this->cols['qty']))
 	                {
 	                    $qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'qty', $qty);
@@ -589,7 +589,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Situation progress
-	                if (!empty($this->linesArrayFields['progress']))
+	                if (!empty($this->cols['progress']))
 	                {
 	                    $progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'progress', $progress);
@@ -597,7 +597,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Unit
-	                if (!empty($this->linesArrayFields['unit']))
+	                if (!empty($this->cols['unit']))
 	                {
 	                    $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 	                    $this->printStdColumnContent($pdf, $curY, 'unit', $unit);
@@ -605,7 +605,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Discount on line
-	                if (!empty($this->linesArrayFields['discount']) && $object->lines[$i]->remise_percent)
+	                if (!empty($this->cols['discount']) && $object->lines[$i]->remise_percent)
 	                {
 	                    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
@@ -613,7 +613,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Total HT line
-	                if (!empty($this->linesArrayFields['totalexcltax']))
+	                if (!empty($this->cols['totalexcltax']))
 	                {
 	                    $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
@@ -1440,7 +1440,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
 
 
-		foreach ($this->linesArrayFields as $colKey => $colDef)
+		foreach ($this->cols as $colKey => $colDef)
 		{
 		    
 		    // get title label
@@ -1787,7 +1787,7 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    
 	    // Sorting
-	    uasort ( $this->linesArrayFields , array( $this, 'columnSort' ) );
+	    uasort ( $this->cols , array( $this, 'columnSort' ) );
 	    
 	    // Positionning
 	    $curX = $this->page_largeur-$this->marge_droite; // start from right
@@ -1798,7 +1798,7 @@ class pdf_crabe extends ModelePDFFactures
 	    // Count flexible column
 	    $totalDefinedColWidth = 0;
 	    $countFlexCol = 0;
-	    foreach ($this->linesArrayFields as $colKey =>& $colDef)
+	    foreach ($this->cols as $colKey =>& $colDef)
 	    {
 	        if(empty($colDef['width'])){
 	            $countFlexCol++;
@@ -1808,7 +1808,7 @@ class pdf_crabe extends ModelePDFFactures
 	        }
 	    }
 	    
-	    foreach ($this->linesArrayFields as $colKey =>& $colDef)
+	    foreach ($this->cols as $colKey =>& $colDef)
 	    {
 	        // setting empty conf with default
 	        if(!empty($colDef['title'])){
@@ -1849,7 +1849,7 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
 	    
-	    global $conf;
+	    global $conf, $hookmanager;
 	    
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
@@ -1860,7 +1860,7 @@ class pdf_crabe extends ModelePDFFactures
 	        'padding' => array(0.5,0,0.5,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 	    $rang=0;
-	    $this->linesArrayFields['desc'] = array(
+	    $this->cols['desc'] = array(
 	        'rang' => 0,
 	        'width' => false, // only for desc
 	        'title' => array(
@@ -1875,7 +1875,7 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
 	    {
-	        $this->linesArrayFields['photo'] = array(
+	        $this->cols['photo'] = array(
 	            'rang' => 10,
 	            'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
 	            'title' => array(
@@ -1891,7 +1891,7 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
 	    {
-	        $this->linesArrayFields['vat'] = array(
+	        $this->cols['vat'] = array(
 	            'rang' => 20,
 	            'width' => 17, // in mm
 	            'title' => array(
@@ -1901,7 +1901,7 @@ class pdf_crabe extends ModelePDFFactures
 	        );
 	    }
 	    
-	    $this->linesArrayFields['subprice'] = array(
+	    $this->cols['subprice'] = array(
 	        'rang' => 30,
 	        'width' => 17, // in mm
 	        'title' => array(
@@ -1910,7 +1910,7 @@ class pdf_crabe extends ModelePDFFactures
 	        'border-left' => true, // add left line separator
 	    );
 	    
-	    $this->linesArrayFields['qty'] = array(
+	    $this->cols['qty'] = array(
 	        'rang' => 50,
 	        'width' => 16, // in mm
 	        'title' => array(
@@ -1921,7 +1921,7 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    if($this->situationinvoice)
 	    {
-	        $this->linesArrayFields['progress'] = array(
+	        $this->cols['progress'] = array(
 	            'rang' => 60,
 	            'width' => 13, // in mm
 	            'title' => array(
@@ -1932,7 +1932,7 @@ class pdf_crabe extends ModelePDFFactures
 	    }
 	    
 	    if($conf->global->PRODUCT_USE_UNITS){
-	        $this->linesArrayFields['unit'] = array(
+	        $this->cols['unit'] = array(
 	            'rang' => 70,
 	            'width' => 10, // in mm
 	            'title' => array(
@@ -1943,7 +1943,7 @@ class pdf_crabe extends ModelePDFFactures
 	    }
 	    
 	    if ($this->atleastonediscount){
-	        $this->linesArrayFields['discount'] = array(
+	        $this->cols['discount'] = array(
 	            'rang' => 80,
 	            'width' => 20, // in mm
 	            'title' => array(
@@ -1953,7 +1953,7 @@ class pdf_crabe extends ModelePDFFactures
 	        );
 	    }
 	    
-	    $this->linesArrayFields['totalexcltax'] = array(
+	    $this->cols['totalexcltax'] = array(
 	        'rang' => 9000,
 	        'width' => 20, // in mm
 	        'title' => array(
@@ -1963,30 +1963,59 @@ class pdf_crabe extends ModelePDFFactures
 	    );
 	    
 	    
-	    // TODO: add hook here;
+	    $parameters=array(
+	        'object' => $object,
+	        'outputlangs' => $outputlangs,
+	        'hidedetails' => $hidedetails,
+	        'hidedesc' => $hidedesc,
+	        'hideref' => $hideref
+	    );
+	    
+	    $reshook=$hookmanager->executeHooks('defineColumnField',$parameters,$this);    // Note that $action and $object may have been modified by hook
+	    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	    if ($reshook>0)
+	    {
+	        $this->cols = $hookmanager->resArray;
+	    }
+	    
 	    
 	}
 	
 	
 	function getColumnContentWidth($colKey)
 	{
-	    $colDef = $this->linesArrayFields[$colKey];
+	    $colDef = $this->cols[$colKey];
 	    return  $colDef['width'] - $colDef['content']['padding'][3] - $colDef['content']['padding'][1];
 	}
 	
 	function getColumnContentXStart($colKey)
 	{
-	    $colDef = $this->linesArrayFields[$colKey];
+	    $colDef = $this->cols[$colKey];
 	    return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
 	}
 	
 	
-	function printStdColumnContent($pdf, $curY, $colKey, $columnText = '')
+	function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
 	{
-	    if(empty($columnText)) return;
-	    $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
-	    $colDef = $this->linesArrayFields[$colKey];
-	    $pdf->MultiCell( $this->getColumnContentWidth($colKey) ,2, $columnText,'',$colDef['content']['align']);
+	    global $hookmanager;
+	    
+	    $parameters=array(
+	        'object' => $object,
+	        'curY' =>& $curY,
+	        'hidedetails' => $hidedetails,
+	        'hidedesc' => $hidedesc,
+	        'hideref' => $hideref
+	    );
+	    $reshook=$hookmanager->executeHooks('printStdColumnContent',$parameters,$this);    // Note that $action and $object may have been modified by hook
+	    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	    if (!$reshook)
+	    {
+	        if(empty($columnText)) return;
+	        $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
+	        $colDef = $this->cols[$colKey];
+	        $pdf->MultiCell( $this->getColumnContentWidth($colKey) ,2, $columnText,'',$colDef['content']['align']);
+	    }
+	    
 	}
 	
 	
