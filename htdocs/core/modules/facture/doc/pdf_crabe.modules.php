@@ -374,20 +374,21 @@ class pdf_crabe extends ModelePDFFactures
 	            }
 	            
 	            $progress_width = 0;
+	            */
 	            // Situation invoice handling
 	            if ($object->situation_cycle_ref)
 	            {
 	                $this->situationinvoice = True;
-	                $progress_width = 18;
+	                /*$progress_width = 18;
 	                $this->posxtva -= $progress_width;
 	                $this->posxup -= $progress_width;
 	                $this->posxqty -= $progress_width;
 	                if(empty($conf->global->PRODUCT_USE_UNITS)) {
 	                    $this->posxprogress += $progress_width;
-	                }
+	                }*/
 	                //$this->posxdiscount -= $progress_width;
 	                 //$this->posxprogress -= $progress_width;
-	            }*/
+	            }
 	            
 	            // New page
 	            $pdf->AddPage();
@@ -1446,7 +1447,7 @@ class pdf_crabe extends ModelePDFFactures
 		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
 		    
 		    // Add column separator
-		    if(!empty($colDef['border'])){
+		    if(!empty($colDef['border-left'])){
 		        $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
 		    }
 		    
@@ -1884,7 +1885,7 @@ class pdf_crabe extends ModelePDFFactures
 	            'content' => array(
 	                'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	            ),
-	            'border' => false, // remove left line separator
+	            'border-left' => false, // remove left line separator
 	        );
 	    }
 	    
@@ -1896,7 +1897,7 @@ class pdf_crabe extends ModelePDFFactures
 	            'title' => array(
 	                'textkey' => 'VAT'
 	            ),
-	            'border' => true, // add left line separator
+	            'border-left' => true, // add left line separator
 	        );
 	    }
 	    
@@ -1906,7 +1907,7 @@ class pdf_crabe extends ModelePDFFactures
 	        'title' => array(
 	            'textkey' => 'PriceUHT'
 	        ),
-	        'border' => true, // add left line separator
+	        'border-left' => true, // add left line separator
 	    );
 	    
 	    $this->linesArrayFields['qty'] = array(
@@ -1915,18 +1916,18 @@ class pdf_crabe extends ModelePDFFactures
 	        'title' => array(
 	            'textkey' => 'Qty'
 	        ),
-	        'border' => true, // add left line separator
+	        'border-left' => true, // add left line separator
 	    );
 	    
 	    if($this->situationinvoice)
 	    {
 	        $this->linesArrayFields['progress'] = array(
 	            'rang' => 60,
-	            'width' => 10, // in mm
+	            'width' => 13, // in mm
 	            'title' => array(
 	                'textkey' => 'Progress'
 	            ),
-	            'border' => false, // add left line separator
+	            'border-left' => false, // add left line separator
 	        );
 	    }
 	    
@@ -1937,7 +1938,7 @@ class pdf_crabe extends ModelePDFFactures
 	            'title' => array(
 	                'textkey' => 'Unit'
 	            ),
-	            'border' => true, // add left line separator
+	            'border-left' => true, // add left line separator
 	        );
 	    }
 	    
@@ -1948,7 +1949,7 @@ class pdf_crabe extends ModelePDFFactures
 	            'title' => array(
 	                'textkey' => 'Discount'
 	            ),
-	            'border' => true, // add left line separator
+	            'border-left' => true, // add left line separator
 	        );
 	    }
 	    
@@ -1958,7 +1959,7 @@ class pdf_crabe extends ModelePDFFactures
 	        'title' => array(
 	            'textkey' => 'TotalHT'
 	        ),
-	        'border' => true, // add left line separator
+	        'border-left' => true, // add left line separator
 	    );
 	    
 	    
