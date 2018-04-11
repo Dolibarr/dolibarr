@@ -1973,13 +1973,19 @@ class pdf_crabe extends ModelePDFFactures
 	        'hideref' => $hideref
 	    );
 	    
-	    $reshook=$hookmanager->executeHooks('defineColumnField',$parameters,$this);    // Note that $action and $object may have been modified by hook
-	    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
-	    if ($reshook>0)
+	    $reshook=$hookmanager->executeHooks('defineColumnField',$parameters,$this);    // Note that $object may have been modified by hook
+	    if ($reshook < 0)
+	    {
+	        setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	    }
+	    elseif (empty($reshook))
+	    {
+	        $this->cols = array_replace($this->cols, $hookmanager->resArray); // array_replace is used to preserve keys
+	    }
+	    else
 	    {
 	        $this->cols = $hookmanager->resArray;
 	    }
-	    
 	    
 	}
 	
