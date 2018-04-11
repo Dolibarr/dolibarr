@@ -166,7 +166,7 @@ class Productlot extends CommonObject
 				}
 			}
 			
-			if (!$error AND !$notrigger) {
+			if (! $error && ! $notrigger) {
 				// Uncomment this and change MYOBJECT to your own tag if you
 				// want this action to call a trigger.
 
