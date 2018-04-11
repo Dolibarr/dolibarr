@@ -63,7 +63,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
-    	if (! preg_match('/^(integer|date|timestamp|varchar|double)/', $addfieldentry['type']))
+    	if (! preg_match('/^(integer|date|timestamp|varchar|double|html)/', $addfieldentry['type']))
     	{
     		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');
     		return -2;
