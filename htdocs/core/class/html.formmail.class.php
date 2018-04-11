@@ -1208,8 +1208,7 @@ class FormMail extends Form
 					'__QUANTITY__' => $line->qty,
 					'__SUBPRICE__' => price($line->subprice),
 					'__AMOUNT__' => price($line->total_ttc),
-					'__AMOUNT_EXCL_TAX__' => price($line->total_ht),
-					//'__PRODUCT_EXTRAFIELD_FIELD__' Done dinamically just after
+					'__AMOUNT_EXCL_TAX__' => price($line->total_ht)
 				);
 
 				// Create dynamic tags for __PRODUCT_EXTRAFIELD_FIELD__
