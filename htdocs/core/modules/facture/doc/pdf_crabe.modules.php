@@ -1866,6 +1866,8 @@ class pdf_crabe extends ModelePDFFactures
 	        'title' => array(
 	            'textkey' => 'Designation',
 	            'align' => 'L',
+	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+	            // 'label' => ' ', // the final label
 	            'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	        ),
 	        'content' => array(
@@ -1880,7 +1882,7 @@ class pdf_crabe extends ModelePDFFactures
 	            'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
 	            'title' => array(
 	                'textkey' => 'Photo',
-	                'label' => ' '
+	                'label' => ' ' 
 	            ),
 	            'content' => array(
 	                'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
