@@ -1990,7 +1990,7 @@ else
             }
             else if ($caneditpassword)
             {
-                $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="off">';
+                $text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
                 if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
                 {
                     $text=$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
