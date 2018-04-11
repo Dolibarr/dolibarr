@@ -1863,12 +1863,30 @@ class pdf_crabe extends ModelePDFFactures
 	        'padding' => array(0.5,0,0.5,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
 	    
+	    /*
+	     * For exemple
+	    $this->cols['theColKey'] = array(
+	        'rank' => $rank, // int : use for ordering columns
+	        'width' => 20, // the column width in mm
+	        'title' => array(
+	            'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
+	            'label' => ' ', // the final label : used fore final generated text
+	            'align' => 'L', // text alignement :  R,C,L 
+	            'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        ),
+	        'content' => array(
+	            'align' => 'L', // text alignement :  R,C,L 
+	            'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        ),
+	    );
+	    */
+	    
 	    $rank=0; // do not use negative rank
 	    $this->cols['desc'] = array(
 	        'rank' => $rank, 
 	        'width' => false, // only for desc
 	        'title' => array(
-	            'textkey' => 'Designation',
+	            'textkey' => 'Designation', // use lang key is usefull in somme case with module
 	            'align' => 'L',
 	            // 'textkey' => 'yourLangKey', // if there is no label, yourLangKey will be translated to replace label
 	            // 'label' => ' ', // the final label
@@ -2014,12 +2032,45 @@ class pdf_crabe extends ModelePDFFactures
 	    return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
 	}
 	
-	function getColumnRang($colKey)
+	function getColumnRank($colKey)
 	{
-	    if(empty($this->cols[$colKey])) return -1;
-	    $colDef = $this->cols[$colKey];
-	    return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
+	    if(empty($this->cols[$colKey]['rank'])) return -1;
+	    return  $this->cols[$colKey]['rank'];
 	}
+	
+	function insertNewColumnDef($newColKey, $defArray, $targetCol = false, $insertAfterTarget = false)
+	{
+	    // prepare wanted rank
+	    $rank = -1;
+	    
+	    // try to get rank from target column
+	    if(!empty($targetCol)){
+	        $rank = $this->getColumnRank($targetCol);
+	        if($rank>=0 && $insertAfterTarget){ $rank++; }
+	    }
+	    
+	    // get rank from new column definition
+	    if($rank<0 && !empty($defArray['rank'])){
+	        $rank = $defArray['rank'];
+	    }
+	    
+	    // error: no rank 
+	    if($rank<0){ return -1; }
+	    
+	    foreach ($this->cols as $colKey =>& $colDef)
+	    {
+	        if( $rank <= $colDef['rank'])
+	        {
+	            $colDef['rank'] = $colDef['rank'] + 1;
+	        }
+	    }
+	    
+	    $defArray['rank'] = $rank;
+	    $this->cols = array_replace($this->cols, $defArray); // array_replace is used to preserve keys
+	    
+	    return $rank;
+	}
+	
 	
 	
 	function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
