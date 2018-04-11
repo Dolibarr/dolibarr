@@ -23,15 +23,15 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
-
+$code = $conf->global->MAIN_INFO_ACCOUNTANT_CODE;
 $prefix = $conf->global->ACCOUNTING_EXPORT_PREFIX_SPEC;
 $format = $conf->global->ACCOUNTING_EXPORT_FORMAT;
 $nodateexport = $conf->global->ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME;
 
-$date_export = dol_print_date($now, '%Y%m%d%H%M%S');
+$date_export = "_" . dol_print_date($now, '%Y%m%d%H%M%S');
 
 header('Content-Type: text/csv');
 
-$filename = ($prefix?$prefix . "_":""). "journal_" . $journal . ($nodateexport?"":$date_export) . "." . $format;
+$completefilename = ($code?$code . "_":"") . ($prefix?$prefix . "_":"") . $filename . ($nodateexport?"":$date_export) . "." . $format;
 
-header('Content-Disposition: attachment;filename=' . $filename);
+header('Content-Disposition: attachment;filename=' . $completefilename);
