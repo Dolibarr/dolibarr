@@ -1952,7 +1952,7 @@ class pdf_crabe extends ModelePDFFactures
 	    {
 	        $this->cols['progress'] = array(
 	            'rank' => $rank,
-	            'width' => 13, // in mm
+	            'width' => 18, // in mm
 	            'title' => array(
 	                'textkey' => 'Progress'
 	            ),
