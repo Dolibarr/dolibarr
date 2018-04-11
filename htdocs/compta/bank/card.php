@@ -845,11 +845,11 @@ else
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input size="8" type="text" class="flat" name="ref" value="'.(isset($_POST["ref"])?GETPOST("ref"):$object->ref).'"></td></tr>';
+		print '<td><input size="8" type="text" class="flat" name="ref" value="'.dol_escape_htmltag(isset($_POST["ref"])?GETPOST("ref"):$object->ref).'"></td></tr>';
 
 		// Label
         print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-        print '<td><input type="text" class="flat minwidth300" name="label" value="'.(isset($_POST["label"])?GETPOST("label"):$object->label).'"></td></tr>';
+        print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(isset($_POST["label"])?GETPOST("label"):$object->label).'"></td></tr>';
 
         // Type
         print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
