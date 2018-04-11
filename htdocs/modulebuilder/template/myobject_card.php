@@ -118,6 +118,7 @@ if (empty($reshook))
 
 	$permissiontoadd = $user->rights->mymodule->write;
 	$permissiontodelete = $user->rights->mymodule->delete;
+	$backurlforcard = dol_buildpath('/mymodule/myobject_card.php',1).'?id=__ID__';
 	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
 
 	// Actions cancel, add, update or delete

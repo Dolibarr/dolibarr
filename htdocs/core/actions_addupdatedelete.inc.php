@@ -26,6 +26,7 @@
 // $object must be defined
 // $permissiontoadd must be defined
 // $permissiontodelete must be defined
+// $backurlforcard must be defined
 // $backurlforlist must be defined
 // $backtopage may be defined
 
@@ -66,7 +67,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if ($result > 0)
 		{
 			// Creation OK
-			$urltogo=$backtopage?$backtopage:$backurlforlist;
+			$urltogo=$backtopage?$backtopage:($backurlforcard?str_replace('__ID__', $result, $backurlforcard):$backurlforlist);
 			header("Location: ".$urltogo);
 			exit;
 		}
