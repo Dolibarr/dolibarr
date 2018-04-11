@@ -803,7 +803,7 @@ else
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
 
-		dol_fiche_head(array(), 0, '' ,0);
+		dol_fiche_head(array(), 0, '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 
