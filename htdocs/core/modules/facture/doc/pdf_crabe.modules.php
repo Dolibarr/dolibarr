@@ -2019,25 +2019,52 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	}
 	
-	
+	/**
+	 *   	get column content width from column key
+	 *
+	 *   	@param	string			$colKey    		the column key
+	 *      @return	float      width in mm
+	 */
 	function getColumnContentWidth($colKey)
 	{
 	    $colDef = $this->cols[$colKey];
 	    return  $colDef['width'] - $colDef['content']['padding'][3] - $colDef['content']['padding'][1];
 	}
 	
+	
+	/**
+	 *   	get column content X (abscissa) left position from column key
+	 *
+	 *   	@param	string    $colKey    		the column key
+	 *      @return	float      X position in mm
+	 */
 	function getColumnContentXStart($colKey)
 	{
 	    $colDef = $this->cols[$colKey];
 	    return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
 	}
 	
+	/**
+	 *   	get column position rank from column key
+	 *
+	 *   	@param	string		$colKey    		the column key
+	 *      @return	int         rank on success and -1 on error
+	 */
 	function getColumnRank($colKey)
 	{
 	    if(empty($this->cols[$colKey]['rank'])) return -1;
 	    return  $this->cols[$colKey]['rank'];
 	}
 	
+	/**
+	 *   	get column position rank from column key
+	 *
+	 *   	@param	string		$newColKey    	the new column key
+	 *   	@param	array		$defArray    	a single column definition array
+	 *   	@param	string		$targetCol    	target column used to place the new column beside
+	 *   	@param	bool		$insertAfterTarget    	insert before or after target column ?
+	 *      @return	int         new rank on success and -1 on error
+	 */
 	function insertNewColumnDef($newColKey, $defArray, $targetCol = false, $insertAfterTarget = false)
 	{
 	    // prepare wanted rank
@@ -2072,7 +2099,15 @@ class pdf_crabe extends ModelePDFFactures
 	}
 	
 	
-	
+	/**
+	 *   	print standard column content
+	 *
+	 *   	@param	PDF		    $pdf    	pdf object
+	 *   	@param	float		$curY    	curent Y position
+	 *   	@param	string		$colKey    	the column key
+	 *   	@param	string		$columnText   column text
+	 *      @return	int         new rank on success and -1 on error
+	 */
 	function printStdColumnContent($pdf, &$curY, $colKey, $columnText = '')
 	{
 	    global $hookmanager;
