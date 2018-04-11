@@ -944,6 +944,10 @@ class ExtraFields
 				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 				if (!empty($InfoFieldList[4]))
 				{
+				    // can use curent entity filter
+				    if (strpos($InfoFieldList[4], '$ENTITY$')!==false) {
+				        $InfoFieldList[4]=str_replace('$ENTITY$',$conf->entity,$InfoFieldList[4]);
+				    }
 					// can use SELECT request
 					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
 						$InfoFieldList[4]=str_replace('$SEL$','SELECT',$InfoFieldList[4]);
