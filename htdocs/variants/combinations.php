@@ -397,7 +397,7 @@ if (! empty($id) || ! empty($ref))
 
 					select.empty().append('<option value="">Loading...</option>');
 
-					jQuery.getJSON("<?php echo dol_buildpath('/variants/ajax/get_attribute_values.php', 2) ?>", {
+					jQuery.getJSON("ajax/get_attribute_values.php", {
 						id: jQuery(this).val()
 					}, function(data) {
 						if (data.error) {
@@ -747,7 +747,11 @@ if (! empty($id) || ! empty($ref))
 
 		print '</form>';
 	}
+} else {
+	llxHeader();
+	// not found
 }
+
 
 llxFooter();
 
