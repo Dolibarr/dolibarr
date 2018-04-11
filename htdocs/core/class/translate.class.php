@@ -129,7 +129,7 @@ class Translate
 	 *  Return active language code for current user
 	 * 	It's an accessor for this->defaultlang
 	 *
-	 *  @param	int		$mode       0=Long language code, 1=Short language code
+	 *  @param	int		$mode       0=Long language code, 1=Short language code (en, fr, es, ...)
 	 *  @return string      		Language code used (en_US, en_AU, fr_FR, ...)
 	 */
 	function getDefaultLang($mode=0)
@@ -895,7 +895,7 @@ class Translate
 
 		$sql = "SELECT ".$fieldlabel." as label";
 		$sql.= " FROM ".MAIN_DB_PREFIX.$tablename;
-		$sql.= " WHERE ".$fieldkey." = '".($keyforselect?$keyforselect:$key)."'";
+		$sql.= " WHERE ".$fieldkey." = '".$db->escape($keyforselect?$keyforselect:$key)."'";
 		if ($filteronentity) $sql.= " AND entity IN (" . getEntity($tablename). ')';
 		dol_syslog(get_class($this).'::getLabelFromKey', LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -977,7 +977,7 @@ class Translate
 		$sql = "SELECT code_iso, label, unicode";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_currencies";
 		$sql.= " WHERE active = 1";
-		if (! empty($currency_code)) $sql.=" AND code_iso = '".$currency_code."'";
+		if (! empty($currency_code)) $sql.=" AND code_iso = '".$db->escape($currency_code)."'";
 		//$sql.= " ORDER BY code_iso ASC"; // Not required, a sort is done later
 
 		dol_syslog(get_class($this).'::loadCacheCurrencies', LOG_DEBUG);
@@ -1027,6 +1027,7 @@ class Translate
 
 		foreach($this->tab_translate as $code => $label) {
 			$substitutionarray['lang_'.$code] = $label;
+			$substitutionarray['__('.$code.')__'] = $label;
 		}
 
 		return $substitutionarray;

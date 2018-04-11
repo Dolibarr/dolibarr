@@ -331,7 +331,7 @@ function project_admin_prepare_head()
  */
 function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0)
 {
-	global $user, $bc, $langs;
+	global $user, $bc, $langs, $conf;
 	global $projectstatic, $taskstatic;
 
 	$lastprojectid=0;
@@ -940,7 +940,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				print "</td>\n";
 
 				// Planned Workload
-				print '<td align="right">';
+				print '<td align="right" class="leftborder plannedworkload">';
 				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 				else print '--:--';
 				print '</td>';
@@ -986,7 +986,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				}
 
 				// Form to add new time
-				print '<td class="nowrap" align="center">';
+				print '<td class="nowrap leftborder" align="center">';
 				$tableCell=$form->select_date($preselectedday,$lines[$i]->id,1,1,2,"addtime",0,0,1,$disabledtask);
 				print $tableCell;
 				print '</td>';
@@ -996,9 +996,19 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				elseif (! $isavailable[$preselectedday]['morning'])   $cssonholiday.='onholidaymorning ';
 				elseif (! $isavailable[$preselectedday]['afternoon']) $cssonholiday.='onholidayafternoon ';
 
-				// Duration
-				print '<td align="center" class="duration'.($cssonholiday?' '.$cssonholiday:'').'">';
+				global $daytoparse;
+				$tmparray = dol_getdate($daytoparse,true);	// detail of current day
+				$idw = $tmparray['wday'];
 
+				global $numstartworkingday, $numendworkingday;
+				$cssweekend='';
+				if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+				{
+					$cssweekend='weekend';
+				}
+
+				// Duration
+				print '<td class="center duration'.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">';
 				$dayWorkLoad = $projectstatic->weekWorkLoadPerTask[$preselectedday][$lines[$i]->id];
 				$totalforeachday[$preselectedday]+=$dayWorkLoad;
 
@@ -1214,7 +1224,7 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				print "</td>\n";
 
 				// Planned Workload
-				print '<td align="right">';
+				print '<td align="right" class="leftborder plannedworkload">';
 				if ($lines[$i]->planned_workload) print convertSecondToTime($lines[$i]->planned_workload,'allhourmin');
 				else print '--:--';
 				print '</td>';
@@ -1280,12 +1290,19 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					if ($dayWorkLoad > 0) $alreadyspent=convertSecondToTime($dayWorkLoad,'allhourmin');
 					$alttitle=$langs->trans("AddHereTimeSpentForDay",$tmparray['day'],$tmparray['mon']);
 
-					$tableCell ='<td align="center" class="hide'.$idw.($cssonholiday?' '.$cssonholiday:'').'">';
+					global $numstartworkingday, $numendworkingday;
+					$cssweekend='';
+					if (($idw + 1) < $numstartworkingday || ($idw + 1) > $numendworkingday)	// This is a day is not inside the setup of working days, so we use a week-end css.
+					{
+						$cssweekend='weekend';
+					}
+
+					$tableCell ='<td align="center" class="hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">';
+					$placeholder='';
 					if ($alreadyspent)
 					{
 						$tableCell.='<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 						//$placeholder=' placeholder="00:00"';
-						$placeholder='';
 					 	//$tableCell.='+';
 					}
 				  	$tableCell.='<input type="text" alt="'.($disabledtask?'':$alttitle).'" title="'.($disabledtask?'':$alttitle).'" '.($disabledtask?'disabled':$placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
@@ -1410,7 +1427,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)
 	{
 		$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
@@ -1421,7 +1438,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
 	}
-	$sql.= " WHERE p.entity = ".$conf->entity;
+	$sql.= " WHERE p.entity IN (".getEntity('project').")";
 	$sql.= " AND p.rowid IN (".$projectsListId.")";
 	if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	if ($mytasks)
@@ -1508,6 +1525,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 		print_liste_field_titre("Status","","","","",'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
+		$total_plannedworkload=0;
+		$total_declaredprogressworkload=0;
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);

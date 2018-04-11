@@ -70,11 +70,11 @@ function dol_decode($chain)
 
 /**
  * 	Returns a hash of a string.
- *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function.
- *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
+ *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommanded value is 'password_hash')
+ *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO then md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @getRandomPassword
  */
@@ -83,8 +83,10 @@ function dol_hash($chain, $type='0')
 	global $conf;
 
 	// No need to add salt for password_hash
-	if ($type == '0' && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash'))
-        return password_hash($chain, PASSWORD_DEFAULT);
+	if (($type == '0' || $type == 'auto') && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash'))
+	{
+		return password_hash($chain, PASSWORD_DEFAULT);
+	}
 
 	// Salt value
 	if (! empty($conf->global->MAIN_SECURITY_SALT)) $chain=$conf->global->MAIN_SECURITY_SALT.$chain;
@@ -136,7 +138,7 @@ function dol_verifyHash($chain, $hash, $type='0')
  *	@param  string	$features	    Features to check (it must be module name. Examples: 'societe', 'contact', 'produit&service', 'produit|service', ...)
  *	@param  int		$objectid      	Object ID if we want to check a particular record (optional) is linked to a owned thirdparty (optional).
  *	@param  string	$tableandshare  'TableName&SharedElement' with Tablename is table where object is stored. SharedElement is an optional key to define where to check entity for multicompany modume. Param not used if objectid is null (optional).
- *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be or check with 'level1|level2'.
+ *	@param  string	$feature2		Feature to check, second level of permission (optional). Can be a 'or' check with 'level1|level2'.
  *  @param  string	$dbt_keyfield   Field name for socid foreign key if not fk_soc. Not used if objectid is null (optional)
  *  @param  string	$dbt_select     Field name for select if not rowid. Not used if objectid is null (optional)
  *  @param	Canvas	$objcanvas		Object canvas

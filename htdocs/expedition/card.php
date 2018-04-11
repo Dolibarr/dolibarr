@@ -29,7 +29,7 @@
 /**
  *	\file       htdocs/expedition/card.php
  *	\ingroup    expedition
- *	\brief      Fiche descriptive d'une expedition
+ *	\brief      Card of a shipment
  */
 
 require '../main.inc.php';
@@ -155,27 +155,22 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
-	    // Fill array 'array_options' with data from update form
+		$object->oldcopy = dol_clone($object);
+
+		// Fill array 'array_options' with data from update form
 	    $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute'));
+	    $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 	    if ($ret < 0) $error++;
 
 	    if (! $error)
 	    {
-	        // Actions on extra fields (by external module or standard code)
-	        // TODO le hook fait double emploi avec le trigger !!
-	        $hookmanager->initHooks(array('expeditiondao'));
-	        $parameters = array('id' => $object->id);
-	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	        if (empty($reshook)) {
-	            $result = $object->insertExtraFields();
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-	        } else if ($reshook < 0)
-	            $error++;
+	        // Actions on extra fields
+            $result = $object->insertExtraFields('SHIPMENT_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 	    }
 
 	    if ($error)
@@ -1068,7 +1063,7 @@ if ($action == 'create')
 				// copy from order
 				$orderExtrafields = new Extrafields($db);
 				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);
-				if ($object->fetch_optionals($object->id, $orderExtrafieldLabels) > 0) {
+				if ($object->fetch_optionals() > 0) {
 					$expe->array_options = array_merge($expe->array_options, $object->array_options);
 				}
 				print $object->showOptionals($extrafields, 'edit');
@@ -1270,7 +1265,7 @@ if ($action == 'create')
 						print '<td align="center">';
 						if ($line->product_type == Product::TYPE_PRODUCT || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 						{
-                            if (GETPOST('qtyl'.$indiceAsked, 'int')) $defaultqty=GETPOST('qtyl'.$indiceAsked, 'int');
+                            if (GETPOST('qtyl'.$indiceAsked, 'int')) $deliverableQty=GETPOST('qtyl'.$indiceAsked, 'int');
                             print '<input name="idl'.$indiceAsked.'" type="hidden" value="'.$line->id.'">';
 							print '<input name="qtyl'.$indiceAsked.'" id="qtyl'.$indiceAsked.'" type="text" size="4" value="'.$deliverableQty.'">';
 						}
@@ -1605,9 +1600,9 @@ if ($action == 'create')
 					$orderLineExtrafields = new Extrafields($db);
 					$orderLineExtrafieldLabels = $orderLineExtrafields->fetch_name_optionals_label($object->table_element_line);
 					$srcLine = new OrderLine($db);
-					$srcLine->fetch_optionals($line->id,$orderLineExtrafieldLabels); // fetch extrafields also available in orderline
+					$srcLine->fetch_optionals($line->id); // fetch extrafields also available in orderline
 					$line = new ExpeditionLigne($db);
-					$line->fetch_optionals($object->id,$extralabelslines);
+					$line->fetch_optionals($line->id);
 					$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					print '<tr class="oddeven">';
 					print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var], 'colspan'=>$colspan),$indiceAsked);
@@ -1661,7 +1656,7 @@ else if ($id || $ref)
 		$soc = new Societe($db);
 		$soc->fetch($object->socid);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals();
 
 		$head=shipping_prepare_head($object);
 		dol_fiche_head($head, 'shipping', $langs->trans("Shipment"), -1, 'sending');
@@ -2451,7 +2446,7 @@ else if ($id || $ref)
 			if (is_array($extralabelslines) && count($extralabelslines)>0) {
 				$colspan= empty($conf->productbatch->enabled) ? 5 : 6;
 				$line = new ExpeditionLigne($db);
-				$line->fetch_optionals($lines[$i]->id,$extralabelslines);
+				$line->fetch_optionals($lines[$i]->id);
 				print '<tr class="oddeven">';
 				if ($action == 'editline' && $lines[$i]->id == $line_id)
 				{
@@ -2492,7 +2487,7 @@ else if ($id || $ref)
 		if (empty($reshook))
 		{
 
-			if ($object->statut == 0 && $num_prod > 0)
+			if ($object->statut == Expedition::STATUS_DRAFT && $num_prod > 0)
 			{
 				if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->creer))
 	  		     || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expedition->shipping_advance->validate)))
@@ -2507,9 +2502,16 @@ else if ($id || $ref)
 
 			// TODO add alternative status
 			// 0=draft, 1=validated, 2=billed, we miss a status "delivered" (only available on order)
-			if ($object->statut == 2 && $object->billed && $user->rights->expedition->creer)
+			if ($object->statut == Expedition::STATUS_CLOSED && $user->rights->expedition->creer)
 			{
-			    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+				if (! empty($conf->facture->enabled) && ! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))  // Quand l'option est on, il faut avoir le bouton en plus et non en remplacement du Close ?
+				{
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ClassifyUnbilled").'</a>';
+				}
+				else
+				{
+			    	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+				}
 			}
 
 			// Send
@@ -2517,9 +2519,9 @@ else if ($id || $ref)
 			{
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 				}
-				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendMail').'</a>';
 			}
 
 			// Create bill

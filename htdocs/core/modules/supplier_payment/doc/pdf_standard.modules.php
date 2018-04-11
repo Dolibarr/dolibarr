@@ -65,9 +65,9 @@ class pdf_standard extends ModelePDFSuppliersPayments
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "standard";

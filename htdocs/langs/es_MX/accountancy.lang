@@ -46,7 +46,6 @@ LabelAccount=Descripción de la cuenta
 Sens=Significado
 DelYear=Año a borrar
 DelJournal=Diario a borrar
-DelBookKeeping=Eliminar registro del libro mayor
 DescFinanceJournal=Diario financiero incluyendo todos los tipos de pagos por cuenta bancaria
 NewAccountingMvt=Nueva transacción
 NumMvts=Número de transacción

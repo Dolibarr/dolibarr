@@ -33,6 +33,7 @@ PropalStatusSigned=وقعت (لمشروع القانون)
 PropalStatusNotSigned=لم يتم التوقيع (مغلقة)
 PropalStatusBilled=فواتير
 PropalStatusDraftShort=مسودة
+PropalStatusValidatedShort=التحقق من صحة
 PropalStatusClosedShort=مغلقة
 PropalStatusSignedShort=وقعت
 PropalStatusNotSignedShort=لم يتم التوقيع

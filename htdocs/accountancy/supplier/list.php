@@ -222,7 +222,7 @@ $sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn_det as l ON f.rowid = l.
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_buy = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."'";
 $sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
-$sql.= " AND product_type <= 2";
+$sql.= " AND l.product_type <= 2";
 // Add search filter like
 if ($search_lineid) {
     $sql .= natural_search("l.rowid", $search_lineid, 1);

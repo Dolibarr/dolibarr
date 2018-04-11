@@ -236,7 +236,9 @@ class Categorie extends CommonObject
 				$this->type			= $res['type'];
 				$this->entity		= $res['entity'];
 
-				$this->fetch_optionals($this->id,null);
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				$this->db->free($resql);
 
@@ -336,28 +338,23 @@ class Categorie extends CommonObject
 
 				$action='create';
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO the hook duplicates the trigger !!
-				$hookmanager->initHooks(array('HookModuleNamedao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
-                // Call trigger
-                $result=$this->call_trigger('CATEGORY_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				if (! $error)
+				{
+	                // Call trigger
+    	            $result=$this->call_trigger('CATEGORY_CREATE',$user);
+        	        if ($result < 0) { $error++; }
+            	    // End call triggers
+				}
 
                 if ( ! $error )
                 {
@@ -430,28 +427,23 @@ class Categorie extends CommonObject
 		{
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			// TODO the hook duplicates the trigger !!
-			$hookmanager->initHooks(array('HookCategorydao'));
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
-            // Call trigger
-            $result=$this->call_trigger('CATEGORY_MODIFY',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
+			if (! $error)
+			{
+	            // Call trigger
+    	        $result=$this->call_trigger('CATEGORY_MODIFY',$user);
+        	    if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            	// End call triggers
+			}
 
 			$this->db->commit();
 
@@ -651,18 +643,6 @@ class Categorie extends CommonObject
 
 		if ($this->id == -1) return -2;
 
-		// For backward compatibility
-		if ($type == 'societe')
-		{
-			$type = 'customer';
-			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
-		}
-		elseif ($type == 'fournisseur')
-		{
-			$type = 'supplier';
-			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
-		}
-
         $this->db->begin();
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type];
@@ -713,11 +693,11 @@ class Categorie extends CommonObject
 				}
 			}
 
-			// Save object we want to link category to into category instance to provide information to trigger
-			$this->linkto=$obj;
+
 
             // Call trigger
-            $result=$this->call_trigger('CATEGORY_LINK',$user);
+			$this->context=array('linkto'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
+			$result=$this->call_trigger('CATEGORY_LINK',$user);
             if ($result < 0) { $error++; }
             // End call triggers
 
@@ -825,7 +805,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT c.fk_" . $this->MAP_CAT_FK[$type];
 		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as c";
 		$sql .= ", " . MAIN_DB_PREFIX . $this->MAP_OBJ_TABLE[$type] . " as o";
-		$sql .= " WHERE o.entity IN (" . getEntity( $obj->element, 1).")";
+		$sql .= " WHERE o.entity IN (" . getEntity( $obj->element).")";
 		$sql.= " AND c.fk_categorie = ".$this->id;
 		$sql .= " AND c.fk_" . $this->MAP_CAT_FK[$type] . " = o.rowid";
 
@@ -896,8 +876,12 @@ class Categorie extends CommonObject
 
 		$sub_type = $type;
 		$subcol_name = "fk_".$type;
-		if ($type=="customer" || $type=="supplier") {
+		if ($type=="customer") {
 			$sub_type="societe";
+			$subcol_name="fk_soc";
+		}
+		if ($type=="supplier") {
+			$sub_type="fournisseur";
 			$subcol_name="fk_soc";
 		}
 		if ($type=="contact") {
@@ -1066,7 +1050,7 @@ class Categorie extends CommonObject
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= ", t.label as label_trans, t.description as description_trans";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		if (! empty($conf->global->MAIN_MULTILANGS)) $sql.= " LEFT  JOIN ".MAIN_DB_PREFIX."categorie_lang as t ON t.fk_category=c.rowid AND t.lang='".$current_lang."'";
-		$sql .= " WHERE c.entity IN (" . getEntity( 'category', 1 ) . ")";
+		$sql .= " WHERE c.entity IN (" . getEntity( 'category') . ")";
 		$sql .= " AND c.type = " . $type;
 
 		dol_syslog(get_class($this)."::get_full_arbo get category list", LOG_DEBUG);
@@ -1197,6 +1181,8 @@ class Categorie extends CommonObject
 	 */
 	function get_all_categories($type=null, $parent=false)
 	{
+		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE entity IN (".getEntity('category').")";
 		if (! is_null($type))
@@ -1481,7 +1467,7 @@ class Categorie extends CommonObject
     		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
     		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
     		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
-    		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
+    		$sql .= " AND c.entity IN (" . getEntity( 'category') . ")";
 
     		$res = $this->db->query($sql);
     		if ($res)
@@ -1542,7 +1528,7 @@ class Categorie extends CommonObject
 		// Generation requete recherche
 		$sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "categorie";
 		$sql .= " WHERE type = " . $this->MAP_ID[$type];
-		$sql .= " AND entity IN (" . getEntity( 'category', 1 ) . ")";
+		$sql .= " AND entity IN (" . getEntity( 'category') . ")";
 		if ($nom)
 		{
 			if (! $exact)

@@ -80,7 +80,7 @@ class PaiementFourn extends Paiement
 		$sql.= ' c.code as paiement_code, c.libelle as paiement_type,';
 		$sql.= ' p.num_paiement, p.note, b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as p';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid ';
 		$sql.= ' WHERE p.entity IN ('.getEntity('facture_fourn').')';
 		if ($id > 0)
@@ -210,11 +210,12 @@ class PaiementFourn extends Paiement
 						$resql=$this->db->query($sql);
 						if ($resql)
 						{
+							$invoice=new FactureFournisseur($this->db);
+							$invoice->fetch($facid);
+
 							// If we want to closed payed invoices
 							if ($closepaidinvoices)
 							{
-								$invoice=new FactureFournisseur($this->db);
-								$invoice->fetch($facid);
 								$paiement = $invoice->getSommePaiement();
 								//$creditnotes=$invoice->getSumCreditNotesUsed();
 								$creditnotes=0;
@@ -228,17 +229,34 @@ class PaiementFourn extends Paiement
 								}
 								else dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing.");
 							}
+
+							// Regenerate documents of invoices
+							if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+							{
+								$outputlangs = $langs;
+								if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $invoice->thirdparty->default_lang;
+								if (! empty($newlang)) {
+									$outputlangs = new Translate("", $conf);
+									$outputlangs->setDefaultLang($newlang);
+								}
+								$ret = $invoice->fetch($facid); // Reload to get new records
+								$result = $invoice->generateDocument($invoice->modelpdf, $outputlangs);
+								if ($result < 0) {
+									setEventMessages($invoice->error, $invoice->errors, 'errors');
+									$error++;
+								}
+							}
 						}
 						else
 						{
-							dol_syslog('Paiement::Create Erreur INSERT dans paiement_facture '.$facid);
+							$this->error=$this->db->lasterror();
 							$error++;
 						}
 
 					}
 					else
 					{
-						dol_syslog('PaiementFourn::Create Montant non numerique',LOG_ERR);
+						dol_syslog(get_class($this).'::Create Amount line '.$key.' not a number. We discard it.');
 					}
 				}
 

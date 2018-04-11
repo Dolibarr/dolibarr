@@ -78,6 +78,7 @@ ResultOfMailSending=Resultado del envío masivo de e-mails
 NbSelected=Nº seleccionados
 NbIgnored=Nº ignorados
 NbSent=Nº enviados
+SentXXXmessages=%s message(s) sent.
 ConfirmUnvalidateEmailing=¿Está seguro de querer cambiar el estado del e-mailing <b>%s</b> a borrador?
 MailingModuleDescContactsWithThirdpartyFilter=Filtro de contactos con tercero
 MailingModuleDescContactsByCompanyCategory=Contactos de terceros por categoría
@@ -87,6 +88,7 @@ MailingModuleDescEmailsFromFile=E-mails de archivo
 MailingModuleDescEmailsFromUser=E-mails enviados por usuario
 MailingModuleDescDolibarrUsers=Usuarios con e-mails
 MailingModuleDescThirdPartiesByCategories=Terceros (por categoría)
+SendingFromWebInterfaceIsNotAllowed=El envío desde la interfaz web no está permitido.
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Línea %s en archivo

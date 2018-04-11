@@ -341,13 +341,9 @@ if (! empty($object->share))
 {
 	if ($action != 'edit')
 	{
-		$modulepart='ecm';
 		$forcedownload=0;
 
 		$paramlink='';
-		//if (! empty($modulepart)) $paramlink.=($paramlink?'&':'').'modulepart='.$modulepart;		// For sharing with hash (so public files), modulepart is not required.
-		//if (! empty($object->entity)) $paramlink.='&entity='.$object->entity; 					// For sharing with hash (so public files), entity is not required.
-		//$paramlink.=($paramlink?'&':'').'file='.urlencode($filepath);								// No need of name of file for public link, we will use the hash
 		if (! empty($object->share)) $paramlink.=($paramlink?'&':'').'hashp='.$object->share;			// Hash for public share
 		if ($forcedownload) $paramlink.=($paramlink?'&':'').'attachment=1';
 

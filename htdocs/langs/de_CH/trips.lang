@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - trips
 ShowExpenseReport=Spesenreport anzeigen
+TripsAndExpenses=Reise- und Fahrtspesen
 TripCard=Reisekosten Karte
+AddTrip=Reisekostenabrechnung erstellen
 ListOfTrips=Liste Reise- und Spesenabrechnungen
 TypeFees=Spesen- und Kostenarten
 ShowTrip=Spesenreport anzeigen

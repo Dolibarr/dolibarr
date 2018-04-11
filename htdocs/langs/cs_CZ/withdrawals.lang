@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Plocha trvalých příkazů zákazníků
 SuppliersStandingOrdersArea=Direct kreditní platební příkazy area
-StandingOrders=Inkasní příkazy k úhradě
-StandingOrder=Platba inkasem platební příkaz
+StandingOrdersPayment=Inkasní příkazy k úhradě
+StandingOrderPayment=Platba inkasem platební příkaz
 NewStandingOrder=Nový příkaz k inkasu
 StandingOrderToProcess=Ve zpracování
 WithdrawalsReceipts=příkazy k inkasu
@@ -26,7 +26,7 @@ LastWithdrawalReceipt=Poslední %s přímého inkasa debetní
 MakeWithdrawRequest=Vytvořit požadavek výběru
 WithdrawRequestsDone=%s přímé žádosti o debetní platební zaznamenán
 ThirdPartyBankCode=Bankovní kód třetí strany
-NoInvoiceCouldBeWithdrawed=Neúspěšný výběr z faktur. Zkontrolujte, že faktury jsou na firmy s platným BAN.
+NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoices are on companies with a valid default BAN and that BAN has a RUM with mode <strong>%s</strong>.
 ClassCredited=Označit přidání kreditu
 ClassCreditedConfirm=Jste si jisti, že chcete zařadit tento výběr příjmu jako připsaný na váš bankovní účet?
 TransData=Datum přenosu
@@ -78,7 +78,7 @@ ThisWillAlsoAddPaymentOnInvoice=This will also record payments to invoices and w
 StatisticsByLineStatus=Statistika podle stavu řádků
 RUM=UMR
 RUMLong=Unikátní Mandát Referenční
-RUMWillBeGenerated=UMR číslo se vygenerují údaje o bankovním účtu jsou uloženy
+RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved
 WithdrawMode=Režim přímé inkaso (FRST nebo opakovat)
 WithdrawRequestAmount=Množství přání inkasa
 WithdrawRequestErrorNilAmount=Nelze vytvořit inkasa Žádost o prázdnou hodnotu.
@@ -98,6 +98,10 @@ ModeFRST=Jednorázová platba
 PleaseCheckOne=Zkontrolujte prosím jen jeden
 DirectDebitOrderCreated=Direct debit order %s created
 AmountRequested=Amount requested
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Execution date
+CreateForSepa=Create direct debit file
 
 ### Notifications
 InfoCreditSubject=Placení inkasní příkaz k úhradě %s bankou

@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - compta
-MenuFinancial=Facturación/Pagos
+MenuFinancial=Facturación | Pago
 TaxModuleSetupToModifyRules=Vaya a <a href="%s"> Configuración del módulo de impuestos </a> para modificar las reglas de cálculo
 TaxModuleSetupToModifyRulesLT=Vaya a <a href="%s"> Configuración de la empresa </a> para modificar las reglas de cálculo
 OptionMode=Opción para contabilidad
@@ -26,7 +26,6 @@ Credit=Crédito
 Piece=Contabilidad Doc.
 AmountHTVATRealReceived=Neto recaudado
 AmountHTVATRealPaid=Neto pagado
-VATToPay=IVA Debito
 VATReceived=Impuesto recibido
 VATToCollect=IVA Crédito
 VATSummary=Balance de impuestos
@@ -137,23 +136,13 @@ RulesAmountOnInOutBookkeepingRecord=Incluye registro en su Libro mayor con cuent
 RulesResultBookkeepingPredefined=Incluye registro en su Libro mayor con cuentas de contabilidad que tiene el grupo "GASTOS" o "INGRESOS"
 RulesResultBookkeepingPersonalized=Muestra un registro en su Libro mayor con cuentas de contabilidad <b> agrupadas por grupos personalizados </ b>
 SeePageForSetup=Ver el menú <a href="%s"> %s </a> para la configuración
-LT2ReportByCustomersInInputOutputModeES=Informe de un tercero IRPF
-LT1ReportByCustomersInInputOutputModeES=Informe de un tercero RE
-VATReport=Informe de IVA
 VATReportByCustomersInInputOutputMode=Informe del cliente IVA recaudado y pagado
-VATReportByCustomersInDueDebtMode=Informe del cliente IVA recaudado y pagado
-VATReportByQuartersInInputOutputMode=Informe por tasa de IVA cobrado y pagado
-LT1ReportByQuartersInInputOutputMode=Informe por tasa RE
-LT2ReportByQuartersInInputOutputMode=Informe por tasa de IRPF
-VATReportByQuartersInDueDebtMode=Informe por tasa de IVA cobrado y pagado
-LT1ReportByQuartersInDueDebtMode=Informe por tasa RE
-LT2ReportByQuartersInDueDebtMode=Informe por tasa de IRPF
+LT1ReportByQuartersES=Informe por tasa RE
+LT2ReportByQuartersES=Informe por tasa de IRPF
 SeeVATReportInInputOutputMode=Ver informe<b>%sajuste de IVA%s</b>para un cálculo estándar
 SeeVATReportInDueDebtMode=Consulte el informe <b>%s IVA en flujo%s</b> para un cálculo con una opción en el flujo
 RulesVATInServices=- Para los servicios, el informe incluye las regulaciones del IVA realmente recibidas o emitidas sobre la base de la fecha de pago.
-RulesVATInProducts=- Para los activos materiales, incluye las facturas de IVA en función de la fecha de facturación.
 RulesVATDueServices=- Para los servicios, el informe incluye las facturas con IVA adeudadas, pagadas o no, en función de la fecha de la factura.
-RulesVATDueProducts=- Para los activos materiales, incluye las facturas de IVA, basadas en la fecha de la factura.
 OptionVatInfoModuleComptabilite=Nota: Para los activos materiales, debe usar la fecha de entrega para ser más justo.
 PercentOfInvoice=%% / factura
 NotUsedForGoods=No usado en productos
@@ -179,8 +168,6 @@ CalculationRuleDesc=Para calcular el IVA total, hay dos métodos: <br>El método
 CalculationRuleDescSupplier=De acuerdo con el proveedor, elija el método apropiado para aplicar la misma regla de cálculo y obtenga el mismo resultado esperado por su proveedor.
 TurnoverPerProductInCommitmentAccountingNotRelevant=El informe de facturación por producto, al utilizar el modo <b> contabilidad de efectivo </ b> no es relevante. Este informe solo está disponible cuando se utiliza el modo <b> contabilidad del compromiso </ b> (ver configuración del módulo de contabilidad).
 AccountancyJournal=Revista de códigos contables
-ACCOUNTING_VAT_SOLD_ACCOUNT=Cuenta de contabilidad por defecto para cobrar el IVA - IVA sobre las ventas (se usa si no está definido en la configuración del diccionario del IVA)
-ACCOUNTING_VAT_BUY_ACCOUNT=Cuenta de contabilidad por defecto para el IVA recuperado - IVA en compras (utilizado si no está definido en la configuración del diccionario de IVA)
 ACCOUNTING_VAT_PAY_ACCOUNT=Cuenta de contabilidad por defecto para pagar el IVA
 ACCOUNTING_ACCOUNT_CUSTOMER=Cuenta de contabilidad utilizada para terceros clientes
 ACCOUNTING_ACCOUNT_CUSTOMER_Desc=La cuenta de contabilidad dedicada definida en la tarjeta de un tercero se utilizará solo para los contadores de Subledger. Este se usará para el Libro mayor y como valor predeterminado de la contabilidad del Libro mayor auxiliar si no se define una cuenta de cliente dedicada dedicada a terceros.

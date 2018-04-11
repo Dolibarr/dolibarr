@@ -57,13 +57,11 @@ class modHoliday extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
-		$this->description = "Leave management";
+		$this->description = "Leave requests";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->special = 0;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -158,7 +156,25 @@ class modHoliday extends DolibarrModules
 
 
 		// Exports
-		$r=1;
+		$r=0;
+
+		$r++;
+		$this->export_code[$r]='leaverequest_'.$r;
+		$this->export_label[$r]='ListeCP';
+		$this->export_icon[$r]='holiday';
+		$this->export_permission[$r]=array(array("holiday","read_all"));
+		$this->export_fields_array[$r]=array('d.rowid'=>"LeaveId",'d.fk_type'=>'TypeOfLeaveId','t.code'=>'TypeOfLeaveCode','t.label'=>'TypeOfLeaveLabel','d.fk_user'=>'UserID','u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.halfday'=>'HalfDay','d.date_valid'=>'DateApprove','d.fk_validator'=>"UserForApprovalID",'ua.lastname'=>"UserForApprovalLastname",'ua.firstname'=>"UserForApprovalFirstname",'ua.login'=>"UserForApprovalLogin",'d.description'=>'Description','d.statut'=>'Status');
+		$this->export_entities_array[$r]=array('u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ua.lastname'=>'user','ua.firstname'=>'user','ua.login'=>'user');
+		$this->export_alias_array[$r]=array('d.rowid'=>"idholiday");
+		$this->export_dependencies_array[$r]=array(); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
+
+		$this->export_sql_start[$r]='SELECT DISTINCT ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'holiday as d';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_holiday_types as t ON t.rowid = d.fk_type';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'user as ua ON ua.rowid = d.fk_validator,';
+		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'user as u';
+		$this->export_sql_end[$r] .=' WHERE d.fk_user = u.rowid';
+		$this->export_sql_end[$r] .=' AND d.entity IN ('.getEntity('holiday').')';
 
 		// Example:
 		// $this->export_code[$r]=$this->rights_class.'_'.$r;

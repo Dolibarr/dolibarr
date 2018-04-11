@@ -337,12 +337,8 @@ class EcmFiles //extends CommonObject
 
 			// Retrieve all extrafields for invoice
 			// fetch optionals attributes and labels
-			/*
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields=new ExtraFields($this->db);
-			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-			$this->fetch_optionals($this->id,$extralabels);
-            */
+			// $this->fetch_optionals();
+
 			// $this->fetch_lines();
 
 			$this->db->free($resql);

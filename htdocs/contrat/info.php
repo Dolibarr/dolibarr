@@ -41,6 +41,17 @@ $ref		= GETPOST('ref','alpha');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat', $id, '');
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
+
+
+/*
+ * Actions
+ */
+
+// None
+
+
 
 /*
  * View

@@ -18,10 +18,23 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
+
+
+
+/*ini_set('unserialize_callback_func', 'mycallback');
+
+function mycallback($classname)
+{
+	//var_dump($classname);
+	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
+}*/
+
+
+
 /**
  *	Class to manage Blocked Log
  */
-
 class BlockedLog
 {
 	/**
@@ -90,6 +103,7 @@ class BlockedLog
 	public $ref_object = '';
 
 	public $object_data = null;
+	public $user_fullname='';
 
 	/**
 	 * Array of tracked event codes
@@ -149,11 +163,10 @@ class BlockedLog
 		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_MODIFY']='logMEMBER_SUBSCRIPTION_MODIFY';
 		if ($conf->adherent->enabled) $this->trackedevents['MEMBER_SUBSCRIPTION_DELETE']='logMEMBER_SUBSCRIPTION_DELETE';
 
-		/*
-		 $trackedevents['PAYMENT_VARIOUS_CREATE']='BlockedLogVariousPaymentCreate';
-		 $trackedevents['PAYMENT_VARIOUS_MODIFY']='BlockedLogVariousPaymentModify';
-		 $trackedevents['PAYMENT_VARIOUS_DELETE']='BlockedLogVariousPaymentDelete';
-		*/
+
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_CREATE']='logPAYMENT_VARIOUS_CREATE';
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_MODIFY']='logPAYMENT_VARIOUS_MODIFY';
+		if ($conf->banque->enabled) $this->trackedevents['PAYMENT_VARIOUS_DELETE']='logPAYMENT_VARIOUS_DELETE';
 	}
 
 	/**
@@ -218,10 +231,32 @@ class BlockedLog
 				$this->error++;
 			}
 		}
+		else if($this->element === 'payment_various') {
+			require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+
+			$object = new PaymentVarious($this->db);
+			if ($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
 		else if($this->element === 'don' || $this->element === 'donation') {
 			require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 
 			$object = new Don($this->db);
+			if ($object->fetch($this->fk_object)>0) {
+				return $object->getNomUrl(1);
+			}
+			else{
+				$this->error++;
+			}
+		}
+		else if($this->element === 'subscription') {
+			require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+
+			$object = new Subscription($this->db);
 			if ($object->fetch($this->fk_object)>0) {
 				return $object->getNomUrl(1);
 			}
@@ -278,11 +313,14 @@ class BlockedLog
 	 *      @param		Object		$object     object to store
 	 *      @param		string		$action     action
 	 *      @param		string		$amounts    amounts
+	 *      @param		User		$fuser		User object (forced)
 	 *      @return		int						>0 if OK, <0 if KO
 	 */
-	public function setObjectData(&$object, $action, $amounts)
+	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
 		global $langs, $user, $mysoc;
+
+		if (is_object($fuser)) $user = $fuser;
 
 		// Generic fields
 
@@ -299,9 +337,13 @@ class BlockedLog
 		{
 			$this->date_object = $object->datev;
 		}
-		elseif ($object->element == 'payment_donation')
+		elseif ($object->element == 'payment_donation' || $object->element == 'payment_various')
 		{
 			$this->date_object = $object->datepaid?$object->datepaid:$object->datep;
+		}
+		elseif ($object->element=='subscription')
+		{
+			$this->date_object = $object->dateh;
 		}
 		else {
 			$this->date_object = $object->date;
@@ -313,7 +355,10 @@ class BlockedLog
 		// id of object
 		$this->fk_object = $object->id;
 
+
+		// Set object_data
 		$this->object_data=new stdClass();
+		$arrayoffieldstoexclude = array('table_element','fields','ref_previous','ref_next','origin','origin_id','oldcopy','picto','error','modelpdf','table_element_line','linkedObjectsIds','linkedObjects','fk_delivery_address');
 
 		// Add thirdparty info
 		if (empty($object->thirdparty) && method_exists($object, 'fetch_thirdparty')) $object->fetch_thirdparty();
@@ -323,7 +368,7 @@ class BlockedLog
 
 			foreach($object->thirdparty as $key=>$value)
 			{
-				if (in_array($key, array('fields'))) continue;	// Discard some properties
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
 				'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -339,7 +384,7 @@ class BlockedLog
 
 			foreach($mysoc as $key=>$value)
 			{
-				if (in_array($key, array('fields'))) continue;	// Discard some properties
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
 				'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 				'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -356,12 +401,11 @@ class BlockedLog
 		}
 
 		// Field specific to object
-
 		if ($this->element == 'facture')
 		{
 			foreach($object as $key=>$value)
 			{
-				if (in_array($key, array('fields'))) continue;	// Discard some properties
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
 				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public','lines'
 				))) continue;									// Discard if not into a dedicated list
@@ -392,7 +436,7 @@ class BlockedLog
 		{
 			foreach($object as $key=>$value)
 			{
-				if (in_array($key, array('fields'))) continue;	// Discard some properties
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 				if (! in_array($key, array(
 				'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
 				))) continue;									// Discard if not into a dedicated list
@@ -401,20 +445,25 @@ class BlockedLog
 
 			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
-		elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation')
+		elseif ($this->element == 'payment' || $this->element == 'payment_supplier' || $this->element == 'payment_donation' || $this->element == 'payment_various')
 		{
 			$datepayment = $object->datepaye?$object->datepaye:($object->datepaid?$object->datepaid:$object->datep);
-			$paymenttypeid = $object->paiementid?$object->paiementid:$object->paymenttype;
+			$paymenttypeid = $object->paiementid?$object->paiementid:($object->paymenttype?$object->paymenttype:$object->type_payment);
 
 			$this->object_data->ref = $object->ref;
 			$this->object_data->date = $datepayment;
 			$this->object_data->type_code = dol_getIdFromCode($this->db, $paymenttypeid, 'c_paiement', 'id', 'code');
-			$this->object_data->payment_num = $object->num_paiement;
+			$this->object_data->payment_num = ($object->num_paiement?$object->num_paiement:$object->num_payment);
 			//$this->object_data->fk_account = $object->fk_account;
 			$this->object_data->note = $object->note;
 			//var_dump($this->object_data);exit;
 
 			$totalamount=0;
+
+			if (! is_array($object->amounts) && $object->amount)
+			{
+				$object->amounts=array($object->id => $object->amount);
+			}
 
 			$paymentpartnumber=0;
 			foreach($object->amounts as $objid => $amount)
@@ -439,26 +488,41 @@ class BlockedLog
 					include_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
 					$tmpobject = new Don($this->db);
 				}
+				elseif ($this->element == 'payment_various')
+				{
+					include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+					$tmpobject = new PaymentVarious($this->db);
+				}
+
 				if (! is_object($tmpobject))
 				{
 					continue;
 				}
 
 				$result = $tmpobject->fetch($objid);
+
 				if ($result <= 0)
 				{
 					$this->error = $tmpobject->error;
 					$this->errors = $tmpobject->errors;
+					dol_syslog("Failed to fetch object with id ".$objid, LOG_ERR);
 					return -1;
 				}
 
 				$paymentpart = new stdClass();
 				$paymentpart->amount = $amount;
 
-				if ($this->element != 'payment_donation')
+				if (! in_array($this->element, array('payment_donation', 'payment_various')))
 				{
 					$result = $tmpobject->fetch_thirdparty();
-					if ($result <= 0)
+					if ($result == 0)
+					{
+						$this->error='Failed to fetch thirdparty for object with id '.$tmpobject->id;
+						$this->errors[] = $this->error;
+						dol_syslog("Failed to fetch thirdparty for object with id ".$tmpobject->id, LOG_ERR);
+						return -1;
+					}
+					elseif ($result < 0)
 					{
 						$this->error = $tmpobject->error;
 						$this->errors = $tmpobject->errors;
@@ -468,7 +532,7 @@ class BlockedLog
 					$paymentpart->thirdparty = new stdClass();
 					foreach($tmpobject->thirdparty as $key=>$value)
 					{
-						if (in_array($key, array('fields'))) continue;	// Discard some properties
+						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
 						if (! in_array($key, array(
 						'name','name_alias','ref_ext','address','zip','town','state_code','country_code','idprof1','idprof2','idprof3','idprof4','idprof5','idprof6','phone','fax','email','barcode',
 						'tva_intra', 'localtax1_assuj', 'localtax1_value', 'localtax2_assuj', 'localtax2_value', 'managers', 'capital', 'typent_code', 'forme_juridique_code', 'code_client', 'code_fournisseur'
@@ -481,21 +545,25 @@ class BlockedLog
 				if ($this->element == 'payment_donation') $paymentpart->donation = new stdClass();
 				else $paymentpart->invoice = new stdClass();
 
-				foreach($tmpobject as $key=>$value)
+				if ($this->element != 'payment_various')
 				{
-					if (in_array($key, array('fields'))) continue;	// Discard some properties
-					if (! in_array($key, array(
-					'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
-					))) continue;									// Discard if not into a dedicated list
-					if (!is_object($value))
+					foreach($tmpobject as $key=>$value)
 					{
-						if ($this->element == 'payment_donation') $paymentpart->donation->{$key} = $value;
-						else $paymentpart->invoice->{$key} = $value;
+						if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
+						if (! in_array($key, array(
+						'ref','facnumber','ref_client','ref_supplier','date','datef','type','total_ht','total_tva','total_ttc','localtax1','localtax2','revenuestamp','datepointoftax','note_public'
+						))) continue;									// Discard if not into a dedicated list
+						if (!is_object($value))
+						{
+							if ($this->element == 'payment_donation') $paymentpart->donation->{$key} = $value;
+							elseif ($this->element == 'payment_various') $paymentpart->various->{$key} = $value;
+							else $paymentpart->invoice->{$key} = $value;
+						}
 					}
-				}
 
-				$paymentpartnumber++;
-				$this->object_data->payment_part[$paymentpartnumber] = $paymentpart;
+					$paymentpartnumber++;	// first payment will be 1
+					$this->object_data->payment_part[$paymentpartnumber] = $paymentpart;
+				}
 			}
 
 			$this->object_data->amount = $totalamount;
@@ -505,6 +573,29 @@ class BlockedLog
 		elseif($this->element == 'payment_salary')
 		{
 			$this->object_data->amounts = array($object->amount);
+
+			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
+		}
+		elseif($this->element == 'subscription')
+		{
+			foreach($object as $key=>$value)
+			{
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
+				if (! in_array($key, array(
+					'id','datec','dateh','datef','fk_adherent','amount','import_key','statut','note'
+				))) continue;									// Discard if not into a dedicated list
+				if (!is_object($value)) $this->object_data->{$key} = $value;
+			}
+
+			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
+		}
+		else 	// Generic case
+		{
+			foreach($object as $key=>$value)
+			{
+				if (in_array($key, $arrayoffieldstoexclude)) continue;	// Discard some properties
+				if (!is_object($value)) $this->object_data->{$key} = $value;
+			}
 
 			if (! empty($object->newref)) $this->object_data->ref = $object->newref;
 		}
@@ -562,7 +653,7 @@ class BlockedLog
 				$this->fk_user 			= $obj->fk_user;
 				$this->user_fullname	= $obj->user_fullname;
 
-				$this->object_data		= unserialize($obj->object_data);
+				$this->object_data		= $this->dolDecodeBlockedData($obj->object_data);
 
 				$this->signature		= $obj->signature;
 				$this->signature_line	= $obj->signature_line;
@@ -583,6 +674,31 @@ class BlockedLog
 		}
 
 	}
+
+
+	/**
+	 * Decode data
+	 *
+	 * @param	string	$data	Data to unserialize
+	 * @param	string	$mode	0=unserialize, 1=json_decode
+	 * @return 	string			Value unserialized
+	 */
+	public function dolDecodeBlockedData($data, $mode=0)
+	{
+		try
+		{
+			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			//include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+			$aaa = unserialize($data);
+			//$aaa = unserialize($data);
+		}
+		catch(Exception $e)
+		{
+			//print $e->getErrs);
+		}
+		return $aaa;
+	}
+
 
 	/**
 	 *	Set block certified by authority
@@ -633,11 +749,12 @@ class BlockedLog
 			return -2;
 		}
 
-		if (empty($this->action) || empty($this->fk_user) || empty($this->user_fullname)) {
+		if (empty($this->action)) {
 			$this->error=$langs->trans("BadParameterWhenCallingCreateOfBlockedLog");
 			dol_syslog($this->error, LOG_WARNING);
 			return -3;
 		}
+		if (empty($this->fk_user)) $this->user_fullname='(Anonymous)';
 
 		$this->date_creation = dol_now();
 

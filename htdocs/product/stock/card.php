@@ -117,7 +117,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->su
 	if ($result > 0)
 	{
 	    setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
-		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php');
+		header("Location: ".DOL_URL_ROOT.'/product/stock/list.php?restore_lastsearch_values=1');
 		exit;
 	}
 	else
@@ -446,7 +446,7 @@ else
 			$totalunit=0;
 			$totalvalue=$totalvaluesell=0;
 
-			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
+			$sql = "SELECT p.rowid as rowid, p.ref, p.label as produit, p.tobatch, p.fk_product_type as type, p.pmp as ppmp, p.price, p.price_ttc, p.entity,";
 			$sql.= " ps.reel as value";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 			$sql.= " WHERE ps.fk_product = p.rowid";
@@ -487,10 +487,11 @@ else
 					print '<tr class="oddeven">';
 					print "<td>";
 					$productstatic->id=$objp->rowid;
-                    $productstatic->ref = $objp->ref;
-                    $productstatic->label = $objp->produit;
+					$productstatic->ref = $objp->ref;
+					$productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
 					$productstatic->entity=$objp->entity;
+					$productstatic->status_batch=$objp->tobatch; 
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
 

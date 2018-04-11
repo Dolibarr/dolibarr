@@ -94,7 +94,11 @@ delete from llx_livraison where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
 delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
+
+delete from llx_rights_def where perms IS NULL;
 delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
+delete from llx_usergroup_rights where fk_usergroup not in (select rowid from llx_usergroup);
+delete from llx_usergroup_rights where fk_id not in (select id from llx_rights_def);
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
@@ -343,6 +347,8 @@ update llx_facturedet set product_type = 1 where product_type = 2;
 --update llx_propaldet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 --update llx_commandedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
 --update llx_facturedet as d set d.product_type = 1 where d.fk_product = 22 and d.product_type = 0;
+
+update llx_propal set fk_statut = 1 where fk_statut = -1;
 
 delete from llx_commande_fournisseur_dispatch where fk_commandefourndet = 0 or fk_commandefourndet IS NULL;
 

@@ -20,6 +20,7 @@ SellingPrices=Verkaufspreise
 BuyingPrices=Einkaufspreise
 CustomerPrices=Kunden Preise
 SuppliersPrices=Lieferanten Preise
+unitS=Zweitens
 ServiceCodeModel=Vorlage für Dienstleistungs-Referenz
 FillBarCodeTypeAndValueFromProduct=Barcode-Typ und -Wert von einem Produkt wählen.
 PriceByCustomer=Unterschiedliche Preise je nach Kunde

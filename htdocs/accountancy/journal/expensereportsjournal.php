@@ -140,9 +140,9 @@ if ($result) {
 		$compta_fees = $obj->compte;
 
 		$vatdata = getTaxesFromId($obj->tva_tx.($obj->vat_src_code?' ('.$obj->vat_src_code.')':''), $mysoc, $mysoc, 0);
-		$compta_tva = (! empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $account_vat);
-		$compta_localtax1 = (! empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
-		$compta_localtax2 = (! empty($vatdata['accountancy_code_sell']) ? $vatdata['accountancy_code_sell'] : $cpttva);
+		$compta_tva = (! empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $account_vat);
+		$compta_localtax1 = (! empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
+		$compta_localtax2 = (! empty($vatdata['accountancy_code_buy']) ? $vatdata['accountancy_code_buy'] : $cpttva);
 
 		// Define array to display all VAT rates that use this accounting account $compta_tva
 		if (price2num($obj->tva_tx) || ! empty($obj->vat_src_code))
@@ -216,6 +216,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
+					$bookkeeping->entity = $conf->entity;
 
 					$totaldebit += $bookkeeping->debit;
 					$totalcredit += $bookkeeping->credit;
@@ -265,6 +266,7 @@ if ($action == 'writebookkeeping') {
 						$bookkeeping->code_journal = $journal;
 						$bookkeeping->journal_label = $journal_label;
 						$bookkeeping->fk_user_author = $user->id;
+						$bookkeeping->entity = $conf->entity;
 
 						$totaldebit += $bookkeeping->debit;
 						$totalcredit += $bookkeeping->credit;
@@ -320,6 +322,7 @@ if ($action == 'writebookkeeping') {
 					$bookkeeping->code_journal = $journal;
 					$bookkeeping->journal_label = $journal_label;
 					$bookkeeping->fk_user_author = $user->id;
+					$bookkeeping->entity = $conf->entity;
 
 					$totaldebit += $bookkeeping->debit;
 					$totalcredit += $bookkeeping->credit;
@@ -344,7 +347,8 @@ if ($action == 'writebookkeeping') {
 			}
 		}
 
-		if ($totaldebit != $totalcredit)
+		// Protection against a bug on line before
+		if (price2num($totaldebit) != price2num($totalcredit))
 		{
 			$error++;
 			$errorforline++;
@@ -408,9 +412,10 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 // Export
-/*if ($action == 'exportcsv') {
+/*if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
+	$filename = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// Model Cegid Expert Export
@@ -527,7 +532,7 @@ if (empty($action) || $action == 'view') {
 	$builddate=dol_now();
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
-	$listofchoices=array('already'=>$langs->trans("AlreadyInGeneralLedger"), 'notyet'=>$langs->trans("NotYetInGeneralLedger"));
+	$listofchoices=array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
 	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;

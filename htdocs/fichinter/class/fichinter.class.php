@@ -128,7 +128,7 @@ class Fichinter extends CommonObject
 			$sql.= " WHERE sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= " ".$clause." fi.entity IN (".getEntity($this->element, 1).")";
+		$sql.= " ".$clause." fi.entity IN (".getEntity('intervention').")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -157,7 +157,7 @@ class Fichinter extends CommonObject
 	 */
 	function create($user, $notrigger=0)
 	{
-		global $conf, $user, $langs;
+		global $conf, $langs;
 
 		dol_syslog(get_class($this)."::create ref=".$this->ref);
 
@@ -253,7 +253,7 @@ class Fichinter extends CommonObject
 			}
 
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('FICHINTER_CREATE',$user);
@@ -348,7 +348,10 @@ class Fichinter extends CommonObject
 		$sql.= " f.tms as datem,";
 		$sql.= " f.duree, f.fk_projet, f.note_public, f.note_private, f.model_pdf, f.extraparams, fk_contrat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
-		if ($ref) $sql.= " WHERE f.ref='".$this->db->escape($ref)."'";
+		if ($ref) {
+			$sql.= " WHERE f.entity IN (".getEntity('intervention').")";
+			$sql.= " AND f.ref='".$this->db->escape($ref)."'";
+		}
 		else $sql.= " WHERE f.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -383,14 +386,13 @@ class Fichinter extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
-				*/
+				 */
 				$result=$this->fetch_lines();
 				if ($result < 0)
 				{
@@ -783,7 +785,6 @@ class Fichinter extends CommonObject
 		$sql.= " f.fk_user_valid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
 		$sql.= " WHERE f.rowid = ".$id;
-		$sql.= " AND f.entity = ".$conf->entity;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -887,7 +888,6 @@ class Fichinter extends CommonObject
 			// Delete object
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter";
 			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog("Fichinter::delete", LOG_DEBUG);
 			$resql = $this->db->query($sql);
@@ -951,7 +951,6 @@ class Fichinter extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql.= " SET datei = '".$this->db->idate($date_delivery)."'";
 			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
 			$sql.= " AND fk_statut = 0";
 
 			if ($this->db->query($sql))
@@ -985,7 +984,6 @@ class Fichinter extends CommonObject
 			$sql.= " SET description = '".$this->db->escape($description)."',";
 			$sql.= " fk_user_modif = ".$user->id;
 			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
 
 			if ($this->db->query($sql))
 			{
@@ -1018,7 +1016,6 @@ class Fichinter extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
 			$sql.= " SET fk_contrat = '".$contractid."'";
 			$sql.= " WHERE rowid = ".$this->id;
-			$sql.= " AND entity = ".$conf->entity;
 
 			if ($this->db->query($sql))
 			{
@@ -1107,11 +1104,6 @@ class Fichinter extends CommonObject
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-			// Call trigger
-			$result=$this->call_trigger('INTERVENTION_CLONE',$user);
-			if ($result < 0) $error++;
-			// End call triggers
 		}
 
 		unset($this->context['createfromclone']);
@@ -1223,6 +1215,8 @@ class Fichinter extends CommonObject
 	 */
 	function fetch_lines()
 	{
+		$this->lines = array();
+
 		$sql = 'SELECT rowid, description, duree, date, rang';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'fichinterdet';
 		$sql.=' WHERE fk_fichinter = '.$this->id .' ORDER BY rang ASC, date ASC' ;
@@ -1399,7 +1393,7 @@ class FichinterLigne extends CommonObjectLine
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->rowid;
+				$this->id=$this->id;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -1461,7 +1455,7 @@ class FichinterLigne extends CommonObjectLine
 		$sql.= ",date='".$this->db->idate($this->datei)."'";
 		$sql.= ",duree=".$this->duration;
 		$sql.= ",rang='".$this->db->escape($this->rang)."'";
-		$sql.= " WHERE rowid = ".$this->rowid;
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dol_syslog("FichinterLigne::update", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -1470,7 +1464,7 @@ class FichinterLigne extends CommonObjectLine
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->rowid;
+				$this->id=$this->id;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -1539,7 +1533,6 @@ class FichinterLigne extends CommonObjectLine
 			$sql.= " , dateo = ".(! empty($obj->dateo)?"'".$this->db->idate($obj->dateo)."'":"null");
 			$sql.= " , datee = ".(! empty($obj->datee)?"'".$this->db->idate($obj->datee)."'":"null");
 			$sql.= " WHERE rowid = ".$this->fk_fichinter;
-			$sql.= " AND entity = ".$conf->entity;
 
 			dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 			$resql=$this->db->query($sql);
@@ -1578,10 +1571,10 @@ class FichinterLigne extends CommonObjectLine
 
 		if ($this->statut == 0)
 		{
-			dol_syslog(get_class($this)."::deleteline lineid=".$this->rowid);
+			dol_syslog(get_class($this)."::deleteline lineid=".$this->id);
 			$this->db->begin();
 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->rowid;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$this->id;
 			$resql = $this->db->query($sql);
 
 			if ($resql)

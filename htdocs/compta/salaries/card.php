@@ -73,7 +73,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 	if (empty($datev)) $datev=$datep;
 
-	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement');
+	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
 
 	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;

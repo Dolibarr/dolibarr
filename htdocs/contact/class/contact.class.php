@@ -42,6 +42,27 @@ class Contact extends CommonObject
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'contact';
 
+
+	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
+	public $fields=array(
+		'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		'lastname'      =>array('type'=>'varchar(128)', 'label'=>'Name',             'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1),
+		'firstname'     =>array('type'=>'varchar(128)', 'label'=>'Firstname',        'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>11, 'searchall'=>1),
+		'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+		'note_public'   =>array('type'=>'text',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		'note_private'  =>array('type'=>'text',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
+		'datec'         =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+		//'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
+		'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		//'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>1,  'position'=>1000),
+	);
+
 	public $civility_id;      // In fact we store civility_code
 	public $civility_code;
 	public $address;
@@ -96,7 +117,13 @@ class Contact extends CommonObject
 	public $user_id;
 	public $user_login;
 
+	// END MODULEBUILDER PROPERTIES
+
+
 	public $oldcopy;				// To contains a clone of this when we need to save old properties of object
+
+
+
 
 
 	/**
@@ -131,7 +158,7 @@ class Contact extends CommonObject
 			$sql.= " WHERE sp.fk_soc = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			$clause = "AND";
 		}
-		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element, 1).')';
+		$sql.= ' '.$clause.' sp.entity IN ('.getEntity($this->element).')';
 		$sql.= " AND (sp.priv='0' OR (sp.priv='1' AND sp.fk_user_creat=".$user->id."))";
         if ($user->societe_id > 0) $sql.=" AND sp.fk_soc = ".$user->societe_id;
 
@@ -193,15 +220,15 @@ class Contact extends CommonObject
 		$sql.= ", import_key";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."',";
-		if ($this->socid > 0) $sql.= " ".$this->socid.",";
+		if ($this->socid > 0) $sql.= " ".$this->db->escape($this->socid).",";
 		else $sql.= "null,";
 		$sql.= "'".$this->db->escape($this->lastname)."',";
         $sql.= "'".$this->db->escape($this->firstname)."',";
-		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
-		$sql.= " ".$this->priv.",";
-		$sql.= " ".$this->statut.",";
+        $sql.= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"null").",";
+		$sql.= " ".$this->db->escape($this->priv).",";
+		$sql.= " ".$this->db->escape($this->statut).",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$entity.",";
+        $sql.= " ".$this->db->escape($entity).",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
@@ -315,6 +342,7 @@ class Contact extends CommonObject
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
+		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql .= ", note_public = ".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
@@ -322,7 +350,7 @@ class Contact extends CommonObject
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
 		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
-		$sql .= ", statut = ".$this->statut;
+		$sql .= ", statut = ".$this->db->escape($this->statut);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->db->escape($this->default_lang)."'":"NULL");
 		$sql .= ", no_email=".($this->no_email?"'".$this->db->escape($this->no_email)."'":"0");
@@ -339,11 +367,8 @@ class Contact extends CommonObject
 
 		    $action='update';
 
-		    // Actions on extra fields (by external module or standard code)
-		    $hookmanager->initHooks(array('contactdao'));
-		    $parameters=array('socid'=>$this->id);
-		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		    if (empty($reshook))
+		    // Actions on extra fields
+		    if (! $error)
 		    {
 		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 		    	{
@@ -354,7 +379,6 @@ class Contact extends CommonObject
 		    		}
 		    	}
 		    }
-		    else if ($reshook < 0) $error++;
 
 			if (! $error && $this->user_id > 0)
 			{
@@ -503,7 +527,7 @@ class Contact extends CommonObject
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_CONTACT_FIELD_MOBILE)) $info[$conf->global->LDAP_CONTACT_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_CONTACT_FIELD_FAX))	    $info[$conf->global->LDAP_CONTACT_FIELD_FAX] = $this->fax;
         if ($this->skype && ! empty($conf->global->LDAP_CONTACT_FIELD_SKYPE))	    $info[$conf->global->LDAP_CONTACT_FIELD_SKYPE] = $this->skype;
-		if ($this->note_private && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = $this->note_private;
+        if ($this->note_private && ! empty($conf->global->LDAP_CONTACT_FIELD_DESCRIPTION)) $info[$conf->global->LDAP_CONTACT_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
 		if ($this->email && ! empty($conf->global->LDAP_CONTACT_FIELD_MAIL))     $info[$conf->global->LDAP_CONTACT_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
@@ -561,8 +585,8 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-            $error++;
-		    $this->error=$this->db->lasterror();
+			$error++;
+			$this->error=$this->db->lasterror();
 		}
 
 		// Mis a jour alerte birthday
@@ -774,12 +798,9 @@ class Contact extends CommonObject
 					}
 				}
 
-				// Retreive all extrafield for contact
-                // fetch optionals attributes and labels
-                require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
-                $extrafields=new ExtraFields($this->db);
-                $extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-               	$this->fetch_optionals($this->id,$extralabels);
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				return 1;
 			}
@@ -1054,9 +1075,10 @@ class Contact extends CommonObject
 	 *	@param		int			$maxlen						Max length of
 	 *  @param		string		$moreparam					Add more param into URL
      *  @param      int     	$save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@param		int			$notooltip					1=Disable tooltip
 	 *	@return		string									String with URL
 	 */
-	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1)
+	function getNomUrl($withpicto=0, $option='', $maxlen=0, $moreparam='', $save_lastsearch_value=-1, $notooltip=0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1088,15 +1110,18 @@ class Contact extends CommonObject
 
         $linkstart = '<a href="'.$url.'"';
         $linkclose="";
-    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-        {
-            $label=$langs->trans("ShowContact");
-            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-        }
-       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-       	$linkclose.= ' class="classfortooltip">';
+		if (empty($notooltip)) {
+	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+    	    {
+        	    $label=$langs->trans("ShowContact");
+            	$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+    	   	$linkclose.= ' class="classfortooltip"';
+		}
+		$linkclose.='>';
 
-		if (! is_object($hookmanager))
+		/*if (! is_object($hookmanager))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 			$hookmanager=new HookManager($this->db);
@@ -1104,7 +1129,7 @@ class Contact extends CommonObject
 		$hookmanager->initHooks(array('contactdao'));
 		$parameters=array('id'=>$this->id);
 		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+		if ($reshook > 0) $linkclose = $hookmanager->resPrint;*/
 
 		$linkstart.=$linkclose;
 		$linkend='</a>';
@@ -1115,11 +1140,22 @@ class Contact extends CommonObject
 			$linkend='</a>';
 		}
 
-
 		$result.=$linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip valigntextbottom"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.=($maxlen?dol_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs));
 		$result.=$linkend;
+
+		global $action;
+		if (! is_object($hookmanager))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+			$hookmanager=new HookManager($this->db);
+		}
+		$hookmanager->initHooks(array('contactdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
 		return $result;
 	}

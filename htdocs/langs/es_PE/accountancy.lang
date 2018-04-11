@@ -46,7 +46,6 @@ ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta contable de espera
 ACCOUNTING_PRODUCT_BUY_ACCOUNT=Cuenta de contabilidad por defecto para los productos comprados (Usados sin no están en la hoja de producto)
 Sens=Significado
 Codejournal=Periódico
-DelBookKeeping=Eliminar registro del libro mayor
 FinanceJournal=Periodo Financiero
 TotalMarge=Margen total de ventas
 Modelcsv_CEGID=Exportar hacia CEGID Experto contable

@@ -259,9 +259,6 @@ class Conf
 		// Load translation object with current language
 		if (empty($this->global->MAIN_LANG_DEFAULT)) $this->global->MAIN_LANG_DEFAULT="en_US";
 
-		//if (! isset($this->global->MAIN_REPEATCONTACTONEACHTAB)) $this->global->MAIN_REPEATCONTACTONEACHTAB=1;
-		//if (! isset($this->global->MAIN_REPEATADDRESSONEACHTAB)) $this->global->MAIN_REPEATADDRESSONEACHTAB=1;
-
 		$rootfordata = DOL_DATA_ROOT;
 		$rootforuser = DOL_DATA_ROOT;
 		// If multicompany module is enabled, we redefine the root of data
@@ -313,7 +310,7 @@ class Conf
 
 		// For user storage
 		$this->user->multidir_output	= array($this->entity => $rootfordata."/users");
-		$this->user->multidir_temp		= array($this->entity => $rootfordata."/users/temp");
+		$this->user->multidir_temp	= array($this->entity => $rootfordata."/users/temp");
 		// For backward compatibility
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
@@ -323,6 +320,9 @@ class Conf
 		$this->usergroup->dir_temp=$rootforuser."/usergroups/temp";
 
 		// For propal storage
+		$this->propal->multidir_output	= array($this->entity => $rootfordata."/propale");
+		$this->propal->multidir_temp		= array($this->entity => $rootfordata."/propale/temp");
+		// For backward compatibility
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
@@ -425,7 +425,7 @@ class Conf
 		if (empty($this->global->MAIN_MONNAIE)) $this->global->MAIN_MONNAIE='EUR';
 		$this->currency=$this->global->MAIN_MONNAIE;
 
-		if (empty($conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)) $conf->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30;   // Less than 1 minutes to be sure
+		if (empty($this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY)) $this->global->MAIN_BROWSER_NOTIFICATION_FREQUENCY = 30;   // Less than 1 minutes to be sure
 
 		// conf->global->ACCOUNTING_MODE = Option des modules Comptabilites (simple ou expert). Defini le mode de calcul des etats comptables (CA,...)
         if (empty($this->global->ACCOUNTING_MODE)) $this->global->ACCOUNTING_MODE='RECETTES-DEPENSES';  // By default. Can be 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
@@ -485,7 +485,7 @@ class Conf
 
 		// Default pdf option
 		if (! isset($this->global->MAIN_PDF_DASH_BETWEEN_LINES)) $this->global->MAIN_PDF_DASH_BETWEEN_LINES=1;    // use dash between lines
-        if (! isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) $this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT=1;  // allow html content into free footer text
+		if (! isset($this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT)) $this->global->PDF_ALLOW_HTML_FOR_FREE_TEXT=1;  // allow html content into free footer text
 
 		// Set default value to MAIN_SHOW_LOGO
 		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
@@ -504,6 +504,10 @@ class Conf
 
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
+
+		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list 
+		if (! empty($this->modules_parts['moduleforexternal']))
+			foreach($this->modules_parts['moduleforexternal'] as $key=>$value) $this->global->MAIN_MODULES_FOR_EXTERNAL.=",$key";
 
 		// Enable select2
 		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') $this->global->MAIN_USE_JQUERY_MULTISELECT='select2';
@@ -584,13 +588,15 @@ class Conf
 		if (! isset($this->global->THEME_HIDE_BORDER_ON_INPUT)) $this->global->THEME_HIDE_BORDER_ON_INPUT=0;
 
 		// Save inconsistent option
-		if (empty($conf->global->AGENDA_USE_EVENT_TYPE) && (! isset($conf->global->AGENDA_DEFAULT_FILTER_TYPE) || $conf->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO'))
+		if (empty($this->global->AGENDA_USE_EVENT_TYPE) && (! isset($this->global->AGENDA_DEFAULT_FILTER_TYPE) || $this->global->AGENDA_DEFAULT_FILTER_TYPE == 'AC_NON_AUTO'))
 		{
-		    $conf->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
+			$this->global->AGENDA_DEFAULT_FILTER_TYPE='0';    // 'AC_NON_AUTO' does not exists when AGENDA_DEFAULT_FILTER_TYPE is not on.
 		}
 
-		$conf->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
-		$conf->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
+		if (! isset($this->global->MAIN_EXTRAFIELDS_IN_ONE_TD)) $this->global->MAIN_EXTRAFIELDS_IN_ONE_TD = 1;
+
+		$this->global->MAIN_MODULE_DOLISTORE_API_SRV='https://www.dolistore.com';
+		$this->global->MAIN_MODULE_DOLISTORE_API_KEY='dolistorecatalogpublickey1234567';
 
 		// For backward compatibility
 		if (isset($this->product))   $this->produit=$this->product;

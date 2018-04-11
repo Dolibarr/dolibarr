@@ -108,6 +108,8 @@ class Expedition extends CommonObject
 	 */
 	function __construct($db)
 	{
+		global $conf;
+
 		$this->db = $db;
 		$this->lines = array();
 		$this->products = array();
@@ -118,6 +120,20 @@ class Expedition extends CommonObject
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
 		$this->statuts[2]  = 'StatusSendingProcessed';
+
+		// List of short language codes for status
+		$this->statutshorts = array();
+		$this->statutshorts[-1] = 'StatusSendingCanceledShort';
+		$this->statutshorts[0]  = 'StatusSendingDraftShort';
+		$this->statutshorts[1]  = 'StatusSendingValidatedShort';
+		$this->statutshorts[2]  = 'StatusSendingProcessedShort';
+
+		/* Status "billed" or not is managed by another field than status
+		if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
+		{
+			$this->statuts[2]  = 'StatusSendingBilled';
+			$this->statutshorts[2]  = 'StatusSendingBilledShort';
+		}*/
 	}
 
 	/**
@@ -295,23 +311,15 @@ class Expedition extends CommonObject
 					}
 				}
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$hookmanager->initHooks(array('expeditiondao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error && ! $notrigger)
 				{
@@ -382,7 +390,7 @@ class Expedition extends CommonObject
 
 		if (($lineId = $expeditionline->insert()) < 0)
 		{
-			$this->error[]=$expeditionline->error;
+			$this->errors[]=$expeditionline->error;
 		}
 		return $lineId;
 	}
@@ -531,12 +539,9 @@ class Expedition extends CommonObject
 				 */
 				$result=$this->fetch_thirdparty();
 
-				// Retrieve all extrafields for expedition
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				/*
 				 * Lines
@@ -1068,32 +1073,43 @@ class Expedition extends CommonObject
 
 	/**
 	 * 	Delete shipment.
-	 *  Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
+	 * 	Warning, do not delete a shipment if a delivery is linked to (with table llx_element_element)
 	 *
 	 * 	@return	int		>0 if OK, 0 if deletion done but failed to delete files, <0 if KO
 	 */
 	function delete()
 	{
 		global $conf, $langs, $user;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		if ($conf->productbatch->enabled)
-		{
 		require_once DOL_DOCUMENT_ROOT.'/expedition/class/expeditionbatch.class.php';
-		}
+
 		$error=0;
 		$this->error='';
+
+		$this->db->begin();
 
 		// Add a protection to refuse deleting if shipment has at least one delivery
 		$this->fetchObjectLinked($this->id, 'shipping', 0, 'delivery');	// Get deliveries linked to this shipment
 		if (count($this->linkedObjectsIds) > 0)
 		{
 			$this->error='ErrorThereIsSomeDeliveries';
-			return -1;
+			$error++;
 		}
 
-		$this->db->begin();
+		if (! $error)
+		{
+			if (! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('SHIPPING_DELETE',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
+			}
+		}
+
 		// Stock control
-		if ($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
+		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
 
@@ -1190,11 +1206,6 @@ class Expedition extends CommonObject
 
 					if ($this->db->query($sql))
 					{
-						// Call trigger
-						$result=$this->call_trigger('SHIPPING_DELETE',$user);
-						if ($result < 0) { $error++; }
-						// End call triggers
-
 						if (! empty($this->origin) && $this->origin_id > 0)
 						{
 							$this->fetch_origin();
@@ -1575,32 +1586,32 @@ class Expedition extends CommonObject
 		if ($mode==0)
 		{
 			if ($statut==0) return $langs->trans($this->statuts[$statut]);
-			if ($statut==1)  return $langs->trans($this->statuts[$statut]);
-			if ($statut==2)  return $langs->trans($this->statuts[$statut]);
+			if ($statut==1) return $langs->trans($this->statuts[$statut]);
+			if ($statut==2) return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode==1)
 		{
-			if ($statut==0) return $langs->trans('StatusSendingDraftShort');
-			if ($statut==1) return $langs->trans('StatusSendingValidatedShort');
-			if ($statut==2) return $langs->trans('StatusSendingProcessedShort');
+			if ($statut==0) return $langs->trans($this->statutshorts[$statut]);
+			if ($statut==1) return $langs->trans($this->statutshorts[$statut]);
+			if ($statut==2) return $langs->trans($this->statutshorts[$statut]);
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
-			if ($statut==2) return img_picto($langs->trans('StatusSendingProcessed'),'statut6');
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
-			if ($statut==2) return img_picto($langs->trans('StatusSendingProcessed'),'statut6').' '.$langs->trans('StatusSendingProcessed');
+			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $langs->trans('StatusSendingDraftShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-			if ($statut==1) return $langs->trans('StatusSendingValidatedShort').' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
-			if ($statut==2) return $langs->trans('StatusSendingProcessedShort').' '.img_picto($langs->trans('StatusSendingProcessedShort'),'statut6');
+			if ($statut==0) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
+			if ($statut==2) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
 		}
 	}
 
@@ -2070,13 +2081,19 @@ class Expedition extends CommonObject
 	/**
 	 *	Classify the shipping as validated/opened
 	 *
-	 *	@return     int     <0 if ko, >0 if ok
+	 *	@return     int     <0 if KO, 0 if already open, >0 if OK
 	 */
 	function reOpen()
 	{
 		global $conf,$langs,$user;
 
 		$error=0;
+
+		// Protection. This avoid to move stock later when we should not
+		if ($this->statut == self::STATUS_VALIDATED)
+		{
+			return 0;
+		}
 
 		$this->db->begin();
 
@@ -2364,9 +2381,9 @@ class ExpeditionLigne extends CommonObjectLine
 		$error=0;
 
 		// Check parameters
-		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || empty($this->qty))
+		if (empty($this->fk_expedition) || empty($this->fk_origin_line) || ! is_numeric($this->qty))
 		{
-			$this->errors[] = 'ErrorMandatoryParametersNotProvided';
+			$this->error = 'ErrorMandatoryParametersNotProvided';
 			return -1;
 		}
 		// Clean parameters
@@ -2406,7 +2423,6 @@ class ExpeditionLigne extends CommonObjectLine
 				$result=$this->call_trigger('LINESHIPPING_INSERT',$user);
 				if ($result < 0)
 				{
-					$this->errors[]=$this->error;
 					$error++;
 				}
 				// End call triggers
@@ -2422,6 +2438,7 @@ class ExpeditionLigne extends CommonObjectLine
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
+
 			$this->db->rollback();
 			return -1*$error;
 		}
@@ -2665,19 +2682,21 @@ class ExpeditionLigne extends CommonObjectLine
 				$this->errors[]=$this->db->lasterror()." - sql=$sql";
 				$error++;
 			}
-			else
+		}
+
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$this->errors[]=$this->error;
-						$error++;
-					}
+					$this->errors[]=$this->error;
+					$error++;
 				}
 			}
 		}
+
 		if (! $error && ! $notrigger)
 		{
 			// Call trigger

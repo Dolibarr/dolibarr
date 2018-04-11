@@ -72,12 +72,12 @@ $search_montant_vat=GETPOST('search_montant_vat');
 $search_montant_ttc=GETPOST('search_montant_ttc');
 $search_payment_mode=GETPOST('search_payment_mode');
 $search_payment_term=GETPOST('search_payment_term');
-$day=GETPOST('day');
-$year=GETPOST('year');
-$month=GETPOST('month');
-$day_date_when=GETPOST('day_date_when');
-$year_date_when=GETPOST('year_date_when');
-$month_date_when=GETPOST('month_date_when');
+$search_day=GETPOST('search_day','int');
+$search_year=GETPOST('search_year','int');
+$search_month=GETPOST('search_month','int');
+$search_day_date_when=GETPOST('search_day_date_when','int');
+$search_year_date_when=GETPOST('search_year_date_when','int');
+$search_month_date_when=GETPOST('search_month_date_when','int');
 $search_recurring=GETPOST('search_recurring','int');
 $search_frequency=GETPOST('search_frequency','alpha');
 $search_unit_frequency=GETPOST('search_unit_frequency','alpha');
@@ -172,12 +172,12 @@ if (empty($reshook))
 		$search_montant_ttc='';
 		$search_payment_mode='';
 		$search_payment_term='';
-		$day='';
-		$year='';
-		$month='';
-		$day_date_when='';
-		$year_date_when='';
-		$month_date_when='';
+		$search_day='';
+		$search_year='';
+		$search_month='';
+		$search_day_date_when='';
+		$search_year_date_when='';
+		$search_month_date_when='';
 		$search_recurring='';
 		$search_frequency='';
 		$search_unit_frequency='';
@@ -239,38 +239,38 @@ if (! empty($search_payment_term) && $search_payment_term != '-1')   $sql .= nat
 if ($search_recurring == '1')     $sql .= ' AND f.frequency > 0';
 if ($search_recurring == '0')     $sql .= ' AND (f.frequency IS NULL or f.frequency = 0)';
 if ($search_frequency != '')      $sql .= natural_search('f.frequency', $search_frequency, 1);
-if ($search_unit_frequency != '') $sql .= natural_search('f.unit_frequency', $search_unit_frequency);
+if ($search_unit_frequency != '') $sql .= ' AND f.frequency > 0'.natural_search('f.unit_frequency', $search_unit_frequency);
 if ($search_status != '' && $search_status >= -1)
 {
 	if ($search_status == 0) $sql.= ' AND frequency = 0 AND suspended = 0';
 	if ($search_status == 1) $sql.= ' AND frequency != 0 AND suspended = 0';
 	if ($search_status == -1) $sql.= ' AND suspended = 1';
 }
-if ($month > 0)
+if ($search_month > 0)
 {
-	if ($year > 0 && empty($day))
-		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-	else if ($year > 0 && ! empty($day))
-		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+	if ($search_year > 0 && empty($search_day))
+		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+	else if ($search_year > 0 && ! empty($search_day))
+		$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
 	else
-		$sql.= " AND date_format(f.date_last_gen, '%m') = '".$month."'";
+		$sql.= " AND date_format(f.date_last_gen, '%m') = '".$db->escape($search_month)."'";
 }
-else if ($year > 0)
+else if ($search_year > 0)
 {
-	$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND f.date_last_gen BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
-if ($month_date_when > 0)
+if ($search_month_date_when > 0)
 {
-	if ($year_date_when > 0 && empty($day_date_when))
-		$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,$month_date_when,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,$month_date_when,false))."'";
-	else if ($year_date_when > 0 && ! empty($day_date_when))
-		$sql.= " AND f.date_date_when_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_date_when, $day_date_when, $year_date_when))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_date_when, $day_date_when, $year_date_when))."'";
+	if ($search_year_date_when > 0 && empty($search_day_date_when))
+		$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when,$search_month_date_when,false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when,$search_month_date_when,false))."'";
+	else if ($search_year_date_when > 0 && ! empty($search_day_date_when))
+		$sql.= " AND f.date_date_when_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_date_when, $search_day_date_when, $search_year_date_when))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_date_when, $search_day_date_when, $search_year_date_when))."'";
 	else
-		$sql.= " AND date_format(f.date_when, '%m') = '".$month_date_when."'";
+		$sql.= " AND date_format(f.date_when, '%m') = '".$db->escape($search_month_date_when)."'";
 }
-else if ($year_date_when > 0)
+else if ($search_year_date_when > 0)
 {
-	$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($year_date_when,12,false))."'";
+	$sql.= " AND f.date_when BETWEEN '".$db->idate(dol_get_first_day($search_year_date_when,1,false))."' AND '".$db->idate(dol_get_last_day($search_year_date_when,12,false))."'";
 }
 
 $nbtotalofrecords = '';
@@ -291,26 +291,26 @@ if ($resql)
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-	if ($socid)              $param.='&socid='.urlencode($socid);
-	if ($day)                $param.='&day='.urlencode($day);
-	if ($month)              $param.='&month='.urlencode($month);
-	if ($year)               $param.='&year=' .urlencode($year);
-	if ($day_date_when)      $param.='&day_date_when='.urlencode($day_date_when);
-	if ($month_date_when)    $param.='&month_date_when='.urlencode($month_date_when);
-	if ($year_date_when)     $param.='&year_date_when=' .urlencode($year_date_when);
-	if ($search_ref)         $param.='&search_ref=' .urlencode($search_ref);
-	if ($search_societe)     $param.='&search_societe=' .urlencode($search_societe);
+	if ($socid)                     $param.='&socid='.urlencode($socid);
+	if ($search_day)                $param.='&search_day='.urlencode($search_day);
+	if ($search_month)              $param.='&search_month='.urlencode($search_month);
+	if ($search_year)               $param.='&search_year=' .urlencode($search_year);
+	if ($search_day_date_when)      $param.='&search_day_date_when='.urlencode($search_day_date_when);
+	if ($search_month_date_when)    $param.='&search_month_date_when='.urlencode($search_month_date_when);
+	if ($search_year_date_when)     $param.='&search_year_date_when=' .urlencode($search_year_date_when);
+	if ($search_ref)                $param.='&search_ref=' .urlencode($search_ref);
+	if ($search_societe)            $param.='&search_societe=' .urlencode($search_societe);
 	if ($search_montant_ht != '')   $param.='&search_montant_ht=' .urlencode($search_montant_ht);
 	if ($search_montant_vat != '')  $param.='&search_montant_vat='.urlencode($search_montant_vat);
 	if ($search_montant_ttc != '')  $param.='&search_montant_ttc='.urlencode($search_montant_ttc);
 	if ($search_payment_mode != '') $param.='&search_payment_mode='.urlencode($search_payment_mode);
 	if ($search_payment_type != '') $param.='&search_payment_type='.urlencode($search_payment_type);
 	if ($search_recurring != '' && $search_recurrning != '-1')    $param.='&search_recurring='  .urlencode($search_recurring);
-	if ($search_frequency > 0)      $param.='&search_frequency='  .urlencode($search_frequency);
-	if ($search_unit_frequency > 0) $param.='&search_unit_frequency='.urlencode($search_unit_frequency);
+	if ($search_frequency > 0)        $param.='&search_frequency='  .urlencode($search_frequency);
+	if ($search_unit_frequency != '') $param.='&search_unit_frequency='.urlencode($search_unit_frequency);
 	if ($search_status != '')		$param.='&search_status='.urlencode($search_status);
-	if ($option)             $param.="&option=".urlencode($option);
-	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
+	if ($option)                    $param.="&option=".urlencode($option);
+	if ($optioncss != '')           $param.='&optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -419,19 +419,19 @@ if ($resql)
 	// Date invoice
 	if (! empty($arrayfields['f.date_last_gen']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
-		$formother->select_year($year?$year:-1,'year',1, 20, 5);
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+		$formother->select_year($search_year?$search_year:-1,'search_year',1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
 		print '</td>';
 	}
-	// Date due
+	// Date next generation
 	if (! empty($arrayfields['f.date_when']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_date_when" value="'.$day_date_when.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month_date_when" value="'.$month_date_when.'">';
-		$formother->select_year($year_date_when?$year_date_when:-1,'year_date_when',1, 20, 5);
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_date_when" value="'.$search_day_date_when.'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_date_when" value="'.$search_month_date_when.'">';
+		$formother->select_year($search_year_date_when?$search_year_date_when:-1,'search_year_date_when',1, 20, 5, 0, 0, '', 'witdhauto valignmiddle');
 		print '</td>';
 	}
 	// Extra fields
@@ -583,21 +583,26 @@ if ($resql)
 			if (! empty($arrayfields['f.nb_gen_done']['checked']))
 			{
 				print '<td align="center">';
-				print ($objp->frequency ? $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+				print ($objp->frequency > 0 ? $objp->nb_gen_done.($objp->nb_gen_max>0?' / '. $objp->nb_gen_max:'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 			}
+			// Date last generation
 			if (! empty($arrayfields['f.date_last_gen']['checked']))
 			{
 			   print '<td align="center">';
-			   print ($objp->frequency ? dol_print_date($db->jdate($objp->date_last_gen),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+			   print ($objp->frequency > 0 ? dol_print_date($db->jdate($objp->date_last_gen),'day') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
+			// Date next generation
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
 			   print '<td align="center">';
+			   print '<div class="nowraponall">';
 			   print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+			   if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
+			   print '</div>';
 			   print '</td>';
 			   if (! $i) $totalarray['nbfield']++;
 			}
@@ -633,7 +638,7 @@ if ($resql)
 				}
 				else
 				{
-					print $langs->trans("DateIsNotEnough");
+					print $form->textwithpicto('', $langs->trans("DateIsNotEnough"));
 				}
 			}
 			else

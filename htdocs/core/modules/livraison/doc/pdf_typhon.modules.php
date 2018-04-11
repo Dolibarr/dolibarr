@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
- * Copyright (C) 2011-2012 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
 
  * This program is free software; you can redistribute it and/or modify
@@ -65,11 +65,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("sendings");
-		$langs->load("companies");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills", "sendings", "companies"));
 
 		$this->db = $db;
 		$this->name = "typhon";
@@ -139,14 +137,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("deliveries");
-		$outputlangs->load("sendings");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings", "deliveries"));
 
 		if ($conf->expedition->dir_output)
 		{
@@ -799,7 +792,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42;

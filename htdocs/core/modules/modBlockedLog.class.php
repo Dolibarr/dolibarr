@@ -55,8 +55,6 @@ class modBlockedLog extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 2;
         // Name of image file used for this module.
         $this->picto='technic';
 
@@ -172,7 +170,7 @@ class modBlockedLog extends DolibarrModules
     	// If already used, we add an entry to show we enable module
    		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
-   		$object=new stdClass;
+   		$object=new stdClass();
     	$object->id = 1;
     	$object->element = 'module';
     	$object->ref = 'systemevent';
@@ -215,7 +213,7 @@ class modBlockedLog extends DolibarrModules
 		// If already used, we add an entry to show we enable module
 		require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
 
-		$object=new stdClass;
+		$object=new stdClass();
     	$object->id = 1;
     	$object->element = 'module';
     	$object->ref = 'systemevent';

@@ -33,6 +33,7 @@ PropalStatusSigned=Signed (needs billing)
 PropalStatusNotSigned=Not signed (closed)
 PropalStatusBilled=Billed
 PropalStatusDraftShort=Konsep
+PropalStatusValidatedShort=Divalidasi
 PropalStatusClosedShort=Ditutup
 PropalStatusSignedShort=Signed
 PropalStatusNotSignedShort=Not signed

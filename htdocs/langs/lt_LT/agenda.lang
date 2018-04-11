@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Member %s validated
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Siunta %s patvirtinta
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Taip pat galite pridėti šiuos parametrus išvesties filtravi
 AgendaUrlOptions3=<b>logina=%s</b> uždrausti vartotojo veiksmų išvestis <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>projektas=PROJECT_ID</b> uždrausti veiksmų asocijuotų su projektu <b>PROJECT_ID</b> išvestis.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Užimtas
@@ -109,7 +112,7 @@ ExportCal=Eksportuoti kalendorių
 ExtSites=Importuoti išorinį kalendorių
 ExtSitesEnableThisTool=Rodyti išorinius kalendorius (nustatytus pagrindinuose nustatymuose) darbotvarkėje. Neįtakoja išorinių kalendorių nustatytų vartotojo.
 ExtSitesNbOfAgenda=Kalendorių skaičius
-AgendaExtNb=Kalendoriaus nb %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL prieiga prie .ical failo
 ExtSiteNoLabel=Aprašymo nėra
 VisibleTimeRange=Visible time range

@@ -29,6 +29,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
+$langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
+
 $year = GETPOST('year', 'int');
 if ($year == 0 )
 {
@@ -40,7 +42,7 @@ if ($year == 0 )
 }
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -259,7 +261,7 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 		$x_paye_sum = 0;
 		$x_paye_ht = 0;
 		foreach($x_both as $rate => $both){
-			
+
 			print '<tr class="oddeven">';
 			print "<td>$rate%</td>";
 			print "<td class=\"nowrap\" align=\"right\">".price($both['coll']['totalht'])."</td>";
@@ -282,7 +284,7 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 		$total = $total + $diff;
 		$subtotal = $subtotal + $diff;
 
-		
+
 		print '<tr class="oddeven">';
 		print '<td colspan="7"></td>';
 		print "<td class=\"nowrap\" align=\"right\">".price($diff)."</td>\n";

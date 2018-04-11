@@ -138,8 +138,7 @@ if ($action == 'export_csv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
-	$journal = 'balance';
-
+	$filename = 'balance';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);

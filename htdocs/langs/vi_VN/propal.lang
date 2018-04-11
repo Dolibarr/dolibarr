@@ -33,6 +33,7 @@ PropalStatusSigned=Đã ký (cần ra hóa đơn)
 PropalStatusNotSigned=Không ký (đã đóng)
 PropalStatusBilled=Đã ra hóa đơn
 PropalStatusDraftShort=Dự thảo
+PropalStatusValidatedShort=Đã xác nhận
 PropalStatusClosedShort=Đã đóng
 PropalStatusSignedShort=Đã ký
 PropalStatusNotSignedShort=Không ký

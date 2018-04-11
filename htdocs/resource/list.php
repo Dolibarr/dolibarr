@@ -17,8 +17,8 @@
 
 /**
  *      \file       resource/index.php
- *              \ingroup    resource
- *              \brief      Page to manage resource objects
+ *      \ingroup    resource
+ *      \brief      Page to manage resource objects
  */
 
 
@@ -26,18 +26,16 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
 // Load translations files required by page
-$langs->load("resource");
-$langs->load("companies");
-$langs->load("other");
+$langs->loadLangs(array("resource","companies","other"));
 
 // Get parameters
-$id                     = GETPOST('id','int');
+$id             = GETPOST('id','int');
 $action         = GETPOST('action','alpha');
 
-$lineid                         = GETPOST('lineid','int');
-$element                        = GETPOST('element','alpha');
-$element_id                     = GETPOST('element_id','int');
-$resource_id            = GETPOST('resource_id','int');
+$lineid         = GETPOST('lineid','int');
+$element        = GETPOST('element','alpha');
+$element_id     = GETPOST('element_id','int');
+$resource_id    = GETPOST('resource_id','int');
 
 $sortorder      = GETPOST('sortorder','alpha');
 $sortfield      = GETPOST('sortfield','alpha');
@@ -45,8 +43,8 @@ $sortfield      = GETPOST('sortfield','alpha');
 // Initialize context for list
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'resourcelist';
 
+// Initialize technical objects
 $object = new Dolresource($db);
-
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -86,10 +84,10 @@ foreach ($search_array_options as $key => $val)
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 
 
-$hookmanager->initHooks(array('resource_list'));
+$hookmanager->initHooks(array('resourcelist'));
 
 if (empty($sortorder)) $sortorder="ASC";
-if (empty($sortfield)) $sortfield="t.rowid";
+if (empty($sortfield)) $sortfield="t.ref";
 if (empty($arch)) $arch = 0;
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -198,7 +196,13 @@ if($ret == -1) {
 	dol_print_error($db,$object->error);
 	exit;
 } else {
-	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords,'title_generic.png', 0, '', '', $limit);
+	$newcardbutton='';
+	if ($user->rights->resource->write)
+	{
+		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuResourceAdd').'</a>';
+	}
+
+	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords,'title_generic.png', 0, $newcardbutton, '', $limit);
 }
 
 $moreforfilter = '';

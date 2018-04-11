@@ -53,6 +53,11 @@ if (empty($user->rights->accounting->chartofaccount))
 
 $accountingcategory = new AccountancyCategory($db);
 
+
+/*
+ * Actions
+ */
+
 // si ajout de comptes
 if (! empty($selectcpt)) {
 	$cpts = array ();
@@ -83,6 +88,7 @@ if ($action == 'delete') {
 /*
  * View
  */
+
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
@@ -99,13 +105,15 @@ print '<input type="hidden" name="action" value="display">';
 dol_fiche_head();
 
 print '<table class="border" width="100%">';
-// Category
+
+// Select the category
 print '<tr><td class="titlefield">' . $langs->trans("AccountingCategory") . '</td>';
 print '<td>';
 $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
 print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
+// Select the accounts
 if (! empty($cat_id))
 {
 	$return = $accountingcategory->getAccountsWithNoCategory($cat_id);
@@ -153,7 +161,7 @@ if ($action == 'display' || $action == 'delete') {
 	print "</tr>\n";
 
 	if (! empty($cat_id)) {
-		$return = $accountingcategory->display($cat_id);
+		$return = $accountingcategory->display($cat_id);	// This load ->lines_display
 		if ($return < 0) {
 			setEventMessages(null, $accountingcategory->errors, 'errors');
 		}

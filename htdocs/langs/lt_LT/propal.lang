@@ -33,6 +33,7 @@ PropalStatusSigned=Pasirašyta (reikia pateikti sąskaitą-faktūrą)
 PropalStatusNotSigned=Nepasirašyta (uždarytas)
 PropalStatusBilled=Sąskaita-faktūra pateikta
 PropalStatusDraftShort=Projektas
+PropalStatusValidatedShort=Galiojantis
 PropalStatusClosedShort=Uždarytas
 PropalStatusSignedShort=Pasirašyta
 PropalStatusNotSignedShort=Nepasirašyta

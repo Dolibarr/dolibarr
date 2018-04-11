@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Accounting account used for user third parties
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=The dedicated accounting account defined on user card will be used for Subledger accouting only. This one will be used for General Ledger and as default value of Subledger accounting if dedicated user accouting account on user is not defined.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Základný účtovný účet pre osobný rozvoj
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
 Salary=Mzda
 Salaries=Mzdy
 NewSalaryPayment=Nová výplata mzdy
@@ -15,3 +15,4 @@ THMDescription=Táto hodnota môže byť použitá pre výpočet ceny času str�
 TJMDescription=Táto hoidnota je iba informačná a nie je použitá pre kalkulácie
 LastSalaries=Latest %s salary payments
 AllSalaries=All salary payments
+SalariesStatistics=Statistiques salaires

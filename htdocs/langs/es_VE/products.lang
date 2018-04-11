@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - products
 TMenuProducts=Productos y servicios
 ProductStatusNotOnBuyShort=Fuera compra
+PriceExpressionEditorHelp2=Puede acceder a los atributos adicionales con variables como <b>#extrafield_myextrafieldkey#</b> y variables globales con <b>#global_mycode#</b>

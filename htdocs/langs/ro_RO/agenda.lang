@@ -12,7 +12,7 @@ Event=Eveniment
 Events=Evenimente
 EventsNb=Număr evenimente
 ListOfActions=Lista  evenimente
-EventReports=Event reports
+EventReports=Rapoarte Eveniment
 Location=Locație
 ToUserOfGroup=Oricărui utilizator din grup
 EventOnFullDay=Eveniment toat(ă)e zi(ua)lele
@@ -35,7 +35,7 @@ AgendaAutoActionDesc= Definiți aici evenimentele pentru care doriți ca Dolibar
 AgendaSetupOtherDesc= Această pagină permite configurarea unor opțiuni pentru exportul de evenimente Dolibarr într-un calendar extern (Thunderbird, Google Calendar, ...)
 AgendaExtSitesDesc=Această pagină vă permite să declaraţi sursele externe de calendare pentru a vedea evenimentele lor în agenda Dolibarr.
 ActionsEvents=Evenimente pentru care Dolibarr va crea o acţiune în agendă în mod automat
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=Evenimentul reamintire prin email nu a fost activata in Configurare Modul Agenda
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Terța parte %s a fost creată
 ContractValidatedInDolibarr=Contract %s validat
@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Membru %s validat
 MemberModifiedInDolibarr=Membrul %s modificat
 MemberResiliatedInDolibarr=Membru %s terminat
 MemberDeletedInDolibarr=Membru %s şters
-MemberSubscriptionAddedInDolibarr=Înscrierea pentru membrul %s adăugat
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Livrarea %s validata
 ShipmentClassifyClosedInDolibarr=Expediere %s clasificată facturată
 ShipmentUnClassifyCloseddInDolibarr=Expediere %s clasificată redeschisă
@@ -67,7 +69,7 @@ OrderApprovedInDolibarr=Comanda %s aprobată
 OrderRefusedInDolibarr=Comanda %s refuzată
 OrderBackToDraftInDolibarr=Comanda %s revenită de statutul schiţă
 ProposalSentByEMail=Oferta comercială %s  trimisă prin e-mail
-ContractSentByEMail=Contract %s sent by EMail
+ContractSentByEMail=Contract %s  trimis pe  EMail
 OrderSentByEMail=Comanda client %s trimisă prin e-mail
 InvoiceSentByEMail=Factura client %s trimisă prin e-mail
 SupplierOrderSentByEMail=Comanda  furnizor %s  trimisă prin e-mail
@@ -78,26 +80,27 @@ InterventionSentByEMail=Intervenţia %s  trimisă prin e-mail
 ProposalDeleted=Ofertă ştearsă
 OrderDeleted=Comandă ştearsă
 InvoiceDeleted=Factură ştearsă
-PRODUCT_CREATEInDolibarr=Product %s created
-PRODUCT_MODIFYInDolibarr=Product %s modified
-PRODUCT_DELETEInDolibarr=Product %s deleted
-EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
-EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
-EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
-EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
-EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PRODUCT_CREATEInDolibarr=Produs%s creat
+PRODUCT_MODIFYInDolibarr=Produs %s modificat
+PRODUCT_DELETEInDolibarr=Produs %s sters
+EXPENSE_REPORT_CREATEInDolibarr=Raport cheltuieli %s creat
+EXPENSE_REPORT_VALIDATEInDolibarr=Raport cheltuieli  %s validat
+EXPENSE_REPORT_APPROVEInDolibarr=Raport cheltuieli %s aprobat
+EXPENSE_REPORT_DELETEInDolibarr=Raport cheltuieli %ssters
+EXPENSE_REPORT_REFUSEDInDolibarr=Raport cheltuieli %s refuzat
 PROJECT_CREATEInDolibarr=Proiect %s creat
-PROJECT_MODIFYInDolibarr=Project %s modified
-PROJECT_DELETEInDolibarr=Project %s deleted
+PROJECT_MODIFYInDolibarr=Proiect %s modificat
+PROJECT_DELETEInDolibarr=Proiect %s sters
 ##### End agenda events #####
 AgendaModelModule=Șabloane de documente pentru eveniment
 DateActionStart=Data începerii
 DateActionEnd=Data terminării
 AgendaUrlOptions1=Puteţi, de asemenea, să adăugaţi următorii parametri pentru  filtrarea rezultatelor:
 AgendaUrlOptions3=<b>logind=%s</b> ​​pentru a limita exportul de acțiuni deţinute de utilizatorul <b>%s</b>
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pentru a limita exportul de acțiuni asociate la proiectul <b>PROJECT_ID</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​pentru a limita exportul de acțiuni deţinute de utilizatorul  <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> ​​pentru a limita exportul de acțiuni atribuite utilizatorului <b>%s</b>( proprietari sau altii).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Afişează ziua de naştere a contactelor
 AgendaHideBirthdayEvents=Ascunde ziua de naştere a contactelor
 Busy=Ocupat
@@ -109,7 +112,7 @@ ExportCal=Export calendar
 ExtSites=Import calendare externe
 ExtSitesEnableThisTool=Afişează calendarele externe (definite in setup global) în agenda. Nu afectează calendarele externe definite de utilizatori.
 ExtSitesNbOfAgenda=Număr calendare
-AgendaExtNb=Calendar nr %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL-ul pentru a accesa  fişierul . ical
 ExtSiteNoLabel=Nicio descriere
 VisibleTimeRange=Interval de timp vizibil

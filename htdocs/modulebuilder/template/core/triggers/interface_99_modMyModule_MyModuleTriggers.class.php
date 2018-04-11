@@ -151,13 +151,13 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		    case 'STOCK_MOVEMENT':
 
 		        //MYECMDIR
-		    case 'MYECMDIR_DELETE':
 		    case 'MYECMDIR_CREATE':
 		    case 'MYECMDIR_MODIFY':
+		    case 'MYECMDIR_DELETE':
 
 		        // Customer orders
 		    case 'ORDER_CREATE':
-		    case 'ORDER_CLONE':
+		    case 'ORDER_MODIFY':
 		    case 'ORDER_VALIDATE':
 		    case 'ORDER_DELETE':
 		    case 'ORDER_CANCEL':
@@ -170,7 +170,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 		        // Supplier orders
 		    case 'ORDER_SUPPLIER_CREATE':
-		    case 'ORDER_SUPPLIER_CLONE':
+		    case 'ORDER_SUPPLIER_MODIFY':
 		    case 'ORDER_SUPPLIER_VALIDATE':
 		    case 'ORDER_SUPPLIER_DELETE':
 		    case 'ORDER_SUPPLIER_APPROVE':
@@ -184,7 +184,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 		        // Proposals
 		    case 'PROPAL_CREATE':
-		    case 'PROPAL_CLONE':
 		    case 'PROPAL_MODIFY':
 		    case 'PROPAL_VALIDATE':
 		    case 'PROPAL_SENTBYMAIL':
@@ -197,7 +196,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 		        // SupplierProposal
 		    case 'SUPPLIER_PROPOSAL_CREATE':
-		    case 'SUPPLIER_PROPOSAL_CLONE':
 		    case 'SUPPLIER_PROPOSAL_MODIFY':
 		    case 'SUPPLIER_PROPOSAL_VALIDATE':
 		    case 'SUPPLIER_PROPOSAL_SENTBYMAIL':
@@ -210,6 +208,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 		        // Contracts
 		    case 'CONTRACT_CREATE':
+		    case 'CONTRACT_MODIFY':
 		    case 'CONTRACT_ACTIVATE':
 		    case 'CONTRACT_CANCEL':
 		    case 'CONTRACT_CLOSE':
@@ -220,7 +219,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 
 		        // Bills
 		    case 'BILL_CREATE':
-		    case 'BILL_CLONE':
 		    case 'BILL_MODIFY':
 		    case 'BILL_VALIDATE':
 		    case 'BILL_UNVALIDATE':

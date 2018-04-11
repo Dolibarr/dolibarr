@@ -32,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
 $langs->loadLangs(array("sendings","deliveries",'companies','bills'));
 
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'shipmentlist';   // To manage different context of search
+
 $socid=GETPOST('socid','int');
 // Security check
 $expeditionid = GETPOST('id','int');
@@ -63,9 +65,6 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='shipmentlist';
 
 $viewstatut=GETPOST('viewstatut');
 
@@ -149,12 +148,13 @@ if (empty($reshook))
 {
 	// Mass actions. Controls on number of lines checked
 	$maxformassaction=1000;
-	if (! empty($massaction) && count($toselect) < 1)
+	$numtoselect = (is_array($toselect)?count($toselect):0);
+	if (! empty($massaction) && $numtoselect < 1)
 	{
 		$error++;
 		setEventMessages($langs->trans("NoLineChecked"), null, "warnings");
 	}
-	if (! $error && count($toselect) > $maxformassaction)
+	if (! $error && $numtoselect > $maxformassaction)
 	{
 		setEventMessages($langs->trans('TooManyRecordForMassAction',$maxformassaction), null, 'errors');
 		$error++;
@@ -265,6 +265,12 @@ if ($resql)
 
 	//$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
+	$newcardbutton='';
+	if ($user->rights->expedition->creer)
+	{
+		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2">'.$langs->trans('NewSending').'</a>';
+	}
+
 	$i = 0;
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -275,7 +281,7 @@ if ($resql)
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords, '', 0, '', '', $limit);
+	print_barre_liste($langs->trans('ListOfSendings'), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
 	if ($sall)
 	{
@@ -542,7 +548,7 @@ if ($resql)
 		{
 			$shipment->fetchObjectLinked($shipment->id,$shipment->element);
 			$receiving='';
-			if (count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
+			if (is_array($shipment->linkedObjects['delivery']) && count($shipment->linkedObjects['delivery']) > 0) $receiving=reset($shipment->linkedObjects['delivery']);
 
 			if (! empty($arrayfields['l.ref']['checked']))
 			{

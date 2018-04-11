@@ -58,7 +58,6 @@ class modSociete extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->config_page_url = array("societe.php@societe");
 		// Name of image file used for this module.
 		$this->picto='company';
@@ -284,8 +283,8 @@ class modSociete extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid AND payterm.entity IN ('.getEntity('c_payment_term').')';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id AND paymode.entity IN ('.getEntity('c_paiement').')';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as payterm ON s.cond_reglement = payterm.rowid';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as paymode ON s.mode_reglement = paymode.id';
 		$this->export_sql_end[$r] .=' WHERE s.entity IN ('.getEntity('societe').')';
 		if (is_object($user) && empty($user->rights->societe->client->voir)) {
 			$this->export_sql_end[$r] .=' AND (sc.fk_user = '.$user->id.' ';
@@ -411,12 +410,12 @@ class modSociete extends DolibarrModules
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
 		$this->import_label[$r]="ImportDataset_company_3";	// Translation key
-		$this->import_icon[$r]='account';
+		$this->import_icon[$r]='company';
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('sr'=>MAIN_DB_PREFIX.'societe_rib');
 		$this->import_fields_array[$r]=array('sr.fk_soc'=>"ThirdPartyName*",'sr.bank'=>"Bank",
-				'sr.code_banque'=>"BankCode*",'sr.code_guichet'=>"DeskCode*",'sr.number'=>"BankAccountNumber*",
-				'sr.cle_rib'=>"BankAccountNumberKey*",'sr.bic'=>"BIC",'sr.iban_prefix'=>"IBAN", 'sr.domiciliation'=>"BankAccountDomiciliation",'sr.proprio' => "BankAccountOwner", 'sr.owner_address' => "BankAccountOwnerAddress", 'sr.default_rib' => 'Default'
+				'sr.code_banque'=>"BankCode",'sr.code_guichet'=>"DeskCode",'sr.number'=>"BankAccountNumber*",
+				'sr.cle_rib'=>"BankAccountNumberKey",'sr.bic'=>"BIC",'sr.iban_prefix'=>"IBAN", 'sr.domiciliation'=>"BankAccountDomiciliation",'sr.proprio' => "BankAccountOwner", 'sr.owner_address' => "BankAccountOwnerAddress", 'sr.default_rib' => 'Default'
 		);
 
 		$this->import_convertvalue_array[$r]=array(

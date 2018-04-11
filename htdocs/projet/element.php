@@ -103,8 +103,8 @@ $socid=$object->socid;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $projectid, 'projet&project');
 
-
 $hookmanager->initHooks(array('projectOverview'));
+
 
 /*
  *	View
@@ -185,9 +185,9 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 // Date start - end
 print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-$start = dol_print_date($object->date_start,'dayhour');
+$start = dol_print_date($object->date_start,'day');
 print ($start?$start:'?');
-$end = dol_print_date($object->date_end,'dayhour');
+$end = dol_print_date($object->date_end,'day');
 print ' - ';
 print ($end?$end:'?');
 if ($object->hasDelay()) print img_warning("Late");
@@ -470,7 +470,7 @@ $listofreferent=array(
 );
 
 $parameters=array('listofreferent'=>$listofreferent);
-$resHook = $hookmanager->executeHooks('completeListOfReferent',$parameters,$object,$action);
+$resHook = $hookmanager->executeHooks('completeListOfReferent', $parameters, $object, $action);
 
 if(!empty($hookmanager->resArray)) {
 
@@ -1137,9 +1137,12 @@ foreach ($listofreferent as $key => $value)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else // error
+		else
 		{
-			print $elementarray;
+			if (! is_array($elementarray))	// error
+			{
+				print $elementarray;
+			}
 		}
 		print "</table>";
 		print "<br>\n";

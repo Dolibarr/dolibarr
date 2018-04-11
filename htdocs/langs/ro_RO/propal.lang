@@ -33,6 +33,7 @@ PropalStatusSigned=Semnată (de facturat)
 PropalStatusNotSigned=Nesemnată (inchisă)
 PropalStatusBilled=Facturată
 PropalStatusDraftShort=Schiţă
+PropalStatusValidatedShort=Validată
 PropalStatusClosedShort=Închisă
 PropalStatusSignedShort=Semnată
 PropalStatusNotSignedShort=Nesemnată

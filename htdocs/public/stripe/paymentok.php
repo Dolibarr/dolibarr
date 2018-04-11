@@ -127,6 +127,8 @@ if ($ispaymentok)
     $sendemail = '';
     if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL)) $sendemail=$conf->global->ONLINE_PAYMENT_SENDEMAIL;
 
+    $tmptag=dolExplodeIntoArray($fulltag,'.','=');
+
 	// Send an email
     if ($sendemail)
 	{
@@ -152,12 +154,11 @@ if ($ispaymentok)
 
     	$urlback=$_SERVER["REQUEST_URI"];
 		$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
-		$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 		$content="";
 		if (! empty($tmptag['MEM']))
 		{
 			$langs->load("members");
-			$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+			$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
 			$content.=$langs->trans("PaymentSubscription")."<br>\n";
 			$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
 			$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";

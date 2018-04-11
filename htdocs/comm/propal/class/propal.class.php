@@ -1114,12 +1114,8 @@ class Propal extends CommonObject
 					{
 						$action='update';
 
-						// Actions on extra fields (by external module or standard code)
-						// TODO le hook fait double emploi avec le trigger !!
-						$hookmanager->initHooks(array('propaldao'));
-						$parameters=array('socid'=>$this->id);
-						$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-						if (empty($reshook))
+						// Actions on extra fields
+						if (! $error)
 						{
 							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 							{
@@ -1130,9 +1126,8 @@ class Propal extends CommonObject
 								}
 							}
 						}
-						else if ($reshook < 0) $error++;
 
-						if (! $notrigger)
+						if (! $error && ! $notrigger)
 						{
 							// Call trigger
 							$result=$this->call_trigger('PROPAL_CREATE',$user);
@@ -1210,7 +1205,7 @@ class Propal extends CommonObject
 
 		// get extrafields so they will be clone
 		foreach($this->lines as $line)
-			$line->fetch_optionals($line->rowid);
+			$line->fetch_optionals();
 
 		// Load dest object
 		$clonedObj = clone $this;
@@ -1289,11 +1284,6 @@ class Propal extends CommonObject
 				$reshook=$hookmanager->executeHooks('createFrom',$parameters,$clonedObj,$action);    // Note that $action and $object may have been modified by some hooks
 				if ($reshook < 0) $error++;
 			}
-
-			// Call trigger
-			$result=$clonedObj->call_trigger('PROPAL_CLONE',$user);
-			if ($result < 0) { $error++; }
-			// End call triggers
 		}
 
 		unset($this->context['createfromclone']);
@@ -1321,7 +1311,7 @@ class Propal extends CommonObject
 	function fetch($rowid,$ref='')
 	{
 
-		$sql = "SELECT p.rowid, p.ref, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
+		$sql = "SELECT p.rowid, p.ref, p.entity, p.remise, p.remise_percent, p.remise_absolue, p.fk_soc";
 		$sql.= ", p.total, p.tva, p.localtax1, p.localtax2, p.total_ht";
 		$sql.= ", p.datec";
 		$sql.= ", p.date_valid as datev";
@@ -1348,8 +1338,8 @@ class Propal extends CommonObject
 		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
@@ -1367,6 +1357,7 @@ class Propal extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id                   = $obj->rowid;
+				$this->entity               = $obj->entity;
 
 				$this->ref                  = $obj->ref;
 				$this->ref_client           = $obj->ref_client;
@@ -1439,12 +1430,9 @@ class Propal extends CommonObject
 					$this->brouillon = 1;
 				}
 
-				// Retreive all extrafield for invoice
+				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-				$extrafields=new ExtraFields($this->db);
-				$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
-				$this->fetch_optionals($this->id,$extralabels);
+				$this->fetch_optionals();
 
 				$this->db->free($resql);
 
@@ -1756,8 +1744,8 @@ class Propal extends CommonObject
 				// to  not lose the linked files
 				$oldref = dol_sanitizeFileName($this->ref);
 				$newref = dol_sanitizeFileName($num);
-				$dirsource = $conf->propal->dir_output.'/'.$oldref;
-				$dirdest = $conf->propal->dir_output.'/'.$newref;
+				$dirsource = $conf->propal->multidir_output[$this->entity].'/'.$oldref;
+				$dirdest = $conf->propal->multidir_output[$this->entity].'/'.$newref;
 
 				if (file_exists($dirsource))
 				{
@@ -1766,7 +1754,7 @@ class Propal extends CommonObject
 					{
 						dol_syslog("Rename ok");
 						// Rename docs starting with $oldref with $newref
-						$listoffiles=dol_dir_list($conf->propal->dir_output.'/'.$newref, 'files', 1, '^'.preg_quote($oldref,'/'));
+						$listoffiles=dol_dir_list($dirdest, 'files', 1, '^'.preg_quote($oldref,'/'));
 						foreach($listoffiles as $fileentry)
 						{
 							$dirsource=$fileentry['name'];
@@ -2536,21 +2524,6 @@ class Propal extends CommonObject
 	}
 
 	/**
-	 *	Class invoiced the Propal
-	 *
-	 *	@return     int     	<0 si ko, >0 si ok
-	 *  @deprecated
-	 *  @see classifyBilled()
-	 */
-	function classer_facturee()
-	{
-		global $user;
-		dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-		return $this->classifyBilled($user);
-	}
-
-	/**
 	 *	Set draft status
 	 *
 	 *	@param		User	$user		Object user that modify
@@ -2822,9 +2795,9 @@ class Propal extends CommonObject
 					{
 						// We remove directory
 						$ref = dol_sanitizeFileName($this->ref);
-						if ($conf->propal->dir_output && !empty($this->ref))
+						if ($conf->propal->multidir_output[$this->entity] && !empty($this->ref))
 						{
-							$dir = $conf->propal->dir_output . "/" . $ref ;
+							$dir = $conf->propal->multidir_output[$this->entity] . "/" . $ref ;
 							$file = $dir . "/" . $ref . ".pdf";
 							if (file_exists($file))
 							{
@@ -3975,7 +3948,7 @@ class PropaleLigne extends CommonObjectLine
 				}
 			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINEPROPAL_INSERT',$user);
@@ -4158,7 +4131,7 @@ class PropaleLigne extends CommonObjectLine
 				}
 			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINEPROPAL_UPDATE',$user);

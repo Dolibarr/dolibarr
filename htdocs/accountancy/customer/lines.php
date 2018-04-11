@@ -110,27 +110,37 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
 
+	if (! (GETPOST('account_parent','int') >= 0))
+	{
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
+	}
+
 	$db->begin();
 
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
-	$sql1 .= " SET l.fk_code_ventilation=" . $account_parent;
-	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
+	if (! $error)
+	{
+		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
+		$sql1 .= " SET l.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
+		$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
 
-	dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		setEventMessages($db->lasterror(), null, 'errors');
-	}
-	if (! $error) {
-		$db->commit();
-		setEventMessages($langs->trans('Save'), null, 'mesgs');
-	} else {
-		$db->rollback();
-		setEventMessages($db->lasterror(), null, 'errors');
+		dol_syslog('accountancy/customer/lines.php::changeaccount sql= ' . $sql1);
+		$resql1 = $db->query($sql1);
+		if (! $resql1) {
+			$error ++;
+			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		if (! $error) {
+			$db->commit();
+			setEventMessages($langs->trans('Save'), null, 'mesgs');
+		} else {
+			$db->rollback();
+			setEventMessages($db->lasterror(), null, 'errors');
+		}
+
+		$account_parent = '';   // Protection to avoid to mass apply it a second time
 	}
 
-	$account_parent = '';   // Protection to avoid to mass apply it a second time
 }
 
 
@@ -163,7 +173,7 @@ print '<script type="text/javascript">
 /*
  * Customer Invoice lines
  */
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
@@ -204,7 +214,7 @@ if (strlen(trim($search_account))) {
 	$sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= natural_search("fd.tva_tx", $search_vat);
+	$sql .= natural_search("fd.tva_tx", price2num($search_vat), 1);
 }
 if ($search_month > 0)
 {
@@ -223,7 +233,7 @@ if (strlen(trim($search_country))) {
 	$sql .= natural_search("co.label", $search_country);
 }
 if (strlen(trim($search_tvaintra))) {
-	$sql .= natural_search("s.tva_intra", $search_tva_intra);
+	$sql .= natural_search("s.tva_intra", $search_tvaintra);
 }
 $sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";    // We don't share object for accountancy
 $sql .= $db->order($sortfield, $sortorder);
@@ -245,28 +255,19 @@ if ($result) {
 	$i = 0;
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_invoice)
-		$param .= "&search_invoice=" . $search_invoice;
-	if ($search_ref)
-		$param .= "&search_ref=" . $search_ref;
-	if ($search_label)
-		$param .= "&search_label=" . $search_label;
-	if ($search_desc)
-		$param .= "&search_desc=" . $search_desc;
-	if ($search_account)
-		$param .= "&search_account=" . $search_account;
-	if ($search_vat)
-		$param .= "&search_vat=" . $search_vat;
-	if ($search_day)         $param.='&search_day='.urlencode($search_day);
-	if ($search_month)       $param.='&search_month='.urlencode($search_month);
-	if ($search_year)        $param.='&search_year='.urlencode($search_year);
-	if ($search_country)
-		$param .= "&search_country=" . $search_country;
-	if ($search_tvaintra)
-		$param .= "&search_tvaintra=" . $search_tvaintra;
-
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($search_invoice)	$param .= "&search_invoice=" . urlencode($search_invoice);
+	if ($search_ref)		$param .= "&search_ref=" . urlencode($search_ref);
+	if ($search_label)		$param .= "&search_label=" . urlencode($search_label);
+	if ($search_desc)		$param .= "&search_desc=" . urlencode($search_desc);
+	if ($search_account)	$param .= "&search_account=" . urlencode($search_account);
+	if ($search_vat)		$param .= "&search_vat=" . urlencode($search_vat);
+	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
+	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
+	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
+	if ($search_country)  	$param .= "&search_country=" . urlencode($search_country);
+	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -281,7 +282,7 @@ if ($result) {
 	print $langs->trans("DescVentilDoneCustomer") . '<br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
-	print $formaccounting->select_account($account_parent, 'account_parent', 1);
+	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '"/></div>';
 
 	$moreforfilter = '';
@@ -333,7 +334,7 @@ if ($result) {
 		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label_compte;
 
 		$facture_static->ref = $objp->facnumber;
-		$facture_static->id = $objp->rowid;
+		$facture_static->id = $objp->facid;
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
@@ -370,7 +371,7 @@ if ($result) {
 		print '</a>';
 		print '</td>';
 
-		print '<td align="center">' . $objp->country .'</td>';
+		print '<td>' . $objp->country .'</td>';
 
 		print '<td>' . $objp->tva_intra . '</td>';
 

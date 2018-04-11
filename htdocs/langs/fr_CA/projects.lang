@@ -138,3 +138,4 @@ OpportunityTotalAmount=Possibilité montant total
 OpportunityPonderatedAmountDesc=Montant des opportunités pondéré avec probabilité
 OppStatusPENDING=Créance
 OppStatusWON=A gagné
+SendProjectRef=About project %s

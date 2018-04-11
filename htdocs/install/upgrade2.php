@@ -163,7 +163,13 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
     // Chargement config
-    if (! $error) $conf->setValues($db);
+    if (! $error)
+    {
+    	$conf->setValues($db);
+    	// Reset forced setup after the setValues
+    	if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+    	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+    }
 
 
     /***************************************************************************************
@@ -371,7 +377,20 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         $beforeversionarray=explode('.','6.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            // No particular code
+        	if (! empty($conf->multicompany->enabled))
+        	{
+        		global $multicompany_transverse_mode;
+
+        		// Only if the transverse mode is not used
+        		if (empty($multicompany_transverse_mode))
+        		{
+        			// Migrate to add entity value into llx_user_rights
+        			migrate_user_rights_entity($db, $langs, $conf);
+
+        			// Migrate to add entity value into llx_usergroup_rights
+        			migrate_usergroup_rights_entity($db, $langs, $conf);
+        		}
+        	}
         }
 
         // Scripts for last version
@@ -3940,7 +3959,7 @@ function migrate_reset_blocked_log($db,$langs,$conf)
 						else
 						{
 							// Add set line
-							$object=new stdClass;
+							$object=new stdClass();
 							$object->id = 1;
 							$object->element = 'module';
 							$object->ref = 'systemevent';
@@ -3958,7 +3977,7 @@ function migrate_reset_blocked_log($db,$langs,$conf)
 					}
 					else
 					{
-						print ' - '.$langs->trans('AlreadyInV7');
+						print ' - '.$langs->trans('AlreadyInV7').'<br>';
 					}
 				}
 				else
@@ -4149,6 +4168,158 @@ function migrate_remise_except_entity($db,$langs,$conf)
 					}
 				}
 				else
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate to add entity value into llx_user_rights
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_user_rights_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<b>'.$langs->trans('MigrationUserRightsEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_user_rights_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT u.rowid, u.entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."user as u";
+	$sqlSelect.= " WHERE u.entity > 1";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."user_rights SET";
+				$sqlUpdate.= " entity = " . $obj->entity;
+				$sqlUpdate.= " WHERE fk_user = " . $obj->rowid;
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate to add entity value into llx_usergroup_rights
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_usergroup_rights_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<b>'.$langs->trans('MigrationUserGroupRightsEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_usergroup_rights_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT u.rowid, u.entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."usergroup as u";
+	$sqlSelect.= " WHERE u.entity > 1";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."usergroup_rights SET";
+				$sqlUpdate.= " entity = " . $obj->entity;
+				$sqlUpdate.= " WHERE fk_usergroup = " . $obj->rowid;
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
 				{
 					$error++;
 					dol_print_error($db);

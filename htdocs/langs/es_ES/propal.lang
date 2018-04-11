@@ -33,6 +33,7 @@ PropalStatusSigned=Firmado (a facturar)
 PropalStatusNotSigned=No firmado (cerrado)
 PropalStatusBilled=Facturado
 PropalStatusDraftShort=Borrador
+PropalStatusValidatedShort=Validado
 PropalStatusClosedShort=Cerrado
 PropalStatusSignedShort=Firmado
 PropalStatusNotSignedShort=No firmado

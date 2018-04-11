@@ -33,6 +33,7 @@ PropalStatusSigned=簽名（需要收費）
 PropalStatusNotSigned=不簽署（非公開）
 PropalStatusBilled=帳單
 PropalStatusDraftShort=草案
+PropalStatusValidatedShort=驗證
 PropalStatusClosedShort=關閉
 PropalStatusSignedShort=簽名
 PropalStatusNotSignedShort=未簽署

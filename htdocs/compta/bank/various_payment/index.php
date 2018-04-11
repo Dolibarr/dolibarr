@@ -102,27 +102,25 @@ $sql = "SELECT v.rowid, v.sens, v.amount, v.label, v.datep as datep, v.datev as 
 $sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number as bank_account_number, ba.fk_accountancy_journal as accountancy_journal, ba.label as blabel,";
 $sql.= " pst.code as payment_code";
 $sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON v.fk_typepayment = pst.id AND pst.entity IN (" . getEntity('c_paiement').")";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON v.fk_typepayment = pst.id";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 $sql.= " WHERE v.entity IN (".getEntity('payment_various').")";
 
 // Search criteria
-if ($search_ref)				$sql.=" AND v.rowid=".$search_ref;
-if ($search_label)				$sql.=natural_search(array('v.label'), $search_label);
-if ($search_amount_deb)			$sql.=natural_search("v.amount", $search_amount_deb, 1);
-if ($search_amount_cred)		$sql.=natural_search("v.amount", $search_amount_cred, 1);
-if ($search_account > 0)		$sql.=" AND b.fk_account=".$search_account;
-if ($search_date)				$sql.=" AND v.datep=".$search_date;
-if ($search_accountancy_code)	$sql.=" AND v.accountancy_code=".$search_accountancy_code;
-
+if ($search_ref)					$sql.=" AND v.rowid=".$search_ref;
+if ($search_label)					$sql.=natural_search(array('v.label'), $search_label);
+if ($search_amount_deb)				$sql.=natural_search("v.amount", $search_amount_deb, 1);
+if ($search_amount_cred)			$sql.=natural_search("v.amount", $search_amount_cred, 1);
+if ($search_account > 0)			$sql.=" AND b.fk_account=".$search_account;
+if ($search_date)					$sql.=" AND v.datep=".$search_date;
+if ($search_accountancy_code > 0)	$sql.=" AND v.accountancy_code=".$search_accountancy_code;
+if ($typeid > 0) $sql .= " AND v.fk_typepayment=".$typeid;
 if ($filtre) {
 	$filtre=str_replace(":","=",$filtre);
 	$sql .= " AND ".$filtre;
 }
-if ($typeid) {
-	$sql .= " AND v.fk_typepayment=".$typeid;
-}
+
 $sql.= $db->order($sortfield,$sortorder);
 
 $totalnboflines=0;
@@ -142,10 +140,20 @@ if ($result)
 	$var=true;
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($typeid) $param.='&amp;typeid='.$typeid;
-	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($search_ref)			$param.='&search_ref='.urlencode($search_ref);
+	if ($search_label)			$param.='&search_label='.urlencode($search_label);
+	if ($typeid > 0)            $param.='&typeid='.urlencode($typeid);
+	if ($search_amount_deb)     $param.='&search_amount_deb='.urlencode($search_amount_deb);
+	if ($search_amount_cred)    $param.='&search_amount_cred='.urlencode($search_amount_cred);
+	if ($search_account > 0)			$param.='&search_amount='.urlencode($search_account);
+	//if ($search_date)					$param.='&search_date='.$search_date;
+	if ($search_accountancy_code > 0)	$param.='&search_accountancy_code='.urlencode($search_accountancy_code);
+
+	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
+
+	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create">'.$langs->trans('MenuNewVariousPayment').'</a>';
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
@@ -157,22 +165,10 @@ if ($result)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("VariousPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($langs->trans("VariousPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-
-	print '<tr class="liste_titre">';
-	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"v.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"v.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"v.datep","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("PaymentMode",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-	if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting",$_SERVER["PHP_SELF"],"v.accountancy_code","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("Debit",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre("Credit",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
 
 	print '<tr class="liste_titre">';
 
@@ -193,7 +189,7 @@ if ($result)
 
 	// Type
 	print '<td class="liste_titre" align="left">';
-	$form->select_types_paiements($typeid,'typeid','',0,0,1,16);
+	$form->select_types_paiements($typeid,'typeid','',0,1,1,16);
 	print '</td>';
 
 	// Account
@@ -226,6 +222,20 @@ if ($result)
 	print '</td>';
 
 	print "</tr>\n";
+
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"v.rowid","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"v.label","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"v.datep","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("PaymentMode",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+	if (! empty($conf->banque->enabled))     print_liste_field_titre("BankAccount",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+	if (! empty($conf->accounting->enabled)) print_liste_field_titre("AccountAccounting",$_SERVER["PHP_SELF"],"v.accountancy_code","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Debit",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Credit",$_SERVER["PHP_SELF"],"v.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
+	print "</tr>\n";
+
 
 	$totalarray=array();
 	while ($i < min($num,$limit))

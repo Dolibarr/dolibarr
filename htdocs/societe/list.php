@@ -9,6 +9,7 @@
  * Copyright (C) 2016       Ferran Marcet      		<fmarcet@2byte.es>
  * Copyright (C) 2017       Rui Strecht      		<rui.strecht@aliartalentos.com>
  * Copyright (C) 2017       Juanjo Menent      		<jmenent@2byte.es>
+ * Copyright (C) 2018       Nicolas ZABOURI      	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +45,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'thirdpartylist';
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -105,18 +107,13 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='thirdpartylist';
-/*if ($search_type == '1,3') { $contextpage='customerlist'; $type='c'; }
-if ($search_type == '2,3') { $contextpage='prospectlist'; $type='p'; }
-if ($search_type == '4') { $contextpage='supplierlist'; $type='f'; }
-*/
 if ($type == 'c') { $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
 if ($type == 'p') { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
 if ($type == 'f') { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Societe($db);
+$hookmanager->initHooks(array('thirdpartylist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -137,11 +134,15 @@ $fieldstosearchall = array(
 	's.siren'=>"ProfId1",
 	's.siret'=>"ProfId2",
 	's.ape'=>"ProfId3",
+	's.phone'=>"Phone",
 );
 if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof4']='ProfId4';
 if (($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != "ProfId5".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof5']='ProfId5';
 if (($tmp = $langs->transnoentities("ProfId6".$mysoc->country_code)) && $tmp != "ProfId6".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof6']='ProfId6';
 if (!empty($conf->barcode->enabled)) $fieldstosearchall['s.barcode']='Gencod';
+// Personalized search criterias. Example: $conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS = 's.nom=ThirdPartyName;s.name_alias=AliasNameShort;s.code_client=CustomerCode'
+if (! empty($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS)) $fieldstosearchall=dolExplodeIntoArray($conf->global->THIRDPARTY_QUICKSEARCH_ON_FIELDS);
+
 
 // Define list of fields to show into list
 $checkedcustomercode=(in_array($contextpage, array('thirdpartylist', 'customerlist', 'prospectlist')) ? 1 : 0);
@@ -394,6 +395,7 @@ $sql.= " s.email, s.phone, s.url, s.siren as idprof1, s.siret as idprof2, s.ape 
 $sql.= " s.tms as date_update, s.datec as date_creation,";
 $sql.= " s.code_compta,s.code_compta_fournisseur,";
 $sql.= " typent.code as typent_code,";
+$sql.= " country.code as country_code,";
 $sql.= " state.code_departement as state_code, state.nom as state_name,";
 $sql.= " region.code_region as region_code, region.nom as region_name";
 // We'll need these fields in order to filter by sale (including the case where the user can only see his prospects)
@@ -513,7 +515,7 @@ $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($search_all != '')     $param = "&sall=".urlencode($search_all);
-if ($sall != '')           $param .= "&sall=".urlencode($sall);
+if ($sall != '')           $param.= "&sall=".urlencode($sall);
 if ($search_categ_cus > 0) $param.='&search_categ_cus='.urlencode($search_categ_cus);
 if ($search_categ_sup > 0) $param.='&search_categ_sup='.urlencode($search_categ_sup);
 if ($search_sale > 0)	   $param.='&search_sale='.urlencode($search_sale);
@@ -567,6 +569,23 @@ if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->societe->creer)
+{
+	$typefilter='';
+	$label='MenuNewThirdParty';
+
+	if(! empty($type))
+	{
+		$typefilter = '&amp;type='.$type;
+		if($type == 'p') $label='MenuNewProspect';
+		if($type == 'c') $label='MenuNewCustomer';
+		if($type == 'f') $label='NewSupplier';
+	}
+
+	$newcardbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'">'.$langs->trans($label).'</a>';
+}
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -575,7 +594,7 @@ print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies', 0, $newcardbutton, '', $limit);
 
 $langs->load("other");
 $textprofid=array();
@@ -995,16 +1014,7 @@ while ($i < min($num, $limit))
 		$savalias = $obj->name_alias;
 		if (! empty($arrayfields['s.name_alias']['checked'])) $companystatic->name_alias='';
 		print '<td class="tdoverflowmax200">';
-		//if (! empty($arrayfields['s.name_alias']['checked']))	// Hide alias from output
-		//{
-			$savalias=$companystatic->name_alias;
-			$companystatic->name_alias='';
-		//}
-		print $companystatic->getNomUrl(1,'',100);
-		//if (! empty($arrayfields['s.name_alias']['checked']))	// Hide alias from output
-		//{
-			$companystatic->name_alias=$savalias;
-		//}
+		print $companystatic->getNomUrl(1, '', 100, 0, 1);
 		print "</td>\n";
 		$companystatic->name_alias = $savalias;
         if (! $i) $totalarray['nbfield']++;
@@ -1095,7 +1105,7 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.phone']['checked']))
 	{
-		print "<td>".$obj->phone."</td>\n";
+       		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid)."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.url']['checked']))

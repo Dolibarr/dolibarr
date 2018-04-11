@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007      Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+-- Copyright (C) 2011-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
 -- Copyright (C) 2015-2017 Juanjo Menent        <jmenent@2byte.es>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -28,12 +28,14 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('VT', 'Sale Journal', 2, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AC', 'Purchase Journal', 3, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('BQ', 'Bank Journal', 4, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('OD', 'Other Journal', 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('AN', 'Has new Journal', 9, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active) VALUES ('ER', 'Expense Report Journal', 5, 1);
+
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT', 'Sale Journal',           2, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC', 'Purchase Journal',       3, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ', 'Bank Journal',           4, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD', 'Other Journal',          1, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN', 'Has new Journal',        9, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER', 'Expense Report Journal', 5, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'Inventory Journal'    , 8, 1, 1);
 
 
 -- Description of chart of account FR PCG99-ABREGE
@@ -42,7 +44,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account FR PCG99-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG99-BASE', 'The base accountancy french plan', 1);
 
--- Description of chart of account FR PCG14-BASE
+-- Description of chart of account FR PCG14-DEV
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG14-DEV', 'The developed accountancy french plan 2014', 1);
 
 -- Description of chart of account BE PCMN-BASE

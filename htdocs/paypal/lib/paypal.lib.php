@@ -192,7 +192,7 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
  * @param  	string	$returnURL			Url to use if payment is OK
  * @param   string	$cancelURL			Url to use if payment is KO
  * @param   string	$tag				Full tag
- * @return	void
+ * @return	string						No return (a redirect is done) if OK, or Error message if KO
  */
 function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$returnURL,$cancelURL,$tag)
 {
@@ -272,11 +272,20 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
         $ErrorLongMsg = urldecode($resArray["L_LONGMESSAGE0"]);
         $ErrorSeverityCode = urldecode($resArray["L_SEVERITYCODE0"]);
 
-        echo $langs->trans('SetExpressCheckoutAPICallFailed') . "<br>\n";
-        echo $langs->trans('DetailedErrorMessage') . ": " . $ErrorLongMsg."<br>\n";
-        echo $langs->trans('ShortErrorMessage') . ": " . $ErrorShortMsg."<br>\n";
-        echo $langs->trans('ErrorCode') . ": " . $ErrorCode."<br>\n";
-        echo $langs->trans('ErrorSeverityCode') . ": " . $ErrorSeverityCode."<br>\n";
+        if ($ErrorCode == 10729)
+        {
+        	$mesg.= "PayPal can't accept payments for this thirdparty. An address is defined but is not complete (missing State).<br>Ask system administrator to fix address or to setup Paypal module to accept payments even on not complete addresses (remove option PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS).<br>\n";
+        }
+        else
+        {
+        	$mesg = $langs->trans('SetExpressCheckoutAPICallFailed') . "<br>\n";
+        	$mesg.= $langs->trans('DetailedErrorMessage') . ": " . $ErrorLongMsg."<br>\n";
+        	$mesg.= $langs->trans('ShortErrorMessage') . ": " . $ErrorShortMsg."<br>\n";
+        	$mesg.= $langs->trans('ErrorCode') . ": " . $ErrorCode."<br>\n";
+        	$mesg.= $langs->trans('ErrorSeverityCode') . ": " . $ErrorSeverityCode."<br>\n";
+        }
+
+        return $mesg;
     }
 
 }
@@ -300,6 +309,7 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  *      phoneNum:           the phoneNum  entered on the merchant's site
  *      email:              the buyer email
  *      desc:               Product description
+ * See https://developer.paypal.com/docs/classic/api/merchant/SetExpressCheckout_API_Operation_NVP/
  *
  * @param 	double 			$paymentAmount		Payment amount
  * @param 	string 			$currencyCodeType	Currency
@@ -307,8 +317,8 @@ function print_paypal_redirect($paymentAmount,$currencyCodeType,$paymentType,$re
  * @param 	string 			$returnURL			Return Url
  * @param 	string 			$cancelURL			Cancel Url
  * @param 	string 			$tag				Full tag
- * @param 	string 			$solutionType		Type
- * @param 	string 			$landingPage		Landing page
+ * @param 	string 			$solutionType		Type ('Mark' or 'Sole')
+ * @param 	string 			$landingPage		Landing page ('Login' or 'Billing')
  * @param	string			$shipToName			Ship to name
  * @param	string			$shipToStreet		Ship to street
  * @param	string			$shipToCity			Ship to city
@@ -327,38 +337,86 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     // Construct the parameter string that describes the SetExpressCheckout API call in the shortcut implementation
 
     //declaring of global variables
-    global $conf, $langs;
+    global $conf, $langs, $mysoc;
     global $API_Endpoint, $API_Url, $API_version, $USE_PROXY, $PROXY_HOST, $PROXY_PORT;
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
     $nvpstr = '';
-    $nvpstr = $nvpstr . "&AMT=". urlencode($paymentAmount);                // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
-    $nvpstr = $nvpstr . "&PAYMENTACTION=" . urlencode($paymentType);       // PAYMENTACTION deprecated by paypal -> PAYMENTREQUEST_n_PAYMENTACTION
+    //$nvpstr = $nvpstr . "&VERSION=".$API_version;				// Already added by hash_call
     $nvpstr = $nvpstr . "&RETURNURL=" . urlencode($returnURL);
     $nvpstr = $nvpstr . "&CANCELURL=" . urlencode($cancelURL);
-    $nvpstr = $nvpstr . "&CURRENCYCODE=" . urlencode($currencyCodeType);    // CURRENCYCODE deprecated by paypal -> PAYMENTREQUEST_n_CURRENCYCODE
-    $nvpstr = $nvpstr . "&ADDROVERRIDE=1";
-    //$nvpstr = $nvpstr . "&ALLOWNOTE=0";
-    $nvpstr = $nvpstr . "&SHIPTONAME=" . urlencode($shipToName);            // SHIPTONAME deprecated by paypal -> PAYMENTREQUEST_n_SHIPTONAME
-    $nvpstr = $nvpstr . "&SHIPTOSTREET=" . urlencode($shipToStreet);        //
-    $nvpstr = $nvpstr . "&SHIPTOSTREET2=" . urlencode($shipToStreet2);
-    $nvpstr = $nvpstr . "&SHIPTOCITY=" . urlencode($shipToCity);
-    $nvpstr = $nvpstr . "&SHIPTOSTATE=" . urlencode($shipToState);
-    $nvpstr = $nvpstr . "&SHIPTOCOUNTRYCODE=" . urlencode($shipToCountryCode);
-    $nvpstr = $nvpstr . "&SHIPTOZIP=" . urlencode($shipToZip);
-    $nvpstr = $nvpstr . "&PHONENUM=" . urlencode($phoneNum);
+    if (! empty($conf->global->PAYPAL_ALLOW_NOTES))
+    {
+    	$nvpstr = $nvpstr . "&ALLOWNOTE=0";
+    }
+    if (empty($conf->global->PAYPAL_REQUIRE_VALID_SHIPPING_ADDRESS))
+    {
+    	$nvpstr = $nvpstr . "&NOSHIPPING=1";	// An empty or not complete shipping address will be accepted
+    }
+    else
+    {
+    	$nvpstr = $nvpstr . "&NOSHIPPING=0";	// A valid shipping address is required (full required fields mandatory)
+    }
     $nvpstr = $nvpstr . "&SOLUTIONTYPE=" . urlencode($solutionType);
     $nvpstr = $nvpstr . "&LANDINGPAGE=" . urlencode($landingPage);
-    //$nvpstr = $nvpstr . "&CUSTOMERSERVICENUMBER=" . urlencode($tag);    // Hotline phone number
-    $nvpstr = $nvpstr . "&INVNUM=" . urlencode($tag);
-    if (! empty($email)) $nvpstr = $nvpstr . "&EMAIL=" . urlencode($email);
-    if (! empty($desc))  $nvpstr = $nvpstr . "&DESC=" . urlencode($desc);        // DESC deprecated by paypal -> PAYMENTREQUEST_n_DESC
+    if (! empty($conf->global->PAYPAL_CUSTOMER_SERVICE_NUMBER))
+    {
+    	$nvpstr = $nvpstr . "&CUSTOMERSERVICENUMBER=" . urlencode($conf->global->PAYPAL_CUSTOMER_SERVICE_NUMBER);    // Hotline phone number
+    }
 
+    $paypalprefix = 'PAYMENTREQUEST_0_';
+    //$paypalprefix = '';
+	if (! empty($paypalprefix) && $paymentType == 'Sole') $paymentType='Sale';
+
+	$nvpstr = $nvpstr . "&AMT=". urlencode($paymentAmount);									// Total for all elements
+
+    $nvpstr = $nvpstr . "&".$paypalprefix."INVNUM=" . urlencode($tag);
+    $nvpstr = $nvpstr . "&".$paypalprefix."AMT=". urlencode($paymentAmount);                 // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+    $nvpstr = $nvpstr . "&".$paypalprefix."ITEMAMT=". urlencode($paymentAmount);             // AMT deprecated by paypal -> PAYMENTREQUEST_n_AMT
+    $nvpstr = $nvpstr . "&".$paypalprefix."PAYMENTACTION=" . urlencode($paymentType);        // PAYMENTACTION deprecated by paypal -> PAYMENTREQUEST_n_PAYMENTACTION
+    $nvpstr = $nvpstr . "&".$paypalprefix."CURRENCYCODE=" . urlencode($currencyCodeType);    // CURRENCYCODE deprecated by paypal -> PAYMENTREQUEST_n_CURRENCYCODE
+
+    $nvpstr = $nvpstr . "&".$paypalprefix."L_PAYMENTREQUEST_0_QTY0=1";
+    $nvpstr = $nvpstr . "&".$paypalprefix."L_PAYMENTREQUEST_0_AMT0=".urlencode($paymentAmount);
+    $nvpstr = $nvpstr . "&".$paypalprefix."L_PAYMENTREQUEST_0_NAME0=".urlencode($desc);
+    $nvpstr = $nvpstr . "&".$paypalprefix."L_PAYMENTREQUEST_0_NUMBER0=0";
+
+    $nvpstr = $nvpstr . "&".$paypalprefix."SHIPTONAME=" . urlencode($shipToName);            // SHIPTONAME deprecated by paypal -> PAYMENTREQUEST_n_SHIPTONAME
+    $nvpstr = $nvpstr . "&".$paypalprefix."SHIPTOSTREET=" . urlencode($shipToStreet);        //
+    $nvpstr = $nvpstr . "&".$paypalprefix."SHIPTOSTREET2=" . urlencode($shipToStreet2);
+    $nvpstr = $nvpstr . "&".$paypalprefix."SHIPTOCITY=" . urlencode($shipToCity);
+    $nvpstr = $nvpstr . "&".$paypalprefix."SHIPTOSTATE=" . urlencode($shipToState);
+    $nvpstr = $nvpstr . "&".$paypalprefix."SHIPTOCOUNTRYCODE=" . urlencode($shipToCountryCode);
+    $nvpstr = $nvpstr . "&".$paypalprefix."SHIPTOZIP=" . urlencode($shipToZip);
+    $nvpstr = $nvpstr . "&".$paypalprefix."PHONENUM=" . urlencode($phoneNum);
+    if (! empty($email)) $nvpstr = $nvpstr . "&".$paypalprefix."EMAIL=" . urlencode($email);      // EMAIL deprecated by paypal -> PAYMENTREQUEST_n_EMAIL
+    if (! empty($desc))  $nvpstr = $nvpstr . "&".$paypalprefix."DESC=" . urlencode($desc);        // DESC deprecated by paypal -> PAYMENTREQUEST_n_DESC
+
+    if (! empty($conf->global->PAYPAL_LOGOIMG) && $mysoc->logo)
+    {
+    	global $dolibarr_main_url_root;
+
+	    // Define $urlwithroot
+	    $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($dolibarr_main_url_root));
+	    $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
+	    //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
+
+	    $urllogo=$urlwithroot."/viewimage.php?modulepart=mycompany&file=".$mysoc->logo;
+	    $nvpstr = $nvpstr . "&LOGOIMG=" . urlencode($urllogo);
+    }
+    if (! empty($conf->global->PAYPAL_BRANDNAME))
+    {
+    	$nvpstr = $nvpstr . "&BRANDNAME=" . urlencode($conf->global->PAYPAL_BRANDNAME);    // BRANDNAME
+    }
+    if (! empty($conf->global->PAYPAL_NOTETOBUYER))
+    {
+    	$nvpstr = $nvpstr . "&NOTETOBUYER=" . urlencode($conf->global->PAYPAL_NOTETOBUYER);  // PAYPAL_NOTETOBUYER
+    }
 
 	$_SESSION["FinalPaymentAmt"] = $paymentAmount;
     $_SESSION["currencyCodeType"] = $currencyCodeType;
-    $_SESSION["PaymentType"] = $paymentType;
-    $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR '];  // Payer ip
+    $_SESSION["PaymentType"] = $paymentType;			// 'Mark', 'Sole'
+    $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR'];   // Payer ip
 
     //'---------------------------------------------------------------------------------------------------------------
     //' Make the API call to PayPal
@@ -534,7 +592,7 @@ function hash_call($methodName,$nvpStr)
     global $PAYPAL_API_USER, $PAYPAL_API_PASSWORD, $PAYPAL_API_SIGNATURE;
 
     // TODO problem with triggers
-    $API_version="56";
+    $API_version="98.0";
 	if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha'))		// We can force sand box with param 'forcesandbox'
 	{
 	    $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";

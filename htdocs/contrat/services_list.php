@@ -53,6 +53,7 @@ $search_status=GETPOST("search_status","alpha");
 $statut=GETPOST('statut')?GETPOST('statut'):1;
 $search_product_category=GETPOST('search_product_category','int');
 $socid=GETPOST('socid','int');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'contractservicelist'.$mode;
 
 $opouvertureprevuemonth=GETPOST('opouvertureprevuemonth');
 $opouvertureprevueday=GETPOST('opouvertureprevueday');
@@ -74,11 +75,10 @@ $opclotureday=GETPOST('opclotureday');
 $opclotureyear=GETPOST('opclotureyear');
 $filter_opcloture=GETPOST('filter_opcloture');
 
-// Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'servicelist'.$mode;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new ContratLigne($db);
+$hookmanager->initHooks(array('contractservicelist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -482,7 +482,6 @@ if (! empty($arrayfields['cd.date_cloture']['checked']))
 	print $form->select_date($filter_date_cloture,'opcloture',0,0,1,'',1,0,1);
 	print '</td>';
 }
-// Extra fields
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 

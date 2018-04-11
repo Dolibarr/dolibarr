@@ -107,7 +107,7 @@ if ($action == 'add' && $user->rights->adherent->configurer)
 	$object->subscription	= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= trim($vote);
+	$object->vote			= (boolean) trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -160,7 +160,7 @@ if ($action == 'update' && $user->rights->adherent->configurer)
 	$object->subscription	= (int) trim($subscription);
 	$object->note			= trim($comment);
 	$object->mail_valid		= trim($mail_valid);
-	$object->vote			= trim($vote);
+	$object->vote			= (boolean) trim($vote);
 
 	// Fill array 'array_options' with data from add form
 	$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -216,7 +216,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
+	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -228,6 +228,12 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 		$param = '';
 
+		$newcardbutton='';
+		if ($user->rights->adherent->configurer)
+		{
+			$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create">'.$langs->trans('NewMemberType').'</a>';
+		}
+
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -237,7 +243,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
         print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	    print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -361,7 +367,7 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		/*
 		 * Confirmation suppression
@@ -692,7 +698,7 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		$head = member_type_prepare_head($object);
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  * Copyright (C) 2011      Herve Prot           <herve.prot@symeos.com>
  * Copyright (C) 2012      Juanjo Menent        <jmenent@2byte.es>
@@ -50,10 +50,11 @@ if (! empty($conf->categorie->enabled)) require_once DOL_DOCUMENT_ROOT.'/categor
 $id			= GETPOST('id','int');
 $action		= GETPOST('action','aZ09');
 $mode		= GETPOST('mode','alpha');
-$confirm		= GETPOST('confirm','alpha');
+$confirm	= GETPOST('confirm','alpha');
 $subaction	= GETPOST('subaction','alpha');
 $group		= GETPOST("group","int",3);
 $cancel		= GETPOST('cancel','alpha');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'useracard';   // To manage different context of search
 
 // Define value to know what current user can do on users
 $canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
@@ -67,6 +68,7 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 	$canreadgroup=(! empty($user->admin) || $user->rights->user->group_advance->read);
 	$caneditgroup=(! empty($user->admin) || $user->rights->user->group_advance->write);
 }
+
 // Define value to know what current user can do on properties of edited user
 if ($id)
 {
@@ -100,8 +102,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$contextpage=array('usercard','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('usercard','globalcard'));
 
 
 
@@ -154,7 +155,7 @@ if (empty($reshook)) {
 				$langs->load("errors");
 				setEventMessages($langs->trans("ErrorUserCannotBeDelete"), null, 'errors');
 			} else {
-				header("Location: index.php");
+				header("Location: index.php?restore_lastsearch_values=1");
 				exit;
 			}
 		}
@@ -202,7 +203,7 @@ if (empty($reshook)) {
 			$object->office_fax = GETPOST("office_fax", 'alpha');
 			$object->user_mobile = GETPOST("user_mobile");
 			$object->skype = GETPOST("skype", 'alpha');
-			$object->email = GETPOST("email", 'alpha');
+			$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 			$object->job = GETPOST("job", 'alpha');
 			$object->signature = GETPOST("signature");
 			$object->accountancy_code = GETPOST("accountancy_code");
@@ -346,7 +347,7 @@ if (empty($reshook)) {
 				$object->office_fax = GETPOST("office_fax", 'alpha');
 				$object->user_mobile = GETPOST("user_mobile");
 				$object->skype = GETPOST("skype", 'alpha');
-				$object->email = GETPOST("email", 'alpha');
+				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
 				$object->signature = GETPOST("signature");
 				$object->accountancy_code = GETPOST("accountancy_code");
@@ -1176,7 +1177,7 @@ else
 	{
 		$object->fetch($id, '', '', 1);
 		if ($res < 0) { dol_print_error($db,$object->error); exit; }
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 
 		// Check if user has rights
 		$object->getrights();
@@ -1231,7 +1232,7 @@ else
 		if ($mode == 'employee') // For HRM module development
 		{
 			$title = $langs->trans("Employee");
-			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/hrm/employee/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		}
 		else
 		{
@@ -1239,7 +1240,7 @@ else
 			$linkback = '';
 
 			if ($user->rights->user->user->lire || $user->admin) {
-				$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
+				$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 			}
 		}
 
@@ -1795,7 +1796,7 @@ else
 						}
 						else
 						{
-							print '<tr '.$bc[false].'><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+							print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 						}
 					}
 
@@ -1888,7 +1889,7 @@ else
 			}
 			else if ($caneditpassword)
 			{
-				$text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="off">';
+				$text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
 				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
 				{
 					$text=$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');

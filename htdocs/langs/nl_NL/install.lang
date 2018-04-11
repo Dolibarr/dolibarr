@@ -141,7 +141,7 @@ KeepDefaultValuesProxmox=U gebruikt de Dolibarr installatiewizard van een Proxmo
 UpgradeExternalModule=Voer een specifiek upgradeproces uit voor externe modules
 SetAtLeastOneOptionAsUrlParameter=Stel ten minste één optie in als parameter in de URL. Bijvoorbeeld: '... repair.php? Standard = confirmed'
 NothingToDelete=Niets om op te ruimen / verwijderen
-NothingToDo=Nothing to do
+NothingToDo=Niets te doen
 #########
 # upgrade
 MigrationFixData=Reparatie voor gedenormaliseerde gegevens
@@ -197,7 +197,7 @@ MigrationEventsContact=Migratie van evenementen om afspraakcontact toe te voegen
 MigrationRemiseEntity=Aanpassen entity veld waarde van llx_societe_remise
 MigrationRemiseExceptEntity=Aanpassen entity veld waarde van llx_societe_remise_except
 MigrationReloadModule=Herlaad module %s
-MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
+MigrationResetBlockedLog=Reset BlockedLog module voor v7 algoritme
 ShowNotAvailableOptions=Toon niet beschikbare opties
 HideNotAvailableOptions=Verberg niet beschikbare opties
 ErrorFoundDuringMigration=Er is een fout gemeld tijdens het migratieproces, dus de volgende stap is niet beschikbaar. Om fouten te negeren kunt u <a href="%s">hier</a> klikken, maar sommige functies van de applicatie werken mogelijk pas goed als deze zijn opgelost.

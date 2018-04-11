@@ -419,7 +419,8 @@ if (empty($reshook))
 					$date_start,
 					$date_end,
 					$array_options,
-					$productsupplier->fk_unit
+					$productsupplier->fk_unit,
+                    $productsupplier->fourn_multicurrency_unitprice
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -850,7 +851,7 @@ if (empty($reshook))
 		$result=$object->delete($user);
 		if ($result > 0)
 		{
-			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php');
+			header("Location: ".DOL_URL_ROOT.'/fourn/commande/list.php?restore_lastsearch_values=1');
 			exit;
 		}
 		else
@@ -945,39 +946,28 @@ if (empty($reshook))
 
 	if ($action == 'update_extras')
 	{
+		$object->oldcopy = dol_clone($object);
+
 		// Fill array 'array_options' with data from add form
 		$extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
-		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute'));
+		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('supplierorderdao'));
-			$parameters=array('id'=>$object->id);
-
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
-
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
+				if ($result < 0)
 				{
-					$result=$object->insertExtraFields();
-
-					if ($result < 0)
-					{
-						$error++;
-					}
-
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 		}
-		else
-		{
+
+		if ($error)
 			$action = 'edit_extras';
-		}
 	}
 
 	/*
@@ -1356,6 +1346,8 @@ if ($action=='create')
 
 	dol_htmloutput_events();
 
+	$currency_code = $conf->currency;
+
 	$societe='';
 	if ($socid>0)
 	{
@@ -1398,7 +1390,7 @@ if ($action=='create')
 		$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
 		$shipping_method_id = (! empty($objectsrc->shipping_method_id)?$objectsrc->shipping_method_id:(! empty($soc->shipping_method_id)?$soc->shipping_method_id:0));
 		$demand_reason_id	= (!empty($objectsrc->demand_reason_id)?$objectsrc->demand_reason_id:(!empty($soc->demand_reason_id)?$soc->demand_reason_id:0));
-		$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_percent)?$soc->remise_percent:0));
+		$remise_percent		= (!empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(!empty($soc->remise_supplier_percent)?$soc->remise_supplier_percent:0));
 		$remise_absolue		= (!empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(!empty($soc->remise_absolue)?$soc->remise_absolue:0));
 		$dateinvoice		= empty($conf->global->MAIN_AUTOFILL_DATE)?-1:'';
 
@@ -1436,7 +1428,7 @@ if ($action=='create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 	print '<input type="hidden" name="socid" value="' . $soc->id . '">' . "\n";
-	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_percent . '">';
+	print '<input type="hidden" name="remise_percent" value="' . $soc->remise_supplier_percent . '">';
 	print '<input type="hidden" name="origin" value="' . $origin . '">';
 	print '<input type="hidden" name="originid" value="' . $originid . '">';
 	if (!empty($currency_tx)) print '<input type="hidden" name="originmulticurrency_tx" value="' . $currency_tx . '">';
@@ -1476,6 +1468,21 @@ if ($action=='create')
 		print ' <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&client=0&fournisseur=1&backtopage='.urlencode($_SERVER["PHP_SELF"].'?action=create').'">'.$langs->trans("AddThirdParty").'</a>';
 	}
 	print '</td>';
+
+	if ($societe->id > 0)
+	{
+		// Discounts for third party
+		print '<tr><td>' . $langs->trans('Discounts') . '</td><td>';
+
+		$absolute_discount = $societe->getAvailableDiscounts('', '', 0, 1);
+
+		$thirdparty = $societe;
+		$discount_type = 1;
+		$backtopage = urlencode($_SERVER["PHP_SELF"] . '?socid=' . $thirdparty->id . '&action=' . $action . '&origin=' . GETPOST('origin') . '&originid=' . GETPOST('originid'));
+		include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+		print '</td></tr>';
+	}
 
 	// Ref supplier
 	print '<tr><td>'.$langs->trans('RefSupplier').'</td><td><input name="refsupplier" type="text"></td>';
@@ -1642,7 +1649,7 @@ elseif (! empty($object->id))
 	$author	= new User($db);
 	$author->fetch($object->user_author_id);
 
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 
 	$head = ordersupplier_prepare_head($object);
@@ -1857,6 +1864,29 @@ elseif (! empty($object->id))
 	print '<td>'.$author->getNomUrl(1, '', 0, 0, 0).'</td>';
 	print '</tr>';
 
+	// Relative and absolute discounts
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	} else {
+		$filterabsolutediscount = "fk_invoice_supplier_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS PAID)%')";
+		$filtercreditnote = "fk_invoice_supplier_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS PAID)%')";
+	}
+
+	$absolute_discount = $societe->getAvailableDiscounts('', $filterabsolutediscount, 0, 1);
+	$absolute_creditnote = $societe->getAvailableDiscounts('', $filtercreditnote, 0, 1);
+	$absolute_discount = price2num($absolute_discount, 'MT');
+	$absolute_creditnote = price2num($absolute_creditnote, 'MT');
+
+	print '<tr><td class="titlefield">' . $langs->trans('Discounts') . '</td><td>';
+
+	$thirdparty = $societe;
+	$discount_type = 1;
+	$backtopage = urlencode($_SERVER["PHP_SELF"] . '?id=' . $object->id);
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
+	print '</td></tr>';
+
 	// Conditions de reglement par defaut
 	$langs->load('bills');
 	print '<tr><td class="nowrap">';
@@ -2052,8 +2082,12 @@ elseif (! empty($object->id))
 	}
 
 	// Total
+	$alert = '';
+	if($object->total_ht < $object->thirdparty->supplier_order_min_amount) {
+		$alert = ' ' . img_warning($langs->trans('OrderMinAmount').': '.price($object->thirdparty->supplier_order_min_amount));
+	}
 	print '<tr><td class="titlefieldmiddle">'.$langs->trans("AmountHT").'</td>';
-	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).'</td>';
+	print '<td>'.price($object->total_ht,'',$langs,1,-1,-1,$conf->currency).$alert.'</td>';
 	print '</tr>';
 
 	// Total VAT
@@ -2263,7 +2297,7 @@ elseif (! empty($object->id))
 				{
 					if ($user->rights->fournisseur->commande->commander)
 					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 					}
 				}
 
@@ -2453,7 +2487,7 @@ elseif (! empty($object->id))
 				print $form->select_date('','',1,1,'',"commande",1,1,1);
 				print "</td></tr>\n";
 
-				print "<tr><td>".$langs->trans("Delivery")."</td><td>\n";
+				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
 				$liv = array();
 				$liv[''] = '&nbsp;';
 				$liv['tot']	= $langs->trans("CompleteOrNoMoreReceptionExpected");
@@ -2695,7 +2729,7 @@ elseif (! empty($object->id))
 		}
 
 		// Presend form
-		$modelmail='supplier_order_send';
+		$modelmail='order_supplier_send';
 		$defaulttopic='SendOrderRef';
 		$diroutput = $conf->fournisseur->commande->dir_output;
 		$trackid = 'sor'.$object->id;

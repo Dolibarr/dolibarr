@@ -1,4 +1,6 @@
 <?php
+use Stripe\BankAccount;
+
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
@@ -42,6 +44,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'bankaccountlist';   // To manage different context of search
 
 $search_ref=GETPOST('search_ref','alpha');
 $search_label=GETPOST('search_label','alpha');
@@ -51,7 +54,8 @@ $optioncss = GETPOST('optioncss','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque');
+if (! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with list of banks accounting account allowed to manager of chart account
+if (! $allowed) $result=restrictedArea($user,'banque');
 
 $diroutputmassaction=$conf->bank->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -66,11 +70,9 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield='b.label';
 if (! $sortorder) $sortorder='ASC';
 
-// Initialize technical object to manage context to save list fields
-$contextpage='bankaccountlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Account($db);
+$hookmanager->initHooks(array('bankaccountlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -89,8 +91,8 @@ $arrayfields=array(
     'accountype'=>array('label'=>$langs->trans("Type"), 'checked'=>1),
     'b.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
     'b.number'=>array('label'=>$langs->trans("AccountIdShort"), 'checked'=>1),
-    'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>$conf->accountancy->enabled),
-    'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>$conf->accountancy->enabled),
+    'b.account_number'=>array('label'=>$langs->trans("AccountAccounting"), 'checked'=>(! empty($conf->accounting->enabled) || ! empty($conf->accounting->enabled))),
+    'b.fk_accountancy_journal'=>array('label'=>$langs->trans("AccountancyJournal"), 'checked'=>(! empty($conf->accounting->enabled) || ! empty($conf->accounting->enabled))),
     'toreconcile'=>array('label'=>$langs->trans("TransactionsToConciliate"), 'checked'=>1),
     'b.currency_code'=>array('label'=>$langs->trans("Currency"), 'checked'=>0),
 	'b.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),

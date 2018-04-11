@@ -64,6 +64,7 @@ class Project extends CommonObject
 	var $user_close_id;
     var $public;      //!< Tell if this is a public or private project
     var $budget_amount;
+    var $bill_time;			// Is the time spent on project must be invoiced or not
 
     var $statuts_short;
     var $statuts_long;
@@ -178,6 +179,7 @@ class Project extends CommonObject
         $sql.= ", datee";
         $sql.= ", opp_amount";
         $sql.= ", budget_amount";
+        $sql.= ", bill_time";
         $sql.= ", entity";
         $sql.= ") VALUES (";
         $sql.= "'" . $this->db->escape($this->ref) . "'";
@@ -194,6 +196,7 @@ class Project extends CommonObject
         $sql.= ", " . ($this->date_end != '' ? "'".$this->db->idate($this->date_end)."'" : 'null');
         $sql.= ", " . (strcmp($this->opp_amount,'') ? price2num($this->opp_amount) : 'null');
         $sql.= ", " . (strcmp($this->budget_amount,'') ? price2num($this->budget_amount) : 'null');
+        $sql.= ", " . ($this->bill_time ? 1 : 0);
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
@@ -220,7 +223,7 @@ class Project extends CommonObject
         }
 
         // Update extrafield
-        if (!$error) {
+        if (! $error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -231,13 +234,13 @@ class Project extends CommonObject
         	}
         }
 
-        if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+        if (! $error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
             $res = $this->setValid($user);
             if ($res < 0) $error++;
         }
 
-        if (!$error)
+        if (! $error)
         {
             $this->db->commit();
             return $ret;
@@ -297,22 +300,16 @@ class Project extends CommonObject
             $sql.= ", opp_amount = " . (strcmp($this->opp_amount, '') ? price2num($this->opp_amount) : "null");
             $sql.= ", budget_amount = " . (strcmp($this->budget_amount, '')  ? price2num($this->budget_amount) : "null");
             $sql.= ", fk_user_modif = " . $user->id;
+            $sql.= ", bill_time = " . ($this->bill_time ? 1 : 0);
             $sql.= " WHERE rowid = " . $this->id;
 
             dol_syslog(get_class($this)."::update", LOG_DEBUG);
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                if (!$notrigger)
+                // Update extrafield
+                if (! $error)
                 {
-                    // Call trigger
-                    $result=$this->call_trigger('PROJECT_MODIFY',$user);
-                    if ($result < 0) { $error++; }
-                    // End call triggers
-                }
-
-                //Update extrafield
-                if (!$error) {
                 	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
                 	{
                 		$result=$this->insertExtraFields();
@@ -321,6 +318,14 @@ class Project extends CommonObject
                 			$error++;
                 		}
                 	}
+                }
+
+                if (! $error && ! $notrigger)
+                {
+                	// Call trigger
+                	$result=$this->call_trigger('PROJECT_MODIFY',$user);
+                	if ($result < 0) { $error++; }
+                	// End call triggers
                 }
 
                 if (! $error && (is_object($this->oldcopy) && $this->oldcopy->ref !== $this->ref))
@@ -393,7 +398,8 @@ class Project extends CommonObject
         if (empty($id) && empty($ref)) return -1;
 
         $sql = "SELECT rowid, ref, title, description, public, datec, opp_amount, budget_amount,";
-        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent, note_private, note_public, model_pdf";
+        $sql.= " tms, dateo, datee, date_close, fk_soc, fk_user_creat, fk_user_modif, fk_user_close, fk_statut, fk_opp_status, opp_percent,";
+        $sql.= " note_private, note_public, model_pdf, bill_time";
         $sql.= " FROM " . MAIN_DB_PREFIX . "projet";
         if (! empty($id))
         {
@@ -440,10 +446,12 @@ class Project extends CommonObject
                 $this->opp_percent	= $obj->opp_percent;
                 $this->budget_amount	= $obj->budget_amount;
                 $this->modelpdf	= $obj->model_pdf;
+                $this->bill_time = (int) $obj->bill_time;
 
                 $this->db->free($resql);
 
-                // Retreive all extrafield for thirdparty
+                // Retreive all extrafield
+                // fetch optionals attributes and labels
                 $this->fetch_optionals();
 
                 if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
@@ -508,13 +516,13 @@ class Project extends CommonObject
     }
 
     /**
-     * 	Return list of elements for type, linked to project
+     * 	Return list of elements for type, linked to a project
      *
      * 	@param		string		$type			'propal','order','invoice','order_supplier','invoice_supplier',...
      * 	@param		string		$tablename		name of table associated of the type
      * 	@param		string		$datefieldname	name of date field for filter
-     *  @param		string		$dates			Start date (ex 00:00:00)
-     *  @param		string		$datee			End date (ex 23:59:59)
+     *  @param		int			$dates			Start date
+     *  @param		int			$datee			End date
      * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
@@ -523,29 +531,31 @@ class Project extends CommonObject
 
         if ($this->id <= 0) return $elements;
 
+        $ids = $this->id;
+
 		if ($type == 'agenda')
         {
-            $sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project=" . $this->id;
+        	$sql = "SELECT id as rowid FROM " . MAIN_DB_PREFIX . "actioncomm WHERE fk_project IN (". $ids .")";
         }
         elseif ($type == 'expensereport')
 		{
-            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet=" . $this->id;
+            $sql = "SELECT ed.rowid FROM " . MAIN_DB_PREFIX . "expensereport as e, " . MAIN_DB_PREFIX . "expensereport_det as ed WHERE e.rowid = ed.fk_expensereport AND ed.fk_projet IN (". $ids .")";
 		}
         elseif ($type == 'project_task')
 		{
-			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet=" . $this->id;
+			$sql = "SELECT DISTINCT pt.rowid FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (". $ids .")";
 		}
 		elseif ($type == 'project_task_time')	// Case we want to duplicate line foreach user
 		{
-			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet=" . $this->id;
+			$sql = "SELECT DISTINCT pt.rowid, ptt.fk_user FROM " . MAIN_DB_PREFIX . "projet_task as pt, " . MAIN_DB_PREFIX . "projet_task_time as ptt WHERE pt.rowid = ptt.fk_task AND pt.fk_projet IN (". $ids .")";
 		}
 		elseif ($type == 'stock_mouvement')
 		{
-			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . 'stock_mouvement as ms WHERE ms.origintype = "project" AND ms.fk_origin = ' . $this->id . ' AND ms.type_mouvement = 1';
+			$sql = 'SELECT ms.rowid, ms.fk_user_author as fk_user FROM ' . MAIN_DB_PREFIX . "stock_mouvement as ms WHERE ms.origintype = 'project' AND ms.fk_origin  IN (". $ids .") AND ms.type_mouvement = 1";
 		}
         else
 		{
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet=" . $this->id;
+            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet IN (". $ids .")";
 		}
 
 		if ($dates > 0)
@@ -580,10 +590,10 @@ class Project extends CommonObject
                     $i++;
                 }
                 $this->db->free($result);
-
-                /* Return array */
-                return $elements;
             }
+
+            /* Return array even if empty*/
+            return $elements;
         }
         else
         {
@@ -638,45 +648,13 @@ class Project extends CommonObject
 	        }
         }
 
-        // Delete tasks
-        if (! $error)
-        {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_time";
-	        $sql.= " WHERE fk_task IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
+		// Fetch tasks
+		$this->getLinesArray($user);
 
-	        $resql = $this->db->query($sql);
-	        if (!$resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
-        }
-
-        if (! $error)
-        {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task_extrafields";
-	        $sql.= " WHERE fk_object IN (SELECT rowid FROM " . MAIN_DB_PREFIX . "projet_task WHERE fk_projet=" . $this->id . ")";
-
-	        $resql = $this->db->query($sql);
-	        if (!$resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
-        }
-
-        if (! $error)
-        {
-	        $sql = "DELETE FROM " . MAIN_DB_PREFIX . "projet_task";
-	        $sql.= " WHERE fk_projet=" . $this->id;
-
-	        $resql = $this->db->query($sql);
-	        if (!$resql)
-	        {
-	        	$this->errors[] = $this->db->lasterror();
-	        	$error++;
-	        }
-        }
+		// Delete tasks
+		foreach($this->lines as &$task) {
+			$task->delete($user);
+		}
 
         // Delete project
         if (! $error)
@@ -1011,17 +989,18 @@ class Project extends CommonObject
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
 
-		if (! is_object($hookmanager)) {
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
+			/*if (! is_object($hookmanager)) {
+				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+				$hookmanager=new HookManager($this->db);
+			}
+			$hookmanager->initHooks(array('projectdao'));
+			$parameters=array('id'=>$this->id);
+			// Note that $action and $object may have been modified by some hooks
+			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
+			if ($reshook > 0)
+				$linkclose = $hookmanager->resPrint;
+			*/
 		}
-		$hookmanager->initHooks(array('projectdao'));
-		$parameters=array('id'=>$this->id);
-		// Note that $action and $object may have been modified by some hooks
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);
-		if ($reshook > 0)
-			$linkclose = $hookmanager->resPrint;
-        }
 
         $picto = 'projectpub';
         if (! $this->public) $picto = 'project';
@@ -1035,6 +1014,18 @@ class Project extends CommonObject
         if ($withpicto != 2) $result.= $this->ref;
         $result .= $linkend;
         if ($withpicto != 2) $result.=(($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+        global $action;
+        if (! is_object($hookmanager))
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+        	$hookmanager=new HookManager($this->db);
+        }
+        $hookmanager->initHooks(array('projectdao'));
+        $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+        $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+        if ($reshook > 0) $result = $hookmanager->resPrint;
+        else $result .= $hookmanager->resPrint;
 
         return $result;
     }
@@ -1137,10 +1128,10 @@ class Project extends CommonObject
      *
      * @param 	User	$user			User object
      * @param 	int		$mode			0=All project I have permission on (assigned to me and public), 1=Projects assigned to me only, 2=Will return list of all projects with no test on contacts
-     * @param 	int		$list			0=Return array,1=Return string list
+     * @param 	int		$list			0=Return array, 1=Return string list
      * @param	int		$socid			0=No filter on third party, id of third party
-     * @param	string		$filter			additionnal filter on project (statut, ref, ...)
-     * @return 	array or string			Array of projects id, or string with projects id separated with ","
+     * @param	string	$filter			additionnal filter on project (statut, ref, ...)
+     * @return 	array or string			Array of projects id, or string with projects id separated with "," if list is 1
      */
     function getProjectsAuthorizedForUser($user, $mode=0, $list=0, $socid=0, $filter='')
     {

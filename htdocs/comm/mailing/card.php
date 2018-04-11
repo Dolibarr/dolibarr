@@ -156,6 +156,7 @@ if (empty($reshook))
 			$sql = "SELECT mc.rowid, mc.fk_mailing, mc.lastname, mc.firstname, mc.email, mc.other, mc.source_url, mc.source_id, mc.source_type, mc.tag";
 			$sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 			$sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$object->id;
+			$sql .= " ORDER BY mc.statut DESC";		// first status 0, then status -1
 
 			dol_syslog("card.php: select targets", LOG_DEBUG);
 			$resql=$db->query($sql);
@@ -840,7 +841,7 @@ else
 					if (! empty($conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS)) setEventMessages($langs->trans("MailSendSetupIs3", $conf->global->MAILING_SMTP_SETUP_EMAILS_FOR_QUESTIONS), null, 'warnings');
 					$_GET["action"]='';
 				}
-				else if ($conf->global->MAILING_LIMIT_SENDBYWEB == '-1')
+				else if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
 				{
 				    if (! empty($conf->global->MAILING_LIMIT_WARNING_PHPMAIL) && $sendingmode == 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_PHPMAIL), null, 'warnings');
 				    if (! empty($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL) && $sendingmode != 'mail') setEventMessages($langs->transnoentitiesnoconv($conf->global->MAILING_LIMIT_WARNING_NOPHPMAIL), null, 'warnings');
@@ -875,7 +876,16 @@ else
 			$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 
 			$morehtmlright='';
-			if ($object->statut == 2) $morehtmlright.=' ('.$object->countNbOfTargets('alreadysent').'/'.$object->nbemail.') ';
+			$nbtry = $nbok = 0;
+			if ($object->statut == 2 || $object->statut == 3)
+			{
+				$nbtry = $object->countNbOfTargets('alreadysent');
+				$nbko  = $object->countNbOfTargets('alreadysentko');
+
+				$morehtmlright.=' ('.$nbtry.'/'.$object->nbemail;
+				if ($nbko) $morehtmlright.=' - '.$nbko.' '.$langs->trans("Error");
+				$morehtmlright.=') &nbsp; ';
+			}
 
 			dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '', '', 0, '', $morehtmlright);
 
@@ -903,11 +913,11 @@ else
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
-			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
-			if ($object->statut != 3 && is_numeric($nbemail))
+			$nbemail = ($object->nbemail?$object->nbemail:0);
+			if (is_numeric($nbemail))
 			{
 			    $text='';
-			    if (! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			    if ((! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || ($object->statut == 2 && $nbtry < $nbemail)))
 			    {
     				if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
     				{
@@ -915,9 +925,10 @@ else
     				}
     				else
     				{
-    					$text.=$langs->trans('NotEnoughPermissions');
+    					$text.=$langs->trans('SendingFromWebInterfaceIsNotAllowed');
     				}
 			    }
+			    if (empty($nbemail)) $nbemail.=' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
 				if ($text)
     			{
     			    print $form->textwithpicto($nbemail,$text,1,'warning');
@@ -956,7 +967,7 @@ else
 			 * Boutons d'action
 			 */
 
-			if (GETPOST('cancel','alpha') || $confirm=='no' || $action == '' || in_array($action,array('settodraft', 'valid','delete','sendall','clone')))
+			if (GETPOST('cancel','alpha') || $confirm=='no' || $action == '' || in_array($action,array('settodraft','valid','delete','sendall','clone','test')))
 			{
 				print "\n\n<div class=\"tabsAction\">\n";
 
@@ -1008,7 +1019,11 @@ else
 
 				if (($object->statut == 1 || $object->statut == 2) && $object->nbemail > 0 && $user->rights->mailing->valider)
 				{
-					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0 || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send))
+					if ($conf->global->MAILING_LIMIT_SENDBYWEB < 0)
+					{
+						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("SendingFromWebInterfaceIsNotAllowed")).'">'.$langs->trans("SendMailing").'</a>';
+					}
+					else if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! $user->rights->mailing->mailing_advance->send)
 					{
 						print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("SendMailing").'</a>';
 					}
@@ -1056,7 +1071,9 @@ else
 			    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 			    print load_fiche_titre($langs->trans("TestMailing"));
 
-				// Create l'objet formulaire mail
+			    dol_fiche_head(null, '', '', -1);
+
+			    // Create l'objet formulaire mail
 				include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 				$formmail = new FormMail($db);
 				$formmail->fromname = $object->email_from;
@@ -1084,6 +1101,10 @@ else
 				print $formmail->get_form();
 
 				print '<br>';
+
+				dol_fiche_end();
+
+				print dol_set_focus('#sendto');
 			}
 
 
@@ -1099,7 +1120,7 @@ else
 
 			dol_fiche_head('', '', '', -1);
 
-			print '<table class="border" width="100%">';
+			print '<table class="bordernooddeven" width="100%">';
 
 			// Subject
 			print '<tr><td class="titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3">'.$object->sujet.'</td></tr>';
@@ -1183,15 +1204,30 @@ else
 			print '<tr><td>';
 			print $langs->trans("TotalNbOfDistinctRecipients");
 			print '</td><td colspan="3">';
-			$nbemail = ($object->nbemail?$object->nbemail:img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>');
-			if (!empty($conf->global->MAILING_LIMIT_SENDBYWEB) && is_numeric($nbemail) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail)
+			$nbemail = ($object->nbemail?$object->nbemail:0);
+			if (is_numeric($nbemail))
 			{
-				$text=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
-				print $form->textwithpicto($nbemail,$text,1,'warning');
-			}
-			else
-			{
-				print $nbemail;
+				$text='';
+				if ((! empty($conf->global->MAILING_LIMIT_SENDBYWEB) && $conf->global->MAILING_LIMIT_SENDBYWEB < $nbemail) && ($object->statut == 1 || $object->statut == 2))
+				{
+					if ($conf->global->MAILING_LIMIT_SENDBYWEB > 0)
+					{
+						$text.=$langs->trans('LimitSendingEmailing',$conf->global->MAILING_LIMIT_SENDBYWEB);
+					}
+					else
+					{
+						$text.=$langs->trans('SendingFromWebInterfaceIsNotAllowed');
+					}
+				}
+				if (empty($nbemail)) $nbemail.=' '.img_warning('').' <font class="warning">'.$langs->trans("NoTargetYet").'</font>';
+				if ($text)
+				{
+					print $form->textwithpicto($nbemail,$text,1,'warning');
+				}
+				else
+				{
+					print $nbemail;
+				}
 			}
 			print '</td></tr>';
 
@@ -1230,7 +1266,7 @@ else
 
 			dol_fiche_head(null, '', '', -1);
 
-			print '<table class="border" width="100%">';
+			print '<table class="bordernooddeven" width="100%">';
 
 			// Subject
 			print '<tr><td class="fieldrequired titlefield">'.$langs->trans("MailTopic").'</td><td colspan="3"><input class="flat quatrevingtpercent" type="text" name="sujet" value="'.$object->sujet.'"></td></tr>';
