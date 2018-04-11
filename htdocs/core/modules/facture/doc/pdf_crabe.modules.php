@@ -621,6 +621,17 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                
+	                $parameters=array(
+	                    'object' => $object,
+	                    'i' => $i,
+	                    'curY' =>& $curY,
+	                    'nexY' =>& $nexY,
+	                    'outputlangs' => $outputlangs,
+	                    'hidedetails' => $hidedetails
+	                );
+	                $reshook=$hookmanager->executeHooks('printPDFline',$parameters,$this);    // Note that $object may have been modified by hook
+	                
+	                
 	                
 	                $sign=1;
 	                if (isset($object->type) && $object->type == 2 && ! empty($conf->global->INVOICE_POSITIVE_CREDIT_NOTE)) $sign=-1;
