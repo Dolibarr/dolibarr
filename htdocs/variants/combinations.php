@@ -699,7 +699,11 @@ if (! empty($id) || ! empty($ref))
 		print '</div>';
 		print '</form>';
 	}
+} else {
+	llxHeader();
+	// not found
 }
+
 
 llxFooter();
 
