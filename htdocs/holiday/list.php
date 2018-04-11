@@ -461,15 +461,19 @@ else
 
 // Type
 print '<td class="liste_titre">';
-$typeleaves=$holidaystatic->getTypes(1,-1);
-$arraytypeleaves=array();
-foreach($typeleaves as $key => $val)
-{
-	$labeltoshow = ($langs->trans($val['code'])!=$val['code'] ? $langs->trans($val['code']) : $val['label']);
-    //$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
-    $arraytypeleaves[$val['rowid']]=$labeltoshow;
+if (empty($mysoc->country_id)) {
+	setEventMessages(null, array($langs->trans("ErrorSetACountryFirst"),$langs->trans("CompanyFoundation")),'errors');
+} else {
+	$typeleaves=$holidaystatic->getTypes(1,-1);
+	$arraytypeleaves=array();
+	foreach($typeleaves as $key => $val)
+	{
+		$labeltoshow = ($langs->trans($val['code'])!=$val['code'] ? $langs->trans($val['code']) : $val['label']);
+		//$labeltoshow .= ($val['delay'] > 0 ? ' ('.$langs->trans("NoticePeriod").': '.$val['delay'].' '.$langs->trans("days").')':'');
+		$arraytypeleaves[$val['rowid']]=$labeltoshow;
+	}
+	print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1);
 }
-print $form->selectarray('search_type', $arraytypeleaves, $search_type, 1);
 print '</td>';
 
 // Duration
@@ -524,7 +528,7 @@ if ($id && empty($user->rights->holiday->read_all) && ! in_array($id, $childids)
 	$result = 0;
 }
 // Lines
-elseif (! empty($holiday->holiday))
+elseif (! empty($holiday->holiday) && !empty($mysoc->country_id))
 {
 	$userstatic = new User($db);
 	$approbatorstatic = new User($db);
