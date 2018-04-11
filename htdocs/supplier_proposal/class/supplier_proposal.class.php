@@ -838,8 +838,8 @@ class SupplierProposal extends CommonObject
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", '".$this->db->escape($this->modelpdf)."'";
-        $sql.= ", ".$this->cond_reglement_id;
-        $sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
+        $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
