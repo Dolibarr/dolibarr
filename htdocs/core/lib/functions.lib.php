@@ -6739,10 +6739,11 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 			        {
 			            if ($val)
 			            {
-			                $newres .= ($i2 > 0 ? ' OR ' : '') . $field . ' LIKE \'' . $db->escape(trim($val)) . ',%\'';
+			                $newres .= ($i2 > 0 ? ' OR (' : '(') . $field . ' LIKE \'' . $db->escape(trim($val)) . ',%\'';
 			                $newres .= ' OR '. $field . ' = \'' . $db->escape(trim($val)) . '\''; 
 			                $newres .= ' OR '. $field . ' LIKE \'%,' . $db->escape(trim($val)) . '\'';
 			                $newres .= ' OR '. $field . ' LIKE \'%,' . $db->escape(trim($val)) . ',%\'';
+					$newres .= ')';
 			                $i2++;
 			            }
 			        }
