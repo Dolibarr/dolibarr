@@ -1763,12 +1763,12 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function columnSort($a, $b) {
 	    
-	    if(empty($a['rang'])){ $a['rang'] = 0; }
-	    if(empty($b['rang'])){ $b['rang'] = 0; }
-	    if ($a['rang'] == $b['rang']) {
+	    if(empty($a['rank'])){ $a['rank'] = 0; }
+	    if(empty($b['rank'])){ $b['rank'] = 0; }
+	    if ($a['rank'] == $b['rank']) {
 	        return 0;
 	    }
-	    return ($a['rang'] > $b['rang']) ? -1 : 1;
+	    return ($a['rank'] > $b['rank']) ? -1 : 1;
 	    
 	}
 	
@@ -1851,17 +1851,21 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    global $conf, $hookmanager;
 	    
+	    // Default field style for content
 	    $this->defaultContentsFieldsStyle = array(
 	        'align' => 'R', // R,C,L
 	        'padding' => array(0.5,0.5,0.5,0.5), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
+	    
+	    // Default field style for content
 	    $this->defaultTitlesFieldsStyle = array(
 	        'align' => 'C', // R,C,L 
 	        'padding' => array(0.5,0,0.5,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
 	    );
-	    $rang=0;
+	    
+	    $rank=0; // do not use negative rank
 	    $this->cols['desc'] = array(
-	        'rang' => 0,
+	        'rank' => $rank, 
 	        'width' => false, // only for desc
 	        'title' => array(
 	            'textkey' => 'Designation',
@@ -1877,8 +1881,9 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
 	    {
+	        $rank = $rank + 10;
 	        $this->cols['photo'] = array(
-	            'rang' => 10,
+	            'rank' => $rank,
 	            'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
 	            'title' => array(
 	                'textkey' => 'Photo',
@@ -1893,8 +1898,9 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
 	    {
+	        $rank = $rank + 10;
 	        $this->cols['vat'] = array(
-	            'rang' => 20,
+	            'rank' => $rank,
 	            'width' => 17, // in mm
 	            'title' => array(
 	                'textkey' => 'VAT'
@@ -1903,8 +1909,9 @@ class pdf_crabe extends ModelePDFFactures
 	        );
 	    }
 	    
+	    $rank = $rank + 10;
 	    $this->cols['subprice'] = array(
-	        'rang' => 30,
+	        'rank' => $rank,
 	        'width' => 17, // in mm
 	        'title' => array(
 	            'textkey' => 'PriceUHT'
@@ -1912,8 +1919,9 @@ class pdf_crabe extends ModelePDFFactures
 	        'border-left' => true, // add left line separator
 	    );
 	    
+	    $rank = $rank + 10;
 	    $this->cols['qty'] = array(
-	        'rang' => 50,
+	        'rank' => $rank,
 	        'width' => 16, // in mm
 	        'title' => array(
 	            'textkey' => 'Qty'
@@ -1921,10 +1929,11 @@ class pdf_crabe extends ModelePDFFactures
 	        'border-left' => true, // add left line separator
 	    );
 	    
+	    $rank = $rank + 10;
 	    if($this->situationinvoice)
 	    {
 	        $this->cols['progress'] = array(
-	            'rang' => 60,
+	            'rank' => $rank,
 	            'width' => 13, // in mm
 	            'title' => array(
 	                'textkey' => 'Progress'
@@ -1933,9 +1942,10 @@ class pdf_crabe extends ModelePDFFactures
 	        );
 	    }
 	    
+	    $rank = $rank + 10;
 	    if($conf->global->PRODUCT_USE_UNITS){
 	        $this->cols['unit'] = array(
-	            'rang' => 70,
+	            'rank' => $rank,
 	            'width' => 10, // in mm
 	            'title' => array(
 	                'textkey' => 'Unit'
@@ -1944,9 +1954,10 @@ class pdf_crabe extends ModelePDFFactures
 	        );
 	    }
 	    
+	    $rank = $rank + 10;
 	    if ($this->atleastonediscount){
 	        $this->cols['discount'] = array(
-	            'rang' => 80,
+	            'rank' => $rank,
 	            'width' => 20, // in mm
 	            'title' => array(
 	                'textkey' => 'Discount'
@@ -1955,8 +1966,9 @@ class pdf_crabe extends ModelePDFFactures
 	        );
 	    }
 	    
+	    $rank = $rank + 10;
 	    $this->cols['totalexcltax'] = array(
-	        'rang' => 9000,
+	        'rank' => $rank,
 	        'width' => 20, // in mm
 	        'title' => array(
 	            'textkey' => 'TotalHT'
@@ -1998,6 +2010,13 @@ class pdf_crabe extends ModelePDFFactures
 	
 	function getColumnContentXStart($colKey)
 	{
+	    $colDef = $this->cols[$colKey];
+	    return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
+	}
+	
+	function getColumnRang($colKey)
+	{
+	    if(empty($this->cols[$colKey])) return -1;
 	    $colDef = $this->cols[$colKey];
 	    return  $colDef['xStartPos'] + $colDef['content']['padding'][3];
 	}
