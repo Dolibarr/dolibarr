@@ -775,9 +775,6 @@ class CMailFile
 				if (! empty($this->error) || ! $result) {
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
-				} else {
-                    $this->error = $langs->trans("SentXXXmessages", $result);
-					$this->errors[] = $langs->trans("SentXXXmessages", $result);
 				}
 			}
 			else

@@ -2787,11 +2787,12 @@ abstract class CommonObject
 	 *	@param  int		$targetid		Object target id (if not defined, id of object)
 	 *	@param  string	$targettype		Object target type (if not defined, elemennt name of object)
 	 *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
-	 *  @param	int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
-	 *	@return	int						<0 if KO, >0 if OK
+	 *  @param  int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
+	 *  @param  string	$orderby		SQL 'ORDER BY' clause
+	 *	@return int						<0 if KO, >0 if OK
 	 *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
 	 */
-	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1)
+	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1,$orderby='sourcetype')
 	{
 		global $conf;
 
@@ -2847,7 +2848,7 @@ abstract class CommonObject
 			$sql.= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
 			$sql.= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
 		}
-		$sql .= ' ORDER BY sourcetype';
+		$sql .= ' ORDER BY '.$orderby;
 
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
 		$resql = $this->db->query($sql);
