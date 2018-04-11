@@ -170,6 +170,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$sendtocc='';
 		$sendtobcc='';
 		$sendtoid = array();
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+			$sendtouserid=array();
+		}
 
 		// Define $sendto
 		$receiver=$_POST['receiver'];
@@ -200,6 +203,18 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 		}
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+			$receiveruser=$_POST['receiveruser'];
+			if (is_array($receiveruser) && count($receiveruser)>0)
+			{
+				$fuserdest = new User($db);
+				foreach($receiveruser as $key=>$val)
+				{
+					$tmparray[] = $fuserdest->user_get_property($key,'email');
+					$sendtouserid[] = $key;
+				}
+			}
+		}
 		$sendto=implode(',',$tmparray);
 
 		// Define $sendtocc
@@ -227,6 +242,19 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
+				}
+			}
+		}
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+			$receiveruser=$_POST['receiveccruser'];
+
+			if (is_array($receiveruser) && count($receiveruser)>0)
+			{
+				$fuserdest = new User($db);
+				foreach($receiveruser as $key=>$val)
+				{
+					$tmparray[] = $fuserdest->user_get_property($key,'email');
+					$sendtouserid[] = $key;
 				}
 			}
 		}
@@ -429,6 +457,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						$object->elementtype	= $object->element;
 						if (is_array($attachedfiles) && count($attachedfiles)>0) {
 							$object->attachedfiles	= $attachedfiles;
+						}
+						if (is_array($sendtouserid) && count($sendtouserid)>0 && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+							$object->sendtouserid	= $sendtouserid;
 						}
 
 						// Call of triggers

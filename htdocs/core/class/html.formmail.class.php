@@ -81,6 +81,9 @@ class FormMail extends Form
 	var $substit_lines=array();
 	var $param=array();
 
+	public $withtouser=array();
+	public $withtoccuser=array();
+
 	var $error;
 
 	public $lines_model;
@@ -624,6 +627,28 @@ class FormMail extends Form
 				$out.= "</td></tr>\n";
 			}
 
+			// To User
+			if (! empty($this->withtouser) && is_array($this->withtouser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
+			{
+				$out.= '<tr><td>';
+				$out.= $langs->trans("MailToSalaries");
+				$out.= '</td><td>';
+
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withtouser;
+				foreach($tmparray as $key => $val)
+				{
+					$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+				$withtoselected=GETPOST("receiveruser",'none');     // Array of selected value
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+				{
+					$withtoselected = array_keys($tmparray);
+				}
+				$out.= $form->multiselectarray("receiveruser", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
+				$out.= "</td></tr>\n";
+			}
+
 			// withoptiononeemailperrecipient
 			if (! empty($this->withoptiononeemailperrecipient))
 			{
@@ -665,6 +690,28 @@ class FormMail extends Form
 						$out.= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500',null, "");
 					}
 				}
+				$out.= "</td></tr>\n";
+			}
+
+			// To User cc
+			if (! empty($this->withtoccuser) && is_array($this->withtoccuser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
+			{
+				$out.= '<tr><td>';
+				$out.= $langs->trans("MailToCCSalaries");
+				$out.= '</td><td>';
+
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withtoccuser;
+				foreach($tmparray as $key => $val)
+				{
+					$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+				$withtoselected=GETPOST("receiverccuser",'none');     // Array of selected value
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+				{
+					$withtoselected = array_keys($tmparray);
+				}
+				$out.= $form->multiselectarray("receiverccuser", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
 				$out.= "</td></tr>\n";
 			}
 
