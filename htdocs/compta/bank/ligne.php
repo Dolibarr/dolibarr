@@ -437,6 +437,7 @@ if ($result)
 
         // Type of payment / Number
         print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero");
+        print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
         print "</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
@@ -459,22 +460,10 @@ if ($result)
         }
         print "</tr>";
 
-        // Bank of cheque
-        print "<tr><td>".$langs->trans("Bank")."</td>";
-        if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
-        {
-            print '<td>';
-            print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
-            print '</td>';
-        }
-        else
-        {
-            print '<td>'.$objp->banque.'</td>';
-        }
-        print "</tr>";
-
         // Transmitter
-        print "<tr><td>".$langs->trans("CheckTransmitter")."</td>";
+        print "<tr><td>".$langs->trans("CheckTransmitter");
+        print ' <em>('.$langs->trans("ChequeMaker").')</em>';
+        print "</td>";
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
@@ -484,6 +473,22 @@ if ($result)
         else
         {
             print '<td>'.$objp->emetteur.'</td>';
+        }
+        print "</tr>";
+
+        // Bank of cheque
+        print "<tr><td>".$langs->trans("Bank");
+        print ' <em>('.$langs->trans("ChequeBank").')</em>';
+        print "</td>";
+        if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
+        {
+        	print '<td>';
+        	print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
+        	print '</td>';
+        }
+        else
+        {
+        	print '<td>'.$objp->banque.'</td>';
         }
         print "</tr>";
 

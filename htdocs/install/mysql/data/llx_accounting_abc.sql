@@ -44,7 +44,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account FR PCG99-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG99-BASE', 'The base accountancy french plan', 1);
 
--- Description of chart of account FR PCG14-BASE
+-- Description of chart of account FR PCG14-DEV
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG14-DEV', 'The developed accountancy french plan 2014', 1);
 
 -- Description of chart of account BE PCMN-BASE

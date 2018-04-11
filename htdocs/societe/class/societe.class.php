@@ -1056,23 +1056,15 @@ class Societe extends CommonObject
 
 				$action='update';
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$hookmanager->initHooks(array('thirdpartydao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error && $call_trigger)
 				{
@@ -2407,7 +2399,7 @@ class Societe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				if ($mode == 'email') $contact_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
+				if ($mode == 'email') $contact_property = dol_string_nospecial(dolGetFirstLastname($obj->firstname, $obj->lastname), ' ', array(","))." <".$obj->email.">";
 				else if ($mode == 'mobile') $contact_property = $obj->phone_mobile;
 			}
 			return $contact_property;
@@ -3143,6 +3135,17 @@ class Societe extends CommonObject
 		else if (! empty($this->typent_code) && in_array($this->typent_code,array('TE_SMALL','TE_MEDIUM','TE_LARGE','TE_GROUP'))) $isacompany=1;
 
 		return $isacompany;
+	}
+
+	/**
+	 *  Return if a company is inside the EEC (European Economic Community)
+	 *
+	 *  @return     boolean		true = country inside EEC, false = country outside EEC
+	 */
+	function isInEEC()
+	{
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
+		return isInEEC($this);
 	}
 
 	/**

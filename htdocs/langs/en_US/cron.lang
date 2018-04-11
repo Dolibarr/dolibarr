@@ -43,7 +43,7 @@ CronNoJobs=No jobs registered
 CronPriority=Priority
 CronLabel=Label
 CronNbRun=Nb. launch
-CronMaxRun=Max nb. launch
+CronMaxRun=Max number launch
 CronEach=Every
 JobFinished=Job launched and finished
 #Page card
@@ -79,5 +79,5 @@ CronCannotLoadObject=Class file %s was loaded, but object %s was not found into 
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, nb of backup files to keep
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

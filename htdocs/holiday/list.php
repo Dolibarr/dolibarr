@@ -85,7 +85,7 @@ if (! $sortorder) $sortorder="DESC";
 
 
 $sall                = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
-$search_ref          = GETPOST('search_ref','alpha');
+$search_ref          = GETPOST('search_ref','alphanohtml');
 $search_day_create   = GETPOST('search_day_create','int');
 $search_month_create = GETPOST('search_month_create','int');
 $search_year_create  = GETPOST('search_year_create','int');
@@ -185,7 +185,7 @@ $order = $db->order($sortfield,$sortorder).$db->plimit($limit + 1, $offset);
 // Ref
 if(!empty($search_ref))
 {
-    $filter.= " AND cp.rowid = ".$db->escape($search_ref);
+    $filter.= " AND cp.rowid = ".(int) $db->escape($search_ref);
 }
 
 // Start date

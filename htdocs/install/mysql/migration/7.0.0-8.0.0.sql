@@ -46,8 +46,18 @@ ALTER TABLE llx_inventory ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_inventory ADD COLUMN fk_user_valid integer;
 ALTER TABLE llx_inventory ADD COLUMN import_key varchar(14);
 
+-- Missing Chart of accounts in migration 7.0.0
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG14-DEV', 'The developed accountancy french plan 2014', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'PCG_SUISSE', 'Switzerland plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN-LUXEMBURG', 'Plan comptable normalisé Luxembourgeois', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 80, 'DK-STD', 'Standardkontoplan fra SKAT', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 10, 'PCT', 'The Tunisia plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 12, 'PCG', 'The Moroccan chart of accounts', 1);
 
 -- For 8.0
+
+-- delete old permission no more used
+DELETE FROM llx_rights_def WHERE perms = 'main' and module = 'commercial';
 
 delete from llx_rights_def where perms IS NULL;
 delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
@@ -403,3 +413,10 @@ create table llx_asset_type_extrafields
 ALTER TABLE llx_asset_type_extrafields ADD INDEX idx_asset_type_extrafields (fk_object);
 
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (7,'INV', 'Inventory journal', 8, 1);
+
+UPDATE llx_accounting_account set account_parent = 0 WHERE account_parent = '' OR account_parent IS NULL;
+ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_parent (account_parent);
+
+ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
+

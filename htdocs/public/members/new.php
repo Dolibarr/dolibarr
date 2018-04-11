@@ -59,11 +59,7 @@ $backtopage=GETPOST('backtopage','alpha');
 $action=GETPOST('action','alpha');
 
 // Load translation files
-$langs->load("main");
-$langs->load("members");
-$langs->load("companies");
-$langs->load("install");
-$langs->load("other");
+$langs->loadLangs(array("main","members","companies","install","other"));
 
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
@@ -75,6 +71,8 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 }
 
 $extrafields = new ExtraFields($db);
+
+$object = new Adherent($db);
 
 
 /**
@@ -487,16 +485,16 @@ llxHeaderVierge($langs->trans("NewSubscription"));
 
 print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
 
-print '<div class="center subscriptionformhelptext">';
+
+print '<div align="center">';
+print '<div id="divsubscribe">';
+
+print '<div class="center subscriptionformhelptext justify">';
 if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
-
-print '<div align="center">';
-print '<div id="divsubscribe">';
-
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
@@ -631,13 +629,8 @@ print '</td></tr>'."\n";
 print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Public
 print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
-// Extrafields
-foreach($extrafields->attribute_label as $key=>$value)
-{
-    print "<tr><td>".$value."</td><td>";
-    print $extrafields->showInputField($key,GETPOST('options_'.$key));
-    print "</td></tr>\n";
-}
+// Other attributes
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
 print '<td class="tdtop">'.$langs->trans("Comments").'</td>';

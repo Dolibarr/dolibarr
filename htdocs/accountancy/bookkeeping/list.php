@@ -39,8 +39,8 @@ $action = GETPOST('action', 'alpha');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
 $search_doc_type = GETPOST("search_doc_type");
 $search_doc_ref = GETPOST("search_doc_ref");
-$search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
-$search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
+$search_date_start = dol_mktime(0, 0, 0, GETPOST('search_date_startmonth', 'int'), GETPOST('search_date_startday', 'int'), GETPOST('search_date_startyear', 'int'));
+$search_date_end = dol_mktime(0, 0, 0, GETPOST('search_date_endmonth', 'int'), GETPOST('search_date_endday', 'int'), GETPOST('search_date_endyear', 'int'));
 $search_doc_date = dol_mktime(0, 0, 0, GETPOST('doc_datemonth', 'int'), GETPOST('doc_dateday', 'int'), GETPOST('doc_dateyear', 'int'));
 $search_date_creation_start = dol_mktime(0, 0, 0, GETPOST('date_creation_startmonth', 'int'), GETPOST('date_creation_startday', 'int'), GETPOST('date_creation_startyear', 'int'));
 $search_date_creation_end = dol_mktime(0, 0, 0, GETPOST('date_creation_endmonth', 'int'), GETPOST('date_creation_endday', 'int'), GETPOST('date_creation_endyear', 'int'));
@@ -75,6 +75,8 @@ if ($search_accountancy_aux_code_end == - 1) {
 }
 $search_mvt_label = GETPOST('search_mvt_label', 'alpha');
 $search_direction = GETPOST('search_direction', 'alpha');
+$search_debit = GETPOST('search_debit', 'alpha');
+$search_credit = GETPOST('search_credit', 'alpha');
 $search_ledger_code = GETPOST('search_ledger_code', 'alpha');
 
 // Load variable for pagination
@@ -98,7 +100,7 @@ $form = new Form($db);
 
 if (! in_array($action, array('export_file', 'delmouv', 'delmouvconfirm')) && ! isset($_POST['begin']) && ! isset($_GET['begin']) && ! isset($_POST['formfilteraction']) && GETPOST('page','int') == '' && ! GETPOST('noreset','int'))
 {
-	if (empty($search_date_start) && empty($search_date_end))
+	if (empty($search_date_start) && empty($search_date_end) && ! GETPOSTISSET('restore_lastsearch_values'))
 	{
 		$query = "SELECT date_start, date_end from ".MAIN_DB_PREFIX."accounting_fiscalyear ";
 		$query.= " where date_start < '".$db->idate(dol_now())."' and date_end > '".$db->idate(dol_now())."' limit 1";
@@ -181,12 +183,12 @@ $filter = array ();
 if (! empty($search_date_start)) {
 	$filter['t.doc_date>='] = $search_date_start;
 	$tmp=dol_getdate($search_date_start);
-	$param .= '&date_startmonth=' . $tmp['mon'] . '&date_startday=' . $tmp['mday'] . '&date_startyear=' . $tmp['year'];
+	$param .= '&search_date_startmonth=' . $tmp['mon'] . '&search_date_startday=' . $tmp['mday'] . '&search_date_startyear=' . $tmp['year'];
 }
 if (! empty($search_date_end)) {
 	$filter['t.doc_date<='] = $search_date_end;
 	$tmp=dol_getdate($search_date_end);
-	$param .= '&date_endmonth=' . $tmp['mon'] . '&date_endday=' . $tmp['mday'] . '&date_endyear=' . $tmp['year'];
+	$param .= '&search_date_endmonth=' . $tmp['mon'] . '&search_date_endday=' . $tmp['mday'] . '&search_date_endyear=' . $tmp['year'];
 }
 if (! empty($search_doc_date)) {
 	$filter['t.doc_date'] = $search_doc_date;
@@ -195,51 +197,51 @@ if (! empty($search_doc_date)) {
 }
 if (! empty($search_doc_type)) {
 	$filter['t.doc_type'] = $search_doc_type;
-	$param .= '&search_doc_type=' . $search_doc_type;
+	$param .= '&search_doc_type=' . urlencode($search_doc_type);
 }
 if (! empty($search_doc_ref)) {
 	$filter['t.doc_ref'] = $search_doc_ref;
-	$param .= '&search_doc_ref=' . $search_doc_ref;
+	$param .= '&search_doc_ref=' . urlencode($search_doc_ref);
 }
 if (! empty($search_accountancy_code)) {
 	$filter['t.numero_compte'] = $search_accountancy_code;
-	$param .= '&search_accountancy_code=' . $search_accountancy_code;
+	$param .= '&search_accountancy_code=' . urlencode($search_accountancy_code);
 }
 if (! empty($search_accountancy_code_start)) {
 	$filter['t.numero_compte>='] = $search_accountancy_code_start;
-	$param .= '&search_accountancy_code_start=' . $search_accountancy_code_start;
+	$param .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
 }
 if (! empty($search_accountancy_code_end)) {
 	$filter['t.numero_compte<='] = $search_accountancy_code_end;
-	$param .= '&search_accountancy_code_end=' . $search_accountancy_code_end;
+	$param .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
 }
 if (! empty($search_accountancy_aux_code)) {
 	$filter['t.subledger_account'] = $search_accountancy_aux_code;
-	$param .= '&search_accountancy_aux_code=' . $search_accountancy_aux_code;
+	$param .= '&search_accountancy_aux_code=' . urlencode($search_accountancy_aux_code);
 }
 if (! empty($search_accountancy_aux_code_start)) {
 	$filter['t.subledger_account>='] = $search_accountancy_aux_code_start;
-	$param .= '&search_accountancy_aux_code_start=' . $search_accountancy_aux_code_start;
+	$param .= '&search_accountancy_aux_code_start=' . urlencode($search_accountancy_aux_code_start);
 }
 if (! empty($search_accountancy_aux_code_end)) {
 	$filter['t.subledger_account<='] = $search_accountancy_aux_code_end;
-	$param .= '&search_accountancy_aux_code_end=' . $search_accountancy_aux_code_end;
+	$param .= '&search_accountancy_aux_code_end=' . urlencode($search_accountancy_aux_code_end);
 }
 if (! empty($search_mvt_label)) {
 	$filter['t.label_operation'] = $search_mvt_label;
-	$param .= '&search_mvt_label=' . $search_mvt_label;
+	$param .= '&search_mvt_label=' . urlencode($search_mvt_label);
 }
 if (! empty($search_direction)) {
 	$filter['t.sens'] = $search_direction;
-	$param .= '&search_direction=' . $search_direction;
+	$param .= '&search_direction=' . urlencode($search_direction);
 }
 if (! empty($search_ledger_code)) {
 	$filter['t.code_journal'] = $search_ledger_code;
-	$param .= '&search_ledger_code=' . $search_ledger_code;
+	$param .= '&search_ledger_code=' . urlencode($search_ledger_code);
 }
 if (! empty($search_mvt_num)) {
 	$filter['t.piece_num'] = $search_mvt_num;
-	$param .= '&search_mvt_num=' . $search_mvt_num;
+	$param .= '&search_mvt_num=' . urlencode($search_mvt_num);
 }
 if (! empty($search_date_creation_start)) {
 	$filter['t.date_creation>='] = $search_date_creation_start;
@@ -263,11 +265,11 @@ if (! empty($search_date_modification_end)) {
 }
 if (! empty($search_debit)) {
 	$filter['t.debit'] = $search_debit;
-	$param .= '&search_debit=' . $search_debit;
+	$param .= '&search_debit=' . urlencode($search_debit);
 }
 if (! empty($search_credit)) {
 	$filter['t.credit'] = $search_credit;
-	$param .= '&search_credit=' . $search_credit;
+	$param .= '&search_credit=' . urlencode($search_credit);
 }
 
 if ($action == 'delbookkeeping') {
@@ -460,11 +462,11 @@ if (! empty($arrayfields['t.doc_date']['checked']))
 	print '<td class="liste_titre center">';
 	print '<div class="nowrap">';
 	print $langs->trans('From') . ' ';
-	print $form->select_date($search_date_start?$search_date_start:-1, 'date_start', 0, 0, 1);
+	print $form->select_date($search_date_start?$search_date_start:-1, 'search_date_start', 0, 0, 1);
 	print '</div>';
 	print '<div class="nowrap">';
 	print $langs->trans('to') . ' ';
-	print $form->select_date($search_date_end?$search_date_end:-1, 'date_end', 0, 0, 1);
+	print $form->select_date($search_date_end?$search_date_end:-1, 'search_date_end', 0, 0, 1);
 	print '</div>';
 	print '</td>';
 }
@@ -612,7 +614,12 @@ if ($num > 0)
 		// Piece number
 		if (! empty($arrayfields['t.piece_num']['checked']))
 		{
-			print '<td><a href="./card.php?piece_num=' . $line->piece_num . '">' . $line->piece_num . '</a></td>';
+			print '<td>';
+			$object->id = $line->id;
+			$object->piece_num = $line->piece_num;
+			print $object->getNomUrl(1,'',0,'',1);
+			//print '<a href="./card.php?piece_num=' . $line->piece_num . '&save_lastsearch_values=1">' . $line->piece_num . '</a>';
+			print '</td>';
 			if (! $i) $totalarray['nbfield']++;
 		}
 
@@ -732,7 +739,7 @@ print '</div>';
 
 // TODO Replace this with mass delete action
 print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a>';
+print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DeleteMvt") . '</a>';
 print '</div>';
 
 

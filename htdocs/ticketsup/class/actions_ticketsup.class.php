@@ -436,7 +436,7 @@ class ActionsTicketsup
                 $log_action = $langs->trans('TicketLogClosedBy', $user->getFullName($langs));
                 $ret = $object->createTicketLog($user, $log_action);
                 if ($ret > 0) {
-                    setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>');
+                    setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
                 } else {
                     setEventMessages($langs->trans('TicketMarkedAsClosedButLogActionNotSaved'), null, 'warnings');
                 }

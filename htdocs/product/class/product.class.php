@@ -886,7 +886,7 @@ class Product extends CommonObject
 			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->db->escape($this->surface_units)."'" : 'null');
 			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->db->escape($this->volume)."'" : 'null');
 			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
-			$sql.= ", fk_default_warehouse = " . (! empty($this->fk_default_warehouse) ? $this->db->escape($this->fk_default_warehouse) : 'null');
+			$sql.= ", fk_default_warehouse = " . ($this->fk_default_warehouse > 0 ? $this->db->escape($this->fk_default_warehouse) : 'null');
 			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->db->escape($this->seuil_stock_alerte)."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
@@ -926,22 +926,15 @@ class Product extends CommonObject
 
 				$action='update';
 
-				// Actions on extra fields (by external module or standard code)
-				$hookmanager->initHooks(array('productdao'));
-				$parameters=array('id'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error && ! $notrigger)
 				{
@@ -3518,6 +3511,17 @@ class Product extends CommonObject
         if ($this->type == Product::TYPE_SERVICE)
         {
             //
+        }
+        if (! empty($conf->accounting->enabled) && $this->status)
+        {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+        	$label.= '<br><b>' . $langs->trans('ProductAccountancySellCode') . ':</b> '. length_accountg($this->accountancy_code_sell);
+        	$label.= '<br><b>' . $langs->trans('ProductAccountancySellIntraCode') . ':</b> '. length_accountg($this->accountancy_code_sell_export);
+        	$label.= '<br><b>' . $langs->trans('ProductAccountancySellExportCode') . ':</b> '. length_accountg($this->accountancy_code_sell_intra);
+        }
+        if (! empty($conf->accounting->enabled) && $this->status_buy)
+        {
+        	$label.= '<br><b>' . $langs->trans('ProductAccountancyBuyCode') . ':</b> '. length_accountg($this->accountancy_code_buy);
         }
         if (! empty($this->entity))
         {

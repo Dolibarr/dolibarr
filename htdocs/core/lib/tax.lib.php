@@ -200,6 +200,12 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 {
     global $conf;
 
+    // If we use date_start and date_end, we must not use $y, $m, $q
+    if (($date_start || $date_end) && (! empty($y) || ! empty($m) || ! empty($q)))
+    {
+    	dol_print_error('', 'Bad value of input parameter for tax_by_date');
+    }
+
     $list=array();
 
     if ($direction == 'sell')

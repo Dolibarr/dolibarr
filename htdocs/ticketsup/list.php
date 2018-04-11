@@ -445,7 +445,7 @@ if ($mode == 'my_assign') {
 $topicmail="SendTicketsupRef";
 $modelmail="ticketsup";
 $objecttmp=new Ticketsup($db);
-$trackid='xxxx'.$object->id;
+$trackid='tick'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
 if ($sall)
@@ -502,15 +502,15 @@ foreach($object->fields as $key => $val)
     if (! empty($arrayfields['t.'.$key]['checked'])) {
         if ($key == 'type_code') {
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            $formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, 'maxwidth200');
+            $formTicket->selectTypesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth200'));
             print '</td>';
         } elseif ($key == 'category_code') {
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            $formTicket->selectCategoriesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, 'maxwidth200');
+            $formTicket->selectCategoriesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth200'));
             print '</td>';
         } elseif ($key == 'severity_code') {
             print '<td class="liste_titre'.($align?' '.$align:'').'">';
-            $formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, 'maxwidth200');
+            $formTicket->selectSeveritiesTickets(dol_escape_htmltag($search[$key]), 'search_'.$key.'', '', 0, 1, 1, 0, ($val['css']?$val['css']:'maxwidth200'));
             print '</td>';
         } elseif ($key == 'fk_statut') {
         	print '<td class="liste_titre'.($align?' '.$align:'').'">';

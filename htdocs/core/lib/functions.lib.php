@@ -545,10 +545,10 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
-		case 'nohtml':
+		case 'nohtml':		// Recommended for most scalar parameters
 			$out=dol_string_nohtmltag($out, 0);
 			break;
-		case 'alphanohtml':	// Recommended for search params
+		case 'alphanohtml':	// Recommended for search parameters
 			if (! is_array($out))
 			{
 				$out=trim($out);
@@ -939,7 +939,7 @@ function dol_escape_js($stringtoescape, $mode=0, $noescapebackslashn=0)
  *  @param		int			$keepb				1=Preserve b tags (otherwise, remove them)
  *  @param      int         $keepn              1=Preserve \r\n strings (otherwise, replace them with escaped value)
  *  @return     string     				 		Escaped string
- *  @see		dol_string_nohtmltag
+ *  @see		dol_string_nohtmltag, dol_string_nospecial, dol_string_unaccent
  */
 function dol_escape_htmltag($stringtoescape, $keepb=0, $keepn=0)
 {

@@ -635,9 +635,58 @@ function getFormeJuridiqueLabel($code)
     }
 }
 
+
+/**
+ *  Return list of countries that are inside the EEC (European Economic Community)
+ *  TODO Add a field into country dictionary.
+ *
+ *  @return     array					Array of countries code in EEC
+ */
+function getCountriesInEEC()
+{
+	// List of all country codes that are in europe for european vat rules
+	// List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
+	$country_code_in_EEC=array(
+		'AT',	// Austria
+		'BE',	// Belgium
+		'BG',	// Bulgaria
+		'CY',	// Cyprus
+		'CZ',	// Czech republic
+		'DE',	// Germany
+		'DK',	// Danemark
+		'EE',	// Estonia
+		'ES',	// Spain
+		'FI',	// Finland
+		'FR',	// France
+		'GB',	// United Kingdom
+		'GR',	// Greece
+		'HR',   // Croatia
+		'NL',	// Holland
+		'HU',	// Hungary
+		'IE',	// Ireland
+		'IM',	// Isle of Man - Included in UK
+		'IT',	// Italy
+		'LT',	// Lithuania
+		'LU',	// Luxembourg
+		'LV',	// Latvia
+		'MC',	// Monaco - Included in France
+		'MT',	// Malta
+		//'NO',	// Norway
+		'PL',	// Poland
+		'PT',	// Portugal
+		'RO',	// Romania
+		'SE',	// Sweden
+		'SK',	// Slovakia
+		'SI',	// Slovenia
+		'UK',	// United Kingdom
+		//'CH',	// Switzerland - No. Swizerland in not in EEC
+	);
+
+	return $country_code_in_EEC;
+}
+
 /**
  *  Return if a country of an object is inside the EEC (European Economic Community)
- *  TODO Add a field into country dictionary.
  *
  *  @param      Object      $object    Object
  *  @return     boolean		           true = country inside EEC, false = country outside EEC
@@ -646,43 +695,8 @@ function isInEEC($object)
 {
 	if (empty($object->country_code)) return false;
 
-    // List of all country codes that are in europe for european vat rules
-    // List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
-    $country_code_in_EEC=array(
-        'AT',	// Austria
-        'BE',	// Belgium
-        'BG',	// Bulgaria
-        'CY',	// Cyprus
-        'CZ',	// Czech republic
-        'DE',	// Germany
-        'DK',	// Danemark
-        'EE',	// Estonia
-        'ES',	// Spain
-        'FI',	// Finland
-        'FR',	// France
-        'GB',	// United Kingdom
-        'GR',	// Greece
-        'HR',   // Croatia
-        'NL',	// Holland
-        'HU',	// Hungary
-        'IE',	// Ireland
-        'IM',	// Isle of Man - Included in UK
-        'IT',	// Italy
-        'LT',	// Lithuania
-        'LU',	// Luxembourg
-        'LV',	// Latvia
-        'MC',	// Monaco - Included in France
-        'MT',	// Malta
-        //'NO',	// Norway
-        'PL',	// Poland
-        'PT',	// Portugal
-        'RO',	// Romania
-        'SE',	// Sweden
-        'SK',	// Slovakia
-        'SI',	// Slovenia
-        'UK',	// United Kingdom
-        //'CH',	// Switzerland - No. Swizerland in not in EEC
-    );
+	$country_code_in_EEC = getCountriesInEEC();
+
     //print "dd".$this->country_code;
     return in_array($object->country_code, $country_code_in_EEC);
 }

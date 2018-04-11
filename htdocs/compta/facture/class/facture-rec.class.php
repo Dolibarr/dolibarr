@@ -1791,7 +1791,7 @@ class FactureLigneRec extends CommonInvoiceLine
     			}
     		}
 
-    		if (! $notrigger)
+    		if (! $error && ! $notrigger)
     		{
     			// Call trigger
     			$result=$this->call_trigger('LINEBILL_REC_UPDATE',$user);
