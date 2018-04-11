@@ -4609,8 +4609,8 @@ abstract class CommonObject
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
 					case 'datetime':
-						// This will convert date to timestamp
-						if(!is_int($this->array_options[$key])) {
+						// If data is a string instead of a timestamp, we convert it
+						if (! is_int($this->array_options[$key])) {
 							$this->array_options[$key] = strtotime($this->array_options[$key]);
 						}
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
