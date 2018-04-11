@@ -33,6 +33,7 @@ PropalStatusSigned=Undertecknats (behov fakturering)
 PropalStatusNotSigned=Inte undertecknat (stängt)
 PropalStatusBilled=Fakturerade
 PropalStatusDraftShort=Förslag
+PropalStatusValidatedShort=Validerade
 PropalStatusClosedShort=Stängt
 PropalStatusSignedShort=Signerad
 PropalStatusNotSignedShort=Inte undertecknat

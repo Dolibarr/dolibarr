@@ -94,3 +94,4 @@ YouCanUseTranslationKey=Podeu utilitzar aquí una clau que és la clau de traduc
 DropTableIfEmpty=(Suprimeix la taula si està buida)
 TableDoesNotExists=La taula %s no existeix
 TableDropped=S'ha esborrat la taula %s
+InitStructureFromExistingTable=Build the structure array string of an existing table

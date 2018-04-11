@@ -33,6 +33,7 @@ PropalStatusSigned=Podpisano (do rachunku)
 PropalStatusNotSigned=Nie podpisały (zamknięte)
 PropalStatusBilled=zapowiadane
 PropalStatusDraftShort=Szkic
+PropalStatusValidatedShort=Zatwierdzony
 PropalStatusClosedShort=Zamknięte
 PropalStatusSignedShort=Podpisany
 PropalStatusNotSignedShort=Niepodpisany

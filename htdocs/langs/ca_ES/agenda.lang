@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Soci %s validat
 MemberModifiedInDolibarr=Soci %s modificat
 MemberResiliatedInDolibarr=Membre %s acabat
 MemberDeletedInDolibarr=Soci %s eliminat
-MemberSubscriptionAddedInDolibarr=Subscripció del soci %s afegida
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Expedició %s validada
 ShipmentClassifyClosedInDolibarr=Expedició %s classificada com a facturada
 ShipmentUnClassifyCloseddInDolibarr=Expedició %s classificada com a reoberta
@@ -98,6 +100,7 @@ AgendaUrlOptions3=<b>logina=%s</b> ​​per a restringir insercions a les accio
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​per a restringir la producció d'accions que no pertanyen a l'usuari <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per a restringir la sortida d'accions associades al projecta <b>PROJECT_ID</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> per excloure l'acció automàtica.
 AgendaShowBirthdayEvents=Mostra aniversaris dels contactes
 AgendaHideBirthdayEvents=Oculta aniversaris dels contactes
 Busy=Ocupat
@@ -109,7 +112,7 @@ ExportCal=Exportar calendari
 ExtSites=Calendaris externs
 ExtSitesEnableThisTool=Mostrar calendaris externs (definint a la configuració global) a l'agenda. No afecta als calendaris externs definits per l'usuari
 ExtSitesNbOfAgenda=Nombre de calendaris
-AgendaExtNb=Calendari nº %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=Url d'accés a l'arxiu. ical
 ExtSiteNoLabel=Sense descripció
 VisibleTimeRange=Rang de temps visible

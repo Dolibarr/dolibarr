@@ -15,3 +15,4 @@ THMDescription=Questo valore viene usato per calcolare il costo delle ore spese 
 TJMDescription=Attualmente il valore è solo un dato informativo e non viene usato per alcun calcolo automatico
 LastSalaries=Ultimo %s pagamento dello stipendio
 AllSalaries=Tutti i pagamenti degli stipendi
+SalariesStatistics=Statistiques salaires

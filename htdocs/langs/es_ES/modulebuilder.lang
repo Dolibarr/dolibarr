@@ -94,3 +94,4 @@ YouCanUseTranslationKey=Aquí puede usar una clave que es la clave de traducció
 DropTableIfEmpty=(Eliminar tabla si está vacía)
 TableDoesNotExists=La tabla %s no existe
 TableDropped=Tabla %s eliminada
+InitStructureFromExistingTable=Construir la estructura de array de una tabla existente

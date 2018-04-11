@@ -33,6 +33,7 @@ PropalStatusSigned=Signat (a facturar)
 PropalStatusNotSigned=No signat (tancat)
 PropalStatusBilled=Facturat
 PropalStatusDraftShort=Esborrany
+PropalStatusValidatedShort=Validat
 PropalStatusClosedShort=Tancat
 PropalStatusSignedShort=Signat
 PropalStatusNotSignedShort=No signat

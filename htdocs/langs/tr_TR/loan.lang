@@ -50,4 +50,6 @@ ConfigLoan=Kredi modülünün yapılandırılması
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Varsayılan muhasebe hesabı sermayesi
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Varsayılan muhasebe hesabı faiz oranı
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Varsayılan muhasebe hesabı sigortası
-CreateCalcSchedule=Kredi programı Oluştur/Düzenle
+FinancialCommitment=Financial commitment
+CreateCalcSchedule=Edit financial commitment
+InterestAmount=Interest amount

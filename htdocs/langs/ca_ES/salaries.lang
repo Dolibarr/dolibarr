@@ -15,3 +15,4 @@ THMDescription=Aquest valor es pot utilitzar per calcular el cost del temps cons
 TJMDescription=Aquest valor només és informatiu i no s'utilitza en cap càlcul
 LastSalaries=Últims %s pagaments de salari
 AllSalaries=Tots els pagaments de salari
+SalariesStatistics=Statistiques salaires

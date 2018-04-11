@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Adhérent %s validé
 MemberModifiedInDolibarr=Adhérent %s modifié
 MemberResiliatedInDolibarr=Adhérent %s résilié
 MemberDeletedInDolibarr=Adhérent %s supprimé
-MemberSubscriptionAddedInDolibarr=Souscription adhérent %s
+MemberSubscriptionAddedInDolibarr=Adhésion %s pour l'adhérent %s ajoutée
+MemberSubscriptionModifiedInDolibarr=Abonnement %s pour l'adhérent %s modifié
+MemberSubscriptionDeletedInDolibarr=Abonnement %s pour l'adhérent %s supprimé
 ShipmentValidatedInDolibarr=Expédition %s validée
 ShipmentClassifyClosedInDolibarr=Expédition %s classée payée
 ShipmentUnClassifyCloseddInDolibarr=Expédition %s réouverte
@@ -98,6 +100,7 @@ AgendaUrlOptions3=<b>logina=%s</b> pour limiter l'export aux actions dont l'util
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> pour limiter l'export aux actions non assignées à l'utilisateur <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>pour limiter l'export aux actions assignées à l'utilisateur <b>%s</b> (propriétaire et autres).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> pour restreindre aux événements associés au projet <b>PROJECT_ID</b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> pour exclure un événement automatique.
 AgendaShowBirthdayEvents=Afficher les anniversaires de contacts
 AgendaHideBirthdayEvents=Masquer les anniversaires de contacts
 Busy=Occupé
@@ -109,7 +112,7 @@ ExportCal=Export calendrier
 ExtSites=Import calendriers externes
 ExtSitesEnableThisTool=Afficher les calendriers externes (définis dans la configuration globale du module) dans l'agenda. N'affecte pas les calendriers externes définis par les utilisateurs.
 ExtSitesNbOfAgenda=Nombre de calendriers
-AgendaExtNb=Calendrier n° %s
+AgendaExtNb=Calendrier no %s
 ExtSiteUrlAgenda=URL d'accès au fichier ical
 ExtSiteNoLabel=Aucune description
 VisibleTimeRange=Plage d'heures visible

@@ -50,4 +50,6 @@ ConfigLoan=Konfiguracja modułu kredytu
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Domyśly kapitał konta rachunkowego
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Domyślnie odsetki od rachunku księgowego
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Domyślnie ubezpieczenie rachunku księgowego
-CreateCalcSchedule=Utwórz / zmodyfikuj harmonogram kredytu
+FinancialCommitment=Financial commitment
+CreateCalcSchedule=Edit financial commitment
+InterestAmount=Interest amount

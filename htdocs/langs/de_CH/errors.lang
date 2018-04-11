@@ -18,6 +18,7 @@ ErrorWarehouseRequiredIntoShipmentLine=Warenlager ist auf der Lieferzeile erford
 ErrorFileMustHaveFormat=Datei muss das Format %s haben
 ErrorSupplierCountryIsNotDefined=Zu diesem Lieferant ist kein Land definiert. Bitte korrigieren Sie dies zuerst.
 ErrorsThirdpartyMerge=Die zwei Einträge können nicht zusammengeführt werden. Aktion abgebrochen.
+WarningBookmarkAlreadyExists=Ein Lesezeichen mit diesem Titel oder Ziel (URL) existiert bereits.
 WarningPassIsEmpty=Warnung: Derzeit ist kein Datenbankpasswort gesetzt. Dies ist eine Sicherheitslücke. Konfigurieren Sie ehestmöglich ein Passwort für den Datenbankzugriff und passen Sie Ihre conf.php entsprechend an.
 WarningNoDocumentModelActivated=Für das Erstellen von Dokumenten ist keine Vorlage gewählt. Eine Vorlage wird standardmässig ausgewählt, bis Sie die Moduleinstellungen angepasst haben.
 WarningSomeLinesWithNullHourlyRate=Einige Zeiten wurden durch Benutzer erfasst bei denen der Stundenansatz nicht definiert war. Ein Stundenansatz von 0 %s pro Stunde wird verwendet, was aber Fehlerhafte Zeitauswertungen zur Folge haben kann.

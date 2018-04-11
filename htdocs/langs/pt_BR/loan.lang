@@ -40,4 +40,3 @@ AddLoan=Criar empréstimo
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Capital contabilístico por padrão
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Interesse contabilístico por padrão
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Seguro contabilístico por padrão
-CreateCalcSchedule=Criar / alterar horário de empréstimo

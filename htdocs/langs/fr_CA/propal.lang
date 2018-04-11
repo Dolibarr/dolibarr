@@ -15,6 +15,7 @@ AmountOfProposalsByMonthHT=Montant par mois (net d'impôt)
 PropalsOpened=Ouverte
 PropalStatusValidated=Validé (la proposition est ouverte)
 PropalStatusNotSigned=Non signée (close)
+PropalStatusValidatedShort=Validée
 PropalsToClose=Propositions commerciales à clôturer
 ListOfProposals=Liste des propositions commerciales
 ActionsOnPropal=Événements sur proposition

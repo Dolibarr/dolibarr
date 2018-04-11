@@ -41,4 +41,4 @@ rateMustBeNumeric=Die Rate muss ein numerischer Wert sein
 markRateShouldBeLesserThan100=Die markierte Rate sollte kleiner sein als 100
 ShowMarginInfos=Zeige Rand-Informationen
 CheckMargins=Detail zu Gewinnspanne
-MarginPerSaleRepresentativeWarning=Manche Partner sind mit keinem Handelsvertreter verknüpft, andere können mit mehreren Benutzer verknüpft sein, weswegen manche Gewinnspannen nicht in diesem Bericht erscheinen können oder aber mehrmals vorkommen.
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

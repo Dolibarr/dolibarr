@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Standard Buchhaltungskonto für Benutzer Partner
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Das in der Benutzerkarte hinterlegte Konto wird nur für die Nebenbücher verwendet. Dieses Konto wird für das Hauptbuch und als Vorgabewert für die Nebnbücher verwendet, wenn beim Benutzer kein Konto hinterlegt ist.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Buchhaltungs-Konto für Löhne
 Salary=Lohn
 Salaries=Löhne
 NewSalaryPayment=Neue Lohnzahlung
@@ -15,3 +15,4 @@ THMDescription=Dieser Wert kann verwendet werden, um die Kosten für die verbrau
 TJMDescription=Dieser Wert ist aktuell nur zu Informationszwecken und wird nicht für eine Berechnung verwendet
 LastSalaries=Letzte %sLohnzahlungen
 AllSalaries=Alle Lohnzahlungen
+SalariesStatistics=Statistiques salaires

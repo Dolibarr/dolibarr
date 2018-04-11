@@ -1,8 +1,6 @@
 # Dolibarr language file - Source file is en_US - propal
 ProposalsOpened=Openstaande offertes
-ConfirmDeleteProp=Weet u zeker dat u deze offerte wilt verwijderen?
 ConfirmValidateProp=Weet u zeker dat u deze offerte met naam <b>%s</b> wilt valideren?
-LastPropals=Laatste %s offertes
 LastModifiedProposals=Laatste %s gewijzigde offertes
 NoProposal=Geen offerte
 PropalStatusValidated=Gevalideerd (offerte staat open)

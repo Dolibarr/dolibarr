@@ -33,6 +33,7 @@ PropalStatusSigned=Underskrevet (til bill)
 PropalStatusNotSigned=Ikke underskrevet (lukket)
 PropalStatusBilled=Billed
 PropalStatusDraftShort=Udkast
+PropalStatusValidatedShort=valideret
 PropalStatusClosedShort=Lukket
 PropalStatusSignedShort=Underskrevet
 PropalStatusNotSignedShort=Ikke underskrevet

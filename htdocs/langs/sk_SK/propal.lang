@@ -33,6 +33,7 @@ PropalStatusSigned=Podpis (potreby fakturácia)
 PropalStatusNotSigned=Nie ste prihlásený (uzavretý)
 PropalStatusBilled=Účtované
 PropalStatusDraftShort=Návrh
+PropalStatusValidatedShort=Overené
 PropalStatusClosedShort=Zatvorené
 PropalStatusSignedShort=Podpísaný
 PropalStatusNotSignedShort=Nie ste prihlásený

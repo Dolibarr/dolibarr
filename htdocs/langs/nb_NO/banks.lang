@@ -7,6 +7,7 @@ BankName=Banknavn
 FinancialAccount=Konto
 BankAccount=Bankkonto
 BankAccounts=Bankkonti
+BankAccountsAndGateways=Bankkontoer | Gateways
 ShowAccount=Vis konto
 AccountRef=Kontonummer hovedbokskonto
 AccountLabel=Kontonavn hovedbokskonto

@@ -43,7 +43,7 @@ PropalClosedSignedInDolibarr=Orçamento %s, assinado
 PropalClosedRefusedInDolibarr=Orçamento %s, recusado
 PropalValidatedInDolibarr=Orçamento %s, validado
 PropalClassifiedBilledInDolibarr=Orçamento %s, classificado como faturado
-InvoiceValidatedInDolibarr=Factura %s, validada
+InvoiceValidatedInDolibarr=Fatura %s, validada
 InvoiceValidatedInDolibarrFromPos=Fatura %s, validada a partir do ponto de venda
 InvoiceBackToDraftInDolibarr=Fatura %s, voltou ao estado de rascunho
 InvoiceDeleteDolibarr=Fatura %s, apagada
@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Membro %s, validado
 MemberModifiedInDolibarr=Membro %s modificado
 MemberResiliatedInDolibarr=Membro %s, terminado
 MemberDeletedInDolibarr=Membro %s, eliminado
-MemberSubscriptionAddedInDolibarr=Subscrição do membro %s, adicionada
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Expedição %s, validada
 ShipmentClassifyClosedInDolibarr=Expedição %s, classificada como faturada
 ShipmentUnClassifyCloseddInDolibarr=Expedição %s, classificada como re-aberta
@@ -82,7 +84,7 @@ PRODUCT_CREATEInDolibarr=O produto %s foi criado
 PRODUCT_MODIFYInDolibarr=O produto %s foi modificado
 PRODUCT_DELETEInDolibarr=O produto %s foi eliminado
 EXPENSE_REPORT_CREATEInDolibarr=Relatório de despesas %s, criado
-EXPENSE_REPORT_VALIDATEInDolibarr=Relatório de despesas %s, validade
+EXPENSE_REPORT_VALIDATEInDolibarr=Relatório de despesas %s, validado
 EXPENSE_REPORT_APPROVEInDolibarr=Relatório de despesas %s, aprovado
 EXPENSE_REPORT_DELETEInDolibarr=Relatório de despesas %s, eliminado
 EXPENSE_REPORT_REFUSEDInDolibarr=Relatório de despesas %s, recusado
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Também pode adicionar os seguintes parâmetros de filtro de s
 AgendaUrlOptions3=<b>logina=%s</b> para restringir a produção para as acções criadas pelo utilizador <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina =!%s</b> para restringir a saída às ações que não pertencem ao utilizador <b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> para restringir a saída às ações atribuídas ao utilizador <b>%s</b> (proprietário e outros).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir a produção para as acções associadas ao projeto <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Mostrar aniversários dos contactos
 AgendaHideBirthdayEvents=Ocultar aniversários dos contactos
 Busy=Ocupado
@@ -109,7 +112,7 @@ ExportCal=Exportar calendário
 ExtSites=Importar calendários externos
 ExtSitesEnableThisTool=Mostrar calendários externos (definidos na configuração global) na agenda. Não afeta os calendários externos definidos pelos utilizadores.
 ExtSitesNbOfAgenda=Número de calendários
-AgendaExtNb=Calendário nb %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL para aceder ao ficheiro .ical
 ExtSiteNoLabel=Sem Descrição
 VisibleTimeRange=Intervalo de tempo visível

@@ -33,6 +33,7 @@ PropalStatusSigned=Undirritað (þarf greiðanda)
 PropalStatusNotSigned=Ekki skráð (lokað)
 PropalStatusBilled=Billed
 PropalStatusDraftShort=Víxill
+PropalStatusValidatedShort=Staðfest
 PropalStatusClosedShort=Loka
 PropalStatusSignedShort=Innsigli
 PropalStatusNotSignedShort=Ekki skráð

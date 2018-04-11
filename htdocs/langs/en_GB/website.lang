@@ -2,3 +2,4 @@
 WebsiteSetupDesc=Create here as many entries for websites as you need. Then go into menu Websites to edit them.
 PageNameAliasHelp=Name or alias of the page.<br>This alias is also used to forge an SEO URL when the website is run from a Virtual host of a Web server (like Apache, Nginx, ...). Use the button "<strong>%s</strong>" to edit this alias.
 PreviewOfSiteNotYetAvailable=Preview of your website <strong>%s</strong> is not yet available. You must first add a page.
+OnlyEditionOfSourceForGrabbedContentFuture=Note: only edition of HTML source will be possible when a page content is intiliazed by grabbing it from an external page (WYSIWYG editor will not be available)

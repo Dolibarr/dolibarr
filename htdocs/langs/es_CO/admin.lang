@@ -73,7 +73,6 @@ DaylingSavingTime=Horario de verano
 CurrentHour=Hora del PHP (servidor)
 Position=Puesto
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-Module42Name=Log
 DictionaryCanton=Departamento
 LTRate=Tipo
 CompanyName=Nombre
