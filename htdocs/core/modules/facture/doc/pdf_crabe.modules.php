@@ -2004,9 +2004,8 @@ class pdf_crabe extends ModelePDFFactures
 	    $parameters=array(
 	        'object' => $object,
 	        'curY' =>& $curY,
-	        'hidedetails' => $hidedetails,
-	        'hidedesc' => $hidedesc,
-	        'hideref' => $hideref
+	        'columnText' => $columnText,
+	        'colKey' => $colKey
 	    );
 	    $reshook=$hookmanager->executeHooks('printStdColumnContent',$parameters,$this);    // Note that $action and $object may have been modified by hook
 	    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
