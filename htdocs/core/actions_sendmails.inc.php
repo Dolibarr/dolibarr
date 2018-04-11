@@ -131,6 +131,12 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
 		}
 		else dol_print_error('','Use actions_sendmails.in.php for an element/object that is not supported');
+
+		if (is_object($hookmanager))
+		{
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('initSendToSocid',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		}
 	}
 	else $thirdparty = $mysoc;
 
