@@ -1356,6 +1356,8 @@ if ($action=='create')
 
 	dol_htmloutput_events();
 
+	$currency_code = $conf->currency;
+
 	$societe='';
 	if ($socid>0)
 	{
