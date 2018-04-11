@@ -528,6 +528,9 @@ CREATE TABLE llx_comment (
 
 DELETE FROM llx_const where name = __ENCRYPT('MAIN_SHOW_WORKBOARD')__;
 
+-- Adherent - Update old constants
+UPDATE llx_const SET value = REPLACE(value, '%', '__') WHERE name LIKE 'ADHERENT%'; 
+
 -- Accountancy - Remove old constants
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_PURCHASE_JOURNAL')__;
