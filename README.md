@@ -179,7 +179,8 @@ Administrator, user, developer and translator's documentations are available alo
 
 ## CONTRIBUTING
 
-See [CONTRIBUTING](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md) file
+This project exists thanks to all the people who contribute. [[Contribute](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
+<a href="graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
 
 
 ## CREDITS
@@ -199,11 +200,6 @@ Follow Dolibarr project on:
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)
-
-### Contributors
-
-This project exists thanks to all the people who contribute. [[Contribute](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
-<a href="graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
 
 
 ### Sponsors
