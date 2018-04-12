@@ -378,7 +378,6 @@ ALTER TABLE llx_asset ADD INDEX idx_asset_entity (entity);
 ALTER TABLE llx_asset ADD INDEX idx_asset_fk_soc (fk_soc);
 
 ALTER TABLE llx_asset ADD INDEX idx_asset_fk_asset_type (fk_asset_type);
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_asset_type FOREIGN KEY (fk_asset_type)    REFERENCES llx_asset_type (rowid);
 
 create table llx_asset_extrafields
 (
@@ -401,6 +400,8 @@ create table llx_asset_type
 )ENGINE=innodb;
 
 ALTER TABLE llx_asset_type ADD UNIQUE INDEX uk_asset_type_label (label, entity);
+
+ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_asset_type FOREIGN KEY (fk_asset_type)    REFERENCES llx_asset_type (rowid);
 
 create table llx_asset_type_extrafields
 (
