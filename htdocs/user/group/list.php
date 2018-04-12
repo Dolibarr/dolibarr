@@ -45,6 +45,14 @@ $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alp
 $search_group=GETPOST('search_group');
 $optioncss = GETPOST('optioncss','alpha');
 
+// Defini si peux lire/modifier utilisateurs et permisssions
+$caneditperms=($user->admin || $user->rights->user->user->creer);
+// Advanced permissions
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$caneditperms=($user->admin || $user->rights->user->group_advance->write);
+}
+
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -131,7 +139,7 @@ if ($resql)
     $text = $langs->trans("ListOfGroups");
 
     $newcardbutton='';
-    if ($user->rights->propal->creer)
+    if ($caneditperms)
     {
     	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=">'.$langs->trans('NewGroup').'</a>';
     }
