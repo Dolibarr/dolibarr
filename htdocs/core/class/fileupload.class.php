@@ -94,6 +94,9 @@ class FileUpload
 		elseif ($element == 'product') {
 			$dir_output = $conf->product->multidir_output[$conf->entity];
 		}
+		elseif ($element == 'productbatch') {
+			$dir_output = $conf->productbatch->multidir_output[$conf->entity];
+		}
 		elseif ($element == 'action') {
 			$pathname = 'comm/action'; $filename='actioncomm';
 			$dir_output=$conf->agenda->dir_output;
