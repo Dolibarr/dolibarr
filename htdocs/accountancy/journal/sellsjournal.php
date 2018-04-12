@@ -171,7 +171,8 @@ if ($result) {
 		$line->fetch($obj->fdid);
 
 		// Situation invoices handling
-		$prev_progress = $line->get_prev_progress($obj->fdid);
+		$prev_progress = $line->get_prev_progress($obj->rowid);
+
 		if ($obj->type == Facture::TYPE_SITUATION) {
 			// Avoid divide by 0
 			if ($obj->situation_percent == 0) {

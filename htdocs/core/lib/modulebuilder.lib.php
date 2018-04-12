@@ -63,7 +63,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
-    	if (! preg_match('/^(integer|date|timestamp|varchar|double)/', $addfieldentry['type']))
+    	if (! preg_match('/^(integer|date|timestamp|varchar|double|html|price)/', $addfieldentry['type']))
     	{
     		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');
     		return -2;
@@ -260,6 +260,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             $type = $val['type'];
             $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
             if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
+            if ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
             $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';

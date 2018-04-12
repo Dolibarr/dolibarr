@@ -838,6 +838,8 @@ if (empty($reshook))
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 			$action = '';
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+			exit;
 		}
 		else
 		{

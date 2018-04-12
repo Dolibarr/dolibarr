@@ -5335,7 +5335,8 @@ class Form
 		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX .$objecttmp->table_element." as t";
 		if ($objecttmp->ismultientitymanaged == 2)
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE t.entity IN (".getEntity($objecttmp->table_element).")";
+		$sql.= " WHERE 1=1";
+		if(! empty($objecttmp->ismultientitymanaged)) $sql.= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
 		if ($objecttmp->ismultientitymanaged == 1 && ! empty($user->societe_id))
 		{
 			if ($objecttmp->element == 'societe') $sql.= " AND t.rowid = ".$user->societe_id;

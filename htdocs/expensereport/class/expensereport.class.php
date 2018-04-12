@@ -1690,6 +1690,13 @@ class ExpenseReport extends CommonObject
 
 			$this->line = new ExpenseReportLine($this->db);
 
+			if (preg_match('/\((.*)\)/', $vatrate, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+			}
+			$vatrate = preg_replace('/\*/','',$vatrate);
+
 			$seller = '';  // seller is unknown
 			$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
@@ -1924,7 +1931,6 @@ class ExpenseReport extends CommonObject
 
             // Clean vat code
             $vat_src_code='';
-
             if (preg_match('/\((.*)\)/', $vatrate, $reg))
             {
                 $vat_src_code = $reg[1];
