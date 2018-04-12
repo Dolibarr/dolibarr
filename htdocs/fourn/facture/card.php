@@ -319,6 +319,12 @@ if (empty($reshook))
 		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 	}
 
+	// Set incoterm
+	elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+	{
+		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
+
 	// payment mode
 	else if ($action == 'setmode' && $user->rights->fournisseur->facture->creer)
 	{
