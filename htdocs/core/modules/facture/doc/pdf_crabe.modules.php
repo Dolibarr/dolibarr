@@ -355,39 +355,19 @@ class pdf_crabe extends ModelePDFFactures
 	            
 	            $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
 	            
-	            // Positionne $this->atleastonediscount si on a au moins une remise
-	            for ($i = 0 ; $i < $nblignes ; $i++)
-	            {
-	                if ($object->lines[$i]->remise_percent)
-	                {
-	                    $this->atleastonediscount++;
-	                }
-	            }
-	            /*if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))    // retreive space not used by discount
-	            {
-	                $this->posxpicture+=($this->postotalht - $this->posxdiscount);
-	                $this->posxtva+=($this->postotalht - $this->posxdiscount);
-	                $this->posxup+=($this->postotalht - $this->posxdiscount);
-	                $this->posxqty+=($this->postotalht - $this->posxdiscount);
-	                $this->posxdiscount+=($this->postotalht - $this->posxdiscount);
-	                //$this->postotalht;
+	            // Does we have at least one line with discount $this->atleastonediscount
+	            foreach ($object->lines as $line) {
+	               if ($line->remise_percent){
+	                    $this->atleastonediscount = true;
+	                    break;
+	               }
 	            }
 	            
-	            $progress_width = 0;
-	            */
+	           
 	            // Situation invoice handling
 	            if ($object->situation_cycle_ref)
 	            {
-	                $this->situationinvoice = True;
-	                /*$progress_width = 18;
-	                $this->posxtva -= $progress_width;
-	                $this->posxup -= $progress_width;
-	                $this->posxqty -= $progress_width;
-	                if(empty($conf->global->PRODUCT_USE_UNITS)) {
-	                    $this->posxprogress += $progress_width;
-	                }*/
-	                //$this->posxdiscount -= $progress_width;
-	                 //$this->posxprogress -= $progress_width;
+	                $this->situationinvoice = true;
 	            }
 	            
 	            // New page
