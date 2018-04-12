@@ -102,6 +102,7 @@ class PaiementFourn extends Paiement
 				$this->ref            = $obj->ref;
 				$this->entity         = $obj->entity;
 				$this->date           = $this->db->jdate($obj->dp);
+				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
