@@ -180,12 +180,12 @@ $arrayfields=array(
 	'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Buy").')', 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
-if (is_array($extrafields->attributes[$object->element]['label']) && count($extrafields->attributes[$object->element]['label']))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
 {
-	foreach($extrafields->attributes[$object->element]['label'] as $key => $val)
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
-		if (! empty($extrafields->attributes[$object->element]['list'][$key]))
-			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->element]['list'][$key])!=3 && $extrafields->attributes[$object->element]['perms'][$key]));
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
 	}
 }
 $object->fields = dol_sort_array($object->fields, 'position');
@@ -278,15 +278,15 @@ else
 		$sql .= ', pac.rowid prod_comb_id';
 	}
 	// Add fields from extrafields
-	if (! empty($extrafields->attributes[$object->element]['label'])) {
-		foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+	if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
 	}
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-	if (is_array($extrafields->attributes[$object->element]['label']) && count($extrafields->attributes[$object->element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
+	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
 	if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 	// multilang
@@ -337,8 +337,8 @@ else
 		$sql .= ', pac.rowid';
 	}
 	// Add fields from extrafields
-	if (! empty($extrafields->attributes[$object->element]['label'])) {
-		foreach ($extrafields->attributes[$object->element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->element]['type'][$key] != 'separate' ? ",ef.".$key : '');
+	if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
 	}
 	// Add fields from hooks
 	$parameters=array();

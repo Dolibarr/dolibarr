@@ -28,6 +28,7 @@
 // $permissiontodelete must be defined
 // $backurlforlist must be defined
 // $backtopage may be defined
+// $triggermodname may be defined
 
 if ($cancel)
 {
@@ -134,14 +135,34 @@ if ($action == 'update' && ! empty($permissiontoadd))
 		else
 		{
 			// Creation KO
-			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessages($object->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action='edit';
 		}
 	}
 	else
 	{
 		$action='edit';
+	}
+}
+
+// Action to update one extrafield
+if ($action == "update_extras" && ! empty($permissiontoadd))
+{
+	$object->fetch(GETPOST('id','int'));
+	$attributekey = GETPOST('attribute','alpha');
+	$attributekeylong = 'options_'.$attributekey;
+	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong,' alpha');
+
+	$result = $object->updateExtraField($attributekey, empty($triggermodname)?'':$triggermodname, $user);
+	if ($result > 0)
+	{
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = 'view';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'edit_extras';
 	}
 }
 

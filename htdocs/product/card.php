@@ -1310,7 +1310,7 @@ else
             print '</td></tr>';
 
 			// Batch number managment
-			if ($conf->productbatch->enabled) 
+			if ($conf->productbatch->enabled)
 			{
 				if ($object->isProduct() || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
@@ -1737,7 +1737,7 @@ else
 			print '</td></tr>';
 
             // Batch number management (to batch)
-            if (! empty($conf->productbatch->enabled)) 
+            if (! empty($conf->productbatch->enabled))
             {
 				if ($object->isProduct() || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
