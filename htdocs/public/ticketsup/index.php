@@ -66,7 +66,7 @@ $form = new Form($db);
 $formticket = new FormTicketsup($db);
 
 $arrayofjs = array();
-$arrayofcss = array('/ticketsup/css/styles.css', '/ticketsup/css/bg.css.php');
+$arrayofcss = array('/ticketsup/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {

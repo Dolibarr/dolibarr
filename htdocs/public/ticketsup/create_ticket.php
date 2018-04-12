@@ -70,8 +70,10 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 
 /*
- * Add file in email form
+ * Actions
  */
+
+// Add file in email form
 if (GETPOST('addfile') && !GETPOST('add_ticket')) {
     ////$res = $object->fetch('',GETPOST('track_id'));
     ////if($res > 0)
@@ -89,9 +91,7 @@ if (GETPOST('addfile') && !GETPOST('add_ticket')) {
     ////}
 }
 
-/*
- * Remove file in email form
- */
+// Remove file
 if (GETPOST('removedfile') && !GETPOST('add_ticket')) {
     ////$res = $object->fetch('',GETPOST('track_id'));
     ////if($res > 0)
@@ -255,17 +255,20 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 {
                 	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
                 	{
-                		$qualified = true;
-                		if ($qualified && isset($this->attributes[$object->table_element]['list'][$key]))
+                		$enabled = 1;
+                		if ($qualified && isset($extrafields->attributes[$object->table_element]['list'][$key]))
                 		{
-                			$qualified = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
-                			if (empty($result) || $result == 2) $qualified = false;
+                			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
                 		}
-                		if ($qualified && isset($this->attributes[$object->table_element]['perms'][$key]))
+                		$perms = 1;
+                		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key]))
                 		{
-                			$qualified = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
+                			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
                 		}
 
+                		$qualified=true;
+                		if (empty($enabled) || $enabled == 2) $qualified = false;
+                		if (empty($perms)) $qualified = false;
                 		if ($qualified) $message_admin .= '<li>' . $langs->trans($key) . ' : ' . $value . '</li>';
                 	}
                 }
@@ -324,7 +327,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
  */
 
 $arrayofjs = array();
-$arrayofcss = array('/opensurvey/css/style.css', '/ticketsup/css/styles.css', '/ticketsup/css/bg.css.php');
+$arrayofcss = array('/opensurvey/css/style.css', '/ticketsup/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
@@ -361,7 +364,7 @@ if ($action != "infos_success") {
     print '<div class="info marginleftonly marginrightonly">' . $langs->trans('TicketPublicInfoCreateTicket') . '</div>';
     $formticket->showForm();
 } else {
-    print '<div class="ok">' . $langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>' . $object->track_id . '</strong>');
+    print '<div class="info center">' . $langs->trans('MesgInfosPublicTicketCreatedWithTrackId', '<strong>' . $object->track_id . '</strong>');
     print '<br>';
     print $langs->trans('PleaseRememberThisId');
 }
