@@ -201,6 +201,7 @@ class Productlot extends CommonObject
 	 */
 	public function fetch($id = 0, $product_id = 0, $batch = '')
 	{
+		global $conf;
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
@@ -233,7 +234,7 @@ class Productlot extends CommonObject
 				//$this->ref = $obj->fk_product.'_'.$obj->batch;
 
 				$this->batch = $obj->batch;
-				$this->entity = $obj->entity;
+				$this->entity = (!empty($obj->entity)?$obj->entity:$conf->entity); // Prevent "null" entity 
 				$this->fk_product = $obj->fk_product;
 				$this->eatby = $this->db->jdate($obj->eatby);
 				$this->sellby = $this->db->jdate($obj->sellby);
