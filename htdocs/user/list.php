@@ -56,6 +56,9 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 
+// Define value to know what current user can do on users
+$canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new User($db);
 $hookmanager->initHooks(array('userlist'));
@@ -272,7 +275,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 $text = $langs->trans("ListOfUsers");
 
 $newcardbutton='';
-if ($user->rights->propal->creer)
+if ($canadduser)
 {
 	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=">'.$langs->trans('NewUser').'</a>';
 }
