@@ -1,6 +1,6 @@
 # DOLIBARR ERP & CRM
 
-![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg) ![Downloads per day](https://img.shields.io/sourceforge/dm/dolibarr.svg)  [![Backers on Open Collective](https://opencollective.com/dolibarr/backers/badge.svg)](#backers)  [![Sponsors on Open Collective](https://opencollective.com/dolibarr/sponsors/badge.svg)](#sponsors) 
+![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg) ![Downloads per day](https://img.shields.io/sourceforge/dm/dolibarr.svg)
 
 Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
@@ -206,15 +206,8 @@ This project exists thanks to all the people who contribute. [[Contribute](https
 <a href="graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
 
 
-### Backers
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/dolibarr#backer)]
-
-<a href="https://opencollective.com/dolibarr#backers" target="_blank"><img src="https://opencollective.com/dolibarr/backers.svg?width=890”></a>
-
-
 ### Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/dolibarr#sponsor)]
+Support this project by becoming a sponsor. Your logo will show up here. 🙏 [[Become a backer](https://opencollective.com/dolibarr#backer)]
 
-<a href="https://opencollective.com/dolibarr/sponsor/0/website" target="_blank"><img src="https://opencollective.com/dolibarr/sponsor/0/avatar.svg"></a>
+<a href="https://opencollective.com/dolibarr#backers" target="_blank"><img src="https://opencollective.com/dolibarr/backers.svg?width=890”></a>
