@@ -103,13 +103,3 @@ div.corps {
 }
 #form_create_ticket input.text,
 #form_create_ticket textarea { width:450px;}
- div.info {
-    background: none repeat scroll 0% 0% rgb(252, 245, 184);
-    padding: 2px 4px 2px 6px;
-    margin: 1.5em 1em;
-    border: 1px solid rgb(188, 169, 54);
-    font-weight: normal;
-
-}
-
-div.warning { color: #333333;}

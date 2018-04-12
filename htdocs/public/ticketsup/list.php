@@ -36,8 +36,8 @@ if (!defined("NOLOGIN")) {
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/html.formticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ticketsup/lib/ticketsup.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
 
 // Load traductions files requiredby by page
 $langs->load("companies");
@@ -122,10 +122,11 @@ if ($action == "view_ticketlist") {
 }
 $object->doActions($action);
 
-/***************************************************
- * VIEW
- *
- ****************************************************/
+
+
+/*
+ * View
+ */
 
 $form = new Form($db);
 $user_assign = new User($db);
@@ -293,8 +294,8 @@ if ($action == "view_ticketlist") {
         $sql .= " t.datec,";
         $sql .= " t.date_read,";
         $sql .= " t.date_close,";
-        $sql .= " t.tms";
-        $sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
+        $sql .= " t.tms,";
+        $sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
         // Add fields for extrafields
         foreach ($extrafields->attribute_list as $key => $val) {
         	$sql .= ($extrafields->attribute_type[$key] != 'separate' ? ",ef." . $key . ' as options_' . $key : '');

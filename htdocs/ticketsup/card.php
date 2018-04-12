@@ -53,10 +53,10 @@ $action = GETPOST('action', 'alpha', 3);
 // Initialize technical object to manage hooks of ticketsup. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ticketsupcard','globalcard'));
 
+$object = new Ticketsup($db);
+
 $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-
-$object = new Ticketsup($db);
 
 if (!$action) {
     $action = 'view';
@@ -85,6 +85,28 @@ $result = restrictedArea($user, 'ticketsup', $object->id);
 $actionobject = new ActionsTicketsup($db);
 $actionobject->doActions($action, $object);
 
+if ($action == "update_extras" && $user->rights->ticketsup->write && !GETPOST('cancel','alpha'))
+{
+	$triggermodname = 'TICKETSUP_MODIFY';
+
+	$res = $object->fetch(GETPOST('id','int'), '', GETPOST('track_id','alpha'));
+	$attributekey = GETPOST('attribute','alpha');
+	$attributekeylong = 'options_'.$attributekey;
+	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong,' alpha');
+
+	$result = $object->updateExtraField($attributekey, $triggermodname, $user);
+	if ($result > 0)
+	{
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = 'view';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'edit_extras';
+	}
+}
+
 $permissiondellink = $user->rights->ticketsup->write;
 include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be include, not include_once
 
@@ -100,7 +122,9 @@ $form = new Form($db);
 $formticket = new FormTicketsup($db);
 $formproject = new FormProjets($db);
 
-if ($action == 'view' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen' || $action == 'editsubject' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink') {
+if ($action == 'view' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
+	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink')
+{
 
     if ($res > 0) {
         // or for unauthorized internals users
@@ -412,29 +436,8 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         print '</td></tr>';
 
         // Other attributes
-        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
-        if (empty($reshook) && !empty($extrafields->attribute_label)) {
-            if ($action == "edit_extrafields") {
-                print '<form method="post" name="form_edit_extrafields" enctype="multipart/form-data" action="' . $url_page_current . '">';
-                print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-                print '<input type="hidden" name="action" value="set_extrafields">';
-                print '<input type="hidden" name="track_id" value="' . $object->track_id . '">';
+        include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
-                print $object->showOptionals($extrafields, 'edit');
-                print '<tr><td colspan="2" align="center">';
-                print ' <input class="button" type="submit" name="btn_edit_extrafields" value="' . $langs->trans("Modify") . '" />';
-                print ' <input class="button" type="submit" name="cancel" value="' . $langs->trans("Cancel") . '" />';
-                print '</tr>';
-                print '</form>';
-            } else {
-                print $object->showOptionals($extrafields);
-                if ($user->rights->ticketsup->write) {
-                    print '<tr><td colspan="2" align="center">';
-                    print '<a href="' . $url_page_current . '?track_id=' . $object->track_id . '&action=edit_extrafields">' . img_picto('', 'edit') . ' ' . $langs->trans('Edit') . '</a>';
-                    print '</tr>';
-                }
-            }
-        }
         print '</table>';
 
 
