@@ -208,6 +208,6 @@ This project exists thanks to all the people who contribute. [[Contribute](https
 
 ### Sponsors
 
-Support this project by becoming a sponsor. Your logo will show up here. 🙏 [[Become a backer](https://opencollective.com/dolibarr#backer)]
+Support this project by becoming a sponsor. Your logo will show up here. 🙏 [[Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]
 
 <a href="https://opencollective.com/dolibarr#backers" target="_blank"><img src="https://opencollective.com/dolibarr/backers.svg?width=890”></a>
