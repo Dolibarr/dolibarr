@@ -624,6 +624,7 @@ class pdf_crabe extends ModelePDFFactures
 	                $parameters=array(
 	                    'object' => $object,
 	                    'i' => $i,
+	                    'pdf' =>& $pdf,
 	                    'curY' =>& $curY,
 	                    'nexY' =>& $nexY,
 	                    'outputlangs' => $outputlangs,
@@ -1801,7 +1802,7 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    
 	    // Sorting
-	    uasort ( $this->cols , array( $this, 'columnSort' ) );
+	    uasort ( $this->cols, array( $this, 'columnSort' ) );
 	    
 	    // Positionning
 	    $curX = $this->page_largeur-$this->marge_droite; // start from right
