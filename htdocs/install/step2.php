@@ -42,8 +42,8 @@ error_reporting(0);		// Disable all errors
 @set_time_limit(900);	// Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
-$action=GETPOST('action','aZ09');
-$setuplang=(GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):'auto');
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$argv[1]);
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2];
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -622,8 +622,17 @@ else
     print 'Parameter action=set not defined';
 }
 
+
+$ret=0;
+if (!$ok && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step2: end");
 
 pFooter($ok?0:1,$setuplang);
 
 if (isset($db) && is_object($db)) $db->close();
+
+// Return code if ran from command line
+if ($ret) exit($ret);
+

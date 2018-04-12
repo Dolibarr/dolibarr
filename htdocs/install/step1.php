@@ -32,8 +32,8 @@ include 'inc.php';
 
 global $langs;
 
-$action=GETPOST('action','alpha');
-$setuplang=(GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):'auto');
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$argv[1]);
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2]);
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -41,24 +41,24 @@ $langs->load("install");
 $langs->load("errors");
 
 // Dolibarr pages directory
-$main_dir = GETPOST('main_dir');
+$main_dir = GETPOST('main_dir')?GETPOST('main_dir'):(empty($argv[3])?'':$argv[3]);
 // Directory for generated documents (invoices, orders, ecm, etc...)
-$main_data_dir = GETPOST('main_data_dir') ? GETPOST('main_data_dir') : $main_dir . '/documents';
+$main_data_dir = GETPOST('main_data_dir') ? GETPOST('main_data_dir') : (empty($argv[4])? ($main_dir . '/documents') :$argv[4]);
 // Dolibarr root URL
-$main_url = GETPOST('main_url');
+$main_url = GETPOST('main_url')?GETPOST('main_url'):(empty($argv[5])?'':$argv[5]);
 // Database login informations
-$userroot=GETPOST('db_user_root');
-$passroot=GETPOST('db_pass_root');
+$userroot=GETPOST('db_user_root')?GETPOST('db_user_root'):(empty($argv[6])?'':$argv[6]);
+$passroot=GETPOST('db_pass_root')?GETPOST('db_pass_root'):(empty($argv[7])?'':$argv[7]);
 // Database server
-$db_type=GETPOST('db_type','alpha');
-$db_host=GETPOST('db_host','alpha');
-$db_name=GETPOST('db_name','alpha');
-$db_user=GETPOST('db_user','alpha');
-$db_pass=GETPOST('db_pass');
-$db_port=GETPOST('db_port','int');
-$db_prefix=GETPOST('db_prefix','alpha');
-$db_create_database = GETPOST('db_create_database','none');
-$db_create_user = GETPOST('db_create_user','none');
+$db_type=GETPOST('db_type','alpha')?GETPOST('db_type','alpha'):(empty($argv[8])?'':$argv[8]);
+$db_host=GETPOST('db_host','alpha')?GETPOST('db_host','alpha'):(empty($argv[9])?'':$argv[9]);
+$db_name=GETPOST('db_name','alpha')?GETPOST('db_name','alpha'):(empty($argv[10])?'':$argv[10]);
+$db_user=GETPOST('db_user','alpha')?GETPOST('db_user','alpha'):(empty($argv[11])?'':$argv[11]);
+$db_pass=GETPOST('db_pass')?GETPOST('db_pass'):(empty($argv[12])?'':$argv[12]);
+$db_port=GETPOST('db_port','int')?GETPOST('db_port','int'):(empty($argv[13])?'':$argv[13]);
+$db_prefix=GETPOST('db_prefix','alpha')?GETPOST('db_prefix','alpha'):(empty($argv[14])?'':$argv[14]);
+$db_create_database = GETPOST('db_create_database','none')?GETPOST('db_create_database','none'):(empty($argv[15])?'':$argv[15]);
+$db_create_user = GETPOST('db_create_user','none')?GETPOST('db_create_user','none'):(empty($argv[16])?'':$argv[16]);
 // Force https
 $main_force_https = ((GETPOST("main_force_https",'alpha') && (GETPOST("main_force_https",'alpha') == "on" || GETPOST("main_force_https",'alpha') == 1)) ? '1' : '0');
 // Use alternative directory
@@ -800,9 +800,16 @@ function jsinfo()
 
 <?php
 
+$ret=0;
+if ($error && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step1: end");
 
 pFooter($error?1:0,$setuplang,'jsinfo',1);
+
+// Return code if ran from command line
+if ($ret) exit($ret);
 
 
 /**
