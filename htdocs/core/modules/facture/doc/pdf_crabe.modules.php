@@ -1467,7 +1467,7 @@ class pdf_crabe extends ModelePDFFactures
 		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
 		    
 		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
-		      $pdf->MultiCell( $textWidth ,2, $colDef['title']['label'],'',$colDef['title']['align']);
+		      $pdf->MultiCell($textWidth,2,$colDef['title']['label'],'',$colDef['title']['align']);
 		    }
 		}
 		
@@ -1788,6 +1788,9 @@ class pdf_crabe extends ModelePDFFactures
 	 *
 	 *   	@param	object			$object    		common object
 	 *   	@param	outputlangs		$outputlangs    langs
+     *      @param		int			$hidedetails		Do not show line details
+     *      @param		int			$hidedesc			Do not show desc
+     *      @param		int			$hideref			Do not show ref
 	 *      @return	null
 	 */
 	function prepareArrayColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
@@ -1856,6 +1859,9 @@ class pdf_crabe extends ModelePDFFactures
 	 *
 	 *   	@param	object			$object    		common object
 	 *   	@param	outputlangs		$outputlangs    langs
+     *      @param	int			   $hidedetails		Do not show line details
+     *      @param	int			   $hidedesc		Do not show desc
+     *      @param	int			   $hideref			Do not show ref
 	 *      @return	null
 	 */
 	function defineColumnField($object,$outputlangs,$hidedetails=0,$hidedesc=0,$hideref=0){
@@ -2130,13 +2136,13 @@ class pdf_crabe extends ModelePDFFactures
 	        'colKey' => $colKey
 	    );
 	    $reshook=$hookmanager->executeHooks('printStdColumnContent',$parameters,$this);    // Note that $action and $object may have been modified by hook
-	    if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+	    if ($reshook < 0) setEventMessages($hookmanager->error,$hookmanager->errors,'errors');
 	    if (!$reshook)
 	    {
 	        if(empty($columnText)) return;
-	        $pdf->SetXY($this->getColumnContentXStart($colKey), $curY); // Set curent position
+	        $pdf->SetXY($this->getColumnContentXStart($colKey),$curY); // Set curent position
 	        $colDef = $this->cols[$colKey];
-	        $pdf->MultiCell( $this->getColumnContentWidth($colKey) ,2, $columnText,'',$colDef['content']['align']);
+	        $pdf->MultiCell( $this->getColumnContentWidth($colKey),2, $columnText,'',$colDef['content']['align']);
 	    }
 	    
 	}
