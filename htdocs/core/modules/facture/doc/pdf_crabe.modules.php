@@ -2110,7 +2110,7 @@ class pdf_crabe extends ModelePDFFactures
 	    }
 	    
 	    $defArray['rank'] = $rank;
-	    $this->cols = array_replace($this->cols, $defArray); // array_replace is used to preserve keys
+	    $this->cols[$newColKey] = $defArray; // array_replace is used to preserve keys
 	    
 	    return $rank;
 	}
