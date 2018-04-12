@@ -162,7 +162,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 Dolibarr can be extended with a lot of other external application or modules from third party developers available at the [DoliStore](https://www.dolistore.com).
 
 
-## FUTURE
+## WHAT DOLIBARR CAN'T DO YET
 
 These are features that Dolibarr does **not** yet fully support:
 
@@ -179,7 +179,8 @@ Administrator, user, developer and translator's documentations are available alo
 
 ## CONTRIBUTING
 
-See [CONTRIBUTING](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md) file
+This project exists thanks to all the people who contribute. [[Contribute](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
+<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
 
 
 ## CREDITS
@@ -199,3 +200,8 @@ Follow Dolibarr project on:
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)
+
+
+### Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here. 🙏 [[Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]
