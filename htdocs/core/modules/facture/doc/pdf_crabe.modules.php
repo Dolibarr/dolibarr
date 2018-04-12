@@ -2069,7 +2069,7 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function getColumnRank($colKey)
 	{
-	    if(empty($this->cols[$colKey]['rank'])) return -1;
+	    if(!isset($this->cols[$colKey]['rank'])) return -1;
 	    return  $this->cols[$colKey]['rank'];
 	}
 	
