@@ -220,7 +220,7 @@ if (empty($reshook))
 		$search_tosell="";
 		$search_tobuy="";
 		$search_tobatch='';
-		$search_type='';
+		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 		$search_accountancy_code_sell='';
 		$search_accountancy_code_buy='';
 		$search_array_options=array();
