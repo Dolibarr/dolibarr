@@ -162,7 +162,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 Dolibarr can be extended with a lot of other external application or modules from third party developers available at the [DoliStore](https://www.dolistore.com).
 
 
-## FUTURE
+## WHAT DOLIBARR CAN'T DO YET
 
 These are features that Dolibarr does **not** yet fully support:
 
