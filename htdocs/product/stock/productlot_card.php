@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018      All-3kcis       		 <contact@all-3kcis.fr>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,7 +87,8 @@ if ($id || $ref)
         $productid=$tmp[0];
         $batch=$tmp[1];
     }
-    $object->fetch($id, $productid, $batch);
+	$object->fetch($id, $productid, $batch);
+	$object->ref = $object->batch; // For document management ( it use $object->ref)
 }
 
 // Initialize technical object to manage hooks of modules. Note that conf->hooks_modules contains array array
@@ -411,14 +413,14 @@ if (empty($action))
     print '<a name="builddoc"></a>'; // ancre
 
     // Documents
-	$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product_batch').$object->id;
+	$filedir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product_batch').dol_sanitizeFileName($object->ref);
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$usercanread;
     $delallowed=$usercancreate;
 
 	$var=true;
 
-    print $formfile->showdocuments('product_batch',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+    print $formfile->showdocuments('product_batch',dol_sanitizeFileName($object->ref),$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
 
     print '</div>';

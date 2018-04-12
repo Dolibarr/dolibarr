@@ -2626,7 +2626,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 	}
 
 	// Wrapping pour les lots produits
-	else if ($modulepart == 'product_batch')
+	else if ($modulepart == 'product_batch' || $modulepart == 'produitlot')
 	{
 		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
 		if (($fuser->rights->produit->{$lire} ) || preg_match('/^specimen/i',$original_file))

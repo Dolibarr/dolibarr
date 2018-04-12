@@ -71,7 +71,7 @@ $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="position_name";
 
-
+$modulepart='product_batch';
 $object = new Productlot($db);
 if ($id || $ref)
 {
@@ -82,13 +82,9 @@ if ($id || $ref)
         $batch=$tmp[1];
     }
     $object->fetch($id, $productid, $batch);
-}
-$modulepart='product_batch';
-if ($id > 0 || ! empty($ref))
-{
-    $result = $object->fetch($id, $ref);
+    $object->ref = $object->batch; // For document management ( it use $object->ref)
 
-    if (! empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, $modulepart).$object->id;
+    if (! empty($conf->productbatch->enabled)) $upload_dir = $conf->productbatch->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, $modulepart).dol_sanitizeFileName($object->ref);
 }
 
 
