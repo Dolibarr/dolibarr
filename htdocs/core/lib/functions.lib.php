@@ -5967,7 +5967,7 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 				$extrafieldstmp = new ExtraFields($db);
 				$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
 				$object->fetch_optionals();
-				foreach ($extrafieldstmp->attribute_label as $key => $label) {
+				foreach ($extrafieldstmp->attributes[$object->table_element]['label'] as $key => $label) {
 					$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
 				}
 			}

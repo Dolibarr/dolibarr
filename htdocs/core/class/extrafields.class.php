@@ -1384,7 +1384,6 @@ class ExtraFields
 
 		if (! empty($extrafieldsobjectkey))
 		{
-			$elementtype=$this->attributes[$extrafieldsobjectkey]['elementtype'][$key];	// seems not used
 			$label=$this->attributes[$extrafieldsobjectkey]['label'][$key];
 			$type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
 			$size=$this->attributes[$extrafieldsobjectkey]['size'][$key];
@@ -1400,7 +1399,6 @@ class ExtraFields
 		}
 		else	// Old usage
 		{
-			$elementtype=$this->attribute_elementtype[$key];	// seems not used
 			$label=$this->attribute_label[$key];
 			$type=$this->attribute_type[$key];
 			$size=$this->attribute_size[$key];

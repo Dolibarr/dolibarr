@@ -153,7 +153,7 @@ if ($action == "update_extras" && ! empty($permissiontoadd))
 	$attributekeylong = 'options_'.$attributekey;
 	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong,' alpha');
 
-	$result = $object->updateExtraField($attributekey, empty($triggermodname)?'':$triggermodname, $user);
+	$result = $object->insertExtraFields(empty($triggermodname)?'':$triggermodname, $user);
 	if ($result > 0)
 	{
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');

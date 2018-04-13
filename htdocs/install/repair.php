@@ -267,7 +267,7 @@ if ($ok && GETPOST('standard', 'alpha'))
 	            if (! in_array($code,array_keys($arrayoffieldsfound)))
 	            {
 	                print 'Found field '.$code.' declared into '.MAIN_DB_PREFIX.'extrafields table but not found into desc of table '.$tableextra." -> ";
-	                $type=$extrafields->attribute_type[$code]; $length=$extrafields->attribute_size[$code]; $attribute=''; $default=''; $extra=''; $null='null';
+	                $type=$extrafields->attributes[$elementtype]['type'][$code]; $length=$extrafields->attributes[$elementtype]['size'][$code]; $attribute=''; $default=''; $extra=''; $null='null';
 
            			if ($type=='boolean') {
         				$typedb='int';
