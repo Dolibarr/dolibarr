@@ -1266,8 +1266,11 @@ class FormMail extends Form
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
 					$product->fetch_optionals();
-					foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
-						$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
+					if (is_array($extrafieldstmp->attributes[$object->table_element]['label']) && count($extrafieldstmp->attributes[$object->table_element]['label']) > 0)
+					{
+						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
+							$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
+						}
 					}
 				}
 				$this->substit_lines[] = $substit_line;
