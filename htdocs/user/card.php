@@ -818,10 +818,17 @@ if ($action == 'create' || $action == 'adduserldap')
 			$valuetoshow.= ($valuetoshow?', ':'').'<input size="30" maxsize="32" type="text" name="password" value="'.$password.'" autocomplete="new-password">';
 		}
 	}
+
+	// Other form for user password
+	$parameters=array('valuetoshow' => $valuetoshow, 'password' => $password);
+	$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
+	else $valuetoshow.=$hookmanager->resPrint;				// to add
+
 	print $valuetoshow;
 	print '</td></tr>';
 
-	if(! empty($conf->api->enabled))
+	if (! empty($conf->api->enabled))
 	{
 		// API key
 		$generated_api_key = '';
@@ -1363,6 +1370,13 @@ else
 					else $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("Hidden");
 				}
 			}
+
+			// Other form for user password
+			$parameters=array('valuetoshow' => $valuetoshow);
+			$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
+			else $valuetoshow.=$hookmanager->resPrint;				// to add
+
 			print $valuetoshow;
 			print "</td>";
 			print '</tr>'."\n";
@@ -1923,6 +1937,13 @@ else
 					$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').preg_replace('/./i','*',$object->pass);
 				}
 			}
+
+			// Other form for user password
+			$parameters=array('valuetoshow' => $valuetoshow, 'caneditpassword' => $caneditpassword);
+			$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
+			else $valuetoshow.=$hookmanager->resPrint;				// to add
+
 			print $valuetoshow;
 			print "</td></tr>\n";
 
@@ -2033,7 +2054,7 @@ else
 		   	else
 			{
 				$type=0;
-				if ($object->contact_id) $type=$object->contact_id;
+				if ($object->contactid) $type=$object->contactid;
 				print $form->selectcontacts(0,$type,'contactid',2,'','',1,'',false,1);
 			   	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 			}
@@ -2203,12 +2224,12 @@ else
 				print '<td>';
 				if ($caneditfield)
 				{
-								print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
 				}
 				else
 				{
-								print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-								print $object->accountancy_code;
+					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print $object->accountancy_code;
 				}
 				print '</td>';
 				print "</tr>";
