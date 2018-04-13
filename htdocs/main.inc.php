@@ -1493,11 +1493,16 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		$result=$hookmanager->executeHooks('printTopRightMenu',$parameters);    // Note that $action and $object may have been modified by some hooks
 		if (is_numeric($result))
 		{
-			if (empty($result)) $toprightmenu.=$hookmanager->resPrint;		// add
-			else  $toprightmenu=$hookmanager->resPrint;						// replace
+			if ($result == 0)
+				$toprightmenu.=$hookmanager->resPrint;		// add
+			else
+				$toprightmenu=$hookmanager->resPrint;						// replace
 		}
-		else $toprightmenu.=$result;	// For backward compatibility
-
+		else
+		{
+			$toprightmenu.=$result;	// For backward compatibility
+		}
+		
 		// Link to module builder
 		if (! empty($conf->modulebuilder->enabled))
 		{
