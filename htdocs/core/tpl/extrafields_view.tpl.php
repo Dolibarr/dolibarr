@@ -46,7 +46,7 @@ print $hookmanager->resPrint;
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 //var_dump($extrafields->attributes);
-if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label']))
+if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
@@ -80,7 +80,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
-			print $extrafields->showSeparator($key);
+			print $extrafields->showSeparator($key, $object);
 		}
 		else
 		{

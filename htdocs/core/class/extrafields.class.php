@@ -1384,7 +1384,6 @@ class ExtraFields
 
 		if (! empty($extrafieldsobjectkey))
 		{
-			$elementtype=$this->attributes[$extrafieldsobjectkey]['elementtype'][$key];	// seems not used
 			$label=$this->attributes[$extrafieldsobjectkey]['label'][$key];
 			$type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
 			$size=$this->attributes[$extrafieldsobjectkey]['size'][$key];
@@ -1400,7 +1399,6 @@ class ExtraFields
 		}
 		else	// Old usage
 		{
-			$elementtype=$this->attribute_elementtype[$key];	// seems not used
 			$label=$this->attribute_label[$key];
 			$type=$this->attribute_type[$key];
 			$size=$this->attribute_size[$key];
@@ -1743,11 +1741,16 @@ class ExtraFields
 	 * Return HTML string to print separator extrafield
 	 *
 	 * @param   string	$key            Key of attribute
-	 * @return string
+	 * @param	string	$object			Object
+	 * @return 	string					HTML code with line for separator
 	 */
-	function showSeparator($key)
+	function showSeparator($key, $object)
 	{
-		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
+		global $langs;
+
+		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="2"><strong>';
+		$out.= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
+		$out.= '</strong></td></tr>';
 		return $out;
 	}
 

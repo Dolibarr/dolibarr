@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Jean-François FERRY <hello@librethic.io>
  * Copyright (C) 2016      Christophe Battarel <christophe@altairis.fr>
+ * Copyright (C) 2018      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,25 +77,38 @@ if ($id || $track_id || $ref) {
 // Security check
 $result = restrictedArea($user, 'ticketsup', $object->id);
 
+$triggermodname = 'TICKETSUP_MODIFY';
+$permissiontoadd = $user->rights->ticketsup->write;
+
 
 
 /*
  * Actions
  */
 
+if ($cancel)
+{
+	if (! empty($backtopage))
+	{
+		header("Location: ".$backtopage);
+		exit;
+	}
+	$action='';
+}
+
+
 $actionobject = new ActionsTicketsup($db);
 $actionobject->doActions($action, $object);
 
-if ($action == "update_extras" && $user->rights->ticketsup->write && !GETPOST('cancel','alpha'))
+// Action to update one extrafield
+if ($action == "update_extras" && ! empty($permissiontoadd))
 {
-	$triggermodname = 'TICKETSUP_MODIFY';
-
-	$res = $object->fetch(GETPOST('id','int'), '', GETPOST('track_id','alpha'));
+	$object->fetch(GETPOST('id','int'), '', GETPOST('track_id','alpha'));
 	$attributekey = GETPOST('attribute','alpha');
 	$attributekeylong = 'options_'.$attributekey;
 	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong,' alpha');
 
-	$result = $object->updateExtraField($attributekey, $triggermodname, $user);
+	$result = $object->insertExtraFields(empty($triggermodname)?'':$triggermodname, $user);
 	if ($result > 0)
 	{
 		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');

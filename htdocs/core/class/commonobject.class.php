@@ -4903,14 +4903,14 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Update an exta field value for the current object.
+	 *	Update an extra field value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
 	 *  @param  string      $key    		Key of the extrafield (without starting 'options_')
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see setValueFrom
+	 *  @see setValueFrom, insertExtraFields
 	 */
 	function updateExtraField($key, $trigger, $userused)
 	{
@@ -5054,7 +5054,6 @@ abstract class CommonObject
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
-		//$elementtype=$this->attribute_elementtype[$key];	// seems to not be used
 		$default=$val['default'];
 		$computed=$val['computed'];
 		$unique=$val['unique'];
@@ -5597,7 +5596,6 @@ abstract class CommonObject
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
-		//$elementtype=$this->attribute_elementtype[$key];	// seems to not be used
 		$default=$val['default'];
 		$computed=$val['computed'];
 		$unique=$val['unique'];
@@ -5996,7 +5994,7 @@ abstract class CommonObject
 
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 				{
-					$out .= $extrafields->showSeparator($key);
+					$out .= $extrafields->showSeparator($key, $this);
 				}
 				else
 				{

@@ -586,8 +586,8 @@ class Ticketsup extends CommonObject
         $sql .= " t.tms";
         $sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
         // Add fields for extrafields
-        foreach ($extrafields->attribute_list as $key => $val) {
-        	$sql .= ($extrafields->attribute_type[$key] != 'separate' ? ",ef." . $key . ' as options_' . $key : '');
+        foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+        	$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ",ef." . $key . ' as options_' . $key : '');
         }
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup as t";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_type as type ON type.code=t.type_code";
@@ -596,7 +596,7 @@ class Ticketsup extends CommonObject
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid=t.fk_soc";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as uc ON uc.rowid=t.fk_user_create";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as ua ON ua.rowid=t.fk_user_assign";
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
+        if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
             $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "ticketsup_extrafields as ef on (t.rowid = ef.fk_object)";
         }
         if (!$user->rights->societe->client->voir && !$user->socid) {
@@ -690,8 +690,8 @@ class Ticketsup extends CommonObject
                     $line->date_close = $this->db->jdate($obj->date_close);
 
                     // Extra fields
-                    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-                        foreach ($extrafields->attribute_label as $key => $val) {
+                    if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
+                    	foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
                             $tmpkey = 'options_' . $key;
                             $line->{$tmpkey} = $obj->$tmpkey;
                         }

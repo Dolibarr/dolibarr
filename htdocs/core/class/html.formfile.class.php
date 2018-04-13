@@ -867,7 +867,7 @@ class FormFile
 		}
 		else
 		{
-			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir).'$/', $filedir, $regs);
+			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir,'/').'$/', $filedir, $regs);
 			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
 		}
 
