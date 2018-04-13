@@ -1169,6 +1169,7 @@ BrowserIsKO=Vous utilisez le navigateur %s. Ce navigateur est déconseillé pour
 XDebugInstalled=XDebug est chargé.
 XCacheInstalled=XCache est chargé.
 AddRefInList=Afficher les références client/fournisseur dans les listes (listes déroulantes ou à autocomplétion) et les libellés des liens clicables. Les tiers apparaîtront alors sous la forme "CC12345 - SC45678 - La big company coorp", au lieu de "La big company coorp".
+OnSearchAndListGoOnCustomerOrSupplierCard = A la recherche, ou sur une liste, aller directement sur la fiche client ou fournisseur (si le tiers est client ou fournisseur)
 AskForPreferredShippingMethod=Demander la méthode d'expédition préférée pour les tiers.
 FieldEdition=Édition du champ %s
 FillThisOnlyIfRequired=Exemple: +2 (ne remplir que si un décalage d'heure est constaté dans l'export)

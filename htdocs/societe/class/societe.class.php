@@ -1972,6 +1972,13 @@ class Societe extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$name=$this->name?$this->name:$this->nom;
+		
+		if(!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
+
+             if(empty($option) && $this->client > 0) $option = 'customer';
+             if(empty($option) && $this->fournisseur > 0) $option = 'supplier';
+         }
+
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
