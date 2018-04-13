@@ -97,7 +97,7 @@ class Conf
 		// First level object
 		// TODO Remove this part.
 		$this->expedition_bon	= new stdClass();
-		$this->livraison_bon		= new stdClass();
+		$this->livraison_bon	= new stdClass();
 		$this->fournisseur		= new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
@@ -107,12 +107,12 @@ class Conf
 		$this->propal			= new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
-		$this->usergroup			= new stdClass();
+		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
-		$this->expensereport		= new stdClass();
+		$this->expensereport	= new stdClass();
 		$this->productbatch		= new stdClass();
 	}
 
