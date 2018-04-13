@@ -819,7 +819,7 @@ if ($action == 'create' || $action == 'adduserldap')
 		}
 	}
 
-	// Other form for add user to group
+	// Other form for user password
 	$parameters=array('valuetoshow' => $valuetoshow, 'password' => $password);
 	$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
@@ -828,7 +828,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	print $valuetoshow;
 	print '</td></tr>';
 
-	if(! empty($conf->api->enabled))
+	if (! empty($conf->api->enabled))
 	{
 		// API key
 		$generated_api_key = '';
@@ -1371,7 +1371,7 @@ else
 				}
 			}
 
-			// Other form for add user to group
+			// Other form for user password
 			$parameters=array('valuetoshow' => $valuetoshow);
 			$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
@@ -1938,8 +1938,8 @@ else
 				}
 			}
 
-			// Other form for add user to group
-			$parameters=array('valuetoshow' => $valuetoshow);
+			// Other form for user password
+			$parameters=array('valuetoshow' => $valuetoshow, 'caneditpassword' => $caneditpassword);
 			$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
 			else $valuetoshow.=$hookmanager->resPrint;				// to add
