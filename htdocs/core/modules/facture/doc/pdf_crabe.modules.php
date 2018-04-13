@@ -456,7 +456,7 @@ class pdf_crabe extends ModelePDFFactures
 	                    $showpricebeforepagebreak=0;
 	                }
 	                
-	                if (isset($imglinesize['width']) && isset($imglinesize['height']))
+	                if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
 	                {
 	                    $pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
 	                    // $pdf->Image does not increase value return by getY, so we save it manually
