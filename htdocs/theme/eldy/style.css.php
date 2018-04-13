@@ -4314,6 +4314,10 @@ div.dataTables_length select {
 /*  Select2                                                                       */
 /* ============================================================================== */
 
+.select2-container--focus span.select2-selection.select2-selection--single {
+    border-bottom: 1px solid #666 !important;
+}
+
 .blockvmenusearch .select2-container--default .select2-selection--single,
 .blockvmenubookmarks .select2-container--default .select2-selection--single
 {
