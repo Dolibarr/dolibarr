@@ -43,6 +43,7 @@ if ($massaction == 'presend')
 		$listofselectedref = array();
 		foreach ($arrayofselected as $toselectid)
 		{
+			$objecttmp = new $objectclass( $db );
 			$result = $objecttmp->fetch($toselectid);
 			if ($result > 0)
 			{
@@ -54,6 +55,7 @@ if ($massaction == 'presend')
 					$thirdpartyid = $objecttmp->fk_user_author;
 				$listofselectedthirdparties[$thirdpartyid] = $thirdpartyid;
 				$listofselectedref[$thirdpartyid][$toselectid] = $objecttmp->ref;
+				$listofobjectref[$thirdpartyid][$toselectid]=$objecttmp;
 			}
 		}
 	}
@@ -133,6 +135,14 @@ if ($massaction == 'presend')
 	$parameters = array(
 		'mode' => 'formemail'
 	);
+
+	if ( ! empty( $listofselectedthirdparties ) ) {
+		$parameters['listofobjectthirdparties'] = $listofselectedthirdparties;
+	}
+	if ( ! empty( $listofobjectref ) ) {
+		$parameters['listofobjectref'] = $listofobjectref;
+	}
+
 	complete_substitutions_array($substitutionarray, $langs, $object, $parameters);
 
 	// Tableau des substitutions
