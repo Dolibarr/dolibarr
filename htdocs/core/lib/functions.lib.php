@@ -5792,7 +5792,7 @@ function dol_concatdesc($text1,$text2,$forxml=false)
  */
 function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $object=null)
 {
-	global $db, $conf, $mysoc, $user;
+	global $db, $conf, $mysoc, $user, $extrafields;
 
 	$substitutionarray=array();
 
@@ -5966,11 +5966,14 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			{
 				if (! is_object($extrafields)) $extrafields = new ExtraFields($db);
 				$extrafields->fetch_name_optionals_label($object->table_element, true);
-				$object->fetch_optionals();
-				if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
+
+				if ($object->fetch_optionals() > 0)
 				{
-					foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
-						$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
+					{
+						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+							$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+						}
 					}
 				}
 			}
