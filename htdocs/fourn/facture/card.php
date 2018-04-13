@@ -1200,6 +1200,8 @@ if (empty($reshook))
 				$type = $productsupplier->type;
 				$price_base_type = 'HT';
 
+				$rang = $object->line_max() +1;
+
 				$result=$object->addline(
 					$desc,
 					$productsupplier->fourn_pu,
@@ -1215,7 +1217,7 @@ if (empty($reshook))
 					$tva_npr,
 					$price_base_type,
 					$type,
-					-1,
+					$rang,
 					0,
 					$array_options,
 					$productsupplier->fk_unit,
