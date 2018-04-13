@@ -983,6 +983,8 @@ if (empty($reshook))
 	            $type = $productsupplier->type;
 	            $price_base_type = 'HT';
 
+	            $rang = $object->line_max() +1;
+	            
 	            // TODO Save the product supplier ref into database (like done for supplier propal and order) into field ref_supplier (must rename field ref into ref_supplier first)
 	            $result=$object->addline(
 	            	$desc,
@@ -999,7 +1001,7 @@ if (empty($reshook))
 	            	$tva_npr,
 	            	$price_base_type,
 	            	$type,
-	            	-1,
+	                $rang,
 	            	0,
 	            	$array_options,
 	            	$productsupplier->fk_unit
