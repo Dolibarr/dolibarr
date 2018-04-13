@@ -820,7 +820,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Other form for add user to group
-	$parameters=array('valuetoshow' => $valuetoshow);
+	$parameters=array('valuetoshow' => $valuetoshow, 'password' => $password);
 	$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
 	else $valuetoshow.=$hookmanager->resPrint;				// to add
