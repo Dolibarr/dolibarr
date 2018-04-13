@@ -253,8 +253,8 @@ else {
 		print '<tr class="oddeven">';
 
 		// Permet d'afficher le compte comptable
-		if ($root_account_description != $displayed_account) {
-
+		if (empty($displayed_account) || $root_account_description != $displayed_account)
+		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
 				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
@@ -262,9 +262,9 @@ else {
 				print '</tr>';
 			}
 
-			// Affiche le compte comptable en d�but de ligne
+			// Affiche le compte comptable en debut de ligne
 			print "<tr>";
-			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $root_account_description . '</td>';
+			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $line->numero_compte . ($root_account_description ? ' - ' . $root_account_description : '') . '</td>';
 			print '</tr>';
 
 			$displayed_account = $root_account_description;
