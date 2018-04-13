@@ -2730,14 +2730,15 @@ class Facture extends CommonInvoice
 
 				// Mise a jour informations denormalisees au niveau de la facture meme
 				$result=$this->update_price(1,'auto',0,$mysoc);	// The addline method is designed to add line from user input so total calculation with update_price must be done using 'auto' mode.
+
 				if ($result > 0)
 				{
 					$this->db->commit();
-					return $this->line->rowid;
+					return $this->line->id;
 				}
 				else
 				{
-					$this->error=$this->db->error();
+					$this->error=$this->db->lasterror();
 					$this->db->rollback();
 					return -1;
 				}
@@ -4482,11 +4483,11 @@ class FactureLigne extends CommonInvoiceLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
+			$this->rowid=$this->id;	// For backward compatibility
 
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-            	$this->id=$this->rowid;
             	$result=$this->insertExtraFields();
             	if ($result < 0)
             	{
@@ -4558,12 +4559,12 @@ class FactureLigne extends CommonInvoiceLine
 			}
 
 			$this->db->commit();
-			return $this->rowid;
+			return $this->id;
 
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
 			$this->db->rollback();
 			return -2;
 		}
