@@ -5964,12 +5964,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			// Create dynamic tags for __EXTRAFIELD_FIELD__
 			if ($object->table_element && $object->id > 0)
 			{
-				if (! is_object($extrafields)) $extrafieldstmp = new ExtraFields($db);
-				$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
+				if (! is_object($extrafields)) $extrafields = new ExtraFields($db);
+				$extrafields->fetch_name_optionals_label($object->table_element, true);
 				$object->fetch_optionals();
-				if (is_array($extrafieldstmp->attributes[$object->table_element]['label']) && count($extrafieldstmp->attributes[$object->table_element]['label']) > 0)
+				if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 				{
-					foreach ($extrafieldstmp->attributes[$object->table_element]['label'] as $key => $label) {
+					foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
 						$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
 					}
 				}
