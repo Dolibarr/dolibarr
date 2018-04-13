@@ -805,7 +805,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	{
 		$valuetoshow.=($valuetoshow?', ':'').$langs->trans("HTTPBasicPassword");
 	}
-	if (preg_match('/dolibarr/',$dolibarr_main_authentication))
+	if (! preg_match('/ldap|http/',$dolibarr_main_authentication))
 	{
 		if (! empty($ldap_pass))	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
 		{
@@ -1354,7 +1354,7 @@ else
 			{
 				$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("HTTPBasicPassword");
 			}
-			if (preg_match('/dolibarr/',$dolibarr_main_authentication))
+			if (! preg_match('/ldap|http/',$dolibarr_main_authentication))
 			{
 				if ($object->pass) $valuetoshow.= preg_replace('/./i','*',$object->pass);
 				else
@@ -1912,7 +1912,7 @@ else
 			{
 				$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
 			}
-			if (preg_match('/dolibarr/',$dolibarr_main_authentication))
+			if (! preg_match('/ldap|http/',$dolibarr_main_authentication))
 			{
 				if ($caneditpassword)
 				{
