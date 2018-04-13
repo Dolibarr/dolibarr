@@ -40,9 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
 
 // Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
-$langs->load("ticketsup");
+$langs->loadLangs(array("companies","other","ticketsup"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
@@ -201,10 +199,10 @@ if ($action == "view_ticketlist") {
         );
 
         // Extra fields
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-            foreach ($extrafields->attribute_label as $key => $val) {
-                if ($extrafields->attribute_type[$key] != 'separate') {
-                    $arrayfields["ef." . $key] = array('label' => $extrafields->attribute_label[$key], 'checked' => $extrafields->attribute_list[$key], 'position' => $extrafields->attribute_pos[$key], 'enabled' => $extrafields->attribute_perms[$key]);
+        if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+        	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+        		if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
+        			$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => $extrafields->attributes[$object->table_element]['list'][$key], 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $extrafields->attributes[$object->table_element]['perms'][$key]);
                 }
             }
         }
@@ -297,8 +295,9 @@ if ($action == "view_ticketlist") {
         $sql .= " t.tms,";
         $sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
         // Add fields for extrafields
-        foreach ($extrafields->attribute_list as $key => $val) {
-        	$sql .= ($extrafields->attribute_type[$key] != 'separate' ? ",ef." . $key . ' as options_' . $key : '');
+        if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+        	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+        		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef." . $key . ' as options_' . $key : '');
         }
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup as t";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_type as type ON type.code=t.type_code";
@@ -310,7 +309,7 @@ if ($action == "view_ticketlist") {
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON ec.element_id=t.rowid";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_contact as tc ON ec.fk_c_type_contact=tc.rowid";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople sp ON ec.fk_socpeople=sp.rowid";
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
+        if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
             $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "ticketsup_extrafields as ef on (t.rowid = ef.fk_object)";
         }
         $sql .= " WHERE t.entity IN (" . getEntity('ticketsup') . ")";
@@ -408,8 +407,8 @@ if ($action == "view_ticketlist") {
                     print_liste_field_titre($arrayfields['t.tms']['label'], $url_page_current, 't.tms', '', $param, '', $sortfield, $sortorder);
                 }
                 // Extra fields
-                if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-                    foreach ($extrafields->attribute_label as $key => $val) {
+                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                         if (!empty($arrayfields["ef." . $key]['checked'])) {
                             $align = $extrafields->getAlignFlag($key);
                             print_liste_field_titre($extralabels[$key], $url_page_current, "ef." . $key, "", $param, ($align ? 'align="' . $align . '"' : ''), $sortfield, $sortorder);
@@ -490,8 +489,8 @@ if ($action == "view_ticketlist") {
                 }
 
                 // Extra fields
-                if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-                    foreach ($extrafields->attribute_label as $key => $val) {
+                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                         if (!empty($arrayfields["ef." . $key]['checked'])) {
                             print '<td class="liste_titre"></td>';
                         }
@@ -613,8 +612,8 @@ if ($action == "view_ticketlist") {
                     }
 
                     // Extra fields
-                    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-                        foreach ($extrafields->attribute_label as $key => $val) {
+                    if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+                    	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                             if (!empty($arrayfields["ef." . $key]['checked'])) {
                                 print '<td';
                                 $align = $extrafields->getAlignFlag($key);

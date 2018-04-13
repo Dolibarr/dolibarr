@@ -140,7 +140,7 @@ class FormTicketsup
 
         print "\n<!-- Begin form TICKETSUP -->\n";
 
-        print '<form method="POST" style="margin-bottom: 10px;" name="ticketsup" id="form_create_ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
+        print '<form method="POST" style="margin-bottom: 30px;" name="ticketsup" id="form_create_ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="' . $this->action . '">';
         foreach ($this->param as $key => $value) {
