@@ -1743,11 +1743,16 @@ class ExtraFields
 	 * Return HTML string to print separator extrafield
 	 *
 	 * @param   string	$key            Key of attribute
-	 * @return string
+	 * @param	string	$object			Object
+	 * @return 	string					HTML code with line for separator
 	 */
-	function showSeparator($key)
+	function showSeparator($key, $object)
 	{
-		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
+		global $langs;
+
+		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="2"><strong>';
+		$out.= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
+		$out.= '</strong></td></tr>';
 		return $out;
 	}
 

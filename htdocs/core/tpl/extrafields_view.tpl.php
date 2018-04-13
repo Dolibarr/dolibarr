@@ -80,7 +80,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
-			print $extrafields->showSeparator($key);
+			print $extrafields->showSeparator($key, $object);
 		}
 		else
 		{

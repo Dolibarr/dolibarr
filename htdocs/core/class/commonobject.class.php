@@ -5996,7 +5996,7 @@ abstract class CommonObject
 
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 				{
-					$out .= $extrafields->showSeparator($key);
+					$out .= $extrafields->showSeparator($key, $this);
 				}
 				else
 				{
