@@ -51,6 +51,10 @@ $search_accountancy_code_start = GETPOST('search_accountancy_code_start', 'alpha
 if ($search_accountancy_code_start == - 1) {
 	$search_accountancy_code_start = '';
 }
+$search_accountancy_code_end = GETPOST('search_accountancy_code_end', 'alpha');
+if ($search_accountancy_code_end == - 1) {
+	$search_accountancy_code_end = '';
+}
 $search_doc_ref = GETPOST('search_doc_ref', 'alpha');
 $search_label_operation = GETPOST('search_label_operation', 'alpha');
 $search_direction = GETPOST('search_direction', 'alpha');
@@ -116,8 +120,12 @@ if (! empty($search_doc_date)) {
 if (! GETPOST('button_removefilter_x','alpha') && ! GETPOST('button_removefilter.x','alpha') && ! GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
   if (! empty($search_accountancy_code_start)) {
-  	$filter['t.numero_compte'] = $search_accountancy_code_start;
+  	$filter['t.numero_compte>='] = $search_accountancy_code_start;
   	$options .= '&search_accountancy_code_start=' . urlencode($search_accountancy_code_start);
+  }
+  if (! empty($search_accountancy_code_end)) {
+  	$filter['t.numero_compte<='] = $search_accountancy_code_end;
+  	$options .= '&search_accountancy_code_end=' . urlencode($search_accountancy_code_end);
   }
   if (! empty($search_label_account)) {
   	$filter['t.label_compte'] = $search_label_account;
@@ -151,7 +159,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_doc_date = '';
 	$search_accountancy_code = '';
 	$search_accountancy_code_start = '';
-    $search_label_account = '';
+	$search_accountancy_code_end = '';
+	$search_label_account = '';
     $search_doc_ref = '';
 	$search_label_operation = '';
 	$search_direction = '';
@@ -260,7 +269,16 @@ else
 print '<table class="noborder" width="100%">';
 
 print '<tr class="liste_titre">';
-print '<td class="liste_titre">' . $object->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, '') . '</td>';
+print '<td class="liste_titre">';
+print '<div class="nowrap">';
+print $langs->trans('From').' ';
+print $formaccounting->select_account($search_accountancy_code_start, 'search_accountancy_code_start', 1, array (), 1, 1, 'maxwidth200');
+print '</div>';
+print '<div class="nowrap">';
+print $langs->trans('to').' ';
+print $formaccounting->select_account($search_accountancy_code_end, 'search_accountancy_code_end', 1, array (), 1, 1, 'maxwidth200');
+print '</div>';
+print '</td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre" align="center">';
 print $langs->trans('From') . ': ';
