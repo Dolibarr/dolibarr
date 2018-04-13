@@ -37,7 +37,7 @@ $versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(
 $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
 $setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[3])?'auto':$argv[3]);
 $langs->setDefaultLang($setuplang);
-$action=GETPOST('action','alpha')?GETPOST('action','alpha'):(empty($argv[4])?'auto':$argv[4]);
+$action=GETPOST('action','alpha')?GETPOST('action','alpha'):(empty($argv[4])?'':$argv[4]);
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
