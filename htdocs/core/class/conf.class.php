@@ -113,6 +113,7 @@ class Conf
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
 		$this->expensereport		= new stdClass();
+		$this->productbatch		= new stdClass();
 	}
 
 
@@ -509,7 +510,7 @@ class Conf
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
 
-		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list 
+		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
 		if (! empty($this->modules_parts['moduleforexternal']))
 			foreach($this->modules_parts['moduleforexternal'] as $key=>$value) $this->global->MAIN_MODULES_FOR_EXTERNAL.=",$key";
 
