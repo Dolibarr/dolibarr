@@ -1646,7 +1646,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$parameters = array('objectsrc' => $objectsrc, 'socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
