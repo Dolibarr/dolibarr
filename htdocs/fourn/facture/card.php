@@ -1998,7 +1998,7 @@ if ($action == 'create')
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
 
-	if (empty($reshook)
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields, 'edit');
 	}

@@ -1412,7 +1412,7 @@ if ($action == 'create')
 	$parameters = array('colspan' => ' colspan="3"');
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
     print $hookmanager->resPrint;
-	if (empty($reshook) {
+	if (empty($reshook)) {
 	    print $object->showOptionals($extrafields, 'edit');
 	}
 

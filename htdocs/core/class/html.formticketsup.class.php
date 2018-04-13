@@ -386,7 +386,7 @@ class FormTicketsup
 
         // Other attributes
         $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
-        if (empty($reshook) && is_array($extrafields->attributes[$ticketstat->table_element]['label']))
+        if (empty($reshook))
         {
             print $ticketstat->showOptionals($extrafields, 'edit');
         }
