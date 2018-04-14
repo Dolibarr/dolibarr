@@ -535,8 +535,8 @@ if ($resql)
 	}
 
 	$param='&socid='.$socid;
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall)				 $param.='&sall='.urlencode($sall);
 	if ($search_day)         $param.='&search_day='.urlencode($search_day);
 	if ($search_month)       $param.='&search_month='.urlencode($search_month);
