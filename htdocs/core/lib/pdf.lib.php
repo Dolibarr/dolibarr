@@ -152,6 +152,12 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		// For TCPDF, we specify permission we want to block
 		$pdfrights = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS)?json_decode($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS, true):array('modify','copy')); // Json format in llx_const
 
+		// Password for the end user
+		$pdfuserpass = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_USERPASS)?$conf->global->PDF_SECURITY_ENCRYPTION_USERPASS:'');
+
+		// Password of the owner, created randomly if not defined
+		$pdfownerpass = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_OWNERPASS)?$conf->global->PDF_SECURITY_ENCRYPTION_OWNERPASS:null);
+
 		// For encryption strength: 0 = RC4 40 bit; 1 = RC4 128 bit; 2 = AES 128 bit; 3 = AES 256 bit
 		$encstrength = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_STRENGTH)?$conf->global->PDF_SECURITY_ENCRYPTION_STRENGTH:0);
 
@@ -159,8 +165,6 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		// For example: array(array('c' => 'file://../examples/data/cert/tcpdf.crt', 'p' => array('print')))
 		$pubkeys = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_PUBKEYS)?json_decode($conf->global->PDF_SECURITY_ENCRYPTION_PUBKEYS, true):null); // Json format in llx_const
 
-		$pdfuserpass = ''; // Password for the end user
-		$pdfownerpass = NULL; // Password of the owner, created randomly if not defined
 		$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass,$encstrength,$pubkeys);
 	}
 
