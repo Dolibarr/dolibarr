@@ -543,6 +543,8 @@ else	// Show
 	print '<br>';
 
 	// Login page
+	print '<div class="div-table-responsive">';
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("LoginPage").'</td><td></td></tr>';
 
@@ -573,6 +575,7 @@ else	// Show
 	print '</td></tr>';
 
 	print '</table>'."\n";
+	print '</div>';
 
 	print '<div class="tabsAction tabsActionNoBottom">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';

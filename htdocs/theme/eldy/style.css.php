@@ -53,8 +53,8 @@ $colortexttitlenotab='100,60,20';
 $colortexttitle='0,0,0';
 $colortext='0,0,0';
 $colortextlink='0,0,100';
-$fontsize='13';
-$fontsizesmaller='12';
+$fontsize='0.85em';
+$fontsizesmaller='0.75em';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
 
@@ -117,8 +117,8 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
 	$conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
 	$conf->global->THEME_ELDY_TEXT='0,0,0';
-	$conf->global->THEME_ELDY_FONT_SIZE1='13';
-	$conf->global->THEME_ELDY_FONT_SIZE2='12';
+	$conf->global->THEME_ELDY_FONT_SIZE1='0.85em';
+	$conf->global->THEME_ELDY_FONT_SIZE2='0.75em';
 }
 
 // Case of option availables only if THEME_ELDY_ENABLE_PERSONALIZED is on
@@ -199,6 +199,15 @@ $colortextlink=join(',',colorStringToArray($colortextlink));
 
 $nbtopmenuentries=$menumanager->showmenu('topnb');
 
+
+$minwidthtmenu=66;		/* minimum width for one top menu entry */
+$heightmenu=46;			/* height of top menu, part with image */
+$heightmenu2=48;        /* height of top menu, part with login  */
+$disableimages = 0;
+$maxwidthloginblock = 130;
+if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
+
+
 print '/*'."\n";
 print 'colorbackbody='.$colorbackbody."\n";
 print 'colorbackvmenu1='.$colorbackvmenu1."\n";
@@ -239,7 +248,7 @@ body {
 	background: rgb(<?php print $colorbackbody; ?>);
 <?php } ?>
 	color: rgb(<?php echo $colortext; ?>);
-	font-size: <?php print $fontsize ?>px;
+	font-size: <?php print is_numeric($fontsize) ? $fontsize.'px' : $fontsize; ?>;
 	line-height: 1.4;
 	font-family: <?php print $fontlist ?>;
     margin-top: 0;
@@ -873,7 +882,7 @@ select.selectarrowonleft option {
 .hideobject { display: none; }
 .minwidth50  { min-width: 50px; }
 /* rule for not too small screen only */
-@media only screen and (min-width: <?php echo round($nbtopmenuentries * $fontsize * 3.4, 0) + 7; ?>px)
+@media only screen and (min-width: <?php echo round($nbtopmenuentries * 45, 0) + 7; ?>px)
 {
 	.width25  { width: 25px; }
     .width50  { width: 50px; }
@@ -960,10 +969,10 @@ select.selectarrowonleft option {
 @media only screen and (max-width: 767px)
 {
 	body {
-		font-size: <?php print $fontsize+3; ?>px;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?>;
 	}
 	div.refidno {
-		font-size: <?php print $fontsize+3; ?>px !important;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?> !important;
 	}
 }
 
@@ -971,10 +980,10 @@ select.selectarrowonleft option {
 @media only screen and (max-width: 570px)
 {
 	body {
-		font-size: <?php print $fontsize+3; ?>px;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?>;
 	}
 	div.refidno {
-		font-size: <?php print $fontsize+3; ?>px !important;
+		font-size: <?php print is_numeric($fontsize) ? ($fontsize+3).'px' : $fontsize; ?> !important;
 	}
 
 	.divmainbodylarge { margin-left: 20px !important; margin-right: 20px !important; }
@@ -1006,7 +1015,7 @@ select.selectarrowonleft option {
 	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
-		font-size: <?php print $fontsize+3; ?>px;
+		font-size: <?php print is_numeric($fontsize)?($fontsize+3).'px':$fontsize; ?>;
     	/* min-height: 1.4em; */
     	/* line-height: 1.4em; */
     	/* padding: .4em .1em; */
@@ -1453,15 +1462,6 @@ img.photorefnoborder {
 /* Menu top et 1ere ligne tableau                                                 */
 /* ============================================================================== */
 
-<?php
-$minwidthtmenu=66;		/* minimum width for one top menu entry */
-$heightmenu=46;			/* height of top menu, part with image */
-$heightmenu2=48;        /* height of top menu, part with login  */
-$disableimages = 0;
-$maxwidthloginblock = 130;
-if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
-?>
-
 div#id-top {
 <?php if (GETPOST('optioncss','aZ09') == 'print') {  ?>
 	display:none;
@@ -1591,13 +1591,6 @@ div.tmenucenter
     height: <?php print $heightmenu; ?>px;
 	<?php } ?>
     width: 100%;
-	/*
-    max-width: <?php echo round($fontsize * 8); ?>px;
-   	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	color: #<?php echo $colortextbackhmenu; ?>;
-	*/
 }
 #menu_titre_logo {
 	padding-top: 0;
@@ -1625,7 +1618,18 @@ div.mainmenu {
 	min-width: 40px;
 }
 
-/* Do not load menu img if hidden to save bandwidth */
+/* For mainmenu, we always load the img */
+
+div.mainmenu.menu {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png',1) ?>);
+	<?php print $disableimages?'':'top: 7px'; ?>
+}
+#mainmenutd_menu a.tmenuimage {
+    display: unset;
+}
+
+/* Do not load menu img for other if hidden to save bandwidth */
+
 <?php if (empty($dol_hide_topmenu)) { ?>
 
 div.mainmenu.home{
@@ -1679,11 +1683,6 @@ div.mainmenu.hrm {
 
 div.mainmenu.members {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/members.png',1) ?>);
-}
-
-div.mainmenu.menu {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/menu.png',1) ?>);
-	top: 7px;
 }
 
 div.mainmenu.products {
@@ -1895,7 +1894,7 @@ div.login_block {
 	<?php print $right; ?>: 0;
 	top: <?php print $disableimages?'4px':'0'; ?>;
 	font-weight: bold;
-	max-width: <?php echo $maxwidthloginblock; ?>px;
+	<?php echo (empty($disableimages) && $maxwidthloginblock)?'max-width: '.$maxwidthloginblock.'px;':''; ?>
 	<?php if (GETPOST('optioncss','aZ09') == 'print') { ?>
 	display: none;
 	<?php } ?>
@@ -1927,7 +1926,7 @@ div.login_block_user {
 }
 div.login_block_other {
 	display: inline-block;
-	clear: both;
+	clear: <?php echo $disableimages?'none':'both'; ?>;
 }
 div.login_block_other { padding-top: 3px; text-align: right; }
 .login_block_elem {
@@ -1952,7 +1951,7 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .alogin, .alogin:hover {
 	font-weight: normal !important;
-	font-size: <?php echo $fontsizesmaller; ?>px !important;
+	font-size: <?php echo is_numeric($fontsizesmaller)?($fontsizesmaller.'px'):$fontsizesmaller; ?> !important;
 	padding-top: 2px;
 }
 .alogin:hover, .atoplogin:hover {
@@ -2041,17 +2040,17 @@ input.vmenusearchselectcombo[type=text] {
 .companylogo { }
 .searchform { padding-top: 10px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
-font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
-a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
-font.vsmenudisabled { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
+a.vsmenu:link, a.vsmenu:visited, a.vsmenu:hover, a.vsmenu:active, span.vsmenu { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; }
 a.vsmenu:link, a.vsmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; white-space: nowrap; }
 font.vsmenudisabledmargin { margin: 1px 1px 1px 6px; }
 li a.vsmenudisabled, li.vsmenudisabled { color: #aaa !important; }
 
-a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print $fontsizesmaller ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; text-decoration: none; }
+a.help:link, a.help:visited, a.help:hover, a.help:active, span.help { font-size:<?php print is_numeric($fontsizesmaller)?($fontsizesmaller.'px'):$fontsizesmaller; ?>; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: normal; color: #aaa; text-decoration: none; }
 
 .vmenu div.blockvmenufirst, .vmenu div.blockvmenulogo, .vmenu div.blockvmenusearchphone, .vmenu div.blockvmenubookmarks
 {
@@ -2685,7 +2684,7 @@ div.refidno  {
 	padding-top: 3px;
 	font-weight: normal;
   	color: #444;
-  	font-size: <?php print $fontsize ?>px;
+  	font-size: <?php print is_numeric($fontsize)?$fontsize.'px':$fontsize ?>;
   	line-height: 21px;
 }
 div.refidno form {
@@ -3526,7 +3525,7 @@ div#card-errors {
 .ui-dialog-titlebar {
 }
 .ui-dialog-content {
-    font-size: <?php print $fontsize; ?>px !important;
+    font-size: <?php print is_numeric($fontsize)?$fontsize.'px':$fontsize; ?> !important;
 }
 
 
@@ -4035,7 +4034,7 @@ A.none, A.none:active, A.none:visited, A.none:hover {
 }
 .ui-widget {
     font-family:<?php echo $fontlist; ?>;
-    font-size:<?php echo $fontsize; ?>px;
+    font-size:<?php echo is_numeric($fontsize)?$fontsize.'px':$fontsize; ?>;
 }
 /* .ui-button { margin-left: -2px; <?php print (preg_match('/chrome/',$conf->browser->name)?'padding-top: 1px;':''); ?> } */
 .ui-button { margin-left: -2px; }
@@ -4872,7 +4871,7 @@ a.ui-link, a.ui-link:hover, .ui-btn:hover, span.ui-btn-text:hover, span.ui-btn-i
 	min-width: .4em;
 	padding-left: 6px;
 	padding-right: 6px;
-	font-size: <?php print $fontsize ?>px;
+	font-size: <?php print is_numeric($fontsize)?$fontsize.'px':$fontsize; ?>;
 	/* white-space: normal; */		/* Warning, enable this break the truncate feature */
 }
 .ui-btn-icon-right .ui-btn-inner {
@@ -5455,20 +5454,19 @@ div.tabsElem a.tab {
 	}
 }
 
-/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo $fontsize ?> */
+/* nboftopmenuentries = <?php echo $nbtopmenuentries ?>, fontsize=<?php echo is_numeric($fontsize)?$fontsize.'px':$fontsize ?> */
 /* rule to reduce top menu - 1st reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 7, 0) + 24; ?>px)	/* reduction 1 */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 91, 0) + 24; ?>px)	/* reduction 1 */
 {
 	div.tmenucenter {
-	    width: <?php echo round($fontsize * 4); ?>px;	/* size of viewport */
+	    width: <?php echo round(52); ?>px;	/* size of viewport */
     	white-space: nowrap;
   		overflow: hidden;
   		text-overflow: ellipsis;
   		color: #<?php echo $colortextbackhmenu; ?>;
 	}
 	.mainmenuaspan {
-    	/*display: none;*/
-  		font-size: 10px;
+  		font-size: 0.9em;
   		padding-right: 0;
     }
     .topmenuimage {
@@ -5491,20 +5489,20 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 2nd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 5, 0) + 24; ?>px)	/* reduction 2 */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 75, 0) + 24; ?>px)	/* reduction 2 */
 {
 	div.mainmenu {
 		height: 23px;
 	}
 	div.tmenucenter {
-	    max-width: <?php echo round($fontsize * 2); ?>px;	/* size of viewport */
+	    max-width: <?php echo round(26); ?>px;	/* size of viewport */
   		text-overflow: clip;
 	}
 	span.mainmenuaspan {
     	margin-left: 1px;
 	}
 	.mainmenuaspan {
-  		font-size: 10px;
+  		font-size: 0.9em;
   		padding-left: 0;
   		padding-right: 0;
     }
@@ -5515,7 +5513,7 @@ div.tabsElem a.tab {
 	}
 }
 /* rule to reduce top menu - 3rd reduction */
-@media only screen and (max-width: <?php echo round($nbtopmenuentries * $fontsize * 3.6, 0) + 12; ?>px)	/* reduction 3 */
+@media only screen and (max-width: <?php echo round($nbtopmenuentries * 49, 0) + 12; ?>px)	/* reduction 3 */
 {
 	.side-nav {
 		z-index: 200;
