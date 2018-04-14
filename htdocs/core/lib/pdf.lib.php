@@ -130,6 +130,10 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
+	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
+	else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
+	else $pdf = new TCPDF($pagetype,$metric,$format);
+
 	// Protection and encryption of pdf
 	if (! empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
@@ -144,9 +148,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		- print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
 		- owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
 		*/
-		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
-		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
-		else $pdf = new TCPDF($pagetype,$metric,$format);
+
 		// For TCPDF, we specify permission we want to block
 		$pdfrights = array('modify','copy');
 
