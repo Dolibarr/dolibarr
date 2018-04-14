@@ -185,6 +185,7 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	    // Loop on each lines to detect if there is at least one image to show
 	    $realpatharray=array();
+	    $this->atleastonephoto = false;
 	    if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
 	    {
 	        $objphoto = new Product($this->db);
@@ -233,6 +234,7 @@ class pdf_crabe extends ModelePDFFactures
 	                        
 	                        $realpath = $dir.$filename;
 	                        $arephoto = true;
+	                        $this->atleastonephoto = true;
 	                    }
 	                }
 	            }
@@ -444,61 +446,66 @@ class pdf_crabe extends ModelePDFFactures
 	                $posYAfterImage=0;
 	                $posYAfterDescription=0;
 	                
-	                // We start with Photo of product line
-	                if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
+	                if($this->getColumnStatus('photo'))
 	                {
-	                    $pdf->AddPage('','',true);
-	                    if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-	                    if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-	                    $pdf->setPage($pageposbefore+1);
-	                    
-	                    $curY = $tab_top_newpage;
-	                    $showpricebeforepagebreak=0;
-	                }
-	                
-	                if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
-	                {
-	                    $pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
-	                    // $pdf->Image does not increase value return by getY, so we save it manually
-	                    $posYAfterImage=$curY+$imglinesize['height'];
+    	                // We start with Photo of product line
+    	                if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_hauteur-($heightforfooter+$heightforfreetext+$heightforinfotot)))	// If photo too high, we moved completely on new page
+    	                {
+    	                    $pdf->AddPage('','',true);
+    	                    if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+    	                    if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+    	                    $pdf->setPage($pageposbefore+1);
+    	                    
+    	                    $curY = $tab_top_newpage;
+    	                    $showpricebeforepagebreak=0;
+    	                }
+    	                
+    	                if (!empty($this->cols['photo']) && isset($imglinesize['width']) && isset($imglinesize['height']))
+    	                {
+    	                    $pdf->Image($realpatharray[$i], $this->getColumnContentXStart('photo'), $curY, $imglinesize['width'], $imglinesize['height'], '', '', '', 2, 300);	// Use 300 dpi
+    	                    // $pdf->Image does not increase value return by getY, so we save it manually
+    	                    $posYAfterImage=$curY+$imglinesize['height'];
+    	                }
 	                }
 	                
 	                // Description of product line
-	                
-	                $pdf->startTransaction();
-	                pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
-	                $pageposafter=$pdf->getPage();
-	                if ($pageposafter > $pageposbefore)	// There is a pagebreak
+	                if ($this->getColumnStatus('desc'))
 	                {
-	                    $pdf->rollbackTransaction(true);
-	                    $pageposafter=$pageposbefore;
-	                    //print $pageposafter.'-'.$pageposbefore;exit;
-	                    $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-	                    pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
-	                    $pageposafter=$pdf->getPage();
-	                    $posyafter=$pdf->GetY();
-	                    //var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
-	                    if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
-	                    {
-	                        if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
-	                        {
-	                            $pdf->AddPage('','',true);
-	                            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-	                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-	                            $pdf->setPage($pageposafter+1);
-	                        }
-	                    }
-	                    else
-	                    {
-	                        // We found a page break
-	                        $showpricebeforepagebreak=0;
-	                    }
+    	                $pdf->startTransaction();
+    	                pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
+    	                $pageposafter=$pdf->getPage();
+    	                if ($pageposafter > $pageposbefore)	// There is a pagebreak
+    	                {
+    	                    $pdf->rollbackTransaction(true);
+    	                    $pageposafter=$pageposbefore;
+    	                    //print $pageposafter.'-'.$pageposbefore;exit;
+    	                    $pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+    	                    pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
+    	                    $pageposafter=$pdf->getPage();
+    	                    $posyafter=$pdf->GetY();
+    	                    //var_dump($posyafter); var_dump(($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
+    	                    if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+    	                    {
+    	                        if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+    	                        {
+    	                            $pdf->AddPage('','',true);
+    	                            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+    	                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+    	                            $pdf->setPage($pageposafter+1);
+    	                        }
+    	                    }
+    	                    else
+    	                    {
+    	                        // We found a page break
+    	                        $showpricebeforepagebreak=0;
+    	                    }
+    	                }
+    	                else	// No pagebreak
+    	                {
+    	                    $pdf->commitTransaction();
+    	                }
+    	                $posYAfterDescription=$pdf->GetY();
 	                }
-	                else	// No pagebreak
-	                {
-	                    $pdf->commitTransaction();
-	                }
-	                $posYAfterDescription=$pdf->GetY();
 	                
 	                $nexY = $pdf->GetY();
 	                $pageposafter=$pdf->getPage();
@@ -514,7 +521,7 @@ class pdf_crabe extends ModelePDFFactures
 	                $pdf->SetFont('','', $default_font_size - 1);   // On repositionne la police par defaut
 	                
 	                // VAT Rate
-	                if (!empty($this->cols['vat']))
+	                if ($this->getColumnStatus('vat'))
 	                {
 	                    $vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
@@ -522,7 +529,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Unit price before discount
-	                if (!empty($this->cols['subprice']))
+	                if ($this->getColumnStatus('subprice'))
 	                {
 	                    $up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
@@ -531,7 +538,7 @@ class pdf_crabe extends ModelePDFFactures
 	                
 	                // Quantity
 	                // Enough for 6 chars
-	                if (!empty($this->cols['qty']))
+	                if ($this->getColumnStatus('qty'))
 	                {
 	                    $qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'qty', $qty);
@@ -539,7 +546,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Situation progress
-	                if (!empty($this->cols['progress']))
+	                if ($this->getColumnStatus('progress'))
 	                {
 	                    $progress = pdf_getlineprogress($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'progress', $progress);
@@ -547,7 +554,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Unit
-	                if (!empty($this->cols['unit']))
+	                if ($this->getColumnStatus('unit'))
 	                {
 	                    $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 	                    $this->printStdColumnContent($pdf, $curY, 'unit', $unit);
@@ -555,7 +562,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Discount on line
-	                if (!empty($this->cols['discount']) && $object->lines[$i]->remise_percent)
+	                if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent)
 	                {
 	                    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
@@ -563,7 +570,7 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	                
 	                // Total HT line
-	                if (!empty($this->cols['totalexcltax']))
+	                if ($this->getColumnStatus('totalexcltax'))
 	                {
 	                    $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 	                    $this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
@@ -1404,6 +1411,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		foreach ($this->cols as $colKey => $colDef)
 		{
+		    if(!$this->getColumnStatus($colKey)) continue;
 		    
 		    // get title label
 		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
@@ -1765,6 +1773,8 @@ class pdf_crabe extends ModelePDFFactures
 	    $countFlexCol = 0;
 	    foreach ($this->cols as $colKey =>& $colDef)
 	    {
+	        if(!$this->getColumnStatus($colKey)) continue; // continue if desable
+	        
 	        if(empty($colDef['width'])){
 	            $countFlexCol++;
 	        }
@@ -1791,16 +1801,19 @@ class pdf_crabe extends ModelePDFFactures
 	            $colDef['content'] = $this->defaultContentsFieldsStyle;
 	        }
 	        
-	        // In case of flexible column
-	        if(empty($colDef['width'])){
-	            $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
+	        if($this->getColumnStatus($colKey))
+	        {
+    	        // In case of flexible column
+    	        if(empty($colDef['width'])){
+    	            $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
+    	        }
+    	        
+    	        // Set positions
+    	        $lastX = $curX;
+    	        $curX = $lastX - $colDef['width'];
+    	        $colDef['xStartPos'] = $curX;
+    	        $colDef['xEndPos']   = $lastX;
 	        }
-	        
-	        // Set positions
-	        $lastX = $curX;
-	        $curX = $lastX - $colDef['width'];
-	        $colDef['xStartPos'] = $curX;
-	        $colDef['xEndPos']   = $lastX;
 	    }
 	}
 	
@@ -1853,6 +1866,7 @@ class pdf_crabe extends ModelePDFFactures
 	    $this->cols['desc'] = array(
 	        'rank' => $rank, 
 	        'width' => false, // only for desc
+	        'status' => true,
 	        'title' => array(
 	            'textkey' => 'Designation', // use lang key is usefull in somme case with module
 	            'align' => 'L',
@@ -1865,40 +1879,49 @@ class pdf_crabe extends ModelePDFFactures
 	        ),
 	    );
 	    
-	    if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
+	    // PHOTO
+        $rank = $rank + 10;
+        $this->cols['photo'] = array(
+            'rank' => $rank,
+            'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
+            'status' => false,
+            'title' => array(
+                'textkey' => 'Photo',
+                'label' => ' ' 
+            ),
+            'content' => array(
+                'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+            ),
+            'border-left' => false, // remove left line separator
+        );
+	        
+	    if (! empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE) && !empty($this->atleastonephoto))
 	    {
-	        $rank = $rank + 10;
-	        $this->cols['photo'] = array(
-	            'rank' => $rank,
-	            'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
-	            'title' => array(
-	                'textkey' => 'Photo',
-	                'label' => ' ' 
-	            ),
-	            'content' => array(
-	                'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-	            ),
-	            'border-left' => false, // remove left line separator
-	        );
+	        $this->cols['photo']['status'] = true;
 	    }
+	    
+	    
+	    $rank = $rank + 10;
+	    $this->cols['vat'] = array(
+	        'rank' => $rank,
+	        'status' => false,
+	        'width' => 16, // in mm
+	        'title' => array(
+	            'textkey' => 'VAT'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
 	    
 	    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
 	    {
-	        $rank = $rank + 10;
-	        $this->cols['vat'] = array(
-	            'rank' => $rank,
-	            'width' => 16, // in mm
-	            'title' => array(
-	                'textkey' => 'VAT'
-	            ),
-	            'border-left' => true, // add left line separator
-	        );
+	        $this->cols['vat']['status'] = true;
 	    }
 	    
 	    $rank = $rank + 10;
 	    $this->cols['subprice'] = array(
 	        'rank' => $rank,
 	        'width' => 19, // in mm
+	        'status' => true,
 	        'title' => array(
 	            'textkey' => 'PriceUHT'
 	        ),
@@ -1909,6 +1932,7 @@ class pdf_crabe extends ModelePDFFactures
 	    $this->cols['qty'] = array(
 	        'rank' => $rank,
 	        'width' => 16, // in mm
+	        'status' => true,
 	        'title' => array(
 	            'textkey' => 'Qty'
 	        ),
@@ -1916,46 +1940,54 @@ class pdf_crabe extends ModelePDFFactures
 	    );
 	    
 	    $rank = $rank + 10;
+	    $this->cols['progress'] = array(
+	        'rank' => $rank,
+	        'width' => 19, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'Progress'
+	        ),
+	        'border-left' => false, // add left line separator
+	    );
+	    
 	    if($this->situationinvoice)
 	    {
-	        $this->cols['progress'] = array(
-	            'rank' => $rank,
-	            'width' => 19, // in mm
-	            'title' => array(
-	                'textkey' => 'Progress'
-	            ),
-	            'border-left' => false, // add left line separator
-	        );
+	        $this->cols['progress']['status'] = true;
 	    }
 	    
 	    $rank = $rank + 10;
+	    $this->cols['unit'] = array(
+	        'rank' => $rank,
+	        'width' => 11, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'Unit'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
 	    if($conf->global->PRODUCT_USE_UNITS){
-	        $this->cols['unit'] = array(
-	            'rank' => $rank,
-	            'width' => 11, // in mm
-	            'title' => array(
-	                'textkey' => 'Unit'
-	            ),
-	            'border-left' => true, // add left line separator
-	        );
+	        $this->cols['unit']['status'] = true;
 	    }
 	    
 	    $rank = $rank + 10;
+	    $this->cols['discount'] = array(
+	        'rank' => $rank,
+	        'width' => 13, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'ReductionShort'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
 	    if ($this->atleastonediscount){
-	        $this->cols['discount'] = array(
-	            'rank' => $rank,
-	            'width' => 13, // in mm
-	            'title' => array(
-	                'textkey' => 'ReductionShort'
-	            ),
-	            'border-left' => true, // add left line separator
-	        );
+	        $this->cols['discount']['status'] = true;
 	    }
 	    
 	    $rank = $rank + 10;
 	    $this->cols['totalexcltax'] = array(
 	        'rank' => $rank,
 	        'width' => 26, // in mm
+	        'status' => true,
 	        'title' => array(
 	            'textkey' => 'TotalHT'
 	        ),
@@ -2098,6 +2130,20 @@ class pdf_crabe extends ModelePDFFactures
 	    
 	}
 	
+	
+	/**
+	 *   	get column status from column key
+	 *
+	 *   	@param	string			$colKey    		the column key
+	 *      @return	float      width in mm
+	 */
+	function getColumnStatus($colKey)
+	{
+	    if( !empty($this->cols[$colKey]['status'])){
+	        return true;
+	    }
+	    else  return  false;
+	}
 	
 }
 

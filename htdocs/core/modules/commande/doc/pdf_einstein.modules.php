@@ -362,41 +362,44 @@ class pdf_einstein extends ModelePDFCommandes
 					$curX = $this->posxdesc-1;
 
 					$showpricebeforepagebreak=1;
-
-					$pdf->startTransaction();
-					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
-					$pageposafter=$pdf->getPage();
-					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+					
+					if($this->getColumnStatus('desc'))
 					{
-						$pdf->rollbackTransaction(true);
-						$pageposafter=$pageposbefore;
-						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
-						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
-						$pageposafter=$pdf->getPage();
-						$posyafter=$pdf->GetY();
-						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
-						{
-							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
-							{
-								$pdf->AddPage('','',true);
-								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-								$pdf->setPage($pageposafter+1);
-							}
-						}
-						else
-						{
-							// We found a page break
-							$showpricebeforepagebreak=0;
-						}
+    					$pdf->startTransaction();
+    					pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
+    					$pageposafter=$pdf->getPage();
+    					if ($pageposafter > $pageposbefore)	// There is a pagebreak
+    					{
+    						$pdf->rollbackTransaction(true);
+    						$pageposafter=$pageposbefore;
+    						//print $pageposafter.'-'.$pageposbefore;exit;
+    						$pdf->setPageOrientation('', 1, $heightforfooter);	// The only function to edit the bottom margin of current page to set it.
+    						pdf_writelinedesc($pdf,$object,$i,$outputlangs,$this->getColumnContentWidth('desc'),3,$this->getColumnContentXStart('desc'),$curY,$hideref,$hidedesc);
+    						$pageposafter=$pdf->getPage();
+    						$posyafter=$pdf->GetY();
+    						if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+$heightforinfotot)))	// There is no space left for total+free text
+    						{
+    							if ($i == ($nblignes-1))	// No more lines, and no space left to show total, so we create a new page
+    							{
+    								$pdf->AddPage('','',true);
+    								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+    								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+    								$pdf->setPage($pageposafter+1);
+    							}
+    						}
+    						else
+    						{
+    							// We found a page break
+    							$showpricebeforepagebreak=0;
+    						}
+    					}
+    					else	// No pagebreak
+    					{
+    						$pdf->commitTransaction();
+    					}
+    					$posYAfterDescription=$pdf->GetY();
 					}
-					else	// No pagebreak
-					{
-						$pdf->commitTransaction();
-					}
-					$posYAfterDescription=$pdf->GetY();
-
+					
 					$nexY = $pdf->GetY();
 					$pageposafter=$pdf->getPage();
 
@@ -412,7 +415,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetFont('','',  $default_font_size - 1);   // On repositionne la police par defaut
 
 					// VAT Rate
-					if (!empty($this->cols['vat']))
+					if ($this->getColumnStatus('vat'))
 					{
 					    $vat_rate = pdf_getlinevatrate($object, $i, $outputlangs, $hidedetails);
 					    $this->printStdColumnContent($pdf, $curY, 'vat', $vat_rate);
@@ -420,7 +423,7 @@ class pdf_einstein extends ModelePDFCommandes
 					}
 					
 					// Unit price before discount
-					if (!empty($this->cols['subprice']))
+					if ($this->getColumnStatus('subprice'))
 					{
 					    $up_excl_tax = pdf_getlineupexcltax($object, $i, $outputlangs, $hidedetails);
 					    $this->printStdColumnContent($pdf, $curY, 'subprice', $up_excl_tax);
@@ -429,7 +432,7 @@ class pdf_einstein extends ModelePDFCommandes
 					
 					// Quantity
 					// Enough for 6 chars
-					if (!empty($this->cols['qty']))
+					if ($this->getColumnStatus('qty'))
 					{
 					    $qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					    $this->printStdColumnContent($pdf, $curY, 'qty', $qty);
@@ -438,7 +441,7 @@ class pdf_einstein extends ModelePDFCommandes
 					
 					
 					// Unit
-					if (!empty($this->cols['unit']))
+					if ($this->getColumnStatus('unit'))
 					{
 					    $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
 					    $this->printStdColumnContent($pdf, $curY, 'unit', $unit);
@@ -446,7 +449,7 @@ class pdf_einstein extends ModelePDFCommandes
 					}
 					
 					// Discount on line
-					if (!empty($this->cols['discount']) && $object->lines[$i]->remise_percent)
+					if ($this->getColumnStatus('discount') && $object->lines[$i]->remise_percent)
 					{
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
 					    $this->printStdColumnContent($pdf, $curY, 'discount', $remise_percent);
@@ -454,7 +457,7 @@ class pdf_einstein extends ModelePDFCommandes
 					}
 					
 					// Total HT line
-					if (!empty($this->cols['totalexcltax']))
+					if ($this->getColumnStatus('totalexcltax'))
 					{
 					    $total_excl_tax = pdf_getlinetotalexcltax($object, $i, $outputlangs, $hidedetails);
 					    $this->printStdColumnContent($pdf, $curY, 'totalexcltax', $total_excl_tax);
@@ -1078,7 +1081,7 @@ class pdf_einstein extends ModelePDFCommandes
 	/**
 	 *   Show table for lines
 	 *
-	 *   @param		TCPDF		$pdf     		Object PDF
+	 *   @param		PDF			$pdf     		Object PDF
 	 *   @param		string		$tab_top		Top position of table
 	 *   @param		string		$tab_height		Height of table (rectangle)
 	 *   @param		int			$nexY			Y (not used)
@@ -1090,59 +1093,62 @@ class pdf_einstein extends ModelePDFCommandes
 	 */
 	function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop=0, $hidebottom=0, $currency='')
 	{
-	    global $conf;
-	    
-	    // Force to disable hidetop and hidebottom
-	    $hidebottom=0;
-	    if ($hidetop) $hidetop=-1;
-	    
-	    $currency = !empty($currency) ? $currency : $conf->currency;
-	    $default_font_size = pdf_getPDFFontSize($outputlangs);
-	    
-	    // Amount in (at tab_top - 1)
-	    $pdf->SetTextColor(0,0,0);
-	    $pdf->SetFont('','', $default_font_size - 2);
-	    
-	    if (empty($hidetop))
-	    {
-	        $titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$currency));
-	        $pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
-	        $pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
-	        
-	        //$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-	        if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
-	    }
-	    
-	    $pdf->SetDrawColor(128,128,128);
-	    $pdf->SetFont('','', $default_font_size - 1);
-	    
-	    // Output Rect
-	    $this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
-	    
-	    
-	    foreach ($this->cols as $colKey => $colDef)
-	    {
-	        
-	        // get title label
-	        $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
-	        
-	        // Add column separator
-	        if(!empty($colDef['border-left'])){
-	            $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
-	        }
-	        
-	        if (empty($hidetop))
-	        {
-	            $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
-	            
-	            $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
-	            $pdf->MultiCell($textWidth,2,$colDef['title']['label'],'',$colDef['title']['align']);
-	        }
-	    }
-	    
-	    if (empty($hidetop)){
-	        $pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
-	    }
+		global $conf;
+
+		// Force to disable hidetop and hidebottom
+		$hidebottom=0;
+		if ($hidetop) $hidetop=-1;
+
+		$currency = !empty($currency) ? $currency : $conf->currency;
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
+		// Amount in (at tab_top - 1)
+		$pdf->SetTextColor(0,0,0);
+		$pdf->SetFont('','', $default_font_size - 2);
+
+		if (empty($hidetop))
+		{
+			$titre = $outputlangs->transnoentities("AmountInCurrency",$outputlangs->transnoentitiesnoconv("Currency".$currency));
+			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top-4);
+			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
+
+			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
+			if (! empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_droite-$this->marge_gauche, 5, 'F', null, explode(',',$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+		}
+
+		$pdf->SetDrawColor(128,128,128);
+		$pdf->SetFont('','', $default_font_size - 1);
+
+		// Output Rect
+		$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect prend une longueur en 3eme param et 4eme param
+
+
+		foreach ($this->cols as $colKey => $colDef)
+		{
+		    if(!$this->getColumnStatus($colKey)) continue;
+		    
+		    // get title label
+		    $colDef['title']['label'] = !empty($colDef['title']['label'])?$colDef['title']['label']:$outputlangs->transnoentities($colDef['title']['textkey']);
+		    
+		    // Add column separator
+		    if(!empty($colDef['border-left'])){
+		        $pdf->line($colDef['xStartPos'], $tab_top, $colDef['xStartPos'], $tab_top + $tab_height);
+		    }
+		    
+		    if (empty($hidetop))
+		    {
+		      $pdf->SetXY($colDef['xStartPos'] + $colDef['title']['padding'][3], $tab_top + $colDef['title']['padding'][0] );
+		    
+		      $textWidth = $colDef['width'] - $colDef['title']['padding'][3] -$colDef['title']['padding'][1];
+		      $pdf->MultiCell($textWidth,2,$colDef['title']['label'],'',$colDef['title']['align']);
+		    }
+		}
+		
+		if (empty($hidetop)){
+			$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line prend une position y en 2eme param et 4eme param
+		}
+
+		
 	}
 
 	/**
@@ -1420,6 +1426,8 @@ class pdf_einstein extends ModelePDFCommandes
 	    $countFlexCol = 0;
 	    foreach ($this->cols as $colKey =>& $colDef)
 	    {
+	        if(!$this->getColumnStatus($colKey)) continue; // continue if desable
+	        
 	        if(empty($colDef['width'])){
 	            $countFlexCol++;
 	        }
@@ -1446,16 +1454,19 @@ class pdf_einstein extends ModelePDFCommandes
 	            $colDef['content'] = $this->defaultContentsFieldsStyle;
 	        }
 	        
-	        // In case of flexible column
-	        if(empty($colDef['width'])){
-	            $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
+	        if($this->getColumnStatus($colKey))
+	        {
+	            // In case of flexible column
+	            if(empty($colDef['width'])){
+	                $colDef['width'] = abs(($arrayWidth - $totalDefinedColWidth)) / $countFlexCol;
+	            }
+	            
+	            // Set positions
+	            $lastX = $curX;
+	            $curX = $lastX - $colDef['width'];
+	            $colDef['xStartPos'] = $curX;
+	            $colDef['xEndPos']   = $lastX;
 	        }
-	        
-	        // Set positions
-	        $lastX = $curX;
-	        $curX = $lastX - $colDef['width'];
-	        $colDef['xStartPos'] = $curX;
-	        $colDef['xEndPos']   = $lastX;
 	    }
 	}
 	
@@ -1508,6 +1519,7 @@ class pdf_einstein extends ModelePDFCommandes
 	    $this->cols['desc'] = array(
 	        'rank' => $rank,
 	        'width' => false, // only for desc
+	        'status' => true,
 	        'title' => array(
 	            'textkey' => 'Designation', // use lang key is usefull in somme case with module
 	            'align' => 'L',
@@ -1520,40 +1532,48 @@ class pdf_einstein extends ModelePDFCommandes
 	        ),
 	    );
 	    
+	    $rank = $rank + 10;
+	    $this->cols['photo'] = array(
+	        'rank' => $rank,
+	        'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'Photo',
+	            'label' => ' '
+	        ),
+	        'content' => array(
+	            'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
+	        ),
+	        'border-left' => false, // remove left line separator
+	    );
+	    
 	    if (! empty($conf->global->MAIN_GENERATE_ORDERS_WITH_PICTURE))
 	    {
-	        $rank = $rank + 10;
-	        $this->cols['photo'] = array(
-	            'rank' => $rank,
-	            'width' => (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH), // in mm
-	            'title' => array(
-	                'textkey' => 'Photo',
-	                'label' => ' '
-	            ),
-	            'content' => array(
-	                'padding' => array(0,0,0,0), // Like css 0 => top , 1 => right, 2 => bottom, 3 => left
-	            ),
-	            'border-left' => false, // remove left line separator
-	        );
+	        $this->cols['photo']['status'] = true;
 	    }
+	    
+	    
+	    $rank = $rank + 10;
+	    $this->cols['vat'] = array(
+	        'rank' => $rank,
+	        'status' => false,
+	        'width' => 16, // in mm
+	        'title' => array(
+	            'textkey' => 'VAT'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
 	    
 	    if (empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) && empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN))
 	    {
-	        $rank = $rank + 10;
-	        $this->cols['vat'] = array(
-	            'rank' => $rank,
-	            'width' => 16, // in mm
-	            'title' => array(
-	                'textkey' => 'VAT'
-	            ),
-	            'border-left' => true, // add left line separator
-	        );
+	        $this->cols['vat']['status'] = true;
 	    }
 	    
 	    $rank = $rank + 10;
 	    $this->cols['subprice'] = array(
 	        'rank' => $rank,
 	        'width' => 19, // in mm
+	        'status' => true,
 	        'title' => array(
 	            'textkey' => 'PriceUHT'
 	        ),
@@ -1564,6 +1584,7 @@ class pdf_einstein extends ModelePDFCommandes
 	    $this->cols['qty'] = array(
 	        'rank' => $rank,
 	        'width' => 16, // in mm
+	        'status' => true,
 	        'title' => array(
 	            'textkey' => 'Qty'
 	        ),
@@ -1571,46 +1592,54 @@ class pdf_einstein extends ModelePDFCommandes
 	    );
 	    
 	    $rank = $rank + 10;
+	    $this->cols['progress'] = array(
+	        'rank' => $rank,
+	        'width' => 19, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'Progress'
+	        ),
+	        'border-left' => false, // add left line separator
+	    );
+	    
 	    if($this->situationinvoice)
 	    {
-	        $this->cols['progress'] = array(
-	            'rank' => $rank,
-	            'width' => 19, // in mm
-	            'title' => array(
-	                'textkey' => 'Progress'
-	            ),
-	            'border-left' => false, // add left line separator
-	        );
+	        $this->cols['progress']['status'] = true;
 	    }
 	    
 	    $rank = $rank + 10;
+	    $this->cols['unit'] = array(
+	        'rank' => $rank,
+	        'width' => 11, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'Unit'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
 	    if($conf->global->PRODUCT_USE_UNITS){
-	        $this->cols['unit'] = array(
-	            'rank' => $rank,
-	            'width' => 11, // in mm
-	            'title' => array(
-	                'textkey' => 'Unit'
-	            ),
-	            'border-left' => true, // add left line separator
-	        );
+	        $this->cols['unit']['status'] = true;
 	    }
 	    
 	    $rank = $rank + 10;
+	    $this->cols['discount'] = array(
+	        'rank' => $rank,
+	        'width' => 13, // in mm
+	        'status' => false,
+	        'title' => array(
+	            'textkey' => 'ReductionShort'
+	        ),
+	        'border-left' => true, // add left line separator
+	    );
 	    if ($this->atleastonediscount){
-	        $this->cols['discount'] = array(
-	            'rank' => $rank,
-	            'width' => 13, // in mm
-	            'title' => array(
-	                'textkey' => 'ReductionShort'
-	            ),
-	            'border-left' => true, // add left line separator
-	        );
+	        $this->cols['discount']['status'] = true;
 	    }
 	    
 	    $rank = $rank + 10;
 	    $this->cols['totalexcltax'] = array(
 	        'rank' => $rank,
 	        'width' => 26, // in mm
+	        'status' => true,
 	        'title' => array(
 	            'textkey' => 'TotalHT'
 	        ),
@@ -1751,6 +1780,21 @@ class pdf_einstein extends ModelePDFCommandes
 	        $pdf->MultiCell( $this->getColumnContentWidth($colKey),2, $columnText,'',$colDef['content']['align']);
 	    }
 	    
+	}
+	
+	
+	/**
+	 *   	get column status from column key
+	 *
+	 *   	@param	string			$colKey    		the column key
+	 *      @return	float      width in mm
+	 */
+	function getColumnStatus($colKey)
+	{
+	    if( !empty($this->cols[$colKey]['status'])){
+	        return true;
+	    }
+	    else  return  false;
 	}
 }
 
