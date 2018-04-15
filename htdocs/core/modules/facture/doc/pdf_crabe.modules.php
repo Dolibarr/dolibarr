@@ -395,10 +395,10 @@ class pdf_crabe extends ModelePDFFactures
 	                }
 	            }
 	            
+	            $pagenb = $pdf->getPage();
 	            if ($notetoshow)
 	            {
 	                $tab_width = $this->page_largeur-$this->marge_gauche-$this->marge_droite;
-	                $pagenb = $pdf->getPage();
 	                $pageposbeforenote = $pagenb;
 	                
 	                $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
@@ -413,20 +413,14 @@ class pdf_crabe extends ModelePDFFactures
 	                $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 	                // Description
 	                $pageposafternote=$pdf->getPage();
-	                
 	                $posyafter = $pdf->GetY();
-	                if($pageposafternote==$pageposbeforenote && $this->page_hauteur - ( $posyafter + $heightforfooter))
-	                {
-	                    // not enough space, need to add page
-	                    $pageposafternote ++;
-	                }
 	                
 	                if($pageposafternote>$pageposbeforenote )
 	                {
 	                    $pdf->rollbackTransaction(true);
 	                    
 	                    // prepar pages to receive notes
-	                    while ($pagenb <= $pageposafternote) {
+	                    while ($pagenb < $pageposafternote) {
 	                        $pdf->AddPage();
 	                        $pagenb++;
 	                        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -455,6 +449,7 @@ class pdf_crabe extends ModelePDFFactures
 	                        $pdf->setTopMargin($tab_top_newpage);
 	                        // The only function to edit the bottom margin of current page to set it.
 	                        $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+	                        //$posyafter = $tab_top_newpage;
 	                    }
 	                    
 	                    
@@ -494,12 +489,25 @@ class pdf_crabe extends ModelePDFFactures
 	                    $posyafter = $pdf->GetY();
 	                    $height_note=$posyafter-$tab_top;
 	                    $pdf->Rect($this->marge_gauche, $tab_top-1, $tab_width, $height_note+1);
+	                    
+	                    
+	                    if($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+20)) )
+	                    {
+	                        // not enough space, need to add page
+	                        $pdf->AddPage('','',true);
+	                        $pagenb++;
+	                        $pageposafternote++;
+	                        $pdf->setPage($pageposafternote);
+	                        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+	                        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+	                        
+	                        $posyafter = $tab_top_newpage;
+	                    }
+	                    
 	                }
 	                
-	                $nexY = $posyafter ;
-	                
 	                $tab_height = $tab_height - $height_note;
-	                $tab_top = $nexY+6;
+	                $tab_top = $posyafter +6;
 	            }
 	            else
 	            {
@@ -542,7 +550,6 @@ class pdf_crabe extends ModelePDFFactures
     	                {
     	                    $pdf->AddPage('','',true);
     	                    if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-    	                    if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
     	                    $pdf->setPage($pageposbefore+1);
     	                    
     	                    $curY = $tab_top_newpage;
@@ -579,7 +586,6 @@ class pdf_crabe extends ModelePDFFactures
     	                        {
     	                            $pdf->AddPage('','',true);
     	                            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-    	                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
     	                            $pdf->setPage($pageposafter+1);
     	                        }
     	                    }
@@ -757,6 +763,7 @@ class pdf_crabe extends ModelePDFFactures
 	                            $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
 	                            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 	                        }
+	                        
 	                        if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 	                        {
 	                            if ($pagenb == $pageposafter)
