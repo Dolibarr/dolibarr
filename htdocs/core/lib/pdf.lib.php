@@ -123,12 +123,15 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	require_once TCPDF_PATH.'tcpdf.php';
 
 	// We need to instantiate tcpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
-    if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
+	if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
 	else if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
 	//$arrayformat=pdf_getFormat();
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
+
+	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
+	else $pdf = new TCPDF($pagetype,$metric,$format);
 
 	// Protection and encryption of pdf
 	if (! empty($conf->global->PDF_SECURITY_ENCRYPTION))
@@ -144,15 +147,24 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		- print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
 		- owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
 		*/
-		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
-		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
-		else $pdf = new TCPDF($pagetype,$metric,$format);
-		// For TCPDF, we specify permission we want to block
-		$pdfrights = array('modify','copy');
 
-		$pdfuserpass = ''; // Password for the end user
-		$pdfownerpass = NULL; // Password of the owner, created randomly if not defined
-		$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+		// For TCPDF, we specify permission we want to block
+		$pdfrights = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS)?json_decode($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS, true):array('modify','copy')); // Json format in llx_const
+
+		// Password for the end user
+		$pdfuserpass = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_USERPASS)?$conf->global->PDF_SECURITY_ENCRYPTION_USERPASS:'');
+
+		// Password of the owner, created randomly if not defined
+		$pdfownerpass = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_OWNERPASS)?$conf->global->PDF_SECURITY_ENCRYPTION_OWNERPASS:null);
+
+		// For encryption strength: 0 = RC4 40 bit; 1 = RC4 128 bit; 2 = AES 128 bit; 3 = AES 256 bit
+		$encstrength = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_STRENGTH)?$conf->global->PDF_SECURITY_ENCRYPTION_STRENGTH:0);
+
+		// Array of recipients containing public-key certificates ('c') and permissions ('p').
+		// For example: array(array('c' => 'file://../examples/data/cert/tcpdf.crt', 'p' => array('print')))
+		$pubkeys = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_PUBKEYS)?json_decode($conf->global->PDF_SECURITY_ENCRYPTION_PUBKEYS, true):null); // Json format in llx_const
+
+		$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass,$encstrength,$pubkeys);
 	}
 
 	return $pdf;
