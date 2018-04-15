@@ -5022,7 +5022,7 @@ abstract class CommonObject
 	 * @param  array   		$val	       Array of properties for field to show
 	 * @param  string  		$key           Key of attribute
 	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  		$moreparam     To add more parametes on html input tag
+	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$showsize      Value for css to define size. May also be a numeric.
@@ -5076,7 +5076,7 @@ abstract class CommonObject
 			else return '';
 		}
 
-		// Use in priorit showsize from parameters, then $val['css'] then autodefine
+		// Use in priority showsize from parameters, then $val['css'] then autodefine
 		if (empty($showsize) && ! empty($val['css']))
 		{
 			$showsize = $val['css'];
