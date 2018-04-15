@@ -324,9 +324,12 @@ class CommandeFournisseur extends CommonOrder
             $result=$this->fetch_lines();
             if ($result < 0)
             {
-            	return -3;
+            	return -1;
             }
-
+            else
+            {
+            	return 1;
+            }
         }
         else
         {
