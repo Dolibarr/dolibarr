@@ -123,7 +123,7 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	require_once TCPDF_PATH.'tcpdf.php';
 
 	// We need to instantiate tcpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
-    if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
+	if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
 	else if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
 	//$arrayformat=pdf_getFormat();
@@ -131,7 +131,6 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$metric=$arrayformat['unit'];
 
 	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
-	else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
 	else $pdf = new TCPDF($pagetype,$metric,$format);
 
 	// Protection and encryption of pdf
