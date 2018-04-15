@@ -399,7 +399,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
 
-	$stripeSource = GETPOST("stripeSource",'alpha');
+	if (NULL !== GETPOST("token",'alpha')){
+        $stripeSource = GETPOST("token",'alpha');
+        }else{
+        $stripeSource = GETPOST("stripeSource",'alpha');
+        }
+	
 	$email = GETPOST("email",'alpha');
 	$thirdparty_id=GETPOST('thirdparty_id', 'int');		// Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
 	$vatnumber = GETPOST('vatnumber','alpha');
