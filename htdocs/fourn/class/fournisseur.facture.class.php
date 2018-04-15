@@ -2695,6 +2695,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
 		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
 
+		$this->fetch_optionals();
+
 		return 1;
 	}
 
