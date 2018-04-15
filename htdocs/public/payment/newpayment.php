@@ -399,12 +399,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
 
-	$stripeToken = GETPOST("stripeToken",'alpha');
+	$stripeSource = GETPOST("stripeSource",'alpha');
 	$email = GETPOST("email",'alpha');
 	$thirdparty_id=GETPOST('thirdparty_id', 'int');		// Note that for payment following online registration for members, this is empty because thirdparty is created once payment is confirmed by paymentok.php
 	$vatnumber = GETPOST('vatnumber','alpha');
 
-	dol_syslog("stripeToken = ".$stripeToken, LOG_DEBUG, 0, '_stripe');
+	dol_syslog("stripeSource = ".$stripeSource, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("email = ".$email, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("thirdparty_id = ".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
 	dol_syslog("vatnumber = ".$vatnumber, LOG_DEBUG, 0, '_stripe');
@@ -441,7 +441,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			$stripe = new Stripe($db);
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
-			$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
+			$card = $customer->sources->create(array("source" => $stripeSource, "metadata" => $metadata));
 
 			if (empty($card))
 			{
@@ -481,7 +481,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'description' => ($email?'Anonymous customer for '.$email:'Anonymous customer'),
 				'metadata' => $metadata,
 				'business_vat_id' => ($vatnumber?$vatnumber:null),
-				'source'  => $stripeToken           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
+				'source'  => $stripeSource           // source can be a token OR array('object'=>'card', 'exp_month'=>xx, 'exp_year'=>xxxx, 'number'=>xxxxxxx, 'cvc'=>xxx, 'name'=>'Cardholder's full name', zip ?)
 			));
 			// Return $customer = array('id'=>'cus_XXXX', ...)
 
@@ -562,7 +562,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 		$action='';
 	}
 
-	$_SESSION["onlinetoken"] = $stripeToken;
+	$_SESSION["onlinetoken"] = $stripeSource;
 	$_SESSION["FinalPaymentAmt"] = $amount;
 	$_SESSION["currencyCodeType"] = $currency;
 	$_SESSION["paymentType"] = '';
@@ -1542,87 +1542,85 @@ if (preg_match('/^dopayment/',$action))
 
 	    </form>
 
-
-	    <script src="https://js.stripe.com/v2/"></script>
 	    <script src="https://js.stripe.com/v3/"></script>
 
 	    <script type="text/javascript" language="javascript">';
 		?>
 
-	    // Create a Stripe client
-	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+	  // Create a Stripe client
+	  var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
 
-	    // Create an instance of Elements
-	    var elements = stripe.elements();
+    // Create an instance of Elements
+    var elements = stripe.elements();
 
-	    // Custom styling can be passed to options when creating an Element.
-	    // (Note that this demo uses a wider set of styles than the guide below.)
-	    var style = {
-	      base: {
-	        color: '#32325d',
-	        lineHeight: '24px',
-	        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-	        fontSmoothing: 'antialiased',
-	        fontSize: '16px',
-	        '::placeholder': {
-	          color: '#aab7c4'
-	        }
-	      },
-	      invalid: {
-	        color: '#fa755a',
-	        iconColor: '#fa755a'
-	      }
-	    };
+    // Custom styling can be passed to options when creating an Element.
+    // (Note that this demo uses a wider set of styles than the guide below.)
+    var style = {
+      base: {
+        color: '#32325d',
+        lineHeight: '24px',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        fontSize: '16px',
+        '::placeholder': {
+          color: '#aab7c4'
+        }
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a'
+      }
+    };
 
-	    // Create an instance of the card Element
-	    var card = elements.create('card', {style: style});
+    // Create an instance of the card Element
+    var card = elements.create('card', {style: style});
 
-	    // Add an instance of the card Element into the `card-element` <div>
-	    card.mount('#card-element');
+    // Add an instance of the card Element into the `card-element` <div>
+    card.mount('#card-element');
 
-	    // Handle real-time validation errors from the card Element.
-	    card.addEventListener('change', function(event) {
-	      var displayError = document.getElementById('card-errors');
-	      if (event.error) {
-	        displayError.textContent = event.error.message;
-	      } else {
-	        displayError.textContent = '';
-	      }
-	    });
+    // Handle real-time validation errors from the card Element.
+    card.addEventListener('change', function(event) {
+      var displayError = document.getElementById('card-errors');
+      if (event.error) {
+        displayError.textContent = event.error.message;
+      } else {
+        displayError.textContent = '';
+      }
+    });
+    
+    // Handle form submission   
+   var form = document.getElementById('payment-form');
+form.addEventListener('submit', function(event) {
+  event.preventDefault();
 
-	    // Handle form submission
-	    var form = document.getElementById('payment-form');
-	    console.log(form);
-	    form.addEventListener('submit', function(event) {
-	      event.preventDefault();
+  stripe.createSource(card).then(function(result) {
+    if (result.error) {
+      // Inform the user if there was an error
+      var errorElement = document.getElementById('card-errors');
+      errorElement.textContent = result.error.message;
+    } else {
+      // Send the source to your server
+      stripeSourceHandler(result.source);
+    }
+  });
+});
 
-	      stripe.createToken(card).then(function(result) {
-	        if (result.error) {
-	          // Inform the user if there was an error
-	          var errorElement = document.getElementById('card-errors');
-	          errorElement.textContent = result.error.message;
-	        } else {
-	          // Send the token to your server
-	          stripeTokenHandler(result.token);
-	        }
-	      });
-	    });
 
-	    function stripeTokenHandler(token) {
-	      // Insert the token ID into the form so it gets submitted to the server
-	      var form = document.getElementById('payment-form');
-	      var hiddenInput = document.createElement('input');
-	      hiddenInput.setAttribute('type', 'hidden');
-	      hiddenInput.setAttribute('name', 'stripeToken');
-	      hiddenInput.setAttribute('value', token.id);
-	      form.appendChild(hiddenInput);
+function stripeSourceHandler(source) {
+  // Insert the source ID into the form so it gets submitted to the server
+  var form = document.getElementById('payment-form');
+  var hiddenInput = document.createElement('input');
+  hiddenInput.setAttribute('type', 'hidden');
+  hiddenInput.setAttribute('name', 'stripeSource');
+  hiddenInput.setAttribute('value', source.id);
+  form.appendChild(hiddenInput);
 
-	      // Submit the form
-	      jQuery('#buttontopay').hide();
-	      jQuery('#hourglasstopay').show();
-	      console.log("submit");
-	      form.submit();
-	    }
+      // Submit the form
+      jQuery('#buttontopay').hide();
+      jQuery('#hourglasstopay').show();
+      console.log("submit");
+      form.submit();
+    }
 
 	    <?php
 		print '</script>';
@@ -1635,4 +1633,3 @@ htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
 llxFooter('', 'public');
 
 $db->close();
-
