@@ -603,7 +603,7 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 		print '</td>';
 	}
 
-	// TextTitleColor
+	// TextTitleColor for title of Pages
 	if ($foruserprofile)
 	{
 
@@ -650,6 +650,33 @@ function show_theme($fuser,$edit=0,$foruserprofile=false)
 	   		print $formother->showColor($conf->global->THEME_ELDY_BACKTITLE1, $langs->trans("Default"));
 	   	}
 		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong>f0f0f0</strong>) ';  // $colorbacktitle1 in CSS
+		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
+		print '</span>';
+		print '</td>';
+
+		print '</tr>';
+	}
+
+	// TextTitleColor
+	if ($foruserprofile)
+	{
+
+
+	}
+	else
+	{
+		print '<tr class="oddeven">';
+		print '<td>'.$langs->trans("BackgroundTableTitleTextColor").'</td>';
+		print '<td colspan="'.($colspan-1).'">';
+		if ($edit)
+		{
+			print $formother->selectColor(colorArrayToHex(colorStringToArray($conf->global->THEME_ELDY_TEXTTITLE,array()),''),'THEME_ELDY_TEXTTITLE','formcolor',1).' ';
+		}
+		else
+		{
+			print $formother->showColor($conf->global->THEME_ELDY_TEXTTITLE, $langs->trans("Default"));
+		}
+		print ' &nbsp; <span class="nowraponall">('.$langs->trans("Default").': <strong><span style="color: #000000">000000</span></strong>) ';
 		print $form->textwithpicto('', $langs->trans("NotSupportedByAllThemes").', '.$langs->trans("PressF5AfterChangingThis"));
 		print '</span>';
 		print '</td>';

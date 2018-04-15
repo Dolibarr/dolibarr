@@ -258,7 +258,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-.thumbstat, a.tab { color: rgb(<?php print $colortexttitle; ?>) !important; font-weight: bold !important; }
+.thumbstat, a.tab { font-weight: bold !important; }
 th a { font-weight: <?php echo ($useboldtitle?'bold':'normal'); ?> !important; }
 a.tab { font-weight: bold !important; }
 
@@ -2397,7 +2397,7 @@ span.butAction, span.butActionDelete {
 .butActionNew, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
 	margin: 0em 0.3em 0 0.3em !important;
-	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
     border-color: #c5c5c5;
@@ -2806,13 +2806,13 @@ div.pagination li span {
 div.pagination li:first-child a,
 div.pagination li:first-child span {
   margin-left: 0;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
+  /*border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;*/
 }
 div.pagination li:last-child a,
 div.pagination li:last-child span {
-  border-top-right-radius: 4px;
-  border-bottom-right-radius: 4px;
+  /*border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;*/
 }
 div.pagination li a:hover,
 div.pagination li span:hover,

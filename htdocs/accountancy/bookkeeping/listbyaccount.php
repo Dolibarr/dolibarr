@@ -255,13 +255,13 @@ if ($action == 'delbookkeepingyear') {
 
 print '<form method="POST" id="searchFormList" action="' . $_SERVER["PHP_SELF"] . '">';
 
-$viewflat = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param.'">' . $langs->trans("ViewFlatList") . '</a>';
-$addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
+$viewflat = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/list.php?'.$param.'">' . $langs->trans("ViewFlatList") . '</a>';
+$newcardbutton = '<a class="butActionNew" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
 
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $viewflat.$addbutton, '', $limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $result, $nbtotalofrecords, 'title_accountancy', 0, $viewflat.$newcardbutton, '', $limit);
 
 // Reverse sort order
 if ( preg_match('/^asc/i', $sortorder) )
@@ -292,8 +292,8 @@ print $form->select_date($search_date_end, 'search_date_end', 0, 0, 1);
 print '</td>';
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_doc_ref" value="' . dol_escape_htmltag($search_doc_ref) . '"/></td>';
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="' . dol_escape_htmltag($search_label_operation) . '"/></td>';
-print '<td class="liste_titre"><input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'"></td>';
-print '<td class="liste_titre"><input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'"></td>';
+print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'"></td>';
+print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'"></td>';
 print '<td class="liste_titre" align="center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
 print '<td class="liste_titre" align="right" colspan="2">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);

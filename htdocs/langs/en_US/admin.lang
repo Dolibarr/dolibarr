@@ -1689,7 +1689,7 @@ InstallModuleFromWebHasBeenDisabledByFile=Install of external module from applic
 ConfFileMustContainCustom=Installing or building an external module from application need to save the module files into directory <strong>%s</strong>. To have this directory processed by Dolibarr, you must setup your <strong>conf/conf.php</strong> to add the 2 directive lines:<br><strong>$dolibarr_main_url_root_alt='/custom';</strong><br><strong>$dolibarr_main_document_root_alt='%s/custom';</strong> 
 HighlightLinesOnMouseHover=Highlight table lines when mouse move passes over
 HighlightLinesColor=Highlight color of the line when the mouse passes over (keep empty for no highlight)
-TextTitleColor=Color of page title
+TextTitleColor=Text color of Page title
 LinkColor=Color of links
 PressF5AfterChangingThis=Press CTRL+F5 on keyboard or clear your browser cache after changing this value to have it effective
 NotSupportedByAllThemes=Will works with core themes, may not be supported by external themes
@@ -1698,6 +1698,7 @@ TopMenuBackgroundColor=Background color for Top menu
 TopMenuDisableImages=Hide images in Top menu
 LeftMenuBackgroundColor=Background color for Left menu
 BackgroundTableTitleColor=Background color for Table title line
+BackgroundTableTitleTextColor=Text color for Table title line
 BackgroundTableLineOddColor=Background color for odd table lines
 BackgroundTableLineEvenColor=Background color for even table lines
 MinimumNoticePeriod=Minimum notice period (Your leave request must be done before this delay)
