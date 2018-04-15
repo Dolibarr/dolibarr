@@ -2040,7 +2040,7 @@ function dol_now($mode='gmt')
  *
  * @param	int		$size		Size to print
  * @param	int		$shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
- * @param	int		$shortunit	Use short value of size unit
+ * @param	int		$shortunit	Use short label of size unit (for example 'b' instead of 'bytes')
  * @return	string				Link
  */
 function dol_print_size($size,$shortvalue=0,$shortunit=0)

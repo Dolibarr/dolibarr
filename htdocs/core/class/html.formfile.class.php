@@ -990,6 +990,7 @@ class FormFile
 		global $user, $conf, $langs, $hookmanager;
 		global $sortfield, $sortorder, $maxheightmini;
 		global $dolibarr_main_url_root;
+		global $form;
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
@@ -1034,6 +1035,8 @@ class FormFile
 		}
 		else
 		{
+			if (! is_object($form)) $form=new Form($this->db);
+
 			if (! preg_match('/&id=/', $param) && isset($object->id)) $param.='&id='.$object->id;
 			$relativepathwihtoutslashend=preg_replace('/\/$/', '', $relativepath);
 			if ($relativepathwihtoutslashend) $param.= '&file='.urlencode($relativepathwihtoutslashend);
@@ -1161,7 +1164,15 @@ class FormFile
 					print "</td>\n";
 
 					// Size
-					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
+					$sizetoshow = dol_print_size($file['size'],1,1);
+					$sizetoshowbytes = dol_print_size($file['size'],0,1);
+
+					print '<td align="right" width="80px">';
+					if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
+					else {
+						print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+					}
+					print '</td>';
 
 					// Date
 					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
