@@ -437,7 +437,11 @@ print '<input type="hidden" name="mode" value="' . $mode . '" >';
 if ($socid)     print '<input type="hidden" name="socid" value="' . $socid . '" >';
 if ($projectid) print '<input type="hidden" name="projectid" value="' . $projectid . '" >';
 
-$newcardbutton = '<a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
+$newcardbutton='';
+if ($user->rights->ticketsup->write)
+{
+	$newcardbutton = '<a class="butActionNew" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
+}
 
 print_barre_liste($langs->trans('TicketList'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_ticketsup', 0, $newcardbutton, '', $limit);
 

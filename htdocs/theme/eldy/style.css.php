@@ -2445,6 +2445,23 @@ span.butAction, span.butActionDelete {
     color: #999 !important;
     border: 1px solid #bbb;
 }
+.butActionNewRefused, .butActionNewRefused:link, .butActionNewRefused:visited, .butActionNewRefused:hover, .butActionNewRefused:active {
+    text-decoration: none !important;
+	white-space: nowrap !important;
+	cursor: not-allowed !important;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+    font-family: <?php print $fontlist ?> !important;
+    font-weight: normal !important;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    color: #999 !important;
+    border: 1px solid #bbb;
+    padding-top: 0.2em;
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
 
 .butActionTransparent {
 	color: #222 ! important;
@@ -2452,7 +2469,7 @@ span.butAction, span.butActionDelete {
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED) && (! $user->admin)) { ?>
-.butActionRefused {
+.butActionRefused, .butActionNewRefused {
 	display: none;
 }
 <?php } ?>
@@ -2803,7 +2820,6 @@ div.pagination li a:focus,
 div.pagination li span:focus {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
-	padding-top: 8px;
 }
 div.pagination li .active a,
 div.pagination li .active span,

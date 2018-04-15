@@ -592,7 +592,7 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->facture->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create">'.$langs->trans('NewBill').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create">'.$langs->trans('NewBill').'</a>';
 	}
 
 	$i = 0;

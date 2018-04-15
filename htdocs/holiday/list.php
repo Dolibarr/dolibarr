@@ -378,7 +378,11 @@ else
    	//print $num;
     //print count($holiday->holiday);
 
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request">'.$langs->trans('MenuAddCP').'</a>';
+	$newcardbutton='';
+	if ($user->rights->holiday->write)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/holiday/card.php?action=request">'.$langs->trans('MenuAddCP').'</a>';
+	}
 
 	print_barre_liste($langs->trans("ListeCP"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_hrm.png', 0, $newcardbutton, '', $limit);
 

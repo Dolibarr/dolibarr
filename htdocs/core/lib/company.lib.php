@@ -724,17 +724,17 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
     {
         $langs->load("projects");
 
-        $buttoncreate='';
+        $newcardbutton='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
         {
-            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
-			if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($langs->trans("AddProject"),'filenew');
-			$buttoncreate.='</a>'."\n";
+            //$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
+			if (empty($conf->dol_optimize_smallscreen)) $newcardbutton.=' '.img_picto($langs->trans("AddProject"),'filenew');
+			$newcardbutton.='</a>'."\n";
         }
 
         print "\n";
-        print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $buttoncreate.$morehtmlright, '');
+        print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton.$morehtmlright, '');
         print '<div class="div-table-responsive">';
         print "\n".'<table class="noborder" width=100%>';
 
@@ -921,18 +921,18 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $contactstatic->fields = dol_sort_array($contactstatic->fields, 'position');
     $arrayfields = dol_sort_array($arrayfields, 'position');
 
-    $buttoncreate='';
+    $newcardbutton='';
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
-		$buttoncreate.='</a>'."\n";
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
+		$newcardbutton.='</a>'."\n";
     }
 
     print "\n";
 
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
-    print load_fiche_titre($title, $buttoncreate,'');
+    print load_fiche_titre($title, $newcardbutton,'');
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -1171,14 +1171,14 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	$addressstatic = new Address($db);
 	$num = $addressstatic->fetch_lines($object->id);
 
-	$buttoncreate='';
+	$newcardbutton='';
 	if ($user->rights->societe->creer)
 	{
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress").' '.img_picto($langs->trans("AddAddress"),'filenew').'</a>'."\n";
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress").' '.img_picto($langs->trans("AddAddress"),'filenew').'</a>'."\n";
 	}
 
 	print "\n";
-	print load_fiche_titre($langs->trans("AddressesForCompany"),$buttoncreate,'');
+	print load_fiche_titre($langs->trans("AddressesForCompany"),$newcardbutton,'');
 
 	print "\n".'<table class="noborder" width="100%">'."\n";
 

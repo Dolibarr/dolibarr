@@ -277,7 +277,7 @@ $text = $langs->trans("ListOfUsers");
 $newcardbutton='';
 if ($canadduser)
 {
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=">'.$langs->trans('NewUser').'</a>';
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=">'.$langs->trans('NewUser').'</a>';
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

@@ -441,7 +441,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?action=create">'.$langs->trans('NewProject').'</a>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create">'.$langs->trans('NewProject').'</a>';
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

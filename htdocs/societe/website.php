@@ -223,9 +223,9 @@ dol_fiche_end();
 $newcardbutton = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$newcardbutton .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
+		$newcardbutton .= '<a class="butActionNew" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
 	} else {
-		$newcardbutton .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
+		$newcardbutton .= '<a class="butActionNewRefused" href="#">' . $langs->trans("AddAction") . '</a>';
 	}
 }
 

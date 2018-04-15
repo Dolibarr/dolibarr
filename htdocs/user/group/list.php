@@ -141,7 +141,7 @@ if ($resql)
     $newcardbutton='';
     if ($caneditperms)
     {
-    	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=">'.$langs->trans('NewGroup').'</a>';
+    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=">'.$langs->trans('NewGroup').'</a>';
     }
 
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";

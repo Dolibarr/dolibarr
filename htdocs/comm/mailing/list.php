@@ -104,7 +104,11 @@ if ($result)
 	$title=$langs->trans("ListOfEMailings");
 	if ($filteremail) $title.=' ('.$langs->trans("SentTo",$filteremail).')';
 
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create">'.$langs->trans('NewMailing').'</a>';
+	$newcardbutton='';
+	if ($user->rights->mailing->creer)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create">'.$langs->trans('NewMailing').'</a>';
+	}
 
 	$i = 0;
 

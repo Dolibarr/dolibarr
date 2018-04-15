@@ -1580,8 +1580,11 @@ li.tmenu, li.tmenusel {
 	margin: 0px 0px 0px 0px;
 	font-weight: normal;
 }
-li.tmenusel, li.tmenu:hover {
+li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
+}
+li.tmenusel {
+	text-decoration: underline;
 }
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
@@ -2344,7 +2347,7 @@ span.butAction, span.butActionDelete {
 }
 
 
-.button, .butAction, .butActionDelete, .butActionRefused {
+.button, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
 	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
@@ -2386,6 +2389,10 @@ span.butAction, span.butActionDelete {
 	cursor: pointer;
 	color: #ffffff !important;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	background-color: #006dcc;
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
@@ -2393,10 +2400,6 @@ span.butAction, span.butActionDelete {
 	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
 	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
 	background-repeat: repeat-x;
-	-webkit-border-radius: 2px;
-	border-radius: 2px;
-	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .button, .butAction {
@@ -2444,13 +2447,17 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 	color: #FFFFFF;
 }
 
-.butActionRefused {
+.butActionRefused, .butActionNewRefused {
 	color: #AAAAAA !important;
 	cursor: not-allowed !important;
 }
 
 a.butAction:hover, a.butActionDelete:hover, a.butActionRefused:hover {
     text-decoration: none;
+}
+a.butActionNewRefused:hover {
+	border-color: unset !important;
+	border: 1px solid #bbbbbb;
 }
 a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
 	opacity: 0.9;
@@ -2462,7 +2469,7 @@ a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
-.butActionRefused {
+.butActionRefused, .butActionNewRefused {
 	display: none;
 }
 <?php } ?>

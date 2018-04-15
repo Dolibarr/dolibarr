@@ -114,7 +114,7 @@ if ($resql)
     $newcardbutton='';
     if ($user->rights->loan->write)
     {
-    	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/loan/card.php?action=create">'.$langs->trans('NewLoan').'</a>';
+    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create">'.$langs->trans('NewLoan').'</a>';
     }
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";

@@ -427,7 +427,7 @@ else
 		{
 			$label='NewProduct';
 			if($type == Product::TYPE_SERVICE) $label='NewService';
-			$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type.'">'.$langs->trans($label).'</a>';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type.'">'.$langs->trans($label).'</a>';
 		}
 
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';

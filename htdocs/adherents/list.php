@@ -348,7 +348,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->adherent->creer)
 {
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create">'.$langs->trans('NewMember').'</a>';
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create">'.$langs->trans('NewMember').'</a>';
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

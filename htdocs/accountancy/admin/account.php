@@ -225,7 +225,7 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	$newcardbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
+	$newcardbutton = '<a class="butActionNew" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 
 	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
