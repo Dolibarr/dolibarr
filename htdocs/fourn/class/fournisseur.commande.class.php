@@ -326,7 +326,10 @@ class CommandeFournisseur extends CommonOrder
             {
             	return -3;
             }
-
+            else
+            {
+            	return 1;
+            }
         }
         else
         {
