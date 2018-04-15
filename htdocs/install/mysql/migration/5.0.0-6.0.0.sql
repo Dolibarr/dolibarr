@@ -489,7 +489,7 @@ DELETE FROM llx_categorie_product WHERE fk_categorie NOT IN (SELECT rowid FROM l
 DELETE FROM llx_categorie_societe WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type IN (1, 2));
 DELETE FROM llx_categorie_member WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 3);
 DELETE FROM llx_categorie_contact WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 4);
-DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 5);
+DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 6);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
 
