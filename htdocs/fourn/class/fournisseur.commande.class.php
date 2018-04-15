@@ -318,104 +318,128 @@ class CommandeFournisseur extends CommonOrder
 
             if ($this->statut == 0) $this->brouillon = 1;
 
-			//$result=$this->fetch_lines();
-            $this->lines=array();
-
-            $sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
-            $sql.= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
-            $sql.= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
-            $sql.= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
-            $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
-	        $sql.= " l.fk_unit,";
-            $sql.= " l.date_start, l.date_end,";
-			$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
-            $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
-            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
-            $sql.= " WHERE l.fk_commande = ".$this->id;
-            $sql.= " ORDER BY l.rang, l.rowid";
-            //print $sql;
-
-            dol_syslog(get_class($this)."::fetch get lines", LOG_DEBUG);
-            $result = $this->db->query($sql);
-            if ($result)
+            /*
+             * Lines
+             */
+            $result=$this->fetch_lines();
+            if ($result < 0)
             {
-                $num = $this->db->num_rows($result);
-                $i = 0;
-
-                while ($i < $num)
-                {
-                    $objp                  = $this->db->fetch_object($result);
-
-                    $line                 = new CommandeFournisseurLigne($this->db);
-
-                    $line->id                  = $objp->rowid;
-                    $line->desc                = $objp->description;
-                    $line->description         = $objp->description;
-                    $line->qty                 = $objp->qty;
-                    $line->tva_tx              = $objp->tva_tx;
-                    $line->localtax1_tx		   = $objp->localtax1_tx;
-                    $line->localtax2_tx		   = $objp->localtax2_tx;
-                    $line->localtax1_type	   = $objp->localtax1_type;
-                    $line->localtax2_type	   = $objp->localtax2_type;
-                    $line->subprice            = $objp->subprice;
-                    $line->pu_ht	           = $objp->subprice;
-                    $line->remise_percent      = $objp->remise_percent;
-
-                    $line->vat_src_code        = $objp->vat_src_code;
-                    $line->total_ht            = $objp->total_ht;
-                    $line->total_tva           = $objp->total_tva;
-                    $line->total_localtax1	   = $objp->total_localtax1;
-                    $line->total_localtax2	   = $objp->total_localtax2;
-                    $line->total_ttc           = $objp->total_ttc;
-                    $line->product_type        = $objp->product_type;
-
-                    $line->fk_product          = $objp->fk_product;
-
-                    $line->libelle             = $objp->product_label;
-                    $line->product_label       = $objp->product_label;
-                    $line->product_desc        = $objp->product_desc;
-
-                    $line->ref                 = $objp->product_ref;    // Ref of product
-                    $line->product_ref         = $objp->product_ref;    // Ref of product
-                    $line->ref_fourn           = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
-                    $line->ref_supplier        = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
-
-                    $line->date_start          = $this->db->jdate($objp->date_start);
-                    $line->date_end            = $this->db->jdate($objp->date_end);
-	                $line->fk_unit             = $objp->fk_unit;
-
-					// Multicurrency
-					$line->fk_multicurrency 		= $objp->fk_multicurrency;
-					$line->multicurrency_code 		= $objp->multicurrency_code;
-					$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
-					$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
-					$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
-					$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
-
-	                $line->special_code        = $objp->special_code;
-	                $line->fk_parent_line      = $objp->fk_parent_line;
-
-                    $line->rang                = $objp->rang;
-
-                    $this->lines[$i]      = $line;
-
-                    $i++;
-                }
-                $this->db->free($result);
-
-                return 1;
+            	return -3;
             }
-            else
-            {
-                $this->error=$this->db->error()." sql=".$sql;
-                return -1;
-            }
+
         }
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
             return -1;
         }
+    }
+
+    /**
+     * Load array lines
+     *
+     * @param		int		$only_product	Return only physical products
+     * @return		int						<0 if KO, >0 if OK
+     */
+    function fetch_lines($only_product=0)
+    {
+    	//$result=$this->fetch_lines();
+    	$this->lines=array();
+
+    	$sql = "SELECT l.rowid, l.ref as ref_supplier, l.fk_product, l.product_type, l.label, l.description, l.qty,";
+    	$sql.= " l.vat_src_code, l.tva_tx, l.remise_percent, l.subprice,";
+    	$sql.= " l.localtax1_tx, l. localtax2_tx, l.localtax1_type, l. localtax2_type, l.total_localtax1, l.total_localtax2,";
+    	$sql.= " l.total_ht, l.total_tva, l.total_ttc, l.special_code, l.fk_parent_line, l.rang,";
+    	$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.description as product_desc,";
+    	$sql.= " l.fk_unit,";
+    	$sql.= " l.date_start, l.date_end,";
+    	$sql.= ' l.fk_multicurrency, l.multicurrency_code, l.multicurrency_subprice, l.multicurrency_total_ht, l.multicurrency_total_tva, l.multicurrency_total_ttc';
+    	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
+    	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
+    	$sql.= " WHERE l.fk_commande = ".$this->id;
+    	if ($only_product) $sql .= ' AND p.fk_product_type = 0';
+    	$sql.= " ORDER BY l.rang, l.rowid";
+    	//print $sql;
+
+    	dol_syslog(get_class($this)."::fetch get lines", LOG_DEBUG);
+    	$result = $this->db->query($sql);
+    	if ($result)
+    	{
+    		$num = $this->db->num_rows($result);
+    		$i = 0;
+
+    		while ($i < $num)
+    		{
+    			$objp                  = $this->db->fetch_object($result);
+
+    			$line                 = new CommandeFournisseurLigne($this->db);
+
+    			$line->id                  = $objp->rowid;
+    			$line->desc                = $objp->description;
+    			$line->description         = $objp->description;
+    			$line->qty                 = $objp->qty;
+    			$line->tva_tx              = $objp->tva_tx;
+    			$line->localtax1_tx		   = $objp->localtax1_tx;
+    			$line->localtax2_tx		   = $objp->localtax2_tx;
+    			$line->localtax1_type	   = $objp->localtax1_type;
+    			$line->localtax2_type	   = $objp->localtax2_type;
+    			$line->subprice            = $objp->subprice;
+    			$line->pu_ht	           = $objp->subprice;
+    			$line->remise_percent      = $objp->remise_percent;
+
+    			$line->vat_src_code        = $objp->vat_src_code;
+    			$line->total_ht            = $objp->total_ht;
+    			$line->total_tva           = $objp->total_tva;
+    			$line->total_localtax1	   = $objp->total_localtax1;
+    			$line->total_localtax2	   = $objp->total_localtax2;
+    			$line->total_ttc           = $objp->total_ttc;
+    			$line->product_type        = $objp->product_type;
+
+    			$line->fk_product          = $objp->fk_product;
+
+    			$line->libelle             = $objp->product_label;
+    			$line->product_label       = $objp->product_label;
+    			$line->product_desc        = $objp->product_desc;
+
+    			$line->ref                 = $objp->product_ref;    // Ref of product
+    			$line->product_ref         = $objp->product_ref;    // Ref of product
+    			$line->ref_fourn           = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
+    			$line->ref_supplier        = $objp->ref_supplier;   // The supplier ref of price when product was added. May have change since
+
+    			$line->date_start          = $this->db->jdate($objp->date_start);
+    			$line->date_end            = $this->db->jdate($objp->date_end);
+    			$line->fk_unit             = $objp->fk_unit;
+
+    			// Multicurrency
+    			$line->fk_multicurrency 		= $objp->fk_multicurrency;
+    			$line->multicurrency_code 		= $objp->multicurrency_code;
+    			$line->multicurrency_subprice 	= $objp->multicurrency_subprice;
+    			$line->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
+    			$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
+    			$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+
+    			$line->special_code        = $objp->special_code;
+    			$line->fk_parent_line      = $objp->fk_parent_line;
+
+    			$line->rang                = $objp->rang;
+
+    			// Retreive all extrafield
+    			// fetch optionals attributes and labels
+    			$line->fetch_optionals();
+
+    			$this->lines[$i]      = $line;
+
+    			$i++;
+    		}
+    		$this->db->free($result);
+
+    		return $num;
+    	}
+    	else
+    	{
+    		$this->error=$this->db->error()." sql=".$sql;
+    		return -1;
+    	}
     }
 
     /**
@@ -3160,6 +3184,8 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
+
+			$this->fetch_optionals();
 
             $this->db->free($result);
             return 1;
