@@ -5,7 +5,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
@@ -13,7 +13,7 @@
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2017      Rui Strecht		<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018      Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -448,7 +448,7 @@ abstract class CommonObject
 	 *
 	 * 	@param		int			$withcountry		1=Add country into address string
 	 *  @param		string		$sep				Separator to use to build string
-	 *  @param		int		$withregion			1=Add region into address string
+	 *  @param		int		    $withregion			1=Add region into address string
 	 *	@return		string							Full address string
 	 */
 	function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
@@ -717,7 +717,7 @@ abstract class CommonObject
 		}
 		else
 		{
-			// On recherche id type_contact
+			// We look for id type_contact
 			$sql = "SELECT tc.rowid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 			$sql.= " WHERE tc.element='".$this->db->escape($this->element)."'";
@@ -741,7 +741,7 @@ abstract class CommonObject
 
 		$datecreate = dol_now();
 
-		// Socpeople must have already been added by some a trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
+		// Socpeople must have already been added by some trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
 		$TListeContacts=$this->liste_contact(-1, $source);
 		$already_added=false;
 		if(!empty($TListeContacts)) {
@@ -757,7 +757,7 @@ abstract class CommonObject
 
 			$this->db->begin();
 
-			// Insertion dans la base
+			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
 			$sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
 			$sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
@@ -832,7 +832,7 @@ abstract class CommonObject
 	 */
 	function update_contact($rowid, $statut, $type_contact_id=0, $fk_socpeople=0)
 	{
-		// Insertion dans la base
+		// Insert into database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
 		$sql.= " statut = ".$statut;
 		if ($type_contact_id) $sql.= ", fk_c_type_contact = '".$type_contact_id ."'";
