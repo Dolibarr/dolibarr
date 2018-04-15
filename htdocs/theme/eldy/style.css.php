@@ -3216,6 +3216,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 span.boxstatstext {
 	opacity: 0.8;
     line-height: 18px;
+    color: #000;
 }
 span.boxstatstext img, a.dashboardlineindicatorlate img {
 	border: 0;

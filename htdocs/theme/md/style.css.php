@@ -3189,6 +3189,7 @@ div .tdtop {
 }
 span.boxstatstext {
     line-height: 18px;
+    color: #000;
     /* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
 }
 span.boxstatsindicator {
