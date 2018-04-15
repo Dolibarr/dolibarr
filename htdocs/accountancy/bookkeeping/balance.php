@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2016       Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2016       Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2016       Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -152,7 +152,6 @@ if ($action == 'export_csv') {
 		print $object->get_compte_desc($line->numero_compte) . $sep;
 		print price($line->debit) . $sep;
 		print price($line->credit) . $sep;
-		print price($line->debit) . $sep;
 		print price($line->credit - $line->debit) . $sep;
 		print "\n";
 	}
