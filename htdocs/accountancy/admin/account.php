@@ -225,9 +225,9 @@ if ($resql)
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
+	$newcardbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 
-	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd, '', $limit);
+	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $newcardbutton, '', $limit);
 
 	// Box to select active chart of account
     print $langs->trans("Selectchartofaccounts") . " : ";

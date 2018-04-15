@@ -350,7 +350,7 @@ if ($action == "view_ticketlist") {
             $resql = $db->query($sql);
             if ($resql) {
                 $num = $db->num_rows($resql);
-                print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticketsup-32@ticketsup');
+                print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticketsup');
 
                 /*
                 * Search bar

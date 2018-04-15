@@ -2394,8 +2394,28 @@ span.butAction, span.butActionDelete {
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
 }
+.butActionNew, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
+	text-decoration: none;
+	margin: 0em 0.3em 0 0.3em !important;
+	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	font-family: <?php print $fontlist ?>;
+    font-weight: normal;
+    border-color: #c5c5c5;
+    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+    color: #fff !important;
+    background: rgb(<?php echo $colorbackhmenu1 ?>);
+    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
 
-.butAction:hover   {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+
+.butAction:hover, .butActionNew:hover   {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
@@ -2696,6 +2716,12 @@ div.pagination {
 div.pagination a {
 	font-weight: normal;
 }
+/*div.pagination a.butAction, div.fichehalfright a.butAction {
+    margin-right: 0px !important;
+}
+div.tabsAction a.butActionDelete:last-child, div.tabsAction a.butAction:last-child {
+    margin-right: 0px !important;
+}*/
 div.pagination ul
 {
   list-style: none;

@@ -2373,6 +2373,31 @@ span.butAction, span.butActionDelete {
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+.butActionNew, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
+	text-decoration: none;
+	border-color: #c5c5c5;
+	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+	display: inline-block;
+    padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	line-height: 20px;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	color: #ffffff !important;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	background-color: #006dcc;
+	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+	background-repeat: repeat-x;
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
 
 .button, .butAction {
 	color: #ffffff !important;
@@ -2427,7 +2452,7 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 a.butAction:hover, a.butActionDelete:hover, a.butActionRefused:hover {
     text-decoration: none;
 }
-a.butAction:hover, a.butActionDelete:hover {
+a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
 	opacity: 0.9;
 }
 

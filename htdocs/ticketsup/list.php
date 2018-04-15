@@ -160,7 +160,7 @@ if (empty($reshook))
 	{
 		$massaction='';     // Protection to avoid mass action if we force a new search during a mass action confirmation
 	}
-	
+
 	// Mass actions
 	$objectclass='Ticketsup';
 	$objectlabel='Ticketsup';
@@ -437,9 +437,9 @@ print '<input type="hidden" name="mode" value="' . $mode . '" >';
 if ($socid)     print '<input type="hidden" name="socid" value="' . $socid . '" >';
 if ($projectid) print '<input type="hidden" name="projectid" value="' . $projectid . '" >';
 
-$buttontocreate = '<a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
+$newcardbutton = '<a class="butAction" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
 
-print_barre_liste($langs->trans('TicketList'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_ticketsup', 0, $buttontocreate, '', $limit);
+print_barre_liste($langs->trans('TicketList'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_ticketsup', 0, $newcardbutton, '', $limit);
 
 if ($mode == 'my_assign') {
     print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';
@@ -676,18 +676,18 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 {
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
-	
+
 	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 	$formfile = new FormFile($db);
-	
+
 	// Show list of available documents
 	$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
 	$urlsource.=str_replace('&amp;','&',$param);
-	
+
 	$filedir=$diroutputmassaction;
 	$genallowed=$user->rights->ticketsup->read;
 	$delallowed=$user->rights->ticketsup->write;
-	
+
 	print $formfile->showdocuments('massfilesarea_ticketsup','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 }
 
