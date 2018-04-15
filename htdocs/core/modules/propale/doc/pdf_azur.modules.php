@@ -280,6 +280,7 @@ class pdf_azur extends ModelePDFPropales
 				}
                 // Array for grids
                 $arraygrids = array();
+                $arraynotegrids = array();
                 // Define columns
                 $this->cols = array();
                 // Description
