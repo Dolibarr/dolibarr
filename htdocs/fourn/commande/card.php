@@ -2176,6 +2176,7 @@ elseif (! empty($object->id))
 			// modified by hook
 			if (empty($reshook))
 			{
+				$object->fetchObjectLinked();		// Links are used to show or not button, so we load them now.
 
 				// Validate
 				if ($object->statut == 0 && $num > 0)
