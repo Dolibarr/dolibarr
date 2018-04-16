@@ -480,7 +480,7 @@ class pdf_einstein extends ModelePDFCommandes
     							{
     								$pdf->AddPage('','',true);
     								if (! empty($tplidx)) $pdf->useTemplate($tplidx);
-    								if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+    								//if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
     								$pdf->setPage($pageposafter+1);
     							}
     						}
