@@ -1950,7 +1950,6 @@ div.login_block_other { padding-top: 3px; text-align: right; }
 }
 .alogin, .alogin:hover {
 	font-weight: normal !important;
-	font-size: <?php echo is_numeric($fontsizesmaller)?($fontsizesmaller.'px'):$fontsizesmaller; ?> !important;
 	padding-top: 2px;
 }
 .alogin:hover, .atoplogin:hover {
