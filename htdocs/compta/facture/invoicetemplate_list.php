@@ -598,11 +598,18 @@ if ($resql)
 			// Date next generation
 			if (! empty($arrayfields['f.date_when']['checked']))
 			{
-			   print '<td align="center">';
-			   print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
-			   if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
-			   print '</td>';
-			   if (! $i) $totalarray['nbfield']++;
+				print '<td align="center">';
+				print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
+				if (! $invoicerectmp->isMaxNbGenReached())
+				{
+					if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
+				}
+				else
+				{
+					print img_info($langs->trans("MaxNumberOfGenerationReached"));
+				}
+				print '</td>';
+				if (! $i) $totalarray['nbfield']++;
 			}
 			if (! empty($arrayfields['f.datec']['checked']))
 			{
@@ -629,7 +636,11 @@ if ($resql)
 			print '<td align="center">';
 			if ($user->rights->facture->creer && empty($invoicerectmp->suspended))
 			{
-				if (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
+				if ($invoicerectmp->isMaxNbGenReached())
+				{
+					print $langs->trans("MaxNumberOfGenerationReached");
+				}
+				elseif (empty($objp->frequency) || $db->jdate($objp->date_when) <= $today)
 				{
 					print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create&amp;socid='.$objp->socid.'&amp;fac_rec='.$objp->facid.'">';
 					print $langs->trans("CreateBill").'</a>';
