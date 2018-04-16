@@ -78,6 +78,7 @@ ResultOfMailSending=Resultado del envío masivo de e-mails
 NbSelected=Nº seleccionados
 NbIgnored=Nº ignorados
 NbSent=Nº enviados
+SentXXXmessages=%s message(s) sent.
 ConfirmUnvalidateEmailing=¿Está seguro de querer cambiar el estado del e-mailing <b>%s</b> a borrador?
 MailingModuleDescContactsWithThirdpartyFilter=Filtro de contactos con tercero
 MailingModuleDescContactsByCompanyCategory=Contactos de terceros por categoría

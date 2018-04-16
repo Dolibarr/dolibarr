@@ -33,11 +33,11 @@ require_once $dolibarr_main_document_root . '/core/lib/security.lib.php'; // for
 
 global $langs;
 
-$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
-$langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
-$action=GETPOST('action','alpha');
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[3])?'auto':$argv[3]);
+$langs->setDefaultLang($setuplang);
+$action=GETPOST('action','alpha')?GETPOST('action','alpha'):(empty($argv[4])?'':$argv[4]);
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
@@ -55,9 +55,9 @@ if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upg
 $langs->load("admin");
 $langs->load("install");
 
-$login = GETPOST('login', 'alpha');
-$pass = GETPOST('pass', 'alpha');
-$pass_verif = GETPOST('pass_verif', 'alpha');
+$login = GETPOST('login', 'alpha')?GETPOST('login', 'alpha'):(empty($argv[5])?'':$argv[5]);
+$pass = GETPOST('pass', 'alpha')?GETPOST('pass', 'alpha'):(empty($argv[6])?'':$argv[6]);
+$pass_verif = GETPOST('pass_verif', 'alpha')?GETPOST('pass_verif', 'alpha'):(empty($argv[7])?'':$argv[7]);
 
 $success=0;
 
@@ -76,6 +76,8 @@ if (@file_exists($forcedfile)) {
 }
 
 dolibarr_install_syslog("--- step5: entering step5.php page");
+
+$error=0;
 
 
 /*
@@ -461,6 +463,14 @@ else
 clearstatcache();
 
 
+$ret=0;
+if ($error && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step5: Dolibarr setup finished");
 
 pFooter(1,$setuplang);
+
+// Return code if ran from command line
+if ($ret) exit($ret);
+

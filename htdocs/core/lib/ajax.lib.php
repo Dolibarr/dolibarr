@@ -407,7 +407,8 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 					},
 					escapeMarkup: function(markup) {
 						return markup;
-					}
+					},
+					dropdownCssClass: \'ui-dialog\'
 				})';
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Área domiciliaciones
 SuppliersStandingOrdersArea=Área domiciliaciones
-StandingOrders=Domiciliaciones
-StandingOrder=Domiciliación
+StandingOrdersPayment=Domiciliaciones
+StandingOrderPayment=Domiciliación
 NewStandingOrder=Nueva domiciliación
 StandingOrderToProcess=A procesar
 WithdrawalsReceipts=Domiciliaciones
@@ -98,6 +98,10 @@ ModeFRST=Pago único
 PleaseCheckOne=Escoja solamente uno
 DirectDebitOrderCreated=Domiciliación %s creada
 AmountRequested=Importe solicitado
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Fecha de ejecución
+CreateForSepa=Crear archivo SEPA
 
 ### Notifications
 InfoCreditSubject=Abono de domiciliación %s por el banco

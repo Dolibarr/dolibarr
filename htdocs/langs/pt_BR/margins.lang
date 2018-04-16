@@ -26,4 +26,3 @@ rateMustBeNumeric=Rata deve ser um valor numerico
 markRateShouldBeLesserThan100=Rata marcada teria que ser menor do que 100
 ShowMarginInfos=Mostrar informações sobre margens
 CheckMargins=Detalhes das margens
-MarginPerSaleRepresentativeWarning=O relatório de margem por usuário usa o link entre terceiros e representantes de vendas para calcular a margem de cada venda representativa. Por causa que alguns terceiros não terem um representante de vendas dedicado e alguns terceiros podem estar ligados a vários, alguns montantes podem não ser incluídos neste relatório (se não houver representante de venda) e alguns podem aparecer em diferentes linhas (para cada representante de venda).

@@ -319,6 +319,12 @@ if (empty($reshook))
 		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 	}
 
+	// Set incoterm
+	elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+	{
+		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
+
 	// payment mode
 	else if ($action == 'setmode' && $user->rights->fournisseur->facture->creer)
 	{
@@ -1194,6 +1200,8 @@ if (empty($reshook))
 				$type = $productsupplier->type;
 				$price_base_type = 'HT';
 
+				$rang = $object->line_max() +1;
+
 				$result=$object->addline(
 					$desc,
 					$productsupplier->fourn_pu,
@@ -1209,7 +1217,7 @@ if (empty($reshook))
 					$tva_npr,
 					$price_base_type,
 					$type,
-					-1,
+					$rang,
 					0,
 					$array_options,
 					$productsupplier->fk_unit,
@@ -1992,7 +2000,7 @@ if ($action == 'create')
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
 
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields, 'edit');
 	}

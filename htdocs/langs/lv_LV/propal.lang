@@ -33,6 +33,7 @@ PropalStatusSigned=Parakstīts (vajadzības rēķinu)
 PropalStatusNotSigned=Nav parakstīts (slēgta)
 PropalStatusBilled=Jāmaksā
 PropalStatusDraftShort=Melnraksts
+PropalStatusValidatedShort=Validated
 PropalStatusClosedShort=Slēgts
 PropalStatusSignedShort=Parakstīts
 PropalStatusNotSignedShort=Nav parakstīts

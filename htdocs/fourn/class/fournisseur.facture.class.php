@@ -1557,6 +1557,12 @@ class FactureFournisseur extends CommonInvoice
         // Check parameters
         if ($type < 0) return -1;
 
+        if ($rang < 0)
+        {
+        	$rangmax = $this->line_max();
+        	$rang = $rangmax + 1;
+        }
+
         // Insert line
         $this->line=new SupplierInvoiceLine($this->db);
 
@@ -2688,6 +2694,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->multicurrency_total_ht	= $obj->multicurrency_total_ht;
 		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
 		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
+
+		$this->fetch_optionals();
 
 		return 1;
 	}

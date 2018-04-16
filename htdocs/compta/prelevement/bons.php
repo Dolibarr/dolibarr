@@ -101,7 +101,11 @@ if ($result)
 
   $selectedfields='';
 
-  $newcardbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php">'.$langs->trans('NewStandingOrder').'</a>';
+  $newcardbutton='';
+  if ($user->rights->prelevement->bons->creer)
+  {
+  	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php">'.$langs->trans('NewStandingOrder').'</a>';
+  }
 
   // Lines of title fields
   print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';

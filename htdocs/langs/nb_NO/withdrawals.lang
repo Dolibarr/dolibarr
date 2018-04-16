@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Område for direktedebetsordre
 SuppliersStandingOrdersArea=Område for direktekreditordre
-StandingOrders=Direktedebet betalingsordre
-StandingOrder=Direktedebet betalingsordre
+StandingOrdersPayment=Direktedebet betalingsordre
+StandingOrderPayment=Direktedebet betalingsordre
 NewStandingOrder=Ny direktedebetsordre
 StandingOrderToProcess=Til behandling
 WithdrawalsReceipts=Direktedebetsordre
@@ -26,7 +26,7 @@ LastWithdrawalReceipt=Siste %s direktedebetskvitteringer
 MakeWithdrawRequest=Foreta en direktedebet betalingsforespørsel
 WithdrawRequestsDone=%s direktedebet-betalingforespørsler registrert
 ThirdPartyBankCode=Tredjepartens bankkonto
-NoInvoiceCouldBeWithdrawed=Ingen faktura tilbakekalt. Sjekk at faktura er på firmaer med gyldig BAN.
+NoInvoiceCouldBeWithdrawed=Ingen faktura tilbakekalt. Kontroller at fakturaer er mot selskaper med gyldig standard BAN, og at BAN har en RUM-modus <strong> %s </strong>.
 ClassCredited=Klassifiser som kreditert
 ClassCreditedConfirm=Er du sikker på at du vil klassifisere tilbakekallingen som kreditert din bankkonto?
 TransData=Dato for overføring
@@ -78,7 +78,7 @@ ThisWillAlsoAddPaymentOnInvoice=Dette vil også registrere innbetalinger til fak
 StatisticsByLineStatus=Statistikk etter linjestatus
 RUM=UMR
 RUMLong=Unik Mandat Referanse
-RUMWillBeGenerated=UMR.nummer vil bli generert når bankkonto-informasjon er lagret
+RUMWillBeGenerated=Hvis tomt, vil UMR-nummer bli generert når bankkontoinformasjon er lagret
 WithdrawMode=Direktedebetsmodus (FRST eller RECUR)
 WithdrawRequestAmount=Antall direktedebet-betalingforespørsler
 WithdrawRequestErrorNilAmount=Kan ikke opprette en tom direktedebet-betalingforespørsel
@@ -98,6 +98,10 @@ ModeFRST=Engangsbetaling
 PleaseCheckOne=Vennligs kryss av kun en
 DirectDebitOrderCreated=Direktedebet-ordre %s opprettet
 AmountRequested=Beløp forespurt
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Utførelsesdato
+CreateForSepa=Lag direkte debitfil
 
 ### Notifications
 InfoCreditSubject=Betaling av direktedebets-betalingsordre %s utført av banken

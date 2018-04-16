@@ -129,38 +129,14 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		{
 			$thirdparty=$object;
 			if ($thirdparty->id > 0) $sendtosocid=$thirdparty->id;
-			elseif (! empty($conf->dolimail->enabled))
-			{
-				$dolimail = new Dolimail($db);
-				$possibleaccounts=$dolimail->get_societe_by_email($_POST['sendto'],"1");
-				$possibleuser=$dolimail->get_from_user_by_mail($_POST['sendto'],"1"); // suche in llx_societe and socpeople
-				if (!$possibleaccounts && !$possibleuser)
-				{
-					setEventMessages($langs->trans('ErrorFailedToFindSocieteRecord',$_POST['sendto']), null, 'errors');
-				}
-				elseif (count($possibleaccounts)>1)
-				{
-					$sendtosocid=$possibleaccounts[1]['id'];
-					$result=$object->fetch($sendtosocid);
-
-					setEventMessages($langs->trans('ErrorFoundMoreThanOneRecordWithEmail',$_POST['sendto'],$object->name), null, 'mesgs');
-				}
-				else
-				{
-					if($possibleaccounts){
-						$sendtosocid=$possibleaccounts[1]['id'];
-						$result=$object->fetch($sendtosocid);
-					}elseif($possibleuser){
-						$sendtosocid=$possibleuser[0]['id'];
-
-						$result=$uobject->fetch($sendtosocid);
-						$object=$uobject;
-					}
-
-				}
-			}
 		}
 		else dol_print_error('','Use actions_sendmails.in.php for an element/object that is not supported');
+
+		if (is_object($hookmanager))
+		{
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('initSendToSocid',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+		}
 	}
 	else $thirdparty = $mysoc;
 
@@ -170,6 +146,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$sendtocc='';
 		$sendtobcc='';
 		$sendtoid = array();
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+			$sendtouserid=array();
+		}
 
 		// Define $sendto
 		$receiver=$_POST['receiver'];
@@ -200,6 +179,18 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 		}
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+			$receiveruser=$_POST['receiveruser'];
+			if (is_array($receiveruser) && count($receiveruser)>0)
+			{
+				$fuserdest = new User($db);
+				foreach($receiveruser as $key=>$val)
+				{
+					$tmparray[] = $fuserdest->user_get_property($key,'email');
+					$sendtouserid[] = $key;
+				}
+			}
+		}
 		$sendto=implode(',',$tmparray);
 
 		// Define $sendtocc
@@ -227,6 +218,19 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				{
 					$tmparray[] = $thirdparty->contact_get_property((int) $val,'email');
 					//$sendtoid[] = $val;  TODO Add also id of contact in CC ?
+				}
+			}
+		}
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+			$receiveruser=$_POST['receiveccruser'];
+
+			if (is_array($receiveruser) && count($receiveruser)>0)
+			{
+				$fuserdest = new User($db);
+				foreach($receiveruser as $key=>$val)
+				{
+					$tmparray[] = $fuserdest->user_get_property($key,'email');
+					$sendtouserid[] = $key;
 				}
 			}
 		}
@@ -430,6 +434,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						if (is_array($attachedfiles) && count($attachedfiles)>0) {
 							$object->attachedfiles	= $attachedfiles;
 						}
+						if (is_array($sendtouserid) && count($sendtouserid)>0 && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+							$object->sendtouserid	= $sendtouserid;
+						}
 
 						// Call of triggers
 						if (! empty($trigger_name))
@@ -448,10 +455,10 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 					$mesg=$langs->trans('MailSuccessfulySent',$mailfile->getValidAddress($from,2),$mailfile->getValidAddress($sendto,2));
 					setEventMessages($mesg, null, 'mesgs');
 
-					$moreparam='';
-					if (isset($paramname2) || isset($paramval2)) $moreparam.= '&'.($paramname2?$paramname2:'mid').'='.$paramval2;
-					header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').$moreparam);
-					exit;
+  					$moreparam='';
+	  				if (isset($paramname2) || isset($paramval2)) $moreparam.= '&'.($paramname2?$paramname2:'mid').'='.$paramval2;
+		  			header('Location: '.$_SERVER["PHP_SELF"].'?'.($paramname?$paramname:'id').'='.(is_object($object)?$object->id:'').$moreparam);
+			  		exit;
 				}
 				else
 				{

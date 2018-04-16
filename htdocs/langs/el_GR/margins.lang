@@ -41,4 +41,4 @@ rateMustBeNumeric=Βαθμολογήστε πρέπει να είναι μια �
 markRateShouldBeLesserThan100=Το ποσοστό πρέπει να είναι χαμηλότερη από 100
 ShowMarginInfos=Δείτε πληροφορίες για τα περιθώρια
 CheckMargins=Margins detail
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each user. Because some thirdparties may not be linked to any sale representative and some thirdparties may be linked to several users, some margins may not appears in these report or may appears in several different lines.
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

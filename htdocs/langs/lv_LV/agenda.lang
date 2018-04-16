@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Dalībnieks %s apstiprināts
 MemberModifiedInDolibarr=Dalībnieks %s labots
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Dalībnieks %s dzēsts
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Sūtījums %s apstiprināts
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Jūs varat pievienot arī šādus parametrus, lai filtrētu pr
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Rādīt kontaktu dzimšanas dienas
 AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas
 Busy=Aizņemts
@@ -109,7 +112,7 @@ ExportCal=Eksportēt kalendāru
 ExtSites=Importēt ārējos kalendārus
 ExtSitesEnableThisTool=Show external calendars (defined into global setup) into agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Kalendāru skaits
-AgendaExtNb=Kalendārs nb %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL, lai piekļūtu. ICal failam
 ExtSiteNoLabel=Nav Apraksta
 VisibleTimeRange=Visible time range

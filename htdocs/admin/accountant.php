@@ -61,6 +61,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_FAX", GETPOST("fax",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_MAIL", GETPOST("mail",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_WEB", GETPOST("web",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_CODE", GETPOST("code",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_ACCOUNTANT_NOTE", GETPOST("note",'none'),'chaine',0,'',$conf->entity);
 
 	if ($action != 'updateedit' && ! $error)
@@ -155,6 +156,10 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<input name="web" id="web" class="minwidth300" value="'. $conf->global->MAIN_INFO_ACCOUNTANT_WEB . '"></td></tr>';
 	print '</td></tr>'."\n";
 
+	// Code
+	print '<tr class="oddeven"><td><label for="code">'.$langs->trans("AccountantFileNumber").'</label></td><td>';
+	print '<input name="code" id="code" class="minwidth100" value="'. ($conf->global->MAIN_INFO_ACCOUNTANT_CODE?$conf->global->MAIN_INFO_ACCOUNTANT_CODE: GETPOST("code",'nohtml')) . '" autofocus="autofocus"></td></tr>'."\n";
+
 	// Note
 	print '<tr class="oddeven"><td class="tdtop"><label for="note">'.$langs->trans("Note").'</label></td><td>';
 	print '<textarea class="flat quatrevingtpercent" name="note" id="note" rows="'.ROWS_5.'">'.(GETPOST('note','none') ? GETPOST('note','none') : $conf->global->MAIN_INFO_ACCOUNTANT_NOTE).'</textarea></td></tr>';
@@ -224,9 +229,9 @@ else
 
 	print '<tr class="oddeven"><td>'.$langs->trans("Mail").'</td><td>' . dol_print_email($conf->global->MAIN_INFO_ACCOUNTANT_MAIL,0,0,0,80) . '</td></tr>';
 
-	// Web
-
 	print '<tr class="oddeven"><td>'.$langs->trans("Web").'</td><td>' . dol_print_url($conf->global->MAIN_INFO_ACCOUNTANT_WEB,'_blank',80) . '</td></tr>';
+
+	print '<tr class="oddeven"><td>'.$langs->trans("AccountantFileNumber").'</td><td>' . $conf->global->MAIN_INFO_ACCOUNTANT_CODE . '</td></tr>';
 
 	print '<tr class="oddeven"><td class="tdtop">'.$langs->trans("Note").'</td><td>' . (! empty($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) ? nl2br($conf->global->MAIN_INFO_ACCOUNTANT_NOTE) : '') . '</td></tr>';
 

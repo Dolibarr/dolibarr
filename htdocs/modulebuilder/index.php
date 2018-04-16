@@ -225,6 +225,7 @@ if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray',
 
 			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."', 'enabled'=>1, 'visible'=>-2";
 			if ($notnull) $string.= ", 'notnull'=>".$notnull;
+			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
 			$string.= ", 'position'=>".$i."),\n";
 			$string.="<br>";
 			$i+=5;

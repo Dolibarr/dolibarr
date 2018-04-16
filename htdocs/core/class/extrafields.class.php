@@ -137,7 +137,7 @@ class ExtraFields
 	 *  @param  int				$type               Type of attribute ('boolean','int','varchar','text','html','date','datehour','price','phone','mail','password','url','select','checkbox','separate',...)
 	 *  @param  int				$pos                Position of attribute
 	 *  @param  string			$size               Size/length of attribute
-	 *  @param  string			$elementtype        Element type ('member', 'product', 'thirdparty', ...)
+	 *  @param  string			$elementtype        Element type. Same value than object->table_element (Example 'member', 'product', 'thirdparty', ...)
 	 *  @param	int				$unique				Is field unique or not
 	 *  @param	int				$required			Is field required or not
 	 *  @param	string			$default_value		Defaulted value (In database. use the default_value feature for default value on screen. Example: '', '0', 'null', 'avalue')
@@ -761,7 +761,7 @@ class ExtraFields
 		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
-		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";
+		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";	// Filed with object->table_element
 		$sql.= " ORDER BY pos";
 
 		$resql=$this->db->query($sql);
@@ -1063,6 +1063,10 @@ class ExtraFields
 				$sql.= ' FROM '.MAIN_DB_PREFIX .$InfoFieldList[0];
 				if (!empty($InfoFieldList[4]))
 				{
+				    // can use curent entity filter
+				    if (strpos($InfoFieldList[4], '$ENTITY$')!==false) {
+				        $InfoFieldList[4]=str_replace('$ENTITY$',$conf->entity,$InfoFieldList[4]);
+				    }
 					// can use SELECT request
 					if (strpos($InfoFieldList[4], '$SEL$')!==false) {
 						$InfoFieldList[4]=str_replace('$SEL$','SELECT',$InfoFieldList[4]);
@@ -1371,7 +1375,7 @@ class ExtraFields
 	 * @param   string	$key            		Key of attribute
 	 * @param   string	$value          		Value to show
 	 * @param	string	$moreparam				To add more parameters on html input tag (only checkbox use html input for output rendering)
-	 * @param	string	$extrafieldsobjectkey	If defined, use the new method to get extrafields data
+	 * @param	string	$extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
 	 * @return	string							Formated value
 	 */
 	function showOutputField($key, $value, $moreparam='', $extrafieldsobjectkey='')
@@ -1380,7 +1384,6 @@ class ExtraFields
 
 		if (! empty($extrafieldsobjectkey))
 		{
-			$elementtype=$this->attributes[$extrafieldsobjectkey]['elementtype'][$key];	// seems not used
 			$label=$this->attributes[$extrafieldsobjectkey]['label'][$key];
 			$type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
 			$size=$this->attributes[$extrafieldsobjectkey]['size'][$key];
@@ -1389,14 +1392,13 @@ class ExtraFields
 			$unique=$this->attributes[$extrafieldsobjectkey]['unique'][$key];
 			$required=$this->attributes[$extrafieldsobjectkey]['required'][$key];
 			$param=$this->attributes[$extrafieldsobjectkey]['param'][$key];
-			$perms=$this->attributes[$extrafieldsobjectkey]['perms'][$key];
+			$perms=dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
 			$langfile=$this->attributes[$extrafieldsobjectkey]['langfile'][$key];
-			$list=$this->attributes[$extrafieldsobjectkey]['list'][$key];
-			$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+			$list=dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 		else	// Old usage
 		{
-			$elementtype=$this->attribute_elementtype[$key];	// seems not used
 			$label=$this->attribute_label[$key];
 			$type=$this->attribute_type[$key];
 			$size=$this->attribute_size[$key];
@@ -1405,10 +1407,10 @@ class ExtraFields
 			$unique=$this->attribute_unique[$key];
 			$required=$this->attribute_required[$key];
 			$param=$this->attribute_param[$key];
-			$perms=$this->attribute_perms[$key];
+			$perms=dol_eval($this->attribute_perms[$key], 1);
 			$langfile=$this->attribute_langfile[$key];
-			$list=$this->attribute_list[$key];
-			$hidden=(($list == 0) ? 1 : 0);		// If zero, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+			$list=dol_eval($this->attribute_list[$key], 1);
+			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
@@ -1739,27 +1741,34 @@ class ExtraFields
 	 * Return HTML string to print separator extrafield
 	 *
 	 * @param   string	$key            Key of attribute
-	 * @return string
+	 * @param	string	$object			Object
+	 * @return 	string					HTML code with line for separator
 	 */
-	function showSeparator($key)
+	function showSeparator($key, $object)
 	{
-		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="4"><strong>'.$this->attribute_label[$key].'</strong></td></tr>';
+		global $langs;
+
+		$out = '<tr class="trextrafieldseparator trextrafieldseparator'.$key.'"><td colspan="2"><strong>';
+		$out.= $langs->trans($this->attributes[$object->table_element]['label'][$key]);
+		$out.= '</strong></td></tr>';
 		return $out;
 	}
 
 	/**
 	 * Fill array_options property of object by extrafields value (using for data sent by forms)
 	 *
-	 * @param   array	$extralabels    $array of extrafields
+	 * @param   array	$extralabels    $array of extrafields (@deprecated)
 	 * @param   object	$object         Object
 	 * @param	string	$onlykey		Only following key is filled. When we make update of only one extrafield ($action = 'update_extras'), calling page must must set this to avoid to have other extrafields being reset.
 	 * @return	int						1 if array_options set, 0 if no value, -1 if error (field required missing for example)
 	 */
-	function setOptionalsFromPost($extralabels,&$object,$onlykey='')
+	function setOptionalsFromPost($extralabels, &$object, $onlykey='')
 	{
 		global $_POST, $langs;
 		$nofillrequired='';// For error when required field left blank
 		$error_field_required = array();
+
+		if (is_array($this->attributes[$object->table_element]['label'])) $extralabels=$this->attributes[$object->table_element]['label'];
 
 		if (is_array($extralabels))
 		{
@@ -1768,11 +1777,27 @@ class ExtraFields
 			{
 				if (! empty($onlykey) && $key != $onlykey) continue;
 
-				$key_type = $this->attribute_type[$key];
-				if ($this->attribute_required[$key] && empty($_POST["options_".$key])) // Check if empty without GETPOST, value can be alpha, int, array, etc...
+				$key_type = $this->attributes[$object->table_element]['type'][$key];
+				if ($key_type == 'separate') continue;
+
+				$enabled = 1;
+				if (isset($this->attributes[$object->table_element]['list'][$key]))
 				{
+					$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+				}
+				$perms = 1;
+				if (isset($this->attributes[$object->table_element]['perms'][$key]))
+				{
+					$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
+				}
+				if (empty($enabled)) continue;
+				if (empty($perms)) continue;
+
+				if ($this->attributes[$object->table_element]['required'][$key] && empty($_POST["options_".$key])) // Check if empty without GETPOST, value can be alpha, int, array, etc...
+				{
+					//print 'ccc'.$value.'-'.$this->attributes[$object->table_element]['required'][$key];
 					$nofillrequired++;
-					$error_field_required[] = $value;
+					$error_field_required[] = $langs->transnoentitiesnoconv($value);
 				}
 
 				if (in_array($key_type,array('date')))
@@ -1825,7 +1850,7 @@ class ExtraFields
 	/**
 	 * return array_options array of data of extrafields value of object sent by a search form
 	 *
-	 * @param  array   $extralabels    $array of extrafields
+	 * @param  array   $extralabels    $array of extrafields (@deprecated)
 	 * @param  string  $keyprefix      Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  $keysuffix      Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @return array|int               array_options set or 0 if no value
@@ -1834,13 +1859,15 @@ class ExtraFields
 	{
 		global $_POST;
 
+		if (is_array($this->attributes[$object->table_element]['label'])) $extralabels=$this->attributes[$object->table_element]['label'];
+
 		$array_options = array();
 		if (is_array($extralabels))
 		{
 			// Get extra fields
 			foreach ($extralabels as $key => $value)
 			{
-				$key_type = $this->attribute_type[$key];
+				$key_type = $this->attributes[$object->table_element]['type'][$key];
 
 				if (in_array($key_type,array('date','datetime')))
 				{

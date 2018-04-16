@@ -397,7 +397,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->propal->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create">'.$langs->trans('NewPropal').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create">'.$langs->trans('NewPropal').'</a>';
 	}
 
 	// Lignes des champs de filtre

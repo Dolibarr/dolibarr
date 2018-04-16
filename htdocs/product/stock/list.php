@@ -133,7 +133,7 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->stock->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuNewWarehouse').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuNewWarehouse').'</a>';
 	}
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';

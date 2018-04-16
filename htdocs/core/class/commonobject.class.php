@@ -5,7 +5,7 @@
  * Copyright (C) 2012      Christophe Battarel  <christophe.battarel@altairis.fr>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2012-2013 Christophe Battarel  <christophe.battarel@altairis.fr>
- * Copyright (C) 2011-2014 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2012-2015 Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2012      Cedric Salvador      <csalvador@gpcsolutions.fr>
@@ -13,7 +13,7 @@
  * Copyright (C) 2016      Bahfir abbes         <dolipar@dolipar.org>
  * Copyright (C) 2017      ATM Consulting       <support@atm-consulting.fr>
  * Copyright (C) 2017      Nicolas ZABOURI      <info@inovea-conseil.com>
- * Copyright (C) 2017      Rui Strecht		<rui.strecht@aliartalentos.com>
+ * Copyright (C) 2017      Rui Strecht		    <rui.strecht@aliartalentos.com>
  * Copyright (C) 2018      Frederic France      <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -448,7 +448,7 @@ abstract class CommonObject
 	 *
 	 * 	@param		int			$withcountry		1=Add country into address string
 	 *  @param		string		$sep				Separator to use to build string
-	 *  @param		int		$withregion			1=Add region into address string
+	 *  @param		int		    $withregion			1=Add region into address string
 	 *	@return		string							Full address string
 	 */
 	function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
@@ -717,7 +717,7 @@ abstract class CommonObject
 		}
 		else
 		{
-			// On recherche id type_contact
+			// We look for id type_contact
 			$sql = "SELECT tc.rowid";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact as tc";
 			$sql.= " WHERE tc.element='".$this->db->escape($this->element)."'";
@@ -741,7 +741,7 @@ abstract class CommonObject
 
 		$datecreate = dol_now();
 
-		// Socpeople must have already been added by some a trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
+		// Socpeople must have already been added by some trigger, then we have to check it to avoid DB_ERROR_RECORD_ALREADY_EXISTS error
 		$TListeContacts=$this->liste_contact(-1, $source);
 		$already_added=false;
 		if(!empty($TListeContacts)) {
@@ -757,7 +757,7 @@ abstract class CommonObject
 
 			$this->db->begin();
 
-			// Insertion dans la base
+			// Insert into database
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."element_contact";
 			$sql.= " (element_id, fk_socpeople, datecreate, statut, fk_c_type_contact) ";
 			$sql.= " VALUES (".$this->id.", ".$fk_socpeople." , " ;
@@ -832,7 +832,7 @@ abstract class CommonObject
 	 */
 	function update_contact($rowid, $statut, $type_contact_id=0, $fk_socpeople=0)
 	{
-		// Insertion dans la base
+		// Insert into database
 		$sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
 		$sql.= " statut = ".$statut;
 		if ($type_contact_id) $sql.= ", fk_c_type_contact = '".$type_contact_id ."'";
@@ -1408,18 +1408,19 @@ abstract class CommonObject
 	 *	Setter generic. Update a specific field into database.
 	 *  Warning: Trigger is run only if param trigkey is provided.
 	 *
-	 *	@param	string		$field		Field to update
-	 *	@param	mixed		$value		New value
-	 *	@param	string		$table		To force other table element or element line (should not be used)
-	 *	@param	int			$id			To force other object id (should not be used)
-	 *	@param	string		$format		Data format ('text', 'date'). 'text' is used if not defined
-	 *	@param	string		$id_field	To force rowid field name. 'rowid' is used if not defined
-	 *	@param	User|string	$fuser		Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
-	 *  @param  string      $trigkey    Trigger key to run (in most cases something like 'XXX_MODIFY')
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@param	string		$field			Field to update
+	 *	@param	mixed		$value			New value
+	 *	@param	string		$table			To force other table element or element line (should not be used)
+	 *	@param	int			$id				To force other object id (should not be used)
+	 *	@param	string		$format			Data format ('text', 'date'). 'text' is used if not defined
+	 *	@param	string		$id_field		To force rowid field name. 'rowid' is used if not defined
+	 *	@param	User|string	$fuser			Update the user of last update field with this user. If not provided, current user is used except if value is 'none'
+	 *  @param  string      $trigkey    	Trigger key to run (in most cases something like 'XXX_MODIFY')
+	 *  @param	string		$fk_user_field	Name of field to save user id making change
+	 *	@return	int							<0 if KO, >0 if OK
 	 *  @see updateExtraField
 	 */
-	function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='')
+	function setValueFrom($field, $value, $table='', $id=null, $format='', $id_field='', $fuser=null, $trigkey='', $fk_user_field='fk_user_modif')
 	{
 		global $user,$langs,$conf;
 
@@ -1428,24 +1429,26 @@ abstract class CommonObject
 		if (empty($format))   $format='text';
 		if (empty($id_field)) $id_field='rowid';
 
-		$fk_user_field = 'fk_user_modif';
-
 		$error=0;
 
 		$this->db->begin();
 
 		// Special case
 		if ($table == 'product' && $field == 'note_private') $field='note';
-		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) {
-			$fk_user_field = 'fk_user_mod';
-		}
+		if (in_array($table, array('actioncomm', 'adherent', 'advtargetemailing', 'cronjob', 'establishment'))) $fk_user_field = 'fk_user_mod';
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX.$table." SET ";
+
 		if ($format == 'text') $sql.= $field." = '".$this->db->escape($value)."'";
 		else if ($format == 'int') $sql.= $field." = ".$this->db->escape($value);
 		else if ($format == 'date') $sql.= $field." = ".($value ? "'".$this->db->idate($value)."'" : "null");
-		if (! empty($fuser) && is_object($fuser)) $sql.=", ".$fk_user_field." = ".$fuser->id;
-		elseif (empty($fuser) || $fuser != 'none') $sql.=", ".$fk_user_field." = ".$user->id;
+
+		if ($fk_user_field)
+		{
+			if (! empty($fuser) && is_object($fuser)) $sql.=", ".$fk_user_field." = ".$fuser->id;
+			elseif (empty($fuser) || $fuser != 'none') $sql.=", ".$fk_user_field." = ".$user->id;
+		}
+
 		$sql.= " WHERE ".$id_field." = ".$id;
 
 		dol_syslog(get_class($this)."::".__FUNCTION__."", LOG_DEBUG);
@@ -2787,11 +2790,12 @@ abstract class CommonObject
 	 *	@param  int		$targetid		Object target id (if not defined, id of object)
 	 *	@param  string	$targettype		Object target type (if not defined, elemennt name of object)
 	 *	@param  string	$clause			'OR' or 'AND' clause used when both source id and target id are provided
-	 *  @param	int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
-	 *	@return	int						<0 if KO, >0 if OK
+	 *  @param  int		$alsosametype	0=Return only links to object that differs from source. 1=Include also link to objects of same type.
+	 *  @param  string	$orderby		SQL 'ORDER BY' clause
+	 *	@return int						<0 if KO, >0 if OK
 	 *  @see	add_object_linked, updateObjectLinked, deleteObjectLinked
 	 */
-	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1)
+	function fetchObjectLinked($sourceid=null,$sourcetype='',$targetid=null,$targettype='',$clause='OR',$alsosametype=1,$orderby='sourcetype')
 	{
 		global $conf;
 
@@ -2847,7 +2851,7 @@ abstract class CommonObject
 			$sql.= "(fk_source = ".$sourceid." AND sourcetype = '".$sourcetype."')";
 			$sql.= " ".$clause." (fk_target = ".$targetid." AND targettype = '".$targettype."')";
 		}
-		$sql .= ' ORDER BY sourcetype';
+		$sql .= ' ORDER BY '.$orderby;
 
 		dol_syslog(get_class($this)."::fetchObjectLink", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -4789,6 +4793,10 @@ abstract class CommonObject
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
 					case 'datetime':
+						// If data is a string instead of a timestamp, we convert it
+						if (! is_int($this->array_options[$key])) {
+							$this->array_options[$key] = strtotime($this->array_options[$key]);
+						}
 						$new_array_options[$key] = $this->db->idate($this->array_options[$key]);
 						break;
 		   			case 'link':
@@ -4895,14 +4903,14 @@ abstract class CommonObject
 	}
 
 	/**
-	 *	Update an exta field value for the current object.
+	 *	Update an extra field value for the current object.
 	 *  Data to describe values to update are stored into $this->array_options=array('options_codeforfield1'=>'valueforfield1', 'options_codeforfield2'=>'valueforfield2', ...)
 	 *
 	 *  @param  string      $key    		Key of the extrafield (without starting 'options_')
 	 *  @param	string		$trigger		If defined, call also the trigger (for example COMPANY_MODIFY)
 	 *  @param	User		$userused		Object user
 	 *  @return int                 		-1=error, O=did nothing, 1=OK
-	 *  @see setValueFrom
+	 *  @see setValueFrom, insertExtraFields
 	 */
 	function updateExtraField($key, $trigger, $userused)
 	{
@@ -5014,7 +5022,7 @@ abstract class CommonObject
 	 * @param  array   		$val	       Array of properties for field to show
 	 * @param  string  		$key           Key of attribute
 	 * @param  string  		$value         Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  		$moreparam     To add more parametes on html input tag
+	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string|int	$showsize      Value for css to define size. May also be a numeric.
@@ -5046,7 +5054,6 @@ abstract class CommonObject
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
-		//$elementtype=$this->attribute_elementtype[$key];	// seems to not be used
 		$default=$val['default'];
 		$computed=$val['computed'];
 		$unique=$val['unique'];
@@ -5069,7 +5076,7 @@ abstract class CommonObject
 			else return '';
 		}
 
-		// Use in priorit showsize from parameters, then $val['css'] then autodefine
+		// Use in priority showsize from parameters, then $val['css'] then autodefine
 		if (empty($showsize) && ! empty($val['css']))
 		{
 			$showsize = $val['css'];
@@ -5589,7 +5596,6 @@ abstract class CommonObject
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
-		//$elementtype=$this->attribute_elementtype[$key];	// seems to not be used
 		$default=$val['default'];
 		$computed=$val['computed'];
 		$unique=$val['unique'];
@@ -5929,25 +5935,29 @@ abstract class CommonObject
 
 		$out = '';
 
-		if (count($extrafields->attribute_label) > 0)
+		if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label']) > 0)
 		{
 			$out .= "\n";
 			$out .= '<!-- showOptionalsInput --> ';
 			$out .= "\n";
 
 			$e = 0;
-			foreach($extrafields->attribute_label as $key=>$label)
+			foreach($extrafields->attributes[$this->table_element]['label'] as $key=>$label)
 			{
-				$enabled = $extrafields->attribute_list[$key];
-				if (empty($enabled)) continue;												// 0 = Never visible field
-				if (! is_numeric($enabled))
+				$enabled = 1;
+				if ($enabled && isset($extrafields->attributes[$this->table_element]['list'][$key]))
 				{
-					$enabled=dol_eval($enabled, 1);
-					if (empty($enabled)) continue;
-					else $enabled = 1;
+					$enabled = dol_eval($extrafields->attributes[$this->table_element]['list'][$key], 1);
+				}
+
+				$perms = 1;
+				if ($perms && isset($extrafields->attributes[$this->table_element]['perms'][$key]))
+				{
+					$perms = dol_eval($extrafields->attributes[$this->table_element]['perms'][$key], 1);
 				}
 
 				if (($mode == 'create' || $mode == 'edit') && abs($enabled) != 1 && abs($enabled) != 3) continue;	// <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+				if (empty($perms)) continue;
 
 				// Load language if required
 				if (! empty($extrafields->attributes[$this->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$this->table_element]['langfile'][$key]);
@@ -5982,14 +5992,14 @@ abstract class CommonObject
 				}
 				//var_dump($value);
 
-				if ($extrafields->attribute_type[$key] == 'separate')
+				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 				{
-					$out .= $extrafields->showSeparator($key);
+					$out .= $extrafields->showSeparator($key, $this);
 				}
 				else
 				{
 					$csstyle='';
-					$class=(!empty($extrafields->attribute_hidden[$key]) ? 'hideobject ' : '');
+					$class=(!empty($extrafields->attributes[$this->table_element]['hidden'][$key]) ? 'hideobject ' : '');
 					if (is_array($params) && count($params)>0) {
 						if (array_key_exists('style',$params)) {
 							$csstyle=$params['style'];
@@ -6005,27 +6015,27 @@ abstract class CommonObject
 
 					$out .= '<tr id="'.$html_id.'" '.$csstyle.' class="'.$class.$this->element.'_extras_'.$key.'" '.$domData.' >';
 
-					if ( !empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
+					if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0)
 					{
 						if (! empty($conf->global->MAIN_EXTRAFIELDS_USE_TWO_COLUMS) && ($e % 2) == 0) { $colspan='0'; }
 					}
 
-					if($action == 'selectlines'){  $colspan++; }
+					if ($action == 'selectlines') { $colspan++; }
 
 					// Convert date into timestamp format (value in memory must be a timestamp)
-					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('date','datetime')))
 					{
 						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
-					if (in_array($extrafields->attribute_type[$key],array('price','double')))
+					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('price','double')))
 					{
 						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix,'int',3)):$this->array_options['options_'.$key];
 					}
 
 					$labeltoshow = $langs->trans($label);
 
-					if($extrafields->attribute_required[$key])
+					if ($extrafields->attributes[$this->table_element]['required'][$key])
 					{
 						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
 					}

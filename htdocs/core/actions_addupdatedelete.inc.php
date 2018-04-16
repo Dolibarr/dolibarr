@@ -28,6 +28,7 @@
 // $permissiontodelete must be defined
 // $backurlforlist must be defined
 // $backtopage may be defined
+// $triggermodname may be defined
 
 if ($cancel)
 {
@@ -47,8 +48,17 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if (in_array($key, array('rowid', 'entity', 'date_creation', 'tms', 'fk_user_creat', 'fk_user_modif', 'import_key'))) continue;	// Ignore special fields
 
 		// Set value to insert
-		if (in_array($object->fields[$key]['type'], array('text', 'html'))) $value = GETPOST($key,'none');
-		else $value = GETPOST($key,'alpha');
+		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
+			$value = GETPOST($key,'none');
+		} elseif ($object->fields[$key]['type']=='date') {
+			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type']=='datetime') {
+			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type']=='price') {
+			$value = price2num(GETPOST($key));
+		} else {
+			$value = GETPOST($key,'alpha');
+		}
 		if (preg_match('/^integer:/i', $object->fields[$key]['type']) && $value == '-1') $value='';		// This is an implicit foreign key field
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 
@@ -95,11 +105,12 @@ if ($action == 'update' && ! empty($permissiontoadd))
 		// Set value to update
 		if (in_array($object->fields[$key]['type'], array('text', 'html'))) {
 			$value = GETPOST($key,'none');
-		}
-		elseif ($object->fields[$key]['type']=='date') {
+		} elseif ($object->fields[$key]['type']=='date') {
 			$value = dol_mktime(12, 0, 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
 		} elseif ($object->fields[$key]['type']=='datetime') {
 			$value = dol_mktime(GETPOST($key.'hour'), GETPOST($key.'min'), 0, GETPOST($key.'month'), GETPOST($key.'day'), GETPOST($key.'year'));
+		} elseif ($object->fields[$key]['type']=='price') {
+			$value = price2num(GETPOST($key));
 		} else {
 			$value = GETPOST($key,'alpha');
 		}
@@ -124,14 +135,34 @@ if ($action == 'update' && ! empty($permissiontoadd))
 		else
 		{
 			// Creation KO
-			if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
-			else setEventMessages($object->error, null, 'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 			$action='edit';
 		}
 	}
 	else
 	{
 		$action='edit';
+	}
+}
+
+// Action to update one extrafield
+if ($action == "update_extras" && ! empty($permissiontoadd))
+{
+	$object->fetch(GETPOST('id','int'));
+	$attributekey = GETPOST('attribute','alpha');
+	$attributekeylong = 'options_'.$attributekey;
+	$object->array_options['options_'.$attributekey] = GETPOST($attributekeylong,' alpha');
+
+	$result = $object->insertExtraFields(empty($triggermodname)?'':$triggermodname, $user);
+	if ($result > 0)
+	{
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
+		$action = 'view';
+	}
+	else
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+		$action = 'edit_extras';
 	}
 }
 

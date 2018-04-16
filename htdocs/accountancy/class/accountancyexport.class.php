@@ -1,14 +1,14 @@
 <?php
 /*
- * Copyright (C) 2007-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
- * Copyright (C) 2016		Pierre-Henry Favre	<phf@atm-consulting.fr>
- * Copyright (C) 2016-2017	Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2013-2017  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2017       Elarifr. Ari Elbaz	<github@accedinfo.com>
- * Copyright (C) 2017		Frédéric France     <frederic.france@netlogic.fr>
+ * Copyright (C) 2007-2012  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2015       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2016       Pierre-Henry Favre  <phf@atm-consulting.fr>
+ * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2017  Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2017       Elarifr. Ari Elbaz  <github@accedinfo.com>
+ * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -177,7 +177,7 @@ class AccountancyExport
 	 */
 	public static function downloadFile() {
 		global $conf;
-		$journal = 'bookkepping';
+		$filename = 'general_ledger';
 		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 	}
 

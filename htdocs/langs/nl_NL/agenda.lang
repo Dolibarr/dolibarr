@@ -12,7 +12,7 @@ Event=Actie
 Events=Gebeurtenissen
 EventsNb=Aantal gebeurtenissen
 ListOfActions=Gebeurtenissenlijst
-EventReports=Event reports
+EventReports=Overzicht gebeurtenissen
 Location=Locatie
 ToUserOfGroup=Naar elke gebruiker in deze groep
 EventOnFullDay=Gebeurtenis volledige dag
@@ -35,7 +35,7 @@ AgendaAutoActionDesc= Definieer hier een gebeurtenis waar Dolibarr deze automati
 AgendaSetupOtherDesc= Op deze pagina kunt u andere instellingen van de agendamodule instellen.
 AgendaExtSitesDesc=Op deze pagina kunt configureren externe agenda.
 ActionsEvents=Gebeurtenissen waarvoor Dolibarr automatisch een item zal maken in de agenda
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=Herinneringen via e-mail van agenda afspraken is niet aangezet in de module set-up van het Agenda onderdeel.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Derde partij %s aangemaakt
 ContractValidatedInDolibarr=Contract %s gevalideerd
@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Lid %s gevalideerd
 MemberModifiedInDolibarr=Lid %s gewijzigd
 MemberResiliatedInDolibarr=Lidmaatschap %s beëindigd
 MemberDeletedInDolibarr=Lid %s verwijderd
-MemberSubscriptionAddedInDolibarr=Abonnement voor lid %s toegevoegd
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Verzending %s gevalideerd
 ShipmentClassifyClosedInDolibarr=Verzending %s geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s geclassificeerd als heropend
@@ -67,7 +69,7 @@ OrderApprovedInDolibarr=Bestel %s goedgekeurd
 OrderRefusedInDolibarr=Order %s is geweigerd
 OrderBackToDraftInDolibarr=Bestel %s terug te gaan naar ontwerp-status
 ProposalSentByEMail=Offerte %s verzonden per e-mail
-ContractSentByEMail=Contract %s sent by EMail
+ContractSentByEMail=Contract %s verstuurd per e-mail
 OrderSentByEMail=Afnemersopdracht %s verzonden per e-mail
 InvoiceSentByEMail=Afnemersfactuur %s verzonden per e-mail
 SupplierOrderSentByEMail=Leveranciersopdracht %s verzonden per e-mail
@@ -78,17 +80,17 @@ InterventionSentByEMail=Interventie %s via mail verzonden
 ProposalDeleted=Voorstel verwijderd
 OrderDeleted=Bestelling verwijderd
 InvoiceDeleted=Factuur verwijderd
-PRODUCT_CREATEInDolibarr=Product %s created
-PRODUCT_MODIFYInDolibarr=Product %s modified
-PRODUCT_DELETEInDolibarr=Product %s deleted
-EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
-EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
-EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
-EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
-EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PRODUCT_CREATEInDolibarr=Product %s aangemaakt
+PRODUCT_MODIFYInDolibarr=Product %s aangepast
+PRODUCT_DELETEInDolibarr=Product %s verwijderd
+EXPENSE_REPORT_CREATEInDolibarr=Overzicht van kosten %s aangemaakt 
+EXPENSE_REPORT_VALIDATEInDolibarr=Kosten rapportage %s goedgekeurd
+EXPENSE_REPORT_APPROVEInDolibarr=Overzicht van kosten %s goedgekeurd
+EXPENSE_REPORT_DELETEInDolibarr=Overzicht van kosten %s verwijderd
+EXPENSE_REPORT_REFUSEDInDolibarr=Kosten rapportage %s afgekeurd
 PROJECT_CREATEInDolibarr=Project %s gecreëerd
-PROJECT_MODIFYInDolibarr=Project %s modified
-PROJECT_DELETEInDolibarr=Project %s deleted
+PROJECT_MODIFYInDolibarr=Project %s aangepast
+PROJECT_DELETEInDolibarr=Project %s verwijderd
 ##### End agenda events #####
 AgendaModelModule=Document sjablonen voor evenement
 DateActionStart=Startdatum
@@ -97,7 +99,8 @@ AgendaUrlOptions1=U kunt ook de volgende parameters gebruiken om te filteren:
 AgendaUrlOptions3=<b>login=%s</b> om uitvoer van acties gedaan door gebruiker <b>%s</b> te beperken.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> om uitvoer van acties toegewezen aan project <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Verjaardagen van contacten weergeven
 AgendaHideBirthdayEvents=Verjaardagen van contacten verbergen
 Busy=Bezig
@@ -109,7 +112,7 @@ ExportCal=Export kalender
 ExtSites=Externe agenda
 ExtSitesEnableThisTool=Toon externe kalenders (gedefinieerd in de globale setup) in de agenda. Heeft geen invloed op de externe agenda's gedefinieerd door gebruikers.
 ExtSitesNbOfAgenda=Aantal kalenders
-AgendaExtNb=Kalender nb %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL aan. Ical bestand te openen
 ExtSiteNoLabel=Geen omschrijving
 VisibleTimeRange=Zichtbare werktijd

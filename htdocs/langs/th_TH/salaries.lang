@@ -15,3 +15,4 @@ THMDescription=ค่านี้อาจจะใช้ในการคำ�
 TJMDescription=ค่านี้เป็นในปัจจุบันเป็นข้อมูลเท่านั้นและไม่ได้ใช้ในการคำนวณใด ๆ
 LastSalaries=Latest %s salary payments
 AllSalaries=All salary payments
+SalariesStatistics=Statistiques salaires

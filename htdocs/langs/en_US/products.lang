@@ -70,6 +70,7 @@ SoldAmount=Sold amount
 PurchasedAmount=Purchased amount
 NewPrice=New price
 MinPrice=Min. selling price
+EditSellingPriceLabel=Edit selling price label
 CantBeLessThanMinPrice=The selling price can't be lower than minimum allowed for this product (%s without tax). This message can also appears if you type a too important discount.
 ContractStatusClosed=Closed
 ErrorProductAlreadyExists=A product with reference %s already exists.

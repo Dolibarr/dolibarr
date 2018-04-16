@@ -33,6 +33,7 @@ PropalStatusSigned=Подпись (в законопроекте)
 PropalStatusNotSigned=Не подписал (закрытые)
 PropalStatusBilled=Billed
 PropalStatusDraftShort=Черновик
+PropalStatusValidatedShort=Утверждена
 PropalStatusClosedShort=Закрытые
 PropalStatusSignedShort=Подпись
 PropalStatusNotSignedShort=Не подписано

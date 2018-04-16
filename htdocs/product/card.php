@@ -1097,7 +1097,7 @@ else
         $parameters=array('cols' => 3);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        if (empty($reshook))
         {
         	print $object->showOptionals($extrafields,'edit',$parameters);
         }
@@ -1310,7 +1310,7 @@ else
             print '</td></tr>';
 
 			// Batch number managment
-			if ($conf->productbatch->enabled) 
+			if ($conf->productbatch->enabled)
 			{
 				if ($object->isProduct() || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{
@@ -1470,7 +1470,7 @@ else
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            if (empty($reshook))
             {
             	print $object->showOptionals($extrafields,'edit');
             }
@@ -1737,7 +1737,7 @@ else
 			print '</td></tr>';
 
             // Batch number management (to batch)
-            if (! empty($conf->productbatch->enabled)) 
+            if (! empty($conf->productbatch->enabled))
             {
 				if ($object->isProduct() || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
 				{

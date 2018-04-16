@@ -216,7 +216,13 @@ class FactureTest extends PHPUnit_Framework_TestCase
         $newlocalobject=new Facture($this->savdb);
         $newlocalobject->initAsSpecimen();
         $this->changeProperties($newlocalobject);
-        $this->assertEquals($this->objCompare($localobject,$newlocalobject,true,array('newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','ref','statut','paye','specimen','facnumber','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement','cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva','multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx')), array());    // Actual, Expected
+
+        // Hack to avoid test to be wrong when module sellyoursaas is on
+        unset($localobject->array_options['options_commission']);
+        unset($localobject->array_options['options_reseller']);
+
+        $arraywithdiff = $this->objCompare($localobject,$newlocalobject,true,array('newref','oldref','id','lines','client','thirdparty','brouillon','user_author','date_creation','date_validation','datem','ref','statut','paye','specimen','facnumber','actiontypecode','actionmsg2','actionmsg','mode_reglement','cond_reglement','cond_reglement_doc','situation_cycle_ref','situation_counter','situation_final','multicurrency_total_ht','multicurrency_total_tva','multicurrency_total_ttc','fk_multicurrency','multicurrency_code','multicurrency_tx'));
+        $this->assertEquals($arraywithdiff, array());    // Actual, Expected
 
         return $localobject;
     }

@@ -1,53 +1,55 @@
 # Dolibarr language file - Source file is en_US - loan
 Loan=Lening
-Loans=Loans
-NewLoan=New Loan
-ShowLoan=Show Loan
-PaymentLoan=Loan payment
-LoanPayment=Loan payment
-ShowLoanPayment=Show Loan Payment
+Loans=Leningen
+NewLoan=Nieuwe lening
+ShowLoan=Toon lening
+PaymentLoan=Aflossing
+LoanPayment=Aflossing
+ShowLoanPayment=Toon aflossingen
 LoanCapital=Kapitaal
-Insurance=Insurance
-Interest=Interest
-Nbterms=Number of terms
-LoanAccountancyCapitalCode=Accounting account capital
-LoanAccountancyInsuranceCode=Accounting account insurance
-LoanAccountancyInterestCode=Accounting account interest
-ConfirmDeleteLoan=Confirm deleting this loan
-LoanDeleted=Loan Deleted Successfully
+Insurance=Verzekering
+Interest=Rente
+Nbterms=Aantal termijnen
+LoanAccountancyCapitalCode=Tegenrekening Lening
+LoanAccountancyInsuranceCode=Tegenrekening verzekering
+LoanAccountancyInterestCode=Tegenrekening rente
+ConfirmDeleteLoan=Bevestigen verwijderen lening
+LoanDeleted=Lening verwijderd
 ConfirmPayLoan=Confirm classify paid this loan
-LoanPaid=Loan Paid
+LoanPaid=Afgeloste lening
 # Calc
-LoanCalc=Bank Loans Calculator
-PurchaseFinanceInfo=Purchase & Financing Information
-SalePriceOfAsset=Sale Price of Asset
-PercentageDown=Percentage Down
-LengthOfMortgage=Duration of loan
-AnnualInterestRate=Annual Interest Rate
-ExplainCalculations=Explain Calculations
-ShowMeCalculationsAndAmortization=Show me the calculations and amortization
-MortgagePaymentInformation=Mortgage Payment Information
-DownPayment=Down Payment
+LoanCalc=Lening Calculator
+PurchaseFinanceInfo=Aankoop- en Financiering informatie
+SalePriceOfAsset=Onderliggende waarde
+PercentageDown=Lager percentage
+LengthOfMortgage=Duur lening
+AnnualInterestRate=Rente tarief
+ExplainCalculations=Verklaar berekeningen
+ShowMeCalculationsAndAmortization=Toon berekeningen en amortisatieschema
+MortgagePaymentInformation=Informatie hypotheekbetaling
+DownPayment=Aanbetaling
 DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
 InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
 MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula
 MonthlyInterestRateDesc=The <b>monthly interest rate</b> = The annual interest rate divided by 12 (for the 12 months in a year)
 MonthTermDesc=The <b>month term</b> of the loan in months = The number of years you've taken the loan out for times 12
-MonthlyPaymentDesc=The montly payment is figured out using the following formula
+MonthlyPaymentDesc=Het maandbedrag is tot stand gekomen door gebruik van de volgende formule
 AmortizationPaymentDesc=The <a href="#amortization">amortization</a> breaks down how much of your monthly payment goes towards the bank's interest, and how much goes into paying off the principal of your loan.
-AmountFinanced=Amount Financed
+AmountFinanced=Gefinancierd bedrag
 AmortizationMonthlyPaymentOverYears=Amortization For Monthly Payment: <b>%s</b> over %s years
-Totalsforyear=Totals for year
-MonthlyPayment=Monthly Payment
+Totalsforyear=Totalen per jaar
+MonthlyPayment=Maandelijks bedrag
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
 GoToInterest=%s will go towards INTEREST
 GoToPrincipal=%s will go towards PRINCIPAL
 YouWillSpend=You will spend %s in year %s
 ListLoanAssociatedProject=List of loan associated with the project
-AddLoan=Create loan
+AddLoan=Aanmaken lening
 # Admin
 ConfigLoan=Configuration of the module loan
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standaard grootboekrekening kapitaal
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standaard grootboekrekening rente
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standaard grootboekrekening verzekeringen
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+FinancialCommitment=Financial commitment
+CreateCalcSchedule=Edit financial commitment
+InterestAmount=Interest amount

@@ -249,6 +249,7 @@ class MouvementStock extends CommonObject
             	else   // If not found, we add record
             	{
             	    $productlot = new Productlot($this->db);
+            	    $productlot->entity = $conf->entity;
             	    $productlot->fk_product = $fk_product;
             	    $productlot->batch = $batch;
             	    // If we are here = first time we manage this batch, so we used dates provided by users to create lot

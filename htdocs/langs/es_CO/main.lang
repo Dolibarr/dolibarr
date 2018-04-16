@@ -34,4 +34,6 @@ RequestAlreadyDone=La solicitud ya ha sido procesada
 December=diciembre
 FindBug=Señalar un bug
 Currency=Moneda
+NewAttribute=Nuevo atributo
+AttributeCode=Código atributo
 PrintFile=Imprimir archivo %s

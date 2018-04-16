@@ -15,3 +15,4 @@ THMDescription=يمكن استخدام هذه القيمة لحساب تكلفة
 TJMDescription=هذه القيمة هي حاليا فقط كمعلومات وليس لاستخدامها في أي حساب
 LastSalaries=Latest %s salary payments
 AllSalaries=All salary payments
+SalariesStatistics=Statistiques salaires

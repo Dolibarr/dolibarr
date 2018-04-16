@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Miembro %s validado
 MemberModifiedInDolibarr=Miembro %s modificado
 MemberResiliatedInDolibarr=Miembro %s terminado
 MemberDeletedInDolibarr=Miembro %s eliminado
-MemberSubscriptionAddedInDolibarr=Subscripción del miembro %s añadida
+MemberSubscriptionAddedInDolibarr=Subscripción %s del miembro %s añadida
+MemberSubscriptionModifiedInDolibarr=Suscripción %s del miembro %s modificada
+MemberSubscriptionDeletedInDolibarr=Suscripción %s del miembro %s eliminada
 ShipmentValidatedInDolibarr=Expedición %s validada
 ShipmentClassifyClosedInDolibarr=Expedición %s clasificada como pagada
 ShipmentUnClassifyCloseddInDolibarr=Expedición %s clasificada como reabierta
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Puede también añadir estos parámetros al filtro de salida:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir inserciones a acciones creadas por el usuario <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restringir la salida a acciones que no pertenecen al usuario <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b>para restringir notificaciones en acciones asignadas al usuario <b>%s</b>(propietario y otros).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir inserciones a acciones asociadas al proyecto <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restringir exportación de acciones asociadas al proyecto <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir el evento automático.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 Busy=Ocupado
@@ -109,7 +112,7 @@ ExportCal=Exportar calendario
 ExtSites=Calendarios externos
 ExtSitesEnableThisTool=Mostrar calendarios externos (definido en la configuración global) en la agenda. No afecta a los calendarios externos definidos por los usuarios
 ExtSitesNbOfAgenda=Número de calendarios
-AgendaExtNb=Calendario nº %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=Url de acceso al archivo .ical
 ExtSiteNoLabel=Sin descripción
 VisibleTimeRange=Rango de tiempo visible

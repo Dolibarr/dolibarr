@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=สมาชิก s% ผ่านการตรว�
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=สมาชิก s% ลบ
-MemberSubscriptionAddedInDolibarr=สมัครสมาชิกสำหรับสมาชิก% s เพิ่ม
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=% s การตรวจสอบการจัดส่ง
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -97,7 +99,8 @@ AgendaUrlOptions1=นอกจากนี้คุณยังสามาร�
 AgendaUrlOptions3=<b>Logina =% s</b> ​​ที่จะ จำกัด <b>การส่งออกไปยังการดำเนินการที่เป็นเจ้าของโดยผู้ใช้%</b> s
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>โครงการ = PROJECT_ID</b> ที่จะ จำกัด การส่งออกไปยังการดำเนินการที่เกี่ยวข้องกับโครงการ <b>PROJECT_ID</b>
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=ไม่ว่าง
@@ -109,7 +112,7 @@ ExportCal=ส่งออกปฏิทิน
 ExtSites=นำเข้าปฏิทินภายนอก
 ExtSitesEnableThisTool=แสดงปฏิทินภายนอก (เข้าสู่การตั้งค่าที่กำหนดไว้ทั่วโลก) เข้าสู่วาระการประชุม ไม่ส่งผลกระทบต่อปฏิทินภายนอกที่กำหนดโดยผู้ใช้
 ExtSitesNbOfAgenda=จำนวนปฏิทิน
-AgendaExtNb=ปฏิทิน nb% s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL ที่เข้าถึงไฟล์ .ical
 ExtSiteNoLabel=คำอธิบายไม่มี
 VisibleTimeRange=Visible time range

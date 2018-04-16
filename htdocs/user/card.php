@@ -335,7 +335,7 @@ if (empty($reshook)) {
 				$object->gender = GETPOST("gender", 'alpha');
 				$birth = dol_mktime(0, 0, 0, GETPOST('birthmonth'), GETPOST('birthday'), GETPOST('birthyear'));
 				$object->birth = $birth;
-				$object->pass = GETPOST("password");
+				$object->pass = GETPOST("password",'none');
 				$object->api_key = (GETPOST("api_key", 'alpha')) ? GETPOST("api_key", 'alpha') : $object->api_key;
 				if (! empty($user->admin)) $object->admin = GETPOST("admin"); 	// admin flag can only be set/unset by an admin user. A test is also done later when forging sql request
 				$object->address = GETPOST('address', 'alpha');
@@ -349,20 +349,20 @@ if (empty($reshook)) {
 				$object->skype = GETPOST("skype", 'alpha');
 				$object->email = preg_replace('/\s+/', '', GETPOST("email", 'alpha'));
 				$object->job = GETPOST("job", 'alpha');
-				$object->signature = GETPOST("signature");
-				$object->accountancy_code = GETPOST("accountancy_code");
-				$object->openid = GETPOST("openid");
-				$object->fk_user = GETPOST("fk_user") > 0 ? GETPOST("fk_user") : 0;
+				$object->signature = GETPOST("signature",'none');
+				$object->accountancy_code = GETPOST("accountancy_code",'alpha');
+				$object->openid = GETPOST("openid",'alpha');
+				$object->fk_user = GETPOST("fk_user",'int') > 0 ? GETPOST("fk_user",'int') : 0;
 				$object->employee = GETPOST('employee');
 
-				$object->thm = GETPOST("thm") != '' ? GETPOST("thm") : '';
-				$object->tjm = GETPOST("tjm") != '' ? GETPOST("tjm") : '';
-				$object->salary = GETPOST("salary") != '' ? GETPOST("salary") : '';
-				$object->salaryextra = GETPOST("salaryextra") != '' ? GETPOST("salaryextra") : '';
-				$object->weeklyhours = GETPOST("weeklyhours") != '' ? GETPOST("weeklyhours") : '';
+				$object->thm = GETPOST("thm",'alphanohtml') != '' ? GETPOST("thm",'alphanohtml') : '';
+				$object->tjm = GETPOST("tjm",'alphanohtml') != '' ? GETPOST("tjm",'alphanohtml') : '';
+				$object->salary = GETPOST("salary",'alphanohtml') != '' ? GETPOST("salary",'alphanohtml') : '';
+				$object->salaryextra = GETPOST("salaryextra",'alphanohtml') != '' ? GETPOST("salaryextra",'alphanohtml') : '';
+				$object->weeklyhours = GETPOST("weeklyhours",'alphanohtml') != '' ? GETPOST("weeklyhours",'alphanohtml') : '';
 
-				$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
-				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
+				$object->color = GETPOST("color",'alpha') != '' ? GETPOST("color",'alpha') : '';
+				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth','int'), GETPOST('dateemploymentday','int'), GETPOST('dateemploymentyear','int'));
 				$object->dateemployment = $dateemployment;
 
 				if (! empty($conf->multicompany->enabled))
@@ -781,7 +781,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 	else
 	{
-		print '<input class="maxwidth200" maxsize="24" type="text" name="login" value="'.GETPOST('login').'">';
+		print '<input class="maxwidth200" maxsize="24" type="text" name="login" value="'.dol_escape_htmltag(GETPOST('login','alpha')).'">';
 	}
 	print '</td></tr>';
 
@@ -796,26 +796,39 @@ if ($action == 'create' || $action == 'adduserldap')
 	// Password
 	print '<tr><td class="fieldrequired">'.$langs->trans("Password").'</td>';
 	print '<td>';
-	if (! empty($ldap_sid))
+	$valuetoshow='';
+	if (preg_match('/ldap/',$dolibarr_main_authentication))
 	{
-		print 'Mot de passe du domaine';
+		$valuetoshow.=($valuetoshow?', ':'').$langs->trans("PasswordOfUserInLDAP");
 	}
-	else
+	if (preg_match('/http/',$dolibarr_main_authentication))
 	{
-		if (! empty($ldap_pass))
+		$valuetoshow.=($valuetoshow?', ':'').$langs->trans("HTTPBasicPassword");
+	}
+	if (preg_match('/dolibarr/',$dolibarr_main_authentication))
+	{
+		if (! empty($ldap_pass))	// For very old system comaptibilty. Now clear password can't be viewed from LDAP read
 		{
-			print '<input type="hidden" name="password" value="'.$ldap_pass.'">';
-			print preg_replace('/./i','*',$ldap_pass);
+			$valuetoshow.= ($valuetoshow?', ':'').'<input type="hidden" name="password" value="'.$ldap_pass.'">';	// Dolibarr password is preffiled with LDAP known password
+			$valuetoshow.= preg_replace('/./i','*',$ldap_pass);
 		}
 		else
 		{
 			// We do not use a field password but a field text to show new password to use.
-			print '<input size="30" maxsize="32" type="text" name="password" value="'.$password.'" autocomplete="off">';
+			$valuetoshow.= ($valuetoshow?', ':'').'<input size="30" maxsize="32" type="text" name="password" value="'.$password.'" autocomplete="new-password">';
 		}
 	}
+
+	// Other form for user password
+	$parameters=array('valuetoshow' => $valuetoshow, 'password' => $password);
+	$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
+	else $valuetoshow.=$hookmanager->resPrint;				// to add
+
+	print $valuetoshow;
 	print '</td></tr>';
 
-	if(! empty($conf->api->enabled))
+	if (! empty($conf->api->enabled))
 	{
 		// API key
 		$generated_api_key = '';
@@ -1064,7 +1077,7 @@ if ($action == 'create' || $action == 'adduserldap')
 	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -1315,36 +1328,57 @@ else
 
 			// Password
 			print '<tr><td>'.$langs->trans("Password").'</td>';
-			if (! empty($object->ldap_sid))
+
+			print '<td>';
+			$valuetoshow='';
+			if (preg_match('/ldap/',$dolibarr_main_authentication))
 			{
-				if ($passDoNotExpire)
+				if (! empty($object->ldap_sid))
 				{
-					print '<td>'.$langs->trans("LdapUacf_".$statutUACF).'</td>';
-				}
-				else if($userChangePassNextLogon)
-				{
-					print '<td class="warning">'.$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN).'</td>';
-				}
-				else if($userDisabled)
-				{
-					print '<td class="warning">'.$langs->trans("LdapUacf_".$statutUACF,$ldap->domainFQDN).'</td>';
+					if ($passDoNotExpire)
+					{
+						$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("LdapUacf_".$statutUACF);
+					}
+					else if($userChangePassNextLogon)
+					{
+						$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').'<span class="warning">'.$langs->trans("UserMustChangePassNextLogon",$ldap->domainFQDN).'</span>';
+					}
+					else if($userDisabled)
+					{
+						$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').'<span class="warning">'.$langs->trans("LdapUacf_".$statutUACF,$ldap->domainFQDN).'</span>';
+					}
+					else
+					{
+						$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("PasswordOfUserInLDAP");
+					}
 				}
 				else
 				{
-					print '<td>'.$langs->trans("DomainPassword").'</td>';
+					$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("PasswordOfUserInLDAP");
 				}
 			}
-			else
+			if (preg_match('/http/',$dolibarr_main_authentication))
 			{
-				print '<td>';
-				if ($object->pass) print preg_replace('/./i','*',$object->pass);
+				$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("HTTPBasicPassword");
+			}
+			if (preg_match('/dolibarr/',$dolibarr_main_authentication))
+			{
+				if ($object->pass) $valuetoshow.= preg_replace('/./i','*',$object->pass);
 				else
 				{
-					if ($user->admin) print $langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
-					else print $langs->trans("Hidden");
+					if ($user->admin) $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("Crypted").': '.$object->pass_indatabase_crypted;
+					else $valuetoshow.= ($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("Hidden");
 				}
-				print "</td>";
 			}
+
+			// Other form for user password
+			$parameters=array('valuetoshow' => $valuetoshow);
+			$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
+			else $valuetoshow.=$hookmanager->resPrint;				// to add
+
+			print $valuetoshow;
+			print "</td>";
 			print '</tr>'."\n";
 
 			// API key
@@ -1883,23 +1917,34 @@ else
 			// Pass
 			print '<tr><td>'.$langs->trans("Password").'</td>';
 			print '<td>';
-			if ($object->ldap_sid)
+			$valuetoshow='';
+			if (preg_match('/ldap/',$dolibarr_main_authentication))
 			{
-				$text=$langs->trans("DomainPassword");
+				$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$langs->trans("PasswordOfUserInLDAP");
 			}
-			else if ($caneditpassword)
+			if (preg_match('/http/',$dolibarr_main_authentication))
 			{
-				$text='<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="off">';
-				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
+				$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
+			}
+			if (preg_match('/dolibarr/',$dolibarr_main_authentication))
+			{
+				if ($caneditpassword)
 				{
-					$text=$form->textwithpicto($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication),1,'warning');
+					$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').'<input size="12" maxlength="32" type="password" class="flat" name="password" value="'.$object->pass.'" autocomplete="new-password">';
+				}
+				else
+				{
+					$valuetoshow.=($valuetoshow?(' '.$langs->trans("or").' '):'').preg_replace('/./i','*',$object->pass);
 				}
 			}
-			else
-			{
-				$text=preg_replace('/./i','*',$object->pass);
-			}
-			print $text;
+
+			// Other form for user password
+			$parameters=array('valuetoshow' => $valuetoshow, 'caneditpassword' => $caneditpassword);
+			$reshook=$hookmanager->executeHooks('printUserPasswordField',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if ($reshook > 0) $valuetoshow=$hookmanager->resPrint;	// to replace
+			else $valuetoshow.=$hookmanager->resPrint;				// to add
+
+			print $valuetoshow;
 			print "</td></tr>\n";
 
 			// API key
@@ -2009,7 +2054,7 @@ else
 		   	else
 			{
 				$type=0;
-				if ($object->contact_id) $type=$object->contact_id;
+				if ($object->contactid) $type=$object->contactid;
 				print $form->selectcontacts(0,$type,'contactid',2,'','',1,'',false,1);
 			   	if ($object->ldap_sid) print ' ('.$langs->trans("DomainUser").')';
 			}
@@ -2179,12 +2224,12 @@ else
 				print '<td>';
 				if ($caneditfield)
 				{
-								print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print '<input size="30" type="text" class="flat" name="accountancy_code" value="'.$object->accountancy_code.'">';
 				}
 				else
 				{
-								print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
-								print $object->accountancy_code;
+					print '<input type="hidden" name="accountancy_code" value="'.$object->accountancy_code.'">';
+					print $object->accountancy_code;
 				}
 				print '</td>';
 				print "</tr>";
@@ -2298,7 +2343,7 @@ else
 			$parameters=array('colspan' => ' colspan="2"');
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
+			if (empty($reshook))
 			{
 				print $object->showOptionals($extrafields,'edit');
 			}

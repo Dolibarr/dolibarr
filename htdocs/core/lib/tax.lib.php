@@ -323,7 +323,6 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
     	$sql.= " ORDER BY d.rowid, d.".$fk_facture.", pf.rowid";
     }
 
-    //print $sql.'<br>';
     if (! $sql) return -1;
     if ($sql == 'TODO') return -2;
     if ($sql != 'TODO')

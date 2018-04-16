@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Àrea de pagament de domiciliacions bancaries
 SuppliersStandingOrdersArea=Àrea de pagament mitjançant domiciliació bancària
-StandingOrders=Ordres de pagament mitjançant domiciliació bancària
-StandingOrder=Ordre de pagament de dèbit directe
+StandingOrdersPayment=Ordres de pagament mitjançant domiciliació bancària
+StandingOrderPayment=Ordre de pagament de domiciliació
 NewStandingOrder=Nova ordre de domiciliació bancària
 StandingOrderToProcess=A processar
 WithdrawalsReceipts=Domiciliacions
@@ -78,7 +78,7 @@ ThisWillAlsoAddPaymentOnInvoice=Això també registrarà els pagaments a les fac
 StatisticsByLineStatus=Estadístiques per estats de línies
 RUM=UMR
 RUMLong=Referència de mandat única (UMR)
-RUMWillBeGenerated=Número UMR serà generat un cop la informació del compte bancària està salvada
+RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved
 WithdrawMode=Modo de domiciliació bancària (FRST o RECUR)
 WithdrawRequestAmount=Import de la domiciliació
 WithdrawRequestErrorNilAmount=No és possible crear una domiciliació sense import
@@ -98,6 +98,10 @@ ModeFRST=Pagament únic
 PleaseCheckOne=Si us plau marqui només una
 DirectDebitOrderCreated=S'ha creat l'ordre de domiciliació bancària %s
 AmountRequested=Quantitat sol·licitada
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Execution date
+CreateForSepa=Create direct debit file
 
 ### Notifications
 InfoCreditSubject=Pagament de rebuts domiciliats %s pel banc
