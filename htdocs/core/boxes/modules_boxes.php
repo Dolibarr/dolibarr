@@ -261,17 +261,17 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 {
                     $sublink='';
                     if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?'':' target="'.$head['target'].'"').'>';
-                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
+                    if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="opacitymedium '.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
                     if (! empty($head['sublink']))  $sublink.= '</a>';
 
                     $out.= '<td class="nocellnopadd boxclose right nowraponall">';
                     $out.=$sublink;
                     // The image must have the class 'boxhandle' beause it's value used in DOM draggable objects to define the area used to catch the full object
-                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
-                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
+                    $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="opacitymedium boxhandle hideonsmartphone cursormove"');
+                    $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="opacitymedium boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
                     //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
-                    if (! empty($head['graph'])) $label.=' <span class="fa fa-bar-chart"></span>';
+                    if (! empty($head['graph'])) $label.=' <span class="opacitymedium fa fa-bar-chart"></span>';
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }

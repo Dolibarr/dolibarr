@@ -4841,6 +4841,9 @@ dl.dropdown {
     display:inline-block;
     padding: 0 3px 2px 0;
 }
+.dropdown span.value {
+    display:none;
+}
 .dropdown dd ul {
     background-color: #FFF;
     border: 1px solid #888;
@@ -4853,13 +4856,12 @@ dl.dropdown {
     max-height: 264px;
     overflow: auto;
 }
-.dropdown span.value {
-    display:none;
-}
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 2px;
+	/* color: rgb(<?php print $colortext; ?>); */
+	color: #000;
 }
 .dropdown dd ul li input[type="checkbox"] {
     margin-<?php echo $right; ?>: 3px;

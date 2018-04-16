@@ -3089,7 +3089,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (empty($srconly) && in_array($pictowithoutext, array('bank', 'delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow'))) {
+		if (empty($srconly) && in_array($pictowithoutext, array(
+				'bank', 'close_title', 'delete', 'edit', 'filter', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'switch_off', 'switch_on', 'unlink', 'uparrow')
+			)) {
 			$fakey = $pictowithoutext;
 			$facolor = '';
 			$fasize = '';
@@ -3115,6 +3118,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-bank';
 				$facolor = '#444';
 			}
+			elseif ($pictowithoutext == 'close_title') {
+				$fakey = 'fa-window-close';
+			}
 			elseif ($pictowithoutext == 'delete') {
 				$fakey = 'fa-trash';
 				$facolor = '#444';
@@ -3122,6 +3128,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'edit') {
 				$fakey = 'fa-pencil';
 				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'filter') {
+				$fakey = 'fa-'.$pictowithoutext;
+			}
+			elseif ($pictowithoutext == 'grip_title') {
+				$fakey = 'fa-arrows';
 			}
 			elseif ($pictowithoutext == 'printer') {
 				$fakey = 'fa-print';
