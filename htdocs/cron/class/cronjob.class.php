@@ -1050,8 +1050,9 @@ class Cronjob extends CommonObject
 			{
 				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
 
-				// Create Object for the call module
+				// Create Object for the called module
 				$object = new $this->objectname($this->db);
+				if ($this->entity > 0) $object->entity = $this->entity;		// We work on a dedicated entity
 
 				$params_arr = array_map('trim', explode(",",$this->params));
 
