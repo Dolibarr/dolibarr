@@ -802,6 +802,11 @@ abstract class CommonDocGenerator
         {
             if(!$this->getColumnStatus($colKey)) continue; // continue if desable
             
+            if(!empty($colDef['scale'])){
+                // In case of column widht is defined by percentage
+                $colDef['width'] = abs($arrayWidth * $colDef['scale'] / 100 );
+            }
+            
             if(empty($colDef['width'])){
                 $countFlexCol++;
             }
