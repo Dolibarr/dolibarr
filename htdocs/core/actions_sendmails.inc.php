@@ -347,9 +347,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						if (!$folder) $folder = "Sent";	// Default Sent folder
 
 						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
-						if (FALSE === $mailboxconfig->mbox)
+						if (false === $mailboxconfig->mbox)
 						{
-							$info = FALSE;
+							$info = false;
 							$err = $langs->trans('Error3_Imap_Connection_Error');
 							setEventMessages($err,$mailboxconfig->element, null, 'errors');
 						}

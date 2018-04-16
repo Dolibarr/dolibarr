@@ -178,7 +178,7 @@ class Products extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of product
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
 			throw new RestException(401);
@@ -208,7 +208,7 @@ class Products extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
     	global $conf;
 

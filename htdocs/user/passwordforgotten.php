@@ -96,7 +96,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
 if ($action == 'buildnewpassword' && $username)
 {
     $sessionkey = 'dol_antispam_value';
-    $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+    $ok=(array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
     // Verify code
     if (! $ok)

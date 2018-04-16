@@ -272,7 +272,7 @@ function GETPOSTISSET($paramname)
  *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|string[]      Value found (string or array), or '' if check fails
  */
-function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NULL, $noreplace=0)
+function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=null, $noreplace=0)
 {
 	global $mysoc,$user,$conf;
 
@@ -6519,7 +6519,7 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 			else
 			{
 				($case_sensitive) ? natsort($temp) : natcasesort($temp);
-				if($order!='asc') $temp=array_reverse($temp,TRUE);
+				if($order!='asc') $temp=array_reverse($temp, true);
 			}
 
 			$sorted = array();

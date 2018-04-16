@@ -58,7 +58,7 @@ $fontsizesmaller='0.75em';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
 
-session_cache_limiter(FALSE);
+session_cache_limiter(false);
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

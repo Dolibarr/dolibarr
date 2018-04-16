@@ -6644,7 +6644,7 @@ abstract class CommonObject
 			{
 				$this->{$field} = @unserialize($obj->{$field});
 				// Hack for data not in UTF8
-				if($this->{$field } === FALSE) @unserialize(utf8_decode($obj->{$field}));
+				if($this->{$field } === false) @unserialize(utf8_decode($obj->{$field}));
 			}
 			elseif($this->isInt($info))
 			{
