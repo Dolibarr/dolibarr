@@ -315,25 +315,120 @@ class pdf_einstein extends ModelePDFCommandes
 						if (! empty($salerepobj->signature)) $notetoshow=dol_concatdesc($notetoshow, $salerepobj->signature);
 					}
 				}
+
+				$pagenb = $pdf->getPage();
 				if ($notetoshow)
 				{
-					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
-
-					$tab_top = 88 + $height_incoterms;
-
-					$pdf->SetFont('','', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
-					$nexY = $pdf->GetY();
-					$height_note=$nexY-$tab_top;
-
-					// Rect prend une longueur en 3eme param
-					$pdf->SetDrawColor(192,192,192);
-					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
-
-					$tab_height = $tab_height - $height_note;
-					$tab_top = $nexY+6;
+				    $tab_width = $this->page_largeur-$this->marge_gauche-$this->marge_droite;
+				    $pageposbeforenote = $pagenb;
+				    
+				    $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+				    complete_substitutions_array($substitutionarray, $outputlangs, $object);
+				    $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
+				    
+				    $tab_top = 88 + $height_incoterms;
+				    
+				    $pdf->startTransaction();
+				    
+				    $pdf->SetFont('','', $default_font_size - 1);
+				    $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+				    // Description
+				    $pageposafternote=$pdf->getPage();
+				    $posyafter = $pdf->GetY();
+				    
+				    if($pageposafternote>$pageposbeforenote )
+				    {
+				        $pdf->rollbackTransaction(true);
+				        
+				        // prepar pages to receive notes
+				        while ($pagenb < $pageposafternote) {
+				            $pdf->AddPage();
+				            $pagenb++;
+				            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+				            // $this->_pagefoot($pdf,$object,$outputlangs,1);
+				            $pdf->setTopMargin($tab_top_newpage);
+				            // The only function to edit the bottom margin of current page to set it.
+				            $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+				        }
+				        
+				        // back to start
+				        $pdf->setPage($pageposbeforenote);
+				        $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+				        $pdf->SetFont('','', $default_font_size - 1);
+				        $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+				        $pageposafternote=$pdf->getPage();
+				        
+				        $posyafter = $pdf->GetY();
+				        
+				        if ($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+20)))	// There is no space left for total+free text
+				        {
+				            $pdf->AddPage('','',true);
+				            $pagenb++;
+				            $pageposafternote++;
+				            $pdf->setPage($pageposafternote);
+				            $pdf->setTopMargin($tab_top_newpage);
+				            // The only function to edit the bottom margin of current page to set it.
+				            $pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext);
+				            //$posyafter = $tab_top_newpage;
+				        }
+				        
+				        
+				        // apply note frame to previus pages
+				        $i = $pageposbeforenote;
+				        while ($i < $pageposafternote) {
+				            $pdf->setPage($i);
+				            
+				            
+				            $pdf->SetDrawColor(128,128,128);
+				            // Draw note frame
+				            if($i>$pageposbeforenote){
+				                $height_note = $this->page_hauteur - ($tab_top_newpage + $heightforfooter);
+				                $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note + 1);
+				            }
+				            else{
+				                $height_note = $this->page_hauteur - ($tab_top + $heightforfooter);
+				                $pdf->Rect($this->marge_gauche, $tab_top-1, $tab_width, $height_note + 1);
+				            }
+				            
+				            // Add footer
+				            $pdf->setPageOrientation('', 1, 0);	// The only function to edit the bottom margin of current page to set it.
+				            $this->_pagefoot($pdf,$object,$outputlangs,1);
+				            
+				            $i++;
+				        }
+				        
+				        // apply note frame to last page
+				        $pdf->setPage($pageposafternote);
+				        $height_note=$posyafter-$tab_top_newpage;
+				        $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note+1);
+				        
+				    }
+				    else // No pagebreak
+				    {
+				        $pdf->commitTransaction();
+				        $posyafter = $pdf->GetY();
+				        $height_note=$posyafter-$tab_top;
+				        $pdf->Rect($this->marge_gauche, $tab_top-1, $tab_width, $height_note+1);
+				        
+				        
+				        if($posyafter > ($this->page_hauteur - ($heightforfooter+$heightforfreetext+20)) )
+				        {
+				            // not enough space, need to add page
+				            $pdf->AddPage('','',true);
+				            $pagenb++;
+				            $pageposafternote++;
+				            $pdf->setPage($pageposafternote);
+				            if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				            if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+				            
+				            $posyafter = $tab_top_newpage;
+				        }
+				        
+				    }
+				    
+				    $tab_height = $tab_height - $height_note;
+				    $tab_top = $posyafter +6;
 				}
 				else
 				{
@@ -348,6 +443,8 @@ class pdf_einstein extends ModelePDFCommandes
 				$this->prepareArrayColumnField($object,$outputlangs,$hidedetails,$hidedesc,$hideref);
 				
 				// Loop on each lines
+				$pageposbeforeprintlines=$pdf->getPage();
+				$pagenb = $pageposbeforeprintlines;
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
@@ -529,7 +626,7 @@ class pdf_einstein extends ModelePDFCommandes
 					while ($pagenb < $pageposafter)
 					{
 						$pdf->setPage($pagenb);
-						if ($pagenb == 1)
+						if ($pagenb == $pageposbeforeprintlines)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						}
@@ -545,7 +642,7 @@ class pdf_einstein extends ModelePDFCommandes
 					}
 					if (isset($object->lines[$i+1]->pagebreak) && $object->lines[$i+1]->pagebreak)
 					{
-						if ($pagenb == 1)
+					    if ($pagenb == $pageposafter)
 						{
 							$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						}
@@ -563,7 +660,7 @@ class pdf_einstein extends ModelePDFCommandes
 				}
 
 				// Show square
-				if ($pagenb == 1)
+				if ($pagenb == $pageposbeforeprintlines)
 					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
 				else
 					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
