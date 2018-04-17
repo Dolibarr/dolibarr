@@ -4560,6 +4560,8 @@ abstract class CommonObject
 			return 0;
 		}
 
+		$this->array_options=array();
+
 		if (! is_array($optionsArray))
 		{
 			// If $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
