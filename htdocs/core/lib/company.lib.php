@@ -953,6 +953,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_name != '')   $param.='&search_name='.urlencode($search_name);
     if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
     // Add $param from extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
     $sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.skype, t.statut, t.photo,";
@@ -963,6 +964,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
     if ($search_name) $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
     // Add where from extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
     if ($sortfield == "t.name") $sql.=" ORDER BY t.lastname $sortorder, t.firstname $sortorder";
     else $sql.= " ORDER BY $sortfield $sortorder";
@@ -991,6 +993,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	}
     }
     // Extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
     // Fields from hook
@@ -1017,6 +1020,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
     }
     // Extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
     // Hook fields
     $parameters=array('arrayfields'=>$arrayfields);
@@ -1110,7 +1114,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             }
 
             // Extra fields
-            $extrafieldsobjectkey='socpeople';
+            $extrafieldsobjectkey=$contactstatic->table_element;
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
             // Actions
