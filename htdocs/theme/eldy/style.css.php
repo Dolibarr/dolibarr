@@ -1817,7 +1817,7 @@ form#login {
 	max-width: 560px;
 <?php
 if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
-	print '	background-color: rgba(255, 255, 255, 0.8);';
+	print '	background-color: rgba(255, 255, 255, 0.9);';
 } else {
 	print '	background-color: #FFFFFF;';
 }
