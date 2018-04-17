@@ -196,7 +196,7 @@ class Invoices extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int                  ID of invoice
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
 			throw new RestException(401, "Insuffisant rights");
@@ -313,7 +313,7 @@ class Invoices extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function putLine($id, $lineid, $request_data = NULL) {
+    function putLine($id, $lineid, $request_data = null) {
     	if(! DolibarrApiAccess::$user->rights->facture->creer) {
     		throw new RestException(401);
     	}
@@ -414,7 +414,7 @@ class Invoices extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
 			throw new RestException(401);
@@ -499,7 +499,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 400
      */
-    function postLine($id, $request_data = NULL) {
+    function postLine($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->facture->creer) {
                         throw new RestException(401);
                   }

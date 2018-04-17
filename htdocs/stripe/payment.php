@@ -418,7 +418,7 @@ else {
 }
 
 if (GETPOST('error')){
-	setEventMessages(GETPOST('error'), NULL, 'errors');
+	setEventMessages(GETPOST('error'), null, 'errors');
 }
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')

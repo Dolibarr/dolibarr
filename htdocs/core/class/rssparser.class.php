@@ -753,7 +753,7 @@ function xml2php($xml)
         {
             //If this element is already in the array we will create an indexed array
             $tmp = $array[$key];
-            $array[$key] = NULL;
+            $array[$key] = null;
             $array[$key][] = $tmp;
             $array[$key][] = $child;
             $tab = true;

@@ -71,7 +71,7 @@ if (! empty($selectcpt)) {
 	if ($return<0) {
 		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
 	}
 }
 if ($action == 'delete') {

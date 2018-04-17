@@ -33,6 +33,7 @@ PropalStatusSigned=（要請求）署名
 PropalStatusNotSigned=（クローズ）署名されていません
 PropalStatusBilled=請求
 PropalStatusDraftShort=ドラフト
+PropalStatusValidatedShort=検証
 PropalStatusClosedShort=閉じた
 PropalStatusSignedShort=署名された
 PropalStatusNotSignedShort=署名されていない

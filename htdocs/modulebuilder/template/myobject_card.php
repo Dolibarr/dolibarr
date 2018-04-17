@@ -119,6 +119,7 @@ if (empty($reshook))
 	$permissiontoadd = $user->rights->mymodule->write;
 	$permissiontodelete = $user->rights->mymodule->delete;
 	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
+	$triggermodname = 'MYMODULE_MODIFY';
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';

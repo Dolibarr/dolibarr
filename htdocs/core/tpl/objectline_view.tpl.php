@@ -152,7 +152,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			if ($line->date_start_fill || $line->date_end_fill) echo '</div>';
 		}
 		else {
-			echo '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			if ($line->date_start || $line->date_end) echo '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 			//echo get_date_range($line->date_start, $line->date_end, $format);
 		}
 

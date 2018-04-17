@@ -81,7 +81,7 @@ SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à pa
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
 LanguageDefDesc=Entrez dans ces fichiers, toutes les clés et la traduction pour chaque fichier de langue.
 MenusDefDesc=Define here the menus provided by your module (once defined, they are visible into the menu editor %s)
-PermissionsDefDesc=Define here the new permissions provided by your module (once defined, they are visible into the default permissions setup %s)
+PermissionsDefDesc=Définissez ici les nouvelles permissions fournies par votre module (une fois définies, elles sont visibles dans la configuration des permissions %s)
 HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module descriptor, the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
 TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez exécuter pour chaque événement métier exécuté.
 SeeIDsInUse=Voir les IDs utilisés dans votre installation
@@ -90,7 +90,7 @@ ToolkitForDevelopers=Boîte à outils pour développeurs Dolibarr
 TryToUseTheModuleBuilder=If you have knowledge in SQL and PHP, you can try to use the native module builder wizard. Just enable the module and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu. Warning: This is a developer feature, bad use may breaks your application.
 SeeTopRightMenu=Voir<span class="fa fa-bug"></span> à droite de votre barre de menu principal
 AddLanguageFile=Ajouter le fichier de langue
-YouCanUseTranslationKey=You can use here a key that is the translation key found into language file (see tab "Languages")
+YouCanUseTranslationKey=Vous pouvez utiliser ici une clé qui est la clé de traduction trouvée dans le fichier de langue (voir l'onglet "Langues")
 DropTableIfEmpty=(Supprimer la table si vide)
 TableDoesNotExists=La table %s n'existe pas
 TableDropped=La table %s a été supprimée

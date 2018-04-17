@@ -23,7 +23,7 @@
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticketsup/class/ticketsup.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
 
@@ -172,12 +172,6 @@ if ($action == 'setvarother') {
         $error++;
     }
 
-    $param_extrafields_public = GETPOST('TICKETS_EXTRAFIELDS_PUBLIC', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_EXTRAFIELDS_PUBLIC', $param_extrafields_public, 'chaine', 0, '', $conf->entity);
-    if (!$res > 0) {
-        $error++;
-    }
-
     $param_disable_email = GETPOST('TICKETS_DISABLE_ALL_MAILS', 'alpha');
     $res = dolibarr_set_const($db, 'TICKETS_DISABLE_ALL_MAILS', $param_disable_email, 'chaine', 0, '', $conf->entity);
     if (!$res > 0) {
@@ -241,7 +235,7 @@ dol_fiche_head($head, 'settings', $langs->trans("Module56000Name"), -1, "tickets
 
 print $langs->trans("TicketsupSetupDictionaries") . ' : <a href="' . dol_buildpath('/admin/dict.php', 1) . '" >' . dol_buildpath('/admin/dict.php', 2) . '</a><br>';
 
-print $langs->trans("TicketsupPublicAccess") . ' : <a href="' . dol_buildpath('/ticketsup/public/index.php', 1) . '" target="_blank" >' . dol_buildpath('/ticketsup/public/index.php', 2) . '</a>';
+print $langs->trans("TicketsupPublicAccess") . ' : <a href="' . dol_buildpath('/public/ticketsup/index.php', 1) . '" target="_blank" >' . dol_buildpath('/public/ticketsup/index.php', 2) . '</a>';
 
 dol_fiche_end();
 
@@ -413,21 +407,6 @@ if ($conf->use_javascript_ajax) {
 print '</td>';
 print '<td align="center">';
 print $form->textwithpicto('', $langs->trans("TicketsShowCompanyLogoHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
-
-// Display extrafields into public interface
-print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowExtrafieldsIntoPublicArea") . '</td>';
-print '<td align="left">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_EXTRAFIELDS_PUBLIC');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_EXTRAFIELDS_PUBLIC", $arrval, $conf->global->TICKETS_EXTRAFIELDS_PUBLIC);
-}
-print '</td>';
-print '<td align="center">';
-print $form->textwithpicto('', $langs->trans("TicketsShowExtrafieldsIntoPublicAreaHelp"), 1, 'help');
 print '</td>';
 print '</tr>';
 

@@ -11,4 +11,4 @@ PreviewOfSiteNotYetAvailable=Aperçu de votre site web <strong>%s</strong> n'est
 ViewSiteInNewTab=Afficher le site dans un nouvel onglet
 ViewPageInNewTab=Afficher la page dans un nouvel onglet
 ViewWebsiteInProduction=Afficher le site Web à l'aide d'URL d'accueil
-PreviewSiteServedByWebServer=Aperçu %s dans un nouvel onglet. <br> <br> Le %s sera desservi par un serveur web externe (comme Apache, Nginx, IIS). Vous devez installer et configurer ce serveur avant de pointer vers le répertoire: <br> <strong>%s</strong> <br> URL desservie par un serveur externe: <br> <strong> %s</strong>
+OnlyEditionOfSourceForGrabbedContentFuture=Note: only edition of HTML source will be possible when a page content is intiliazed by grabbing it from an external page (WYSIWYG editor will not be available)

@@ -292,7 +292,7 @@ class ActionsTicketsup
                 $object->description = GETPOST("description");
 
                 //...
-                $ret = $object->update(GETPOST('id'), $user);
+                $ret = $object->update($user);
                 if ($ret <= 0) {
                     $error++;
                     $this->errors = $object->error;
@@ -436,7 +436,7 @@ class ActionsTicketsup
                 $log_action = $langs->trans('TicketLogClosedBy', $user->getFullName($langs));
                 $ret = $object->createTicketLog($user, $log_action);
                 if ($ret > 0) {
-                    setEventMessages('<div class="confirm">' . $langs->trans('TicketMarkedAsClosed') . '</div>');
+                    setEventMessages($langs->trans('TicketMarkedAsClosed'), null, 'mesgs');
                 } else {
                     setEventMessages($langs->trans('TicketMarkedAsClosedButLogActionNotSaved'), null, 'warnings');
                 }
@@ -523,24 +523,8 @@ class ActionsTicketsup
             }
         }
 
-        if ($action == "set_extrafields" && GETPOST('btn_edit_extrafields') && $user->rights->ticketsup->write && !GETPOST('cancel')) {
-            $res = $this->fetch('', '', GETPOST('track_id','alpha'));
 
-            $extrafields = new ExtraFields($this->db);
-            $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
-            $ret = $extrafields->setOptionalsFromPost($extralabels, $object);
-
-            $ret = $object->update($user);
-            if ($ret > 0) {
-                setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
-                $url = 'card.php?action=view&track_id=' . $object->track_id;
-                header("Location: " . $url);
-                exit();
-            }
-
-            $action = 'view';
-        } // Reopen ticket
-        elseif ($action == 'confirm_reopen' && $user->rights->ticketsup->manage && !GETPOST('cancel')) {
+        if ($action == 'confirm_reopen' && $user->rights->ticketsup->manage && !GETPOST('cancel')) {
             if ($this->fetch(GETPOST('id', 'int'), '', GETPOST('track_id', 'alpha')) >= 0) {
                 // prevent browser refresh from reopening ticket several times
                 if ($object->fk_statut == 8) {

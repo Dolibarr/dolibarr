@@ -7,16 +7,18 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
+if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey=$object->table_element;
+
 // Loop to show all columns of extrafields for the search title line
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
 {
-	foreach($extrafields->attribute_label as $key => $val)
+	foreach($extrafields->attributes[$extrafieldsobjectkey]['label'] as $key => $val)
 	{
 		if (! empty($arrayfields["ef.".$key]['checked'])) {
 			$align=$extrafields->getAlignFlag($key);
-			$typeofextrafield=$extrafields->attribute_type[$key];
+			$typeofextrafield=$extrafields->attributes[$extrafieldsobjectkey]['type'][$key];
 			print '<td class="liste_titre'.($align?' '.$align:'').'">';
-			if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attribute_computed[$key]))
+			if (in_array($typeofextrafield, array('varchar', 'int', 'double', 'select')) && empty($extrafields->attributes[$extrafieldsobjectkey]['computed'][$key]))
 			{
 				$crit=$val;
 				$tmpkey=preg_replace('/search_options_/','',$key);

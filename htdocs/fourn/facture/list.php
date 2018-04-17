@@ -474,7 +474,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->fournisseur->facture->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create">'.$langs->trans('NewBill').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/facture/card.php?action=create">'.$langs->trans('NewBill').'</a>';
 	}
 
 	$i = 0;

@@ -46,13 +46,26 @@ print $hookmanager->resPrint;
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 //var_dump($extrafields->attributes);
-if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label']))
+if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
 		// Discard if extrafield is a hidden field on form
-		if (empty($extrafields->attributes[$object->table_element]['list'][$key])) continue;	// 0 = Never visible field
-		if (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 1 && abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) continue;  // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+		$enabled = 1;
+		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key]))
+		{
+			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+		}
+		$perms = 1;
+		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key]))
+		{
+			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+		}
+		//print $key.'-'.$enabled.'-'.$perms.'-'.$label.$_POST["options_" . $key].'<br>'."\n";
+
+		if (empty($enabled)) continue;	// 0 = Never visible field
+		if (abs($enabled) != 1 && abs($enabled) != 3) continue;  // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+		if (empty($perms)) continue;    // 0 = Not visible
 
 		// Load language if required
 		if (! empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
@@ -67,7 +80,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 		}
 		if ($extrafields->attributes[$object->table_element]['type'][$key] == 'separate')
 		{
-			print $extrafields->showSeparator($key);
+			print $extrafields->showSeparator($key, $object);
 		}
 		else
 		{
@@ -139,7 +152,8 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			}
 			else
 			{
-				print $extrafields->showOutputField($key, $value, '', (empty($extrafieldsobjectkey)?'':$extrafieldsobjectkey));
+				//print $key.'-'.$value.'-'.$object->table_element;
+				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}
 			print '</td></tr>' . "\n";
 

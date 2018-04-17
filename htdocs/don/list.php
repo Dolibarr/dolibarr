@@ -131,7 +131,11 @@ if ($resql)
     //if ($page > 0) $param.= '&page='.$page;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/don/card.php?action=create">'.$langs->trans('NewDonation').'</a>';
+	$newcardbutton='';
+	if ($user->rights->don->create)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create">'.$langs->trans('NewDonation').'</a>';
+	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

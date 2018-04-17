@@ -371,7 +371,7 @@ if ($action == 'create' && !$error) {
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		$object=new FactureFournisseur($db);
 		print $object->showOptionals($extrafields,'edit');

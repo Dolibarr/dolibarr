@@ -644,7 +644,6 @@ else	// Show
 		print ' ('.@constant('TCPDI_PATH').')';
 		$i++;
 	}
-	print '<!-- $conf->global->MAIN_USE_FPDF = '.$conf->global->MAIN_USE_FPDF.' -->';
 	print '</td>'."\n";
 	print '</tr>'."\n";
 

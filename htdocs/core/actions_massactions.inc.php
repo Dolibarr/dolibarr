@@ -357,6 +357,14 @@ if (! $error && $massaction == 'confirm_presend')
 					$substitutionarray['__CHECK_READ__'] = '<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>';
 
 					$parameters=array('mode'=>'formemail');
+
+					if ( ! empty( $listofobjectthirdparties ) ) {
+						$parameters['listofobjectthirdparties'] = $listofobjectthirdparties;
+					}
+					if ( ! empty( $listofobjectref ) ) {
+						$parameters['listofobjectref'] = $listofobjectref;
+					}
+
 					complete_substitutions_array($substitutionarray, $langs, $objecttmp, $parameters);
 
 					$subject=make_substitutions($subject, $substitutionarray);

@@ -44,7 +44,7 @@ ErrorConstantNotDefined=المعلمة %s غير معرف
 ErrorUnknown=خطأ غير معروف
 ErrorSQL=خطأ SQL
 ErrorLogoFileNotFound=لم يتم العثور على ملف شعار '٪ ق'
-ErrorGoToGlobalSetup=Go to 'Company/Organisation' setup to fix this
+ErrorGoToGlobalSetup=Go to 'Company/Organization' setup to fix this
 ErrorGoToModuleSetup=الذهاب إلى الوحدة الإعداد لإصلاح هذه
 ErrorFailedToSendMail=فشل في إرسال البريد (المرسل =٪ ق، استقبال =٪ ق)
 ErrorFileNotUploaded=ويتم تحميل الملف. تحقق لا يتجاوز هذا الحجم الأقصى المسموح به، أن المساحة الحرة المتوفرة على القرص والتي لا يوجد بالفعل ملف بنفس الاسم في هذا الدليل.
@@ -64,12 +64,14 @@ ErrorNoVATRateDefinedForSellerCountry=خطأ، لا معدلات ضريبة ال
 ErrorNoSocialContributionForSellerCountry=خطأ، لا الاجتماعي / المالي نوع الضرائب المحددة للبلد '٪ ق'.
 ErrorFailedToSaveFile=خطأ، فشل في حفظ الملف.
 ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of current one
-MaxNbOfRecordPerPage=Max nb of record per page
+MaxNbOfRecordPerPage=Max number of record per page
 NotAuthorized=غير مصرح لك ان تفعل ذلك.
 SetDate=التاريخ المحدد
 SelectDate=تحديد تاريخ
 SeeAlso=انظر أيضا الصورة٪
 SeeHere=انظر هنا
+ClickHere=اضغط هنا
+Here=Here
 Apply=تطبيق
 BackgroundColorByDefault=لون الخلفية الافتراضية
 FileRenamed=The file was successfully renamed
@@ -185,6 +187,7 @@ ToLink=حلقة الوصل
 Select=اختار
 Choose=أختر
 Resize=تغيير
+ResizeOrCrop=Resize or Crop
 Recenter=Recenter
 Author=مؤلف
 User=المستعمل
@@ -325,8 +328,10 @@ Default=افتراضي
 DefaultValue=القيمة الافتراضية
 DefaultValues=Default values
 Price=السعر
+PriceCurrency=Price (currency)
 UnitPrice=سعر الوحدة
 UnitPriceHT=سعر الوحدة (صافي)
+UnitPriceHTCurrency=Unit price (net) (currency)
 UnitPriceTTC=سعر الوحدة
 PriceU=إلى أعلى
 PriceUHT=UP (صافي)
@@ -334,6 +339,7 @@ PriceUHTCurrency=U.P (currency)
 PriceUTTC=UP (شركة الضريبة)
 Amount=كمية
 AmountInvoice=قيمة الفاتورة
+AmountInvoiced=Amount invoiced
 AmountPayment=مبلغ الدفع
 AmountHTShort=مبلغ (صافي)
 AmountTTCShort=المبلغ (المؤتمر الوطني العراقي. الضريبية)
@@ -353,6 +359,7 @@ AmountLT2ES=كمية IRPF
 AmountTotal=الكمية الكلية
 AmountAverage=متوسط ​​كمية
 PriceQtyMinHT=دقيقة سعر الكمية. (صافية من الضرائب)
+PriceQtyMinHTCurrency=Price quantity min. (net of tax) (currency)
 Percentage=نسبة مئوية
 Total=الإجمالي الكلي
 SubTotal=حاصل الجمع
@@ -389,6 +396,8 @@ LT2ES=IRPF
 LT1IN=CGST
 LT2IN=SGST
 VATRate=معدل الضريبة
+VATCode=Tax Rate code
+VATNPR=Tax Rate NPR
 DefaultTaxRate=Default tax rate
 Average=متوسط
 Sum=مجموع
@@ -419,7 +428,8 @@ ActionRunningShort=In progress
 ActionDoneShort=تم الانتهاء من
 ActionUncomplete=Uncomplete
 LatestLinkedEvents=Latest %s linked events
-CompanyFoundation=Company/Organisation
+CompanyFoundation=Company/Organization
+Accountant=Accountant
 ContactsForCompany=اتصالات لهذا الطرف الثالث
 ContactsAddressesForCompany=اتصالات / عناوين لهذا الطرف الثالث
 AddressesForCompany=عناوين لهذا الطرف الثالث
@@ -427,6 +437,9 @@ ActionsOnCompany=الأحداث حول هذا الطرف الثالث
 ActionsOnMember=الأحداث عن هذا العضو
 ActionsOnProduct=Events about this product
 NActionsLate=٪ في وقت متأخر الصورة
+ToDo=لكى يفعل
+Completed=Completed
+Running=In progress
 RequestAlreadyDone=طلب المسجل بالفعل
 Filter=فلتر
 FilterOnInto=معايير البحث <strong>'٪ ق'</strong> إلى حقول٪ الصورة
@@ -704,6 +717,8 @@ WarningYouAreInMaintenanceMode=انذار ، كنت في وضع الصيانة �
 CoreErrorTitle=نظام خطأ
 CoreErrorMessage=Sorry, an error occurred. Contact your system administrator to check the logs or disable $dolibarr_main_prod=1 to get more information.
 CreditCard=بطاقة الائتمان
+ValidatePayment=تحقق من الدفع
+CreditOrDebitCard=Credit or debit card
 FieldsWithAreMandatory=حقول إلزامية مع <b>%s</b>
 FieldsWithIsForPublic=<b>%s</b> تظهر الحقول التي تحتوي على قائمة العامة للأعضاء. إذا كنت لا تريد هذا ، والتحقق من "العامة" مربع.
 AccordingToGeoIPDatabase=(وفقا لGeoIP التحويل)
@@ -808,8 +823,8 @@ ConfirmMassDeletion=Bulk delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record ?
 RelatedObjects=Related Objects
 ClassifyBilled=تصنيف الفواتير
+ClassifyUnbilled=Classify unbilled
 Progress=تقدم
-ClickHere=اضغط هنا
 FrontOffice=Front office
 BackOffice=المكتب الخلفي
 View=View
@@ -851,6 +866,8 @@ FileNotShared=File not shared to exernal public
 Project=المشروع
 Projects=مشاريع
 Rights=الصلاحيات
+LineNb=Line no.
+IncotermLabel=شروط التجارة الدولية
 # Week day
 Monday=يوم الاثنين
 Tuesday=الثلاثاء
@@ -890,7 +907,7 @@ Select2MoreCharacters=أحرف أو أكثر
 Select2MoreCharactersMore=<strong>Search syntax:</strong><br><kbd><strong> |</strong></kbd><kbd> OR</kbd> (a|b)<br><kbd><strong>*</strong></kbd><kbd> Any character</kbd> (a*b)<br><kbd><strong>^</strong></kbd><kbd> Start with</kbd> (^ab)<br><kbd><strong>$</strong></kbd><kbd> End with</kbd> (ab$)<br>
 Select2LoadingMoreResults=تحميل المزيد من النتائج ...
 Select2SearchInProgress=بحث في التقدم ...
-SearchIntoThirdparties=الأطراف الثالثة
+SearchIntoThirdparties=أطراف ثالثة
 SearchIntoContacts=جهات الاتصال
 SearchIntoMembers=أعضاء
 SearchIntoUsers=المستخدمين
@@ -916,3 +933,11 @@ CommentDeleted=Comment deleted
 Everybody=مشاريع مشتركة
 PayedBy=Payed by
 PayedTo=Payed to
+Monthly=Monthly
+Quarterly=Quarterly
+Annual=Annual
+Local=Local
+Remote=Remote
+LocalAndRemote=Local and Remote
+KeyboardShortcut=Keyboard shortcut
+AssignedTo=مخصص ل

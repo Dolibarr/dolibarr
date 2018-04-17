@@ -413,7 +413,7 @@ if ($action == 'create')
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit',$parameters);
 	}
@@ -803,7 +803,7 @@ else
 		print '<input type="hidden" name="action" value="update">';
 		print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">'."\n\n";
 
-		dol_fiche_head(array(), 0, '' ,0);
+		dol_fiche_head(array(), 0, '', 0);
 
 		//print '<div class="underbanner clearboth"></div>';
 
@@ -811,11 +811,11 @@ else
 
 		// Ref
 		print '<tr><td class="fieldrequired titlefieldcreate">'.$langs->trans("Ref").'</td>';
-		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.(isset($_POST["ref"])?GETPOST("ref"):$object->ref).'"></td></tr>';
+		print '<td><input type="text" class="flat maxwidth200" name="ref" value="'.dol_escape_htmltag(isset($_POST["ref"])?GETPOST("ref"):$object->ref).'"></td></tr>';
 
 		// Label
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td>';
-		print '<td><input type="text" class="flat minwidth300" name="label" value="'.(isset($_POST["label"])?GETPOST("label"):$object->label).'"></td></tr>';
+		print '<td><input type="text" class="flat minwidth300" name="label" value="'.dol_escape_htmltag(isset($_POST["label"])?GETPOST("label"):$object->label).'"></td></tr>';
 
 		// Type
 		print '<tr><td class="fieldrequired">'.$langs->trans("AccountType").'</td>';
@@ -914,7 +914,7 @@ else
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}

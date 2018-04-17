@@ -369,7 +369,8 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 
 			foreach ($x_both[$rate]['coll']['detail'] as $index => $fields) {
 				// Define type
-				$type=($fields['dtype']?$fields['dtype']:$fields['ptype']);
+				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
+				$type=(isset($fields['dtype'])?$fields['dtype']:$fields['ptype']);
 				// Try to enhance type detection using date_start and date_end for free lines where type
 				// was not saved.
 				if (!empty($fields['ddate_start'])) {
@@ -401,10 +402,10 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				{
 					$product_static->id=$fields['pid'];
 					$product_static->ref=$fields['pref'];
-					$product_static->type=$fields['ptype'];
+					$product_static->type=$fields['dtype'];		// We force with the type of line to have type how line is registered
 					print $product_static->getNomUrl(1);
 					if (dol_string_nohtmltag($fields['descr'])) {
-						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
+						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
 					}
 				}
 				else
@@ -423,7 +424,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 							$fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
 						}
 					}
-					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
+					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
 
 					// Show range
 					print_date_range($fields['ddate_start'],$fields['ddate_end']);
@@ -550,7 +551,8 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 
 			foreach ($x_both[$rate]['paye']['detail'] as $index=>$fields) {
 				// Define type
-				$type=($fields['dtype']?$fields['dtype']:$fields['ptype']);
+				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
+				$type=(isset($fields['dtype'])?$fields['dtype']:$fields['ptype']);
 				// Try to enhance type detection using date_start and date_end for free lines where type
 				// was not saved.
 				if (!empty($fields['ddate_start'])) {
@@ -582,10 +584,10 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 				{
 					$product_static->id=$fields['pid'];
 					$product_static->ref=$fields['pref'];
-					$product_static->type=$fields['ptype'];
+					$product_static->type=$fields['dtype'];		// We force with the type of line to have type how line is registered
 					print $product_static->getNomUrl(1);
 					if (dol_string_nohtmltag($fields['descr'])) {
-						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
+						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
 					}
 				}
 				else
@@ -595,7 +597,16 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 					} else {
 						$text = img_object($langs->trans('Product'),'product');
 					}
-					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),16);
+					if (preg_match('/^\((.*)\)$/',$fields['descr'],$reg)) {
+						if ($reg[1]=='DEPOSIT') {
+							$fields['descr']=$langs->transnoentitiesnoconv('Deposit');
+						} elseif ($reg[1]=='CREDIT_NOTE') {
+							$fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
+						} else {
+							$fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
+						}
+					}
+					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
 
 					// Show range
 					print_date_range($fields['ddate_start'],$fields['ddate_end']);

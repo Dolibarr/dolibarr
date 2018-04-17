@@ -46,9 +46,7 @@ $action = GETPOST('action','alpha');
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
-	$result = dolibarr_set_const($db, "STRIPE_LIVE", GETPOST('STRIPE_LIVE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+
 	if (empty($conf->stripeconnect->enabled)) {
 		$result = dolibarr_set_const($db, "STRIPE_TEST_PUBLISHABLE_KEY", GETPOST('STRIPE_TEST_PUBLISHABLE_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (! $result > 0)
@@ -97,6 +95,7 @@ if ($action == 'setvalue' && $user->admin)
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_WAREHOUSE", (GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
+
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)

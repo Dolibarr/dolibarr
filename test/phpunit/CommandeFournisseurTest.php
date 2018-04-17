@@ -179,7 +179,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
 
         $result=$localobject2->create($user);
         print __METHOD__." result=".$result."\n";
-        $this->assertGreaterThanOrEqual(0, $result);
+        $this->assertGreaterThan(0, $result);
 
         return $result;
     }
@@ -206,7 +206,7 @@ class CommandeFournisseurTest extends PHPUnit_Framework_TestCase
         $result=$localobject->fetch($id);
 
         print __METHOD__." id=".$id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
+        $this->assertLessThan($result, 0, 'Failed to fetch supplier order with id '.$id);
         return $localobject;
     }
 

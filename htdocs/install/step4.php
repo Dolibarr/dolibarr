@@ -32,7 +32,7 @@ require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
 global $langs;
 
-$setuplang=(GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):'auto');
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[1])?'auto':$argv[1]);
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -49,7 +49,7 @@ if (@file_exists($forcedfile)) {
 
 dolibarr_install_syslog("--- step4: entering step4.php page");
 
-$err=0;
+$error=0;
 $ok = 0;
 
 
@@ -69,7 +69,7 @@ if (! is_writable($conffile))
 }
 
 
-print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/key.svg" width="20" alt="Database"> '.$langs->trans("DolibarrAdminLogin").'</h3>';
+print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/key.svg" width="20" alt="Database"> '.$langs->trans("DolibarrAdminLogin").'</h3>';
 
 print $langs->trans("LastStepDesc").'<br><br>';
 
@@ -92,7 +92,7 @@ if ($db->ok)
     {
         print '<br>';
         print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
-        $err=0;	// We show button
+        $error=0;	// We show button
     }
 
     if (isset($_GET["error"]) && $_GET["error"] == 2)
@@ -101,20 +101,28 @@ if ($db->ok)
         print '<div class="error">';
         print $langs->trans("PleaseTypePassword");
         print '</div>';
-        $err=0;	// We show button
+        $error=0;	// We show button
     }
 
     if (isset($_GET["error"]) && $_GET["error"] == 3)
     {
         print '<br>';
         print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
-        $err=0;	// We show button
+        $error=0;	// We show button
     }
 
 }
 
+
+$ret=0;
+if ($error && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step4: end");
 
-pFooter($err,$setuplang);
+pFooter($error,$setuplang);
 
 $db->close();
+
+// Return code if ran from command line
+if ($ret) exit($ret);

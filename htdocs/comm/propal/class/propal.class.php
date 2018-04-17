@@ -1653,7 +1653,7 @@ class Propal extends CommonObject
 
 			$this->db->free($result);
 
-			return 1;
+			return $num;
 		}
 		else
 		{
@@ -3813,6 +3813,8 @@ class PropaleLigne extends CommonObjectLine
 				$this->multicurrency_total_ht 	= $objp->multicurrency_total_ht;
 				$this->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
+
+				$this->fetch_optionals();
 
 				$this->db->free($result);
 

@@ -171,7 +171,8 @@ if ($result) {
 		$line->fetch($obj->fdid);
 
 		// Situation invoices handling
-		$prev_progress = $line->get_prev_progress($obj->fdid);
+		$prev_progress = $line->get_prev_progress($obj->rowid);
+
 		if ($obj->type == Facture::TYPE_SITUATION) {
 			// Avoid divide by 0
 			if ($obj->situation_percent == 0) {
@@ -527,10 +528,10 @@ if ($action == 'writebookkeeping') {
 $form = new Form($db);
 
 // Export
-if ($action == 'exportcsv') {
-
+if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
+	$filename = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Client($db);

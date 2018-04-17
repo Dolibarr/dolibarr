@@ -33,6 +33,7 @@ PropalStatusSigned=Podpisana (potrebno fakturirati)
 PropalStatusNotSigned=Nepodpisana (zaprta)
 PropalStatusBilled=Fakturirana
 PropalStatusDraftShort=Osnutek
+PropalStatusValidatedShort=Potrjen
 PropalStatusClosedShort=Zaprta
 PropalStatusSignedShort=Podpisana
 PropalStatusNotSignedShort=Nepodpisana

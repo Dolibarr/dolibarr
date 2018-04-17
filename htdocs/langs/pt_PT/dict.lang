@@ -250,9 +250,9 @@ CountryMF=Saint Martin
 ##### Civilities #####
 CivilityMME=Sra.
 CivilityMR=Sr.
-CivilityMLE=Dr.
-CivilityMTRE=Eng.
-CivilityDR=Doutor
+CivilityMLE=Doutor
+CivilityMTRE=Mestre
+CivilityDR=Dr.
 ##### Currencies #####
 Currencyeuros=Euros
 CurrencyAUD=Dólar UA

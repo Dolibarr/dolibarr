@@ -41,4 +41,4 @@ rateMustBeNumeric=Le taux doit être une valeure numérique
 markRateShouldBeLesserThan100=Le taux de marque doit être inférieur à 100
 ShowMarginInfos=Afficher les infos de marges
 CheckMargins=Détails des marges
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each salerepresentaive. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=Le rapport de la marge par utilisateur utilise le lien entre les tiers et les représentants commerciaux pour calculer la marge de chaque représentant. Étant donné que certains tiers peuvent ne pas avoir de représentant de vente dédié et que certaines tiers peuvent être liés à plusieurs, certains montants peuvent ne pas être inclus dans ce rapport (s'il n'y a pas de commercial), certains peuvent apparaître sur des lignes différentes (pour chaque commercial).

@@ -36,7 +36,6 @@ InvoiceCanceledInDolibarr=Fatura %s cancelada
 MemberValidatedInDolibarr=Membro %s validado
 MemberResiliatedInDolibarr=Membro %s finalizado
 MemberDeletedInDolibarr=Membro %s cancelado
-MemberSubscriptionAddedInDolibarr=Inscrição do membo %s adicionada
 ShipmentValidatedInDolibarr=Envio %s validado
 ShipmentClassifyClosedInDolibarr=Expedição%s classificado(s) e faturado(s)
 ShipmentUnClassifyCloseddInDolibarr=Expedição%s classificado(s) reaberto(s)
@@ -77,14 +76,14 @@ AgendaUrlOptions1=Você também pode adicionar os seguintes parâmetros nos filt
 AgendaUrlOptions3=<b>logina=%s</b> para restringir a saída para ações criada pelo usuário <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir a saída das ações não pertencentes ao usuário<b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> para restringir a saída às ações atribuídas ao usuário <b>%s</b> (proprietário e outros).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir a saida de açoes associadas ao projeto <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>projeto=__PROJECT_ID__</b> para restringir a saída para ações ligadas ao  <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> para exclusão automática do evento
 AgendaShowBirthdayEvents=Mostrar datas de nascimento dos contatos
 AgendaHideBirthdayEvents=Ocultar datas de nascimento dos contatos
 ExportDataset_event1=Lista dos eventos da agenda
 DefaultWorkingDays=Padrão dias úteis por semana (Exemplo: 1-5, 1-6)
 DefaultWorkingHours=Padrão horas de trabalho em dia (Exemplo: 9-18)
 ExtSitesEnableThisTool=Mostrar calendários externos na agenda
-AgendaExtNb=Calendário núm %s
 ExtSiteUrlAgenda=URL para acessar arquivos .ical
 ExtSiteNoLabel=Sem descrição
 VisibleDaysRange=Intervalo de dias visíveis

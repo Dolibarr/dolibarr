@@ -404,7 +404,7 @@ class FactureFournisseur extends CommonInvoice
                 	$line = $this->lines[$i];
 
                 	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
-				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
                 	if (! is_object($line)) $line = (object) $line;
 
                 	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
@@ -1557,6 +1557,12 @@ class FactureFournisseur extends CommonInvoice
         // Check parameters
         if ($type < 0) return -1;
 
+        if ($rang < 0)
+        {
+        	$rangmax = $this->line_max();
+        	$rang = $rangmax + 1;
+        }
+
         // Insert line
         $this->line=new SupplierInvoiceLine($this->db);
 
@@ -2688,6 +2694,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->multicurrency_total_ht	= $obj->multicurrency_total_ht;
 		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
 		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
+
+		$this->fetch_optionals();
 
 		return 1;
 	}

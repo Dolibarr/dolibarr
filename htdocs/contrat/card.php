@@ -1287,7 +1287,7 @@ if ($action == 'create')
 	print $hookmanager->resPrint;
 
 	// Other attributes
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 

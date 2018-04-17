@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Conta contabilística usada para terceiros
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=A conta contabilidade definida na ficha do utilizador será usada apenas para o Livro Auxiliar de contabilidade. Este será usado para o Livro Razão e como valor padrão da contabilidade do Livro Auxiliar se a conta de contabilidade do utilizador não estiver definida.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage payments
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Conta contabilística usada por defeito para pagamentos de salários
 Salary=Salário
 Salaries=Salários
 NewSalaryPayment=Novo Pagamento de Salário
@@ -15,3 +15,4 @@ THMDescription=Esse valor pode ser usado para calcular o custo do tempo consumid
 TJMDescription=Esse valor é atualmente serve apenas como informação e não é utilizado em qualquer cálculo
 LastSalaries=Últimos %s pagamentos salariais
 AllSalaries=Todos os pagamentos salariais
+SalariesStatistics=Statistiques salaires
