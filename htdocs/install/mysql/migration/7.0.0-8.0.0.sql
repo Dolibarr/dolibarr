@@ -122,12 +122,13 @@ ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 DELETE FROM llx_c_paiement WHERE code = '' or code = '-' or id = 0;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
-ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
 
 -- Add missing keys and primary key
 ALTER TABLE llx_c_payment_term DROP INDEX uk_c_payment_term;
-ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
+-- VMYSQL4.3 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
+
 
 ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
 
@@ -181,8 +182,8 @@ CREATE TABLE llx_ticketsup
 )ENGINE=innodb;
 
 ALTER TABLE llx_ticketsup ADD COLUMN notify_tiers_at_create integer;
-ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_rowid_track_id (rowid, track_id);
-ALTER TABLE llx_ticketsup ADD INDEX id_ticketsup_track_id (track_id);
+ALTER TABLE llx_ticketsup DROP INDEX uk_ticketsup_rowid_track_id;
+ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_track_id (track_id);
 
 CREATE TABLE llx_ticketsup_msg
 (
