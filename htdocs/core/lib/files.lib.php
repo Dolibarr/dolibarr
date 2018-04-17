@@ -1949,7 +1949,7 @@ function dol_uncompress($inputfile,$outputdir)
 		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
 		$zip = new ZipArchive;
 		$res = $zip->open($inputfile);
-		if ($res === TRUE)
+		if ($res === true)
 		{
 			$zip->extractTo($outputdir.'/');
 			$zip->close();
@@ -2623,6 +2623,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (! empty($conf->product->enabled)) $original_file=$conf->product->multidir_output[$entity].'/'.$original_file;
 		elseif (! empty($conf->service->enabled)) $original_file=$conf->service->multidir_output[$entity].'/'.$original_file;
+	}
+
+	// Wrapping pour les lots produits
+	else if ($modulepart == 'product_batch' || $modulepart == 'produitlot')
+	{
+		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+		if (($fuser->rights->produit->{$lire} ) || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		if (! empty($conf->productbatch->enabled)) $original_file=$conf->productbatch->multidir_output[$entity].'/'.$original_file;
 	}
 
 	// Wrapping pour les contrats

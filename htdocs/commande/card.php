@@ -1269,24 +1269,16 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			$hookmanager->initHooks(array('orderdao'));
-			$parameters = array('id' => $object->id);
-			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-																								  // some hooks
-			if (empty($reshook)) {
-				$result = $object->insertExtraFields('ORDER_MODIFY');
-				if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-			} else if ($reshook < 0)
+			// Actions on extra fields
+			$result = $object->insertExtraFields('ORDER_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
+			}
 		}
 
-		if ($error)
-			$action = 'edit_extras';
+		if ($error) $action = 'edit_extras';
 	}
 
 	if ($action == 'set_thirdparty' && $user->rights->commande->creer)
@@ -1654,7 +1646,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$parameters = array('objectsrc' => $objectsrc, 'socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 

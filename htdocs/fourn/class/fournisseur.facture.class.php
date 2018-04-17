@@ -404,7 +404,7 @@ class FactureFournisseur extends CommonInvoice
                 	$line = $this->lines[$i];
 
                 	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
-				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
                 	if (! is_object($line)) $line = (object) $line;
 
                 	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
@@ -444,23 +444,15 @@ class FactureFournisseur extends CommonInvoice
             {
             	$action='create';
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$hookmanager->initHooks(array('supplierinvoicedao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-	            	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();               // This also set $this->error or $this->errors if errors are found
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();               // This also set $this->error or $this->errors if errors are found
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error)
 				{
@@ -1564,6 +1556,12 @@ class FactureFournisseur extends CommonInvoice
 
         // Check parameters
         if ($type < 0) return -1;
+
+        if ($rang < 0)
+        {
+        	$rangmax = $this->line_max();
+        	$rang = $rangmax + 1;
+        }
 
         // Insert line
         $this->line=new SupplierInvoiceLine($this->db);
@@ -2697,6 +2695,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
 		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
 
+		$this->fetch_optionals();
+
 		return 1;
 	}
 
@@ -2830,7 +2830,9 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 		{
-			if ($this->insertExtraFields() < 0) {
+			$result = $this->insertExtraFields();
+			if ($result < 0)
+			{
 				$error++;
 			}
 		}
@@ -2976,7 +2978,7 @@ class SupplierInvoiceLine extends CommonObjectLine
                 }
             }
 
-            if (! $notrigger)
+            if (! $error && ! $notrigger)
             {
                 // Call trigger
                 $result=$this->call_trigger('LINEBILL_SUPPLIER_CREATE',$user);

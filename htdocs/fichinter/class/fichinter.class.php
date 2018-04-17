@@ -253,7 +253,7 @@ class Fichinter extends CommonObject
 			}
 
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('FICHINTER_CREATE',$user);

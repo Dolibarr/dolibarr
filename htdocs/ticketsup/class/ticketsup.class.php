@@ -175,27 +175,27 @@ class Ticketsup extends CommonObject
     public $fields=array(
         'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'position'=>1, 'visible'=>-2, 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'index'=>1, 'comment'=>"Id"),
     	'entity' => array('type'=>'integer', 'label'=>'Entity', 'visible'=>0, 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'index'=>1),
-    	'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
-        'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-2, 'enabled'=>0, 'position'=>20, 'notnull'=>1, 'index'=>1),
-        'track_id' => array('type'=>'varchar(255)', 'label'=>'TrackID', 'visible'=>0, 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
-	    'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>1, 'enabled'=>1, 'position'=>49, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
+    	'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'visible'=>1, 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object", 'css'=>'aaa'),
+	    'track_id' => array('type'=>'varchar(255)', 'label'=>'TrackID', 'visible'=>0, 'enabled'=>1, 'position'=>11, 'notnull'=>-1, 'searchall'=>1, 'help'=>"Help text"),
+	    'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>15, 'notnull'=>1),
+    	'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>1, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
+    	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+    	'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
+	    'category_code' => array('type'=>'varchar(32)', 'label'=>'Category', 'visible'=>1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+	    'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
     	'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty"),
-        'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToProject"),
-        'fk_user_create' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Author', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
+	    'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-2, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
+    	'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToProject"),
         'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
-        'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>12, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
         'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>60, 'notnull'=>-1,),
-        'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-2, 'enabled'=>1, 'position'=>40, 'notnull'=>1),
         'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
         'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
-        'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
-        'category_code' => array('type'=>'varchar(32)', 'label'=>'Category', 'visible'=>1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
-        'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
         'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_close' => array('type'=>'datetime', 'label'=>'TicketCloseOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'visible'=>-2, 'enabled'=>1, 'position'=>501, 'notnull'=>1),
-	    'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted'))
+	    'resolution' => array('type'=>'integer', 'label'=>'Resolution', 'visible'=>-2, 'enabled'=>1, 'position'=>550, 'notnull'=>1),
+    	'fk_statut' => array('type'=>'integer', 'label'=>'Status', 'visible'=>1, 'enabled'=>1, 'position'=>600, 'notnull'=>1, 'index'=>1, 'arrayofkeyval'=>array(0 => 'Unread', 1 => 'Read', 3 => 'Answered', 4 => 'Assigned', 5 => 'InProgress', 6 => 'Waiting', 8 => 'Closed', 9 => 'Deleted'))
     );
 
     /**
@@ -400,7 +400,7 @@ class Ticketsup extends CommonObject
             }
 
             //Update extrafield
-            if (!$error) {
+            if (! $error) {
                 if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
                     $result = $this->insertExtraFields();
                     if ($result < 0) {
@@ -586,8 +586,8 @@ class Ticketsup extends CommonObject
         $sql .= " t.tms";
         $sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
         // Add fields for extrafields
-        foreach ($extrafields->attribute_list as $key => $val) {
-        	$sql .= ($extrafields->attribute_type[$key] != 'separate' ? ",ef." . $key . ' as options_' . $key : '');
+        foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
+        	$sql .= ($extrafields->attributes[$this->table_element]['type'][$key] != 'separate' ? ",ef." . $key . ' as options_' . $key : '');
         }
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup as t";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_type as type ON type.code=t.type_code";
@@ -596,7 +596,7 @@ class Ticketsup extends CommonObject
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid=t.fk_soc";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as uc ON uc.rowid=t.fk_user_create";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as ua ON ua.rowid=t.fk_user_assign";
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
+        if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
             $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "ticketsup_extrafields as ef on (t.rowid = ef.fk_object)";
         }
         if (!$user->rights->societe->client->voir && !$user->socid) {
@@ -690,8 +690,8 @@ class Ticketsup extends CommonObject
                     $line->date_close = $this->db->jdate($obj->date_close);
 
                     // Extra fields
-                    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-                        foreach ($extrafields->attribute_label as $key => $val) {
+                    if (is_array($extrafields->attributes[$this->table_element]['label']) && count($extrafields->attributes[$this->table_element]['label'])) {
+                    	foreach ($extrafields->attributes[$this->table_element]['label'] as $key => $val) {
                             $tmpkey = 'options_' . $key;
                             $line->{$tmpkey} = $obj->$tmpkey;
                         }
@@ -822,30 +822,23 @@ class Ticketsup extends CommonObject
             $this->errors[] = "Error " . $this->db->lasterror();
         }
 
-        if (!$error) {
-            // FIXME le hook fait double emploi avec le trigger !!
-            $hookmanager->initHooks(array('TicketSupDao'));
-            $parameters = array('ticketsupid' => $this->id);
-            $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-            if (empty($reshook)) {
-                if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
-                    $result = $this->insertExtraFields();
-                    if ($result < 0) {
-                        $error++;
-                    }
-                }
-            } elseif ($reshook < 0) {
-                $error++;
-            }
-
-            if (!$notrigger) {
-            	// Call trigger
-            	$result=$this->call_trigger('TICKET_MODIFY', $user);
-            	if ($result < 0) {
+        if (! $error) {
+            // Update extrafields
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) { // For avoid conflicts if trigger used
+                $result = $this->insertExtraFields();
+                if ($result < 0) {
                     $error++;
                 }
-            	// End call triggers
             }
+        }
+
+        if (! $error && ! $notrigger) {
+        	// Call trigger
+        	$result=$this->call_trigger('TICKET_MODIFY', $user);
+        	if ($result < 0) {
+                $error++;
+            }
+          	// End call triggers
         }
 
         // Commit or rollback

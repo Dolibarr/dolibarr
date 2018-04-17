@@ -575,9 +575,10 @@ if ($action == 'writebookkeeping') {
 $form = new Form($db);
 
 // Export
-if ($action == 'exportcsv') {
+if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
+	$filename = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$companystatic = new Fournisseur($db);

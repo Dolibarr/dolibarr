@@ -181,7 +181,11 @@ if ($result)
 	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/list.php?status=-1,1">'.$langs->trans('NewSubscription').'</a>';
+	$newcardbutton='';
+	if ($user->rights->adherent->cotisation->creer)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/list.php?status=-1,1">'.$langs->trans('NewSubscription').'</a>';
+	}
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

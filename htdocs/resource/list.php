@@ -199,7 +199,7 @@ if($ret == -1) {
 	$newcardbutton='';
 	if ($user->rights->resource->write)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuResourceAdd').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuResourceAdd').'</a>';
 	}
 
 	print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $ret+1, $nbtotalofrecords,'title_generic.png', 0, $newcardbutton, '', $limit);

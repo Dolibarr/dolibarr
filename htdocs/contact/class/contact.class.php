@@ -342,6 +342,7 @@ class Contact extends CommonObject
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
+		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql .= ", note_public = ".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
@@ -366,11 +367,8 @@ class Contact extends CommonObject
 
 		    $action='update';
 
-		    // Actions on extra fields (by external module or standard code)
-		    $hookmanager->initHooks(array('contactdao'));
-		    $parameters=array('socid'=>$this->id);
-		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		    if (empty($reshook))
+		    // Actions on extra fields
+		    if (! $error)
 		    {
 		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 		    	{
@@ -381,7 +379,6 @@ class Contact extends CommonObject
 		    		}
 		    	}
 		    }
-		    else if ($reshook < 0) $error++;
 
 			if (! $error && $this->user_id > 0)
 			{
@@ -588,8 +585,8 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-            $error++;
-		    $this->error=$this->db->lasterror();
+			$error++;
+			$this->error=$this->db->lasterror();
 		}
 
 		// Mis a jour alerte birthday

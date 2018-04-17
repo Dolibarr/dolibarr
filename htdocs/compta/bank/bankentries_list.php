@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
@@ -427,9 +427,9 @@ if ($id > 0 || ! empty($ref))
             if ($user->rights->banque->consolidate) {
             	$newparam = $param;
             	$newparam = preg_replace('/search_conciliated=\d+/i','',$newparam);
-            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butActionNew" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
             } else {
-            	$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butActionNewRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
         }
     }
@@ -722,7 +722,7 @@ if ($resql)
 	// Title
 	$bankcateg=new BankCateg($db);
 
-	$addbutton = '';
+	$newcardbutton = '';
 	if ($action != 'addline' && $action != 'reconcile')
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
@@ -730,27 +730,27 @@ if ($resql)
 			if (! empty($conf->global->BANK_USE_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
-					$addbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$search_account).'">'.$langs->trans("AddBankRecord").'</a>';
+					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$search_account).'">'.$langs->trans("AddBankRecord").'</a>';
 				} else {
-					$addbutton = '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
 				}
 			}
 			else													// If direct entries is not done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
-					$addbutton = '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord").'</a>';
+					$newcardbutton = '<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord").'</a>';
 				} else {
-					$addbutton = '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
 				}
 			}
 		}
 		else
 		{
-			$addbutton = '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+			$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
 		}
 	}
 
-	$morehtml='<div class="inline-block '.(($buttonreconcile || $addbutton)?'marginrightonly':'').'">';
+	$morehtml='<div class="inline-block '.(($buttonreconcile || $newcardbutton)?'marginrightonly':'').'">';
 	$morehtml.= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
 	$morehtml.='<input type="text" name="pageplusone" id="pageplusone" class="flat right width25" value="'.($page+1).'">';
 	$morehtml.='/'.$nbtotalofpages.' ';
@@ -761,7 +761,7 @@ if ($resql)
 		$morehtml.=$buttonreconcile;
 	}
 
-	$morehtml.=$addbutton;
+	$morehtml.=$newcardbutton;
 
 	$picto='title_bank';
 	if ($id > 0 || ! empty($ref)) $picto='';

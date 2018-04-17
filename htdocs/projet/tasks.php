@@ -77,7 +77,9 @@ $planned_workload=$planned_workloadhour*3600+$planned_workloadmin*60;
 $userAccess=0;
 
 
-
+$parameters=array('id'=>$id);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 /*
  * Actions
  */
@@ -416,7 +418,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields_task->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields_task,'edit');
 	}

@@ -396,7 +396,7 @@ class Don extends CommonObject
         }
 
 		// Update extrafield
-        if (!$error) {
+        if (! $error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -482,7 +482,7 @@ class Don extends CommonObject
             }
 
             // Update extrafield
-            if (!$error)
+            if (! $error)
 			{
               	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
                	{

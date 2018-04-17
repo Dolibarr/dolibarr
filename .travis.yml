@@ -31,7 +31,6 @@ addons:
     - pgloader
 
 php:
-- '5.3'
 - '5.4'
 - '5.5'
 - '5.6'
@@ -64,8 +63,6 @@ matrix:
   - php: nightly
   # We exclude some combinations not usefull to save Travis CPU
   exclude:
-  - php: '5.4'
-    env: DB=postgresql
   - php: '5.5'
     env: DB=postgresql
   - php: '5.6'
@@ -123,7 +120,7 @@ install:
 
 - |
   echo "Installing PHP Unit"
-  if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '5.4' ] || [ "$TRAVIS_PHP_VERSION" = '5.5' ]; then
     composer -n require phpunit/phpunit ^4
   fi
   if [ "$TRAVIS_PHP_VERSION" = '5.6' ] || [ "$TRAVIS_PHP_VERSION" = '7.0' ] || [ "$TRAVIS_PHP_VERSION" = '7.1' ]; then
@@ -162,7 +159,7 @@ before_script:
   echo
   echo "Set timezone"
   echo 'date.timezone = "Europe/Paris"' >> ~/.phpenv/versions/$PHP_VERSION_NAME/etc/php.ini
-  if [ "$TRAVIS_PHP_VERSION" = '5.3' ] || [ "$TRAVIS_PHP_VERSION" = '5.4' ]; then
+  if [ "$TRAVIS_PHP_VERSION" = '5.4' ]; then
     #echo
     #echo "Enabling APC for PHP <= 5.4"
     #   Documentation says it should be available for PHP <= 5.6 but it's not for 5.5 and 5.6!

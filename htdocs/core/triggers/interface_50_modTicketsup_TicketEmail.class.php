@@ -236,14 +236,29 @@ class InterfaceTicketEmail extends DolibarrTriggers
 		            $message_customer.='<li>'.$langs->trans('Type').' : '.$object->type_label.'</li>';
 		            $message_customer.='<li>'.$langs->trans('Category').' : '.$object->category_label.'</li>';
 		            $message_customer.='<li>'.$langs->trans('Severity').' : '.$object->severity_label.'</li>';
+
 		            // Extrafields
-		            if ($conf->global->TICKETS_EXTRAFIELDS_PUBLIC) {
-		                if (is_array($object->array_options) && count($object->array_options) > 0) {
-		                    foreach ($object->array_options as $key => $value) {
-                                $message_customer.='<li>'.$langs->trans($key).' : '.$value.'</li>';
-		                    }
-		                }
+		            foreach ($this->attributes[$object->table_element]['label'] as $key => $value)
+		            {
+		            	$enabled = 1;
+		            	if ($enabled && isset($this->attributes[$object->table_element]['list'][$key]))
+		            	{
+		            		$enabled = dol_eval($this->attributes[$object->table_element]['list'][$key], 1);
+		            	}
+		            	$perms = 1;
+		            	if ($perms && isset($this->attributes[$object->table_element]['perms'][$key]))
+		            	{
+		            		$perms = dol_eval($this->attributes[$object->table_element]['perms'][$key], 1);
+		            	}
+
+		            	$qualified = true;
+		            	if (empty($enabled)) $qualified = false;
+		            	if (empty($perms)) $qualified = false;
+
+		            	if ($qualified) $message_customer.='<li>'.$langs->trans($key).' : '.$value.'</li>';
 		            }
+
+
 		            $message_customer.='</ul>';
 		            $message_customer.='<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 		            $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE?$conf->global->TICKETS_URL_PUBLIC_INTERFACE.'/':dol_buildpath('/ticketsup/public/view.php', 2)).'?track_id='.$object->track_id;

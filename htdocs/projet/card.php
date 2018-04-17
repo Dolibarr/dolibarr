@@ -629,7 +629,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -869,7 +869,7 @@ elseif ($object->id > 0)
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1055,7 +1055,7 @@ elseif ($object->id > 0)
                         if (parseFloat(oldpercent) != 100) { jQuery("#opp_percent").val(oldpercent); }
                         else { jQuery("#opp_percent").val(defaultpercent); }
                     }
-                    else 
+                    else
                     {
                     	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent)));
                     	{

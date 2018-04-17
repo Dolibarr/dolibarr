@@ -463,24 +463,15 @@ class Adherent extends CommonObject
 
 			$action='update';
 
-			// Actions on extra fields (by external module)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('memberdao'));
-			$parameters=array('id'=>$this->id);
-			$action='';
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			// Update password
 			if (! $error && $this->pass)

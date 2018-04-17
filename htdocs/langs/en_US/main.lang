@@ -64,7 +64,7 @@ ErrorNoVATRateDefinedForSellerCountry=Error, no vat rates defined for country '%
 ErrorNoSocialContributionForSellerCountry=Error, no social/fiscal taxes type defined for country '%s'.
 ErrorFailedToSaveFile=Error, failed to save file.
 ErrorCannotAddThisParentWarehouse=You are trying to add a parent warehouse which is already a child of current one
-MaxNbOfRecordPerPage=Max nb of record per page
+MaxNbOfRecordPerPage=Max number of record per page
 NotAuthorized=You are not authorized to do that.
 SetDate=Set date
 SelectDate=Select a date
@@ -866,7 +866,7 @@ FileNotShared=File not shared to exernal public
 Project=Project
 Projects=Projects
 Rights=Permissions
-LineNb=Line nb
+LineNb=Line no.
 IncotermLabel=Incoterms
 # Week day
 Monday=Monday

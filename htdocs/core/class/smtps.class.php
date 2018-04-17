@@ -647,7 +647,7 @@ class SMTPs
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
@@ -655,7 +655,7 @@ class SMTPs
 		if ( ! empty ($_strConfigPath) )
 		{
 			// If the path is not valid, this will NOT generate an error,
-			// it will simply return FALSE.
+			// it will simply return false.
 			if ( ! @include ( $_strConfigPath ) )
 			{
 				$this->_setErr(110, '"' . $_strConfigPath . '" is not a valid path.');
@@ -1756,7 +1756,7 @@ class SMTPs
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 

@@ -107,7 +107,7 @@ if ($id > 0)
 			print $form->showphoto('memberphoto', $object, 64);
 			print '</td></tr>'."\n";
 		}
-		//  foreach($objecto->attribute_label as $key=>$value){
+		//  foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$value){
 		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
 		//  }
 

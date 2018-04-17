@@ -961,7 +961,7 @@ class Societe extends CommonObject
 			$sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
 			if (isset($this->stcomm_id))
 			{
-				$sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? $this->stcomm_id : "0");
+				$sql .= ",fk_stcomm=".(!empty($this->stcomm_id)  ? $this->stcomm_id : "0");
 			}
 			$sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
@@ -1056,23 +1056,15 @@ class Societe extends CommonObject
 
 				$action='update';
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$hookmanager->initHooks(array('thirdpartydao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error && $call_trigger)
 				{
@@ -1980,6 +1972,13 @@ class Societe extends CommonObject
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$name=$this->name?$this->name:$this->nom;
+		
+		if(!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
+
+             if(empty($option) && $this->client > 0) $option = 'customer';
+             if(empty($option) && $this->fournisseur > 0) $option = 'supplier';
+         }
+
 
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
@@ -2407,7 +2406,7 @@ class Societe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				if ($mode == 'email') $contact_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
+				if ($mode == 'email') $contact_property = dol_string_nospecial(dolGetFirstLastname($obj->firstname, $obj->lastname), ' ', array(","))." <".$obj->email.">";
 				else if ($mode == 'mobile') $contact_property = $obj->phone_mobile;
 			}
 			return $contact_property;

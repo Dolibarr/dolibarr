@@ -14,5 +14,4 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_rowid_track_id (rowid, track_id);
-ALTER TABLE llx_ticketsup ADD INDEX id_ticketsup_track_id (track_id);
+ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_track_id (track_id);

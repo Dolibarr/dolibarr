@@ -334,10 +334,10 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$key = $obj->fk_soc;
 			} else {
-				$key = NULL;
+				$key = null;
 			}
 		} else {
-			$key = NULL;
+			$key = null;
 		}
 
 		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');

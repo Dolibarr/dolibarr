@@ -838,6 +838,8 @@ if (empty($reshook))
 				$object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
 			}
 			$action = '';
+			header("Location: ".$_SERVER["PHP_SELF"]."?id=".$object->id);
+			exit;
 		}
 		else
 		{
@@ -955,32 +957,19 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('supplierorderdao'));
-			$parameters=array('id'=>$object->id);
-
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
-
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
+				if ($result < 0)
 				{
-					$result=$object->insertExtraFields('ORDER_SUPPLIER_MODIFY');
-
-					if ($result < 0)
-					{
-						$error++;
-					}
-
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 		}
-		else
-		{
+
+		if ($error)
 			$action = 'edit_extras';
-		}
 	}
 
 	/*
@@ -1359,6 +1348,8 @@ if ($action=='create')
 
 	dol_htmloutput_events();
 
+	$currency_code = $conf->currency;
+
 	$societe='';
 	if ($socid>0)
 	{
@@ -1618,7 +1609,7 @@ if ($action=='create')
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -2217,6 +2208,7 @@ elseif (! empty($object->id))
 			// modified by hook
 			if (empty($reshook))
 			{
+				$object->fetchObjectLinked();		// Links are used to show or not button, so we load them now.
 
 				// Validate
 				if ($object->statut == 0 && $num > 0)
@@ -2345,11 +2337,11 @@ elseif (! empty($object->id))
 				// Ship
 				if (! empty($conf->stock->enabled) && ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER))
 				{
-					if (in_array($object->statut, array(3,4))) {
+					if (in_array($object->statut, array(3,4,5))) {
 						if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->receptionner) {
-							print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/dispatch.php?id=' . $object->id . '">' . $langs->trans('OrderDispatch') . '</a></div>';
+							print '<div class="inline-block divButAction"><a class="butAction" href="' . DOL_URL_ROOT . '/fourn/commande/dispatch.php?id=' . $object->id . '">' . $langs->trans('ReceiveProducts') . '</a></div>';
 						} else {
-							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('OrderDispatch') . '</a></div>';
+							print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="' . dol_escape_htmltag($langs->trans("NotAllowed")) . '">' . $langs->trans('ReceiveProducts') . '</a></div>';
 						}
 					}
 				}

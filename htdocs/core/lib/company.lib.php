@@ -724,17 +724,17 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
     {
         $langs->load("projects");
 
-        $buttoncreate='';
+        $newcardbutton='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
         {
-            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
-			if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($langs->trans("AddProject"),'filenew');
-			$buttoncreate.='</a>'."\n";
+            //$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
+			if (empty($conf->dol_optimize_smallscreen)) $newcardbutton.=' '.img_picto($langs->trans("AddProject"),'filenew');
+			$newcardbutton.='</a>'."\n";
         }
 
         print "\n";
-        print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $buttoncreate.$morehtmlright, '');
+        print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton.$morehtmlright, '');
         print '<div class="div-table-responsive">';
         print "\n".'<table class="noborder" width=100%>';
 
@@ -921,18 +921,18 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $contactstatic->fields = dol_sort_array($contactstatic->fields, 'position');
     $arrayfields = dol_sort_array($arrayfields, 'position');
 
-    $buttoncreate='';
+    $newcardbutton='';
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
-		$buttoncreate.='</a>'."\n";
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
+		$newcardbutton.='</a>'."\n";
     }
 
     print "\n";
 
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
-    print load_fiche_titre($title, $buttoncreate,'');
+    print load_fiche_titre($title, $newcardbutton,'');
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -953,6 +953,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_name != '')   $param.='&search_name='.urlencode($search_name);
     if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
     // Add $param from extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
     $sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.skype, t.statut, t.photo,";
@@ -963,6 +964,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
     if ($search_name) $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
     // Add where from extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
     if ($sortfield == "t.name") $sql.=" ORDER BY t.lastname $sortorder, t.firstname $sortorder";
     else $sql.= " ORDER BY $sortfield $sortorder";
@@ -991,6 +993,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	}
     }
     // Extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
     // Fields from hook
@@ -1017,6 +1020,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
     }
     // Extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
     // Hook fields
     $parameters=array('arrayfields'=>$arrayfields);
@@ -1110,7 +1114,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             }
 
             // Extra fields
-            $extrafieldsobjectkey='socpeople';
+            $extrafieldsobjectkey=$contactstatic->table_element;
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
             // Actions
@@ -1171,14 +1175,14 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	$addressstatic = new Address($db);
 	$num = $addressstatic->fetch_lines($object->id);
 
-	$buttoncreate='';
+	$newcardbutton='';
 	if ($user->rights->societe->creer)
 	{
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress").' '.img_picto($langs->trans("AddAddress"),'filenew').'</a>'."\n";
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress").' '.img_picto($langs->trans("AddAddress"),'filenew').'</a>'."\n";
 	}
 
 	print "\n";
-	print load_fiche_titre($langs->trans("AddressesForCompany"),$buttoncreate,'');
+	print load_fiche_titre($langs->trans("AddressesForCompany"),$newcardbutton,'');
 
 	print "\n".'<table class="noborder" width="100%">'."\n";
 

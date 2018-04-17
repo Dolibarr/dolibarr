@@ -63,7 +63,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-		
+
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
 
@@ -1086,7 +1086,16 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
+		    $carac_emetteur='';
+		    // Add internal contact of proposal if defined
+		    $arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+		    if (count($arrayidcontact) > 0)
+		    {
+		        $object->fetch_user($arrayidcontact[0]);
+		        $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+		    }
+
+		    $carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42;

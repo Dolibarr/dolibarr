@@ -164,20 +164,13 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	        // Actions on extra fields (by external module or standard code)
-	        // TODO le hook fait double emploi avec le trigger !!
-	        $hookmanager->initHooks(array('expeditiondao'));
-	        $parameters = array('id' => $object->id);
-	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	        if (empty($reshook)) {
-	            $result = $object->insertExtraFields('SHIPMENT_MODIFY');
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-	        } else if ($reshook < 0)
-	            $error++;
+	        // Actions on extra fields
+            $result = $object->insertExtraFields('SHIPMENT_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 	    }
 
 	    if ($error)
@@ -1066,7 +1059,7 @@ if ($action == 'create')
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
-			if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+			if (empty($reshook)) {
 				// copy from order
 				$orderExtrafields = new Extrafields($db);
 				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);

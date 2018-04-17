@@ -153,7 +153,11 @@ if ($result)
 
 	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create">'.$langs->trans('MenuNewVariousPayment').'</a>';
+	$newcardbutton='';
+	if ($user->rights->banque->modifier)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create">'.$langs->trans('MenuNewVariousPayment').'</a>';
+	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 

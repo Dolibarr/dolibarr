@@ -8,6 +8,7 @@ English Dolibarr ChangeLog
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Remove old deprecated hook 'insertExtraFields'. Triggers must be used for action on CRUD events.
 * Hook 'maildao' was renamed into 'mail' into the method sendfile that send emails, and method was renamed from
   'doaction' into 'sendMail'. 
 * Rename trigger CONTRACT_SERVICE_ACTIVATE into LINECONTRACT_ACTIVATE and

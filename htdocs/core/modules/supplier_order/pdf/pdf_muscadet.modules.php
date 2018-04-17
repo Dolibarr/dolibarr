@@ -1210,8 +1210,17 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		if ($showaddress)
 		{
-			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
+		    // Sender properties
+		    $carac_emetteur='';
+		    // Add internal contact of proposal if defined
+		    $arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+		    if (count($arrayidcontact) > 0)
+		    {
+		        $object->fetch_user($arrayidcontact[0]);
+		        $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+		    }
+
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42;

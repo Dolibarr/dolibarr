@@ -838,8 +838,8 @@ class SupplierProposal extends CommonObject
         $sql.= ", '".$this->db->escape($this->note_private)."'";
         $sql.= ", '".$this->db->escape($this->note_public)."'";
         $sql.= ", '".$this->db->escape($this->modelpdf)."'";
-        $sql.= ", ".$this->cond_reglement_id;
-        $sql.= ", ".$this->mode_reglement_id;
+        $sql.= ", ".($this->cond_reglement_id > 0 ? $this->cond_reglement_id : 'NULL');
+        $sql.= ", ".($this->mode_reglement_id > 0 ? $this->mode_reglement_id : 'NULL');
         $sql.= ", ".($this->fk_account>0?$this->fk_account:'NULL');
         $sql.= ", ".($this->date_livraison!=''?"'".$this->db->idate($this->date_livraison)."'":"null");
         $sql.= ", ".($this->shipping_method_id>0?$this->shipping_method_id:'NULL');
@@ -960,24 +960,17 @@ class SupplierProposal extends CommonObject
                     {
                     	$action='update';
 
-                    	// Actions on extra fields (by external module or standard code)
-                    	$hookmanager->initHooks(array('supplier_proposaldao'));
-                    	$parameters=array('socid'=>$this->id);
-                    	$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                    	if (empty($reshook))
-                    	{
-                    		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-                    		{
-                    			$result=$this->insertExtraFields();
-                    			if ($result < 0)
-                    			{
-                    				$error++;
-                    			}
-                    		}
+                    	// Actions on extra fields
+                   		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                   		{
+                   			$result=$this->insertExtraFields();
+                   			if ($result < 0)
+                   			{
+                   				$error++;
+                   			}
                     	}
-                    	else if ($reshook < 0) $error++;
 
-                        if (! $notrigger)
+                        if (! $erro && ! $notrigger)
                         {
                             // Call trigger
                             $result=$this->call_trigger('PROPAL_SUPPLIER_CREATE',$user);
@@ -2885,7 +2878,7 @@ class SupplierProposalLine extends CommonObjectLine
             	}
             }
 
-            if (! $notrigger)
+            if (! $error && ! $notrigger)
             {
                 // Call trigger
                 $result=$this->call_trigger('LINESUPPLIER_PROPOSAL_INSERT',$user);
@@ -3061,7 +3054,7 @@ class SupplierProposalLine extends CommonObjectLine
         		}
         	}
 
-            if (! $notrigger)
+            if (! $error && ! $notrigger)
             {
                 // Call trigger
                 $result=$this->call_trigger('LINESUPPLIER_PROPOSAL_UPDATE',$user);

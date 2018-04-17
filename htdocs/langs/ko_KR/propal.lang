@@ -33,6 +33,7 @@ PropalStatusSigned=Signed (needs billing)
 PropalStatusNotSigned=Not signed (closed)
 PropalStatusBilled=Billed
 PropalStatusDraftShort=초안
+PropalStatusValidatedShort=확인 함
 PropalStatusClosedShort=닫은
 PropalStatusSignedShort=Signed
 PropalStatusNotSignedShort=Not signed

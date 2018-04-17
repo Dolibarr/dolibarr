@@ -280,7 +280,7 @@ function backup_tables($outputfile, $tables='*')
 
     //cycle through
     $handle = fopen($outputfile, 'w+');
-    if (fwrite($handle, '') === FALSE)
+    if (fwrite($handle, '') === false)
     {
         $langs->load("errors");
         dol_syslog("Failed to open file ".$outputfile,LOG_ERR);

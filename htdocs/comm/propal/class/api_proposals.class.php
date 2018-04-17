@@ -176,7 +176,7 @@ class Proposals extends DolibarrApi
 	 * @param   array   $request_data   Request data
 	 * @return  int     ID of proposal
 	 */
-	function post($request_data = NULL)
+	function post($request_data = null)
 	{
 	  if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -241,7 +241,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return int
 	 */
-	function postLine($id, $request_data = NULL)
+	function postLine($id, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
@@ -307,7 +307,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return object
 	 */
-	function putLine($id, $lineid, $request_data = NULL)
+	function putLine($id, $lineid, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->propal->creer) {
 			throw new RestException(401);
@@ -410,7 +410,7 @@ class Proposals extends DolibarrApi
 	 *
 	 * @return int
 	 */
-	function put($id, $request_data = NULL) {
+	function put($id, $request_data = null) {
 	  if(! DolibarrApiAccess::$user->rights->propal->creer) {
 		  	throw new RestException(401);
 		  }

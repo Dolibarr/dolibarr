@@ -5335,7 +5335,8 @@ class Form
 		$sql = "SELECT t.rowid, ".$fieldstoshow." FROM ".MAIN_DB_PREFIX .$objecttmp->table_element." as t";
 		if ($objecttmp->ismultientitymanaged == 2)
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE t.entity IN (".getEntity($objecttmp->table_element).")";
+		$sql.= " WHERE 1=1";
+		if(! empty($objecttmp->ismultientitymanaged)) $sql.= " AND t.entity IN (".getEntity($objecttmp->table_element).")";
 		if ($objecttmp->ismultientitymanaged == 1 && ! empty($user->societe_id))
 		{
 			if ($objecttmp->element == 'societe') $sql.= " AND t.rowid = ".$user->societe_id;
@@ -5907,7 +5908,7 @@ class Form
             </a>
             <input type="hidden" class="'.$htmlname.'" name="'.$htmlname.'" value="'.$listcheckedstring.'">
             </dt>
-            <dd class="dropowndd">
+            <dd class="dropdowndd">
                 <div class="multiselectcheckbox'.$htmlname.'">
                     <ul class="ul'.$htmlname.'">
                     '.$lis.'
@@ -6031,13 +6032,13 @@ class Form
 			foreach($object->linkedObjects as $objecttype => $objects)
 			{
 				$tplpath = $element = $subelement = $objecttype;
-                
+
 				// to display inport button on tpl
 				$showImportButton=false;
 				if(!empty($compatibleImportElementsList) && in_array($element,$compatibleImportElementsList)){
 				    $showImportButton=true;
 				}
-				
+
 				if ($objecttype != 'supplier_proposal' && preg_match('/^([^_]+)_([^_]+)/i',$objecttype,$regs))
 				{
 					$element = $regs[1];
@@ -6097,7 +6098,7 @@ class Form
 						global $noMoreLinkedObjectBlockAfter;
 						$noMoreLinkedObjectBlockAfter=1;
 					}
-					
+
 					$res=@include dol_buildpath($reldir.'/'.$tplname.'.tpl.php');
 					if ($res)
 					{
@@ -6113,13 +6114,13 @@ class Form
 			}
 
 			print '</table>';
-			
+
 			if(!empty($compatibleImportElementsList))
 			{
 			    $res=@include dol_buildpath('core/tpl/ajax/objectlinked_lineimport.tpl.php');
 			}
-			
-			
+
+
 			print '</div>';
 
 			return $nbofdifferenttypes;

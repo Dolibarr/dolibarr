@@ -188,7 +188,7 @@ class Interventions extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of intervention
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -249,7 +249,7 @@ class Interventions extends DolibarrApi
      *
      * @return  int
      */
-    function postLine($id, $request_data = NULL)
+    function postLine($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->ficheinter->creer) {
                           throw new RestException(401, "Insuffisant rights");

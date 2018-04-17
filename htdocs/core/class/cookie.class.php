@@ -50,7 +50,7 @@ class DolCookie
 	 */
 	function __construct($key = '')
 	{
-		$this->_myKey = hash('sha256', $key, TRUE);
+		$this->_myKey = hash('sha256', $key, true);
 		$this->_iv = md5(md5($this->_myKey));
 		$this->cookie = "";
 		$this->myCookie = "";

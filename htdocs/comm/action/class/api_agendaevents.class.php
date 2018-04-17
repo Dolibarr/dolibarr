@@ -187,7 +187,7 @@ class AgendaEvents extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int                     ID of Agenda Event
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
 			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
@@ -226,7 +226,7 @@ class AgendaEvents extends DolibarrApi
      * @return int
      */
     /*
-    function put($id, $request_data = NULL) {
+    function put($id, $request_data = null) {
       if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
 			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
 		  }

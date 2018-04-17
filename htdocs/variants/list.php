@@ -18,7 +18,7 @@
 require '../main.inc.php';
 require DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-$id = GETPOST('id');
+$id = GETPOST('id','int');
 $action = GETPOST('action','aZ09');
 $object = new ProductAttribute($db);
 
@@ -57,9 +57,12 @@ $variants = $object->fetchAll();
 
 llxHeader('', $title);
 
-$buttonadd='<a href="create.php" class="butAction">'.$langs->trans('Create').'</a>';
-
-print load_fiche_titre($title, $buttonadd);
+$newcardbutton='';
+if ($user->rights->produit->creer)
+{
+	$newcardbutton='<a href="create.php" class="butActionNew">'.$langs->trans('Create').'</a>';
+}
+print load_fiche_titre($title, $newcardbutton, 'title_products');
 
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 ?>

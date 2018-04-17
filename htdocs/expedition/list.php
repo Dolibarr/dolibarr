@@ -268,7 +268,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->expedition->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2">'.$langs->trans('NewSending').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2">'.$langs->trans('NewSending').'</a>';
 	}
 
 	$i = 0;

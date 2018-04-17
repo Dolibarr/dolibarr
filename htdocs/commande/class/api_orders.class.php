@@ -179,7 +179,7 @@ class Orders extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of order
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -245,7 +245,7 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function postLine($id, $request_data = NULL) {
+    function postLine($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
@@ -308,7 +308,7 @@ class Orders extends DolibarrApi
      *
      * @return object
      */
-    function putLine($id, $lineid, $request_data = NULL) {
+    function putLine($id, $lineid, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }
@@ -402,7 +402,7 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = NULL) {
+    function put($id, $request_data = null) {
       if (! DolibarrApiAccess::$user->rights->commande->creer) {
 		  	throw new RestException(401);
 		  }

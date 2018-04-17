@@ -244,7 +244,7 @@ class CdavLib
 	 *
 	 * @param int	 	$calendarId			Calendar id
 	 * @param int		$bCalendarData		Add calendar data
-	 * @return array|string[][]|unknown[][]|NULL[][]
+	 * @return array|string[][]
 	 */
 	public function getFullCalendarObjects($calendarId, $bCalendarData)
 	{

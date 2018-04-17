@@ -268,8 +268,9 @@ class CompanyPaymentMode extends CommonObject
 	 */
 	public function fetch($id, $ref = null, $socid = 0, $type = '')
 	{
-		if ($socid) $sql.= " AND fk_soc  = ".$this->db->escape($socid)." AND default_rib = 1";
-		if ($type)  $sql.= " AND type = '".$this->db->escape($type)."'";
+		$morewhere = '';
+		if ($socid) $morewhere.= " AND fk_soc  = ".$this->db->escape($socid)." AND default_rib = 1";
+		if ($type)  $morewhere.= " AND type = '".$this->db->escape($type)."'";
 
 		$result = $this->fetchCommon($id, $ref, $morewhere);
 		if ($result > 0 && ! empty($this->table_element_line)) $this->fetchLines();

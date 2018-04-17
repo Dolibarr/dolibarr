@@ -140,7 +140,7 @@ class FormTicketsup
 
         print "\n<!-- Begin form TICKETSUP -->\n";
 
-        print '<form method="post" name="ticketsup" id="form_create_ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
+        print '<form method="POST" style="margin-bottom: 30px;" name="ticketsup" id="form_create_ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="' . $this->action . '">';
         foreach ($this->param as $key => $value) {
@@ -148,8 +148,8 @@ class FormTicketsup
         }
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
-        print '<div class="tabBar tabBarWithBottom">';
-        print '<table class="border"  width="' . $width . '">';
+        print '<div class="">';
+        print '<table class="tableticket"  width="' . $width . '">';
 
 
         if ($this->withref) {
@@ -385,11 +385,10 @@ class FormTicketsup
         }
 
         // Other attributes
-        if ($this->withextrafields == 1) {
-            $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
-            if (empty($reshook) && !empty($extrafields->attribute_label)) {
-                print $ticketstat->showOptionals($extrafields, 'edit');
-            }
+        $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $ticketstat, $action); // Note that $action and $object may have been modified by hook
+        if (empty($reshook))
+        {
+            print $ticketstat->showOptionals($extrafields, 'edit');
         }
 
         print '</table>';

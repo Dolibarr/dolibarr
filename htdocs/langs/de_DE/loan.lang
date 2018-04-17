@@ -50,4 +50,6 @@ ConfigLoan=Konfiguration des Modul Kredite
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard-Buchhaltungskonto Kapital
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard-Buchhaltungskonto Zinsen
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard-Buchhaltungskonto Versicherung
-CreateCalcSchedule=Fälligkeit des Darlehens erstellen/bearbeiten
+FinancialCommitment=Financial commitment
+CreateCalcSchedule=Edit financial commitment
+InterestAmount=Interest amount

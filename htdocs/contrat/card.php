@@ -46,12 +46,7 @@ if (! empty($conf->projet->enabled)) {
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
-$langs->load("contracts");
-$langs->load("orders");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load('compta');
+$langs->loadLangs(array("contracts","orders","companies","bills","products",'compta'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
@@ -1287,7 +1282,7 @@ if ($action == 'create')
 	print $hookmanager->resPrint;
 
 	// Other attributes
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -1781,7 +1776,7 @@ else
 					print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 					print '</td>';
 					print '</tr>';
-					
+
 					$colspan=6;
 					if (! empty($conf->margin->enabled) && ! empty($conf->global->MARGIN_SHOW_ON_CONTRACT)) $colspan++;
 					if($conf->global->PRODUCT_USE_UNITS) $colspan++;
