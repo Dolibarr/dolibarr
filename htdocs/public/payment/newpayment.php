@@ -399,7 +399,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
 
-if (GETPOST("paymenttoken",'alpha') && NULL!==GETPOST("paymenttoken",'alpha'))
+if (GETPOST("paymenttoken",'alpha') && null!==GETPOST("paymenttoken",'alpha'))
 {
         $stripeSource = GETPOST("token",'alpha');
         }else{
@@ -3728,7 +3728,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
   
-  if (NULL !== GETPOST("token",'alpha')){
+  if (null !== GETPOST("token",'alpha')){
   $stripeSource = GETPOST("token",'alpha');
   }else{
   $stripeSource = GETPOST("stripeSource",'alpha');
