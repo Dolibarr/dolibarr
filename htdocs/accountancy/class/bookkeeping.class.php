@@ -246,9 +246,6 @@ class BookKeeping extends CommonObject
 				}
 
 				$now = dol_now();
-				if (empty($this->date_create)) {
-					$this->date_create = $now;
-				}
 
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
 				$sql .= "doc_date";
@@ -291,7 +288,7 @@ class BookKeeping extends CommonObject
 				$sql .= "," . $this->montant;
 				$sql .= ",'" . $this->db->escape($this->sens) . "'";
 				$sql .= ",'" . $this->db->escape($this->fk_user_author) . "'";
-				$sql .= ",'" . $this->db->idate($this->date_create). "'";
+				$sql .= ",'" . $this->db->idate($now). "'";
 				$sql .= ",'" . $this->db->escape($this->code_journal) . "'";
 				$sql .= ",'" . $this->db->escape($this->journal_label) . "'";
 				$sql .= "," . $this->db->escape($this->piece_num);
@@ -496,9 +493,6 @@ class BookKeeping extends CommonObject
 		$this->credit = price2num($this->credit, 'MT');
 
 		$now = dol_now();
-		if (empty($this->date_create)) {
-		    $this->date_create = $now;
-		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -545,7 +539,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : $this->montant ). ',';
 		$sql .= ' ' . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ',';
 		$sql .= ' ' . $user->id . ',';
-		$sql .= ' ' . "'" . $this->db->idate($this->date_create) . "',";
+		$sql .= ' ' . "'" . $this->db->idate($now) . "',";
 		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
 		$sql .= ' ' . (empty($this->journal_label) ? 'NULL' : "'" . $this->db->escape($this->journal_label) . "'") . ',';
 		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
