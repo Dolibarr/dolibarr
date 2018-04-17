@@ -3090,7 +3090,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'filter', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'bank', 'close_title', 'delete', 'edit', 'filter', 'grip', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'switch_off', 'switch_on', 'unlink', 'uparrow')
 			)) {
 			$fakey = $pictowithoutext;
@@ -3132,7 +3132,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'filter') {
 				$fakey = 'fa-'.$pictowithoutext;
 			}
-			elseif ($pictowithoutext == 'grip_title') {
+			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
 				$fakey = 'fa-arrows';
 			}
 			elseif ($pictowithoutext == 'printer') {
