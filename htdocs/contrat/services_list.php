@@ -525,7 +525,9 @@ print "</tr>\n";
 $contractstatic=new Contrat($db);
 $productstatic=new Product($db);
 
-$var=True; $i=0;
+$var=true;
+$i=0;
+$totalarray=array();
 while ($i < min($num,$limit))
 {
 	$obj = $db->fetch_object($resql);
@@ -542,6 +544,7 @@ while ($i < min($num,$limit))
 		print '<td>';
 		print $contractstatic->getNomUrl(1,16);
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// Service
 	if (! empty($arrayfields['p.description']['checked']))
@@ -563,6 +566,7 @@ while ($i < min($num,$limit))
 			if ($obj->type == 1) print img_object($obj->description,'service').' '.dol_trunc($obj->description,24);
 		}
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
 	if (! empty($arrayfields['cd.qty']['checked']))
@@ -570,30 +574,45 @@ while ($i < min($num,$limit))
 		print '<td>';
 		print $obj->qty;
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['cd.total_ht']['checked']))
 	{
-		print '<td>';
+		print '<td align="right">';
 		print price($obj->total_ht);
 		print '</td>';
-	}
+		$totalarray['totalht'] += $obj->total_ht;
+        if (! $i) {
+            $totalarray['displaytotalline']++;
+            $totalarray['nbfield']++;
+            $totalarray['totalhtfield']=$totalarray['nbfield'];
+        }
+    }
 	if (! empty($arrayfields['cd.total_tva']['checked']))
 	{
-		print '<td>';
+		print '<td align="right">';
 		print price($obj->total_tva);
 		print '</td>';
-	}
+        $totalarray['totalvat'] += $obj->total_tva;
+        if (! $i) {
+            $totalarray['nbfield']++;
+            $totalarray['totalvatfield']=$totalarray['nbfield'];
+            $totalarray['displaytotalline']++;
+        }
+    }
 	if (! empty($arrayfields['cd.tva_tx']['checked']))
 	{
-		print '<td>';
+		print '<td align="right">';
 		print price2num($obj->tva_tx).'%';
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['cd.subprice']['checked']))
 	{
-		print '<td>';
+		print '<td align="right">';
 		print price($obj->subprice);
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
 
@@ -606,6 +625,7 @@ while ($i < min($num,$limit))
 		$companystatic->client=1;
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Start date
@@ -617,10 +637,12 @@ while ($i < min($num,$limit))
 		print ' '.img_picto($langs->trans("Late"),"warning");
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['cd.date_ouverture']['checked']))
 	{
 		print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture)):'&nbsp;').'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	// End date
 	if (! empty($arrayfields['cd.date_fin_validite']['checked']))
@@ -634,10 +656,12 @@ while ($i < min($num,$limit))
 		}
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
 		print '</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['cd.date_cloture']['checked']))
 	{
 		print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture)).'</td>';
+        if (! $i) $totalarray['nbfield']++;
 	}
 
 	// Extra fields
@@ -675,6 +699,7 @@ while ($i < min($num,$limit))
 		   print $staticcontratligne->LibStatut($obj->statut,5,($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < $now)?1:0);
 	   }
 	   print '</td>';
+       if (! $i) $totalarray['nbfield']++;
 	}
 	// Action column
 	print '<td class="nowrap" align="center">';
@@ -690,6 +715,25 @@ while ($i < min($num,$limit))
 	print "</tr>\n";
 	$i++;
 }
+
+// Show total line
+if (isset($totalarray['displaytotalline'])) {
+	print '<tr class="liste_total">';
+	$i=0;
+	while ($i < $totalarray['nbfield']) {
+		$i++;
+		if ($i == 1) {
+			if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
+			else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
+		}
+		elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
+		elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+		elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+		else print '<td></td>';
+	}
+	print '</tr>';
+}
+
 $db->free($resql);
 
 $parameters=array('sql' => $sql);
