@@ -17,3 +17,4 @@ AmortizationPaymentDesc=The <a href="#amortization">amortisation</a> calculates 
 AmortizationMonthlyPaymentOverYears=Amortisation For Monthly Payment: <b>%s</b> over %s years\n
 MonthlyPayment=Monthly Repayment\n
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to calculate the monthly repayments of a loan, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is offered as an initial deposit. Also taken into consideration are any local property taxes, and their effect on the total monthly mortgage repayment.<br>\n
+CreateCalcSchedule=Edit financial commitment

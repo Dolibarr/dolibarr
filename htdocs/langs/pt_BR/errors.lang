@@ -4,7 +4,6 @@ ErrorButCommitIsDone=Erros foram encontrados mas, apesar disso, validamos
 ErrorBadEMail=O e-mail %s está errado
 ErrorBadUrl=O URL %s está errado
 ErrorBadValueForParamNotAString=Valor ruim para o seu parâmetro por falta, possivelmente, de tradução.
-ErrorLoginAlreadyExists=O login %s já existe.
 ErrorRecordNotFound=Registro não encontrado.
 ErrorFailToCopyFile=Houve uma falha ao copiar o arquivo '<b>%s</b>' para '<b>%s</b>'.
 ErrorFailToRenameFile=Houve uma falha ao renomear o arquivo '<b>%s</b>' para '<b>%s</b>'.

@@ -78,6 +78,7 @@ ResultOfMailSending=Sende-Ergebnis der E-Mail-Kampagne
 NbSelected=Anz. gewählte
 NbIgnored=Anz. ignoriert
 NbSent=Anz. gesendet
+SentXXXmessages=%s message(s) sent.
 ConfirmUnvalidateEmailing=Möchten Sie die eMail-Kampange <b>%s</b> in den Entwurf Status wechseln?
 MailingModuleDescContactsWithThirdpartyFilter=Kontakt mit Kunden Filter
 MailingModuleDescContactsByCompanyCategory=Kontakte mit Partner Kategorie
@@ -87,7 +88,7 @@ MailingModuleDescEmailsFromFile=E-Mailadressen aus Datei
 MailingModuleDescEmailsFromUser=E-Mailadressen Eingabe durch Benutzer
 MailingModuleDescDolibarrUsers=Benutzer mit E-Mailadresse
 MailingModuleDescThirdPartiesByCategories=Partner (nach Kategorien)
-SendingFromWebInterfaceIsNotAllowed=Sending from web interface is not allowed.
+SendingFromWebInterfaceIsNotAllowed=Versand vom Webinterface ist nicht erlaubt
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Zeile %s in der Datei
@@ -135,7 +136,7 @@ NbOfTargetedContacts=Aktuelle Anzahl der E-Mails-Kontakte
 UseFormatFileEmailToTarget=Importierte Datei muss das Format\n<strong>email;name;firstname;other</strong> haben
 UseFormatInputEmailToTarget=Geben Sie eine Zeichenkette in dem Format <strong>email, name, firstname, other</strong> ein
 MailAdvTargetRecipients=Empfänger (Erweitere Selektion)
-AdvTgtTitle=Füllen Sie die Eingabefelder zur Vorauswahl der Partner- oder  Kontakt- / Adressen - Empänger
+AdvTgtTitle=Fill input fields to preselect the third parties or contacts/addresses to target
 AdvTgtSearchTextHelp=Tipps für die Suche:  <br>- x<b>%%</b> , um alle Wörter zu suchen, mit x beginnen, Frankreich  <b>-</b> als Trennzeichen  von Werten gesucht, Frankreich <b>-</b> ausschließen würdig <br> Beispiel: <b> jean;joe;jim%%;!jimo;!jima% </b>  werden alle Ergebnisse angezeigt werden <i> jean </i> und  <i> joe </i>,, die mit  <i> jim </i> beginnen mit Ausnahme von <i> jimo </i>  und  <i> jima </i>.
 AdvTgtSearchIntHelp=Intervall verwenden um eine Integer oder Fliesskommazahl auszuwählen
 AdvTgtMinVal=Mindestwert
