@@ -323,10 +323,21 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
             }
 
             print '</td>';
-            print $htmllogobar;
-            $htmllogobar = '';
             print '</tr>';
         }
+        // Supplier code
+        if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+        	print '<tr><td class="titlefield">';
+        	print $langs->trans('SupplierCode') . '</td><td>';
+        	print $socstat->code_fournisseur;
+        	if ($socstat->check_codefournisseur() != 0) {
+        		print ' <font class="error">(' . $langs->trans("WrongSupplierCode") . ')</font>';
+        	}
+
+        	print '</td>';
+        	print '</tr>';
+        }
+
         print '</table>';
         print '</div>';
         dol_fiche_end();
