@@ -729,7 +729,7 @@ class ExtraFields
 	{
 		global $conf;
 
-		if (empty($elementtype) ) return array();
+		if (empty($elementtype)) return array();
 
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
@@ -832,16 +832,17 @@ class ExtraFields
 	 * Return HTML string to put an input field into a page
 	 * Code very similar with showInputField of common object
 	 *
-	 * @param  string  $key            Key of attribute
-	 * @param  string  $value          Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
-	 * @param  string  $moreparam      To add more parametes on html input tag
-	 * @param  string  $keysuffix      Prefix string to add after name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $keyprefix      Suffix string to add before name and id of field (can be used to avoid duplicate names)
-	 * @param  string  $morecss        More css (to defined size of field. Old behaviour: may also be a numeric)
-	 * @param  int     $objectid       Current object id
+	 * @param  string  $key            			Key of attribute
+	 * @param  string  $value          			Preselected value to show (for date type it must be in timestamp format, for amount or price it must be a php numeric value)
+	 * @param  string  $moreparam      			To add more parametes on html input tag
+	 * @param  string  $keysuffix      			Prefix string to add after name and id of field (can be used to avoid duplicate names)
+	 * @param  string  $keyprefix      			Suffix string to add before name and id of field (can be used to avoid duplicate names)
+	 * @param  string  $morecss        			More css (to defined size of field. Old behaviour: may also be a numeric)
+	 * @param  int     $objectid       			Current object id
+	 * @param  string  $extrafieldsobjectkey	If defined (for example $object->table_element), use the new method to get extrafields data
 	 * @return string
 	 */
-	function showInputField($key, $value, $moreparam='', $keysuffix='', $keyprefix='', $morecss='', $objectid=0)
+	function showInputField($key, $value, $moreparam='', $keysuffix='', $keyprefix='', $morecss='', $objectid=0, $extrafieldsobjectkey='')
 	{
 		global $conf,$langs,$form;
 
@@ -855,18 +856,36 @@ class ExtraFields
 
 		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
 
-		$label=$this->attribute_label[$key];
-		$type =$this->attribute_type[$key];
-		$size =$this->attribute_size[$key];
-		$elementtype=$this->attribute_elementtype[$key];	// Seems not used
-		$default=$this->attribute_default[$key];
-		$computed=$this->attribute_computed[$key];
-		$unique=$this->attribute_unique[$key];
-		$required=$this->attribute_required[$key];
-		$param=$this->attribute_param[$key];
-		$langfile=$this->attribute_langfile[$key];
-		$list=$this->attribute_list[$key];
-		$hidden=$this->attribute_hidden[$key];
+		if (! empty($extrafieldsobjectkey))
+		{
+			$label=$this->attributes[$extrafieldsobjectkey]['label'][$key];
+			$type=$this->attributes[$extrafieldsobjectkey]['type'][$key];
+			$size=$this->attributes[$extrafieldsobjectkey]['size'][$key];
+			$default=$this->attributes[$extrafieldsobjectkey]['default'][$key];
+			$computed=$this->attributes[$extrafieldsobjectkey]['computed'][$key];
+			$unique=$this->attributes[$extrafieldsobjectkey]['unique'][$key];
+			$required=$this->attributes[$extrafieldsobjectkey]['required'][$key];
+			$param=$this->attributes[$extrafieldsobjectkey]['param'][$key];
+			$perms=dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
+			$langfile=$this->attributes[$extrafieldsobjectkey]['langfile'][$key];
+			$list=dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+		}
+		else	// Old usage
+		{
+			$label=$this->attribute_label[$key];
+			$type =$this->attribute_type[$key];
+			$size =$this->attribute_size[$key];
+			$elementtype=$this->attribute_elementtype[$key];	// Seems not used
+			$default=$this->attribute_default[$key];
+			$computed=$this->attribute_computed[$key];
+			$unique=$this->attribute_unique[$key];
+			$required=$this->attribute_required[$key];
+			$param=$this->attribute_param[$key];
+			$langfile=$this->attribute_langfile[$key];
+			$list=$this->attribute_list[$key];
+			$hidden=$this->attribute_hidden[$key];
+		}
 
 		if ($computed)
 		{
@@ -1008,7 +1027,10 @@ class ExtraFields
 				$out.='<option value="'.$key.'"';
 				$out.= (((string) $value == (string) $key)?' selected':'');
 				$out.= (!empty($parent)?' parent="'.$parent.'"':'');
-				$out.='>'.$val.'</option>';
+				$out.='>';
+				if ($langfile) $out.=$langs->trans($val);
+				else $out.=$val;
+				$out.='</option>';
 			}
 			$out.='</select>';
 		}
@@ -1470,7 +1492,8 @@ class ExtraFields
 		}
 		elseif ($type == 'select')
 		{
-			$value=$param['options'][$value];
+			if ($langfile) $value=$langs->trans($param['options'][$value]);
+			else $value=$param['options'][$value];
 		}
 		elseif ($type == 'sellist')
 		{
