@@ -1762,7 +1762,7 @@ class pdf_azur extends ModelePDFPropales
 	        'border-left' => false, // remove left line separator
 	    );
 	    
-	    if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE))
+	    if (! empty($conf->global->MAIN_GENERATE_PROPOSALS_WITH_PICTURE) && !empty($this->atleastonephoto))
 	    {
 	        $this->cols['photo']['status'] = true;
 	    }
