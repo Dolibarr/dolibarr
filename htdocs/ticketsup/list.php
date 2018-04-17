@@ -316,7 +316,7 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
         // Customer code
         if ($socstat->client && !empty($socstat->code_client)) {
             print '<tr><td class="titlefield">';
-            print $langs->trans('CustomerCode') . '</td><td colspan="' . (2 + (($showlogo || $showbarcode) ? 0 : 1)) . '">';
+            print $langs->trans('CustomerCode') . '</td><td>';
             print $socstat->code_client;
             if ($socstat->check_codeclient() != 0) {
                 print ' <font class="error">(' . $langs->trans("WrongCustomerCode") . ')</font>';
