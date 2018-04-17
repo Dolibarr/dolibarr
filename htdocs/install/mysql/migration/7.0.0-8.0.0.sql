@@ -122,11 +122,11 @@ ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 DELETE FROM llx_c_paiement WHERE code = '' or code = '-' or id = 0;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
-ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
+ALTER TABLE llx_c_paiement MODIFY COLUMN id INTEGER AUTO_INCREMENT PRIMARY KEY;
 
 -- Add missing keys and primary key
 ALTER TABLE llx_c_payment_term DROP INDEX uk_c_payment_term;
-ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
+ALTER TABLE llx_c_payment_term MODIFY COLUMN rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
 
 ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
@@ -279,12 +279,8 @@ INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, descrip
 INSERT INTO llx_c_ticketsup_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);
 
 
-
-
-
 ALTER TABLE llx_facturedet_rec ADD COLUMN date_start_fill integer DEFAULT 0;
 ALTER TABLE llx_facturedet_rec ADD COLUMN date_end_fill integer DEFAULT 0;
-
 
 
 CREATE TABLE llx_societe_account(
