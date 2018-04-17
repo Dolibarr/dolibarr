@@ -217,7 +217,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 				$heightforinfotot = 40;	// Height reserved to output the info and total part
 		        $heightforfreetext= (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT)?$conf->global->MAIN_PDF_FREETEXT_HEIGHT:5);	// Height reserved to output the free text on last page
-	            $heightforfooter = $this->marge_basse + 8;	// Height reserved to output the footer (value include bottom margin)
+	            $heightforfooter = $this->marge_basse + 12;	// Height reserved to output the footer (value include bottom margin)
 
                 if (class_exists('TCPDF'))
                 {
@@ -400,6 +400,8 @@ class pdf_einstein extends ModelePDFCommandes
 				        
 				        // apply note frame to last page
 				        $pdf->setPage($pageposafternote);
+				        if (! empty($tplidx)) $pdf->useTemplate($tplidx);
+				        if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 				        $height_note=$posyafter-$tab_top_newpage;
 				        $pdf->Rect($this->marge_gauche, $tab_top_newpage-1, $tab_width, $height_note+1);
 				        
