@@ -676,7 +676,7 @@ class Task extends CommonObject
 		$this->fk_statut='';
 		$this->note='This is a specimen task not';
 	}
-
+	
 	/**
 	 * Return list of tasks for all projects or for one particular project
 	 * Sort order is on project, then on position of task, and last on start date of first level task
@@ -696,11 +696,11 @@ class Task extends CommonObject
 	function getTasksArray($usert=null, $userp=null, $projectid=0, $socid=0, $mode=0, $filteronproj='', $filteronprojstatus=-1, $morewherefilter='',$filteronprojuser=0,$filterontaskuser=0)
 	{
 		global $conf;
-
+		
 		$tasks = array();
-
+		
 		//print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
-
+		
 		// List of tasks (does not care about permissions. Filtering will be done later)
 		$sql = "SELECT ";
 		if ($filteronprojuser > 0 || $filterontaskuser > 0) $sql.= " DISTINCT";		// We may get several time the same record if user has several roles on same project/task
@@ -746,7 +746,7 @@ class Task extends CommonObject
 			$sql.= " WHERE p.entity IN (".getEntity('project').")";
 		}
 		else return 'BadValueForParameterMode';
-
+		
 		if ($filteronprojuser > 0)
 		{
 			$sql.= " AND p.rowid = ec.element_id";
@@ -772,7 +772,7 @@ class Task extends CommonObject
 		if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut IN (".$filteronprojstatus.")";
 		if ($morewherefilter) $sql.=$morewherefilter;
 		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
-
+		
 		//print $sql;exit;
 		dol_syslog(get_class($this)."::getTasksArray", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -784,9 +784,9 @@ class Task extends CommonObject
 			while ($i < $num)
 			{
 				$error=0;
-
+				
 				$obj = $this->db->fetch_object($resql);
-
+				
 				if ((! $obj->public) && (is_object($userp)))	// If not public project and we ask a filter on project owned by a user
 				{
 					if (! $this->getUserRolesForProjectsOrTasks($userp, 0, $obj->projectid, 0))
@@ -801,7 +801,7 @@ class Task extends CommonObject
 						$error++;
 					}
 				}
-
+				
 				if (! $error)
 				{
 					$tasks[$i] = new Task($this->db);
@@ -823,13 +823,13 @@ class Task extends CommonObject
 					$tasks[$i]->date_start		= $this->db->jdate($obj->date_start);
 					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
 					$tasks[$i]->rang	   		= $obj->rang;
-
+					
 					$tasks[$i]->socid           = $obj->thirdparty_id;	// For backward compatibility
 					$tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
 					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
 					$tasks[$i]->thirdparty_email= $obj->thirdparty_email;
 				}
-
+				
 				$i++;
 			}
 			$this->db->free($resql);
@@ -838,7 +838,121 @@ class Task extends CommonObject
 		{
 			dol_print_error($this->db);
 		}
-
+		
+		return $tasks;
+	}
+	
+	/**
+	 * Return list of tasks for all projects or for one particular project
+	 * Sort order is on project, then on position of task, and last on start date of first level task
+	 *
+	 * @param	User	$usert				Object user to recover tasks with time already spent
+	 * @param	string	$datestart			Date start for week period
+	 * @param	string	$dateend			Date end for week period
+	 * @param	array	$TTask				Array of task to add in results
+	 * @param	string	$morewherefilter	Add more filter into where SQL request (must start with ' AND ...')
+	 * @return 	array						Array of tasks
+	 */
+	function getTasksPersonalizedArray($usert=null,$datestart=null, $dateend=null, $TTask=array(), $morewherefilter='')
+	{
+		global $conf;
+		
+		$tasks = array();
+		
+		//print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
+		
+		// List of tasks (does not care about permissions. Filtering will be done later)
+		$sql = "SELECT ";
+		if (!empty($usert)) $sql.= " DISTINCT";		// We may get several time the same record if user has several roles on same project/task
+		$sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
+		$sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
+		$sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
+		$sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name, s.email as thirdparty_email";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."projet_task as t ON p.rowid = t.fk_projet";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task_time as tt ON tt.fk_task = t.rowid";
+		
+		$sql.= " WHERE p.entity IN (".getEntity('project').")";
+		
+		if (!empty($usert)) {
+			$sql.= " AND (";
+			$sql.= " tt.fk_user = ".$usert->id;
+			$sql.= " AND tt.task_date >= '".date('Y-m-d',$datestart)."'";
+			$sql.= " AND tt.task_date < '".date('Y-m-d',$dateend)."'";
+			$sql.= " )";
+		}
+		
+		if(!empty($TTask)) $sql.=' OR t.rowid IN ('.implode(',',$TTask).')';
+		if ($morewherefilter) $sql.=$morewherefilter;
+		$sql.= " ORDER BY p.ref, t.rang, t.dateo";
+		
+		//print $sql;exit;
+		dol_syslog(get_class($this)."::getTasksArray", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			// Loop on each record found, so each couple (project id, task id)
+			while ($i < $num)
+			{
+				$error=0;
+				
+				$obj = $this->db->fetch_object($resql);
+				
+				if ((! $obj->public) && (is_object($usert)))	// If not public project and we ask a filter on project owned by a user
+				{
+					// if user not in contact task / project 
+					// AND not have global project right 
+					// AND the conf auto_add isn't enable 
+					// AND this is not a task with a previous time spent
+					if (! $this->getUserRolesForProjectsOrTasks($usert, 0, $obj->projectid, 0) 
+							&& empty($conf->global->PROJECT_TIMESHEET_AUTO_ADD_IN_CONTACT) 
+							&& empty($usert->rights->projet->all->creer) 
+							&& empty($TTask[$obj->taskid]))
+					{
+						$error++;
+					}
+				}
+				
+				if (! $error)
+				{
+					$tasks[$i] = new Task($this->db);
+					$tasks[$i]->id				= $obj->taskid;
+					$tasks[$i]->ref				= $obj->taskref;
+					$tasks[$i]->fk_project		= $obj->projectid;
+					$tasks[$i]->projectref		= $obj->ref;
+					$tasks[$i]->projectlabel	= $obj->plabel;
+					$tasks[$i]->projectstatus	= $obj->projectstatus;
+					$tasks[$i]->label			= $obj->label;
+					$tasks[$i]->description		= $obj->description;
+					$tasks[$i]->fk_parent		= $obj->fk_task_parent;      // deprecated
+					$tasks[$i]->fk_task_parent	= $obj->fk_task_parent;
+					$tasks[$i]->duration		= $obj->duration_effective;
+					$tasks[$i]->planned_workload= $obj->planned_workload;
+					$tasks[$i]->progress		= $obj->progress;
+					$tasks[$i]->fk_statut		= $obj->status;
+					$tasks[$i]->public			= $obj->public;
+					$tasks[$i]->date_start		= $this->db->jdate($obj->date_start);
+					$tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
+					$tasks[$i]->rang	   		= $obj->rang;
+					
+					$tasks[$i]->socid           = $obj->thirdparty_id;	// For backward compatibility
+					$tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
+					$tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
+					$tasks[$i]->thirdparty_email= $obj->thirdparty_email;
+				}
+				
+				$i++;
+			}
+			$this->db->free($resql);
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+		
 		return $tasks;
 	}
 

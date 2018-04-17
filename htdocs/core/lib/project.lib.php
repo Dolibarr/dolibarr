@@ -245,12 +245,20 @@ function project_timesheet_prepare_head($mode, $fuser=null)
 	$param='';
 	$param.=($mode?'&mode='.$mode:'');
 	if (is_object($fuser) && $fuser->id > 0 && $fuser->id != $user->id) $param.='&search_usertoprocessid='.$fuser->id;
-
+	
 	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERWEEK))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perweek.php".($param?'?'.$param:'');
 		$head[$h][1] = $langs->trans("InputPerWeek");
 		$head[$h][2] = 'inputperweek';
+		$h++;
+	}
+	
+	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERWEEK))
+	{
+		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perweek_personalized.php".($param?'?'.$param:'');
+		$head[$h][1] = $langs->trans("InputPerWeekPersonalized");
+		$head[$h][2] = 'inputperweekpersonalized';
 		$h++;
 	}
 
