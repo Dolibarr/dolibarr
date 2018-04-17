@@ -416,7 +416,10 @@ ALTER TABLE llx_asset_type_extrafields ADD INDEX idx_asset_type_extrafields (fk_
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (7,'INV', 'Inventory journal', 8, 1);
 
 UPDATE llx_accounting_account set account_parent = 0 WHERE account_parent = '' OR account_parent IS NULL;
-ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+-- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent DROP DEFAULT;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer USING account_parent::integer;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent SET DEFAULT 0;
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_parent (account_parent);
 
 ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
