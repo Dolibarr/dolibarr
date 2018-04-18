@@ -148,7 +148,8 @@ class FormTicketsup
         }
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
-        print '<div class="">';
+        dol_fiche_head('');
+
         print '<table class="tableticket"  width="' . $width . '">';
 
 
@@ -181,7 +182,7 @@ class FormTicketsup
                 print '<tr><td class="titlefield">' . $langs->trans("ThirdParty") . '</td><td>';
                 $events = array();
                 $events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-                print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events);
+                print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
                 print '</td></tr>';
                 if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
                     $htmlname = 'socid';
@@ -436,7 +437,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheTypesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_tickettype'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat minwidth200'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -536,7 +537,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheCategoriesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_ticketcategory'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat minwidth150'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -605,7 +606,7 @@ class FormTicketsup
             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
 
-        print ajax_combobox('select'.$htmlname);
+        print ajax_combobox('select'.$htmlname,'',0,0,'off');
     }
 
     /**
@@ -637,7 +638,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheSeveritiesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_ticketseverity'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat minwidth150'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
