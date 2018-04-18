@@ -29,19 +29,18 @@ require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/member/modules_cards.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 
-$langs->load("members");
-$langs->load("errors");
+$langs->loadLangs(array("members","errors"));
 
 // Choix de l'annee d'impression ou annee courante.
 $now = dol_now();
 $year=dol_print_date($now,'%Y');
 $month=dol_print_date($now,'%m');
 $day=dol_print_date($now,'%d');
-$foruserid=GETPOST('foruserid');
-$foruserlogin=GETPOST('foruserlogin');
-$mode=GETPOST('mode');
-$model=GETPOST("model");			// Doc template to use for business cards
-$modellabel=GETPOST("modellabel");	// Doc template to use for address sheet
+$foruserid=GETPOST('foruserid','alphanohtml');
+$foruserlogin=GETPOST('foruserlogin','alphanohtml');
+$mode=GETPOST('mode','aZ09');
+$model=GETPOST("model",'aZ09');				// Doc template to use for business cards
+$modellabel=GETPOST("modellabel",'aZ09');	// Doc template to use for address sheet
 $mesg='';
 
 $adherentstatic=new Adherent($db);
