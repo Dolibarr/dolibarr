@@ -299,7 +299,7 @@ class FormTicketsup
 
         // Notify thirdparty at creation
         print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
-        print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
+        print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.((GETPOST('notify_tiers_at_create') ? ' checked="checked"' : $this->withnotifytiersatcreate?' checked="checked"':'')).'>';
         print '</td></tr>';
 
         // TITLE
