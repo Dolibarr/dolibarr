@@ -465,15 +465,6 @@ if (empty($reshook))
 	// Action for direct print
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
-	// Actions to send emails
-	$trigger_name='SUPPLIER_PROPOSAL_SENTBYMAIL';
-	$paramname='id';
-	$mode='emailfromsupplierproposal';
-	$trackid='spr'.$object->id;
-	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-
-
-
 	// Go back to draft
 	if ($action == 'modif' && $user->rights->supplier_proposal->creer)
 	{
@@ -876,46 +867,20 @@ if (empty($reshook))
 		exit();
 	}
 
-	// Generation doc (depuis lien ou depuis cartouche doc)
-	else if ($action == 'builddoc' && $user->rights->supplier_proposal->creer) {
-		if (GETPOST('model')) {
-			$object->setDocModel($user, GETPOST('model'));
-		}
+	// Actions to send emails
+	$trigger_name='SUPPLIER_PROPOSAL_SENTBYMAIL';
+	$paramname='id';
+	$mode='emailfromsupplierproposal';
+	$trackid='spr'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 
-		// Define output language
-		$outputlangs = $langs;
-		if (! empty($conf->global->MAIN_MULTILANGS)) {
-			$outputlangs = new Translate("", $conf);
-			$newlang = (GETPOST('lang_id','aZ09') ? GETPOST('lang_id','aZ09') : $object->thirdparty->default_lang);
-			$outputlangs->setDefaultLang($newlang);
-		}
-		$ret = $object->fetch($id); // Reload to get new records
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-		if ($result <= 0)
-		{
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-		}
-	}
-
-	// Remove file in doc form
-	else if ($action == 'remove_file' && $user->rights->supplier_proposal->creer) {
-		if ($object->id > 0) {
-			require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
-
-			$langs->load("other");
-			$upload_dir = $conf->supplier_proposal->dir_output;
-			$file = $upload_dir . '/' . GETPOST('file');
-			$ret = dol_delete_file($file, 0, 0, 0, $object);
-			if ($ret)
-				setEventMessages($langs->trans("FileWasRemoved", GETPOST('file')), null, 'mesgs');
-			else
-				setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('file')), null, 'errors');
-		}
-	}
+	// Actions to build doc
+	$upload_dir = $conf->supplier_proposal->dir_output;
+	$permissioncreate=$user->rights->supplier_proposal->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Set project
-	else if ($action == 'classin' && $user->rights->supplier_proposal->creer) {
+	if ($action == 'classin' && $user->rights->supplier_proposal->creer) {
 		$object->setProject($_POST['projectid']);
 	}
 
