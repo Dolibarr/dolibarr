@@ -43,7 +43,7 @@ $toselect = GETPOST('toselect', 'array');
 $result=restrictedArea($user,'adherent');
 
 $filter=GETPOST("filter",'alpha');
-$statut=GETPOST("statut",'alpha');
+$statut=GETPOST("statut",'intcomma');
 $search=GETPOST("search",'alpha');
 $search_ref=GETPOST("search_ref",'alpha');
 $search_lastname=GETPOST("search_lastname",'alpha');
