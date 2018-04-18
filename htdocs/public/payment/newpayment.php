@@ -1592,7 +1592,7 @@ if (preg_match('/^dopayment/',$action))
 	    <label for="card-element">
 	    '.$langs->trans("OwnerName").'
 	    </label>
-      <INPUT id="owner-name" type="text" name="owner-name" value="ok" >
+      <INPUT id="owner-name" type="text" name="owner-name" placeholder="owner of source" >
       </DIV>
 	    <div class="form-row left">
 	    <label for="card-element">
