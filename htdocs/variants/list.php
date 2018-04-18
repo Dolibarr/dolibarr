@@ -60,8 +60,11 @@ llxHeader('', $title);
 $newcardbutton='';
 if ($user->rights->produit->creer)
 {
-	$newcardbutton='<a href="create.php" class="butActionNew">'.$langs->trans('Create').'</a>';
+	$newcardbutton='<a href="'.DOL_URL_ROOT.'/variants/create.php" class="butActionNew">'.$langs->trans('Create');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
+
 print load_fiche_titre($title, $newcardbutton, 'title_products');
 
 $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;

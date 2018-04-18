@@ -64,14 +64,22 @@ ErrorNoVATRateDefinedForSellerCountry=Greška, nije definirana PDV stopa za drž
 ErrorNoSocialContributionForSellerCountry=Greška, nisu definirane vrste doprinosa i poreza za državu '%s'.
 ErrorFailedToSaveFile=Greška, neuspjelo spremanje datoteke.
 ErrorCannotAddThisParentWarehouse=Pokušavate dodati nadređeno skladište koje je već podređeno skladište ovom trenutnom
+<<<<<<< HEAD
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+MaxNbOfRecordPerPage=Maks broj unosa po stranici
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 NotAuthorized=Niste ovlašteni da to uradite.
 SetDate=Postavi datum
 SelectDate=Odaberi datum
 SeeAlso=Također pogledajte %s
 SeeHere=Pogledaj ovdje
 ClickHere=Klikni ovdje
+<<<<<<< HEAD
 Here=Here
+=======
+Here=Ovdje
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 Apply=Primijeniti
 BackgroundColorByDefault=Osnovna boja pozadine
 FileRenamed=Datoteka je uspješno preimenovana
@@ -866,7 +874,11 @@ FileNotShared=Datoteka nije dijeljena vanjskim korisnicima
 Project=Projekt
 Projects=Projekti
 Rights=Dozvole
+<<<<<<< HEAD
 LineNb=Line no.
+=======
+LineNb=Red br.
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 IncotermLabel=Incoterms
 # Week day
 Monday=Ponedjeljak

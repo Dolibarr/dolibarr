@@ -4104,8 +4104,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return='';
 
-	if ($picto == 'setup') $picto='title.png';
-	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
+	if ($picto == 'setup') $picto='title_generic.png';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';

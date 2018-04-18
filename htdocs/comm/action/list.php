@@ -397,6 +397,7 @@ if ($resql)
     	$s = $hookmanager->resPrint;
     }
 
+    $newcardbutton='';
     if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
     {
         $tmpforcreatebutton=dol_getdate(dol_now(), true);
@@ -405,12 +406,12 @@ if ($resql)
 
         //$param='month='.$monthshown.'&year='.$year;
         $hourminsec='100000';
-        $link = '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$tmpforcreatebutton['year'],$tmpforcreatebutton['mon'],$tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
-        $link.= $langs->trans("AddAction");
-        $link.= '</a>';
+        $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$tmpforcreatebutton['year'],$tmpforcreatebutton['mon'],$tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">'.$langs->trans("AddAction");
+        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        $newcardbutton.= '</a>';
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$link, '', $limit);
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit);
 
     $moreforfilter='';
 

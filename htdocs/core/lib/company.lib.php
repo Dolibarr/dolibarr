@@ -727,10 +727,9 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
         $newcardbutton='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
         {
-            //$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
 			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
-			if (empty($conf->dol_optimize_smallscreen)) $newcardbutton.=' '.img_picto($langs->trans("AddProject"),'filenew');
-			$newcardbutton.='</a>'."\n";
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
         }
 
         print "\n";
@@ -926,7 +925,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
-		$newcardbutton.='</a>'."\n";
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
     }
 
     print "\n";
@@ -1178,7 +1178,9 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	$newcardbutton='';
 	if ($user->rights->societe->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress").' '.img_picto($langs->trans("AddAddress"),'filenew').'</a>'."\n";
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress");
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	print "\n";

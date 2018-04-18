@@ -1549,6 +1549,7 @@ else
 			print '<input type="hidden" name="fournprice" value="'.(!empty($object->lines[$cursorline-1]->fk_fournprice) ? $object->lines[$cursorline-1]->fk_fournprice : 0).'">';
 
 			// Area with common detail of line
+			print '<div class="div-table-responsive-no-min">';
 			print '<table class="notopnoleftnoright allwidth tableforservicepart1" width="100%">';
 
 			$sql = "SELECT cd.rowid, cd.statut, cd.label as label_det, cd.fk_product, cd.product_type, cd.description, cd.price_ht, cd.qty,";
@@ -1813,6 +1814,7 @@ else
 			}
 
 			print "</table>";
+			print '</div>';
 
 			print "</form>\n";
 

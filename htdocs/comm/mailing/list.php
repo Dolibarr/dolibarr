@@ -107,7 +107,9 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->mailing->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create">'.$langs->trans('NewMailing').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create">'.$langs->trans('NewMailing');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	$i = 0;

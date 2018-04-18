@@ -451,7 +451,9 @@ if ($projectid) print '<input type="hidden" name="projectid" value="' . $project
 $newcardbutton='';
 if ($user->rights->ticketsup->write)
 {
-	$newcardbutton = '<a class="butActionNew" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticketsup/new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 print_barre_liste($langs->trans('TicketList'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_ticketsup', 0, $newcardbutton, '', $limit);

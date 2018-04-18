@@ -78,7 +78,11 @@ ResultOfMailSending=Resultat de l'enviament massiu d'e-mails
 NbSelected=Nº seleccionats
 NbIgnored=Nº ignorats
 NbSent=Nº enviats
+<<<<<<< HEAD
 SentXXXmessages=%s message(s) sent.
+=======
+SentXXXmessages=%s missatge(s) enviat(s).
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 ConfirmUnvalidateEmailing=Are you sure you want to change email <b>%s</b> to draft status?
 MailingModuleDescContactsWithThirdpartyFilter=Contacte amb filtres de client
 MailingModuleDescContactsByCompanyCategory=Contactes per categoria de tercer

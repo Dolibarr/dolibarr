@@ -1363,7 +1363,7 @@ table.noborder tr.liste_titre td {
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
 .tagtdnote span.pictoedit {
-    opacity: 0.9;
+    opacity: 0.6;
 }
 img.hideonsmartphone.pictoactionview {
     vertical-align: bottom;
@@ -1413,6 +1413,7 @@ div.statusref img {
     padding-left: 8px;
     padding-right: 9px;
     vertical-align: text-bottom;
+    width: 18px;
 }
 div.statusrefbis {
     padding-left: 8px;
@@ -2348,7 +2349,6 @@ span.butAction, span.butActionDelete {
 
 
 .button, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
-	border-color: #c5c5c5;
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
     padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
@@ -2376,10 +2376,9 @@ span.butAction, span.butActionDelete {
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
-.butActionNew, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
+.butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
-	border-color: #c5c5c5;
-	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
+	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 	display: inline-block;
     padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
     margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
@@ -2387,20 +2386,22 @@ span.butAction, span.butActionDelete {
 	text-align: center;
 	vertical-align: middle;
 	cursor: pointer;
-	color: #ffffff !important;
-	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+	/* color: #ffffff !important; */
+	/* text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); */
 	-webkit-border-radius: 2px;
 	border-radius: 2px;
-	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
-	background-color: #006dcc;
+	/* -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); */
+	/* background-color: #006dcc;
 	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
 	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
 	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
 	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
-	background-repeat: repeat-x;
+	background-repeat: repeat-x; */
 }
+a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
+a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
 
 .button, .butAction {
 	color: #ffffff !important;
@@ -2535,15 +2536,16 @@ table.border, table.bordernooddeven, table.dataTable, .table-border, .table-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
+
 .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 22px;
+	height: 26px;
 }
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-    height: 22px;
+    height: 26px;
 }
 
-table.border td, div.border div div.tagtd {
-	padding: 2px 2px 2px 2px;
+table.border td, table.bordernooddeven td, div.border div div.tagtd {
+	padding: 2px 4px 2px 4px;
 	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
@@ -2770,10 +2772,6 @@ border: none;
 div.pagination li.noborder a:hover {
   border: none;
   background-color: transparent;
-}
-div.pagination li a,
-div.pagination li span {
-  background-color: #fff;
 }
 div.pagination li:first-child a,
 div.pagination li:first-child span {

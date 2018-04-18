@@ -594,7 +594,9 @@ if ($user->rights->societe->creer)
 		if($type == 'f') $label='NewSupplier';
 	}
 
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'">'.$langs->trans($label).'</a>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'">'.$langs->trans($label);
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';

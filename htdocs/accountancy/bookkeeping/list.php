@@ -439,7 +439,9 @@ $button.= '</a>';
 
 
 $groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
-$newcardbutton = '<a class="butActionNew" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
+$newcardbutton = '<a class="butActionNew" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt");
+$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+$newcardbutton.= '</a>';
 
 print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$newcardbutton, '', $limit);
 
