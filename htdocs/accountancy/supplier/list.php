@@ -27,7 +27,6 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
@@ -36,13 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-// Langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("main");
-$langs->load("accountancy");
-$langs->load("productbatch");
+$langs->loadLangs(array("compta","bills","other","accountancy","productbatch"));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');

@@ -256,7 +256,7 @@ class AccountingJournal extends CommonObject
 	{
 		global $langs;
 
-		$langs->load("accountancy");
+		$langs->loadLangs(array("accountancy"));
 
 		if ($mode == 0)
 		{
