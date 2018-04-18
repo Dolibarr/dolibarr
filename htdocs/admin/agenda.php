@@ -75,6 +75,12 @@ else
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_event = '';
+	$action = '';
+}
+
+if (GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') ||GETPOST('button_search','alpha'))	// To avoid the save when we click on search
+{
+	$action = '';
 }
 
 if ($action == "save" && empty($cancel))
@@ -106,34 +112,6 @@ if ($action == "save" && empty($cancel))
     }
 }
 
-if (preg_match('/set_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-
-if (preg_match('/del_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
 
 
 /**

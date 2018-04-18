@@ -51,36 +51,7 @@ if (GETPOST('sendit') && ! empty($conf->global->MAIN_UPLOAD_DOC))
     dol_add_file_process($upload_dir, 0, 0, 'userfile');
 }
 
-if (preg_match('/set_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-
-else if (preg_match('/del_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-
-else if ($action == 'updateform')
+if ($action == 'updateform')
 {
 	$antivircommand = GETPOST('MAIN_ANTIVIRUS_COMMAND','none');			// Use GETPOST none because we must accept ". Example c:\Progra~1\ClamWin\bin\clamscan.exe
 	$antivirparam = GETPOST('MAIN_ANTIVIRUS_PARAM','none');				// Use GETPOST none because we must accept ". Example --database="C:\Program Files (x86)\ClamWin\lib"
