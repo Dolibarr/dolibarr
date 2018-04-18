@@ -5549,6 +5549,39 @@ abstract class CommonObject
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out='<input type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$showsize.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
+		elseif ($type == 'array')
+		{
+			$newval = $val;
+			$newval['type'] = 'varchar(256)';
+
+			$out='';
+
+			$inputs = array();
+			if(! empty($value)) {
+				foreach($value as $option) {
+					$out.= '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
+					$out.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', $option, $moreparam, '', '', $showsize).'<br /></span>';
+				}
+			}
+
+			$out.= '<a id="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_add" href="javascript:;"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+
+			$newInput = '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
+			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $showsize).'<br /></span>';
+
+			$out.= '
+<script type="text/javascript">
+$(document).ready(function() {
+	$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
+		$("'.dol_escape_js($newInput).'").insertBefore(this);
+	});
+
+	$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+		$(this).parent().remove();
+	});
+});
+</script>';
+		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
 		}
@@ -5911,6 +5944,10 @@ abstract class CommonObject
 		elseif ($type == 'password')
 		{
 			$value=preg_replace('/./i','*',$value);
+		}
+		elseif ($type == 'array')
+		{
+			$value = implode('<br />', $value);
 		}
 
 		//print $type.'-'.$size;
@@ -6600,7 +6637,14 @@ abstract class CommonObject
 			}
 			else if($this->isArray($info))
 			{
-				$queryarray[$field] = serialize($this->{$field});
+				if(! empty($this->{$field})) {
+					if(! is_array($this->{$field})) {
+						$this->{$field} = array($this->{$field});
+					}
+					$queryarray[$field] = serialize($this->{$field});
+				} else {
+					$queryarray[$field] = NULL;
+				}
 			}
 			else if($this->isInt($info))
 			{
@@ -6644,9 +6688,13 @@ abstract class CommonObject
 			}
 			elseif($this->isArray($info))
 			{
-				$this->{$field} = @unserialize($obj->{$field});
-				// Hack for data not in UTF8
-				if($this->{$field } === false) @unserialize(utf8_decode($obj->{$field}));
+				if(! empty($obj->{$field})) {
+					$this->{$field} = @unserialize($obj->{$field});
+					// Hack for data not in UTF8
+					if($this->{$field } === false) @unserialize(utf8_decode($obj->{$field}));
+				} else {
+					$this->{$field} = array();
+				}
 			}
 			elseif($this->isInt($info))
 			{
