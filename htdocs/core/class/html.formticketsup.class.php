@@ -858,7 +858,7 @@ class FormTicketsup
             // Destinataires
             print '<tr class="email_line"><td>' . $langs->trans('MailRecipients') . '</td><td colspan="2">';
             $ticketstat = new Ticketsup($this->db);
-            $res = $ticketstat->fetch('', $this->track_id);
+            $res = $ticketstat->fetch('', '', $this->track_id);
             if ($res) {
                 // Retrieve email of all contacts (internal and external)
                 $contacts = $ticketstat->getInfosTicketInternalContact();
@@ -881,7 +881,7 @@ class FormTicketsup
                     $ticketstat->socid = $ticketstat->fk_soc;
                     $ticketstat->fetch_thirdparty();
 
-                    if (!in_array($ticketstat->thirdparty->email, $sendto)) {
+                    if (is_array($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
                         $sendto[] = $ticketstat->thirdparty->email . '(' . $langs->trans('Customer') . ')';
                     }
                 }
