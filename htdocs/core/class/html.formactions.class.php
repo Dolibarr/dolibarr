@@ -197,9 +197,9 @@ class FormActions
             $newcardbutton='';
 			if (! empty($conf->agenda->enabled))
 			{
-				$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:'').($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'">';
-				$newcardbutton.= $langs->trans("AddEvent");
-				$newcardbutton.= '<span class="fa fa-plus-circle"></span></a>';
+				$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.($object->socid>0?'&socid='.$object->socid:'').($projectid>0?'&projectid='.$projectid:'').'&backtopage='.urlencode($urlbacktopage).'">'.$langs->trans("AddEvent");
+				$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+				$newcardbutton.= '</a>';
 			}
 
         	print '<!-- formactions->showactions -->'."\n";

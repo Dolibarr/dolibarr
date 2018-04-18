@@ -184,7 +184,9 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->adherent->cotisation->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/list.php?status=-1,1">'.$langs->trans('NewSubscription').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/list.php?status=-1,1">'.$langs->trans('NewSubscription');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

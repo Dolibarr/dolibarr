@@ -274,7 +274,9 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->ficheinter->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create">'.$langs->trans('NewIntervention').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create">'.$langs->trans('NewIntervention');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	// Lines of title fields

@@ -1411,6 +1411,7 @@ div.statusref img {
     padding-left: 8px;
    	padding-right: 9px;
    	vertical-align: text-bottom;
+   	width: 18px;
 }
 div.statusrefbis {
     padding-left: 8px;
@@ -2391,7 +2392,7 @@ span.butAction, span.butActionDelete {
     /* color: #fff; */
     /* background: rgb(<?php echo $colorbackhmenu1 ?>); */
     color: #000;
-    text-transform: uppercase;
+    /* text-transform: uppercase; */
     border: 1px solid #aaa;
 
     border-top-right-radius: 0 !important;
@@ -2399,27 +2400,27 @@ span.butAction, span.butActionDelete {
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
 }
-.butActionNew, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
+.butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
 	margin: 0em 0.3em 0 0.3em !important;
 	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
-    border-color: #c5c5c5;
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
     text-align: center;
     cursor: pointer;
-    color: #fff !important;
+    /*color: #fff !important;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
-    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
+    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);*/
 
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
 }
-a.butActionNew>span.fa-plus-circle { padding-left: 6px; }
+a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
+a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
 
 .butAction:hover, .butActionNew:hover   {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
@@ -2428,8 +2429,8 @@ a.butActionNew>span.fa-plus-circle { padding-left: 6px; }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
     /* background: #633; */
-    border: 1px solid #733;
-    color: #733;
+    border: 1px solid #633;
+    color: #633;
 }
 
 .butActionDelete:hover {
@@ -2463,7 +2464,6 @@ a.butActionNew>span.fa-plus-circle { padding-left: 6px; }
     text-align: center;
     cursor: pointer;
     color: #999 !important;
-    border: 1px solid #bbb;
     padding-top: 0.2em;
     box-shadow: none !important;
     -webkit-box-shadow: none !important;

@@ -230,7 +230,9 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->banque->configurer)
 {
-	$newcardbutton.='<a class="butActionNew" href="card.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
+	$newcardbutton.='<a class="butActionNew" href="card.php?action=create">'.$langs->trans("NewFinancialAccount");
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 

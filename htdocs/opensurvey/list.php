@@ -97,13 +97,17 @@ $fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':
 
 
 $newcardbutton='';
-if (!$user->rights->opensurvey->read)
+if (!$user->rights->opensurvey->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php">'.$langs->trans('NewSurvey').'</a>';
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php">'.$langs->trans('NewSurvey');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 else
 {
-	$newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('NewSurvey').'</a>';
+	$newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('NewSurvey');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 
