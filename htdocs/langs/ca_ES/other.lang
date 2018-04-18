@@ -246,4 +246,8 @@ WEBSITE_PAGEURL=URL de pàgina
 WEBSITE_TITLE=Títol
 WEBSITE_DESCRIPTION=Descripció
 WEBSITE_KEYWORDS=Paraules clau
+<<<<<<< HEAD
 LinesToImport=Lines to import
+=======
+LinesToImport=Línies per importar
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git

@@ -47,7 +47,7 @@ Notify_PROPAL_SENTBYMAIL=Commercial proposal sent by mail
 Notify_WITHDRAW_TRANSMIT=Transmission withdrawal
 Notify_WITHDRAW_CREDIT=Credit withdrawal
 Notify_WITHDRAW_EMIT=Perform withdrawal
-Notify_COMPANY_CREATE=Trća stranka kreirana
+Notify_COMPANY_CREATE=Treća stranka kreirana
 Notify_COMPANY_SENTBYMAIL=Mails sent from third party card
 Notify_BILL_VALIDATE=Customer invoice validated
 Notify_BILL_UNVALIDATE=Customer invoice unvalidated
@@ -246,4 +246,8 @@ WEBSITE_PAGEURL=URL of page
 WEBSITE_TITLE=Titula
 WEBSITE_DESCRIPTION=Opis
 WEBSITE_KEYWORDS=Keywords
+<<<<<<< HEAD
 LinesToImport=Lines to import
+=======
+LinesToImport=Linija za uvoz
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git

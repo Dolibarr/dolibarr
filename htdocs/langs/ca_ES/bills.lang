@@ -348,10 +348,17 @@ NextDateToExecution=Data de la propera generació de factures
 NextDateToExecutionShort=Data següent gen.
 DateLastGeneration=Data de l'última generació
 DateLastGenerationShort=Data última gen.
+<<<<<<< HEAD
 MaxPeriodNumber=Max number of invoice generation
 NbOfGenerationDone=Number of invoice generation already done
 NbOfGenerationDoneShort=Number of generation done
 MaxGenerationReached=Maximum number of generations reached
+=======
+MaxPeriodNumber=Número màxim de generació de factures
+NbOfGenerationDone=Número de generació de factura ja realitzat
+NbOfGenerationDoneShort=Número de generació realitzat
+MaxGenerationReached=Número màxim de generacions aconseguides
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 InvoiceAutoValidate=Valida les factures automàticament
 GeneratedFromRecurringInvoice=Generat des de la plantilla de factura recurrent %s
 DateIsNotEnough=Encara no s'ha arribat a la data

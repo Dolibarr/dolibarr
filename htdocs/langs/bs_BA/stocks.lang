@@ -8,9 +8,17 @@ WarehouseEdit=Modifikovanje skladišta
 MenuNewWarehouse=Novo skladište
 WarehouseSource=Izvorno skladište
 WarehouseSourceNotDefined=Nema definisanog skladišta,
+<<<<<<< HEAD
 AddWarehouse=Create warehouse
+=======
+AddWarehouse=Napravi skladište
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 AddOne=Dodaj jedno
+<<<<<<< HEAD
 DefaultWarehouse=Default warehouse
+=======
+DefaultWarehouse=Glavno skladište
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 WarehouseTarget=Ciljano skladište
 ValidateSending=Obriši slanje
 CancelSending=Poništi slanje
@@ -24,7 +32,11 @@ Movements=Kretanja
 ErrorWarehouseRefRequired=Referentno ime skladište je potrebno
 ListOfWarehouses=Lista skladišta
 ListOfStockMovements=Lista kretanja zaliha
+<<<<<<< HEAD
 ListOfInventories=List of inventories
+=======
+ListOfInventories=Spisak inventara
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 MovementId=Movement ID
 StockMovementForId=Movement ID %d
 ListMouvementStockProject=List of stock movements associated to project
@@ -161,7 +173,7 @@ inventoryCreatePermission=Create new inventory
 inventoryReadPermission=View inventories
 inventoryWritePermission=Update inventories
 inventoryValidatePermission=Validate inventory
-inventoryTitle=Inventory
+inventoryTitle=Inventar
 inventoryListTitle=Inventories
 inventoryListEmpty=No inventory in progress
 inventoryCreateDelete=Create/Delete inventory
@@ -177,7 +189,7 @@ inventoryMvtStock=By inventory
 inventoryWarningProductAlreadyExists=This product is already into list
 SelectCategory=Category filter
 SelectFournisseur=Supplier filter
-inventoryOnDate=Inventory
+inventoryOnDate=Inventar
 INVENTORY_DISABLE_VIRTUAL=Allow to not destock child product from a kit on inventory
 INVENTORY_USE_MIN_PA_IF_NO_LAST_PA=Use the buy price if no last buy price can be found
 INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT=Stock movement have date of inventory

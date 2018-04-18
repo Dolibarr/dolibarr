@@ -239,7 +239,11 @@ AccountingJournalType2=Sales
 AccountingJournalType3=Purchases
 AccountingJournalType4=Banka
 AccountingJournalType5=Expenses report
+<<<<<<< HEAD
 AccountingJournalType8=Inventory
+=======
+AccountingJournalType8=Inventar
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
 AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>

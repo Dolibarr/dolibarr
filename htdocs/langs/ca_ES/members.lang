@@ -117,7 +117,11 @@ SendingEmailOnCancelation=Sending email on cancelation
 YourMembershipRequestWasReceived=Your membership was received.
 YourMembershipWasValidated=Your membership was validated
 YourSubscriptionWasRecorded=Your new subscription was recorded
+<<<<<<< HEAD
 SubscriptionReminderEmail=Subscription reminder
+=======
+SubscriptionReminderEmail=Recordatori de subscripció
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 YourMembershipWasCanceled=Your membership was canceled
 CardContent=Contingut de la seva fitxa de soci
 # Text of email templates
