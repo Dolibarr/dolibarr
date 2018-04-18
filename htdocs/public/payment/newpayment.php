@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2018	        ptibogxiv			<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companybankaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/societe/class/companypaymentmode.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 
 // Security check
@@ -460,7 +463,37 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			}
 			else
 			{
+       $pos=strpos($stripeSource,'src_');
+
+if ($pos !== false) {
+$src = \Stripe\Source::retrieve("$stripeSource",array("stripe_account" => $stripeacc));
+}
+else {
+$src = \Stripe\Source::create(array(
+  "type" => "card",
+  "token" => "$stripeSource"
+),array("stripe_account" => $stripeacc));
+$stripeSource=$src->id;
+}
+      
 				dol_syslog("Create charge on card ".$card->id, LOG_DEBUG, 0, '_stripe');
+        
+if ($src->object=='source' && $src->type=='card' && isset($src->card->three_d_secure) && (($src->card->three_d_secure=='required') OR ($src->card->three_d_secure=='recommended') OR ($src->card->three_d_secure=='optional' && $amount>=$conf->global->STRIPE_MINIMAL_3DSECURE))){
+$src2 = \Stripe\Source::create(array(
+  "amount" => price2num($amountstripe, 'MU'),
+  "currency" => $currency,
+  "type" => "three_d_secure",
+  "three_d_secure" => array(
+    "card" => $stripeSource,
+  ),
+    "metadata" => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])),
+  "redirect" => array(
+    "return_url" => $urlok
+  ),
+),array("stripe_account" => $stripe->GetStripeAccount($conf->entity)));
+
+if ($src2->three_d_secure->authenticated==false && $src2->redirect->status=='succeeded') {
+//todo functionalize payment
 				$charge = \Stripe\Charge::create(array(
 					'amount'   => price2num($amountstripe, 'MU'),
 					'currency' => $currency,
@@ -471,6 +504,27 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					'source' => $stripeSource,
 					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
 				));
+//$charge=$stripe->CreatePaymentStripe($total,$currency,$object,$item,$source,$customer->id,$stripe->GetStripeAccount($conf->entity));
+}
+else {
+		header("Location: ".$src2->redirect->url);
+		exit;
+$error++;
+}
+}else{
+//todo functionalize payment
+				$charge = \Stripe\Charge::create(array(
+					'amount'   => price2num($amountstripe, 'MU'),
+					'currency' => $currency,
+					'capture'  => true,							// Charge immediatly
+					'description' => 'Stripe payment: '.$FULLTAG,
+					'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])),
+					'customer' => $customer->id,
+					'source' => $stripeSource,
+					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
+				));
+//$charge=$stripe->CreatePaymentStripe($total,$currency,$object,$item,$source,$customer->id,$stripe->GetStripeAccount($conf->entity));
+}        
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -1531,8 +1585,9 @@ if (preg_match('/^dopayment/',$action))
 		print '
 	    <table id="dolpaymenttable" summary="Payment form" class="center">
 	    <tbody><tr><td class="textpublicpayment">
-      <DIV id="payment-request-button"><!-- A Stripe Element will be inserted here. --></DIV></TR></TD>
-      <tbody><tr><td class="textpublicpayment">
+      <DIV id="payment-request-button"><!-- A Stripe Element will be inserted here. --></DIV></TR></TD>';
+ 
+      print '<tbody><tr><td class="textpublicpayment">
       <div class="form-row left">
 	    <label for="card-element">
 	    '.$langs->trans("OwnerName").'
@@ -1695,3 +1750,4 @@ htmlPrintOnlinePaymentFooter($mysoc,$langs,1,$suffix,$object);
 llxFooter('', 'public');
 
 $db->close();
+
