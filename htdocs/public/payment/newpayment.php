@@ -1592,7 +1592,7 @@ if (preg_match('/^dopayment/',$action))
 	    <label for="card-element">
 	    '.$langs->trans("OwnerName").'
 	    </label>
-      <INPUT id="owner-name" type="text" name="owner-namee" value="ok" >
+      <INPUT id="owner-name" type="text" name="owner-name" value="ok" >
       </DIV>
 	    <div class="form-row left">
 	    <label for="card-element">
@@ -1655,6 +1655,12 @@ var paymentRequest = stripe.paymentRequest({
       }
     };
 
+   var ownerinf = document.getElementById('owner-name').value;
+   var ownerInfo = {
+    owner: {
+      name: ownerinf,
+    },
+   };
     // Create an instance of the card Element
     var card = elements.create('card', {style: style});
 
@@ -1674,9 +1680,9 @@ var paymentRequest = stripe.paymentRequest({
     // Handle form submission   
    var form = document.getElementById('payment-form');
 form.addEventListener('submit', function(event) {
-  event.preventDefault();
-
-  stripe.createSource(card).then(function(result) {
+event.preventDefault();
+document.getElementById("owner-name").required = true;
+stripe.createSource(card, ownerInfo).then(function(result) {
     if (result.error) {
       // Inform the user if there was an error
       var errorElement = document.getElementById('card-errors');
