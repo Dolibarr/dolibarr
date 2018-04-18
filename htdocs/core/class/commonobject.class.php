@@ -5469,11 +5469,19 @@ abstract class CommonObject
 		elseif ($key == 'status' && method_exists($this, 'getLibStatut')) $value=$this->getLibStatut(3);
 		elseif ($type == 'date')
 		{
-			$value=dol_print_date($value,'day');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'day');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'datetime')
 		{
-			$value=dol_print_date($value,'dayhour');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'dayhour');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'double')
 		{
