@@ -1363,7 +1363,7 @@ table.noborder tr.liste_titre td {
 .fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
 .fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
 .tagtdnote span.pictoedit {
-    opacity: 0.9;
+    opacity: 0.6;
 }
 img.hideonsmartphone.pictoactionview {
     vertical-align: bottom;
@@ -2401,6 +2401,7 @@ span.butAction, span.butActionDelete {
 	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
 	background-repeat: repeat-x;
 }
+a.butActionNew>span.fa { padding-right: 6px; }
 
 .button, .butAction {
 	color: #ffffff !important;
@@ -2535,15 +2536,16 @@ table.border, table.bordernooddeven, table.dataTable, .table-border, .table-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
+
 .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 22px;
+	height: 26px;
 }
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-    height: 22px;
+    height: 26px;
 }
 
-table.border td, div.border div div.tagtd {
-	padding: 2px 2px 2px 2px;
+table.border td, table.bordernooddeven td, div.border div div.tagtd {
+	padding: 2px 4px 2px 4px;
 	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
