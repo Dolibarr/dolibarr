@@ -67,7 +67,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if ($result > 0)
 		{
 			// Creation OK
-			$urltogo=$backtopage?$backtopage:($backurlforcard?str_replace('__ID__', $result, $backurlforcard):$backurlforlist);
+			$urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
 			header("Location: ".$urltogo);
 			exit;
 		}
