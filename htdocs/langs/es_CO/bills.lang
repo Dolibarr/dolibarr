@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - bills
+HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess paid for each overpaid invoice.
 BillStatusPaid=Pagado
 BillStatusStarted=Empezado
 BillShortStatusPaid=Pagado
@@ -7,7 +8,12 @@ BillShortStatusValidated=Validado
 BillShortStatusStarted=Empezado
 BillShortStatusClosedUnpaid=Cerrado
 BillFrom=De
+DiscountFromExcessReceived=Payments in excess of invoice %s
 ReasonDiscount=Razón
+MaxPeriodNumber=Max number of invoice generation
+NbOfGenerationDone=Number of invoice generation already done
+NbOfGenerationDoneShort=Number of generation done
+MaxGenerationReached=Maximum number of generations reached
 PaymentTypeCB=Tarjeta de crédito
 PaymentTypeShortCB=Tarjeta de crédito
 PaymentTypeCHQ=Verificar

@@ -111,7 +111,7 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 			return 0; // not implemented action log
 		}
 
-		$result = $b->setObjectData($object, $action, $amounts);		// Set field date_object, ref_object, fk_object, element, object_data
+		$result = $b->setObjectData($object, $action, $amounts, $user);		// Set field date_object, ref_object, fk_object, element, object_data
 
 		if ($result < 0)
 		{

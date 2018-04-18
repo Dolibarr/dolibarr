@@ -45,8 +45,6 @@ if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
 
-    $result=dolibarr_set_const($db, "STRIPE_LIVE",GETPOST('STRIPE_LIVE','alpha'),'chaine',0,'',$conf->entity);
-    if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_TEST_PUBLISHABLE_KEY",GETPOST('STRIPE_TEST_PUBLISHABLE_KEY','alpha'),'chaine',0,'',$conf->entity);
 	if (! $result > 0) $error++;
 	$result=dolibarr_set_const($db, "STRIPE_TEST_SECRET_KEY",GETPOST('STRIPE_TEST_SECRET_KEY','alpha'),'chaine',0,'',$conf->entity);

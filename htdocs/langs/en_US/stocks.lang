@@ -200,3 +200,4 @@ RegulateStock=Regulate Stock
 ListInventory=List
 StockSupportServices=Stock management support services
 StockSupportServicesDesc=By default, you can stock only product with type "product". If on, and if module service is on, you can also stock a product with type "service"
+ReceiveProducts=Receive products

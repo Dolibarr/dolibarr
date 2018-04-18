@@ -304,10 +304,10 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   date_validated        datetime					-- FEC:ValidDate
 ) ENGINE=innodb;
 
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_numero_compte (numero_compte);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_code_journal (code_journal);
 
 
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN debit double(24,8);
@@ -489,7 +489,7 @@ DELETE FROM llx_categorie_product WHERE fk_categorie NOT IN (SELECT rowid FROM l
 DELETE FROM llx_categorie_societe WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type IN (1, 2));
 DELETE FROM llx_categorie_member WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 3);
 DELETE FROM llx_categorie_contact WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 4);
-DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 5);
+DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 6);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
 
@@ -520,6 +520,8 @@ ALTER TABLE llx_user_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER r
 ALTER TABLE llx_user_rights DROP FOREIGN KEY fk_user_rights_fk_user_user;
 ALTER TABLE llx_user_rights DROP INDEX uk_user_rights;
 ALTER TABLE llx_user_rights DROP INDEX fk_user;
+-- VPGSQL8.4 ALTER TABLE llx_usergroup_rights DROP CONSTRAINT llx_user_rights_fk_user_userp_fk_id_key;
+-- VPGSQL8.4 ALTER TABLE llx_usergroup_rights DROP INDEX llx_user_rights_fk_user_user_fk_id_key;
 ALTER TABLE llx_user_rights ADD UNIQUE INDEX uk_user_rights (entity, fk_user, fk_id);
 DELETE FROM llx_user_rights WHERE fk_user NOT IN (select rowid from llx_user);
 ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
@@ -527,6 +529,8 @@ ALTER TABLE llx_user_rights ADD CONSTRAINT fk_user_rights_fk_user_user FOREIGN K
 ALTER TABLE llx_usergroup_rights ADD COLUMN entity integer DEFAULT 1 NOT NULL AFTER rowid;
 ALTER TABLE llx_usergroup_rights DROP FOREIGN KEY fk_usergroup_rights_fk_usergroup;
 ALTER TABLE llx_usergroup_rights DROP INDEX fk_usergroup;
+-- VPGSQL8.4 ALTER TABLE llx_usergroup_rights DROP CONSTRAINT llx_usergroup_rights_fk_usergroup_fk_id_key;
+-- VPGSQL8.4 ALTER TABLE llx_usergroup_rights DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key;
 ALTER TABLE llx_usergroup_rights ADD UNIQUE INDEX uk_usergroup_rights (entity, fk_usergroup, fk_id);
 ALTER TABLE llx_usergroup_rights ADD CONSTRAINT fk_usergroup_rights_fk_usergroup FOREIGN KEY (fk_usergroup) REFERENCES llx_usergroup (rowid);
 

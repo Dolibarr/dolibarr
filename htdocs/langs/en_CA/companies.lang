@@ -1,5 +1,10 @@
 # Dolibarr language file - Source file is en_US - companies
-VATIsUsed=GST is used
-VATIsNotUsed=GST is not use
+ReportByCustomers=Report by customer
 LocalTax1IsUsedES=PST is used
 LocalTax1IsNotUsedES=GST is not used
+CustomerAbsoluteDiscountAllUsers=Absolute customer discounts (granted by all users)
+CustomerAbsoluteDiscountMy=Absolute customer discounts (granted by yourself)
+ImportDataset_company_2=Contacts/Addresses (of third parties or not) and attributes
+ImportDataset_company_3=Bank accounts of third parties
+ThirdpartiesMergeSuccess=Third parties have been merged
+ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.

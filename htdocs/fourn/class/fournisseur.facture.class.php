@@ -1436,6 +1436,12 @@ class FactureFournisseur extends CommonInvoice
         // Check parameters
         if ($type < 0) return -1;
 
+        if ($rang < 0)
+        {
+        	$rangmax = $this->line_max();
+        	$rang = $rangmax + 1;
+        }
+
         // Insert line
         $this->line=new SupplierInvoiceLine($this->db);
 

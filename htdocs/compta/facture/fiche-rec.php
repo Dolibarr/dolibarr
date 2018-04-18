@@ -1518,7 +1518,7 @@ else
 		}
 		print '</td></tr>';
 
-		// Date when
+		// Date when (next invoice generation)
 		print '<tr><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
@@ -1534,7 +1534,14 @@ else
 			print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 		}
 		//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
-		if ($action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
+		if (! $object->isMaxNbGenReached())
+		{
+			if ($action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
+		}
+		else
+		{
+			print img_info($langs->trans("MaxNumberOfGenerationReached"));
+		}
 		print '</td>';
 		print '</tr>';
 

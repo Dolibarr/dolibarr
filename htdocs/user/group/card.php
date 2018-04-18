@@ -110,9 +110,9 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action="create";       // Go back to create page
 			} else {
-				$object->nom	= trim($_POST["nom"]);	// For backward compatibility
-				$object->name	= trim($_POST["nom"]);
-				$object->note	= trim($_POST["note"]);
+				$object->name	= trim(GETPOST("nom",'nohtml'));
+				$object->nom	= $object->name;	// For backward compatibility
+				$object->note	= trim(GETPOST("note",'none'));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -193,9 +193,9 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name	= trim($_POST["group"]);
+			$object->name	= trim(GETPOST("group",'nohtml'));
 			$object->nom	= $object->name;			// For backward compatibility
-			$object->note	= dol_htmlcleanlastbr($_POST["note"]);
+			$object->note	= dol_htmlcleanlastbr(GETPOST("note",'none'));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -258,7 +258,7 @@ if ($action == 'create')
 
 	print "<tr>";
 	print '<td class="fieldrequired titlefield">'.$langs->trans("Name").'</td>';
-	print '<td><input type="text" id="nom" name="nom" value="'.GETPOST('nom','alpha').'"></td></tr>';
+	print '<td><input type="text" id="nom" name="nom" value="'.dol_escape_htmltag(GETPOST('nom','nohtml')).'"></td></tr>';
 
 	// Multicompany
 	if (! empty($conf->multicompany->enabled) && is_object($mc))
@@ -343,7 +343,7 @@ else
             if (! empty($conf->mutlicompany->enabled))
             {
     			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-    			print '<td class="valeur">'.$object->name;
+    			print '<td class="valeur">'.dol_escape_htmltag($object->name);
     			if (empty($object->entity))
     			{
     				print img_picto($langs->trans("GlobalGroup"),'redstar');
@@ -356,7 +356,7 @@ else
 			{
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
-				print '<td class="valeur">'.$mc->label;
+				print '<td class="valeur">'.dol_escape_htmltag($mc->label);
 				print "</td></tr>\n";
 			}
 
@@ -490,7 +490,7 @@ else
 	        $genallowed = $user->rights->user->user->creer;
 	        $delallowed = $user->rights->user->user->supprimer;
 
-	        $somethingshown = $formfile->show_documents('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+	        $somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 	        // Show links to link elements
 	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);
@@ -520,7 +520,7 @@ else
 
             print '<table class="border" width="100%">';
             print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Name").'</td>';
-            print '<td class="valeur"><input size="15" type="text" name="group" value="'.$object->name.'">';
+            print '<td class="valeur"><input class="minwidth300" type="text" name="group" value="'.dol_escape_htmltag($object->name).'">';
             print "</td></tr>\n";
 
             // Multicompany

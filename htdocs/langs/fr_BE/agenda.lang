@@ -18,6 +18,7 @@ InvoiceBackToDraftInDolibarr=Facture %s retour à l'état de brouillon
 ProposalSentByEMail=Propale %s envoyée par e-mail
 OrderSentByEMail=Commande client %s envoyée par e-mail
 ShippingSentByEMail=Livraison %s envoyée par e-mail
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 ExportCal=Exporter calendrier
-AgendaExtNb=Calendrier num %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL pour accéder au fichier .ical

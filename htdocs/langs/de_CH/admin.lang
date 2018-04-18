@@ -89,6 +89,7 @@ ConfirmEraseAllCurrentBarCode=Wirklich alle aktuellen Barcode-Werte löschen?
 DisplayCompanyManagers=Anzeige der Namen der Geschäftsführung
 Use3StepsApproval=Standardmässig, Einkaufsaufträge müssen durch zwei unterschiedlichen Benutzer erstellt und freigegeben werden (ein Schritt/Benutzer zum Erstellen und ein Schritt/Benutzer für die Freigabe). Beachten Sie, wenn ein Benutzer beide Rechte hat - zum Erstellen und Freigeben, dann reicht ein Benutzer für diesen Vorgang. Optional können Sie einen zusätzlichen Schritt/User für die Freigabe einrichten, wenn der Betrag einen bestimmten dedizierten Wert übersteigt (wenn der Betrag höher wird, werden 3 Stufen notwendig: 1=Validierung, 2=erste Freigabe und 3=Gegenfreigabe.<br>Lassen Sie das Feld leer, wenn eine Freigabe (2 Schritte) ausreicht; tragen Sie einen sehr niedrigen Wert (0.1) ein, wenn eine zweite Freigabe notwendig ist.
 UseDoubleApproval=3-fach Verarbeitungsschritte verwenden, wenn der Betrag (ohne Steuer) höher ist als ...
+WarningPHPMail=WARNING: It is often better to setup outgoing emails to use the email server of your provider instead of the default setup. Some email providers (like Yahoo) does not allow you to send an email from another server than their own server. Your current setup use the server of the application to send email and not the server of your email provider, so some recipients (the one compatible with the restrictive DMARC protocol), will ask your email provider if they can accept your email and some email providers (like Yahoo) may respond "no" because the server is not a server of them, so few of your sent Emails may not be accepted (be carefull also to your email provider sending quota).<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
 ClickToShowDescription=Klicken um die Beschreibung zu sehen
 DependsOn=Dieses Modul benötigt die folgenden Module
 PageUrlForDefaultValues=Hier muss die relative URL der Seite eingetragen werden. Wenn Parameter in der URL angegeben werden, dann werden alle Vorgabewerte auf den gleichen Wert gesetzt. Beispiele:
@@ -147,9 +148,6 @@ LocalTax1IsNotUsedDescES=Standardmässig werden die vorgeschlagenen RE 0 ist. En
 LocalTax2IsUsedDescES=Die RE Rate standardmässig beim Erstellen Aussichten, Rechnungen, Bestellungen etc. folgen die aktive Standard-Regel: <br> Ist der Verkäufer nicht zu IRPF ausgesetzt, dann durch IRPF default = 0. Ende der Regel. <br> Ist der Verkäufer zur IRPF dann der Einkommenssteuer unterworfen standardmässig. Ende der Regel. <br>
 LocalTax2IsNotUsedDescES=Standardmässig werden die vorgeschlagenen IRPF 0 ist. Ende der Regel.
 LocalTax2IsNotUsedExampleES=In Spanien sind sie bussines nicht der Steuer unterliegen System von Modulen.
-MenuCompanySetup=Firma/Organisation
-CompanyInfo=Firmen-/Organisationsinformationen
-CompanyIds=Firmen-/Organisations-IDs
 Delays_MAIN_DELAY_ACTIONS_TODO=Verzögerungstoleranz (in Tagen) vor Warnung für nicht erledigte Ereignisse
 Delays_MAIN_DELAY_PROJECT_TO_CLOSE=Verzögerungstoleranz (in Tagen) vor Warnung für nicht fristgerecht geschlossene Projekte
 Delays_MAIN_DELAY_TASKS_TODO=Verzögerungstoleranz (in Tagen) vor Warnung für nicht erledigte Projektaufgaben
@@ -167,7 +165,7 @@ SystemAreaForAdminOnly=Dieser Bereich steht ausschliesslich Administratoren zur 
 TriggersDesc=Trigger sind Dateien, die nach einem Kopieren in das Verzeichnis <b>htdocs/core/triggers</b> das Workflow-Verhalten des Systems beeinflussen. Diese stellen neue, mit Systemereignissen verbundene, Ereignisse dar (Neuer Geschäftspartner angelegt, Rechnung freigegeben, ...).
 TriggerDisabledByName=Trigger in dieser Datei sind durch das <b>-NORUN</b>-Suffix in ihrem Namen deaktviert.
 DictionaryDesc=Definieren Sie hier alle Defaultwerte. Sie können die vordefinierten Werte mit ihren eigenen ergänzen.
-ConstDesc=Diese Seite erlaubt es alle anderen Parameter einzustellen, die auf den vorherigen Seiten nicht verfügbar sind. Dies sind meist reservierte Parameter für Entwickler oder für die erweiterte Fehlersuche. Für eine Liste von Optionen <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="externe Seite - öffnet sich in einem neuen Fenster" target="_blank"> hier überprüfen </ </a>.
+ConstDesc=Diese Seite erlaubt es alle anderen Parameter einzustellen, die auf den vorherigen Seiten nicht verfügbar sind. Dies sind meist reservierte Parameter für Entwickler oder für die erweiterte Fehlersuche. Für eine Liste von Optionen <a href="https://wiki.dolibarr.org/index.php/Setup_Other#List_of_known_hidden_options" title="externe Seite - öffnet sich in einem neuen Fenster" target="_blank"> hier überprüfen  </a>.
 MiscellaneousDesc=Alle anderen sicherheitsrelevanten Parameter werden hier definiert.
 MAIN_ROUNDING_RULE_TOT=Rundungseinstellung (Für Länder in denen nicht auf 10er basis Gerundet wird. zB. 0.05 damit in 0.05 Schritten gerundet wirb)
 TotalPriceAfterRounding=Gesamtpreis (Netto/MwSt./Brutto) gerundet
@@ -224,6 +222,7 @@ IfYouUsePointOfSaleCheckModule=Wenn Sie ein Point of Sale-Modul (POS-Modul Stand
 DetailTitre=Menübezeichner oder Bezeichnungs-Code für Übersetzung
 DetailLangs=Sprachdateiname für Bezeichnungsübersetzung
 OptionVatMode=MwSt. fällig
+OptionVATDefault=Standard basis
 SummaryOfVatExigibilityUsedByDefault=Standardmässiger Zeitpunkt der MwSt.-Fälligkeit in Abhängigkeit zur derzeit gewählten Option:
 ClickToDialUseTelLinkDesc=Verwenden Sie diese Methode wenn ein Softphone oder eine andere Telefonielösung auf dem Computer ist. Es wird ein "tel:" Link generiert. Wenn Sie eine Serverbasierte Lösung benötigen, setzen Sie dieses Feld auf Nein und geben die notwendigen Daten im nächsten Feld ein.
 CashDeskThirdPartyForSell=Standardgeschäftspartner für Kassenverkäufe
