@@ -113,10 +113,10 @@ class FormTicketsup
     /**
      * Show the form to input ticket
      *
-     * @param  string $width Width of form
+     * @param  int	 $withdolfichehead			With dol_fiche_head
      * @return void
      */
-    public function showForm($width = '100%')
+    public function showForm($withdolfichehead=0)
     {
         global $conf, $langs, $user, $hookmanager;
 
@@ -140,7 +140,9 @@ class FormTicketsup
 
         print "\n<!-- Begin form TICKETSUP -->\n";
 
-        print '<form method="POST" style="margin-bottom: 30px;" name="ticketsup" id="form_create_ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
+        if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
+
+        print '<form method="POST" '.($withdolfichehead?'':'style="margin-bottom: 30px;" ').'name="ticketsup" id="form_create_ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="' . $this->action . '">';
         foreach ($this->param as $key => $value) {
@@ -149,7 +151,7 @@ class FormTicketsup
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
         print '<div class="">';
-        print '<table class="tableticket"  width="' . $width . '">';
+        print '<table class="tableticket centpercent">';
 
 
         if ($this->withref) {
@@ -393,6 +395,8 @@ class FormTicketsup
 
         print '</table>';
         print '</div>';
+
+        if ($withdolfichehead) dol_fiche_end();
 
         print '<center>';
         print '<input class="button" type="submit" name="add_ticket" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';

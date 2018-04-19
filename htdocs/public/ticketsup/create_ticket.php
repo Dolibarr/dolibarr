@@ -175,7 +175,10 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         if (!is_object($user)) {
             $user = new User($db);
         }
-        $id = $object->create($user, 1); // Disable trigger for email (send by this page)
+
+        $object->context['disableemailtothirdparty']=1;		// Disable email sent by ticketsup trigger when creation is done from this page
+
+        $id = $object->create($user);
         if ($id <= 0) {
             $error++;
             $errors = ($object->error ? array($object->error) : $object->errors);
