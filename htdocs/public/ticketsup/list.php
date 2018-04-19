@@ -60,6 +60,13 @@ if (isset($_SESSION['email_customer'])) {
 
 $object = new ActionsTicketsup($db);
 
+
+
+
+/*
+ * Actions
+ */
+
 if ($action == "view_ticketlist") {
     $error = 0;
     $display_ticket_list = false;
@@ -82,7 +89,8 @@ if ($action == "view_ticketlist") {
     }
 
     if (!$error) {
-        $ret = $object->fetch('', $track_id);
+    	$ret = $object->fetch('', '', $track_id);
+
         if ($ret && $object->dao->id > 0) {
             // vérifie si l'adresse email est bien dans les contacts du ticket
             $contacts = $object->dao->liste_contact(-1, 'external');
@@ -118,6 +126,7 @@ if ($action == "view_ticketlist") {
         $action = '';
     }
 }
+
 $object->doActions($action);
 
 
@@ -143,11 +152,13 @@ if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
 
 print '<div style="margin: 0 auto; width:60%">';
 
-if ($action == "view_ticketlist") {
+if ($action == "view_ticketlist")
+{
+
     if ($display_ticket_list) {
         // Filters
         $search_fk_status = GETPOST("search_fk_status", 'alpha');
-        $search_subject = GETPOST("search_subject");
+        $search_subject = GETPOST("search_subject", 'alpha');
         $search_type = GETPOST("search_type", 'alpha');
         $search_category = GETPOST("search_category", 'alpha');
         $search_severity = GETPOST("search_severity", 'alpha');
@@ -271,7 +282,7 @@ if ($action == "view_ticketlist") {
         $pagenext = $page + 1;
 
         // Request SQL
-        $sql = "SELECT";
+        $sql = "SELECT DISTINCT";
         $sql .= " t.rowid,";
         $sql .= " t.ref,";
         $sql .= " t.track_id,";
@@ -313,12 +324,12 @@ if ($action == "view_ticketlist") {
             $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "ticketsup_extrafields as ef on (t.rowid = ef.fk_object)";
         }
         $sql .= " WHERE t.entity IN (" . getEntity('ticketsup') . ")";
-        $sql .= " AND tc.source = 'external'";
-        $sql .= " AND tc.element='" . $object->dao->element . "'";
-        $sql .= " AND tc.active=1";
-        $sql .= " AND (sp.email='" . $db->escape($_SESSION['email_customer']) . "'";
+        $sql .= " AND ((tc.source = 'external'";
+        $sql .= " AND tc.element='" . $db->escape($object->dao->element) . "'";
+        $sql .= " AND tc.active=1)";
+        $sql .= " OR (sp.email='" . $db->escape($_SESSION['email_customer']) . "'";
         $sql .= " OR s.email='" . $db->escape($_SESSION['email_customer']) . "'";
-        $sql .= " OR t.origin_email='" . $db->escape($_SESSION['email_customer']) . "')";
+        $sql .= " OR t.origin_email='" . $db->escape($_SESSION['email_customer']) . "'))";
         // Manage filter
         if (!empty($filter)) {
             foreach ($filter as $key => $value) {
@@ -337,7 +348,7 @@ if ($action == "view_ticketlist") {
                 }
             }
         }
-        $sql .= " GROUP BY t.track_id";
+        //$sql .= " GROUP BY t.track_id";
         $sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
 
         $resql = $db->query($sql);
@@ -442,9 +453,9 @@ if ($action == "view_ticketlist") {
 
                 // Status
                 if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print '<td>';
+                    print '<td class="liste_titre">';
                     $selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
-                    $object->printSelectStatus($selected);
+                    //$object->printSelectStatus($selected);
                     print '</td>';
                 }
 
@@ -497,16 +508,15 @@ if ($action == "view_ticketlist") {
                     }
                 }
 
-                print '<td class="liste_titre" align="right">';
+                print '<td class="liste_titre nowraponall" align="right">';
                 print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
                 print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
                 print '</td>';
                 print '</tr>';
 
-                $var = true;
-                while ($obj = $db->fetch_object($resql)) {
-                    $var = !$var;
-                    print "<tr " . $bc[$var] . ">";
+                while ($obj = $db->fetch_object($resql))
+                {
+                    print '<tr class="oddeven">';
 
                     // Date ticket
                     if (!empty($arrayfields['t.datec']['checked'])) {
@@ -582,11 +592,11 @@ if ($action == "view_ticketlist") {
                     // Message author
                     if (!empty($arrayfields['t.fk_user_create']['checked'])) {
                         print '<td>';
-                        if ($obj->fk_user_create) {
+                        if ($obj->fk_user_create > 0) {
                             $user_create->firstname = (!empty($obj->user_create_firstname) ? $obj->user_create_firstname : '');
                             $user_create->name = (!empty($obj->user_create_lastname) ? $obj->user_create_lastname : '');
                             $user_create->id = (!empty($obj->fk_user_create) ? $obj->fk_user_create : '');
-                            print $user_create->getFullName();
+                            print $user_create->getFullName($langs);
                         } else {
                             print $langs->trans('Email');
                         }
@@ -596,11 +606,11 @@ if ($action == "view_ticketlist") {
                     // Assigned author
                     if (!empty($arrayfields['t.fk_user_assign']['checked'])) {
                         print '<td>';
-                        if ($obj->fk_user_assign) {
+                        if ($obj->fk_user_assig > 0) {
                             $user_assign->firstname = (!empty($obj->user_assign_firstname) ? $obj->user_assign_firstname : '');
                             $user_assign->lastname = (!empty($obj->user_assign_lastname) ? $obj->user_assign_lastname : '');
                             $user_assign->id = (!empty($obj->fk_user_assign) ? $obj->fk_user_assign : '');
-                            print $user_assign->getFullName();
+                            print $user_assign->getFullName($langs);
                         } else {
                             print $langs->trans('None');
                         }
