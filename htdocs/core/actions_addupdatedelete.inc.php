@@ -62,7 +62,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 
 		$object->$key=$value;
-		if ($val['notnull'] > 0 && $object->$key == '')
+		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
 		{
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
@@ -117,7 +117,7 @@ if ($action == 'update' && ! empty($permissiontoadd))
 		if (! empty($object->fields[$key]['foreignkey']) && $value == '-1') $value='';					// This is an explicit foreign key field
 
 		$object->$key=$value;
-		if ($val['notnull'] > 0 && $object->$key == '')
+		if ($val['notnull'] > 0 && $object->$key == '' && is_null($val['default']))
 		{
 			$error++;
 			setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv($val['label'])), null, 'errors');
