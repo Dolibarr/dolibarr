@@ -1588,7 +1588,7 @@ class Ticketsup extends CommonObject
                     $url_internal_ticket = dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $this->track_id;
                     $message .= "\n" . $langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : ' . '<a href="' . $url_internal_ticket . '">' . $this->track_id . '</a>' . "\n";
                 } else {
-                    $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/ticketsup/public/view.php', 2)) . '?track_id=' . $this->track_id;
+                    $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticketsup/view.php', 2)) . '?track_id=' . $this->track_id;
                     $message .= "\n" . $langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . '<a href="' . $url_public_ticket . '">' . $this->track_id . '</a>' . "\n";
                 }
 

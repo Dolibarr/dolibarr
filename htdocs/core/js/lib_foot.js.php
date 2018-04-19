@@ -131,16 +131,29 @@ if ($conf->browser->layout != 'phone')
            ' . "\n";
 }
 
+// Code to manage reposition
 print "\n/* JS CODE TO ENABLE reposition management (does not work if a redirect is done after action of submission) */\n";
 print '
 			jQuery(document).ready(function() {
 				/* If page_y set, we set scollbar with it */
-				page_y=getParameterByName(\'page_y\', 0); if (page_y > 0) $(\'html, body\').scrollTop(page_y);
-				/* Set handler to add page_y param on some a href links */
+				page_y=getParameterByName(\'page_y\', 0);				/* search in GET parameter */
+				if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
+				console.log("page_y found is "+page_y);
+				if (page_y > 0) $(\'html, body\').scrollTop(page_y);
+
+				/* Set handler to add page_y param on output (click on href links or submit button) */
 				jQuery(".reposition").click(function() {
   	           		var page_y = $(document).scrollTop();
-  	           		this.href=this.href+\'&page_y=\'+page_y;
-  	           		console.log("We click on tag with .reposition class. this.ref is now "+this.href)
+					if (this.ref)
+					{
+  	           			this.href=this.href+\'&page_y=\'+page_y;
+  	           			console.log("We click on tag with .reposition class. this.ref is now "+this.href);
+					}
+					else
+					{
+						console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update form field page_y with value "+page_y);
+						jQuery("input[type=hidden][name=page_y]").val(page_y);
+					}
 		 		});
 			});'."\n";
 

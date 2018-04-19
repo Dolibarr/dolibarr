@@ -17,9 +17,9 @@
  */
 
 /**
- *    Display public form to add new ticket
- *
- *    \ingroup     ticketsup
+ *       \file       htdocs/public/ticketsup/index.php
+ *       \ingroup    ticketsup
+ *       \brief      Display public form to add new ticket
  */
 if (!defined('NOREQUIREUSER')) {
     define('NOREQUIREUSER', '1');
@@ -127,11 +127,11 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         }
     }
 
-    if (!GETPOST("subject")) {
+    if (!GETPOST("subject","none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("Subject")));
         $action = '';
-    } elseif (!GETPOST("message")) {
+    } elseif (!GETPOST("message","none")) {
         $error++;
         array_push($object->errors, $langs->trans("ErrorFieldRequired", $langs->transnoentities("message")));
         $action = '';
@@ -149,13 +149,13 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 
         $object->track_id = generate_random_id(16);
 
-        $object->subject = GETPOST("subject");
-        $object->message = GETPOST("message");
+        $object->subject = GETPOST("subject","none");
+        $object->message = GETPOST("message","none");
         $object->origin_email = $origin_email;
 
-        $object->type_code = GETPOST("type_code");
-        $object->category_code = GETPOST("category_code");
-        $object->severity_code = GETPOST("severity_code");
+        $object->type_code = GETPOST("type_code", 'az09');
+        $object->category_code = GETPOST("category_code", 'az09');
+        $object->severity_code = GETPOST("severity_code", 'az09');
         if (is_array($searched_companies)) {
             $object->fk_soc = $searched_companies[0]->id;
         }
@@ -172,7 +172,10 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         if (!is_object($user)) {
             $user = new User($db);
         }
-        $id = $object->create($user, 1); // Disable trigger for email (send by this page)
+
+        $object->context['disableticketsupemail']=1;		// Disable emails sent by ticketsup trigger when creation is done from this page, emails are already sent later
+
+        $id = $object->create($user);
         if ($id <= 0) {
             $error++;
             $errors = ($object->error ? array($object->error) : $object->errors);
@@ -184,9 +187,20 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
             if ($usertoassign > 0) {
                 $object->add_contact($usertoassign, "SUPPORTCLI", 'external', $notrigger = 0);
             }
+        }
 
-            $object->db->commit();
+        if (! $error)
+        {
+        	$object->db->commit();
+        	$action = "infos_success";
+        } else {
+	    	$object->db->rollback();
+	    	setEventMessage($object->errors, 'errors');
+	    	$action = 'create_ticket';
+	    }
 
+	    if (! $error)
+	    {
             $res = $object->fetch($id);
             if ($res) {
                 // Create form object
@@ -205,18 +219,19 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 $mimetype = $attachedfiles['mimes'];
 
                 // Send email to customer
+
                 $subject = '[' . $conf->global->MAIN_INFO_SOCIETE_NOM . '] ' . $langs->transnoentities('TicketNewEmailSubject');
                 $message .= ($conf->global->TICKETS_MESSAGE_MAIL_NEW ? $conf->global->TICKETS_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')) . "\n\n";
                 $message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket') . "\n";
 
-                $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/ticketsup/public/view.php', 2)) . '?track_id=' . $object->track_id;
+                $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticketsup/view.php', 2)) . '?track_id=' . $object->track_id;
                 $infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="' . $url_public_ticket . '">' . $object->track_id . '</a>') . "\n";
                 $infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl') . "\n\n";
 
                 $message .= dol_nl2br($infos_new_ticket);
                 $message .= $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
 
-                $sendto = GETPOST('email');
+                $sendto = GETPOST('email','alpha');
 
                 $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '>';
                 $replyto = $from;
@@ -238,79 +253,80 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
                 }
 
-                /* Send email to admin */
+
+                // Send email to TICKETS_NOTIFICATION_EMAIL_TO
+
                 $sendto = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO;
-                $subject = '[' . $conf->global->MAIN_INFO_SOCIETE_NOM . '] ' . $langs->transnoentities('TicketNewEmailSubjectAdmin');
-                $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id) . "\n\n";
-                $message_admin .= '<ul><li>' . $langs->trans('Title') . ' : ' . $object->subject . '</li>';
-                $message_admin .= '<li>' . $langs->trans('Type') . ' : ' . $object->type_label . '</li>';
-                $message_admin .= '<li>' . $langs->trans('Category') . ' : ' . $object->category_label . '</li>';
-                $message_admin .= '<li>' . $langs->trans('Severity') . ' : ' . $object->severity_label . '</li>';
-                $message_admin .= '<li>' . $langs->trans('From') . ' : ' . $object->origin_email . '</li>';
 
-                if (is_array($extrafields->attributes[$object->table_element]['label']))
+                if ($sendto)
                 {
-                	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
-                	{
-                		$enabled = 1;
-                		if ($qualified && isset($extrafields->attributes[$object->table_element]['list'][$key]))
-                		{
-                			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
-                		}
-                		$perms = 1;
-                		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key]))
-                		{
-                			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
-                		}
+	                $subject = '[' . $conf->global->MAIN_INFO_SOCIETE_NOM . '] ' . $langs->transnoentities('TicketNewEmailSubjectAdmin');
+	                $message_admin = $langs->transnoentities('TicketNewEmailBodyAdmin', $object->track_id) . "\n\n";
+	                $message_admin .= '<ul><li>' . $langs->trans('Title') . ' : ' . $object->subject . '</li>';
+	                $message_admin .= '<li>' . $langs->trans('Type') . ' : ' . $object->type_label . '</li>';
+	                $message_admin .= '<li>' . $langs->trans('Category') . ' : ' . $object->category_label . '</li>';
+	                $message_admin .= '<li>' . $langs->trans('Severity') . ' : ' . $object->severity_label . '</li>';
+	                $message_admin .= '<li>' . $langs->trans('From') . ' : ' . $object->origin_email . '</li>';
 
-                		$qualified=true;
-                		if (empty($enabled) || $enabled == 2) $qualified = false;
-                		if (empty($perms)) $qualified = false;
-                		if ($qualified) $message_admin .= '<li>' . $langs->trans($key) . ' : ' . $value . '</li>';
-                	}
-                }
+	                if (is_array($extrafields->attributes[$object->table_element]['label']))
+	                {
+	                	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	                	{
+	                		$enabled = 1;
+	                		if ($qualified && isset($extrafields->attributes[$object->table_element]['list'][$key]))
+	                		{
+	                			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);
+	                		}
+	                		$perms = 1;
+	                		if ($perms && isset($extrafields->attributes[$object->table_element]['perms'][$key]))
+	                		{
+	                			$perms = dol_eval($extrafields->attributes[$object->table_element]['perms'][$key], 1);
+	                		}
 
-                $message_admin .= '</ul>';
-                $message_admin .= '<p>' . $langs->trans('Message') . ' : <br>' . $object->message . '</p>';
-                $message_admin .= '<p><a href="' . dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
+	                		$qualified=true;
+	                		if (empty($enabled) || $enabled == 2) $qualified = false;
+	                		if (empty($perms)) $qualified = false;
+	                		if ($qualified) $message_admin .= '<li>' . $langs->trans($key) . ' : ' . $value . '</li>';
+	                	}
+	                }
 
-                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '>';
-                $replyto = $from;
+	                $message_admin .= '</ul>';
+	                $message_admin .= '<p>' . $langs->trans('Message') . ' : <br>' . $object->message . '</p>';
+	                $message_admin .= '<p><a href="' . dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
 
-                $message_admin = dol_nl2br($message_admin);
+	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '>';
+	                $replyto = $from;
 
-                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
-                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
-                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
-                }
-                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
-                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-                if ($mailfile->error) {
-                    setEventMessage($mailfile->error, 'errors');
-                } else {
-                    $result = $mailfile->sendfile();
-                }
-                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
-                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
-                }
+	                $message_admin = dol_nl2br($message_admin);
 
-                // Copy files into ticket directory
-                $destdir = $conf->ticketsup->dir_output . '/' . $object->track_id;
-                if (!dol_is_dir($destdir)) {
-                    dol_mkdir($destdir);
-                }
-                foreach ($filename as $i => $val) {
-                    dol_move($filepath[$i], $destdir . '/' . $filename[$i], 0, 1);
-                    $formmail->remove_attached_files($i);
+	                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+	                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
+	                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
+	                }
+	                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
+	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
+	                if ($mailfile->error) {
+	                    setEventMessage($mailfile->error, 'errors');
+	                } else {
+	                    $result = $mailfile->sendfile();
+	                }
+	                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+	                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
+	                }
                 }
             }
 
+            // Copy files into ticket directory
+            $destdir = $conf->ticketsup->dir_output . '/' . $object->track_id;
+            if (! dol_is_dir($destdir)) {
+            	dol_mkdir($destdir);
+            }
+            foreach ($filename as $i => $val) {
+            	dol_move($filepath[$i], $destdir . '/' . $filename[$i], 0, 1);
+            	$formmail->remove_attached_files($i);
+            }
+
             setEventMessage($langs->trans('YourTicketSuccessfullySaved'));
-            $action = "infos_success";
-        } else {
-            $object->db->rollback();
-            setEventMessage($object->errors, 'errors');
-            $action = 'create_ticket';
         }
     } else {
         setEventMessage($object->errors, 'errors');

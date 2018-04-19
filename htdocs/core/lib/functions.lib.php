@@ -3906,16 +3906,20 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
  * @param	string	$morecss		More css
+ * @param	string	$email			Email
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error', $email='')
 {
 	global $langs,$conf;
 
+	if (empty($email)) $email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
+
 	$langs->load("errors");
 	$now=dol_now();
+
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
 	{
@@ -6883,6 +6887,10 @@ function printCommonFooter($zone='private')
 
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
 	else print "\n".'<!-- Common footer for public page -->'."\n";
+
+	// A div to store page_y POST parameter so we can read it using javascript
+	print "\n<!-- A div to store page_y POST paramater -->\n";
+	print '<div id="page_y" style="display: none;">'.$_POST['page_y'].'</div>'."\n";
 
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks

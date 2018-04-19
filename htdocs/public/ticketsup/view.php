@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       ticketsup/public/index.php
+ *       \file       htdocs/public/ticketsup/index.php
  *       \ingroup    ticketsup
  *       \brief      Public file to add and manage ticket
  */
