@@ -797,6 +797,8 @@ if ($resql)
             		$i++;
             		continue;		// It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
             	}
+				// TODO Test on 'enabled'
+
 
             	print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
 
