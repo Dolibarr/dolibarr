@@ -2,7 +2,6 @@
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2006-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2009-2012	Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2018	        ptibogxiv			<support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -402,10 +401,13 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
   
+  if (GETPOST("paymenttoken",'alpha') or GETPOST("modepayment",'alpha')=='src_newcard'){
   if (GETPOST("paymenttoken",'alpha') && NULL!==GETPOST("paymenttoken",'alpha')){
   $stripeSource = GETPOST("paymenttoken",'alpha');
   }else{
   $stripeSource = GETPOST("stripeSource",'alpha');
+  } }else{
+  $stripeSource = GETPOST("modepayment",'alpha');
   }
      
   $savesource = GETPOST("savethesource",'alpha');
@@ -434,20 +436,22 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 		{
 			dol_syslog("Search existing Stripe customer profile for thirdparty_id=".$thirdparty_id, LOG_DEBUG, 0, '_stripe');
 
-			$service = 'StripeTest';
-			$servicestatus = 0;
-			if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
-			{
-				$service = 'StripeLive';
-				$servicestatus = 1;
-			}
-			$stripeacc = null;	// No Oauth/connect use for public pages
+	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+	{
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+			$stripe = new Stripe($db);
+	    $stripeacc = $stripe->getStripeAccount($service);								// Get Stripe OAuth connect account (no network access here)
+	
 
 			$thirdparty = new Societe($db);
 			$thirdparty->fetch($thirdparty_id);
 
-			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-			$stripe = new Stripe($db);
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
       
       if ($savesource=='ok'){
@@ -709,7 +713,17 @@ if (! empty($conf->paybox->enabled))
 
 }
 if (! empty($conf->stripe->enabled))
-{
+{ 	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+	{
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
+
+			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+			$stripe = new Stripe($db);
+	    $stripeacc = $stripe->getStripeAccount($service);	
 	print '<!-- STRIPE_LIVE = '.$conf->global->STRIPE_LIVE.' -->'."\n";
 }
 print '<!-- urlok = '.$urlok.' -->'."\n";
@@ -1560,7 +1574,7 @@ if (preg_match('/^dopayment/',$action))
 	        background-color: #fefde5 !important;
 	    }
 	    </style>';
-
+      
 		print '
 
 	    <br>
@@ -1581,18 +1595,138 @@ if (preg_match('/^dopayment/',$action))
 		print '<input type="hidden" name="forcesandbox" value="'.GETPOST('forcesandbox','alpha').'" />';
 		print '<input type="hidden" name="email" value="'.GETPOST('email','alpha').'" />';
 		print '<input type="hidden" name="thirdparty_id" value="'.GETPOST('thirdparty_id','int').'" />';
+    
+    	$service = 'StripeTest';
+	$servicestatus = 0;
+	if (! empty($conf->global->STRIPE_LIVE) && ! GETPOST('forcesandbox','alpha'))
+	{
+		$service = 'StripeLive';
+		$servicestatus = 1;
+	}
 
+			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+			$stripe = new Stripe($db);
+	    $stripeacc = $stripe->getStripeAccount($service);								// Get Stripe OAuth connect account (no network access here)
+   		$thirdparty = new Societe($db);
+			$thirdparty->fetch(GETPOST('thirdparty_id','int')); 
 		print '
 	    <table id="dolpaymenttable" summary="Payment form" class="center">
-	    <tbody><tr><td class="textpublicpayment">
-      <DIV id="payment-request-button"><!-- A Stripe Element will be inserted here. --></DIV></TR></TD>';
- 
-      print '<tbody><tr><td class="textpublicpayment">
+	    <tbody><tr class="textpublicpayment"><td  colspan="7">
+      <DIV id="payment-request-button"><!-- A Stripe Element will be inserted here. --></DIV><BR><BR></TD></TR>';
+     $listofsources = array();
+		if (is_object($stripe))
+		{
+			try {
+				$customerstripe=$stripe->customerStripe($thirdparty, $stripeacc, $servicestatus);
+				if ($customerstripe->id) {
+					$listofsources=$customerstripe->sources->data;
+				}
+			}
+			catch(Exception $e)
+			{
+				dol_syslog("Error when searching/loading Stripe customer for thirdparty id =".$object->id);
+			}
+		} 		// Show remote sources (not already shown as local source)
+    
+		if (is_array($listofsources) && count($listofsources))
+		{
+			foreach ($listofsources as $src)
+			{
+				if (! empty($arrayofstripecard[$src->id])) continue;	// Already in previous list
+
+				$nbremote++;
+
+				print '<tr class="textpublicpayment">';
+					print '<td><INPUT id="'.$src->id.'" onclick="ShowHideDiv()" type="radio" name="modepayment" value="'.$src->id.'" ';
+if ($customerstripe->default_source == $src->id){print ' checked ';}
+print '>';
+					print '</td>';
+				print '<td>';
+				if ($src->object=='card')
+				{
+					print img_credit_card($src->brand);
+				}
+				elseif ($src->object=='source' && $src->type=='card')
+				{
+					print img_credit_card($src->card->brand);
+				}
+				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				{
+					print '<span class="fa fa-university fa-2x fa-fw"></span>';
+				}
+
+				print'</td><td valign="middle">';
+				if ($src->object=='card')
+				{
+					print '....'.$src->last4.' - '.$src->exp_month.'/'.$src->exp_year.'';
+					print '</td><td>';
+					if ($src->country)
+					{
+						$img=picto_from_langcode($src->country);
+						print $img?$img.' ':'';
+						print getCountry($src->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				elseif ($src->object=='source' && $src->type=='card')
+				{
+					print $src->owner->name.'<br>....'.$src->card->last4.' - '.$src->card->exp_month.'/'.$src->card->exp_year.'';
+					print '</td><td>';
+
+				 	if ($src->card->country)
+					{
+						$img=picto_from_langcode($src->card->country);
+						print $img?$img.' ':'';
+						print getCountry($src->card->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				elseif ($src->object=='source' && $src->type=='sepa_debit')
+				{
+					print 'info sepa';
+					print '</td><td>';
+					if ($src->sepa_debit->country)
+					{
+							$img=picto_from_langcode($src->sepa_debit->country);
+							print $img?$img.' ':'';
+							print getCountry($src->sepa_debit->country,1);
+					}
+					else print img_warning().' <font class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("CompanyCountry")).'</font>';
+				}
+				print '</td>';
+				// Default
+				print '<td align="center" width="50">';
+				if (($customerstripe->default_source != $src->id))
+				{
+					print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&source='.$src->id.'&action=setassourcedefault">';
+					print img_picto($langs->trans("Default"),'off');
+					print '</a>';
+				} else {
+					print img_picto($langs->trans("Default"),'on');
+				}
+				print '</td>';
+
+				print '</tr>';
+			}
+		}
+      print '<tr class="textpublicpayment">';
+					print '<td><INPUT id="CdDbt" onclick="ShowHideDiv()" type="radio" name="modepayment" value="src_newcard" ';
+if ($nbremote == 0){print ' checked ';}
+print '>';
+				print '</td>';
+				print '<td >';
+
+					print '<span class="fa fa-credit-card-alt fa-2x fa-fw"></span>';
+
+				print'</td><td colspan="5">';
+			  print $langs->trans("NewCard");
+				print '</td></tr>';
+      print '<tr id="CardForm" class="textpublicpayment" style="display: none"><td colspan="7">
       <div class="form-row left">
 	    <label for="card-element">
 	    '.$langs->trans("OwnerName").'
 	    </label>
-      <INPUT id="owner-name" type="text" name="owner-name" placeholder="owner of source" >
+      <INPUT id="owner-name" value="" type="text" onchange="ShowHideDiv()" placeholder="owner of source" >
       </DIV>
 	    <div class="form-row left">
 	    <label for="card-element">
@@ -1601,24 +1735,24 @@ if (preg_match('/^dopayment/',$action))
 	    <div id="card-element">
 	    <!-- a Stripe Element will be inserted here. -->
 	    </div>
-
 	    <!-- Used to display form errors -->
 	    <div id="card-errors" role="alert"></div>
-	    </div><INPUT id="savethesourcecard" type="checkbox" name="savethesource" value="ok" > '.$langs->trans("SaveSource").'
-	    <br>
+	    </div><INPUT id="savethesourcecard" type="checkbox" name="savethesource" value="ok" > '.$langs->trans("SaveSource");
+	    print '</td></tr>';
+      print '<tr class="textpublicpayment"><td colspan="7"><br>
 	    <button class="butAction" id="buttontopay">'.$langs->trans("ValidatePayment").'</button>
 	    <img id="hourglasstopay" class="hidden" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/working.gif'.'">
 	    </td></tr></tbody></table>
 
-	    </form>
+	    </form>';
 
-	    <script src="https://js.stripe.com/v3/"></script>
+	    print '<script src="https://js.stripe.com/v3/"></script>
 
 	    <script type="text/javascript" language="javascript">';
 		?>
 
 	  // Create a Stripe client
-	  var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
+	  var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; ?>');
 
 var montant = <?php echo $amount*100; ?>;
 var ref = '<?php echo $REF; ?>';
@@ -1632,6 +1766,21 @@ var paymentRequest = stripe.paymentRequest({
   },
 });
 }
+
+function ShowHideDiv() {
+
+var CdDbt = document.getElementById("CdDbt");
+var CardForm = document.getElementById("CardForm");  
+if (CardForm){
+CardForm.style.display = CdDbt.checked ? "block" : "none";
+}
+
+var ownerinf = document.getElementById('owner-name').value;
+var ownerInfo = {
+  owner: {
+      name: ownerinf,
+  },
+};
 
     // Create an instance of Elements
     var elements = stripe.elements();
@@ -1655,12 +1804,6 @@ var paymentRequest = stripe.paymentRequest({
       }
     };
 
-   var ownerinf = document.getElementById('owner-name').value;
-   var ownerInfo = {
-    owner: {
-      name: ownerinf,
-    },
-   };
     // Create an instance of the card Element
     var card = elements.create('card', {style: style});
 
@@ -1678,22 +1821,25 @@ var paymentRequest = stripe.paymentRequest({
     });
     
     // Handle form submission   
-   var form = document.getElementById('payment-form');
-form.addEventListener('submit', function(event) {
+var form = document.getElementById('payment-form');
+form.addEventListener('submit', function(event) { 
+
+if (CdDbt.checked) {
 event.preventDefault();
 document.getElementById("owner-name").required = true;
 stripe.createSource(card, ownerInfo).then(function(result) {
-    if (result.error) {
-      // Inform the user if there was an error
-      var errorElement = document.getElementById('card-errors');
-      errorElement.textContent = result.error.message;
+if (result.error) {
+var errorElement = document.getElementById('card-errors');
+errorElement.textContent = result.error.message;
     } else {
-      // Send the source to your server
-      stripeSourceHandler(result.source);
+stripeSourceHandler(result.source);
     }
   });
-});
+} else { 
+stripeSourceHandler(event);}
 
+});
+}
 
 function stripeSourceHandler(source) {
   // Insert the source ID into the form so it gets submitted to the server
@@ -1710,6 +1856,8 @@ function stripeSourceHandler(source) {
       console.log("submit");
       form.submit();
     }
+
+window.onload=ShowHideDiv;      
     
 var elements = stripe.elements();
 var prButton = elements.create('paymentRequestButton', {
