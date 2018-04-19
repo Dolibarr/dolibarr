@@ -40,9 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
 
 // Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
-$langs->load("ticketsup");
+$langs->loadLangs(array("companies","other","ticketsup"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
@@ -57,6 +55,11 @@ if (isset($_SESSION['email_customer'])) {
 }
 
 $object = new ActionsTicketsup($db);
+
+
+/*
+ * Actions
+ */
 
 if ($action == "view_ticket" || $action == "add_message" || $action == "close" || $action == "confirm_public_close" || $action == "new_public_message") {
     $error = 0;
@@ -116,16 +119,18 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 }
 $object->doActions($action);
 
-/***************************************************
- * VIEW
- *
- ****************************************************/
+
+
+/*
+ * View
+ */
 
 $form = new Form($db);
 $formticket = new FormTicketsup($db);
 
 $arrayofjs = array();
 $arrayofcss = array('/ticketsup/css/styles.css.php');
+
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
@@ -151,17 +156,17 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         print '<table class="border" style="width:100%">';
 
         // Ref
-        print '<tr><td style="width:40%">' . $langs->trans("Ref") . '</td><td>';
+        print '<tr><td class="titlefield">' . $langs->trans("Ref") . '</td><td>';
         print $object->dao->ref;
         print '</td></tr>';
 
         // Tracking ID
-        print '<tr><td style="width:40%">' . $langs->trans("TicketTrackId") . '</td><td>';
+        print '<tr><td>' . $langs->trans("TicketTrackId") . '</td><td>';
         print $object->dao->track_id;
         print '</td></tr>';
 
         // Subject
-        print '<tr><td><strong>' . $langs->trans("Subject") . '</strong></td><td>';
+        print '<tr><td>' . $langs->trans("Subject") . '</td><td>';
         print $object->dao->subject;
         print '</td></tr>';
 
@@ -218,7 +223,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         }
 
         // User assigned
-        print '<tr><td>' . $langs->trans("UserAssignedTo") . '</td><td>';
+        print '<tr><td>' . $langs->trans("AssignedTo") . '</td><td>';
         if ($object->dao->fk_user_assign > 0) {
             $fuser = new User($db);
             $fuser->fetch($object->dao->fk_user_assign);

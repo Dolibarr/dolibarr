@@ -75,7 +75,7 @@ $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Add file in email form
 if (GETPOST('addfile') && !GETPOST('add_ticket')) {
-    ////$res = $object->fetch('',GETPOST('track_id'));
+    ////$res = $object->fetch('','',GETPOST('track_id'));
     ////if($res > 0)
     ////{
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
