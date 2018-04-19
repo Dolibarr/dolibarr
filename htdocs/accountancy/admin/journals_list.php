@@ -30,9 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
-$langs->load("admin");
-$langs->load("compta");
-$langs->load("accountancy");
+$langs->loadLangs(array("admin","compta","accountancy"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -629,7 +627,7 @@ if ($id)
 								$valuetoshow=$langs->trans('All');
 							}
 							else if ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
-								$langs->load("accountancy");
+								$langs->loadLangs(array("accountancy"));
 								$key=$langs->trans("AccountingJournalType".strtoupper($obj->nature));
 								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($obj->nature)?$key:$obj->{$fieldlist[$field]});
 							}

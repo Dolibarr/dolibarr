@@ -170,7 +170,7 @@ class BookKeeping extends CommonObject
 		// Check parameters
 		if (empty($this->numero_compte) || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')
 		{
-			$langs->load("errors");
+			$langs->loadLangs(array("errors"));
 			if (in_array($this->doc_type, array('bank', 'expense_report')))
 			{
 				$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet,  $this->doc_type);

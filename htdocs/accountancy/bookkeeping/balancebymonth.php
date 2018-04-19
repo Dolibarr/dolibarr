@@ -26,16 +26,10 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-// Langs
-$langs->load("main");
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("accountancy");
+$langs->loadLangs(array("compta","bills","other","accountancy"));
 
 // Filter
 $year = GETPOST("year",'int');

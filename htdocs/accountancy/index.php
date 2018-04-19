@@ -26,25 +26,11 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-// Langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("main");
-$langs->load("accountancy");
+$langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","admin","dict"));
 
 // Security check
 if ($user->societe_id > 0)
 	accessforbidden();
-
-$langs->load("admin");
-$langs->load("dict");
-$langs->load("bills");
-$langs->load("accountancy");
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("loans");
-
 
 /*
  * Actions
