@@ -3908,14 +3908,17 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param	string	$morecss		More css
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error', $email='')
 {
 	global $langs,$conf;
 
+	if (empty($email)) $email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
+
 	$langs->load("errors");
 	$now=dol_now();
+
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
 	{
