@@ -1588,7 +1588,7 @@ else
 
 				if ($action != 'editline' || GETPOST('rowid') != $objp->rowid)
 				{
-					print '<tr '.$bcnd[$var].' class="tdtop">';
+					print '<tr class="tdtop oddeven">';
 					// Label
 					if ($objp->fk_product > 0)
 					{
@@ -1684,7 +1684,7 @@ else
 							$colspan = 7;
 						}
 
-						print '<tr '.$bcnd[$var].'>';
+						print '<tr class="oddeven">';
 						print '<td colspan="'.$colspan.'">';
 
 						// Date planned
@@ -1721,14 +1721,14 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcnd[$var], 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+						print $line->showOptionals($extrafieldsline, 'view', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
 				}
 				// Ligne en mode update
 				else
 				{
 					// Ligne carac
-					print "<tr ".$bcnd[$var].">";
+					print '<tr class="oddeven">';
 					print '<td>';
 					if ($objp->fk_product)
 					{
@@ -1783,7 +1783,7 @@ else
 					if($conf->global->PRODUCT_USE_UNITS) $colspan++;
 
 					// Ligne dates prevues
-					print "<tr ".$bcnd[$var].">";
+					print '<tr class="oddeven">';
 					print '<td colspan="'.$colspan.'">';
 					print $langs->trans("DateStartPlanned").' ';
 					$form->select_date($db->jdate($objp->date_debut),"date_start_update",$usehm,$usehm,($db->jdate($objp->date_debut)>0?0:1),"update");
@@ -1795,7 +1795,7 @@ else
 					if (is_array($extralabelslines) && count($extralabelslines)>0) {
 						$line = new ContratLigne($db);
 						$line->fetch_optionals($objp->rowid);
-						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+						print $line->showOptionals($extrafieldsline, 'edit', array('style'=>'class="oddeven"', 'colspan'=>$colspan), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 					}
 				}
 
@@ -1808,7 +1808,7 @@ else
 
 			if ($object->statut > 0)
 			{
-				print '<tr '.$bcnd[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td class="tdhrthin" colspan="'.($conf->margin->enabled?7:6).'"><hr class="opacitymedium tdhrthin"></td>';
 				print "</tr>\n";
 			}
@@ -1886,7 +1886,7 @@ else
 			{
 				print '<table class="notopnoleftnoright tableforservicepart2'.($cursorline < $nbofservices ?' boxtablenobottom':'').'" width="100%">';
 
-				print '<tr '.$bcnd[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td>'.$langs->trans("ServiceStatus").': '.$object->lines[$cursorline-1]->getLibStatut(4).'</td>';
 				print '<td width="30" align="right">';
 				if ($user->societe_id == 0)
@@ -1913,7 +1913,7 @@ else
 				print '</td>';
 				print "</tr>\n";
 
-				print '<tr '.$bcnd[$var].'>';
+				print '<tr class="oddeven">';
 
 				print '<td>';
 				// Si pas encore active
@@ -1969,7 +1969,7 @@ else
 					}
 				}
 
-				print '<tr '.$bc[false].'>';
+				print '<tr class="oddeven">';
 				print '<td class="nohover">'.$langs->trans("DateServiceActivate").'</td><td class="nohover">';
 				print $form->select_date($dateactstart,'',$usehm,$usehm,'',"active",1,0,1);
 				print '</td>';
@@ -1981,7 +1981,7 @@ else
 
 				print '</tr>';
 
-				print '<tr '.$bc[false].'>';
+				print '<tr class="oddeven">';
 				print '<td class="nohover">'.$langs->trans("Comment").'</td><td colspan="3" class="nohover" colspan="'.($conf->margin->enabled?4:3).'"><input size="80" type="text" name="comment" value="'.$_POST["comment"].'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="activate" value="'.$langs->trans("Activate").'"> &nbsp; ';
@@ -2026,7 +2026,7 @@ else
 				$now=dol_now();
 				if ($dateactend > $now) $dateactend=$now;
 
-				print '<tr '.$bc[false].'><td colspan="2" class="nohover">';
+				print '<tr class="oddeven"><td colspan="2" class="nohover">';
 				if ($objp->statut >= 4)
 				{
 					if ($objp->statut == 4)
@@ -2039,7 +2039,7 @@ else
 				print '<td class="center nohover">';
 				print '</td></tr>';
 
-				print '<tr '.$bc[false].'>';
+				print '<tr class="oddeven">';
 				print '<td class="nohover">'.$langs->trans("Comment").'</td><td class="nohover"><input size="70" type="text" class="flat" name="comment" value="'.dol_escape_htmltag(GETPOST('comment', 'alpha')).'"></td>';
 				print '<td class="nohover right">';
 				print '<input type="submit" class="button" name="close" value="'.$langs->trans("Disable").'"> &nbsp; ';
@@ -2079,8 +2079,6 @@ else
 			// Form to add new line
 	   		if ($action != 'editline')
 			{
-				$var = true;
-
 				$forcetoshowtitlelines=1;
 
 				// Add free products/services
@@ -2201,8 +2199,7 @@ else
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 			$genallowed = $user->rights->contrat->lire;
 			$delallowed = $user->rights->contrat->creer;
-
-			$var = true;
+			
 
 			print $formfile->showdocuments('contract', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 

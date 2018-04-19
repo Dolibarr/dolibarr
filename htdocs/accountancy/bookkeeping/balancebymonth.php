@@ -29,7 +29,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-$langs->loadLangs(array("compta","bills","other","accountancy"));
+// Load traductions files requiredby by page
+$langs->loadLangs(array("bills","compta","accountancy","other"));
 
 // Filter
 $year = GETPOST("year",'int');
@@ -69,8 +70,6 @@ if ($result) {
 
 $y = $year_current;
 
-$var = true;
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width=150>' . $langs->trans("Label") . '</td><td align="center">' . $langs->trans("JanuaryMin") . '</td><td align="center">' . $langs->trans("FebruaryMin") . '</td><td align="center">' . $langs->trans("MarchMin") . '</td><td align="center">' . $langs->trans("AprilMin") . '</td><td align="center">' . $langs->trans("MayMin") . '</td><td align="center">' . $langs->trans("JuneMin") . '</td><td align="center">' . $langs->trans("JulyMin") . '</td><td align="center">' . $langs->trans("AugustMin") . '</td><td align="center">' . $langs->trans("SeptemberMin") . '</td><td align="center">' . $langs->trans("OctoberMin") . '</td><td align="center">' . $langs->trans("NovemberMin") . '</td><td align="center">' . $langs->trans("DecemberMin") . '</td><td align="center"><b>Total</b></td></tr>';
 
@@ -102,7 +101,7 @@ if ($resql) {
 		
 		$row = $db->fetch_row($resql);
 		
-		print '<tr><td width="14%">' . length_accountg($row[0]) . '</td>';
+		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[1]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[2]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[3]) . '</td>';

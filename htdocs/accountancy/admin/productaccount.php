@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
+// Load traductions files requiredby by page
 $langs->loadLangs(array("companies","compta","accountancy","products"));
 
 // Security check
@@ -354,7 +355,6 @@ if ($result)
 
 	$product_static = new Product($db);
 
-	$var = true;
 	$i=0;
     while ($i < min($num,$limit))
     {
