@@ -343,6 +343,9 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			$this->supplierproposal=new stdClass();
+			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
+			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
 			$this->fournisseur->payment=new stdClass();
 			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";
 			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";
@@ -358,6 +361,9 @@ class Conf
     			$this->supplier_invoice->enabled=1;
     			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";
     			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";
+    			$this->supplierproposal=new stdClass();
+    			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
+    			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
 			}
 		}
 
