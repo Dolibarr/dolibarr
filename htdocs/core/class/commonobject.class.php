@@ -5566,27 +5566,27 @@ abstract class CommonObject
 			if(! empty($value)) {
 				foreach($value as $option) {
 					$out.= '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
-					$out.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', $option, $moreparam, '', '', $showsize).'<br /></span>';
+					$out.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', $option, $moreparam, '', '', $showsize).'<br></span>';
 				}
 			}
 
 			$out.= '<a id="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_add" href="javascript:;"><span class="fa fa-plus-circle valignmiddle"></span></a>';
 
 			$newInput = '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
-			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $showsize).'<br /></span>';
+			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $showsize).'<br></span>';
 
 			$out.= '
-<script type="text/javascript">
-$(document).ready(function() {
-	$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
-		$("'.dol_escape_js($newInput).'").insertBefore(this);
-	});
+				<script type="text/javascript">
+				$(document).ready(function() {
+					$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
+						$("'.dol_escape_js($newInput).'").insertBefore(this);
+					});
 
-	$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
-		$(this).parent().remove();
-	});
-});
-</script>';
+					$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+						$(this).parent().remove();
+					});
+				});
+				</script>';
 		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
@@ -5961,7 +5961,7 @@ $(document).ready(function() {
 		}
 		elseif ($type == 'array')
 		{
-			$value = implode('<br />', $value);
+			$value = implode('<br>', $value);
 		}
 
 		//print $type.'-'.$size;
