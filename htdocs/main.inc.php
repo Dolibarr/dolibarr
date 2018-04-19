@@ -198,7 +198,7 @@ if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 {
 	$tmpautoset=explode(':',$_POST["DOL_AUTOSET_COOKIE"],2);
 	$tmplist=explode(',',$tmpautoset[1]);
-	$cookiearrayvalue='';
+	$cookiearrayvalue=array();
 	foreach ($tmplist as $tmpkey)
 	{
 		$postkey=$tmpautoset[0].'_'.$tmpkey;
