@@ -1028,7 +1028,7 @@ class ExtraFields
 				$out.= (((string) $value == (string) $key)?' selected':'');
 				$out.= (!empty($parent)?' parent="'.$parent.'"':'');
 				$out.='>';
-				if ($langfile) $out.=$langs->trans($val);
+				if ($langfile && $val) $out.=$langs->trans($val);
 				else $out.=$val;
 				$out.='</option>';
 			}
@@ -1492,7 +1492,7 @@ class ExtraFields
 		}
 		elseif ($type == 'select')
 		{
-			if ($langfile) $value=$langs->trans($param['options'][$value]);
+			if ($langfile && $param['options'][$value]) $value=$langs->trans($param['options'][$value]);
 			else $value=$param['options'][$value];
 		}
 		elseif ($type == 'sellist')
