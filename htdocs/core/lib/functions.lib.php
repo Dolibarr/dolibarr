@@ -6888,6 +6888,10 @@ function printCommonFooter($zone='private')
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
 	else print "\n".'<!-- Common footer for public page -->'."\n";
 
+	// A div to store page_y POST parameter so we can read it using javascript
+	print "\n<!-- A div to store page_y POST paramater -->\n";
+	print '<div id="page_y" style="display: none;">'.$_POST['page_y'].'</div>'."\n";
+
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook))
