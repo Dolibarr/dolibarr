@@ -169,8 +169,10 @@ if ($conf->adherent->enabled)          $elementList['member']=$langs->trans('Mai
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
 if ($conf->projet->enabled)            $elementList['project']=$langs->trans('MailToProject');
 $elementList['user']=$langs->trans('MailToUser');
-$elementList['all'] =$langs->trans('VisibleEverywhere');
-$elementList['none']=$langs->trans('VisibleNowhere');
+sort($elementList);
+// Add all and none after the sort
+$elementList['all'] ='-- '.$langs->trans("All").' -- ('.$langs->trans('VisibleEverywhere').')';
+$elementList['none']='-- '.$langs->trans("None").' -- ('.$langs->trans('VisibleNowhere').')';
 
 $parameters=array('elementList'=>$elementList);
 $reshook=$hookmanager->executeHooks('emailElementlist',$parameters);    // Note that $action and $object may have been modified by some hooks
