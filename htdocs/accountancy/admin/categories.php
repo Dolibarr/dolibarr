@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
-$langs->load("bills");
-$langs->load("accountancy");
+$langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';
 $id = GETPOST('id', 'int');

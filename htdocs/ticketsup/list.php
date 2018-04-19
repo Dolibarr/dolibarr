@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013-2018    Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
+ * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2018		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -580,11 +581,12 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine=0;
-foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
-{
-	if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+if (! empty($extrafields->attributes[$object->table_element]['computed'])) {
+	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
+	{
+		if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+	}
 }
-
 
 // Loop on record
 // --------------------------------------------------------------------

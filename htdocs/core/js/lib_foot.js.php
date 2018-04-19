@@ -143,17 +143,17 @@ print '
 
 				/* Set handler to add page_y param on output (click on href links or submit button) */
 				jQuery(".reposition").click(function() {
-  	           		var page_y = $(document).scrollTop();
-					if (this.ref)
+					var page_y = $(document).scrollTop();
+					if (this.href)
 					{
-  	           			this.href=this.href+\'&page_y=\'+page_y;
-  	           			console.log("We click on tag with .reposition class. this.ref is now "+this.href);
+						this.href=this.href+\'&page_y=\'+page_y;
+						console.log("We click on tag with .reposition class. this.ref is now "+this.href);
 					}
 					else
 					{
 						console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update form field page_y with value "+page_y);
 						jQuery("input[type=hidden][name=page_y]").val(page_y);
 					}
-		 		});
+				});
 			});'."\n";
 

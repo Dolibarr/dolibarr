@@ -26,12 +26,11 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("bills","compta","main","accountancy","other"));
+$langs->loadLangs(array("bills","compta","accountancy","other"));
 
 // Filter
 $year = GETPOST("year",'int');

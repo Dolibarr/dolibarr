@@ -26,7 +26,6 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
@@ -36,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("companies","compta","main","accountancy","products"));
+$langs->loadLangs(array("companies","compta","accountancy","products"));
 
 // Security check
 if (empty($conf->accounting->enabled)) {
