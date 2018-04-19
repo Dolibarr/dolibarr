@@ -272,7 +272,7 @@ class FormTicketsup
             dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
             $classname = ucfirst($subelement);
             $objectsrc = new $classname($this->db);
-            $objectsrc->fetch(GETPOST('originid'));
+            $objectsrc->fetch(GETPOST('originid','int'));
 
             if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
                 $objectsrc->fetch_lines();
@@ -299,9 +299,12 @@ class FormTicketsup
         print '</td></tr>';
 
         // Notify thirdparty at creation
-        print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
-        print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
-        print '</td></tr>';
+        if (empty($this->ispublic))
+        {
+	        print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
+        	print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
+        	print '</td></tr>';
+        }
 
         // TITLE
         if ($this->withtitletopic) {

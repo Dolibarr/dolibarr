@@ -16,9 +16,9 @@
  */
 
 /**
- *       \file       ticketsup/public/index.php
- *        \ingroup    ticketsup
- *        \brief      Public file to add and manage ticket
+ *       \file       htdocs/public/ticketsup/index.php
+ *       \ingroup    ticketsup
+ *       \brief      Public file to add and manage ticket
  */
 
 //if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');

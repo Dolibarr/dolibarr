@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       ticketsup/public/index.php
+ *       \file       htdocs/public/ticketsup/index.php
  *       \ingroup    ticketsup
  *       \brief      Public file to add and manage ticket
  */
@@ -253,7 +253,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
             $formticket->withfile = 2;
             $formticket->showMessageForm('100%');
         } else {
-            print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="' . dol_buildpath('/ticketsup/public/list.php', 1) . '">';
+            print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticketsup/list.php', 1) . '">';
             print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
             print '<input type="hidden" name="action" value="view_ticketlist">';
             print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';

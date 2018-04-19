@@ -16,9 +16,9 @@
  */
 
 /**
- *       \file       ticketsup/public/index.php
- *        \ingroup    ticketsup
- *        \brief      Public file to add and manage ticket
+ *       \file       htdocs/public/ticketsup/list.php
+ *       \ingroup    ticketsup
+ *       \brief      Public file to add and manage ticket
  */
 
 if (!defined('NOCSRFCHECK')) {
@@ -155,7 +155,7 @@ if ($action == "view_ticketlist") {
         $search_fk_user_assign = GETPOST("search_fk_user_assign", 'int');
 
         // Store current page url
-        $url_page_current = dol_buildpath('/ticketsup/public/list.php', 1);
+        $url_page_current = dol_buildpath('/public/ticketsup/list.php', 1);
 
         // Do we click on purge search criteria ?
         if (GETPOST("button_removefilter_x")) {
@@ -635,7 +635,7 @@ if ($action == "view_ticketlist") {
                 print '</table>';
                 print '</form>';
 
-                print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="' . dol_buildpath('/ticketsup/public/view.php', 1) . '" style="display:none;">';
+                print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticketsup/view.php', 1) . '" style="display:none;">';
                 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
                 print '<input type="hidden" name="action" value="view_ticket">';
                 print '<input type="hidden" name="btn_view_ticket_list" value="1">';

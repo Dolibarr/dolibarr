@@ -759,7 +759,7 @@ class ActionsTicketsup
                             $url_public_ticket = (!empty($conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) ?
                             		(!empty($conf->global->TICKETS_URL_PUBLIC_INTERFACE) ?
                             			$conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/view.php' :
-                            			dol_buildpath('/ticketsup/public/view.php', 2)
+                            			dol_buildpath('/public/ticketsup/view.php', 2)
                             		) :
                             		dol_buildpath('/ticketsup/card.php', 2)
                             	) . '?track_id=' . $object->track_id;
@@ -928,7 +928,7 @@ class ActionsTicketsup
                         $message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
                     }
 
-                    $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/ticketsup/public/view.php', 2)) . '?track_id=' . $object->track_id;
+                    $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticketsup/view.php', 2)) . '?track_id=' . $object->track_id;
                     $message .= "\n\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . $url_public_ticket . "\n";
 
                     // Add signature
