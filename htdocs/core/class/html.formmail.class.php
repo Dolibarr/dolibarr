@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2017 Nicolas ZABOURI        <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1110,7 +1111,8 @@ class FormMail extends Form
 				elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
 				elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
 				elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
-
+				elseif (!empty($type_template))				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template)); }
+				
 				$ret->label = 'default';
 				$ret->lang = $outputlangs->defaultlang;
 				$ret->topic = '';

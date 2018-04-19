@@ -3923,23 +3923,26 @@ abstract class CommonObject
 		$var = true;
 		$i	 = 0;
 
-		foreach ($this->lines as $line)
+		if (! empty($this->lines))
 		{
-			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			foreach ($this->lines as $line)
 			{
-				if (empty($line->fk_parent_line))
+				if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
 				{
-					$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
-					$action='';
-					$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					if (empty($line->fk_parent_line))
+					{
+						$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+						$action='';
+						$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					}
 				}
-			}
-			else
-			{
-				$this->printOriginLine($line, $var, $restrictlist);
-			}
+				else
+				{
+					$this->printOriginLine($line, $var, $restrictlist);
+				}
 
-			$i++;
+				$i++;
+			}
 		}
 	}
 

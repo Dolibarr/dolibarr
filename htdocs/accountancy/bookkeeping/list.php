@@ -32,8 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-// Langs
-$langs->load("accountancy");
+$langs->loadLangs(array("accountancy"));
 
 $action = GETPOST('action', 'alpha');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');

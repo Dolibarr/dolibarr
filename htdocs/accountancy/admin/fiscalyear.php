@@ -39,8 +39,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.rowid"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
-$langs->load("admin");
-$langs->load("compta");
+$langs->loadLangs(array("admin","compta"));
 
 // Security check
 if ($user->societe_id > 0)

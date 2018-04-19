@@ -93,9 +93,7 @@ if (GETPOST('addfile') && !GETPOST('add_ticket')) {
 
 // Remove file
 if (GETPOST('removedfile') && !GETPOST('add_ticket')) {
-    ////$res = $object->fetch('','',GETPOST('track_id'));
-    ////if($res > 0)
-    ////{
+
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
     // Set tmp directory
@@ -103,9 +101,8 @@ if (GETPOST('removedfile') && !GETPOST('add_ticket')) {
     $upload_dir_tmp = $vardir . '/temp';
 
     // TODO Delete only files that was uploaded from email form
-    dol_remove_file_process($_POST['removedfile'], 0);
+    dol_remove_file_process($_POST['removedfile'], 0, 0);
     $action = 'create_ticket';
-    ////}
 }
 if ($action == 'create_ticket' && GETPOST('add_ticket')) {
     $error = 0;
