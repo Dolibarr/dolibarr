@@ -3906,6 +3906,7 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
  * @param	string	$morecss		More css
+ * @param	string	$email			Email
  * @return	void
  */
 function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error', $email='')
