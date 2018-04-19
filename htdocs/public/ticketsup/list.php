@@ -274,9 +274,7 @@ if ($action == "view_ticketlist")
         $limit = $conf->liste_limit;
 
         $page = GETPOST("page", 'int');
-        if ($page == -1) {
-            $page = 0;
-        }
+        if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
         $offset = $limit * $page;
         $pageprev = $page - 1;
         $pagenext = $page + 1;

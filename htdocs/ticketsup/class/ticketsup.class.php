@@ -1639,7 +1639,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_logs_ticket)) {
+        if (is_array($this->cache_logs_ticket) && count($this->cache_logs_ticket)) {
             return 0;
         }
         // Cache deja charge
@@ -1751,7 +1751,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_msgs_ticket)) {
+        if (is_array($this->cache_msgs_ticket) && count($this->cache_msgs_ticket)) {
             return 0;
         }
         // Cache deja charge

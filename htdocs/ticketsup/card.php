@@ -134,7 +134,10 @@ include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';        // Must be inc
 $userstat = new User($db);
 $form = new Form($db);
 $formticket = new FormTicketsup($db);
-$formproject = new FormProjets($db);
+
+if (! empty($conf->projet->enabled)) {
+	$formproject = new FormProjets($db);
+}
 
 if ($action == 'view' || $action == 'add_message' || $action == 'close' || $action == 'delete' || $action == 'editcustomer' || $action == 'progression' || $action == 'reopen'
 	|| $action == 'editsubject' || $action == 'edit_extras' || $action == 'update_extras' || $action == 'edit_extrafields' || $action == 'set_extrafields' || $action == 'classify' || $action == 'sel_contract' || $action == 'edit_message_init' || $action == 'set_status' || $action == 'dellink')
@@ -631,15 +634,15 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
 
 	                print '<div class="tagtd">';
 
-	                print dol_print_phone($tab[$i]['phone'], '', '', '', AC_TEL).'<br>';
+	                print dol_print_phone($tab[$i]['phone'], '', '', '', 'AC_TEL').'<br>';
 
 	                if (! empty($tab[$i]['phone_perso'])) {
 	                    //print img_picto($langs->trans('PhonePerso'),'object_phoning.png','',0,0,0).' ';
-	                    print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', '', '', AC_TEL).'<br>';
+	                    print '<br>'.dol_print_phone($tab[$i]['phone_perso'], '', '', '', 'AC_TEL').'<br>';
 	                }
 	                if (! empty($tab[$i]['phone_mobile'])) {
 	                    //print img_picto($langs->trans('PhoneMobile'),'object_phoning.png','',0,0,0).' ';
-	                    print dol_print_phone($tab[$i]['phone_mobile'], '', '', '', AC_TEL).'<br>';
+	                    print dol_print_phone($tab[$i]['phone_mobile'], '', '', '', 'AC_TEL').'<br>';
 	                }
 	                print '</div>';
 
