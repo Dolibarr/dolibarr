@@ -5469,11 +5469,19 @@ abstract class CommonObject
 		elseif ($key == 'status' && method_exists($this, 'getLibStatut')) $value=$this->getLibStatut(3);
 		elseif ($type == 'date')
 		{
-			$value=dol_print_date($value,'day');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'day');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'datetime')
 		{
-			$value=dol_print_date($value,'dayhour');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'dayhour');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'double')
 		{
@@ -6278,7 +6286,7 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]))
+			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
