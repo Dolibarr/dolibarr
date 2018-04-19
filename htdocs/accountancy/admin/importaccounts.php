@@ -29,11 +29,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("main");
-$langs->load("accountancy");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("compta","bills","main","accountancy"));
 
 // Security check
 if (! $user->admin)
@@ -141,7 +138,6 @@ if ($result) {
 	$form = new Form($db);
 	$formaccounting = new FormAccounting($db);
 
-	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 		print '<tr class="oddeven">';

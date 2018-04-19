@@ -35,14 +35,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-// Langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("trips");
-$langs->load("main");
-$langs->load("accountancy");
-$langs->load("productbatch");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("bills","compta","main","accountancy","other","trips","productbatch"));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -345,7 +339,6 @@ if ($result) {
 	$expensereport_static = new ExpenseReport($db);
 	$form = new Form($db);
 
-	$var = true;
 	while ( $i < min($num_lines, $limit) ) {
 		$objp = $db->fetch_object($result);
 
