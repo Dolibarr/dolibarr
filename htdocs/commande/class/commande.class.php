@@ -4140,9 +4140,9 @@ class OrderLine extends CommonOrderLine
 	 *	@param      int		$notrigger		1 = disable triggers
      *	@return		int		<0 si ko, >0 si ok
      */
-	function update(User $user, $notrigger=0)
+	function update($user=null, $notrigger=0)
 	{
-		global $conf,$langs;
+	    global $user,$conf,$langs;
 
 		$error=0;
 
