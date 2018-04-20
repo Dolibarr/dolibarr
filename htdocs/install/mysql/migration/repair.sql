@@ -437,3 +437,19 @@ update llx_facturedet set product_type = 1 where product_type = 0 AND fk_product
 update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 0);
 update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
  
+ 
+ 
+ 
+
+-- Note to migrate from old counter aquarium to new one
+-- drop table tmp;
+-- create table tmp select rowid, code_client, concat(substr(code_client, 1, 6),'-0',substr(code_client, 8, 5)) as code_client2 from llx_societe where code_client like 'CU____-____';
+-- update llx_societe as s set code_client = (select code_client2 from tmp as t where t.rowid = s.rowid) where code_client like 'CU____-____';
+-- drop table tmp;
+-- create table tmp select rowid, code_fournisseur, concat(substr(code_fournisseur, 1, 6),'-0',substr(code_fournisseur, 8, 5)) as code_fournisseur2 from llx_societe where code_fournisseur like 'SU____-____';
+-- select * from tmp;
+-- update llx_societe as s set s.code_fournisseur = (select code_fournisseur2 from tmp as t where t.rowid = s.rowid) where s.code_fournisseur like 'SU____-____';
+-- update llx_societe set code_compta =  concat('411', substr(code_client, 3, 2),substr(code_client, 8, 5)) where client in (1,2,3) and code_compte is not null;
+-- update llx_societe set code_compta_fournisseur =  concat('401', substr(code_fournisseur, 3, 2),substr(code_fournisseur, 8, 5)) where fournisseur in (1,2,3) and code_fournisseur is not null;
+
+
