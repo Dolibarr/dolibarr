@@ -269,7 +269,6 @@ foreach ($dirmodels as $reldir) {
     if (is_dir($dir)) {
         $handle = opendir($dir);
         if (is_resource($handle)) {
-            $var = true;
 
             while (($file = readdir($handle)) !== false) {
                 if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
@@ -290,8 +289,7 @@ foreach ($dirmodels as $reldir) {
                     }
 
                     if ($module->isEnabled()) {
-                        $var = !$var;
-                        print '<tr ' . $bc[$var] . '><td>' . $module->name . "</td><td>\n";
+                        print '<tr class="oddeven"><td>' . $module->name . "</td><td>\n";
                         print $module->info();
                         print '</td>';
 
