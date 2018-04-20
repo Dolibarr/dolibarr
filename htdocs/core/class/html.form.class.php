@@ -3469,8 +3469,8 @@ class Form
 			if ($selected) {
 				require_once DOL_DOCUMENT_ROOT .'/compta/bank/class/account.class.php';
 				$bankstatic=new Account($this->db);
-				$bankstatic->fetch($selected);
-				print $bankstatic->getNomUrl(1);
+				$result = $bankstatic->fetch($selected);
+				if ($result) print $bankstatic->getNomUrl(1);
 			} else {
 				print "&nbsp;";
 			}

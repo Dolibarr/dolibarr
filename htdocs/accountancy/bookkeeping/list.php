@@ -430,7 +430,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 
 $listofformat=AccountancyExport::getType();
-$button = '<a class="butActionNew" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
+$button = '<a class="butAction" name="button_export_file" href="'.$_SERVER["PHP_SELF"].'?action=export_file'.($param?'&'.$param:'').'">';
 if (count($filter)) $button.= $langs->trans("ExportFilteredList");
 else $button.= $langs->trans("ExportList");
 //$button.=' ('.$listofformat[$conf->global->ACCOUNTING_EXPORT_MODELCSV].')';
