@@ -88,7 +88,7 @@ if ($action == 'create_ticket') {
         $defaultref = '';
     }
 
-    $formticket->showForm();
+    $formticket->showForm(1);
 }
 
 //$somethingshown=$object->showLinkedObjectBlock();

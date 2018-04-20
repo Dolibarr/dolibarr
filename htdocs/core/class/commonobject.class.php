@@ -3923,23 +3923,26 @@ abstract class CommonObject
 		$var = true;
 		$i	 = 0;
 
-		foreach ($this->lines as $line)
+		if (! empty($this->lines))
 		{
-			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			foreach ($this->lines as $line)
 			{
-				if (empty($line->fk_parent_line))
+				if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
 				{
-					$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
-					$action='';
-					$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					if (empty($line->fk_parent_line))
+					{
+						$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+						$action='';
+						$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					}
 				}
-			}
-			else
-			{
-				$this->printOriginLine($line, $var, $restrictlist);
-			}
+				else
+				{
+					$this->printOriginLine($line, $var, $restrictlist);
+				}
 
-			$i++;
+				$i++;
+			}
 		}
 	}
 
@@ -5672,11 +5675,19 @@ abstract class CommonObject
 		elseif ($key == 'status' && method_exists($this, 'getLibStatut')) $value=$this->getLibStatut(3);
 		elseif ($type == 'date')
 		{
-			$value=dol_print_date($value,'day');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'day');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'datetime')
 		{
-			$value=dol_print_date($value,'dayhour');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'dayhour');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'double')
 		{
@@ -6734,7 +6745,7 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]))
+			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);

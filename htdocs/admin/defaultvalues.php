@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2017		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -212,9 +212,9 @@ print "<br>\n";
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($optioncss != '')  $param.='&optioncss='.$optioncss;
-if (defaulturl)        $param.='&defaulturl='.urlencode(defaulturl);
-if (defaultkey)        $param.='&defaultkey='.urlencode(defaultkey);
-if (defaultvalue)      $param.='&defaultvalue='.urlencode(defaultvalue);
+if ($defaulturl)        $param.='&defaulturl='.urlencode($defaulturl);
+if ($defaultkey)        $param.='&defaultkey='.urlencode($defaultkey);
+if ($defaultvalue)      $param.='&defaultvalue='.urlencode($defaultvalue);
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';

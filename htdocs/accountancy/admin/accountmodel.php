@@ -880,7 +880,7 @@ if ($id)
 								$valuetoshow=price($valuetoshow);
 							}
 							else if ($fieldlist[$field]=='libelle_facture') {
-								$langs->load("bills");
+								$langs->loadLangs(array("bills"));
 								$key=$langs->trans("PaymentCondition".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "PaymentCondition".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 								$valuetoshow=nl2br($valuetoshow);
@@ -890,7 +890,7 @@ if ($id)
 								$valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_availability') {
-								$langs->load("propal");
+								$langs->loadLangs(array("propal"));
 								$key=$langs->trans("AvailabilityType".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "AvailabilityType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
@@ -915,17 +915,17 @@ if ($id)
 								$valuetoshow=($obj->code && $key != "Civility".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_type_contact') {
-								$langs->load('agenda');
+								$langs->loadLangs(array("agenda"));
 								$key=$langs->trans("TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "TypeContact_".$obj->element."_".$obj->source."_".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_payment_term') {
-								$langs->load("bills");
+								$langs->loadLangs(array("bills"));
 								$key=$langs->trans("PaymentConditionShort".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "PaymentConditionShort".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_paiement') {
-								$langs->load("bills");
+								$langs->loadLangs(array("bills"));
 								$key=$langs->trans("PaymentType".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "PaymentType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
@@ -934,12 +934,12 @@ if ($id)
 								$valuetoshow=($obj->code && $key != "DemandReasonType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_input_method') {
-								$langs->load("orders");
+								$langs->loadLangs(array("orders"));
 								$key=$langs->trans($obj->code);
 								$valuetoshow=($obj->code && $key != $obj->code)?$key:$obj->{$fieldlist[$field]};
 							}
 							else if ($fieldlist[$field]=='libelle' && $tabname[$id]==MAIN_DB_PREFIX.'c_shipment_mode') {
-								$langs->load("sendings");
+								$langs->loadLangs(array("sendings"));
 								$key=$langs->trans("SendingMethod".strtoupper($obj->code));
 								$valuetoshow=($obj->code && $key != "SendingMethod".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
 							}
@@ -950,7 +950,7 @@ if ($id)
 							}
 							else if ($fieldlist[$field] == 'label' && $tabname[$id] == MAIN_DB_PREFIX.'c_type_fees')
 							{
-								$langs->load('trips');
+								$langs->loadLangs(array("trips"));
 								$key = $langs->trans(strtoupper($obj->code));
 								$valuetoshow = ($obj->code && $key != strtoupper($obj->code) ? $key : $obj->{$fieldlist[$field]});
 							}
@@ -961,11 +961,11 @@ if ($id)
 								$valuetoshow = $langs->getCurrencySymbol($obj->code,1);
 							}
 							else if ($fieldlist[$field]=='label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_units') {
-								$langs->load("products");
+								$langs->loadLangs(array("products"));
 								$valuetoshow=$langs->trans($obj->{$fieldlist[$field]});
 							}
 							else if ($fieldlist[$field]=='short_label' && $tabname[$_GET["id"]]==MAIN_DB_PREFIX.'c_units') {
-								$langs->load("products");
+								$langs->loadLangs(array("products"));
 								$valuetoshow = $langs->trans($obj->{$fieldlist[$field]});
 							}
 							else if (($fieldlist[$field] == 'unit') && ($tabname[$id] == MAIN_DB_PREFIX.'c_paper_format'))

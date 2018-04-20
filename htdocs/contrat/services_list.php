@@ -204,6 +204,7 @@ if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk
 $sql.= " cd.date_ouverture_prevue,";
 $sql.= " cd.date_ouverture,";
 $sql.= " cd.date_fin_validite,";
+$sql.= " cd.date_cloture,";
 $sql.= " cd.qty,";
 $sql.= " cd.total_ht,";
 $sql.= " cd.total_tva,";
@@ -632,7 +633,7 @@ while ($i < min($num,$limit))
 	if (! empty($arrayfields['cd.date_ouverture_prevue']['checked']))
 	{
 		print '<td align="center">';
-		print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue)):'&nbsp;');
+		print ($obj->date_ouverture_prevue?dol_print_date($db->jdate($obj->date_ouverture_prevue), 'dayhour'):'&nbsp;');
 		if ($db->jdate($obj->date_ouverture_prevue) && ($db->jdate($obj->date_ouverture_prevue) < ($now - $conf->contrat->services->inactifs->warning_delay)) && $obj->statut == 0)
 		print ' '.img_picto($langs->trans("Late"),"warning");
 		else print '&nbsp;&nbsp;&nbsp;&nbsp;';
@@ -641,13 +642,13 @@ while ($i < min($num,$limit))
 	}
 	if (! empty($arrayfields['cd.date_ouverture']['checked']))
 	{
-		print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture)):'&nbsp;').'</td>';
+		print '<td align="center">'.($obj->date_ouverture?dol_print_date($db->jdate($obj->date_ouverture), 'dayhour'):'&nbsp;').'</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
 	// End date
 	if (! empty($arrayfields['cd.date_fin_validite']['checked']))
 	{
-		print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite)):'&nbsp;');
+		print '<td align="center">'.($obj->date_fin_validite?dol_print_date($db->jdate($obj->date_fin_validite), 'dayhour'):'&nbsp;');
 		if ($obj->date_fin_validite && $db->jdate($obj->date_fin_validite) < ($now - $conf->contrat->services->expires->warning_delay) && $obj->statut < 5)
 		{
 			$warning_delay=$conf->contrat->services->expires->warning_delay / 3600 / 24;
@@ -658,9 +659,10 @@ while ($i < min($num,$limit))
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
+	// Close date (real end date)
 	if (! empty($arrayfields['cd.date_cloture']['checked']))
 	{
-		print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture)).'</td>';
+		print '<td align="center">'.dol_print_date($db->jdate($obj->date_cloture), 'dayhour').'</td>';
         if (! $i) $totalarray['nbfield']++;
 	}
 
