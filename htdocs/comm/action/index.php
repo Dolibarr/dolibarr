@@ -126,7 +126,7 @@ $hookmanager->initHooks(array('agenda'));
  * Actions
  */
 
-if (GETPOST("viewlist") || $action == 'show_list')
+if (GETPOST("viewlist",'alpha') || $action == 'show_list')
 {
     $param='';
     if (is_array($_POST))
@@ -142,7 +142,7 @@ if (GETPOST("viewlist") || $action == 'show_list')
     exit;
 }
 
-if (GETPOST("viewperuser") || $action == 'show_peruser')
+if (GETPOST("viewperuser",'alpha') || $action == 'show_peruser')
 {
     $param='';
     if (is_array($_POST))
