@@ -469,8 +469,8 @@ if (empty($reshook))
 			'use_companybankid'=>GETPOST('companybankid'),
 			'force_dir_output'=>$conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
 		);
-		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid'));
-		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid'));
+		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid','int'), 'alpha');
+		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid','int'), 'alpha');
 	}
 
 	$id = $socid;
@@ -1254,6 +1254,31 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$var=true;
 
 		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+
+		// Show direct download link
+		/*
+		 $conf->global->THIRDPARTY_ALLOW_EXTERNAL_DOWNLOAD=1;
+		 if (! empty($conf->global->THIRDPARTY_ALLOW_EXTERNAL_DOWNLOAD))
+		 {
+		 print '<br>eee<!-- Link to download main doc -->'."\n";
+		 print showDirectDownloadLink($object).'<br>';
+		 }*/
+		if (! empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD))
+		{
+			$companybankaccounttemp = new CompanyBankAccount($db);
+			$companypaymentmodetemp = new CompanyPaymentMode($db);
+			$result = $companypaymentmodetemp->fetch(0, null, $object->id, 'ban');
+
+			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+			$ecmfile = new EcmFiles($db);
+			$result = $ecmfile->fetch(0, '', '', '', '', $companybankaccounttemp->table_element, $companypaymentmodetemp->id);
+			if ($result > 0)
+			{
+				$companybankaccounttemp->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
+				print '<br><!-- Link to download main doc -->'."\n";
+				print showDirectDownloadLink($companybankaccounttemp).'<br>';
+			}
+		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

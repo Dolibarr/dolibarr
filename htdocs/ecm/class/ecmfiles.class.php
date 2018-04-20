@@ -167,13 +167,13 @@ class EcmFiles extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 				$maxposition = (int) $obj->maxposition;
 			}
-			else 
+			else
 			{
 				$this->errors[] = 'Error ' . $this->db->lasterror();
 				return --$error;
 			}
 			$maxposition=$maxposition+1;
-		} 
+		}
 		else
 		{
 			$maxposition=$this->position;
@@ -274,14 +274,16 @@ class EcmFiles extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param  int    $id          	   Id object
-	 * @param  string $ref         	   Hash of file name (filename+filepath). Not always defined on some version.
-	 * @param  string $relativepath    Relative path of file from document directory. Example: path/path2/file
-	 * @param  string $hashoffile      Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
-	 * @param  string $hashforshare    Hash of file sharing.
-	 * @return int                 	   <0 if KO, 0 if not found, >0 if OK
+	 * @param  int    $id          	   	Id object
+	 * @param  string $ref         	   	Hash of file name (filename+filepath). Not always defined on some version.
+	 * @param  string $relativepath    	Relative path of file from document directory. Example: path/path2/file
+	 * @param  string $hashoffile      	Hash of file content. Take the first one found if same file is at different places. This hash will also change if file content is changed.
+	 * @param  string $hashforshare    	Hash of file sharing.
+	 * @param  string $src_object_type 	src_object_type to search
+	 * @param  string $src_object_id 	src_object_id to search
+	 * @return int                 	   	<0 if KO, 0 if not found, >0 if OK
 	 */
-	public function fetch($id, $ref = '', $relativepath = '', $hashoffile='', $hashforshare='')
+	public function fetch($id, $ref = '', $relativepath = '', $hashoffile='', $hashforshare='', $src_object_type='', $src_object_id=0)
 	{
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
@@ -324,8 +326,13 @@ class EcmFiles extends CommonObject
 		}
 		elseif (! empty($hashforshare)) {
 			$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
-		} else {
-			$sql .= ' AND t.rowid = ' . $id;
+		}
+		elseif ($src_object_type && $src_object_id)
+		{
+			$sql.= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
+		}
+		else {
+			$sql .= ' AND t.rowid = '.$this->db->escape($id);
 		}
 		// When we search on hash of content, we take the first one. Solve also hash conflict.
 		$this->db->plimit(1);
@@ -363,7 +370,7 @@ class EcmFiles extends CommonObject
 			// Retrieve all extrafields for invoice
 			// fetch optionals attributes and labels
 			// $this->fetch_optionals();
-			
+
 			// $this->fetch_lines();
 
 			$this->db->free($resql);

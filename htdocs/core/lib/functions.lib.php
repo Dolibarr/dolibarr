@@ -7219,10 +7219,10 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 }
 
 /**
- * Return string with full Url
+ * Return string with full Url. The file qualified is the one defined by relative path in $object->last_main_doc
  *
- * @param   Object	$object		Object
- * @return	string				Url string
+ * @param   Object	$object				Object
+ * @return	string						Url string
  */
 function showDirectDownloadLink($object)
 {

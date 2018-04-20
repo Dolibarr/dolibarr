@@ -599,7 +599,7 @@ abstract class CommonObject
 
 		if (empty($this->last_main_doc))
 		{
-			return '';		// No known last doc
+			return '';		// No way to known which document name to use
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -4387,6 +4387,9 @@ abstract class CommonObject
 							$ecmfile->gen_or_uploaded = 'generated';
 							$ecmfile->description = '';    // indexed content
 							$ecmfile->keyword = '';        // keyword content
+							$ecmfile->src_object_type = $this->table_element;
+							$ecmfile->src_object_id   = $this->id;
+
 							$result = $ecmfile->create($user);
 							if ($result < 0)
 							{
