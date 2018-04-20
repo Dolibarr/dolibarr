@@ -356,7 +356,7 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center nowraponall">';
    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
    	$formother->select_year($search_year,'search_year',1, 20, 5);

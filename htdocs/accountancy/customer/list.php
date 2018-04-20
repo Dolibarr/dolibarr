@@ -315,7 +315,7 @@ if ($result) {
 	if ($search_vat)         $param.='&search_vat='.urlencode($search_vat);
 	if ($search_country)  	$param .= "&search_country=" . urlencode($search_country);
 	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
-	
+
 	$arrayofmassactions =  array(
 	    'ventil'=>$langs->trans("Ventilate")
 	    //'presend'=>$langs->trans("SendByMail"),
@@ -355,7 +355,7 @@ if ($result) {
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth25" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
-	print '<td class="liste_titre center">';
+	print '<td class="liste_titre center nowraponall">';
    	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
    	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
    	$formother->select_year($search_year,'search_year',1, 20, 5);
@@ -473,9 +473,9 @@ if ($result) {
 		print '</td>';
 
 		print '<td>' . $objp->country .'</td>';
-		
+
 		print '<td>' . $objp->tva_intra . '</td>';
-		
+
 		// Current account
 		print '<td align="center" style="' . $code_sell_p_notset . '">';
 	    print (($objp->type_l == 1)?$langs->trans("DefaultForService"):$langs->trans("DefaultForProduct")) . ' = ' . ($objp->code_sell_l > 0 ? length_accountg($objp->code_sell_l) : $langs->trans("Unknown"));
