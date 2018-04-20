@@ -1256,13 +1256,6 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
 
 		// Show direct download link
-		/*
-		 $conf->global->THIRDPARTY_ALLOW_EXTERNAL_DOWNLOAD=1;
-		 if (! empty($conf->global->THIRDPARTY_ALLOW_EXTERNAL_DOWNLOAD))
-		 {
-		 print '<br>eee<!-- Link to download main doc -->'."\n";
-		 print showDirectDownloadLink($object).'<br>';
-		 }*/
 		if (! empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD))
 		{
 			$companybankaccounttemp = new CompanyBankAccount($db);
