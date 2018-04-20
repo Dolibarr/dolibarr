@@ -384,7 +384,7 @@ print $form->textwithpicto('', $langs->trans("TicketsEmailMustExistHelp"), 1, 'h
 print '</td>';
 print '</tr>';
 
-if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
 	// Show logo for module
 	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowModuleLogo") . '</td>';
@@ -400,7 +400,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print $form->textwithpicto('', $langs->trans("TicketsShowModuleLogoHelp"), 1, 'help');
 	print '</td>';
 	print '</tr>';
-}
+}*/
 
 // Show logo for company
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowCompanyLogo") . '</td>';
