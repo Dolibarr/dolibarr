@@ -5575,18 +5575,20 @@ abstract class CommonObject
 			$newInput = '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
 			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $showsize).'<br></span>';
 
-			$out.= '
-				<script type="text/javascript">
-				$(document).ready(function() {
-					$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
-						$("'.dol_escape_js($newInput).'").insertBefore(this);
+			if(! empty($conf->use_javascript_ajax)) {
+				$out.= '
+					<script type="text/javascript">
+					$(document).ready(function() {
+						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
+							$("'.dol_escape_js($newInput).'").insertBefore(this);
+						});
+	
+						$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+							$(this).parent().remove();
+						});
 					});
-
-					$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
-						$(this).parent().remove();
-					});
-				});
-				</script>';
+					</script>';
+			}
 		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
