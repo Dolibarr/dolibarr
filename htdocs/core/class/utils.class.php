@@ -47,7 +47,7 @@ class Utils
 	 *  Purge files into directory of data files.
 	 *  CAN BE A CRON TASK
 	 *
-	 *  @param	string		$choice		Choice of purge mode ('tempfiles', 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
+	 *  @param	string		$choice		Choice of purge mode ('tempfiles', '' or 'tempfilesold' to purge temp older than 24h, 'allfiles', 'logfile')
 	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	function purgeFiles($choice='tempfilesold')
@@ -67,7 +67,7 @@ class Utils
 			// Delete temporary files
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'^temp$','','','',2);
+				$filesarray=dol_dir_list($dolibarr_main_data_root, "directories", 1, '^temp$', '', 'name', SORT_ASC, 2, 0, '', 1);	// Do not follow symlinks
 				if ($choice == 'tempfilesold')
 				{
 					$now = dol_now();
@@ -81,10 +81,10 @@ class Utils
 
 		if ($choice=='allfiles')
 		{
-			// Delete all files (except install.lock)
+			// Delete all files (except install.lock, do not follow symbolic links)
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root,"all",0,'','install\.lock$');
+				$filesarray=dol_dir_list($dolibarr_main_data_root, "all", 0, '', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 			}
 		}
 
@@ -93,7 +93,7 @@ class Utils
 			// Define files log
 			if ($dolibarr_main_data_root)
 			{
-				$filesarray=dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*$', 'install\.lock$');
+				$filesarray=dol_dir_list($dolibarr_main_data_root, "files", 0, '.*\.log[\.0-9]*(\.gz)?$', 'install\.lock$', 'name', SORT_ASC, 0, 0, '', 1);
 			}
 
 			$filelog='';
@@ -129,7 +129,7 @@ class Utils
 				}
 				elseif ($filesarray[$key]['type'] == 'file')
 				{
-					// If (file that is not logfile) or (if logfile with option logfile)
+					// If (file that is not logfile) or (if mode is logfile)
 					if ($filesarray[$key]['fullname'] != $filelog || $choice=='logfile')
 					{
 						$result=dol_delete_file($filesarray[$key]['fullname'], 1, 1);
@@ -138,7 +138,10 @@ class Utils
 							$count++;
 							$countdeleted++;
 						}
-						else $counterror++;
+						else
+						{
+							$counterror++;
+						}
 					}
 				}
 			}
@@ -446,7 +449,6 @@ class Utils
 			}
 		}
 
-
 		return 0;
 	}
 
@@ -667,5 +669,117 @@ class Utils
 		}
 
 		return -1;
+	}
+
+	/**
+	 * This saves syslog files and compresses older ones
+	 * Used from cronjob
+	 *
+	 * @return	int						0 if OK, < 0 if KO
+	 */
+	function compressSyslogs() {
+		global $conf;
+
+		if(empty($conf->loghandlers['mod_syslog_file'])) { // File Syslog disabled
+			return 0;
+		}
+
+		if(! function_exists('gzopen')) {
+			$this->error = 'Support for gzopen not available in this PHP';
+			return -1;
+		}
+
+		dol_include_once('/core/lib/files.lib.php');
+
+		$nbSaves = ! empty($conf->global->SYSLOG_FILE_SAVES) ? intval($conf->global->SYSLOG_FILE_SAVES) : 14;
+
+		if (empty($conf->global->SYSLOG_FILE)) {
+			$mainlogdir = DOL_DATA_ROOT;
+			$mainlog = 'dolibarr.log';
+		} else {
+			$mainlogfull = str_replace('DOL_DATA_ROOT', DOL_DATA_ROOT, $conf->global->SYSLOG_FILE);
+			$mainlogdir = dirname($mainlogfull);
+			$mainlog = basename($mainlogfull);
+		}
+
+		$tabfiles = dol_dir_list(DOL_DATA_ROOT, 'files', 0, '^(dolibarr_.+|odt2pdf)\.log$'); // Also handle other log files like dolibarr_install.log
+		$tabfiles[] = array('name' => $mainlog, 'path' => $mainlogdir);
+
+		foreach($tabfiles as $file) {
+
+			$logname = $file['name'];
+			$logpath = $file['path'];
+
+			// Handle already compressed files to rename them and add +1
+
+			$filter = '^'.preg_quote($logname, '/').'\.([0-9]+)\.gz$';
+
+			$gzfilestmp = dol_dir_list($logpath, 'files', 0, $filter);
+			$gzfiles = array();
+
+			foreach($gzfilestmp as $gzfile) {
+				$tabmatches = array();
+				preg_match('/'.$filter.'/i', $gzfile['name'], $tabmatches);
+
+				$numsave = intval($tabmatches[1]);
+
+				$gzfiles[$numsave] = $gzfile;
+			}
+
+			krsort($gzfiles, SORT_NUMERIC);
+
+			foreach($gzfiles as $numsave => $dummy) {
+				if (dol_is_file($logpath.'/'.$logname.'.'.($numsave+1).'.gz')) {
+					return -2;
+				}
+
+				if($numsave >= $nbSaves) {
+					dol_delete_file($logpath.'/'.$logname.'.'.$numsave.'.gz');
+				} else {
+					dol_move($logpath.'/'.$logname.'.'.$numsave.'.gz', $logpath.'/'.$logname.'.'.($numsave+1).'.gz', 0, 1, 0, 0);
+				}
+			}
+
+			// Compress last save
+			if (dol_is_file($logpath.'/'.$logname.'.1')) {
+				if($nbSaves > 1) {
+					$gzfilehandle = gzopen($logpath.'/'.$logname.'.2.gz', 'wb9');
+
+					if (empty($gzfilehandle)) {
+						$this->error = 'Failted to open file '.$logpath.'/'.$logname.'.2.gz';
+						return -3;
+					}
+
+					$sourcehandle = fopen($logpath.'/'.$logname.'.1', 'r');
+
+					if (empty($sourcehandle)) {
+						$this->error = 'Failed to open file '.$logpath.'/'.$logname.'.1';
+						return -4;
+					}
+
+					while(! feof($sourcehandle)) {
+						gzwrite($gzfilehandle, fread($sourcehandle, 512 * 1024)); // Read 512 kB at a time
+					}
+
+					fclose($sourcehandle);
+					gzclose($gzfilehandle);
+				} else {
+					dol_delete_file($logpath.'/'.$logname.'.1');
+				}
+			}
+
+			// Compress current file et recreate it
+
+			if (dol_is_file($logpath.'/'.$logname)) {
+				if (dol_move($logpath.'/'.$logname, $logpath.'/'.$logname.'.1', 0, 1, 0, 0))
+				{
+					$newlog = fopen($logpath.'/'.$logname, 'a+');
+					fclose($newlog);
+				}
+			}
+		}
+
+		$this->output = 'Archive log files (keeping last SYSLOG_FILE_SAVES='.$nbSaves.' files) done.';
+		return 0;
 	}
 }

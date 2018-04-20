@@ -69,14 +69,16 @@ if (GETPOST("format",'alpha')) $format=GETPOST("format",'apha');
 if (GETPOST("type",'apha'))   $type=GETPOST("type",'alpha');
 
 $filters=array();
-if (GETPOST("year",'int')) 	        $filters['year']=GETPOST("year",'int');
-if (GETPOST("id",'int'))            $filters['id']=GETPOST("id",'int');
-if (GETPOST("idfrom",'int'))        $filters['idfrom']=GETPOST("idfrom",'int');
-if (GETPOST("idto",'int'))          $filters['idto']=GETPOST("idto",'int');
-if (GETPOST("project",'apha'))      $filters['project']=GETPOST("project",'apha');
-if (GETPOST("logina",'apha'))       $filters['logina']=GETPOST("logina",'apha');
-if (GETPOST("logint",'apha'))       $filters['logint']=GETPOST("logint",'apha');
-if (GETPOST("notolderthan",'int'))  $filters['notolderthan']=GETPOST("notolderthan","int");
+if (GETPOST("year",'int')) 	         $filters['year']=GETPOST("year",'int');
+if (GETPOST("id",'int'))             $filters['id']=GETPOST("id",'int');
+if (GETPOST("idfrom",'int'))         $filters['idfrom']=GETPOST("idfrom",'int');
+if (GETPOST("idto",'int'))           $filters['idto']=GETPOST("idto",'int');
+if (GETPOST("project",'apha'))       $filters['project']=GETPOST("project",'apha');
+if (GETPOST("logina",'apha'))        $filters['logina']=GETPOST("logina",'apha');
+if (GETPOST("logint",'apha'))        $filters['logint']=GETPOST("logint",'apha');
+if (GETPOST("notactiontype",'apha')) $filters['notactiontype']=GETPOST("notactiontype",'apha');
+if (GETPOST("actiontype",'apha'))    $filters['actiontype']=GETPOST("actiontype",'apha');
+if (GETPOST("notolderthan",'int'))   $filters['notolderthan']=GETPOST("notolderthan","int");
 else $filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 
 // Check config
@@ -116,6 +118,7 @@ foreach ($filters as $key => $value)
     if ($key == 'project')         $filename.='-project'.$value;
 	if ($key == 'logina')	       $filename.='-logina'.$value;	// Author
 	if ($key == 'logint')	       $filename.='-logint'.$value;	// Assigned to
+	if ($key == 'notactiontype')   $filename.='-notactiontype'.$value;
 }
 // Add extension
 if ($format == 'vcal') { $shortfilename.='.vcs'; $filename.='.vcs'; }

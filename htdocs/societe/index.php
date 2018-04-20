@@ -127,6 +127,7 @@ if ($result)
 }
 else dol_print_error($db);
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
@@ -175,6 +176,7 @@ print '<tr class="liste_total"><td>'.$langs->trans("UniqueThirdParties").'</td><
 print $total;
 print '</td></tr>';
 print '</table>';
+print '</div>';
 
 if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES))
 {
@@ -183,6 +185,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	print '<tr '.$bc[0].'><td align="center" colspan="2">';
@@ -250,6 +253,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print $total;
 	print '</td></tr>';
 	print '</table>';
+	print '</div>';
 }
 
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
@@ -287,6 +291,7 @@ if ($result)
         $transRecordedType = $langs->trans("LastModifiedThirdParties",$max);
 
         print "\n<!-- last thirdparties modified -->\n";
+        print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder" width="100%">';
 
         print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
@@ -348,6 +353,7 @@ if ($result)
         $db->free($result);
 
         print "</table>\n";
+        print '</div>';
         print "<!-- End last thirdparties modified -->\n";
     }
 }

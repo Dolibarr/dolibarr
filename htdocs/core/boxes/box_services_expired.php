@@ -126,7 +126,7 @@ class box_services_expired extends ModeleBoxes
     				'asis' => 1
     				);
 
-    				$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone" align="left"',
+    				$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" align="left"',
     				'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
     				'asis' => 1
     				);

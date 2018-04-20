@@ -611,18 +611,6 @@ else	// Show
 	print '<td>'.$langs->trans("Value").'</td>'."\n";
 	print "</tr>\n";
 
-	if (! empty($dolibarr_pdf_force_fpdf))
-	{
-
-		print '<tr class="oddeven">'."\n";
-		print '<td>dolibarr_pdf_force_fpdf</td>'."\n";
-		print '<td>';
-		print $dolibarr_pdf_force_fpdf;
-		print '</td>';
-		print '</tr>';
-	}
-
-
 	print '<tr class="oddeven">'."\n";
 	print '<td>'.$langs->trans("LibraryToBuildPDF").'</td>'."\n";
 	print '<td>';
@@ -656,17 +644,11 @@ else	// Show
 		print ' ('.@constant('TCPDI_PATH').')';
 		$i++;
 	}
-	print '<!-- $conf->global->MAIN_USE_FPDF = '.$conf->global->MAIN_USE_FPDF.' -->';
 	print '</td>'."\n";
 	print '</tr>'."\n";
 
 	print "</table>\n";
 	print '</div>';
-
-	if (! empty($dolibarr_pdf_force_fpdf))
-	{
-		print info_admin($langs->trans("WarningUsingFPDF")).'<br>';
-	}
 
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';

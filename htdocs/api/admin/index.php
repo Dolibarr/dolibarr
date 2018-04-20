@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2004		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2005-2016	Laurent Destailleur		<eldy@users.sourceforge.org>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
- * Copyright (C) 2015		Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2012-2018	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ if ($action == 'setproductionmode')
 {
 	$status = GETPOST('status','alpha');
 
-	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', $conf->entity) > 0)
+	if (dolibarr_set_const($db, 'API_PRODUCTION_MODE', $status, 'chaine', 0, '', 0) > 0)
 	{
 		$error=0;
 
@@ -86,7 +86,7 @@ dol_mkdir(DOL_DATA_ROOT.'/api/temp');		// May have been deleted by a purge
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ApiSetup"),$linkback,'title_setup');
 
 print $langs->trans("ApiDesc")."<br>\n";

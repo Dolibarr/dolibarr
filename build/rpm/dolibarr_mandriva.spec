@@ -173,6 +173,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
 %_datadir/dolibarr/htdocs/custom
+%_datadir/dolibarr/htdocs/dav
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/expedition

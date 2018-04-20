@@ -140,8 +140,16 @@ if ($object->id > 0)
 	if ($object->paye) $resteapayer=0;
 	$resteapayeraffiche=$resteapayer;
 
-	$absolute_discount=$object->thirdparty->getAvailableDiscounts('','fk_facture_source IS NULL');
-	$absolute_creditnote=$object->thirdparty->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+		$filterabsolutediscount = "fk_facture_source IS NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+		$filtercreditnote = "fk_facture_source IS NOT NULL"; // If we want deposit to be substracted to payments only and not to total of final invoice
+	} else {
+		$filterabsolutediscount = "fk_facture_source IS NULL OR (description LIKE '(DEPOSIT)%' AND description NOT LIKE '(EXCESS RECEIVED)%')";
+		$filtercreditnote = "fk_facture_source IS NOT NULL AND (description NOT LIKE '(DEPOSIT)%' OR description LIKE '(EXCESS RECEIVED)%')";
+	}
+
+	$absolute_discount=$object->thirdparty->getAvailableDiscounts('',$filterabsolutediscount);
+	$absolute_creditnote=$object->thirdparty->getAvailableDiscounts('',$filtercreditnote);
 	$absolute_discount=price2num($absolute_discount,'MT');
 	$absolute_creditnote=price2num($absolute_creditnote,'MT');
 
@@ -253,61 +261,13 @@ if ($object->id > 0)
 
 	// Discounts
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-	if ($object->thirdparty->remise_percent) print $langs->trans("CompanyHasRelativeDiscount",$object->thirdparty->remise_percent);
-	else print $langs->trans("CompanyHasNoRelativeDiscount");
-	print '. ';
-	if ($absolute_discount > 0)
-	{
-		if ($object->statut > Facture::STATUS_DRAFT || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
-		{
-			if ($object->statut == Facture::STATUS_DRAFT)
-			{
-				print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency)).'. ';
-			}
-			else
-			{
-				if ($object->statut < Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_CREDIT_NOTE || $object->type == Facture::TYPE_DEPOSIT)
-				{
-					$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
-					print '<br>'.$text.'.<br>';
-				}
-				else
-				{
-					$text=$langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->currency));
-					$text2=$langs->trans("AbsoluteDiscountUse");
-					print $form->textwithpicto($text,$text2);
-				}
-			}
-		}
-		else
-		{
-			// Remise dispo de type non avoir
-			$filter='fk_facture_source IS NULL';
-			print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id',$object->thirdparty->id,$absolute_discount,$filter,$resteapayer,'',1);
-		}
-	}
-	if ($absolute_creditnote > 0)
-	{
-		// If validated, we show link "add credit note to payment"
-		if ($object->statut != Facture::STATUS_VALIDATED || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_CREDIT_NOTE)
-		{
-			if ($object->statut == Facture::STATUS_DRAFT && $object->type != Facture::TYPE_DEPOSIT)
-			{
-				$text=$langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency));
-				print $form->textwithpicto($text,$langs->trans("CreditNoteDepositUse"));
-			}
-			else print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->currency)).'.';
-		}
-		else
-		{
-			// Remise dispo de type avoir
-			$filter='fk_facture_source IS NOT NULL';
-			if (! $absolute_discount) print '<br>';
-			$form->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$object->id,0,'remise_id_for_payment',$object->thirdparty->id,$absolute_creditnote,$filter,$resteapayer,'',1);
-		}
-	}
-	if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+
+	$thirdparty = $object->thirdparty;
+	$discount_type = 0;
+	$backtopage = urlencode($_SERVER["PHP_SELF"] . '?facid=' . $object->id);
+	$cannotApplyDiscount = 1;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/object_discounts.tpl.php';
+
 	print '</td></tr>';
 
 	// Date invoice

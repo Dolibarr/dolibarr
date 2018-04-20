@@ -85,7 +85,7 @@ if (! $sortorder) $sortorder='DESC';
 $object=new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectagenda'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('myobjectagenda','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('myobject');
 

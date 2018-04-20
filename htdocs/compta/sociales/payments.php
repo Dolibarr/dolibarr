@@ -133,7 +133,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs,";
 	$sql.= " ".MAIN_DB_PREFIX."paiementcharge as pc";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 	$sql.= " WHERE cs.fk_type = c.id AND pc.fk_charge = cs.rowid";
 	$sql.= " AND cs.entity = ".$conf->entity;
 	if ($year > 0)

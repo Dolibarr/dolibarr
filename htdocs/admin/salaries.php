@@ -77,7 +77,7 @@ llxHeader('',$langs->trans('SalariesSetup'));
 $form = new Form($db);
 if (! empty($conf->accounting->enabled)) $formaccounting = New FormAccounting($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('SalariesSetup'),$linkback,'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';

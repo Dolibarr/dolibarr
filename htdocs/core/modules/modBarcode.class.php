@@ -51,7 +51,6 @@ class modBarcode extends DolibarrModules
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 2;
 		$this->picto='barcode';
 
 		// Data directories to create when module is enabled

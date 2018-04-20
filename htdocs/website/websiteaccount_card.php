@@ -221,7 +221,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
 	if ($object->fk_soc >0 && empty($socid)) $socid = $object->fk_soc;
 
-    $res = $object->fetch_optionals($object->id, $extralabels);
+    $res = $object->fetch_optionals();
 
 	$head = websiteaccountPrepareHead($object);
 	dol_fiche_head($head, 'card', $langs->trans("WebsiteAccount"), -1, 'websiteaccount@website');

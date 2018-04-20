@@ -62,7 +62,7 @@ pHeader('','');     // No next step for navigation buttons. Next step is defined
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/gear.svg" width="20" alt="Database"> '.$langs->trans("MiscellaneousChecks").":</h3>\n";
+print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Database"> '.$langs->trans("MiscellaneousChecks").":</h3>\n";
 
 // Check browser
 $useragent=$_SERVER['HTTP_USER_AGENT'];
@@ -76,8 +76,8 @@ if (! empty($useragent))
 
 
 // Check PHP version
-$arrayphpminversionerror = array(5,3,0);
-$arrayphpminversionwarning = array(5,3,0);
+$arrayphpminversionerror = array(5,4,0);
+$arrayphpminversionwarning = array(5,4,0);
 if (versioncompare(versionphparray(),$arrayphpminversionerror) < 0)        // Minimum to use (error if lower)
 {
 	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow", versiontostring($arrayphpminversionerror));

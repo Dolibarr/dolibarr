@@ -60,7 +60,6 @@ class Tva extends CommonObject
         $this->db = $db;
         $this->element = 'tva';
         $this->table_element = 'tva';
-        return 1;
     }
 
 
@@ -150,7 +149,7 @@ class Tva extends CommonObject
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update($user, $notrigger=0)
     {
     	global $conf, $langs;
 
@@ -672,7 +671,7 @@ class Tva extends CommonObject
         {
 
 
-            
+
         	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
         	{
         		$label=$langs->trans("ShowMyObject");

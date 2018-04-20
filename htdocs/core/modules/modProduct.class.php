@@ -59,7 +59,6 @@ class modProduct extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='product';
 
 		// Data directories to create when module is enabled
@@ -321,7 +320,7 @@ class modProduct extends DolibarrModules
 					'sp.unitprice'=>'50',
 					'sp.remise_percent'=>'0'
 			);
-			$this->import_updatekeys_array[$r]=array('sp.fk_product'=>'ProductOrService','sp.ref_fourn'=>'SupplierRef');
+			$this->import_updatekeys_array[$r]=array('sp.fk_product'=>'ProductOrService','sp.ref_fourn'=>'SupplierRef','sp.fk_soc'=>'Supplier');
 		}
 
 		if (! empty($conf->global->PRODUIT_MULTIPRICES))

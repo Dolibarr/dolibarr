@@ -185,9 +185,9 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 
 // Date start - end
 print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-$start = dol_print_date($object->date_start,'dayhour');
+$start = dol_print_date($object->date_start,'day');
 print ($start?$start:'?');
-$end = dol_print_date($object->date_end,'dayhour');
+$end = dol_print_date($object->date_end,'day');
 print ' - ';
 print ($end?$end:'?');
 if ($object->hasDelay()) print img_warning("Late");
@@ -1137,9 +1137,12 @@ foreach ($listofreferent as $key => $value)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else // error
+		else
 		{
-			print $elementarray;
+			if (! is_array($elementarray))	// error
+			{
+				print $elementarray;
+			}
 		}
 		print "</table>";
 		print "<br>\n";

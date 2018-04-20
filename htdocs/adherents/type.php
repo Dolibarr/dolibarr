@@ -216,7 +216,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 	$sql = "SELECT d.rowid, d.libelle as label, d.subscription, d.vote";
 	$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-	$sql.= " WHERE d.entity IN (".getEntity('adherent').")";
+	$sql.= " WHERE d.entity IN (".getEntity('member_type').")";
 
 	$result = $db->query($sql);
 	if ($result)
@@ -228,6 +228,14 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 
 		$param = '';
 
+		$newcardbutton='';
+		if ($user->rights->adherent->configurer)
+		{
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create">'.$langs->trans('NewMemberType');
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
+		}
+
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -237,7 +245,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
         print '<input type="hidden" name="page" value="'.$page.'">';
 		print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 
-	    print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+		print_barre_liste($langs->trans("MembersTypes"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 
 		$moreforfilter = '';
 
@@ -332,7 +340,7 @@ if ($action == 'create')
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -361,7 +369,7 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		/*
 		 * Confirmation suppression
@@ -692,7 +700,7 @@ if ($rowid > 0)
 	{
 		$object = new AdherentType($db);
 		$object->fetch($rowid);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		$head = member_type_prepare_head($object);
 
@@ -730,7 +738,7 @@ if ($rowid > 0)
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$act,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 		    print $object->showOptionals($extrafields,'edit');
 		}
@@ -738,7 +746,7 @@ if ($rowid > 0)
 		print '</table>';
 
 		// Extra field
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 			print '<br><br><table class="border" width="100%">';
 			foreach($extrafields->attribute_label as $key=>$label)

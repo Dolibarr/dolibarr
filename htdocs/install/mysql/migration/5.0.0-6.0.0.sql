@@ -242,7 +242,7 @@ UPDATE llx_bank_account SET accountancy_journal = 'OD' WHERE accountancy_journal
 ALTER TABLE llx_bank_account ADD COLUMN fk_accountancy_journal integer;
 ALTER TABLE llx_bank_account ADD INDEX idx_fk_accountancy_journal (fk_accountancy_journal);
 
-UPDATE llx_bank_account AS ba SET fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal AS aj WHERE ba.accountancy_journal = aj.code) WHERE accountancy_journal NOT IN ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
+UPDATE llx_bank_account AS ba SET fk_accountancy_journal = (SELECT rowid FROM llx_accounting_journal AS aj WHERE ba.accountancy_journal = aj.code AND aj.entity = ba.entity) WHERE accountancy_journal NOT IN ('1', '2', '3', '4', '5', '6', '5', '8', '9', '10', '11', '12', '13', '14', '15');
 ALTER TABLE llx_bank_account ADD CONSTRAINT fk_bank_account_accountancy_journal FOREIGN KEY (fk_accountancy_journal) REFERENCES llx_accounting_journal (rowid);
 
 --Update general ledger for FEC format & harmonization
@@ -304,10 +304,10 @@ CREATE TABLE llx_accounting_bookkeeping_tmp
   date_validated        datetime					-- FEC:ValidDate
 ) ENGINE=innodb;
 
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_doc_date (doc_date);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_fk_docdet (fk_docdet);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_numero_compte (numero_compte);
-ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_code_journal (code_journal);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_doc_date (doc_date);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_fk_docdet (fk_docdet);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_numero_compte (numero_compte);
+ALTER TABLE llx_accounting_bookkeeping_tmp ADD INDEX idx_accounting_bookkeeping_tmp_code_journal (code_journal);
 
 
 ALTER TABLE llx_accounting_bookkeeping MODIFY COLUMN debit double(24,8);
@@ -489,7 +489,7 @@ DELETE FROM llx_categorie_product WHERE fk_categorie NOT IN (SELECT rowid FROM l
 DELETE FROM llx_categorie_societe WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type IN (1, 2));
 DELETE FROM llx_categorie_member WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 3);
 DELETE FROM llx_categorie_contact WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 4);
-DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 5);
+DELETE FROM llx_categorie_project WHERE fk_categorie NOT IN (SELECT rowid FROM llx_categorie WHERE type = 6);
 
 ALTER TABLE llx_inventory ADD COLUMN ref varchar(48);
 

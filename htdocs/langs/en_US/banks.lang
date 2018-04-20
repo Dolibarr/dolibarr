@@ -7,6 +7,7 @@ BankName=Bank name
 FinancialAccount=Account
 BankAccount=Bank account
 BankAccounts=Bank accounts
+BankAccountsAndGateways=Bank accounts | Gateways
 ShowAccount=Show Account
 AccountRef=Financial account ref
 AccountLabel=Financial account label

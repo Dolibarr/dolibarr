@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,7 +144,7 @@ if ($action == 'initbarcodeproducts')
 						$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
 
 						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
-						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'date', '', $user, 'PRODUCT_MODIFY');
+						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'text', '', $user, 'PRODUCT_MODIFY');
 
 						$nbtry++;
 						if ($result > 0) $nbok++;

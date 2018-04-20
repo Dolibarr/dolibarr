@@ -69,9 +69,6 @@ class modResource extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-		// Where to store the module in setup page
-		// (0=common,1=interface,2=others,3=very specific)
-		$this->special = 2;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png
 		// use this->picto='pictovalue'
@@ -231,7 +228,7 @@ class modResource extends DolibarrModules
 			'langs'=> 'resource',
 			'position'=> 101,
 			'enabled'=> '1',
-			'perms'=> '$user->rights->resource->read',
+			'perms'=> '$user->rights->resource->write',
 			'target'=> '',
 			'user'=> 0
 		);

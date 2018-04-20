@@ -132,12 +132,12 @@ if (GETPOST('search_task') != '')
 
 if (GETPOST('search_user') != '')
 {
-    header("Location: ".DOL_URL_ROOT.'/user/index.php?mode=search&sall='.urlencode(GETPOST('search_user')));
+    header("Location: ".DOL_URL_ROOT.'/user/list.php?mode=search&sall='.urlencode(GETPOST('search_user')));
     exit;
 }
 if (GETPOST('search_group') != '')
 {
-    header("Location: ".DOL_URL_ROOT.'/user/group/index.php?mode=search&sall='.urlencode(GETPOST('search_group')));
+    header("Location: ".DOL_URL_ROOT.'/user/group/list.php?mode=search&sall='.urlencode(GETPOST('search_group')));
     exit;
 }
 

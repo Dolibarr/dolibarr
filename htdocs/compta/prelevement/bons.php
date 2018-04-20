@@ -101,6 +101,14 @@ if ($result)
 
   $selectedfields='';
 
+  $newcardbutton='';
+  if ($user->rights->prelevement->bons->creer)
+  {
+  	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php">'.$langs->trans('NewStandingOrder');
+  	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+  	$newcardbutton.= '</a>';
+  }
+
   // Lines of title fields
   print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
   if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -112,7 +120,7 @@ if ($result)
   print '<input type="hidden" name="page" value="'.$page.'">';
   print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-  print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+  print_barre_liste($langs->trans("WithdrawalsReceipts"), $page, $_SERVER["PHP_SELF"], $urladd, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
 
   $moreforfilter='';
 

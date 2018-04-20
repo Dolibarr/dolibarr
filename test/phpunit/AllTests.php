@@ -156,6 +156,8 @@ class AllTests
 
         require_once dirname(__FILE__).'/FichinterTest.php';
         $suite->addTestSuite('FichinterTest');
+        require_once dirname(__FILE__).'/TicketsupTest.php';
+        $suite->addTestSuite('TicketsupTest');
 
         require_once dirname(__FILE__).'/PropalTest.php';
         $suite->addTestSuite('PropalTest');

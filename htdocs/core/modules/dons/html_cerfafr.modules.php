@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2006	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Marcos García           <marcosgdf@gmail.com>
- * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>  
+ * Copyright (C) 2014-2015  Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015  		Benoit Bruchard			<benoitb21@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,7 +89,7 @@ class html_cerfafr extends ModeleDon
 		$outputlangs->load("donations");
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
-		
+
 		if (! empty($conf->don->dir_output))
 		{
 			// Definition of the object don (for upward compatibility)
@@ -134,21 +134,21 @@ class html_cerfafr extends ModeleDon
 					$paymentmode = $formclass->cache_types_paiements[$don->modepaiementid]['label'];
 				}
 				else $paymentmode = '';
-				
-				if ($don->modepaiementid==7){
+
+				if ($don->modepaymentcode=='CHQ'){
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox" disabled="true" checked="checked"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
-				else if ($don->modepaiementid==4){
+				else if ($don->modepaymentcode=='LIQ'){
 					$ModePaiement = '<td width="25%"><input type="checkbox" checked="checked"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
-				else if ($don->modepaiementid==2 || $don->modepaiementid==3 || $don->modepaiementid==6){
+				else if ($don->modepaymentcode=='VIR' || $don->modepaymentcode=='PRE' || $don->modepaymentcode=='CB'){
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox" checked="checked"> Virement, prélèvement, carte bancaire</td>';
-				} 
-				else 
+				}
+				else
 				{
 					$ModePaiement = '<td width="25%"><input type="checkbox"> Remise d\'espèces</td><td width="25%"><input type="checkbox"> Chèque</td><td width="50%"><input type="checkbox"> Virement, prélèvement, carte bancaire</td>';
 				}
-				
+
 				/*
 				if (empty($don->societe))
 				{
@@ -159,14 +159,14 @@ class html_cerfafr extends ModeleDon
 					$CodeDon = '<td width="33%"><input type="checkbox" disabled="true" > 200 du CGI</td><td width="33%"><input type="checkbox" disabled="true" checked="checked" > 238 bis du CGI</td><td width="33%"><input type="checkbox" disabled="true" > 885-0 V bis A du CGI</td>';
 				}
 				*/
-				
+
 				// Define contents
 				$donmodel=DOL_DOCUMENT_ROOT ."/core/modules/dons/html_cerfafr.html";
 				$form = implode('', file($donmodel));
 				$form = str_replace('__REF__',$don->id,$form);
 				$form = str_replace('__DATE__',dol_print_date($don->date,'day',false,$outputlangs),$form);
 				//$form = str_replace('__IP__',$user->ip,$form); // TODO $user->ip not exist
-				$form = str_replace('__AMOUNT__',$don->amount,$form);
+				$form = str_replace('__AMOUNT__', price($don->amount), $form);
 				$form = str_replace('__AMOUNTLETTERS__',chiffre_en_lettre($don->amount),$form);
 				$form = str_replace('__CURRENCY__',$outputlangs->transnoentitiesnoconv("Currency".$currency),$form);
 				$form = str_replace('__CURRENCYCODE__',$conf->currency,$form);
@@ -183,7 +183,6 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__DONATOR_ZIP__',$don->zip,$form);
 				$form = str_replace('__DONATOR_TOWN__',$don->town,$form);
 				$form = str_replace('__PAYMENTMODE_LIB__ ', $paymentmode,$form);
-				$form = str_replace('__ModePaiement__', $ModePaiement,$form);
 				$form = str_replace('__NOW__',dol_print_date($now,'day',false,$outputlangs),$form);
 				$form = str_replace('__DonationRef__',$outputlangs->trans("DonationRef"),$form);
 				$form = str_replace('__DonationTitle__',$outputlangs->trans("DonationTitle"),$form);
@@ -203,6 +202,8 @@ class html_cerfafr extends ModeleDon
 				$form = str_replace('__Message__',$outputlangs->trans("Message"),$form);
 				$form = str_replace('__IConfirmDonationReception__',$outputlangs->trans("IConfirmDonationReception"),$form);
 				$form = str_replace('__DonationMessage__',$conf->global->DONATION_MESSAGE,$form);
+
+				$form = str_replace('__ModePaiement__', $ModePaiement,$form);
 
 				$frencharticle='';
 				if (preg_match('/fr/i',$outputlangs->defaultlang)) $frencharticle='<font size="+1">Article 200, 238 bis et 885-0 V bis A du code général des impôts (CGI)</font>';
@@ -260,7 +261,7 @@ class html_cerfafr extends ModeleDon
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;
 			}
 			else
@@ -394,34 +395,34 @@ function chiffre_en_lettre($montant, $devise1='', $devise2='')
 		if($cent[$i]==1) $trio[$i]='cent';
 		else if($cent[$i]!=0 || $cent[$i]!='') $trio[$i]=$chif[$cent[$i]] .' cents';
 	}
-     
-     
+
+
 $chif2=array('', 'dix', 'vingt', 'trente', 'quarante', 'cinquante', 'soixante', 'soixante-dix', 'quatre-vingts', 'quatre-vingts dix');
 	$secon_c=$chif2[$dix_c];
 	if($cent_c==1) $trio_c='cent';
 	else if($cent_c!=0 || $cent_c!='') $trio_c=$chif[$cent_c] .' cents';
-     
+
 	if(($cent[3]==0 || $cent[3]=='') && ($dix[3]==0 || $dix[3]=='') && ($unite[3]==1))
 		$somme = $trio[3]. '  ' .$secon[3]. ' ' . $prim[3]. ' million ';
 	else if(($cent[3]!=0 && $cent[3]!='') || ($dix[3]!=0 && $dix[3]!='') || ($unite[3]!=0 && $unite[3]!=''))
 		$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3]. ' millions ';
 	else
 		$somme = $trio[3]. ' ' .$secon[3]. ' ' . $prim[3];
-     
+
 	if(($cent[2]==0 || $cent[2]=='') && ($dix[2]==0 || $dix[2]=='') && ($unite[2]==1))
 		$somme = $somme.' mille ';
 	else if(($cent[2]!=0 && $cent[2]!='') || ($dix[2]!=0 && $dix[2]!='') || ($unite[2]!=0 && $unite[2]!=''))
 		$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2]. ' milles ';
 	else
 		$somme = $somme. $trio[2]. ' ' .$secon[2]. ' ' . $prim[2];
-     
+
 	$somme = $somme. $trio[1]. ' ' .$secon[1]. ' ' . $prim[1];
-     
+
 	$somme = $somme. ' '. $dev1 .' ' ;
-     
+
 	if(($cent_c=='0' || $cent_c=='') && ($dix_c=='0' || $dix_c==''))
 		return $somme. ' et z&eacute;ro '. $dev2;
 	else
 		return $somme. $trio_c. ' ' .$secon_c. ' ' . $dev2;
-		
+
 }

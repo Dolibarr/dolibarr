@@ -58,7 +58,6 @@ class modPropale extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='propal';
 
 		// Data directories to create when module is enabled
@@ -101,13 +100,13 @@ class modPropale extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 		$r++;
-		
+
 		/*$this->const[$r][0] = "PROPALE_DRAFT_WATERMARK";
 		$this->const[$r][2] = "__(Draft)__";
 		$this->const[$r][3] = 'Watermark to show on draft proposals';
 		$this->const[$r][4] = 0;
 		$r++;*/
-				
+
 		// Boxes
 		$this->boxes = array(
            	0=>array('file'=>'box_graph_propales_permonth.php','enabledbydefaulton'=>'Home'),
@@ -170,12 +169,12 @@ class modPropale extends DolibarrModules
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'export';
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;

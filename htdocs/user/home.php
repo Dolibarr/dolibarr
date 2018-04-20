@@ -24,6 +24,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userhome';   // To manage different context of search
+
 if (! $user->rights->user->user->lire && ! $user->admin)
 {
 	// Redirection vers la page de l'utilisateur
@@ -45,6 +47,9 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 
 $companystatic = new Societe($db);
 $fuserstatic = new User($db);
+
+// Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('userhome'));
 
 
 /*
@@ -89,7 +94,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
+$sql = "SELECT DISTINCT u.rowid, u.lastname, u.firstname, u.admin, u.login, u.fk_soc, u.datec, u.statut";
 $sql.= ", u.entity";
 $sql.= ", u.ldap_sid";
 $sql.= ", u.photo";
@@ -101,13 +106,13 @@ $sql.= ", s.code_client";
 $sql.= ", s.canvas";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_soc = s.rowid";
-if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
-{
-	$sql.= " WHERE u.entity IS NOT NULL";
-}
-else
-{
-	$sql.= " WHERE u.entity IN (0,".$conf->entity.")";
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printUserListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+if ($reshook > 0) {
+	$sql.=$hookmanager->resPrint;
+} else {
+	$sql.= " WHERE u.entity IN (".getEntity('user').")";
 }
 if (!empty($socid)) $sql.= " AND u.fk_soc = ".$socid;
 $sql.= $db->order("u.datec","DESC");
@@ -213,7 +218,7 @@ if ($canreadperms)
 
 	$sql = "SELECT g.rowid, g.nom as name, g.note, g.entity, g.datec";
 	$sql.= " FROM ".MAIN_DB_PREFIX."usergroup as g";
-	if(! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
+	if (! empty($conf->multicompany->enabled) && $conf->entity == 1 && ($conf->global->MULTICOMPANY_TRANSVERSE_MODE || ($user->admin && ! $user->entity)))
 	{
 		$sql.= " WHERE g.entity IS NOT NULL";
 	}

@@ -28,15 +28,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
-$langs->load("bills");
-$langs->load("compta");
-$langs->load("companies");
-$langs->load("products");
+$langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 $local=GETPOST('localTaxType', 'int');
 
 // Date range
-$year=GETPOST("year");
+$year=GETPOST("year","int");
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
@@ -45,42 +42,47 @@ if (empty($year))
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
+$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
     $q=GETPOST("q");
     if (empty($q))
 	{
-		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,$_REQUEST["month"],false); }
+		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,GETPOST("month"),false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
 		else
 		{
-		    $month_current = strftime("%m",dol_now());
-		    if ($month_current >= 10) $q=4;
-            elseif ($month_current >= 7) $q=3;
-            elseif ($month_current >= 4) $q=2;
-            else $q=1;
+			$date_start=dol_get_first_day($year_start,empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START,false);
+			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	else
+	{
+		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	}
 }
 
-$min = GETPOST("min");
+$min = price2num(GETPOST("min","alpha"));
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
-// 0=normal, 1=option vat for services is on debit
+// 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
+if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax",'int');
+if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
+
+
 
 /*
  * View
@@ -98,6 +100,9 @@ foreach($listofparams as $param)
 
 llxHeader('','','','',0,0,'','',$morequerystring);
 
+
+$name=$langs->transcountry($local==1?"LT1ReportByCustomers":"LT2ReportByCustomers", $mysoc->country_code);
+
 $fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
@@ -108,7 +113,6 @@ $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
 // Affiche en-tete du rapport
 if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
 {
-    $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -126,7 +130,6 @@ if ($calc==0 || $calc==1)	// Calculate on invoice for goods and services
 }
 if ($calc==2) 	// Invoice for goods, payment for services
 {
-    $nom=$langs->transcountry($local==1?"LT1ReportByCustomersInInputOutputMode":"LT2ReportByCustomersInInputOutputMode",$mysoc->country_code);
     $calcmode=$langs->trans("CalcModeLT2Debt");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);

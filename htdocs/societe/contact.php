@@ -66,7 +66,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartycard','globalcard'));
+$hookmanager->initHooks(array('thirdpartycontact','globalcard'));
 
 if ($action == 'view' && $object->fetch($socid)<=0)
 {
@@ -150,7 +150,7 @@ if (is_object($objcanvas) && $objcanvas->displayCanvasExists($action))
 else
 {
 
-    if (!empty($object->id)) $res=$object->fetch_optionals($object->id,$extralabels);
+    if (!empty($object->id)) $res=$object->fetch_optionals();
     //if ($res < 0) { dol_print_error($db); exit; }
 
 

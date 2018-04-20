@@ -94,7 +94,8 @@ if ((string) $type == '1') { $contextpage='servicelist'; if ($search_type=='') $
 if ((string) $type == '0') { $contextpage='productlist'; if ($search_type=='') $search_type='0'; }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
-$hookmanager->initHooks(array($contextpage));
+$object=new Product($db);
+$hookmanager->initHooks(array('productservicelist'));
 $extrafields = new ExtraFields($db);
 $form=new Form($db);
 
@@ -179,13 +180,16 @@ $arrayfields=array(
 	'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Buy").')', 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-   }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 
@@ -216,7 +220,7 @@ if (empty($reshook))
 		$search_tosell="";
 		$search_tobuy="";
 		$search_tobatch='';
-		$search_type='';
+		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 		$search_accountancy_code_sell='';
 		$search_accountancy_code_buy='';
 		$search_array_options=array();
@@ -269,19 +273,20 @@ else
 	$sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
 	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy,';
 	$sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp,';
-	//$sql.= ' pfp.ref_fourn as ref_supplier, ';
 	$sql.= ' MIN(pfp.unitprice) as minsellprice';
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
 		$sql .= ', pac.rowid prod_comb_id';
 	}
 	// Add fields from extrafields
-	foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+	if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+	}
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
+	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
 	if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 	// multilang
@@ -332,7 +337,9 @@ else
 		$sql .= ', pac.rowid';
 	}
 	// Add fields from extrafields
-	foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+	if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
+	}
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldSelect',$parameters);    // Note that $action and $object may have been modified by hook
@@ -413,6 +420,18 @@ else
 		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+		$newcardbutton='';
+		$rightskey='produit';
+		if($type == Product::TYPE_SERVICE) $rightskey='service';
+		if($user->rights->{$rightskey}->creer)
+		{
+			$label='NewProduct';
+			if($type == Product::TYPE_SERVICE) $label='NewService';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type.'">'.$langs->trans($label);
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
+		}
+
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -424,7 +443,7 @@ else
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, '', '', $limit);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, $newcardbutton, '', $limit);
 
 		$topicmail="Information";
 		$modelmail="product";
@@ -655,7 +674,7 @@ else
 			// Extra fields
 			include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 			// Hook fields
-			$parameters=array('arrayfields'=>$arrayfields);
+			$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 			$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 			print $hookmanager->resPrint;
 			if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -699,6 +718,7 @@ else
 				$product_static->type = $obj->fk_product_type;
 				$product_static->status_buy = $obj->tobuy;
 				$product_static->status     = $obj->tosell;
+				$product_static->status_batch = $obj->tobatch;
 				$product_static->entity = $obj->entity;
 				$product_static->pmp = $obj->pmp;
 
@@ -794,7 +814,7 @@ else
 								if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire)
 								{
 									$htmltext=$product_fourn->display_price_product_fournisseur(1, 1, 0, 1);
-									print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) + $product_fourn->fourn_unitcharges - $product_fourn->fourn_remise).' '.$langs->trans("HT"),$htmltext);
+									print $form->textwithpicto(price($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) - $product_fourn->fourn_remise).' '.$langs->trans("HT"),$htmltext);
 								}
 								else print price($product_fourn->fourn_unitprice).' '.$langs->trans("HT");
 							}

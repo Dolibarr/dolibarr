@@ -182,8 +182,8 @@ if (empty($reshook))
 				$object->datestart	= $datestart;
 				$object->dateend	= $dateend;
 				$object->capital	= $capital;
-				$object->nbterm		= GETPOST("nbterm");
-				$object->rate		= GETPOST("rate");
+				$object->nbterm		= GETPOST("nbterm",'int');
+				$object->rate		= price2num(GETPOST("rate",'alpha'));
 
 				$accountancy_account_capital	= GETPOST('accountancy_account_capital');
 				$accountancy_account_insurance	= GETPOST('accountancy_account_insurance');
@@ -423,11 +423,11 @@ if ($id > 0)
 
 		print '<script type="text/javascript">' . "\n";
 		print '  	function popEcheancier() {' . "\n";
-		print '  		$div = $(\'<div id="popCalendar"><iframe width="100%" height="100%" frameborder="0" src="createschedule.php?loanid=' . $object->id . '"></iframe></div>\');' . "\n";
+		print '  		$div = $(\'<div id="popCalendar"><iframe width="100%" height="98%" frameborder="0" src="createschedule.php?loanid=' . $object->id . '"></iframe></div>\');' . "\n";
 		print '  		$div.dialog({' . "\n";
 		print '  			modal:true' . "\n";
 		print '  			,width:"90%"' . "\n";
-		print '  			,height:$(window).height() - 150' . "\n";
+		print '  			,height:$(window).height() - 160' . "\n";
 		print '  		});' . "\n";
 		print '  	}' . "\n";
 		print '</script>';
@@ -676,7 +676,7 @@ if ($id > 0)
 		$sql.= " p.amount_capital, p.amount_insurance, p.amount_interest,";
 		$sql.= " c.libelle as paiement_type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_typepayment = c.id";
 		$sql.= ", ".MAIN_DB_PREFIX."loan as l";
 		$sql.= " WHERE p.fk_loan = ".$id;
 		$sql.= " AND p.fk_loan = l.rowid";
@@ -692,7 +692,7 @@ if ($id > 0)
 			$total_insurance = 0;
 			$total_interest = 0;
 			$total_capital = 0;
-			print '<table class="noborder paymenttable">';
+			print '<table class="noborder">';
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("RefPayment").'</td>';
 			print '<td>'.$langs->trans("Date").'</td>';
@@ -729,7 +729,9 @@ if ($id > 0)
 				$staytopay = $object->capital - $totalpaid;
 
 				print '<tr><td colspan="5" align="right">'.$langs->trans("RemainderToPay").' :</td>';
-				print '<td align="right"><b>'.price($staytopay, 0, $langs, 0, 0, -1, $conf->currency).'</b></td></tr>';
+				print '<td align="right"'.($staytopay?' class="amountremaintopay"':'class="amountpaymentcomplete"').'>';
+				print price($staytopay, 0, $langs, 0, 0, -1, $conf->currency);
+				print '</td></tr>';
 			}
 			print "</table>";
 			$db->free($resql);

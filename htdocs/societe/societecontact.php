@@ -45,6 +45,9 @@ $result = restrictedArea($user, 'societe', $id,'');
 
 $object = new Societe($db);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contactthirdparty','globalcard'));
+
 
 /*
  * Actions
@@ -222,7 +225,8 @@ if ($id > 0 || ! empty($ref))
 			$sql.= " t.libelle as type, t.subscription";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql.= " WHERE d.fk_soc=".$id;
+			$sql.= " WHERE d.fk_soc = ".$id;
+			$sql.= " AND d.fk_adherent_type = t.rowid";
 
 			dol_syslog("get list sql=".$sql);
 			$resql = $db->query($sql);

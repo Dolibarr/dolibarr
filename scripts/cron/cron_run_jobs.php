@@ -85,7 +85,7 @@ if ($key != $conf->global->CRON_KEY)
 // If param userlogin is reserved word 'firstadmin'
 if ($userlogin == 'firstadmin')
 {
-    $sql='SELECT login from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
+    $sql='SELECT login, entity from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -93,7 +93,7 @@ if ($userlogin == 'firstadmin')
         if ($obj)
         {
             $userlogin = $obj->login;
-            echo "First admin user found is login '".$userlogin."'\n";
+            echo "First admin user found is login '".$userlogin."', entity ".$obj->entity."\n";
         }
     }
     else dol_print_error($db);
@@ -132,7 +132,7 @@ if (! empty($id)) {
 	$filter['t.rowid']=$id;
 }
 
-$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter, 0);
+$result = $object->fetch_all('ASC,ASC,ASC','t.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
 	echo "Error: ".$object->error;
@@ -159,8 +159,8 @@ if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 	// Loop over job
 	foreach($qualifiedjobs as $line)
 	{
-	    dol_syslog("cron_run_jobs.php cronjobid: ".$line->id, LOG_DEBUG);
-	    echo "cron_run_jobs.php cronjobid: ".$line->id."\n";
+		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
+		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label."\n";
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))

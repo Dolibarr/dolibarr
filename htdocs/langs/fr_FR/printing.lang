@@ -49,4 +49,6 @@ DirectPrintingJobsDesc=Cette page liste les travaux d'impression trouvés sur le
 GoogleAuthNotConfigured=Configuration Google OAuth non terminé. Activer le module OAuth et entrer un Google ID/Secret
 GoogleAuthConfigured=Identifiants Google OAuth trouvé dans la configuration du module OAuth.
 PrintingDriverDescprintgcp=Paramètres de configuration des drivers Google Cloud Print pour les impressions.
+PrintingDriverDescprintipp=Variables de configuration pour le pilotes d'impression Cups.
 PrintTestDescprintgcp=List des imprimantes Google Cloud Print.
+PrintTestDescprintipp=Liste des imprimantes pour Cups.

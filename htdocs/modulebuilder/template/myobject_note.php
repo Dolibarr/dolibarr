@@ -54,7 +54,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 $object=new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectnote'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('myobjectnote','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('myobject');
 
@@ -69,6 +69,7 @@ if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$ob
 
 $permissionnote=1;
 //$permissionnote=$user->rights->mymodule->creer;	// Used by the include of actions_setnotes.inc.php
+
 
 
 /*

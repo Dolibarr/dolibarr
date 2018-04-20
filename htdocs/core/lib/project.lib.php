@@ -331,7 +331,7 @@ function project_admin_prepare_head()
  */
 function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0)
 {
-	global $user, $bc, $langs;
+	global $user, $bc, $langs, $conf;
 	global $projectstatic, $taskstatic;
 
 	$lastprojectid=0;
@@ -1298,11 +1298,11 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 					}
 
 					$tableCell ='<td align="center" class="hide'.$idw.($cssonholiday?' '.$cssonholiday:'').($cssweekend?' '.$cssweekend:'').'">';
+					$placeholder='';
 					if ($alreadyspent)
 					{
 						$tableCell.='<span class="timesheetalreadyrecorded" title="texttoreplace"><input type="text" class="center smallpadd" size="2" disabled id="timespent['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="'.$alreadyspent.'"></span>';
 						//$placeholder=' placeholder="00:00"';
-						$placeholder='';
 					 	//$tableCell.='+';
 					}
 				  	$tableCell.='<input type="text" alt="'.($disabledtask?'':$alttitle).'" title="'.($disabledtask?'':$alttitle).'" '.($disabledtask?'disabled':$placeholder).' class="center smallpadd" size="2" id="timeadded['.$inc.']['.$idw.']" name="task['.$lines[$i]->id.']['.$idw.']" value="" cols="2"  maxlength="5"';
@@ -1427,7 +1427,7 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
+	$sql= " FROM ".MAIN_DB_PREFIX."projet as p";
 	if ($mytasks)
 	{
 		$sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
@@ -1525,6 +1525,8 @@ function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=
 		print_liste_field_titre("Status","","","","",'align="right"',$sortfield,$sortorder);
 		print "</tr>\n";
 
+		$total_plannedworkload=0;
+		$total_declaredprogressworkload=0;
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);

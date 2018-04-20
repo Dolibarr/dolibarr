@@ -64,7 +64,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('admin'));
+$hookmanager->initHooks(array('website'));
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -514,15 +514,7 @@ if ($id)
             }
         }
 
-        $tmpaction = 'create';
-        $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-        $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
-        $error=$hookmanager->error; $errors=$hookmanager->errors;
-
-        if (empty($reshook))
-        {
-       		fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
-        }
+        fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
 
         print '<td colspan="3" align="right">';
         if ($action != 'edit')
@@ -602,7 +594,7 @@ if ($id)
                 {
                     $tmpaction='edit';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                    $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('editWebsiteFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     if (empty($reshook)) fieldListWebsites($fieldlist,$obj,$tabname[$id],'edit');
@@ -614,7 +606,7 @@ if ($id)
                 {
 	              	$tmpaction = 'view';
                     $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                    $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('viewWebsiteFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 

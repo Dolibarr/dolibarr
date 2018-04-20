@@ -27,9 +27,8 @@
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure accounting expert module
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
@@ -65,39 +64,23 @@ $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' :
 if ($action == 'update') {
 	$error = 0;
 
-	$accounting_modes = array (
-			'RECETTES-DEPENSES',
-			'CREANCES-DETTES'
-	);
+	if (! $error)
+	{
+	    foreach ($list as $constname)
+	    {
+	        $constvalue = GETPOST($constname, 'alpha');
 
-	$accounting_mode = GETPOST('accounting_mode', 'alpha');
-
-	if (in_array($accounting_mode, $accounting_modes)) {
-
-		if (! dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	} else {
-		$error ++;
+	        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+	            $error++;
+	        }
+	    }
+	    if ($error) {
+	    	setEventMessages($langs->trans("Error"), null, 'errors');
+	    }
 	}
-
-	if ($error) {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-
-    foreach ($list as $constname)
-    {
-        $constvalue = GETPOST($constname, 'alpha');
-
-        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error ++;
-        }
-    }
 
     if (! $error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -159,7 +142,7 @@ llxHeader();
 
 $form = new Form($db);
 
-//$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+//$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print load_fiche_titre($langs->trans('ConfigAccountingExpert'), $linkback, 'title_setup');
 
 print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';

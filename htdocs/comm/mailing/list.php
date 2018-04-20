@@ -103,12 +103,19 @@ if ($result)
 
 	$title=$langs->trans("ListOfEMailings");
 	if ($filteremail) $title.=' ('.$langs->trans("SentTo",$filteremail).')';
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,"",$num);
+
+	$newcardbutton='';
+	if ($user->rights->mailing->creer)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create">'.$langs->trans('NewMailing');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
 
 	$i = 0;
 
-	$param = "&amp;sall=".urlencode($sall);
-	if ($filteremail) $param.='&amp;filteremail='.urlencode($filteremail);
+	$param = "&sall=".urlencode($sall);
+	if ($filteremail) $param.='&filteremail='.urlencode($filteremail);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -118,7 +125,9 @@ if ($result)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-    $moreforfilter = '';
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '',$num, '', 'title_generic.png', 0, $newcardbutton);
+
+	$moreforfilter = '';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";

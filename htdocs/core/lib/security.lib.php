@@ -70,11 +70,11 @@ function dol_decode($chain)
 
 /**
  * 	Returns a hash of a string.
- *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function.
- *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt.
+ *  If constant MAIN_SECURITY_HASH_ALGO is defined, we use this function as hashing function (recommanded value is 'password_hash')
+ *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO then md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @getRandomPassword
  */
@@ -83,8 +83,10 @@ function dol_hash($chain, $type='0')
 	global $conf;
 
 	// No need to add salt for password_hash
-	if ($type == '0' && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash'))
-        return password_hash($chain, PASSWORD_DEFAULT);
+	if (($type == '0' || $type == 'auto') && ! empty($conf->global->MAIN_SECURITY_HASH_ALGO) && $conf->global->MAIN_SECURITY_HASH_ALGO == 'password_hash' && function_exists('password_hash'))
+	{
+		return password_hash($chain, PASSWORD_DEFAULT);
+	}
 
 	// Salt value
 	if (! empty($conf->global->MAIN_SECURITY_SALT)) $chain=$conf->global->MAIN_SECURITY_SALT.$chain;

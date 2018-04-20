@@ -136,10 +136,10 @@ class doc_generic_project_odt extends ModelePDFProjects
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
-		$object->fetch_optionals($object->id,$extralabels);
+		$object->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
-		
+
 		return $resarray;
 	}
 
@@ -198,18 +198,18 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		if ($contact['source']=='external') {
 			$ret[$pc.'isInternal'] = ''; // not internal
-			
+
 			$ct = new Contact($this->db);
 			$ct->fetch($contact['id']);
 			$ret[$pc.'phone_pro'] = $ct->phone_pro;
 			$ret[$pc.'phone_perso'] = $ct->phone_perso;
 			$ret[$pc.'phone_mobile'] = $ct->phone_mobile;
-			
+
 			// fetch external user extrafields
 			require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
 			$extrafields=new ExtraFields($this->db);
 			$extralabels=$extrafields->fetch_name_optionals_label($ct->table_element, true);
-			$extrafields_num = $ct->fetch_optionals($ct->id, $extralabels);
+			$extrafields_num = $ct->fetch_optionals();
 			//dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: ===== Number of Extrafields found: ".$extrafields_num, LOG_DEBUG);
 			foreach($ct->array_options as $efkey => $efval) {
 				dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: +++++ Extrafield ".$efkey." => ".$efval, LOG_DEBUG);
@@ -217,7 +217,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			}
 		} elseif ($contact['source']=='internal') {
 			$ret[$pc.'isInternal'] = '1'; // this is an internal user
-		
+
 			$ct = new User($this->db);
 			$ct->fetch($contact['id']);
 			$ret[$pc.'phone_pro'] = $ct->office_phone;
@@ -569,24 +569,25 @@ class doc_generic_project_odt extends ModelePDFProjects
 				//print exit;
 
 
-
-
-				// Make substitutions into odt of user info
+				// Define substitution array
+				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+				$array_object_from_properties = $this->get_substitutionarray_each_var_object($object, $outputlangs);
+				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
-                // retrieve contact information for use in project as contact_xxx tags
-        		$array_project_contact = array();
-        		if ($usecontact)
-            			$array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				// retrieve contact information for use in project as contact_xxx tags
+				$array_project_contact = array();
+				if ($usecontact) $array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_project_contact);
+				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_project_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
+
 				// Call the ODTSubstitution hook
 				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+
 				foreach($tmparray as $key=>$value)
 				{
 					try {
@@ -1067,7 +1068,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else

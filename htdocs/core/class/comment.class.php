@@ -7,20 +7,22 @@ class Comment extends CommonObject
 	public $element='comment';		//!< Id that identify managed objects
 	public $table_element='comment';	//!< Name of table without prefix where object is stored
 
-	var $fk_element;
-	var $element_type;
+	public $fk_element;
+	public $element_type;
 
-	var $description;
+	public $description;
 
-	var $tms;
+	public $tms;
 
-	var $datec;
+	public $datec;
 
-	var $fk_user_author;
+	public $fk_user_author;
 
-	var $entity;
+	public $entity;
 
-	var $import_key;
+	public $import_key;
+
+	public $comments = array();
 
 	public $oldcopy;
 
@@ -289,10 +291,10 @@ class Comment extends CommonObject
 	 * @param	int			$fk_element			Id of element
 	 * @return 	array							Comment array
 	 */
-	public static function fetchAllFor($element_type, $fk_element)
+	public function fetchAllFor($element_type, $fk_element)
 	{
 		global $db,$conf;
-		$TComments = array();
+		$this->comments = array();
 		if(!empty($element_type) && !empty($fk_element)) {
 			$sql = "SELECT";
 			$sql.= " c.rowid";
@@ -302,7 +304,7 @@ class Comment extends CommonObject
 			$sql.= " AND c.entity = ".$conf->entity;
 			$sql.= " ORDER BY c.tms DESC";
 
-			dol_syslog("Comment::fetchAllFor", LOG_DEBUG);
+			dol_syslog(get_class($this).'::'.__METHOD__, LOG_DEBUG);
 			$resql=$db->query($sql);
 			if ($resql)
 			{
@@ -313,12 +315,17 @@ class Comment extends CommonObject
 					{
 						$comment = new self($db);
 						$comment->fetch($obj->rowid);
-						$TComments[] = $comment;
+						$this->comments[] = $comment;
 					}
 				}
 				$db->free($resql);
+			} else {
+				$error++; $this->errors[]="Error ".$this->db->lasterror();
+				return -1;
 			}
+
 		}
-		return $TComments;
+
+		return count($this->comments);
 	}
 }

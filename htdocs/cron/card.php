@@ -557,7 +557,7 @@ else
 
 	dol_fiche_head($head, 'card', $langs->trans("CronTask"), -1, 'cron');
 
-	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' . DOL_URL_ROOT . '/cron/list.php?status=-2&restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	$morehtmlref.='</div>';
@@ -613,6 +613,22 @@ else
 	print $langs->trans('CronNote')."</td><td>";
 	print $langs->trans($object->note);
 	print "</td></tr>";
+
+	if (! empty($conf->multicompany->enabled))
+	{
+		print '<tr><td>';
+		print $langs->trans('Entity')."</td><td>";
+		if (! $object->entity)
+		{
+			print $langs->trans("AllEntities");
+		}
+		else
+		{
+			$mc->getInfo($object->entity);
+			print $mc->label;
+		}
+		print "</td></tr>";
+	}
 
 	print '</table>';
     print '</div>';

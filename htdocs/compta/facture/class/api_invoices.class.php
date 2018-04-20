@@ -196,7 +196,7 @@ class Invoices extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int                  ID of invoice
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
 			throw new RestException(401, "Insuffisant rights");
@@ -313,7 +313,7 @@ class Invoices extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function putLine($id, $lineid, $request_data = NULL) {
+    function putLine($id, $lineid, $request_data = null) {
     	if(! DolibarrApiAccess::$user->rights->facture->creer) {
     		throw new RestException(401);
     	}
@@ -414,7 +414,7 @@ class Invoices extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
 			throw new RestException(401);
@@ -499,7 +499,7 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 400
      */
-    function postLine($id, $request_data = NULL) {
+    function postLine($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->facture->creer) {
                         throw new RestException(401);
                   }
@@ -937,8 +937,6 @@ class Invoices extends DolibarrApi
                 throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        $request_data = (object) $payment_data;
-
         if (! empty($conf->banque->enabled)) {
             if(empty($accountid)) {
                 throw new RestException(400, 'Account ID is mandatory');
@@ -962,6 +960,10 @@ class Invoices extends DolibarrApi
         $resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
 
         $this->db->begin();
+
+        $amounts = array();
+        $multicurrency_amounts = array();
+
         // Clean parameters amount if payment is for a credit note
         if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
             $resteapayer = price2num($resteapayer,'MT');

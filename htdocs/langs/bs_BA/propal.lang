@@ -33,6 +33,7 @@ PropalStatusSigned=Signed (needs billing)
 PropalStatusNotSigned=Not signed (closed)
 PropalStatusBilled=Fakturisano
 PropalStatusDraftShort=Nacrt
+PropalStatusValidatedShort=Potvrđeno
 PropalStatusClosedShort=Zatvoreno
 PropalStatusSignedShort=Signed
 PropalStatusNotSignedShort=Not signed

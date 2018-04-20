@@ -11,6 +11,7 @@
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1439,7 +1440,12 @@ if ((empty($conf->global->PRODUIT_CUSTOMER_PRICES) || $action=='showlog_default_
 
     		// Il doit au moins y avoir la ligne de prix initial.
     		// On l'ajoute donc pour remettre a niveau (pb vieilles versions)
-    		$object->updatePrice($object->price, $object->price_base_type, $user, $newprice_min);
+    		//$object->updatePrice($object->price, $object->price_base_type, $user, $newprice_min);
+            if (! empty($conf->global->PRODUIT_MULTIPRICES)) {
+                $object->updatePrice($object->multiprices[1], $object->multiprices_base_type[1], $user, $object->multiprices_tva_tx[1], $object->multiprices_min[1], 1);
+            } else {
+                $object->updatePrice($object->price, $object->price_base_type, $user, $object->tva_tx, $object->price_min);
+            }
 
     		$result = $db->query($sql);
     		$num = $db->num_rows($result);

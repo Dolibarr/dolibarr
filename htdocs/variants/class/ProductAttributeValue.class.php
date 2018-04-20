@@ -140,15 +140,16 @@ class ProductAttributeValue
 	/**
 	 * Creates a value for a product attribute
 	 *
-	 * @return int <0 KO >0 OK
+	 * @param	User	$user		Object user
+	 * @return 	int 				<0 KO >0 OK
 	 */
-	public function create()
+	public function create(User $user)
 	{
 		if (!$this->fk_product_attribute) {
 			return -1;
 		}
 
-		//Ref must be uppercase
+		// Ref must be uppercase
 		$this->ref = strtoupper($this->ref);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_attribute_value (fk_product_attribute, ref, value, entity)

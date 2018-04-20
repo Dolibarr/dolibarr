@@ -163,8 +163,6 @@ foreach ($modulesdir as $dir)
 		    						$modules[$i] = $objMod;
 		    			            $filename[$i]= $modName;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	if (!is_array($familyinfo)) $familyinfo=array();
@@ -180,13 +178,11 @@ foreach ($modulesdir as $dir)
 		    			                $moduleposition = 800;
 		    			            }
 
-		    			            if ($special == 1) $familykey='interface';
-
 		    			            $orders[$i]  = $familyinfo[$familykey]['position']."_".$familykey."_".$moduleposition."_".$j;   // Sort by family, then by module position then number
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -240,7 +236,6 @@ foreach($orders as $tmpkey => $tmpvalue)
     $i++;
 }
 $value = $orders[$key];
-$special = $objMod->special;
 $tab=explode('_',$value);
 $familyposition=$tab[0]; $familykey=$tab[1]; $module_position=$tab[2]; $numero=$tab[3];
 

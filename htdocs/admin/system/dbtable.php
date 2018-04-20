@@ -75,7 +75,7 @@ else
 		}
 	}
 
-	if ($base == 1)
+	if ($base == 1)	// mysql
 	{
 		$link=array();
 		$cons = explode(";", $row[14]);
@@ -97,11 +97,19 @@ else
 
 		//  var_dump($link);
 
-		print '<table>';
-		print '<tr class="liste_titre"><td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
-		print '<td>'.$langs->trans("FieldsLinked").'</td></tr>';
+		print '<table class="noborder">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Fields").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Index").'</td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td></td>';
+		print '<td>'.$langs->trans("FieldsLinked").'</td>';
+		print '</tr>';
 
-		$sql = "DESCRIBE ".$table;
+		//$sql = "DESCRIBE ".$table;
+		$sql = "SHOW FULL COLUMNS IN ".$db->escape($table);
+		
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -111,12 +119,18 @@ else
 			{
 				$row = $db->fetch_row($resql);
 				print '<tr class="oddeven">';
-				print "<td>$row[0]</td>";
-				print "<td>$row[1]</td>";
-				print "<td>$row[3]</td>";
+				print "<td>".$row[0]."</td>";
+				print "<td>".$row[1]."</td>";
+				print "<td>".$row[3]."</td>";
+				print "<td>".(empty($row[4])?'':$row[4])."</td>";
+				print "<td>".(empty($row[5])?'':$row[5])."</td>";
+				print "<td>".(empty($row[6])?'':$row[6])."</td>";
+				print "<td>".(empty($row[7])?'':$row[7])."</td>";
+
 				print "<td>".(isset($link[$row[0]][0])?$link[$row[0]][0]:'').".";
 				print (isset($link[$row[0]][1])?$link[$row[0]][1]:'')."</td>";
-
+				
+				print '<!-- ALTER ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
 				print '</tr>';
 				$i++;
 			}

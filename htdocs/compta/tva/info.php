@@ -53,7 +53,7 @@ $head = vat_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("VATPayment"), -1, 'payment');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 

@@ -55,7 +55,7 @@ $hookmanager->initHooks(array('taxvatcard','globalcard'));
 
 if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 {
-	header("Location: reglement.php");
+	header("Location: list.php");
 	exit;
 }
 
@@ -119,7 +119,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		if ($ret > 0)
 		{
 			$db->commit();
-			header("Location: reglement.php");
+			header("Location: list.php");
 			exit;
 		}
 		else
@@ -154,7 +154,7 @@ if ($action == 'delete')
 			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/tva/reglement.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/tva/list.php');
 				exit;
 			}
 			else
@@ -306,7 +306,7 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
 

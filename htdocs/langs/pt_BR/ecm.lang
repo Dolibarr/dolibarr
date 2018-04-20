@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - ecm
 ECMNbOfDocs=Nr. de documentos
+ECMRoot=Raiz ECM
 ECMNewSection=Criar pasta
 ECMAddSection=Adicionar pasta
 ECMCreationDate=Data criação
@@ -7,8 +8,8 @@ ECMNbOfFilesInDir=Número de arquivos na pasta
 ECMNbOfSubDir=Número de subpastas
 ECMNbOfFilesInSubDir=Numero de arquivos nos subpastas
 ECMCreationUser=Criado por
-ECMArea=Área GED
-ECMAreaDesc=O GED (Gestão Eletrônica de Documentos) permite salvar, compartilhar e pesquisar rapidamente todos os tipos de documentos contidos no Dolibarr.
+ECMArea=Área DMS / ECM
+ECMAreaDesc=A área DMS / ECM (Gerenciamento de documentos / Gerenciamento de conteúdo eletrônico) permite salvar, compartilhar e pesquisar rapidamente todos os tipos de documentos no Dolibarr.
 ECMAreaDesc2=* As pastas automáticas são geradas automaticamente quando algum arquivo é adicionado a algum ficheiro do sistema.<br>* As pastas manuais podem ser usados ​​para guardar documentos sem ligação a um cadastro do sistema.
 ECMSectionWasRemoved=A pasta <b>%s</b> foi eliminada
 ECMSearchByKeywords=Busca usando palavras chave
@@ -28,3 +29,8 @@ ECMDirectoryForFiles=Relação de pasta para arquivos
 CannotRemoveDirectoryContainsFiles=Não foi possível apagar, porque contém alguns arquivos
 ECMFileManager=Gerenciador de arquivos
 ECMSelectASection=Selecione uma pasta na árvore a esquerda...
+DirNotSynchronizedSyncFirst=Este diretório parece ser criado ou modificado fora do módulo ECM. Você deve clicar no botão "Sincronizar" primeiro para sincronizar o disco do banco de dados para obter o conteúdo desse diretório.
+ReSyncListOfDir=Sincronizar lista de diretórios
+HashOfFileContent=Hash do conteúdo do arquivo
+FileNotYetIndexedInDatabase=Arquivo ainda não indexado no banco de dados (tente voltar a carregá-lo)
+FileSharedViaALink=Arquivo compartilhado via um link

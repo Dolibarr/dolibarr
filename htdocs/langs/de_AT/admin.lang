@@ -23,6 +23,7 @@ Module70Name=Eingriffe
 Module70Desc=Eingriffsverwaltung
 Module80Name=Sendungen
 Module310Desc=Mitgliederverwaltun
+Module330Name=Lesezeichen
 Module330Desc=Bookmarks-Verwaltung
 Module500Name=Steuern, Sozialbeiträge und Dividenden
 Module500Desc=Steuer-, Sozialbeitrags- und Dividendenverwaltung

@@ -29,7 +29,6 @@ PropalClassifiedBilledInDolibarr=Propuesta %s clasificado facturado
 InvoiceValidatedInDolibarrFromPos=Factura %s validada de POS
 InvoiceBackToDraftInDolibarr=La factura %s vuelve al estado del giro
 InvoicePaidInDolibarr=Factura %s cambiado a pagado
-MemberSubscriptionAddedInDolibarr=Se agregó una suscripción para el miembro %s
 ShipmentValidatedInDolibarr=Envío %s validado
 ShipmentClassifyClosedInDolibarr=Envío %s clasificado facturado
 ShipmentUnClassifyCloseddInDolibarr=Envío %s clasificado reabierto
@@ -59,7 +58,8 @@ AgendaUrlOptions1=También puede agregar los siguientes parámetros para filtrar
 AgendaUrlOptions3=<b>logina =%s</b> para restringir la salida a acciones propiedad de un usuario<b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> para restringir la salida a acciones que no son propiedad del usuario <b>%s</b>.
 AgendaUrlOptions4=<b>logint =%s</b> para restringir la salida a acciones asignadas al usuario <b>%s</b> (propietario y otros).
-AgendaUrlOptionsProject=<b> project = PROJECT_ID </ b> para restringir el resultado a acciones asociadas al proyecto <b> PROJECT_ID </ b>.
+AgendaUrlOptionsProject=<b> project = __ PROJECT_ID __ </ b> para restringir el resultado a acciones vinculadas al proyecto <b> __ PROJECT_ID __ </ b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype = systemauto </ b> para excluir el evento automático.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de contactos
 ExportDataset_event1=Lista de eventos de la agenda
@@ -67,7 +67,6 @@ DefaultWorkingDays=Rango predeterminado de días laborables en la semana (Ejempl
 DefaultWorkingHours=Horas de trabajo predeterminadas en el día (Ejemplo: 9-18)
 ExtSites=Importar calendarios externos
 ExtSitesEnableThisTool=Mostrar los calendarios externos (definidos en la configuración global) en la agenda. No afecta los calendarios externos definidos por los usuarios.
-AgendaExtNb=Calendario N° %s
 ExtSiteUrlAgenda=URL para acceder al archivo .ical
 DateActionBegin=Fecha del evento de inicio
 ConfirmCloneEvent=¿Seguro que quieres clonar el evento <b>%s</b>?

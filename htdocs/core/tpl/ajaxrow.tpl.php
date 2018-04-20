@@ -29,7 +29,7 @@ if (empty($object) || ! is_object($object))
 
 ?>
 
-<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on tables -->
+<!-- BEGIN PHP TEMPLATE AJAXROW.TPL.PHP - Script to enable drag and drop on lines of a table -->
 <?php
 $id=$object->id;
 $fk_element=$object->fk_element;

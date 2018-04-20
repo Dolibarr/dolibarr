@@ -128,7 +128,7 @@ class box_contracts extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1),
                         'asis'=>1
                     );

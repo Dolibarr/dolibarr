@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Accounting
 ACCOUNTING_EXPORT_SEPARATORCSV=Column separator for export file
 ACCOUNTING_EXPORT_DATE=Date format for export file
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -149,7 +150,6 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Accounting account by default for the sold servi
 Doctype=Type of document
 Docdate=Date
 Docref=Reference
-Code_tiers=Thirdparty
 LabelAccount=Label account
 LabelOperation=Label operation
 Sens=Sens
@@ -169,7 +169,6 @@ DelYear=Year to delete
 DelJournal=Journal to delete
 ConfirmDeleteMvt=This will delete all lines of the Ledger for year and/or from a specific journal. At least one criteria is required.
 ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
-DelBookKeeping=Delete record of the Ledger
 FinanceJournal=Finance journal
 ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=Finance journal including all the types of payments by bank account
@@ -180,7 +179,7 @@ ProductAccountNotDefined=Account for product not defined
 FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Account for bank not defined
 CustomerInvoicePayment=Payment of invoice customer
-ThirdPartyAccount=Thirdparty account
+ThirdPartyAccount=Third party account
 NewAccountingMvt=New transaction
 NumMvts=Numero of transaction
 ListeMvts=List of movements
@@ -236,13 +235,15 @@ AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
 ShowAccoutingJournal=Show accounting journal
 Nature=Nature
-AccountingJournalType1=Miscellaneous operation
+AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Sales
 AccountingJournalType3=Purchases
 AccountingJournalType4=Bank
 AccountingJournalType5=Expenses report
+AccountingJournalType8=Inventory
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 
 ## Export
 ExportDraftJournal=Export draft journal

@@ -63,18 +63,18 @@ if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta'
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
 // Date range
-$year=GETPOST("year");
-$month=GETPOST("month");
-$search_societe = GETPOST("search_societe");
-$search_zip = GETPOST("search_zip");
-$search_town = GETPOST("search_town");
-$search_country = GETPOST("search_country");
-$date_startyear = GETPOST("date_startyear");
-$date_startmonth = GETPOST("date_startmonth");
-$date_startday = GETPOST("date_startday");
-$date_endyear = GETPOST("date_endyear");
-$date_endmonth = GETPOST("date_endmonth");
-$date_endday = GETPOST("date_endday");
+$year=GETPOST("year",'int');
+$month=GETPOST("month",'int');
+$search_societe = GETPOST("search_societe",'alpha');
+$search_zip = GETPOST("search_zip",'alpha');
+$search_town = GETPOST("search_town",'alpha');
+$search_country = GETPOST("search_country",'alpha');
+$date_startyear = GETPOST("date_startyear",'alpha');
+$date_startmonth = GETPOST("date_startmonth",'alpha');
+$date_startday = GETPOST("date_startday",'alpha');
+$date_endyear = GETPOST("date_endyear",'alpha');
+$date_endmonth = GETPOST("date_endmonth",'alpha');
+$date_endday = GETPOST("date_endday",'alpha');
 if (empty($year))
 {
 	$year_current = strftime("%Y",dol_now());
@@ -85,8 +85,8 @@ if (empty($year))
 	$month_current = strftime("%m",dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
+$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
