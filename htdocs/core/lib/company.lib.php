@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1023,7 +1024,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
     // Hook fields
-    $parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";

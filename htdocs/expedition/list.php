@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -440,7 +440,7 @@ if ($resql)
 		}
 	}
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['e.datec']['checked']))  print_liste_field_titre($arrayfields['e.datec']['label'],$_SERVER["PHP_SELF"],"e.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
