@@ -475,7 +475,6 @@ class FactureRec extends CommonInvoice
 
 				$line->id	            = $objp->rowid;
 				$line->rowid	        = $objp->rowid;
-				$line->label            = $objp->custom_label;		// Label line
 				$line->desc             = $objp->description;		// Description line
 				$line->description      = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
@@ -487,6 +486,8 @@ class FactureRec extends CommonInvoice
 				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$line->qty              = $objp->qty;
 				$line->subprice         = $objp->subprice;
+
+				$line->label            = $objp->custom_label;		// @deprecated
 
 				$line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;

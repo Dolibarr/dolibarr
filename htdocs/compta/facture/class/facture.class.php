@@ -2565,6 +2565,7 @@ class Facture extends CommonInvoice
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
+			//var_dump(debug_backtrace(false));exit;
 		}
 
 		global $mysoc, $conf, $langs;

@@ -64,7 +64,7 @@ $dateend=dol_mktime(0, 0, 0, GETPOST('dateendmonth','int'), GETPOST('dateendday'
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
 
-$filter = GETPOST("filter",'',3);
+$filter = GETPOST("filter",'alpha',3);
 $filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;

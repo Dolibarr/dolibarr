@@ -767,17 +767,7 @@ class Contrat extends CommonObject
 				$line->fk_user_cloture  = $objp->fk_user_cloture;
 				$line->fk_unit           = $objp->fk_unit;
 
-				$line->ref				= $objp->product_ref;						// deprecated
-				if (empty($objp->fk_product))
-				{
-					$line->label			= '';         			// deprecated
-					$line->libelle 			= $objp->description;	// deprecated
-				}
-				else
-				{
-					$line->label			= $objp->product_label;         			// deprecated
-					$line->libelle			= $objp->product_label;         		// deprecated
-				}
+				$line->ref				= $objp->product_ref;	// deprecated
 				$line->product_ref		= $objp->product_ref;   // Ref product
 				$line->product_desc		= $objp->product_desc;  // Description product
 				$line->product_label	= $objp->product_label; // Label product
@@ -2459,12 +2449,15 @@ class ContratLigne extends CommonObjectLine
 	var $fk_contrat;
 	var $fk_product;
 	var $statut;					// 0 inactive, 4 active, 5 closed
-	var $type;                     // 0 for product, 1 for service
+	var $type;						// 0 for product, 1 for service
+	/**
+	 * @var string
+	 * @deprecated
+	 */
 	var $label;
 	/**
 	 * @var string
-	 * @deprecated Use $label instead
-	 * @see label
+	 * @deprecated
 	 */
 	public $libelle;
 
