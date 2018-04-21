@@ -80,28 +80,31 @@ class HookManager
 
 		$this->contextarray=array_unique(array_merge($arraycontext,$this->contextarray));    // All contexts are concatenated
 
-		foreach($conf->modules_parts['hooks'] as $module => $hooks)
+		foreach($conf->modules_parts['hooks'] as $module => $hooks)	// Loop on each module that brings hooks
 		{
-			if ($conf->$module->enabled)
+			if (empty($conf->$module->enabled)) continue;
+
+			//dol_syslog(get_class($this).'::initHooks module='.$module.' arraycontext='.join(',',$arraycontext));
+			foreach($arraycontext as $context)
 			{
-				foreach($arraycontext as $context)
+				if (is_array($hooks)) $arrayhooks=$hooks;    // New system
+				else $arrayhooks=explode(':',$hooks);        // Old system (for backward compatibility)
+
+				if (in_array($context, $arrayhooks) || in_array('all', $arrayhooks))    // We instantiate action class only if initialized hook is handled by module
 				{
-				    if (is_array($hooks)) $arrayhooks=$hooks;    // New system
-				    else $arrayhooks=explode(':',$hooks);        // Old system (for backward compatibility)
-					if (in_array($context,$arrayhooks) || in_array('all',$arrayhooks))    // We instantiate action class only if hook is required
+					// Include actions class overwriting hooks
+					if (! is_object($this->hooks[$context][$module]))	// If set, class was already loaded
 					{
 						$path 		= '/'.$module.'/class/';
 						$actionfile = 'actions_'.$module.'.class.php';
-						$pathroot	= '';
 
-						// Include actions class overwriting hooks
-						dol_syslog('Loading hook:' . $actionfile, LOG_INFO);
+						dol_syslog(get_class($this).'::initHooks Loading hook class for context '.$context.": ".$actionfile, LOG_INFO);
 						$resaction=dol_include_once($path.$actionfile);
 						if ($resaction)
 						{
-    						$controlclassname = 'Actions'.ucfirst($module);
-    						$actionInstance = new $controlclassname($this->db);
-    						$this->hooks[$context][$module] = $actionInstance;
+							$controlclassname = 'Actions'.ucfirst($module);
+							$actionInstance = new $controlclassname($this->db);
+							$this->hooks[$context][$module] = $actionInstance;
 						}
 					}
 				}
@@ -213,20 +216,19 @@ class HookManager
 
                     $this->resNbOfHooks++;
 
-                    dol_syslog(get_class($this).'::executeHooks a qualified hook was found for method='.$method.' module='.$module." action=".$action." context=".$context);
-
                     $modulealreadyexecuted[$module]=$module; // Use the $currentcontext in method to avoid running twice
 
                     // Clean class (an error may have been set from a previous call of another method for same module/hook)
                     $actionclassinstance->error=0;
                     $actionclassinstance->errors=array();
 
+                    dol_syslog(get_class($this)."::executeHooks Qualified hook found (hooktype=".$hooktype."). We call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", action=".$action." context=".$context, LOG_DEBUG);
+
                     // Add current context to avoid method execution in bad context, you can add this test in your method : eg if($currentcontext != 'formfile') return;
                     $parameters['currentcontext'] = $context;
                     // Hooks that must return int (hooks with type 'addreplace')
                     if ($hooktype == 'addreplace')
                     {
-                    	dol_syslog("Call method ".$method." of class ".get_class($actionclassinstance).", module=".$module.", hooktype=".$hooktype, LOG_DEBUG);
                     	$resaction += $actionclassinstance->$method($parameters, $object, $action, $this); // $object and $action can be changed by method ($object->id during creation for example or $action to go back to other action for example)
                     	if ($resaction < 0 || ! empty($actionclassinstance->error) || (! empty($actionclassinstance->errors) && count($actionclassinstance->errors) > 0))
                     	{
