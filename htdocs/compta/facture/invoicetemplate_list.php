@@ -83,7 +83,7 @@ $search_frequency=GETPOST('search_frequency','alpha');
 $search_unit_frequency=GETPOST('search_unit_frequency','alpha');
 $search_status=GETPOST('search_status','int');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

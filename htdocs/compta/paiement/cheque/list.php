@@ -43,7 +43,7 @@ $search_ref = GETPOST('search_ref','alpha');
 $search_account = GETPOST('search_account','int');
 $search_amount = GETPOST('search_amount','alpha');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

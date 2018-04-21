@@ -48,7 +48,7 @@ if (! $year && $mode != 'sconly') { $year=date("Y", time()); }
 
 $search_account = GETPOST('search_account','int');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

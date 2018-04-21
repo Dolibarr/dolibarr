@@ -37,7 +37,7 @@ $search_ref=GETPOST("sref","alpha")?GETPOST("sref","alpha"):GETPOST("search_ref"
 $search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_label","alpha");
 $search_status=GETPOST("search_status","int");
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (! $sortfield) $sortfield="e.ref";

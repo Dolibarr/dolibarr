@@ -59,7 +59,7 @@ $search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be 
 $search_company=GETPOST("search_company",'alpha');
 $search_payment_num=GETPOST('search_payment_num','alpha');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

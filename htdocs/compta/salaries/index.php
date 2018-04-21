@@ -38,7 +38,7 @@ $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref','int');
 $search_user = GETPOST('search_user','alpha');
 $search_label = GETPOST('search_label','alpha');

@@ -66,7 +66,7 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 $optioncss = GETPOST('optioncss','alpha');
@@ -725,7 +725,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
  */
 if (empty($action))
 {
-    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+    $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
     $page=GETPOST("page",'int');

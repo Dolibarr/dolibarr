@@ -91,7 +91,7 @@ $num_releve=GETPOST("num_releve","alpha");
 $cat=GETPOST("cat");
 if (empty($dateop)) $dateop=-1;
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

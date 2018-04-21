@@ -58,7 +58,7 @@ $result = restrictedArea($user, 'ficheinter', $id,'fichinter');
 
 $diroutputmassaction=$conf->ficheinter->dir_output . '/temp/massgeneration/'.$user->id;
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');

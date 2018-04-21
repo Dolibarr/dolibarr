@@ -69,7 +69,7 @@ $projectid = GETPOST('projectid','int');
 $year_date_when=GETPOST('year_date_when');
 $month_date_when=GETPOST('month_date_when');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');

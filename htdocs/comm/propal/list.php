@@ -85,7 +85,7 @@ $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alp
 $mesg=(GETPOST("msg") ? GETPOST("msg") : GETPOST("mesg"));
 
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
