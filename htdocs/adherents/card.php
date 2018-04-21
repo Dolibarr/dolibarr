@@ -1384,7 +1384,7 @@ else
 			$outputlangs = new Translate('', $conf);
 			$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
 			$outputlangs->loadLangs(array("main", "members"));
-			// Get email content fro mtemplae
+			// Get email content from template
 			$arraydefaultmessage=null;
 			$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION;
 
