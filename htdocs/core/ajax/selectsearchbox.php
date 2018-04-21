@@ -27,10 +27,9 @@
 if (! isset($usedbyinclude) || empty($usedbyinclude))
 {
     if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
-    //if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');
-    if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-    if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-    if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+    if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+    if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+    if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
     if (! defined('NOREDIRECTBYMAINTOLOGIN')) define('NOREDIRECTBYMAINTOLOGIN','1');
 
     $res=@include '../../main.inc.php';

@@ -35,7 +35,7 @@ if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIREHOOK'))		define('NOREQUIREHOOK','1');	// Disable "main.inc.php" hooks
+
 // Some value of modulepart can be used to get resources that are public so no login are required.
 if ((isset($_GET["modulepart"]) && ($_GET["modulepart"] == 'mycompany' || $_GET["modulepart"] == 'companylogo')) && ! defined("NOLOGIN"))
 {
