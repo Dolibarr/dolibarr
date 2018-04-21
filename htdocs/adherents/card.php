@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2012-2016 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2012-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2015-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,11 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("members");
-$langs->load("users");
-$langs->load('other');
+// Load traductions files requiredby by page
+$langs->loadLangs(array("companies","bills","members","users","other"));
 
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
