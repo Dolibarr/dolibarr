@@ -160,16 +160,16 @@ class Product extends CommonObject
 	//! Average price value for product entry into stock (PMP)
 	public $pmp;
 
-    	/**
+	/**
 	 * Stock alert
 	 * @var int
 	 */
-	public $seuil_stock_alerte;
+	public $seuil_stock_alerte=0;
 
 	/**
 	 * Ask for replenishment when $desiredstock < $stock_reel
 	 */
-	public $desiredstock;
+	public $desiredstock=0;
 
 	/*
 	 * Service expiration
@@ -185,13 +185,13 @@ class Product extends CommonObject
 	 * Status indicates whether the product is on sale '1' or not '0'
 	 * @var int
 	 */
-	public $status;
+	public $status=0;
 
 	/**
 	 * Status indicate whether the product is available for purchase '1' or not '0'
 	 * @var int
 	 */
-	public $status_buy;
+	public $status_buy=0;
 
 	/**
 	 * Status indicates whether the product is a finished product '1' or a raw material '0'
@@ -203,7 +203,7 @@ class Product extends CommonObject
 	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	 * @var int
 	 */
-	public $status_batch;
+	public $status_batch=0;
 
 	/**
 	 * Customs code
@@ -266,7 +266,7 @@ class Product extends CommonObject
 	//! Product ID already linked to a reference supplier
 	public $product_id_already_linked;
 
-	public $nbphoto;
+	public $nbphoto=0;
 
 	//! Contains detail of stock of product into each warehouse
 	public $stock_warehouse=array();
@@ -332,14 +332,7 @@ class Product extends CommonObject
 		global $langs;
 
 		$this->db = $db;
-		$this->status = 0;
-		$this->status_buy = 0;
-		$this->nbphoto = 0;
-		$this->stock_reel = 0;
-		$this->seuil_stock_alerte = 0;
-		$this->desiredstock = 0;
 		$this->canvas = '';
-		$this->status_batch=0;
 	}
 
 	/**

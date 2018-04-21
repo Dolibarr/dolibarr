@@ -191,18 +191,6 @@ class SupplierProposal extends CommonObject
         $this->remise = 0;
         $this->remise_percent = 0;
         $this->remise_absolue = 0;
-
-        $langs->load("supplier_proposal");
-        $this->labelstatut[0]=$langs->trans("SupplierProposalStatusDraft");
-        $this->labelstatut[1]=$langs->trans("SupplierProposalStatusValidated");
-        $this->labelstatut[2]=$langs->trans("SupplierProposalStatusSigned");
-        $this->labelstatut[3]=$langs->trans("SupplierProposalStatusNotSigned");
-        $this->labelstatut[4]=$langs->trans("SupplierProposalStatusClosed");
-        $this->labelstatut_short[0]=$langs->trans("SupplierProposalStatusDraftShort");
-        $this->labelstatut_short[1]=$langs->trans("Opened");
-        $this->labelstatut_short[2]=$langs->trans("SupplierProposalStatusSignedShort");
-        $this->labelstatut_short[3]=$langs->trans("SupplierProposalStatusNotSignedShort");
-        $this->labelstatut_short[4]=$langs->trans("SupplierProposalStatusClosedShort");
     }
 
 
@@ -2072,9 +2060,24 @@ class SupplierProposal extends CommonObject
      */
 	function LibStatut($statut,$mode=1)
     {
-		global $langs;
-		$langs->load("supplier_proposal");
+    	// Init/load array of translation of status
+    	if (empty($this->labelstatut) || empty($this->labelstatut_short))
+    	{
+    		global $langs;
+    		$langs->load("supplier_proposal");
+    		$this->labelstatut[0]=$langs->trans("SupplierProposalStatusDraft");
+    		$this->labelstatut[1]=$langs->trans("SupplierProposalStatusValidated");
+    		$this->labelstatut[2]=$langs->trans("SupplierProposalStatusSigned");
+    		$this->labelstatut[3]=$langs->trans("SupplierProposalStatusNotSigned");
+    		$this->labelstatut[4]=$langs->trans("SupplierProposalStatusClosed");
+    		$this->labelstatut_short[0]=$langs->trans("SupplierProposalStatusDraftShort");
+    		$this->labelstatut_short[1]=$langs->trans("Opened");
+    		$this->labelstatut_short[2]=$langs->trans("SupplierProposalStatusSignedShort");
+    		$this->labelstatut_short[3]=$langs->trans("SupplierProposalStatusNotSignedShort");
+    		$this->labelstatut_short[4]=$langs->trans("SupplierProposalStatusClosedShort");
+    	}
 
+    	$statuttrans='';
 		if ($statut==0) $statuttrans='statut0';
 		if ($statut==1) $statuttrans='statut1';
 		if ($statut==2) $statuttrans='statut3';
