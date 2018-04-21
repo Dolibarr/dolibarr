@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2016	Juanjo Menent           <jmenent@2byte.es>
@@ -271,7 +271,7 @@ else
 
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 	$sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy,';
+	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy,';
 	$sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp,';
 	$sql.= ' MIN(pfp.unitprice) as minsellprice';
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
@@ -317,25 +317,17 @@ else
 	if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
 	if ($search_accountancy_code_sell) $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
 	if ($search_accountancy_code_buy)  $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
-	// Add where from extra fields
-
-	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
-		$sql .= " AND pac.rowid IS NULL";
-	}
-
+	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) $sql .= " AND pac.rowid IS NULL";
 	// Add where from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
 	// Add where from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
 	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
 	$sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
-	$sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy, p.pmp';
-	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
-		$sql .= ', pac.rowid';
-	}
+	$sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp';
+	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) $sql .= ', pac.rowid';
 	// Add fields from extrafields
 	if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
@@ -700,7 +692,7 @@ else
 					$sql = "SELECT label";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql.= " WHERE fk_product=".$obj->rowid;
-					$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+					$sql.= " AND lang='". $db->escape($langs->getDefaultLang()) ."'";
 					$sql.= " LIMIT 1";
 
 					$result = $db->query($sql);
@@ -721,6 +713,10 @@ else
 				$product_static->status_batch = $obj->tobatch;
 				$product_static->entity = $obj->entity;
 				$product_static->pmp = $obj->pmp;
+				$product_static->accountancy_code_sell = $obj->accountancy_code_sell;
+				$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
+				$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
+				$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
 
 				if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 				{

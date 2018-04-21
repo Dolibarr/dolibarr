@@ -227,10 +227,10 @@ class Product extends CommonObject
 	public $volume;
 	public $volume_units;
 
-	public $accountancy_code_buy;
-	public $accountancy_code_buy_intra;
-	public $accountancy_code_buy_export;
 	public $accountancy_code_sell;
+	public $accountancy_code_sell_intra;
+	public $accountancy_code_sell_export;
+	public $accountancy_code_buy;
 
 	/**
 	 * Main barcode
