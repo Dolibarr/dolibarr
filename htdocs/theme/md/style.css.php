@@ -3659,7 +3659,7 @@ table.dp {
     border-style:none;
     background-color:transparent;
     padding:0px;
-    font-size:9px;
+    font-size: 0.85em;
     border-width:0px;
     color: #eee;
     vertical-align:middle;

@@ -1785,6 +1785,8 @@ SetToYesIfGroupIsComputationOfOtherGroups=Set this to yes if this group is a com
 EnterCalculationRuleIfPreviousFieldIsYes=Enter calculcation rule if previous field was set to Yes (For example 'CODEGRP1+CODEGRP2')
 SeveralLangugeVariatFound=Several language variants found
 WebDavServer=URL of %s server : %s
+COMPANY_AQUARIUM_REMOVE_SPECIAL=Remove special characters
+COMPANY_AQUARIUM_CLEAN_REGEX=Regex filter to clean value (COMPANY_AQUARIUM_CLEAN_REGEX)
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
 UseSearchToSelectResource=Use a search form to choose a resource (rather than a drop-down list).
