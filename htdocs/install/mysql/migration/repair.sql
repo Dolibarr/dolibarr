@@ -439,7 +439,10 @@ update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_
  
  
  
- 
+-- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
+-- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
+
+
 
 -- Note to migrate from old counter aquarium to new one
 -- drop table tmp;
