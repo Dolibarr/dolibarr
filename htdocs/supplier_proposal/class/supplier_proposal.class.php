@@ -2109,16 +2109,16 @@ class SupplierProposal extends CommonObject
 
         $sql = "SELECT p.rowid, p.ref, p.datec as datec";
         $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->socid)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = " AND";
         }
-        $sql.= $clause." p.entity = ".$conf->entity;
+        $sql.= $clause." p.entity IN (".getEntity('supplier_proposal').")";
         if ($mode == 'opened') $sql.= " AND p.fk_statut = 1";
         if ($mode == 'signed') $sql.= " AND p.fk_statut = 2";
-        if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
+        if ($user->socid) $sql.= " AND p.fk_soc = ".$user->socid;
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2266,13 +2266,13 @@ class SupplierProposal extends CommonObject
         $sql = "SELECT count(p.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->socid)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = "AND";
         }
-        $sql.= " ".$clause." p.entity = ".$conf->entity;
+        $sql.= " ".$clause." p.entity IN (".getEntity('supplier_proposal').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
