@@ -124,9 +124,9 @@ class SupplierProposal extends CommonObject
 
     var $cond_reglement_code;
     var $mode_reglement_code;
-    var $remise;
-    var $remise_percent;
-    var $remise_absolue;
+    var $remise = 0;
+    var $remise_percent = 0;
+    var $remise_absolue = 0;
 
     var $products=array();
     var $extraparams=array();
@@ -185,12 +185,11 @@ class SupplierProposal extends CommonObject
         global $conf,$langs;
 
         $this->db = $db;
+
         $this->socid = $socid;
         $this->id = $supplier_proposalid;
+
         $this->products = array();
-        $this->remise = 0;
-        $this->remise_percent = 0;
-        $this->remise_absolue = 0;
     }
 
 

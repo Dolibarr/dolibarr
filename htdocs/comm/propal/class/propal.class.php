@@ -142,9 +142,9 @@ class Propal extends CommonObject
 
 	public $cond_reglement_code;
 	public $mode_reglement_code;
-	public $remise;
-	public $remise_percent;
-	public $remise_absolue;
+	public $remise = 0;
+	public $remise_percent = 0;
+	public $remise_absolue = 0;
 	public $fk_address;
 	public $address_type;
 	public $address;
@@ -198,6 +198,7 @@ class Propal extends CommonObject
 	 */
 	const STATUS_BILLED = 4;   // Todo rename into STATUS_CLOSE ?
 
+
 	/**
 	 *	Constructor
 	 *
@@ -210,12 +211,11 @@ class Propal extends CommonObject
 		global $conf,$langs;
 
 		$this->db = $db;
+
 		$this->socid = $socid;
 		$this->id = $propalid;
+
 		$this->products = array();
-		$this->remise = 0;
-		$this->remise_percent = 0;
-		$this->remise_absolue = 0;
 
 		$this->duree_validite=$conf->global->PROPALE_VALIDITY_DURATION;
 	}

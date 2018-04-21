@@ -57,7 +57,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
 // Orders
-$commande = new CommandeFournisseur($db);
 $sql = "SELECT count(cf.rowid), cf.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as cf,";
 $sql.= " ".MAIN_DB_PREFIX."societe as s";
@@ -76,17 +75,15 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
 	print "</tr>\n";
-	$var=True;
 
 	while ($i < $num)
 	{
 		$row = $db->fetch_row($resql);
 
-
 		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans($commande->statuts[$row[1]]).'</td>';
+		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
 		print '<td align="center">'.$row[0].'</td>';
-		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/list.php?statut='.$row[1].'">'.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
 		print "</tr>\n";
 		$i++;

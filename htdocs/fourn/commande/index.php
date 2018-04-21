@@ -187,9 +187,8 @@ if ($resql)
 	{
 		$row = $db->fetch_row($resql);
 
-
 		print '<tr class="oddeven">';
-		print '<td>'.$langs->trans($commandestatic->statuts[$row[1]]).'</td>';
+		print '<td>'.$commandestatic->LibStatut($row[1]).'</td>';
 		print '<td align="right"><a href="list.php?statut='.$row[1].'">'.$row[0].' '.$commandestatic->LibStatut($row[1],3).'</a></td>';
 
 		print "</tr>\n";

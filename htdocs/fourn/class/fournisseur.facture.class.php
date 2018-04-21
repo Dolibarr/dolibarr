@@ -89,16 +89,16 @@ class FactureFournisseur extends CommonInvoice
     public $tms;              // Last update date
     public $date;             // Invoice date
     public $date_echeance;    // Max payment date
-    public $amount;
-    public $remise;
-    public $tva;
+    public $amount=0;
+    public $remise=0;
+    public $tva=0;
     public $localtax1;
     public $localtax2;
-    public $total_ht;
-    public $total_tva;
-    public $total_localtax1;
-    public $total_localtax2;
-    public $total_ttc;
+    public $total_ht=0;
+    public $total_tva=0;
+    public $total_localtax1=0;
+    public $total_localtax2=0;
+    public $total_ttc=0;
 	/**
 	 * @deprecated
 	 * @see note_private, note_public
@@ -201,16 +201,6 @@ class FactureFournisseur extends CommonInvoice
     public function __construct($db)
     {
         $this->db = $db;
-
-        $this->amount = 0;
-        $this->remise = 0;
-        $this->tva = 0;
-        $this->total_localtax1 = 0;
-        $this->total_localtax2 = 0;
-        $this->total_ht = 0;
-        $this->total_tva = 0;
-        $this->total_ttc = 0;
-        $this->propalid = 0;
 
         $this->products = array();
     }

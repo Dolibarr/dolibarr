@@ -189,7 +189,7 @@ class CommandeFournisseur extends CommonOrder
         $this->db = $db;
         $this->products = array();
 
-        // List of language codes for status
+        // TODO Move in LibStatut
         $this->statuts[0] = 'StatusOrderDraft';
         $this->statuts[1] = 'StatusOrderValidated';
         $this->statuts[2] = 'StatusOrderApproved';
