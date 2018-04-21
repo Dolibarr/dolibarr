@@ -184,23 +184,9 @@ class CommandeFournisseur extends CommonOrder
      */
     public function __construct($db)
     {
-    	global $conf;
-
         $this->db = $db;
-        $this->products = array();
 
-        // TODO Move in LibStatut
-        $this->statuts[0] = 'StatusOrderDraft';
-        $this->statuts[1] = 'StatusOrderValidated';
-        $this->statuts[2] = 'StatusOrderApproved';
-        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
-        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
-        $this->statuts[4] = 'StatusOrderReceivedPartially';
-        $this->statuts[5] = 'StatusOrderReceivedAll';
-        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
-        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
-        $this->statuts[9] = 'StatusOrderRefused';
+        $this->products = array();
     }
 
 
@@ -587,23 +573,40 @@ class CommandeFournisseur extends CommonOrder
      */
     function LibStatut($statut,$mode=0,$billed=0)
     {
-        global $langs;
-        $langs->load('orders');
+    	if (empty($this->statuts) || empty($statutshort))
+    	{
+	        global $langs;
+	        $langs->load('orders');
+
+	        $this->statuts[0] = 'StatusOrderDraft';
+	        $this->statuts[1] = 'StatusOrderValidated';
+	        $this->statuts[2] = 'StatusOrderApproved';
+	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
+	        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
+	        $this->statuts[4] = 'StatusOrderReceivedPartially';
+	        $this->statuts[5] = 'StatusOrderReceivedAll';
+	        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
+	        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
+	        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
+	        $this->statuts[9] = 'StatusOrderRefused';
+
+	        // List of language codes for status
+	        $statutshort[0] = 'StatusOrderDraftShort';
+	        $statutshort[1] = 'StatusOrderValidatedShort';
+	        $statutshort[2] = 'StatusOrderApprovedShort';
+	        $statutshort[3] = 'StatusOrderOnProcessShort';
+	        $statutshort[4] = 'StatusOrderReceivedPartiallyShort';
+	        $statutshort[5] = 'StatusOrderReceivedAllShort';
+	        $statutshort[6] = 'StatusOrderCanceledShort';
+	        $statutshort[7] = 'StatusOrderCanceledShort';
+	        $statutshort[9] = 'StatusOrderRefusedShort';
+    	}
+
+    	$langs->load('orders');
 
         $billedtext='';
 		//if ($statut==5 && $this->billed == 1) $statut = 8;
         if ($billed == 1) $billedtext=$langs->trans("Billed");
-
-        // List of language codes for status
-        $statutshort[0] = 'StatusOrderDraftShort';
-        $statutshort[1] = 'StatusOrderValidatedShort';
-        $statutshort[2] = 'StatusOrderApprovedShort';
-        $statutshort[3] = 'StatusOrderOnProcessShort';
-        $statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-        $statutshort[5] = 'StatusOrderReceivedAllShort';
-        $statutshort[6] = 'StatusOrderCanceledShort';
-        $statutshort[7] = 'StatusOrderCanceledShort';
-        $statutshort[9] = 'StatusOrderRefusedShort';
 
         if ($mode == 0)
         {
