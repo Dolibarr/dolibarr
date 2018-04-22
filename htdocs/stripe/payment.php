@@ -32,6 +32,7 @@
 // Load Dolibarr environment
 $res=@include("../main.inc.php");                                // For root directory
 if (! $res) $res=@include("../../main.inc.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -303,9 +304,8 @@ if (empty($reshook))
 		}
 		elseif (preg_match('/src_/i',$source))
 		{
-			$stripeacc = $stripe->getStripeAccount($entity);
-			$customer2 = \Stripe\Customer::retrieve($customer->id, array("stripe_account" => $stripeacc));
-			//$src = $customer2->sources->retrieve("$source", array("stripe_account" => $stripeacc));	// this API fails when array stripe_account is provided
+	
+		        $customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
 			$src = $customer2->sources->retrieve("$source");
 			if ($src->type=='card')
 			{
@@ -395,7 +395,7 @@ if (empty($reshook))
 		}
 		else
 		{
-			$loc = dol_buildpath('/stripeconnect/payment.php?facid='.$facid.'&action=create&error='.$e->getMessage().'', 1);
+			$loc = DOL_URL_ROOT.'/stripeconnect/payment.php?facid='.$facid.'&action=create&error='.$e->getMessage();
 			$db->rollback();
 
 			header('Location: '.$loc);
