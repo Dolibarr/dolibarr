@@ -184,11 +184,10 @@ if (! empty($conf->supplier_proposal->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
+
 				print '<tr class="oddeven">';
 
 				$supplier_proposalstatic->id=$obj->rowid;
@@ -242,10 +241,8 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
-
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';

@@ -461,15 +461,14 @@ class printing_printgcp extends PrintingDriver
         $html .= '<td>'.$langs->trans("Status").'</td>';
         $html .= '<td>'.$langs->trans("Cancel").'</td>';
         $html .= '</tr>'."\n";
-        $var = True;
+
         $jobs = $responsedata['jobs'];
         //$html .= '<pre>'.print_r($jobs['0'],true).'</pre>';
         if (is_array($jobs))
         {
             foreach ($jobs as $value)
             {
-                $var = !$var;
-                $html .= '<tr '.$bc[$var].'>';
+                $html .= '<tr class="oddeven">';
                 $html .= '<td>'.$value['id'].'</td>';
                 $dates=dol_print_date((int) substr($value['createTime'], 0, 10), 'dayhour');
                 $html .= '<td>'.$dates.'</td>';

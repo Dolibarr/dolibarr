@@ -551,7 +551,6 @@ print '</div>';
 
  if ($num)
  {
- $var = True;
  $total_ttc_Rac = $totalam_Rac = $total_Rac = 0;
  while ($i < $num)
  {
@@ -602,7 +601,6 @@ print '</div>';
 
  if ($num)
  {
- $var = True;
  $total_pr = 0;
  while ($i < $num)
  {
