@@ -259,7 +259,7 @@ before_script:
   - sudo chown -R travis:travis /var/lib/apache2/fastcgi
   - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
   # configure apache virtual hosts for precise
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$TRAVIS_BUILD_DIR?g" --in-place /etc/apache2/sites-available/default
+  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)?g" --in-place /etc/apache2/sites-available/default
   - sudo cat /etc/apache2/sites-available/default
   # configure apache virtual hosts for trusty
   - sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/000-default.conf
