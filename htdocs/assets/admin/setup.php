@@ -60,10 +60,7 @@ print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
 
 $head = AssetsAdminPrepareHead();
 
-dol_fiche_head($head, 'settings', $langs->trans("Assets"), 0, 'generic');
-
-// Setup page goes here
-echo $langs->trans("AssetsSetupPage");
+dol_fiche_head($head, 'settings', $langs->trans("Assets"), -1, 'generic');
 
 
 if ($action == 'edit')

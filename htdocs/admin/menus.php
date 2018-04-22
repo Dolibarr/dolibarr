@@ -30,11 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("users");
-$langs->load("other");
+$langs->loadLangs(array("companies","products","admin","users","other"));
 
 // Security check
 if (! $user->admin) accessforbidden();
