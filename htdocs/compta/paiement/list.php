@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,7 +279,7 @@ if ($resql)
     print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
 
-    $parameters=array();
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 

@@ -5,6 +5,7 @@ use Stripe\BankAccount;
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -391,7 +392,7 @@ if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titr
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['b.datec']['checked']))          print_liste_field_titre($arrayfields['b.datec']['label'],$_SERVER["PHP_SELF"],"b.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
