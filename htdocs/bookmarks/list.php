@@ -125,11 +125,9 @@ if ($resql)
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-
 
 		print '<tr class="oddeven">';
 

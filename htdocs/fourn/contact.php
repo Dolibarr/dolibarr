@@ -105,13 +105,10 @@ if ($result)
     print_liste_field_titre("Phone");
     print "</tr>\n";
 
-    $var=True;
     $i = 0;
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-
-
 
         print '<tr class="oddeven">';
 

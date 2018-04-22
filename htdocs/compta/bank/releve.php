@@ -395,7 +395,6 @@ if (empty($numref))
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=True;
 		$numrows = $db->num_rows($result);
 		$i = 0;
 
@@ -572,7 +571,6 @@ else
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=False;
 		$numrows = $db->num_rows($result);
 		$i = 0;
 

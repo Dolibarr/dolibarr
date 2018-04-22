@@ -94,7 +94,6 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
-    $var=True;
 
     print_barre_liste($langs->trans("ReceivedCustomersPaymentsToValid"), $page, $_SERVER["PHP_SELF"],"",$sortfield,$sortorder,'',$num);
 

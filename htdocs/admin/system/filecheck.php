@@ -86,7 +86,7 @@ if (empty($xmlremote)) $xmlremote = 'https://www.dolibarr.org/files/stable/signa
 
 
 // Test if remote test is ok
-$enableremotecheck = True;
+$enableremotecheck = true;
 if (preg_match('/beta|alpha|rc/i', DOL_VERSION) || ! empty($conf->global->MAIN_ALLOW_INTEGRITY_CHECK_ON_UNSTABLE)) $enableremotecheck=False;
 $enableremotecheck = true;
 

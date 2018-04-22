@@ -524,7 +524,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
 	                    print '</tr>';
 
-	                    $var=True;
 	                    $total=0;
 	                    $total_ttc=0;
 	                    $totalrecu=0;
@@ -794,7 +793,6 @@ if (empty($action))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=True;
 
         $param='';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;

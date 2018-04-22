@@ -248,12 +248,10 @@ class pdf_paiement
 		{
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			$var=True;
 
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-
 
 				$lines[$i][0] = $objp->facnumber;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"day",false,$outputlangs,true);

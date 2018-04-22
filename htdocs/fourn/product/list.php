@@ -253,7 +253,7 @@ if ($resql)
 	print "</tr>\n";
 
 	$oldid = '';
-	$var=True;
+
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);

@@ -139,7 +139,6 @@ if ($result)
 	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder,'public_');
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
 	{
 		$objp = $db->fetch_object($result);
