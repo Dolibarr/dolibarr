@@ -1139,7 +1139,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 	if (preg_match('/\.\./',$file) || preg_match('/[<>|]/',$file))
 	{
 		dol_syslog("Refused to delete file ".$file, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	if (empty($nohook))
@@ -1238,7 +1238,7 @@ function dol_delete_dir($dir,$nophperrors=0)
 	if (preg_match('/\.\./',$dir) || preg_match('/[<>|]/',$dir))
 	{
 		dol_syslog("Refused to delete dir ".$dir, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	$dir_osencoded=dol_osencode($dir);

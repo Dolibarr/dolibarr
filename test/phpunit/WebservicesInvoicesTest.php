@@ -291,7 +291,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// Test URL
     	$result='';
-    	$parameters = array('authentication'=>$authentication,'id'=>NULL,'ref'=>NULL,'ref_ext'=>'ref-phpunit-2');
+    	$parameters = array('authentication'=>$authentication, 'id'=>null, 'ref'=>null, 'ref_ext'=>'ref-phpunit-2');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');

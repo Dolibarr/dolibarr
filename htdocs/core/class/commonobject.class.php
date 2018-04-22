@@ -6605,7 +6605,7 @@ abstract class CommonObject
 			{
 				if(empty($this->{$field}))
 				{
-					$queryarray[$field] = NULL;
+					$queryarray[$field] = null;
 				}
 				else
 				{
