@@ -595,7 +595,7 @@ class FormFile
 					$file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
 					$res=include_once $file;
 				}
-				$class='Modele'.ucfirst($modulepart);
+				$class='ModelePDF'.ucfirst($modulepart);
 				if (class_exists($class))
 				{
 					$modellist=call_user_func($class.'::liste_modeles',$this->db);
