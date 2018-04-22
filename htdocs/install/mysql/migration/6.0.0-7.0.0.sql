@@ -707,3 +707,6 @@ create table llx_facture_rec_extrafields
 
 
 ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
+
+UPDATE llx_cronjob set entity = 1 where entity = 0 and label in ('RecurringInvoices', 'SendEmailsReminders');
+UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTemporaryFilesShort', 'MakeLocalDatabaseDumpShort');
