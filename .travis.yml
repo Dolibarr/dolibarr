@@ -3,7 +3,7 @@
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
 # We use dist: precise to have php 5.3 available 
-dist: precise
+dist: trusty
 sudo: required
 
 language: php
@@ -267,17 +267,9 @@ script:
   echo "Checking webserver availability by a wget -O - http://127.0.0.1"
   # Ensure we catch errors
   set -e
+  # The wget should return a page with line '<meta name="generator" content="Dolibarr installer">
   wget -O - http://127.0.0.1 > test.html
   head test.html
-  set +e
-  echo
-
-- |
-  echo "Checking webserver availability by a wget -O - http://127.0.0.1/index.php"
-  # Ensure we catch errors
-  set -e
-  wget -O - http://127.0.0.1/index.php > test.php
-  head test.php
   set +e
   echo
 
