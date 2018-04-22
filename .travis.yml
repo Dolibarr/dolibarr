@@ -173,22 +173,27 @@ before_script:
   echo
 
 - |
-  if [ "$DEBUG" = true ]; then
-    echo "Debugging informations"
-    # Check PHP
-    php -i
-    # Check PHP CodeSniffer installation
-    which phpcs
-    phpcs --version
-    phpcs -i
-    # Check PHPUnit installation
-    which phpunit
-    phpunit --version
-    # Check MySQL
-    mysql --version
-    mysql -e "SELECT VERSION();"
-    echo
-  fi
+  echo "Versions information"
+  # Check PHP
+  echo "PHP version"
+  php -i | head -
+  # Check PHP CodeSniffer installation
+  echo "PHPCS version"
+  which phpcs
+  phpcs --version | head -
+  phpcs -i | head -
+  # Check PHPUnit installation
+  echo "PHPUnit version"
+  which phpunit
+  phpunit --version | head -
+  # Check Apache version
+  echo "Apache version"
+  apache2 -v | head -
+  # Check MariaDb
+  echo "MariaDb version"
+  mysql --version | head -
+  mysql -e "SELECT VERSION();"  | head -
+  echo
   
 - |
   echo "Setting up database"
@@ -335,7 +340,6 @@ script:
   
 - |
   echo "Unit testing"
-  phpunit --version
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
   set -e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
