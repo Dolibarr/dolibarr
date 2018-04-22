@@ -256,9 +256,7 @@ before_script:
   # configure apache virtual hosts
   sudo cp -f build/travis-ci/apache.conf /etc/apache2/sites-available/default
   sudo sed -e "s?%TRAVIS_BUILD_DIR%?$TRAVIS_BUILD_DIR?g" --in-place /etc/apache2/sites-available/default
-  if [ "$DEBUG" = true ]; then
-    sudo cat /etc/apache2/sites-available/default
-  fi
+  sudo cat /etc/apache2/sites-available/default
   sudo service apache2 restart
   echo
 
