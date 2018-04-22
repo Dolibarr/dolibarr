@@ -108,7 +108,7 @@ class FactureRec extends CommonInvoice
 		if (empty($this->frequency))
 		{
 			$this->frequency=0;
-			$this->date_when=NULL;
+			$this->date_when=null;
 		}
 
 

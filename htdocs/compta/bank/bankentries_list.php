@@ -912,7 +912,7 @@ if ($resql)
 	if (! empty($arrayfields['b.conciliated']['checked']))
 	{
         print '<td class="liste_titre" align="center">';
-        print $form->selectyesno('search_conciliated', $search_conciliated, 1, False, 1);
+        print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1);
         print '</td>';
 	}
 	print '<td class="liste_titre" align="middle">';
