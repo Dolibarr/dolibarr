@@ -707,5 +707,3 @@ create table llx_facture_rec_extrafields
 
 
 ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
-
-UPDATE llx_cronjob SET entity = 1 WHERE entity = 0 ;
