@@ -1059,12 +1059,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 								if ($objp->nature == 4 && ! empty($conf->banque->enabled)) $nature="bank";
 								if ($objp->nature == 5 && ! empty($conf->expensereport->enabled)) $nature="expensereports";
 								if ($objp->nature == 1) $nature="various";
+								if ($objp->nature == 8) $nature="inventory";
 								if ($objp->nature == 9) $nature="hasnew";
 
 								// To enable when page exists
 								if ($conf->global->MAIN_FEATURES_LEVEL < 2)
 								{
-									if ($nature == 'various' || $nature == 'hasnew') $nature='';
+									if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') $nature='';
 								}
 
 								if ($nature)
