@@ -269,7 +269,13 @@ script:
   set -e
   wget -O - http://127.0.0.1 > test.html
   head test.html
+  set +e
+  echo
+
+- |
   echo "Checking webserver availability by a wget -O - http://127.0.0.1/index.php"
+  # Ensure we catch errors
+  set -e
   wget -O - http://127.0.0.1/index.php > test.php
   head test.php
   set +e
