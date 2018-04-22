@@ -3,7 +3,7 @@
 # For syntax, see http://about.travis-ci.org/docs/user/languages/php/
 
 # We use dist: precise to have php 5.3 available 
-#dist: precise
+dist: precise
 sudo: required
 
 language: php
@@ -264,14 +264,14 @@ before_script:
 
 script:
 - |
-  echo "Checking webserver availability"
+  echo "Checking webserver availability by a wget -O - http://127.0.0.1"
   # Ensure we catch errors
   set -e
-  wget http://127.0.0.1
-  cat index.html
-  if [ "$DEBUG" = true ]; then
-    cat index.html
-  fi
+  wget -O - http://127.0.0.1 > test.html
+  head test.html
+  echo "Checking webserver availability by a wget -O - http://127.0.0.1/index.php"
+  wget -O - http://127.0.0.1/index.php > test.php
+  head test.php
   set +e
   echo
 
