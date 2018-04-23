@@ -62,6 +62,8 @@ if (empty($conf->stock->enabled)) {
 	accessforbidden();
 }
 
+$hookmanager->initHooks(array('ordersupplierdispatch'));
+
 // Recuperation de l'id de projet
 $projectid = 0;
 if ($_GET["projectid"])
@@ -84,6 +86,10 @@ if ($id > 0 || ! empty($ref)) {
 /*
  * Actions
  */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
 {
@@ -429,6 +435,9 @@ if ($id > 0 || ! empty($ref)) {
 	print '<tr><td>' . $langs->trans("AuthorRequest") . '</td>';
 	print '<td>' . $author->getNomUrl(1, '', 0, 0, 0) . '</td>';
 	print '</tr>';
+
+  $parameters=array();
+  $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
 	print "</table>";
 
