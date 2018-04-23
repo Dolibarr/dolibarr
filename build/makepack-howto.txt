@@ -8,14 +8,17 @@ This files describe steps made by Dolibarr packaging team to make a
 beta version of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in ChangeLog. To generate a changelog, you can do "git log `git merge-base 3.7.0 origin/develop`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+- Update version/info in ChangeLog. 
+To generate a changelog of a major new version x.y.0 (from develop repo), you can do "cd ~/git/dolibarr; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent develop) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+To generate a changelog of a major new version x.y.0 (from x.y repo), you can do "cd ~/git/dolibarr_x.y; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent x.y.0) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dolibarr_x.y; git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+- To know number of lines changes: git diff --shortstat A B
 - Update version number with x.y.z-w in htdocs/filefunc.inc.php
-- Update version number with x.y.z-w in build/debian/changelog
 - Commit all changes.
-- Add a Tag (x.y.z-beta) and push it: git push --tags
-- Create a branch (x.y).
 
 - Run makepack-dolibarr.pl to generate all packages.
+
+- Create a branch (x.y), if version seems stable enough.
 
 - Move build files into www.dolibarr.org web site
   (/home/dolibarr/wwwroot/files/lastbuild).
@@ -29,9 +32,12 @@ This files describe steps made by Dolibarr packaging team to make a
 complete release of Dolibarr, step by step.
 
 - Check all files are commited.
-- Update version/info in ChangeLog. To generate a changelog, you can do "git log `git merge-base 3.7.0 origin/develop`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+- Update version/info in ChangeLog. 
+To generate a changelog of a major new version x.y.0 (from develop repo), you can do "cd ~/git/dolibarr; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent develop) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+To generate a changelog of a major new version x.y.0 (from x.y repo), you can do "cd ~/git/dolibarr_x.y; git log `diff -u <(git rev-list --first-parent x.(y-1).0)  <(git rev-list --first-parent x.y.0) | sed -ne 's/^ //p' | head -1`.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+To generate a changelog of a maintenance version x.y.z, you can do "cd ~/git/dolibarr_x.y; git log x.y.z-1.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e '^FIX\|NEW' | sort -u | sed 's/FIXED:/FIX:/g' | sed 's/FIXED :/FIX:/g' | sed 's/FIX :/FIX:/g' | sed 's/FIX /FIX: /g' | sed 's/NEW :/NEW:/g' | sed 's/NEW /NEW: /g' > /tmp/aaa"
+- To know number of lines changes: git diff --shortstat A B
 - Update version number with x.y.z in htdocs/filefunc.inc.php
-- Update version number with x.y.z in build/debian/changelog
 - Commit all changes.
 
 - Run makepack-dolibarr.pl to generate all packages.

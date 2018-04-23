@@ -2,6 +2,8 @@
 AddThisPageToBookmarks=Dodaj ovu stranicu u bookmark
 Bookmark=Bookmark
 Bookmarks=Bookmarks
+ListOfBookmarks=Lista bookmark-a
+EditBookmarks=Prikaži/uredi favorite
 NewBookmark=Novi bookmark
 ShowBookmark=Prikaži bookmark
 OpenANewWindow=Otvori u novom prozoru
@@ -14,6 +16,5 @@ BehaviourOnClick=Ponašanje kada se klikne na link
 CreateBookmark=Kreiraj bookmark
 SetHereATitleForLink=Postavi naslov za bookmark
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Koristi ekterni http link ili relativni Dolibarr link
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izaberi da li će se stranica otvorena sa linkom prokazati u trenutnom ili novom prozoru
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Upravljanje bookmark-ima
-ListOfBookmarks=Lista bookmark-a

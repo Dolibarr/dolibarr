@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - deliveries
+DeliveryRef=Ref. Lieferung
+DeliveryStateSaved=Lieferstatus gespeichert
+StatusDeliveryValidated=Erhalten
+ShowReceiving=Lieferschein anzeigen

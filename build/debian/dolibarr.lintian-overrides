@@ -5,3 +5,6 @@ dolibarr: desktop-command-not-in-package usr/share/applications/dolibarr.desktop
 # We use <IfVersion> to include the correct configuration for each apache version
 dolibarr: apache2-deprecated-auth-config Order
 dolibarr: apache2-deprecated-auth-config Allow
+# Ignore warning required for a good install process
+dolibarr: apache2-reverse-dependency-calls-wrapper-script postinst a2enmod
+dolibarr: apache2-reverse-dependency-calls-wrapper-script postinst a2enconf

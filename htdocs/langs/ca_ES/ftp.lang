@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=No s'ha pogut connectar amb el login/c
 FTPFailedToRemoveFile=No s'ha pogut suprimir el fitxer <b>%s</b>.
 FTPFailedToRemoveDir=No s'ha pogut suprimir la carpeta <b>%s</b> (Comproveu els permisos i que el directori està buit).
 FTPPassiveMode=Mode passiu
+ChooseAFTPEntryIntoMenu=Tria una entrada FTP en el menú...
+FailedToGetFile=Error obtenint els fitxers %s

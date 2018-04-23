@@ -48,7 +48,7 @@ class modPayBox extends DolibarrModules
 
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
-        $this->family = "other";
+        $this->family = "interface";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
@@ -57,8 +57,6 @@ class modPayBox extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=other)
-        $this->special = 1;
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory, use this->picto=DOL_URL_ROOT.'/module/img/file.png'
@@ -106,7 +104,7 @@ class modPayBox extends DolibarrModules
         // Example:
         // $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
         // $this->rights[$r][1] = 'Permision label';	// Permission label
-        // $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
+        // $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
         // $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         // $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         // $r++;

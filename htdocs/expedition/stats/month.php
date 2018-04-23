@@ -39,7 +39,7 @@ $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
 $mesg = '';
 
-print_fiche_titre($langs->trans("StatisticsOfSendings").' '.$_GET["year"], $mesg);
+print load_fiche_titre($langs->trans("StatisticsOfSendings").' '.$_GET["year"], $mesg);
 
 $stats = new ExpeditionStats($db);
 $data = $stats->getNbExpeditionByMonth($_GET["year"]);

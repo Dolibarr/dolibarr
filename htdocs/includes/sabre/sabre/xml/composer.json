@@ -1,0 +1,53 @@
+{
+    "name": "sabre/xml",
+    "description" : "sabre/xml is an XML library that you may not hate.",
+    "keywords" : [ "XML", "XMLReader", "XMLWriter", "DOM" ],
+    "homepage" : "https://sabre.io/xml/",
+    "license" : "BSD-3-Clause",
+    "require" : {
+        "php" : ">=5.5.5",
+        "ext-xmlwriter" : "*",
+        "ext-xmlreader" : "*",
+        "ext-dom" : "*",
+        "lib-libxml" : ">=2.6.20",
+        "sabre/uri" : ">=1.0,<3.0.0"
+    },
+    "authors" : [
+        {
+            "name" : "Evert Pot",
+            "email" : "me@evertpot.com",
+            "homepage" : "http://evertpot.com/",
+            "role" : "Developer"
+        },
+        {
+            "name": "Markus Staab",
+            "email": "markus.staab@redaxo.de",
+            "role" : "Developer"
+        }
+    ],
+    "support" : {
+        "forum" : "https://groups.google.com/group/sabredav-discuss",
+        "source" : "https://github.com/fruux/sabre-xml"
+    },
+    "autoload" : {
+        "psr-4" : {
+            "Sabre\\Xml\\" : "lib/"
+        },
+        "files": [
+            "lib/Deserializer/functions.php",
+            "lib/Serializer/functions.php"
+        ]
+    },
+    "autoload-dev" : {
+        "psr-4" : {
+            "Sabre\\Xml\\" : "tests/Sabre/Xml/"
+        }
+    },
+    "require-dev": {
+        "sabre/cs": "~1.0.0",
+        "phpunit/phpunit" : "*"
+    },
+    "config" : {
+        "bin-dir" : "bin/"
+    }
+}

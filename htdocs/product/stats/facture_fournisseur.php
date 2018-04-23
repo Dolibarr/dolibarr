@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/product/stats/facture_fournisseur.php
- * \ingroup product service facture
- * \brief Page des stats des factures fournisseurs pour un produit
+ * \file 		htdocs/product/stats/facture_fournisseur.php
+ * \ingroup 	product service facture
+ * \brief 		Page of supplier invoice statistics for a product
  */
 
 require '../../main.inc.php';
@@ -46,7 +46,7 @@ $socid = '';
 if (! empty($user->societe_id)) $socid=$user->societe_id;
 $result = restrictedArea($user, 'produit|service', $fieldvalue, 'product&product', '', '', $fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productstatssupplyinvoice'));
 
 $mesg = '';
@@ -54,7 +54,7 @@ $mesg = '';
 $sortfield = GETPOST("sortfield", 'alpha');
 $sortorder = GETPOST("sortorder", 'alpha');
 $page = GETPOST("page", 'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -63,7 +63,7 @@ if (! $sortfield) $sortfield = "f.datef";
 $search_month = GETPOST('search_month', 'aplha');
 $search_year = GETPOST('search_year', 'int');
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) {
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) {
 	$search_month = '';
 	$search_year = '';
 }
@@ -83,6 +83,8 @@ if ($id > 0 || ! empty($ref))
 	$product = new Product($db);
 	$result = $product->fetch($id, $ref);
 
+	$object = $product;
+
 	$parameters = array('id' => $id);
 	$reshook = $hookmanager->executeHooks('doActions', $parameters, $product, $action); // Note that $action and $object may have been modified by some hooks
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -94,44 +96,38 @@ if ($id > 0 || ! empty($ref))
 		$head = product_prepare_head($product);
 		$titre = $langs->trans("CardProduct" . $product->type);
 		$picto = ($product->type == Product::TYPE_SERVICE ? 'service' : 'product');
-		dol_fiche_head($head, 'referers', $titre, 0, $picto);
+		dol_fiche_head($head, 'referers', $titre, -1, $picto);
 
 		$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $product, $action); // Note that $action and $object may have been modified by hook
+        print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		print '<table class="border" width="100%">';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		// Reference
-		print '<tr>';
-		print '<td width="30%">' . $langs->trans("Ref") . '</td><td colspan="3">';
-		print $form->showrefnav($product, 'ref', '', 1, 'ref');
-		print '</td>';
-		print '</tr>';
+        $shownav = 1;
+        if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-		// Libelle
-		print '<tr><td>' . $langs->trans("Label") . '</td><td colspan="3">' . $product->label . '</td>';
-		print '</tr>';
+        dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 
-		// Status (to sell)
-		print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Sell") . ')</td><td colspan="3">';
-		print $product->getLibStatut(2, 0);
-		print '</td></tr>';
+        print '<div class="fichecenter">';
 
-		// Status (to buy)
-		print '<tr><td>' . $langs->trans("Status") . ' (' . $langs->trans("Buy") . ')</td><td colspan="3">';
-		print $product->getLibStatut(2, 1);
-		print '</td></tr>';
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
 
 		show_stats_for_company($product, $socid);
 
 		print "</table>";
 
-		print '</div>';
+        print '</div>';
+        print '<div style="clear:both"></div>';
+
+		dol_fiche_end();
+
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
-			$sql = "SELECT distinct s.nom as name, s.rowid as socid, s.code_client, f.ref, d.total_ht as total_ht,";
-			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
+			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, d.rowid, d.total_ht as total_ht,";
+			$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.libelle, f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut as statut, d.qty";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -139,7 +135,7 @@ if ($id > 0 || ! empty($ref))
 			$sql .= ", " . MAIN_DB_PREFIX . "facture_fourn_det as d";
 			if (! $user->rights->societe->client->voir && ! $socid)	$sql .= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 			$sql .= " WHERE f.fk_soc = s.rowid";
-			$sql .= " AND f.entity IN (".getEntity('facture_fourn', 1).")";
+			$sql .= " AND f.entity IN (".getEntity('facture_fourn').")";
 			$sql .= " AND d.fk_facture_fourn = f.rowid";
 			$sql .= " AND d.fk_product =" . $product->id;
 			if (! empty($search_month))
@@ -190,7 +186,8 @@ if ($id > 0 || ! empty($ref))
 				}
 
 				print_barre_liste($langs->trans("SuppliersInvoices"), $page, $_SERVER["PHP_SELF"], "&amp;id=$product->id", $sortfield, $sortorder, '', $num, $totalrecords, '');
-				print '<div class="liste_titre">';
+                print '<div class="liste_titre liste_titre_bydiv centpercent">';
+                print '<div class="divsearchfield">';
 				print $langs->trans('Period') . ' (' . $langs->trans("DateInvoice") . ') - ';
 				print $langs->trans('Month') . ':<input class="flat" type="text" size="4" name="search_month" value="' . $search_month . '"> ';
 				print $langs->trans('Year') . ':' . $formother->selectyear($search_year ? $search_year : - 1, 'search_year', 1, 20, 5);
@@ -199,38 +196,44 @@ if ($id > 0 || ! empty($ref))
 				print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
 				print '</div>';
 				print '</div>';
+				print '</div>';
 
 				$i = 0;
-				print '<table class="noborder" width="100%">';
+                print '<div class="div-table-responsive">';
+				print '<table class="tagtable liste listwithfilterbefore" width="100%">';
 				print '<tr class="liste_titre">';
-				print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("SupplierCode"), $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("DateInvoice"), $_SERVER["PHP_SELF"], "f.datef", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Qty"), $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"], "f.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
-				print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "s.rowid", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("Company", $_SERVER["PHP_SELF"], "s.nom", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("SupplierCode", $_SERVER["PHP_SELF"], "s.code_client", "", $option, '', $sortfield, $sortorder);
+				print_liste_field_titre("DateInvoice", $_SERVER["PHP_SELF"], "f.datef", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("Qty", $_SERVER["PHP_SELF"], "d.qty", "", $option, 'align="center"', $sortfield, $sortorder);
+				print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"], "f.total_ht", "", $option, 'align="right"', $sortfield, $sortorder);
+				print_liste_field_titre("Status", $_SERVER["PHP_SELF"], "f.paye,f.fk_statut", "", $option, 'align="right"', $sortfield, $sortorder);
 				print "</tr>\n";
 
 				if ($num > 0)
 				{
-					$var = True;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($result);
-						$var = ! $var;
 
-						print '<tr ' . $bc[$var] . '>';
-						print '<td>';
 						$supplierinvoicestatic->id = $objp->facid;
-						$supplierinvoicestatic->ref = $objp->facnumber;
+						$supplierinvoicestatic->ref = $objp->ref;
+						$supplierinvoicestatic->ref_supplier = $objp->ref_supplier;
+						$supplierinvoicestatic->libelle = $objp->libelle;
+						$supplierinvoicestatic->total_ht = $objp->total_ht;
+						$supplierinvoicestatic->total_ttc = $objp->total_ttc;
+						$supplierinvoicestatic->total_tva = $objp->total_tva;
+
+						print '<tr class="oddeven">';
+						print '<td>';
 						print $supplierinvoicestatic->getNomUrl(1);
 						print "</td>\n";
 						$societestatic->fetch($objp->socid);
 						print '<td>' . $societestatic->getNomUrl(1) . '</td>';
 						print "<td>" . $objp->code_client . "</td>\n";
                    		print '<td align="center">';
-						print dol_print_date($db->jdate($objp->datef)) . "</td>";
+						print dol_print_date($db->jdate($objp->datef), 'dayhour') . "</td>";
 						print '<td align="center">' . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->total_ht) . "</td>\n";
 						print '<td align="right">' . $supplierinvoicestatic->LibStatut($objp->paye, $objp->statut, 5) . '</td>';
@@ -250,8 +253,8 @@ if ($id > 0 || ! empty($ref))
 				print '<td align="right">' . price($total_ht) . '</td>';
 				print '<td></td>';
 				print "</table>";
+				print '</div>';
 				print '</form>';
-				print '<br>';
 			} else {
 				dol_print_error($db);
 			}

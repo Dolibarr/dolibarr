@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Nepodařilo se přihlásit k FTP serve
 FTPFailedToRemoveFile=Nepodařilo se odstranit soubor <b>%s.</b>
 FTPFailedToRemoveDir=Nepodařilo se odstranit adresář <b>%s</b> (Zkontrolujte oprávnění a zda adresář je prázdný).
 FTPPassiveMode=Pasivní režim
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

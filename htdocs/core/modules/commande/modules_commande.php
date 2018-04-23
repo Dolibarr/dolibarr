@@ -25,17 +25,17 @@
 /**
  *  \file			htdocs/core/modules/commande/modules_commande.php
  *  \ingroup		commande
- *  \brief			Fichier contenant la classe mere de generation des commandes en PDF
- *  				et la classe mere de numerotation des commandes
+ *  \brief			File that contains parent class for orders models
+ *                  and parent class for orders numbering models
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requis car utilise par les classes qui heritent
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// required for use by classes that inherit
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 
 /**
- *	Classe mere des modeles de commandes
+ *	Parent class for orders models
  */
 abstract class ModelePDFCommandes extends CommonDocGenerator
 {
@@ -146,26 +146,4 @@ abstract class ModeleNumRefCommandes
 		if ($this->version) return $this->version;
 		return $langs->trans("NotAvailable");
 	}
-}
-
-
-/**
- *  Create a document onto disk accordign to template module.
- *
- *  @param	    DoliDB		$db  			Database handler
- *  @param	    Commande		$object			Object order
- *  @param	    string		$modele			Force le modele a utiliser ('' to not force)
- *  @param		Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @param      int			$hidedetails    Hide details of lines
- *  @param      int			$hidedesc       Hide description
- *  @param      int			$hideref        Hide ref
- *  @return     int         				0 if KO, 1 if OK
- *  @deprecated Use the new function generateDocument of Commande class
- *  @see Commande::generateDocument()
- */
-function commande_pdf_create(DoliDB $db, Commande $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
-{
-	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }

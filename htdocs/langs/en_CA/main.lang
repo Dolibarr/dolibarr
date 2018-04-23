@@ -24,6 +24,5 @@ AmountVAT=Amount GST
 AmountLT1=Amount PST
 TotalVAT=Total GST
 TotalLT1=Total PST
-IncludedVAT=Including GST
 VAT=GST
 VATRate=GST rate

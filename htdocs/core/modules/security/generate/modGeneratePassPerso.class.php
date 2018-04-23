@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Teddy Andreotti <125155@supinfo.com>
+/* Copyright (C) 2006-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2014		Teddy Andreotti		<125155@supinfo.com>
+ * Copyright (C) 2017		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +99,10 @@ class modGeneratePassPerso extends ModeleGenPassword
 			$this->Spe = str_replace($this->Ambi,"",$this->Spe);
 		}
 
-		$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
+		$pattern = $this->Min . (! empty($this->NbMaj)?$this->Maj:'') . (! empty($this->NbNum)?$this->Nb:'') . (! empty($this->NbSpe)?$this->Spe:'');
+		$this->All = str_shuffle($pattern);
+
+		//$this->All = str_shuffle($this->Maj. $this->Min. $this->Nb. $this->Spe);
 		//$this->All = $this->Maj. $this->Min. $this->Nb. $this->Spe;
 		//$this->All =  $this->Spe;
 
@@ -134,19 +138,19 @@ class modGeneratePassPerso extends ModeleGenPassword
 	{
 		$pass = "";
 		for($i=0; $i<$this->NbMaj; $i++){ // Y
-			$pass .= $this->Maj[rand(0,strlen($this->Maj) - 1)];
+			$pass .= $this->Maj[mt_rand(0,strlen($this->Maj) - 1)];
 		}
 
 		for($i=0; $i<$this->NbNum; $i++){ // X
-			$pass .= $this->Nb[rand(0,strlen($this->Nb) - 1)];
+			$pass .= $this->Nb[mt_rand(0,strlen($this->Nb) - 1)];
 		}
 
 		for($i=0; $i<$this->NbSpe; $i++){ // @
-			$pass .= $this->Spe[rand(0,strlen($this->Spe) - 1)];
+			$pass .= $this->Spe[mt_rand(0,strlen($this->Spe) - 1)];
 		}
 
 		for($i=strlen($pass);$i<$this->length2; $i++){ // y
-			$pass .= $this->All[rand(0,strlen($this->All) -1)];
+			$pass .= $this->All[mt_rand(0,strlen($this->All) -1)];
 		}
 
 		$pass = str_shuffle($pass);

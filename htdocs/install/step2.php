@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Cedric GROSS         <c.gross@kreiz-it.fr>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2010  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ include 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
+global $langs;
+
 $step = 2;
 $ok = 0;
 
@@ -40,15 +42,14 @@ error_reporting(0);		// Disable all errors
 @set_time_limit(900);	// Need 900 on some OS like Windows 7/64
 error_reporting($err);
 
-$action=GETPOST('action');
-$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
+$action=GETPOST('action','aZ09')?GETPOST('action','aZ09'):(empty($argv[1])?'':$argv[1]);
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[2])?'auto':$argv[2]);
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
 $langs->load("install");
 
 $choix=0;
-if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
@@ -61,7 +62,10 @@ if ($dolibarr_main_db_type == "sqlite3")  $choix=5;
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
+if (@file_exists($forcedfile)) {
+	$useforcedwizard = true;
+	include_once $forcedfile;
+}
 
 dolibarr_install_syslog("--- step2: entering step2.php page");
 
@@ -82,7 +86,7 @@ if (! is_writable($conffile))
 
 if ($action == "set")
 {
-    print '<h3>'.$langs->trans("Database").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("Database").'</h3>';
 
     print '<table cellspacing="0" style="padding: 4px 4px 4px 0px" border="0" width="100%">';
     $error=0;
@@ -197,8 +201,10 @@ if ($action == "set")
                 {
                     $buffer=preg_replace('/type=innodb/i','ENGINE=innodb',$buffer);
                 }
-                else if ($conf->db->type == 'mssql')
+                else
                 {
+                    // Keyword ENGINE is MySQL-specific, so scrub it for
+                    // other database types (mssql, pgsql)
                     $buffer=preg_replace('/type=innodb/i','',$buffer);
                     $buffer=preg_replace('/ENGINE=innodb/i','',$buffer);
                 }
@@ -510,6 +516,8 @@ if ($action == "set")
             {
                 if (preg_match('/\.sql$/i',$file) && preg_match('/^llx_/i',$file))
                 {
+                	if (preg_match('/^llx_accounting_account_/',$file)) continue;	// We discard data file of chart of account. Will be loaded when a chart is selected.
+
                     //print 'x'.$file.'-'.$createdata.'<br>';
                     if (is_numeric($createdata) || preg_match('/'.preg_quote($createdata).'/i',$file))
                     {
@@ -614,8 +622,17 @@ else
     print 'Parameter action=set not defined';
 }
 
+
+$ret=0;
+if (!$ok && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step2: end");
 
-pFooter(!$ok,$setuplang);
+pFooter($ok?0:1,$setuplang);
 
 if (isset($db) && is_object($db)) $db->close();
+
+// Return code if ran from command line
+if ($ret) exit($ret);
+

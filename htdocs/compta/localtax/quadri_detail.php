@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006-2007 Yannick Warnier      <ywarnier@beeznest.org>
- * Copyright (C) 2014	   Rosana Romero 		<rromero@2byte.es>
+ * Copyright (C) 2014-2016 Juanjo Menent		<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,10 +38,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
-$langs->load("bills");
-$langs->load("compta");
-$langs->load("companies");
-$langs->load("products");
+$langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 $local=GETPOST('localTaxType', 'int');
 // Date range
@@ -54,37 +51,40 @@ if (empty($year))
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+
+$date_start = dol_mktime( 0, 0, 0, GETPOST( "date_startmonth" ), GETPOST( "date_startday" ), GETPOST( "date_startyear" ) );
+$date_end   = dol_mktime( 23, 59, 59, GETPOST( "date_endmonth" ), GETPOST( "date_endday" ), GETPOST( "date_endyear" ) );
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
 	$q=GETPOST("q");
 	if (empty($q))
 	{
-		if (isset($_REQUEST["month"])) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,$_REQUEST["month"],false); }
+		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,$_REQUEST["month"],false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
 		else
 		{
-            $month_current = strftime("%m",dol_now());
-            if ($month_current >= 10) $q=4;
-            elseif ($month_current >= 7) $q=3;
-            elseif ($month_current >= 4) $q=2;
-            else $q=1;
+			$date_start=dol_get_first_day($year_start,empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START,false);
+			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	else
+	{
+		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	}
 }
 
-$min = GETPOST("min");
+$min = price2num(GETPOST("min","alpha"));
 if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
-// 0=normal, 1=option vat for services is on debit
+// 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
+if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax",'int');
 if (empty($modetax)) $modetax=0;
 
 // Security check
@@ -92,12 +92,9 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-
-
-/*
+/**
  * View
  */
-
 $morequerystring='';
 $listofparams=array('date_startmonth','date_startyear','date_startday','date_endmonth','date_endyear','date_endday');
 foreach($listofparams as $param)
@@ -116,19 +113,15 @@ $product_static=new Product($db);
 $payment_static=new Paiement($db);
 $paymentfourn_static=new PaiementFourn($db);
 
-//print_fiche_titre($langs->trans("VAT"),"");
-
-//$fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
 $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
-//$fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
-//$fsearch.='  <input type="text" name="min" value="'.$min.'">';
+$fsearch.='  <input type="hidden" name="localTaxType" value="'.$local.'">';
 
+$name=$langs->transcountry($local==1?"LT1ReportByQuarters":"LT2ReportByQuarters", $mysoc->country_code);
 $calc=$conf->global->MAIN_INFO_LOCALTAX_CALC.$local;
-// Affiche en-tete du rapport
+
 if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice for goods and services
 {
-    $nom=$langs->trans($local==1?"LT1ReportByQuartersInDueDebtMode":"LT2ReportByQuartersInDueDebtMode");
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -138,14 +131,11 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
 	$nextyear=$year_start; $nextquarter=$q;
 	if ($nextquarter < 4) $nextquarter++;
 	else { $nextquarter=1; $nextyear++; }
-	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
-    //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-    //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
-    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
+
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 	else  $description.='<br>'.$langs->trans("DepositsAreIncluded");
     $description.=$fsearch;
-    $builddate=time();
-    //$exportlink=$langs->trans("NotYetAvailable");
+    $builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");
@@ -160,7 +150,6 @@ if ($conf->global->$calc==0 || $conf->global->$calc==1)	// Calculate on invoice 
 }
 if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
 {
-    $nom=$langs->trans($local==1?"LT1ReportByQuartersInInputOutputMode":"LT2ReportByQuartersInInputOutputMode");
     $calcmode=$calc==0?$langs->trans("CalcModeLT".$local):$langs->trans("CalcModeLT".$local."Rec");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -170,14 +159,10 @@ if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
 	$nextyear=$year_start; $nextquarter=$q;
 	if ($nextquarter < 4) $nextquarter++;
 	else { $nextquarter=1; $nextyear++; }
-	//$periodlink=($prevyear?"<a href='".$_SERVER["PHP_SELF"]."?year=".$prevyear."&q=".$prevquarter."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".$nextyear."&q=".$nextquarter."&modetax=".$modetax."'>".img_next()."</a>":"");
-    if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.=' '.$langs->trans("DepositsAreNotIncluded");
+	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.=' '.$langs->trans("DepositsAreNotIncluded");
 	else  $description.=' '.$langs->trans("DepositsAreIncluded");
-    //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-    //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
-	$builddate=time();
-    //$exportlink=$langs->trans("NotYetAvailable");
+	$builddate=dol_now();
 
 	$elementcust=$langs->trans("CustomersInvoices");
 	$productcust=$langs->trans("ProductOrService");
@@ -190,7 +175,7 @@ if ($conf->global->$calc==2) 	// Invoice for goods, payment for services
 	$vatsup=$langs->trans("VATPaid");
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 
 if($local==1){
@@ -203,17 +188,13 @@ if($local==1){
 
 // VAT Received and paid
 
-
-
 $y = $year_current;
 $total = 0;
 $i=0;
 
 // Load arrays of datas
-$x_coll= local_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell', $local);
-//$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
-$x_paye = local_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy', $local);
-
+$x_coll = tax_by_date('localtax' . $local, $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = tax_by_date('localtax' . $local, $db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 echo '<table class="noborder" width="100%">';
 
@@ -230,14 +211,14 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 else
 {
 	$x_both = array();
+
 	//now, from these two arrays, get another array with one rate per line
 	foreach(array_keys($x_coll) as $my_coll_rate)
 	{
-		//foreach($x_coll[$my_coll_rate][localtax1_list]){
 		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
-		$x_both[$my_coll_rate]['coll']['vat']     = $x_coll[$my_coll_rate]['vat'];
+		$x_both[$my_coll_rate]['coll']['localtax'.$local]     = $x_coll[$my_coll_rate]['localtax'.$local];
 		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
-		$x_both[$my_coll_rate]['paye']['vat'] = 0;
+		$x_both[$my_coll_rate]['paye']['localtax'.$local] = 0;
 		$x_both[$my_coll_rate]['coll']['links'] = '';
 		$x_both[$my_coll_rate]['coll']['detail'] = array();
 		foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy)
@@ -303,9 +284,6 @@ else
 	}
 	//now we have an array (x_both) indexed by rates for coll and paye
 
-
-	//print table headers for this quadri - incomes first
-
 	$x_coll_sum = 0;
 	$x_coll_ht = 0;
 	$x_paye_sum = 0;
@@ -313,8 +291,6 @@ else
 
 	$span=3;
 	if ($modetax == 0) $span+=2;
-
-	//print '<tr><td colspan="'.($span+1).'">'..')</td></tr>';
 
 	if($conf->global->$calc ==0 || $conf->global->$calc == 2){
 		// Customers invoices
@@ -345,8 +321,6 @@ else
 
 				if($rate!=0){
 					print "<tr>";
-					//print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
-					/**/
 					print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.$span.'"></td>';
 					print '</tr>'."\n";
 				}
@@ -360,8 +334,8 @@ else
 					if (! empty($fields['ddate_start'])) $type=1;
 					if (! empty($fields['ddate_end'])) $type=1;
 
-					$var=!$var;
-					print '<tr '.$bc[$var].'>';
+
+					print '<tr class="oddeven">';
 
 					// Ref
 					print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
@@ -400,9 +374,7 @@ else
 						print price($fields['totalht']);
 						if (price2num($fields['ftotal_ttc']))
 						{
-							//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
 							$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
-							//print ' ('.round($ratiolineinvoice*100,2).'%)';
 						}
 						print '</td>';
 					}
@@ -413,7 +385,6 @@ else
 					{
 						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
 						print '<td class="nowrap" align="right">';
-						//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
 						if ($fields['payment_amount'] && $fields['ftotal_ttc'])
 						{
 							$payment_static->id=$fields['payment_id'];
@@ -424,7 +395,7 @@ else
 							print $langs->trans("NotUsedForGoods");
 						}
 						else {
-							print $fields['payment_amount'];
+							print price($fields['payment_amount']);
 							if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 						}
 						print '</td>';
@@ -491,7 +462,6 @@ else
 	if($conf->global->$calc ==0 || $conf->global->$calc == 1){
 		echo '<table class="noborder" width="100%">';
 		//print table headers for this quadri - expenses now
-		//imprime les en-tete de tables pour ce quadri - maintenant les d�penses
 		print '<tr class="liste_titre">';
 		print '<td align="left">'.$elementsup.'</td>';
 		print '<td align="left">'.$productsup.'</td>';
@@ -527,8 +497,8 @@ else
 					if (! empty($fields['ddate_start'])) $type=1;
 					if (! empty($fields['ddate_end'])) $type=1;
 
-					$var=!$var;
-					print '<tr '.$bc[$var].'>';
+
+					print '<tr class="oddeven">';
 
 					// Ref
 					print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
@@ -585,7 +555,7 @@ else
 						}
 						else
 						{
-							print $fields['payment_amount'];
+							print price($fields['payment_amount']);
 							if (isset($fields['payment_amount'])) print ' ('.round($ratiopaymentinvoice*100,2).'%)';
 						}
 						print '</td>';
@@ -663,6 +633,5 @@ else
 	$i++;
 }
 
-$db->close();
-
 llxFooter();
+$db->close();

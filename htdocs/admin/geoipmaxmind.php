@@ -33,7 +33,7 @@ accessforbidden();
 $langs->load("admin");
 $langs->load("errors");
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 /*
  * Actions
@@ -46,7 +46,7 @@ if ($action == 'set')
 
 	if (! $gimcdf && ! file_exists($gimcdf))
 	{
-		setEventMessage($langs->trans("ErrorFileNotFound",$gimcdf),'errors');
+		setEventMessages($langs->trans("ErrorFileNotFound",$gimcdf), null, 'errors');
 		$error++;
 	}
 
@@ -57,11 +57,11 @@ if ($action == 'set')
 
 		if (! $error)
 		{
-			setEventMessage($langs->trans("SetupSaved"));
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("Error"),'errors');
+			setEventMessages($langs->trans("Error"), null, 'errors');
 		}
 	}
 }
@@ -75,8 +75,8 @@ $form=new Form($db);
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("GeoIPMaxmindSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("GeoIPMaxmindSetup"),$linkback,'title_setup');
 print '<br>';
 
 $version='';
@@ -105,8 +105,8 @@ print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
+
+print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td colspan="2">';
 
 if ($geointernal) print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).'<br>';

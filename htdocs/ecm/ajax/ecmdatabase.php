@@ -22,13 +22,11 @@
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
-//if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
 require '../../main.inc.php';
-require DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
 $action	= GETPOST('action','alpha');
 $element = GETPOST('element', 'alpha');
@@ -39,7 +37,7 @@ $element = GETPOST('element', 'alpha');
 
 top_httphead();
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Load original field value
 if (isset($action) && ! empty($action))
@@ -48,7 +46,7 @@ if (isset($action) && ! empty($action))
 
 	if ($action == 'build' && ! empty($element))
 	{
-		require DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
+		require_once DOL_DOCUMENT_ROOT . '/ecm/class/ecmdirectory.class.php';
 
 		$ecmdirstatic = new EcmDirectory($db);
 		$ecmdirtmp = new EcmDirectory($db);

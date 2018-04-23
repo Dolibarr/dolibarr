@@ -27,10 +27,9 @@ create table llx_don
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   tms             timestamp,
   fk_statut       smallint NOT NULL DEFAULT 0,  -- Status of donation promise or validate
-  datec           datetime,                     -- Create date
   datedon         datetime,                     -- Date of the donation/promise
-  amount          real DEFAULT 0,
-  fk_payment      integer,
+  amount          double(24,8) DEFAULT 0,
+  fk_payment      integer,						-- Id of payment mode
   paid            smallint default 0 NOT NULL,
   firstname       varchar(50),
   lastname        varchar(50),
@@ -43,12 +42,15 @@ create table llx_don
   email           varchar(255),
   phone           varchar(24),
   phone_mobile    varchar(24),
-  public          smallint DEFAULT 1 NOT NULL,   -- Donation is public ? (0,1)
-  fk_projet       integer NULL,                  -- Donation is given for a project ?
+  public          smallint DEFAULT 1 NOT NULL,  -- Donation is public ? (0,1)
+  fk_projet       integer NULL,                 -- Donation is given for a project ?
+  datec           datetime,                     -- Create date
   fk_user_author  integer NOT NULL,
+  date_valid      datetime,						-- date de validation
   fk_user_valid   integer NULL,
   note_private    text,
   note_public     text,
   model_pdf       varchar(255),
-  import_key      varchar(14)
+  import_key      varchar(14),
+  extraparams	  varchar(255)							-- for other parameters with json format
 )ENGINE=innodb;

@@ -52,7 +52,7 @@ $object = new Address($db);
  */
 
 // Cancel
-if (GETPOST("cancel") && ! empty($backtopage))
+if (GETPOST('cancel','alpha') && ! empty($backtopage))
 {
 	header("Location: ".$backtopage);
 	exit;
@@ -106,7 +106,7 @@ if ($action == 'add' || $action == 'update')
         }
         else
         {
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
             $action='create';
         }
     }
@@ -147,7 +147,7 @@ if ($action == 'add' || $action == 'update')
         else
         {
             $reload = 0;
-	        setEventMessage($object->error, 'errors');
+	        setEventMessages($object->error, $object->errors, 'errors');
             $action= "edit";
         }
     }
@@ -211,7 +211,7 @@ if ($action == 'create')
             $object->country		= $tmparray['label'];
         }
 
-        print_fiche_titre($langs->trans("AddAddress"));
+        print load_fiche_titre($langs->trans("AddAddress"));
 
         print "<br>\n";
 
@@ -253,7 +253,7 @@ if ($action == 'create')
         print '<tr><td class="fieldrequired">'.$langs->trans('Label').'</td><td><input type="text" size="30" name="label" id="label" value="'.($object->label?$object->label:$langs->trans('RequiredField')).'"></td></tr>';
         print '<tr><td class="fieldrequired">'.$langs->trans('Name').'</td><td><input type="text" size="30" name="name" id="name" value="'.($object->name?$object->name:$langs->trans('RequiredField')).'"></td></tr>';
 
-        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
+        print '<tr><td class="tdtop">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 
@@ -306,7 +306,7 @@ elseif ($action == 'edit')
 
     dol_fiche_head($head, 'card', $societe->name);
 
-    print_titre($langs->trans("EditAddress"));
+    print load_fiche_titre($langs->trans("EditAddress"));
     print "<br>\n";
 
     if ($socid)
@@ -353,7 +353,7 @@ elseif ($action == 'edit')
         print '<tr><td>'.$langs->trans('AddressLabel').'</td><td colspan="3"><input type="text" size="40" name="label" value="'.$object->label.'"></td></tr>';
         print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="name" value="'.$object->name.'"></td></tr>';
 
-        print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" cols="40" rows="3" wrap="soft">';
+        print '<tr><td class="tdtop">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="address" class="quatrevingtpercent" rows="3" wrap="soft">';
         print $object->address;
         print '</textarea></td></tr>';
 

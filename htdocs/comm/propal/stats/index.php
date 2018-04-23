@@ -33,7 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formpropal.class.php';
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
 
-$object_statut=GETPOST('propal_statut');
+$mode=GETPOST("mode")?GETPOST("mode"):'customer';
+if ($mode == 'customer' && ! $user->rights->propale->lire) accessforbidden();
+if ($mode == 'supplier' && ! $user->rights->supplier_proposal->lire) accessforbidden();
+
+$object_status=GETPOST('object_status');
 
 $userid=GETPOST('userid','int');
 $socid=GETPOST('socid','int');
@@ -50,7 +54,11 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$mode=GETPOST('mode');
+$langs->load('orders');
+$langs->load('companies');
+$langs->load('other');
+$langs->load('suppliers');
+$langs->load('supplier_proposal');
 
 
 /*
@@ -62,18 +70,29 @@ $formpropal=new FormPropal($db);
 
 $langs->load('propal');
 $langs->load('other');
+$langs->load("companies");
 
-llxHeader('', $langs->trans("ProposalsStatistics"));
+if ($mode == 'customer')
+{
+    $title=$langs->trans("ProposalsStatistics");
+    $dir=$conf->propale->dir_temp;
+}
+if ($mode == 'supplier')
+{
+    $title=$langs->trans("ProposalsStatisticsSuppliers").' ('.$langs->trans("SentToSuppliers").")";
+    $dir=$conf->supplier_proposal->dir_temp;
+}
 
-print_fiche_titre($langs->trans("ProposalsStatistics"),'','title_commercial.png');
+llxHeader('', $title);
 
-$dir=$conf->propal->dir_temp;
+print load_fiche_titre($title,'','title_commercial.png');
+
 
 dol_mkdir($dir);
 
 
-$stats = new PropaleStats($db, $socid, ($userid>0?$userid:0));
-if ($object_statut != '' && $object_statut >= 0) $stats->where .= ' AND p.fk_statut IN ('.$object_statut.')';
+$stats = new PropaleStats($db, $socid, ($userid>0?$userid:0), $mode);
+if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND p.fk_statut IN ('.$db->escape($object_status).')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -160,7 +179,7 @@ if (! $mesg)
     $px2->draw($filenameamount,$fileurlamount);
 }
 
-$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear, $filter);
+$data = $stats->getAverageByMonthWithPrevYear($endyear, $startyear);
 
 $fileurl_avg='';
 if (!$user->rights->societe->client->voir || $user->societe_id)
@@ -223,7 +242,7 @@ $h++;
 
 complete_head_from_modules($conf,$langs,null,$head,$h,'propal_stats');
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -234,20 +253,20 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	// Show filter box
 	print '<form name="stats" method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="mode" value="'.$mode.'">';
-	print '<table class="border" width="100%">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="liste_titre" colspan="2">'.$langs->trans("Filter").'</td></tr>';
 	// Company
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
 	$filter='s.client in (1,2,3)';
-	print $form->select_company($socid,'socid',$filter,1);
+	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_dolusers($userid,'userid',1);
+	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 	// Status
 	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
-	$formpropal->selectProposalStatus($object_statut,0,1);
+    $formpropal->selectProposalStatus(($object_status!=''?$object_status:-1),0,0,1,$mode,'object_status');
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
@@ -262,15 +281,15 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<br><br>';
 //}
 
-print '<table class="border" width="100%">';
-print '<tr height="24">';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre" height="24">';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("NbOfProposals").'</td>';
-print '<td align="center">%</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">%</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
-print '<td align="center">%</td>';
+print '<td align="right">'.$langs->trans("NbOfProposals").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">%</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
@@ -280,7 +299,8 @@ foreach ($data as $val)
     while (! empty($year) && $oldyear > $year+1)
     {	// If we have empty year
         $oldyear--;
-        print '<tr height="24">';
+
+        print '<tr class="oddeven" height="24">';
         print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
         print '<td align="right">0</td>';
         print '<td align="right"></td>';
@@ -290,7 +310,7 @@ foreach ($data as $val)
         print '<td align="right"></td>';
         print '</tr>';
     }
-    print '<tr height="24">';
+    print '<tr class="oddeven" height="24">';
     print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
     print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';

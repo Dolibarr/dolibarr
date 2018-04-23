@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2014-2016	Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,9 +33,6 @@ class PaymentLoan extends CommonObject
 	public $element='payment_loan';			//!< Id that identify managed objects
 	public $table_element='payment_loan';	//!< Name of table without prefix where object is stored
 
-	var $id;
-	var $ref;
-
 	var $fk_loan;
 	var $datec='';
 	var $tms='';
@@ -46,8 +43,6 @@ class PaymentLoan extends CommonObject
 	var $amount_interest;
 	var $fk_typepayment;
 	var $num_payment;
-	var $note_private;
-	var $note_public;
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
@@ -92,9 +87,9 @@ class PaymentLoan extends CommonObject
 
 		// Clean parameters
 		if (isset($this->fk_loan)) 			$this->fk_loan = trim($this->fk_loan);
-		if (isset($this->amount_capital))	$this->amount_capital = trim($this->amount_capital?$this->amount_capital:0);
-		if (isset($this->amount_insurance))	$this->amount_insurance = trim($this->amount_insurance?$this->amount_insurance:0);
-		if (isset($this->amount_interest))	$this->amount_interest = trim($this->amount_interest?$this->amount_interest:0);
+		if (isset($this->amount_capital))	$this->amount_capital = price2num($this->amount_capital?$this->amount_capital:0);
+		if (isset($this->amount_insurance))	$this->amount_insurance = price2num($this->amount_insurance?$this->amount_insurance:0);
+		if (isset($this->amount_interest))	$this->amount_interest = price2num($this->amount_interest?$this->amount_interest:0);
 		if (isset($this->fk_typepayment))	$this->fk_typepayment = trim($this->fk_typepayment);
 		if (isset($this->num_payment))		$this->num_payment = trim($this->num_payment);
 		if (isset($this->note_private))     $this->note_private = trim($this->note_private);
@@ -180,9 +175,10 @@ class PaymentLoan extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_loan as t)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_loan as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepayment = pt.id";
+		$sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -390,6 +386,7 @@ class PaymentLoan extends CommonObject
      *      All payment properties must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
+     *      @param  int		$fk_loan            Id of fk_loan to do link with this payment
      *      @param  string	$mode               'payment_loan'
      *      @param  string	$label              Label to use in bank record
      *      @param  int		$accountid          Id of bank account to do link with
@@ -397,7 +394,7 @@ class PaymentLoan extends CommonObject
      *      @param  string	$emetteur_banque    Name of bank
      *      @return int                 		<0 if KO, >0 if OK
      */
-    function addPaymentToBank($user, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
+    function addPaymentToBank($user, $fk_loan, $mode, $label, $accountid, $emetteur_nom, $emetteur_banque)
     {
         global $conf;
 
@@ -450,11 +447,10 @@ class PaymentLoan extends CommonObject
                     }
                 }
 
-                // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                //$linkaddedforthirdparty=array();
+                // Add link 'loan' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
                 if ($mode == 'payment_loan')
                 {
-                    $result=$acc->add_url_line($bank_line_id, $this->id, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
+                    $result=$acc->add_url_line($bank_line_id, $fk_loan, DOL_URL_ROOT.'/loan/card.php?id=', ($this->label?$this->label:''),'loan');
                     if ($result <= 0) dol_print_error($this->db);
                 }
             }

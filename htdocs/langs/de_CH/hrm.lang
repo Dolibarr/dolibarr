@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - hrm
+Establishments=Betriebe
+Establishment=Betrieb
+NewEstablishment=Neuer Betrieb
+DeleteEstablishment=Betrieb löschen
+OpenEtablishment=Betrieb wählen
+CloseEtablishment=Betrieb schliessen
+DictionaryDepartment=Personalverwaltung - Abteilungsliste
+DictionaryFunction=Personalverwaltung - Funktionsliste

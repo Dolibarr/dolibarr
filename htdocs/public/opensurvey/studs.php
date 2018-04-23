@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2013      Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2014 Marcos García				<marcosgdf@gmail.com>
+/* Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2014      Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/opensurvey/fonctions.php");
 
 
 // Init vars
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $numsondage = '';
 if (GETPOST('sondage'))
 {
@@ -41,12 +41,14 @@ if (GETPOST('sondage'))
 
 $object=new Opensurveysondage($db);
 $result=$object->fetch(0,$numsondage);
-if ($result <= 0) dol_print_error('','Failed to get survey id '.$numsondage);
 
 $nblignes=$object->fetch_lines();
 
 //If the survey has not yet finished, then it can be modified
-$canbemodified = ($object->date_fin > dol_now());
+$canbemodified = ((empty($object->date_fin) || $object->date_fin > dol_now()) && $object->status != Opensurveysondage::STATUS_CLOSED);
+
+// Security check
+if (empty($conf->opensurvey->enabled)) accessforbidden('',0,0,1);
 
 
 /*
@@ -58,27 +60,27 @@ $nbcolonnes = substr_count($object->sujet, ',') + 1;
 $listofvoters=explode(',',$_SESSION["savevoter"]);
 
 // Add comment
-if (GETPOST('ajoutcomment'))
+if (GETPOST('ajoutcomment','alpha'))
 {
 	if (!$canbemodified) accessforbidden();
 
 	$error=0;
 
-	if (! GETPOST('comment'))
+	if (! GETPOST('comment','none'))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Comment")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 	}
-	if (! GETPOST('commentuser'))
+	if (! GETPOST('commentuser','nohtml'))
 	{
 		$error++;
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("User")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 	}
 
 	if (! $error)
 	{
-		$comment = GETPOST("comment");
-		$comment_user = GETPOST('commentuser');
+		$comment = GETPOST("comment",'none');
+		$comment_user = GETPOST('commentuser','nohtml');
 
 		$resql = $object->addComment($comment, $comment_user);
 
@@ -92,7 +94,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 	if (!$canbemodified) accessforbidden();
 
 	//Si le nom est bien entré
-	if (GETPOST('nom'))
+	if (GETPOST('nom','nohtml'))
 	{
 		$nouveauchoix = '';
 		for ($i=0;$i<$nbcolonnes;$i++)
@@ -110,19 +112,19 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			}
 		}
 
-		$nom=substr(GETPOST("nom"),0,64);
-		
+		$nom=substr(GETPOST("nom",'nohtml'),0,64);
+
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'opensurvey_user_studs';
 		$sql.= " WHERE id_sondage='".$db->escape($numsondage)."' AND nom = '".$db->escape($nom)."' ORDER BY id_users";
 		$resql = $db->query($sql);
 		if (! $resql) dol_print_error($db);
-		
+
 		$num_rows = $db->num_rows($resql);
 		if ($num_rows > 0)
 		{
-			setEventMessage($langs->trans("VoteNameAlreadyExists"),'errors');
+			setEventMessages($langs->trans("VoteNameAlreadyExists"), null, 'errors');
 			$error++;
 		}
 		else
@@ -164,7 +166,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 	}
 }
 
@@ -181,7 +183,7 @@ for ($i=0; $i<$nblignes; $i++)
 		$testligneamodifier=true;
 	}
 
-	//test pour voir si une ligne est a modifier
+	//test to see if a line is to be modified
 	if (isset($_POST['validermodifier'.$i]))
 	{
 		$modifier=$i;
@@ -241,6 +243,16 @@ $arrayofjs=array();
 $arrayofcss=array('/opensurvey/css/style.css');
 llxHeaderSurvey($object->titre, "", 0, 0, $arrayofjs, $arrayofcss);
 
+if (empty($object->ref))     // For survey, id is a hex string
+{
+    $langs->load("errors");
+    print $langs->trans("ErrorRecordNotFound");
+
+    llxFooterSurvey();
+
+    $db->close();
+    exit();
+}
 
 // Define format of choices
 $toutsujet=explode(",",$object->sujet);
@@ -278,7 +290,7 @@ if (!$canbemodified) {
 	llxFooterSurvey();
 
 	$db->close();
-	die;
+	exit;
 }
 
 print '<form name="formulaire" action="studs.php?sondage='.$numsondage.'"'.'#bas" method="POST">'."\n";
@@ -293,11 +305,11 @@ print '<table class="resultats">'."\n";
 // Show choice titles
 if ($object->format=="D")
 {
-	//affichage des sujets du sondage
+	//display of survey topics
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des années
+	//display of years
 	$colspan=1;
 	$nbofsujet=count($toutsujet);
 	for ($i=0;$i<$nbofsujet;$i++)
@@ -314,7 +326,7 @@ if ($object->format=="D")
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des mois
+	//display of months
 	$colspan=1;
 	for ($i=0;$i<$nbofsujet;$i++) {
 		$cur = intval($toutsujet[$i]);	// intval() est utiliser pour supprimer le suffixe @* qui déplaît logiquement à strftime()
@@ -337,7 +349,7 @@ if ($object->format=="D")
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
-	//affichage des jours
+	//display of days
 	$colspan=1;
 	for ($i=0;$i<$nbofsujet;$i++) {
 		$cur = intval($toutsujet[$i]);
@@ -356,7 +368,7 @@ if ($object->format=="D")
 
 	print '</tr>'."\n";
 
-	//affichage des horaires
+	//Display schedules
 	if (strpos($object->sujet, '@') !== false) {
 		print '<tr>'."\n";
 		print '<td></td>'."\n";
@@ -375,7 +387,7 @@ if ($object->format=="D")
 }
 else
 {
-	//affichage des sujets du sondage
+	//display of survey topics
 	print '<tr>'."\n";
 	print '<td></td>'."\n";
 
@@ -727,9 +739,9 @@ if ($comments)
 if ($object->allow_comments) {
 	print '<div class="addcomment">' .$langs->trans("AddACommentForPoll") . "<br>\n";
 
-	print '<textarea name="comment" rows="2" cols="60"></textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment','none')).'</textarea><br>'."\n";
 	print $langs->trans("Name") .': ';
-	print '<input type="text" name="commentuser" maxlength="64" /> &nbsp; '."\n";
+	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser','nohtml').'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	print '</form>'."\n";
 

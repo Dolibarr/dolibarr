@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2015  Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2015  Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2016  Charlie Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,15 +15,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+$code = $conf->global->MAIN_INFO_ACCOUNTANT_CODE;
 $prefix = $conf->global->ACCOUNTING_EXPORT_PREFIX_SPEC;
 $format = $conf->global->ACCOUNTING_EXPORT_FORMAT;
-	
-$date_export = dol_print_date($now, '%Y%m%d%H%M%S');
+$nodateexport = $conf->global->ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME;
+
+$date_export = "_" . dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 header('Content-Type: text/csv');
-if ($prefix)
-	$filename = $prefix . "_" . "journal_" . $journal . $date_export . "." . $format;
-else
-	$filename = "journal_" . $journal . $date_export . "." . $format;
-header('Content-Disposition: attachment;filename='.$filename);
+
+$completefilename = ($code?$code . "_":"") . ($prefix?$prefix . "_":"") . $filename . ($nodateexport?"":$date_export) . "." . $format;
+
+header('Content-Disposition: attachment;filename=' . $completefilename);

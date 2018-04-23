@@ -29,6 +29,7 @@ create table llx_facturedet_rec
   product_type		integer DEFAULT 0,
   label				varchar(255) DEFAULT NULL,
   description		text,
+  vat_src_code					varchar(10)  DEFAULT '',			-- Vat code used as source of vat fields. Not strict foreign key here.
   tva_tx			double(6,3),	             	-- taux tva
   localtax1_tx      double(6,3) DEFAULT 0,    		-- localtax1 rate
   localtax1_type	varchar(10) NULL, 				-- localtax1 type
@@ -44,9 +45,19 @@ create table llx_facturedet_rec
   total_localtax1	double(24,8) DEFAULT 0,		-- Total LocalTax1 for total quantity of line
   total_localtax2	double(24,8) DEFAULT 0,		-- total LocalTax2 for total quantity of line
   total_ttc			double(24,8),					-- Total TTC de la ligne toute quantity et incluant remise ligne et globale
+  date_start_fill	integer DEFAULT 0,				-- 1=autofill the date_start of invoice with __INVOICE_DATE_NEXT_INVOICE_BEFORE_GEN__
+  date_end_fill		integer DEFAULT 0,				-- 1=autofill the date_start of invoice with __INVOICE_PREVIOUS_DATE_NEXT_INVOICE_AFTER_GEN__
   info_bits			integer DEFAULT 0,				-- TVA NPR ou non
   special_code		integer UNSIGNED DEFAULT 0,	-- code pour les lignes speciales
   rang				integer DEFAULT 0,				-- ordre d'affichage
-  fk_contract_line  integer NULL,					-- id of contract line when predefined invoice comes from contract lines
-  fk_unit         integer    DEFAULT NULL
+  fk_contract_line  integer NULL,					-- id of contract line when template invoice comes from contract lines
+  fk_unit           integer    DEFAULT NULL,
+  import_key		varchar(14),
+    
+  fk_multicurrency          integer,
+  multicurrency_code        varchar(255),
+  multicurrency_subprice    double(24,8) DEFAULT 0,
+  multicurrency_total_ht    double(24,8) DEFAULT 0,
+  multicurrency_total_tva   double(24,8) DEFAULT 0,
+  multicurrency_total_ttc   double(24,8) DEFAULT 0
 )ENGINE=innodb;

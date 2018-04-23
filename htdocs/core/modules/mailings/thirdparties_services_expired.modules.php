@@ -23,6 +23,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 class mailing_thirdparties_services_expired extends MailingTargets
 {
     var $name='DolibarrContractsLinesExpired';
+	// This label is used if no translation is found for key XXX neither MailingModuleDescXXX where XXX=name is found
     var $desc='Third parties with expired contract\'s lines';
     var $require_admin=0;
 
@@ -47,7 +48,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
         // List of services
         $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."product";
-        $sql.= " WHERE entity IN (".getEntity('product', 1).")";
+        $sql.= " WHERE entity IN (".getEntity('product').")";
         if (empty($conf->global->CONTRACT_SUPPORT_PRODUCTS)) $sql.= " AND fk_product_type = 1";	// By default, only services
         $sql.= " ORDER BY ref";
         $result=$this->db->query($sql);
@@ -101,7 +102,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $sql = "SELECT s.rowid as id, s.email, s.nom as name, cd.rowid as cdid, cd.date_ouverture, cd.date_fin_validite, cd.fk_contrat";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
         $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
-        $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+        $sql.= " WHERE s.entity IN (".getEntity('societe').")";
         $sql.= " AND s.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
         $sql.= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
         $sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid AND p.ref = '".$product."'";
@@ -128,8 +129,8 @@ class mailing_thirdparties_services_expired extends MailingTargets
 					'lastname' => $obj->name,	// For thirdparties, lastname must be name
                     'firstname' => '',			// For thirdparties, firstname is ''
 					'other' =>
-                    ('StartDate='.dol_print_date($this->db->jdate($obj->date_ouverture),'day')).';'.
-                    ('EndDate='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.
+                    ('DateStart='.dol_print_date($this->db->jdate($obj->date_ouverture),'day')).';'.
+                    ('DateEnd='.dol_print_date($this->db->jdate($obj->date_fin_validite),'day')).';'.
                     ('Contract='.$obj->fk_contrat).';'.
                     ('ContactLine='.$obj->cdid),
 					'source_url' => $this->url($obj->id),
@@ -191,7 +192,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
         $sql = "SELECT count(*) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
         $sql.= ", ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."product as p";
-        $sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+        $sql.= " WHERE s.entity IN (".getEntity('societe').")";
         $sql.= " AND s.rowid = c.fk_soc AND cd.fk_contrat = c.rowid AND s.email != ''";
         $sql.= " AND cd.statut= 4 AND cd.fk_product=p.rowid";
         $sql.= " AND p.ref IN ('".join("','",$this->arrayofproducts)."')";
@@ -233,7 +234,7 @@ class mailing_thirdparties_services_expired extends MailingTargets
      */
     function url($id)
     {
-        return '<a href="'.DOL_URL_ROOT.'/societe/soc.php?socid='.$id.'">'.img_object('',"company").'</a>';
+        return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
     }
 
 }

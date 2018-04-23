@@ -1,0 +1,14 @@
+# Dolibarr language file - Source file is en_US - bookmarks
+AddThisPageToBookmarks=Voeg huidige pagina toe aan de bladwijzers
+Bookmark=Bladwijzer
+Bookmarks=Bladwijzers
+ListOfBookmarks=Lijst van bladwijzers
+EditBookmarks=Bladwijzers oplijsten/bewerken
+NewBookmark=Nieuwe bladwijzer
+ShowBookmark=Toon bladwijzer
+BookmarkTitle=Bladwijzer titel
+BehaviourOnClick=Gedrag wanneer een bladwijzer URL geselecteerd is
+CreateBookmark=Bladwijzer aanmaken
+SetHereATitleForLink=Stel hier een titel voor de bladwijzer in
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Kies indien gekoppelde pagina moet worden geopend in een nieuw venster of niet
+BookmarksManagement=Bladwijzerbeheer

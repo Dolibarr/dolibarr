@@ -1,0 +1,8 @@
+# Dolibarr language file - Source file is en_US - commercial
+CommercialArea=Vertriebs - Übersicht
+CardAction=Ereignisse Übersicht
+ActionOnCompany=Verknüpfte Firma
+TaskRDVWith=Treffen mit %s
+ActionAC_RDV=Treffen
+ActionAC_INT=Eingriff vor Ort
+ActionAC_CLO=Schliessen

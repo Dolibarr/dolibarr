@@ -28,7 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 $id = GETPOST('id','int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'usernote';   // To manage different context of search
 
 $langs->load("companies");
 $langs->load("members");
@@ -36,7 +37,8 @@ $langs->load("bills");
 $langs->load("users");
 
 $object = new User($db);
-$object->fetch($id);
+$object->fetch($id, '', '', 1);
+$object->getrights();
 
 // If user is not user read and no permission to read other users, we stop
 if (($object->id != $user->id) && (! $user->rights->user->user->lire)) accessforbidden();
@@ -48,33 +50,36 @@ $feature2 = (($socid && $user->rights->user->self->creer)?'':'user');
 if ($user->id == $id) $feature2=''; // A user can always read its own card
 $result = restrictedArea($user, 'user', $id, 'user&user', $feature2);
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('usercard','usernote','globalcard'));
 
 
-/******************************************************************************/
-/*                     Actions                                                */
-/******************************************************************************/
+/*
+ * Actions
+ */
 
-if ($action == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
-{
-	$db->begin();
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-	$res=$object->update_note(dol_html_entity_decode(GETPOST('note_private'), ENT_QUOTES));
-	if ($res < 0)
-	{
-		$mesg='<div class="error">'.$adh->error.'</div>';
-		$db->rollback();
-	}
-	else
-	{
-		$db->commit();
+if (empty($reshook)) {
+	if ($action == 'update' && $user->rights->user->user->creer && !$_POST["cancel"]) {
+		$db->begin();
+
+		$res = $object->update_note(dol_html_entity_decode(GETPOST('note_private','none'), ENT_QUOTES));
+		if ($res < 0) {
+			$mesg = '<div class="error">'.$adh->error.'</div>';
+			$db->rollback();
+		} else {
+			$db->commit();
+		}
 	}
 }
 
 
-
-/******************************************************************************/
-/* Affichage fiche                                                            */
-/******************************************************************************/
+/*
+ * View
+ */
 
 llxHeader();
 
@@ -85,42 +90,37 @@ if ($id)
 	$head = user_prepare_head($object);
 
 	$title = $langs->trans("User");
-	dol_fiche_head($head, 'note', $title, 0, 'user');
+	dol_fiche_head($head, 'note', $title, -1, 'user');
 
-	if ($msg) print '<div class="error">'.$msg.'</div>';
+	$linkback = '';
 
-	print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
+	if ($user->rights->user->user->lire || $user->admin) {
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
+	}
+
+    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
+
+    print '<div class="underbanner clearboth"></div>';
+
+    print "<form method=\"post\" action=\"".$_SERVER['PHP_SELF']."\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
+	print '<div class="fichecenter">';
     print '<table class="border" width="100%">';
 
-    // Reference
-	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
-	print '<td colspan="3">';
-	print $form->showrefnav($object,'id','',$user->rights->user->user->lire || $user->admin);
-	print '</td>';
-	print '</tr>';
-
-    // Lastname
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$object->lastname.'&nbsp;</td>';
-	print '</tr>';
-
-    // Firstname
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$object->firstname.'&nbsp;</td></tr>';
-
     // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$object->login.'&nbsp;</td></tr>';
+    print '<tr><td class="titlefield">'.$langs->trans("Login").'</td><td class="valeur">'.$object->login.'&nbsp;</td></tr>';
 
 	// Note
     print '<tr><td class="tdtop">'.$langs->trans("Note").'</td>';
-	print '<td colspan="3">';
+	print '<td>';
 	if ($action == 'edit' && $user->rights->user->user->creer)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$object->id."\">";
 	    // Editeur wysiwyg
 		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('note_private',$object->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,10,80);
+		$doleditor=new DolEditor('note_private',$object->note,'',280,'dolibarr_notes','In',true,false,$conf->global->FCKEDITOR_ENABLE_SOCIETE,ROWS_8,'90%');
 		$doleditor->Create();
 	}
 	else
@@ -130,6 +130,7 @@ if ($id)
 	print "</td></tr>";
 
     print "</table>";
+    print '</div>';
 
 	dol_fiche_end();
 

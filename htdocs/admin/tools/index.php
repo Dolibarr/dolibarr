@@ -37,12 +37,12 @@ if (! $user->admin)
 
 $form = new Form($db);
 
-$title=$langs->trans("SystemToolsArea");
-if (GETPOST('leftmenu') == 'modulesadmintools') $title=$langs->trans("ModulesSystemTools");
+$title=$langs->trans("AdminTools");
+//if (GETPOST('leftmenu',"aZ09") == 'admintools') $title=$langs->trans("ModulesSystemTools");
 
-llxHeader(array(),$title);
+llxHeader('', $title);
 
-print_fiche_titre($title,'','title_setup');
+print load_fiche_titre($title,'','title_setup');
 
 print $langs->trans("SystemToolsAreaDesc").'<br>';
 print "<br>";

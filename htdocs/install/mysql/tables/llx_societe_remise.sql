@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2011      Regis Houssin        <regis.houssin@capnetworks.com>
+-- Copyright (C) 2011-2016 Regis Houssin        <regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,13 +21,14 @@
 
 create table llx_societe_remise
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_soc          integer NOT NULL,
-  tms             timestamp,
-  datec	          datetime,                            -- creation date
-  fk_user_author  integer,                             -- creation user
-  remise_client   double(6,3)  DEFAULT 0 NOT NULL,     -- discount
-  note            text
+  rowid				integer AUTO_INCREMENT PRIMARY KEY,
+  entity			integer DEFAULT 1 NOT NULL,			-- multi company id
+  fk_soc			integer NOT NULL,
+  tms				timestamp,
+  datec				datetime,							-- creation date
+  fk_user_author	integer,							-- creation user
+  remise_client		double(6,3)  DEFAULT 0 NOT NULL,	-- discount
+  note				text
 
 )ENGINE=innodb;
 

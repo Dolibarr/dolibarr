@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Charlie BENKE	<charlie@patas-monkey.com> 
+ * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/salaries/card.php
- *      \ingroup    salaries
- *		\brief      Page of salaries payments
+ *	\file       htdocs/compta/salaries/card.php
+ *	\ingroup    salaries
+ *	\brief      Page of salaries payments
  */
 
 require '../../main.inc.php';
@@ -36,18 +36,19 @@ $langs->load("banks");
 $langs->load("bills");
 $langs->load("users");
 $langs->load("salaries");
+$langs->load('hrm');
 
 $id=GETPOST("id",'int');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', '', '', '');
+$result = restrictedArea($user, 'salaries', '', '', 'payment');
 
 $object = new PaymentSalary($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salarycard','globalcard'));
 
 
@@ -71,9 +72,11 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 	if (empty($datev)) $datev=$datep;
-	
-	$object->accountid=GETPOST("accountid","int");
-	$object->fk_user=GETPOST("fk_user","int");
+
+	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement', 'code', 'id', 1);
+
+	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
+	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;
 	$object->datev=$datev;
 	$object->datep=$datep;
 	$object->amount=price2num(GETPOST("amount"));
@@ -81,9 +84,9 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->datesp=$datesp;
 	$object->dateep=$dateep;
 	$object->note=GETPOST("note");
-	$object->type_payment=GETPOST("paymenttype");
+	$object->type_payment=($type_payment > 0 ? $type_payment : 0);
 	$object->num_payment=GETPOST("num_payment");
-	$object->fk_user_creat=$user->id;
+	$object->fk_user_author=$user->id;
 
 	// Set user current salary as ref salaray for the payment
 	$fuser=new User($db);
@@ -92,30 +95,30 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 
 	if (empty($datep) || empty($datev) || empty($datesp) || empty($dateep))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Date")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Date")), null, 'errors');
 		$error++;
 	}
 	if (empty($object->fk_user) || $object->fk_user < 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Employee")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Employee")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->type_payment) || $object->type_payment < 0)
+	if (empty($type_payment) || $type_payment < 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentMode")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
 	}
 	if (empty($object->amount))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Amount")), null, 'errors');
 		$error++;
 	}
 	if (! empty($conf->banque->enabled) && ! $object->accountid > 0)
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Account")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$db->begin();
@@ -166,18 +169,18 @@ if ($action == 'delete')
 			{
 				$object->error=$accountline->error;
 				$db->rollback();
-				setEventMessage($object->error,'errors');
+				setEventMessages($object->error, $object->errors, 'errors');
 			}
 		}
 		else
 		{
 			$db->rollback();
-			setEventMessage($object->error,'errors');
+			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
 	else
 	{
-		setEventMessage('Error try do delete a line linked to a conciliated bank transaction','errors');
+		setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
 	}
 }
 
@@ -186,7 +189,7 @@ if ($action == 'delete')
  *	View
  */
 
-llxHeader();
+llxHeader("",$langs->trans("SalaryPayment"));
 
 $form = new Form($db);
 
@@ -201,7 +204,7 @@ if ($id)
 	}
 }
 
-// Formulaire saisie salaire
+// Create
 if ($action == 'create')
 {
 	$year_current = strftime("%Y",dol_now());
@@ -213,6 +216,12 @@ if ($action == 'create')
 		$pastmonthyear--;
 	}
 
+	$datespmonth = GETPOST('datespmonth', 'int');
+	$datespday = GETPOST('datespday', 'int');
+	$datespyear = GETPOST('datespyear', 'int');
+	$dateepmonth = GETPOST('dateepmonth', 'int');
+	$dateepday = GETPOST('dateepday', 'int');
+	$dateepyear = GETPOST('dateepyear', 'int');
 	$datesp=dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
 	$dateep=dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
@@ -225,67 +234,84 @@ if ($action == 'create')
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="add">';
 
-	print_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
+	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
 
 	dol_fiche_head('', '');
-	
+
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+	// Date payment
+	print '<tr><td>';
+	print fieldLabel('DatePayment','datep',1).'</td><td>';
 	print $form->select_date((empty($datep)?-1:$datep),"datep",'','','','add',1,1);
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
+	// Date value for bank
+	print '<tr><td>';
+	print fieldLabel('DateValue','datev',0).'</td><td>';
 	print $form->select_date((empty($datev)?-1:$datev),"datev",'','','','add',1,1);
 	print '</td></tr>';
 
 	// Employee
-	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("Employee").'</td><td>';
-	print $form->select_dolusers(GETPOST('fk_user','int'),'fk_user',1);
+	print '<tr><td>';
+	print fieldLabel('Employee','fk_user',1).'</td><td>';
+	$noactive=0;	// We keep active and unactive users
+	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->trans("SalaryPayment")).'"></td></tr>';
+	print '<tr><td>';
+	print fieldLabel('Label','label',1).'</td><td>';
+	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label")?GETPOST("label"):$langs->trans("SalaryPayment")).'">';
+	print '</td></tr>';
 
-	print "<tr>";
-	print '<td class="fieldrequired">'.$langs->trans("DateStartPeriod").'</td><td>';
+	// Date start period
+	print '<tr><td>';
+	print fieldLabel('DateStartPeriod','datesp',1).'</td><td>';
 	print $form->select_date($datesp,"datesp",'','','','add');
 	print '</td></tr>';
 
-	print '<tr><td class="fieldrequired">'.$langs->trans("DateEndPeriod").'</td><td>';
+	// Date end period
+	print '<tr><td>';
+	print fieldLabel('DateEndPeriod','dateep',1).'</td><td>';
 	print $form->select_date($dateep,"dateep",'','','','add');
 	print '</td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+	print '<tr><td>';
+	print fieldLabel('Amount','amount',1).'</td><td>';
+	print '<input name="amount" id="amount" class="minwidth100" value="'.GETPOST("amount").'">';
+	print '</td></tr>';
 
 	// Bank
 	if (! empty($conf->banque->enabled))
 	{
-		print '<tr><td class="fieldrequired">'.$langs->trans("Account").'</td><td>';
+		print '<tr><td>';
+		print fieldLabel('BankAccount','selectaccountid',1).'</td><td>';
 		$form->select_comptes($_POST["accountid"],"accountid",0,'',1);  // Affiche liste des comptes courant
 		print '</td></tr>';
 	}
 
 	// Type payment
-	print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
-	print "</td>\n";
-	print "</tr>";
+	print '<tr><td>';
+	print fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td>';
+	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype", '', 2);
+	print '</td></tr>';
 
+	// Number
 	if (! empty($conf->banque->enabled))
 	{
 		// Number
-		print '<tr><td>'.$langs->trans('Numero');
+		print '<tr><td><label for="num_payment">'.$langs->trans('Numero');
 		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
-		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+		print '</label></td>';
+		print '<td><input name="num_payment" id="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="1"');
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 
@@ -303,7 +329,7 @@ if ($action == 'create')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Barre d'action                                                             */
+/* View mode                                                                  */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -312,45 +338,47 @@ if ($id)
 
 	$head=salaries_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref='<div class="refidno">';
+
+	$userstatic=new User($db);
+	$userstatic->fetch($object->fk_user);
+
+	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
+	$morehtmlref.='</div>';
+
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border" width="100%">';
 
-	print "<tr>";
-	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $object->ref;
-	print '</td></tr>';
-
-	// Person
-	print '<tr><td>'.$langs->trans("Person").'</td><td>';
-	$usersal=new User($db);
-	$usersal->fetch($object->fk_user);
-	print $usersal->getNomUrl(1);
-	print '</td></tr>';
-
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DateStartPeriod").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DateStartPeriod").'</td><td>';
 	print dol_print_date($object->datesp,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td>';
 	print dol_print_date($object->dateep,'day');
 	print '</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
 	print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -361,7 +389,7 @@ if ($id)
 
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			print $bankline->getNomUrl(1,0,'showall');
 			print '</td>';
 			print '</tr>';
@@ -369,14 +397,17 @@ if ($id)
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="3"');
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 
+	print '</div>';
+
 	dol_fiche_end();
 
-	
+
 	/*
 	 * Action buttons
 	 */
@@ -385,7 +416,7 @@ if ($id)
 	{
 		if (! empty($user->rights->salaries->delete))
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}
 		else
 		{
@@ -394,7 +425,7 @@ if ($id)
 	}
 	else
 	{
-		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConcialitedTransaction").'">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionRefused" href="#" title="'.$langs->trans("LinkedToAConciliatedTransaction").'">'.$langs->trans("Delete").'</a>';
 	}
 	print "</div>";
 }

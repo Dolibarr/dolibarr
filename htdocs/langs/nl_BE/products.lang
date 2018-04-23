@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - products
+Reference=Artikelcode
+OnSell=Te koop
+OnBuy=Te koop
+NotOnSell=Niet meer beschikbaar
+ProductStatusNotOnSell=Niet meer verkrijgbaar
+ProductStatusOnSellShort=Te koop
+ProductSellByQuarterHT=Bruto omzetcijfer per trimester
+ServiceSellByQuarterHT=Bruto omzetcijfer per trimester

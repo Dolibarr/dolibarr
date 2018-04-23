@@ -47,7 +47,7 @@ $langs->load("other");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -128,22 +128,18 @@ if ($savehandler == 'files')
 {
 	print '<table class="liste" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("SessionId"),$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateModification"),$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Age"),$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Raw"),$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"login","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("SessionId",$_SERVER["PHP_SELF"],"id","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DateCreation",$_SERVER["PHP_SELF"],"datec","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DateModification",$_SERVER["PHP_SELF"],"datem","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Age",$_SERVER["PHP_SELF"],"age","","",'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("Raw",$_SERVER["PHP_SELF"],"raw","","",'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	$var=True;
-
 	foreach ($listofsessions as $key => $sessionentry)
 	{
-		$var=!$var;
-
-		print "<tr ".$bc[$var].">";
+		print '<tr class="oddeven">';
 
 		// Login
 		print '<td>'.$sessionentry['login'].'</td>';

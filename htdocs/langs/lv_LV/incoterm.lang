@@ -1,7 +1,0 @@
-Module62000Name=Inkoterms
-Module62000Desc=Add features to manage Incoterm
-IncotermLabel=Inkoterms
-IncotermSetupTitle1=Iespēja
-IncotermSetupTitle2=Status
-IncotermSetup=Setup of module Incoterm
-IncotermFunctionDesc=Activate Incoterm feature (Thirdparty, Proposal, Customer Order, Customer Invoice, Shipment, Supplier order)

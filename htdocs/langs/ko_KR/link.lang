@@ -1,3 +1,4 @@
+# Dolibarr language file - Source file is en_US - languages
 LinkANewFile=Link a new file/document
 LinkedFiles=Linked files and documents
 NoLinkFound=No registered links
@@ -6,3 +7,4 @@ ErrorFileNotLinked=The file could not be linked
 LinkRemoved=The link %s has been removed
 ErrorFailedToDeleteLink= Failed to remove link '<b>%s</b>'
 ErrorFailedToUpdateLink= Failed to update link '<b>%s</b>'
+URLToLink=URL to link

@@ -1,13 +1,12 @@
 # Dolibarr language file - Source file is en_US - help
-CommunitySupport=Forum/Wiki-Unterstützung
+CommunitySupport=Forum/Wiki Unterstützung
 EMailSupport=E-Mail-Unterstützung
 RemoteControlSupport=Fernwartungs-Support
 OtherSupport=Weitere Unterstützung
 ToSeeListOfAvailableRessources=Hier sehen Sie die verfügbaren Ressourcen:
-ClickHere=Hier klicken
 HelpCenter=Hilfe-Center
-DolibarrHelpCenter=Hilfe-und Supportcenter
-ToGoBackToDolibarr=Klicken Sie hier um zum System <a href="%s">zurückzukehren</a>
+DolibarrHelpCenter=Hilfe- und Supportcenter
+ToGoBackToDolibarr=Andernfalls klicken Sie <a href="%s">hier um zum System</a> zurückzukehren
 TypeOfSupport=Support-Typ
 TypeSupportCommunauty=Community (kostenlos)
 TypeSupportCommercial=Kommerzieller Support
@@ -16,13 +15,12 @@ NeedHelpCenter=Benötigen Sie Hilfe oder Unterstützung?
 Efficiency=Effizienz
 TypeHelpOnly=Ausschließlich Hilfe
 TypeHelpDev=Hilfe & Entwicklung
-TypeHelpDevForm=Hilfe, Entwicklung & Bildung
+TypeHelpDevForm=Hilfe&Entwicklung&Ausbildung
 ToGetHelpGoOnSparkAngels1=Einige Unternehmen bieten eine schnelle (manchmal prompte) und effiziente Online-Unterstützung durch Fernwartung. Solche Helfer finden Sie auf dieser Website <b>%s</b>
 ToGetHelpGoOnSparkAngels3=Über einen Klick auf diese Schaltfläche erhalten Sie eine Liste aller verfügbaren Trainer für das System
 ToGetHelpGoOnSparkAngels2=Gelegentlich ist zum Zeitpunkt Ihrer Suche vielleicht kein Partner verfügbar. Denken Sie daran, den Filter auf "Alle verfügbaren" zu setzen. So können Sie mehr Anfragen stellen.
 BackToHelpCenter=Klicken Sie hier um zur <a href="%s">Hilfeseite</a> zurückzukehren.
 LinkToGoldMember=Sie können einen, vom System für Ihre Sprache (%s) automatisch ausgewählten, Trainer über einen Klick auf sein Widget kontaktieren (Status und Maximalpreis aktualisieren sich automatisch):
 PossibleLanguages=Unterstützte Sprachen
-MakeADonation=Unterstützen Sie das Projekt über eine Spende
 SubscribeToFoundation=Helfen auch Sie dem Dolibarr Projekt und unterstützen uns mit einer Abo-Spende.
 SeeOfficalSupport=Für offizielle Dolibarr Unterstützung in Ihrer Sprache: br><b><a href="%s" target="_blank">%s</a></b>

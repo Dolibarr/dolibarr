@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2011-2014      Juanjo Menent <jmenent@2byte.es>
+ * Copyright (C) 2015			Marcos García <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,7 @@
 /**
  *	    \file       htdocs/compta/localtax/card.php
  *      \ingroup    tax
- *		\brief      Page of IRPF payments
+ *		\brief      Page of second or third tax payments (like IRPF for spain, ...)
  */
 
 require '../../main.inc.php';
@@ -29,63 +30,69 @@ $langs->load("compta");
 $langs->load("banks");
 $langs->load("bills");
 
-$id=$_REQUEST["id"];
+$id=GETPOST("id",'int');
+$action=GETPOST("action","alpha");
+$refund=GETPOST("refund","int");
+if (empty($refund)) $refund=0;
+
 $lttype=GETPOST('localTaxType', 'int');
-$mesg = '';
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
+$localtax = new Localtax($db);
 
-/*
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('localtaxvatcard','globalcard'));
+
+
+/**
  * Actions
  */
 
 //add payment of localtax
 if($_POST["cancel"] == $langs->trans("Cancel")){
-	header("Location: reglement.php?localTaxType=".$lttype);
+	header("Location: list.php?localTaxType=".$lttype);
 	exit;
 }
 
-if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
+if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
-    $localtax = new Localtax($db);
 
     $db->begin();
 
     $datev=dol_mktime(12,0,0, $_POST["datevmonth"], $_POST["datevday"], $_POST["datevyear"]);
     $datep=dol_mktime(12,0,0, $_POST["datepmonth"], $_POST["datepday"], $_POST["datepyear"]);
 
-    $localtax->accountid=$_POST["accountid"];
-    $localtax->paymenttype=$_POST["paiementtype"];
+    $localtax->accountid=GETPOST("accountid");
+    $localtax->paymenttype=GETPOST("paiementtype");
     $localtax->datev=$datev;
     $localtax->datep=$datep;
-    $localtax->amount=$_POST["amount"];
-	$localtax->label=$_POST["label"];
+    $localtax->amount=price2num(GETPOST("amount"));
+	$localtax->label=GETPOST("label");
 	$localtax->ltt=$lttype;
 
     $ret=$localtax->addPayment($user);
     if ($ret > 0)
     {
         $db->commit();
-        header("Location: reglement.php?localTaxType=".$lttype);
+        header("Location: list.php?localTaxType=".$lttype);
         exit;
     }
     else
     {
         $db->rollback();
-        $mesg='<div class="error">'.$localtax->error.'</div>';
+        setEventMessages($localtax->error, $localtax->errors, 'errors');
         $_GET["action"]="create";
     }
 }
 
 //delete payment of localtax
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
-    $localtax = new Localtax($db);
-    $result=$localtax->fetch($_GET['id']);
+    $result=$localtax->fetch($id);
 
 	if ($localtax->rappro == 0)
 	{
@@ -98,31 +105,32 @@ if ($_GET["action"] == 'delete')
 			{
 				$accountline=new AccountLine($db);
 				$result=$accountline->fetch($localtax->fk_bank);
-				$result=$accountline->delete($user);
+				if ($result > 0) $result=$accountline->delete($user);	// $result may be 0 if not found (when bank entry was deleted manually and fk_bank point to nothing)
 			}
 
-			if ($result > 0)
+			if ($result >= 0)
 			{
 				$db->commit();
-				header("Location: ".DOL_URL_ROOT.'/compta/localtax/reglement.php');
+				header("Location: ".DOL_URL_ROOT.'/compta/localtax/list.php?localTaxType='.$localtax->ltt);
 				exit;
 			}
 			else
 			{
 				$localtax->error=$accountline->error;
 				$db->rollback();
-				$mesg='<div class="error">'.$localtax->error.'</div>';
+				setEventMessages($localtax->error, $localtax->errors, 'errors');
 			}
 	    }
 	    else
 	    {
 	        $db->rollback();
-	        $mesg='<div class="error">'.$localtax->error.'</div>';
+	        setEventMessages($localtax->error, $localtax->errors, 'errors');
 	    }
 	}
 	else
 	{
-        $mesg='<div class="error">Error try do delete a line linked to a conciliated bank transaction</div>';
+        $mesg='Error try do delete a line linked to a conciliated bank transaction';
+        setEventMessages($mesg, null, 'errors');
 	}
 }
 
@@ -147,33 +155,33 @@ if ($id)
 }
 
 
-if ($_GET["action"] == 'create')
+if ($action == 'create')
 {
-    print "<form name='add' action=\"card.php\" method=\"post\">\n";
+    print load_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
+
+    print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" name="formlocaltax" method="post">'."\n";
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="localTaxType" value="'.$lttype.'">';
     print '<input type="hidden" name="action" value="add">';
 
-    print_fiche_titre($langs->transcountry($lttype==2?"newLT2Payment":"newLT1Payment",$mysoc->country_code));
-    
-    if ($mesg) print $mesg;
+    dol_fiche_head();
 
     print '<table class="border" width="100%">';
 
     print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
-    print $form->select_date($datep,"datep",'','','','add');
+    print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+    print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
     print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
-    print $form->select_date($datev,"datev",'','','','add');
+    print $form->select_date($datev,"datev",'','','','add',1,1);
     print '</td></tr>';
 
 	// Label
-	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" size="40" value="'.($_POST["label"]?$_POST["label"]:$langs->transcountry(($lttype==2?"LT2Payment":"LT1Payment"),$mysoc->country_code)).'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input name="label" class="minwidth200" value="'.($_POST["label"]?GETPOST("label",'',2):$langs->transcountry(($lttype==2?"LT2Payment":"LT1Payment"),$mysoc->country_code)).'"></td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.$_POST["amount"].'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
 
     if (! empty($conf->banque->enabled))
     {
@@ -182,13 +190,23 @@ if ($_GET["action"] == 'create')
         print '</td></tr>';
 
 	    print '<tr><td class="fieldrequired">'.$langs->trans("PaymentMode").'</td><td>';
-	    $form->select_types_paiements($_POST["paiementtype"], "paiementtype");
+	    $form->select_types_paiements(GETPOST("paiementtype"), "paiementtype");
 	    print "</td>\n";
 	    print "</tr>";
-	}
+
+		// Number
+		print '<tr><td>'.$langs->trans('Numero');
+		print ' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+		print '<td><input name="num_payment" type="text" value="'.GETPOST("num_payment").'"></td></tr>'."\n";
+    }
+    // Other attributes
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
+
     print '</table>';
 
-	print "<br>";
+	dol_fiche_end();
 
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -208,8 +226,6 @@ if ($_GET["action"] == 'create')
 
 if ($id)
 {
-    if ($mesg) print $mesg;
-
 	$h = 0;
 	$head[$h][0] = DOL_URL_ROOT.'/compta/localtax/card.php?id='.$vatpayment->id;
 	$head[$h][1] = $langs->trans('Card');
@@ -222,20 +238,20 @@ if ($id)
 	print '<table class="border" width="100%">';
 
 	print "<tr>";
-	print '<td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
 	print $vatpayment->ref;
 	print '</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($vatpayment->datep,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
 	print dol_print_date($vatpayment->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($vatpayment->amount).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($vatpayment->amount).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -246,16 +262,22 @@ if ($id)
 
 	    	print '<tr>';
 	    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			print $bankline->getNomUrl(1,0,'showall');
 	    	print '</td>';
 	    	print '</tr>';
 		}
 	}
 
-	print '</table>';
+    // Other attributes
+    $parameters=array();
+    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$vatpayment,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 
-	print '</div>';
+    print '</table>';
+
+	dol_fiche_end();
+
 
 	/*
 	* Boutons d'actions
@@ -268,8 +290,6 @@ if ($id)
 	print "</div>";
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();
 

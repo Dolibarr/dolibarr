@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2013   Antoine Iauch	   <aiauch@gpcsolutions.fr>
- * Copyright (C) 2013   Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015   Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2013      Antoine Iauch	   <aiauch@gpcsolutions.fr>
+ * Copyright (C) 2013-2016 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015      Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("products");
 $langs->load("categories");
@@ -55,6 +55,9 @@ $subcat = false;
 if (GETPOST('subcat', 'alpha') === 'yes') {
 	$subcat = true;
 }
+// product/service
+$selected_type = GETPOST('search_type', 'int');
+if ($selected_type =='') $selected_type = -1;
 
 // Date range
 $year=GETPOST("year");
@@ -124,6 +127,7 @@ $headerparams['q'] = $q;
 
 $tableparams = array();
 $tableparams['search_categ'] = $selected_cat;
+$tableparams['search_type'] = $selected_type;
 $tableparams['subcat'] = ($subcat === true)?'yes':'';
 
 // Adding common parameters
@@ -139,12 +143,14 @@ foreach($allparams as $key => $value) {
 /*
  * View
  */
+
 llxHeader();
+
 $form=new Form($db);
 $formother = new FormOther($db);
 
 // Show report header
-$nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByProductsAndServices");
+$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByProductsAndServices");
 
 if ($modecompta=="CREANCES-DETTES") {
 	$calcmode=$langs->trans("CalcModeDebt");
@@ -159,7 +165,7 @@ if ($modecompta=="CREANCES-DETTES") {
 		$description.= $langs->trans("DepositsAreIncluded");
 	}
 
-	$builddate=time();
+	$builddate=dol_now();
 } else {
 	$calcmode=$langs->trans("CalcModeEngagement");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
@@ -169,18 +175,28 @@ if ($modecompta=="CREANCES-DETTES") {
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
 
-	$builddate=time();
+	$builddate=dol_now();
 }
 
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
+report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
+if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
+{
+    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+}
+
+
+
+$name=array();
 
 // SQL request
 $catotal=0;
+$catotal_ht=0;
+$qtytotal=0;
 
 if ($modecompta == 'CREANCES-DETTES')
 {
-	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label,";
+	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql.= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql.= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l, ".MAIN_DB_PREFIX."product as p";
@@ -203,6 +219,10 @@ if ($modecompta == 'CREANCES-DETTES')
 	if ($date_start && $date_end) {
 		$sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
 	}
+	if ($selected_type >=0)
+	{
+		$sql.= " AND l.product_type = ".$selected_type;
+	}
 	if ($selected_cat === -2)	// Without any category
 	{
 		$sql.=" AND cp.fk_product is null";
@@ -214,7 +234,7 @@ if ($modecompta == 'CREANCES-DETTES')
 		$sql.= " AND cp.fk_categorie = c.rowid AND cp.fk_product = p.rowid";
 	}
 	$sql.= " AND f.entity = ".$conf->entity;
-	$sql.= " GROUP BY p.rowid, p.ref, p.label";
+	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.fk_product_type";
 	$sql.= $db->order($sortfield,$sortorder);
 
 	dol_syslog("cabyprodserv", LOG_DEBUG);
@@ -228,6 +248,7 @@ if ($modecompta == 'CREANCES-DETTES')
 			$amount[$obj->rowid] = $obj->amount_ttc;
 			$qty[$obj->rowid] = $obj->qty;
 			$name[$obj->rowid] = $obj->ref . '&nbsp;-&nbsp;' . $obj->label;
+			$type[$obj->rowid] = $obj->product_type;
 			$catotal_ht+=$obj->amount;
 			$catotal+=$obj->amount_ttc;
 			$qtytotal+=$obj->qty;
@@ -246,7 +267,11 @@ if ($modecompta == 'CREANCES-DETTES')
 		print '<input type="hidden" name="'.$key.'" value="'.$value.'">';
 	}
 
-	print '<table class="noborder" width="100%">';
+    $moreforfilter='';
+
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+
 	// Category filter
 	print '<tr class="liste_titre">';
 	print '<td>';
@@ -257,11 +282,17 @@ if ($modecompta == 'CREANCES-DETTES')
 	if ($subcat) {
 		print ' checked';
 	}
-	print '></td>';
-	print '<td colspan="5" align="right">';
+	print '>';
+    // type filter (produit/service)
+    print ' ';
+    print $langs->trans("Type"). ': ';
+    $form->select_type_of_lines(isset($selected_type)?$selected_type:-1,'search_type',1,1,1);
+    print '</td>';
+
+    print '<td colspan="5" align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
 	print '</td></tr>';
-	
+
 	// Array header
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre(
@@ -331,27 +362,27 @@ if ($modecompta == 'CREANCES-DETTES')
 
 	if (count($name)) {
 		foreach($name as $key=>$value) {
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+
+			print '<tr class="oddeven">';
 
 			// Product
 			$fullname=$name[$key];
 			if ($key >= 0) {
-				$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$fullname.'</a>';
+				$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),$type[$key]==0?'product':'service').' '.$fullname.'</a>';
 			} else {
 				$linkname=$langs->trans("PaymentsNotLinkedToProduct");
 			}
 
 			print "<td>".$linkname."</td>\n";
-			
+
 			// Quantity
 			print '<td align="right">';
 			print $qty[$key];
 			print '</td>';
-			
+
 			// Percent;
 			print '<td align="right">'.($qtytotal > 0 ? round(100 * $qty[$key] / $qtytotal, 2).'%' : '&nbsp;').'</td>';
-	
+
 			// Amount w/o VAT
 			print '<td align="right">';
 			/*if ($key > 0) {
@@ -362,7 +393,7 @@ if ($modecompta == 'CREANCES-DETTES')
 			print price($amount_ht[$key]);
 			//print '</a>';
 			print '</td>';
-	
+
 			// Amount with VAT
 			print '<td align="right">';
 			/*if ($key > 0) {
@@ -373,12 +404,12 @@ if ($modecompta == 'CREANCES-DETTES')
 			print price($amount[$key]);
 			//print '</a>';
 			print '</td>';
-	
+
 			// Percent;
 			print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
-	
+
 			// TODO: statistics?
-	
+
 			print "</tr>\n";
 			$i++;
 		}
@@ -386,6 +417,8 @@ if ($modecompta == 'CREANCES-DETTES')
 		// Total
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
+		print '<td align="right">'.price($qtytotal).'</td>';
+		print '<td>&nbsp;</td>';
 		print '<td align="right">'.price($catotal_ht).'</td>';
 		print '<td align="right">'.price($catotal).'</td>';
 		print '<td>&nbsp;</td>';
@@ -394,6 +427,8 @@ if ($modecompta == 'CREANCES-DETTES')
 		$db->free($result);
 	}
 	print "</table>";
+	print '</div>';
+
 	print '</form>';
 } else {
 	// $modecompta != 'CREANCES-DETTES'

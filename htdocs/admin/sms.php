@@ -43,7 +43,7 @@ $substitutionarrayfortest=array(
 '__FIRSTNAME__' => 'TESTFirstname'
 );
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 
 /*
@@ -88,25 +88,25 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 	if (! empty($formsms->error))
 	{
-		setEventMessage($formsms->error,'errors');
+		setEventMessages($formsms->error, $formsms->errors, 'errors');
 	    $action='test';
 	    $error++;
 	}
     if (empty($body))
     {
-        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("Message")),'errors');
+        setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("Message")), null, 'errors');
         $action='test';
         $error++;
     }
 	if (empty($smsfrom) || ! str_replace('+','',$smsfrom))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsFrom")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsFrom")), null, 'errors');
         $action='test';
 		$error++;
 	}
 	if (empty($sendto) || ! str_replace('+','',$sendto))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentities("SmsTo")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentities("SmsTo")), null, 'errors');
         $action='test';
 		$error++;
 	}
@@ -123,11 +123,13 @@ if ($action == 'send' && ! $_POST['cancel'])
 
 		if ($result)
 		{
-			setEventMessage($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto));
+			setEventMessages($langs->trans("SmsSuccessfulySent",$smsfrom,$sendto), null, 'mesgs');
+			setEventMessages($smsfile->error, $smsfile->errors, 'mesgs');
 		}
 		else
 		{
-			setEventMessage($langs->trans("ResultKo"),'errors');
+			setEventMessages($langs->trans("ResultKo"), null, 'errors');
+			setEventMessages($smsfile->error, $smsfile->errors, 'errors');
 		}
 
 		$action='';
@@ -147,7 +149,7 @@ if (preg_match('/^mac/i',PHP_OS)) $linuxlike=0;
 $wikihelp='EN:Setup Sms|FR:Paramétrage Sms|ES:Configuración Sms';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
-print_fiche_titre($langs->trans("SmsSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SmsSetup"),'','title_setup');
 
 print $langs->trans("SmsDesc")."<br>\n";
 print "<br>\n";
@@ -173,31 +175,31 @@ if ($action == 'edit')
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>';
 	print $form->selectyesno('MAIN_DISABLE_ALL_SMS',$conf->global->MAIN_DISABLE_ALL_SMS,1);
 	print '</td></tr>';
 
 	// Separator
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+	
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	if (count($listofmethods)) print $form->selectarray('MAIN_SMS_SENDMODE',$listofmethods,$conf->global->MAIN_SMS_SENDMODE,1);
 	else print '<font class="error">'.$langs->trans("None").'</font>';
     print '</td></tr>';
 
 	// From
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_SMS_FROM" size="32" value="' . $conf->global->MAIN_MAIL_SMS_FROM;
 	print '"></td></tr>';
 
 	// Autocopy to
-	/*$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
+	/*
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 	print '"></td></tr>';
 	*/
@@ -222,31 +224,31 @@ else
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_SMS).'</td></tr>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_SMS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_SMS).'</td></tr>';
 
 	// Separator
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td colspan="2">&nbsp;</td></tr>';
+	
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_SMS_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_SMS_SENDMODE];
 	if (empty($text)) $text=$langs->trans("Undefined").' '.img_warning();
 	print $text;
 	print '</td></tr>';
 
 	// From
-	$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
+	
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMS_FROM",$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_SMS_FROM;
 	if (!empty($conf->global->MAIN_MAIL_SMS_FROM) && ! isValidPhone($conf->global->MAIN_MAIL_SMS_FROM)) print ' '.img_warning($langs->trans("ErrorBadPhone"));
 	print '</td></tr>';
 
 	// Autocopy to
-	/*$var=!$var;
-	print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
+	/*
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_AUTOCOPY_TO;
 	if (!empty($conf->global->MAIN_MAIL_AUTOCOPY_TO) && ! isValidEmail($conf->global->MAIN_MAIL_AUTOCOPY_TO)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
@@ -289,7 +291,7 @@ else
 	if ($_GET["action"] == 'testconnect')
 	{
 		print '<br>';
-		print_titre($langs->trans("DoTestServerAvailability"));
+		print load_fiche_titre($langs->trans("DoTestServerAvailability"));
 
 		// If we use SSL/TLS
 		if (! empty($conf->global->MAIN_MAIL_EMAIL_TLS) && function_exists('openssl_open')) $server='ssl://'.$server;
@@ -311,7 +313,7 @@ else
 	if ($action == 'test')
 	{
 		print '<br>';
-		print_titre($langs->trans("DoTestSend"));
+		print load_fiche_titre($langs->trans("DoTestSend"));
 
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formsms.class.php';

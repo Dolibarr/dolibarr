@@ -4,7 +4,6 @@ EMailSupport=Epostsupport
 RemoteControlSupport=Online support
 OtherSupport=Annen support
 ToSeeListOfAvailableRessources=For å se tilgjengelige ressurser:
-ClickHere=Klikk her
 HelpCenter=Brukerstøtte
 DolibarrHelpCenter=Dolibarr hjelp og support
 ToGoBackToDolibarr=Ellers, klikk <a href="%s">her for å bruke Dolibarr</a>
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Noen ganger er det ingen selskap tilgjengelig når du 
 BackToHelpCenter=Ellers, klikk her for å gå <a href="%s">tilbake til hjemmesiden for brukerstøtte</a> .
 LinkToGoldMember=Du kan ringe forhåndsvalgt support fra Dolibarr for ditt språk (%s) ved å klikke dennes Widget (status og maksimumspris blir automatisk oppdatert):
 PossibleLanguages=Støttede språk
-MakeADonation=Hjelp Dolibarr prosjektet, gjør en donasjon
 SubscribeToFoundation=Hjelp Dolibarr prosjektet, gi en donasjon
 SeeOfficalSupport=For offisiell Dolibarr support på ditt språk: <br><b><a href="%s" target="_blank">%s</a></b>

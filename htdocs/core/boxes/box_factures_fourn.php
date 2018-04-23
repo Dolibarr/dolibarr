@@ -44,6 +44,21 @@ class box_factures_fourn extends ModeleBoxes
 
 
 	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	function __construct($db,$param)
+	{
+	    global $user;
+
+	    $this->db=$db;
+
+	    $this->hidden=! ($user->rights->fournisseur->facture->lire);
+	}
+
+	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
@@ -95,13 +110,14 @@ class box_factures_fourn extends ModeleBoxes
 				$num = $db->num_rows($result);
 
 				$line = 0;
-				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateEcheance').': %s)';
+				$l_due_date =  $langs->trans('Late').' ('.$langs->trans('DateDue').': %s)';
 
                 while ($line < $num) {
 					$objp = $db->fetch_object($result);
 					$datelimite=$db->jdate($objp->datelimite);
 					$date=$db->jdate($objp->df);
 					$datem=$db->jdate($objp->tms);
+
                     $facturestatic->id = $objp->facid;
                     $facturestatic->ref = $objp->ref;
                     $facturestatic->total_ht = $objp->total_ht;
@@ -109,6 +125,8 @@ class box_factures_fourn extends ModeleBoxes
                     $facturestatic->total_ttc = $objp->total_ttc;
                     $facturestatic->date_echeance = $datelimite;
                     $facturestatic->statut = $objp->fk_statut;
+                    $facturestatic->ref_supplier = $objp->ref_supplier;
+
                     $thirdpartytmp->id = $objp->socid;
                     $thirdpartytmp->name = $objp->name;
                     $thirdpartytmp->fournisseur = 1;
@@ -122,32 +140,32 @@ class box_factures_fourn extends ModeleBoxes
                     }
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'class="tdoverflowmax50"',
                         'text' => $objp->ref_supplier,
                         'tooltip' => $langs->trans('SupplierInvoice').': '.($objp->ref?$objp->ref:$objp->facid).'<br>'.$langs->trans('RefSupplier').': '.$objp->ref_supplier,
                         'url' => DOL_URL_ROOT."/fourn/facture/card.php?facid=".$objp->facid,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'class="tdoverflowmax50"',
                         'text' => $thirdpartytmp->getNomUrl(1, 'supplier'),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($date,'day'),
                     );
 
@@ -171,15 +189,15 @@ class box_factures_fourn extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->transnoentities("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->transnoentities("ReadPermissionNotAllowed")
             );
         }
     }
@@ -189,11 +207,12 @@ class box_factures_fourn extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
+	 *  @param	int		$nooutput	No print, only return string
+	 *	@return	string
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

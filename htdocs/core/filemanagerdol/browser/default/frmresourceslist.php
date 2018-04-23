@@ -71,7 +71,7 @@ function ProtectPath(path)
 oListManager.GetFolderRowHtml = function( folderName, folderPath )
 {
 	// Build the link to view the folder.
-	var sLink = '<a href="#" onclick="OpenFolder(\'' + ProtectPath(folderPath ) + '\');return false;">' ;
+	var sLink = '<a href="#" onclick="OpenFolder(\'' + ProtectPath(folderPath) + '\');return false;">' ;
 
 	return '<tr>' +
 			'<td width="16">' +
@@ -84,10 +84,11 @@ oListManager.GetFolderRowHtml = function( folderName, folderPath )
 		'<\/td><\/tr>' ;
 }
 
+// Note: fileUrl must be already "URL encoded"
 oListManager.GetFileRowHtml = function( fileName, fileUrl, fileSize )
 {
 	// Build the link to view the folder.
-	var sLink = '<a href="#" onclick="OpenFile(\'' + ProtectPath(fileUrl ) + '\');return false;">' ;
+	var sLink = '<a href="#" onclick="OpenFile(\'' + ProtectPath(fileUrl) + '\');return false;">' ;
 
 	// Get the file icon.
 	var sIcon = oIcons.GetIcon( fileName );
@@ -123,11 +124,13 @@ function GetUrlParam( paramName )
         return '' ;
 }
 
+// Note fileUrl must be already "URL encoded"
 function OpenFile( fileUrl )
 {
     funcNum = GetUrlParam('CKEditorFuncNum');
-    window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
-
+    //window.top.opener.CKEDITOR.tools.callFunction(funcNum, encodeURI( fileUrl ).replace( '#', '%23' ));
+	window.top.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl.replace( '#', '%23' ));
+    
     ///////////////////////////////////
     window.top.close();
     window.top.opener.focus();

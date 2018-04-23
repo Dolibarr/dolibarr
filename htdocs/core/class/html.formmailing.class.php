@@ -25,30 +25,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 /**
  *	Class to offer components to list and upload files
  */
-class FormMailing  extends Form
+class FormMailing extends Form
 {
-	public $db;
-	public $error;
 	public $errors=array();
-
-
-	/**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
-	*/
-	function __construct($db)
-	{
-		$this->db = $db;
-		return 1;
-	}
 
 	/**
 	 * Output a select with destinaries status
-	 * 
-	 * @param string $selectedid the selected id
-	 * @param string $htmlname name of controm
-	 * @param integer $show_empty show empty option
+	 *
+	 * @param string   $selectedid     The selected id
+	 * @param string   $htmlname       Name of controm
+	 * @param integer  $show_empty     Show empty option
 	 * @return string HTML select
 	 */
 	public function selectDestinariesStatus($selectedid='',$htmlname='dest_status', $show_empty=0) {
@@ -59,26 +45,14 @@ class FormMailing  extends Form
 		require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 		$mailing = new Mailing($this->db);
 
-
-		$array = $mailing->statut_dest;
-		//Cannot use form->selectarray because empty value is defaulted to -1 in this method and we use here status -1...
-
-		$out = '<select name="'.$htmlname.'" class="flat">';
+		$options = array();
 
 		if ($show_empty) {
-			$out .= '<option value=""></option>';
+			$options[-2] = '';   // Note -1 is used for error
 		}
 
-		foreach($mailing->statut_dest as $id=>$status) {
-			if ($selectedid==$id)  {
-				$selected=" selected ";
-			}else {
-				$selected="";
-			}
-			$out .= '<option '.$selected.' value="'.$id.'">'.$langs->trans($status).'</option>';
-		}
+        $options = $options + $mailing->statut_dest;
 
-		$out .= '</select>';
-		return $out;
+        return Form::selectarray($htmlname, $options, $selectedid, 0, 0, 0, '', 1);
 	}
 }

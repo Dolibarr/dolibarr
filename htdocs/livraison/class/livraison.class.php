@@ -42,32 +42,16 @@ class Livraison extends CommonObject
 	public $element="delivery";
 	public $fk_element="fk_livraison";
 	public $table_element="livraison";
+	public $table_element_line="livraisondet";
 
-	var $id;
 	var $brouillon;
-	var $origin;
-	var $origin_id;
 	var $socid;
 	var $ref_customer;
-	var $statut;
-
-	/**
-	 * @deprecated
-	 * @see note_public, note_private
-	 */
-	var $note;
-	var $note_public;
-	var $note_private;
 
 	var $date_delivery;    // Date really received
 	var $date_creation;
 	var $date_valid;
 	var $model_pdf;
-
-	//Incorterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
 
 	/**
 	 * Constructor
@@ -81,9 +65,9 @@ class Livraison extends CommonObject
 		$this->products = array();
 
 		// List of short language codes for status
-		$this->statuts[-1] = 'StatusSendingCanceled';
-		$this->statuts[0]  = 'StatusSendingDraft';
-		$this->statuts[1]  = 'StatusSendingValidated';
+		$this->statuts[-1] = 'StatusDeliveryCanceled';
+		$this->statuts[0]  = 'StatusDeliveryDraft';
+		$this->statuts[1]  = 'StatusDeliveryValidated';
 	}
 
 	/**
@@ -266,7 +250,7 @@ class Livraison extends CommonObject
 	 * 	Load a delivery receipt
 	 *
 	 * 	@param	int		$id			Id of object to load
-	 * 	@return	void
+	 * 	@return	integer
 	 */
 	function fetch($id)
 	{
@@ -279,7 +263,7 @@ class Livraison extends CommonObject
         $sql.= ', l.fk_incoterms, l.location_incoterms';
         $sql.= ", i.libelle as libelle_incoterms";
 		$sql.= " FROM ".MAIN_DB_PREFIX."livraison as l";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->element."'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = l.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON l.fk_incoterms = i.rowid';
 		$sql.= " WHERE l.rowid = ".$id;
 
@@ -311,11 +295,15 @@ class Livraison extends CommonObject
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
+
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 
 				/*
 				 * Lignes
@@ -378,7 +366,7 @@ class Livraison extends CommonObject
 					$soc = new Societe($this->db);
 					$soc->fetch($this->socid);
 
-					if (preg_match('/^[\(]?PROV/i', $this->ref))
+					if (preg_match('/^[\(]?PROV/i', $this->ref) || empty($this->ref)) // empty should not happened, but when it occurs, the test save life
 		            {
 		                $numref = $objMod->livraison_get_num($soc,$this);
 		            }
@@ -500,7 +488,7 @@ class Livraison extends CommonObject
 	 *
 	 *	@param	User	$user            Utilisateur qui cree
 	 *	@param  int		$sending_id      Id de l'expedition qui sert de modele
-	 *	@return	void
+	 *	@return	integer
 	 */
 	function create_from_sending($user, $sending_id)
 	{
@@ -532,12 +520,42 @@ class Livraison extends CommonObject
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
 		$this->ref_customer			= $expedition->ref_customer;
-		
+
 		//Incoterms
 		$this->fk_incoterms		= $expedition->fk_incoterms;
 		$this->location_incoterms = $expedition->location_incoterms;
 
 		return $this->create($user);
+	}
+
+	/**
+	 * Update a livraison line (only extrafields)
+	 *
+	 * @param 	int		$id					Id of line (livraison line)
+	 * @param	array		$array_options		extrafields array
+	 * @return	int							<0 if KO, >0 if OK
+	 */
+	function update_line($id, $array_options=0)
+	{
+		global $conf;
+		$error = 0;
+
+		if ($id > 0 && ! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
+		{
+			$livraisonline = new LivraisonLigne($this->db);
+			$livraisonline->array_options=$array_options;
+			$livraisonline->id=$id;
+			$result=$livraisonline->insertExtraFields();
+
+			if ($result < 0)
+			{
+				$this->error[]=$livraisonline->error;
+				$error++;
+			}
+		}
+
+		if (! $error) return 1;
+		else return -1;
 	}
 
 
@@ -563,7 +581,7 @@ class Livraison extends CommonObject
 	 *	Delete line
 	 *
 	 *	@param	int		$lineid		Line id
-	 *	@return	void
+	 *	@return	integer|null
 	 */
 	function deleteline($lineid)
 	{
@@ -588,7 +606,7 @@ class Livraison extends CommonObject
 	/**
 	 * Delete object
 	 *
-	 * @return	void
+	 * @return	integer
 	 */
 	function delete()
 	{
@@ -674,26 +692,36 @@ class Livraison extends CommonObject
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto=0, $save_lastsearch_value=-1)
 	{
 		global $langs;
 
 		$result='';
-		$urlOption='';
-        $label=$langs->trans("ShowReceiving").': '.$this->ref;
-
-
-        $link = '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
-
 		$picto='sending';
 
-		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		$label=$langs->trans("ShowReceiving").': '.$this->ref;
+
+		$url=DOL_URL_ROOT.'/livraison/card.php?id='.$this->id;
+
+        //if ($option !== 'nolink')
+        //{
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        //}
+
+
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
+
+		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$link.$this->ref.$linkend;
+		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -726,6 +754,7 @@ class Livraison extends CommonObject
 
 				$obj = $this->db->fetch_object($resql);
 
+				$line->id					= $obj->rowid;
 				$line->label			= $obj->custom_label;
 				$line->description		= $obj->description;
 				$line->fk_product		= $obj->fk_product;
@@ -778,9 +807,9 @@ class Livraison extends CommonObject
 
 		if ($mode==0)
 		{
-			if ($statut==-1) return $langs->trans('StatusSendingCanceled');
-			if ($statut==0)  return $langs->trans('StatusSendingDraft');
-			if ($statut==1)  return $langs->trans('StatusSendingValidated');
+			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled');
+			if ($statut==0)  return $langs->trans('StatusDeliveryDraft');
+			if ($statut==1)  return $langs->trans('StatusDeliveryValidated');
 		}
 		if ($mode==1)
 		{
@@ -790,9 +819,15 @@ class Livraison extends CommonObject
 		}
 		if ($mode == 4)
 		{
-			if ($statut==-1) return img_picto($langs->trans('StatusSendingCanceled'),'statut5').' '.$langs->trans('StatusSendingCanceled');
-			if ($statut==0)  return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
-			if ($statut==1)  return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
+			if ($statut==-1) return img_picto($langs->trans('StatusDeliveryCanceled'),'statut5').' '.$langs->trans('StatusDeliveryCanceled');
+			if ($statut==0)  return img_picto($langs->trans('StatusDeliveryDraft'),'statut0').' '.$langs->trans('StatusDeliveryDraft');
+			if ($statut==1)  return img_picto($langs->trans('StatusDeliveryValidated'),'statut4').' '.$langs->trans('StatusDeliveryValidated');
+		}
+		if ($mode == 6)
+		{
+			if ($statut==-1) return $langs->trans('StatusDeliveryCanceled').' '.img_picto($langs->trans('StatusDeliveryCanceled'),'statut5');
+			if ($statut==0)  return $langs->trans('StatusDeliveryDraft').' '.img_picto($langs->trans('StatusDeliveryDraft'),'statut0');
+			if ($statut==1)  return $langs->trans('StatusDeliveryValidated').' '.img_picto($langs->trans('StatusDeliveryValidated'),'statut4');
 		}
 	}
 
@@ -810,11 +845,12 @@ class Livraison extends CommonObject
 
 		$now=dol_now();
 
-		// Charge tableau des produits prodids
+        // Load array of products prodids
+		$num_prods = 0;
 		$prodids = array();
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('product').")";
 		$sql.= " AND tosell = 1";
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -979,16 +1015,14 @@ class Livraison extends CommonObject
 
 		$langs->load("deliveries");
 
-		// Positionne modele sur le nom du modele de bon de livraison a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->LIVRAISON_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'typhon';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->LIVRAISON_ADDON_PDF)) {
 				$modele = $conf->global->LIVRAISON_ADDON_PDF;
-			}
-			else
-			{
-				$modele = 'typhon';
 			}
 		}
 
@@ -1023,6 +1057,8 @@ class Livraison extends CommonObject
  */
 class LivraisonLigne extends CommonObjectLine
 {
+	var $db;
+
 	// From llx_expeditiondet
 	var $qty;
 	var $qty_asked;
@@ -1045,6 +1081,9 @@ class LivraisonLigne extends CommonObjectLine
 
 	public $product_ref;
 	public $product_label;
+
+	public $element='livraisondet';
+	public $table_element='livraisondet';
 
 	/**
 	 *	Constructor

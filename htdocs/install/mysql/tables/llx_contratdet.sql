@@ -29,7 +29,7 @@ create table llx_contratdet
 
   label                 text,                              -- libelle du produit
   description           text,
-  fk_remise_except		  integer       NULL,                -- Lien vers table des remises fixes
+  fk_remise_except		integer       NULL,                -- Lien vers table des remises fixes
 
   date_commande         datetime,
   date_ouverture_prevue datetime,
@@ -37,15 +37,16 @@ create table llx_contratdet
   date_fin_validite     datetime,
   date_cloture          datetime,
 
-  tva_tx                double(6,3)   DEFAULT 0, 	         -- taux tva
-  localtax1_tx		double(6,3)   DEFAULT 0,           -- local tax 1 rate
-  localtax1_type			 	varchar(10)	  	 NULL, 			 -- localtax1 type
-  localtax2_tx		double(6,3)   DEFAULT 0,           -- local tax 2 rate
-  localtax2_type			 	varchar(10)	  	 NULL, 			 -- localtax2 type
+  vat_src_code			varchar(10)   DEFAULT '',		   -- Vat code used as source of vat fields. Not strict foreign key here.
+  tva_tx                double(6,3)   DEFAULT 0, 	       -- taux tva
+  localtax1_tx		    double(6,3)   DEFAULT 0,           -- local tax 1 rate
+  localtax1_type		varchar(10)	  	 NULL, 		       -- localtax1 type
+  localtax2_tx		    double(6,3)   DEFAULT 0,           -- local tax 2 rate
+  localtax2_type		varchar(10)	  	 NULL, 			   -- localtax2 type
   qty                   real          NOT NULL,            -- quantity
-  remise_percent        real          DEFAULT 0,    		   -- pourcentage de remise
+  remise_percent        real          DEFAULT 0,    	   -- pourcentage de remise
   subprice              double(24,8)  DEFAULT 0,           -- prix unitaire
-  price_ht              real,              		             -- prix final (obsolete)
+  price_ht              real,              		           -- prix final (obsolete)
   remise                real          DEFAULT 0,    		             -- montant de la remise (obsolete)
   total_ht              double(24,8)  DEFAULT 0,     		   -- Total HT de la ligne toute quantite et incluant remise ligne et globale
   total_tva             double(24,8)  DEFAULT 0,	   		   -- Total TVA de la ligne toute quantite et incluant remise ligne et globale
@@ -62,6 +63,12 @@ create table llx_contratdet
   fk_user_ouverture     integer,
   fk_user_cloture       integer,
   commentaire           text,
-  fk_unit               integer       DEFAULT NULL
+  fk_unit               integer       DEFAULT NULL,
 
+  fk_multicurrency		integer,
+  multicurrency_code			varchar(255),
+  multicurrency_subprice		double(24,8) DEFAULT 0,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0  
 )ENGINE=innodb;

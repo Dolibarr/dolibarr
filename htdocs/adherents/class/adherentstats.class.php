@@ -24,7 +24,7 @@
  */
 
 include_once DOL_DOCUMENT_ROOT . '/core/class/stats.class.php';
-include_once DOL_DOCUMENT_ROOT . '/adherents/class/cotisation.class.php';
+include_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
 
 
 /**
@@ -57,15 +57,15 @@ class AdherentStats extends Stats
         $this->socid = $socid;
         $this->userid = $userid;
 
-		$object=new Cotisation($this->db);
+		$object=new Subscription($this->db);
 
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as p";
 		$this->from.= ", ".MAIN_DB_PREFIX."adherent as m";
 
-		$this->field='cotisation';
+		$this->field='subscription';
 
 		$this->where.= " m.statut != 0";
-		$this->where.= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent', 1).")";
+		$this->where.= " AND p.fk_adherent = m.rowid AND m.entity IN (".getEntity('adherent').")";
 		//if (!$user->rights->societe->client->voir && !$user->societe_id) $this->where .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if($this->memberid)
 		{
@@ -76,12 +76,13 @@ class AdherentStats extends Stats
 
 
 	/**
-	 * Renvoie le nombre de proposition par mois pour une annee donnee
+	 * Return the number of proposition by month for a given year
 	 *
      * @param   int		$year       Year
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of nb each month
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -93,11 +94,11 @@ class AdherentStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		return $this->_getNbByMonth($year, $sql);
+		return $this->_getNbByMonth($year, $sql, $format);
 	}
 
 	/**
-	 * Renvoie le nombre de cotisation par annee
+	 * Return the number of subscriptions by year
 	 *
      * @return	array				Array of nb each year
 	 */
@@ -116,12 +117,13 @@ class AdherentStats extends Stats
 	}
 
 	/**
-	 * Renvoie le nombre de cotisation par mois pour une annee donnee
+	 * Return the number of subscriptions by month for a given year
 	 *
      * @param   int		$year       Year
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      * @return	array				Array of amount each month
 	 */
-	function getAmountByMonth($year)
+	function getAmountByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -133,7 +135,7 @@ class AdherentStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		return $this->_getAmountByMonth($year, $sql);
+		return $this->_getAmountByMonth($year, $sql, $format);
 	}
 
 	/**

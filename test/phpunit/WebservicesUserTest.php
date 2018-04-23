@@ -38,6 +38,8 @@ if (empty($user->id)) {
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
+$conf->global->MAIN_UMASK='0666';
+
 
 /**
  * Class for PHPUnit tests
@@ -154,7 +156,7 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
 
         // Test URL
         $result='';
-        $parameters = array('authentication'=>$authentication,'ref'=>'admin');
+        $parameters = array('authentication'=>$authentication,'id'=>0,'ref'=>'admin');
         print __METHOD__."Call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
@@ -177,11 +179,11 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
         }
 
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('OK',$result['result']['result_code']);
+        $this->assertEquals('OK', $result['result']['result_code'], 'Test on ref admin');
 
         // Test URL
         $result='';
-        $parameters = array('authentication'=>$authentication,'ref'=>'refthatdoesnotexists');
+        $parameters = array('authentication'=>$authentication,'id'=>0,'ref'=>'refthatdoesnotexists');
         print __METHOD__."Call method ".$WS_METHOD."\n";
         try {
             $result = $soapclient->call($WS_METHOD,$parameters,$ns,'');
@@ -200,7 +202,7 @@ class WebservicesUserTest extends PHPUnit_Framework_TestCase
         }
 
         print __METHOD__." result=".$result."\n";
-        $this->assertEquals('NOT_FOUND',$result['result']['result_code']);
+        $this->assertEquals('NOT_FOUND', $result['result']['result_code'], 'Test on ref that does not exists');
 
         return $result;
     }

@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Configuration d'Oauth
+ManualTokenGeneration=Génération de jetons manuels
+IsTokenGenerated=Le jeton est-il généré?
+NoAccessToken=Pas de jeton d'accès enregistré dans la base de données locale
+HasAccessToken=Un jeton a été généré et enregistré dans la base de données locale
+NewTokenStored=Jeton reçu et enregistré
+ToCheckDeleteTokenOnProvider=Cliquez ici pour vérifier / supprimer l'autorisation enregistrée par %s OAuth provider
+TokenDeleted=Jeton supprimé
+RequestAccess=Cliquez ici pour demander / renouveler l'accès et recevoir un nouveau jeton à sauvegarder
+DeleteAccess=Cliquez ici pour supprimer le jeton
+UseTheFollowingUrlAsRedirectURI=Utiliser l'URL suivante comme URI de redirection lorsque vous créez vos informations d'identification sur votre fournisseur OAuth:
+ListOfSupportedOauthProviders=Entrez ici les informations d'identification fournies par votre fournisseur OAuth2. Seuls les fournisseurs OAuth2 supportés sont visibles ici. Cette configuration peut être utilisée par d'autres modules nécessitant une authentification OAuth2.
+OAuthSetupForLogin=Page pour générer un jeton OAuth
+SeePreviousTab=Voir l'onglet précédent
+TOKEN_EXPIRED=Jeton expiré
+TOKEN_EXPIRE_AT=Token expire à
+TOKEN_DELETE=Supprimer le jeton enregistré
+OAUTH_GOOGLE_ID=Id de Google Oauth
+OAUTH_GOOGLE_DESC=Allez sur <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> cette page </a> puis "Credentials" pour créer des informations d'identification Oauth
+OAUTH_GITHUB_DESC=Allez sur <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> cette page </a> puis "Enregistrez une nouvelle application" pour créer des informations d'identification Oauth

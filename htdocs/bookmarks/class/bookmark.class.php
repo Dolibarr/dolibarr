@@ -26,8 +26,13 @@
 /**
  *		Class to manage bookmarks
  */
-class Bookmark
+class Bookmark extends CommonObject
 {
+    public $element='bookmark';
+    public $table_element='bookmark';
+    public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+    public $picto = 'bookmark';
+
     var $db;
 
     var $id;
@@ -106,7 +111,7 @@ class Bookmark
     	$this->url=trim($this->url);
     	$this->title=trim($this->title);
 		if (empty($this->position)) $this->position=0;
-		
+
 		$now=dol_now();
 
     	$this->db->begin();
@@ -114,14 +119,12 @@ class Bookmark
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_user,dateb,url,target";
         $sql.= ",title,favicon,position";
         $sql.= ",entity";
-        if ($this->fk_soc) $sql.=",fk_soc";
         $sql.= ") VALUES (";
-        $sql.= ($this->fk_user > 0?"'".$this->fk_user."'":"0").",";
+        $sql.= ($this->fk_user > 0 ? $this->fk_user:"0").",";
         $sql.= " '".$this->db->idate($now)."',";
-        $sql.= " '".$this->url."', '".$this->target."',";
-        $sql.= " '".$this->db->escape($this->title)."', '".$this->favicon."', '".$this->position."'";
-        $sql.= ", '".$conf->entity."'";
-        if ($this->fk_soc) $sql.=",".$this->fk_soc;
+        $sql.= " '".$this->db->escape($this->url)."', '".$this->db->escape($this->target)."',";
+        $sql.= " '".$this->db->escape($this->title)."', '".$this->db->escape($this->favicon)."', '".$this->db->escape($this->position)."'";
+        $sql.= ", ".$this->db->escape($conf->entity);
         $sql.= ")";
 
         dol_syslog("Bookmark::update", LOG_DEBUG);
@@ -165,13 +168,13 @@ class Bookmark
 		if (empty($this->position)) $this->position=0;
 
     	$sql = "UPDATE ".MAIN_DB_PREFIX."bookmark";
-        $sql.= " SET fk_user = ".($this->fk_user > 0?"'".$this->fk_user."'":"0");
+        $sql.= " SET fk_user = ".($this->fk_user > 0 ? $this->fk_user :"0");
         $sql.= " ,dateb = '".$this->db->idate($this->datec)."'";
         $sql.= " ,url = '".$this->db->escape($this->url)."'";
-        $sql.= " ,target = '".$this->target."'";
+        $sql.= " ,target = '".$this->db->escape($this->target)."'";
         $sql.= " ,title = '".$this->db->escape($this->title)."'";
-        $sql.= " ,favicon = '".$this->favicon."'";
-        $sql.= " ,position = '".$this->position."'";
+        $sql.= " ,favicon = '".$this->db->escape($this->favicon)."'";
+        $sql.= " ,position = '".$this->db->escape($this->position)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog("Bookmark::update", LOG_DEBUG);
@@ -226,6 +229,17 @@ class Bookmark
 		);
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
+	}
+
+	/**
+	 *	Return label of contact status
+	 *
+	 *	@param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * 	@return 	string					Label of contact status
+	 */
+	function getLibStatut($mode)
+	{
+	    return '';
 	}
 
 }

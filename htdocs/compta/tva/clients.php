@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Yannick Warnier      <ywarnier@beeznest.org>
  * Copyright (C) 2014	   Ferran Marcet        <fmarcet@2byte.es>
  *
@@ -20,9 +20,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/tva/clients.php
- *	  \ingroup    tax
- *		\brief      Page des societes
+ *		\file       htdocs/compta/tva/clients.php
+ *		\ingroup    tax
+ *		\brief      Page of sales taxes
  */
 
 require '../../main.inc.php';
@@ -32,73 +32,61 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
 
-$langs->load("bills");
-$langs->load("compta");
-$langs->load("companies");
-$langs->load("products");
-$langs->load("other");
+$langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 // Date range
-$year=GETPOST("year");
-if (empty($year)) {
+$year=GETPOST("year","int");
+if (empty($year))
+{
 	$year_current = strftime("%Y",dol_now());
 	$year_start = $year_current;
 } else {
 	$year_current = $year;
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
+$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
 // Quarter
-if (empty($date_start) || empty($date_end)) {// We define date_start and date_end
+if (empty($date_start) || empty($date_end)) // We define date_start and date_end
+{
 	$q=GETPOST("q");
-	if (empty($q)) {
-		if (isset($_REQUEST["month"])) {
-			$date_start=dol_get_first_day($year_start,$_REQUEST["month"],false);
-			$date_end=dol_get_last_day($year_start,$_REQUEST["month"],false);
-		} else {
-			$month_current = strftime("%m",dol_now());
-			if ($month_current >= 10) $q=4;
-			elseif ($month_current >= 7) $q=3;
-			elseif ($month_current >= 4) $q=2;
-			else $q=1;
+	if (empty($q))
+	{
+		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,GETPOST("month"),false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
+		else
+		{
+			$date_start=dol_get_first_day($year_start,empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START,false);
+			if (empty($conf->global->MAIN_INFO_VAT_RETURN) || $conf->global->MAIN_INFO_VAT_RETURN == 2) $date_end=dol_time_plus_duree($date_start, 3, 'm') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 3) $date_end=dol_time_plus_duree($date_start, 1, 'y') - 1;
+			else if ($conf->global->MAIN_INFO_VAT_RETURN == 1) $date_end=dol_time_plus_duree($date_start, 1, 'm') - 1;
 		}
 	}
-	if ($q==1) {
-		$date_start=dol_get_first_day($year_start,1,false);
-		$date_end=dol_get_last_day($year_start,3,false);
-	}
-	if ($q==2) {
-		$date_start=dol_get_first_day($year_start,4,false);
-		$date_end=dol_get_last_day($year_start,6,false);
-	}
-	if ($q==3) {
-		$date_start=dol_get_first_day($year_start,7,false);
-		$date_end=dol_get_last_day($year_start,9,false);
-	}
-	if ($q==4) {
-		$date_start=dol_get_first_day($year_start,10,false);
-		$date_end=dol_get_last_day($year_start,12,false);
+	else
+	{
+		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 	}
 }
 
-$min = GETPOST("min");
-if (empty($min)) {
-	$min = 0;
-}
+$min = price2num(GETPOST("min","alpha"));
+if (empty($min)) $min = 0;
 
 // Define modetax (0 or 1)
-// 0=normal, 1=option vat for services is on debit
+// 0=normal, 1=option vat for services is on debit, 2=option on payments for products
 $modetax = $conf->global->TAX_MODE;
-if (isset($_REQUEST["modetax"])) $modetax=$_REQUEST["modetax"];
+if (GETPOSTISSET("modetax")) $modetax=GETPOST("modetax",'int');
 if (empty($modetax)) $modetax=0;
 
 // Security check
 $socid = GETPOST('socid','int');
-if ($user->societe_id) {
-	$socid=$user->societe_id;
-}
+if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
+
+// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
+$modecompta = $conf->global->ACCOUNTING_MODE;
+if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 
 
@@ -122,7 +110,7 @@ if (isset($_REQUEST['extra_report']) && $_REQUEST['extra_report'] == 1) {
 	$special_report = true;
 }
 
-llxHeader('','','','',0,0,'','',$morequerystring);
+llxHeader('',$langs->trans("VATReport"),'','',0,0,'','',$morequerystring);
 
 $fsearch.='<br>';
 $fsearch.='  <input type="hidden" name="year" value="'.$year.'">';
@@ -130,95 +118,53 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
-// Affiche en-tete du rapport
-if ($modetax==1) {	// Calculate on invoice for goods and services
-	$name=$langs->trans("VATReportByCustomersInDueDebtMode");
-	$calcmode=$langs->trans("CalcModeVATDebt");
-	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-	//$name.='<br>('.$langs->trans("SeeVATReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=0">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	//$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
-	$description=$langs->trans("RulesVATDueServices");
-	$description.='<br>';
-	$description.=$langs->trans("RulesVATDueProducts");
-	//if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-	//if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
-	} else {
-		$description.='<br>'.$langs->trans("DepositsAreIncluded");
-	}
-	$description.=$fsearch;
-	$description.='<br>'
-		. '<input type="radio" name="extra_report" value="0" '.($special_report?'':'checked="checked"').'> '
-		. $langs->trans('SimpleReport')
-		. '</input>'
-		. '<br>'
-		. '<input type="radio" name="extra_report" value="1" '.($special_report?'checked="checked"':'').'> '
-		. $langs->trans('AddExtraReport')
-		. '</input>'
-		. '<br>';
-	$builddate=time();
-	//$exportlink=$langs->trans("NotYetAvailable");
+$description='';
 
-	$elementcust=$langs->trans("CustomersInvoices");
-	$productcust=$langs->trans("Description");
-	$amountcust=$langs->trans("AmountHT");
-	if ($mysoc->tva_assuj) {
-		$vatcust.=' ('.$langs->trans("ToPay").')';
-	}
-	$elementsup=$langs->trans("SuppliersInvoices");
-	$productsup=$langs->trans("Description");
-	$amountsup=$langs->trans("AmountHT");
-	if ($mysoc->tva_assuj) {
-		$vatsup.=' ('.$langs->trans("ToGetBack").')';
-	}
-}
-if ($modetax==0) {	// Invoice for goods, payment for services
-	$name=$langs->trans("VATReportByCustomersInInputOutputMode");
-	$calcmode=$langs->trans("CalcModeVATEngagement");
-	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
-	//$name.='<br>('.$langs->trans("SeeVATReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modetax=1">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	//$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
-	$description=$langs->trans("RulesVATInServices");
-	$description.=' '.$langs->trans("DepositsAreIncluded");
-	$description.='<br>';
-	$description.=$langs->trans("RulesVATInProducts");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-		$description .= ' ' . $langs->trans("DepositsAreNotIncluded");
-	} else {
-		$description .= ' ' . $langs->trans("DepositsAreIncluded");
-	}
-	//if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
-	//if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
-	$description.=$fsearch;
-	$description.='<br>'
-		. '<input type="radio" name="extra_report" value="0" '.($special_report?'':'checked="checked"').'> '
-		. $langs->trans('SimpleReport')
-		. '</input>'
-		. '<br>'
-		. '<input type="radio" name="extra_report" value="1" '.($special_report?'checked="checked"':'').'> '
-		. $langs->trans('AddExtraReport')
-		. '</input>'
-		. '<br>';
-	$builddate=time();
-	//$exportlink=$langs->trans("NotYetAvailable");
+// Show report header
+$name=$langs->trans("VATReportByCustomers");
+$calcmode='';
+if ($modetax == 0) $calcmode=$langs->trans('OptionVATDefault');
+if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
+if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
+$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 
-	$elementcust=$langs->trans("CustomersInvoices");
-	$productcust=$langs->trans("Description");
-	$amountcust=$langs->trans("AmountHT");
-	if ($mysoc->tva_assuj) {
-		$vatcust.=' ('.$langs->trans("ToPay").')';
-	}
-	$elementsup=$langs->trans("SuppliersInvoices");
-	$productsup=$langs->trans("Description");
-	$amountsup=$langs->trans("AmountHT");
-	if ($mysoc->tva_assuj) {
-		$vatsup.=' ('.$langs->trans("ToGetBack").')';
-	}
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
+if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description.=$langs->trans("RulesVATInProducts");
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'invoice') $description.='<br>'.$langs->trans("RulesVATDueServices");
+if ($conf->global->TAX_MODE_SELL_SERVICE == 'payment') $description.='<br>'.$langs->trans("RulesVATInServices");
+if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
+	$description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 }
-report_header($name,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
+
+$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+//$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
+$description.=$fsearch;
+$description.='<br>'
+	. '<input type="radio" name="extra_report" value="0" '.($special_report?'':'checked="checked"').'> '
+	. $langs->trans('SimpleReport')
+	. '</input>'
+	. '<br>'
+	. '<input type="radio" name="extra_report" value="1" '.($special_report?'checked="checked"':'').'> '
+	. $langs->trans('AddExtraReport')
+	. '</input>'
+	. '<br>';
+$builddate=dol_now();
+//$exportlink=$langs->trans("NotYetAvailable");
+
+$elementcust=$langs->trans("CustomersInvoices");
+$productcust=$langs->trans("Description");
+$amountcust=$langs->trans("AmountHT");
+if ($mysoc->tva_assuj) {
+	$vatcust.=' ('.$langs->trans("ToPay").')';
+}
+$elementsup=$langs->trans("SuppliersInvoices");
+$productsup=$langs->trans("Description");
+$amountsup=$langs->trans("AmountHT");
+if ($mysoc->tva_assuj) {
+	$vatsup.=' ('.$langs->trans("ToGetBack").')';
+}
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -227,7 +173,7 @@ $vatsup=$langs->trans("VATPaid");
 // VAT Received
 
 //print "<br>";
-//print_titre($vatcust);
+//print load_fiche_titre($vatcust);
 
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
@@ -246,9 +192,11 @@ $parameters["mode"] = $modetax;
 $parameters["start"] = $date_start;
 $parameters["end"] = $date_end;
 $parameters["direction"] = 'sell';
+$parameters["type"] = 'vat';
+
 // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
 if (is_array($coll_list)) {
 	$var=true;
@@ -256,7 +204,7 @@ if (is_array($coll_list)) {
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			$var=!$var;
+
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if(empty($intra)) {
 				if($coll->assuj == '1') {
@@ -266,7 +214,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;
@@ -292,7 +240,14 @@ if (is_array($coll_list)) {
 } else {
 	$langs->load("errors");
 	if ($coll_list == -1) {
-		print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+		if ($modecompta == 'CREANCES-DETTES')
+		{
+			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+		}
 	} else if ($coll_list == -2) {
 		print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
 	} else {
@@ -306,10 +261,10 @@ if (is_array($coll_list)) {
 // VAT Paid
 
 //print "<br>";
-//print_titre($vatsup);
+//print load_fiche_titre($vatsup);
 
 //print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
+print "<tr class=\"liste_titre liste_titre_topborder\">";
 print '<td align="left">'.$langs->trans("Num")."</td>";
 print '<td align="left">'.$langs->trans("Supplier")."</td>";
 print "<td>".$langs->trans("VATIntra")."</td>";
@@ -322,14 +277,14 @@ $company_static=new Societe($db);
 $coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
 
 $parameters["direction"] = 'buy';
-$reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if (is_array($coll_list)) {
 	$var=true;
 	$total = 0;  $totalamount = 0;
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			$var=!$var;
+
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if (empty($intra)) {
 				if ($coll->assuj == '1') {
@@ -339,7 +294,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;
@@ -377,7 +332,14 @@ if (is_array($coll_list)) {
 } else {
 	$langs->load("errors");
 	if ($coll_list == -1) {
-		print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+		if ($modecompta == 'CREANCES-DETTES')
+		{
+			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+		}
+		else
+		{
+			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+		}
 	} else if ($coll_list == -2) {
 		print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
 	} else {
@@ -457,7 +419,14 @@ if ($special_report) {
 	} else {
 		$langs->load("errors");
 		if ($coll_list == -1) {
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+			if ($modecompta == 'CREANCES-DETTES')
+			{
+				print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+			}
 		} else {
 			if ($coll_list == -2) {
 				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
@@ -530,7 +499,14 @@ if ($special_report) {
 	} else {
 		$langs->load("errors");
 		if ($coll_list == -1) {
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+			if ($modecompta == 'CREANCES-DETTES')
+			{
+				print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+			}
 		} else {
 			if ($coll_list == -2) {
 				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';

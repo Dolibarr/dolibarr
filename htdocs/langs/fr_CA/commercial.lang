@@ -1,0 +1,13 @@
+# Dolibarr language file - Source file is en_US - commercial
+DeleteAction=Supprimer l'événement
+NewAction=Nouvel événement
+ConfirmDeleteAction=Êtes-vous sûr de vouloir supprimer cet événement?
+ActionOnCompany=Société associée
+ActionOnContact=Contact connexe
+ThirdPartiesOfSaleRepresentative=Personnes tierces ayant un représentant commercial
+SaleRepresentativesOfThirdParty=Représentants commerciaux de tiers
+LastDoneTasks=Dernières %s actions complétées
+LastActionsToDo=Le plus ancien %s actions non complétées
+ActionAC_OTH_AUTO=Événements insérés automatiquement
+WelcomeOnOnlineSignaturePage=Bienvenue sur la page pour accepter les propositions commerciales de %s
+SignatureProposalRef=Signature de la proposition commerciale %s

@@ -17,12 +17,15 @@ use ZendAmf\Parser\OutputStream;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
-class AmfFormat extends Format
+class AmfFormat extends DependentFormat
 {
     const MIME = 'application/x-amf';
     const EXTENSION = 'amf';
+
+    const PACKAGE_NAME = 'zendframework/zendamf:dev-master';
+    const EXTERNAL_CLASS = 'ZendAmf\\Parser\\Amf3\\Deserializer';
 
     public function encode($data, $humanReadable = false)
     {

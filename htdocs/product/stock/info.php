@@ -28,6 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
 
 $langs->load("stocks");
 
+$id = GETPOST('id','int');
+$ref = GETPOST('ref','alpha');
+
 // Security check
 $result=restrictedArea($user,'stock');
 
@@ -39,18 +42,33 @@ $result=restrictedArea($user,'stock');
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("Stocks"),$help_url);
 
-$entrepot = new Entrepot($db);
-$entrepot->fetch($_GET["id"]);
-$entrepot->info($_GET["id"]);
+$object = new Entrepot($db);
+$object->fetch($id, $ref);
+$object->info($object->id);
 
-$head = stock_prepare_head($entrepot);
+$head = stock_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Warehouse"), 0, 'stock');
+dol_fiche_head($head, 'info', $langs->trans("Warehouse"), -1, 'stock');
 
 
-print '<table width="100%"><tr><td>';
-dol_print_object_info($entrepot);
-print '</td></tr></table>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/product/stock/list.php">'.$langs->trans("BackToList").'</a>';
+
+$morehtmlref='<div class="refidno">';
+$morehtmlref.=$langs->trans("LocationSummary").' : '.$object->lieu;
+$morehtmlref.='</div>';
+
+$shownav = 1;
+if ($user->societe_id && ! in_array('stock', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', 'ref', $morehtmlref);
+
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
+
+print '<br>';
+
+dol_print_object_info($object);
 
 print '</div>';
 

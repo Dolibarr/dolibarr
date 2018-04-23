@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 
 
 /**
- *	\class      mod_facture_mercure
- *	\brief      Classe du modele de numerotation de reference de facture Mercure
+ *	Class of numbering module Mercure for invoices
  */
 class mod_facture_mercure extends ModeleNumRefFactures
 {

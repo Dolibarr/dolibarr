@@ -29,7 +29,9 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 
-$year=$_GET["year"];
+$langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
+
+$year = GETPOST('year', 'int');
 if ($year == 0 )
 {
   $year_current = strftime("%Y",time());
@@ -40,7 +42,7 @@ if ($year == 0 )
 }
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
@@ -190,12 +192,12 @@ llxHeader();
 $textprevyear="<a href=\"quadri.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
 $textnextyear=" <a href=\"quadri.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
+print load_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
 
 echo '<table width="100%">';
 echo '<tr><td>';
-print_fiche_titre($langs->trans("VATSummary"));
+print load_fiche_titre($langs->trans("VATSummary"));
 echo '</td></tr>';
 
 echo '<tr>';
@@ -237,7 +239,7 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 			$x_both[$my_coll_rate]['paye']['vat'] = 0;
 			$x_both[$my_coll_rate]['coll']['links'] = '';
 			foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy){
-				$x_both[$my_coll_rate]['coll']['links'] .= '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
+				$x_both[$my_coll_rate]['coll']['links'] .= '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
 			}
 		}
 		foreach(array_keys($x_paye) as $my_paye_rate){
@@ -259,8 +261,8 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 		$x_paye_sum = 0;
 		$x_paye_ht = 0;
 		foreach($x_both as $rate => $both){
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+
+			print '<tr class="oddeven">';
 			print "<td>$rate%</td>";
 			print "<td class=\"nowrap\" align=\"right\">".price($both['coll']['totalht'])."</td>";
 			print "<td class=\"nowrap\" align=\"right\">".price($both['coll']['vat'])."</td>";
@@ -282,8 +284,8 @@ if ($conf->global->ACCOUNTING_MODE == "CREANCES-DETTES")
 		$total = $total + $diff;
 		$subtotal = $subtotal + $diff;
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+
+		print '<tr class="oddeven">';
 		print '<td colspan="7"></td>';
 		print "<td class=\"nowrap\" align=\"right\">".price($diff)."</td>\n";
 		print "</tr>\n";
@@ -313,7 +315,5 @@ print '</table>';
 echo '</td></tr>';
 echo '</table>';
 
-
-$db->close();
-
 llxFooter();
+$db->close();

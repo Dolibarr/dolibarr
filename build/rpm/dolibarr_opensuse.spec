@@ -18,8 +18,8 @@ License: GPL-3.0+
 #Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
-URL: http://www.dolibarr.org
-Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_opensuse/%{name}-%{version}.tgz
+URL: https://www.dolibarr.org
+Source0: https://www.dolibarr.org/files/lastbuild/package_rpm_opensuse/%{name}-%{version}.tgz
 Patch0: %{name}-forrpm.patch
 BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
@@ -36,7 +36,7 @@ AutoReqProv: no
 
 
 %description
-An easy to use CRM & ERP open source/free software for small  
+An easy to use CRM & ERP open source/free software package for small  
 and medium companies, foundations or freelances. It includes different 
 features for Enterprise Resource Planning (ERP) and Customer Relationship 
 Management (CRM) but also for different other activities.
@@ -170,9 +170,11 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/api
 %_datadir/dolibarr/htdocs/asterisk
 %_datadir/dolibarr/htdocs/barcode
+%_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
+%_datadir/dolibarr/htdocs/collab
 %_datadir/dolibarr/htdocs/comm
 %_datadir/dolibarr/htdocs/commande
 %_datadir/dolibarr/htdocs/compta
@@ -181,6 +183,8 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/contrat
 %_datadir/dolibarr/htdocs/core
 %_datadir/dolibarr/htdocs/cron
+%_datadir/dolibarr/htdocs/custom
+%_datadir/dolibarr/htdocs/dav
 %_datadir/dolibarr/htdocs/don
 %_datadir/dolibarr/htdocs/ecm
 %_datadir/dolibarr/htdocs/expedition
@@ -191,6 +195,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/fourn
 %_datadir/dolibarr/htdocs/ftp
 %_datadir/dolibarr/htdocs/holiday
+%_datadir/dolibarr/htdocs/hrm
 %_datadir/dolibarr/htdocs/imports
 %_datadir/dolibarr/htdocs/includes
 %_datadir/dolibarr/htdocs/install
@@ -199,6 +204,8 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
+%_datadir/dolibarr/htdocs/modulebuilder
+%_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/paybox
 %_datadir/dolibarr/htdocs/paypal
@@ -208,10 +215,14 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/public
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/societe
+%_datadir/dolibarr/htdocs/stripe
+%_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
 %_datadir/dolibarr/htdocs/user
+%_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
+%_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
 %_datadir/dolibarr/htdocs/*.php

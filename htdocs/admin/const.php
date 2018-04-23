@@ -55,12 +55,12 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 
 	if (empty($constname))
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Name")), null, 'errors');
 		$error++;
 	}
 	if ($constvalue == '')
 	{
-		setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Value")),'errors');
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Value")), null, 'errors');
 		$error++;
 	}
 
@@ -68,7 +68,7 @@ if ($action == 'add' || (GETPOST('add') && $action != 'update'))
 	{
 		if (dolibarr_set_const($db, $constname, $constvalue, 'chaine', 1, $constnote, $entity) >= 0)
 		{
-			setEventMessage($langs->trans("RecordSaved"));
+			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$action="";
 			$constname="";
 			$constvalue="";
@@ -99,7 +99,7 @@ if (! empty($consts) && $action == 'update')
 			}
 		}
 	}
-	if ($nbmodified > 0) setEventMessage($langs->trans("RecordSaved"));
+	if ($nbmodified > 0) setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 	$action='';
 }
 
@@ -122,7 +122,7 @@ if (! empty($consts) && $action == 'delete')
 			}
 		}
 	}
-	if ($nbdeleted > 0) setEventMessage($langs->trans("RecordDeleted"));
+	if ($nbdeleted > 0) setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	$action='';
 }
 
@@ -131,7 +131,7 @@ if ($action == 'delete')
 {
 	if (dolibarr_del_const($db, $rowid, $entity) >= 0)
 	{
-		setEventMessage($langs->trans("RecordDeleted"));
+		setEventMessages($langs->trans("RecordDeleted"), null, 'mesgs');
 	}
 	else
 	{
@@ -146,7 +146,8 @@ if ($action == 'delete')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("OtherSetup"));
+$wikihelp='EN:Setup_Other|FR:Paramétrage_Divers|ES:Configuración_Varios';
+llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 // Add logic to show/hide buttons
 if ($conf->use_javascript_ajax)
@@ -172,7 +173,7 @@ jQuery(document).ready(function() {
 <?php
 }
 
-print_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
+print load_fiche_titre($langs->trans("OtherSetup"),'','title_setup');
 
 print $langs->trans("ConstDesc")."<br>\n";
 print "<br>\n";
@@ -181,6 +182,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" id="action" name="action" value="">';
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
@@ -195,7 +197,7 @@ print "</tr>\n";
 $var=false;
 print "\n";
 
-print '<tr '.$bc[$var].'><td><input type="text" class="flat" size="24" name="constname" value="'.$constname.'"></td>'."\n";
+print '<tr class="oddeven"><td><input type="text" class="flat" size="24" name="constname" value="'.$constname.'"></td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="30" name="constvalue" value="'.$constvalue.'">';
 print '</td><td>';
@@ -245,11 +247,11 @@ if ($result)
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($result);
-		$var=!$var;
+		
 
 		print "\n";
 
-		print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>'."\n";
+		print '<tr class="oddeven"><td>'.$obj->name.'</td>'."\n";
 
 		// Value
 		print '<td>';
@@ -296,6 +298,7 @@ if ($result)
 
 
 print '</table>';
+print '</div>';
 
 if ($conf->use_javascript_ajax)
 {
@@ -309,6 +312,7 @@ if ($conf->use_javascript_ajax)
 }
 
 print "</form>\n";
+
 
 llxFooter();
 

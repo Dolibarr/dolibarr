@@ -54,7 +54,6 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		$handle=opendir($dir);
 
 		// Recherche des fichiers drivers exports disponibles
-		$var=True;
 		$i=0;
         if (is_resource($handle))
         {
@@ -64,23 +63,25 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
     			{
     				$moduleid=$reg[1];
 
-    				// Chargement de la classe
-    				$file = $dir."/export_".$moduleid.".modules.php";
+    				// Loading Class
+    				$file = $dir."export_".$moduleid.".modules.php";
     				$classname = "Export".ucfirst($moduleid);
 
     				require_once $file;
-    				$module = new $classname($db);
+    				if (class_exists($classname))
+    				{
+        				$module = new $classname($db);
 
-    				// Picto
-    				$this->picto[$module->id]=$module->picto;
-    				// Driver properties
-    				$this->driverlabel[$module->id]=$module->getDriverLabel().(empty($module->disabled)?'':' __(Disabled)__');	// '__(Disabled)__' is a key
-    				$this->driverdesc[$module->id]=$module->getDriverDesc();
-    				$this->driverversion[$module->id]=$module->getDriverVersion();
-    				// If use an external lib
-    				$this->liblabel[$module->id]=$module->getLibLabel();
-    				$this->libversion[$module->id]=$module->getLibVersion();
-
+        				// Picto
+        				$this->picto[$module->id]=$module->picto;
+        				// Driver properties
+        				$this->driverlabel[$module->id]=$module->getDriverLabel().(empty($module->disabled)?'':' __(Disabled)__');	// '__(Disabled)__' is a key
+        				$this->driverdesc[$module->id]=$module->getDriverDesc();
+        				$this->driverversion[$module->id]=$module->getDriverVersion();
+        				// If use an external lib
+        				$this->liblabel[$module->id]=$module->getLibLabel();
+        				$this->libversion[$module->id]=$module->getLibVersion();
+    				}
     				$i++;
     			}
     		}

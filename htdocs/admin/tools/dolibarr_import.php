@@ -39,6 +39,8 @@ $showpass=GETPOST('showpass');
  */
 
 $label=$db::LABEL;
+$type=$db->type;
+
 
 $help_url='EN:Restores|FR:Restaurations|ES:Restauraciones';
 llxHeader('','',$help_url);
@@ -63,9 +65,13 @@ jQuery(document).ready(function() {
 </script>
 <?php
 
-print_fiche_titre($langs->trans("Restore"),'','title_setup');
+print load_fiche_titre($langs->trans("Restore"),'','title_setup');
 
-print $langs->trans("RestoreDesc",DOL_DATA_ROOT).'<br><br>';
+print '<div class="center">';
+print $langs->trans("RestoreDesc",DOL_DATA_ROOT);
+print '</div>';
+print '<br>';
+
 ?>
 <fieldset>
 <legend style="font-size: 3em">1</legend>
@@ -84,14 +90,14 @@ print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
 
 <?php print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b>'; ?><br><br>
 
-<table><tr><td valign="top">
+<table class="centpercent"><tr><td class="tdtop">
 
 <?php if ($conf->use_javascript_ajax) { ?>
 <div id="div_container_exportoptions">
 <fieldset id="exportoptions">
 	<legend><?php echo $langs->trans("ImportMethod"); ?></legend>
     <?php
-    if ($label == 'MySQL')
+    if (in_array($type, array('mysql', 'mysqli')))
     {
     ?>
     <div class="formelementrow">
@@ -100,7 +106,7 @@ print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
     </div>
     <?php
     }
-    else if ($label == 'PostgreSQL')
+    else if (in_array($type, array('pgsql')))
     {
     ?>
     <div class="formelementrow">
@@ -118,17 +124,17 @@ print $langs->trans("RestoreDesc3",$dolibarr_main_db_name).'<br><br>';
 </div>
 <?php } ?>
 
-</td><td valign="top">
+</td><td class="tdtop">
 
 
-<div id="div_container_sub_exportoptions">
+<div id="div_container_sub_exportoptions" >
 <?php
-if ($label == 'MySQL')
+if (in_array($type, array('mysql', 'mysqli')))
 {
 ?>
 	<fieldset id="mysql_options">
     <legend><?php echo $langs->trans('RestoreMySQL') ?></legend>
-	<div class="formelementrow">
+	<div class="formelementrow centpercent">
 	<?php
 	// Parameteres execution
 	$command=$db->getPathOfRestore();
@@ -148,7 +154,8 @@ if ($label == 'MySQL')
 
 	echo $langs->trans("ImportMySqlDesc");
 	print '<br>';
-	print '<textarea rows="1" cols="120">'.$langs->trans("ImportMySqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+	print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportMySqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+	print ajax_autoselect('restorecommand');
 
 	if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=mysql_options">'.$langs->trans("UnHidePassword").'</a>';
 	//else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
@@ -157,7 +164,7 @@ if ($label == 'MySQL')
     </fieldset>
 <?php
 }
-else if ($label == 'PostgreSQL')
+else if (in_array($type, array('pgsql')))
 {
 ?>
     <fieldset id="postgresql_options">
@@ -187,8 +194,8 @@ else if ($label == 'PostgreSQL')
 
     echo $langs->trans("ImportPostgreSqlDesc");
     print '<br>';
-    print '<textarea rows="1" cols="120">'.$langs->trans("ImportPostgreSqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
-
+    print '<textarea rows="1" id="restorecommand" class="centpercent">'.$langs->trans("ImportPostgreSqlCommand",$command,($showpass?$paramclear:$paramcrypted)).'</textarea><br>';
+    print ajax_autoselect('restorecommand');
     //if (empty($_GET["showpass"]) && $dolibarr_main_db_pass) print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=1&amp;radio_dump=postgresql_options">'.$langs->trans("UnHidePassword").'</a>';
     //else print '<br><a href="'.$_SERVER["PHP_SELF"].'?showpass=0&amp;radio_dump=mysql_options">'.$langs->trans("HidePassword").'</a>';
     ?>

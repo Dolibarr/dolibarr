@@ -1,0 +1,28 @@
+# Dolibarr language file - Source file is en_US - companies
+CountryIsInEEC=Venezuela
+OverAllSupplierProposals=Solicitudes de precios
+LocalTax1IsUsed=Sujeto
+LocalTax2IsUsed=Sujeto
+ProfId1AT=Id prof. 1 (USt.-IdNr)
+ProfId2AT=Id prof. 2 (USt.-Nr)
+ProfId3AT=Id prof. 3 (Handelsregister-Nr.)
+ProfId1ES=CI/ RIF
+ProfId2ES=-
+ProfId3ES=-
+ProfId4ES=-
+ProfId1FR=-
+ProfId2FR=-
+ProfId3FR=-
+ProfId4FR=-
+ProfId3GB=-
+ProfId1HN=-
+ProfId2MX=Registro Patronal IVSS
+ProfId3MX=-
+CompanyHasCreditNote=Este cliente tiene <b>%s %s</b> anticipos disponibles
+VATIntraCheckDesc=El link <b>%s</b> permite consultar al SENIAT el RIF. Se requiere acceso a internet para que el servicio funcione
+VATIntraCheckURL=http://contribuyente.seniat.gob.ve/BuscaRif/BuscaRif.jsp
+VATIntraCheckableOnEUSite=Verificar en la web del SENIAT
+VATIntraManualCheck=Puede también realizar una verificación manual en la página del SENIAT <a href="%s" target="_blank">%s</a>
+ContactOthers=Otra
+ExportDataset_company_2=Contactos de terceros y atributos
+InActivity=Abierta

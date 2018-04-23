@@ -36,7 +36,7 @@ Go into project you want to update. It mught be:
 
 Once logged, click on "Add file" in section "Source Files", then select mode "Upload From: Remote URL"
 Keep empty for "Filename", choose "Remote URL" and enter into last field, URL that should looks like this:
-http://www.dolibarr.org/files/stable/package_rpm_generic/dolibarr-x.y.v-0.3.src.rpm
+http://www.dolibarr.org/files/stable/package_rpm_generic/dolibarr-x.y.v-0.4.src.rpm
 
 Then add into Advanded - Attributes
 OBS:Screenshots http://www.dolibarr.org/images/dolibarr_screenshot1.png

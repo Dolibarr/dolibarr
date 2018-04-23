@@ -71,7 +71,7 @@ if ($action == 'up')
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
+	$sql.= " WHERE m.rowid = ".GETPOST("menuId","int");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -89,11 +89,11 @@ if ($action == 'up')
 	// Menu before
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".$_GET["menuId"]."))";
-	$sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
+	$sql.= " WHERE (m.position < ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid < ".GETPOST("menuId","int")."))";
+	$sql.= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND m.entity = ".$conf->entity;
-	$sql.= " AND m.type = '".$current['type']."'";
-	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
+	$sql.= " AND m.type = '".$db->escape($current['type'])."'";
+	$sql.= " AND m.fk_menu = '".$db->escape($current['fk_menu'])."'";
 	$sql.= " ORDER BY m.position, m.rowid";
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
@@ -127,7 +127,7 @@ elseif ($action == 'down')
 	// Get current position
 	$sql = "SELECT m.rowid, m.position, m.type, m.fk_menu";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
+	$sql.= " WHERE m.rowid = ".GETPOST("menuId","int");
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
 	$num = $db->num_rows($result);
@@ -145,11 +145,11 @@ elseif ($action == 'down')
 	// Menu after
 	$sql = "SELECT m.rowid, m.position";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".$_GET["menuId"]."))";
-	$sql.= " AND m.menu_handler='".$menu_handler_to_search."'";
+	$sql.= " WHERE (m.position > ".($current['order'])." OR (m.position = ".($current['order'])." AND rowid > ".GETPOST("menuId","int")."))";
+	$sql.= " AND m.menu_handler='".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND m.entity = ".$conf->entity;
-	$sql.= " AND m.type = '".$current['type']."'";
-	$sql.= " AND m.fk_menu = '".$current['fk_menu']."'";
+	$sql.= " AND m.type = '".$db->escape($current['type'])."'";
+	$sql.= " AND m.fk_menu = '".$db->escape($current['fk_menu'])."'";
 	$sql.= " ORDER BY m.position, m.rowid";
 	dol_syslog("admin/menus/index.php ".$sql);
 	$result = $db->query($sql);
@@ -180,13 +180,13 @@ elseif ($action == 'confirm_delete' && $confirm == 'yes')
 	$db->begin();
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu";
-	$sql.= " WHERE rowid = ".$_GET['menuId'];
+	$sql.= " WHERE rowid = ".GETPOST('menuId','int');
 	$resql=$db->query($sql);
 	if ($resql)
 	{
 		$db->commit();
 
-		setEventMessage($langs->trans("MenuDeleted"));
+		setEventMessages($langs->trans("MenuDeleted"), null, 'mesgs');
 
 		header("Location: ".DOL_URL_ROOT.'/admin/menus/index.php?menu_handler='.$menu_handler);
 		exit ;
@@ -214,7 +214,7 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 llxHeader('',$langs->trans("Menus"),'','',0,0,$arrayofjs,$arrayofcss);
 
 
-print_fiche_titre($langs->trans("Menus"),'','title_setup');
+print load_fiche_titre($langs->trans("Menus"),'','title_setup');
 
 
 $h = 0;
@@ -234,7 +234,7 @@ $head[$h][1] = $langs->trans("Miscellaneous");
 $head[$h][2] = 'misc';
 $h++;
 
-dol_fiche_head($head, 'editor', $langs->trans("Menus"));
+dol_fiche_head($head, 'editor', $langs->trans("Menus"), -1);
 
 print $langs->trans("MenusEditorDesc")."<br>\n";
 print "<br>\n";
@@ -245,11 +245,11 @@ if ($action == 'delete')
 {
 	$sql = "SELECT m.titre";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE m.rowid = ".$_GET['menuId'];
+	$sql.= " WHERE m.rowid = ".GETPOST('menuId','int');
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
 
-    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
+    print $form->formconfirm("index.php?menu_handler=".$menu_handler."&menuId=".GETPOST('menuId','int'),$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
 }
 
 
@@ -262,7 +262,7 @@ print '</form>';
 
 print '<br>';
 
-print '<table class="border" width="100%">';
+print '<table class="noborder centpercent">';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
@@ -289,17 +289,18 @@ if ($conf->use_javascript_ajax)
 	  - la chaine a afficher
 	ie: data[]= array (index, index parent, chaine )
 	*/
+
 	//il faut d'abord declarer un element racine de l'arbre
 
-	$data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
+    $data[] = array('rowid'=>0,'fk_menu'=>-1,'title'=>"racine",'mainmenu'=>'','leftmenu'=>'','fk_mainmenu'=>'','fk_leftmenu'=>'');
 
 	//puis tous les elements enfants
 
-	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu";
+	$sql = "SELECT m.rowid, m.titre, m.langs, m.mainmenu, m.leftmenu, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.position, m.module";
 	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-	$sql.= " WHERE menu_handler = '".$menu_handler_to_search."'";
+	$sql.= " WHERE menu_handler = '".$db->escape($menu_handler_to_search)."'";
 	$sql.= " AND entity = ".$conf->entity;
-	$sql.= " AND fk_menu >= 0";
+	//$sql.= " AND fk_menu >= 0";
 	$sql.= " ORDER BY m.position, m.rowid";		// Order is position then rowid (because we need a sort criteria when position is same)
 
 	$res  = $db->query($sql);
@@ -312,14 +313,17 @@ if ($conf->use_javascript_ajax)
 		{
 			if (! empty($menu['langs'])) $langs->load($menu['langs']);
 			$titre = $langs->trans($menu['titre']);
+
 			$data[] = array(
 				'rowid'=>$menu['rowid'],
+			    'module'=>$menu['module'],
 				'fk_menu'=>$menu['fk_menu'],
 				'title'=>$titre,
-				'mainmenu'=>$menu['mainmenu'],
+			    'mainmenu'=>$menu['mainmenu'],
 				'leftmenu'=>$menu['leftmenu'],
 				'fk_mainmenu'=>$menu['fk_mainmenu'],
 				'fk_leftmenu'=>$menu['fk_leftmenu'],
+			    'position'=>$menu['position'],
 				'entry'=>'<table class="nobordernopadding centpercent"><tr><td>'.
 						'<strong> &nbsp; <a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.$titre.'</a></strong>'.
 						'</td><td align="right">'.
@@ -327,17 +331,26 @@ if ($conf->use_javascript_ajax)
 						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> '.
 						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> '.
 						'&nbsp; &nbsp; &nbsp;'.
-						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Descendre","1downarrow").'</a>'.
-						'</td></tr></table>'
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down","1downarrow").'</a>'.
+						'</td></tr></table>',
+			    'buttons'=>'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=edit&menuId='.$menu['rowid'].'">'.img_edit('default',0,'class="menuEdit" id="edit'.$menu['rowid'].'"').'</a> '.
+						'<a href="edit.php?menu_handler='.$menu_handler_to_search.'&action=create&menuId='.$menu['rowid'].'">'.img_edit_add('default').'</a> '.
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=delete&menuId='.$menu['rowid'].'">'.img_delete('default').'</a> '.
+						'&nbsp; &nbsp; &nbsp;'.
+						'<a href="index.php?menu_handler='.$menu_handler_to_search.'&action=up&menuId='.$menu['rowid'].'">'.img_picto("Up","1uparrow").'</a><a href="index.php?menu_handler='.$menu_handler_to_search.'&action=down&menuId='.$menu['rowid'].'">'.img_picto("Down","1downarrow").'</a>'
 			);
 			$i++;
 		}
 	}
 
-	// Appelle de la fonction recursive (ammorce)
-	// avec recherche depuis la racine.
+	global $tree_recur_alreadyadded;       // This var was def into tree_recur
+
 	//var_dump($data);
-	tree_recur($data,$data[0],0);
+
+	// Appelle de la fonction recursive (ammorce) avec recherche depuis la racine.
+	//tree_recur($data, $data[0], 0, 'iddivjstree', 0, 1);  // use this to get info on name and foreign keys of menu entry
+	tree_recur($data, $data[0], 0, 'iddivjstree', 0, 0);  // $data[0] is virtual record 'racine'
+
 
 	print '</td>';
 
@@ -345,6 +358,39 @@ if ($conf->use_javascript_ajax)
 
 	print '</table>';
 
+
+	// Process remaining records (records that are not linked to root by any path)
+    $remainingdata = array();
+	foreach($data as $datar)
+	{
+	    if (empty($datar['rowid']) || $tree_recur_alreadyadded[$datar['rowid']]) continue;
+	    $remainingdata[] = $datar;
+	}
+
+	if (count($remainingdata))
+	{
+    	print '<table class="noborder centpercent">';
+
+    	print '<tr class="liste_titre">';
+    	print '<td>'.$langs->trans("NotTopTreeMenuPersonalized").'</td>';
+    	print '<td align="right"></td>';
+    	print '</tr>';
+
+    	print '<tr>';
+    	print '<td colspan="2">';
+    	foreach($remainingdata as $datar)
+    	{
+            $father = array('rowid'=>$datar['rowid'],'title'=>"???",'mainmenu'=>$datar['fk_mainmenu'],'leftmenu'=>$datar['fk_leftmenu'],'fk_mainmenu'=>'','fk_leftmenu'=>'');
+    	    //print 'Start with rowid='.$datar['rowid'].' mainmenu='.$father ['mainmenu'].' leftmenu='.$father ['leftmenu'].'<br>'."\n";
+    	    tree_recur($data, $father, 0, 'iddivjstree'.$datar['rowid'], 1, 1);
+    	}
+
+    	print '</td>';
+
+    	print '</tr>';
+
+    	print '</table>';
+	}
 
 	print '</div>';
 
@@ -359,7 +405,7 @@ if ($conf->use_javascript_ajax)
 else
 {
 	$langs->load("errors");
-	setEventMessage($langs->trans("ErrorFeatureNeedJavascript"), 'errors');
+	setEventMessages($langs->trans("ErrorFeatureNeedJavascript"), null, 'errors');
 }
 
 print '<br>';

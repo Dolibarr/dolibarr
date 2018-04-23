@@ -46,15 +46,14 @@ class modPrinting extends DolibarrModules
         $this->numero = 64000;
         // Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
         // It is used to group modules in module setup page
-        $this->family = "technic";
+        $this->family = "interface";
+        $this->module_position = 520;
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable Direct Printing System.";
         $this->version = 'dolibarr';    // 'development' or 'experimental' or 'dolibarr' or version
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 1;
         // Name of image file used for this module.
         // If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
         // If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
@@ -96,7 +95,7 @@ class modPrinting extends DolibarrModules
         $this->rights[$r][0] = 64001;
         $this->rights[$r][1] = 'DirectPrint';
         $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 1;
+        $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'read';
 
         // Main menu entries
@@ -104,14 +103,13 @@ class modPrinting extends DolibarrModules
         $r=0;
 
         // This is to declare the Top Menu entry:
-        $this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=modulesadmintools',               // Put 0 if this is a top menu
+        $this->menu[$r]=array(  'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',               // Put 0 if this is a top menu
                                 'type'=>'left',                 // This is a Top menu entry
                                 'titre'=>'MenuDirectPrinting',
-                                'mainmenu'=>'printing',
-                                'url'=>'/printing/index.php',
+                                'url'=>'/printing/index.php?mainmenu=home&leftmenu=admintools',
                                 'langs'=>'printing',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
                                 'position'=>300,
-                                'enabled'=>'$conf->printing->enabled && $leftmenu==\'modulesadmintools\'',
+                                'enabled'=>'$conf->printing->enabled && preg_match(\'/^admintools/\', $leftmenu)',
                                 'perms'=>'$user->rights->printing->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
                                 'target'=>'',
                                 'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both

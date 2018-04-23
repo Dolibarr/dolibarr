@@ -37,7 +37,7 @@ if (! $user->admin)
 
 $actionsave=GETPOST("save");
 
-// Sauvegardes parametres
+// Save parameters
 if (!empty($actionsave))
 {
 	$i=0;
@@ -49,12 +49,12 @@ if (!empty($actionsave))
 	if ($i >= 1)
 	{
 		$db->commit();
-		setEventMessage($langs->trans("SetupSaved"));
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
 	else
 	{
 		$db->rollback();
-		setEventMessage($langs->trans("Error"), 'errors');
+		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
 }
 
@@ -65,8 +65,8 @@ if (!empty($actionsave))
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("CronSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("CronSetup"),$linkback,'title_setup');
 
 // Configuration header
 $head = cronadmin_prepare_head();
@@ -74,7 +74,7 @@ $head = cronadmin_prepare_head();
 print '<form name="agendasetupform" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-dol_fiche_head($head,'setup',$langs->trans("Module2300Name"),0,'cron');
+dol_fiche_head($head, 'setup', $langs->trans("Module2300Name"), -1, 'cron');
 
 print "<br>\n";
 
@@ -88,9 +88,20 @@ print "</tr>";
 
 print '<tr class="impair">';
 print '<td class="fieldrequired">'.$langs->trans("KeyForCronAccess").'</td>';
-print '<td><input type="text" class="flat" id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '" size="40">';
-if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+$disabled='';
+if (! empty($conf->global->CRON_DISABLE_KEY_CHANGE)) $disabled=' disabled="disabled"';
+print '<td>';
+if (empty($conf->global->CRON_DISABLE_KEY_CHANGE))
+{
+    print '<input type="text" class="flat minwidth200"'.$disabled.' id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '">';
+    if (! empty($conf->use_javascript_ajax))
+    	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
+}
+else
+{
+    print (! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'');
+    print '<input type="hidden" id="CRON_KEY" name="CRON_KEY" value="'. (GETPOST('CRON_KEY')?GETPOST('CRON_KEY'):(! empty($conf->global->CRON_KEY)?$conf->global->CRON_KEY:'')) . '">';
+}
 print '</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
@@ -109,6 +120,7 @@ print '</form>';
 print '<br><br>';
 
 print $langs->trans("UseMenuModuleToolsToAddCronJobs").'<br>';
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
 
 print '<br><br>';
 

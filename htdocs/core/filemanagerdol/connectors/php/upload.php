@@ -42,7 +42,7 @@ function SendError($number, $text)
 
 // Check if this uploader has been enabled.
 if ( !$Config['Enabled'] )
-	SendUploadResults('1', '', '', 'This file uploader is disabled. Please check the "editor/filemanager/connectors/php/config.php" file');
+	SendUploadResults('1', '', '', 'This file uploader is disabled. Please check the "filemanagerdol/connectors/php/config.php" file');
 
 $sCommand = 'QuickUpload' ;
 
@@ -60,7 +60,7 @@ if (! IsAllowedType($sType))
     SendUploadResults(1, '', '', 'Invalid type specified');
 
 
-// DOL_CHANGE
+// @CHANGE
 //FileUpload( $sType, $sCurrentFolder, $sCommand )
 
 // Get the CKEditor Callback

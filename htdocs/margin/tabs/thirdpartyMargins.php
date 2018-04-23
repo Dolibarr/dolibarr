@@ -42,12 +42,28 @@ $mesg = '';
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datef";
+
+$object = new Societe($db);
+if ($socid > 0) $object->fetch($socid);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('thirdpartymargins','globalcard'));
+
+
+/*
+ * Actions
+ */
+
+$parameters=array('id'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
 
 
 /*
@@ -57,54 +73,53 @@ if (! $sortfield) $sortfield="f.datef";
 $invoicestatic=new Facture($db);
 $form = new Form($db);
 
+$title=$langs->trans("ThirdParty").' - '.$langs->trans("Margins");
+if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name.' - '.$langs->trans("Files");
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
-llxHeader('',$langs->trans("ThirdParty").' - '.$langs->trans("Margins"),$help_url);
+llxHeader('',$title,$help_url);
 
 if ($socid > 0)
 {
-    $societe = new Societe($db);
-    $societe->fetch($socid);
+    $object = new Societe($db);
+    $object->fetch($socid);
 
     /*
      * Affichage onglets
      */
 
-    $head = societe_prepare_head($societe);
+    $head = societe_prepare_head($object);
 
-    dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"),0,'company');
+    dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"), -1, 'company');
 
-    print '<table class="border" width="100%">';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-    print '<td colspan="3">';
-    print $form->showrefnav($societe,'socid','',($user->societe_id?0:1),'rowid','nom');
-    print '</td></tr>';
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
-    if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
+    print '<div class="fichecenter">';
+
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border tableforfield" width="100%">';
+
+    if ($object->client)
     {
-        print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
-    }
-
-    if ($societe->client)
-    {
-        print '<tr><td>';
+        print '<tr><td class="titlefield">';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
-        print $societe->code_client;
-        if ($societe->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
+        print $object->code_client;
+        if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
         print '</td></tr>';
     }
 
-    if ($societe->fournisseur)
+    if (! empty($conf->fournisseur->enabled) && $object->fournisseur && ! empty($user->rights->fournisseur->lire))
     {
-        print '<tr><td>';
+        print '<tr><td class="titlefield">';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
-        print $societe->code_fournisseur;
-        if ($societe->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
+        print $object->code_fournisseur;
+        if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td></tr>';
     }
 
     // Total Margin
-    print '<tr><td>'.$langs->trans("TotalMargin").'</td><td colspan="3">';
+    print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
     print '<span id="totalMargin"></span>'; // set by jquery (see below)
     print '</td></tr>';
 
@@ -123,8 +138,13 @@ if ($socid > 0)
     }
 
     print "</table>";
-    print '</div>';
 
+    print '</div>';
+    print '<div style="clear:both"></div>';
+
+    dol_fiche_end();
+
+    print '<br>';
 
     $sql = "SELECT distinct s.nom, s.rowid as socid, s.code_client,";
     $sql.= " f.rowid as facid, f.facnumber, f.total as total_ht,";
@@ -137,7 +157,7 @@ if ($socid > 0)
     $sql.= ", ".MAIN_DB_PREFIX."facturedet as d";
     $sql.= " WHERE f.fk_soc = s.rowid";
     $sql.= " AND f.fk_statut > 0";
-    $sql.= " AND s.entity = ".$conf->entity;
+    $sql.= " AND f.entity = ".$conf->entity;
     $sql.= " AND d.fk_facture = f.rowid";
     $sql.= " AND f.fk_soc = $socid";
     $sql.= " AND d.buy_price_ht IS NOT NULL";
@@ -153,22 +173,23 @@ if ($socid > 0)
     {
     	$num = $db->num_rows($result);
 
-    	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=".$societe->id,$sortfield,$sortorder,'',0,0,'');
+    	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=".$object->id,$sortfield,$sortorder,'',0,0,'');
 
     	$i = 0;
+    	print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     	print "<table class=\"noborder\" width=\"100%\">";
 
     	print '<tr class="liste_titre">';
-    	print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socid=".$_REQUEST["socid"],'',$sortfield,$sortorder);
+    	print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;socid=".$_REQUEST["socid"],'align="center"',$sortfield,$sortorder);
+    	print_liste_field_titre("SoldAmount",$_SERVER["PHP_SELF"],"selling_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("PurchasedAmount",$_SERVER["PHP_SELF"],"buying_price","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("Margin",$_SERVER["PHP_SELF"],"marge","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-    		print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	if (! empty($conf->global->DISPLAY_MARK_RATES))
-    		print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
-    	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    		print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
+    	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;socid=".$_REQUEST["socid"],'align="right"',$sortfield,$sortorder);
     	print "</tr>\n";
 
     	$cumul_achat = 0;
@@ -178,7 +199,6 @@ if ($socid > 0)
 
     	if ($num > 0)
     	{
-    		$var=True;
     		while ($i < $num /*&& $i < $conf->liste_limit*/)
     		{
     			$objp = $db->fetch_object($result);
@@ -186,9 +206,7 @@ if ($socid > 0)
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-    			$var=!$var;
-
-    			print "<tr ".$bc[$var].">";
+    			print '<tr class="oddeven">';
     			print '<td>';
     			$invoicestatic->id=$objp->facid;
     			$invoicestatic->ref=$objp->facnumber;
@@ -206,13 +224,13 @@ if ($socid > 0)
     			print '<td align="right">'.$invoicestatic->LibStatut($objp->paye,$objp->statut,5).'</td>';
     			print "</tr>\n";
     			$i++;
-    			$cumul_achat += $objp->buying_price;
     			$cumul_vente += $objp->selling_price;
+    			$cumul_achat += ($objp->type == 2 ? -1 : 1) * $objp->buying_price;
     		}
     	}
 
     	// affichage totaux marges
-    	$var=!$var;
+
     	$totalMargin = $cumul_vente - $cumul_achat;
     	if ($totalMargin < 0)
     	{
@@ -224,6 +242,8 @@ if ($socid > 0)
     		$marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
     		$markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
     	}
+
+    	// Total
     	print '<tr class="liste_total">';
     	print '<td colspan=2>'.$langs->trans('TotalMargin')."</td>";
     	print "<td align=\"right\">".price($cumul_vente, null, null, null, null, $rounding)."</td>\n";
@@ -241,12 +261,14 @@ if ($socid > 0)
     	dol_print_error($db);
     }
     print "</table>";
+    print '</div>';
+
     print '<br>';
     $db->free($result);
 }
 else
 {
-	dol_print_error();
+	dol_print_error('', 'Parameter socid not defined');
 }
 
 

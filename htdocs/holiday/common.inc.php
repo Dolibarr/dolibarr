@@ -25,7 +25,7 @@
 
 require_once realpath(dirname(__FILE__)).'/../main.inc.php';
 if (! class_exists('Holiday')) {
-	require DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
+	require_once DOL_DOCUMENT_ROOT. '/holiday/class/holiday.class.php';
 }
 
 $langs->load("user");

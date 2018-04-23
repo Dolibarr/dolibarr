@@ -49,6 +49,7 @@ class AntiVir
 	/**
 	 *	Scan a file with antivirus.
 	 *  This function runs the command defined in setup. This antivirus command must return 0 if OK.
+	 *  Return also true (virus found) if file end with '.virus' (so we can make test safely).
 	 *
 	 *	@param	string	$file		File to scan
 	 *	@return	int					<0 if KO (-98 if error, -99 if virus), 0 if OK
@@ -58,6 +59,12 @@ class AntiVir
 		global $conf;
 
 		$return = 0;
+
+		if (preg_match('/\.virus$/i', $file))
+		{
+		    $this->errors='File has an extension saying file is a virus';
+		    return -97;
+		}
 
 		$fullcommand=$this->getCliCommand($file);
 		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';

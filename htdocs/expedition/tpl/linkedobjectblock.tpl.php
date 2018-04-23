@@ -14,8 +14,15 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
+
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE -->
@@ -28,51 +35,53 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
 $langs->load("sendings");
-echo '<br>';
-print_titre($langs->trans('RelatedShippings'));
 
-?>
-<table class="noborder allwidth">
-<tr class="liste_titre">
-	<td><?php echo $langs->trans("Ref"); ?></td>
-	<td align="center"><?php echo $langs->trans("Date"); ?></td>
-	<td align="center"><?php echo $langs->trans("DateDeliveryPlanned"); ?></td>
-	<td align="right"><?php echo $langs->trans("AmountHTShort"); ?></td>
-	<td align="right"><?php echo $langs->trans("Status"); ?></td>
-	<td></td>
-</tr>
-<?php
-$total=0;
+$total=0; $ilink=0;
 $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
-	$var=!$var;
+    $ilink++;
+
+    $trclass=($var?'pair':'impair');
+    if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
-<tr <?php echo $GLOBALS['bc'][$var]; ?> >
-    <td><?php echo $objectlink->getNomUrl(1); ?></td>
-	<td align="center"><?php echo dol_print_date($objectlink->date_creation,'day'); ?></td>
-	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
-	<td align="right"><?php
-		if ($user->rights->expedition->lire) {
-			$total = $total + $objectlink->total_ht;
-			echo price($objectlink->total_ht);
-		} ?></td>
-	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
-</tr>
+    <tr class="<?php echo $trclass; ?>">
+        <td><?php echo $langs->trans("Shipment"); ?></td>
+        <td><?php echo $objectlink->getNomUrl(1); ?></td>
+        <td></td>
+    	<td align="center"><?php echo dol_print_date($objectlink->date_delivery,'day'); ?></td>
+    	<td align="right"><?php
+    		if ($user->rights->expedition->lire) {
+    			$total = $total + $objectlink->total_ht;
+    			echo price($objectlink->total_ht);
+    		} ?></td>
+    	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
+    	<td align="right">
+    		<?php
+    		// For now, shipments must stay linked to order, so link is not deletable
+    		if($object->element != 'commande') {
+    			?>
+    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
+    			<?php
+    		}
+    		?>
+    </tr>
 <?php
 }
-
+if (count($linkedObjectBlock) > 1)
+{
+    ?>
+    <tr class="liste_total <?php echo (empty($noMoreLinkedObjectBlockAfter)?'liste_sub_total':''); ?>">
+        <td><?php echo $langs->trans("Total"); ?></td>
+        <td></td>
+    	<td align="center"></td>
+    	<td align="center"></td>
+    	<td align="right"><?php echo price($total); ?></td>
+    	<td align="right"></td>
+    	<td align="right"></td>
+    </tr>
+    <?php
+}
 ?>
-<tr class="liste_total">
-	<td align="left" colspan="3"><?php echo $langs->trans('TotalHT'); ?></td>
-	<td align="right"><?php
-		if ($user->rights->expedition->lire) {
-			echo price($total);
-		} ?></td>
-	<td></td>
-	<td></td>
-</tr>
-</table>
 
 <!-- END PHP TEMPLATE -->

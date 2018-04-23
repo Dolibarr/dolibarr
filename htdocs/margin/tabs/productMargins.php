@@ -49,7 +49,7 @@ $mesg = '';
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -65,12 +65,25 @@ $invoicestatic=new Facture($db);
 
 $form = new Form($db);
 
-
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+    $result = $object->fetch($id, $ref);
 
-	llxHeader("","",$langs->trans("CardProduct".$object->type));
+    $title = $langs->trans('ProductServiceCard');
+	$helpurl = '';
+	$shortlabel = dol_trunc($object->label,16);
+	if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+	{
+		$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Card');
+		$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+	}
+	if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+	{
+		$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Card');
+		$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+	}
+
+	llxHeader('', $title, $helpurl);
 
 	/*
 	 *  En mode visu
@@ -80,33 +93,20 @@ if ($id > 0 || ! empty($ref))
 		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-		dol_fiche_head($head, 'margin', $titre, 0, $picto);
+		dol_fiche_head($head, 'margin', $titre, -1, $picto);
 
-		print '<table class="border" width="100%">';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		// Reference
-		print '<tr>';
-		print '<td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $form->showrefnav($object,'ref','',1,'ref');
-		print '</td>';
-		print '</tr>';
+        dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref');
 
-		// Libelle
-		print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$object->label.'</td>';
-		print '</tr>';
 
-		// Status (to sell)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="3">';
-		print $object->getLibStatut(2,0);
-		print '</td></tr>';
+        print '<div class="fichecenter">';
 
-		// Status (to buy)
-		print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="3">';
-		print $object->getLibStatut(2,1);
-		print '</td></tr>';
+        print '<div class="underbanner clearboth"></div>';
+        print '<table class="border tableforfield" width="100%">';
 
 		// Total Margin
-		print '<tr><td>'.$langs->trans("TotalMargin").'</td><td colspan="3">';
+		print '<tr><td class="titlefield">'.$langs->trans("TotalMargin").'</td><td colspan="3">';
 		print '<span id="totalMargin"></span>'; // set by jquery (see below)
 		print '</td></tr>';
 
@@ -125,7 +125,11 @@ if ($id > 0 || ! empty($ref))
 		}
 
 		print "</table>";
-		print '</div>';
+
+        print '</div>';
+        print '<div style="clear:both"></div>';
+
+		dol_fiche_end();
 
 
         if ($user->rights->facture->lire) {
@@ -163,22 +167,24 @@ if ($id > 0 || ! empty($ref))
                 print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;id=$object->id",$sortfield,$sortorder,'',0,0,'');
 
                 $i = 0;
+
+                print '<div class="div-table-responsive">';
                 print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
-                print_liste_field_titre($langs->trans("Invoice"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$object->id,'',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$object->id,'',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("CustomerCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$object->id,'',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("DateInvoice"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$object->id,'align="center"',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("SellingPrice"),$_SERVER["PHP_SELF"],"selling_price","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("BuyingPrice"),$_SERVER["PHP_SELF"],"buying_price","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("Qty"),$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("Margin"),$_SERVER["PHP_SELF"],"marge","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;id=".$object->id,'',$sortfield,$sortorder);
+                print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$object->id,'',$sortfield,$sortorder);
+                print_liste_field_titre("CustomerCode",$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$object->id,'',$sortfield,$sortorder);
+                print_liste_field_titre("DateInvoice",$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$object->id,'align="center"',$sortfield,$sortorder);
+                print_liste_field_titre("SellingPrice",$_SERVER["PHP_SELF"],"selling_price","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre("BuyingPrice",$_SERVER["PHP_SELF"],"buying_price","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre("Qty",$_SERVER["PHP_SELF"],"d.qty","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre("Margin",$_SERVER["PHP_SELF"],"marge","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
                 if (! empty($conf->global->DISPLAY_MARGIN_RATES))
-                    print_liste_field_titre($langs->trans("MarginRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                    print_liste_field_titre("MarginRate",$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
                 if (! empty($conf->global->DISPLAY_MARK_RATES))
-                    print_liste_field_titre($langs->trans("MarkRate"),$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
-                print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                    print_liste_field_titre("MarkRate",$_SERVER["PHP_SELF"],"","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
+                print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"f.paye,f.fk_statut","","&amp;id=".$object->id,'align="right"',$sortfield,$sortorder);
                 print "</tr>\n";
 
                 $cumul_achat = 0;
@@ -187,15 +193,13 @@ if ($id > 0 || ! empty($ref))
                 $rounding = min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT);
 
                 if ($num > 0) {
-                    $var=True;
                     while ($i < $num /*&& $i < $conf->liste_limit*/) {
                         $objp = $db->fetch_object($result);
-                        $var=!$var;
 
 						$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
 						$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr class="oddeven">';
                         print '<td>';
                         $invoicestatic->id=$objp->facid;
                         $invoicestatic->ref=$objp->facnumber;
@@ -223,7 +227,7 @@ if ($id > 0 || ! empty($ref))
                 }
 
                 // affichage totaux marges
-                $var=!$var;
+
                 $totalMargin = $cumul_vente - $cumul_achat;
                 if ($totalMargin < 0)
                 {
@@ -231,7 +235,7 @@ if ($id > 0 || ! empty($ref))
                     $markRate = ($cumul_vente != 0)?-1*(100 * $totalMargin / $cumul_vente):'';
                 }
                 else
-              {
+                {
                     $marginRate = ($cumul_achat != 0)?(100 * $totalMargin / $cumul_achat):'';
                     $markRate = ($cumul_vente != 0)?(100 * $totalMargin / $cumul_vente):'';
                 }
@@ -248,7 +252,7 @@ if ($id > 0 || ! empty($ref))
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
                 print "</table>";
-                print '<br>';
+                print '</div>';
             } else {
                 dol_print_error($db);
             }

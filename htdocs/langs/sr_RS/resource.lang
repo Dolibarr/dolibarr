@@ -1,34 +1,36 @@
+# Dolibarr language file - Source file is en_US - resource
+MenuResourceIndex=Resursi
+MenuResourceAdd=Novi resurs
+DeleteResource=Obriši resurs
+ConfirmDeleteResourceElement=Potvrdi brisanje resursa za ovaj element
+NoResourceInDatabase=Nema resursa u bazi.
+NoResourceLinked=Nema povezanih resursa
 
-MenuResourceIndex=Resources
-MenuResourceAdd=New resource
-MenuResourcePlanning=Resource planning
-DeleteResource=Delete resource
-ConfirmDeleteResourceElement=Confirm delete the resource for this element
-NoResourceInDatabase=No resource in database.
-NoResourceLinked=No resource linked
+ResourcePageIndex=Lista resursa
+ResourceSingular=Resurs
+ResourceCard=Kartica resursa
+AddResource=Kreiraj resurs
+ResourceFormLabel_ref=Ime resursa
+ResourceType=Tip resursa
+ResourceFormLabel_description=Opis resursa
 
-ResourcePageIndex=Resources list
-ResourceSingular=Resource
-ResourceCard=Resource card
-AddResource=Create a resource
-ResourceFormLabel_ref=Resource name
-ResourceType=Resource type
-ResourceFormLabel_description=Resource description
+ResourcesLinkedToElement=Resursi vezani za elemenat
 
-ResourcesLinkedToElement=Resources linked to element
+ShowResource=Prikaži resurs
 
-ShowResourcePlanning=Show resource planning
-GotoDate=Go to date
+ResourceElementPage=Resursi elementa
+ResourceCreatedWithSuccess=Resurs uspešno kreiran
+RessourceLineSuccessfullyDeleted=Linija resursa uspešno obrisana
+RessourceLineSuccessfullyUpdated=Linija resursa uspešno ažurirana
+ResourceLinkedWithSuccess=Resurs uspešno povezan
 
-ResourceElementPage=Element resources
-ResourceCreatedWithSuccess=Resource successfully created
-RessourceLineSuccessfullyDeleted=Resource line successfully deleted
-RessourceLineSuccessfullyUpdated=Resource line successfully updated
-ResourceLinkedWithSuccess=Resource linked with success
+ConfirmDeleteResource=Potvrdi brisanje ovog resursa
+RessourceSuccessfullyDeleted=Resurs uspešno obrisan
+DictionaryResourceType=Tip resursa
 
-TitleResourceCard=Resource card
-ConfirmDeleteResource=Confirm to delete this resource
-RessourceSuccessfullyDeleted=Resource successfully deleted
-DictionaryResourceType=Type of resources
+SelectResource=Izbor resursa
 
-SelectResource=Select resource
+IdResource=ID broj resursa
+AssetNumber=Serijski broj
+ResourceTypeCode=Kod tipa resursa
+ImportDataset_resource_1=Resursi

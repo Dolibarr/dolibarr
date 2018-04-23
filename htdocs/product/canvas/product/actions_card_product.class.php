@@ -74,6 +74,7 @@ class ActionsCardProduct
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+		global $limit, $offset, $sortfield, $sortorder;
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
@@ -215,7 +216,7 @@ class ActionsCardProduct
 			$this->tpl['nblignes'] = 4;
 			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
 			{
-				$this->tpl['photos'] = $this->object->show_photos($conf->product->multidir_output[$this->object->entity],1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity],1,1,0,0,0,80);
 			}
 
 			// Nature
@@ -250,7 +251,7 @@ class ActionsCardProduct
 
 		if ($action == 'list')
 		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 
 	}
@@ -269,7 +270,7 @@ class ActionsCardProduct
 
 		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
-		$sql.= " WHERE element = '".$this->fieldListName."'";
+		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
 		$sql.= " AND entity = ".$conf->entity;
 		$sql.= " ORDER BY rang ASC";
 
@@ -309,7 +310,7 @@ class ActionsCardProduct
 
 
 	/**
-	 * 	Fetch datas list
+	 * 	Fetch datas list and save into ->list_datas
 	 *
 	 *  @param	int		$limit		Limit number of responses
 	 *  @param	int		$offset		Offset for first response
@@ -325,23 +326,22 @@ class ActionsCardProduct
 
         $this->list_datas = array();
 
-		//$_GET["sall"] = 'LL';
 		// Clean parameters
-		$sall=trim(isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"]);
+        $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 
 		foreach($this->field_list as $field)
 		{
 			if ($field['enabled'])
 			{
 				$fieldname = "s".$field['alias'];
-				$$fieldname = trim(isset($_GET[$fieldname])?$_GET[$fieldname]:$_POST[$fieldname]);
+				$$fieldname = trim(GETPOST($fieldname));
 			}
 		}
 
 		$sql = 'SELECT DISTINCT ';
 
 		// Fields requiered
-		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte';
+		$sql.= 'p.rowid, p.price_base_type, p.fk_product_type, p.seuil_stock_alerte, p.entity';
 
 		// Fields not requiered
 		foreach($this->field_list as $field)
@@ -353,7 +353,7 @@ class ActionsCardProduct
 		}
 
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-		$sql.= " WHERE p.entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE p.entity IN (".getEntity('product').")";
 
 		if ($sall)
 		{
@@ -417,6 +417,7 @@ class ActionsCardProduct
 							$this->id 		= $obj->rowid;
 							$this->ref 		= $obj->$alias;
 							$this->type 	= $obj->fk_product_type;
+							$this->entity	= $obj->entity;
 							$datas[$alias] 	= $this->getNomUrl(1,'',24);
 						}
 						else if ($alias == 'stock')

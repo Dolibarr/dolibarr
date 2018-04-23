@@ -40,16 +40,16 @@ $upload_dir=$conf->admin->dir_temp;
  * Actions
  */
 
-if (GETPOST("action") == 'set_proxy')
+if (GETPOST('action','aZ09') == 'set_proxy')
 {
     if (GETPOST("MAIN_USE_CONNECT_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_CONNECT_TIMEOUT")))
     {
-        setEventMessage($langs->trans("ErrorValueMustBeInteger"),'errors');
+        setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
         $error++;
     }
     if (GETPOST("MAIN_USE_RESPONSE_TIMEOUT") && ! is_numeric(GETPOST("MAIN_USE_RESPONSE_TIMEOUT")))
     {
-        setEventMessage($langs->trans("ErrorValueMustBeInteger"),'errors');
+        setEventMessages($langs->trans("ErrorValueMustBeInteger"), null, 'errors');
         $error++;
     }
 
@@ -68,7 +68,7 @@ if (GETPOST("action") == 'set_proxy')
 
     if (! $error)
     {
-        setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+        setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
 }
 
@@ -79,9 +79,10 @@ if (GETPOST("action") == 'set_proxy')
 
 $form = new Form($db);
 
-llxHeader('',$langs->trans("Proxy"));
+$wikihelp='EN:Setup_Security|FR:Paramétrage_Sécurité|ES:Configuración_Seguridad';
+llxHeader('',$langs->trans("Proxy"), $wikihelp);
 
-print_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
+print load_fiche_titre($langs->trans("SecuritySetup"),'','title_setup');
 
 print $langs->trans("ProxyDesc")."<br>\n";
 print "<br>\n";
@@ -95,7 +96,7 @@ print '<input type="hidden" name="action" value="set_proxy">';
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'proxy', $langs->trans("Security"));
+dol_fiche_head($head, 'proxy', $langs->trans("Security"), -1);
 
 
 if ($conf->use_javascript_ajax)
@@ -132,8 +133,8 @@ print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td width="200">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ConnectionTimeout").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -142,8 +143,8 @@ print ' '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ResponseTimeout").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -152,8 +153,8 @@ print ' '.strtolower($langs->trans("Seconds"));
 print '</td>';
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_USE").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -161,7 +162,7 @@ print $form->selectyesno('MAIN_PROXY_USE',$conf->global->MAIN_PROXY_USE,1);
 print '</td>';
 print '</tr>';
 
-$var=!$var;
+
 print '<tr '.$bcdd[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_HOST").'</td><td align="right">';
 print '</td>';
@@ -170,7 +171,7 @@ print '<input class="flat" name="MAIN_PROXY_HOST" type="text" size="16" value="'
 print '</td>';
 print '</tr>';
 
-$var=!$var;
+
 print '<tr '.$bcdd[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_PORT").'</td><td align="right">';
 print '</td>';
@@ -179,7 +180,7 @@ print '<input class="flat" name="MAIN_PROXY_PORT" type="text" size="4" value="'.
 print '</td>';
 print '</tr>';
 
-$var=!$var;
+
 print '<tr '.$bcdd[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_USER").'</td><td align="right">';
 print '</td>';
@@ -188,7 +189,7 @@ print '<input class="flat" name="MAIN_PROXY_USER" type="text" size="16" value="'
 print '</td>';
 print '</tr>';
 
-$var=!$var;
+
 print '<tr '.$bcdd[$var].'>';
 print '<td>'.$langs->trans("MAIN_PROXY_PASS").'</td><td align="right">';
 print '</td>';
@@ -207,6 +208,5 @@ print '</div>';
 
 print '</form>';
 
-$db->close();
-
 llxFooter();
+$db->close();

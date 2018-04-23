@@ -2,9 +2,9 @@
 /* Copyright (C) 2005     	Patrick Rouillon    <patrick@rouillon.net>
  * Copyright (C) 2005-2011	Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin       <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012	Philippe Grand      <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015	Philippe Grand      <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Charles-Fr Benke	<charles.fr@benke.fr>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,9 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $id,'');
 
 $object = new Societe($db);
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contactthirdparty','globalcard'));
 
 
 /*
@@ -107,13 +110,14 @@ else if ($action == 'deletecontact' && $user->rights->societe->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->societe->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
+
 
 /*
  * View
@@ -144,20 +148,29 @@ if ($id > 0 || ! empty($ref))
 		$soc->fetch($object->socid);
 
 		$head = societe_prepare_head($object);
-		dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"),0,'company');
+		dol_fiche_head($head, 'contact', $langs->trans("ThirdParty"), -1, 'company');
 
 		print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-		print '<table class="border" width="100%">';
-		print '<tr><td width="20%">'.$langs->trans('ThirdPartyName').'</td>';
-		print '<td colspan="3">';
-		print $form->showrefnav($object,'id','',($user->societe_id?0:1),'rowid','nom');
-		print '</td></tr>';
 
-		// Alias names (commercial, trademark or alias names)
-		print '<tr><td valign="top">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-		print $object->name_alias;
-		print "</td></tr>";
+        $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+        dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+
+    	print '<div class="fichecenter">';
+
+        print '<div class="underbanner clearboth"></div>';
+		print '<table class="border centpercent">';
+
+    	// Prospect/Customer
+    	/*print '<tr><td class="titlefield">'.$langs->trans('ProspectCustomer').'</td><td>';
+    	print $object->getLibCustProspStatut();
+    	print '</td></tr>';
+
+    	// Supplier
+    	print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
+    	print yn($object->fournisseur);
+    	print '</td></tr>';*/
 
 		if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
 		{
@@ -166,7 +179,7 @@ if ($id > 0 || ! empty($ref))
 
 		if ($object->client)
 		{
-		    print '<tr><td>';
+		    print '<tr><td class="titlefield">';
 		    print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		    print $object->code_client;
 		    if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -175,13 +188,17 @@ if ($id > 0 || ! empty($ref))
 
 		if ($object->fournisseur)
 		{
-		    print '<tr><td>';
+		    print '<tr><td class="titlefield">';
 		    print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		    print $object->code_fournisseur;
 		    if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
 		    print '</td></tr>';
 		}
-		print '</table></form>';
+		print '</table>';
+
+		print '</div>';
+
+		print '</form>';
 		print '<br>';
 
 		// Contacts lines (modules that overwrite templates must declare this into descriptor)
@@ -205,10 +222,11 @@ if ($id > 0 || ! empty($ref))
 			$sql = "SELECT d.rowid, d.login, d.lastname, d.firstname, d.societe as company, d.fk_soc,";
 			$sql.= " d.datefin,";
 			$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
-			$sql.= " t.libelle as type, t.cotisation";
+			$sql.= " t.libelle as type, t.subscription";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as d";
 			$sql.= ", ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql.= " WHERE d.fk_soc=".$id;
+			$sql.= " WHERE d.fk_soc = ".$id;
+			$sql.= " AND d.fk_adherent_type = t.rowid";
 
 			dol_syslog("get list sql=".$sql);
 			$resql = $db->query($sql);
@@ -225,17 +243,16 @@ if ($id > 0 || ! empty($ref))
 
 					print "<table class=\"noborder\" width=\"100%\">";
 					print '<tr class="liste_titre">';
-					print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
-					print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
-					print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-					print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"t.libelle",$param,"","",$sortfield,$sortorder);
-					print_liste_field_titre($langs->trans("Person"),$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
-					print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
-					print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
-					print_liste_field_titre($langs->trans("EndSubscription"),$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
+					print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"d.rowid",$param,"","",$sortfield,$sortorder);
+					print_liste_field_titre( $langs->trans("Name")." / ".$langs->trans("Company"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
+					print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+					print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"t.libelle",$param,"","",$sortfield,$sortorder);
+					print_liste_field_titre("Person",$_SERVER["PHP_SELF"],"d.morphy",$param,"","",$sortfield,$sortorder);
+					print_liste_field_titre("EMail",$_SERVER["PHP_SELF"],"d.email",$param,"","",$sortfield,$sortorder);
+					print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
+					print_liste_field_titre("EndSubscription",$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
 					print "</tr>\n";
 
-					$var=True;
 					$i=0;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
@@ -251,8 +268,7 @@ if ($id > 0 || ! empty($ref))
 
 						$companyname=$objp->company;
 
-						$var=!$var;
-						print "<tr ".$bc[$var].">";
+						print '<tr class="oddeven">';
 
 						// Ref
 						print "<td>";
@@ -284,7 +300,7 @@ if ($id > 0 || ! empty($ref))
 
 						// Statut
 						print '<td class="nowrap">';
-						print $memberstatic->LibStatut($objp->statut,$objp->cotisation,$datefin,2);
+						print $memberstatic->LibStatut($objp->statut,$objp->subscription,$datefin,2);
 						print "</td>";
 
 						// End of subscription date
@@ -300,7 +316,7 @@ if ($id > 0 || ! empty($ref))
 						else
 						{
 							print '<td align="left" class="nowrap">';
-							if ($objp->cotisation == 'yes')
+							if ($objp->subscription == 'yes')
 							{
 								print $langs->trans("SubscriptionNotReceived");
 								if ($objp->statut > 0) print " ".img_warning();
@@ -327,5 +343,5 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-$db->close();
 llxFooter();
+$db->close();

@@ -1,5 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2012      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+-- Copyright (C) 2016	Regis Houssin		<regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,6 +17,7 @@
 --
 -- ===================================================================
 
+ALTER TABLE llx_holiday ADD INDEX idx_holiday_entity (entity);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user (fk_user);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_fk_user_create (fk_user_create);
 ALTER TABLE llx_holiday ADD INDEX idx_holiday_date_create (date_create);

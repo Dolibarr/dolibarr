@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=ล้มเหลวในการ�
 FTPFailedToRemoveFile=<b>ไม่สามารถลบไฟล์%</b> s
 FTPFailedToRemoveDir=<b>ไม่สามารถลบไดเรกทอรี% s</b> (สิทธิ์ตรวจสอบไดเรกทอรีที่ว่างเปล่า)
 FTPPassiveMode=โหมด Passive
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

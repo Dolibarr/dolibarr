@@ -138,7 +138,6 @@ class MarginsLibTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(20,$result[2]);
 		
 		$result=getMarginInfos(10, 10, 19.6, 0, 0, 0, 8);
-		var_dump($result);
 		print __METHOD__." result[0]=".$result[0]."\n";
 		$this->assertEquals(8,$result[0]);
 		print __METHOD__." result[1]=".$result[1]."\n";

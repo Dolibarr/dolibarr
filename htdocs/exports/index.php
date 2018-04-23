@@ -44,18 +44,19 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("ExportsArea"),'EN:Module_Exports_En|FR:Module_Exports|ES:M&oacute;dulo_Exportaciones');
 
-print_fiche_titre($langs->trans("ExportsArea"));
+print load_fiche_titre($langs->trans("ExportsArea"));
 
 print $langs->trans("FormatedExportDesc1").'<br>';
-print $langs->trans("FormatedExportDesc2").' ';
-print $langs->trans("FormatedExportDesc3").'<br>';
+//print $langs->trans("FormatedExportDesc2").' ';
+//print $langs->trans("FormatedExportDesc3").'<br>';
 print '<br>';
 
 
-print '<div class="fichecenter"><div class="fichehalfleft">';
+//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
 // List export set
+/*
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
@@ -67,8 +68,8 @@ if (count($export->array_export_code))
 {
 	foreach ($export->array_export_code as $key => $value)
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'><td>';
+
+		print '<tr class="oddeven"><td>';
 		//print img_object($export->array_export_module[$key]->getName(),$export->array_export_module[$key]->picto).' ';
 		print $export->array_export_module[$key]->getName();
 		print '</td><td>';
@@ -89,6 +90,7 @@ else
 }
 print '</table>';
 print '<br>';
+*/
 
 print '<div class="center">';
 if (count($export->array_export_code))
@@ -110,7 +112,7 @@ if (count($export->array_export_code))
 print '</div>';
 print '<br>';
 
-print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+//print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 // List of available export format
@@ -123,7 +125,7 @@ print '<td align="right">'.$langs->trans("LibraryVersion").'</td>';
 print '</tr>';
 
 include_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
-$model=new ModeleExports();
+$model=new ModeleExports($db);
 $liste=$model->liste_modeles($db);    // This is not a static method for exports because method load non static properties
 
 $var=true;
@@ -134,8 +136,8 @@ foreach($liste as $key => $val)
     	$liste[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$liste[$key]);
     }
 
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+
+	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
 	$label=$liste[$key];
@@ -148,7 +150,7 @@ foreach($liste as $key => $val)
 print '</table>';
 
 
-print '</div></div></div>';
+//print '</div></div></div>';
 
 
 llxFooter();

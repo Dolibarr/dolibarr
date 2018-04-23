@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2012	Christophe Battarel	<christophe.battarel@altairis.fr>
+ * Copyright (C) 2016	Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ $action=GETPOST('action','alpha');
 /*
  * Action
  */
-if (preg_match('/set_(.*)/',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'yesno', 0, '', $conf->entity) > 0)
@@ -55,7 +56,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
     }
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -73,7 +74,7 @@ if ($action == 'remises')
 {
     if (dolibarr_set_const($db, 'MARGIN_METHODE_FOR_DISCOUNT', $_POST['MARGIN_METHODE_FOR_DISCOUNT'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {
@@ -85,7 +86,7 @@ if ($action == 'typemarges')
 {
     if (dolibarr_set_const($db, 'MARGIN_TYPE', $_POST['MARGIN_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {
@@ -97,7 +98,7 @@ if ($action == 'contact')
 {
     if (dolibarr_set_const($db, 'AGENT_CONTACT_TYPE', $_POST['AGENT_CONTACT_TYPE'], 'chaine', 0, '', $conf->entity) > 0)
     {
-          setEventMessage($langs->trans("RecordModifiedSuccessfully"));
+          setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
     }
     else
     {
@@ -112,15 +113,15 @@ if ($action == 'contact')
 llxHeader('',$langs->trans("margesSetup"));
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
-print_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("margesSetup"),$linkback,'title_setup');
 
 
 $head = marges_admin_prepare_head();
 
-dol_fiche_head($head, 'parameters', $langs->trans("Margins"), 0, 'margin');
+dol_fiche_head($head, 'parameters', $langs->trans("Margins"), -1, 'margin');
 
-print_fiche_titre($langs->trans("MemberMainOptions"),'','');
+print load_fiche_titre($langs->trans("MemberMainOptions"),'','');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width=300>'.$langs->trans("Description").'</td>';
@@ -132,11 +133,11 @@ $var=true;
 $form = new Form($db);
 
 // GLOBAL DISCOUNT MANAGEMENT
-$var=!$var;
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"typemarges\">";
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_TYPE").'</td>';
 print '<td>';
 print ' <input type="radio" name="MARGIN_TYPE" value="1" ';
@@ -145,33 +146,27 @@ if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '1')
 print '/> ';
 print $langs->trans('MargeType1');
 print '<br>';
-/*print $langs->trans('MargeNette');
-print ' <input type="radio" name="MARGIN_TYPE" value="2" ';
-if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == '2')
-	print 'checked ';
-print '/>';*/
-// TODO Check that PMP is available when stock module is not enabled. If not, make this choice greyed when stock module disabled.
-//if (! empty($conf->stock->enabled))
-//{
-	print ' <input type="radio" name="MARGIN_TYPE" value="pmp" ';
-	if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp')
-		print 'checked ';
-	print '/> ';
-	print $langs->trans('MargeType2');
-//}
+print ' <input type="radio" name="MARGIN_TYPE" value="pmp" ';
+if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'pmp') print 'checked ';
+print '/> ';
+print $langs->trans('MargeType2');
+print '<br>';
+print ' <input type="radio" name="MARGIN_TYPE" value="costprice" ';
+if (isset($conf->global->MARGIN_TYPE) && $conf->global->MARGIN_TYPE == 'costprice') print 'checked ';
+print '/> ';
+print $langs->trans('MargeType3');
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" class="button">';
 print '</td>';
 print '<td>'.$langs->trans('MarginTypeDesc');
-print ' ('.$langs->trans("PMPValueShort").')';
 print '</td>';
 print '</tr>';
 print '</form>';
 
 // DISPLAY MARGIN RATES
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarginRates").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -194,8 +189,8 @@ print '<td>'.$langs->trans('MarginRate').' = '.$langs->trans('Margin').' / '.$la
 print '</tr>';
 
 // DISPLAY MARK RATES
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("DisplayMarkRates").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -217,8 +212,8 @@ print '</td>';
 print '<td>'.$langs->trans('MarkRate').' = '.$langs->trans('Margin').' / '.$langs->trans('SellingPrice').'</td>';
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ForceBuyingPriceIfNull").'</td>';
 print '<td colspan="2" align="center">';
 if (! empty($conf->use_javascript_ajax))
@@ -241,27 +236,20 @@ print '<td>'.$langs->trans('ForceBuyingPriceIfNullDetails').'</td>';
 print '</tr>';
 
 // GLOBAL DISCOUNT MANAGEMENT
-$var=!$var;
+$methods = array(
+	1 => $langs->trans('UseDiscountAsProduct'),
+	2 => $langs->trans('UseDiscountAsService'),
+	3 => $langs->trans('UseDiscountOnTotal')
+);
+
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"remises\">";
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MARGIN_METHODE_FOR_DISCOUNT").'</td>';
 print '<td align="left">';
-print '<select name="MARGIN_METHODE_FOR_DISCOUNT" class="flat">';
-print '<option value="1" ';
-if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '1')
-	print 'selected ';
-print '>'.$langs->trans('UseDiscountAsProduct').'</option>';
-print '<option value="2" ';
-if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '2')
-	print 'selected ';
-print '>'.$langs->trans('UseDiscountAsService').'</option>';
-print '<option value="3" ';
-if (isset($conf->global->MARGIN_METHODE_FOR_DISCOUNT) && $conf->global->MARGIN_METHODE_FOR_DISCOUNT == '3')
-	print 'selected ';
-print '>'.$langs->trans('UseDiscountOnTotal').'</option>';
-print '</select>';
+print Form::selectarray('MARGIN_METHODE_FOR_DISCOUNT', $methods, $conf->global->MARGIN_METHODE_FOR_DISCOUNT);
 print '</td>';
 print '<td>';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
@@ -271,11 +259,11 @@ print '</tr>';
 print '</form>';
 
 // INTERNAL CONTACT TYPE USED AS COMMERCIAL AGENT
-$var=!$var;
+
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"contact\">";
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AgentContactType").'</td>';
 print '<td align="left">';
 $formcompany = new FormCompany($db);

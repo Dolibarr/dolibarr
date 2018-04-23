@@ -19,3 +19,4 @@ FormatDateHourShort=%d.%m.%Y %H:%M
 FormatDateHourSecShort=%m/%d/%Y %I:%M:%S %p
 FormatDateHourTextShort=%d %b %Y %H:%M
 FormatDateHourText=%d %B %Y %H:%M
+MenuECM=Документация

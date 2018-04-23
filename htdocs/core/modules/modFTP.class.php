@@ -48,7 +48,7 @@ class modFTP extends DolibarrModules
 
 		// Family can be 'crm','financial','hr','projects','product','ecm','technic','other'
 		// It is used to sort modules in module setup page
-		$this->family = "other";
+		$this->family = "interface";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		// Module description used if translation string 'ModuleXXXDesc' not found (XXX is id value)
@@ -57,8 +57,6 @@ class modFTP extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (XXX is id value)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->special = 1;
 		// Name of png file (without png) used for this module
 		$this->picto='dir';
 
@@ -76,7 +74,10 @@ class modFTP extends DolibarrModules
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 
 		// Constants
-		$this->const = array();			// List of parameters
+		$this->const = array(
+		    1=>array('FTP_CONNECT_WITH_SSL','chaine','0','Use FTPS for FTP module', 1, 'current', 1),
+		    2=>array('FTP_CONNECT_WITH_SFTP','chaine','0','Use SFTP for FTP module', 1, 'current', 1)
+		);			// List of parameters
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
@@ -97,7 +98,7 @@ class modFTP extends DolibarrModules
 		$this->rights[$r][0] = 2801;
 		$this->rights[$r][1] = 'Use FTP client in read mode (browse and download only)';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 
 		$r++;
@@ -107,12 +108,9 @@ class modFTP extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'write';
 
-		// Menus
-		//------
-		$this->menus = array();			// List of menus to add
-		$r=0;
 
-		// Top menu
+		// Menus
+		//-------
 		$this->menu[$r]=array('fk_menu'=>0,
 							  'type'=>'top',
 							  'titre'=>'FTP',

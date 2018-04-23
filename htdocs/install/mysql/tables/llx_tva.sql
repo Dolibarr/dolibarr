@@ -21,23 +21,17 @@ create table llx_tva
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
+  datec           datetime,                   -- Create date
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur
-  amount          real NOT NULL DEFAULT 0,
+  amount          double(24,8) NOT NULL DEFAULT 0,
   fk_typepayment  integer NULL,
   num_payment     varchar(50),
   label           varchar(255),
   entity          integer DEFAULT 1 NOT NULL,	-- multi company id
   note            text,
   fk_bank         integer,  
-  fk_user_creat   integer,                    -- utilisateur qui a cree l'info
-  fk_user_modif   integer                     -- utilisateur qui a modifi� l'info
+  fk_user_creat   integer,                    -- utilisateur who create record
+  fk_user_modif   integer,                    -- utilisateur who modify record
+  import_key      varchar(14)
 )ENGINE=innodb;
-
--- 
--- List of codes for the field entity
---
--- 1 : first company vat
--- 2 : second company vat
--- 3 : etc...
---

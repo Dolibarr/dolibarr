@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2014-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018  	   Ferran Marcet 		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +39,7 @@ $forbarcode=GETPOST('forbarcode');
 $fk_barcode_type=GETPOST('fk_barcode_type');
 $eraseallbarcode=GETPOST('eraseallbarcode');
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);
@@ -92,7 +93,7 @@ if ($action == 'initbarcodeproducts')
 	if (! is_object($modBarCodeProduct))
 	{
 		$error++;
-		setEventMessage($langs->trans("NoBarcodeNumberingTemplateDefined"),'errors');
+		setEventMessages($langs->trans("NoBarcodeNumberingTemplateDefined"), null, 'errors');
 	}
 
 	if (! $error)
@@ -109,7 +110,7 @@ if ($action == 'initbarcodeproducts')
 			$resql=$db->query($sql);
 			if ($resql)
 			{
-				setEventMessage($langs->trans("AllBarcodeReset"),'mesgs');
+				setEventMessages($langs->trans("AllBarcodeReset"), null, 'mesgs');
 			}
 			else
 			{
@@ -143,7 +144,7 @@ if ($action == 'initbarcodeproducts')
 						$nextvalue=$modBarCodeProduct->getNextValue($productstatic,'');
 
 						//print 'Set value '.$nextvalue.' to product '.$productstatic->id." ".$productstatic->ref." ".$productstatic->type."<br>\n";
-						$result=$productstatic->setValueFrom('barcode', $nextvalue);
+						$result=$productstatic->setValueFrom('barcode', $nextvalue, '', '', 'text', '', $user, 'PRODUCT_MODIFY');
 
 						$nbtry++;
 						if ($result > 0) $nbok++;
@@ -160,7 +161,7 @@ if ($action == 'initbarcodeproducts')
 
 			if (! $error)
 			{
-				setEventMessage($langs->trans("RecordsModified",$nbok),'mesgs');
+				setEventMessages($langs->trans("RecordsModified",$nbok), null, 'mesgs');
 			}
 		}
 
@@ -191,7 +192,7 @@ $form=new Form($db);
 
 llxHeader('',$langs->trans("MassBarcodeInit"));
 
-print_fiche_titre($langs->trans("MassBarcodeInit"));
+print load_fiche_titre($langs->trans("MassBarcodeInit"), '', 'title_setup.png');
 print '<br>';
 
 print $langs->trans("MassBarcodeInitDesc").'<br>';
@@ -211,7 +212,7 @@ if ($conf->societe->enabled)
 {
 	$nbno=$nbtotal=0;
 
-	print_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','object_company');
+	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','object_company');
 	print '<br>'."\n";
 	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
 	$resql=$db->query($sql);
@@ -252,7 +253,7 @@ if ($conf->product->enabled || $conf->product->service)
 
 	$nbno=$nbtotal=0;
 
-	print_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','object_product');
+	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','object_product');
 	print '<br>'."\n";
 
 	$sql ="SELECT count(rowid) as nb, fk_product_type, datec";
@@ -298,7 +299,7 @@ if ($conf->product->enabled || $conf->product->service)
 	{
 		$disabled=1;
 		$titleno=$langs->trans("NoBarcodeNumberingTemplateDefined");
-		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font><br>';
+		print '<font class="warning">'.$langs->trans("NoBarcodeNumberingTemplateDefined").'</font> (<a href="'.DOL_URL_ROOT.'/admin/barcode.php">'.$langs->trans("ToGenerateCodeDefineAutomaticRuleFirst").'</a>)<br>';
 	}
 	if (empty($nbno))
 	{

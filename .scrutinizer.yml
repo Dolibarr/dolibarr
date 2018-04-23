@@ -9,6 +9,7 @@ filter:
         - dev/*
         - doc/*
         - test/*
+        - htdocs/includes/*
     paths: 
         - htdocs/*
         - scripts/*

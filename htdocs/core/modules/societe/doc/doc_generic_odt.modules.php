@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2010-2011 Laurent Destailleur <ely@users.sourceforge.net>
-
+ * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -131,7 +131,25 @@ class doc_generic_odt extends ModeleThirdPartyDoc
         $texte.= '</table>';
 
 		// Scan directories
-		if (count($listofdir)) $texte.=$langs->trans("NumberOfModelFilesFound").': <b>'.count($listoffiles).'</b>';
+		$nbofiles=count($listoffiles);
+		if (! empty($conf->global->COMPANY_ADDON_PDF_ODT_PATH))
+		{
+			$texte.=$langs->trans("NumberOfModelFilesFound").': <b>';
+			//$texte.=$nbofiles?'<a id="a_'.get_class($this).'" href="#">':'';
+			$texte.=$nbofiles;
+			//$texte.=$nbofiles?'</a>':'';
+			$texte.='</b>';
+		}
+
+		if ($nbofiles)
+		{
+   			$texte.='<div id="div_'.get_class($this).'" class="hidden">';
+   			foreach($listoffiles as $file)
+   			{
+                $texte.=$file['name'].'<br>';
+   			}
+   			$texte.='<div id="div_'.get_class($this).'">';
+		}
 
 		$texte.= '</td>';
 
@@ -209,9 +227,15 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$newfiletmp=preg_replace('/modele_/i','',$newfiletmp);
 				// Get extension (ods or odt)
 				$newfileformat=substr($newfile, strrpos($newfile, '.')+1);
+				if ( ! empty($conf->global->MAIN_DOC_USE_OBJECT_THIRDPARTY_NAME))
+				{
+				    $newfiletmp = dol_sanitizeFileName(dol_string_nospecial($object->name)).'-'.$newfiletmp;
+				}
 				if ( ! empty($conf->global->MAIN_DOC_USE_TIMING))
 				{
-					$filename=$newfiletmp.'.'.dol_print_date(dol_now(),'%Y%m%d%H%M%S').'.'.$newfileformat;
+				    $format=$conf->global->MAIN_DOC_USE_TIMING;
+				    if ($format == '1') $format='%Y%m%d%H%M%S';
+					$filename=$newfiletmp.'-'.dol_print_date(dol_now(),$format).'.'.$newfileformat;
 				}
 				else
 				{
@@ -248,53 +272,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 				//print $odfHandler->__toString()."\n";
 
-				// Make substitutions into odt of user info
-			    $tmparray=$this->get_substitutionarray_user($user,$outputlangs);
-                //var_dump($tmparray); exit;
-                foreach($tmparray as $key=>$value)
-                {
-                    try {
-                        if (preg_match('/logo$/',$key)) // Image
-                        {
-                            //var_dump($value);exit;
-                            if (file_exists($value)) $odfHandler->setImage($key, $value);
-                            else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-                        }
-                        else    // Text
-                        {
-                            //print $key.' '.$value;exit;
-                            $odfHandler->setVars($key, $value, true, 'UTF-8');
-                        }
-                    }
-                    catch(OdfException $e)
-                    {
-                        // setVars failed, probably because key not found
-                    }
-                }
-                // Make substitutions into odt of mysoc info
-                $tmparray=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
-				//var_dump($tmparray); exit;
-				foreach($tmparray as $key=>$value)
-				{
-					try {
-						if (preg_match('/logo$/',$key))	// Image
-						{
-							//var_dump($value);exit;
-							if (file_exists($value)) $odfHandler->setImage($key, $value);
-							else $odfHandler->setVars($key, 'ErrorFileNotFound', true, 'UTF-8');
-						}
-						else	// Text
-						{
-							$odfHandler->setVars($key, $value, true, 'UTF-8');
-						}
-					}
-					catch(OdfException $e)
-					{
-                        // setVars failed, probably because key not found
-					}
-				}
-
-
                 // Replace tags of lines for contacts
                 $contact_arrray=array();
 
@@ -308,6 +285,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 $var=true;
                 if ($num)
                 {
+                    require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+
                 	$i=0;
                 	$contactstatic = new Contact($this->db);
 
@@ -354,13 +333,18 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 	}
                 }
 
-                // Make substitutions into odt of thirdparty + external modules
-				$tmparray=$this->get_substitutionarray_thirdparty($object,$outputlangs);
+                // Make substitutions into odt
+                $array_user=$this->get_substitutionarray_user($user,$outputlangs);
+                $array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
+                $array_thirdparty=$this->get_substitutionarray_thirdparty($object,$outputlangs);
+                $array_other=$this->get_substitutionarray_other($outputlangs);
+
+                $tmparray = array_merge($array_user,$array_soc,$array_thirdparty,$array_other);
                 complete_substitutions_array($tmparray, $outputlangs, $object);
 
                 // Call the ODTSubstitution hook
-                $parameters=array('file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
-                $reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                $parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				$reshook=$hookmanager->executeHooks('ODTSubstitution',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
                 // Replace variables into document
 				foreach($tmparray as $key=>$value)
@@ -395,7 +379,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				}
 
                 // Call the beforeODTSave hook
-				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs);
+                		$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
@@ -412,27 +396,29 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					   $odfHandler->creator = $user->getFullName($outputlangs);
 					   $odfHandler->title = $object->builddoc_filename;
 					   $odfHandler->subject = $object->builddoc_filename;
-					   
+
 					   if (! empty($conf->global->ODT_ADD_DOLIBARR_ID))
 					   {
     					  $odfHandler->userdefined['dol_id'] = $object->id;
 	   		  		      $odfHandler->userdefined['dol_element'] = $object->element;
 					   }
-					   
+
 					   $odfHandler->saveToDisk($file);
 					}catch (Exception $e){
 						$this->error=$e->getMessage();
 						return -1;
 					}
 				}
-
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('afterODTCreation',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				
+
 				if (! empty($conf->global->MAIN_UMASK))
 				@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+				
 				return 1;   // Success
 			}
 			else

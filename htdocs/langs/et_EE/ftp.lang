@@ -10,3 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Määratletud kasutajanime/parooliga F
 FTPFailedToRemoveFile=Faili <b>%s</b> kustutamine ebaõnnestus.
 FTPFailedToRemoveDir=Kausta <b>%s</b> kustutamine ebaõnnestus (kontrolli õigusi ja seda, et kataloog on tühi).
 FTPPassiveMode=Passiivne režiim
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

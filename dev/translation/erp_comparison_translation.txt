@@ -1,0 +1,17 @@
+
+
+Term Dolibarr		SAP					Odoo							...
+----------------------------------------------------------------------------
+Thirdparty			Contact partner		Partner/Contact (company)
+Contact/address		Contact person		Partner/Contact (individual)
+
+Financial			??					Invoicing
+
+Income / Expense	??					Profit / Loss
+Balance				??					Net profit
+Subledger account	Subledger account	??
+
+
+Proposal            ??                  Quotation                       Proposal is ok but proposition looks better (proposal is for a detailed proposition). We can say also "business proposition or business proposal".
+                                                                        Indian are using "Quotation".
+                                                                        

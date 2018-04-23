@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /*
  * Copyright (C) 2013 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -143,7 +143,7 @@ $objmodel = new $classname($db);
 
 
 // Define target path
-$dirname = $conf->banque->dir_temp;
+$dirname = $conf->bank->dir_temp;
 $filename = 'export-bank-receipts-'.$bankref.'-'.$num.'.'.$objmodel->extension;
 
 
@@ -262,7 +262,7 @@ if ($resql)
 		$totalbefore = $total;
 		$total = $total + $objp->amount;
 
-		$var=!$var;
+
 
 		// Date operation
 		$dateop=$db->jdate($objp->do);
@@ -289,22 +289,28 @@ if ($resql)
 			{
 				$paymentstatic->fetch($links[$key]['url_id']);
 				$tmparray=$paymentstatic->getBillsArray('');
-				foreach($tmparray as $key => $val)
+				if (is_array($tmparray))
 				{
-					$invoicestatic->fetch($val);
-					if ($accountelem) $accountelem.= ', ';
-					$accountelem.=$invoicestatic->ref;
+					foreach($tmparray as $key => $val)
+					{
+						$invoicestatic->fetch($val);
+						if ($accountelem) $accountelem.= ', ';
+						$accountelem.=$invoicestatic->ref;
+					}
 				}
 			}
 			elseif ($links[$key]['type']=='payment_supplier')
 			{
 				$paymentsupplierstatic->fetch($links[$key]['url_id']);
 				$tmparray=$paymentsupplierstatic->getBillsArray('');
-				foreach($tmparray as $key => $val)
+				if (is_array($tmparray))
 				{
-					$invoicesupplierstatic->fetch($val);
-					if ($accountelem) $accountelem.= ', ';
-					$accountelem.=$invoicesupplierstatic->ref;
+					foreach($tmparray as $key => $val)
+					{
+						$invoicesupplierstatic->fetch($val);
+						if ($accountelem) $accountelem.= ', ';
+						$accountelem.=$invoicesupplierstatic->ref;
+					}
 				}
 			}
 			elseif ($links[$key]['type']=='payment_sc')
@@ -366,7 +372,7 @@ if ($resql)
 			/*elseif ($links[$key]['type']=='sc')
 				{
 			if ($accountelem) $accountelem.= ', ';
-			//$accountelem.= '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+			//$accountelem.= '<a href="'.DOL_URL_ROOT.'/compta/sociales/card.php?id='.$links[$key]['url_id'].'">';
 			//$accountelem.= img_object($langs->transnoentitiesnoconv('ShowBill'),'bill').' ';
 			$accountelem.= $langs->transnoentitiesnoconv("SocialContribution");
 			//$accountelem.= '</a>';

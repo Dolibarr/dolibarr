@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - printing
+NoDefaultPrinterDefined=Kein Standarddrucker defininert
+IPP_BW=schwarz / weiss
+PrintingDriverDescprintgcp=Konfigurationsvariablen für Google Cloud Print.
+PrintTestDescprintgcp=Druckerliste für Google Cloud Print

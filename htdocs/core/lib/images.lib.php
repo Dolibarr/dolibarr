@@ -37,8 +37,10 @@ $quality = 80;
  */
 function image_format_supported($file)
 {
+    $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm|\.svg';   // See also into product.class.php
+
     // Case filename is not a format image
-    if (! preg_match('/(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$/i',$file,$reg)) return -1;
+    if (! preg_match('/('.$regeximgext.')$/i',$file,$reg)) return -1;
 
     // Case filename is a format image but not supported by this PHP
     $imgfonction='';
@@ -47,6 +49,8 @@ function image_format_supported($file)
     if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
     if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
     if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
+    if (strtolower($reg[1]) == '.xpm')  $imgfonction = 'imagecreatefromxpm';
+    if (strtolower($reg[1]) == '.xbm')  $imgfonction = 'imagecreatefromxbm';
     if ($imgfonction)
     {
         if (! function_exists($imgfonction))
@@ -74,16 +78,18 @@ function dol_getImageSize($file, $url = false)
 
 	if (image_format_supported($file) < 0) return $ret;
 
-	$fichier = $file;
+	$filetoread = $file;
 	if (!$url)
 	{
-		$fichier = realpath($file); 	// Chemin canonique absolu de l'image
-		$dir = dirname($file); 			// Chemin du dossier contenant l'image
+		$filetoread = realpath(dol_osencode($file)); 	// Chemin canonique absolu de l'image
 	}
 
-	$infoImg = getimagesize($fichier); // Recuperation des infos de l'image
-	$ret['width']=$infoImg[0]; // Largeur de l'image
-	$ret['height']=$infoImg[1]; // Hauteur de l'image
+	if ($filetoread)
+	{
+    	$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
+    	$ret['width']=$infoImg[0]; // Largeur de l'image
+    	$ret['height']=$infoImg[1]; // Hauteur de l'image
+	}
 
 	return $ret;
 }
@@ -139,10 +145,9 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 		return 'Both newHeight or newWidth must be defined for croping';
 	}
 
-	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
-	$dir = dirname($file); 			// Chemin du dossier contenant l'image
+	$filetoread = realpath(dol_osencode($file)); 	// Chemin canonique absolu de l'image
 
-	$infoImg = getimagesize($fichier); // Recuperation des infos de l'image
+	$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
@@ -187,22 +192,22 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 	switch($infoImg[2])
 	{
 		case 1:	// Gif
-			$img = imagecreatefromgif($fichier);
+			$img = imagecreatefromgif($filetoread);
 			$extImg = '.gif';	// File name extension of image
 			$newquality='NU';	// Quality is not used for this format
 			break;
 		case 2:	// Jpg
-			$img = imagecreatefromjpeg($fichier);
+			$img = imagecreatefromjpeg($filetoread);
 			$extImg = '.jpg';
 			$newquality=100;	// % quality maximum
 			break;
 		case 3:	// Png
-			$img = imagecreatefrompng($fichier);
+			$img = imagecreatefrompng($filetoread);
 			$extImg = '.png';
 			$newquality=0;		// No compression (0-9)
 			break;
 		case 4:	// Bmp
-			$img = imagecreatefromwbmp($fichier);
+			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
 			$newquality='NU';	// Quality is not used for this format
 			break;
@@ -292,6 +297,46 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
 
 
 /**
+ * dolRotateImage if image is a jpg file.
+ * Currently use an autodetection to know if we can rotate.
+ * TODO Introduce a new parameter to force rotate.
+ *
+ * @param 	string   $file_path      Full path to image to rotate
+ * @return	boolean				     Success or not
+ */
+function dolRotateImage($file_path)
+{
+    $exif = @exif_read_data($file_path);
+    if ($exif === false) {
+        return false;
+    }
+    $orientation = intval(@$exif['Orientation']);
+    if (!in_array($orientation, array(3, 6, 8))) {
+        return false;
+    }
+    $image = @imagecreatefromjpeg($file_path);
+    switch ($orientation) {
+        case 3:
+            $image = @imagerotate($image, 180, 0);
+            break;
+        case 6:
+            $image = @imagerotate($image, 270, 0);
+            break;
+        case 8:
+            $image = @imagerotate($image, 90, 0);
+            break;
+        default:
+            return false;
+    }
+    $success = imagejpeg($image, $file_path);
+    // Free up memory (imagedestroy does not delete files):
+    @imagedestroy($image);
+    return $success;
+}
+
+
+
+/**
  *    	Create a thumbnail from an image file (Supported extensions are gif, jpg, png and bmp).
  *      If file is myfile.jpg, new file may be myfile_small.jpg
  *
@@ -301,8 +346,8 @@ function dol_imageResizeOrCrop($file, $mode, $newWidth, $newHeight, $src_x=0, $s
  *    	@param     string	$extName        	Extension to differenciate thumb file name ('_small', '_mini')
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
- *      @param     int		$targetformat     	New format of target (1,2,3,... or 0 to keep old format)
- *    	@return    string						Full path of thumb or '' if it fails
+ *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
+ *    	@return    string						Full path of thumb or '' if it fails or 'Error...' if it fails
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
 {
@@ -343,10 +388,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	    return 'Error: Wrong value for parameter maxHeight';
 	}
 
-	$fichier = realpath($file); 	// Chemin canonique absolu de l'image
-	$dir = dirname($file); 			// Chemin du dossier contenant l'image
+	$filetoread = realpath(dol_osencode($file)); 	// Chemin canonique absolu de l'image
 
-	$infoImg = getimagesize($fichier); // Recuperation des infos de l'image
+	$infoImg = getimagesize($filetoread); // Recuperation des infos de l'image
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
@@ -390,22 +434,23 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 
 	// On cree le repertoire contenant les vignettes
-	$dirthumb = $dir.($outdir?'/'.$outdir:''); 	// Chemin du dossier contenant les vignettes
+	$dirthumb = dirname($file).($outdir?'/'.$outdir:''); 	// Chemin du dossier contenant les vignettes
 	dol_mkdir($dirthumb);
 
 	// Initialisation des variables selon l'extension de l'image
+	$img=null;
 	switch($infoImg[2])
 	{
 		case IMAGETYPE_GIF:	    // 1
-			$img = imagecreatefromgif($fichier);
+			$img = imagecreatefromgif($filetoread);
 			$extImg = '.gif'; // Extension de l'image
 			break;
 		case IMAGETYPE_JPEG:    // 2
-			$img = imagecreatefromjpeg($fichier);
+			$img = imagecreatefromjpeg($filetoread);
 			$extImg = (preg_match('/\.jpeg$/',$file)?'.jpeg':'.jpg'); // Extension de l'image
 			break;
 		case IMAGETYPE_PNG:	    // 3
-			$img = imagecreatefrompng($fichier);
+			$img = imagecreatefrompng($filetoread);
 			$extImg = '.png';
 			break;
 		case IMAGETYPE_BMP:	    // 6
@@ -413,7 +458,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 			$extImg = '.bmp';
 			break;
 		case IMAGETYPE_WBMP:	// 15
-			$img = imagecreatefromwbmp($fichier);
+			$img = imagecreatefromwbmp($filetoread);
 			$extImg = '.bmp';
 			break;
 	}
@@ -473,6 +518,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 
 	// Initialisation des variables selon l'extension de l'image
+	// $targetformat is 0 by default, in such case, we keep original extension
 	switch($targetformat)
 	{
 		case IMAGETYPE_GIF:	    // 1
@@ -483,7 +529,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
             break;
 		case IMAGETYPE_JPEG:    // 2
             $trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
-            $extImgTarget = (preg_match('/\.jpeg$/',$file)?'.jpeg':'.jpg');
+            $extImgTarget = (preg_match('/\.jpeg$/i',$file)?'.jpeg':'.jpg');
             $newquality=$quality;
             break;
 		case IMAGETYPE_PNG:	    // 3
@@ -512,7 +558,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 
 	$fileName = preg_replace('/(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$/i','',$file);	// On enleve extension quelquesoit la casse
 	$fileName = basename($fileName);
-	$imgThumbName = $dirthumb.'/'.$fileName.$extName.$extImgTarget; // Chemin complet du fichier de la vignette
+	//$imgThumbName = $dirthumb.'/'.getImageFileNameForSize(basename($file), $extName, $extImgTarget);   // Full path of thumb file
+	$imgThumbName = getImageFileNameForSize($file, $extName, $extImgTarget);   // Full path of thumb file
+
 
 	// Check if permission are ok
 	//$fp = fopen($imgThumbName, "w");

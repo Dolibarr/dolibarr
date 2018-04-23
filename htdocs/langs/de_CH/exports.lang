@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - exports
+FormatedImportDesc2=Wählen Sie zuerst den Dateityp für den Import, dann die entsrechende Datei und zuletzt die zu importierenden Felder.
+FileSuccessfullyBuilt=Filter generiert
+ChooseFileToImport=Wählen Sie zu importierende Datei und klicken Sie anschliessend auf das %s Symbol...
+DataComeFromIdFoundFromCodeId=Der Eintrag aus der Quelldatei mit der Feldnummer <b>%s</b> wird zur Referenzierung verwendet. Dazu muss die ID des Objektes im Wörterbuch <b>%s</b> existieren. Ist Ihnen die ID bekannt, dann können Sie auch diese in der Quelldatei - anstelle des Codes - eintragen. Der Import sollte in beiden Fällen funktionieren.
+ExampleAnyCodeOrIdFoundIntoDictionary=Ein Code (oder eine ID) wurde im Dictionnary <b>%s</b> gefunden
+ImportFromLine=Import ab Zeile Nummer
+EndAtLineNb=Bis zu Zeile Nummer
+SetThisValueTo2ToExcludeFirstLine=zB. auf 3 setzen, um die ersten beiden Zeilen zu ignorieren
+KeepEmptyToGoToEndOfFile=Diese Feld leer lassen um die Datei bis zum Ende einzulesen

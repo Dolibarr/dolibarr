@@ -1,0 +1,27 @@
+# Dolibarr language file - Source file is en_US - install
+MiscellaneousChecks=Vereisten controle
+PHPSupportPOSTGETOk=Deze PHP installatie ondersteund POST en GET.
+PHPSupportPOSTGETKo=Mogelijk ondersteund uw PHP installatie geen POST en / of GET variabelen. Controleer deze instelling <b>variables_order</b> in php.ini.
+PHPSupportGD=Deze PHP installatie ondersteund GD grafische functies.
+PHPSupportUTF8=Deze PHP installatie ondersteund UTF8 functies.
+Recheck=Klik hier voor een significantere test
+ErrorPHPDoesNotSupportSessions=Uw PHP installatie ondersteund geen sessies. Dit is vereist voor een goede werking van Dolibarr. Controleer uw PHP instellingen.
+ErrorPHPDoesNotSupportGD=Uw PHP installatie ondersteund geen grafische functies. Grafieken zullen niet beschikbaar zijn.
+ErrorPHPDoesNotSupportUTF8=Uw PHP installatie ondersteund geen UTF8 functies. Dolibarr kan daardoor niet goed werken. Los dit op voordat u verder gaat met de installatie van Dolibarr.
+ErrorFailedToConnectToDatabase=Er kon niet verbonden worden met de database '%s'.
+ErrorDatabaseVersionTooLow=Databankversie (%s) te oud. Versie %s of hoger is vereist.
+ErrorConnectedButDatabaseNotFound=De verbinding met de server kon succesvol worden opgezet, maar de database '%s' is niet gevonden.
+PasswordAgain=Geef uw wachtwoord opnieuw
+CreateOtherKeysForTable=Creëer foreign keys en indexes voor de tabel %s
+SystemIsInstalled=De installatie is voltooid
+GoToDolibarr=Ga naar Dolibarr
+GoToSetupArea=Ga naar Dolibarr (instellingsomgeving)
+GoToUpgradePage=Ga opnieuw naar de upgrade pagina
+WithNoSlashAtTheEnd=Zonder toevoeging van de slash "/"
+LastStepDesc=<strong>Laatste stap:</strong> Definieer hier de login en het wachtwoord die u wilt gebruiken om verbinding te maken software. Niet los dit als het is de rekening voor alle anderen te beheren.
+ShowEditTechnicalParameters=Klik hier om verder gevorderde parameters te zien of aan te passen. (expert instellingen)
+ErrorDatabaseVersionForbiddenForMigration=Uw database versie is %s en heeft een kritieke bug die gegevensverlies veroorzaakt als je structuur verandering uitvoert op uw database, welke gedaan worden door het migratieproces. Voor deze reden, zal de migratie niet worden toegestaan ​​totdat u uw database upgrade naar een hogere versie (lijst van gekende versies met bug: %s).
+MigrationUpdateFailed=Upgrade mislukt
+MigrationDeliveryAddress=Werk de afleveringsadressen voor verzending bij
+MigrationCategorieAssociation=Overzetten van categoriën
+MigrationReloadModule=Herladen van de module  %s

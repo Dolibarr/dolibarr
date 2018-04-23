@@ -30,12 +30,6 @@ include_once DOL_DOCUMENT_ROOT.'/adherents/canvas/actions_adherentcard_common.cl
  */
 class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 {
-	var $db;
-	var $dirmodule;
-    var $targetmodule;
-    var $canvas;
-    var $card;
-
 	/**
      *	Constructor
      *
@@ -82,6 +76,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 */
 	function assign_values(&$action, $id)
 	{
+		global $limit, $offset, $sortfield, $sortorder;
 		global $conf, $db, $langs, $user;
 		global $form;
 
@@ -120,14 +115,14 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 
 		if ($action == 'list')
 		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 
 	}
 
 
 	/**
-	 * 	Fetch datas list
+	 * 	Fetch datas list and save into ->list_datas
 	 *
 	 *  @param	int		$limit		Limit number of responses
 	 *  @param	int		$offset		Offset for first response

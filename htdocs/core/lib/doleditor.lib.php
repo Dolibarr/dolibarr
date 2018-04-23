@@ -52,7 +52,7 @@ function show_skin($fuser,$edit=0)
 	// Now dir_themes=array('/themes') or dir_themes=array('/theme','/mymodule/theme')
 
     $selected_theme='';
-    if (empty($conf->global->FCKEDITOR_SKIN)) $selected_theme='moono';
+    if (empty($conf->global->FCKEDITOR_SKIN)) $selected_theme='moono-lisa';
     else $selected_theme=$conf->global->FCKEDITOR_SKIN;
 
     $colspan=2;
@@ -71,7 +71,7 @@ function show_skin($fuser,$edit=0)
    	print '</a>';*/
    	print '</th></tr>';
 
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
    	print '<td>'.$langs->trans("ThemeDir").'</td>';
    	print '<td>';
    	foreach($dirskins as $dirskin)
@@ -81,8 +81,8 @@ function show_skin($fuser,$edit=0)
    	print '</td>';
    	print '</tr>';
 
-    //$var=!$var;
-    print '<tr '.$bc[$var].'><td colspan="'.$colspan.'">';
+    //
+    print '<tr class="oddeven"><td colspan="'.$colspan.'">';
 
     print '<table class="nobordernopadding" width="100%"><tr><td><div align="center">';
 

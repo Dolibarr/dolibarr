@@ -79,9 +79,12 @@ class mod_expedition_ribera extends ModelNumRefExpedition
      	global $conf,$langs,$mysoc;
 
     	$old_code_client=$mysoc->code_client;
+    	$old_code_type=$mysoc->typent_code;
     	$mysoc->code_client='CCCCCCCCCC';
+    	$mysoc->typent_code='TTTTTTTTTT';
      	$numExample = $this->getNextValue($mysoc,'');
 		$mysoc->code_client=$old_code_client;
+		$mysoc->typent_code=$old_code_type;
 
 		if (! $numExample)
 		{
@@ -111,7 +114,9 @@ class mod_expedition_ribera extends ModelNumRefExpedition
 			return 0;
 		}
 
-		$numFinal=get_next_value($db,$mask,'expedition','ref','',$objsoc->code_client,$shipment->date_expedition);
+		$date = $shipment->date_expedition;
+
+		$numFinal=get_next_value($db,$mask,'expedition','ref','',$objsoc,$date);
 
 		return  $numFinal;
 	}

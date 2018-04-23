@@ -3,7 +3,7 @@
 Dolibarr ERP & CRM est un logiciel moderne pour gérer votre activité (société, association, auto-entrepreneurs, artisans). 
 Il est simple d'utilisation et modulaire, vous permettant de n'activez que les fonctions dont vous avez besoin (contacts, fournisseurs, factures, commandes, stocks, agenda, ...).
  
-![ScreenShot](http://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
+![ScreenShot](https://www.dolibarr.org/images/dolibarr_screenshot1_640x480.png)
 
 
 
@@ -23,9 +23,9 @@ Ubuntu) ou DoliRpm (la version tout-en-un de Dolibarr pour Fedora, Redhat,
 OpenSuse, Mandriva ou Mageia).
 
 Vous pouvez les télécharger depuis la rubrique *download* du portail officiel: 
-http://www.dolibarr.org/
+https://www.dolibarr.org/
 
-Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (Mysql),
+Si vous avez déjà installé un serveur Web avec PHP et une base de donnée (MariaDb/MySql/PostgreSql),
 vous pouvez installer Dolibarr avec cette version de la manière suivante:
 
 - Copier le répertoire "dolibarr" et son contenu dans la racine de votre serveur
@@ -54,19 +54,10 @@ Pour mettre a jour Dolibarr depuis une vieille version vers celle ci:
 - Ecraser les vieux fichiers dans le vieux repertoire 'dolibarr' par les fichiers
   fournis dans ce nouveau package.
   
-- Si vous venez d'une version x.y.z vers x.y.w (seul le 3eme chiffre varie),
-  il n'y a pas besoin de migration de données.
-  
-- Si vous venez d'une beta ou d'un version x.y.z vers une autre ou les numeros x
-  ou y varient, vous devez appelez la page "install/" de migration dans votre 
-  navigateur (ceci doit se faire automatiquement au premier accès de l'application).
-  Ce sera une URL du genre:
-   http://localhost/dolibarr/htdocs/install/index.php
-  ou
-   http://yourdolibarrhost/install/index.php
+- Au prochain accès, Dolibarr proposera la page de "mise a jour" des données (si necessaire).
+  Si un fichier install.lock existe pour vérouiller le processus de mise à jour, il sera demandé de le supprimer manuellement (vous devriez trouver le fichier install.lock dans le répertoire utilisé pour stocker les documents générés ou transféré sur le serveur. Dans la plupart des cas, c'est le répertoire appelé "documents") 
 
-  Ensuite, choisir l'option de "mise a jour" en rapport avec votre cas.
-  Note: Le processus de migration peut etre lance plusieurs fois sans risque.
+*Note: Le processus de migration peut etre lancé manuellement et plusieurs fois, sans risque, en appelant la page /install/*
   
 
 ## CE QUI EST NOUVEAU
@@ -77,62 +68,102 @@ Voir fichier ChangeLog.
 
 ## CE QUE DOLIBARR PEUT FAIRE
 
-Modules principaux:
+### Modules principaux (tous optionnels):
+
 - Annuaires des prospects et/ou client et/ou fournisseurs
 - Gestion de catalogue de produits et services
-- Gestion de stock
-- Gestion des comptes bancaires
-- Agenda partagé
-- Gestion des commandes
 - Gestion des devis, propositions commerciales
-- Gestion des factures clients et fournisseurs
+- Gestion des commandes
+- Gestion des factures clients/fournisseurs et paiements
+- Gestion des virements bancaires SEPA
+- Gestion des comptes bancaires
+- Calendrier/Agenda partagé (avec export ical, vcal) 
+- Suivi des opportunités et/ou projets (suivi de rentabilité incluant les factures, notes de frais, temps consommé valorisé, ...)
 - Gestion de contrats de services
-- Gestion des paiements
-- Gestion des virements bancaires
+- Gestion de stock
 - Gestion des expéditions
+- Gestion des demandes de congès
+- Gestion des notes de frais
 - GED (Gestion Electronique de Documents)
 - EMailings de masse
 - Réalisation de sondages
 - Point de vente/Caisse enregistreuse
+- …
 
-Autres modules:
+### Autres modules:
+
 - Gestion de marque-pages
 - Gestion des promesses de dons
 - Gestion de la TVA NPR (non perçue récupérable - pour les utilisateurs français des DOM-TOM)
 - Rapports
 - Imports/Exports des données
 - Connectivité LDAP
-- Export PDF de tous les éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
-- De nombreuses autres fonctionnalités issues de modules officiels ou non (AWStats, Bittorrent, Gravatar, Google, Webcalendar...) 
+- Intégratn de ClickToDial
+- Intégration RSS
+- Intégation Skype
+- Intégration de système de paiements (Paypal, Strip, Paybox...)
+- …
 
-Divers:
-- Application multi-utilisateurs avec différents niveaux de permissions par module.
-- Plusieurs gestionnaires de menus (possibilité de différencier les menus pour les utilisateurs internes ou externes comme les clients ou fournisseurs).
-- Application simple à utiliser.
+### Divers:
+
+- Multi-langue.
+- Multi-utilisateurs avec différents niveaux de permissions par module.
+- Multi-devise.
+- Peux être multi-société par ajout du module externe multi-société.
 - Plusieurs thèmes visuels.
-- Code simple et facilement personnalisable.
-- Requiert PHP et Mysql ou Postgresql (Voir versions exactes sur http://wiki.dolibarr.org/index.php/Prérequis). 
-- Compatible avec toutes les offres Cloud du marché respectant les prérequis MySQL et PHP ou Postgresql.
+- Application simple à utiliser.
+- Requiert PHP et MariaDb, Mysql ou Postgresql (Voir versions exactes sur https://wiki.dolibarr.org/index.php/Prérequis). 
+- Compatible avec toutes les offres Cloud du marché respectant les prérequis de base de données et PHP.
+- Code simple et facilement personnalisable (pas de framework lourd; mécanisme de hook et triggers).
+- APIs.
+- Génération PDF et ODT des éléments (factures, propositions commerciales, commandes, bons expéditions, etc...)
+- …
+
+### Extension
+
+Dolibarr peut aussi être étendu à volonté avec l'ajout de module/applications externes développées par des développeus tiers, disponible sur [DoliStore](https://www.dolistore.com).
 
 
-## CE QUE DOLIBARR NE PEUT PAS FAIRE (TACHES A FAIRE)
+## CE QUE DOLIBARR NE PEUT PAS (ENCORE) FAIRE
 
 Voici un liste de fonctionnalites pas encore gérées par Dolibarr:
-- Pas de compta analytique double-partie (uniquement gestion de trésorerie).
-- Dolibarr ne gère qu'une seule monnaie à la fois (mono-devise).
-- Dolibarr ne gère en standard qu'une société/institution/association mère (mono-société). Pour en gérer plusieurs (comme vos filiales), il faut, soit faire plusieurs installations de Dolibarr, soit installer le module MultiCompany qui permet de gérer n société/institutions/associations dans une seule instance par une isolation logique des données.
 - Dolibarr ne contient pas de module de Gestion de la paie.
-- Les tâches du module de gestion de projets n'ont pas de dépendance entre elle.
-- Dolibarr ne contient pas de Webmail.
+- Les tâches du module de gestion de projets n'ont pas de dépendances entre elle.
+- Dolibarr n'embarque pas de Webmail intégré nativement.
 - Dolibarr ne fait pas le café (pas encore). 
 
 
-## RESEAUX SOCIAUX
+## DOCUMENTATION
 
-Suivez le projet Dolibarr project sur
+Les documentations utilisateur, développeur et traducteur sont disponible sous forme de ressources de la communautés via la site [Wiki](https://wiki.dolibarr.org).
 
-Facebook: <https://www.facebook.com/dolibarr.fr>
 
-Google+: <https://plus.google.com/+DolibarrFrance>
+## CONTRIBUER
 
-Twitter: <http://www.twitter.com/dolibarr_france>
+Ce projet existe grâce à ses nombreux contributeurs [[Contribuer](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
+<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
+
+
+## CREDITS
+
+Dolibarr est le résultat du travail de nombreux contributeurs depuis des années et utilise des librairies d'autres contributeurs.
+
+Voir le fichier [COPYRIGHT](https://github.com/Dolibarr/dolibarr/blob/develop/COPYRIGHT)
+
+
+## ACTUALITES ET RESEAUX SOCIAUX
+
+Suivez le projet Dolibarr project sur les réseaux francophones
+
+- Facebook: <https://www.facebook.com/dolibarr.fr>
+- Google+: <https://plus.google.com/+DolibarrFrance>
+- Twitter: <https://www.twitter.com/dolibarr_france>
+
+ou sur les réseaux anglophones
+
+- [Facebook](https://www.facebook.com/dolibarr)
+- [Google+](https://plus.google.com/+DolibarrOrg)
+- [Twitter](https://www.twitter.com/dolibarr)
+- [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
+- [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
+- [GitHub](https://github.com/Dolibarr/dolibarr)

@@ -51,10 +51,9 @@ class modLoan extends DolibarrModules
 		$this->description = "Loans management";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = 'development';
+		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='bill';
 
 		// Data directories to create when module is enabled
@@ -99,7 +98,7 @@ class modLoan extends DolibarrModules
 		$this->rights[$r][0] = 520;
 		$this->rights[$r][1] = 'Read loans';
 		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 		$this->rights[$r][5] = '';
 
@@ -118,7 +117,7 @@ class modLoan extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'delete';
 		$this->rights[$r][5] = '';
-		
+
 		$r++;
 		$this->rights[$r][0] = 525;
 		$this->rights[$r][1] = 'Access loan calculator';
@@ -134,6 +133,11 @@ class modLoan extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 		$this->rights[$r][5] = '';
+
+
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
 
 		// Exports

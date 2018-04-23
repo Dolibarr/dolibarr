@@ -136,7 +136,7 @@ abstract class PHPExcel_CachedObjectStorage_CacheBase {
      * Add or Update a cell in cache
      *
      * @param	PHPExcel_Cell	$cell		Cell to update
-	 * @return	void
+	 * @return	PHPExcel_Cell
      * @throws	PHPExcel_Exception
      */
 	public function updateCacheData(PHPExcel_Cell $cell) {
@@ -151,7 +151,7 @@ abstract class PHPExcel_CachedObjectStorage_CacheBase {
      * @throws	PHPExcel_Exception
      */
 	public function deleteCacheData($pCoord) {
-		if ($pCoord === $this->_currentObjectID) {
+		if ($pCoord === $this->_currentObjectID && !is_null($this->_currentObject)) {
 			$this->_currentObject->detach();
 			$this->_currentObjectID = $this->_currentObject = null;
 		}
@@ -167,7 +167,7 @@ abstract class PHPExcel_CachedObjectStorage_CacheBase {
 	/**
 	 * Get a list of all cell addresses currently held in cache
 	 *
-	 * @return	array of string
+	 * @return	string[]
 	 */
 	public function getCellList() {
 		return array_keys($this->_cellCache);
@@ -177,7 +177,7 @@ abstract class PHPExcel_CachedObjectStorage_CacheBase {
 	/**
 	 * Sort the list of all cell addresses currently held in cache by row and column
 	 *
-	 * @return	void
+	 * @return	string[]
 	 */
 	public function getSortedCellList() {
 		$sortKeys = array();
@@ -206,7 +206,7 @@ abstract class PHPExcel_CachedObjectStorage_CacheBase {
 			sscanf($coord,'%[A-Z]%d', $c, $r);
 			$row[$r] = $r;
 			$col[$c] = strlen($c).$c;
-		}
+ 		}
 		if (!empty($row)) {
 			// Determine highest column and row
 			$highestRow = max($row);
@@ -243,12 +243,12 @@ abstract class PHPExcel_CachedObjectStorage_CacheBase {
 	/**
 	 * Return the row address of the currently active cell object
 	 *
-	 * @return	string
+	 * @return	integer
 	 */
 	public function getCurrentRow()
 	{
 		sscanf($this->_currentObjectID, '%[A-Z]%d', $column, $row);
-		return $row;
+		return (integer) $row;
 	}
 
 	/**
@@ -333,6 +333,35 @@ abstract class PHPExcel_CachedObjectStorage_CacheBase {
 		}
 	}	//	function copyCellCollection()
 
+    /**
+     * Remove a row, deleting all cells in that row
+     *
+     * @param string    $row    Row number to remove
+     * @return void
+     */
+    public function removeRow($row) {
+        foreach ($this->getCellList() as $coord) {
+            sscanf($coord,'%[A-Z]%d', $c, $r);
+            if ($r == $row) {
+                $this->deleteCacheData($coord);
+            }
+        }
+    }
+
+    /**
+     * Remove a column, deleting all cells in that column
+     *
+     * @param string    $column    Column ID to remove
+     * @return void
+     */
+    public function removeColumn($column) {
+        foreach ($this->getCellList() as $coord) {
+            sscanf($coord,'%[A-Z]%d', $c, $r);
+            if ($c == $column) {
+                $this->deleteCacheData($coord);
+            }
+        }
+    }
 
 	/**
 	 * Identify whether the caching method is currently available

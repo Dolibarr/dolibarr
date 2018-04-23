@@ -77,9 +77,9 @@ if ($id > 0)
 {
 	$res=$object->fetch($id);
 	if ($res < 0) { dol_print_error($db,$object->error); exit; }
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
-	print_fiche_titre($langs->trans("MemberCard"), '', '');
+	print load_fiche_titre($langs->trans("MemberCard"), '', '');
 
 	if (empty($object->public))
 	{
@@ -95,10 +95,10 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$object->lastname.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$object->societe.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($object->address).'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Zip").' '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$object->zip.' '.$object->town.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$object->country.'&nbsp;</td></tr>';
 		print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$object->email.'&nbsp;</td></tr>';
-		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$object->birth.'&nbsp;</td></tr>';
+		print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dol_print_date($object->birth,'day').'</td></tr>';
 
 		if (isset($object->photo) && $object->photo !='')
 		{
@@ -107,11 +107,11 @@ if ($id > 0)
 			print $form->showphoto('memberphoto', $object, 64);
 			print '</td></tr>'."\n";
 		}
-		//  foreach($objecto->attribute_label as $key=>$value){
+		//  foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$value){
 		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
 		//  }
 
-		print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>'.nl2br($object->note).'</td></tr>';
+		print '<tr><td class="tdtop">'.$langs->trans("Comments").'</td><td>'.nl2br($object->note_public).'</td></tr>';
 
 		print '</table>';
 	}
