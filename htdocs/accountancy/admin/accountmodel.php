@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -683,7 +683,6 @@ if ($id)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$var=true;
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
@@ -1062,7 +1061,6 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 	global $form;
 	global $region_id;
 	global $elementList,$sourceList;
-	global $bc;
 
 	$formadmin = new FormAdmin($db);
 	$formcompany = new FormCompany($db);
