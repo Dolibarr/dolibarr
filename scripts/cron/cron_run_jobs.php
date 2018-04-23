@@ -73,7 +73,7 @@ $error=0;
 $now=dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . $now . " *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . dol_print_date($now, 'dayrfc') . " *****\n";
 
 // Check module cron is activated
 if (empty($conf->cron->enabled))
@@ -161,7 +161,7 @@ $nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
 $nbofjobslaunchedko=0;
 
-if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
+if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 {
 	// Loop over job
 	foreach($qualifiedjobs as $line)
@@ -214,6 +214,10 @@ if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 			dol_syslog("cron_run_jobs.php:: job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 		}
 	}
+}
+else
+{
+	echo "cron_run_jobs.php no qualified job found\n";
 }
 
 $db->close();
