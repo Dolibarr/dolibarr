@@ -75,6 +75,13 @@ $now=dol_now();
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . $now . " *****\n";
 
+// Check module cron is activated
+if (empty($conf->cron->enabled))
+{
+	print "Error: module Scheduled jobs (cron) not activated\n";
+	exit(-1);
+}
+
 // Check security key
 if ($key != $conf->global->CRON_KEY)
 {
