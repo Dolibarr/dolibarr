@@ -710,6 +710,10 @@ ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (f
 
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 
-
+-- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
+
+
+UPDATE llx_cronjob set entity = 1 where entity = 0 and label in ('RecurringInvoices', 'SendEmailsReminders');
+UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTemporaryFilesShort', 'MakeLocalDatabaseDumpShort');
 

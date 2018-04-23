@@ -82,6 +82,13 @@ if (empty($conf->cron->enabled))
 	exit(-1);
 }
 
+// Check module cron is activated
+if (empty($conf->cron->enabled))
+{
+	print "Error: module Scheduled jobs (cron) not activated\n";
+	exit(-1);
+}
+
 // Check security key
 if ($key != $conf->global->CRON_KEY)
 {
