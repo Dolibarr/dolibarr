@@ -2762,6 +2762,8 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 */
 	public function delete($notrigger = 0)
 	{
+		global $user;
+
 		dol_syslog(get_class($this)."::deleteline rowid=".$this->id, LOG_DEBUG);
 
 		$error = 0;
@@ -2769,7 +2771,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->db->begin();
 
 		if (!$notrigger) {
-			if ($this->call_trigger('LINEBILL_SUPPLIER_DELETE',$user) < 0) {
+			if ($this->call_trigger('LINEBILL_SUPPLIER_DELETE', $user) < 0) {
 				$error++;
 			}
 		}
