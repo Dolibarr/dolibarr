@@ -3594,12 +3594,12 @@ abstract class CommonObject
 	 *  @param	Societe			$buyer				Object thirdparty who buy
 	 *	@return	void
 	 */
-	function formAddObjectLine($dateSelector,$seller,$buyer)
+	function formAddObjectLine($dateSelector, $seller, $buyer)
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
 
-		//Line extrafield
+		// Line extrafield
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline = new ExtraFields($this->db);
 		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
