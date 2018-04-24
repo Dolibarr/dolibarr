@@ -1000,8 +1000,17 @@ if (empty($reshook))
 				$price_base_type = 'TTC';
 			}
 
-			if (GETPOST('productid'))
+			if (GETPOST('productid') > 0)
 			{
+				$productsupplier = new ProductFournisseur($db);
+				if (! empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY))
+				{
+					if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), GETPOST('productid'), 'none', GETPOST('socid','int')) < 0 )
+					{
+						setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+					}
+				}
+
 				$prod = new Product($db);
 				$prod->fetch(GETPOST('productid'));
 				$label = $prod->description;
@@ -1042,7 +1051,7 @@ if (empty($reshook))
 				}
 			}
 
-	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise, GETPOST('fourn_ref','alpha'));
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);

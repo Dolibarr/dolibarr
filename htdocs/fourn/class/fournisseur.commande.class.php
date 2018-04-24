@@ -1487,7 +1487,6 @@ class CommandeFournisseur extends CommonOrder
 
             if ($fk_product > 0)
             {
-            	//if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
             	if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
                 {
                     // Check quantity is enough

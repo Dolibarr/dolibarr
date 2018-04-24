@@ -774,6 +774,7 @@ if (empty($reshook))
 
 	// Mise a jour d'une ligne dans la demande de prix
 	else if ($action == 'updateligne' && $user->rights->supplier_proposal->creer && GETPOST('save') == $langs->trans("Save")) {
+
 		// Define info_bits
 		$info_bits = 0;
 		if (preg_match('/\*/', GETPOST('tva_tx')))
@@ -812,6 +813,16 @@ if (empty($reshook))
 		// Check minimum price
 		$productid = GETPOST('productid', 'int');
 		if (! empty($productid)) {
+
+			$productsupplier = new ProductFournisseur($db);
+			if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY))
+			{
+				if ($productid > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $productid, 'none', GETPOST('socid','int')) < 0 )
+				{
+					setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+				}
+			}
+
 			$product = new Product($db);
 			$res = $product->fetch($productid);
 
