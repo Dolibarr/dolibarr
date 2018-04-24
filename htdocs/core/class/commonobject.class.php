@@ -4847,7 +4847,8 @@ abstract class CommonObject
 			$type = 'varchar';		// convert varchar(xx) int varchar
 			$size = $reg[1];
 		}
-		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) into varchar
+		elseif (preg_match('/double/', $type)) $type = 'double';		// convert double(xx) into double
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -4922,7 +4923,6 @@ abstract class CommonObject
 			}
 		}
 		//var_dump($showsize.' '.$size);
-
 		if (in_array($type,array('date','datetime')))
 		{
 			$tmp=explode(',',$size);
