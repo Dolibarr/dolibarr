@@ -80,7 +80,6 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
-$var=true;
 $form = new Form($db);
 
 // Mail required for members
