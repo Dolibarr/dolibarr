@@ -258,16 +258,15 @@ class Ticketsups extends DolibarrApi
         if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
             $result = $db->query($sql);
             $nbtotalofrecords = $db->num_rows($result);
-        }
-
-        if ($limit) {
-            if ($page < 0) {
-                $page = 0;
+            if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+            {
+            	$page = 0;
+            	$offset = 0;
             }
-            $offset = $limit * $page;
-
-            $sql.= $db->plimit($limit + 1, $offset);
         }
+
+        $sql.= $db->plimit($limit + 1, $offset);
+
         $result = $db->query($sql);
         if ($result) {
             $num = $db->num_rows($result);

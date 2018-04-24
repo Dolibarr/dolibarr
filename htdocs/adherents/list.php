@@ -262,6 +262,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$resql = $db->query($sql);
 	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
 	else dol_print_error($db);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 // Add limit
 $sql.= $db->plimit($limit+1, $offset);
