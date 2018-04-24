@@ -327,11 +327,31 @@ if (! empty($id) || ! empty($ref))
 
 		if ($action == 'add') {
 			$title = $langs->trans('NewProductCombination');
+			print dol_fiche_head();
+			$features = $_SESSION['addvariant_'.$object->id];
+			//First, sanitize
+			print '<div id="parttoaddvariant">';
+			if (! empty($features)) {
+				foreach ($features as $feature) {
+
+					$explode = explode(':', $feature);
+
+					if ($prodattr->fetch($explode[0]) < 0) {
+						continue;
+					}
+
+					if ($prodattr_val->fetch($explode[1]) < 0) {
+						continue;
+					}
+
+					print '<i>' . $prodattr->label . '</i>:'. $prodattr_val->value . ' ';
+				}
+			}
+			print '</div>';
+			print dol_fiche_end();
 		} else {
 			$title = $langs->trans('EditProductCombination');
 		}
-
-		print '<div id="parttoaddvariant"></div>';
 		print_fiche_titre($title);
 
 		if ($action == 'add') {
@@ -346,8 +366,8 @@ if (! empty($id) || ! empty($ref))
 			foreach ($prodattr_all as $each) {
 				$prodattr_alljson[$each->id] = $each;
 			}
-                
-		?>
+
+			?>
 
 		<script type="text/javascript">
 
