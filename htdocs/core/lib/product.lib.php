@@ -97,7 +97,7 @@ function product_prepare_head($object)
 	$head[$h][2] = 'referers';
 	$h++;
 
-	if (!empty($conf->variants->enabled) && $object->isProduct()) {
+	if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
 
 		global $db;
 

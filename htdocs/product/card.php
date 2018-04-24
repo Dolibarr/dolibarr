@@ -1771,7 +1771,7 @@ else
             }
 
             //Parent product.
-            if (!empty($conf->variants->enabled) && $object->isProduct()) {
+            if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
 
                 $combination = new ProductCombination($db);
 
