@@ -394,9 +394,71 @@ class SupplierProposal extends CommonObject
         // Check parameters
         if ($type < 0) return -1;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
+
+            if ($fk_product > 0)
+            {
+            	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY))
+            	{
+            		// Check quantity is enough
+            		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
+            		$prod = new Product($this->db, $fk_product);
+            		if ($prod->fetch($fk_product) > 0)
+            		{
+            			$product_type = $prod->type;
+            			$label = $prod->label;
+
+            			// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
+            			// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+            			$result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+            			if ($result > 0)
+            			{
+            				$pu = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+            				$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+            				// is remise percent not keyed but present for the product we add it
+            				if ($remise_percent == 0 && $prod->remise_percent !=0)
+            					$remise_percent =$prod->remise_percent;
+            			}
+            			if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
+            			{
+            				$langs->load("errors");
+            				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+            				$this->db->rollback();
+            				dol_syslog(get_class($this)."::addline we did not found supplier price, so we can't guess unit price");
+            				//$pu    = $prod->fourn_pu;     // We do not overwrite unit price
+            				//$ref   = $prod->ref_fourn;    // We do not overwrite ref supplier price
+            				return -1;
+            			}
+            			if ($result == -1)
+            			{
+            				$langs->load("errors");
+            				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+            				$this->db->rollback();
+            				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
+            				return -1;
+            			}
+            			if ($result < -1)
+            			{
+            				$this->error=$prod->error;
+            				$this->db->rollback();
+            				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
+            				return -1;
+            			}
+            		}
+            		else
+            		{
+            			$this->error=$prod->error;
+            			$this->db->rollback();
+            			return -1;
+            		}
+            	}
+            }
+            else
+            {
+            	$product_type = $type;
+            }
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva

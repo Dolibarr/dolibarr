@@ -364,12 +364,9 @@ if (empty($reshook))
 		{
 			$productsupplier = new ProductFournisseur($db);
 
-			if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))	// TODO this test seems useless
-			{
-				$idprod=0;
-				if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
-			}
-			if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+			$idprod=0;
+			if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
+			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice'), $reg))
 			{
 				$idprod=$reg[1];
 				$res=$productsupplier->fetch($idprod);
@@ -393,6 +390,9 @@ if (empty($reshook))
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 				$type = $productsupplier->type;
+				$price_base_type = ($productsupplier->fourn_price_base_type?$productsupplier->fourn_price_base_type:'HT');
+
+				$ref_supplier = $productsupplier->ref_supplier;
 
 				$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
@@ -408,8 +408,8 @@ if (empty($reshook))
 					$localtax1_tx,
 					$localtax2_tx,
 					$idprod,
-					$productsupplier->product_fourn_price_id,
-					$productsupplier->fourn_ref,
+					0,							// We already have the $idprod always defined
+					$ref_supplier,
 					$remise_percent,
 					'HT',
 					$pu_ttc,
@@ -438,7 +438,7 @@ if (empty($reshook))
 				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'errors');
 			}
 		}
-		else if (empty($error))
+		else if (empty($error)) // $price_ht is already set
 		{
 			$pu_ht = price2num($price_ht, 'MU');
 			$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
@@ -457,22 +457,19 @@ if (empty($reshook))
 			$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty);
 			$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty);
 
-			if (GETPOST('price_ht')!=='')
+			if ($price_ht !== '')
 			{
-				$price_base_type = 'HT';
-				$ht = price2num(GETPOST('price_ht'));
-				$ttc = 0;
+				$pu_ht = price2num($price_ht, 'MU'); // $pu_ht must be rounded according to settings
 			}
 			else
 			{
-				$ttc = price2num(GETPOST('price_ttc'));
-				$ht = $ttc / (1 + ($tva_tx / 100));
-				$price_base_type = 'HT';
+				$pu_ttc = price2num(GETPOST('price_ttc'), 'MU');
+				$pu_ht = price2num($pu_ttc / (1 + ($tva_tx / 100)), 'MU'); // $pu_ht must be rounded according to settings
 			}
-
+			$price_base_type = 'HT';
 			$pu_ht_devise = price2num($price_ht_devise, 'MU');
 
-			$result=$object->addline($desc, $ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
+			$result=$object->addline($desc, $pu_ht, $qty, $tva_tx, $localtax1_tx, $localtax2_tx, 0, 0, $ref_supplier, $remise_percent, $price_base_type, $pu_ttc, $type,'','', $date_start, $date_end, $array_options, $fk_unit, $pu_ht_devise);
 		}
 
 		//print "xx".$tva_tx; exit;
@@ -556,9 +553,12 @@ if (empty($reshook))
 		}
 
 		$productsupplier = new ProductFournisseur($db);
-		if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
+		if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
 		{
-			setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+			if ($line->fk_product > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), $line->fk_product, 'none', GETPOST('socid','int')) < 0 )
+			{
+				setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+			}
 		}
 
 		$date_start=dol_mktime(GETPOST('date_starthour'), GETPOST('date_startmin'), GETPOST('date_startsec'), GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
@@ -2165,8 +2165,10 @@ elseif (! empty($object->id))
 
 	// Add free products/services form
 	global $forceall, $senderissupplier, $dateSelector;
-	$forceall=1; $senderissupplier=1; $dateSelector=0;
-	if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
+	$forceall=1; $dateSelector=0;
+	$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
+	//if (! empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED)) $senderissupplier=2;
+	if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
 	// Show object lines
 	$inputalsopricewithtax=0;
@@ -2176,12 +2178,10 @@ elseif (! empty($object->id))
 	$num = count($object->lines);
 
 	// Form to add new line
-	if ($object->statut == 0 && $user->rights->fournisseur->commande->creer)
+	if ($object->statut == CommandeFournisseur::STATUS_DRAFT && $user->rights->fournisseur->commande->creer)
 	{
 		if ($action != 'editline')
 		{
-			$var = true;
-
 			// Add free products/services
 			$object->formAddObjectLine(1, $societe, $mysoc);
 

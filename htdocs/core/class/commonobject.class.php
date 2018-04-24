@@ -3594,12 +3594,12 @@ abstract class CommonObject
 	 *  @param	Societe			$buyer				Object thirdparty who buy
 	 *	@return	void
 	 */
-	function formAddObjectLine($dateSelector,$seller,$buyer)
+	function formAddObjectLine($dateSelector, $seller, $buyer)
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
 
-		//Line extrafield
+		// Line extrafield
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline = new ExtraFields($this->db);
 		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
@@ -6004,9 +6004,9 @@ abstract class CommonObject
 						} else {
 							$value = $this->array_options["options_" . $key];			// No GET, no POST, no default value, so we take value of object.
 						}
+						//var_dump($keyprefix.' - '.$key.' - '.$keysuffix.' - '.$keyprefix.'options_'.$key.$keysuffix.' - '.$this->array_options["options_".$key.$keysuffix].' - '.$getposttemp.' - '.$value);
 						break;
 				}
-				//var_dump($value);
 
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 				{
@@ -6041,12 +6041,12 @@ abstract class CommonObject
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('date','datetime')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('price','double')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix,'int',3)):$this->array_options['options_'.$key];
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)):$this->array_options['options_'.$key];
 					}
 
 					$labeltoshow = $langs->trans($label);

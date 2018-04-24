@@ -40,6 +40,7 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
+-- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
 

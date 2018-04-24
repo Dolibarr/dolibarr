@@ -132,7 +132,7 @@ $coldisplay=-1; // We remove first td
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
-		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth75" value="<?php echo $line->ref_fourn; ?>"></td>
+		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth75" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
 	<?php
 	}
 

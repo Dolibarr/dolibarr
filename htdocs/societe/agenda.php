@@ -164,7 +164,7 @@ if ($socid > 0)
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
-        	$newcardbutton.='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction");
+        	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction");
         	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
         	$newcardbutton.= '</a>';
     	}

@@ -994,9 +994,6 @@ select.selectarrowonleft option {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-	div.fiche {
-		    margin-top: <?php print ($dol_hide_topmenu?'12':'6'); ?>px !important;
-	}
 	div.titre {
 		/* margin-top: 12px; */
 		/* line-height: 2em; */
@@ -1229,8 +1226,8 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
-	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
-	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
+	<?php if (! empty($dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
+	<?php if (! empty($dol_hide_leftmenu)) print 'margin-top: 12px;'."\n"; ?>
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -1280,7 +1277,6 @@ div.secondcolumn div.box {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
     	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:6); ?>px;
-    	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
     }
     div.fichecenter {
     	width: 100%;
@@ -3229,6 +3225,9 @@ span.boxstatstext img, a.dashboardlineindicatorlate img {
 }
 a img {
 	border: 0;
+}
+.boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
+	display: inline-flex;
 }
 span.boxstatsindicator {
 	font-size: 130%;

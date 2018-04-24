@@ -895,23 +895,21 @@ class Categorie extends CommonObject
 		$sql.= ' AND s.rowid = sub.fk_categorie';
 		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
 
+		$sql.= $this->db->order($sortfield, $sortorder);
+
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);
-		}
-
-		$sql.= $this->db->order($sortfield, $sortorder);
-		if ($limit)	{
-			if ($page < 0)
+			if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			{
 				$page = 0;
+				$offset = 0;
 			}
-			$offset = $limit * $page;
-
-			$sql.= $this->db->plimit($limit + 1, $offset);
 		}
+
+		$sql.= $this->db->plimit($limit + 1, $offset);
 
 		$result = $this->db->query($sql);
 		if ($result)

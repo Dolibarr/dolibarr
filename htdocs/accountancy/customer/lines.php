@@ -242,6 +242,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
@@ -334,7 +339,7 @@ if ($result) {
 		$facture_static->ref = $objp->ref;
 		$facture_static->id = $objp->facid;
 		$facture_static->type = $objp->ftype;
-		
+
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
 		$product_static->type = $objp->type;

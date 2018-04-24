@@ -1481,13 +1481,13 @@ class CommandeFournisseur extends CommonOrder
         }
         if ($type < 0) return -1;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
 
             if ($fk_product > 0)
             {
-                if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+            	if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
                 {
                     // Check quantity is enough
                     dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
@@ -1502,13 +1502,11 @@ class CommandeFournisseur extends CommonOrder
                         $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
                         if ($result > 0)
                         {
-			    $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
-                            $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
-			    // is remise percent not keyed but present for the product we add it
-                            if ($remise_percent == 0 && $prod->remise_percent !=0)
+                        	$pu = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+                        	$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+                        	// is remise percent not keyed but present for the product we add it
+                        	if ($remise_percent == 0 && $prod->remise_percent !=0)
                             	$remise_percent =$prod->remise_percent;
-
-
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -1539,6 +1537,7 @@ class CommandeFournisseur extends CommonOrder
                     else
     				{
                         $this->error=$prod->error;
+                        $this->db->rollback();
                         return -1;
                     }
                 }
