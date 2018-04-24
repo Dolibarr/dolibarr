@@ -1515,7 +1515,7 @@ class FactureRec extends CommonInvoice
     }
 
 	/**
-     *	Update the auto validate invoice
+     *	Update the auto validate flag of invoice
      *
      *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
      *	@return		int						<0 if KO, >0 if OK
