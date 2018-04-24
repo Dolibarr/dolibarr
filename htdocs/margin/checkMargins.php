@@ -205,10 +205,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
-	if ($result) {
-		$nbtotalofrecords = $db->num_rows($result);
-	} else {
-		setEventMessages($db->lasterror, null, 'errors');
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
 	}
 }
 
