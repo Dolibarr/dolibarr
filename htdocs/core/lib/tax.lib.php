@@ -285,6 +285,11 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $sql.= " p.rowid as pid, p.ref as pref, p.fk_product_type as ptype,";
         $sql.= " 0 as payment_id, 0 as payment_amount";
         $sql.= " FROM ".MAIN_DB_PREFIX.$invoicetable." as f,";
+        if(! empty($conf->global->MAIN_TAX_USE_BANK_VALUE)) {
+            $sql .= " ".MAIN_DB_PREFIX.$paymentfacturetable." as pf,";
+            $sql .= " ".MAIN_DB_PREFIX.$paymenttable." as pa,";
+            $sql .= " ".MAIN_DB_PREFIX."bank as b,";
+        }
         $sql.= " ".MAIN_DB_PREFIX."societe as s,";
         $sql.= " ".MAIN_DB_PREFIX.$invoicedettable." as d" ;
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p on d.fk_product = p.rowid";
@@ -294,18 +299,49 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         else $sql.= " AND f.type IN (0,1,2,3,5)";
         $sql.= " AND f.rowid = d.".$fk_facture;
         $sql.= " AND s.rowid = f.fk_soc";
+        if(! empty($conf->global->MAIN_TAX_USE_BANK_VALUE)) {
+            $sql.= " AND pf.".$fk_facture2." = f.rowid";
+            $sql.= " AND pa.rowid = pf.".$fk_payment;
+            $sql.= " AND b.rowid = pa.fk_bank";
+        }
         if ($y && $m)
         {
-            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
-            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            if(! empty($conf->global->MAIN_TAX_USE_BANK_VALUE)) {
+                $sql.= " AND b.datev >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+                $sql.= " AND b.datev <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            }
+            else {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,$m,false))."'";
+            }
         }
         else if ($y)
         {
-            $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
-            $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            if(! empty($conf->global->MAIN_TAX_USE_BANK_VALUE)) {
+                $sql.= " AND b.datev >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+                $sql.= " AND b.datev <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            }
+            else {
+                $sql.= " AND f.datef >= '".$db->idate(dol_get_first_day($y,1,false))."'";
+                $sql.= " AND f.datef <= '".$db->idate(dol_get_last_day($y,12,false))."'";
+            }
         }
-        if ($q) $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
-        if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+        if ($q) {
+            if(! empty($conf->global->MAIN_TAX_USE_BANK_VALUE)) {
+                $sql.= " AND (date_format(b.datev,'%m') > ".(($q-1)*3)." AND date_format(b.datev,'%m') <= ".($q*3).")";
+            }
+            else {
+                $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
+            }
+        }
+        if ($date_start && $date_end) {
+            if(! empty($conf->global->MAIN_TAX_USE_BANK_VALUE)) {
+                $sql.= " AND b.datev >= '".$db->idate($date_start)."' AND b.datev <= '".$db->idate($date_end)."'";
+            }
+            else {
+                $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
+            }
+        }
         $sql.= " AND (d.product_type = 0";                              // Limit to products
         $sql.= " AND d.date_start is null AND d.date_end IS NULL)";     // enhance detection of service
         $sql.= " ORDER BY d.rowid, d.".$fk_facture;
