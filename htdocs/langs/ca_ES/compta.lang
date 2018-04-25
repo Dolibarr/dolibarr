@@ -169,9 +169,15 @@ LT1ReportByCustomers=Report tax 2 by third party
 LT2ReportByCustomers=Report tax 3 by third party
 LT1ReportByCustomersES=Informe de RE per tercers
 LT2ReportByCustomersES=Informe per tercer del IRPF
+<<<<<<< HEAD
 VATReport=Sale tax report
 VATReportByPeriods=Sale tax report by period
 VATReportByCustomers=Sale tax report by customer
+=======
+VATReport=Informe d'IVA de vendes
+VATReportByPeriods=Sale tax report by period
+VATReportByCustomers=Informe d'IVA sobre vendes per client
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 VATReportByCustomersInInputOutputMode=Informe per clients d'IVA cobrat i pagat
 VATReportByQuartersInInputOutputMode=Report by Sale tax rate of the tax collected and paid
 LT1ReportByQuarters=Report tax 2 by rate

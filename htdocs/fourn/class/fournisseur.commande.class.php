@@ -184,23 +184,9 @@ class CommandeFournisseur extends CommonOrder
      */
     public function __construct($db)
     {
-    	global $conf;
-
         $this->db = $db;
-        $this->products = array();
 
-        // List of language codes for status
-        $this->statuts[0] = 'StatusOrderDraft';
-        $this->statuts[1] = 'StatusOrderValidated';
-        $this->statuts[2] = 'StatusOrderApproved';
-        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
-        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
-        $this->statuts[4] = 'StatusOrderReceivedPartially';
-        $this->statuts[5] = 'StatusOrderReceivedAll';
-        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
-        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
-        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
-        $this->statuts[9] = 'StatusOrderRefused';
+        $this->products = array();
     }
 
 
@@ -587,23 +573,40 @@ class CommandeFournisseur extends CommonOrder
      */
     function LibStatut($statut,$mode=0,$billed=0)
     {
-        global $langs;
-        $langs->load('orders');
+    	if (empty($this->statuts) || empty($statutshort))
+    	{
+	        global $langs;
+	        $langs->load('orders');
+
+	        $this->statuts[0] = 'StatusOrderDraft';
+	        $this->statuts[1] = 'StatusOrderValidated';
+	        $this->statuts[2] = 'StatusOrderApproved';
+	        if (empty($conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS)) $this->statuts[3] = 'StatusOrderOnProcess';
+	        else $this->statuts[3] = 'StatusOrderOnProcessWithValidation';
+	        $this->statuts[4] = 'StatusOrderReceivedPartially';
+	        $this->statuts[5] = 'StatusOrderReceivedAll';
+	        $this->statuts[6] = 'StatusOrderCanceled';	// Approved->Canceled
+	        $this->statuts[7] = 'StatusOrderCanceled';	// Process running->canceled
+	        //$this->statuts[8] = 'StatusOrderBilled';	// Everything is finished, order received totally and bill received
+	        $this->statuts[9] = 'StatusOrderRefused';
+
+	        // List of language codes for status
+	        $statutshort[0] = 'StatusOrderDraftShort';
+	        $statutshort[1] = 'StatusOrderValidatedShort';
+	        $statutshort[2] = 'StatusOrderApprovedShort';
+	        $statutshort[3] = 'StatusOrderOnProcessShort';
+	        $statutshort[4] = 'StatusOrderReceivedPartiallyShort';
+	        $statutshort[5] = 'StatusOrderReceivedAllShort';
+	        $statutshort[6] = 'StatusOrderCanceledShort';
+	        $statutshort[7] = 'StatusOrderCanceledShort';
+	        $statutshort[9] = 'StatusOrderRefusedShort';
+    	}
+
+    	$langs->load('orders');
 
         $billedtext='';
 		//if ($statut==5 && $this->billed == 1) $statut = 8;
         if ($billed == 1) $billedtext=$langs->trans("Billed");
-
-        // List of language codes for status
-        $statutshort[0] = 'StatusOrderDraftShort';
-        $statutshort[1] = 'StatusOrderValidatedShort';
-        $statutshort[2] = 'StatusOrderApprovedShort';
-        $statutshort[3] = 'StatusOrderOnProcessShort';
-        $statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-        $statutshort[5] = 'StatusOrderReceivedAllShort';
-        $statutshort[6] = 'StatusOrderCanceledShort';
-        $statutshort[7] = 'StatusOrderCanceledShort';
-        $statutshort[9] = 'StatusOrderRefusedShort';
 
         if ($mode == 0)
         {
@@ -1478,13 +1481,13 @@ class CommandeFournisseur extends CommonOrder
         }
         if ($type < 0) return -1;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
 
             if ($fk_product > 0)
             {
-                if (empty($conf->global->SUPPLIER_ORDER_WITH_NOPRICEDEFINED))
+            	if (! empty($conf->global->SUPPLIER_ORDER_WITH_PREDEFINED_PRICES_ONLY))
                 {
                     // Check quantity is enough
                     dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
@@ -1499,13 +1502,11 @@ class CommandeFournisseur extends CommonOrder
                         $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
                         if ($result > 0)
                         {
-			    $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
-                            $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
-			    // is remise percent not keyed but present for the product we add it
-                            if ($remise_percent == 0 && $prod->remise_percent !=0)
+                        	$pu = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+                        	$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+                        	// is remise percent not keyed but present for the product we add it
+                        	if ($remise_percent == 0 && $prod->remise_percent !=0)
                             	$remise_percent =$prod->remise_percent;
-
-
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
@@ -1536,6 +1537,7 @@ class CommandeFournisseur extends CommonOrder
                     else
     				{
                         $this->error=$prod->error;
+                        $this->db->rollback();
                         return -1;
                     }
                 }

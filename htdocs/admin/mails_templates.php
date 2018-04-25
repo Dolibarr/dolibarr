@@ -169,9 +169,10 @@ if ($conf->adherent->enabled)          $elementList['member']=$langs->trans('Mai
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
 if ($conf->projet->enabled)            $elementList['project']=$langs->trans('MailToProject');
 $elementList['user']=$langs->trans('MailToUser');
-$elementList['all'] =$langs->trans('VisibleEverywhere');
-$elementList['none']=$langs->trans('VisibleNowhere');
-
+sort($elementList);
+// Add all and none after the sort
+$elementList['all'] ='-- '.$langs->trans("All").' -- ('.$langs->trans('VisibleEverywhere').')';
+$elementList['none']='-- '.$langs->trans("None").' -- ('.$langs->trans('VisibleNowhere').')';
 
 $parameters=array('elementList'=>$elementList);
 $reshook=$hookmanager->executeHooks('emailElementlist',$parameters);    // Note that $action and $object may have been modified by some hooks
@@ -726,10 +727,10 @@ if ($resql)
         {
             $obj = $db->fetch_object($resql);
 
-            print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
-
             if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
             {
+            	print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
             	$tmpaction='edit';
                 $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                 $reshook=$hookmanager->executeHooks('editEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
@@ -787,10 +788,23 @@ if ($resql)
                         print '<td></td>';
                     }
                 }
+
+                print "</tr>\n";
             }
             else
             {
-              	$tmpaction = 'view';
+            	$keyforobj='type_template';
+            	if (! in_array($obj->$keyforobj, array_keys($elementList)))
+            	{
+            		$i++;
+            		continue;		// It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
+            	}
+				// TODO Test on 'enabled'
+
+
+            	print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
+            	$tmpaction = 'view';
                 $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                 $reshook=$hookmanager->executeHooks('viewEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
@@ -876,7 +890,6 @@ if ($resql)
                 }
                 print '</td>';
 
-
                 /*
                 $fieldsforcontent = array('content');
                 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
@@ -904,8 +917,9 @@ if ($resql)
 
                     }
                 }*/
+
+                print "</tr>\n";
             }
-            print "</tr>\n";
 
 
             $i++;

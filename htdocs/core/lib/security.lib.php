@@ -27,44 +27,75 @@
 
 
 /**
- *	Encode a string with base 64 algorithm + specific change
- *	Code of this function is useless and we should use base64_encode only instead
+ *	Encode a string with base 64 algorithm + specific delta change.
  *
  *	@param   string		$chain		string to encode
+ *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string
+ *  @see dol_decode
  */
-function dol_encode($chain)
+function dol_encode($chain, $key='1')
 {
-    $strlength=dol_strlen($chain);
-	for ($i=0; $i < $strlength; $i++)
+	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
-		$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
+	    $strlength=dol_strlen($chain);
+		for ($i=0; $i < $strlength; $i++)
+		{
+			$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
+		}
+		$chain = implode("",$output_tab);
+	}
+	elseif ($key)
+	{
+		$result='';
+		$strlength=dol_strlen($chain);
+		for ($i=0; $i < $strlength; $i++)
+		{
+			$keychar = substr($key, ($i % strlen($key))-1, 1);
+			$result.= chr(ord(substr($chain,$i,1))+(ord($keychar)-65));
+		}
+		$chain=$result;
 	}
 
-	$string_coded = base64_encode(implode("",$output_tab));
-	return $string_coded;
+	return base64_encode($chain);
 }
 
 /**
- *	Decode a base 64 encoded + specific string.
+ *	Decode a base 64 encoded + specific delta change.
  *  This function is called by filefunc.inc.php at each page call.
- *	Code of this function is useless and we should use base64_decode only instead
  *
  *	@param   string		$chain		string to decode
+ *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
+ *  @see dol_encode
  */
-function dol_decode($chain)
+function dol_decode($chain, $key='1')
 {
 	$chain = base64_decode($chain);
 
-	$strlength=dol_strlen($chain);
-	for($i=0; $i < $strlength;$i++)
+	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
-		$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
+		$strlength=dol_strlen($chain);
+		for ($i=0; $i < $strlength;$i++)
+		{
+			$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
+		}
+
+		$chain = implode("",$output_tab);
+	}
+	elseif ($key)
+	{
+		$result='';
+		$strlength=dol_strlen($chain);
+		for ($i=0; $i < $strlength; $i++)
+		{
+			$keychar = substr($key, ($i % strlen($key))-1, 1);
+			$result.= chr(ord(substr($chain, $i, 1))-(ord($keychar)-65));
+		}
+		$chain=$result;
 	}
 
-	$string_decoded = implode("",$output_tab);
-	return $string_decoded;
+	return $chain;
 }
 
 

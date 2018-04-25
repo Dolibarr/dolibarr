@@ -72,7 +72,7 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 }
 
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -395,7 +395,6 @@ if (empty($numref))
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=True;
 		$numrows = $db->num_rows($result);
 		$i = 0;
 
@@ -572,7 +571,6 @@ else
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=False;
 		$numrows = $db->num_rows($result);
 		$i = 0;
 

@@ -26,7 +26,6 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
@@ -35,12 +34,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
-// Langs
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("main");
-$langs->load("accountancy");
-$langs->load("products");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("companies","compta","accountancy","products"));
 
 // Security check
 if (empty($conf->accounting->enabled)) {
@@ -261,7 +256,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
+
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/admin/productaccount.php:: sql=" . $sql, LOG_DEBUG);
@@ -360,7 +361,6 @@ if ($result)
 
 	$product_static = new Product($db);
 
-	$var = true;
 	$i=0;
     while ($i < min($num,$limit))
     {

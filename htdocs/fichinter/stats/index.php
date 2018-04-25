@@ -255,6 +255,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	// Status
 	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	$tmp = $objectstatic->LibStatut(0);		// To load $this->statuts_short
 	$liststatus=$objectstatic->statuts_short;
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) unset($liststatus[2]);   // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);

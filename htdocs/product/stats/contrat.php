@@ -177,7 +177,6 @@ if ($id > 0 || ! empty($ref))
 
 			if ($num > 0)
 			{
-				$var=True;
 				while ($i < $num && $i < $conf->liste_limit)
 				{
 					$objp = $db->fetch_object($result);

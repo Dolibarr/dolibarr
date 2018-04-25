@@ -46,7 +46,7 @@ $search_account = GETPOST('search_account','int');
 $month = GETPOST("month","int");
 $year = GETPOST("year","int");
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -151,7 +151,9 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->tax->charges->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/tva/card.php?action=create">'.$langs->trans('NewVATPayment').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/tva/card.php?action=create">'.$langs->trans('NewVATPayment');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

@@ -222,7 +222,7 @@ if (! empty($conf->paypal->enabled))
 		            $TAXAMT=urldecode($resArray["TAXAMT"]);
 		            $NOTE=urldecode($resArray["NOTE"]);
 
-		            $ispaymentok=True;
+		            $ispaymentok=true;
 		        }
 		        else
 		        {

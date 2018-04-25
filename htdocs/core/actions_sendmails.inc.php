@@ -23,8 +23,8 @@
 
 // $mysoc must be defined
 // $id must be defined
-// $paramname must be defined
-// $mode must be defined (used to know the automatic BCC to add)
+// $paramname may be defined
+// $autocopy may be defined (used to know the automatic BCC to add)
 // $trigger_name must be set (can be '')
 // $actiontypecode can be set
 // $object and $uobject may be defined
@@ -347,9 +347,9 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						if (!$folder) $folder = "Sent";	// Default Sent folder
 
 						$mailboxconfig->mbox = imap_open($mailboxconfig->get_connector_url().$folder, $mailboxconfig->mailbox_imap_login, $mailboxconfig->mailbox_imap_password);
-						if (FALSE === $mailboxconfig->mbox)
+						if (false === $mailboxconfig->mbox)
 						{
-							$info = FALSE;
+							$info = false;
 							$err = $langs->trans('Error3_Imap_Connection_Error');
 							setEventMessages($err,$mailboxconfig->element, null, 'errors');
 						}

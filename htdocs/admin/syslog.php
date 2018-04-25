@@ -31,8 +31,8 @@ global $conf;
 
 if (!$user->admin) accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("admin","other"));
 
 $error=0;
 $action = GETPOST('action','aZ09');
@@ -50,7 +50,6 @@ foreach ($dirsyslogs as $reldir) {
 		$handle = opendir($newdir);
 
 		if (is_resource($handle)) {
-			$var = true;
 
 			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {

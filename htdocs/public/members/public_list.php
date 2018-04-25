@@ -81,7 +81,7 @@ function llxFooterVierge()
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -139,7 +139,6 @@ if ($result)
 	print_liste_field_titre("Photo", $_SERVER["PHP_SELF"],"","",$param,'',$sortfield,$sortorder,'public_');
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num && $i < $conf->liste_limit)
 	{
 		$objp = $db->fetch_object($result);

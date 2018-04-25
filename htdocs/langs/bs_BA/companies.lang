@@ -267,7 +267,11 @@ Prospect=Mogući klijent
 CustomerCard=Kartica kupca
 Customer=Kupac
 CustomerRelativeDiscount=Relativni popust kupca
+<<<<<<< HEAD
 SupplierRelativeDiscount=Relative supplier discount
+=======
+SupplierRelativeDiscount=Relativni popust dobavljača
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 CustomerRelativeDiscountShort=Relativni popust
 CustomerAbsoluteDiscountShort=Fiksni popust
 CompanyHasRelativeDiscount=Ovaj kupca ima defaultni popust od <b>%s%%</b>

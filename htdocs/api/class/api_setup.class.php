@@ -170,7 +170,7 @@ class Setup extends DolibarrApi
                     // and then apply the filter if there is one.
                     $this->translateLabel($country, $lang);
 
-                    if (empty($filter) || stripos($country->label, $filter) !== FALSE) {
+                    if (empty($filter) || stripos($country->label, $filter) !== false) {
                         $list[] = $this->_cleanObjectDatas($country);
                     }
                 }

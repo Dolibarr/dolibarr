@@ -472,7 +472,7 @@ if ($status)
 {
 	if ($status == '1,2,3') $title.=' - '.$langs->trans("StatusOrderToProcessShort");
 	if ($status == '6,7') $title.=' - '.$langs->trans("StatusOrderCanceled");
-	else $title.=' - '.$langs->trans($commandestatic->statuts[$status]);
+	else $title.=' - '.$commandestatic->LibStatut($status);
 }
 if ($search_billed > 0) $title.=' - '.$langs->trans("Billed");
 
@@ -584,6 +584,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -646,7 +651,9 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->fournisseur->commande->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create">'.$langs->trans('NewOrder').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fourn/commande/card.php?action=create">'.$langs->trans('NewOrder');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	// Lignes des champs de filtre

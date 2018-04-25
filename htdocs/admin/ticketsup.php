@@ -71,7 +71,7 @@ if ($action == 'updateMask') {
     if (!empty($notification_email)) {
         $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_FROM', $notification_email, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_FROM', '000000', 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_FROM', '', 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
@@ -82,7 +82,7 @@ if ($action == 'updateMask') {
     if (!empty($notification_email_to)) {
         $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_TO', $notification_email_to, 'chaine', 0, '', $conf->entity);
     } else {
-        $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_TO', '000000', 'chaine', 0, '', $conf->entity);
+        $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_EMAIL_TO', '', 'chaine', 0, '', $conf->entity);
     }
     if (!$res > 0) {
         $error++;
@@ -184,16 +184,22 @@ if ($action == 'setvarother') {
         $error++;
     }
 
-    $param_show_module_logo = GETPOST('TICKETS_SHOW_MODULE_LOGO', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
-    if (!$res > 0) {
-        $error++;
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+    {
+    	$param_show_module_logo = GETPOST('TICKETS_SHOW_MODULE_LOGO', 'alpha');
+    	$res = dolibarr_set_const($db, 'TICKETS_SHOW_MODULE_LOGO', $param_show_module_logo, 'chaine', 0, '', $conf->entity);
+    	if (!$res > 0) {
+        	$error++;
+    	}
     }
 
-    $param_notification_also_main_addressemail = GETPOST('TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
-    $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
-    if (!$res > 0) {
-        $error++;
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+    {
+    	$param_notification_also_main_addressemail = GETPOST('TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS', 'alpha');
+	    $res = dolibarr_set_const($db, 'TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS', $param_notification_also_main_addressemail, 'chaine', 0, '', $conf->entity);
+	    if (!$res > 0) {
+	        $error++;
+	    }
     }
 
     $param_limit_view = GETPOST('TICKETS_LIMIT_VIEW_ASSIGNED_ONLY', 'alpha');
@@ -263,7 +269,6 @@ foreach ($dirmodels as $reldir) {
     if (is_dir($dir)) {
         $handle = opendir($dir);
         if (is_resource($handle)) {
-            $var = true;
 
             while (($file = readdir($handle)) !== false) {
                 if (preg_match('/^(mod_.*)\.php$/i', $file, $reg)) {
@@ -284,8 +289,7 @@ foreach ($dirmodels as $reldir) {
                     }
 
                     if ($module->isEnabled()) {
-                        $var = !$var;
-                        print '<tr ' . $bc[$var] . '><td>' . $module->name . "</td><td>\n";
+                        print '<tr class="oddeven"><td>' . $module->name . "</td><td>\n";
                         print $module->info();
                         print '</td>';
 
@@ -380,20 +384,23 @@ print $form->textwithpicto('', $langs->trans("TicketsEmailMustExistHelp"), 1, 'h
 print '</td>';
 print '</tr>';
 
-// Show logo for module
-print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowModuleLogo") . '</td>';
-print '<td align="left">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_SHOW_MODULE_LOGO');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_SHOW_MODULE_LOGO", $arrval, $conf->global->TICKETS_SHOW_MODULE_LOGO);
-}
-print '</td>';
-print '<td align="center">';
-print $form->textwithpicto('', $langs->trans("TicketsShowModuleLogoHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
+/*if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+	// Show logo for module
+	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowModuleLogo") . '</td>';
+	print '<td align="left">';
+	if ($conf->use_javascript_ajax) {
+	    print ajax_constantonoff('TICKETS_SHOW_MODULE_LOGO');
+	} else {
+	    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	    print $form->selectarray("TICKETS_SHOW_MODULE_LOGO", $arrval, $conf->global->TICKETS_SHOW_MODULE_LOGO);
+	}
+	print '</td>';
+	print '<td align="center">';
+	print $form->textwithpicto('', $langs->trans("TicketsShowModuleLogoHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
+}*/
 
 // Show logo for company
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsShowCompanyLogo") . '</td>';
@@ -446,19 +453,22 @@ print '</td>';
 print '</tr>';
 
 // Also send to main email address
-print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
-print '<td align="left">';
-if ($conf->use_javascript_ajax) {
-    print ajax_constantonoff('TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS');
-} else {
-    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
-    print $form->selectarray("TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS);
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+{
+	print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsEmailAlsoSendToMainAddress") . '</td>';
+	print '<td align="left">';
+	if ($conf->use_javascript_ajax) {
+	    print ajax_constantonoff('TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS');
+	} else {
+	    $arrval = array('0' => $langs->trans("No"), '1' => $langs->trans("Yes"));
+	    print $form->selectarray("TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS", $arrval, $conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS);
+	}
+	print '</td>';
+	print '<td align="center">';
+	print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
+	print '</td>';
+	print '</tr>';
 }
-print '</td>';
-print '<td align="center">';
-print $form->textwithpicto('', $langs->trans("TicketsEmailAlsoSendToMainAddressHelp"), 1, 'help');
-print '</td>';
-print '</tr>';
 
 // Limiter la vue des tickets à ceux assignés à l'utilisateur
 print '<tr class="pair"><td width="70%">' . $langs->trans("TicketsLimitViewAssignedOnly") . '</td>';

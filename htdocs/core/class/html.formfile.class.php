@@ -595,7 +595,7 @@ class FormFile
 					$file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
 					$res=include_once $file;
 				}
-				$class='Modele'.ucfirst($modulepart);
+				$class='ModelePDF'.ucfirst($modulepart);
 				if (class_exists($class))
 				{
 					$modellist=call_user_func($class.'::liste_modeles',$this->db);
@@ -992,6 +992,9 @@ class FormFile
 		global $dolibarr_main_url_root;
 		global $form;
 
+		$disablecrop=1;
+		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticketsup','user'))) $disablecrop=0;
+
 		// Define relative path used to store the file
 		if (empty($relativepath))
 		{
@@ -1035,7 +1038,11 @@ class FormFile
 		}
 		else
 		{
-			if (! is_object($form)) $form=new Form($this->db);
+			if (! is_object($form))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';		// The compoent may be included into ajax page that does not include the Form class
+				$form=new Form($this->db);
+			}
 
 			if (! preg_match('/&id=/', $param) && isset($object->id)) $param.='&id='.$object->id;
 			$relativepathwihtoutslashend=preg_replace('/\/$/', '', $relativepath);
@@ -1252,9 +1259,6 @@ class FormFile
 						{
 							$newmodulepart=$modulepart;
 							if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
-
-							$disablecrop=1;
-							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticketsup','user'))) $disablecrop=0;
 
 							if (! $disablecrop && image_format_supported($file['name']) > 0)
 							{

@@ -701,7 +701,7 @@ if ($id > 0 || ! empty($ref)) {
 
 		if ($nbproduct)
 		{
-            $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($object->statuts[5]));
+			$checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
 
 			print '<br><div class="center">';
             print $langs->trans("Comment") . ' : ';
@@ -844,7 +844,7 @@ if ($id > 0 || ! empty($ref)) {
 				}
 				// date
 				print '<td>' . dol_print_date($objp->datec) . '</td>';
-				
+
 				print "</tr>\n";
 
 				$i ++;

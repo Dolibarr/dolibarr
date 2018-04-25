@@ -267,23 +267,40 @@ Prospect=Client potencial
 CustomerCard=Fitxa client
 Customer=Client
 CustomerRelativeDiscount=Descompte client relatiu
+<<<<<<< HEAD
 SupplierRelativeDiscount=Relative supplier discount
+=======
+SupplierRelativeDiscount=Descompte relatiu de proveïdor
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 CustomerRelativeDiscountShort=Descompte relatiu
 CustomerAbsoluteDiscountShort=Descompte fixe
 CompanyHasRelativeDiscount=Aquest client té un descompte per defecte de <b>%s%%</b>
 CompanyHasNoRelativeDiscount=Aquest client no té descomptes relatius per defecte
 HasRelativeDiscountFromSupplier=You have a default discount of <b>%s%%</b> from this supplier
+<<<<<<< HEAD
 HasNoRelativeDiscountFromSupplier=You have no default relative discount from this supplier
+=======
+HasNoRelativeDiscountFromSupplier=No tens descomptes relatius per defecte d'aquest proveïdor
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 CompanyHasAbsoluteDiscount=Aquest client té descomptes disponibles (notes de crèdit o bestretes) per <b>%s</b> %s
 CompanyHasDownPaymentOrCommercialDiscount=Aquest client té un descompte disponible (comercial, de pagament) per a <b>%s</b>%s
 CompanyHasCreditNote=Aquest client encara té abonaments per <b>%s</b> %s
+<<<<<<< HEAD
 HasNoAbsoluteDiscountFromSupplier=You have no discount credit available from this supplier
+=======
+HasNoAbsoluteDiscountFromSupplier=No tens crèdit disponible per descomptar d'aquest proveïdor
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 HasAbsoluteDiscountFromSupplier=You have discounts available (credits notes or down payments) for <b>%s</b> %s from this supplier
 HasDownPaymentOrCommercialDiscountFromSupplier=You have discounts available (commercial, down payments) for <b>%s</b> %s from this supplier
 HasCreditNoteFromSupplier=You have credit notes for <b>%s</b> %s from this supplier
 CompanyHasNoAbsoluteDiscount=Aquest client no té més descomptes fixos disponibles
+<<<<<<< HEAD
 CustomerAbsoluteDiscountAllUsers=Absolute customer discounts (granted by all users)
 CustomerAbsoluteDiscountMy=Absolute customer discounts (granted by yourself)
+=======
+CustomerAbsoluteDiscountAllUsers=Descomptes absoluts dels clients (concedits per tots els usuaris)
+CustomerAbsoluteDiscountMy=Descomptes absoluts dels clients (concedits per tu mateix)
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 SupplierAbsoluteDiscountAllUsers=Absolute supplier discounts (granted by all users)
 SupplierAbsoluteDiscountMy=Absolute supplier discounts (granted by yourself)
 DiscountNone=Cap
@@ -390,7 +407,11 @@ NoDolibarrAccess=Sense accés d'usuari
 ExportDataset_company_1=Tercers (empreses/entitats/persones físiques) i propietats
 ExportDataset_company_2=Contactes de tercers i atributs
 ImportDataset_company_1=Tercers (empreses/entitats/persones físiques) i propietats
+<<<<<<< HEAD
 ImportDataset_company_2=Contacts/Addresses (of third parties or not) and attributes
+=======
+ImportDataset_company_2=Contactes/Adreces (de tercers o no) i atributs
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 ImportDataset_company_3=Comptes bancaris de tercers
 ImportDataset_company_4=Tercers/Comercials (Assigna usuaris comercials a tercers)
 PriceLevel=Nivell de preus

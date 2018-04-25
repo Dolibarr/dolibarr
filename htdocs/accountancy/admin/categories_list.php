@@ -178,7 +178,7 @@ if (GETPOST('actionadd') || GETPOST('actionmodify'))
     }
     if (! is_numeric(GETPOST('position','alpha')))
     {
-    	$langs->load("errors");
+    	$langs->loadLangs(array("errors"));
    		$ok=0;
    		setEventMessages($langs->transnoentities('ErrorFieldMustBeANumeric', $langs->transnoentities("Position")), null, 'errors');
     }
@@ -735,7 +735,7 @@ if ($id)
                                 $valuetoshow=($obj->code && $key != "Country".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }
                             else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'c_availability') {
-                                $langs->load("propal");
+                                $langs->loadLangs(array("propal"));
                                 $key=$langs->trans("AvailabilityType".strtoupper($obj->code));
                                 $valuetoshow=($obj->code && $key != "AvailabilityType".strtoupper($obj->code)?$key:$obj->{$fieldlist[$field]});
                             }

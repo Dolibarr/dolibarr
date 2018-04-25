@@ -58,7 +58,7 @@ $fontsizesmaller='0.75em';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
 
-session_cache_limiter(FALSE);
+session_cache_limiter(false);
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -994,9 +994,6 @@ select.selectarrowonleft option {
         text-overflow: ellipsis;
         white-space: nowrap;
     }
-	div.fiche {
-		    margin-top: <?php print ($dol_hide_topmenu?'12':'6'); ?>px !important;
-	}
 	div.titre {
 		/* margin-top: 12px; */
 		/* line-height: 2em; */
@@ -1229,8 +1226,8 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'25':'6')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
-	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'."\n"; ?>
-	<?php if (! empty($conf->dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
+	<?php if (! empty($dol_hide_leftmenu)) print 'margin-bottom: 12px;'."\n"; ?>
+	<?php if (! empty($dol_hide_leftmenu)) print 'margin-top: 12px;'."\n"; ?>
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
 	margin: 20px !important;
@@ -1280,7 +1277,6 @@ div.secondcolumn div.box {
     div.fiche {
     	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:($dol_hide_leftmenu?'6':'20')); ?>px;
     	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?8:6); ?>px;
-    	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
     }
     div.fichecenter {
     	width: 100%;
@@ -1411,6 +1407,7 @@ div.statusref img {
     padding-left: 8px;
    	padding-right: 9px;
    	vertical-align: text-bottom;
+   	width: 18px;
 }
 div.statusrefbis {
     padding-left: 8px;
@@ -1815,8 +1812,13 @@ form#login {
 	padding-top:16px;
 	padding-bottom:12px;
 	max-width: 560px;
-
-	background-color: #FFFFFF;
+<?php
+if (! empty($conf->global->MAIN_LOGIN_BACKGROUND)) {
+	print '	background-color: rgba(255, 255, 255, 0.9);';
+} else {
+	print '	background-color: #FFFFFF;';
+}
+?>
 
 	-webkit-box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
 	box-shadow: 0 2px 23px 2px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(60,60,60,0.15);
@@ -2298,7 +2300,7 @@ a.tabunactive {
 }
 a.tab:link, a.tab:visited, a.tab:hover, a.tab#active {
 	font-family: <?php print $fontlist ?>;
-	padding: 12px 9px 12px;
+	padding: 12px 9px 13px;
     margin: 0em 0.2em;
     text-decoration: none;
     white-space: nowrap;
@@ -2373,46 +2375,48 @@ span.butAction, span.butActionDelete {
 	cursor: pointer;
 }
 
-.butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
+.butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
 	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em !important;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
-    border-color: #c5c5c5;
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
     text-align: center;
     cursor: pointer;
-    color: #fff;
-    background: rgb(<?php echo $colorbackhmenu1 ?>);
-    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
+    /* color: #fff; */
+    /* background: rgb(<?php echo $colorbackhmenu1 ?>); */
+    color: #000;
+    /* text-transform: uppercase; */
+    border: 1px solid #aaa;
 
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
 }
-.butActionNew, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
+.butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
 	margin: 0em 0.3em 0 0.3em !important;
 	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
     font-weight: normal;
-    border-color: #c5c5c5;
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
     text-align: center;
     cursor: pointer;
-    color: #fff !important;
+    /*color: #fff !important;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
-    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);
+    border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);*/
 
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     border-top-left-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
 }
+a.butActionNew>span.fa-plus-circle, a.butActionNew>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
+a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-circle:hover { padding-left: 6px; font-size: 1.5em; border: none; box-shadow: none; webkit-box-shadow: none; }
 
 .butAction:hover, .butActionNew:hover   {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
@@ -2420,9 +2424,9 @@ span.butAction, span.butActionDelete {
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-    background: #633;
+    /* background: #633; */
     border: 1px solid #633;
-    color: #FFF;
+    color: #633;
 }
 
 .butActionDelete:hover {
@@ -2456,7 +2460,6 @@ span.butAction, span.butActionDelete {
     text-align: center;
     cursor: pointer;
     color: #999 !important;
-    border: 1px solid #bbb;
     padding-top: 0.2em;
     box-shadow: none !important;
     -webkit-box-shadow: none !important;
@@ -3223,6 +3226,9 @@ span.boxstatstext img, a.dashboardlineindicatorlate img {
 a img {
 	border: 0;
 }
+.boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
+	display: inline-flex;
+}
 span.boxstatsindicator {
 	font-size: 130%;
 	font-weight: normal;
@@ -3713,7 +3719,7 @@ table.dp {
     border-style:none;
     background-color:transparent;
     padding:0px;
-    font-size:9px;
+    font-size: 0.85em;
     border-width:0px;
     color:#0B63A2;
     vertical-align:middle;
@@ -4841,6 +4847,9 @@ dl.dropdown {
     display:inline-block;
     padding: 0 3px 2px 0;
 }
+.dropdown span.value {
+    display:none;
+}
 .dropdown dd ul {
     background-color: #FFF;
     border: 1px solid #888;
@@ -4853,13 +4862,12 @@ dl.dropdown {
     max-height: 264px;
     overflow: auto;
 }
-.dropdown span.value {
-    display:none;
-}
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 2px;
+	/* color: rgb(<?php print $colortext; ?>); */
+	color: #000;
 }
 .dropdown dd ul li input[type="checkbox"] {
     margin-<?php echo $right; ?>: 3px;

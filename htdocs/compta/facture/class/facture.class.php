@@ -613,7 +613,7 @@ class Facture extends CommonInvoice
                 	$line = $this->lines[$i];
 
                 	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
-				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
                 	if (! is_object($line)) $line = (object) $line;
 
 				    if ($result >= 0)
@@ -1984,6 +1984,7 @@ class Facture extends CommonInvoice
 			$this->db->begin();
 
 			dol_syslog(get_class($this)."::set_paid rowid=".$this->id, LOG_DEBUG);
+
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 			$sql.= ' fk_statut='.self::STATUS_CLOSED;
 			if (! $close_code) $sql.= ', paye=1';
@@ -1991,7 +1992,6 @@ class Facture extends CommonInvoice
 			if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
 
-			dol_syslog(get_class($this)."::set_paid", LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -2363,7 +2363,7 @@ class Facture extends CommonInvoice
 
                 if (!empty($conf->global->INVOICE_USE_SITUATION))
                 {
-    				$final = True;
+                	$final = true;
     				$nboflines = count($this->lines);
     				while (($i < $nboflines) && $final) {
     					$final = ($this->lines[$i]->situation_percent == 100);
@@ -2565,6 +2565,7 @@ class Facture extends CommonInvoice
 		// Deprecation warning
 		if ($label) {
 			dol_syslog(__METHOD__ . ": using line label is deprecated", LOG_WARNING);
+			//var_dump(debug_backtrace(false));exit;
 		}
 
 		global $mysoc, $conf, $langs;

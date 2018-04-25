@@ -274,12 +274,11 @@ elseif ($action == 'updateoptions')
 			$conf->global->PROJECT_USE_SEARCH_TO_SELECT = $companysearch;
 		}
 	}
-}
-else if ($action == "linkOtherCompany")
-{
-	$projectToSelect = GETPOST('projectToSelect');
-
-	dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity);	//Allow to disable this configuration if empty value
+	if (GETPOST('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY'))
+	{
+		$projectToSelect = GETPOST('projectToSelect','alpha');
+		dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity);	//Allow to disable this configuration if empty value
+	}
 }
 
 

@@ -41,7 +41,7 @@ $page = GETPOST("page",'int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
 if ($page < 0) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin) accessforbidden();
@@ -280,7 +280,7 @@ function backup_tables($outputfile, $tables='*')
 
     //cycle through
     $handle = fopen($outputfile, 'w+');
-    if (fwrite($handle, '') === FALSE)
+    if (fwrite($handle, '') === false)
     {
         $langs->load("errors");
         dol_syslog("Failed to open file ".$outputfile,LOG_ERR);

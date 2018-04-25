@@ -599,7 +599,7 @@ abstract class CommonObject
 
 		if (empty($this->last_main_doc))
 		{
-			return '';		// No known last doc
+			return '';		// No way to known which document name to use
 		}
 
 		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
@@ -3594,12 +3594,12 @@ abstract class CommonObject
 	 *  @param	Societe			$buyer				Object thirdparty who buy
 	 *	@return	void
 	 */
-	function formAddObjectLine($dateSelector,$seller,$buyer)
+	function formAddObjectLine($dateSelector, $seller, $buyer)
 	{
 		global $conf,$user,$langs,$object,$hookmanager;
 		global $form,$bcnd,$var;
 
-		//Line extrafield
+		// Line extrafield
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline = new ExtraFields($this->db);
 		$extralabelslines=$extrafieldsline->fetch_name_optionals_label($this->table_element_line);
@@ -3923,23 +3923,26 @@ abstract class CommonObject
 		$var = true;
 		$i	 = 0;
 
-		foreach ($this->lines as $line)
+		if (! empty($this->lines))
 		{
-			if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			foreach ($this->lines as $line)
 			{
-				if (empty($line->fk_parent_line))
+				if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
 				{
-					$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
-					$action='';
-					$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					if (empty($line->fk_parent_line))
+					{
+						$parameters=array('line'=>$line,'var'=>$var,'i'=>$i);
+						$action='';
+						$hookmanager->executeHooks('printOriginObjectLine',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+					}
 				}
-			}
-			else
-			{
-				$this->printOriginLine($line, $var, $restrictlist);
-			}
+				else
+				{
+					$this->printOriginLine($line, $var, $restrictlist);
+				}
 
-			$i++;
+				$i++;
+			}
 		}
 	}
 
@@ -4384,6 +4387,9 @@ abstract class CommonObject
 							$ecmfile->gen_or_uploaded = 'generated';
 							$ecmfile->description = '';    // indexed content
 							$ecmfile->keyword = '';        // keyword content
+							$ecmfile->src_object_type = $this->table_element;
+							$ecmfile->src_object_id   = $this->id;
+
 							$result = $ecmfile->create($user);
 							if ($result < 0)
 							{
@@ -4560,6 +4566,8 @@ abstract class CommonObject
 			return 0;
 		}
 
+		$this->array_options=array();
+
 		if (! is_array($optionsArray))
 		{
 			// If $extrafields is not a known object, we initialize it. Best practice is to have $extrafields defined into card.php or list.php page.
@@ -4601,7 +4609,7 @@ abstract class CommonObject
 			$sql.= " FROM ".MAIN_DB_PREFIX.$table_element."_extrafields";
 			$sql.= " WHERE fk_object = ".$rowid;
 
-			dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);
+			//dol_syslog(get_class($this)."::fetch_optionals get extrafields data for ".$this->table_element, LOG_DEBUG);		// Too verbose
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -5670,11 +5678,19 @@ abstract class CommonObject
 		elseif ($key == 'status' && method_exists($this, 'getLibStatut')) $value=$this->getLibStatut(3);
 		elseif ($type == 'date')
 		{
-			$value=dol_print_date($value,'day');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'day');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'datetime')
 		{
-			$value=dol_print_date($value,'dayhour');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'dayhour');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'double')
 		{
@@ -5988,9 +6004,9 @@ abstract class CommonObject
 						} else {
 							$value = $this->array_options["options_" . $key];			// No GET, no POST, no default value, so we take value of object.
 						}
+						//var_dump($keyprefix.' - '.$key.' - '.$keysuffix.' - '.$keyprefix.'options_'.$key.$keysuffix.' - '.$this->array_options["options_".$key.$keysuffix].' - '.$getposttemp.' - '.$value);
 						break;
 				}
-				//var_dump($value);
 
 				if ($extrafields->attributes[$this->table_element]['type'][$key] == 'separate')
 				{
@@ -6025,12 +6041,12 @@ abstract class CommonObject
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('date','datetime')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('price','double')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix,'int',3)):$this->array_options['options_'.$key];
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)):$this->array_options['options_'.$key];
 					}
 
 					$labeltoshow = $langs->trans($label);
@@ -6589,7 +6605,7 @@ abstract class CommonObject
 			{
 				if(empty($this->{$field}))
 				{
-					$queryarray[$field] = NULL;
+					$queryarray[$field] = null;
 				}
 				else
 				{
@@ -6644,7 +6660,7 @@ abstract class CommonObject
 			{
 				$this->{$field} = @unserialize($obj->{$field});
 				// Hack for data not in UTF8
-				if($this->{$field } === FALSE) @unserialize(utf8_decode($obj->{$field}));
+				if($this->{$field } === false) @unserialize(utf8_decode($obj->{$field}));
 			}
 			elseif($this->isInt($info))
 			{
@@ -6732,7 +6748,7 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]))
+			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);

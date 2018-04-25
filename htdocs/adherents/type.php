@@ -231,7 +231,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		$newcardbutton='';
 		if ($user->rights->adherent->configurer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create">'.$langs->trans('NewMemberType').'</a>';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/type.php?action=create">'.$langs->trans('NewMemberType');
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
 		}
 
 		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -485,6 +487,9 @@ if ($rowid > 0)
 		{
 		    $sql.=" AND datefin < '".$db->idate($now)."'";
 		}
+
+		$sql.= " ".$db->order($sortfield,$sortorder);
+
 		// Count total nb of records
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -492,9 +497,13 @@ if ($rowid > 0)
 			$resql = $db->query($sql);
 		    if ($resql) $nbtotalofrecords = $db->num_rows($result);
 		    else dol_print_error($db);
+		    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		    {
+		    	$page = 0;
+		    	$offset = 0;
+		    }
 		}
-		// Add order and limit
-		$sql.= " ".$db->order($sortfield,$sortorder);
+
 		$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
 		$resql = $db->query($sql);

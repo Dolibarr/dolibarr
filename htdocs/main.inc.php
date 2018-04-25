@@ -198,7 +198,7 @@ if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 {
 	$tmpautoset=explode(':',$_POST["DOL_AUTOSET_COOKIE"],2);
 	$tmplist=explode(',',$tmpautoset[1]);
-	$cookiearrayvalue='';
+	$cookiearrayvalue=array();
 	foreach ($tmplist as $tmpkey)
 	{
 		$postkey=$tmpautoset[0].'_'.$tmpkey;
@@ -350,7 +350,7 @@ if (! defined('NOTOKENRENEWAL'))
 	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 
 	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
-	$token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
+	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
 }
 if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
@@ -468,7 +468,7 @@ if (! defined('NOLOGIN'))
 		if (GETPOST("username","alpha",2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			$sessionkey = 'dol_antispam_value';
-			$ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+			$ok=(array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
 			// Check code
 			if (! $ok)
@@ -1502,7 +1502,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		{
 			$toprightmenu.=$result;	// For backward compatibility
 		}
-		
+
 		// Link to module builder
 		if (! empty($conf->modulebuilder->enabled))
 		{
@@ -1634,7 +1634,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
 			//$searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
-			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY)?1:0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 		}
 		else
 		{

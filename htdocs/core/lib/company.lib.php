@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -727,10 +728,9 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
         $newcardbutton='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
         {
-            //$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
 			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
-			if (empty($conf->dol_optimize_smallscreen)) $newcardbutton.=' '.img_picto($langs->trans("AddProject"),'filenew');
-			$newcardbutton.='</a>'."\n";
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
         }
 
         print "\n";
@@ -926,7 +926,8 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
 		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
-		$newcardbutton.='</a>'."\n";
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
     }
 
     print "\n";
@@ -953,6 +954,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_name != '')   $param.='&search_name='.urlencode($search_name);
     if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
     // Add $param from extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
     $sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.skype, t.statut, t.photo,";
@@ -963,6 +965,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
     if ($search_name) $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
     // Add where from extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
     if ($sortfield == "t.name") $sql.=" ORDER BY t.lastname $sortorder, t.firstname $sortorder";
     else $sql.= " ORDER BY $sortfield $sortorder";
@@ -991,6 +994,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	}
     }
     // Extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
     // Fields from hook
@@ -1017,9 +1021,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
     }
     // Extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
     // Hook fields
-    $parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
@@ -1110,7 +1115,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             }
 
             // Extra fields
-            $extrafieldsobjectkey='socpeople';
+            $extrafieldsobjectkey=$contactstatic->table_element;
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
             // Actions
@@ -1174,7 +1179,9 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	$newcardbutton='';
 	if ($user->rights->societe->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress").' '.img_picto($langs->trans("AddAddress"),'filenew').'</a>'."\n";
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress");
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	print "\n";

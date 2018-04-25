@@ -307,8 +307,6 @@ if ($result)
 
 		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th></tr>';
 
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -337,7 +335,7 @@ if ($result)
 			$product_static->label = $objp->label;
 			$product_static->type=$objp->fk_product_type;
 			$product_static->entity = $objp->entity;
-			$product_static->status_batch = $objp->tobatch; 
+			$product_static->status_batch = $objp->tobatch;
 			print $product_static->getNomUrl(1,'',16);
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';

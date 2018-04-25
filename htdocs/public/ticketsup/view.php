@@ -16,7 +16,7 @@
  */
 
 /**
- *       \file       ticketsup/public/index.php
+ *       \file       htdocs/public/ticketsup/index.php
  *       \ingroup    ticketsup
  *       \brief      Public file to add and manage ticket
  */
@@ -40,9 +40,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
 
 // Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
-$langs->load("ticketsup");
+$langs->loadLangs(array("companies","other","ticketsup"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
@@ -57,6 +55,11 @@ if (isset($_SESSION['email_customer'])) {
 }
 
 $object = new ActionsTicketsup($db);
+
+
+/*
+ * Actions
+ */
 
 if ($action == "view_ticket" || $action == "add_message" || $action == "close" || $action == "confirm_public_close" || $action == "new_public_message") {
     $error = 0;
@@ -80,7 +83,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
     }
 
     if (!$error) {
-        $ret = $object->fetch('', $track_id);
+        $ret = $object->fetch('', '', $track_id);
         if ($ret && $object->dao->id > 0) {
             // vérifie si l'adresse email est bien dans les contacts du ticket
             $contacts = $object->dao->liste_contact(-1, 'external');
@@ -116,16 +119,18 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
 }
 $object->doActions($action);
 
-/***************************************************
- * VIEW
- *
- ****************************************************/
+
+
+/*
+ * View
+ */
 
 $form = new Form($db);
 $formticket = new FormTicketsup($db);
 
 $arrayofjs = array();
 $arrayofcss = array('/ticketsup/css/styles.css.php');
+
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
@@ -151,17 +156,17 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         print '<table class="border" style="width:100%">';
 
         // Ref
-        print '<tr><td style="width:40%">' . $langs->trans("Ref") . '</td><td>';
+        print '<tr><td class="titlefield">' . $langs->trans("Ref") . '</td><td>';
         print $object->dao->ref;
         print '</td></tr>';
 
         // Tracking ID
-        print '<tr><td style="width:40%">' . $langs->trans("TicketTrackId") . '</td><td>';
+        print '<tr><td>' . $langs->trans("TicketTrackId") . '</td><td>';
         print $object->dao->track_id;
         print '</td></tr>';
 
         // Subject
-        print '<tr><td><strong>' . $langs->trans("Subject") . '</strong></td><td>';
+        print '<tr><td>' . $langs->trans("Subject") . '</td><td>';
         print $object->dao->subject;
         print '</td></tr>';
 
@@ -218,7 +223,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         }
 
         // User assigned
-        print '<tr><td>' . $langs->trans("UserAssignedTo") . '</td><td>';
+        print '<tr><td>' . $langs->trans("AssignedTo") . '</td><td>';
         if ($object->dao->fk_user_assign > 0) {
             $fuser = new User($db);
             $fuser->fetch($object->dao->fk_user_assign);
@@ -253,7 +258,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
             $formticket->withfile = 2;
             $formticket->showMessageForm('100%');
         } else {
-            print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="' . dol_buildpath('/ticketsup/public/list.php', 1) . '">';
+            print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticketsup/list.php', 1) . '">';
             print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
             print '<input type="hidden" name="action" value="view_ticketlist">';
             print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';

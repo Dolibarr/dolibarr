@@ -298,8 +298,6 @@ if ($result)
     print '<td align="center">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';
 
-    $var=True;
-
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);

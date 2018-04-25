@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2013-2018    Jean-François FERRY <hello@librethic.io>
- * Copyright (C) 2016         Christophe Battarel <christophe@altairis.fr>
+/* Copyright (C) 2013-2018	Jean-François FERRY	<hello@librethic.io>
+ * Copyright (C) 2016		Christophe Battarel	<christophe@altairis.fr>
+ * Copyright (C) 2018		Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,12 +255,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
-}
-// if total resultset is smaller then paging size (filtering), goto and load page 0
-if (($page * $limit) > $nbtotalofrecords)
-{
-	$page = 0;
-	$offset = 0;
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 // if total resultset is smaller the limit, no need to do paging.
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
@@ -316,17 +316,28 @@ if ($socid && !$projectid && $user->rights->societe->lire) {
         // Customer code
         if ($socstat->client && !empty($socstat->code_client)) {
             print '<tr><td class="titlefield">';
-            print $langs->trans('CustomerCode') . '</td><td colspan="' . (2 + (($showlogo || $showbarcode) ? 0 : 1)) . '">';
+            print $langs->trans('CustomerCode') . '</td><td>';
             print $socstat->code_client;
             if ($socstat->check_codeclient() != 0) {
                 print ' <font class="error">(' . $langs->trans("WrongCustomerCode") . ')</font>';
             }
 
             print '</td>';
-            print $htmllogobar;
-            $htmllogobar = '';
             print '</tr>';
         }
+        // Supplier code
+        if ($socstat->fournisseur && !empty($socstat->code_fournisseur)) {
+        	print '<tr><td class="titlefield">';
+        	print $langs->trans('SupplierCode') . '</td><td>';
+        	print $socstat->code_fournisseur;
+        	if ($socstat->check_codefournisseur() != 0) {
+        		print ' <font class="error">(' . $langs->trans("WrongSupplierCode") . ')</font>';
+        	}
+
+        	print '</td>';
+        	print '</tr>';
+        }
+
         print '</table>';
         print '</div>';
         dol_fiche_end();
@@ -440,7 +451,9 @@ if ($projectid) print '<input type="hidden" name="projectid" value="' . $project
 $newcardbutton='';
 if ($user->rights->ticketsup->write)
 {
-	$newcardbutton = '<a class="butActionNew" href="new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket') . '</a>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticketsup/new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 print_barre_liste($langs->trans('TicketList'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_ticketsup', 0, $newcardbutton, '', $limit);
@@ -567,11 +580,12 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine=0;
-foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
-{
-	if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+if (! empty($extrafields->attributes[$object->table_element]['computed'])) {
+	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
+	{
+		if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
+	}
 }
-
 
 // Loop on record
 // --------------------------------------------------------------------

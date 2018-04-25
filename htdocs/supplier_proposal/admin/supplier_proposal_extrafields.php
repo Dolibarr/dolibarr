@@ -87,10 +87,8 @@ print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-$var=True;
 foreach($extrafields->attribute_type as $key => $value)
 {
-
     print '<tr class="oddeven">';
     print "<td>".$extrafields->attribute_pos[$key]."</td>\n";
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";

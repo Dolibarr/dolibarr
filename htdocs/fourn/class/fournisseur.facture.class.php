@@ -89,16 +89,16 @@ class FactureFournisseur extends CommonInvoice
     public $tms;              // Last update date
     public $date;             // Invoice date
     public $date_echeance;    // Max payment date
-    public $amount;
-    public $remise;
-    public $tva;
+    public $amount=0;
+    public $remise=0;
+    public $tva=0;
     public $localtax1;
     public $localtax2;
-    public $total_ht;
-    public $total_tva;
-    public $total_localtax1;
-    public $total_localtax2;
-    public $total_ttc;
+    public $total_ht=0;
+    public $total_tva=0;
+    public $total_localtax1=0;
+    public $total_localtax2=0;
+    public $total_ttc=0;
 	/**
 	 * @deprecated
 	 * @see note_private, note_public
@@ -201,16 +201,6 @@ class FactureFournisseur extends CommonInvoice
     public function __construct($db)
     {
         $this->db = $db;
-
-        $this->amount = 0;
-        $this->remise = 0;
-        $this->tva = 0;
-        $this->total_localtax1 = 0;
-        $this->total_localtax2 = 0;
-        $this->total_ht = 0;
-        $this->total_tva = 0;
-        $this->total_ttc = 0;
-        $this->propalid = 0;
 
         $this->products = array();
     }
@@ -404,7 +394,7 @@ class FactureFournisseur extends CommonInvoice
                 	$line = $this->lines[$i];
 
                 	// Test and convert into object this->lines[$i]. When coming from REST API, we may still have an array
-				    //if (! is_object($line)) $line=json_decode(json_encode($line), FALSE);  // convert recursively array into object.
+				    //if (! is_object($line)) $line=json_decode(json_encode($line), false);  // convert recursively array into object.
                 	if (! is_object($line)) $line = (object) $line;
 
                 	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
@@ -1500,8 +1490,6 @@ class FactureFournisseur extends CommonInvoice
 	 *  @param		double	$pu_ht_devise		Amount in currency
 	 *  @param		string	$ref_supplier		Supplier ref
      *	@return    	int             			>0 if OK, <0 if KO
-     *
-     *  FIXME Add field ref (that should be named ref_supplier) and label into update. For example can be filled when product line created from order.
      */
     public function addline($desc, $pu, $txtva, $txlocaltax1, $txlocaltax2, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT', $type=0, $rang=-1, $notrigger=false, $array_options=0, $fk_unit=null, $origin_id=0, $pu_ht_devise=0, $ref_supplier='')
     {
@@ -1518,6 +1506,71 @@ class FactureFournisseur extends CommonInvoice
         if (empty($txtva)) $txtva=0;
         if (empty($txlocaltax1)) $txlocaltax1=0;
         if (empty($txlocaltax2)) $txlocaltax2=0;
+
+        $this->db->begin();
+
+        if ($fk_product > 0)
+        {
+        	if (! empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY))
+        	{
+        		// Check quantity is enough
+        		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
+        		$prod = new Product($this->db, $fk_product);
+        		if ($prod->fetch($fk_product) > 0)
+        		{
+        			$product_type = $prod->type;
+        			$label = $prod->label;
+
+        			// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
+        			// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+        			$result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+        			if ($result > 0)
+        			{
+        				$pu = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+        				$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+        				// is remise percent not keyed but present for the product we add it
+        				if ($remise_percent == 0 && $prod->remise_percent !=0)
+        					$remise_percent =$prod->remise_percent;
+        			}
+        			if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
+        			{
+        				$langs->load("errors");
+        				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+        				$this->db->rollback();
+        				dol_syslog(get_class($this)."::addline we did not found supplier price, so we can't guess unit price");
+        				//$pu    = $prod->fourn_pu;     // We do not overwrite unit price
+        				//$ref   = $prod->ref_fourn;    // We do not overwrite ref supplier price
+        				return -1;
+        			}
+        			if ($result == -1)
+        			{
+        				$langs->load("errors");
+        				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+        				$this->db->rollback();
+        				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
+        				return -1;
+        			}
+        			if ($result < -1)
+        			{
+        				$this->error=$prod->error;
+        				$this->db->rollback();
+        				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
+        				return -1;
+        			}
+        		}
+        		else
+        		{
+        			$this->error=$prod->error;
+        			$this->db->rollback();
+        			return -1;
+        		}
+        	}
+        }
+        else
+        {
+        	$product_type = $type;
+        }
+
 
         $localtaxes_type=getLocalTaxesFromRate($txtva, 0, $mysoc, $this->thirdparty);
 
@@ -1662,12 +1715,13 @@ class FactureFournisseur extends CommonInvoice
 	 * @param		array		$array_options		extrafields array
      * @param 		string		$fk_unit 			Code of the unit to use. Null to use the default one
 	 * @param		double		$pu_ht_devise		Amount in currency
+	 * @param		string		$ref_supplier		Supplier ref
      * @return    	int           					<0 if KO, >0 if OK
      */
-    public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null, $pu_ht_devise=0)
+    public function updateline($id, $desc, $pu, $vatrate, $txlocaltax1=0, $txlocaltax2=0, $qty=1, $idproduct=0, $price_base_type='HT', $info_bits=0, $type=0, $remise_percent=0, $notrigger=false, $date_start='', $date_end='', $array_options=0, $fk_unit = null, $pu_ht_devise=0, $ref_supplier='')
     {
     	global $mysoc;
-        dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$fk_unit", LOG_DEBUG);
+        dol_syslog(get_class($this)."::updateline $id,$desc,$pu,$vatrate,$qty,$idproduct,$price_base_type,$info_bits,$type,$remise_percent,$fk_unit,$pu_ht_devise,$ref_supplier", LOG_DEBUG);
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
         $pu = price2num($pu);
@@ -1745,6 +1799,7 @@ class FactureFournisseur extends CommonInvoice
 	    $line->pu_ttc = $pu_ttc;
 	    $line->qty = $qty;
 	    $line->remise_percent = $remise_percent;
+	    $line->ref_supplier = $ref_supplier;
 
 	    $line->vat_src_code=$vat_src_code;
 	    $line->tva_tx = $vatrate;
@@ -2659,7 +2714,6 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->fk_facture_fourn			= $obj->fk_facture_fourn;
 		$this->description		= $obj->description;
 		$this->product_ref		= $obj->product_ref;
-		$this->ref				= $obj->product_ref;
 		$this->ref_supplier		= $obj->ref_supplier;
 		$this->libelle			= $obj->label;
 		$this->label  			= $obj->label;
@@ -2787,12 +2841,12 @@ class SupplierInvoiceLine extends CommonObjectLine
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det SET";
 		$sql.= "  description ='".$this->db->escape($this->description)."'";
-		$sql.= ", ref ='".$this->db->escape($this->ref)."'";
+		$sql.= ", ref ='".$this->db->escape($this->ref_supplier ? $this->ref_supplier : $this->ref)."'";
 		$sql.= ", pu_ht = ".price2num($this->pu_ht);
 		$sql.= ", pu_ttc = ".price2num($this->pu_ttc);
 		$sql.= ", qty = ".price2num($this->qty);
 		$sql.= ", remise_percent = ".price2num($this->remise_percent);
-		$sql.= ", vat_src_code = '".(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
+		$sql.= ", vat_src_code = '".$this->db->escape(empty($this->vat_src_code)?'':$this->vat_src_code)."'";
 		$sql.= ", tva_tx = ".price2num($this->tva_tx);
 		$sql.= ", localtax1_tx = ".price2num($this->localtax1_tx);
 		$sql.= ", localtax2_tx = ".price2num($this->localtax2_tx);

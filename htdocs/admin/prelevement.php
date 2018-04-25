@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("admin");
-$langs->load("withdrawals");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("admin","withdrawals"));
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -417,7 +417,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
     if ($resql)
     {
         $num = $db->num_rows($resql);
-        $var = true;
         $i = 0;
         while ($i < $num)
         {

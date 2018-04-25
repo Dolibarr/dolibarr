@@ -52,12 +52,17 @@ class Don extends CommonObject
     var $fk_typepayment;
 	var $num_payment;
 	var $date_valid;
+	var $modepaymentid = 0;
+
+	var $labelstatut;
+	var $labelstatutshort;
 
 	/**
 	 * @deprecated
 	 * @see note_private, note_public
 	 */
 	var $commentaire;
+
 
     /**
      *  Constructor
@@ -69,17 +74,6 @@ class Don extends CommonObject
         global $langs;
 
         $this->db = $db;
-        $this->modepaymentid = 0;
-
-        $langs->load("donations");
-        $this->labelstatut[-1]=$langs->trans("Canceled");
-        $this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
-        $this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
-        $this->labelstatut[2]=$langs->trans("DonationStatusPaid");
-        $this->labelstatutshort[-1]=$langs->trans("Canceled");
-        $this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
-        $this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
-        $this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
     }
 
 
@@ -103,7 +97,19 @@ class Don extends CommonObject
      */
     function LibStatut($statut,$mode=0)
     {
-        global $langs;
+    	if (empty($this->labelstatut) || empty($this->labelstatushort))
+    	{
+	    	global $langs;
+	    	$langs->load("donations");
+	    	$this->labelstatut[-1]=$langs->trans("Canceled");
+	    	$this->labelstatut[0]=$langs->trans("DonationStatusPromiseNotValidated");
+	    	$this->labelstatut[1]=$langs->trans("DonationStatusPromiseValidated");
+	    	$this->labelstatut[2]=$langs->trans("DonationStatusPaid");
+	    	$this->labelstatutshort[-1]=$langs->trans("Canceled");
+	    	$this->labelstatutshort[0]=$langs->trans("DonationStatusPromiseNotValidatedShort");
+	    	$this->labelstatutshort[1]=$langs->trans("DonationStatusPromiseValidatedShort");
+	    	$this->labelstatutshort[2]=$langs->trans("DonationStatusPaidShort");
+    	}
 
         if ($mode == 0)
         {

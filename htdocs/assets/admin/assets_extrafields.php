@@ -65,7 +65,7 @@ print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
 
 $head = AssetsAdminPrepareHead();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Assets"), 0, 'generic');
+dol_fiche_head($head, 'attributes', $langs->trans("Assets"), -1, 'generic');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

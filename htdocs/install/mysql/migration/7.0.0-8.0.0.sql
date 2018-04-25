@@ -13,8 +13,12 @@
 -- To drop an index:        -- VPGSQL8.0 DROP INDEX nomindex
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
--- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
--- To make pk to be auto increment (postgres): -- VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
+-- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (postgres):
+-- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
+-- -- VPGSQL8.2 ALTER TABLE llx_table ADD PRIMARY KEY (rowid);
+-- -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN rowid SET DEFAULT nextval('llx_table_rowid_seq');
+-- -- VPGSQL8.2 SELECT setval('llx_table_rowid_seq', MAX(rowid)) FROM llx_table;
 -- To set a field as NULL:                     -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NULL;
 -- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
 -- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
@@ -36,6 +40,7 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
+-- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
 
@@ -122,12 +127,20 @@ ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 DELETE FROM llx_c_paiement WHERE code = '' or code = '-' or id = 0;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
-ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;
+-- VPGSQL8.2 ALTER TABLE llx_c_paiement ADD PRIMARY KEY (id);
+-- VPGSQL8.2 ALTER TABLE llx_c_paiement ALTER COLUMN id SET DEFAULT nextval('llx_c_paiement_id_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_paiement_id_seq', MAX(id)) FROM llx_c_paiement;
 
 -- Add missing keys and primary key
 ALTER TABLE llx_c_payment_term DROP INDEX uk_c_payment_term;
-ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
+-- VMYSQL4.3 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY (rowid);
+-- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;
 
 ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
 
@@ -181,8 +194,8 @@ CREATE TABLE llx_ticketsup
 )ENGINE=innodb;
 
 ALTER TABLE llx_ticketsup ADD COLUMN notify_tiers_at_create integer;
-ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_rowid_track_id (rowid, track_id);
-ALTER TABLE llx_ticketsup ADD INDEX id_ticketsup_track_id (track_id);
+ALTER TABLE llx_ticketsup DROP INDEX uk_ticketsup_rowid_track_id;
+ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_track_id (track_id);
 
 CREATE TABLE llx_ticketsup_msg
 (
@@ -416,7 +429,10 @@ ALTER TABLE llx_asset_type_extrafields ADD INDEX idx_asset_type_extrafields (fk_
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (7,'INV', 'Inventory journal', 8, 1);
 
 UPDATE llx_accounting_account set account_parent = 0 WHERE account_parent = '' OR account_parent IS NULL;
-ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+-- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent DROP DEFAULT;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer USING account_parent::integer;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent SET DEFAULT 0;
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_parent (account_parent);
 
 ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);

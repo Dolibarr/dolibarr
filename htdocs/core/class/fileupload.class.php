@@ -225,7 +225,7 @@ class FileUpload
 	 * getFileObject
 	 *
 	 * @param	string		$file_name		Filename
-	 * @return 	stdClass|NULL
+	 * @return 	stdClass|null
 	 */
 	protected function getFileObject($file_name)
 	{

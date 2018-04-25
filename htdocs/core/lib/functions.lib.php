@@ -272,7 +272,7 @@ function GETPOSTISSET($paramname)
  *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|string[]      Value found (string or array), or '' if check fails
  */
-function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NULL, $noreplace=0)
+function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=null, $noreplace=0)
 {
 	global $mysoc,$user,$conf;
 
@@ -2015,7 +2015,7 @@ function dol_now($mode='gmt')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
-		$ret=(int) dol_now('gmt')+($tzsecond*3600);
+		$ret=(int) (dol_now('gmt')+($tzsecond*3600));
 	}
 	/*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
@@ -2028,7 +2028,7 @@ function dol_now($mode='gmt')
 		//print 'time: '.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
-		$ret=(int) dol_now('gmt')+($offsettz+$offsetdst);
+		$ret=(int) (dol_now('gmt')+($offsettz+$offsetdst));
 	}
 
 	return $ret;
@@ -3089,7 +3089,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (empty($srconly) && in_array($pictowithoutext, array('bank', 'delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow'))) {
+		if (empty($srconly) && in_array($pictowithoutext, array(
+				'bank', 'close_title', 'delete', 'edit', 'filter', 'grip', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'switch_off', 'switch_on', 'unlink', 'uparrow')
+			)) {
 			$fakey = $pictowithoutext;
 			$facolor = '';
 			$fasize = '';
@@ -3115,6 +3118,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-bank';
 				$facolor = '#444';
 			}
+			elseif ($pictowithoutext == 'close_title') {
+				$fakey = 'fa-window-close';
+			}
 			elseif ($pictowithoutext == 'delete') {
 				$fakey = 'fa-trash';
 				$facolor = '#444';
@@ -3122,6 +3128,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'edit') {
 				$fakey = 'fa-pencil';
 				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'filter') {
+				$fakey = 'fa-'.$pictowithoutext;
+			}
+			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
+				$fakey = 'fa-arrows';
 			}
 			elseif ($pictowithoutext == 'printer') {
 				$fakey = 'fa-print';
@@ -3894,16 +3906,20 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
  * @param	string	$morecss		More css
+ * @param	string	$email			Email
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error', $email='')
 {
 	global $langs,$conf;
 
+	if (empty($email)) $email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
+
 	$langs->load("errors");
 	$now=dol_now();
+
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
 	{
@@ -4092,8 +4108,7 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return='';
 
-	if ($picto == 'setup') $picto='title.png';
-	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
+	if ($picto == 'setup') $picto='title_generic.png';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
@@ -5281,7 +5296,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
-		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment')))
+		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment','expensereport')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
@@ -6519,7 +6534,7 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 			else
 			{
 				($case_sensitive) ? natsort($temp) : natcasesort($temp);
-				if($order!='asc') $temp=array_reverse($temp,TRUE);
+				if($order!='asc') $temp=array_reverse($temp, true);
 			}
 
 			$sorted = array();
@@ -6873,6 +6888,10 @@ function printCommonFooter($zone='private')
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
 	else print "\n".'<!-- Common footer for public page -->'."\n";
 
+	// A div to store page_y POST parameter so we can read it using javascript
+	print "\n<!-- A div to store page_y POST paramater -->\n";
+	print '<div id="page_y" style="display: none;">'.$_POST['page_y'].'</div>'."\n";
+
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook))
@@ -7200,10 +7219,10 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 }
 
 /**
- * Return string with full Url
+ * Return string with full Url. The file qualified is the one defined by relative path in $object->last_main_doc
  *
- * @param   Object	$object		Object
- * @return	string				Url string
+ * @param   Object	$object				Object
+ * @return	string						Url string
  */
 function showDirectDownloadLink($object)
 {
