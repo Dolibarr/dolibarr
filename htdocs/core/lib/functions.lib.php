@@ -578,12 +578,12 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 		{
 			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
 
-			// We save search key only if:
-			// - not empty, or
-			// - if value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
+			// We save search key only if $out not empty that means:
+			// - posted value not empty, or
+			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
 
 			//if (! empty($out) || ! empty($user->default_values[$relativepathstring]['filters'][$paramname]))
-			if (! empty($out))
+			if ($out != '')		// $out = '0' like 'abc' is a search criteria to keep
 			{
 				$user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
 			}
