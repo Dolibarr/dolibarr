@@ -642,16 +642,17 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 *  @param	string	$selected       Id or Code or Label of preselected country
-	 *  @param  string	$htmlname       Name of html select object
-	 *  @param  string	$htmloption     Options html on select object
-	 *  @param	integer	$maxlength		Max length for labels (0=no limit)
-	 *  @param	string	$morecss		More css class
-	 *  @param	string	$usecodeaskey	'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 *  @param	int		$showempty		Show empty choice
-	 *  @return string           		HTML string with select
+	 *  @param	string	$selected       	Id or Code or Label of preselected country
+	 *  @param  string	$htmlname       	Name of html select object
+	 *  @param  string	$htmloption     	Options html on select object
+	 *  @param	integer	$maxlength			Max length for labels (0=no limit)
+	 *  @param	string	$morecss			More css class
+	 *  @param	string	$usecodeaskey		'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 *  @param	int		$showempty			Show empty choice
+	 *  @param	int		$disablefavorites	Disable favorites
+	 *  @return string           			HTML string with select
 	 */
-	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1)
+	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1, $disablefavorites=0)
 	{
 		global $conf,$langs;
 
@@ -692,13 +693,14 @@ class Form
 					$i++;
 				}
 
-				array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
+				if (empty($disablefavorites)) array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
+				else $countryArray = dol_sort_array($countryArray, 'label');
 
 				foreach ($countryArray as $row)
 				{
 					if (empty($showempty) && empty($row['rowid'])) continue;
 
-					if ($row['favorite'] && $row['code_iso']) $atleastonefavorite++;
+					if (empty($disablefavorites) && $row['favorite'] && $row['code_iso']) $atleastonefavorite++;
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
