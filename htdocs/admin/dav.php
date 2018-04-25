@@ -25,41 +25,27 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 
+$langs->loadLangs(array("admin","other","agenda"));
 
 if (!$user->admin)
     accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("agenda");
+// Parameters
+$action = GETPOST('action', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
-$def = array();
-$actionsave=GETPOST('save','alpha');
+$arrayofparameters=array('DAV_ALLOW_PUBLIC_DIR'=>array('css'=>'minwidth200'));
 
-// Sauvegardes parametres
-if ($actionsave)
-{
-    $i=0;
 
-    $db->begin();
+/*
+ * Actions
+ */
 
-    $i+=dolibarr_set_const($db,'XXX',trim(GETPOST('XXX','alpha')),'chaine',0,'',$conf->entity);
-
-    if ($i >= 4)
-    {
-        $db->commit();
-        setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    }
-    else
-    {
-        $db->rollback();
-        setEventMessages($langs->trans("SaveFailed"), null, 'errors');
-    }
-}
+include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
 
 
-/**
+/*
  * View
  */
 
@@ -77,30 +63,51 @@ $head=dav_admin_prepare_head();
 
 dol_fiche_head($head, 'webdav', '', -1, 'action');
 
-print $langs->trans("WebDAVSetupDesc")."<br>\n";
-print "<br>\n";
 
-/*
-print '<table class="noborder" width="100%">';
+if ($action == 'edit')
+{
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="action" value="update">';
 
-print '<tr class="liste_titre">';
-print "<td>".$langs->trans("Parameter")."</td>";
-print "<td>".$langs->trans("Value")."</td>";
-//print "<td>".$langs->trans("Examples")."</td>";
-print "<td>&nbsp;</td>";
-print "</tr>";
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-print '<tr class="oddeven">';
-print '<td class="fieldrequired">'.$langs->trans("PasswordTogetVCalExport")."</td>";
-print '<td><input required="required" type="text" class="flat" id="MAIN_AGENDA_XCAL_EXPORTKEY" name="MAIN_AGENDA_XCAL_EXPORTKEY" value="' . (GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha')?GETPOST('MAIN_AGENDA_XCAL_EXPORTKEY','alpha'):$conf->global->MAIN_AGENDA_XCAL_EXPORTKEY) . '" size="40">';
-if (! empty($conf->use_javascript_ajax))
-	print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
-print '</td>';
-print "<td>&nbsp;</td>";
-print "</tr>";
+	foreach($arrayofparameters as $key => $val)
+	{
+		print '<tr class="oddeven"><td>';
+		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
+	}
 
-print '</table>';
-*/
+	print '</table>';
+
+	print '<br><div class="center">';
+	print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
+	print '</div>';
+
+	print '</form>';
+	print '<br>';
+}
+else
+{
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+	foreach($arrayofparameters as $key => $val)
+	{
+		print '<tr class="oddeven"><td>';
+		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
+		print '</td><td>' . $conf->global->$key . '</td></tr>';
+	}
+
+	print '</table>';
+
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
+	print '</div>';
+}
+
 
 dol_fiche_end();
 
@@ -113,7 +120,7 @@ print "</form>\n";
 
 clearstatcache();
 
-//if ($mesg) print "<br>$mesg<br>";
+print $langs->trans("WebDAVSetupDesc")."<br>\n";
 print "<br>";
 
 
@@ -130,34 +137,6 @@ $message.=img_picto('','object_globe.png').' '.$langs->trans("WebDavServer",'Web
 $message.='<br>';
 print $message;
 
-/*$message =$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptionsNotAdmin",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptionsNotAutoEvent",'systemauto','systemauto').'<br>';
-
-print info_admin($message);
-*/
-
-/*
-if (! empty($conf->use_javascript_ajax))
-{
-	print "\n".'<script type="text/javascript">';
-	print '$(document).ready(function () {
-            $("#generate_token").click(function() {
-            	$.get( "'.DOL_URL_ROOT.'/core/ajax/security.php", {
-            		action: \'getrandompassword\',
-            		generic: true
-				},
-				function(token) {
-					$("#MAIN_AGENDA_XCAL_EXPORTKEY").val(token);
-				});
-            });
-    });';
-	print '</script>';
-}
-*/
 
 llxFooter();
 $db->close();

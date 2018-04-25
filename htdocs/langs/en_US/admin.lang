@@ -1206,6 +1206,9 @@ MustBeUnique=Must be unique?
 MustBeMandatory=Mandatory to create third parties?
 MustBeInvoiceMandatory=Mandatory to validate invoices?
 TechnicalServicesProvided=Technical services provided
+#####DAV #####
+WebDAVSetupDesc=This is the links to access the WebDAV directory. It contains a "public" dir open to any user knowing the URL (if public directory accessis allowed) and a "private" directory that need an existing login account/password to access to.
+WebDavServer=Root URL of %s server : %s
 ##### Webcal setup #####
 WebCalUrlForVCalExport=An export link to <b>%s</b> format is available at following link: %s
 ##### Invoices #####
@@ -1784,7 +1787,6 @@ MAIN_PDF_MARGIN_BOTTOM=Bottom margin on PDF
 SetToYesIfGroupIsComputationOfOtherGroups=Set this to yes if this group is a computation of other groups
 EnterCalculationRuleIfPreviousFieldIsYes=Enter calculcation rule if previous field was set to Yes (For example 'CODEGRP1+CODEGRP2')
 SeveralLangugeVariatFound=Several language variants found
-WebDavServer=URL of %s server : %s
 COMPANY_AQUARIUM_REMOVE_SPECIAL=Remove special characters
 COMPANY_AQUARIUM_CLEAN_REGEX=Regex filter to clean value (COMPANY_AQUARIUM_CLEAN_REGEX)
 ##### Resource ####
