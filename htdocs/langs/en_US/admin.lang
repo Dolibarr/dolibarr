@@ -1207,7 +1207,7 @@ MustBeMandatory=Mandatory to create third parties?
 MustBeInvoiceMandatory=Mandatory to validate invoices?
 TechnicalServicesProvided=Technical services provided
 #####DAV #####
-WebDAVSetupDesc=This is the links to access the WebDAV directory. It contains a "public" dir open to any user knowing the URL (if public directory accessis allowed) and a "private" directory that need an existing login account/password to access to.
+WebDAVSetupDesc=This is the links to access the WebDAV directory. It contains a "public" dir open to any user knowing the URL (if public directory access allowed) and a "private" directory that need an existing login account/password to access to.
 WebDavServer=Root URL of %s server : %s
 ##### Webcal setup #####
 WebCalUrlForVCalExport=An export link to <b>%s</b> format is available at following link: %s
