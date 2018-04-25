@@ -11,6 +11,7 @@ YourEMail=Email za potvrdu uplate
 Creditor=Kreditor
 PaymentCode=Kod uplate
 PayBoxDoPayment=Izvrši plaćanje
+ToPay=Izvrši plaćanje
 YouWillBeRedirectedOnPayBox=Bićete redrektovani na sigurnu Paybox stranu kako biste uneli informacije Vaše kreditne kartice
 Continue=Dalje
 ToOfferALinkForOnlinePayment=URL za %s uplatu

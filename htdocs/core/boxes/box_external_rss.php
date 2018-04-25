@@ -80,8 +80,11 @@ class box_external_rss extends ModeleBoxes
 		// documents/externalrss is created by module activation
 		// documents/externalrss/tmp is created by rssparser
 
+		$keyforparamurl="EXTERNAL_RSS_URLRSS_".$site;
+		$keyforparamtitle="EXTERNAL_RSS_TITLE_".$site;
+		
 		// Get RSS feed
-        $url=@constant("EXTERNAL_RSS_URLRSS_".$site);
+		$url=$conf->global->$keyforparamurl;
 
         $rssparser=new RssParser($this->db);
 		$result = $rssparser->parser($url, $this->max, $cachedelay, $conf->externalrss->dir_temp);
@@ -90,7 +93,7 @@ class box_external_rss extends ModeleBoxes
 		$description=$rssparser->getDescription();
 		$link=$rssparser->getLink();
 
-        $title=$langs->trans("BoxTitleLastRssInfos",$max, @constant("EXTERNAL_RSS_TITLE_". $site));
+        $title=$langs->trans("BoxTitleLastRssInfos", $max, $conf->global->$keyforparamtitle);
         if ($result < 0 || ! empty($rssparser->error))
         {
             // Show warning
@@ -163,7 +166,7 @@ class box_external_rss extends ModeleBoxes
             );
 
             $this->info_box_contents[$line][1] = array(
-                'td' => 'align="left"',
+                'td' => '',
                 'text' => $title,
                 'url' => $href,
                 'tooltip' => $tooltip,

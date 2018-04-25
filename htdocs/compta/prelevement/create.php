@@ -67,7 +67,7 @@ if ($action == 'create')
     {
     	setEventMessages($bprev->error, $bprev->errors, 'errors');
     }
-    if ($result == 0)
+    elseif ($result == 0)
     {
     	$mesg='';
         $mesg=$langs->trans("NoInvoiceCouldBeWithdrawed");
@@ -77,6 +77,10 @@ if ($action == 'create')
         {
         	$mesg.=$val."<br>\n";
         }
+    }
+    else
+    {
+    	setEventMessages($langs->trans("DirectDebitOrderCreated", $bprev->getNomUrl(1)), null);
     }
 }
 
@@ -94,9 +98,7 @@ llxHeader('', $langs->trans("NewStandingOrder"));
 if (prelevement_check_config() < 0)
 {
 	$langs->load("errors");
-	print '<div class="error">';
-	print $langs->trans("ErrorModuleSetupNotComplete");
-	print '</div>';
+	setEventMessages($langs->trans("ErrorModuleSetupNotComplete"), null, 'errors');
 }
 
 /*$h=0;
@@ -148,7 +150,7 @@ if ($nb)
 }
 else
 {
-    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw")).'">'.$langs->trans("CreateAll")."</a>\n";
+    print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NoInvoiceToWithdraw", $langs->transnoentitiesnoconv("StandingOrders"))).'">'.$langs->trans("CreateAll")."</a>\n";
 }
 
 print "</div>\n";
@@ -194,8 +196,8 @@ if ($resql)
         while ($i < $num && $i < 20)
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
-            print '<tr '.$bc[$var].'>';
+
+            print '<tr class="oddeven">';
             print '<td>';
             $invoicestatic->id=$obj->rowid;
             $invoicestatic->ref=$obj->facnumber;
@@ -268,9 +270,9 @@ if ($result)
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-        $var=!$var;
 
-        print "<tr ".$bc[$var].">";
+
+        print '<tr class="oddeven">';
 
         print "<td>";
         $bprev->id=$obj->rowid;

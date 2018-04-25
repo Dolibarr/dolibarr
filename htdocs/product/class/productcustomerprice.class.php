@@ -329,6 +329,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= " t.recuperableonly,";
 		$sql .= " t.localtax1_tx,";
 		$sql .= " t.localtax2_tx,";
+		$sql .= " t.localtax1_type,";
+		$sql .= " t.localtax2_type,";
 		$sql .= " t.fk_user,";
 		$sql .= " t.import_key,";
 		$sql .= " soc.nom as socname,";
@@ -338,7 +340,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " ," . MAIN_DB_PREFIX . "societe as soc ";
 		$sql .= " WHERE soc.rowid=t.fk_soc ";
 		$sql .= " AND prod.rowid=t.fk_product ";
-		$sql .= " AND prod.entity IN (" . getEntity('product', 1) . ")";
+		$sql .= " AND prod.entity IN (" . getEntity('product') . ")";
 
 		// Manage filter
 		if (count($filter) > 0) {
@@ -386,6 +388,8 @@ class Productcustomerprice extends CommonObject
 				$line->recuperableonly = $obj->recuperableonly;
 				$line->localtax1_tx = $obj->localtax1_tx;
 				$line->localtax2_tx = $obj->localtax2_tx;
+				$line->localtax1_type = $obj->localtax1_type;
+				$line->localtax2_type = $obj->localtax2_type;
 				$line->fk_user = $obj->fk_user;
 				$line->import_key = $obj->import_key;
 				$line->socname = $obj->socname;
@@ -445,7 +449,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " ," . MAIN_DB_PREFIX . "societe as soc ";
 		$sql .= " WHERE soc.rowid=t.fk_soc ";
 		$sql .= " AND prod.rowid=t.fk_product ";
-		$sql .= " AND prod.entity IN (" . getEntity('product', 1) . ")";
+		$sql .= " AND prod.entity IN (" . getEntity('product') . ")";
 
 		// Manage filter
 		if (count($filter) > 0) {
@@ -724,7 +728,7 @@ class Productcustomerprice extends CommonObject
 		$sql = "SELECT s.rowid";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
 		$sql .= " WHERE s.parent = " . $this->fk_soc;
-		$sql .= " AND s.entity IN (" . getEntity('societe', 1) . ")";
+		$sql .= " AND s.entity IN (" . getEntity('societe') . ")";
 
 		dol_syslog(get_class($this) . "::setPriceOnAffiliateThirdparty", LOG_DEBUG);
 		$resql = $this->db->query($sql);

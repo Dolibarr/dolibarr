@@ -11,6 +11,7 @@ YourEMail=E-mail de confirmació de pagament
 Creditor=Beneficiari
 PaymentCode=Codi de pagament
 PayBoxDoPayment=Continua el pagament amb targeta
+ToPay=Emetre pagament
 YouWillBeRedirectedOnPayBox=Serà redirigit a la pàgina segura de PayBox per indicar la seva targeta de crèdit
 Continue=Continuar
 ToOfferALinkForOnlinePayment=URL de pagament %s

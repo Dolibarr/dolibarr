@@ -128,7 +128,7 @@ class box_produits extends ModeleBoxes
 					$productstatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => '',
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $productstatic->getNomUrl(1),
                         'asis' => 1,
                     );
@@ -161,7 +161,7 @@ class box_produits extends ModeleBoxes
 	                    }
 	               	}
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $price,
                     );
 
@@ -171,7 +171,7 @@ class box_produits extends ModeleBoxes
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datem,'day'),
                     );
 
@@ -205,8 +205,8 @@ class box_produits extends ModeleBoxes
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => '',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }

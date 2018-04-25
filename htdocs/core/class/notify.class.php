@@ -58,7 +58,7 @@ class Notify
         'SHIPPING_VALIDATE'
     );
 
-    
+
     /**
 	 *	Constructor
 	 *
@@ -85,14 +85,14 @@ class Notify
 		$langs->load("mails");
 
 		$listofnotiftodo=$this->getNotificationsArray($action,$socid,$object,0);
-		
+
 		$nb=-1;
 		if (is_array($listofnotiftodo)) $nb=count($listofnotiftodo);
 		if ($nb < 0)  $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ErrorFailedToGetListOfNotificationsToSend");
 		if ($nb == 0) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("NoNotificationsWillBeSent");
    		if ($nb == 1) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("ANotificationsWillBeSent");
    		if ($nb >= 2) $texte=img_object($langs->trans("Notifications"),'email').' '.$langs->trans("SomeNotificationsWillBeSent",$nb);
-		
+
    		if (is_array($listofnotiftodo))
    		{
     		$i=0;
@@ -106,7 +106,7 @@ class Notify
     		}
     		if ($i) $texte.=')';
    		}
-   		
+
 		return $texte;
 	}
 
@@ -117,9 +117,10 @@ class Notify
      * @param	int		$socid			Id of third party or 0 for all thirdparties or -1 for no thirdparties
      * @param	Object	$object			Object the notification is about (need it to check threshold value of some notifications)
      * @param	int		$userid         Id of user or 0 for all users or -1 for no users
+     * @param   array   $scope          Scope where to search
      * @return	array|int				<0 if KO, array of notifications to send if OK
      */
-	function getNotificationsArray($notifcode,$socid=0,$object=null,$userid=0)
+	function getNotificationsArray($notifcode, $socid=0, $object=null, $userid=0, $scope=array('thirdparty', 'user', 'global'))
 	{
 		global $conf, $user;
 
@@ -131,7 +132,7 @@ class Notify
 
         if (! $error)
         {
-            if ($socid >= 0)
+            if ($socid >= 0 && in_array('thirdparty', $scope))
             {
     	        $sql = "SELECT a.code, c.email, c.rowid";
     	        $sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
@@ -146,11 +147,11 @@ class Notify
     		        if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
     		        else $sql.= " AND a.code = '".$notifcode."'";			// New usage
     	        }
-    	        $sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+    	        $sql.= " AND s.entity IN (".getEntity('societe').")";
     	        if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
-    
+
     			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
-    
+
     	        $resql = $this->db->query($sql);
     	        if ($resql)
     	        {
@@ -175,10 +176,10 @@ class Notify
     			}
             }
         }
-        
+
         if (! $error)
         {
-            if ($userid >= 0)
+            if ($userid >= 0 && in_array('user', $scope))
             {
     			$sql = "SELECT a.code, c.email, c.rowid";
     			$sql.= " FROM ".MAIN_DB_PREFIX."notify_def as n,";
@@ -191,11 +192,11 @@ class Notify
     			    if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
     			    else $sql.= " AND a.code = '".$notifcode."'";			// New usage
     			}
-    			$sql.= " AND c.entity IN (".getEntity('user', 1).")";
+    			$sql.= " AND c.entity IN (".getEntity('user').")";
     			if ($userid > 0) $sql.= " AND c.rowid = ".$userid;
-    			
+
     			dol_syslog(__METHOD__." ".$notifcode.", ".$socid."", LOG_DEBUG);
-    			
+
     			$resql = $this->db->query($sql);
     			if ($resql)
     			{
@@ -223,42 +224,45 @@ class Notify
 
 		if (! $error)
 		{
-		    // List of notifications enabled for fixed email
-		    foreach($conf->global as $key => $val)
+		    if (in_array('global', $scope))
 		    {
-		    	if ($notifcode)
-		    	{
-		    		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
-		    	}
-		    	else
-		    	{
-		    		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_.*_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
-		    	}
+    		    // List of notifications enabled for fixed email
+    		    foreach($conf->global as $key => $val)
+    		    {
+    		    	if ($notifcode)
+    		    	{
+    		    		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_'.$notifcode.'_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
+    		    	}
+    		    	else
+    		    	{
+    		    		if ($val == '' || ! preg_match('/^NOTIFICATION_FIXEDEMAIL_.*_THRESHOLD_HIGHER_(.*)$/', $key, $reg)) continue;
+    		    	}
 
-    			$threshold = (float) $reg[1];
-    			if ($valueforthreshold < $threshold) continue;
+        			$threshold = (float) $reg[1];
+        			if ($valueforthreshold < $threshold) continue;
 
-		    	$tmpemail=explode(',',$val);
-		    	foreach($tmpemail as $key2 => $val2)
-		    	{
-		    		$newval2=trim($val2);
-		    		if ($newval2 == '__SUPERVISOREMAIL__')
-		    		{
-		    			if ($user->fk_user > 0)
-		    			{
-							$tmpuser=new User($this->db);
-							$tmpuser->fetch($user->fk_user);
-							if ($tmpuser->email) $newval2=trim($tmpuser->email);
-							else $newval2='';
-		    			}
-		    			else $newval2='';
-		    		}
-		    		if ($newval2)
-		    		{
-		    			$isvalid=isValidEmail($newval2, 0);
-		    			if (empty($resarray[$newval2])) $resarray[$newval2]=array('type'=> 'tofixedemail', 'code'=>trim($key), 'emaildesc'=>trim($val2), 'email'=>$newval2, 'isemailvalid'=>$isvalid);
-		    		}
-		    	}
+    		    	$tmpemail=explode(',',$val);
+    		    	foreach($tmpemail as $key2 => $val2)
+    		    	{
+    		    		$newval2=trim($val2);
+    		    		if ($newval2 == '__SUPERVISOREMAIL__')
+    		    		{
+    		    			if ($user->fk_user > 0)
+    		    			{
+    							$tmpuser=new User($this->db);
+    							$tmpuser->fetch($user->fk_user);
+    							if ($tmpuser->email) $newval2=trim($tmpuser->email);
+    							else $newval2='';
+    		    			}
+    		    			else $newval2='';
+    		    		}
+    		    		if ($newval2)
+    		    		{
+    		    			$isvalid=isValidEmail($newval2, 0);
+    		    			if (empty($resarray[$newval2])) $resarray[$newval2]=array('type'=> 'tofixedemail', 'code'=>trim($key), 'emaildesc'=>trim($val2), 'email'=>$newval2, 'isemailvalid'=>$isvalid);
+    		    		}
+    		    	}
+    		    }
 		    }
 		}
 
@@ -278,12 +282,20 @@ class Notify
      */
     function send($notifcode, $object)
     {
-        global $user,$conf,$langs,$mysoc,$dolibarr_main_url_root;
+        global $user,$conf,$langs,$mysoc;
+        global $hookmanager;
+        global $dolibarr_main_url_root;
 
 		if (! in_array($notifcode, $this->arrayofnotifsupported)) return 0;
 
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-		
+	    if (! is_object($hookmanager))
+	    {
+	        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	        $hookmanager=new HookManager($this->db);
+	    }
+	    $hookmanager->initHooks(array('notification'));
+
 	    dol_syslog(get_class($this)."::send notifcode=".$notifcode.", object=".$object->id);
 
     	$langs->load("other");
@@ -330,7 +342,7 @@ class Notify
         $sql.= " WHERE n.fk_user = c.rowid AND a.rowid = n.fk_action";
         if (is_numeric($notifcode)) $sql.= " AND n.fk_action = ".$notifcode;	// Old usage
         else $sql.= " AND a.code = '".$notifcode."'";	// New usage
-        
+
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -357,16 +369,16 @@ class Notify
 	                	}
 
 	                	$subject = '['.$mysoc->name.'] '.$outputlangs->transnoentitiesnoconv("DolibarrNotification");
-	                	
+
 	                    switch ($notifcode) {
 							case 'BILL_VALIDATE':
-								$link='/compta/facture.php?facid='.$object->id;
+								$link='/compta/facture/card.php?facid='.$object->id;
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
 								break;
 							case 'BILL_PAYED':
-								$link='/compta/facture.php?facid='.$object->id;
+								$link='/compta/facture/card.php?facid='.$object->id;
 								$dir_output = $conf->facture->dir_output;
 								$object_type = 'facture';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed",$newref);
@@ -385,13 +397,13 @@ class Notify
 								break;
 							case 'FICHINTER_ADD_CONTACT':
 								$link='/fichinter/card.php?id='.$object->id;
-								$dir_output = $conf->facture->dir_output;
+								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionAddedContact",$object->ref);
 								break;
 							case 'FICHINTER_VALIDATE':
 								$link='/fichinter/card.php?id='.$object->id;
-								$dir_output = $conf->facture->dir_output;
+								$dir_output = $conf->ficheinter->dir_output;
 								$object_type = 'ficheinter';
 								$mesg = $langs->transnoentitiesnoconv("EMailTextInterventionValidated",$object->ref);
 								break;
@@ -443,6 +455,14 @@ class Notify
 	                    $message.= $mesg;
 	                    if ($link) $message=dol_concatdesc($message,$urlwithroot.$link);
 
+	                    $parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$file, 'mimefile'=>$mimefile, 'filename'=>$filename);
+	                    $reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+	                    if (empty($reshook))
+	                    {
+	                        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
+	                        if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
+	                    }
+
 	                    $mailfile = new CMailFile(
 	                        $subject,
 	                        $sendto,
@@ -458,16 +478,16 @@ class Notify
 	                    );
 
 	                    if ($mailfile->sendfile())
-	                    {   
+	                    {
 	                        if ($obj->type_target == 'touserid') {
      	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_user, type, objet_type, type_target, objet_id, email)";
     	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-                           
+
                             }
                             else {
     	                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_soc, fk_contact, type, objet_type, type_target, objet_id, email)";
     	                        $sql.= " VALUES ('".$this->db->idate(dol_now())."', ".$notifcodedefid.", ".($object->socid?$object->socid:'null').", ".$obj->cid.", '".$obj->type."', '".$object_type."', '".$obj->type_target."', ".$object->id.", '".$this->db->escape($obj->email)."')";
-                                
+
                             }
 	                        if (! $this->db->query($sql))
 	                        {
@@ -528,13 +548,13 @@ class Notify
 
 		        switch ($notifcode) {
 					case 'BILL_VALIDATE':
-						$link='/compta/facture.php?facid='.$object->id;
+						$link='/compta/facture/card.php?facid='.$object->id;
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoiceValidated",$newref);
 						break;
 					case 'BILL_PAYED':
-						$link='/compta/facture.php?facid='.$object->id;
+						$link='/compta/facture/card.php?facid='.$object->id;
 						$dir_output = $conf->facture->dir_output;
 						$object_type = 'facture';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextInvoicePayed",$newref);
@@ -631,13 +651,22 @@ class Notify
 		        	}
 		        	dol_syslog("Replace the __SUPERVISOREMAIL__ key into recipient email string with ".$newval);
 		        	$sendto = preg_replace('/__SUPERVISOREMAIL__/', $newval, $sendto);
-		        	$sendto = preg_replace('/^[\s,]+/','',$sendto);	// Clean start of string
-		        	$sendto = preg_replace('/[\s,]+$/','',$sendto);	// Clean end of string
+		        	$sendto = preg_replace('/,\s*,/', ',', $sendto);	// in some case you can have $sendto like "email, __SUPERVISOREMAIL__ , otheremail" then you have "email,  , othermail" and it's not valid
+		        	$sendto = preg_replace('/^[\s,]+/', '', $sendto);	// Clean start of string
+		        	$sendto = preg_replace('/[\s,]+$/', '', $sendto);	// Clean end of string
 		        }
 
 		        if ($sendto)
 		        {
-		        	$mailfile = new CMailFile(
+       		        $parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$file, 'mimefile'=>$mimefile, 'filename'=>$filename);
+			        $reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+			        if (empty($reshook))
+			        {
+		    	        if (! empty($hookmanager->resArray['subject'])) $subject.=$hookmanager->resArray['subject'];
+		        	    if (! empty($hookmanager->resArray['message'])) $message.=$hookmanager->resArray['message'];
+			        }
+
+		            $mailfile = new CMailFile(
 		        		$subject,
 		        		$sendto,
 		        		$replyto,

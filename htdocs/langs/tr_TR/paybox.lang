@@ -11,6 +11,7 @@ YourEMail=Ödeme alındısı onayı için e-posta adresi
 Creditor=Alacaklı
 PaymentCode=Ödeme kodu
 PayBoxDoPayment=Ödemeye git
+ToPay=Ödeme yap
 YouWillBeRedirectedOnPayBox=Kredi kartı bilgilerinizi girmek için güvenli Paybox sayfasına yönlendirileceksiniz
 Continue=Sonraki
 ToOfferALinkForOnlinePayment=%s Ödemesi için URL

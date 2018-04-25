@@ -39,18 +39,18 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield='t.status';
 if (! $sortorder) $sortorder='ASC';
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $contextpage='cronjoblist';
 
 $status=GETPOST('status','int');
@@ -62,7 +62,7 @@ $securitykey = GETPOST('securitykey','alpha');
 
 $diroutputmassaction=$conf->cronjob->dir_output . '/temp/massgeneration/'.$user->id;
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('cronjoblist'));
 $extrafields = new ExtraFields($db);
 
@@ -78,7 +78,7 @@ $object = new Cronjob($db);
  */
 
 // Do we click on purge search criteria ?
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
 	$search_label='';
 	$status=-1;
@@ -115,19 +115,19 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     {
         $object = new Cronjob($db);
     	$job = $object->fetch($id);
-    
+
         $now = dol_now();   // Date we start
-    
+
         $resrunjob = $object->run_jobs($user->login);   // Return -1 if KO, 1 if OK
     	if ($resrunjob < 0) {
     		setEventMessages($object->error, $object->errors, 'errors');
     	}
-    
+
     	// Programm next run
     	$res = $object->reprogram_jobs($user->login, $now);
     	if ($res > 0)
     	{
-    		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported 
+    		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported
     		{
     		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
     		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
@@ -139,7 +139,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		setEventMessages($object->error, $object->errors, 'errors');
     		$action='';
     	}
-    
+
     	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
     	exit;
     }
@@ -211,8 +211,9 @@ foreach ($search_array_options as $key => $val)
     $tmpkey=preg_replace('/search_options_/','',$key);
     $typ=$extrafields->attribute_type[$tmpkey];
     $mode=0;
-    if (in_array($typ, array('int','double'))) $mode=1;    // Search on a numeric
-    if ($val && ( ($crit != '' && ! in_array($typ, array('select'))) || ! empty($crit)))
+    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
+    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
+    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
     {
         $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
     }
@@ -273,6 +274,7 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 // Line with explanation and button new job
@@ -289,31 +291,17 @@ print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $
 
 
 print $langs->trans('CronInfo').'<br>';
-print $stringcurrentdate.'<br>';
-if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) print info_admin($langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS));
+
+$text =$langs->trans("HoursOnThisPageAreOnServerTZ").' '.$stringcurrentdate.'<br>';
+if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text.=$langs->trans("WarningCronDelayed", $conf->global->CRON_WARNING_DELAY_HOURS);
+print info_admin($text);
 print '<br>';
 
 
 print '<div class="div-table-responsive">';
-print '<table width="100%" class="noborder">';
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("ID"),$_SERVER["PHP_SELF"],"t.rowid","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronLabel"),$_SERVER["PHP_SELF"],"t.label","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronTask"),'','',"",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronFrequency"),'',"","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtStart"),$_SERVER["PHP_SELF"],"t.datestart","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtEnd"),$_SERVER["PHP_SELF"],"t.dateend","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronMaxRun"),$_SERVER["PHP_SELF"],"t.maxrun","",$param,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronNbRun"),$_SERVER["PHP_SELF"],"t.nbrun","",$param,'align="right"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtNextLaunch"),$_SERVER["PHP_SELF"],"t.datenextrun","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronDtLastLaunch"),$_SERVER["PHP_SELF"],"t.datelastrun","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronLastResult"),$_SERVER["PHP_SELF"],"t.lastresult","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("CronLastOutput"),$_SERVER["PHP_SELF"],"t.lastoutput","",$param,'',$sortfield,$sortorder);
-print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
-print_liste_field_titre('');
-print "</tr>\n";
+print '<table class="noborder">';
 
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">';
 print '<input type="text" class="flat" name="search_label" value="'.$search_label.'" size="10">';
@@ -336,6 +324,24 @@ print '<input type="image" class="liste_titre" name="button_removefilter" src="'
 print '</td>';
 print '</tr>';
 
+print '<tr class="liste_titre">';
+print_liste_field_titre("ID",$_SERVER["PHP_SELF"],"t.rowid","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("CronLabel",$_SERVER["PHP_SELF"],"t.label","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("CronTask",'','',"",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("CronFrequency",'',"","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("CronDtStart",$_SERVER["PHP_SELF"],"t.datestart","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("CronDtEnd",$_SERVER["PHP_SELF"],"t.dateend","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("CronMaxRun",$_SERVER["PHP_SELF"],"t.maxrun","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("CronNbRun",$_SERVER["PHP_SELF"],"t.nbrun","",$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("CronDtLastLaunch",$_SERVER["PHP_SELF"],"t.datelastrun","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("CronLastResult",$_SERVER["PHP_SELF"],"t.lastresult","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("CronLastOutput",$_SERVER["PHP_SELF"],"t.lastoutput","",$param,'',$sortfield,$sortorder);
+print_liste_field_titre("CronDtNextLaunch",$_SERVER["PHP_SELF"],"t.datenextrun","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"t.status","",$param,'align="center"',$sortfield,$sortorder);
+print_liste_field_titre('');
+print "</tr>\n";
+
+
 if ($num > 0)
 {
 	// Loop on each job
@@ -347,10 +353,10 @@ if ($num > 0)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($result);
-		$var=!$var;
 
+		if (empty($obj)) break;
 		if (! verifCond($obj->test)) continue;        // Discard line with test = false
-	    
+
 		// title profil
 		if ($style=='pair') {$style='impair';}
 		else {$style='pair';}
@@ -386,7 +392,7 @@ if ($num > 0)
 			$texttoshow.='<br>'.$langs->trans('CronArgs').': '. $obj->params;
 			$texttoshow.='<br>'.$langs->trans('Comment').': '. $langs->trans($obj->note);
 		}
-		elseif ($obj->jobtype=='command') 
+		elseif ($obj->jobtype=='command')
 		{
 			$text=$langs->trans('CronCommand');
 			$texttoshow=$langs->trans('CronCommand').': '.dol_trunc($obj->command);
@@ -414,13 +420,9 @@ if ($num > 0)
 		print '<td align="right">';
 		if (!empty($obj->maxrun)) {print $obj->maxrun;}
 		print '</td>';
-		
+
 		print '<td align="right">';
 		if (!empty($obj->nbrun)) {print $obj->nbrun;} else {print '0';}
-		print '</td>';
-
-		print '<td class="center">';
-		if(!empty($obj->datenextrun)) {print dol_print_date($db->jdate($obj->datenextrun),'dayhour');}
 		print '</td>';
 
 		print '<td class="center">';
@@ -433,6 +435,10 @@ if ($num > 0)
 
 		print '<td>';
 		if(!empty($obj->lastoutput)) {print dol_trunc(nl2br($obj->lastoutput),50);}
+		print '</td>';
+
+		print '<td class="center">';
+		if(!empty($obj->datenextrun)) {print dol_print_date($db->jdate($obj->datenextrun),'dayhour');}
 		print '</td>';
 
 		// Status
@@ -463,7 +469,7 @@ if ($num > 0)
 		print '</td>';
 
 		print '</tr>';
-		
+
 		$i++;
 	}
 }

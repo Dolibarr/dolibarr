@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Добавить эту страницу в закладки
+AddThisPageToBookmarks=Add current page to bookmarks
 Bookmark=Закладка
 Bookmarks=Закладки
+ListOfBookmarks=Список закладок
+EditBookmarks=List/edit bookmarks
 NewBookmark=Новая закладка
 ShowBookmark=Показать закладку
 OpenANewWindow=Открыть новое окно
@@ -10,7 +12,7 @@ BookmarkTargetNewWindowShort=Новое окно
 BookmarkTargetReplaceWindowShort=Текущее окно
 BookmarkTitle=Название закладки
 UrlOrLink=URL
-BehaviourOnClick=Поведение при нажатии на ссылку
+BehaviourOnClick=Behaviour when a bookmark URL is selected
 CreateBookmark=Создать закладку
 SetHereATitleForLink=Установите название для закладки
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Используйте внешний HTTP URL или относительный Dolibarr URL

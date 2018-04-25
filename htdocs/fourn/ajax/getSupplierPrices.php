@@ -78,12 +78,6 @@ if ($idprod > 0)
 				$title.= price($unitprice,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
 				$price = $unitprice;
 			}
-			if ($productSupplier->fourn_unitcharges > 0 && ($conf->global->MARGIN_TYPE == "2"))
-			{
-				$title.=" + ";
-				$title.= price($productSupplier->fourn_unitcharges,0,$langs,0,0,-1,$conf->currency);
-				$price += $productSupplier->fourn_unitcharges;
-			}
 
 			$label = price($price,0,$langs,0,0,-1,$conf->currency)."/".$langs->trans("Unit");
 			if ($productSupplier->fourn_ref) $label.=' ('.$productSupplier->fourn_ref.')';

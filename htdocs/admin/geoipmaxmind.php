@@ -33,7 +33,7 @@ accessforbidden();
 $langs->load("admin");
 $langs->load("errors");
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 /*
  * Actions
@@ -105,8 +105,8 @@ print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
+
+print '<tr class="oddeven"><td width=\"50%\">'.$langs->trans("PathToGeoIPMaxmindCountryDataFile").'</td>';
 print '<td colspan="2">';
 
 if ($geointernal) print 'Using geoip PHP internal functions. Value must be '.geoip_db_filename(GEOIP_COUNTRY_EDITION).' or '.geoip_db_filename(GEOIP_CITY_EDITION_REV1).'<br>';

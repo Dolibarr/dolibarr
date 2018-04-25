@@ -98,6 +98,13 @@ class modCommande extends DolibarrModules
 		$this->const[$r][3] = "";
 		$this->const[$r][4] = 0;
 
+		/*$r++;
+		$this->const[$r][0] = "COMMANDE_DRAFT_WATERMARK";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "__(Draft)__";
+		$this->const[$r][3] = 'Watermark to show on draft orders';
+		$this->const[$r][4] = 0;*/
+		
 		// Boxes
 		$this->boxes = array(
 			0=>array('file'=>'box_commandes.php','enabledbydefaulton'=>'Home'),
@@ -210,7 +217,7 @@ class modCommande extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on cd.fk_product = p.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields as extra3 on p.rowid = extra3.fk_object';
 		$this->export_sql_end[$r] .=' WHERE c.fk_soc = s.rowid AND c.rowid = cd.fk_commande';
-		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('commande',1).')';
+		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('commande').')';
 		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.(empty($user)?0:$user->id);
 	}
 
@@ -249,8 +256,8 @@ class modCommande extends DolibarrModules
 		}
 
 		$sql = array(
-				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'order' AND entity = ".$conf->entity,
-				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order',".$conf->entity.")"
+				"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order' AND entity = ".$conf->entity,
+				"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order',".$conf->entity.")"
 		);
 
 		 return $this->_init($sql,$options);

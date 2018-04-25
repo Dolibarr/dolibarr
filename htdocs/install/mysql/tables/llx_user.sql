@@ -63,6 +63,7 @@ create table llx_user
   fk_user           integer,               -- Hierarchic parent
   note_public		text,
   note              text DEFAULT NULL,
+  model_pdf         varchar(255) DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
   egroupware_id     integer,
@@ -82,5 +83,7 @@ create table llx_user
   salary			double(24,8),			-- denormalized value coming from llx_user_employment
   salaryextra		double(24,8),			-- denormalized value coming from llx_user_employment
   dateemployment	date,					-- denormalized value coming from llx_user_employment
-  weeklyhours		double(16,8)			-- denormalized value coming from llx_user_employment
+  weeklyhours		double(16,8),			-- denormalized value coming from llx_user_employment
+
+  import_key        varchar(14)                          		-- import key
 )ENGINE=innodb;

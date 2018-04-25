@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - products
+Reference=Referenz
 ProductVatMassChange=MwSt-Massenänderung
 LastRecordedProducts=%s zuletzt erfasste Produkte
 CardProduct0=Produkt-Karte

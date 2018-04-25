@@ -43,5 +43,4 @@ create table llx_fichinter
   note_public		text,
   model_pdf			varchar(255),
   extraparams		varchar(255)				-- for stock other parameters with json format
-  
 )ENGINE=innodb;

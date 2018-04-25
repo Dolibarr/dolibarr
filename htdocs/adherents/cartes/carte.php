@@ -68,6 +68,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
     $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as c ON d.country = c.rowid";
     $sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
+    $sql.= " AND d.entity IN (".getEntity('adherent').")";
     if (is_numeric($foruserid)) $sql.=" AND d.rowid=".$foruserid;
     if ($foruserlogin) $sql.=" AND d.login='".$db->escape($foruserlogin)."'";
     $sql.= " ORDER BY d.rowid ASC";
@@ -123,7 +124,7 @@ if ((! empty($foruserid) || ! empty($foruserlogin) || ! empty($mode)) && ! $mesg
                 {
                     $nb = $_Avery_Labels[$model]['NX'] * $_Avery_Labels[$model]['NY'];
                     if ($nb <= 0) $nb=1;  // Protection to avoid empty page
-                    
+
                     for($j=0;$j<$nb;$j++)
                     {
                         $arrayofmembers[]=array(

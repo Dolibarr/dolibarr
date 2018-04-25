@@ -79,6 +79,10 @@ MailingModuleDescContactsWithThirdpartyFilter=Filtro de contactos con tercero
 MailingModuleDescContactsByCompanyCategory=Contactos de terceros por categoría
 MailingModuleDescContactsByCategory=Contactos por categoría
 MailingModuleDescContactsByFunction=Contactos por posición
+MailingModuleDescEmailsFromFile=E-mails de archivo
+MailingModuleDescEmailsFromUser=E-mails enviados por usuario
+MailingModuleDescDolibarrUsers=Usuarios con e-mails
+MailingModuleDescThirdPartiesByCategories=Terceros (por categoría)
 
 # Libelle des modules de liste de destinataires mailing
 LineInFile=Línea %s en archivo
@@ -123,7 +127,7 @@ MailSendSetupIs=La configuración de e-mailings está a '%s'. Este modo no puede
 MailSendSetupIs2=Antes debe, con una cuenta de administrador, en el menú %sInicio - Configuración - E-Mails%s, cambiar el parámetro <strong>'%s'</strong> para usar el modo '%s'. Con este modo puede configurar un servidor SMTP de su proveedor de servicios de internet.
 MailSendSetupIs3=Si tiene preguntas de como configurar su servidor SMTP, puede contactar con %s.
 YouCanAlsoUseSupervisorKeyword=Puede también añadir la etiqueta <strong>__SUPERVISOREMAIL__</strong> para tener un e-mail  enviado del supervisor al usuario (solamente funciona si un e-mail es definido para este supervisor)
-NbOfTargetedContacts=Número actual de contactos destinariarios de e-mails 
+NbOfTargetedContacts=Número actual de contactos destinariarios de e-mails
 UseFormatFileEmailToTarget=Los ficheros importados deben tener el formato <strong>email;nombre;apellido;otros</strong>
 UseFormatInputEmailToTarget=Entra una cadena con el formato <strong>email;nombre;apellido;otros</strong>
 MailAdvTargetRecipients=Destinatarios (selección avanzada)

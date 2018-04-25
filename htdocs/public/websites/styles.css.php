@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,7 @@
 /**
  *     	\file       htdocs/public/websites/styles.css.php
  *		\ingroup    website
- *		\brief      Page to output style page
- *		\author	    Laurent Destailleur
+ *		\brief      Page to output style page. Called with <link rel="stylesheet" href="styles.css.php?websiteid=123" type="text/css" />
  */
 
 define('NOTOKENRENEWAL',1); // Disables token renewal
@@ -48,6 +47,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 $error=0;
 $website=GETPOST('website', 'alpha');
+$websiteid=GETPOST('websiteid', 'int');
 $pageid=GETPOST('page', 'alpha')?GETPOST('page', 'alpha'):GETPOST('pageid', 'alpha');
 
 $accessallowed = 1;
@@ -67,13 +67,20 @@ if (empty($pageid))
 {
     require_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
     require_once DOL_DOCUMENT_ROOT.'/websites/class/websitepage.class.php';
-    
+
     $object=new Website($db);
-    $object->fetch(0, $website);
-    
+    if ($websiteid)
+    {
+        $object->fetch($websiteid);
+        $website=$object->ref;
+    }
+    else
+    {
+        $object->fetch(0, $website);
+    }
     $objectpage=new WebsitePage($db);
     $array=$objectpage->fetchAll($object->id);
-    
+
     if (count($array) > 0)
     {
         $firstrep=reset($array);

@@ -36,7 +36,8 @@ class PaiementFourn extends Paiement
 {
     public $element='payment_supplier';
     public $table_element='paiementfourn';
-
+    public $picto = 'payment';
+    
     var $statut;        //Status of payment. 0 = unvalidated; 1 = validated
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -348,7 +349,7 @@ class PaiementFourn extends Paiement
     			$result=$accline->fetch($bank_line_id);
     			if ($result > 0) // If result = 0, record not found, we don't try to delete
     			{
-    				$result=$accline->delete();
+    				$result=$accline->delete($user);
     			}
     			if ($result < 0)
     			{
@@ -486,7 +487,7 @@ class PaiementFourn extends Paiement
 		global $langs;
 
 		$langs->load('compta');
-		if ($mode == 0)
+		/*if ($mode == 0)
 		{
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
@@ -516,7 +517,12 @@ class PaiementFourn extends Paiement
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
-		return $langs->trans('Unknown');
+		if ($mode == 6)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}*/
+		return '';
 	}
 
 
@@ -525,9 +531,10 @@ class PaiementFourn extends Paiement
 	 *
 	 *	@param		int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param		string	$option			Sur quoi pointe le lien
+	 *  @param		string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *	@return		string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
 	{
 		global $langs;
 
@@ -661,6 +668,49 @@ class PaiementFourn extends Paiement
 	}
 
 	/**
+	 *	Create a document onto disk according to template model.
+	 *
+	 *	@param	    string		$modele			Force template to use ('' to not force)
+	 *	@param		Translate	$outputlangs	Object lang a utiliser pour traduction
+	 *  @param      int			$hidedetails    Hide details of lines
+	 *  @param      int			$hidedesc       Hide description
+	 *  @param      int			$hideref        Hide ref
+	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
+	 */
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	{
+		global $conf, $user, $langs;
+
+		$langs->load("suppliers");
+
+		// Set the model on the model name to use
+		if (empty($modele))
+		{
+			if (! empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF))
+			{
+				$modele = $conf->global->SUPPLIER_PAYMENT_ADDON_PDF;
+			}
+			else
+			{
+				$modele = '';       // No default value. For supplier invoice, we allow to disable all PDF generation
+			}
+		}
+
+		if (empty($modele))
+		{
+		    return 0;
+		}
+		else
+		{
+            $modelpath = "core/modules/supplier_payment/doc/";
+
+            return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		}
+	}
+
+
+
+	/**
 	 * 	get the right way of payment
 	 * 
 	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
@@ -684,4 +734,30 @@ class PaiementFourn extends Paiement
 		
 		return $way;
 	}
+	
+	/**
+     *    	Load the third party of object, from id into this->thirdparty
+     *
+     *		@param		int		$force_thirdparty_id	Force thirdparty id
+     *		@return		int								<0 if KO, >0 if OK
+     */
+    function fetch_thirdparty($force_thirdparty_id=0)
+    {
+		require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
+		
+		if (empty($force_thirdparty_id))
+		{
+			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first supplier invoice to get him
+			if (!empty($billsarray))
+			{
+				$supplier_invoice = new FactureFournisseur($this->db);
+				if ($supplier_invoice->fetch($billsarray[0]) > 0)
+				{
+					$force_thirdparty_id = $supplier_invoice->fk_soc;
+				}
+			}
+		}
+		
+		return parent::fetch_thirdparty($force_thirdparty_id);
+    }
 }

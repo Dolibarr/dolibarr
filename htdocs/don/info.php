@@ -67,7 +67,7 @@ $object->info($id);
 
 $head = donation_prepare_head($object);
 
-dol_fiche_head($head, 'info', $langs->trans("Donation"), 0, 'generic');
+dol_fiche_head($head, 'info', $langs->trans("Donation"), -1, 'generic');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
@@ -116,7 +116,7 @@ print '<br>';
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
-      
+
 print '</div>';
 
 dol_fiche_end();

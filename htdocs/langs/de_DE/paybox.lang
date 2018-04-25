@@ -11,6 +11,7 @@ YourEMail=E-Mail-Adresse für die Zahlungsbestätigung
 Creditor=Zahlungsempfänger
 PaymentCode=Zahlungscode
 PayBoxDoPayment=Jetzt bezahlen
+ToPay=Zahlung tätigen
 YouWillBeRedirectedOnPayBox=Zur Eingabe Ihrer Kreditkartendaten werden Sie an eine sichere Bezahlseite weitergeleitet.
 Continue=Fortfahren
 ToOfferALinkForOnlinePayment=URL für %s Zahlung

@@ -283,15 +283,16 @@ class PriceExpression
  	/**
 	 *  Delete object in database
 	 *
-     * 	@param	int		$rowid		 Row id of expression
      *	@param  User	$user        User that deletes
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
-	function delete($rowid, $user, $notrigger=0)
+	function delete(User $user, $notrigger=0)
 	{
 		$error=0;
 
+		$rowid = $this->id;
+		
 		$this->db->begin();
 
 		if (! $error)

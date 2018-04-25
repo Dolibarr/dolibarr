@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2011-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com> 
+ * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/salaries/card.php
- *      \ingroup    salaries
- *		\brief      Page of salaries payments
+ *	\file       htdocs/compta/salaries/card.php
+ *	\ingroup    salaries
+ *	\brief      Page of salaries payments
  */
 
 require '../../main.inc.php';
@@ -39,16 +39,16 @@ $langs->load("salaries");
 $langs->load('hrm');
 
 $id=GETPOST("id",'int');
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', '', '', '');
+$result = restrictedArea($user, 'salaries', '', '', 'payment');
 
 $object = new PaymentSalary($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('salarycard','globalcard'));
 
 
@@ -72,7 +72,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$datesp=dol_mktime(12,0,0, $_POST["datespmonth"], $_POST["datespday"], $_POST["datespyear"]);
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 	if (empty($datev)) $datev=$datep;
-	
+
 	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;
 	$object->datev=$datev;
@@ -116,7 +116,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("BankAccount")), null, 'errors');
 		$error++;
 	}
-	
+
 	if (! $error)
 	{
 		$db->begin();
@@ -202,11 +202,7 @@ if ($id)
 	}
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/* create mode                                                                */
-/*                                                                            */
-/* ************************************************************************** */
+// Create
 if ($action == 'create')
 {
 	$year_current = strftime("%Y",dol_now());
@@ -233,7 +229,7 @@ if ($action == 'create')
 	print load_fiche_titre($langs->trans("NewSalaryPayment"),'', 'title_accountancy.png');
 
 	dol_fiche_head('', '');
-	
+
 	print '<table class="border" width="100%">';
 
 	// Date payment
@@ -304,8 +300,9 @@ if ($action == 'create')
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="1"');
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 
@@ -332,46 +329,47 @@ if ($id)
 
 	$head=salaries_prepare_head($object);
 
-	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), 0, 'payment');
+	dol_fiche_head($head, 'card', $langs->trans("SalaryPayment"), -1, 'payment');
+
+    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
+	$morehtmlref='<div class="refidno">';
+
+	$userstatic=new User($db);
+	$userstatic->fetch($object->fk_user);
+
+	$morehtmlref.=$langs->trans('Employee') . ' : ' . $userstatic->getNomUrl(1);
+	$morehtmlref.='</div>';
+
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border" width="100%">';
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
-    print "<tr>";
-	print '<td class="titlefield">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-	print '</td></tr>';
-
-	// Employee
-	print '<tr><td>'.$langs->trans("Employee").'</td><td>';
-	$usersal=new User($db);
-	$usersal->fetch($object->fk_user);
-	print $usersal->getNomUrl(1);
-	print '</td></tr>';
-
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DateStartPeriod").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DateStartPeriod").'</td><td>';
 	print dol_print_date($object->datesp,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateEndPeriod").'</td><td>';
 	print dol_print_date($object->dateep,'day');
 	print '</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td colspan="3">';
+	print '<td>'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("DateValue").'</td><td colspan="3">';
+	print '<tr><td>'.$langs->trans("DateValue").'</td><td>';
 	print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="3">'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
+	print '<tr><td>'.$langs->trans("Amount").'</td><td>'.price($object->amount,0,$outputlangs,1,-1,-1,$conf->currency).'</td></tr>';
 
 	if (! empty($conf->banque->enabled))
 	{
@@ -382,7 +380,7 @@ if ($id)
 
 			print '<tr>';
 			print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-			print '<td colspan="3">';
+			print '<td>';
 			print $bankline->getNomUrl(1,0,'showall');
 			print '</td>';
 			print '</tr>';
@@ -390,14 +388,17 @@ if ($id)
 	}
 
 	// Other attributes
-	$parameters=array('colspan' => ' colspan="3"');
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+	print $hookmanager->resPrint;
 
 	print '</table>';
 
+	print '</div>';
+
 	dol_fiche_end();
 
-	
+
 	/*
 	 * Action buttons
 	 */
@@ -406,7 +407,7 @@ if ($id)
 	{
 		if (! empty($user->rights->salaries->delete))
 		{
-			print '<a class="butActionDelete" href="card.php?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
+			print '<a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=delete">'.$langs->trans("Delete").'</a>';
 		}
 		else
 		{

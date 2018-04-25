@@ -1,7 +1,7 @@
 #----------------------------------------------------------------------------
 # \file         dolibarr.pl
 # \brief        Dolibarr script install for Virtualmin Pro
-# \author       (c)2009-2015 Regis Houssin  <regis.houssin@capnetworks.com>
+# \author       (c)2009-2017 Regis Houssin  <regis.houssin@capnetworks.com>
 #----------------------------------------------------------------------------
 
 
@@ -30,7 +30,12 @@ return "Regis Houssin";
 # script_dolibarr_versions()
 sub script_dolibarr_versions
 {
-return ( "3.8.1", "3.7.1", "3.6.4", "3.5.7" );
+return ( "5.0.4", "4.0.6", "3.9.4" );
+}
+
+sub script_dolibarr_release
+{
+return 2;	# for mysqli fix
 }
 
 sub script_dolibarr_category
@@ -177,9 +182,9 @@ if ($opts->{'newdb'} && !$upgrade) {
 local ($dbtype, $dbname) = split(/_/, $opts->{'db'}, 2);
 local $dbuser = $dbtype eq "mysql" ? &mysql_user($d) : &postgres_user($d);
 local $dbpass = $dbtype eq "mysql" ? &mysql_pass($d) : &postgres_pass($d, 1);
-local $dbphptype = $dbtype eq "mysql" && $version >= 3.6 ? "mysql" :
+local $dbphptype = $dbtype eq "mysql" && $version < 3.6 ? "mysql" :
 		   $dbtype eq "mysql" ? "mysqli" : "pgsql";
-local $dbhost = &get_database_host($dbtype);
+local $dbhost = &get_database_host($dbtype, $d);
 local $dberr = &check_script_db_connection($dbtype, $dbname, $dbuser, $dbpass);
 return (0, "Database connection failed : $dberr") if ($dberr);
 
@@ -206,9 +211,6 @@ $pgcharset = $tmpl->{'postgres_encoding'};
 $charset = $dbtype eq "mysql" ? $mycharset : $pgcharset;
 $collate = $dbtype eq "mysql" ? $mycollate : "C";
 
-# Install filename
-local $step = $version >= 3.8 ? "step" : "etape";
-
 $path = &script_path_url($d, $opts);
 if ($path =~ /^https:/ || $d->{'ssl'}) {
         $url = "https://$d->{'dom'}";
@@ -222,15 +224,11 @@ if ($opts->{'path'} =~ /\w/) {
 
 if (!$upgrade) {
 	local $cdef = "$opts->{'dir'}/conf/conf.php.example";
-    &run_as_domain_user($d, "cp ".quotemeta($cdef)." ".quotemeta($cfile));
+	&copy_source_dest_as_domain_user($d, $cdef, $cfile);
 	&set_permissions_as_domain_user($d, 0777, $cfiledir);
-	&set_permissions_as_domain_user($d, 0666, $cfile);
+	&copy_source_dest_as_domain_user($d, $cfile);
 	&run_as_domain_user($d, "mkdir ".quotemeta($docdir));
 	&set_permissions_as_domain_user($d, 0777, $docdir);
-	if (!$version >= 3.7.2) {
-		&run_as_domain_user($d, "mkdir ".quotemeta($altdir));
-		&set_permissions_as_domain_user($d, 0777, $altdir);
-	}
 }
 else {
 	# Preserve old config file, documents and custom directory
@@ -266,7 +264,8 @@ if ($upgrade) {
 			  [ "versionfrom", $upgrade->{'version'} ],
 			  [ "versionto", $ver ],
 			 );
-	local $err = &call_dolibarr_wizard_page(\@params, $step."5", $d, $opts);
+	local $p = $ver >= 3.8 ? "step5" : "etape5";
+	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Remove the installation directory.
@@ -289,15 +288,17 @@ else {
 			  [ "main_force_https", $opts->{'forcehttps'} ],
 			  [ "dolibarr_main_db_character_set", $charset ],
 			  [ "dolibarr_main_db_collation", $collate ],
-			  [ "main_use_alt_dir", "1" ],
+			  [ "usealternaterootdir", "1" ],
 			  [ "main_alt_dir_name", "custom" ],
 			 );
-	local $err = &call_dolibarr_wizard_page(\@params, $step."1", $d, $opts);
+	local $p = $ver >= 3.8 ? "step1" : "etape1";
+	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Second page (Populate database)
 	local @params = ( [ "action", "set" ] );
-	local $err = &call_dolibarr_wizard_page(\@params, $step."2", $d, $opts);
+	local $p = $ver >= 3.8 ? "step2" : "etape2";
+	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Third page (Add administrator account)
@@ -306,7 +307,8 @@ else {
 			  [ "pass", $dompass ],
 			  [ "pass_verif", $dompass ],
 	 		 );
-	local $err = &call_dolibarr_wizard_page(\@params, $step."5", $d, $opts);
+	local $p = $ver >= 3.8 ? "step5" : "etape5";
+	local $err = &call_dolibarr_wizard_page(\@params, $p, $d, $opts);
 	return (-1, "Dolibarr wizard failed : $err") if ($err);
 	
 	# Remove the installation directory and protect config file.
@@ -384,7 +386,10 @@ sub script_dolibarr_check_latest
 {
 local ($ver) = @_;
 local @vers = &osdn_package_versions("dolibarr",
-                $ver >= 3.8 ? "dolibarr\\-(3\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 5.0 ? "dolibarr\\-(5\\.0\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 4.0 ? "dolibarr\\-(4\\.0\\.[0-9\\.]+)\\.tgz" :
+                $ver >= 3.9 ? "dolibarr\\-(3\\.9\\.[0-9\\.]+)\\.tgz" :
+		$ver >= 3.8 ? "dolibarr\\-(3\\.8\\.[0-9\\.]+)\\.tgz" :
                 $ver >= 3.7 ? "dolibarr\\-(3\\.7\\.[0-9\\.]+)\\.tgz" :
                 $ver >= 3.6 ? "dolibarr\\-(3\\.6\\.[0-9\\.]+)\\.tgz" :
                 $ver >= 3.5 ? "dolibarr\\-(3\\.5\\.[0-9\\.]+)\\.tgz" :

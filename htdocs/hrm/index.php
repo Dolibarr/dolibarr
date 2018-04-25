@@ -77,40 +77,42 @@ print load_fiche_titre($langs->trans("HRMArea"),'', 'title_hrm.png');
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
-
-if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$langs->load("holiday");
-    $listofsearchfields['search_holiday']=array('text'=>'TitreRequestCP');
-}
-if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
-{
-	$langs->load("trips");
-    $listofsearchfields['search_deplacement']=array('text'=>'ExpenseReport');
-}
-if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
-{
-	$langs->load("trips");
-    $listofsearchfields['search_expensereport']=array('text'=>'ExpenseReport');
-}
-if (count($listofsearchfields))
-{
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
+    if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
+    {
+    	$langs->load("holiday");
+        $listofsearchfields['search_holiday']=array('text'=>'TitreRequestCP');
+    }
+    if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
+    {
+    	$langs->load("trips");
+        $listofsearchfields['search_deplacement']=array('text'=>'ExpenseReport');
+    }
+    if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire)
+    {
+    	$langs->load("trips");
+        $listofsearchfields['search_expensereport']=array('text'=>'ExpenseReport');
+    }
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';
+    	print '</form>';
+    	print '<br>';
+    }
 }
 
 
@@ -119,7 +121,7 @@ if (! empty($conf->holiday->enabled))
 	$user_id = $user->id;
 
     print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Holidays").'</td></tr>';
+    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
     print "<tr ".$bc[0].">";
     print '<td colspan="3">';
 
@@ -169,19 +171,20 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
 
         $holidaystatic=new Holiday($db);
         $userstatic=new User($db);
-        
+
         $listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
         $typeleaves=$holidaystatic->getTypes(1,-1);
-        
+
         $i = 0;
 
+        print '<div class="div-table-responsive">';
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print '<td colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests",min($max,$num)).'</td>';
-        print '<td>'.$langs->trans("from").'</td>';
-        print '<td>'.$langs->trans("to").'</td>';
-        print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-        print '<td width="16">&nbsp;</td>';
+        print '<th colspan="3">'.$langs->trans("BoxTitleLastLeaveRequests",min($max,$num)).'</th>';
+        print '<th>'.$langs->trans("from").'</th>';
+        print '<th>'.$langs->trans("to").'</th>';
+        print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+        print '<th width="16">&nbsp;</th>';
         print '</tr>';
         if ($num)
         {
@@ -196,29 +199,29 @@ if (! empty($conf->holiday->enabled) && $user->rights->holiday->read)
                 $userstatic->login=$obj->login;
                 $userstatic->photo=$obj->photo;
                 $userstatic->statut=$obj->statut;
-                print '<tr '.$bc[$var].'>';
+                print '<tr class="oddeven">';
                 print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
                 print '<td>'.$userstatic->getNomUrl(-1, 'leave').'</td>';
                 print '<td>'.$typeleaves[$obj->fk_type]['label'].'</td>';
-                
+
                 $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
                 $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
-                
+
                 print '<td>'.dol_print_date($obj->date_start,'day').' '.$langs->trans($listhalfday[$starthalfday]);
                 print '<td>'.dol_print_date($obj->date_end,'day').' '.$langs->trans($listhalfday[$endhalfday]);
                 print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
                 print '<td>'.$holidaystatic->LibStatut($obj->status,3).'</td>';
                 print '</tr>';
-                $var=!$var;
+
                 $i++;
             }
 
         }
         else
         {
-            print '<tr '.$bc[$var].'><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+            print '<tr class="oddeven"><td colspan="7" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
         }
-        print '</table><br>';
+        print '</table></div><br>';
     }
     else dol_print_error($db);
 }
@@ -248,10 +251,10 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("FeesKilometersOrAmout").'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-		print '<td width="16">&nbsp;</td>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
+		print '<th align="right">'.$langs->trans("FeesKilometersOrAmout").'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -270,21 +273,21 @@ if (! empty($conf->deplacement->enabled) && $user->rights->deplacement->lire)
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td>'.$deplacementstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.$obj->km.'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
 				print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
 				print '</tr>';
-				$var=!$var;
+
 				$i++;
 			}
 
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -315,10 +318,10 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-		print '<td align="right">'.$langs->trans("TotalTTC").'</td>';
-		print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-		print '<td width="16">&nbsp;</td>';
+		print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
+		print '<th align="right">'.$langs->trans("TotalTTC").'</th>';
+		print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+		print '<th width="16">&nbsp;</th>';
 		print '</tr>';
 		if ($num)
 		{
@@ -337,23 +340,23 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 				$userstatic->login=$obj->login;
 				$userstatic->statut=$obj->statut;
 				$userstatic->photo=$obj->photo;
-				print '<tr '.$bc[$var].'>';
+				print '<tr class="oddeven">';
 				print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
 				print '<td>'.$userstatic->getNomUrl(-1).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
 				print '<td>'.$expensereportstatic->LibStatut($obj->status,3).'</td>';
 				print '</tr>';
-				$var=!$var;
+
 				$i++;
 			}
 
 		}
 		else
 		{
-			print '<tr '.$bc[$var].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+			print '<tr class="oddeven"><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 		}
-		print '</table><br>';
+		print '</table>';
 	}
 	else dol_print_error($db);
 }

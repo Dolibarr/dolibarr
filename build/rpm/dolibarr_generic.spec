@@ -26,17 +26,17 @@ License: GPL-3.0+
 #Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
-URL: http://www.dolibarr.org
+URL: https://www.dolibarr.org
 %if 0%{?fedora} || 0%{?rhel_version} || 0%{?centos_version}
-Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_redhat-fedora/%{name}-%{version}.tgz
+Source0: https://www.dolibarr.org/files/lastbuild/package_rpm_redhat-fedora/%{name}-%{version}.tgz
 %else
 %if 0%{?mdkversion}
-Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_mandriva/%{name}-%{version}.tgz
+Source0: https://www.dolibarr.org/files/lastbuild/package_rpm_mandriva/%{name}-%{version}.tgz
 %else
 %if 0%{?suse_version}
-Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_opensuse/%{name}-%{version}.tgz
+Source0: https://www.dolibarr.org/files/lastbuild/package_rpm_opensuse/%{name}-%{version}.tgz
 %else
-Source0: http://www.dolibarr.org/files/lastbuild/package_rpm_generic/%{name}-%{version}.tgz
+Source0: https://www.dolibarr.org/files/lastbuild/package_rpm_generic/%{name}-%{version}.tgz
 %endif
 %endif
 %endif
@@ -242,9 +242,11 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/api
 %_datadir/dolibarr/htdocs/asterisk
 %_datadir/dolibarr/htdocs/barcode
+%_datadir/dolibarr/htdocs/blockedlog
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
+%_datadir/dolibarr/htdocs/collab
 %_datadir/dolibarr/htdocs/comm
 %_datadir/dolibarr/htdocs/commande
 %_datadir/dolibarr/htdocs/compta
@@ -273,6 +275,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/loan
 %_datadir/dolibarr/htdocs/mailmanspip
 %_datadir/dolibarr/htdocs/margin
+%_datadir/dolibarr/htdocs/modulebuilder
 %_datadir/dolibarr/htdocs/multicurrency
 %_datadir/dolibarr/htdocs/opensurvey
 %_datadir/dolibarr/htdocs/paybox
@@ -283,10 +286,12 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/public
 %_datadir/dolibarr/htdocs/resource
 %_datadir/dolibarr/htdocs/societe
+%_datadir/dolibarr/htdocs/stripe
 %_datadir/dolibarr/htdocs/supplier_proposal
 %_datadir/dolibarr/htdocs/support
 %_datadir/dolibarr/htdocs/theme
 %_datadir/dolibarr/htdocs/user
+%_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
 %_datadir/dolibarr/htdocs/websites
 %_datadir/dolibarr/htdocs/*.ico

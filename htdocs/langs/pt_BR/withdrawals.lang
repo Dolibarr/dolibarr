@@ -14,7 +14,6 @@ NbOfInvoiceToWithdraw=Nº da fatura com pedido por Débito direto
 NbOfInvoiceToWithdrawWithInfo=Nº da fatura do cliente com pedidos para pagamento por Débito direto com informação bancária definida
 InvoiceWaitingWithdraw=Fatura aguardando o Débito direto
 WithdrawsRefused=Débito direto recusado
-NoInvoiceToWithdraw=Nenhuma fatura a cliente com modo de pagamento 'Débito Directo' em espera. Ir ao separador 'Débito Directo' na ficha da fatura para fazer um pedido.
 ResponsibleUser=Usuário Responsável dos Débitos Diretos
 WithdrawStatistics=Estatísticas do pagamento por Débito direto
 WithdrawRejectStatistics=Estatísticas de recusa do pagamento por Débito direto

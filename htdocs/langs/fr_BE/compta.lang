@@ -1,4 +1,8 @@
 # Dolibarr language file - Source file is en_US - compta
+VATReceived=VAT received
+VATToCollect=VAT purchases
+VATSummary=VAT Balance
+VATPaid=VAT paid
 SalesTurnover=Chiffre d'affaires des ventes
 Dispatched=Envoyé
 ToDispatch=Envoyer

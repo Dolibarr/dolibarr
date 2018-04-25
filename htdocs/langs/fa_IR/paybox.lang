@@ -11,6 +11,7 @@ YourEMail=ایمیل برای دریافت تاییدیه پرداخت
 Creditor=بستانکار
 PaymentCode=کد های پرداخت
 PayBoxDoPayment=برو در پرداخت
+ToPay=آیا پرداخت
 YouWillBeRedirectedOnPayBox=شما می توانید در صفحه خزانه امن برای ورودی هدایت می شوید اطلاعات کارت اعتباری شما
 Continue=بعد
 ToOfferALinkForOnlinePayment=URL برای٪ s پرداخت

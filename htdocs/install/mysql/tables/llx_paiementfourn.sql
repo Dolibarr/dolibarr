@@ -32,5 +32,6 @@ create table llx_paiementfourn
   num_paiement      varchar(50),       -- numero de paiement (cheque)
   note              text,
   fk_bank           integer NOT NULL,
-  statut			smallint NOT NULL DEFAULT 0
+  statut			smallint NOT NULL DEFAULT 0,
+  model_pdf         varchar(255)
 )ENGINE=innodb;

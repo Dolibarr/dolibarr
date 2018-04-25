@@ -81,7 +81,7 @@ class CommandeStats extends Stats
 			$this->where.= " c.fk_statut > 2";    // Only approved & ordered
 		}
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where.= ' AND c.entity IN ('.getEntity('commande', 1).')';
+		$this->where.= ' AND c.entity IN ('.getEntity('commande').')';
 		
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($this->socid)

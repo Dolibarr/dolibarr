@@ -47,7 +47,7 @@ $search_statut=GETPOST('search_statut','int');
 
 if ($search_statut == '') $search_statut='1';
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_statut="";
 }
@@ -73,7 +73,7 @@ $user_arbo = $userstatic->get_full_tree(0, ($search_statut != '' && $search_stat
 
 if (! is_array($user_arbo) && $user_arbo < 0)
 {
-    setEventMessages($userstatic->error, $userstatic->errors, 'warnings');    
+    setEventMessages($userstatic->error, $userstatic->errors, 'warnings');
 }
 else
 {
@@ -97,24 +97,21 @@ foreach($fulltree as $key => $val)
 	$userstatic->admin=$val['admin'];
 	$userstatic->entity=$val['entity'];
 	$userstatic->photo=$val['photo'];
-	
+
 	$entity=$val['entity'];
 	$entitystring='';
 
 	// TODO Set of entitystring should be done with a hook
-	if (is_object($mc))
+	if (! empty($conf->multicompany->enabled) && is_object($mc))
 	{
-		if (! empty($conf->multicompany->enabled))
+		if (empty($entity))
 		{
-			if (empty($entity))
-			{
-				$entitystring=$langs->trans("AllEntities");
-			}
-			else
-			{
-				$mc->getInfo($entity);
-				$entitystring=$mc->label;
-			}
+			$entitystring=$langs->trans("AllEntities");
+		}
+		else
+		{
+			$mc->getInfo($entity);
+			$entitystring=$mc->label;
 		}
 	}
 
@@ -128,7 +125,7 @@ foreach($fulltree as $key => $val)
 		$li.=img_picto($langs->trans("Administrator"),'star');
 	}
 	$li.=' ('.$val['login'].($entitystring?' - '.$entitystring:'').')';
-	
+
 	$data[] = array(
 		'rowid'=>$val['rowid'],
 		'fk_menu'=>$val['fk_user'],
@@ -144,15 +141,8 @@ print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'"
 $param="search_statut=".$search_statut;
 
 print '<table class="liste nohover" width="100%">';
-print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("HierarchicView"));
-print '<td align="right"><div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a>';
-print ' | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div></td>';
-print_liste_field_titre($langs->trans("Status"),$_SERVER['PHP_SELF'],"",'',"",'align="right"');
-print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
-print '</tr>';
 
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre_filter">';
 print '<td class="liste_titre">&nbsp;</td>';
 print '<td class="liste_titre">&nbsp;</td>';
 // Status
@@ -160,10 +150,18 @@ print '<td class="liste_titre" align="right">';
 print $form->selectarray('search_statut', array('-1'=>'','1'=>$langs->trans('Enabled')),$search_statut);
 print '</td>';
 print '<td class="liste_titre" align="right">';
-$searchpitco=$form->showFilterAndCheckAddButtons(0);
-print $searchpitco;
+$searchpicto=$form->showFilterAndCheckAddButtons(0);
+print $searchpicto;
 print '</td>';
 print '</tr>';
+
+print '<tr class="liste_titre">';
+print_liste_field_titre("HierarchicView");
+print_liste_field_titre('<div id="iddivjstreecontrol"><a href="#">'.img_picto('','object_category').' '.$langs->trans("UndoExpandAll").'</a> | <a href="#">'.img_picto('','object_category-expanded').' '.$langs->trans("ExpandAll").'</a></div>',$_SERVER['PHP_SELF'],"",'',"",'align="center"');
+print_liste_field_titre("Status",$_SERVER['PHP_SELF'],"",'',"",'align="right"');
+print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','','','','maxwidthsearch ');
+print '</tr>';
+
 
 $nbofentries=(count($data) - 1);
 

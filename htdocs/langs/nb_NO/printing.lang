@@ -46,6 +46,6 @@ IPP_Media=Skriver media
 IPP_Supported=Mediatype
 DirectPrintingJobsDesc=Denne siden viser utskriftsjobber funnet for  tilgjengelige skrivere.
 GoogleAuthNotConfigured=Google OAuth oppsett ikke utført. Aktiver modulen OAuth og sett opp Google ID/Secret.
-GoogleAuthConfigured=Google OAuth legitimasjon funnet i oppsettet i modulen OAuth.
+GoogleAuthConfigured=Google OAuth legitimasjon ble funnet i oppsettet av OAuth-modulen .
 PrintingDriverDescprintgcp=Konfigurasjonsvariabler for drivere til Google Cloud Print.
 PrintTestDescprintgcp=Liste over skrivere for Google Cloud Print.

@@ -214,6 +214,7 @@ class FormMargin
     	    if (!empty($hidemargininfos)) print '<script>$(document).ready(function() {$(".margininfos").hide();});</script>';
 		}
 
+		print '<!-- Margin table -->'."\n";
 		print '<table class="noborder margintable centpercent">';
 		print '<tr class="liste_titre">';
 		print '<td class="liste_titre">'.$langs->trans('Margins').'</td>';
@@ -232,7 +233,7 @@ class FormMargin
 		if (! empty($conf->product->enabled))
 		{
 			//if ($marginInfo['margin_on_products'] != 0 && $marginInfo['margin_on_services'] != 0) {
-			print '<tr class="impair">';
+			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnProducts').'</td>';
 			print '<td align="right">'.price($marginInfo['pv_products'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_products'], null, null, null, null, $rounding).'</td>';
@@ -246,7 +247,7 @@ class FormMargin
 
 		if (! empty($conf->service->enabled))
 		{
-			print '<tr class="pair">';
+			print '<tr class="oddeven">';
 			print '<td>'.$langs->trans('MarginOnServices').'</td>';
 			print '<td align="right">'.price($marginInfo['pv_services'], null, null, null, null, $rounding).'</td>';
 			print '<td align="right">'.price($marginInfo['pa_services'], null, null, null, null, $rounding).'</td>';

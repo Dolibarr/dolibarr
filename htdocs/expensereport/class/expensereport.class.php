@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2011 Dimitri Mouillard   <dmouillard@teclib.com>
  * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2015 Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2015 Alexandre Spangaro  <aspangaro@zendsi.com>
  * Copyright (C) 2016 Ferran Marcet       <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -118,13 +118,23 @@ class ExpenseReport extends CommonObject
      * Create object in database
      *
      * @param   User    $user   User that create
+	 * @param   int     $notrigger   Disable triggers
      * @return  int             <0 if KO, >0 if OK
      */
-    function create($user)
+    function create($user, $notrigger=0)
     {
         global $conf;
 
         $now = dol_now();
+
+        $error = 0;
+
+        // Check parameters
+        if (empty($this->date_debut) || empty($this->date_fin))
+        {
+            $this->error='ErrorFieldRequired';
+            return -1;
+        }
 
         $fuserid = $this->fk_user_author;       // Note fk_user_author is not the 'author' but the guy the expense report is for.
         if (empty($fuserid)) $fuserid = $user->id;
@@ -167,32 +177,39 @@ class ExpenseReport extends CommonObject
         $sql.= ", ".$conf->entity;
         $sql.= ")";
 
-        dol_syslog(get_class($this)."::create sql=".$sql, LOG_DEBUG);
         $result = $this->db->query($sql);
         if ($result)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.$this->table_element);
             $this->ref='(PROV'.$this->id.')';
 
-            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->ref."' WHERE rowid=".$this->id;
-            dol_syslog(get_class($this)."::create sql=".$sql);
+            $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element." SET ref='".$this->db->escape($this->ref)."' WHERE rowid=".$this->id;
             $resql=$this->db->query($sql);
             if (!$resql) $error++;
 
-            foreach ($this->lignes as $i => $val)
+            if (is_array($this->lines) && count($this->lines)>0)
             {
-                $newndfline=new ExpenseReportLine($this->db);
-                $newndfline=$this->lignes[$i];
-                $newndfline->fk_expensereport=$this->id;
-                if ($result >= 0)
-                {
-                    $result=$newndfline->insert();
-                }
-                if ($result < 0)
-                {
-                    $error++;
-                    break;
-                }
+	            foreach ($this->lines as $i => $val)
+	            {
+	                $newndfline=new ExpenseReportLine($this->db);
+	                $newndfline=$this->lines[$i];
+	                $newndfline->fk_expensereport=$this->id;
+	                if ($result >= 0)
+	                {
+	                    $result=$newndfline->insert();
+	                }
+	                if ($result < 0)
+	                {
+	                    $error++;
+	                    break;
+	                }
+	            }
+            }
+
+            if (! $error)
+            {
+            	$result=$this->insertExtraFields();
+           		if ($result < 0) $error++;
             }
 
             if (! $error)
@@ -200,8 +217,28 @@ class ExpenseReport extends CommonObject
                 $result=$this->update_price();
                 if ($result > 0)
                 {
-                    $this->db->commit();
-                    return $this->id;
+
+					if (!$notrigger)
+					{
+						// Call trigger
+						$result=$this->call_trigger('EXPENSE_REPORT_CREATE',$user);
+
+						if ($result < 0) {
+							$error++;
+						}
+						// End call triggers
+					}
+
+					if (empty($error))
+					{
+						$this->db->commit();
+						return $this->id;
+					}
+					else
+					{
+						$this->db->rollback();
+						return -4;
+					}
                 }
                 else
                 {
@@ -218,82 +255,84 @@ class ExpenseReport extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error()." sql=".$sql;
+            $this->error=$this->db->lasterror()." sql=".$sql;
             $this->db->rollback();
             return -1;
         }
-
     }
 
 
     /**
      *	Load an object from its id and create a new one in database
      *
-     *	@param		int			$socid			Id of thirdparty
-     *	@return		int							New id of clone
+     *	@param		int			$fk_user_author		  Id of new user
+     *	@return		int							      New id of clone
      */
-    function createFromClone($socid=0)
+    function createFromClone($fk_user_author)
     {
         global $user,$hookmanager;
 
         $error=0;
 
-        $this->context['createfromclone'] = 'createfromclone';
+        if (empty($fk_user_author)) $fk_user_author = $user->id;
 
+        $this->context['createfromclone'] = 'createfromclone';
         $this->db->begin();
 
         // get extrafields so they will be clone
-        foreach($this->lines as $line)
+        //foreach($this->lines as $line)
             //$line->fetch_optionals($line->rowid);
 
-            // Load source object
-            $objFrom = clone $this;
+        // Load source object
+        $objFrom = clone $this;
 
-            $this->id=0;
-            $this->ref = '';
-            $this->statut=0;
+        $this->id=0;
+        $this->ref = '';
+        $this->status=0;
+        $this->fk_statut=0;
 
-            // Clear fields
-            $this->fk_user_author     = $user->id;     // Note fk_user_author is not the 'author' but the guy the expense report is for.
-            $this->fk_user_valid      = '';
-            $this->date_create  	  = '';
-            $this->date_creation      = '';
-            $this->date_validation    = '';
+        // Clear fields
+        $this->fk_user_author     = $fk_user_author;     // Note fk_user_author is not the 'author' but the guy the expense report is for.
+        $this->fk_user_valid      = '';
+        $this->date_create  	  = '';
+        $this->date_creation      = '';
+        $this->date_validation    = '';
 
-            // Create clone
-            $result=$this->create($user);
+        // Create clone
+        $result=$this->create($user);
+        if ($result < 0) $error++;
+
+        if (! $error)
+        {
+            // Hook of thirdparty module
+            if (is_object($hookmanager))
+            {
+                $parameters=array('objFrom'=>$objFrom);
+                $action='';
+                $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+                if ($reshook < 0) $error++;
+            }
+
+            // Call trigger
+            $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
+
             if ($result < 0) $error++;
+            // End call triggers
+        }
 
-            if (! $error)
-            {
-                // Hook of thirdparty module
-                if (is_object($hookmanager))
-                {
-                    $parameters=array('objFrom'=>$objFrom);
-                    $action='';
-                    $reshook=$hookmanager->executeHooks('createFrom',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-                    if ($reshook < 0) $error++;
-                }
+        unset($this->context['createfromclone']);
 
-                // Call trigger
-                $result=$this->call_trigger('EXPENSEREPORT_CLONE',$user);
-                if ($result < 0) $error++;
-                // End call triggers
-            }
-
-            unset($this->context['createfromclone']);
-
-            // End
-            if (! $error)
-            {
-                $this->db->commit();
-                return $this->id;
-            }
-            else
-            {
-                $this->db->rollback();
-                return -1;
-            }
+        // End
+        if (! $error)
+        {
+            $this->db->commit();
+            return $this->id;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -1;
+        }
     }
 
 
@@ -301,12 +340,16 @@ class ExpenseReport extends CommonObject
      * update
      *
      * @param   User    $user                   User making change
+	 * @param   int     $notrigger              Disable triggers
      * @param   User    $userofexpensereport    New user we want to have the expense report on.
      * @return  int                             <0 if KO, >0 if OK
      */
-    function update($user, $userofexpensereport=null)
+    function update($user, $notrigger = 0, $userofexpensereport=null)
     {
         global $langs;
+
+		$error = 0;
+		$this->db->begin();
 
         $sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element." SET";
         $sql.= " total_ht = ".$this->total_ht;
@@ -332,10 +375,32 @@ class ExpenseReport extends CommonObject
         $result = $this->db->query($sql);
         if ($result)
         {
-            return 1;
+            if (!$notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('EXPENSE_REPORT_UPDATE',$user);
+
+				if ($result < 0) {
+					$error++;
+				}
+				// End call triggers
+			}
+
+			if (empty($error))
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -2;
+			}
         }
         else
         {
+			$this->db->rollback();
             $this->error=$this->db->error();
             return -1;
         }
@@ -364,7 +429,7 @@ class ExpenseReport extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element." as d LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as dp ON d.fk_c_paiement = dp.id";
         if ($ref) $sql.= " WHERE d.ref = '".$this->db->escape($ref)."'";
         else $sql.= " WHERE d.rowid = ".$id;
-        $sql.= $restrict;
+        //$sql.= $restrict;
 
         dol_syslog(get_class($this)."::fetch sql=".$sql, LOG_DEBUG);
         $resql = $this->db->query($sql) ;
@@ -426,7 +491,6 @@ class ExpenseReport extends CommonObject
                 $this->code_statut      = $obj->code_statut;
                 $this->code_paiement    = $obj->code_paiement;
 
-                $this->lignes = array();    // deprecated
                 $this->lines = array();
 
                 $result=$this->fetch_lines();
@@ -450,10 +514,14 @@ class ExpenseReport extends CommonObject
      *
      *    @param    int     $id                 Id of expense report
      *    @param    user    $fuser              User making change
+	 *    @param    int     $notrigger          Disable triggers
      *    @return   int                         <0 if KO, >0 if OK
      */
-    function set_paid($id, $fuser)
+    function set_paid($id, $fuser, $notrigger = 0)
     {
+		$error = 0;
+		$this->db->begin();
+
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport";
         $sql.= " SET fk_statut = 6, paid=1";
         $sql.= " WHERE rowid = ".$id." AND fk_statut = 5";
@@ -464,15 +532,38 @@ class ExpenseReport extends CommonObject
         {
             if ($this->db->affected_rows($resql))
             {
-                return 1;
+				if (!$notrigger)
+				{
+					// Call trigger
+					$result=$this->call_trigger('EXPENSE_REPORT_PAID',$fuser);
+
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (empty($error))
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->error();
+					return -2;
+				}
             }
             else
             {
+				$this->db->commit();
                 return 0;
             }
         }
         else
         {
+			$this->db->rollback();
             dol_print_error($this->db);
             return -1;
         }
@@ -538,7 +629,7 @@ class ExpenseReport extends CommonObject
         $sql.= " f.tms as date_modification,";
         $sql.= " f.date_valid as datev,";
         $sql.= " f.date_approve as datea,";
-        $sql.= " f.fk_user_author as fk_user_creation,";
+        //$sql.= " f.fk_user_author as fk_user_creation,";      // This is not user of creation but user the expense is for.
         $sql.= " f.fk_user_modif as fk_user_modification,";
         $sql.= " f.fk_user_valid,";
         $sql.= " f.fk_user_approve";
@@ -622,6 +713,8 @@ class ExpenseReport extends CommonObject
         $this->date_fin = $now;
         $this->date_approve = $now;
 
+        $type_fees_id = 2;  // TF_TRIP
+
         $this->status = 5;
         $this->fk_statut = 5;
 
@@ -647,6 +740,7 @@ class ExpenseReport extends CommonObject
             $line->value_unit=120;
             $line->fk_expensereport=0;
             $line->type_fees_code='TRA';
+            $line->fk_c_type_fees=$type_fees_id;
 
             $line->projet_ref = 'ABC';
 
@@ -672,7 +766,7 @@ class ExpenseReport extends CommonObject
 
         $langs->load('trips');
 
-        if($user->rights->expensereport->lire) {
+        if ($user->rights->expensereport->lire) {
 
             $sql = "SELECT de.fk_expensereport, de.date, de.comments, de.total_ht, de.total_ttc";
             $sql.= " FROM ".MAIN_DB_PREFIX."expensereport_det as de";
@@ -758,7 +852,7 @@ class ExpenseReport extends CommonObject
             }
             else
             {
-                $this->error=$db->error();
+                $this->error=$db->lasterror();
                 return -1;
             }
         }
@@ -779,8 +873,6 @@ class ExpenseReport extends CommonObject
         $sql.= ' WHERE tt.'.$this->fk_element.' = '.$id;
 
         $total_ht = 0; $total_tva = 0; $total_ttc = 0;
-
-        dol_syslog('ExpenseReport::recalculer sql='.$sql,LOG_DEBUG);
 
         $result = $this->db->query($sql);
         if($result)
@@ -805,15 +897,15 @@ class ExpenseReport extends CommonObject
             $this->db->free($result);
             return 1;
             else:
-            $this->error=$this->db->error();
-            dol_syslog('ExpenseReport::recalculer: Error '.$this->error,LOG_ERR);
+            $this->error=$this->db->lasterror();
+            dol_syslog(get_class($this)."::recalculer: Error ".$this->error,LOG_ERR);
             return -3;
             endif;
         }
         else
         {
-            $this->error=$this->db->error();
-            dol_syslog('ExpenseReport::recalculer: Error '.$this->error,LOG_ERR);
+            $this->error=$this->db->lasterror();
+            dol_syslog(get_class($this)."::recalculer: Error ".$this->error,LOG_ERR);
             return -3;
         }
     }
@@ -836,8 +928,8 @@ class ExpenseReport extends CommonObject
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON de.fk_c_type_fees = ctf.id';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as p ON de.fk_projet = p.rowid';
         $sql.= ' WHERE de.'.$this->fk_element.' = '.$this->id;
+		$sql.= ' ORDER BY de.date ASC';
 
-        dol_syslog('ExpenseReport::fetch_lines sql='.$sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -870,7 +962,6 @@ class ExpenseReport extends CommonObject
                 $deplig->projet_ref         = $objp->ref_projet;
                 $deplig->projet_title       = $objp->title_projet;
 
-                $this->lignes[$i] = $deplig;
                 $this->lines[$i] = $deplig;
 
                 $i++;
@@ -881,7 +972,7 @@ class ExpenseReport extends CommonObject
         else
         {
             $this->error=$this->db->lasterror();
-            dol_syslog('ExpenseReport::fetch_lines: Error '.$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::fetch_lines: Error ".$this->error, LOG_ERR);
             return -3;
         }
     }
@@ -912,7 +1003,7 @@ class ExpenseReport extends CommonObject
             else
             {
                 $this->error=$this->db->error()." sql=".$sql;
-                dol_syslog("ExpenseReport.class::delete ".$this->error, LOG_ERR);
+                dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
                 $this->db->rollback();
                 return -6;
             }
@@ -920,7 +1011,7 @@ class ExpenseReport extends CommonObject
         else
         {
             $this->error=$this->db->error()." sql=".$sql;
-            dol_syslog("ExpenseReport.class::delete ".$this->error, LOG_ERR);
+            dol_syslog(get_class($this)."::delete ".$this->error, LOG_ERR);
             $this->db->rollback();
             return -4;
         }
@@ -930,12 +1021,14 @@ class ExpenseReport extends CommonObject
      * Set to status validate
      *
      * @param   User    $fuser      User
-     * @return  int                 <0 if KO, >0 if OK
+	 * @param   int     $notrigger  Disable triggers
+     * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
      */
-    function setValidate($fuser)
+    function setValidate($fuser, $notrigger=0)
     {
         global $conf,$langs;
 
+		$error = 0;
         $this->oldref = $this->ref;
         $expld_car = (empty($conf->global->NDF_EXPLODE_CHAR))?"-":$conf->global->NDF_EXPLODE_CHAR;
 
@@ -972,7 +1065,7 @@ class ExpenseReport extends CommonObject
             $dirdest = $conf->expensereport->dir_output.'/'.$newref;
             if (file_exists($dirsource))
             {
-                dol_syslog(get_class($this)."::valid() rename dir ".$dirsource." into ".$dirdest);
+                dol_syslog(get_class($this)."::setValidate() rename dir ".$dirsource." into ".$dirdest);
 
                 if (@rename($dirsource, $dirdest))
                 {
@@ -993,9 +1086,10 @@ class ExpenseReport extends CommonObject
         if ($this->fk_statut != 2)
         {
         	$now = dol_now();
+			$this->db->begin();
 
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."'";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 2, fk_user_valid = ".$fuser->id.", date_valid='".$this->db->idate($now)."'";
             if ($update_number_int) {
                 $sql.= ", ref_number_int = ".$ref_number_int;
             }
@@ -1004,18 +1098,42 @@ class ExpenseReport extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                return 1;
+				if (!$notrigger)
+				{
+					// Call trigger
+					$result=$this->call_trigger('EXPENSE_REPORT_VALIDATE',$fuser);
+
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (empty($error))
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->error();
+					return -2;
+				}
             }
             else
             {
+				$this->db->rollback();
                 $this->error=$this->db->lasterror();
                 return -1;
             }
         }
         else
         {
-            dol_syslog(get_class($this)."::set_save expensereport already with save status", LOG_WARNING);
+            dol_syslog(get_class($this)."::setValidate expensereport already with validated status", LOG_WARNING);
         }
+
+        return 0;
     }
 
     /**
@@ -1067,34 +1185,62 @@ class ExpenseReport extends CommonObject
      * Set status to approved
      *
      * @param   User    $fuser      User
-     * @return  int                 <0 if KO, >0 if OK
+	 * @param   int     $notrigger  Disable triggers
+     * @return  int                 <0 if KO, 0 if nothing done, >0 if OK
      */
-    function setApproved($fuser)
+    function setApproved($fuser, $notrigger=0)
     {
         $now=dol_now();
+		$error = 0;
 
         // date approval
         $this->date_approve = $this->db->idate($now);
         if ($this->fk_statut != 5)
         {
+			$this->db->begin();
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
-            $sql.= " date_approve='".$this->date_approve."'";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 5, fk_user_approve = ".$fuser->id.",";
+            $sql.= " date_approve='".$this->db->idate($this->date_approve)."'";
             $sql.= ' WHERE rowid = '.$this->id;
             if ($this->db->query($sql))
             {
-                return 1;
+                if (!$notrigger)
+				{
+					// Call trigger
+					$result=$this->call_trigger('EXPENSE_REPORT_APPROVE',$fuser);
+
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (empty($error))
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->error();
+					return -2;
+				}
             }
             else
             {
+				$this->db->rollback();
                 $this->error=$this->db->lasterror();
                 return -1;
             }
         }
         else
         {
-            dol_syslog(get_class($this)."::set_valide expensereport already with valide status", LOG_WARNING);
+            dol_syslog(get_class($this)."::setApproved expensereport already with approve status", LOG_WARNING);
         }
+
+        return 0;
     }
 
     /**
@@ -1102,16 +1248,18 @@ class ExpenseReport extends CommonObject
      *
      * @param User      $fuser      User
      * @param Details   $details    Details
+	 * @param int       $notrigger  Disable triggers
      */
-    function setDeny($fuser,$details)
+    function setDeny($fuser,$details,$notrigger=0)
     {
         $now = dol_now();
+		$error = 0;
 
         // date de refus
         if ($this->fk_statut != 99)
         {
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
-            $sql.= " SET ref = '".$this->ref."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
+            $sql.= " SET ref = '".$this->db->escape($this->ref)."', fk_statut = 99, fk_user_refuse = ".$fuser->id.",";
             $sql.= " date_refuse='".$this->db->idate($now)."',";
             $sql.= " detail_refuse='".$this->db->escape($details)."',";
             $sql.= " fk_user_approve = NULL";
@@ -1122,10 +1270,33 @@ class ExpenseReport extends CommonObject
                 $this->fk_user_refuse = $fuser->id;
                 $this->detail_refuse = $details;
                 $this->date_refuse = $now;
-                return 1;
+
+				if (!$notrigger)
+				{
+					// Call trigger
+					$result=$this->call_trigger('EXPENSE_REPORT_DENY',$fuser);
+
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (empty($error))
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->error();
+					return -2;
+				}
             }
             else
             {
+				$this->db->rollback();
                 $this->error=$this->db->lasterror();
                 return -1;
             }
@@ -1140,24 +1311,54 @@ class ExpenseReport extends CommonObject
      * set_unpaid
      *
      * @param   User    $fuser      User
+	 * @param   int     $notrigger  Disable triggers
      * @return  int                 <0 if KO, >0 if OK
      */
-    function set_unpaid($fuser)
+    function set_unpaid($fuser, $notrigger = 0)
     {
+		$error = 0;
+
         if ($this->fk_c_deplacement_statuts != 5)
         {
+			$this->db->begin();
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_statut = 5";
             $sql.= ' WHERE rowid = '.$this->id;
 
             dol_syslog(get_class($this)."::set_unpaid sql=".$sql, LOG_DEBUG);
 
-            if ($this->db->query($sql)):
-            return 1;
-            else:
-            $this->error=$this->db->error();
-            return -1;
-            endif;
+			if ($this->db->query($sql))
+			{
+				if (!$notrigger)
+				{
+					// Call trigger
+					$result=$this->call_trigger('EXPENSE_REPORT_UNPAID',$fuser);
+
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (empty($error))
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->error();
+					return -2;
+				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->error();
+				return -1;
+			}
         }
         else
         {
@@ -1170,16 +1371,20 @@ class ExpenseReport extends CommonObject
      *
      * @param   User    $fuser      User
      * @param   string  $detail     Detail
+	 * @param   int     $notrigger  Disable triggers
      * @return  int                 <0 if KO, >0 if OK
      */
-    function set_cancel($fuser,$detail)
+    function set_cancel($fuser,$detail, $notrigger=0)
     {
+		$error = 0;
         $this->date_cancel = $this->db->idate(gmmktime());
         if ($this->fk_statut != 4)
         {
+			$this->db->begin();
+
             $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
             $sql.= " SET fk_statut = 4, fk_user_cancel = ".$fuser->id;
-            $sql.= ", date_cancel='".$this->date_cancel."'";
+            $sql.= ", date_cancel='".$this->db->idate($this->date_cancel)."'";
             $sql.= " ,detail_cancel='".$this->db->escape($detail)."'";
             $sql.= ' WHERE rowid = '.$this->id;
 
@@ -1187,10 +1392,32 @@ class ExpenseReport extends CommonObject
 
             if ($this->db->query($sql))
             {
-                return 1;
+				if (!$notrigger)
+				{
+					// Call trigger
+					$result=$this->call_trigger('EXPENSE_REPORT_CANCEL',$fuser);
+
+					if ($result < 0) {
+						$error++;
+					}
+					// End call triggers
+				}
+
+				if (empty($error))
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->db->rollback();
+					$this->error=$this->db->error();
+					return -2;
+				}
             }
             else
             {
+				$this->db->rollback();
                 $this->error=$this->db->error();
                 return -1;
             }
@@ -1611,18 +1838,16 @@ class ExpenseReport extends CommonObject
 
         $langs->load("trips");
 
-        // Positionne le modele sur le nom du modele a utiliser
-        if (! dol_strlen($modele))
-        {
-            if (! empty($conf->global->EXPENSEREPORT_ADDON_PDF))
-            {
-                $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
-            }
-            else
-            {
-                $modele = 'standard';
-            }
-        }
+	    if (! dol_strlen($modele)) {
+
+		    $modele = 'standard';
+
+		    if ($this->modelpdf) {
+			    $modele = $this->modelpdf;
+		    } elseif (! empty($conf->global->EXPENSEREPORT_ADDON_PDF)) {
+			    $modele = $conf->global->EXPENSEREPORT_ADDON_PDF;
+		    }
+	    }
 
         $modelpath = "core/modules/expensereport/doc/";
 
@@ -1676,7 +1901,7 @@ class ExpenseReport extends CommonObject
         $sql = "SELECT count(ex.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         $sql.= " WHERE ex.fk_statut > 0";
-        $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
+        $sql.= " AND ex.entity IN (".getEntity('expensereport').")";
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1717,7 +1942,7 @@ class ExpenseReport extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as ex";
         if ($option == 'toapprove') $sql.= " WHERE ex.fk_statut = 2";
         else $sql.= " WHERE ex.fk_statut = 5";
-        $sql.= " AND ex.entity IN (".getEntity('expensereport', 1).")";
+        $sql.= " AND ex.entity IN (".getEntity('expensereport').")";
         $sql.= " AND (ex.fk_user_author IN (".join(',',$userchildids).")";
         $sql.= " OR ex.fk_user_validator IN (".join(',',$userchildids)."))";
 
@@ -1739,7 +1964,7 @@ class ExpenseReport extends CommonObject
 	            $response->label=$langs->trans("ExpenseReportsToPay");
 	            $response->url=DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&amp;statut=5';
 	        }
-	        $response->img=img_object($langs->trans("ExpenseReports"),"trip");
+	        $response->img=img_object('',"trip");
 
             while ($obj=$this->db->fetch_object($resql))
             {
@@ -1842,7 +2067,7 @@ class ExpenseReportLine
     function fetch($rowid)
     {
         $sql = 'SELECT fde.rowid, fde.fk_expensereport, fde.fk_c_type_fees, fde.fk_projet, fde.date,';
-        $sql.= ' fde.tva_tx as vatrate, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
+        $sql.= ' fde.tva_tx as vatrate, fde.vat_src_code, fde.comments, fde.qty, fde.value_unit, fde.total_ht, fde.total_tva, fde.total_ttc,';
         $sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
         $sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
@@ -1871,6 +2096,7 @@ class ExpenseReportLine
             $this->projet_ref = $objp->projet_ref;
             $this->projet_title = $objp->projet_title;
             $this->vatrate = $objp->vatrate;
+            $this->vat_src_code = $objp->vat_src_code;
             $this->total_ht = $objp->total_ht;
             $this->total_tva = $objp->total_tva;
             $this->total_ttc = $objp->total_ttc;
@@ -1905,11 +2131,12 @@ class ExpenseReportLine
 
         $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'expensereport_det';
         $sql.= ' (fk_expensereport, fk_c_type_fees, fk_projet,';
-        $sql.= ' tva_tx, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
+        $sql.= ' tva_tx, vat_src_code, comments, qty, value_unit, total_ht, total_tva, total_ttc, date)';
         $sql.= " VALUES (".$this->fk_expensereport.",";
         $sql.= " ".$this->fk_c_type_fees.",";
         $sql.= " ".($this->fk_projet>0?$this->fk_projet:'null').",";
         $sql.= " ".$this->vatrate.",";
+        $sql.= " '".$this->db->escape($this->vat_src_code)."',";
         $sql.= " '".$this->db->escape($this->comments)."',";
         $sql.= " ".$this->qty.",";
         $sql.= " ".$this->value_unit.",";
@@ -1973,13 +2200,14 @@ class ExpenseReportLine
         // Mise a jour ligne en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."expensereport_det SET";
         $sql.= " comments='".$this->db->escape($this->comments)."'";
-        $sql.= ",value_unit=".$this->value_unit."";
-        $sql.= ",qty=".$this->qty."";
+        $sql.= ",value_unit=".$this->value_unit;
+        $sql.= ",qty=".$this->qty;
         $sql.= ",date='".$this->db->idate($this->date)."'";
         $sql.= ",total_ht=".$this->total_ht."";
         $sql.= ",total_tva=".$this->total_tva."";
         $sql.= ",total_ttc=".$this->total_ttc."";
         $sql.= ",tva_tx=".$this->vatrate;
+        $sql.= ",vat_src_code='".$this->db->escape($this->vat_src_code)."'";
         if ($this->fk_c_type_fees) $sql.= ",fk_c_type_fees=".$this->fk_c_type_fees;
         else $sql.= ",fk_c_type_fees=null";
         if ($this->fk_projet) $sql.= ",fk_projet=".$this->fk_projet;

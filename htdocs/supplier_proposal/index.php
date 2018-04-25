@@ -60,15 +60,19 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 /*
  * Search form
  */
-$var=false;
-print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<table class="noborder nohover" width="100%">';
-print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print '</tr>';
-print "</table></form><br>\n";
+
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
+{
+    $var=false;
+    print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print '<table class="noborder nohover" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("Search").'</td></tr>';
+    print '<tr class="oddeven"><td>';
+    print $langs->trans("SupplierProposal").':</td><td><input type="text" class="flat" name="sall" size="18"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+    print '</tr>';
+    print "</table></form><br>\n";
+}
 
 
 /*
@@ -113,7 +117,7 @@ if ($resql)
     $db->free($resql);
 
     print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</td></tr>'."\n";
+    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
     $var=true;
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
@@ -121,8 +125,8 @@ if ($resql)
         $dataseries[]=array('label'=>$supplier_proposalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
+            
+            print '<tr class="oddeven">';
             print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
             print "</tr>\n";
@@ -165,7 +169,7 @@ if (! empty($conf->supplier_proposal->enabled))
 	{
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td colspan="2">'.$langs->trans("DraftRequests").'</td></tr>';
+		print '<th colspan="2">'.$langs->trans("DraftRequests").'</th></tr>';
 		$langs->load("supplier_proposal");
 		$num = $db->num_rows($resql);
 		if ($num)
@@ -174,9 +178,9 @@ if (! empty($conf->supplier_proposal->enabled))
 			$var = True;
 			while ($i < $num)
 			{
-				$var=!$var;
+				
 				$obj = $db->fetch_object($resql);
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 
 				$supplier_proposalstatic->id=$obj->rowid;
 				$supplier_proposalstatic->ref=$obj->ref;
@@ -223,7 +227,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</td></tr>';
+	print '<th colspan="4">'.$langs->trans("LastModifiedRequests",$max).'</th></tr>';
 
 	$num = $db->num_rows($resql);
 	if ($num)
@@ -232,10 +236,10 @@ if ($resql)
 		$var = True;
 		while ($i < $num)
 		{
-			$var=!$var;
+			
 			$obj = $db->fetch_object($resql);
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td width="20%" class="nowrap">';
 
 			$supplier_proposalstatic->id=$obj->rowid;
@@ -307,14 +311,14 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 			$var=true;
 
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></td></tr>';
+			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
 			$nbofloop=min($num, (empty($conf->global->MAIN_MAXLIST_OVERLOAD)?500:$conf->global->MAIN_MAXLIST_OVERLOAD));
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 
 				// Ref
 				print '<td class="nowrap" width="140">';

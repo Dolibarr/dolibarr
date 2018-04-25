@@ -45,6 +45,7 @@ InvoiceHasAvoir=Corregida por uno o más abonos
 CardBill=Ficha factura
 PredefinedInvoices=Factura predefinida
 Invoice=Factura
+PdfInvoiceTitle=Factura
 Invoices=Facturas
 InvoiceLine=Línea de factura
 InvoiceCustomer=Factura a cliente

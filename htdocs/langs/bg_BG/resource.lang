@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Ресурсът е успешно изтрит
 DictionaryResourceType=Тип на ресурси
 
 SelectResource=Избиране на ресурс
+
+IdResource=Id resource
+AssetNumber=Serial number
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Ресурси

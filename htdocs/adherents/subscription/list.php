@@ -40,18 +40,32 @@ $search_account=GETPOST('search_account','int');
 $search_amount=GETPOST('search_amount','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
+
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
+if ($page == -1 || $page == null) { $page = 0 ; }
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) {  $sortorder="DESC"; }
 if (! $sortfield) {  $sortfield="c.dateadh"; }
 
-$date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_select"];
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('subscriptionlist'));
+$extrafields = new ExtraFields($db);
+
+// fetch optionals attributes and labels
+$extralabels = $extrafields->fetch_name_optionals_label('subscription');
+$search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
+
+// List of fields to search into when doing a "search in all"
+$fieldstosearchall = array(
+);
+$arrayfields=array(
+);
 
 // Security check
 $result=restrictedArea($user,'adherent','','','cotisation');
@@ -61,16 +75,32 @@ $result=restrictedArea($user,'adherent','','','cotisation');
  *	Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('cancel')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend' && $massaction != 'confirm_createbills') { $massaction=''; }
+
+$parameters=array('socid'=>$socid);
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
+
+if (empty($reshook))
 {
-    $search="";
-	$search_ref="";
-    $search_lastname="";
-	$search_firstname="";
-	$search_login="";
-    $search_note="";
-	$search_amount="";
-	$search_account="";
+    // Selection of new fields
+    include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+
+    // Purge search criteria
+    if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+    {
+        $search="";
+    	$search_ref="";
+        $search_lastname="";
+    	$search_firstname="";
+    	$search_login="";
+        $search_note="";
+    	$search_amount="";
+    	$search_account="";
+       	$toselect='';
+       	$search_array_options=array();
+    }
 }
 
 
@@ -84,7 +114,7 @@ llxHeader('',$langs->trans("ListOfSubscriptions"),'EN:Module_Foundations|FR:Modu
 
 
 // List of subscriptions
-$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe,";
+$sql = "SELECT d.rowid, d.login, d.firstname, d.lastname, d.societe, d.photo,";
 $sql.= " c.rowid as crowid, c.subscription,";
 $sql.= " c.dateadh,";
 $sql.= " c.datef,";
@@ -93,7 +123,7 @@ $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
-$sql.= " AND d.entity IN (".getEntity('adherent', 1).")";
+$sql.= " AND d.entity IN (".getEntity('adherent').")";
 if (isset($date_select) && $date_select != '')
 {
     $sql.= " AND c.dateadh LIKE '".$date_select."%'";
@@ -123,7 +153,10 @@ $result = $db->query($sql);
 if ($result)
 {
     $num = $db->num_rows($result);
-    $i = 0;
+
+	$arrayofselected=is_array($toselect)?$toselect:array();
+
+	$i = 0;
 
     $title=$langs->trans("ListOfSubscriptions");
     if (! empty($date_select)) $title.=' ('.$langs->trans("Year").' '.$date_select.')';
@@ -138,7 +171,17 @@ if ($result)
 	if ($search_acount)   $param.="&search_account=".$search_account;
 	if ($search_amount)   $param.="&search_amount=".$search_amount;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
-    
+
+	// List of mass actions available
+	$arrayofmassactions =  array(
+	    //'presend'=>$langs->trans("SendByMail"),
+	    //'builddoc'=>$langs->trans("PDFMerge"),
+	);
+	//if($user->rights->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+	if ($user->rights->adherent->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
+	//if ($massaction == 'presend' || $massaction == 'createbills') $arrayofmassactions=array();
+	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -146,8 +189,10 @@ if ($result)
     print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+    print '<input type="hidden" name="page" value="'.$page.'">';
+    print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
+
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
 
 	if ($sall)
 	{
@@ -155,40 +200,28 @@ if ($result)
 	}
 
     $moreforfilter = '';
-    
+
+    $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+    $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+    if ($massactionbutton) $selectedfields.=$form->showCheckAddButtons('checkforselect', 1);
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"c.rowid",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Login"),$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"c.note",$param,"",'align="left"',$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled))
-    {
-        print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"b.fk_account",$pram,"","",$sortfield,$sortorder);
-    }
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("DateEnd"),$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"c.subscription",$param,"",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre('');
-    print "</tr>\n";
-
-
 	// Line for filters fields
-	print '<tr class="liste_titre">';
+	print '<tr class="liste_titre_filter">';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_ref" value="'.$search_ref.'" size="4"></td>';
+	print '<input class="flat" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'" size="4"></td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_lastname" value="'.$search_lastname.'" size="12"></td>';
+	print '<input class="flat" type="text" name="search_lastname" value="'.dol_escape_htmltag($search_lastname).'" size="12"></td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_login" value="'.$search_login.'" size="7"></td>';
+	print '<input class="flat" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'" size="7"></td>';
 
 	print '<td class="liste_titre" align="left">';
-	print '<input class="flat" type="text" name="search_note" value="'.$search_note.'" size="7"></td>';
+	print '<input class="flat" type="text" name="search_note" value="'.dol_escape_htmltag($search_note).'" size="7"></td>';
 
     if (! empty($conf->banque->enabled))
     {
@@ -202,15 +235,32 @@ if ($result)
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td align="right" class="liste_titre">';
-	print '<input class="flat" type="text" name="search_amount" value="'.$search_amount.'" size="4">';
+	print '<input class="flat" type="text" name="search_amount" value="'.dol_escape_htmltag($search_amount).'" size="4">';
 	print '</td>';
-	
+
     // Action column
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
-    print '</td>';  
+    $searchpicto=$form->showFilterButtons();
+    print $searchpicto;
+    print '</td>';
 
+	print "</tr>\n";
+
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"c.rowid",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"d.lastname",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Login",$_SERVER["PHP_SELF"],"d.login",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"c.note",$param,"",'align="left"',$sortfield,$sortorder);
+	if (! empty($conf->banque->enabled))
+	{
+	    print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"b.fk_account",$pram,"","",$sortfield,$sortorder);
+	}
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"c.dateadh",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"c.datef",$param,"",'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"c.subscription",$param,"",'align="right"',$sortfield,$sortorder);
+	//print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 
@@ -219,66 +269,67 @@ if ($result)
     $adherent=new Adherent($db);
     $accountstatic=new Account($db);
 
-    $var=true;
     $total=0;
     while ($i < min($num, $limit))
     {
-        $objp = $db->fetch_object($result);
-        $total+=$objp->subscription;
+        $obj = $db->fetch_object($result);
+        $total+=$obj->subscription;
 
-        $subscription->ref=$objp->crowid;
-        $subscription->id=$objp->crowid;
+        $subscription->ref=$obj->crowid;
+        $subscription->id=$obj->crowid;
 
-        $adherent->lastname=$objp->lastname;
-        $adherent->firstname=$objp->firstname;
-        $adherent->ref=$adherent->getFullName($langs);
-        $adherent->id=$objp->rowid;
-        $adherent->login=$objp->login;
+        $adherent->lastname=$obj->lastname;
+        $adherent->firstname=$obj->firstname;
+        $adherent->ref=$obj->rowid;
+        $adherent->id=$obj->rowid;
+        $adherent->statut=$obj->statut;
+        $adherent->login=$obj->login;
+        $adherent->photo=$obj->photo;
 
-        $var=!$var;
 
-        print "<tr ".$bc[$var].">";
+
+        print '<tr class="oddeven">';
 
         // Ref
         print '<td>'.$subscription->getNomUrl(1).'</td>';
 
         // Lastname
-        print '<td>'.$adherent->getNomUrl(1).'</td>';
+        print '<td>'.$adherent->getNomUrl(-1).'</td>';
 
         // Login
         print '<td>'.$adherent->login.'</td>';
 
         // Libelle
         print '<td>';
-        print dol_trunc($objp->note,32);
+        print dol_trunc($obj->note,32);
         print '</td>';
 
-        // Banque
-        if (! empty($conf->banque->enabled))
-        {
-            if ($objp->fk_account)
-            {
-                $accountstatic->id=$objp->fk_account;
-                $accountstatic->fetch($objp->fk_account);
-                //$accountstatic->label=$objp->label;
-                print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-            }
-            else
-            {
-                print "<td>";
-                print "</td>\n";
-            }
-        }
+		// Banque
+		if (! empty($conf->banque->enabled))
+		{
+			if ($obj->fk_account > 0)
+			{
+				$accountstatic->id=$obj->fk_account;
+				$accountstatic->fetch($obj->fk_account);
+				//$accountstatic->label=$obj->label;
+				print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+			}
+			else
+			{
+				print "<td>";
+				print "</td>\n";
+			}
+		}
 
         // Date start
-        print '<td align="center">'.dol_print_date($db->jdate($objp->dateadh),'day')."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->dateadh),'day')."</td>\n";
 
         // Date end
-        print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
+        print '<td align="center">'.dol_print_date($db->jdate($obj->datef),'day')."</td>\n";
 
         // Price
-        print '<td align="right">'.price($objp->subscription).'</td>';
-        
+        print '<td align="right">'.price($obj->subscription).'</td>';
+
         print '<td></td>';
 
         print "</tr>";
@@ -287,7 +338,7 @@ if ($result)
     }
 
     // Total
-    $var=!$var;
+
     print '<tr class="liste_total">';
     print "<td>".$langs->trans("Total")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";

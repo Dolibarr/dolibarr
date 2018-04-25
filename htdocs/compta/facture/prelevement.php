@@ -4,6 +4,7 @@
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 if (!$user->rights->facture->lire) accessforbidden();
 
@@ -147,7 +151,7 @@ if ($object->id > 0)
 
 	$head = facture_prepare_head($object);
 
-	dol_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'),0,'bill');
+	dol_fiche_head($head, 'standingorders', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
 	// Invoice content
 
@@ -612,9 +616,9 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result_sql);
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 			print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/card.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print '<td align="center">'.price($obj->amount).'</td>';
@@ -663,9 +667,9 @@ if ($object->id > 0)
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($result);
-			$var=!$var;
+			
 
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 
 			print '<td align="left">'.dol_print_date($db->jdate($obj->date_demande),'day')."</td>\n";
 

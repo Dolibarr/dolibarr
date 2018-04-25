@@ -30,10 +30,11 @@ class BankCateg // extends CommonObject
 {
 	//public $element='bank_categ';			//!< Id that identify managed objects
 	//public $table_element='bank_categ';	//!< Name of table without prefix where object is stored
-
+    public $picto='generic';
+    
 	public $id;
 	public $label;
-
+   
 
 	/**
 	 * Constructor

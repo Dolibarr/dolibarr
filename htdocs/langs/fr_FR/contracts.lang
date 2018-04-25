@@ -83,6 +83,8 @@ NoteListOfYourExpiredServices=Cette list ne contient que les contrats de service
 StandardContractsTemplate=Modèle standard de contrats
 ContactNameAndSignature=Pour %s, nom et signature:
 OnlyLinesWithTypeServiceAreUsed=Seules les lignes de type "Service" seront clonées
+CloneContract=Cloner le contrat
+ConfirmCloneContract=Etes vous sûr de vouloir cloner le contrat <b>%s</b> ?
 
 ##### Types de contacts #####
 TypeContact_contrat_internal_SALESREPSIGN=Commercial signataire du contrat

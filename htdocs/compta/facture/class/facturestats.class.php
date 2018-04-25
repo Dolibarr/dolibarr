@@ -39,7 +39,7 @@ class FactureStats extends Stats
     var $from;
     var $field;
     var $where;
-	
+
 
 	/**
      * 	Constructor
@@ -56,8 +56,8 @@ class FactureStats extends Stats
 		$this->db = $db;
         $this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-		$this->cachefilesuffix = $mode; 
-		
+		$this->cachefilesuffix = $mode;
+
 		if ($mode == 'customer')
 		{
 			$object=new Facture($this->db);
@@ -195,7 +195,7 @@ class FactureStats extends Stats
 
 		return $this->_getAllByYear($sql);
 	}
-	
+
 	/**
 	 *	Return nb, amount of predefined product for year
 	 *
@@ -218,7 +218,7 @@ class FactureStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-	
-	
+
+
 }
 

@@ -1,14 +1,14 @@
 #!/bin/bash
 # @copyright  GPL License 2010 - Vikas Mahajan - http://vikasmahajan.wordpress.com
 # @copyright  GPL License 2013 - Florian HEnry - florian.henry@open-concept.pro
-# @copyright  GPL License 2015 - Laurent Destailleur - eldy@users.sourceforge.net
+# @copyright  GPL License 2017 - Laurent Destailleur - eldy@users.sourceforge.net
 #
 # Convert an ODT into a PDF using "jodconverter" or "pyodconverter" tool.
 # Dolibarr variable MAIN_ODT_AS_PDF must be defined to value "jodconverter" to call jodconverter wrapper after ODT generation
-# or value "pyodconverter" to call DocumentConverter.py after ODT generation.
-# or value "/pathto/jodconverter-cli-file.jar" to call jodconverter java tool without wrapper after ODT generation.
+#  or value "pyodconverter" to call DocumentConverter.py after ODT generation.
+#  or value "/pathto/jodconverter-cli-file.jar" to call jodconverter java tool without wrapper after ODT generation.
 # Dolibarr variable MAIN_DOL_SCRIPTS_ROOT must be defined to path of script directories (otherwise dolibarr will try to guess).
- 
+
 
 if [ "x$1" == "x" ] 
 then
@@ -17,13 +17,21 @@ then
 	exit
 fi
 
+# Full patch where soffice is installed 
+soffice="/usr/bin/soffice"
 
+# Temporary directory (web user must have permission to read/write). You can set here path to your DOL_DATA_ROOT/admin/temp directory for example. 
+home_java="/tmp"
+
+
+# Main program
 if [ -f "$1.odt" ]
  then
   nbprocess=$(pgrep -c soffice)
   if [ $nbprocess -ne 1 ]	# If there is some soffice process running
    then
-    soffice --invisible --accept="socket,host=127.0.0.1,port=8100;urp;" --nofirststartwizard --headless &
+    cmd="$soffice --invisible --accept=socket,host=127.0.0.1,port=8100;urp; --nofirststartwizard --headless -env:UserInstallation=file:///$home_java/"
+    export HOME=$home_java && cd $home_java && $cmd&
     retcode=$?
     if [ $retcode -ne 0 ]
      then

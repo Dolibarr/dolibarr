@@ -124,19 +124,20 @@ print '<input type="hidden" name="action" value="updateform">';
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'file', $langs->trans("Security"));
+dol_fiche_head($head, 'file', $langs->trans("Security"), -1);
 
 
 // Upload options
 $var=false;
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
-print '<tr '.$bc[$var].'>';
+print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("MaxSizeForUploadedFiles").'.';
 $max=@ini_get('upload_max_filesize');
 if ($max) print ' '.$langs->trans("MustBeLowerThanPHPLimit",$max*1024,$langs->trans("Kb")).'.';
@@ -147,8 +148,8 @@ print '<input class="flat" name="MAIN_UPLOAD_DOC" type="text" size="6" value="'.
 print '</td>';
 print '</tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("UMask").'</td><td align="right">';
 print $form->textwithpicto('',$langs->trans("UMaskExplanation"));
 print '</td>';
@@ -158,8 +159,8 @@ print '</td>';
 print '</tr>';
 
 // Use anti virus
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("AntiVirusCommand").'<br>';
 print $langs->trans("AntiVirusCommandExample");
 // Check command in inside safe_mode
@@ -181,8 +182,8 @@ print "</td>";
 print '</tr>';
 
 // Use anti virus
-$var=!$var;
-print "<tr ".$bc[$var].">";
+
+print '<tr class="oddeven">';
 print '<td colspan="2">'.$langs->trans("AntiVirusParam").'<br>';
 print $langs->trans("AntiVirusParamExample");
 print '</td>';
@@ -192,6 +193,7 @@ print "</td>";
 print '</tr>';
 
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 

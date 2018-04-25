@@ -118,9 +118,8 @@ $rights_ids = array();
 foreach($sortorder as $numero=>$name)
 {
 	$idperms="";
-	$var=!$var;
 	// Module
-	print "<tr ".$bc[$var].'><td width="300" class="nowrap">';
+	print '<tr class="oddeven"><td width="300" class="nowrap">';
 	$alt=$name.' - '.$modules_files[$numero];
     if (! empty($picto[$numero]))
     {

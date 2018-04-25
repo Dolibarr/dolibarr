@@ -141,7 +141,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 	 */
 	function write_file($object,$outputlangs,$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
+		global $user,$langs,$conf,$mysoc,$db,$hookmanager,$nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -177,7 +177,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					$pdir = get_exdir(0,2,0,0,$objphoto,'product') . dol_sanitizeFileName($objphoto->ref).'/';
 					$dir = $conf->product->dir_output.'/'.$pdir;
 				}
-				
+
 				$realpath='';
 				foreach ($objphoto->liste_photos($dir,1) as $key => $obj)
 				{
@@ -445,7 +445,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					if ($up_excl_tax > 0)
 						$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
                     */
-					
+
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
@@ -466,11 +466,11 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					if ($total_excl_tax > 0)
 						$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->postotalht, 3, $total_excl_tax, 0, 'R', 0);
                     */
-					
+
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne=$object->lines[$i]->total_tva;
-					
+
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 					$localtax1_rate=$object->lines[$i]->localtax1_tx;
@@ -643,16 +643,6 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		$pdf->SetFont('','', $default_font_size - 1);
 
-		// If France, show VAT mention if not applicable
-		if ($this->emetteur->country_code == 'FR' && $this->franchise == 1)
-		{
-			$pdf->SetFont('','B', $default_font_size - 2);
-			$pdf->SetXY($this->marge_gauche, $posy);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
-
-			$posy=$pdf->GetY()+4;
-		}
-
 		$posxval=52;
 
         // Show shipping date
@@ -731,7 +721,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 			$posy=$pdf->GetY()+3;
 		}
 
-		if (empty($conf->global->SUPPLIER_PROPOSAL_PDF_HIDE_PAYMENTTERMCOND))
+		if (! empty($conf->global->SUPPLIER_PROPOSAL_PDF_SHOW_PAYMENTTERMCOND))
 		{
 			// Show payment mode
 			if ($object->mode_reglement_code
@@ -951,7 +941,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 							$tvakey=str_replace('*','',$tvakey);
 							$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 						}
-						$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
+						$totalvat =$outputlangs->transcountrynoentities("TotalVAT",$mysoc->country_code).' ';
 						$totalvat.=vatrate($tvakey,1).$tvacompl;
 						$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -1307,7 +1297,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		        $pdf->MultiCell(100, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
 		    }
 		}
-		
+
 		$posy+=2;
 
 		// Show list of linked objects

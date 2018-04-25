@@ -66,7 +66,7 @@ $offset = $limit * $page;
  * Actions
  */
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
     $sall="";
     $sref="";
@@ -103,7 +103,7 @@ $head[1][0] = DOL_URL_ROOT.'/product/stock/replenishorders.php';
 $head[1][1] = $texte;
 $head[1][2] = 'replenishorders';
 
-dol_fiche_head($head, 'replenishorders', '', 0, '');
+dol_fiche_head($head, 'replenishorders', '', -1, '');
 
 $commandestatic = new CommandeFournisseur($db);
 
@@ -180,73 +180,10 @@ if ($resql)
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="GET">';
 
-    print '<table class="noborder" width="100%">'.
-         '<tr class="liste_titre">';
-    print_liste_field_titre(
-    		$langs->trans('Ref'),
-    		$_SERVER['PHP_SELF'],
-    		'cf.ref',
-    		'',
-    		$param,
-    		'',
-    		$sortfield,
-    		$sortorder
-    );
-    print_liste_field_titre(
-    		$langs->trans('Company'),
-    		$_SERVER['PHP_SELF'],
-    		's.nom',
-    		'',
-    		$param,
-    		'',
-    		$sortfield,
-    		$sortorder
-    );
-    print_liste_field_titre(
-    		$langs->trans('Author'),
-    		$_SERVER['PHP_SELF'],
-    		'u.login',
-    		'',
-    		$param,
-    		'',
-    		$sortfield,
-    		$sortorder
-    );
-    print_liste_field_titre(
-    		$langs->trans('AmountTTC'),
-    		$_SERVER['PHP_SELF'],
-    		'cf.total_ttc',
-    		'',
-    		$param,
-    		'',
-    		$sortfield,
-    		$sortorder
-    );
-    print_liste_field_titre(
-    		$langs->trans('OrderCreation'),
-    		$_SERVER['PHP_SELF'],
-    		'cf.date_creation',
-    		'',
-    		$param,
-    		'',
-    		$sortfield,
-    		$sortorder
-    );
-    print_liste_field_titre(
-    		$langs->trans('Status'),
-    		$_SERVER['PHP_SELF'],
-    		'cf.fk_statut',
-    		'',
-    		$param,
-    		'align="right"',
-    		$sortfield,
-    		$sortorder
-    );
+    print '<table class="noborder" width="100%">';
 
-    print '</tr>'.
-
-         '<tr class="liste_titre">'.
-         '<td class="liste_titre">'.
+    print '<tr class="liste_titre_filter">';
+    print '<td class="liste_titre">'.
          '<input type="text" class="flat" name="search_ref" value="' . dol_escape_htmltag($sref) . '">'.
          '</td>'.
          '<td class="liste_titre">'.
@@ -262,26 +199,86 @@ if ($resql)
          $form->select_date($search_date, 'search_date', 0, 0, 1, '', 1, 0, 1, 0, '').
          '</td>'.
          '<td class="liste_titre" align="right">';
-         $searchpitco=$form->showFilterAndCheckAddButtons(0);
-         print $searchpitco;
+         $searchpicto=$form->showFilterAndCheckAddButtons(0);
+         print $searchpicto;
          '</td>'.
          '</tr>';
 
-    $var = true;
+         print '<tr class="liste_titre">';
+         print_liste_field_titre(
+             'Ref',
+             $_SERVER['PHP_SELF'],
+             'cf.ref',
+             '',
+             $param,
+             '',
+             $sortfield,
+             $sortorder
+             );
+         print_liste_field_titre(
+             'Company',
+             $_SERVER['PHP_SELF'],
+             's.nom',
+             '',
+             $param,
+             '',
+             $sortfield,
+             $sortorder
+             );
+         print_liste_field_titre(
+             'Author',
+             $_SERVER['PHP_SELF'],
+             'u.login',
+             '',
+             '',
+             '',
+             $sortfield,
+             $sortorder
+             );
+         print_liste_field_titre(
+             'AmountTTC',
+             $_SERVER['PHP_SELF'],
+             'cf.total_ttc',
+             '',
+             $param,
+             '',
+             $sortfield,
+             $sortorder
+             );
+         print_liste_field_titre(
+             'OrderCreation',
+             $_SERVER['PHP_SELF'],
+             'cf.date_creation',
+             '',
+             $param,
+             '',
+             $sortfield,
+             $sortorder
+             );
+         print_liste_field_titre(
+             'Status',
+             $_SERVER['PHP_SELF'],
+             'cf.fk_statut',
+             '',
+             $param,
+             'align="right"',
+             $sortfield,
+             $sortorder
+             );
+         print '</tr>';
 
     $userstatic = new User($db);
 
     while ($i < min($num,$conf->liste_limit))
     {
         $obj = $db->fetch_object($resql);
-        $var = !$var;
 
         $showline = dolDispatchToDo($obj->rowid) && (!$sproduct || in_array($sproduct, getProducts($obj->rowid)));
 
         if ($showline)
         {
             $href = DOL_URL_ROOT . '/fourn/commande/card.php?id=' . $obj->rowid;
-            print '<tr ' . $bc[$var] . '>'.
+            print '<tr>'.
             // Ref
                  '<td>'.
                  '<a href="' . $href . '">'.

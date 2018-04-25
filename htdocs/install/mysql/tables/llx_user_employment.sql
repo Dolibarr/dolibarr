@@ -28,7 +28,7 @@ create table llx_user_employment
   tms               timestamp,
   fk_user_creat     integer,
   fk_user_modif     integer,
-  job				varchar(128),				-- job position. may be a dictionnary
+  job				varchar(128),				-- job position. may be a dictionary
   status            integer NOT NULL,			-- draft, active, closed
   salary			double(24,8),				-- last and current value stored into llx_user
   salaryextra		double(24,8),				-- last and current value stored into llx_user

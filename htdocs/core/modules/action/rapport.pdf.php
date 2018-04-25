@@ -229,7 +229,7 @@ class CommActionRapport
 				$obj = $this->db->fetch_object($resql);
 
 				$eventstatic->id=$obj->id;
-				$eventstatic->percentage=$obj->percentage;
+				$eventstatic->percentage=$obj->percent;
 				$eventstatic->fulldayevent=$obj->fulldayevent;
 				$eventstatic->punctual=$obj->punctual;
 
@@ -266,7 +266,14 @@ class CommActionRapport
 
 				// Date
 				$pdf->SetXY($this->marge_gauche, $y);
-				$pdf->MultiCell(22, $height, dol_print_date($this->db->jdate($obj->dp),"day")."\n".dol_print_date($this->db->jdate($obj->dp),"hour"), 0, 'L', 0);
+				$textdate = dol_print_date($this->db->jdate($obj->dp),"day")."\n".dol_print_date($this->db->jdate($obj->dp),"hour");
+				if ($obj->dp2) {
+					if (dol_print_date($this->db->jdate($obj->dp),"day") != dol_print_date($this->db->jdate($obj->dp2),"day"))
+						$textdate.= " -> ".dol_print_date($this->db->jdate($obj->dp2), "day")." - ".dol_print_date($this->db->jdate($obj->dp2), "hour");
+					else
+						$textdate.= " -> ".dol_print_date($this->db->jdate($obj->dp2), "hour");
+				}
+				$pdf->MultiCell(22, $height, $textdate, 0, 'L', 0);
 				$y0 = $pdf->GetY();
 
 				// Third party

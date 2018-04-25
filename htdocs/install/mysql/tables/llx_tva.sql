@@ -21,6 +21,7 @@ create table llx_tva
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
+  datec           datetime,                   -- Create date
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur
   amount          real NOT NULL DEFAULT 0,

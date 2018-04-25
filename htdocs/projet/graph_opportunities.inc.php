@@ -50,7 +50,7 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	    $ponderated_opp_amount = $ponderated_opp_amount / 100;
 	    
 	    print '<table class="noborder nohover" width="100%">';
-	    print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</td></tr>'."\n";
+	    print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("OpportunitiesStatusForOpenedProjects").'</th></tr>'."\n";
 	    $var=true;
 	    $listofstatus=array_keys($listofoppstatus);
 	    foreach ($listofstatus as $status)
@@ -67,8 +67,8 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 	        $dataseries[]=array('label'=>$labelstatus,'data'=>(isset($valsamount[$status])?(float) $valsamount[$status]:0));
 	        if (! $conf->use_javascript_ajax)
 	        {
-	            $var=!$var;
-	            print "<tr ".$bc[$var].">";
+	            
+	            print '<tr class="oddeven">';
 	            print '<td>'.$labelstatus.'</td>';
 	            print '<td align="right"><a href="list.php?statut='.$status.'">'.price((isset($valsamount[$status])?(float) $valsamount[$status]:0), 0, '', 1, -1, -1, $conf->currency).'</a></td>';
 	            print "</tr>\n";

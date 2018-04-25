@@ -84,11 +84,11 @@ dol_mkdir($dir);
 $stats = new FactureStats($db, $socid, $mode, ($userid>0?$userid:0));
 if ($mode == 'customer')
 {
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$object_status.')';
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
 }
 if ($mode == 'supplier')
 {
-    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$object_status.')';
+    if ($object_status != '' && $object_status >= 0) $stats->where .= ' AND f.fk_statut IN ('.$db->escape($object_status).')';
 }
 
 // Build graphic number of object
@@ -225,9 +225,10 @@ if ($mode == 'supplier') $type='supplier_invoice_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
-$tmp_companies = $form->select_thirdparty_list($socid,'socid',$filter,1, 0, 0, array(), '', 1);
+// We use select_thirdparty_list instead of select_company so we can use $filter and share same code for customer and supplier.
+$tmp_companies = $form->select_thirdparty_list($socid, 'socid', $filter, 1, 0, 0, array(), '', 1);
 //Array passed as an argument to Form::selectarray to build a proper select input
 $companies = array();
 
@@ -293,15 +294,14 @@ print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data as $val)
 {
 	$year = $val['year'];
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		$var=!$var;
-		print '<tr '.$bc[$var].' height="24">';
+
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
 		print '<td align="right"></td>';
@@ -311,8 +311,8 @@ foreach ($data as $val)
 		print '<td align="right"></td>';
 		print '</tr>';
 	}
-	$var=!$var;
-	print '<tr '.$bc[$var].' height="24">';
+
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '<td align="right" style="'.(($val['nb_diff'] >= 0) ? 'color: green;':'color: red;').'">'.round($val['nb_diff']).'</td>';

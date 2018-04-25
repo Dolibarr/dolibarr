@@ -19,6 +19,7 @@ ShowTask=Show task
 ShowAction=Show event
 ActionsReport=Events report
 ThirdPartiesOfSaleRepresentative=Thirdparties with sales representative
+SaleRepresentativesOfThirdParty=Sales representatives of third party
 SalesRepresentative=Sales representative
 SalesRepresentatives=Sales representatives
 SalesRepresentativeFollowUp=Sales representative (follow-up)

@@ -4,6 +4,7 @@ SuppliersOrdersArea=Leverancierorders overzicht
 OrderCard=Opdrachtenkaart
 OrderId=Ordernr
 Order=Order
+PdfOrderTitle=Order
 Orders=Orders
 OrderLine=Orderregel
 OrderDate=Opdrachtdatum

@@ -63,9 +63,22 @@ if (! empty($_REQUEST['search_fourn_id']))
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
 $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'produit|service&fournisseur',$fieldvalue,'product&product','','',$fieldtype);
+$result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+if (empty($user->rights->fournisseur->lire)) accessforbidden();
+
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST("sortfield",'alpha');
+$sortorder = GETPOST("sortorder",'alpha');
+$page = (GETPOST("page",'int')?GETPOST("page", 'int'):0);
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+if (! $sortfield) $sortfield="s.nom";
+if (! $sortorder) $sortorder="ASC";
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('pricesuppliercard','globalcard'));
 
 $object = new ProductFournisseur($db);
@@ -305,9 +318,11 @@ if ($id > 0 || $ref)
 			$head=product_prepare_head($object);
 			$titre=$langs->trans("CardProduct".$object->type);
 			$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-			dol_fiche_head($head, 'suppliers', $titre, 0, $picto);
+
+			dol_fiche_head($head, 'suppliers', $titre, -1, $picto);
 
 			$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		    $object->next_prev_filter=" fk_product_type = ".$object->type;
 
             $shownav = 1;
             if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
@@ -397,7 +412,7 @@ if ($id > 0 || $ref)
 					{
 						if (empty($form->result))
 						{
-							print ' - <a href="'.DOL_URL_ROOT.'/societe/soc.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
+							print ' - <a href="'.DOL_URL_ROOT.'/societe/card.php?action=create&type=f&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id.'&action='.$action).'">'.$langs->trans("CreateDolibarrThirdPartySupplier").'</a>';
 						}
 					}
 				}
@@ -470,7 +485,9 @@ if ($id > 0 || $ref)
                         $default_vat=$object->tva_tx;
                     }
 				}
-				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):'')).'">';
+				$vattosuggest=(GETPOST("tva_tx")?vatrate(GETPOST("tva_tx")):($default_vat!=''?vatrate($default_vat):''));
+				$vattosuggest=preg_replace('/\s*\(.*\)$/','', $vattosuggest);
+				print '<input type="text" class="flat" size="5" name="tva_tx" value="'.$vattosuggest.'">';
 				print '</td></tr>';
 
 				if (! empty($conf->dynamicprices->enabled)) //Only show price mode and expression selector if module is enabled
@@ -548,6 +565,7 @@ if ($id > 0 || $ref)
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$object->id);
 				    $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);
+                    print $hookmanager->resPrint;
 				}
 
 				print '</table>';
@@ -584,13 +602,21 @@ if ($id > 0 || $ref)
 			print "\n</div>\n";
 			print '<br>';
 
-
 			if ($user->rights->fournisseur->lire)
 			{
+				$param='';
+				if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+				if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+				$param.='&ref='.urlencode($object->ref);
+
 				$product_fourn = new ProductFournisseur($db);
-				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder);
-				$nbtotalofrecords = count($product_fourn_list);
-			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $option, $sortfield, $sortorder, '', count($product_fourn_list), $nbtotalofrecords, 'title_accountancy.png');
+				$product_fourn_list = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder, $limit, $offset);
+				$product_fourn_list_all = $product_fourn->list_product_fournisseur_price($object->id, $sortfield, $sortorder, 0, 0);
+				$nbtotalofrecords = count($product_fourn_list_all);
+				$num = count($product_fourn_list);
+				if (($num + ($offset * $limit)) < $nbtotalofrecords) $num++;
+
+			    print_barre_liste($langs->trans('SupplierPrices'), $page, $_SERVEUR ['PHP_SELF'], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit, 1);
 
 				// Suppliers list title
 			    print '<div class="div-table-responsive">';
@@ -600,21 +626,20 @@ if ($id > 0 || $ref)
 
 				$param="&id=".$object->id;
 				print '<tr class="liste_titre">';
-				print_liste_field_titre($langs->trans("Suppliers"),$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("SupplierRef"));
-				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre($langs->trans("Availability"),$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("QtyMin"),$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("VATRate"),$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("PriceQtyMinHT"),$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("UnitPriceHT"),$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("DiscountQtyMin"),$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("NbDaysToDelivery"),$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
-				print_liste_field_titre($langs->trans("ReputationForThisProduct"),$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
-
+				print_liste_field_titre("Suppliers",$_SERVER["PHP_SELF"],"s.nom","",$param,"",$sortfield,$sortorder);
+				print_liste_field_titre("SupplierRef",$_SERVER["PHP_SELF"],"","",$param,"",$sortfield,$sortorder);
+				if (!empty($conf->global->FOURN_PRODUCT_AVAILABILITY)) print_liste_field_titre("Availability",$_SERVER["PHP_SELF"],"pfp.fk_availability","",$param,"",$sortfield,$sortorder);
+				print_liste_field_titre("QtyMin",$_SERVER["PHP_SELF"],"pfp.quantity","",$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("VATRate",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("PriceQtyMinHT",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("UnitPriceHT",$_SERVER["PHP_SELF"],"pfp.unitprice","",$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("DiscountQtyMin",$_SERVER["PHP_SELF"],'','',$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("NbDaysToDelivery",$_SERVER["PHP_SELF"],"pfp.delivery_time_days","",$param,'align="right"',$sortfield,$sortorder);
+				print_liste_field_titre("ReputationForThisProduct",$_SERVER["PHP_SELF"],"pfp.supplier_reputation","",$param,'align="center"',$sortfield,$sortorder);
 				// Charges ????
 				if ($conf->global->PRODUCT_CHARGES)
 				{
-					if (! empty($conf->margin->enabled)) print_liste_field_titre($langs->trans("UnitCharges"));
+					if (! empty($conf->margin->enabled)) print_liste_field_titre("UnitCharges");
 				}
 				print_liste_field_titre('');
 				print "</tr>\n";
@@ -625,9 +650,9 @@ if ($id > 0 || $ref)
 
 					foreach($product_fourn_list as $productfourn)
 					{
-						$var=!$var;
 
-						print "<tr ".$bc[$var].">";
+
+						print '<tr class="oddeven">';
 
 						// Supplier
 						print '<td>'.$productfourn->getSocNomUrl(1,'supplier').'</td>';
@@ -682,6 +707,7 @@ if ($id > 0 || $ref)
 						print'</td>';
 
 						// Charges ????
+						/*
 						if ($conf->global->PRODUCT_CHARGES)
 						{
 							if (! empty($conf->margin->enabled))
@@ -690,7 +716,7 @@ if ($id > 0 || $ref)
 								print $productfourn->fourn_unitcharges?price($productfourn->fourn_unitcharges) : ($productfourn->fourn_qty?price($productfourn->fourn_charges/$productfourn->fourn_qty):"&nbsp;");
 								print '</td>';
 							}
-						}
+						}*/
 
 						if (is_object($hookmanager))
 						{

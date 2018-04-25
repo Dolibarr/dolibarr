@@ -1,6 +1,14 @@
 <!-- BEGIN TEMPLATE resource_add.tpl.php -->
 <?php
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 require_once(DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php');
 
 $form = new Form($db);
@@ -17,7 +25,8 @@ $out .= '<input type="hidden" name="resource_type" value="'.(empty($resource_typ
 
 
 // Place
-$out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div><div>';
+$out .= '<div class="tagtd">'.$langs->trans("SelectResource").'</div>';
+$out .= '<div class="tagtd">';
 $events=array();
 $out .= $formresources->select_resource_list('','fk_resource','',1,1,0,$events,'',2);
 $out .= '</div>';

@@ -31,7 +31,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 
 /*

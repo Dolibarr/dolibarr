@@ -139,27 +139,3 @@ abstract class ModeleNumRefTask
 		return $langs->trans("NotAvailable");
 	}
 }
-
-
-/**
- *  Create an intervention document on disk using template defined into PROJECT_TASK_ADDON_PDF
- *
- *  @param	DoliDB		$db  			objet base de donnee
- *  @param	Task		$object			Object fichinter
- *  @param	string		$modele			force le modele a utiliser ('' par defaut)
- *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @param  int			$hidedetails    Hide details of lines
- *  @param  int			$hidedesc       Hide description
- *  @param  int			$hideref        Hide ref
- *  @param  HookManager	$hookmanager	Hook manager instance
- *  @return int         				0 if KO, 1 if OK
- * @deprecated Use the new function generateDocument of Task class
- * @see Task::generateDocument()
- */
-function task_pdf_create(DoliDB $db, Task $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $hookmanager=false)
-{
-	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $hookmanager);
-}
-

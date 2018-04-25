@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Vellykket sletting av ressurs
 DictionaryResourceType=Ressurstype
 
 SelectResource=Velg ressurs
+
+IdResource=ID ressurs
+AssetNumber=Serienummer
+ResourceTypeCode=Ressurskode
+ImportDataset_resource_1=Ressurser

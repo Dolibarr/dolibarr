@@ -86,7 +86,7 @@ class mailing_contacts4 extends MailingTargets
     	$sql.= " WHERE sp.email != ''";     // Note that null != '' is false
     	$sql.= " AND sp.no_email = 0";
     	$sql.= " AND sp.statut = 1";
-    	$sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+    	$sql.= " AND sp.entity IN (".getEntity('societe').")";
     	if ($filtersarray[0] <> 'all') $sql.= " AND c.label = '".$this->db->escape($filtersarray[0])."'";
     	$sql.= " ORDER BY sp.lastname, sp.firstname";
 
@@ -144,7 +144,7 @@ class mailing_contacts4 extends MailingTargets
             $statssql[$i].= " ".MAIN_DB_PREFIX."categorie_societe as cs";
             $statssql[$i].= " WHERE s.rowid = sp.fk_soc";
             $statssql[$i].= " AND sp.email != ''";    // Note that null != '' is false
-            $statssql[$i].= " AND sp.entity IN (".getEntity('societe', 1).")";
+            $statssql[$i].= " AND sp.entity IN (".getEntity('societe').")";
             $statssql[$i].= " AND cs.fk_categorie = c.rowid";
             $statssql[$i].= " AND cs.fk_soc = sp.fk_soc";
             $statssql[$i].= " GROUP BY c.label";
@@ -171,7 +171,7 @@ class mailing_contacts4 extends MailingTargets
         // If we want a filter "is inside at least one category", we must add it into formFilter
     	$sql = "SELECT count(distinct(c.email)) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-        $sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
+        $sql.= " WHERE c.entity IN (".getEntity('societe').")";
         $sql.= " AND c.email != ''"; // Note that null != '' is false
         $sql.= " AND c.no_email = 0";
         $sql.= " AND c.statut = 1";
@@ -182,7 +182,7 @@ class mailing_contacts4 extends MailingTargets
         $sql.= " ".MAIN_DB_PREFIX."categorie as c,";
         $sql.= " ".MAIN_DB_PREFIX."categorie_societe as cs";
         $sql.= " WHERE s.rowid = sp.fk_soc";
-        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+        $sql.= " AND sp.entity IN (".getEntity('societe').")";
         $sql.= " AND sp.email != ''"; // Note that null != '' is false
         $sql.= " AND cs.fk_categorie = c.rowid";
         $sql.= " AND cs.fk_soc = sp.fk_soc";
@@ -211,7 +211,7 @@ class mailing_contacts4 extends MailingTargets
         $sql.= " WHERE sp.email != ''";     // Note that null != '' is false
         $sql.= " AND sp.no_email = 0";
         $sql.= " AND sp.statut = 1";
-        $sql.= " AND sp.entity IN (".getEntity('societe', 1).")";
+        $sql.= " AND sp.entity IN (".getEntity('societe').")";
         $sql.= " GROUP BY c.label";
         $sql.= " ORDER BY c.label";
 

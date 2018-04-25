@@ -221,7 +221,7 @@ class SMTPs
 	var $_debug = false;
 
 
-	// DOL_CHANGE LDR
+	// @CHANGE LDR
 	var $log = '';
 	var $_errorsTo = '';
 	var $_deliveryReceipt = 0;
@@ -361,7 +361,7 @@ class SMTPs
 		$host=preg_replace('@tcp://@i','',$host);	// Remove prefix
 		$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 
-		// DOL_CHANGE LDR
+		// @CHANGE LDR
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if ( (! is_ip($host)) && ((gethostbyname($host)) == $host))
@@ -393,7 +393,7 @@ class SMTPs
 			// This connection attempt failed.
 			else
 			{
-				// DOL_CHANGE LDR
+				// @CHANGE LDR
 				if (empty($this->errstr)) $this->errstr='Failed to connect with fsockopen host='.$this->getHost().' port='.$this->getPort();
 				$this->_setErr($this->errno, $this->errstr);
 				$_retVal = false;
@@ -427,16 +427,51 @@ class SMTPs
 		{
 			if (!empty($conf->global->MAIN_MAIL_EMAIL_STARTTLS))
 			{
+			    /*
+			    The following dialog illustrates how a client and server can start a TLS STARTTLS session
+			    S: <waits for connection on TCP port 25>
+			    C: <opens connection>
+			    S: 220 mail.imc.org SMTP service ready
+			    C: EHLO mail.ietf.org
+			    S: 250-mail.imc.org offers a warm hug of welcome
+			    S: 250 STARTTLS
+			    C: STARTTLS
+			    S: 220 Go ahead
+			    C: <starts TLS negotiation>
+			    C & S: <negotiate a TLS session>
+			    C & S: <check result of negotiation>
+                // Second pass EHLO
+                C: EHLO client-domain.com
+                S: 250-server-domain.com
+                S: 250 AUTH LOGIN			    
+			    C: <continues by sending an SMTP command
+			    */
 				if (!$_retVal = $this->socket_send_str('STARTTLS', 220))
 				{
 					$this->_setErr(131, 'STARTTLS connection is not supported.');
 					return $_retVal;
 				}
-				if (!stream_socket_enable_crypto($this->socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT))
+
+				// Before 5.6.7:
+				// STREAM_CRYPTO_METHOD_SSLv23_CLIENT = STREAM_CRYPTO_METHOD_SSLv2_CLIENT|STREAM_CRYPTO_METHOD_SSLv3_CLIENT
+				// STREAM_CRYPTO_METHOD_TLS_CLIENT = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT|STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT|STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT
+				// PHP >= 5.6.7:
+				// STREAM_CRYPTO_METHOD_SSLv23_CLIENT = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT|STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT|STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT
+				// STREAM_CRYPTO_METHOD_TLS_CLIENT = STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT
+
+				$crypto_method = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+				if (defined('STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT')) {
+					$crypto_method |= STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+					$crypto_method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT;
+				}
+
+				if (!stream_socket_enable_crypto($this->socket, true, $crypto_method))
 				{
 					$this->_setErr(132, 'STARTTLS connection failed.');
 					return $_retVal;
 				}
+				// Most server servers expect a 2nd pass of EHLO after TLS is established to get another time 
+				// the answer with list of supported AUTH methods. They may differs between non STARTTLS and with STARTTLS.
 				if (!$_retVal = $this->socket_send_str('EHLO '.$host, '250'))
 				{
 					$this->_setErr(126, '"' . $host . '" does not support authenticated connections.');
@@ -1072,7 +1107,7 @@ class SMTPs
 					{
 						foreach ( $this->_msgRecipients[$_host][$_which] as $_addr => $_realName )
 						{
-							if ( $_realName )	// DOL_CHANGE FIX
+							if ( $_realName )	// @CHANGE LDR
 							{
 								$_realName = '"' . $_realName . '"';
 								$_RCPT_list[] = $_realName . ' <' . $_addr . '@' . $_host . '>';
@@ -1251,7 +1286,7 @@ class SMTPs
 		$_header .= $this->getPriority();
 
 
-		// DOL_CHANGE LDR
+		// @CHANGE LDR
 		if ( $this->getDeliveryReceipt() )
 		    $_header .= 'Disposition-Notification-To: '.$this->getFrom('addr') . "\r\n";
 		if ( $this->getErrorsTo() )
@@ -1396,7 +1431,7 @@ class SMTPs
 						$content .= "\r\n" .  $_data['data'] . "\r\n\r\n";
 					}
 				}
-				// DOL_CHANGE LDR
+				// @CHANGE LDR
 				else if ( $type == 'image' )
 				{
 					// loop through all images
@@ -1503,7 +1538,7 @@ class SMTPs
 	}
 
 
-	// DOL_CHANGE LDR
+	// @CHANGE LDR
 
 	/**
 	 * Image attachments are added to the content array as sub-arrays,
@@ -1528,7 +1563,7 @@ class SMTPs
 			$this->_msgContent['image'][$strImageName]['md5']      = dol_hash($strContent, 3);
 		}
 	}
-	// END DOL_CHANGE LDR
+	// END @CHANGE LDR
 
 
 	/**
@@ -1722,7 +1757,7 @@ class SMTPs
 	 */
 	function socket_send_str( $_strSend, $_returnCode = null, $CRLF = "\r\n" )
 	{
-		if ($this->_debug) $this->log.=$_strSend;	// DOL_CHANGE LDR for log
+		if ($this->_debug) $this->log.=$_strSend;	// @CHANGE LDR for log
 		fputs($this->socket, $_strSend . $CRLF);
 		if ($this->_debug) $this->log.=' ('.$_returnCode.')' . $CRLF;
 

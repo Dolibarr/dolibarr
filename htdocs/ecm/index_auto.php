@@ -49,7 +49,7 @@ $result = restrictedArea($user, 'ecm', 0);
 
 // Get parameters
 $socid=GETPOST('socid','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 $section=GETPOST("section")?GETPOST("section","int"):GETPOST("section_id","int");
 $module=GETPOST("module");
 if (! $section) $section=0;
@@ -58,7 +58,7 @@ $section_dir=GETPOST('section_dir');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -350,46 +350,7 @@ $maxheightwin=(isset($_SESSION["dol_screenheight"]) && $_SESSION["dol_screenheig
 
 $morejs=array();
 if (empty($conf->global->MAIN_ECM_DISABLE_JS)) $morejs=array("/includes/jquery/plugins/jqueryFileTree/jqueryFileTree.js");
-$moreheadcss="
-<!-- dol_screenheight=".$_SESSION["dol_screenheight"]." -->
-<style type=\"text/css\">
-    #containerlayout {
-        height:     ".$maxheightwin."px;
-        margin:     0 auto;
-        width:      100%;
-        min-width:  700px;
-        _width:     700px; /* min-width for IE6 */
-    }
-</style>";
-$moreheadjs=empty($conf->use_javascript_ajax)?"":"
-<script type=\"text/javascript\">
-    jQuery(document).ready(function () {
-        jQuery('#containerlayout').layout({
-        	name: \"ecmlayout\"
-        ,   paneClass:    \"ecm-layout-pane\"
-        ,   resizerClass: \"ecm-layout-resizer\"
-        ,   togglerClass: \"ecm-layout-toggler\"
-        ,   center__paneSelector:   \"#ecm-layout-center\"
-        ,   north__paneSelector:    \"#ecm-layout-north\"
-        ,   west__paneSelector:     \"#ecm-layout-west\"
-        ,   resizable: true
-        ,   north__size:        36
-        ,   north__resizable:   false
-        ,   north__closable:    false
-        ,   west__size:         340
-        ,   west__minSize:      280
-        ,   west__slidable:     true
-        ,   west__resizable:    true
-        ,   west__togglerLength_closed: '100%'
-        ,   useStateCookie:     true
-            });
 
-        jQuery('#ecm-layout-center').layout({
-            center__paneSelector:   \".ecm-in-layout-center\"
-        ,   resizable: false
-            });
-    });
-</script>";
 
 llxHeader($moreheadcss.$moreheadjs,$langs->trans("ECMArea"),'','','','',$morejs,'',0,0);
 
@@ -422,14 +383,6 @@ $helptext1.=$langs->trans("ECMAreaDesc2");
 $helptext2.=$langs->trans("ECMAreaDesc");
 $helptext2.=$langs->trans("ECMAreaDesc2");
 
-/*
-print '<div class="hideonsmartphone">';
-print $langs->trans("ECMAreaDesc")."<br>";
-print $langs->trans("ECMAreaDesc2")."<br>";
-print "<br>\n";
-print '</div>';
-*/
-
 // Confirm remove file (for non javascript users)
 if ($action == 'delete' && empty($conf->use_javascript_ajax))
 {
@@ -437,8 +390,9 @@ if ($action == 'delete' && empty($conf->use_javascript_ajax))
 
 }
 
-if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
-else $classviewhide='visible';
+//if (! empty($conf->use_javascript_ajax)) $classviewhide='hidden';
+//else $classviewhide='visible';
+$classviewhide='inline-block';
 
 
 $head = ecm_prepare_dasboard_head('');
@@ -447,7 +401,8 @@ dol_fiche_head($head, 'index_auto', $langs->trans("ECMArea").' - '.$langs->trans
 
 // Start container of all panels
 ?>
-<div id="containerlayout"> <!-- begin div id="containerlayout" -->
+<!-- Begin div id="containerlayout" -->
+<div id="containerlayout">
 <div id="ecm-layout-north" class="toolbar largebutton">
 <?php
 
@@ -494,30 +449,10 @@ if (empty($action) || $action == 'file_manager' || preg_match('/refresh/i',$acti
 	{
 		$htmltooltip=$langs->trans("ECMAreaDesc2");
 
-		// Root title line (Automatic section)
-		print '<tr>';
-		print '<td>';
-		print '<table class="nobordernopadding"><tr class="nobordernopadding">';
-		print '<td align="left" width="24">';
-		print img_picto_common('','treemenu/base.gif');
-		print '</td><td align="left">';
-		$txt=$langs->trans("ECMRoot").' ('.$langs->trans("ECMSectionsAuto").')';
-		print $form->textwithpicto($txt, $htmltooltip, 1, 0);
-		print '</td>';
-		print '</tr></table>';
-		print '</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="right">&nbsp;</td>';
-		print '<td align="center">';
-		print '</td>';
-		print '</tr>';
-
 		$sectionauto=dol_sort_array($sectionauto,'label','ASC',true,false);
 
 		print '<tr>';
-    	print '<td colspan="6" style="padding-left: 20px">';
+    	print '<td colspan="6">';
 	    print '<div id="filetreeauto" class="ecmfiletree"><ul class="ecmjqft">';
 
 		$nbofentries=0;
@@ -583,12 +518,12 @@ include_once DOL_DOCUMENT_ROOT.'/core/ajax/ajaxdirpreview.php';
 </div>
 
 </div>
-</div> <!-- end div id="containerlayout" -->
+</div> <!-- End div id="containerlayout" -->
 <?php
 // End of page
 
 
-dol_fiche_end();
+dol_fiche_end(1);
 
 
 if (! empty($conf->use_javascript_ajax) && empty($conf->global->MAIN_ECM_DISABLE_JS)) {

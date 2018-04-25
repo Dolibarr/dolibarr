@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015 Regis Houssin	<regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2012 Juanjo Menent	<jmenent@2byte.es>
- * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2011-2012	Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // If not defined, we select menu "home"
 $_GET['mainmenu']=GETPOST('mainmenu', 'aZ09')?GETPOST('mainmenu', 'aZ09'):'home';
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $hookmanager->initHooks(array('index'));
 
@@ -61,9 +61,8 @@ if (GETPOST('addbox'))	// Add box (when submit is done from a form when ajax dis
 	$boxorder.=GETPOST('boxcombo', 'aZ09');
 
 	$result=InfoBox::saveboxorder($db,$zone,$boxorder,$userid);
+	if ($result > 0) setEventMessages($langs->trans("BoxAdded"), null);
 }
-
-
 
 
 /*
@@ -79,7 +78,7 @@ if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $title=$langs->trans("HomeAr
 llxHeader('',$title);
 
 
-$resultboxes=FormOther::getBoxesArea($user,"0");
+$resultboxes=FormOther::getBoxesArea($user,"0");    // Load $resultboxes (selectboxlist + boxactivated + boxlista + boxlistb)
 
 
 print load_fiche_titre($langs->trans("HomeArea"),$resultboxes['selectboxlist'],'title_home');
@@ -89,18 +88,13 @@ if (! empty($conf->global->MAIN_MOTD))
     $conf->global->MAIN_MOTD=preg_replace('/<br(\s[\sa-zA-Z_="]*)?\/?>/i','<br>',$conf->global->MAIN_MOTD);
     if (! empty($conf->global->MAIN_MOTD))
     {
-    	$i=0;
-    	while (preg_match('/__\(([a-zA-Z|@]+)\)__/i',$conf->global->MAIN_MOTD,$reg) && $i < 100)
-    	{
-    		$tmp=explode('|',$reg[1]);
-    		if (! empty($tmp[1])) $langs->load($tmp[1]);
-    		$conf->global->MAIN_MOTD=preg_replace('/__\('.preg_quote($reg[1]).'\)__/i',$langs->trans($tmp[0]),$conf->global->MAIN_MOTD);
-    		$i++;
-    	}
+        $substitutionarray=getCommonSubstitutionArray($langs);
+        complete_substitutions_array($substitutionarray, $langs);
+        $texttoshow = make_substitutions($conf->global->MAIN_MOTD, $substitutionarray, $langs);
 
         print "\n<!-- Start of welcome text -->\n";
         print '<table width="100%" class="notopnoleftnoright"><tr><td>';
-        print dol_htmlentitiesbr($conf->global->MAIN_MOTD);
+        print dol_htmlentitiesbr($texttoshow);
         print '</td></tr></table><br>';
         print "\n<!-- End of welcome text -->\n";
     }
@@ -108,26 +102,6 @@ if (! empty($conf->global->MAIN_MOTD))
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
-
-
-/*
- * Informations area
- */
-$boxinfo='';
-$boxinfo.= '<div class="box">';
-$boxinfo.= '<table summary="'.dol_escape_htmltag($langs->trans("LoginInformation")).'" class="noborder boxtable" width="100%">';
-$boxinfo.= '<tr class="liste_titre"><th class="liste_titre" colspan="2">'.$langs->trans("Informations").'</th></tr>';
-$boxinfo.= '<tr '.$bc[false].'>';
-$boxinfo.= '<td class="nowrap">'.$langs->trans("User").'</td><td>'.$user->getNomUrl(0).'</td></tr>';
-$boxinfo.= '<tr '.$bc[true].'>';
-$boxinfo.= '<td class="nowrap">'.$langs->trans("PreviousConnexion").'</td><td>';
-if ($user->datepreviouslogin) $boxinfo.= dol_print_date($user->datepreviouslogin,"dayhour",'tzuser');
-else $boxinfo.= $langs->trans("Unknown");
-$boxinfo.= '</td>';
-$boxinfo.= "</tr>\n";
-$boxinfo.= "</table>\n";
-$boxinfo.= '</div>';
-//print $boxinfo;
 
 
 /*
@@ -144,11 +118,11 @@ $langs->load("contracts");
 if (empty($user->societe_id))
 {
     $boxstat.='<div class="box">';
-    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable" width="100%">';
+    $boxstat.='<table summary="'.dol_escape_htmltag($langs->trans("DolibarrStateBoard")).'" class="noborder boxtable nohover" width="100%">';
     $boxstat.='<tr class="liste_titre">';
     $boxstat.='<th class="liste_titre">'.$langs->trans("DolibarrStateBoard").'</th>';
     $boxstat.='</tr>';
-    $boxstat.='<tr class="impair"><td class="tdboxstats nohover">';
+    $boxstat.='<tr class="impair"><td class="tdboxstats nohover flexcontainer">';
 
     $var=true;
 
@@ -157,7 +131,7 @@ if (empty($user->societe_id))
     $action='';
     $reshook=$hookmanager->executeHooks('addStatisticLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
     $boxstat.=$hookmanager->resPrint;
-    
+
     if (empty($reshook))
     {
 	    // Condition to be checked for each display line dashboard
@@ -179,7 +153,8 @@ if (empty($user->societe_id))
 		! empty($conf->supplier_invoice->enabled) && $user->rights->fournisseur->facture->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_INVOICES_STATS),
 		! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_proposal->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_PROPOSAL_STATS),
 	    ! empty($conf->projet->enabled) && $user->rights->projet->lire,
-	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
+	    ! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire,
+		! empty($conf->don->enabled) && $user->rights->don->lire
 	    );
 	    // Class file containing the method load_state_board for each line
 	    $includes=array(
@@ -190,7 +165,7 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/contact/class/contact.class.php",
     	    DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php",
     	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
-    	    DOL_DOCUMENT_ROOT."/product/class/service.class.php",
+    	    DOL_DOCUMENT_ROOT."/product/class/product.class.php",
     	    DOL_DOCUMENT_ROOT."/comm/propal/class/propal.class.php",
     	    DOL_DOCUMENT_ROOT."/commande/class/commande.class.php",
     	    DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php",
@@ -199,8 +174,9 @@ if (empty($user->societe_id))
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.commande.class.php",
     	    DOL_DOCUMENT_ROOT."/fourn/class/fournisseur.facture.class.php",
     	    DOL_DOCUMENT_ROOT."/supplier_proposal/class/supplier_proposal.class.php",
-            DOL_DOCUMENT_ROOT."/projet/class/project.class.php", 
-	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php"
+            DOL_DOCUMENT_ROOT."/projet/class/project.class.php",
+	        DOL_DOCUMENT_ROOT."/expensereport/class/expensereport.class.php",
+			DOL_DOCUMENT_ROOT."/don/class/don.class.php"
 	    );
 	    // Name class containing the method load_state_board for each line
 	    $classes=array('User',
@@ -210,7 +186,7 @@ if (empty($user->societe_id))
 	                   'Contact',
 	                   'Adherent',
 	                   'Product',
-	                   'Service',
+	                   'Product',
 	                   'Propal',
 	                   'Commande',
 	                   'Facture',
@@ -220,7 +196,8 @@ if (empty($user->societe_id))
 	                   'FactureFournisseur',
             	       'SupplierProposal',
 	                   'Project',
-	                   'ExpenseReport'
+	                   'ExpenseReport',
+					   'Don'
 	    );
 	    // Cle array returned by the method load_state_board for each line
 	    $keys=array('users',
@@ -240,7 +217,8 @@ if (empty($user->societe_id))
 	                'supplier_invoices',
 	                'askprice',
 	                'projects',
-	                'expensereports'
+	                'expensereports',
+					'donations'
 	    );
 	    // Dashboard Icon lines
 	    $icons=array('user',
@@ -259,8 +237,9 @@ if (empty($user->societe_id))
 	                 'order',
 	                 'bill',
 	                 'propal',
-	                 'project',
-					 'trip'
+	                 'projectpub',
+					 'trip',
+					 'generic'
 	    );
 	    // Translation keyword
 	    $titres=array("Users",
@@ -280,7 +259,8 @@ if (empty($user->societe_id))
                       "SuppliersInvoices",
 	                  "SupplierProposalShort",
 	                  "Projects",
-					  "ExpenseReports"
+					  "ExpenseReports",
+					  "Donations"
 	    );
 	    // Dashboard Link lines
 	    $links=array(
@@ -301,7 +281,8 @@ if (empty($user->societe_id))
 	        DOL_URL_ROOT.'/fourn/facture/list.php?mainmenu=accountancy&leftmenu=suppliers_bills',
 	        DOL_URL_ROOT.'/supplier_proposal/list.php?mainmenu=commercial&leftmenu=',
 	        DOL_URL_ROOT.'/projet/list.php?mainmenu=project',
-    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport'
+    		DOL_URL_ROOT.'/expensereport/list.php?mainmenu=hrm&leftmenu=expensereport',
+			DOL_URL_ROOT.'/don/list.php?leftmenu=donations'
 	    );
 	    // Translation lang files
 	    $langfile=array("users",
@@ -321,7 +302,8 @@ if (empty($user->societe_id))
 	                    "bills",
 	                    "supplier_proposal",
 	                    "projects",
-						"trips"
+						"trips",
+						"donations"
 	    );
 
 
@@ -340,20 +322,32 @@ if (empty($user->societe_id))
 	                $board->load_state_board($user);
 	                $boardloaded[$classe]=$board;
 	            }
-	            else $board=$boardloaded[$classe];
+	            else
+	            {
+	                $board=$boardloaded[$classe];
+	            }
 
-	            $var=!$var;
+
 	            if (!empty($langfile[$key])) $langs->load($langfile[$key]);
 	            $text=$langs->trans($titres[$key]);
 	            $boxstat.='<a href="'.$links[$key].'" class="boxstatsindicator thumbstat nobold nounderline">';
 	            $boxstat.='<div class="boxstats">';
-	            $boxstat.='<span class="boxstatstext">'.img_object("",$icons[$key]).' '.$text.'</span><br>';
-	            $boxstat.='<span class="boxstatsindicator">'.$board->nb[$val].'</span>';
+	            $boxstat.='<span class="boxstatstext" title="'.dol_escape_htmltag($text).'">'.img_object("",$icons[$key]).' '.$text.'</span><br>';
+	            $boxstat.='<span class="boxstatsindicator">'.($board->nb[$val]?$board->nb[$val]:0).'</span>';
 	            $boxstat.='</div>';
 	            $boxstat.='</a>';
 	        }
 	    }
     }
+
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
+    $boxstat.='<a class="boxstatsindicator thumbstat nobold nounderline"></a>';
 
     $boxstat.='</td></tr>';
     $boxstat.='</table>';
@@ -372,18 +366,6 @@ $showweather=empty($conf->global->MAIN_DISABLE_METEO)?1:0;
 //Array that contains all WorkboardResponse classes to process them
 $dashboardlines=array();
 
-$boxwork='';
-$boxwork.='<div class="box">';
-$boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
-$boxwork.='<tr class="liste_titre">';
-$boxwork.='<th class="liste_titre" colspan="2">'.$langs->trans("DolibarrWorkBoard").'</th>';
-$boxwork.='<th class="liste_titre" align="right">'.$langs->trans("Number").'</th>';
-$boxwork.='<th class="liste_titre" align="right">'.$form->textwithpicto($langs->trans("Late"),$langs->trans("LateDesc")).'</th>';
-$boxwork.='<th class="liste_titre">&nbsp;</th>';
-//print '<th class="liste_titre" width="20">&nbsp;</th>';
-if ($showweather) $boxwork.='<th class="liste_titre hideonsmartphone" width="80">&nbsp;</th>';
-$boxwork.='</tr>'."\n";
-
 // Do not include sections without management permission
 require_once DOL_DOCUMENT_ROOT.'/core/class/workboardresponse.class.php';
 
@@ -401,7 +383,6 @@ if (! empty($conf->projet->enabled) && $user->rights->projet->lire)
 {
     include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
     $board=new Project($db);
-
     $dashboardlines[] = $board->load_board($user);
 }
 
@@ -467,7 +448,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 }
 
 // Number of supplier invoices (has paid)
-if (! empty($conf->supplier_invoice->enabled) && ! empty($conf->facture->enabled) && $user->rights->facture->lire)
+if (! empty($conf->supplier_invoice->enabled) && ! empty($user->rights->fournisseur->facture->lire))
 {
     include_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
     $board=new FactureFournisseur($db);
@@ -518,6 +499,14 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->to_p
 	$dashboardlines[] = $board->load_board($user,'topay');
 }
 
+$object=new stdClass();
+$parameters=array();
+$action='';
+$reshook=$hookmanager->executeHooks('addOpenElementsDashboardLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook == 0) {
+	$dashboardlines = array_merge($dashboardlines, $hookmanager->resArray);
+}
+
 // Calculate total nb of late
 $totallate=0;
 $var=true;
@@ -529,7 +518,6 @@ foreach($dashboardlines as $tmp)
 {
 	if ($tmp instanceof WorkboardResponse) $valid_dashboardlines[] = $tmp;
 }
-$rowspan = count($valid_dashboardlines);
 
 // We calculate $totallate. Must be defined before start of next loop because it is show in first fetch on next loop
 foreach($valid_dashboardlines as $board)
@@ -539,50 +527,82 @@ foreach($valid_dashboardlines as $board)
     }
 }
 
-// Show dashboard
-foreach($valid_dashboardlines as $board)
+
+$boxwork='';
+$boxwork.='<div class="box">';
+$boxwork.='<table summary="'.dol_escape_htmltag($langs->trans("WorkingBoard")).'" class="noborder boxtable" width="100%">'."\n";
+$boxwork.='<tr class="liste_titre">';
+$boxwork.='<th class="liste_titre">'.$langs->trans("DolibarrWorkBoard").'</th>';
+$boxwork.='</tr>'."\n";
+
+if ($showweather)
 {
-    $var=!$var;
-    $boxwork.= '<tr '.$bc[$var].'><td width="16">'.$board->img.'</td><td>'.$board->label.'</td>';
-    $boxwork.= '<td align="right"><a class="dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator">'.$board->nbtodo.'</span></a></td>';
-    $boxwork.= '<td align="right">';
-    //if ($board->nbtodolate > 0)
-    //{
-    $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
-    $textlate .= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
-    $boxwork.= '<a title="'.dol_escape_htmltag($textlate).'" class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.$board->url.'"><span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
-    $boxwork.= $board->nbtodolate;
-    $boxwork.= '</span></a>';
-    //}
+    $boxwork.='<tr class="nohover">';
+    $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
+    $text='';
+    if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
+    $text.='. '.$langs->trans("LateDesc");
+    //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
+    $options='height="64px"';
+    $boxwork.=showWeather($totallate,$text,$options);
     $boxwork.='</td>';
-    $boxwork.='<td align="left">';
-    if ($board->nbtodolate > 0) $boxwork.=img_picto($textlate,"warning");
-    else $boxwork.='&nbsp;';
-    $boxwork.='</td>';
-    /*print '<td class="nowrap" align="right">';
-    print ' (>'.ceil($board->warning_delay).' '.$langs->trans("days").')';
-    print '</td>';*/
-    
-    if ($showweather)
-    {
-        $boxwork.='<td class="nohover hideonsmartphone noborderbottom" rowspan="'.$rowspan.'" width="80" style="border-left: 1px solid #DDDDDD" align="center">';
-        $text='';
-        if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate).')';
-        $options='height="64px"';
-        if ($rowspan <= 2) $options='height="24"';  // Weather logo is smaller if dashboard has few elements
-        else if ($rowspan <= 3) $options='height="48"';  // Weather logo is smaller if dashboard has few elements
-        $boxwork.=showWeather($totallate,$text,$options);
-        $boxwork.='</td>';
-        $showweather=0;
-    }
     $boxwork.='</tr>';
-    $boxwork.="\n";
 }
+
+// Show dashboard
+$nbworkboardempty=0;
+if (! empty($valid_dashboardlines))
+{
+	$boxwork.='<tr class="nohover"><td class="tdboxstats nohover flexcontainer centpercent">';
+    foreach($valid_dashboardlines as $board)
+    {
+        if (empty($board->nbtodo)) $nbworkboardempty++;
+
+        $textlate = $langs->trans("NActionsLate",$board->nbtodolate);
+        $textlate.= ' ('.$langs->trans("Late").' = '.$langs->trans("DateReference").' > '.$langs->trans("DateToday").' '.(ceil($board->warning_delay) >= 0 ? '+' : '').ceil($board->warning_delay).' '.$langs->trans("days").')';
+
+        $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"><div class="boxstats130 boxstatsborder">';
+        $boxwork .= '<div class="boxstatscontent">';
+        $boxwork .= '<span class="boxstatstext" title="'.dol_escape_htmltag($board->label).'">'.$board->img.' '.$board->label.'</span><br>';
+        $boxwork .= '<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.$board->nbtodo.'</span></a>';
+        $boxwork .= '</div>';
+        if ($board->nbtodolate > 0)
+        {
+            $boxwork .= '<div class="dashboardlinelatecoin nowrap">';
+            $boxwork .= '<a title="'.dol_escape_htmltag($textlate).'" class="valignmiddle dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'" href="'.((!$board->url_late) ? $board->url : $board->url_late ).'">';
+            //$boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
+            $boxwork .= img_picto($textlate, "warning_white", 'class="valigntextbottom"').'';
+            $boxwork .= '<span class="dashboardlineindicatorlate'.($board->nbtodolate>0?' dashboardlineko':' dashboardlineok').'">';
+            $boxwork .= $board->nbtodolate;
+            $boxwork .= '</span>';
+            $boxwork .= '</a>';
+            $boxwork .= '</div>';
+        }
+        $boxwork.='</div></div>';
+        $boxwork .="\n";
+    }
+
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='<div class="boxstatsindicator thumbstat150 nobold nounderline"></div>';
+    $boxwork .='</td></tr>';
+}
+else
+{
+    $boxwork.='<tr class="nohover">';
+    $boxwork.='<td class="nohover valignmiddle opacitymedium">';
+    $boxwork.=$langs->trans("NoOpenedElementToProcess");
+    $boxwork.='</td>';
+    $boxwork.='</tr>';
+}
+
+$boxwork.='</td></tr>';
 
 $boxwork.='</table>';   // End table array of working board
 $boxwork.='</div>';
-
-//print $boxwork;
 
 print '</div></div></div><div class="clearboth"></div>';
 
@@ -598,7 +618,7 @@ $boxlist.='<tr><td class="notopnoleftnoright">'."\n";
 
 $boxlist.='<div class="fichehalfleft">';
 
-$boxlist.=$boxinfo;
+//$boxlist.=$boxinfo;
 $boxlist.=$boxstat;
 $boxlist.=$resultboxes['boxlista'];
 
@@ -676,7 +696,7 @@ function showWeather($totallate,$text,$options)
     $out='';
     $offset=0;
     $factor=10; // By default
-    
+
     $level0=$offset;           if (! empty($conf->global->MAIN_METEO_LEVEL0)) $level0=$conf->global->MAIN_METEO_LEVEL0;
     $level1=$offset+1*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL1)) $level1=$conf->global->MAIN_METEO_LEVEL1;
     $level2=$offset+2*$factor; if (! empty($conf->global->MAIN_METEO_LEVEL2)) $level2=$conf->global->MAIN_METEO_LEVEL2;

@@ -4,6 +4,7 @@ SuppliersOrdersArea=Ostutellimuste ala
 OrderCard=Tellimuse kaar
 OrderId=Tellimuse ID
 Order=Tellimus
+PdfOrderTitle=Tellimus
 Orders=Tellimused
 OrderLine=Tellimuse rida
 OrderDate=Telllimuse kuupäev

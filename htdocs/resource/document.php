@@ -53,7 +53,7 @@ $result = restrictedArea($user, 'resource', $id, 'resource');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -89,30 +89,36 @@ if ($object->id)
 
 	$head=resource_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), 0, 'resource');
+	dol_fiche_head($head, 'documents',  $langs->trans("ResourceSingular"), -1, 'resource');
 
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
 	}
 
-
+	
+	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	 
+	 
+	$morehtmlref='<div class="refidno">';
+	$morehtmlref.='</div>';
+	 
+	 
+	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
+	 
+	 
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+	 
     print '<table class="border" width="100%">';
-
-
-	print '<tr><td class="titlefield">'.$langs->trans("ResourceFormLabel_ref").'</td><td>';
-	$linkback = $objet->ref.' <a href="list.php">'.$langs->trans("BackToList").'</a>';
-	print $form->showrefnav($object, 'id', $linkback,1,"rowid");
-	print '</td>';
-	print '</tr>';
 
 	// Resource type
 	print '<tr>';
-	print '<td>' . $langs->trans("ResourceType") . '</td>';
+	print '<td class="titlefield">' . $langs->trans("ResourceType") . '</td>';
 	print '<td>';
 	print $object->type_label;
 	print '</td>';
@@ -124,6 +130,8 @@ if ($object->id)
 
     print '</div>';
 
+    dol_fiche_end();
+    
     $modulepart = 'dolresource';
     $permission = $user->rights->resource->write;
     $param = '&id=' . $object->id;

@@ -5,6 +5,7 @@ CommRequest=Generelle Preisanfrage
 CommRequests=Generelle Preisanfragen
 SearchRequest=Anfragen finden
 DraftRequests=Entwürfe Preisanfragen
+RequestsOpened=Offene Preisanfragen
 SupplierProposalShort=Angebot Lieferant
 SupplierProposals=Angebote Lieferant
 SupplierProposalsShort=Angebote Lieferant

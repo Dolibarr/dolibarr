@@ -34,7 +34,7 @@ $id = GETPOST('id','int');
 $object = new User($db);
 if ($id > 0 || ! empty($ref))
 {
-	$result = $object->fetch($id, $ref);
+	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 }
 
@@ -65,7 +65,7 @@ llxHeader();
 $head = user_prepare_head($object);
 
 $title = $langs->trans("User");
-dol_fiche_head($head, 'info', $title, 0, 'user');
+dol_fiche_head($head, 'info', $title, -1, 'user');
 
 
 $linkback = '';

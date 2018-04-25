@@ -3,20 +3,18 @@ This file describe changes made on external library after beeing included
 in Dolibarr root.
 
 
-
 ALL:
 ----
-Replace "& new" by "new"
+Check "@CHANGE"
 
 
-
-CKEDITOR:
----------
+CKEDITOR (4.6.2):
+-----------------
 * In ckeditor/ckeditor/contents.css
 Replace:
-	margin: 20px;
+	body { ... margin: 20px;
 With
-	margin: 5px;
+	body { ... margin: 5px;
 
 
 
@@ -33,21 +31,6 @@ Replace call to serialize_val with no bugged value
 
 
 
-FPDI:
------
-Replace:
-	$this->_readXref($this->_xref, $this->_findXref());
-with:
-    try {
-	        $this->_readXref($this->_xref, $this->_findXref());
-    }
-    catch(Exception $e)
-    {
-        	print $e->getMessage();
-        	exit;
-    }
-
-
 
 TCPDF:
 ------
@@ -56,7 +39,7 @@ define('QR_FIND_FROM_RANDOM', 2);
 with
 define('QR_FIND_FROM_RANDOM', false);
 
-* Removed useless directories (examples, tools)
+* Removed useless directories ("examples", "tools")
 
 * Fix
  	// initialize subsetchars
@@ -116,7 +99,7 @@ JQUERYFILETREE:
 RESTLER:
 --------
 
-* Add 2 lines into function     
+* Add 2 lines into file AutoLoader.php to complete function     
 	private function alias($className, $currentClass)
     {
 		...
@@ -127,4 +110,25 @@ to get
         if ($className == 'Luracast\Restler\string') return;
         if ($className == 'Luracast\Restler\mixed') return;
 		...
-        
+    	
+    	
+PARSEDOWN
+---------
+
+* Fix to avoid fatal error when mb_strlen not available:
+
+	// @CHANGE LDR Fix when mb_strlen is not available
+	//$shortage = 4 - mb_strlen($line, 'utf-8') % 4;
+	if (function_exists('mb_strlen')) $len = mb_strlen($line, 'utf-8');
+	else $len = strlen($line);
+	$shortage = 4 - $len % 4;
+                	
+
+
+JEDITABLE.JS
+------------
+
+* <button type="submit" />  =>  <button class="button" type="submit" />
+* <button type="cancel" />  =>  <button class="button" type="cancel" />
+
+

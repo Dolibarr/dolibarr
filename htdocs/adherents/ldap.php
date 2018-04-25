@@ -35,7 +35,7 @@ $langs->load("ldap");
 $langs->load("admin");
 
 $rowid = GETPOST('id','int');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Protection
 $socid=0;

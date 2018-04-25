@@ -19,6 +19,7 @@ ShowTask=Ver tarea
 ShowAction=Ver evento
 ActionsReport=Informe de eventos
 ThirdPartiesOfSaleRepresentative=Terceros cuyo representante de ventas es
+SaleRepresentativesOfThirdParty=comercials del tercero
 SalesRepresentative=Comercial
 SalesRepresentatives=Comerciales
 SalesRepresentativeFollowUp=Comercial (seguimiento)

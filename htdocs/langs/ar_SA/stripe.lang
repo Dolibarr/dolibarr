@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=فيما يلي عناوين المواقع المتاحة لعرض هذه الصفحة زبون لتسديد دفعة Dolibarr على الأجسام
+PaymentForm=شكل الدفع
+WelcomeOnPaymentPage=ونحن نرحب على خدمة الدفع عبر الإنترنت
+ThisScreenAllowsYouToPay=تتيح لك هذه الشاشة إجراء الدفع الإلكتروني إلى ٪ s.
+ThisIsInformationOnPayment=هذه هي المعلومات عن الدفع للقيام
+ToComplete=لإكمال
+YourEMail=البريد الالكتروني لتأكيد الدفع
+STRIPE_PAYONLINE_SENDEMAIL=البريد الإلكتروني لتحذير بعد دفع (النجاح أو لا)
+Creditor=الدائن
+PaymentCode=دفع رمز
+StripeDoPayment=على الدفع
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=التالى
+ToOfferALinkForOnlinePayment=عنوان دفع %s
+ToOfferALinkForOnlinePaymentOnOrder=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للأمر
+ToOfferALinkForOnlinePaymentOnInvoice=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للفاتورة
+ToOfferALinkForOnlinePaymentOnContractLine=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم للحصول على عقد خط
+ToOfferALinkForOnlinePaymentOnFreeAmount=عنوان لتقديم المستندات ٪ الدفع الإلكتروني واجهة المستخدم لمبلغ حرة
+ToOfferALinkForOnlinePaymentOnMemberSubscription=عنوان الموقع لتقديم الدفع عبر الإنترنت %s واجهة المستخدم للاشتراك عضو
+YouCanAddTagOnUrl=You can also add url parameter <b>&tag=يمكنك أيضا إضافة رابط المعلم <b>= & علامة</b> على أي من <i><b>قيمة</b></i> تلك عنوان (مطلوب فقط لدفع الحر) الخاصة بك لإضافة تعليق دفع الوسم.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=هذه الصفحة يؤكد أنه قد تم تسجيلها دفعتك. شكرا لك.
+YourPaymentHasNotBeenRecorded=يمكنك دفع لم يسجل وتم إلغاء الصفقة. شكرا لك.
+AccountParameter=حساب المعلمات
+UsageParameter=استخدام المعلمات
+InformationToFindParameters=مساعدة للعثور على معلومات حسابك %s
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=اسم البائع
+CSSUrlForPaymentForm=عزيزي ورقة النمط المغلق للنموذج الدفع
+MessageOK=رسالة على الصفحة التحقق من صحة الدفع عودة
+MessageKO=رسالة في إلغاء دفع الصفحة عودة
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

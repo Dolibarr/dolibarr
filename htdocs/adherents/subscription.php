@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003	Jean-Louis Bergamo		<jlb@j1b.org>
  * Copyright (C) 2004-2014	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2012		Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2012-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016	Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,9 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->load("companies");
 $langs->load("bills");
@@ -89,13 +90,13 @@ if ($rowid)
     $caneditfieldmember=$user->rights->adherent->creer;
 }
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('subscription'));
+
 // PDF
 $hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
 $hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
 $hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
-
-
-
 
 /*
  * 	Actions
@@ -598,7 +599,7 @@ if ($rowid > 0)
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 
-    dol_fiche_head($head, 'subscription', $langs->trans("Member"), 0, 'user');
+    dol_fiche_head($head, 'subscription', $langs->trans("Member"), -1, 'user');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/list.php">'.$langs->trans("BackToList").'</a>';
 
@@ -666,13 +667,9 @@ if ($rowid > 0)
 		print '</td></tr>';
 	}
 
-	// Other attributes
-	$parameters=array('colspan'=>2);
-	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
-	{
-		print $object->showOptionals($extrafields, 'view', $parameters);
-	}
+    // Other attributes
+    $cols=2;
+    include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 	// Date end subscription
 	print '<tr><td>'.$langs->trans("SubscriptionEndDate").'</td><td class="valeur">';
@@ -812,7 +809,7 @@ if ($rowid > 0)
         $sql.= " c.datef,";
         $sql.= " c.fk_bank,";
         $sql.= " b.rowid as bid,";
-        $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.accountancy_journal, ba.number";
+        $sql.= " ba.rowid as baid, ba.label, ba.bank, ba.ref, ba.account_number, ba.fk_accountancy_journal, ba.number";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."subscription as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
@@ -822,7 +819,6 @@ if ($rowid > 0)
         if ($result)
         {
             $subscriptionstatic=new Subscription($db);
-            $accountstatic=new Account($db);
 
             $num = $db->num_rows($result);
             $i = 0;
@@ -841,12 +837,12 @@ if ($rowid > 0)
             }
             print "</tr>\n";
 
-            $var=True;
+            $accountstatic=new Account($db);
+		
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                $var=!$var;
-                print "<tr ".$bc[$var].">";
+                print '<tr class="oddeven">';
                 $subscriptionstatic->ref=$objp->crowid;
                 $subscriptionstatic->id=$objp->crowid;
                 print '<td>'.$subscriptionstatic->getNomUrl(1).'</td>';
@@ -854,16 +850,24 @@ if ($rowid > 0)
                 print '<td align="center">'.dol_print_date($db->jdate($objp->dateh),'day')."</td>\n";
                 print '<td align="center">'.dol_print_date($db->jdate($objp->datef),'day')."</td>\n";
                 print '<td align="right">'.price($objp->subscription).'</td>';
-                if (! empty($conf->banque->enabled))
-                {
-                    print '<td align="right">';
-                    if ($objp->bid)
-                    {
-                        $accountstatic->label=$objp->label;
-                        $accountstatic->id=$objp->baid;
-                        $accountstatic->number=$objp->number;
-                        $accountstatic->account_number=$objp->account_number;
-                        $accountstatic->accountancy_journal=$objp->accountancy_journal;
+				if (! empty($conf->banque->enabled))
+				{
+					print '<td align="right">';
+					if ($objp->bid)
+					{
+						$accountstatic->label=$objp->label;
+						$accountstatic->id=$objp->baid;
+						$accountstatic->number=$objp->number;
+						$accountstatic->account_number=$objp->account_number;
+
+						if (! empty($conf->accounting->enabled))
+						{
+							$accountingjournal = new AccountingJournal($db);
+							$accountingjournal->fetch($objp->fk_accountancy_journal);
+
+							$accountstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+						}
+
                         $accountstatic->ref=$objp->ref;
                         print $accountstatic->getNomUrl(1);
                     }
@@ -889,6 +893,13 @@ if ($rowid > 0)
         {
             include_once DOL_DOCUMENT_ROOT.'/paypal/lib/paypal.lib.php';
             print showPaypalPaymentUrl('membersubscription',$object->ref);
+        }
+
+        // Link for stripe payment
+        if (! empty($conf->stripe->enabled))
+        {
+            include_once DOL_DOCUMENT_ROOT.'/stripe/lib/stripe.lib.php';
+            print showStripePaymentUrl('membersubscription',$object->ref);
         }
 
     }
@@ -1086,12 +1097,12 @@ if ($rowid > 0)
                     	print '</a>)';
                     }
                     if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0);
-                    if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
-                    {
-                    	$prodtmp=new Product($db);
-                    	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-                    	print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
-                    }
+					if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+					{
+						$prodtmp=new Product($db);
+						$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
+					}
                     print '<br>';
                 }
                 // Add invoice with payments
@@ -1111,12 +1122,12 @@ if ($rowid > 0)
                     	print '</a>)';
                     }
                     if (empty($conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS) || $conf->global->ADHERENT_VAT_FOR_SUBSCRIPTIONS != 'defaultforfoundationcountry') print '. '.$langs->trans("NoVatOnSubscription",0);
-                    if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
-                    {
-                    	$prodtmp=new Product($db);
-                    	$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
-                    	print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
-                    }
+					if (! empty($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS) && (! empty($conf->product->enabled) || ! empty($conf->service->enabled)))
+					{
+						$prodtmp=new Product($db);
+						$prodtmp->fetch($conf->global->ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS);
+						print '. '.$langs->transnoentitiesnoconv("ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS", $prodtmp->getNomUrl(1));	// must use noentitiesnoconv to avoid to encode html into getNomUrl of product
+					}
                     print '<br>';
                 }
                 print '</td></tr>';

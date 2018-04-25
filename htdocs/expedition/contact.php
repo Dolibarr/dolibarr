@@ -123,13 +123,13 @@ else if ($action == 'deletecontact' && $user->rights->expedition->creer)
 		dol_print_error($db);
 	}
 }
-
+/*
 else if ($action == 'setaddress' && $user->rights->expedition->creer)
 {
 	$object->fetch($id);
 	$result=$object->setDeliveryAddress($_POST['fk_address']);
 	if ($result < 0) dol_print_error($db,$object->error);
-}
+}*/
 
 
 /*
@@ -156,7 +156,7 @@ if ($id > 0 || ! empty($ref))
 	$langs->trans("OrderCard");
 
 	$head = shipping_prepare_head($object);
-	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), 0, 'sending');
+	dol_fiche_head($head, 'contact', $langs->trans("Shipment"), -1, 'sending');
 
 
 	// Shipment card

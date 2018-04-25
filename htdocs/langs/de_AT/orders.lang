@@ -2,6 +2,8 @@
 OrderLine=Bestellposition
 OrderToProcess=Zu bearbeitende Bestellung
 OrdersInProcess=Bestellunen in Bearbeitung
+StatusOrderValidatedShort=Bestätigt
+StatusOrderValidated=Bestätigt
 StatusOrderOnProcess=In Arbeit
 RefOrder=Bestellung Nr.
 AuthorRequest=Authorenrechte beantragen

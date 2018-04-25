@@ -29,13 +29,24 @@
 
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY account_number VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_bookkeeping MODIFY numero_compte VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_journal MODIFY code VARCHAR(20) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_bank_account MODIFY accountancy_journal VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_stock_mouvement MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_lot MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_product_batch MODIFY batch VARCHAR(30) COLLATE utf8_unicode_ci;
-
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_sell VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_product MODIFY accountancy_code_buy VARCHAR(32) COLLATE utf8_unicode_ci;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) CHARACTER SET utf8;
+-- VMYSQLUTF8UNICODECI ALTER TABLE llx_c_type_fees MODIFY accountancy_code VARCHAR(32) COLLATE utf8_unicode_ci;
 
 
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
@@ -45,7 +56,16 @@
 
 
 
--- Requests to clean corrupted database
+-- Requests to clean corrupted data
+
+-- VMYSQL4.1 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid;
+-- -- a tester VPGSQL9.5 INSERT IGNORE INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid ON CONFLICT DO NOTHING;
+-- -- avant 9.5 faire en variant x pour qu'au 2eme passage, le premier doublon soit dans la tabel cible
+-- -- INSERT INTO llx_product_lot (entity, fk_product, batch, eatby, sellby, datec, fk_user_creat, fk_user_modif) 
+-- -- SELECT DISTINCT e.entity, ps.fk_product, pb.batch, pb.eatby, pb.sellby, pb.tms, e.fk_user_author, e.fk_user_author 
+-- -- from llx_product_batch as pb, llx_product_stock as ps, llx_entrepot as e
+-- -- WHERE pb.fk_product_stock = ps.rowid AND ps.fk_entrepot = e.rowid 
+-- -- AND NOT EXISTS (SELECT 1 FROM llx_product_lot as b WHERE b.fk_product=ps.fk_product and pb.batch=b.batch) LIMIT x
 
 
 UPDATE llx_user set api_key = null where api_key = '';
@@ -73,6 +93,7 @@ delete from llx_livraison where ref = '';
 delete from llx_expeditiondet where fk_expedition in (select rowid from llx_expedition where ref = '');
 delete from llx_expedition where ref = '';
 delete from llx_holiday_logs where fk_user_update not IN (select rowid from llx_user);
+delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
 
 update llx_deplacement set dated='2010-01-01' where dated < '2000-01-01';
 
@@ -108,15 +129,20 @@ delete from llx_product_extrafields where fk_object not in (select rowid from ll
 update llx_product_batch set batch = '' where batch = 'Non d&eacute;fini';
 update llx_product_batch set batch = '' where batch = 'Non défini';
 
+update llx_stock_mouvement set batch = null where batch = 'Non d&eacute;fini';
+update llx_stock_mouvement set batch = null where batch = 'Non défini';
+
 DELETE FROM llx_product_lot WHERE fk_product NOT IN (select rowid from llx_product); 
 DELETE FROM llx_product_stock WHERE fk_product NOT IN (select rowid from llx_product); 
 DELETE FROM llx_product_stock WHERE reel = 0 AND rowid NOT IN (SELECT fk_product_stock FROM llx_product_batch as pb);
+
+
 
 -- Merge splitted lines into one in table llx_product_batch 
 DROP TABLE tmp_llx_product_batch;
 DROP TABLE tmp_llx_product_batch2;
 CREATE TABLE tmp_llx_product_batch AS select fk_product_stock, eatby, sellby, batch, SUM(qty) as qty, COUNT(rowid) as nb FROM llx_product_batch GROUP BY fk_product_stock, eatby, sellby, batch HAVING COUNT(rowid) > 1;
-CREATE TABLE tmp_llx_product_batch2 AS select pb.rowid, pb.fk_product_stock, pb.eatby, pb.sellby, pb.batch, pb.qty from llx_product_batch as pb, tmp_llx_product_batch as tpb where pb.fk_product_stock = tpb.fk_product_stock and COALESCE(pb.eatby, '') = COALESCE(tpb.eatby,'') and COALESCE(pb.sellby, '') = COALESCE(tpb.sellby, '') and pb.batch = tpb.batch;
+CREATE TABLE tmp_llx_product_batch2 AS select pb.rowid, pb.fk_product_stock, pb.eatby, pb.sellby, pb.batch, pb.qty from llx_product_batch as pb, tmp_llx_product_batch as tpb where pb.fk_product_stock = tpb.fk_product_stock and COALESCE(pb.eatby, '2000-01-01') = COALESCE(tpb.eatby,'2000-01-01') and COALESCE(pb.sellby, '2000-01-01') = COALESCE(tpb.sellby, '2000-01-01') and pb.batch = tpb.batch;
 --select * from tmp_llx_product_batch;
 --select * from tmp_llx_product_batch2;
 DELETE FROM llx_product_batch WHERE rowid IN (select rowid FROM tmp_llx_product_batch2);
@@ -138,9 +164,11 @@ delete from llx_categorie where fk_parent not in (select rowid from tmp_categori
 drop table tmp_categorie;
 -- Fix: delete orphelin category.
 delete from llx_categorie_product where fk_categorie not in (select rowid from llx_categorie where type = 0);
-delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type in (1, 2));
+delete from llx_categorie_fournisseur where fk_categorie not in (select rowid from llx_categorie where type = 1);
+delete from llx_categorie_societe where fk_categorie not in (select rowid from llx_categorie where type = 2);
 delete from llx_categorie_member where fk_categorie not in (select rowid from llx_categorie where type = 3);
 delete from llx_categorie_contact where fk_categorie not in (select rowid from llx_categorie where type = 4);
+delete from llx_categorie_project where fk_categorie not in (select rowid from llx_categorie where type = 6);
 
 
 -- Fix: delete orphelin deliveries. Note: deliveries are linked to shipment by llx_element_element only. No other links.
@@ -326,9 +354,11 @@ drop table tmp_c_shipment_mode;
 -- Restore id of user on link for payment of expense report
 drop table tmp_bank_url_expense_user;
 create table tmp_bank_url_expense_user (select e.fk_user_author, bu2.fk_bank from llx_expensereport as e, llx_bank_url as bu2 where bu2.url_id = e.rowid and bu2.type = 'payment_expensereport');
-update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where bu.url_id = 0 and bu.type ='user';
+update llx_bank_url as bu set url_id = (select e.fk_user_author from tmp_bank_url_expense_user as e where e.fk_bank = bu.fk_bank) where (bu.url_id = 0 OR bu.url_id IS NULL) and bu.type ='user';
 drop table tmp_bank_url_expense_user;
 
+
+-- VMYSQL4.1 update llx_projet_task_time set task_datehour = task_date where task_datehour < task_date or task_datehour > DATE_ADD(task_date, interval 1 day);
 
 
 -- Clean product prices
@@ -361,4 +391,18 @@ drop table tmp_bank_url_expense_user;
 -- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
 -- VMYSQL4.1 update llx_expensereport_det as ed set date = (select date_debut from llx_expensereport as e where ed.fk_expensereport = e.rowid) where DATE(STR_TO_DATE(date, '%Y-%m-%d')) < '1000-00-00';
 -- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_bank set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_bank set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
+
+-- Backport a change of value into the hourly rate. 
+-- update llx_projet_task_time as ptt set ptt.thm = (SELECT thm from llx_user as u where ptt.fk_user = u.rowid) where (ptt.thm is null)
 

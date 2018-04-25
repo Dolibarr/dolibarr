@@ -11,6 +11,7 @@ YourEMail=E-mail obdržať potvrdenie platby
 Creditor=Veriteľ
 PaymentCode=Platobné kód
 PayBoxDoPayment=Ísť na zaplatenie
+ToPay=Do platbu
 YouWillBeRedirectedOnPayBox=Budete presmerovaný na zabezpečené stránky Paybox vstupné vás informácie o kreditnej karte
 Continue=Ďalšie
 ToOfferALinkForOnlinePayment=URL pre %s platby

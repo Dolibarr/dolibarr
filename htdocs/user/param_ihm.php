@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2015 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro.com>
  *
@@ -65,7 +65,7 @@ $dirleft = "../core/menus/standard";
 
 // Charge utilisateur edite
 $object = new User($db);
-$object->fetch($id);
+$object->fetch($id, '', '', 1);
 $object->getrights();
 
 // Liste des zone de recherche permanentes supportees
@@ -78,12 +78,14 @@ $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$lan
 $form = new Form($db);
 $formadmin=new FormAdmin($db);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('usercard','globalcard'));
+
 
 /*
  * Actions
  */
+
 $parameters=array('id'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -179,7 +181,7 @@ if ($action == 'edit')
 
 if ($action == 'edit')
 {
-    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    dol_fiche_head($head, 'guisetup', $title, -1, 'user');
 
 	$linkback = '';
 
@@ -243,8 +245,8 @@ if ($action == 'edit')
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("LandingPage").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
@@ -257,8 +259,8 @@ if ($action == 'edit')
     print '</td></tr>';
     
     // Langue par defaut
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print $s?$s.' ':'';
@@ -272,8 +274,8 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Taille max des listes
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
     print empty($dolibarr_main_demo)?'':' disabled="disabled"';	// Disabled for demo
@@ -297,7 +299,7 @@ if ($action == 'edit')
 }
 else
 {
-    dol_fiche_head($head, 'guisetup', $title, 0, 'user');
+    dol_fiche_head($head, 'guisetup', $title, -1, 'user');
     
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php">'.$langs->trans("BackToList").'</a>';
     
@@ -309,8 +311,8 @@ else
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("LandingPage").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
     print '</td>';
@@ -327,8 +329,8 @@ else
     print '</td></tr>';
     
     // Language
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Language").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
     print ($s?$s.' ':'');
@@ -341,8 +343,8 @@ else
     print (isset($object->conf->MAIN_LANG_DEFAULT) && $object->conf->MAIN_LANG_DEFAULT=='auto'?$langs->trans("AutoDetectLang"):(! empty($object->conf->MAIN_LANG_DEFAULT)?$langs->trans("Language_".$object->conf->MAIN_LANG_DEFAULT):''));
     print '</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MaxSizeList").'</td>';
+    
+    print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.(! empty($conf->global->MAIN_SIZE_LISTE_LIMIT)?$conf->global->MAIN_SIZE_LISTE_LIMIT:'&nbsp;').'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' type="checkbox" disabled '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"").'> '.$langs->trans("UsePersonalValue").'</td>';
     print '<td>' . (! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?$object->conf->MAIN_SIZE_LISTE_LIMIT:'&nbsp;') . '</td></tr>';

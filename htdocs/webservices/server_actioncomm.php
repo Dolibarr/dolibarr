@@ -101,8 +101,7 @@ $actioncomm_fields= array(
 	'percentage' => array('name'=>'percentage','type'=>'xsd:string'),
 	'author' => array('name'=>'author','type'=>'xsd:string'),
 	'usermod' => array('name'=>'usermod','type'=>'xsd:string'),
-	'usertodo' => array('name'=>'usertodo','type'=>'xsd:string'),
-	'userdone' => array('name'=>'userdone','type'=>'xsd:string'),
+	'userownerid' => array('name'=>'userownerid','type'=>'xsd:string'),
 	'priority' => array('name'=>'priority','type'=>'xsd:string'),
 	'fulldayevent' => array('name'=>'fulldayevent','type'=>'xsd:string'),
 	'location' => array('name'=>'location','type'=>'xsd:string'),
@@ -291,8 +290,7 @@ function getActionComm($authentication,$id)
 			        	'percentage'=> $actioncomm->percentage,
 			        	'author'=> $actioncomm->authorid,
 			        	'usermod'=> $actioncomm->usermodid,
-			        	'usertodo'=> $actioncomm->userownerid,
-			        	'userdone'=> $actioncomm->userdoneid,
+			        	'userownerid'=> $actioncomm->userownerid,
 			        	'priority'=> $actioncomm->priority,
 			        	'fulldayevent'=> $actioncomm->fulldayevent,
 			        	'location'=> $actioncomm->location,
@@ -437,8 +435,7 @@ function createActionComm($authentication,$actioncomm)
 		$newobject->fk_project=$actioncomm['projectid'];
 		$newobject->note=$actioncomm['note'];
 		$newobject->contactid=$actioncomm['contactid'];
-		$newobject->userownerid=$actioncomm['usertodo'];
-		$newobject->userdoneid=$actioncomm['userdone'];
+		$newobject->userownerid=$actioncomm['userownerid'];
 		$newobject->label=$actioncomm['label'];
 		$newobject->percentage=$actioncomm['percentage'];
 		$newobject->priority=$actioncomm['priority'];
@@ -532,8 +529,7 @@ function updateActionComm($authentication,$actioncomm)
 			$object->contactid=$actioncomm['contactid'];
 			$object->fk_project=$actioncomm['projectid'];
 			$object->note=$actioncomm['note'];
-			$object->userownerid=$actioncomm['usertodo'];
-			$object->userdoneid=$actioncomm['userdone'];
+			$object->userownerid=$actioncomm['userownerid'];
 			$object->label=$actioncomm['label'];
 			$object->percentage=$actioncomm['percentage'];
 			$object->priority=$actioncomm['priority'];

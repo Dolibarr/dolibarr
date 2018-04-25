@@ -174,9 +174,9 @@ class Link extends CommonObject
         $sql .= ", datea = '" . $this->db->idate(dol_now()) . "'";
         $sql .= ", url = '" . $this->db->escape($this->url) . "'";
         $sql .= ", label = '" . $this->db->escape($this->label) . "'";
-        $sql .= ", objecttype = '" . $this->objecttype . "'";
+        $sql .= ", objecttype = '" . $this->db->escape($this->objecttype) . "'";
         $sql .= ", objectid = " . $this->objectid;
-        $sql .= " WHERE rowid = '" . $this->id ."'";
+        $sql .= " WHERE rowid = " . $this->id;
 
         dol_syslog(get_class($this)."::update sql = " .$sql);
         $resql = $this->db->query($sql);

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2008 Jeremie Ollivier    <jeremie.o@laposte.net>
- * Copyright (C) 2011	   Juanjo Menent   	   <jmenent@2byte.es>
+ * Copyright (C) 2011-2017 Juanjo Menent   	   <jmenent@2byte.es>
  * Copyright (C) 2011      Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ top_htmlhead('','',0,0,'',$arrayofcss);
 <?php
 if (! empty($mysoc->logo_small))
 {
-    print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">';
+    print '<img class="logopos" alt="Logo company" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=mycompany&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small).'">';
 }
 else
 {
@@ -105,7 +105,7 @@ print '<td>';
 $disabled=0;
 $langs->load("companies");
 if (! empty($conf->global->CASHDESK_ID_THIRDPARTY)) $disabled=1; // If a particular third party is defined, we disable choice
-print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):$conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3)',!$disabled,$disabled,1);
+print $form->select_company(GETPOST('socid','int')?GETPOST('socid','int'):$conf->global->CASHDESK_ID_THIRDPARTY,'socid','s.client in (1,3) AND s.status = 1',!$disabled,$disabled,1);
 //print '<input name="warehouse_id" class="texte_login" type="warehouse_id" value="" />';
 print '</td>';
 print "</tr>\n";

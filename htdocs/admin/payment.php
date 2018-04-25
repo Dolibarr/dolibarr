@@ -71,7 +71,7 @@ if ($action == 'setmod')
 
 if ($action == 'setparams')
 {
-	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS');	// No alpha here, we want exact string
+	$freetext = GETPOST('FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS','none');	// No alpha here, we want exact string
 
 	$res = dolibarr_set_const($db, "FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS",$freetext,'chaine',0,'',$conf->entity);
 
@@ -81,24 +81,11 @@ if ($action == 'setparams')
 	{
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
-	
-	/*
-	$freetext = GETPOST('INVOICE_AUTO_FILLJS');	// No alpha here, we want exact string
-	
-	$res = dolibarr_set_const($db, "INVOICE_AUTO_FILLJS",$freetext,'chaine',0,'',$conf->entity);
-	
-	if (! $res > 0) $error++;
-	
-	if ($error)
-	{
-	    setEventMessages($langs->trans("Error"), null, 'errors');
-	}*/
-
 	if (! $error)
 	{
 	    setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
 	}
-	
+
 }
 
 
@@ -117,7 +104,7 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToM
 print load_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
 
 $head = invoice_admin_prepare_head();
-dol_fiche_head($head, 'payment', $langs->trans("Invoices"), 0, 'invoice');
+dol_fiche_head($head, 'payment', $langs->trans("Invoices"), -1, 'invoice');
 
 /*
  *  Numbering module
@@ -177,7 +164,7 @@ foreach ($dirmodels as $reldir)
                         if ($module->isEnabled())
                         {
                             $var = !$var;
-                            print '<tr '.$bc[$var].'><td width="100">';
+                            print '<tr class="oddeven"><td width="100">';
                             echo preg_replace('/\-.*$/','',preg_replace('/mod_payment_/','',preg_replace('/\.php$/','',$file)));
                             print "</td><td>\n";
 
@@ -263,7 +250,7 @@ print "</tr>\n";
 
 // Allow payments on different thirdparties bills but same parent company
 $var=! $var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("PaymentOnDifferentThirdBills");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS",$conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS,1);
@@ -273,7 +260,7 @@ print "</td></tr>\n";
 // Add js auto fill amount on paiement form
 /* always on now
 $var=! $var;
-print '<tr '.$bc[$var].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("JSOnPaimentBill");
 print '</td><td width="60" align="center">';
 print $form->selectyesno("INVOICE_AUTO_FILLJS",$conf->global->INVOICE_AUTO_FILLJS,1);

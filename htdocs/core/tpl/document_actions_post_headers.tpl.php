@@ -18,6 +18,20 @@
  * or see http://www.gnu.org/
  */
 
+// Following var can be set
+// $permission = permission or not to add a file
+// $permtoedit = permission or not to edit file name, crop file
+// $modulepart = for download
+// $param      = param to add to download links
+
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
 if (empty($permtoedit)) $permtoedit=-1;
@@ -72,6 +86,9 @@ $formfile->form_attach_new_file(
 	$savingdocmask
 );
 
+$disablemove=1;
+if ($modulepart == 'produit') $disablemove=0;
+
 // List of document
 $formfile->list_of_documents(
     $filearray,
@@ -79,7 +96,7 @@ $formfile->list_of_documents(
     $modulepart,
     $param,
     0,
-    $relativepathwithnofile,		// relative path with no file. For example "moduledir/0/1"
+    $relativepathwithnofile,		// relative path with no file. For example "0/1"
     $permission,
     0,
     '',
@@ -87,7 +104,11 @@ $formfile->list_of_documents(
     '',
     '',
     0,
-    $permtoedit
+    $permtoedit,
+    $upload_dir,
+    $sortfield,
+    $sortorder,
+    $disablemove
 );
 
 print "<br>";

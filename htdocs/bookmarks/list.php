@@ -27,32 +27,40 @@ require_once DOL_DOCUMENT_ROOT.'/bookmarks/class/bookmark.class.php';
 $langs->load("bookmarks");
 $langs->load("admin");
 
+$action=GETPOST('action','alpha');
+$massaction=GETPOST('massaction','alpha');
+$show_files=GETPOST('show_files','int');
+$confirm=GETPOST('confirm','alpha');
+$toselect = GETPOST('toselect', 'array');
+
 // Security check
 if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 $optioncss = GETPOST('optioncss','alpha');
 
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="position";
-$limit=$conf->liste_limit;
+if (! $sortfield) $sortfield='position';
+if (! $sortorder) $sortorder='ASC';
+
+$id = GETPOST("bid",'int');
 
 
 /*
  * Actions
  */
 
-if ($_GET["action"] == 'delete')
+if ($action == 'delete')
 {
     $bookmark=new Bookmark($db);
-    $res=$bookmark->remove($_GET["bid"]);
+    $res=$bookmark->remove($id);
     if ($res > 0)
     {
         header("Location: ".$_SERVER["PHP_SELF"]);
@@ -71,9 +79,9 @@ if ($_GET["action"] == 'delete')
 
 $userstatic=new User($db);
 
-llxHeader();
+llxHeader('', $langs->trans("ListOfBookmarks"));
 
-print load_fiche_titre($langs->trans("Bookmarks"));
+print load_fiche_titre($langs->trans("ListOfBookmarks"));
 
 $sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";
@@ -93,22 +101,19 @@ if ($resql)
     if ($optioncss != '') $param ='&optioncss='.$optioncss;
 
     $moreforfilter='';
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
-    
+
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Title"),'','');
-    print "</td>";
-    print_liste_field_titre($langs->trans("Link"),'','');
-    print "</td>";
-    print_liste_field_titre($langs->trans("Target"),'','','','','align="center"');
-    print "</td>";
-    print_liste_field_titre($langs->trans("Owner"),$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Position"),$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"bid","", $param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre("Title",$_SERVER["PHP_SELF"],"title","", $param,'align="left"',$sortfield,$sortorder);
+    print_liste_field_titre("Link",'','');
+    print_liste_field_titre("Target",'','','','','align="center"');
+    print_liste_field_titre("Owner",$_SERVER["PHP_SELF"],"u.lastname","", $param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"b.dateb","", $param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("Position",$_SERVER["PHP_SELF"],"b.position","", $param,'align="right"',$sortfield,$sortorder);
     print_liste_field_titre('');
     print "</tr>\n";
 
@@ -117,8 +122,8 @@ if ($resql)
     {
         $obj = $db->fetch_object($resql);
 
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
+
+        print '<tr class="oddeven">';
 
         // Id
         print '<td align="left">';
@@ -126,8 +131,8 @@ if ($resql)
         print '</td>';
 
         $linkintern=0;
-        $title=dol_trunc($obj->title,24);
-        $link=dol_trunc($obj->url,24);
+        $title=$obj->title;
+        $link=$obj->url;
 
         // Title
         print "<td>";
@@ -152,7 +157,7 @@ if ($resql)
         print "</td>\n";
 
         // Url
-        print "<td>";
+        print '<td class="tdoverflowmax200">';
         if (! $linkintern) print '<a href="'.$obj->url.'"'.($obj->target?' target="newlink"':'').'>';
         print $link;
         if (! $linkintern) print '</a>';
@@ -204,7 +209,7 @@ if ($resql)
     }
     print "</table>";
     print '</div>';
-    
+
     $db->free($resql);
 }
 else

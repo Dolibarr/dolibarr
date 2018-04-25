@@ -110,13 +110,24 @@ Enclosure=Ek
 SpecialCode=Özel kod
 ExportStringFilter=%% metinde bir ya da fazla karakterin değiştirilmesine izin verir
 ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : bir yıılık yıl/ay/gün süzgeçi<br>YYYY+YYYY, YYYYMM+YYYYMM, YYYYMMDD+YYYYMMDD : yıllar arası yıllar/aylar/günler süzgeçi<br> > YYYY, > YYYYMM, > YYYYMMDD : izleyen tüm yıllar için yıılar/aylar/günler süzgeçi<br> < YYYY, < YYYYMM, < YYYYMMDD : bütün önceki yıllar/aylar/günler süzgeçi
-ExportNumericFilter='NNNNN' bir değere göre süzgeç<br>'NNNNN+NNNNN' bir değerler aralığı süzgeçi<br>'&gt;NNNNN' düşük değerlere göre süzgeç<br>'&gt;NNNNN' yüksek değerlere göre süzgeç
+ExportNumericFilter=Tek bir değere göre NNNNN filtreler<br>Bir dizi değer üzerinden NNNNN+NNNNN filtreler<br>Daha düşük değerlere göre < NNNNN filtreler<br>Daha düşük değerlere göre > NNNNN filtreler
 ImportFromLine=İçeaktarımın başladığı satır numarası
 EndAtLineNb=Satır numarası sonu
+ImportFromToLine=Satır numaralarını içe aktar (buradan - buraya)
 SetThisValueTo2ToExcludeFirstLine=Örneğin, İlk 2 satırı dışarıda tutmak için bu değeri 3 e ayarlayın
 KeepEmptyToGoToEndOfFile=Dosya sonuna gitmek için bu alanı boş bırakın
+SelectPrimaryColumnsForUpdateAttempt=Güncelleme girişimi için birincil anahtar olarak kullanmak üzere sütun(lar) seçin
+UpdateNotYetSupportedForThisImport=Bu tür bir içe aktarma için güncelleme desteklenmiyor (yalnızca ekleme)
+NoUpdateAttempt=Hiçbir güncelleme girişimi gerçekleşmedi, yalnızca ekleme
+ImportDataset_user_1=Kullanıcılar (çalışanlar veya değil) ve mülkler
+ComputedField=Hesaplanmış alan
 ## filters
 SelectFilterFields=Süzmek istediğiniz değerleri buraya yazın.
 FilteredFields=Süzülmüş alanlar
 FilteredFieldsValues=Süzgeç değeri
 FormatControlRule=Biçim denetimi kuralı
+## imports updates
+KeysToUseForUpdates=Verileri güncellemek için kullanılacak anahtar
+NbInsert=Eklenen satır sayısı: %s
+NbUpdate=Güncellenmiş satır sayısı: %s
+MultipleRecordFoundWithTheseFilters=Bu filtrelerle birden çok kayıt bulundu: %s

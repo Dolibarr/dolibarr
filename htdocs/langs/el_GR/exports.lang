@@ -113,8 +113,14 @@ ExportDateFilter=YYYY, YYYYMM, YYYYMMDD : φίλτρα ανά ένα έτος/μ
 ExportNumericFilter=NNNNN filters by one value<br>NNNNN+NNNNN filters over a range of values<br>< NNNNN filters by lower values<br>> NNNNN filters by higher values
 ImportFromLine=Η εισαγωγή ξεκινάει από τη γραμμή νούμερο
 EndAtLineNb=Τέλος στη γραμμή νούμερο
+ImportFromToLine=Import line numbers (from - to)
 SetThisValueTo2ToExcludeFirstLine=Για παράδειγμα θέστε αυτή την τιμή σε 3 για να αποκλείσετε τις 2 πρώτες γραμμές
 KeepEmptyToGoToEndOfFile=Αφήστε αυτό το πεδίο κενό για να προσωρήσετε στο τέλος του αρχείου
+SelectPrimaryColumnsForUpdateAttempt=Select column(s) to use as primary key for update attempt
+UpdateNotYetSupportedForThisImport=Update is not supported for this type of import (only insert)
+NoUpdateAttempt=No update attempt was performed, only insert
+ImportDataset_user_1=Users (employees or not) and properties
+ComputedField=Computed field
 ## filters
 SelectFilterFields=Αν θέλετε να φιλτράρετε ορισμένες τιμές, απλά εισάγετε τις τιμές εδώ.
 FilteredFields=Φιλτραρισμένα πεδία

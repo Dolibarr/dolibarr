@@ -45,7 +45,7 @@ $numberofsticker=GETPOST('numberofsticker','int');
 
 $mesg='';
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 $producttmp=new Product($db);
 $thirdpartytmp=new Societe($db);

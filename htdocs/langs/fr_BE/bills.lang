@@ -1,9 +1,6 @@
 # Dolibarr language file - Source file is en_US - bills
 BillsLate=Paiements en retard
 InvoiceStandardDesc=Ce type de facture est le type commun.
-InvoiceDeposit=Facture d'accompte
-InvoiceDepositAsk=Facture d'accompte
-InvoiceDepositDesc=Ce type de facture est fait lorsqu'un accompte a été reçu.
 InvoiceProFormaDesc=<b>Une facture proforma</b> est l'image d'une vraie facture mais n'a pas de valeur comptable.
 InvoiceReplacementAsk=Facture de remplacement pour facture
 InvoiceReplacementDesc=Une <b>facture de remplacement</b> est utilisée pour annuler et remplacer complètement une facture pour laquelle aucun paiement n'a encore été reçu. <br><br>Note: Seules les factures sans paiement peuvent être remplacées. Si la facture que vous remplacez n'est pas encore clôturée, elle sera clôturée automatiquement et enregistrée comme 'abandonnée'.
@@ -21,7 +18,6 @@ SupplierBills=factures fournisseurs
 Payment=Paiement
 Payments=Paiements
 DeletePayment=Supprimer paiement
-ConfirmDeletePayment=Êtes-vous certain de vouloir supprimer ce paiement?
 SupplierPayments=Paiements fournisseurs
 ReceivedPayments=Paiements reçus
 ReceivedCustomersPayments=Paiements reçus de clients
@@ -43,7 +39,6 @@ ErrorInvoiceAvoirMustBeNegative=Erreur, une facture de type Note de crédit doit
 ConfirmClassifyPaidPartiallyReasonAvoir=Le reste à payer <b>(%s %s)</b> est un trop facturé (car article retourné, oubli, escompte non défini...) régularisé par un crédit
 ConfirmClassifyPaidPartiallyReasonOtherDesc=Ce choix sera celui choisi dans tout autre cas, par exemple, dans les cas suivants:<br>- paiement partiel car une partie des produits a été retourné.<br>- trop réclamé suite à oubli d'une remise<br>Dans tous les cas, le trop réclamé doit être régularisé en compta et envers le client par un crédit.
 ShowInvoiceAvoir=Afficher note de crédit
-AlreadyPaidNoCreditNotesNoDeposits=Déjà réglé (hors crédits et acomptes)
 EscompteOfferedShort=Ristourne
 Discounts=Ristournes
 AddDiscount=Créer ristourne

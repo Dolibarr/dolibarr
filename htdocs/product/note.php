@@ -34,7 +34,7 @@ $langs->load("companies");
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
-$action = GETPOST('action');
+$action = GETPOST('action','aZ09');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -91,9 +91,10 @@ if ($id > 0 || ! empty($ref))
     $titre=$langs->trans("CardProduct".$object->type);
     $picto=($object->type==Product::TYPE_SERVICE?'service':'product');
 
-    dol_fiche_head($head, 'note', $titre, 0, $picto);
+    dol_fiche_head($head, 'note', $titre, -1, $picto);
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
     if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;

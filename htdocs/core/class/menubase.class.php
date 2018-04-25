@@ -216,20 +216,20 @@ class Menubase
         $sql = "UPDATE ".MAIN_DB_PREFIX."menu SET";
         $sql.= " menu_handler='".$this->db->escape($this->menu_handler)."',";
         $sql.= " module='".$this->db->escape($this->module)."',";
-        $sql.= " type='".$this->type."',";
+        $sql.= " type='".$this->db->escape($this->type)."',";
         $sql.= " mainmenu='".$this->db->escape($this->mainmenu)."',";
         $sql.= " leftmenu='".$this->db->escape($this->leftmenu)."',";
-        $sql.= " fk_menu='".$this->fk_menu."',";
+        $sql.= " fk_menu='".$this->db->escape($this->fk_menu)."',";
         $sql.= " fk_mainmenu=".($this->fk_mainmenu?"'".$this->fk_mainmenu."'":"null").",";
         $sql.= " fk_leftmenu=".($this->fk_leftmenu?"'".$this->fk_leftmenu."'":"null").",";
-        $sql.= " position='".$this->position."',";
+        $sql.= " position=".($this->position > 0 ? $this->position : 0).",";
         $sql.= " url='".$this->db->escape($this->url)."',";
         $sql.= " target='".$this->db->escape($this->target)."',";
         $sql.= " titre='".$this->db->escape($this->titre)."',";
         $sql.= " langs='".$this->db->escape($this->langs)."',";
         $sql.= " perms='".$this->db->escape($this->perms)."',";
         $sql.= " enabled='".$this->db->escape($this->enabled)."',";
-        $sql.= " usertype='".$this->user."'";
+        $sql.= " usertype='".$this->db->escape($this->user)."'";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -402,7 +402,8 @@ class Menubase
     }
 
     /**
-     * 	Load entries found from database in this->newmenu array.
+     * 	Load entries found from database (and stored into $tabMenu) in $this->newmenu array.
+     *  Warning: Entries in $tabMenu must have child after parent
      *
      * 	@param	Menu	$newmenu        Menu array to complete (in most cases, it's empty, may be already initialized with some menu manager like eldy)
      * 	@param	string	$mymainmenu		Value for mainmenu to filter menu to load (often $_SESSION["mainmenu"])
@@ -435,10 +436,10 @@ class Menubase
         // We initialize newmenu with first already found menu entries
         $this->newmenu = $newmenu;
 
-        // Now edit this->newmenu->list to add entries found into tabMenu that are childs of mainmenu claimed, using the fk_menu link (old method)
+        // Now complete $this->newmenu->list to add entries found into $tabMenu that are childs of mainmenu=$menutopid, using the fk_menu link that is int (old method)
         $this->recur($tabMenu, $menutopid, 1);
 
-        // Now update this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
+        // Now complete $this->newmenu->list when fk_menu value is -1 (left menu added by modules with no top menu)
         foreach($tabMenu as $key => $val)
         {
         	//var_dump($tabMenu);
@@ -479,6 +480,10 @@ class Menubase
         			}
         			//print 'We must insert menu entry between entry '.$lastid.' and '.$nextid.'<br>';
         			if ($found) $this->newmenu->insert($lastid, $val['url'], $val['titre'], $searchlastsub, $val['perms'], $val['target'], $val['mainmenu'], $val['leftmenu'], $val['position']);
+        			else {
+        			    dol_syslog("Error. Modules ".$val['module']." has defined a menu entry with a parent='fk_mainmenu=".$val['fk_leftmenu'].",fk_leftmenu=".$val['fk_leftmenu']."' and position=".$val['position'].'. The parent was not found. May be you forget it into your definition of menu, or may be the parent has a "position" that is after the child (fix field "position" of parent or child in this case).', LOG_WARNING);
+        			    //print "Parent menu not found !!<br>";
+        			}
         		}
         	}
         }
@@ -494,7 +499,7 @@ class Menubase
      *  @param	string	$myleftmenu     Value for left that defined leftmenu
      *  @param  int		$type_user      Looks for menu entry for 0=Internal users, 1=External users
      *  @param  string	$menu_handler   Name of menu_handler used ('auguria', 'eldy'...)
-     *  @param  array	$tabMenu       Array to store new entries found (in most cases, it's empty, but may be alreay filled)
+     *  @param  array	$tabMenu        Array to store new entries found (in most cases, it's empty, but may be alreay filled)
      *  @return int     		        >0 if OK, <0 if KO
      */
     function menuLoad($mymainmenu, $myleftmenu, $type_user, $menu_handler, &$tabMenu)
@@ -508,7 +513,7 @@ class Menubase
 
         $sql = "SELECT m.rowid, m.type, m.module, m.fk_menu, m.fk_mainmenu, m.fk_leftmenu, m.url, m.titre, m.langs, m.perms, m.enabled, m.target, m.mainmenu, m.leftmenu, m.position";
         $sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
-        $sql.= " WHERE m.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+        $sql.= " WHERE m.entity IN (0,".$conf->entity.")";
         $sql.= " AND m.menu_handler IN ('".$menu_handler."','all')";
         if ($type_user == 0) $sql.= " AND m.usertype IN (0,2)";
         if ($type_user == 1) $sql.= " AND m.usertype IN (1,2)";
@@ -602,7 +607,7 @@ class Menubase
                     //$tabMenu[$b]['langs']       = $menu['langs'];
                     $tabMenu[$b]['fk_mainmenu'] = $menu['fk_mainmenu'];
                     $tabMenu[$b]['fk_leftmenu'] = $menu['fk_leftmenu'];
-                    $tabMenu[$b]['position']    = $menu['position'];
+                    $tabMenu[$b]['position']    = (int) $menu['position'];
 
                     $b++;
                 }
@@ -610,6 +615,11 @@ class Menubase
                 $a++;
             }
             $this->db->free($resql);
+
+            // Currently $tabMenu is sorted on position.
+            // If a child have a position lower that its parent, we can make a loop to fix this here, but we prefer to show a warning
+            // into the leftMenuCharger later to avoid useless operations.
+
             return 1;
         }
         else
@@ -622,7 +632,7 @@ class Menubase
     /**
      *  Complete this->newmenu with menu entry found in $tab
      *
-     *  @param  array	$tab			Tab array
+     *  @param  array	$tab			Tab array with all menu entries
      *  @param  int		$pere			Id of parent
      *  @param  int		$level			Level
      *  @return	void

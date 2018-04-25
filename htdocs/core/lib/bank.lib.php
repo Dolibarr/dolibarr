@@ -77,7 +77,7 @@ function bank_prepare_head(Account $object)
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
     require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->bank->dir_output . "/" . dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
     $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$h][0] = DOL_URL_ROOT . "/compta/bank/document.php?account=" . $object->id;
     $head[$h][1] = $langs->trans("Documents");
@@ -91,6 +91,11 @@ function bank_prepare_head(Account $object)
     // $this->tabs = array('entity:-tabname);   												to remove a tab
     complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank');
 
+    /*$head[$h][0] = DOL_URL_ROOT . "/compta/bank/info.php?id=" . $object->id;
+    $head[$h][1] = $langs->trans("Info");
+    $head[$h][2] = 'info';
+    $h++;*/
+    
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
 
     return $head;
@@ -130,6 +135,51 @@ function bank_admin_prepare_head($object)
 	$h++;
 
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank_admin', 'remove');
+
+	return $head;
+}
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @param   Object	$object		Object related to tabs
+ * @return  array				Array of tabs to shoc
+ */
+function various_payment_prepare_head($object) {
+	
+	global $db, $langs, $conf;
+	
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'card';
+	$h++;
+
+    // Show more tabs from modules
+    // Entries must be declared in modules descriptor with line
+    // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+    // $this->tabs = array('entity:-tabname);   												to remove a tab
+    complete_head_from_modules($conf,$langs,$object,$head,$h,'various_payment');
+
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+	$upload_dir = $conf->banque->dir_output . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
+	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/document.php?id='.$object->id;
+	$head[$h][1] = $langs->trans('Documents');
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
+	$head[$h][2] = 'documents';
+	$h++;
+
+	$head[$h][0] = DOL_URL_ROOT.'/compta/bank/various_payment/info.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+    
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'various_payment', 'remove');
 
 	return $head;
 }

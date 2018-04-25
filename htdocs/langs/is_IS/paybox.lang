@@ -11,6 +11,7 @@ YourEMail=Netfang til staðfestingar greiðslu
 Creditor=Lánveitandi
 PaymentCode=Greiðsla kóða
 PayBoxDoPayment=Fara á greiðslu
+ToPay=Ekki greiðslu
 YouWillBeRedirectedOnPayBox=Þú verður vísað á að tryggja Paybox síðu til inntak þú upplýsingar um greiðslukort
 Continue=Næsti
 ToOfferALinkForOnlinePayment=Slóð fyrir %s greiðslu

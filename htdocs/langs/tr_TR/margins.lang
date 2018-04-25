@@ -41,4 +41,4 @@ rateMustBeNumeric=Kar oran sayısal bir değer olmalı
 markRateShouldBeLesserThan100=Yayınlanmış kar oranı 100 den daha düşük olmalı
 ShowMarginInfos=Kar oranı bilgisi göster
 CheckMargins=Kar oranı ayrıntıları
-MarginPerSaleRepresentativeWarning=Kullanıcı başına kar oranı raporu, üçüncü taraflarla ve kullanıcı başına kar oranı hesaplanacak satış temsilcisi arasındaki bağlantıyı kullanır. Çünkü bazı üçüncü partiler herhangi bir satış temsilcisine bağlantılanmamış ve bazı üçüncü taraflar birçok kullanıcıya bağlantılanmış olabilir, bazı kar oranları bu raporlarda görünmeyebilir veya birçok farklı satırda görünebilir.
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each salerepresentaive. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

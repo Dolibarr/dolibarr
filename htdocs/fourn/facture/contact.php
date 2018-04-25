@@ -2,6 +2,7 @@
 /* Copyright (C) 2005		Patrick Rouillon	<patrick@rouillon.net>
  * Copyright (C) 2005-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 $langs->load("bills");
 $langs->load('other');
@@ -138,7 +142,7 @@ if ($id > 0 || ! empty($ref))
 		
 		$head = facturefourn_prepare_head($object);
 
-		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), 0, 'bill');
+		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'bill');
 
 		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 

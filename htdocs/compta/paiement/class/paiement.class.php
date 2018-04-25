@@ -37,6 +37,7 @@ class Paiement extends CommonObject
 {
     public $element='payment';
     public $table_element='paiement';
+    public $picto = 'payment';
 
 	var $facid;
 	var $datepaye;
@@ -64,7 +65,7 @@ class Paiement extends CommonObject
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
     var $fk_paiement;    // Type of paiment
 
-    
+
 	/**
 	 *	Constructor
 	 *
@@ -95,7 +96,7 @@ class Paiement extends CommonObject
 		if ($id > 0)
 			$sql.= ' AND p.rowid = '.$id;
 		else if ($ref)
-			$sql.= ' AND p.rowid = '.$ref;
+			$sql.= " AND p.ref = '".$ref."'";
 		else if ($fk_bank)
 			$sql.= ' AND p.fk_bank = '.$fk_bank;
 
@@ -152,14 +153,14 @@ class Paiement extends CommonObject
 
 		$error = 0;
 		$way = $this->getWay();
-		
+
 		$now=dol_now();
-		
+
         // Clean parameters
         $totalamount = 0;
 		$totalamount_converted = 0;
         $atleastonepaymentnotnull = 0;
-		
+
 		if ($way == 'dolibarr')
 		{
 			$amounts = &$this->amounts;
@@ -170,22 +171,22 @@ class Paiement extends CommonObject
 			$amounts = &$this->multicurrency_amounts;
 			$amounts_to_update = &$this->amounts;
 		}
-		
+
 		foreach ($amounts as $key => $value)	// How payment is dispatch
 		{
 			$value_converted = Multicurrency::getAmountConversionFromInvoiceRate($key, $value, $way);
 			$totalamount_converted += $value_converted;
 			$amounts_to_update[$key] = price2num($value_converted, 'MT');
-			
+
 			$newvalue = price2num($value,'MT');
 			$amounts[$key] = $newvalue;
 			$totalamount += $newvalue;
 			if (! empty($newvalue)) $atleastonepaymentnotnull++;
 		}
-		
+
 		$totalamount = price2num($totalamount);
 		$totalamount_converted = price2num($totalamount_converted);
-		
+
 		// Check parameters
         if (empty($totalamount) && empty($atleastonepaymentnotnull))	 // We accept negative amounts for withdraw reject but not empty arrays
         {
@@ -195,7 +196,7 @@ class Paiement extends CommonObject
 
 		$this->db->begin();
 
-		$ref = $this->getNextNumRef('');
+		$this->ref = $this->getNextNumRef('');
 
 		if ($way == 'dolibarr')
 		{
@@ -209,8 +210,8 @@ class Paiement extends CommonObject
 		}
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
-		
+		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
+
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -226,7 +227,7 @@ class Paiement extends CommonObject
 					$amount = price2num($amount);
 					$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount, multicurrency_amount)';
 					$sql .= ' VALUES ('.$facid.', '. $this->id.', \''.$amount.'\', \''.$this->multicurrency_amounts[$key].'\')';
-		
+
 					dol_syslog(get_class($this).'::Create Amount line '.$key.' insert paiement_facture', LOG_DEBUG);
 					$resql=$this->db->query($sql);
 					if ($resql)
@@ -244,21 +245,27 @@ class Paiement extends CommonObject
 
 							//var_dump($invoice->total_ttc.' - '.$paiement.' -'.$creditnotes.' - '.$deposits.' - '.$remaintopay);exit;
 
-                            // If there is withdrawals request to do and not done yet, we wait before closing.
+                            /* Why this ? We can remove i think.
+                            // If there is withdrawals request to do and not done yet on the invoice the payment is on, we wait before closing.
                             $mustwait=0;
+                            $sqlrequest ="SELECT COUNT(rowid) FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
+                            $sqlrequest.="WHERE fk_facture = ".$invoice->id." AND traite = 0";
+                            ...
+
                             $listofpayments=$invoice->getListOfPayments();
                             foreach($listofpayments as $paym)
                             {
-                                // This payment might be this one or a previous one
+                                // This payment on invoice $invoice might be the one we record or another one
                                 if ($paym['type']=='PRE')
                                 {
                                     if (! empty($conf->prelevement->enabled))
                                     {
-                                        // TODO Check if this payment has a withdraw request
                                         // if not, $mustwait++;      // This will disable automatic close on invoice to allow to process
+
                                     }
                                 }
                             }
+                            */
 
                             //Invoice types that are eligible for changing status to paid
 							$affected_types = array(
@@ -271,14 +278,64 @@ class Paiement extends CommonObject
 
                             if (!in_array($invoice->type, $affected_types)) dol_syslog("Invoice ".$facid." is not a standard, nor replacement invoice, nor credit note, nor deposit invoice, nor situation invoice. We do nothing more.");
                             else if ($remaintopay) dol_syslog("Remain to pay for invoice ".$facid." not null. We do nothing more.");
-                            else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
+                            //else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else
                             {
-                                $result=$invoice->set_paid($user,'','');
-                                if ($result<0)
+                                // If invoice is a down payment, we also convert down payment to discount
+                                if ($invoice->type == Facture::TYPE_DEPOSIT)
                                 {
-                                    $this->error=$invoice->error;
-                                    $error++;
+			                        $amount_ht = $amount_tva = $amount_ttc = array();
+
+                                    // Loop on each vat rate
+                                    $i = 0;
+                                    foreach ($invoice->lines as $line)
+                                    {
+                                        if ($line->total_ht!=0)
+                                        { 	// no need to create discount if amount is null
+                                            $amount_ht[$line->tva_tx] += $line->total_ht;
+                                            $amount_tva[$line->tva_tx] += $line->total_tva;
+                                            $amount_ttc[$line->tva_tx] += $line->total_ttc;
+                                            $i ++;
+                                        }
+                                    }
+
+                                    // Insert one discount by VAT rate category
+                                    $discount = new DiscountAbsolute($this->db);
+                                    $discount->description = '(DEPOSIT)';
+                                    $discount->fk_soc = $invoice->socid;
+                                    $discount->fk_facture_source = $invoice->id;
+
+                                    foreach ($amount_ht as $tva_tx => $xxx)
+                                    {
+                                        $discount->amount_ht = abs($amount_ht[$tva_tx]);
+                                        $discount->amount_tva = abs($amount_tva[$tva_tx]);
+                                        $discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+                                        $discount->tva_tx = abs($tva_tx);
+
+                                        $result = $discount->create($user);
+                                        if ($result < 0)
+                                        {
+                                            $error++;
+                                            break;
+                                        }
+                                    }
+
+                                    if ($error)
+                                    {
+                                        setEventMessages($discount->error, $discount->errors, 'errors');
+                                        $error++;
+                                    }
+                                }
+
+                                // Set invoice to paid
+                                if (! $error)
+                                {
+                                    $result=$invoice->set_paid($user,'','');
+                                    if ($result<0)
+                                    {
+                                        $this->error=$invoice->error;
+                                        $error++;
+                                    }
                                 }
                             }
 					    }
@@ -431,12 +488,12 @@ class Paiement extends CommonObject
 
 
     /**
-     *      Add a record into bank for payment with links between this bank record and invoices of payment.
+     *      Add a record into bank for payment + links between this bank record and sources of payment.
      *      All payment properties (this->amount, this->amounts, ...) must have been set first like after a call to create().
      *
      *      @param	User	$user               Object of user making payment
      *      @param  string	$mode               'payment', 'payment_supplier'
-     *      @param  string	$label              Label to use in bank record
+     *      @param  string	$label              Label to use in bank record. Note: If label is '(WithdrawalPayment)', a third entry 'widthdraw' is added into bank_url.
      *      @param  int		$accountid          Id of bank account to do link with
      *      @param  string	$emetteur_nom       Name of transmitter
      *      @param  string	$emetteur_banque    Name of bank
@@ -469,13 +526,13 @@ class Paiement extends CommonObject
 
             $acc = new Account($this->db);
             $result=$acc->fetch($this->fk_account);
-			
+
 			$totalamount=$this->amount;
             if (empty($totalamount)) $totalamount=$this->total; // For backward compatibility
-            
+
             // if dolibarr currency != bank currency then we received an amount in customer currency (currently I don't manage the case : my currency is USD, the customer currency is EUR and he paid me in GBP. Seems no sense for me)
             if (!empty($conf->multicurrency->enabled) && $conf->currency != $acc->currency_code) $totalamount=$this->multicurrency_amount;
-			
+
             if ($mode == 'payment_supplier') $totalamount=-$totalamount;
 
             // Insert payment into llx_bank
@@ -520,10 +577,11 @@ class Paiement extends CommonObject
                 }
 
                 // Add link 'company' in bank_url between invoice and bank transaction (for each invoice concerned by payment)
-                if (! $error  && $label != '(WithdrawalPayment)')
+                //if (! $error && $label != '(WithdrawalPayment)')
+                if (! $error)
                 {
                     $linkaddedforthirdparty=array();
-                    foreach ($this->amounts as $key => $value)  // We should have always same third party but we loop in case of.
+                    foreach ($this->amounts as $key => $value)  // We should have invoices always for same third party but we loop in case of.
                     {
                         if ($mode == 'payment')
                         {
@@ -745,7 +803,7 @@ class Paiement extends CommonObject
 
 	/**
 	 *    Information sur l'objet
-	 *    
+	 *
 	 *    @param   int     $id      id du paiement dont il faut afficher les infos
 	 *    @return  void
 	 */
@@ -911,13 +969,13 @@ class Paiement extends CommonObject
 
 	/**
 	 * 	get the right way of payment
-	 * 
+	 *
 	 * 	@return 	string 	'dolibarr' if standard comportment or paid in dolibarr currency, 'customer' if payment received from multicurrency inputs
 	 */
 	function getWay()
 	{
 		global $conf;
-		
+
 		$way = 'dolibarr';
 		if (!empty($conf->multicurrency->enabled))
 		{
@@ -930,10 +988,10 @@ class Paiement extends CommonObject
 				}
 			}
 		}
-		
+
 		return $way;
 	}
-	
+
 	/**
 	 *  Initialise an instance with random values.
 	 *  Used to build previews or test instances.
@@ -964,26 +1022,29 @@ class Paiement extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			Sur quoi pointe le lien
+	 *  @param  string  $mode           'withlistofinvoices'=Include list of invoices into tooltip
 	 *	@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$mode='withlistofinvoices')
 	{
 		global $langs;
 
 		$result='';
         $label = $langs->trans("ShowPayment").': '.$this->ref;
-	$arraybill = $this->getBillsArray();
-	if (count($arraybill) >0)
-	{
-		require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-		$facturestatic=new Facture($this->db);
-		foreach ($arraybill as $billid)
-		{
-			$facturestatic->fetch($billid);
-			$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
-		}
-	}
-
+        if ($mode == 'withlistofinvoices')
+        {
+            $arraybill = $this->getBillsArray();
+            if (count($arraybill) > 0)
+            {
+            	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+            	$facturestatic=new Facture($this->db);
+            	foreach ($arraybill as $billid)
+            	{
+            		$facturestatic->fetch($billid);
+            		$label .='<br> '.$facturestatic->getNomUrl(1).' '.$facturestatic->getLibStatut(2,1);
+            	}
+            }
+        }
         $link = '<a href="'.DOL_URL_ROOT.'/compta/paiement/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
@@ -1016,7 +1077,7 @@ class Paiement extends CommonObject
 		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
 
 		$langs->load('compta');
-		if ($mode == 0)
+		/*if ($mode == 0)
 		{
 			if ($status == 0) return $langs->trans('ToValidate');
 			if ($status == 1) return $langs->trans('Validated');
@@ -1046,7 +1107,38 @@ class Paiement extends CommonObject
 			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
 			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
 		}
-		return $langs->trans('Unknown');
+		if ($mode == 6)
+	    {
+	        if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+	        if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+	    }*/
+		return '';
 	}
+	
+	/**
+     *    	Load the third party of object, from id into this->thirdparty
+     *
+     *		@param		int		$force_thirdparty_id	Force thirdparty id
+     *		@return		int								<0 if KO, >0 if OK
+     */
+    function fetch_thirdparty($force_thirdparty_id=0)
+    {
+		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+		
+		if (empty($force_thirdparty_id))
+		{
+			$billsarray = $this->getBillsArray(); // From payment, the fk_soc isn't available, we should load the first invoice to get him
+			if (!empty($billsarray))
+			{
+				$supplier_invoice = new FactureFournisseur($this->db);
+				if ($supplier_invoice->fetch($billsarray[0]) > 0)
+				{
+					$force_thirdparty_id = $supplier_invoice->fk_soc;
+				}
+			}
+		}
+		
+		return parent::fetch_thirdparty($force_thirdparty_id);
+    }
 
 }

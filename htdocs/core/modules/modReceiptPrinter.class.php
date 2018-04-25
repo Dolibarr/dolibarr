@@ -137,8 +137,8 @@ class modReceiptPrinter extends DolibarrModules
         // Clean before activation
         $this->remove($options);
         $sql = array(
-            "CREATE TABLE IF NOT EXISTS llx_printer_receipt (rowid int(11) NOT NULL AUTO_INCREMENT, name varchar(128), fk_type int(11), fk_profile int(11), parameter varchar(128), entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
-            "CREATE TABLE IF NOT EXISTS llx_printer_receipt_template (rowid int(11) NOT NULL AUTO_INCREMENT, name varchar(128), template text, entity int(11), PRIMARY KEY (rowid)) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;",
+            "CREATE TABLE IF NOT EXISTS llx_printer_receipt (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), fk_type integer, fk_profile integer, parameter varchar(128), entity integer) ENGINE=innodb;",
+            "CREATE TABLE IF NOT EXISTS llx_printer_receipt_template (rowid integer AUTO_INCREMENT PRIMARY KEY, name varchar(128), template text, entity integer) ENGINE=innodb;",
             );
         return $this->_init($sql,$options);
     }

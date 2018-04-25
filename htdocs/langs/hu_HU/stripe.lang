@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Következő URL-ek elérhetők a vevő részére egy oldal felajánlásához a Dollibar objektumok kifizetéséhez
+PaymentForm=Fizetési ürlap
+WelcomeOnPaymentPage=Üdvözöljük az online fizetési oldalunkon
+ThisScreenAllowsYouToPay=Ez az oldal lehetővé teszi az online fizetést %s számára.
+ThisIsInformationOnPayment=Ez az információ a fizetendő tételről
+ToComplete=Befejezni
+YourEMail=Email a fizetés teljesítéséről
+STRIPE_PAYONLINE_SENDEMAIL=EMail to warn after a payment (success or not)
+Creditor=Hitelező
+PaymentCode=Fizetési kód
+StripeDoPayment=Tovább a fizetéshez
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Következő
+ToOfferALinkForOnlinePayment=URL %s fizetés
+ToOfferALinkForOnlinePaymentOnOrder=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői megrendeléshez
+ToOfferALinkForOnlinePaymentOnInvoice=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői számlához
+ToOfferALinkForOnlinePaymentOnContractLine=URL egy %s online fizetési felhasználói csatolót ajánl egy vevői tétel sorhoz
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL egy %s online fizetési felhasználói csatolót ajánl egy ingyenes összeghez
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL egy %s online fizetési felhasználói csatolót ajánl egy tag feliratkozáshoz
+YouCanAddTagOnUrl=Hozzáadhat URL paramétereket <b>&tag=<i>érték</i></b> bármely ilyen URL (csak az ingyenes fizetéshez szükséges) a saját fizetési megjegyzés címke hozzáadásához.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Ez az oldal megerősíti, hogy a fizetési lett felvéve. Köszönöm.
+YourPaymentHasNotBeenRecorded=Ön fizetést nem került rögzítésre és az ügylet törlésre került. Köszönöm.
+AccountParameter=Számla paraméterek
+UsageParameter=Használat paraméterek
+InformationToFindParameters=Segíts, hogy megtaláld a %s fiókadatokat
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Neve eladó
+CSSUrlForPaymentForm=CSS stíluslapot url fizetési forma
+MessageOK=Üzenet érvényesített fizetési vissza oldal
+MessageKO=Üzenet a törölt kifizetési visszatérés oldal
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

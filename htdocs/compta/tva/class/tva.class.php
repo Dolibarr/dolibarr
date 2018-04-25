@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2011-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ class Tva extends CommonObject
 {
 	//public $element='tva';			//!< Id that identify managed objects
 	//public $table_element='tva';	//!< Name of table without prefix where object is stored
+	public $picto='payment';
 
 	var $tms;
 	var $datep;
@@ -73,6 +74,7 @@ class Tva extends CommonObject
     	global $conf, $langs;
 
 		$error=0;
+		$now=dol_now();
 
 		// Clean parameters
 		$this->amount=trim($this->amount);
@@ -89,7 +91,7 @@ class Tva extends CommonObject
 
 		// Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."tva(";
-		$sql.= "tms,";
+		$sql.= "datec,";
 		$sql.= "datep,";
 		$sql.= "datev,";
 		$sql.= "amount,";
@@ -101,7 +103,7 @@ class Tva extends CommonObject
 
         $sql.= ") VALUES (";
 
-		$sql.= " '".$this->db->idate($this->tms)."',";
+		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
 		$sql.= " '".$this->db->idate($this->datev)."',";
 		$sql.= " '".$this->amount."',";
@@ -171,18 +173,15 @@ class Tva extends CommonObject
 
 		// Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."tva SET";
-
-		$sql.= " tms=".$this->db->idate($this->tms).",";
-		$sql.= " datep=".$this->db->idate($this->datep).",";
-		$sql.= " datev=".$this->db->idate($this->datev).",";
+		$sql.= " tms='".$this->db->idate($this->tms)."',";
+		$sql.= " datep='".$this->db->idate($this->datep)."',";
+		$sql.= " datev='".$this->db->idate($this->datev)."',";
 		$sql.= " amount=".price2num($this->amount).",";
 		$sql.= " label='".$this->db->escape($this->label)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
 		$sql.= " fk_bank=".$this->fk_bank.",";
 		$sql.= " fk_user_creat=".$this->fk_user_creat.",";
-		$sql.= " fk_user_modif=".$this->fk_user_modif."";
-
-
+		$sql.= " fk_user_modif=".($this->fk_user_modif>0?$this->fk_user_modif:$user->id)."";
         $sql.= " WHERE rowid=".$this->id;
 
         dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -578,7 +577,7 @@ class Tva extends CommonObject
 					} else {
 						$bank_line_id = $acc->addline($this->datep, $this->type_payment, $this->label, abs($this->amount), '', '', $user);
 					}
-						
+
                     // Update fk_bank into llx_tva. So we know vat line used to generate bank transaction
                     if ($bank_line_id > 0)
 					{
@@ -677,46 +676,70 @@ class Tva extends CommonObject
 	 *	@param	int		$id     Id of vat payment
 	 *	@return	int				<0 if KO, >0 if OK
 	 */
-    function info($id)
-    {
-        $sql = "SELECT t.rowid, t.tms as datec, t.fk_user_creat";
-        $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
-        $sql.= " WHERE t.rowid = ".$id;
+	function info($id)
+	{
+		$sql = "SELECT t.rowid, t.tms, t.datec, t.fk_user_creat";
+		$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
+		$sql.= " WHERE t.rowid = ".$id;
 
-        dol_syslog(get_class($this)."::info", LOG_DEBUG);
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->num_rows($result))
-            {
-                $obj = $this->db->fetch_object($result);
+		dol_syslog(get_class($this)."::info", LOG_DEBUG);
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
 
-                $this->id = $obj->rowid;
+				$this->id = $obj->rowid;
 
-                if ($obj->fk_user_creat) {
-                    $cuser = new User($this->db);
-                    $cuser->fetch($obj->fk_user_creat);
-                    $this->user_creation = $cuser;
-                }
+				if ($obj->fk_user_creat) {
+					$cuser = new User($this->db);
+					$cuser->fetch($obj->fk_user_creat);
+					$this->user_creation = $cuser;
+				}
 
-                if ($obj->fk_user_modif) {
-                    $muser = new User($this->db);
-                    $muser->fetch($obj->fk_user_modif);
-                    $this->user_modification = $muser;
-                }
+				if ($obj->fk_user_modif) {
+					$muser = new User($this->db);
+					$muser->fetch($obj->fk_user_modif);
+					$this->user_modification = $muser;
+				}
 
-                $this->date_creation     = $this->db->jdate($obj->datec);
-                $this->date_modification = $this->db->jdate($obj->datec);
-                $this->import_key        = $obj->import_key;
-            }
+				$this->date_creation     = $this->db->jdate($obj->datec);
+				$this->date_modification = $this->db->jdate($obj->tms);
+				$this->import_key        = $obj->import_key;
+			}
 
-            $this->db->free($result);
+			$this->db->free($result);
 
-        }
-        else
-        {
-            dol_print_error($this->db);
-        }
-    }
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
 
+	/**
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+	    return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
+	 */
+	function LibStatut($status,$mode=0)
+	{
+	    global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
+	    return '';
+	}
 }

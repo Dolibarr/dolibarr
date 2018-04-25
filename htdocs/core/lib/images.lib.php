@@ -37,8 +37,10 @@ $quality = 80;
  */
 function image_format_supported($file)
 {
+    $regeximgext='\.gif|\.jpg|\.jpeg|\.png|\.bmp|\.xpm|\.xbm';   // See also into product.class.php
+
     // Case filename is not a format image
-    if (! preg_match('/(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$/i',$file,$reg)) return -1;
+    if (! preg_match('/('.$regeximgext.')$/i',$file,$reg)) return -1;
 
     // Case filename is a format image but not supported by this PHP
     $imgfonction='';
@@ -47,6 +49,8 @@ function image_format_supported($file)
     if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
     if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
     if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
+    if (strtolower($reg[1]) == '.xpm')  $imgfonction = 'imagecreatefromxpm';
+    if (strtolower($reg[1]) == '.xbm')  $imgfonction = 'imagecreatefromxbm';
     if ($imgfonction)
     {
         if (! function_exists($imgfonction))
@@ -343,7 +347,7 @@ function dolRotateImage($file_path)
  *    	@param     int		$quality        	Quality of compression (0=worst, 100=best)
  *      @param     string	$outdir           	Directory where to store thumb
  *      @param     int		$targetformat     	New format of target (IMAGETYPE_GIF, IMAGETYPE_JPG, IMAGETYPE_PNG, IMAGETYPE_BMP, IMAGETYPE_WBMP ... or 0 to keep old format)
- *    	@return    string						Full path of thumb or '' if it fails
+ *    	@return    string						Full path of thumb or '' if it fails or 'Error...' if it fails
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50, $outdir='thumbs', $targetformat=0)
 {

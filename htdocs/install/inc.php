@@ -220,6 +220,7 @@ if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant alrea
 	else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
 	else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
 	//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
+	if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
 }
 if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
 // We init log handler for install
@@ -325,6 +326,7 @@ function conf($dolibarr_main_document_root)
         else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
         else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
         //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
+        if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
     }
     if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
     // We init log handler for install
@@ -384,12 +386,13 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
 
     // We force the content charset
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
+    header("X-Content-Type-Options: nosniff");
 
     print '<!DOCTYPE HTML>'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
     print '<meta charset='.$conf->file->character_set_client.'">'."\n";
-    print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";  
+    print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
     print '<!-- Includes CSS for JQuery -->'."\n";
@@ -452,7 +455,7 @@ function pFooter($nonext=0,$setuplang='',$jscheckfunction='', $withpleasewait=0)
         print '<div class="nextbutton" id="nextbutton">';
         if ($nonext == '2')
 		{
-			print $langs->trans("ErrorFoundDuringMigration", $_SERVER["REQUEST_URI"].'&ignoreerrors=1').'<br><br>';
+			print $langs->trans("ErrorFoundDuringMigration", isset($_SERVER["REQUEST_URI"])?$_SERVER["REQUEST_URI"].'&ignoreerrors=1':'').'<br><br>';
 		}
 
         print '<input type="submit" '.($nonext == '2' ? 'disabled="disabled" ':'').'value="'.$langs->trans("NextStep").' ->"';

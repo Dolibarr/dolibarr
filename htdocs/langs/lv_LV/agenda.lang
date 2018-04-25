@@ -2,6 +2,7 @@
 IdAgenda=Notikuma ID
 Actions=Notikumi
 Agenda=Darba kārtība
+TMenuAgenda=Darba kārtība
 Agendas=Darba kārtības
 LocalAgenda=Iekšējais kalendārs
 ActionsOwnedBy=Event owned by
@@ -47,12 +48,13 @@ InvoiceDeleteDolibarr=Rēķins %s dzēsts
 InvoicePaidInDolibarr=Rēķimi %s nomainīti uz apmaksātiem
 InvoiceCanceledInDolibarr=Rēķini %s atcelti
 MemberValidatedInDolibarr=Dalībnieks %s apstiprināts
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Dalībnieks %s dzēsts
 MemberSubscriptionAddedInDolibarr=Subscription for member %s added
 ShipmentValidatedInDolibarr=Sūtījums %s apstiprināts
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Sūtījums %s dzēsts
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Pasūtījums %s pārbaudīts
@@ -73,13 +75,17 @@ InterventionSentByEMail=Intervention %s sent by EMail
 ProposalDeleted=Piedāvājums dzēsts
 OrderDeleted=Pasūtījums dzēsts
 InvoiceDeleted=Rēķins dzēsts
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Sākuma datums
 DateActionEnd=Beigu datums
 AgendaUrlOptions1=Jūs varat pievienot arī šādus parametrus, lai filtrētu produkciju:
-AgendaUrlOptions2=<b>login=%s</b> to restrict output to actions created by or assigned to user <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
-AgendaUrlOptions4=<b>logint = %s</b> ierobežot izejas darbībām piešķirto lietotāja <b>%s.</b>
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Rādīt kontaktu dzimšanas dienas
 AgendaHideBirthdayEvents=Slēpt kontaktu dzimšanas dienas

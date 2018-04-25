@@ -96,12 +96,14 @@ class modFournisseur extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		/* For supplier invoice, we must not have default pdf template on. In most cases, we need to join PDF from supplier, not have a document generated.
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_PDF";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "canelle";
 		$this->const[$r][3] = 'Nom du gestionnaire de generation des factures fournisseur en PDF';
 		$this->const[$r][4] = 0;
 		$r++;
+		*/
 
 		$this->const[$r][0] = "INVOICE_SUPPLIER_ADDON_NUMBER";
 		$this->const[$r][1] = "chaine";
@@ -371,7 +373,7 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields line
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -380,8 +382,8 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn_det_extrafields as extraline ON fd.rowid = extraline.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture_fourn';
-		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice',1).')';
-		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice').')';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
@@ -435,7 +437,7 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields object
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -443,8 +445,8 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON pf.fk_facturefourn = f.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn as p ON pf.fk_paiementfourn = p.rowid';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid';
-        $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice',1).')';
-		if (empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
+        $this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_invoice').')';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 
 		// Order
 		$r++;
@@ -541,7 +543,7 @@ class modFournisseur extends DolibarrModules
 		// End add extra fields line
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'societe as s';
-		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid,';
 		$this->export_sql_end[$r] .=' '.MAIN_DB_PREFIX.'commande_fournisseur as f';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'projet as project on (f.fk_projet = project.rowid)';
@@ -552,8 +554,8 @@ class modFournisseur extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'commande_fournisseurdet_extrafields as extraline ON fd.rowid = extraline.fk_object';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'product as p on (fd.fk_product = p.rowid)';
 		$this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_commande';
-		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_order',1).')';
-		if(!$user->rights->societe->client->voir) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
+		$this->export_sql_end[$r] .=' AND f.entity IN ('.getEntity('supplier_order').')';
+		if (is_object($user) && empty($user->rights->societe->client->voir)) $this->export_sql_end[$r] .=' AND sc.fk_user = '.$user->id;
 	}
 
 
@@ -572,8 +574,8 @@ class modFournisseur extends DolibarrModules
 		$this->remove($options);
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND type = 'order_supplier' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','order_supplier',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'order_supplier' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','order_supplier',".$conf->entity.")",
 		);
 
 		return $this->_init($sql,$options);

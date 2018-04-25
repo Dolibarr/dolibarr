@@ -1,5 +1,5 @@
 // Copyright (C) 2011-2014	Regis Houssin		<regis.houssin@capnetworks.com>
-// Copyright (C) 2011		Laurent Destailleur	<eldy@users.sourceforge.net>
+// Copyright (C) 2011-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -25,6 +25,50 @@ $(document).ready(function() {
 	var element = $('#jeditable_element').html();
 	var table_element = $('#jeditable_table_element').html();
 	var fk_element = $('#jeditable_fk_element').html();
+	
+	
+	if ($('.editval_string').length > 0) {
+		$('.editval_string').editable(urlSaveInPlace, {
+			type		: 'text',
+			id			: 'field',
+			width		: withInPlace,				/* Size of string area in px ? */
+			tooltip		: tooltipInPlace,
+			placeholder	: placeholderInPlace,
+			cancel		: cancelInPlace,
+			submit		: submitInPlace,
+			indicator	: indicatorInPlace,
+			submitdata	: function(result, settings) {
+				return getParameters(this, 'string');
+			},
+			callback	: function(result, settings) {
+				getResult(this, result);
+			},
+			onreset		: function(result, settings) {
+				getDefault(settings);
+			}
+		});
+		$('.editkey_string').hover(
+				function () {
+					console.log("We are hover (entry) an editkey_string");
+					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
+				},
+				function () {
+					console.log("We are no more hover an editkey_string");
+					$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
+				}
+		);
+		$('.editkey_string').click(function() {
+			console.log("We click on the edit field");
+			$('#viewval_' + $(this).attr('id')).click();
+			$('#viewval_' + $(this).attr('id')).hide();
+			$('#editval_' + $(this).attr('id')).show().click();
+		});
+		$('.viewval_string.active').click(function() {
+			console.log("We click on the viewed value");
+			$('#viewval_' + $(this).attr('id').substr(8)).hide();
+			$('#editval_' + $(this).attr('id').substr(8)).show().click();
+		});
+	}
 	
 	if ($('.editval_textarea').length > 0) {
 		$('.editval_textarea').editable(urlSaveInPlace, {
@@ -122,49 +166,6 @@ $(document).ready(function() {
 			$('#editval_' + $(this).attr('id').substr(8)).show().click();
 		});
 		$('.editkey_ckeditor').click(function() {
-			$('#viewval_' + $(this).attr('id')).hide();
-			$('#editval_' + $(this).attr('id')).show().click();
-		});
-	}
-	
-	if ($('.editval_string').length > 0) {
-		$('.editval_string').editable(urlSaveInPlace, {
-			type		: 'text',
-			id			: 'field',
-			width		: withInPlace,				/* Size of string area in px ? */
-			tooltip		: tooltipInPlace,
-			placeholder	: placeholderInPlace,
-			cancel		: cancelInPlace,
-			submit		: submitInPlace,
-			indicator	: indicatorInPlace,
-			submitdata	: function(result, settings) {
-				return getParameters(this, 'string');
-			},
-			callback	: function(result, settings) {
-				getResult(this, result);
-			},
-			onreset		: function(result, settings) {
-				getDefault(settings);
-			}
-		});
-		$('.editkey_string').hover(
-				function () {
-					console.log("We are hover (entry) an editkey_string");
-					$('#viewval_' + $(this).attr('id')).addClass("viewval_hover");
-				},
-				function () {
-					console.log("We are no more hover an editkey_string");
-					$('#viewval_' + $(this).attr('id')).removeClass("viewval_hover");
-				}
-		);
-		$('.editkey_string').click(function() {
-			$( '#viewval_' + $(this).attr('id') ).click();
-		});
-		$('.viewval_string.active').click(function() {
-			$('#viewval_' + $(this).attr('id').substr(8)).hide();
-			$('#editval_' + $(this).attr('id').substr(8)).show().click();
-		});
-		$('.editkey_string').click(function() {
 			$('#viewval_' + $(this).attr('id')).hide();
 			$('#editval_' + $(this).attr('id')).show().click();
 		});

@@ -65,7 +65,7 @@ class mailing_fraise extends MailingTargets
      */
     function getSqlArrayForStats()
     {
-        global $langs;
+        global $conf, $langs;
 
         $langs->load("members");
 
@@ -73,7 +73,7 @@ class mailing_fraise extends MailingTargets
         $statssql=array();
 
         $statssql[0] ="SELECT '".$this->db->escape($langs->trans("FundationMembers"))."' as label, count(*) as nb";
-        $statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
+        $statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1 and entity IN (".getEntity('member').")";
 
         return $statssql;
     }
@@ -89,9 +89,11 @@ class mailing_fraise extends MailingTargets
      */
     function getNbOfRecipients($sql='')
     {
+        global $conf;
+    
         $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
-        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '')";
+        $sql .= " WHERE (a.email IS NOT NULL AND a.email != '') AND a.entity IN (".getEntity('member').")";
 
         // La requete doit retourner un champ "nb" pour etre comprise
         // par parent::getNbOfRecipients
@@ -201,7 +203,7 @@ class mailing_fraise extends MailingTargets
         $sql.= " a.lastname, a.firstname,";
         $sql.= " a.datefin, a.civility as civility_id, a.login, a.societe";    // Other fields
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
-        $sql.= " WHERE a.email <> ''";     // Note that null != '' is false
+        $sql.= " WHERE a.entity IN (".getEntity('member').") AND a.email <> ''";     // Note that null != '' is false
         $sql.= " AND a.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
         if (isset($_POST["filter"]) && $_POST["filter"] == '-1') $sql.= " AND a.statut=-1";
         if (isset($_POST["filter"]) && $_POST["filter"] == '1a') $sql.= " AND a.statut=1 AND a.datefin >= '".$this->db->idate($now)."'";

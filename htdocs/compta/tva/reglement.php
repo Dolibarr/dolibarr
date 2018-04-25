@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2011-2014 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
 $langs->load("compta");
 $langs->load("bills");
@@ -49,7 +50,7 @@ $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -73,7 +74,7 @@ else
 	$typeid=$_REQUEST['typeid'];
 }
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_ref="";
 	$search_label="";
@@ -94,10 +95,10 @@ llxHeader('', $langs->trans("VATPayments"));
 $form = new Form($db);
 $formother=new FormOther($db);
 $tva_static = new Tva($db);
-$accountstatic = new Account($db);
+$bankstatic = new Account($db);
 
 $sql = "SELECT t.rowid, t.amount, t.label, t.datev as dv, t.datep as dp, t.fk_typepayment as type, t.num_payment, t.fk_bank, pst.code as payment_code,";
-$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.accountancy_journal, ba.label as blabel";
+$sql.= " ba.rowid as bid, ba.ref as bref, ba.number as bnumber, ba.account_number, ba.fk_accountancy_journal, ba.label as blabel";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pst ON t.fk_typepayment = pst.id";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON t.fk_bank = b.rowid";
@@ -154,22 +155,14 @@ if ($result)
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-	
-	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit);
-	
-	print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"t.rowid","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Label"),$_SERVER["PHP_SELF"],"t.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DateValue"),$_SERVER["PHP_SELF"],"dv","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("DatePayment"),$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Type"),$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
-    if (! empty($conf->banque->enabled)) print_liste_field_titre($langs->trans("Account"),$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("PayedByThisPayment"),$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
-	print "</tr>\n";
+	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print '<tr class="liste_titre">';
+	print_barre_liste($langs->trans("VATPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num,$totalnboflines, 'title_accountancy', 0, '', '', $limit);
+
+	print '<div class="div-table-responsive">';
+	print '<table class="noborder" width="100%">';
+
+	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
 	print '<td class="liste_titre"></td>';
@@ -191,15 +184,25 @@ if ($result)
     }
 	print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
+	print "</tr>\n";
+
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"t.rowid","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"t.label","",$param,'align="left"',$sortfield,$sortorder);
+	print_liste_field_titre("DateValue",$_SERVER["PHP_SELF"],"dv","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"dp","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
+	if (! empty($conf->banque->enabled)) print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
+	print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"t.amount","",$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('',$_SERVER["PHP_SELF"],"",'','','',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
 	while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($result);
-        $var=!$var;
 
 		if ($obj->payment_code <> '')
 		{
@@ -210,7 +213,7 @@ if ($result)
 			$type = '<td>&nbsp;</td>';
 		}
 
-        print "<tr ".$bc[$var].">";
+        print '<tr class="oddeven">';
 
 		$tva_static->id=$obj->rowid;
 		$tva_static->ref=$obj->rowid;
@@ -225,19 +228,22 @@ if ($result)
 	    {
 	        print '<td>';
 	        if ($obj->fk_bank > 0)
-	        {
-	        	//$accountstatic->fetch($obj->fk_bank);
-	            $accountstatic->id=$obj->bid;
-	            $accountstatic->ref=$obj->bref;
-	            $accountstatic->number=$obj->bnumber;
-	            $accountstatic->accountancy_number=$obj->account_number;
-	            $accountstatic->accountancy_journal=$obj->accountancy_journal;
-	            $accountstatic->label=$obj->blabel;
-	            print $accountstatic->getNomUrl(1);
-	        }
-	        else print '&nbsp;';
-	        print '</td>';
-	    }
+			{
+				$bankstatic->id=$obj->bid;
+				$bankstatic->ref=$obj->bref;
+				$bankstatic->number=$obj->bnumber;
+				$bankstatic->account_number=$obj->account_number;
+
+				$accountingjournal = new AccountingJournal($db);
+				$accountingjournal->fetch($obj->fk_accountancy_journal);
+				$bankstatic->accountancy_journal = $accountingjournal->getNomUrl(0,1,1,'',1);
+
+				$bankstatic->label=$obj->blabel;
+				print $bankstatic->getNomUrl(1);
+			}
+			else print '&nbsp;';
+			print '</td>';
+		}
 		// Amount
         $total = $total + $obj->amount;
 		print "<td align=\"right\">".price($obj->amount)."</td>";
@@ -246,7 +252,7 @@ if ($result)
 
         $i++;
     }
-    
+
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
@@ -254,6 +260,7 @@ if ($result)
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";
+    print '</div>';
 
 	print '</form>';
 

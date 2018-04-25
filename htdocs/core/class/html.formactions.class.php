@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,10 @@ class FormActions
      *  @param  string	$htmlname   	Name of html prefix for html fields (selectX and valX)
      *  @param	integer	$showempty		Show an empty line if select is used
      *  @param	integer	$onlyselect		0=Standard, 1=Hide percent of completion and force usage of a select list, 2=Same than 1 and add "Incomplete (Todo+Running)
+     *  @param  string  $morecss        More css on select field
      * 	@return	void
      */
-    function form_select_status_action($formname,$selected,$canedit=1,$htmlname='complete',$showempty=0,$onlyselect=0)
+    function form_select_status_action($formname, $selected, $canedit=1, $htmlname='complete', $showempty=0, $onlyselect=0, $morecss='maxwidth100')
     {
         global $langs,$conf;
 
@@ -120,7 +121,7 @@ class FormActions
         {
         	//var_dump($selected);
         	if ($selected == 'done') $selected='100';
-            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat">';
+            print '<select '.($canedit?'':'disabled ').'name="'.$htmlname.'" id="select'.$htmlname.'" class="flat'.($morecss?' '.$morecss:'').'">';
             if ($showempty) print '<option value=""'.($selected == ''?' selected':'').'></option>';
             foreach($listofstatus as $key => $val)
             {
@@ -154,16 +155,18 @@ class FormActions
      *	@param	int		$socid			socid of user
      *  @param	int		$forceshowtitle	Show title even if there is no actions to show
      *  @param  string  $morecss        More css on table
+     *  @param	int		$max			Max number of record
+     *  @param	string	$moreparambacktopage	More param for the backtopage
      *	@return	int						<0 if KO, >=0 if OK
      */
-    function showactions($object,$typeelement,$socid=0,$forceshowtitle=0,$morecss='listactions')
+    function showactions($object, $typeelement, $socid=0, $forceshowtitle=0, $morecss='listactions', $max=0, $moreparambacktopage='')
     {
         global $langs,$conf,$user;
         global $bc;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 
-        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement);
+        $listofactions=ActionComm::getActions($this->db, $socid, $object->id, $typeelement, '', '', '', ($max?($max+1):0));
 		if (! is_array($listofactions)) dol_print_error($this->db,'FailedToGetActions');
 
         $num = count($listofactions);
@@ -172,46 +175,68 @@ class FormActions
         	if ($typeelement == 'invoice')   $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'invoice_supplier' || $typeelement == 'supplier_invoice') $title=$langs->trans('ActionsOnBill');
         	elseif ($typeelement == 'propal')    $title=$langs->trans('ActionsOnPropal');
+        	elseif ($typeelement == 'supplier_payment')    $title=$langs->trans('ActionsOnSupplierPayment');
         	elseif ($typeelement == 'supplier_proposal')    $title=$langs->trans('ActionsOnSupplierProposal');
         	elseif ($typeelement == 'order')     $title=$langs->trans('ActionsOnOrder');
         	elseif ($typeelement == 'order_supplier' || $typeelement == 'supplier_order')   $title=$langs->trans('ActionsOnOrder');
-        	elseif ($typeelement == 'project')   $title=$langs->trans('ActionsOnProject');
         	elseif ($typeelement == 'shipping')  $title=$langs->trans('ActionsOnShipping');
             elseif ($typeelement == 'fichinter') $title=$langs->trans('ActionsOnFicheInter');
-        	else $title=$langs->trans("Actions");
+            elseif ($typeelement == 'project') $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            elseif ($typeelement == 'task') $title=$langs->trans('LatestLinkedEvents', $max?$max:'');
+            else $title=$langs->trans("Actions");
 
-        	$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.'&socid='.$object->socid.'&projectid='.$object->fk_project.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">';
-        	$buttontoaddnewevent.= $langs->trans("AddEvent");
-        	$buttontoaddnewevent.= '</a>';
-        	print load_fiche_titre($title, $buttontoaddnewevent, '');
+            $urlbacktopage=$_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage?'&'.$moreparambacktopage:'');
+
+			if ($conf->agenda->enabled) {
+				$buttontoaddnewevent = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&datep=' . dol_print_date(dol_now(), 'dayhourlog') . '&origin=' . $typeelement . '&originid=' . $object->id . '&socid=' . $object->socid . '&projectid=' . $object->fk_project . '&backtopage=' . urlencode($urlbacktopage) . '">';
+				$buttontoaddnewevent.= $langs->trans("AddEvent");
+				$buttontoaddnewevent.= '</a>';
+			}
+			print load_fiche_titre($title, $buttontoaddnewevent, '');
 
         	$page=0; $param=''; $sortfield='a.datep';
-        	
-        	$total = 0;	$var=true; 
+
+        	$total = 0;
+
+        	print '<div class="div-table-responsive">';
         	print '<table class="noborder'.($morecss?' '.$morecss:'').'" width="100%">';
         	print '<tr class="liste_titre">';
-        	print_liste_field_titre($langs->trans('Ref'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Action'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Type'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('Date'), $_SERVER["PHP_SELF"], '', $page, $param, '');
-        	print_liste_field_titre($langs->trans('By'), $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Ref', $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Action', $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Type', $_SERVER["PHP_SELF"], '', $page, $param, '');
+        	print_liste_field_titre('Date', $_SERVER["PHP_SELF"], '', $page, $param, 'align="center"');
+        	print_liste_field_titre('By', $_SERVER["PHP_SELF"], '', $page, $param, '');
         	print_liste_field_titre('', $_SERVER["PHP_SELF"], '', $page, $param, 'align="right"');
         	print '</tr>';
         	print "\n";
 
         	$userstatic = new User($this->db);
 
+        	$cursorevent = 0;
         	foreach($listofactions as $action)
         	{
+        		if ($max && $cursorevent >= $max) break;
+
         		$ref=$action->getNomUrl(1,-1);
         		$label=$action->getNomUrl(0,38);
-                
-        		$var=!$var;
-        		print '<tr '.$bc[$var].'>';
+
+        		print '<tr class="oddeven">';
 				print '<td>'.$ref.'</td>';
         		print '<td>'.$label.'</td>';
-        		print '<td>'.$action->type.'</td>';
-        		print '<td>'.dol_print_date($action->datep,'dayhour');
+        		print '<td>';
+        		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
+        		{
+        		    if ($action->type_picto) print img_picto('', $action->type_picto);
+        		    else {
+        		        if ($action->type_code == 'AC_RDV')   print img_picto('', 'object_group').' ';
+        		        if ($action->type_code == 'AC_TEL')   print img_picto('', 'object_phoning').' ';
+        		        if ($action->type_code == 'AC_FAX')   print img_picto('', 'object_phoning_fax').' ';
+        		        if ($action->type_code == 'AC_EMAIL') print img_picto('', 'object_email').' ';
+        		    }
+        		}
+        		print $action->type;
+        		print '</td>';
+        		print '<td align="center">'.dol_print_date($action->datep,'dayhour');
         		if ($action->datef)
         		{
 	        		$tmpa=dol_getdate($action->datep);
@@ -229,7 +254,7 @@ class FormActions
         			$userstatic->id = $action->author->id;
         			$userstatic->firstname = $action->author->firstname;
         			$userstatic->lastname = $action->author->lastname;
-        			print $userstatic->getNomUrl(1);
+        			print $userstatic->getNomUrl(1, '', 0, 0, 16, 0, '', '');
         		}
         		print '</td>';
         		print '<td align="right">';
@@ -239,8 +264,17 @@ class FormActions
         		}
         		print '</td>';
         		print '</tr>';
+
+        		$cursorevent++;
         	}
+
+        	if ($max && $num > $max)
+        	{
+        		print '<tr class="oddeven"><td colspan="6">'.$langs->trans("More").'...</td></tr>';
+        	}
+
         	print '</table>';
+        	print '</div>';
         }
 
         return $num;
@@ -280,22 +314,22 @@ class FormActions
        	if (! empty($conf->global->AGENDA_ALWAYS_HIDE_AUTO)) unset($arraylist['AC_OTH_AUTO']);
 
        	$out='';
-       	
-		if (! empty($multiselect)) 
+
+		if (! empty($multiselect))
 		{
 	        if (!is_array($selected) && !empty($selected)) $selected = explode(',', $selected);
 			$out.=$form->multiselectarray($htmlname, $arraylist, $selected, 0, 0, 'centpercent', 0, 0);
 		}
-		else 
+		else
 		{
 			$out.=$form->selectarray($htmlname, $arraylist, $selected);
 		}
-		
-        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0) 
+
+        if ($user->admin && empty($onlyautoornot) && $hideinfohelp <= 0)
         {
             $out.=info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup").($hideinfohelp == -1 ? ". ".$langs->trans("YouCanSetDefaultValueInModuleSetup") : ''),1);
         }
-        
+
         if ($nooutput) return $out;
         else print $out;
         return '';

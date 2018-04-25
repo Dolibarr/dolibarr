@@ -36,7 +36,7 @@ class Task extends CommonObject
     public $fk_element='fk_task';
     public $picto = 'task';
     protected $childtables=array('projet_task_time');    // To test if we can delete object
-    
+
     var $fk_task_parent;
     var $label;
     var $description;
@@ -59,7 +59,7 @@ class Task extends CommonObject
 	var $timespent_nblinesnull;
 	var $timespent_nblines;
 	// For detail of lines of timespent record, there is the property ->lines in common
-	
+
 	// Var used to call method addTimeSpent(). Bad practice.
     var $timespent_id;
     var $timespent_duration;
@@ -127,8 +127,8 @@ class Task extends CommonObject
         $sql.= ", ".$user->id;
         $sql.= ", ".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null');
         $sql.= ", ".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null');
-        $sql.= ", ".($this->planned_workload!=''?$this->planned_workload:0);
-        $sql.= ", ".($this->progress!=''?$this->progress:0);
+        $sql.= ", ".(($this->planned_workload!='' && $this->planned_workload >= 0)?$this->planned_workload:'null');
+        $sql.= ", ".(($this->progress!='' && $this->progress >= 0)?$this->progress:'null');
         $sql.= ")";
 
         $this->db->begin();
@@ -226,7 +226,7 @@ class Task extends CommonObject
         if ($resql)
         {
             $num_rows = $this->db->num_rows($resql);
-            
+
             if ($num_rows)
             {
                 $obj = $this->db->fetch_object($resql);
@@ -250,6 +250,9 @@ class Task extends CommonObject
                 $this->note_private			= $obj->note_private;
                 $this->note_public			= $obj->note_public;
 				$this->rang					= $obj->rang;
+
+                // Retreive all extrafield for thirdparty
+               	$this->fetch_optionals();
             }
 
             $this->db->free($resql);
@@ -300,7 +303,7 @@ class Task extends CommonObject
         $sql.= " planned_workload=".((isset($this->planned_workload) && $this->planned_workload != '')?$this->planned_workload:"null").",";
         $sql.= " dateo=".($this->date_start!=''?"'".$this->db->idate($this->date_start)."'":'null').",";
         $sql.= " datee=".($this->date_end!=''?"'".$this->db->idate($this->date_end)."'":'null').",";
-        $sql.= " progress=".$this->progress.",";
+        $sql.= " progress=".(($this->progress!='' && $this->progress >= 0)?$this->progress:'null').",";
         $sql.= " rang=".((!empty($this->rang))?$this->rang:"0");
         $sql.= " WHERE rowid=".$this->id;
 
@@ -409,7 +412,7 @@ class Task extends CommonObject
             $this->db->rollback();
             return 0;
         }
-        
+
         if (! $error)
         {
             // Delete linked contacts
@@ -535,6 +538,40 @@ class Task extends CommonObject
         }
     }
 
+	/**
+     *	Return nb of time spent
+     *
+     *	@return	int		<0 if KO, 0 if no children, >0 if OK
+     */
+    function hasTimeSpent()
+    {
+    	$error=0;
+        $ret=0;
+
+        $sql = "SELECT COUNT(*) as nb";
+        $sql.= " FROM ".MAIN_DB_PREFIX."projet_task_time";
+        $sql.= " WHERE fk_task=".$this->id;
+
+        dol_syslog(get_class($this)."::hasTimeSpent", LOG_DEBUG);
+        $resql = $this->db->query($sql);
+        if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+        else
+        {
+            $obj=$this->db->fetch_object($resql);
+            if ($obj) $ret=$obj->nb;
+            $this->db->free($resql);
+        }
+
+        if (! $error)
+        {
+            return $ret;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
 
     /**
      *	Return clicable name (with picto eventually)
@@ -545,14 +582,15 @@ class Task extends CommonObject
      * 	@param	int		$addlabel		0=Default, 1=Add label into string, >1=Add first chars into string
      *  @param	string	$sep			Separator between ref and label if option addlabel is set
      *  @param	int   	$notooltip		1=Disable tooltip
+     *  @param  int     $save_lastsearch_value    -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
      *	@return	string					Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0)
+    function getNomUrl($withpicto=0,$option='',$mode='task', $addlabel=0, $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
     {
         global $conf, $langs, $user;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
-        
+
         $result='';
         $label = '<u>' . $langs->trans("ShowTask") . '</u>';
         if (! empty($this->ref))
@@ -563,8 +601,12 @@ class Task extends CommonObject
         {
         	$label .= "<br>".get_date_range($this->date_start,$this->date_end,'',$langs,0);
         }
-        
+
         $url = DOL_URL_ROOT.'/projet/tasks/'.$mode.'.php?id='.$this->id.($option=='withproject'?'&withproject=1':'');
+        // Add param to save lastsearch_values or not
+        $add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
 
         $linkclose = '';
         if (empty($notooltip))
@@ -577,11 +619,11 @@ class Task extends CommonObject
             $linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
         }
-        
+
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
-        
+
         $picto='projecttask';
 
         if ($withpicto) $result.=($linkstart.img_object(($notooltip?'':$label), $picto, ($notooltip?'':'class="classfortooltip"'), 0, 0, $notooltip?0:1).$linkend);
@@ -637,7 +679,9 @@ class Task extends CommonObject
         //print $usert.'-'.$userp.'-'.$projectid.'-'.$socid.'-'.$mode.'<br>';
 
         // List of tasks (does not care about permissions. Filtering will be done later)
-        $sql = "SELECT p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
+        $sql = "SELECT ";
+        if ($filteronprojuser > 0 || $filterontaskuser > 0) $sql.= " DISTINCT";		// We may get several time the same record if user has several roles on same project/task
+        $sql.= " p.rowid as projectid, p.ref, p.title as plabel, p.public, p.fk_statut as projectstatus,";
         $sql.= " t.rowid as taskid, t.ref as taskref, t.label, t.description, t.fk_task_parent, t.duration_effective, t.progress, t.fk_statut as status,";
         $sql.= " t.dateo as date_start, t.datee as date_end, t.planned_workload, t.rang,";
         $sql.= " s.rowid as thirdparty_id, s.nom as thirdparty_name";
@@ -656,7 +700,7 @@ class Task extends CommonObject
                 $sql.= ", ".MAIN_DB_PREFIX."element_contact as ec2";
                 $sql.= ", ".MAIN_DB_PREFIX."c_type_contact as ctc2";
             }
-            $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
+            $sql.= " WHERE p.entity IN (".getEntity('project').")";
             $sql.= " AND t.fk_projet = p.rowid";
         }
         elseif ($mode == 1)
@@ -676,7 +720,7 @@ class Task extends CommonObject
             {
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."projet_task as t on t.fk_projet = p.rowid";
             }
-            $sql.= " WHERE p.entity IN (".getEntity('project',1).")";
+            $sql.= " WHERE p.entity IN (".getEntity('project').")";
         }
         else return 'BadValueForParameterMode';
 
@@ -701,7 +745,7 @@ class Task extends CommonObject
         }
         if ($socid)	$sql.= " AND p.fk_soc = ".$socid;
         if ($projectid) $sql.= " AND p.rowid in (".$projectid.")";
-        if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$filteronprojref."%'";
+        if ($filteronprojref) $sql.= " AND p.ref LIKE '%".$this->db->escape($filteronprojref)."%'";
         if ($filteronprojstatus > -1) $sql.= " AND p.fk_statut = ".$filteronprojstatus;
         if ($morewherefilter) $sql.=$morewherefilter;
         $sql.= " ORDER BY p.ref, t.rang, t.dateo";
@@ -756,7 +800,7 @@ class Task extends CommonObject
                     $tasks[$i]->date_start		= $this->db->jdate($obj->date_start);
                     $tasks[$i]->date_end		= $this->db->jdate($obj->date_end);
                     $tasks[$i]->rang	   		= $obj->rang;
-                    
+
                     $tasks[$i]->thirdparty_id	= $obj->thirdparty_id;
                     $tasks[$i]->thirdparty_name	= $obj->thirdparty_name;
                 }
@@ -1021,14 +1065,14 @@ class Task extends CommonObject
             $result['min_date'] = $obj->min_date;               // deprecated. use the ->timespent_xxx instead
             $result['max_date'] = $obj->max_date;               // deprecated. use the ->timespent_xxx instead
             $result['total_duration'] = $obj->total_duration;   // deprecated. use the ->timespent_xxx instead
-            
+
             $this->timespent_min_date=$this->db->jdate($obj->min_date);
             $this->timespent_max_date=$this->db->jdate($obj->max_date);
             $this->timespent_total_duration=$obj->total_duration;
             $this->timespent_total_amount=$obj->total_amount;
             $this->timespent_nblinesnull=($obj->nblinesnull?$obj->nblinesnull:0);
             $this->timespent_nblines=($obj->nblines?$obj->nblines:0);
-            
+
             $this->db->free($resql);
         }
         else
@@ -1447,7 +1491,7 @@ class Task extends CommonObject
 				$clone_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($clone_project_ref). "/" . dol_sanitizeFileName($clone_task_ref);
 				$ori_task_dir = $conf->projet->dir_output . "/" . dol_sanitizeFileName($ori_project_ref). "/" . dol_sanitizeFileName($fromid);
 
-				$filearray=dol_dir_list($ori_task_dir,"files",0,'','(\.meta|_preview\.png)$','',SORT_ASC,1);
+				$filearray=dol_dir_list($ori_task_dir,"files",0,'','(\.meta|_preview.*\.png)$','',SORT_ASC,1);
 				foreach($filearray as $key => $file)
 				{
 					if (!file_exists($clone_task_dir))
@@ -1601,6 +1645,17 @@ class Task extends CommonObject
 			if ($statut==4) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
 			if ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');
 		}
+		if ($mode == 6)
+		{
+			/*if ($statut==0) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut0');
+			if ($statut==1) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut1');
+			if ($statut==2) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut3');
+			if ($statut==3) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut4');
+			if ($statut==4) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut6');
+			if ($statut==5) return $langs->trans($this->statuts_short[$statut]).' '.img_picto($langs->trans($this->statuts_short[$statut]),'statut5');*/
+		    //return $this->progress.' %';
+		    return '&nbsp;';
+		}
 	}
 
 	/**
@@ -1619,16 +1674,14 @@ class Task extends CommonObject
 
 		$langs->load("projects");
 
-		// Positionne modele sur le nom du modele de projet a utiliser
-		if (! dol_strlen($modele))
-		{
-			if (! empty($conf->global->PROJECT_TASK_ADDON_PDF))
-			{
+		if (! dol_strlen($modele)) {
+
+			$modele = 'nodefault';
+
+			if ($this->modelpdf) {
+				$modele = $this->modelpdf;
+			} elseif (! empty($conf->global->PROJECT_TASK_ADDON_PDF)) {
 				$modele = $conf->global->PROJECT_TASK_ADDON_PDF;
-			}
-			else
-			{
-				$modele='nodefault';
 			}
 		}
 
@@ -1661,7 +1714,7 @@ class Task extends CommonObject
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
         if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
         $sql.= ", ".MAIN_DB_PREFIX."projet_task as t";
-        $sql.= " WHERE p.entity IN (".getEntity('project').')';
+        $sql.= " WHERE p.entity IN (".getEntity('project', 0).')';
         $sql.= " AND p.fk_statut = 1";
         $sql.= " AND t.fk_projet = p.rowid";
         $sql.= " AND t.progress < 100";         // tasks to do
@@ -1681,7 +1734,7 @@ class Task extends CommonObject
 	        $response->label = $langs->trans("OpenedTasks");
 	        if ($user->rights->projet->all->lire) $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mainmenu=project';
 	        else $response->url = DOL_URL_ROOT.'/projet/tasks/list.php?mode=mine&amp;mainmenu=project';
-	        $response->img = img_object($langs->trans("Tasks"),"task");
+	        $response->img = img_object('',"task");
 
 	        // This assignment in condition is not a bug. It allows walking the results.
 	        while ($obj=$this->db->fetch_object($resql))

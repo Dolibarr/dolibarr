@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015 Frederic France      <frederic.france@free.fr>
- * Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2010      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,26 +121,26 @@ class box_contracts extends ModeleBoxes
     				// if ($objp->fk_statut == 1 && $dateterm < ($now - $conf->contrat->cloture->warning_delay)) { $late = img_warning($langs->trans("Late")); }
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $contractstatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis'=>1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
                         'text' => $thirdpartytmp->getNomUrl(1),
                         'asis'=>1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datec,'day'),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right" class="nowrap"',
-                        'text' => $contractstatic->getLibStatut(6),
+                        'td' => 'class="nowrap right"',
+                        'text' => $contractstatic->getLibStatut(7),
                         'asis'=>1,
                     );
 
@@ -149,22 +149,22 @@ class box_contracts extends ModeleBoxes
 
                 if ($num==0)
                     $this->info_box_contents[$line][0] = array(
-                        'td' => 'align="center"',
+                        'td' => 'align="center opacitymedium"',
                         'text'=>$langs->trans("NoRecordedContracts"),
                     );
 
                 $db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }

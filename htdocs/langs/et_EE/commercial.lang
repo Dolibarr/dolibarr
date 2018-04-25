@@ -19,6 +19,7 @@ ShowTask=Näita ülesannet
 ShowAction=Näita tegevust
 ActionsReport=Tegevuste aruanne
 ThirdPartiesOfSaleRepresentative=Kolmandate isikute kohtumised müügiesindajaga
+SaleRepresentativesOfThirdParty=Sales representatives of third party
 SalesRepresentative=Müügiesindaja
 SalesRepresentatives=Müügiesindajad
 SalesRepresentativeFollowUp=Müügiesindaja (järelkontroll)

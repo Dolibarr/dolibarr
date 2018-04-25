@@ -16,7 +16,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table of "accounts" for accountancy expert module
+-- Table of 'accounts' for accountancy expert module
 -- ============================================================================
 
 create table llx_accounting_account

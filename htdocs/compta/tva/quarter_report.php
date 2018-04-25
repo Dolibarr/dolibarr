@@ -408,8 +408,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$type=1;
 				}
 
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
@@ -576,8 +576,8 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$type=1;
 				}
 
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+				
+				print '<tr class="oddeven">';
 
 				// Ref
 				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';

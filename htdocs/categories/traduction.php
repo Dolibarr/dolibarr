@@ -167,7 +167,7 @@ if (! empty($object->multilangs))
     }
 }
 
-dol_fiche_head($head, 'translation', $title, 0, 'category');
+dol_fiche_head($head, 'translation', $title, -1, 'category');
 
 $linkback = '<a href="'.DOL_URL_ROOT.'/categories/index.php?leftmenu=cat&type='.$type.'">'.$langs->trans("BackToList").'</a>';
 
@@ -184,6 +184,7 @@ dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', 'ref',
 
 print '<br>';
 
+print '<div class="fichecenter">';
 print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border" width="100%">';
@@ -201,6 +202,7 @@ print $formother->showColor($object->color);
 print '</td></tr>';
 
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 

@@ -1,9 +1,16 @@
 <?php
-        // Sale representative
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+		// Sale representative
         print '<tr><td>';
         print '<table width="100%" class="nobordernopadding"><tr><td>';
         print $langs->trans('SalesRepresentatives');
-        print '<td><td align="right">';
+        print '</td><td align="right">';
         if ($user->rights->societe->creer && $user->rights->societe->client->voir)
         print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$object->id.'">'.img_edit('',1).'</a>';
         else
@@ -32,10 +39,12 @@
                 $userstatic->firstname=$val['firstname'];
                 $userstatic->statut=$val['statut'];
                 $userstatic->photo=$val['photo'];
+                $userstatic->email=$val['email'];
+                $userstatic->entity=$val['entity'];
                 print $userstatic->getNomUrl(-1);
                 $i++;
                 if ($i < $nbofsalesrepresentative) print ', ';
             }
         }
-        else print $langs->trans("NoSalesRepresentativeAffected");
+        else print '<span class="opacitymedium">'.$langs->trans("NoSalesRepresentativeAffected").'</span>';
         print '</td></tr>';

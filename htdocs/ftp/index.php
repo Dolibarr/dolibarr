@@ -37,7 +37,7 @@ if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'ftp','');
 
 // Get parameters
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 $section=GETPOST('section');
 if (! $section) $section='/';
 $numero_ftp = GETPOST("numero_ftp");
@@ -51,7 +51,7 @@ $download_dir = $conf->ftp->dir_temp;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -554,7 +554,7 @@ else
 					$is_directory=ftp_isdir($conn_id, $newremotefileiso);
 				}
 
-				$var=!$var;
+				
 				print '<tr '.$bc[$var].' height="18">';
 				// Name
 				print '<td>';

@@ -163,7 +163,7 @@ class printing_printipp extends PrintingDriver
         $var = true;
         foreach ($list as $value)
         {
-            $var=!$var;
+            
             $printer_det = $this->get_printer_detail($value);
             $html.= "<tr ".$bc[$var].">";
             $html.= '<td>'.$value.'</td>';

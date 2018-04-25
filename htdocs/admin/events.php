@@ -35,7 +35,7 @@ $langs->load("users");
 $langs->load("admin");
 $langs->load("other");
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 
 $securityevent=new Events($db);
@@ -86,7 +86,7 @@ print '<input type="hidden" name="action" value="save">';
 
 $head=security_prepare_head();
 
-dol_fiche_head($head, 'audit', $langs->trans("Security"));
+dol_fiche_head($head, 'audit', $langs->trans("Security"), -1);
 
 
 $var=true;
@@ -99,13 +99,13 @@ foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
 	{
-		$var=!$var;
-		print '<tr '.$bc[$var].'>';
+		
+		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';
 		$key='MAIN_LOGEVENTS_'.$arr['id'];
 		$value=$conf->global->$key;
-		print '<input '.$bc[$var].' type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
+		print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.($value?' checked':'').'>';
 		print '</td></tr>'."\n";
 	}
 }

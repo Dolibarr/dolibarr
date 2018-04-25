@@ -89,7 +89,7 @@ class FormAdvTargetEmailing extends Form
 
 		$langs->load("dict");
 		$maxlength = 0;
-		
+
 		$out = '';
 		$countryArray = array();
 		$label = array ();
@@ -252,7 +252,7 @@ class FormAdvTargetEmailing extends Form
 			// $sql.= ' WHERE entity = '.$conf->entity;
 
 			$options_array = array();
-			
+
 			dol_syslog(get_class($this) . "::".__METHOD__,LOG_DEBUG);
 			$resql = $this->db->query($sql);
 			if ($resql) {
@@ -335,49 +335,8 @@ class FormAdvTargetEmailing extends Form
 	function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0) {
 		global $conf, $langs;
 
-		$return = '';
-		$return .= '<script type="text/javascript" language="javascript">
-						$(document).ready(function() {
-							$.extend($.ui.multiselect.locale, {
-								addAll:\'' . $langs->transnoentities ( "AddAll" ) . '\',
-								removeAll:\'' . $langs->transnoentities ( "RemoveAll" ) . '\',
-								itemsCount:\'' . $langs->transnoentities ( "ItemsCount" ) . '\'
-							});
-
-							$(function(){
-								$("#' . $htmlname . '").addClass("' . $htmlname . '").attr("multiple","multiple").attr("name","' . $htmlname . '[]");
-								$(".multiselect").multiselect({sortable: false, searchable: false});
-							});
-						});
-					</script>';
-		$return .= '<select id="' . $htmlname . '" class="multiselect" multiple="multiple" name="' . $htmlname . '[]" style="display: none;">';
-        //$return .= '<select id="' . $htmlname . '" class="multiselect" multiple="multiple" name="' . $htmlname . '[]">';
-        
-		if ($showempty)
-			$return .= '<option value="">&nbsp;</option>';
-
-		// Find if keys is in selected array value
-		if (is_array($selected_array) && count($selected_array)>0) {
-			$intersect_array = array_intersect_key($options_array, array_flip($selected_array));
-		} else {
-			$intersect_array=array();
-		}
-
-		if (count($options_array) > 0) {
-			foreach ($options_array as $keyoption => $valoption) {
-				// If key is in intersect table then it have to e selected
-				$selected = '';
-			    if (count ( $intersect_array ) > 0) {
-					if (array_key_exists ( $keyoption, $intersect_array )) {
-						$selected = ' selected="selected"';
-					}
-				}
-				$return .= '<option' . $selected . ' value="' . $keyoption . '">' . $valoption . '</option>';
-			}
-		}
-
-		$return .= '</select>';
-
+		$form=new Form($this->db);
+		$return = $form->multiselectarray($htmlname, $options_array, $selected_array,0,0,'',0,295);
 		return $return;
 	}
 
@@ -448,7 +407,7 @@ class FormAdvTargetEmailing extends Form
 			dol_print_error($this->db);
 		}
 
-		return $this->advMultiselectarray ( $htmlname, $options_array, $selected_array );
+		return $this->advMultiselectarray( $htmlname, $options_array, $selected_array );
 	}
 
 	/**

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent	    <jmenent@2byte.es>
- * Copyright (C) 2013-2016 Philippe Grand	    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2017 Philippe Grand	    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -119,7 +119,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans('OptionMode').'</td><td>'.$langs->trans('Description').'</td>';
 print "</tr>\n";
-print '<tr '.$bc[false].'><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
+print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="RECETTES-DEPENSES"'.($accounting_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 // Write info on way to count VAT
 //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE))
@@ -133,7 +133,7 @@ print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'));
 //	//	print nl2br($langs->trans('OptionModeTrueInfoExpert'));
 //}
 print "</td></tr>\n";
-print '<tr '.$bc[true].'><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
+print '<tr class="oddeven"><td width="200"><input type="radio" name="accounting_mode" value="CREANCES-DETTES"'.($accounting_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
 print '<td colspan="2">'.nl2br($langs->trans('OptionModeVirtualDesc'))."</td></tr>\n";
 
 print "</table>\n";
@@ -148,9 +148,7 @@ print "</tr>\n";
 
 foreach ($list as $key)
 {
-	$var=!$var;
-
-	print '<tr '.$bc[$var].' class="value">';
+	print '<tr class="oddeven value">';
 
 	// Param
 	$libelle = $langs->trans($key);

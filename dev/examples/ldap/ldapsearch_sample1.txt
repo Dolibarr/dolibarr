@@ -5,5 +5,5 @@
 #
 # ldapsearch -h hostname -x
 # ldapsearch -h hostname -x -b "ou=people,dc=teclib,dc=infra"
-# ldapsearch -h hostname -x -z 0 -b "o=somecompany.com" -D "cn=manager,o=somecompany.com" -W "(objectclass=*)"
-# ldapsearch -h hostname -x -b "o=somecompany.com" -D "cn=manager,o=somecompany.com" -W "(objectclass=*)"
+# ldapsearch -h hostname -x -z 0 -b "o=somecompany.com" -D "cn=manager,o=somecompany.com" -w password "(objectclass=*)"
+# ldapsearch -h hostname -x -b "o=somecompany.com" -D "cn=manager,o=somecompany.com" -w password "(objectclass=*)"

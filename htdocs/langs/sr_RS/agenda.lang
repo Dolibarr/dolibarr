@@ -2,6 +2,7 @@
 IdAgenda=ID događaj
 Actions=Događaji
 Agenda=Agenda
+TMenuAgenda=Agenda
 Agendas=Agende
 LocalAgenda=Interni kalendar
 ActionsOwnedBy=Događaj u vlasništvu
@@ -47,12 +48,13 @@ InvoiceDeleteDolibarr=Faktura %s je obrisana
 InvoicePaidInDolibarr=Račun %s je promenjen u plaćen
 InvoiceCanceledInDolibarr=Račun %s je otkazan
 MemberValidatedInDolibarr=Član %s je potvrđen
+MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Član %s je obrisan
 MemberSubscriptionAddedInDolibarr=Pretplata za člana %s je dodata
 ShipmentValidatedInDolibarr=Isporuka %s je potvrđena
-ShipmentClassifyClosedInDolibarr=Shipment %s classify billed
-ShipmentUnClassifyCloseddInDolibarr=Shipment %s classify reopened
+ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
+ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
 ShipmentDeletedInDolibarr=Isporuka %s je obrisana
 OrderCreatedInDolibarr=Order %s created
 OrderValidatedInDolibarr=Račun %s je potvrđen
@@ -73,13 +75,17 @@ InterventionSentByEMail=Intervencija %s poslata mejlo
 ProposalDeleted=Proposal deleted
 OrderDeleted=Order deleted
 InvoiceDeleted=Invoice deleted
+PRODUCT_CREATEInDolibarr=Product %s created
+PRODUCT_MODIFYInDolibarr=Product %s modified
+PRODUCT_DELETEInDolibarr=Product %s deleted
 ##### End agenda events #####
+AgendaModelModule=Document templates for event
 DateActionStart=Početak
 DateActionEnd=Kraj
 AgendaUrlOptions1=Možete dodati i sledeće parametre da filtrirate rezultat:
-AgendaUrlOptions2=<b>prijava=%s</b> da se zabrani izlaz akcija kreiranih ili dodeljenih korisniku <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> da se zabrani izlaz akcijama čiji je vlasnik korisnik <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> da se zabrani izlaz akcijama koje su dodeljene korisniku <b>%s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> da se zabrani izlaz akcijama povezanim sa projektom <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts

@@ -1,4 +1,5 @@
 # Dolibarr language file - Source file is en_US - mails
+MailCard=Ficha de Mailing
 MailRecipients=Dsetinatarios
 MailRecipient=Destinatário
 MailTitle=Descrição
@@ -62,8 +63,6 @@ TagSignature=Assinatura do remetente
 EMailRecipient=E-mail destinatario
 TagMailtoEmail=Destinatário do E-mail (incluindo o link HTML "mailto:")
 NoEmailSentBadSenderOrRecipientEmail=Nenhum e-mail enviado. Bad remetente ou destinatário de e-mail. Verifique perfil de usuário.
-AddNewNotification=Ativar uma nova notificação email para alvo
-ListOfActiveNotifications=Lista de todos os destinatários para a notificação por e-mail
 ListOfNotificationsDone=Listar todas as notificações de e-mail enviadas
 MailSendSetupIs=Configuração do envio de e-mails foi configurado a '%s'. Este modo não pode ser usado para envios de massa de e-mails.
 MailSendSetupIs2=Voçê precisa primeiramente acessar com uma conta de Administrador o menu %sInicio - Configurações - EMails%s para mudar o parametro <strong>'%s'</strong> para usar o modo '%s'. Neste modo voçê pode entrar a configuração do servidor SMTP fornecido pelo seu Provedor de Acesso a Internet e usar a funcionalidade de envios de massa de EMails.

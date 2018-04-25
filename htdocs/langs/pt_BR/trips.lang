@@ -1,10 +1,12 @@
 # Dolibarr language file - Source file is en_US - trips
 ExpenseReports=Os relatórios de despesas
+ShowExpenseReport=Mostrar relatório de despesas
 Trips=Os relatórios de despesas
 TripsAndExpenses=Relatórios de despesas
 TripsAndExpensesStatistics=Estatísticas de relatórios de despesas
 TripCard=Despesa de cartão de relatório
 AddTrip=Criar relatório de despesas
+TypeFees=Tipos de benefício
 ShowTrip=Mostrar relatório de despesas
 FeesKilometersOrAmout=Quantidade de quilômetros
 DeleteTrip=Excluir relatório de despesas
@@ -13,7 +15,6 @@ ListToApprove=Esperando aprovação
 ExpensesArea=Área de relatórios de despesas
 ClassifyRefunded=Classificar 'Rembolsado'
 ExpenseReportWaitingForApproval=Um novo relatório de despesas foi apresentada para aprovação
-ExpenseReportWaitingForApprovalMessage=Um novo relatório de despesas foi apresentado e está aguardando aprovação.\n - Usuário: %s \n - Período: %s \n Clique aqui para autenticar: %s
 TripId=Id relatório de despesas
 TripSociete=Informações da empresa
 TripNDF=Informações relatório de despesas

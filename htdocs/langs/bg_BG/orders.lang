@@ -4,6 +4,7 @@ SuppliersOrdersArea=Секция за поръчки към доставчици
 OrderCard=Карта за поръчка
 OrderId=Поръчка Id
 Order=Поръчка
+PdfOrderTitle=Поръчка
 Orders=Поръчки
 OrderLine=Ред за поръчка
 OrderDate=Дата на поръчка

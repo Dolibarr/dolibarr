@@ -113,8 +113,14 @@ ExportDateFilter=AAAA, AAAAMM, AAAAMMJJ: filtre pour une année/mois/jour<br>AAA
 ExportNumericFilter=NNNNN filtre une seule valeur<br>NNNNN+NNNNN filtre une plage de valeurs<br>< NNNNN filtre les valeurs inférieures<br>> NNNNN filtre les valeurs supérieures
 ImportFromLine=Début d'import à la ligne numéro
 EndAtLineNb=Fin à la ligne numéro
+ImportFromToLine=Importer les lignes à la position (de - à)
 SetThisValueTo2ToExcludeFirstLine=Par exemple, positionnez cette valeur à 3 pour exclure les 2 premières lignes
 KeepEmptyToGoToEndOfFile=Laissez ce champ vide pour aller jusqu'à la fin du fichier
+SelectPrimaryColumnsForUpdateAttempt=Sélectionnez la ou les colonne(s) à utiliser comme clé primaire pour la tentative de mise à jour
+UpdateNotYetSupportedForThisImport=La mise à jour n'est pas pris en charge pour ce type d'importation (seulement les ajouts)
+NoUpdateAttempt=Aucune tentative de mise à jour n'a été effectuée, seulement un insertion.
+ImportDataset_user_1=Utilisateurs (employés ou non) et attributs
+ComputedField=Champ calculé
 ## filters
 SelectFilterFields=Si vous voulez filtrer sur certaines valeurs, saisissez ces valeurs.
 FilteredFields=Champs filtrés

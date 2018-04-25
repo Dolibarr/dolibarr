@@ -1,0 +1,42 @@
+# Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Stripe module setup
+StripeDesc=This module offer pages to allow payment on <a href="http://www.stripe.com" target="_blank">Stripe</a> by customers. This can be used for a free payment or for a payment on a particular Dolibarr object (invoice, order, ...)
+StripeOrCBDoPayment=Pay with credit card or Stripe
+FollowingUrlAreAvailableToMakePayments=Μετά από τις διευθύνσεις URL είναι διαθέσιμοι να προσφέρουν μια σελίδα σε έναν πελάτη να προβεί σε πληρωμή σε Dolibarr αντικείμενα
+PaymentForm=Έντυπο πληρωμής
+WelcomeOnPaymentPage=Καλώς ήρθατε στην online υπηρεσία πληρωμών μας
+ThisScreenAllowsYouToPay=Αυτή η οθόνη σας επιτρέπει να κάνετε μια online πληρωμή %s.
+ThisIsInformationOnPayment=Πρόκειται για πληροφορίες σχετικά με την πληρωμή να γίνει
+ToComplete=Για να ολοκληρώσετε
+YourEMail=E-mail για να λάβετε επιβεβαίωση της πληρωμής
+STRIPE_PAYONLINE_SENDEMAIL=Στείλτε e-mail προειδοποιήσεις μετά από πληρωμή (επιτυχία ή όχι)
+Creditor=Πιστωτής
+PaymentCode=Κωδικός Πληρωμής
+StripeDoPayment=Μετάβαση στην πληρωμή
+YouWillBeRedirectedOnStripe=You will be redirected on secured Stripe page to input you credit card information
+Continue=Επόμενη
+ToOfferALinkForOnlinePayment=URL για %s πληρωμής
+ToOfferALinkForOnlinePaymentOnOrder=URL για να προσφέρει μια %s online διεπαφή χρήστη πληρωμή για την παραγγελία
+ToOfferALinkForOnlinePaymentOnInvoice=URL για να προσφέρει μια %s online διεπαφή χρήστη για την πληρωμή του τιμολογίου
+ToOfferALinkForOnlinePaymentOnContractLine=URL για να προσφέρει μια %s online διεπαφή χρήστη πληρωμή για μια γραμμή σύμβαση
+ToOfferALinkForOnlinePaymentOnFreeAmount=URL για να προσφέρει μια %s online διεπαφή χρήστη πληρωμή για ένα ελεύθερο ποσό
+ToOfferALinkForOnlinePaymentOnMemberSubscription=URL για να προσφέρει μια %s online διεπαφή χρήστη πληρωμή για μια συνδρομή μέλους
+YouCanAddTagOnUrl=Μπορείτε επίσης να προσθέσετε την παράμετρο url <b>&amp; tag = <i>αξία</i></b> σε κανένα από αυτά τα URL (απαιτείται μόνο για την ελεύθερη πληρωμής) για να προσθέσετε το δικό σας σχόλιο ετικέτα πληρωμής.
+SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
+YourPaymentHasBeenRecorded=Η σελίδα αυτή επιβεβαιώνει ότι η πληρωμή σας έχει καταγραφεί. Σας ευχαριστώ.
+YourPaymentHasNotBeenRecorded=Η πληρωμή σας δεν έχει καταγραφεί και η συναλλαγή έχει ακυρωθεί. Σας ευχαριστώ.
+AccountParameter=Παράμετροι λογαριασμού
+UsageParameter=Παράμετροι χρήσης
+InformationToFindParameters=Βοήθεια για να βρείτε %s τα στοιχεία του λογαριασμού σας
+STRIPE_CGI_URL_V2=Url of Stripe CGI module for payment
+VendorName=Όνομα του πωλητή
+CSSUrlForPaymentForm=Url CSS φύλλο στυλ για το έντυπο πληρωμής
+MessageOK=Μήνυμα για την επικυρωμένη σελίδα επιστροφή πληρωμής
+MessageKO=Μήνυμα για την ακύρωση σελίδα επιστροφή πληρωμής
+NewStripePaymentReceived=New Stripe payment received
+NewStripePaymentFailed=New Stripe payment tried but failed
+STRIPE_TEST_SECRET_KEY=Secret test key
+STRIPE_TEST_PUBLISHABLE_KEY=Publishable test key
+STRIPE_LIVE_SECRET_KEY=Secret live key
+STRIPE_LIVE_PUBLISHABLE_KEY=Publishable live key
+StripeLiveEnabled=Stripe live enabled (otherwise test/sandbox mode)

@@ -35,6 +35,18 @@ class mod_facture_terre extends ModeleNumRefFactures
 	var $prefixdeposit='AC';
 	var $error='';
 
+	
+	/**
+	 * Constructor
+	 */
+	function __construct()
+	{
+		if (! empty($conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX))
+		{
+			$this->prefixinvoice = $conf->global->INVOICE_NUMBERING_TERRE_FORCE_PREFIX;
+		}
+	}
+	
 	/**
 	 *  Renvoi la description du modele de numerotation
 	 *
@@ -157,7 +169,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 		$sql = "SELECT MAX(CAST(SUBSTRING(facnumber FROM ".$posindice.") AS SIGNED)) as max";	// This is standard SQL
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture";
 		$sql.= " WHERE facnumber LIKE '".$prefix."____-%'";
-		$sql.= " AND entity IN (".getEntity('facture', 1).")";
+		$sql.= " AND entity IN (".getEntity('facture').")";
 
 		$resql=$db->query($sql);
 		dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
@@ -181,7 +193,7 @@ class mod_facture_terre extends ModeleNumRefFactures
             $sql = "SELECT facnumber as ref";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber LIKE '".$prefix."____-".$num."'";
-            $sql.= " AND entity IN (".getEntity('facture', 1).")";
+            $sql.= " AND entity IN (".getEntity('facture').")";
 
             dol_syslog(get_class($this)."::getNextValue", LOG_DEBUG);
             $resql=$db->query($sql);

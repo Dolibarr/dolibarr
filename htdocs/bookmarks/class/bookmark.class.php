@@ -173,10 +173,10 @@ class Bookmark extends CommonObject
         $sql.= " SET fk_user = ".($this->fk_user > 0?"'".$this->fk_user."'":"0");
         $sql.= " ,dateb = '".$this->db->idate($this->datec)."'";
         $sql.= " ,url = '".$this->db->escape($this->url)."'";
-        $sql.= " ,target = '".$this->target."'";
+        $sql.= " ,target = '".$this->db->escape($this->target)."'";
         $sql.= " ,title = '".$this->db->escape($this->title)."'";
-        $sql.= " ,favicon = '".$this->favicon."'";
-        $sql.= " ,position = '".$this->position."'";
+        $sql.= " ,favicon = '".$this->db->escape($this->favicon)."'";
+        $sql.= " ,position = '".$this->db->escape($this->position)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         dol_syslog("Bookmark::update", LOG_DEBUG);

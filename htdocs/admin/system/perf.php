@@ -33,7 +33,7 @@ $langs->load("other");
 if (! $user->admin)
 	accessforbidden();
 
-if (GETPOST('action') == 'donothing')
+if (GETPOST('action','aZ09') == 'donothing')
 {
 	exit;
 }
@@ -112,7 +112,7 @@ $test=function_exists('opcache_get_status');
 if (! $foundcache && $test)
 {
 	$foundcache++;
-	print img_picto('','tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by defautl starting with PHP 5.5
+	print img_picto('','tick.png').' '.$langs->trans("ZendOPCacheInstalled");  // Should be by default starting with PHP 5.5
 	//$tmp=opcache_get_status();
 	//var_dump($tmp);
 }
@@ -376,7 +376,8 @@ jQuery(document).ready(function() {
 
 print '<br>';
 print '<strong>'.$langs->trans("HTTPCacheStaticResources").' - ';
-print $langs->trans("CacheByServer").':</strong><br>';
+print $form->textwithpicto($langs->trans("CacheByServer"), $langs->trans("CacheByServerDesc"));
+print ':</strong><br>';
 // No cahce on PHP
 //print '<div id="httpcachephpok">'.img_picto('','warning.png').' '.$langs->trans("FilesOfTypeNotCompressed",'php (.php)').'</div>';
 //print '<div id="httpcachephpko">'.img_picto('','tick.png').' '.$langs->trans("FilesOfTypeNotCached",'php (.php)').'</div>';
@@ -399,7 +400,9 @@ print $langs->trans("TestNotPossibleWithCurrentBrowsers").'<br>';
 
 // Compressions
 print '<br>';
-print '<strong>'.$langs->trans("CompressionOfResources").'</strong>: ';
+print '<strong>';
+print $form->textwithpicto($langs->trans("CompressionOfResources"), $langs->trans("CompressionOfResourcesDesc"));
+print '</strong>: ';
 //$tmp=getURLContent(DOL_URL_ROOT.'/index.php','GET');var_dump($tmp);
 print '<br>';
 // on PHP

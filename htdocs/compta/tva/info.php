@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ $langs->load("compta");
 $langs->load("bills");
 
 $id=GETPOST('id','int');
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -53,11 +53,20 @@ $head = vat_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("VATPayment"), 0, 'payment');
 
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/reglement.php">'.$langs->trans("BackToList").'</a>';
+
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
+
 print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';
+
+dol_fiche_end();
 
 llxFooter();
 

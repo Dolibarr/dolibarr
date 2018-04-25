@@ -11,6 +11,7 @@ YourEMail=Электронная почта для подтверждения о
 Creditor=Кредитор
 PaymentCode=Код платежа
 PayBoxDoPayment=Перейти к оплате
+ToPay=Совершить платеж
 YouWillBeRedirectedOnPayBox=Вы будете перенаправлены по обеспеченным Paybox страницу для ввода данных кредитной карточки
 Continue=Далее
 ToOfferALinkForOnlinePayment=URL-адрес для оплаты %s

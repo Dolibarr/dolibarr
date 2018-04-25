@@ -52,5 +52,5 @@ CREATE TABLE llx_supplier_proposaldet (
   multicurrency_total_ht  double(24,8) DEFAULT 0,
   multicurrency_total_tva double(24,8) DEFAULT 0,
   multicurrency_total_ttc double(24,8) DEFAULT 0,
-  fk_unit integer DEFAULT NULL -- lien vers table des unités
+  fk_unit integer DEFAULT NULL
 ) ENGINE=innodb;

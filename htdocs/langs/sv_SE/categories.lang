@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Tag/Category
-Rubriques=Tags/Categories
+Rubriques=Taggar/Kategorier
+RubriquesTransactions=Tags/Categories of transactions
 categories=tags/categories
 NoCategoryYet=No tag/category of this type created
 In=I
@@ -44,7 +45,7 @@ CategoryExistsAtSameLevel=Denna kategori finns redan med denna ref
 ContentsVisibleByAllShort=Innehållsförteckning synlig för alla
 ContentsNotVisibleByAllShort=Innehåll inte synlig för alla
 DeleteCategory=Delete tag/category
-ConfirmDeleteCategory=Are you sure you want to delete this tag/category ?
+ConfirmDeleteCategory=Are you sure you want to delete this tag/category?
 NoCategoriesDefined=No tag/category defined
 SuppliersCategoryShort=Suppliers tag/category
 CustomersCategoryShort=Customers tag/category

@@ -92,7 +92,7 @@ class box_prospect extends ModeleBoxes
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 			$sql.= " WHERE s.client IN (2, 3)";
-			$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+			$sql.= " AND s.entity IN (".getEntity('societe').")";
 			if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($user->societe_id) $sql.= " AND s.rowid = ".$user->societe_id;
 			$sql.= " ORDER BY s.tms DESC";
@@ -119,13 +119,13 @@ class box_prospect extends ModeleBoxes
                     $thirdpartystatic->logo = $objp->logo;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $thirdpartystatic->getNomUrl(1),
                     	'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datem, "day"),
                     );
 
@@ -151,15 +151,15 @@ class box_prospect extends ModeleBoxes
                 $db->free($resql);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
 		}
 	}

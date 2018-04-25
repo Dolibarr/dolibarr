@@ -13,3 +13,4 @@ CustomerCodeShort=Kunden-Code
 CapitalOf=Hauptstadt von %s
 NorProspectNorCustomer=Weder Lead noch Kunde
 OthersNotLinkedToThirdParty=Andere, nicht mit einem Partner verknüpfte
+ActivityCeased=geschlossen

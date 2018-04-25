@@ -48,12 +48,13 @@ InvoiceDeleteDolibarr=Factura %s eliminada
 InvoicePaidInDolibarr=Factura %s passada a pagada
 InvoiceCanceledInDolibarr=Factura %s cancel·lada
 MemberValidatedInDolibarr=Soci %s validat
+MemberModifiedInDolibarr=Soci %s modificat
 MemberResiliatedInDolibarr=Membre %s acabat
 MemberDeletedInDolibarr=Soci %s eliminat
 MemberSubscriptionAddedInDolibarr=Subscripció del soci %s afegida
 ShipmentValidatedInDolibarr=Expedició %s validada
-ShipmentClassifyClosedInDolibarr=Entrega %s classificada com a facturada
-ShipmentUnClassifyCloseddInDolibarr=Entrega %s classificada com a reoberta
+ShipmentClassifyClosedInDolibarr=Expedició %s classificada com a facturada
+ShipmentUnClassifyCloseddInDolibarr=Expedició %s classificada com a reoberta
 ShipmentDeletedInDolibarr=Expedició %s eliminada
 OrderCreatedInDolibarr=Comanda %s creada
 OrderValidatedInDolibarr=Comanda %s validada
@@ -74,13 +75,17 @@ InterventionSentByEMail=Intervenció %s enviada per email
 ProposalDeleted=Pressupost esborrat
 OrderDeleted=Comanda esborrada
 InvoiceDeleted=Factura esborrada
+PRODUCT_CREATEInDolibarr=Producte %s creat
+PRODUCT_MODIFYInDolibarr=Producte %s modificat
+PRODUCT_DELETEInDolibarr=Producte %s eliminat
 ##### End agenda events #####
+AgendaModelModule=Plantilles de documents per esdeveniments
 DateActionStart=Data d'inici
 DateActionEnd=Data finalització
 AgendaUrlOptions1=Podeu també afegir aquests paràmetres al filtre de sortida:
-AgendaUrlOptions2=<b>login=%s</b> per a restringir insercions a accions creades o realitzades per l'usuari <b>%s</b>.
 AgendaUrlOptions3=<b>logina=%s</b> ​​per a restringir insercions a les accions creades per l'usuari <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> per a restringir insercions a accions que afectin a l'usuari <b>%s</b>.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> ​​per a restringir la producció d'accions que no pertanyen a l'usuari <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> per a restringir la producció d'accions assignades a l'usuari <b>%s</b> (propietari i altres).
 AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> per a restringir la sortida d'accions associades al projecta <b>PROJECT_ID</b>.
 AgendaShowBirthdayEvents=Mostra aniversaris dels contactes
 AgendaHideBirthdayEvents=Oculta aniversaris dels contactes

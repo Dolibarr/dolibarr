@@ -57,36 +57,38 @@ print load_fiche_titre($transAreaType,$linkback,'title_companies.png');
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 
-
-// Search thirdparty
-if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-	$listofsearchfields['search_thirdparty']=array('text'=>'ThirdParty');
-}
-// Search contact/address
-if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
-{
-	$listofsearchfields['search_contact']=array('text'=>'Contact');
-}
-
-if (count($listofsearchfields))
-{
-	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
-	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print '<table class="noborder nohover centpercent">';
-	$i=0;
-	foreach($listofsearchfields as $key => $value)
-	{
-		if ($i == 0) print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Search").'</th></tr>';
-		print '<tr '.$bc[false].'>';
-		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
-		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
-		print '</tr>';
-		$i++;
-	}
-	print '</table>';	
-	print '</form>';
-	print '<br>';
+    // Search thirdparty
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+    {
+    	$listofsearchfields['search_thirdparty']=array('text'=>'ThirdParty');
+    }
+    // Search contact/address
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
+    {
+    	$listofsearchfields['search_contact']=array('text'=>'Contact');
+    }
+    
+    if (count($listofsearchfields))
+    {
+    	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
+    	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    	print '<table class="noborder nohover centpercent">';
+    	$i=0;
+    	foreach($listofsearchfields as $key => $value)
+    	{
+    		if ($i == 0) print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Search").'</th></tr>';
+    		print '<tr '.$bc[false].'>';
+    		print '<td class="nowrap"><label for="'.$key.'">'.$langs->trans($value["text"]).'</label></td><td><input type="text" class="flat inputsearch" name="'.$key.'" id="'.$key.'" size="18"></td>';
+    		if ($i == 0) print '<td rowspan="'.count($listofsearchfields).'"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td>';
+    		print '</tr>';
+    		$i++;
+    	}
+    	print '</table>';	
+    	print '</form>';
+    	print '<br>';
+    }
 }
 
 
@@ -105,7 +107,7 @@ $total=0;
 $sql = "SELECT s.rowid, s.client, s.fournisseur";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+$sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur <> 1 OR s.client <> 0)";    // client=0, fournisseur=0 must be visible
@@ -182,7 +184,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cs.fk_categorie = c.rowid";
 	$sql.= " WHERE c.type = 2";
 	if (! is_numeric($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)) $sql.= " AND c.label like '".$db->escape($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES)."'";
-	$sql.= " AND c.entity IN (".getEntity('category',1).")";
+	$sql.= " AND c.entity IN (".getEntity('category').")";
 	$sql.= " GROUP BY c.label";
 	$total=0;
 	$result = $db->query($sql);
@@ -217,8 +219,8 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
-				$var=!$var;
-				print '<tr '.$bc[$var].'><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				
+				print '<tr class="oddeven"><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total+=$obj->nb;
 				$i++;
 			}
@@ -246,7 +248,7 @@ $sql.= ", s.logo";
 $sql.= ", s.canvas, s.tms as datem, s.status as status";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+$sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)	$sql.= " AND s.rowid = ".$socid;
 if (! $user->rights->fournisseur->lire) $sql.=" AND (s.fournisseur != 1 OR s.client != 0)";
@@ -279,8 +281,8 @@ if ($result)
         {
             $objp = $db->fetch_object($result);
 
-            $var=!$var;
-            print "<tr ".$bc[$var].">";
+            
+            print '<tr class="oddeven">';
             // Name
             print '<td class="nowrap">';
             $thirdparty_static->id=$objp->rowid;

@@ -30,7 +30,7 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 
 /*
@@ -80,18 +80,19 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
 print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
 print '<br>';
 print $langs->trans("ClickToDialUseTelLinkDesc");
 print '</td></tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("DefaultLink").'</td><td>';
-print '<input style="width: 90%" type="text" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS?' disabled="disabled"':'').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print '<input class="quatrevingtpercent" type="text" id="CLICKTODIAL_URL" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS?' disabled="disabled"':'').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print ajax_autoselect('CLICKTODIAL_URL');
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';

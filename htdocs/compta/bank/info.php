@@ -30,6 +30,8 @@ $langs->load("banks");
 $langs->load("categories");
 $langs->load("companies");
 
+$id = GETPOST("rowid");
+
 
 /*
  * View
@@ -37,27 +39,35 @@ $langs->load("companies");
 
 llxHeader();
 
-$line = new AccountLine($db);
-$line->fetch($_GET["rowid"]);
-$line->info($_GET["rowid"]);
+$object = new AccountLine($db);
+$object->fetch($id);
+$object->info($id);
 
 
 $h=0;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$_GET["rowid"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$id;
 $head[$h][1] = $langs->trans("Card");
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$_GET["rowid"];
+$head[$h][0] = DOL_URL_ROOT.'/compta/bank/info.php?rowid='.$id;
 $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;
 
 
-dol_fiche_head($head, $hselected, $langs->trans("LineRecord"),0,'account');
+dol_fiche_head($head, $hselected, $langs->trans("LineRecord"), -1, 'account');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
+
+
+dol_banner_tab($object, 'rowid', $linkback);
+
+print '<div class="underbanner clearboth"></div>';
+print '<br>';
 
 print '<table width="100%"><tr><td>';
-dol_print_object_info($line);
+dol_print_object_info($object);
 print '</td></tr></table>';
 
 print '</div>';

@@ -1,10 +1,10 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2015-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  * Copyright (C) 2016      Marcos García        <marcosgdf@gmail.com>
  *
@@ -30,6 +30,7 @@
 
 require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
@@ -47,6 +48,8 @@ $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $rowid=GETPOST("rowid",'int');
 $orig_account=GETPOST("orig_account");
+$backtopage=GETPOST('backtopage');
+$cancel=GETPOST('cancel');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref :''));
@@ -59,6 +62,14 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) acces
 /*
  * Actions
  */
+if ($cancel)
+{
+    if ($backtopage)
+    {
+        header("Location: ".$backtopage);
+        exit;
+    }
+}
 
 if ($user->rights->banque->consolidate && $action == 'dvnext')
 {
@@ -75,21 +86,6 @@ if ($user->rights->banque->consolidate && $action == 'dvprev')
 if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->banque->modifier)
 {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".GETPOST("cat1");
-    if (! $db->query($sql))
-    {
-        dol_print_error($db);
-    }
-}
-
-if ($user->rights->banque->modifier && $action == 'class')
-{
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid." AND fk_categ = ".GETPOST('cat1', 'int');
-    if (! $db->query($sql))
-    {
-        dol_print_error($db);
-    }
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".GETPOST('cat1', 'int').")";
     if (! $db->query($sql))
     {
         dol_print_error($db);
@@ -145,7 +141,36 @@ if ($user->rights->banque->modifier && $action == "update")
 		$sql.= " WHERE rowid = ".$rowid;
 
 		$result = $db->query($sql);
-		if ($result)
+		if (! $result)
+		{
+		    $error++;
+		}
+		
+		if (! $error)
+		{
+            $arrayofcategs=GETPOST('custcats', 'array');
+    		$sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = ".$rowid;
+    		if (! $db->query($sql))
+    		{
+    		    $error++;
+    		    dol_print_error($db);
+    		}
+    		if (count($arrayofcategs))
+    		{
+        		foreach($arrayofcategs as $val)
+        		{
+            		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES (".$rowid.", ".$val.")";
+            		if (! $db->query($sql))
+            		{
+            		    $error++;
+            		    dol_print_error($db);
+            		}
+        		}
+        		// $arrayselected will be loaded after in page output
+    		}
+		}		
+		
+		if (! $error)
 		{
 			setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 			$db->commit();
@@ -204,18 +229,13 @@ if ($user->rights->banque->consolidate && ($action == 'num_releve' || $action ==
 
 $form = new Form($db);
 
-llxHeader();
+llxHeader('', $langs->trans("BankTransaction"));
 
-// Load bank groups
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
-$bankcateg = new BankCateg($db);
-$options = array();
-
-foreach ($bankcateg->fetchAll() as $bankcategory) {
-    $options[$bankcategory->id] = $bankcategory->label;
+$c = new Categorie($db);
+$cats = $c->containing($rowid, Categorie::TYPE_BANK_LINE);
+foreach ($cats as $cat) {
+    $arrayselected[] = $cat->id;
 }
-
-$var=false;
 
 $tabs = array(
     array(
@@ -228,7 +248,6 @@ $tabs = array(
     )
 );
 
-dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
 
 $sql = "SELECT b.rowid,b.dateo as do,b.datev as dv, b.amount, b.label, b.rappro,";
 $sql.= " b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, b.fk_account, b.fk_bordereau as receiptid,";
@@ -269,31 +288,39 @@ if ($result)
         print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
         print '<input type="hidden" name="id" value="'.$acct->id.'">';
 
-        print '<table class="border" width="100%">';
-
+        dol_fiche_head($tabs, 0, $langs->trans('LineRecord'), 0, 'account');
+        
         $linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php">'.$langs->trans("BackToList").'</a>';
 
+        
+        dol_banner_tab($bankline, 'rowid', $linkback);
+        
+
+        print '<div class="underbanner clearboth"></div>';       
+        print '<table class="border" width="100%">';
+
         // Ref
+        /*
         print '<tr><td class="titlefield">'.$langs->trans("Ref")."</td>";
         print '<td>';
         print $form->showrefnav($bankline, 'rowid', $linkback, 1, 'rowid', 'rowid');
         print '</td>';
         print '</tr>';
-
+        */
+        
         $i++;
 
-
         // Bank account
-        print "<tr><td>".$langs->trans("Account")."</td>";
+        print '<tr><td class="titlefield">'.$langs->trans("Account").'</td>';
         print '<td>';
-        print $acct->getNomUrl(1,'transactions');
+        print $acct->getNomUrl(1,'transactions','reflabel');
         print '</td>';
         print '</tr>';
 
         // Show links of bank transactions
         if (count($links))
         {
-            print "<tr><td>".$langs->trans("Links")."</td>";
+            print '<tr><td class="tdtop">'.$langs->trans("Links").'</td>';
             print '<td>';
             foreach($links as $key=>$val)
             {
@@ -375,6 +402,12 @@ if ($result)
                     print $langs->trans("User");
                     print '</a>';
                 }
+				else if ($links[$key]['type']=='payment_various') {
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$links[$key]['url_id'].'">';
+                    print img_object($langs->trans('ShowVariousPayment'),'payment').' ';
+                    print $langs->trans("VariousPayment");
+                    print '</a>';
+                }
                 else {
                     print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
                     print img_object('','generic').' ';
@@ -417,7 +450,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
+            print '<input type="text" class="flat minwidth200" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
             print '</td>';
         }
         else
@@ -431,7 +464,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print '<input type="text" class="flat" size="40" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
+            print '<input type="text" class="flat minwidth200" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
             print '</td>';
         }
         else
@@ -485,7 +518,7 @@ if ($result)
         if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
         {
             print '<td>';
-            print '<input name="label" class="flat" '.($objp->rappro?' disabled':'').' value="';
+            print '<input name="label" class="flat minwidth300" '.($objp->rappro?' disabled':'').' value="';
             if (preg_match('/^\((.*)\)$/i',$objp->label,$reg))
             {
                 // Label generique car entre parentheses. On l'affiche en le traduisant
@@ -495,7 +528,7 @@ if ($result)
             {
                 print $objp->label;
             }
-            print '" size="50">';
+            print '">';
             print '</td>';
         }
         else
@@ -519,7 +552,7 @@ if ($result)
         if ($user->rights->banque->modifier)
         {
             print '<td>';
-            print '<input name="amount" class="flat" size="10" '.($objp->rappro?' disabled':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$acct->currency_code);
+            print '<input name="amount" class="flat maxwidth100" '.($objp->rappro?' disabled':'').' value="'.price($objp->amount).'"> '.$langs->trans("Currency".$acct->currency_code);
             print '</td>';
         }
         else
@@ -530,22 +563,41 @@ if ($result)
         }
         print "</tr>";
 
+        // Categories
+        if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
+        {
+            $langs->load('categories');
+        
+            // Bank line
+            print '<tr><td class="toptd">' . fieldLabel('RubriquesTransactions', 'custcats') . '</td><td>';
+            $cate_arbo = $form->select_all_categories(Categorie::TYPE_BANK_LINE, null, 'parent', null, null, 1);
+            print $form->multiselectarray('custcats', $cate_arbo, $arrayselected, null, null, null, null, "90%");
+            print "</td></tr>";
+        }
+
         print "</table>";
-
-        print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
-
+        
+        dol_fiche_end();
+        
+        
+        print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div><br>';
+        
         print "</form>";
 
+        
+        
         // Releve rappro
         if ($acct->canBeConciliated() > 0)  // Si compte rapprochable
         {
-            print '<br>'."\n";
             print load_fiche_titre($langs->trans("Reconciliation"), '', 'title_bank.png');
+            print '<hr>'."\n";
+            
             print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$objp->rowid.'">';
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="setreconcile">';
             print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
-
+            print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+            
             print '<table class="border" width="100%">';
 
             print '<tr><td class="titlefield">'.$langs->trans("Conciliation")."</td>";
@@ -584,7 +636,15 @@ if ($result)
             print '</tr>';
             print '</table>';
 
-			print '<br><div class="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></div>';
+            print '<div class="center">';
+            
+            print '<input type="submit" class="button" value="'.$langs->trans("Update").'">';
+            if ($backtopage)
+            {
+                print ' &nbsp; ';
+                print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
+            }            
+            print '</div>';
 
 			print '</form>';
         }
@@ -594,57 +654,6 @@ if ($result)
     $db->free($result);
 }
 else dol_print_error($db);
-print '</div>';
-
-
-
-// List of bank categories
-print '<br>';
-
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?rowid='.$rowid.'&amp;id='.$id.'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="class">';
-print '<input type="hidden" name="orig_account" value="'.$orig_account.'">';
-
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Rubriques").'</td><td colspan="2">';
-if ($user->rights->banque->modifier)
-{
-    print Form::selectarray('cat1', $options, '', 1).' ';
-    print '<input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-}
-print '</tr>';
-
-$sql = "SELECT c.label, c.rowid";
-$sql.= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
-$sql.= " WHERE a.lineid=".$rowid." AND a.fk_categ = c.rowid";
-$sql.= " ORDER BY c.label";
-$result = $db->query($sql);
-if ($result)
-{
-    $var=True;
-    $num = $db->num_rows($result);
-    $i = 0; $total = 0;
-    while ($i < $num)
-    {
-        $objp = $db->fetch_object($result);
-
-        $var=!$var;
-        print "<tr ".$bc[$var].">";
-
-        print "<td>".$objp->label."</td>";
-        print "<td align=\"center\"><a href=\"budget.php?bid=".$objp->rowid."\">".$langs->trans("ListBankTransactions")."</a></td>";
-        if ($user->rights->banque->modifier)
-        {
-            print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=delete_categ&amp;rowid='.$rowid.'&amp;fk_categ='.$objp->rowid.'">'.img_delete($langs->trans("Remove")).'</a></td>';
-        }
-        print '</tr>';
-
-        $i++;
-    }
-    $db->free($result);
-}
-print '</table></form>';
 
 llxFooter();
 

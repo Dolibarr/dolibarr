@@ -49,9 +49,11 @@ class Categorie extends CommonObject
 	const TYPE_MEMBER = 3;     // TODO Replace this value with 'member'
 	const TYPE_CONTACT = 4;    // TODO Replace this value with 'contact'
 	const TYPE_USER = 4;       // categorie contact and user are same !   TODO Replace this value with 'user'
-    const TYPE_ACCOUNT = 5;    // for bank account TODO Replace this value with 'account'
-    const TYPE_PROJECT = 6;
-    public $picto = 'category';
+
+    const TYPE_ACCOUNT = 5;    // TODO Replace this value with 'bank_account'
+	const TYPE_PROJECT = 6;    // TODO Replace this value with 'project'
+    const TYPE_BANK_LINE = 'bank_line';
+	public $picto = 'category';
 
 
 	/**
@@ -131,7 +133,7 @@ class Categorie extends CommonObject
 	);
 
 	public $element='category';
-	public $table_element='categories';
+	public $table_element='categorie';
 
 	public $fk_parent;
 	public $label;
@@ -188,13 +190,13 @@ class Categorie extends CommonObject
 
 		$sql = "SELECT rowid, fk_parent, entity, label, description, color, fk_soc, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		if ($id)
+		if ($id > 0)
 		{
-			$sql.= " WHERE rowid = '".$id."'";
+			$sql.= " WHERE rowid = ".$id;
 		}
 		else
 		{
-			$sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category',1).")";
+			$sql.= " WHERE label = '".$this->db->escape($label)."' AND entity IN (".getEntity('category').")";
 			if ($type) $sql.= " AND type = '".$this->db->escape($type)."'";
 		}
 
@@ -398,7 +400,7 @@ class Categorie extends CommonObject
 		{
 			$sql .= ", fk_soc = ".($this->socid != -1 ? $this->socid : 'null');
 		}
-		$sql .= ", visible = '".$this->visible."'";
+		$sql .= ", visible = '".$this->db->escape($this->visible)."'";
 		$sql .= ", fk_parent = ".$this->fk_parent;
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -446,9 +448,10 @@ class Categorie extends CommonObject
 	 * 	Delete a category from database
 	 *
 	 * 	@param	User	$user		Object user that ask to delete
-	 *	@return	int <0 KO >0 OK
+     *	@param	int		$notrigger	1=Does not execute triggers, 0= execute triggers
+	 *	@return	int                 <0 KO >0 OK
 	 */
-	function delete($user)
+	function delete($user, $notrigger=0)
 	{
 		global $conf,$langs;
 
@@ -460,6 +463,14 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this)."::remove");
 
 		$this->db->begin();
+
+		if (! $error && ! $notrigger)
+		{
+		    // Call trigger
+		    $result=$this->call_trigger('CATEGORY_DELETE',$user);
+		    if ($result < 0) $error++;
+		    // End call triggers
+		}
 
 		/* FIX #1317 : Check for child category and move up 1 level*/
 		if (! $error)
@@ -579,25 +590,16 @@ class Categorie extends CommonObject
 				$this->error=$this->db->lasterror();
 				$error++;
 			}
-			else
+		}
+
+		// Removed extrafields
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		{
+			$result=$this->deleteExtraFields();
+			if ($result < 0)
 			{
-				// Removed extrafields
-				if (! $error)
-				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-					{
-						$result=$this->deleteExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-							dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
-						}
-					}
-				}
-                // Call trigger
-                $result=$this->call_trigger('CATEGORY_DELETE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				$error++;
+				dol_syslog(get_class($this)."::delete erreur ".$this->error, LOG_ERR);
 			}
 		}
 
@@ -791,11 +793,12 @@ class Categorie extends CommonObject
 	/**
 	 * Return list of fetched instance of elements having this category
 	 *
-	 * @param   string $type Type of category ('customer', 'supplier', 'contact', 'product', 'member')
-	 *
-	 * @return  mixed        -1 if KO, array of instance of object if OK
+	 * @param   string     $type       Type of category ('customer', 'supplier', 'contact', 'product', 'member')
+	 * @param   int        $onlyids    Return only ids of objects (consume less memory)
+	 * @return  mixed                  -1 if KO, array of instance of object if OK
+	 * @see containsObject
 	 */
-	function getObjectsInCateg($type)
+	function getObjectsInCateg($type, $onlyids=0)
 	{
 		$objs = array();
 
@@ -812,10 +815,18 @@ class Categorie extends CommonObject
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
-			while ($rec = $this->db->fetch_array($resql)) {
-				$obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
-				$obj->fetch( $rec['fk_' . $this->MAP_CAT_FK[$type]]);
-				$objs[] = $obj;
+			while ($rec = $this->db->fetch_array($resql))
+			{
+			    if ($onlyids)
+			    {
+			        $objs[] = $rec['fk_' . $this->MAP_CAT_FK[$type]];
+			    }
+			    else
+			    {
+				    $obj = new $this->MAP_OBJ_CLASS[$type]( $this->db );
+				    $obj->fetch( $rec['fk_' . $this->MAP_CAT_FK[$type]]);
+				    $objs[] = $obj;
+			    }
 			}
 			return $objs;
 		}
@@ -833,6 +844,7 @@ class Categorie extends CommonObject
 	 * @param   int    $object_id id of the object to search
 	 *
 	 * @return  int                        number of occurrences
+	 * @see getObjectsInCateg
 	 */
 	function containsObject($type, $object_id )
 	{
@@ -892,7 +904,7 @@ class Categorie extends CommonObject
 		$sql = "SELECT fk_parent as id_parent, rowid as id_son";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE fk_parent != 0";
-		$sql.= " AND entity IN (".getEntity('category',1).")";
+		$sql.= " AND entity IN (".getEntity('category').")";
 
 		dol_syslog(get_class($this)."::load_motherof", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -927,7 +939,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  array               Array of categories. this->cats and this->motherof are set.
 	 */
-	function get_full_arbo($type,$markafterid=0)
+	function get_full_arbo($type, $markafterid=0)
 	{
 	    global $conf, $langs;
 
@@ -1083,7 +1095,7 @@ class Categorie extends CommonObject
 	function get_all_categories($type=null, $parent=false)
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE entity IN (".getEntity('category').")";
 		if (! is_null($type))
 			$sql.= " AND type = ".$type;
 		if ($parent)
@@ -1118,7 +1130,7 @@ class Categorie extends CommonObject
 	{
 		$sql = "SELECT count(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE entity IN (".getEntity('category').")";
 		$res = $this->db->query($sql);
 		if ($res)
 		{
@@ -1144,7 +1156,7 @@ class Categorie extends CommonObject
 		 */
 		$sql = "SELECT c.rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c ";
-		$sql.= " WHERE c.entity IN (".getEntity('category',1).")";
+		$sql.= " WHERE c.entity IN (".getEntity('category').")";
 		$sql.= " AND c.type = ".$this->type;
 		$sql.= " AND c.fk_parent = ".$this->fk_parent;
 		$sql.= " AND c.label = '".$this->db->escape($this->label)."'";
@@ -1167,7 +1179,7 @@ class Categorie extends CommonObject
 					return 1;
 				}
 			}
-			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent.": rowid=".$obj[0]." current_id=".$this->id, LOG_DEBUG);
+			dol_syslog(get_class($this)."::already_exists no category with same name=".$this->label." and same parent ".$this->fk_parent." than category id=".$this->id, LOG_DEBUG);
 			return 0;
 		}
 		else
@@ -1337,34 +1349,68 @@ class Categorie extends CommonObject
 			$type = $map_type[$type];
 		}
 
-		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
-		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
-		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
-		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
-
-		$res = $this->db->query($sql);
-		if ($res)
+		if ($type == Categorie::TYPE_BANK_LINE)   // TODO Remove this with standard category code
 		{
-			while ($obj = $this->db->fetch_object($res))
-			{
-				if ($mode == 'id') {
-					$cats[] = $obj->rowid;
-				} else if ($mode == 'label') {
-					$cats[] = $obj->label;
-				} else {
-					$cat = new Categorie($this->db);
-					$cat->fetch($obj->fk_categorie);
-					$cats[] = $cat;
-				}
-			}
+		    // Load bank groups
+		    $sql = "SELECT c.label, c.rowid";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c";
+		    $sql.= " WHERE a.lineid=".$id." AND a.fk_categ = c.rowid";
+		    $sql.= " ORDER BY c.label";
 
-			return $cats;
+		    $res = $this->db->query($sql);
+		    if ($res)
+		    {
+		        while ($obj = $this->db->fetch_object($res))
+		        {
+    				if ($mode == 'id') {
+    				    $cats[] = $obj->rowid;
+    				} else if ($mode == 'label') {
+    				    $cats[] = $obj->label;
+    				} else {
+    				    $cat = new Categorie($this->db);
+    				    $cat->id = $obj->rowid;
+    				    $cat->label = $obj->label;
+    				    $cats[] = $cat;
+    				}
+		        }
+		    }
+		    else
+		    {
+		        dol_print_error($this->db);
+		        return -1;
+		    }
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
+        else
+        {
+    		$sql = "SELECT ct.fk_categorie, c.label, c.rowid";
+    		$sql .= " FROM " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type] . " as ct, " . MAIN_DB_PREFIX . "categorie as c";
+    		$sql .= " WHERE ct.fk_categorie = c.rowid AND ct.fk_" . $this->MAP_CAT_FK[$type] . " = " . (int) $id . " AND c.type = " . $this->MAP_ID[$type];
+    		$sql .= " AND c.entity IN (" . getEntity( 'category', 1 ) . ")";
+
+    		$res = $this->db->query($sql);
+    		if ($res)
+    		{
+    			while ($obj = $this->db->fetch_object($res))
+    			{
+    				if ($mode == 'id') {
+    					$cats[] = $obj->rowid;
+    				} else if ($mode == 'label') {
+    					$cats[] = $obj->label;
+    				} else {
+    					$cat = new Categorie($this->db);
+    					$cat->fetch($obj->fk_categorie);
+    					$cats[] = $cat;
+    				}
+    			}
+    		}
+    		else
+    		{
+    			dol_print_error($this->db);
+    			return -1;
+    		}
+        }
+
+        return $cats;
 	}
 
 
@@ -1389,7 +1435,7 @@ class Categorie extends CommonObject
 		$cats = array();
 
 		// For backward compatibility
-		if (is_numeric( $type )) {
+		if (is_numeric($type)) {
 			// We want to reverse lookup
 			$map_type = array_flip( $this->MAP_ID );
 			$type = $map_type[$type];
@@ -1494,17 +1540,31 @@ class Categorie extends CommonObject
 			dol_mkdir($dir);
 		}
 
-		if (file_exists($dir))
-		{
-			$originImage = $dir . $file['name'];
+		if (file_exists($dir)) {
+			if (is_array($file['name']) && count($file['name']) > 0) {
+				$nbfile = count($file['name']);
+				for ($i = 0; $i <= $nbfile; $i ++) {
 
-			// Cree fichier en taille origine
-			dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
+					$originImage = $dir . $file['name'][$i];
 
-			if (file_exists($originImage))
-			{
-			    // Create thumbs
-				$this->addThumbs($originImage);
+					// Cree fichier en taille origine
+					dol_move_uploaded_file($file['tmp_name'][$i], $originImage, 1, 0, 0);
+
+					if (file_exists($originImage)) {
+						// Create thumbs
+						$this->addThumbs($originImage);
+					}
+				}
+			} else {
+				$originImage = $dir . $file['name'];
+
+				// Cree fichier en taille origine
+				dol_move_uploaded_file($file['tmp_name'], $originImage, 1, 0, 0);
+
+				if (file_exists($originImage)) {
+					// Create thumbs
+					$this->addThumbs($originImage);
+				}
 			}
 		}
 	}
@@ -1635,7 +1695,7 @@ class Categorie extends CommonObject
 	                $sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 	                $sql2.= " SET label='".$this->db->escape($this->label)."',";
 	                $sql2.= " description='".$this->db->escape($this->description)."'";
-	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$key."'";
+	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$this->db->escape($key)."'";
 	            }
 	            else
 	            {
@@ -1657,7 +1717,7 @@ class Categorie extends CommonObject
 	                $sql2 = "UPDATE ".MAIN_DB_PREFIX."categorie_lang";
 	                $sql2.= " SET label='".$this->db->escape($this->multilangs["$key"]["label"])."',";
 	                $sql2.= " description='".$this->db->escape($this->multilangs["$key"]["description"])."'";
-	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$key."'";
+	                $sql2.= " WHERE fk_category=".$this->id." AND lang='".$this->db->escape($key)."'";
 	            }
 	            else
 	            {

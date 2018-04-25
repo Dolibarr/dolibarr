@@ -366,7 +366,9 @@ if ($nboftargetok) {
 		}
 		else			# For a maintenance release
 		{
-			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			#print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. --no-merges --pretty=short --oneline | sed -e "s/^[0-9a-z]* //" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			print 'cd ~/git/dolibarr_'.$MAJOR.'.'.$MINOR.'; git log '.$MAJOR.'.'.$MINOR.'.'.($BUILD-1).'.. | grep -v "Merge branch" | grep -v "Merge pull" | grep "^ " | sed -e "s/^[0-9a-z]* *//" | grep -e \'^FIX\|NEW\' | sort -u | sed \'s/FIXED:/FIX:/g\' | sed \'s/FIXED :/FIX:/g\' | sed \'s/FIX :/FIX:/g\' | sed \'s/FIX /FIX: /g\' | sed \'s/NEW :/NEW:/g\' | sed \'s/NEW /NEW: /g\' > /tmp/aaa';
+			
 		}
 		print "\n";
 		if (! $ret)
@@ -548,23 +550,16 @@ if ($nboftargetok) {
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/oblyon*`;
 		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/allscreen*`;
 		# Removed other test files
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/themes/eldy/*.new`;
-		$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/api/explorer`;				# This is a dev tool
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/public/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/test`;
 	    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.cvsignore $BUILDROOT/$PROJECT/*/.cvsignore $BUILDROOT/$PROJECT/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/.cvsignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.cvsignore`;
 	    $ret=`rm -f  $BUILDROOT/$PROJECT/.gitignore $BUILDROOT/$PROJECT/*/.gitignore $BUILDROOT/$PROJECT/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/.gitignore $BUILDROOT/$PROJECT/*/*/*/*/*/*/.gitignore`;
    	    $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/geoip/sample*.*`;
-        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/jqueryFileTree/connectors/jqueryFileTree.pl`;    # Avoid errors into rpmlint
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/template`;  # Package not valid for most linux distributions (errors reported into compile.js). Package should be embed by modules to avoid problems.
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpmailer`;                # Package not valid for most linux distributions (errors reported into file LICENSE). Package should be embed by modules to avoid problems.
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/adapters`;		# Keep this removal in case we embed libraries
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/ckeditor/samples`;		# Keep this removal in case we embed libraries
         #$ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/ckeditor/_source`;		# _source must be kept into tarball
    	    
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/datatables/extensions/TableTools/swf`;	# Source of this flash is not available
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/datatables/extras/TableTools/swf`;	    # Source of this flash is not available
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/multiselect/MIT-LICENSE.txt`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/jquery/plugins/select2/release.sh`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mike42/escpos-php/doc`;
@@ -573,6 +568,7 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/mobiledetect/mobiledetectlib/.gitmodules`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/lib/Mail`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/nusoap/samples`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/parsedown/LICENSE.txt`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/php-iban/docs`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/.gitattributes`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/Classes/license.md`;
@@ -581,22 +577,26 @@ if ($nboftargetok) {
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/Examples`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/unitTests`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/phpoffice/phpexcel/license.md`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/stripe/LICENSE`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/dejavu-fonts-ttf-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/freefont-*`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/fonts/utils`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tcpdf/LICENSE.TXT`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/dejavu-fonts-ttf-*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-*`;
+        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_*`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/fonts/utils`;
         $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/tools`;
         $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/includes/tecnickcom/tcpdf/LICENSE.TXT`;
-        $ret=`rm -fr $BUILDROOT/$PROJECT/htdocs/includes/savant`;
+        $ret=`rm -f  $BUILDROOT/$PROJECT/htdocs/theme/common/octicons/LICENSE`;
+        
         
         print "Remove subdir of custom dir\n";
    	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\;\n";
-   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to keep files only
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type d -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs but not files
    	    print "find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\;\n";
-   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to keep files only
+   	    $ret=`find $BUILDROOT/$PROJECT/htdocs/custom/* -type l -exec rm -fr {} \\; >/dev/null 2>&1`;	# For custom we want to remove all subdirs, even symbolic links, but not files
 	}
 
 	# Build package for each target
@@ -915,9 +915,6 @@ if ($nboftargetok) {
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mike42/escpos-php/LICENSE.md`;
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/mobiledetect/mobiledetectlib/LICENSE.txt`;
 			
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/tecnickcom/tcpdf/fonts/dejavu-fonts-ttf-2.34/LICENSE`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/tecnickcom/tcpdf/fonts/freefont-20120503/COPYING`;
-			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/tecnickcom/tcpdf/fonts/ae_fonts_2.0/COPYING`;
 			# Removed files we don't need
 			$ret=`rm -fr $BUILDROOT/$PROJECT.tmp/htdocs/includes/ckeditor/ckeditor/_source`;
 			
@@ -980,13 +977,14 @@ if ($nboftargetok) {
 			$ret=`$cmd`;
 			$ret=`chmod 755 $BUILDROOT/$PROJECT.tmp/debian/rules`;
 			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/translation/autotranslator.class.php`;
-			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/skeletons/modMyModule.class.php`;
-			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/skeletons/skeleton_api_class.class.php`;
-			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/skeletons/skeleton_card.php`;
-			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/skeletons/skeleton_class.class.php`;
-			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/skeletons/skeleton_list.php`;
-			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/dev/skeletons/skeleton_script.php`;
-			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/dev/skeletons/skeleton_webservice_server.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/actions_mymodule.class.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/api_myobject.class.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/class/myobject.class.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/core/modules/modMyModule.class.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/mymoduleindex.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_card.php`;
+			$ret=`chmod -R 644 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/myobject_list.php`;
+			$ret=`chmod -R 755 $BUILDROOT/$PROJECT.tmp/htdocs/modulebuilder/template/scripts/myobject.php`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/scripts -name '*.php' -type f -exec chmod 755 {} \\; ";
 			$ret=`$cmd`;
 			$cmd="find $BUILDROOT/$PROJECT.tmp/scripts -name '*.sh' -type f -exec chmod 755 {} \\; ";

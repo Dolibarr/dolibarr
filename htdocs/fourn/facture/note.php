@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +29,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 $langs->load('bills');
 $langs->load("companies");
@@ -79,10 +83,8 @@ if ($object->id > 0)
 	
 	$head = facturefourn_prepare_head($object);
 	$titre=$langs->trans('SupplierInvoice');
-	dol_fiche_head($head, 'note', $titre, 0, 'bill');
+	dol_fiche_head($head, 'note', $titre, -1, 'bill');
 
-
-	print '<table class="border" width="100%">';
 
 	// Supplier invoice card
     $linkback = '<a href="'.DOL_URL_ROOT.'/fourn/facture/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
@@ -135,7 +137,9 @@ if ($object->id > 0)
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
-	// Type
+	print '<table class="border" width="100%">';
+
+    // Type
 	print '<tr><td class="titlefield">'.$langs->trans('Type').'</td><td>';
 	print $object->getLibType();
 	if ($object->type == FactureFournisseur::TYPE_REPLACEMENT)
@@ -203,6 +207,7 @@ if ($object->id > 0)
 
 	print '<br>';
 
+    print '<div class="underbanner clearboth"></div>';
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

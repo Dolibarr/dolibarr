@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Etiqueta/Categoría
 Rubriques=Etiqueta/Categoría
+RubriquesTransactions=Etiquetas/Categorías de transacciones
 categories=etiquetas/categorías
 NoCategoryYet=Ninguna etiqueta/categoría de este tipo creada
 In=En

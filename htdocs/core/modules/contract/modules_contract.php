@@ -143,24 +143,3 @@ class ModelNumRefContracts
 		return $langs->trans("NotAvailable");
 	}
 }
-
-/**
- *  Create a contract document on disk using template defined into CONTRACT_ADDON_PDF
- *
- *  @param	DoliDB		$db  			objet base de donnee
- *  @param	Contrat		$object			Object contract
- *  @param	string		$modele			force le modele a utiliser ('' par defaut)
- *  @param	Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @param  int			$hidedetails    Hide details of lines
- *  @param  int			$hidedesc       Hide description
- *  @param  int			$hideref        Hide ref
- *  @return int         				0 if KO, 1 if OK
- * @deprecated Use the new function generateDocument of Contrat class
- * @see Contrat::generateDocument()
- */
-function contract_pdf_create(DoliDB $db, Contrat $object, $modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
-{
-	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
-}

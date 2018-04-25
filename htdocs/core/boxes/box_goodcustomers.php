@@ -88,7 +88,7 @@ class box_goodcustomers extends ModeleBoxes
 			$sql = "SELECT s.rowid, s.nom as name, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms as datem, s.status as status,";
 			$sql.= " count(*) as nbfact, sum(". $db->ifsql('f.paye=1','1','0').") as nbfactpaye";
 			$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-			$sql.= ' WHERE s.entity IN ('.getEntity('societe', 1).')';
+			$sql.= ' WHERE s.entity IN ('.getEntity('societe').')';
 			$sql.= ' AND s.rowid = f.fk_soc';
 			$sql.= " GROUP BY s.rowid, s.nom, s.logo, s.code_client, s.code_fournisseur, s.client, s.fournisseur, s.tms, s.status";
 			$sql.= $db->order("nbfact","DESC");
@@ -116,18 +116,18 @@ class box_goodcustomers extends ModeleBoxes
 					$nbimpaye = $objp->nbfact - $objp->nbfactpaye;
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="left"',
+					    'td' => '',
 					    'text' => $thirdpartystatic->getNomUrl(1),
 					    'asis' => 1,
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right"',
+					    'td' => 'class="right"',
 					    'text' => dol_print_date($datem, "day")
 					);
 
 					$this->info_box_contents[$line][] = array(
-					    'td' => 'align="right"',
+					    'td' => 'class="right"',
 					    'text' => $nbfact.( $nbimpaye != 0 ? ' ('.$nbimpaye.')':'')
 					);
 
@@ -144,14 +144,16 @@ class box_goodcustomers extends ModeleBoxes
 				$db->free($result);
 			}
 			else {
-				$this->info_box_contents[0][0] = array(	'td' => 'align="left"',
+				$this->info_box_contents[0][0] = array(	'td' => '',
     	        										'maxlength'=>500,
 	            										'text' => ($db->error().' sql='.$sql));
 			}
 		}
 		else {
-			$this->info_box_contents[0][0] = array('align' => 'left',
-				'text' => $langs->trans("ReadPermissionNotAllowed"));
+			$this->info_box_contents[0][0] = array(
+			    'td' => 'align="left" class="nohover opacitymedium"',
+				'text' => $langs->trans("ReadPermissionNotAllowed")
+			);
 		}
 
 	}

@@ -35,7 +35,7 @@ $ref    = GETPOST('ref','alpha');
 $socid  = GETPOST('socid','int');
 $action = GETPOST('action','alpha');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield","alpha");
 $sortorder = GETPOST("sortorder");
 $page = GETPOST("page");
@@ -78,7 +78,7 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 // Purge search criteria
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // All test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
 {
     $actioncode='';
     $search_agenda_label='';
@@ -107,12 +107,12 @@ llxHeader("",$title,$help_url);
 
 $head = project_prepare_head($object);
 
-dol_fiche_head($head, 'agenda', $langs->trans("Project"), 0, ($object->public?'projectpub':'project'));
+dol_fiche_head($head, 'agenda', $langs->trans("Project"), -1, ($object->public?'projectpub':'project'));
 
 
 // Project card
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref='<div class="refidno">';
 // Title

@@ -71,7 +71,7 @@ class mailing_advthirdparties extends MailingTargets
 			{
 				$sql= "SELECT s.rowid as id, s.email as email, s.nom as name, null as fk_contact";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s LEFT OUTER JOIN ".MAIN_DB_PREFIX."societe_extrafields se ON se.fk_object=s.rowid";
-				$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+				$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 				$sql.= " AND s.rowid IN (".implode(',',$socid).")";
 				$sql.= " ORDER BY email";
 
@@ -100,7 +100,7 @@ class mailing_advthirdparties extends MailingTargets
     								'source_url' => $this->url($obj->id,'thirdparty'),
     								'source_id' => $obj->id,
     								'source_type' => 'thirdparty'
-    						);
+    							);
     						}
     					}
 
@@ -116,13 +116,13 @@ class mailing_advthirdparties extends MailingTargets
 			}
 		}
 
-		if  (($type_of_target==1) || ($type_of_target==2)) {
+		if  (($type_of_target==1) || ($type_of_target==2) || ($type_of_target==4)) {
 			// Select the third parties from category
 			if (count($socid)>0 || count($contactid)>0)
 			{
 				$sql= "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
 				$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
-				$sql.= " WHERE socp.entity IN (".getEntity('societe', 1).")";
+				$sql.= " WHERE socp.entity IN (".getEntity('societe').")";
 				if (count($contactid)>0) {
 					$sql.= " AND socp.rowid IN (".implode(',',$contactid).")";
 				}
@@ -211,7 +211,7 @@ class mailing_advthirdparties extends MailingTargets
 		$sql = "SELECT count(distinct(s.email)) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		$sql.= " WHERE s.email != ''";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		$sql.= " AND s.entity IN (".getEntity('societe').")";
 
 		// La requete doit retourner un champ "nb" pour etre comprise
 		// par parent::getNbOfRecipients
@@ -289,11 +289,11 @@ class mailing_advthirdparties extends MailingTargets
 		if ($type=='thirdparty') {
 			$companystatic=new Societe($this->db);
 			$companystatic->fetch($id);
-			return $companystatic->getNomUrl(0);
+			return $companystatic->getNomUrl(0,'',0,1);
 		} elseif ($type=='contact') {
 			$contactstatic=new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0);
+			return $contactstatic->getNomUrl(0,'',0,'',1);
 		}
 	}
 

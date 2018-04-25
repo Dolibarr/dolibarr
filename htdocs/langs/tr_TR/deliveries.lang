@@ -1,16 +1,16 @@
 # Dolibarr language file - Source file is en_US - deliveries
 Delivery=Teslimat
 DeliveryRef=Teslimat Ref
-DeliveryCard=Receipt card
+DeliveryCard=Makbuz kartı
 DeliveryOrder=Teslimat emri
 DeliveryDate=Teslim tarihi
-CreateDeliveryOrder=Generate delivery receipt
+CreateDeliveryOrder=Teslimat makbuzu oluştur
 DeliveryStateSaved=Teslimat durumu kaydedildi
 SetDeliveryDate=Nakliye tarihini ayarla
 ValidateDeliveryReceipt=Teslimat fişini doğrula
-ValidateDeliveryReceiptConfirm=Are you sure you want to validate this delivery receipt?
+ValidateDeliveryReceiptConfirm=Bu teslimat makbuzunu doğrulamak istediğinizden emin misiniz?
 DeleteDeliveryReceipt=Teslimat fişi sil
-DeleteDeliveryReceiptConfirm=Are you sure you want to delete delivery receipt <b>%s</b>?
+DeleteDeliveryReceiptConfirm=<b>%s</b> teslimat makbuzunu silmek istediğinizden emin misiniz?
 DeliveryMethod=Teslimat yöntemi
 TrackingNumber=İzleme numarası
 DeliveryNotValidated=Teslimat doğrulanmadı

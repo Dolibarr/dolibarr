@@ -76,7 +76,7 @@ print "<br>\n";
 
 $head = order_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("OrderLines"), 0, 'order');
+dol_fiche_head($head, 'attributeslines', $langs->trans("OrderLines"), -1, 'order');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

@@ -37,15 +37,21 @@
  *  @param	int		$autoselect			Automatic selection if just one value
  *  @param	array	$ajaxoptions		Multiple options array
  *                                          Ex: array('update'=>array('field1','field2'...)) will reset field1 and field2 once select done
- *                                          Ex: array('disabled'=>
- *                                          Ex: array('show'=>
- *                                          Ex: array('update_textarea'=>
+ *                                          Ex: array('disabled'=> )
+ *                                          Ex: array('show'=> )
+ *                                          Ex: array('update_textarea'=> )
  *                                          Ex: array('option_disabled'=> id to disable and warning to show if we select a disabled value (this is possible when using autocomplete ajax)
  *	@return string              		Script
  */
 function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLength=2, $autoselect=0, $ajaxoptions=array())
 {
     if (empty($minLength)) $minLength=1;
+
+    $dataforrenderITem='ui-autocomplete';
+    $dataforitem='ui-autocomplete-item';
+    // Allow two constant to use other values for backward compatibility
+    if (defined('JS_QUERY_AUTOCOMPLETE_RENDERITEM')) $dataforrenderITem=constant('JS_QUERY_AUTOCOMPLETE_RENDERITEM');
+    if (defined('JS_QUERY_AUTOCOMPLETE_ITEM'))       $dataforitem=constant('JS_QUERY_AUTOCOMPLETE_ITEM');
 
     // Input search_htmlname is original field
     // Input htmlname is a second input field used when using ajax autocomplete.
@@ -191,10 +197,9 @@ function ajax_autocompleter($selected, $htmlname, $url, $urloption='', $minLengt
     						$("#search_'.$htmlname.'").trigger("change");	// We have changed value of the combo select, we must be sure to trigger all js hook binded on this event. This is required to trigger other javascript change method binded on original field by other code.
     					}
     					,delay: 500
-					}).data("ui-autocomplete")._renderItem = function( ul, item ) {
-
+					}).data("'.$dataforrenderITem.'")._renderItem = function( ul, item ) {
 						return $("<li>")
-						.data( "ui-autocomplete-item", item ) // jQuery UI > 1.10.0
+						.data( "'.$dataforitem.'", item ) // jQuery UI > 1.10.0
 						.append( \'<a><span class="tag">\' + item.label + "</span></a>" )
 						.appendTo(ul);
 					};
@@ -355,6 +360,25 @@ function ajax_dialog($title,$message,$w=350,$h=150)
     return $msg;
 }
 
+
+/**
+ * Make content of an input box selected when we click into input field.
+ *
+ * @param string	$htmlname	Id of html object
+ * @param string	$addlink	Add a 'link to' after
+ */
+function ajax_autoselect($htmlname, $addlink='')
+{
+	global $langs;
+	$out = '<script type="text/javascript">
+               jQuery(document).ready(function () {
+				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
+				});
+		    </script>';
+	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
+	return $out;
+}
+
 /**
  * Convert a html select field into an ajax combobox.
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
@@ -379,7 +403,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if (empty($minLengthToAutocomplete)) $minLengthToAutocomplete=0;
 
     $tmpplugin='select2';
-    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id '.$htmlname.' -->
+    $msg='<!-- JS CODE TO ENABLE '.$tmpplugin.' for id = '.$htmlname.' -->
           <script type="text/javascript">
         	$(document).ready(function () {
         		$(\''.(preg_match('/^\./',$htmlname)?$htmlname:'#'.$htmlname).'\').'.$tmpplugin.'({
@@ -390,7 +414,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 	if ($forcefocus) $msg.= '.select2(\'focus\')';
 	$msg.= ';'."\n";
 
-	if (count($events))
+	if (is_array($events) && count($events))    // If an array of js events to do were provided.
 	{
 		$msg.= '
 			jQuery("#'.$htmlname.'").change(function () {
@@ -403,6 +427,7 @@ function ajax_combobox($htmlname, $events=array(), $minLengthToAutocomplete=0, $
 			});
 
 			function runJsCodeForEvent'.$htmlname.'(obj) {
+			    console.log("Run runJsCodeForEvent'.$htmlname.'");
 				var id = $("#'.$htmlname.'").val();
 				var method = obj.method;
 				var url = obj.url;

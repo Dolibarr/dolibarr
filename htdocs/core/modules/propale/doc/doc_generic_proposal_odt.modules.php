@@ -167,7 +167,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
                 $texte.=$file['name'].'<br>';
    			}
    			$texte.='<div id="div_'.get_class($this).'">';
-    			
+
 			if ($conf->global->MAIN_PROPAL_CHOOSE_ODT_DOCUMENT > 0)
 			{
 				// Model for creation
@@ -252,7 +252,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 			if (! is_object($object))
 			{
 				$id = $object;
-				$object = new Propale($this->db);
+				$object = new Propal($this->db);
 				$result=$object->fetch($id);
 				if ($result < 0)
 				{

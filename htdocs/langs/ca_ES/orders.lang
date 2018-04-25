@@ -4,6 +4,7 @@ SuppliersOrdersArea=Àrea comandes a proveïdors
 OrderCard=Fitxa comanda
 OrderId=Id comanda
 Order=Comanda
+PdfOrderTitle=Comanda
 Orders=Comandes
 OrderLine=Línia de comanda
 OrderDate=Data comanda

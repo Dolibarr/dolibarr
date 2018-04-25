@@ -42,7 +42,7 @@ $result = restrictedArea($user, 'expensereport','','');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -70,7 +70,7 @@ $label=$somme=$nb=array();
 $totalnb=$totalsum=0;
 $sql = "SELECT tf.code, tf.label, count(de.rowid) as nb, sum(de.total_ht) as km";
 $sql.= " FROM ".MAIN_DB_PREFIX."expensereport as d, ".MAIN_DB_PREFIX."expensereport_det as de, ".MAIN_DB_PREFIX."c_type_fees as tf";
-$sql.= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport', 1).") AND de.fk_c_type_fees = tf.id";
+$sql.= " WHERE de.fk_expensereport = d.rowid AND d.entity IN (".getEntity('expensereport').") AND de.fk_c_type_fees = tf.id";
 // RESTRICT RIGHTS
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
@@ -112,7 +112,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("Statistics").'</td>';
+print '<th colspan="4">'.$langs->trans("Statistics").'</th>';
 print "</tr>\n";
 
 $listoftype=$tripandexpense_static->listOfTypes();
@@ -158,7 +158,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
     $childids[]=$user->id;
     $sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
-$sql.= ' AND d.entity IN ('.getEntity('expensereport', 1).')';
+$sql.= ' AND d.entity IN ('.getEntity('expensereport').')';
 if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND d.fk_user_author = s.rowid AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql.= " AND d.fk_user_author = ".$socid;
 $sql.= $db->order($sortfield,$sortorder);
@@ -174,11 +174,11 @@ if ($result)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</td>';
-    print '<td align="right">'.$langs->trans("AmountHT").'</td>';
-    print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
-    print '<td align="right">'.$langs->trans("DateModificationShort").'</td>';
-    print '<td>&nbsp;</td>';
+    print '<th colspan="2">'.$langs->trans("BoxTitleLastModifiedExpenses",min($max,$num)).'</th>';
+    print '<th align="right">'.$langs->trans("AmountHT").'</th>';
+    print '<th align="right">'.$langs->trans("AmountTTC").'</th>';
+    print '<th align="right">'.$langs->trans("DateModificationShort").'</th>';
+    print '<th>&nbsp;</th>';
     print '</tr>';
     if ($num)
     {
@@ -197,7 +197,7 @@ if ($result)
             $userstatic->login=$obj->login;
             $userstatic->statut=$obj->statut;
             $userstatic->photo=$obj->photo;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td>'.$expensereportstatic->getNomUrl(1).'</td>';
             print '<td>'.$userstatic->getNomUrl(-1).'</td>';
             print '<td align="right">'.price($obj->total_ht).'</td>';
@@ -208,14 +208,14 @@ if ($result)
 			print $expensereportstatic->LibStatut($obj->fk_status,3);
             print '</td>';
             print '</tr>';
-            $var=!$var;
+            
             $i++;
         }
 
     }
     else
     {
-        print '<tr '.$bc[$var].'><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
+        print '<tr class="oddeven"><td colspan="6" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
     }
     print '</table><br>';
 }

@@ -1,2 +1,17 @@
 # Dolibarr language file - Source file is en_US - ecm
+ECMNbOfDocs=Anzahl der Dokumente im Verzeichnis
+ECMSectionManual=Manuelle Ordner
+ECMSectionAuto=Automatische Ordner
+ECMSectionsManual=Manuelle Hierarchie
+ECMSectionsAuto=Automatische Hierarchie
+ECMNbOfFilesInDir=Anzahl der Dateien in Ordner
+ECMNbOfSubDir=Anzahl der Unterordner
+ECMAreaDesc=Das EDM (Elektronisches Dokumenten Management)-System erlaubt Ihnen Speichern, Teilen und rasches Auffinden von allen Dokumenten im Dolibarr.
+ECMAreaDesc2=* In den automatischen Verzeichnissen werden die vom System erzeugeten Dokumente abgelegt. <br> * Die manuellen Verzeichnisse können Sie selbst verwalten und zusätzliche nicht direkt zuordenbare Dokument hinterlegen.
+ECMSectionWasRemoved=Der Ordner <b>%s</b> wurde gelöscht.
+ECMSearchByKeywords=Suche nach Stichwörter
+ECMSectionOfDocuments=Dokumentenordner
+ECMDocsBySocialContributions=Verlinke Dokumente zu Sozialabgaben oder Steuerinformationen
 ECMDocsByThirdParties=Mit Geschäftspartnern verknüpfte Dokumente
+ECMDocsByInterventions=Mit Eingriffen verknüpfte Dokumente
+DirNotSynchronizedSyncFirst=Dieses Verzeichnis scheint ausserhalb des ECM Moduls erstellt oder verändert worden zu sein. Sie müssten auf den "Refresh"-Button klicken um den Inhalt der Festplatte mit der Datenbank zu synchronisieren.

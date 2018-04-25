@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2017 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -171,7 +172,7 @@ if ($action == 'addcat')
 
 if ($action == 'set_SUPPLIER_INVOICE_FREE_TEXT')
 {
-    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT');	// No alpha here, we want exact string
+    $freetext = GETPOST('SUPPLIER_INVOICE_FREE_TEXT','none');	// No alpha here, we want exact string
 
     $res = dolibarr_set_const($db, "SUPPLIER_INVOICE_FREE_TEXT",$freetext,'chaine',0,'',$conf->entity);
 
@@ -205,7 +206,7 @@ print "<br>";
 
 $head = supplierorder_admin_prepare_head();
 
-dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), 0, 'company');
+dol_fiche_head($head, 'invoice', $langs->trans("Suppliers"), -1, 'company');
 
 
 // Supplier invoice numbering module
@@ -250,8 +251,8 @@ foreach ($dirmodels as $reldir)
                         if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
                         if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
-                        $var=!$var;
-                        print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+
+                        print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
                         print $module->info();
                         print '</td>';
 
@@ -361,7 +362,6 @@ foreach ($dirmodels as $reldir)
 
     if (is_dir($dir))
     {
-        $var=true;
 
         $handle=opendir($dir);
 
@@ -370,7 +370,7 @@ foreach ($dirmodels as $reldir)
         {
             while (($file = readdir($handle))!==false)
             {
-                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))            	
+                if (preg_match('/\.modules\.php$/i',$file) && preg_match('/^(pdf_|doc_)/',$file))
                 {
                     $name = substr($file, 4, dol_strlen($file) -16);
                     $classname = substr($file, 0, dol_strlen($file) -12);
@@ -378,8 +378,8 @@ foreach ($dirmodels as $reldir)
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new FactureFournisseur($db));
 
-                    $var=!$var;
-                    print "<tr ".$bc[$var].">\n";
+
+                    print "<tr class=\"oddeven\">\n";
                     print "<td>";
 	                print (empty($module->name)?$name:$module->name);
 	                print "</td>\n";
@@ -471,8 +471,14 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
-print $langs->trans("FreeLegalTextOnInvoices").' ('.$langs->trans("AddCRIfTooLong").')<br>';
+$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
+$htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
+foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
+$htmltext.='</i>';
+
+print '<tr class="oddeven"><td colspan="2">';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnInvoices"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
 $variablename='SUPPLIER_INVOICE_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -481,7 +487,7 @@ if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 else
 {
     include_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_details');
+    $doleditor=new DolEditor($variablename, $conf->global->$variablename,'',80,'dolibarr_notes');
     print $doleditor->Create();
 }
 print '</td><td align="right">';
@@ -505,7 +511,7 @@ print '<td align="center" width="60"></td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr '.$bc[$var].'><td colspan="2">';
+print '<tr class="oddeven"><td colspan="2">';
 print $langs->trans("YouMayFindNotificationsFeaturesIntoModuleNotification").'<br>';
 print '</td><td align="right">';
 print "</td></tr>\n";

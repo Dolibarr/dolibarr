@@ -57,7 +57,6 @@ class WebsitePage extends CommonObject
 	public $status;
 	public $date_creation;
 	public $date_modification;
-	public $tms;
 
 	/**
 	 */
@@ -130,7 +129,7 @@ class WebsitePage extends CommonObject
 		$sql.= 'content,';
 		$sql.= 'status,';
 		$sql.= 'date_creation,';
-		$sql.= 'date_modification';
+		$sql.= 'tms';
 		$sql .= ') VALUES (';
 		$sql .= ' '.(! isset($this->fk_website)?'NULL':$this->fk_website).',';
 		$sql .= ' '.(! isset($this->pageurl)?'NULL':"'".$this->db->escape($this->pageurl)."'").',';
@@ -182,7 +181,7 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int    $id           Id object
+	 * @param int    $id           Id object. If this is 0, the default page of website_id will be used, if not defined, the first one. found
 	 * @param string $website_id   Web site id
 	 * @param string $page         Page name
 	 *
@@ -194,7 +193,6 @@ class WebsitePage extends CommonObject
 
 		$sql = 'SELECT';
 		$sql .= ' t.rowid,';
-
 		$sql .= " t.fk_website,";
 		$sql .= " t.pageurl,";
 		$sql .= " t.title,";
@@ -203,16 +201,17 @@ class WebsitePage extends CommonObject
 		$sql .= " t.content,";
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.date_modification,";
-		$sql .= " t.tms";
-
+		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
+		//$sql .= ' WHERE entity IN ('.getEntity('website').')';       // entity is on website level
+		$sql .= ' WHERE 1 = 1';
 		if (null !== $website_id) {
-		    $sql .= ' WHERE t.fk_website = ' . '\'' . $website_id . '\'';
-		    $sql .= ' AND t.pageurl = ' . '\'' . $page . '\'';
+		    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
+		    if ($page) $sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";
 		} else {
-			$sql .= ' WHERE t.rowid = ' . $id;
+			$sql .= ' AND t.rowid = ' . $id;
 		}
+        $sql .= $this->db->plimit(1);
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -231,9 +230,6 @@ class WebsitePage extends CommonObject
 				$this->status = $obj->status;
 				$this->date_creation = $this->db->jdate($obj->date_creation);
 				$this->date_modification = $this->db->jdate($obj->date_modification);
-				$this->tms = $this->db->jdate($obj->tms);
-
-
 			}
 			$this->db->free($resql);
 
@@ -278,10 +274,9 @@ class WebsitePage extends CommonObject
 		$sql .= " t.content,";
 		$sql .= " t.status,";
 		$sql .= " t.date_creation,";
-		$sql .= " t.date_modification,";
-		$sql .= " t.tms";
+		$sql .= " t.tms as date_modification";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element. ' as t';
-		$sql .= ' WHERE t.fk_website = '.$websiteid; 
+		$sql .= ' WHERE t.fk_website = '.$websiteid;
 		// Manage filter
 		$sqlwhere = array();
 		if (count($filter) > 0) {
@@ -301,9 +296,8 @@ class WebsitePage extends CommonObject
 			$sql .= $this->db->order($sortfield,$sortorder);
 		}
 		if (!empty($limit)) {
-		 $sql .=  ' ' . $this->db->plimit($limit + 1, $offset);
+            $sql .=  ' ' . $this->db->plimit($limit, $offset);
 		}
-		$this->lines = array();
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -311,7 +305,7 @@ class WebsitePage extends CommonObject
 
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$record = new WebsitePage($this->db);
+				$record = new self($this->db);
 
 				$record->id = $obj->rowid;
 				$record->fk_website = $obj->fk_website;
@@ -323,7 +317,6 @@ class WebsitePage extends CommonObject
 				$record->status = $obj->status;
 				$record->date_creation = $this->db->jdate($obj->date_creation);
 				$record->date_modification = $this->db->jdate($obj->date_modification);
-				$record->tms = $this->db->jdate($obj->tms);
 				//var_dump($record->id);
 				$records[$record->id] = $record;
 			}
@@ -389,8 +382,7 @@ class WebsitePage extends CommonObject
 		$sql .= ' content = '.(isset($this->content)?"'".$this->db->escape($this->content)."'":"null").',';
 		$sql .= ' status = '.(isset($this->status)?$this->status:"null").',';
 		$sql .= ' date_creation = '.(! isset($this->date_creation) || dol_strlen($this->date_creation) != 0 ? "'".$this->db->idate($this->date_creation)."'" : 'null').',';
-		$sql .= ' date_modification = '.(! isset($this->date_modification) || dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : 'null').',';
-		$sql .= ' tms = '.(dol_strlen($this->tms) != 0 ? "'".$this->db->idate($this->tms)."'" : "'".$this->db->idate(dol_now())."'");
+		$sql .= ' tms = '.(dol_strlen($this->date_modification) != 0 ? "'".$this->db->idate($this->date_modification)."'" : "'".$this->db->idate(dol_now())."'");
 		$sql .= ' WHERE rowid=' . $this->id;
 
 		$this->db->begin();
@@ -405,9 +397,9 @@ class WebsitePage extends CommonObject
 		if ($this->old_object->pageurl != $this->pageurl)
 		{
 		      dol_syslog("The alias was changed, we must rename/recreate the page file into document");
-		      
+
 		}
-		
+
 		if (!$error && !$notrigger) {
 			// Uncomment this and change MYOBJECT to your own tag if you
 			// want this action calls a trigger.
@@ -633,18 +625,17 @@ class WebsitePage extends CommonObject
 	{
 		$this->id = 0;
 
+		$now=dol_now();
+
 		$this->fk_website = '';
 		$this->pageurl = '';
-		$this->title = '';
-		$this->description = '';
-		$this->keywords = '';
-		$this->content = '';
+		$this->title = 'My Page';
+		$this->description = 'This is my page';
+		$this->keywords = 'keyword1, keyword2';
+		$this->content = '<html><body>This is a html content</body></html>';
 		$this->status = '';
-		$this->date_creation = '';
-		$this->date_modification = '';
-		$this->tms = '';
-
-
+		$this->date_creation = $now - (24 * 30 * 3600);
+		$this->date_modification = $now - (24 * 7 * 3600);
 	}
 
 }

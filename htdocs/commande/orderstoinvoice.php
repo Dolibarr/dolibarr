@@ -89,7 +89,7 @@ if ($action == 'create')
 	}
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
 $hookmanager=new HookManager($db);
 $hookmanager->initHooks(array('orderstoinvoice'));
@@ -350,7 +350,7 @@ if (($action == 'create' || $action == 'add') && !$error)
 		if ($id > 0 && ! $error)
 		{
 			$db->commit();
-			header('Location: '.DOL_URL_ROOT.'/compta/facture.php?facid='.$id);
+			header('Location: '.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$id);
 			exit;
 		}
 		else
@@ -411,17 +411,17 @@ if ($action == 'create' && !$error)
 	print '<table class="border" width="100%">';
 
 	// Ref
-	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td colspan="2">'.$langs->trans('Draft').'</td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Ref').'</td><td>'.$langs->trans('Draft').'</td></tr>';
 
 	// Third party
-	print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Customer').'</td><td>';
 	print $soc->getNomUrl(1);
 	print '<input type="hidden" name="socid" value="'.$soc->id.'">';
 	print '</td>';
 	print '</tr>'."\n";
 
 	// Type
-	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td colspan="2">';
+	print '<tr><td class="tdtop fieldrequired">'.$langs->trans('Type').'</td><td>';
 	print '<table class="nobordernopadding">'."\n";
 
 	// Standard invoice
@@ -434,15 +434,15 @@ if ($action == 'create' && !$error)
 	print '</table>';
 
 	// Date invoice
-	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td colspan="2">';
+	print '<tr><td class="fieldrequired">'.$langs->trans('Date').'</td><td>';
 	$html->select_date('','','','','',"add",1,1);
 	print '</td></tr>';
 	// Payment term
-	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
+	print '<tr><td class="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 	$html->select_conditions_paiements(isset($_POST['cond_reglement_id'])?$_POST['cond_reglement_id']:$cond_reglement_id,'cond_reglement_id');
 	print '</td></tr>';
 	// Payment mode
-	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
+	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 	$html->select_types_paiements(isset($_POST['mode_reglement_id'])?$_POST['mode_reglement_id']:$mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
 	// Project
@@ -451,7 +451,7 @@ if ($action == 'create' && !$error)
 		$formproject=new FormProjets($db);
 
 		$langs->load('projects');
-		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+		print '<tr><td>'.$langs->trans('Project').'</td><td>';
 		$formproject->select_projects($soc->id, $projectid, 'projectid');
 		print '</td></tr>';
 	}
@@ -469,9 +469,9 @@ if ($action == 'create' && !$error)
 	}
 
 	// Other attributes
-	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders, 'colspan' => ' colspan="3"');
+	$parameters=array('objectsrc' => $objectsrc, 'idsrc' => $listoforders);
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
+    print $hookmanager->resPrint;
 	if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		$object=new Facture($db);
@@ -489,8 +489,8 @@ if ($action == 'create' && !$error)
 	// Public note
 	print '<tr>';
 	print '<td class="border" valign="top">'.$langs->trans('NotePublic').'</td>';
-	print '<td valign="top" colspan="2">';
-	print '<textarea name="note_public" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+	print '<td valign="top">';
+	print '<textarea name="note_public" class="quatrevingtpercent" rows="'.ROWS_3.'">';
 
 	print $langs->trans("Orders").": ".implode(', ', $listoforders);
 
@@ -500,8 +500,8 @@ if ($action == 'create' && !$error)
 	{
 		print '<tr>';
 		print '<td class="border" valign="top">'.$langs->trans('NotePrivate').'</td>';
-		print '<td valign="top" colspan="2">';
-		print '<textarea name="note" wrap="soft" cols="70" rows="'.ROWS_3.'">';
+		print '<td valign="top">';
+		print '<textarea name="note" class="quatrevingtpercent" rows="'.ROWS_3.'">';
 
 		print '</textarea></td></tr>';
 	}
@@ -549,7 +549,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 	$sql.= ', '.MAIN_DB_PREFIX.'commande as c';
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= ' WHERE c.entity IN ('.getEntity('commande', 1).')';
+	$sql.= ' WHERE c.entity IN ('.getEntity('commande').')';
 	$sql.= ' AND c.fk_soc = s.rowid';
 
 	// Show orders with status validated, shipping started and delivered (well any order we can bill)
@@ -602,12 +602,12 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Ref'),$_SERVER["PHP_SELF"],'c.ref','','&amp;socid='.$socid,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('RefCustomerOrder'),$_SERVER["PHP_SELF"],'c.ref_client','','&amp;socid='.$socid,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('OrderDate'),$_SERVER["PHP_SELF"],'c.date_commande','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('DeliveryDate'),$_SERVER["PHP_SELF"],'c.date_livraison','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Status'),'','','','','align="right"');
-		print_liste_field_titre($langs->trans('GenerateBill'),'','','','','align="center"');
+		print_liste_field_titre('Ref',$_SERVER["PHP_SELF"],'c.ref','','&amp;socid='.$socid,'',$sortfield,$sortorder);
+		print_liste_field_titre('RefCustomerOrder',$_SERVER["PHP_SELF"],'c.ref_client','','&amp;socid='.$socid,'',$sortfield,$sortorder);
+		print_liste_field_titre('OrderDate',$_SERVER["PHP_SELF"],'c.date_commande','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre('DeliveryDate',$_SERVER["PHP_SELF"],'c.date_livraison','','&amp;socid='.$socid, 'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre('Status','','','','','align="right"');
+		print_liste_field_titre('GenerateBill','','','','','align="center"');
 		print '</tr>';
 
 		// Lignes des champs de filtre
@@ -622,7 +622,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '<td class="liste_titre" align="left">';
 		print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
         print '</td>';
-        
+
 		//DATE ORDER
 		print '<td class="liste_titre" align="center">';
 		print $period;
@@ -637,7 +637,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '<td align="right" class="liste_titre">';
 		print '<input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'"  value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
         print '</td>';
-        
+
 		//ALL/NONE
 		print '<td align="center" class="liste_titre">';
 		if ($conf->use_javascript_ajax) print '<a href="#" id="checkall">'.$langs->trans("All").'</a> / <a href="#" id="checknone">'.$langs->trans("None").'</a>';
@@ -653,8 +653,8 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">';
 
 			$generic_commande->id=$objp->rowid;

@@ -134,25 +134,25 @@ class box_factures_fourn_imp extends ModeleBoxes
                     $tooltip = $langs->trans('SupplierInvoice') . ': ' . ($objp->ref?$objp->ref:$objp->facid) . '<br>' . $langs->trans('RefSupplier') . ': ' . $objp->ref_supplier;
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $facturestatic->getNomUrl(1),
                         'text2'=> $late,
                         'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => '',
                         'text' => $thirdpartytmp->getNomUrl(1, '', 40),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => price($objp->total_ht, 0, $langs, 0, -1, -1, $conf->currency),
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datelimite,'day'),
                     );
 
@@ -176,15 +176,15 @@ class box_factures_fourn_imp extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
 

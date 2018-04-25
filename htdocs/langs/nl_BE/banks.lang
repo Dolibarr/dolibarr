@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
+BankChecksToReceipt=Te innen cheques
 RejectCheckDate=Datum de cheque was teruggekeerd
 CheckRejectedAndInvoicesReopened=Teruggekeerde cheque en factuur heropend

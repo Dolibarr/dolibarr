@@ -735,13 +735,13 @@ class DoliDBMysqli extends DoliDB
     {
         // cles recherchees dans le tableau des descriptions (field_desc) : type,value,attribute,null,default,extra
         // ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-        $sql= "ALTER TABLE ".$table." ADD `".$field_name."` ";
+        $sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
         $sql.= $field_desc['type'];
         if(preg_match("/^[^\s]/i",$field_desc['value']))
-        if (! in_array($field_desc['type'],array('date','datetime')))
-        {
-            $sql.= "(".$field_desc['value'].")";
-        }
+            if (! in_array($field_desc['type'],array('date','datetime')))
+            {
+                $sql.= "(".$field_desc['value'].")";
+            }
         if(preg_match("/^[^\s]/i",$field_desc['attribute']))
         $sql.= " ".$field_desc['attribute'];
         if(preg_match("/^[^\s]/i",$field_desc['null']))
@@ -857,6 +857,7 @@ class DoliDBMysqli extends DoliDB
      *	Return charset used to store data in current database (same result than using SELECT default_character_set_name FROM information_schema.SCHEMATA WHERE schema_name = "databasename";)
      *
      *	@return		string		Charset
+     *  @see getDefaultCollationDatabase
      */
     function getDefaultCharacterSetDatabase()
     {
@@ -867,7 +868,9 @@ class DoliDBMysqli extends DoliDB
             return $this->forcecharset;
         }
         $liste=$this->fetch_array($resql);
-        return $liste['Value'];
+        $tmpval = $liste['Value'];
+
+        return $tmpval;
     }
 
     /**
@@ -900,6 +903,7 @@ class DoliDBMysqli extends DoliDB
      *	Return collation used in current database
      *
      *	@return		string		Collation value
+     *  @see getDefaultCharacterSetDatabase
      */
     function getDefaultCollationDatabase()
     {
@@ -910,7 +914,9 @@ class DoliDBMysqli extends DoliDB
             return $this->forcecollate;
         }
         $liste=$this->fetch_array($resql);
-        return $liste['Value'];
+        $tmpval = $liste['Value'];
+
+        return $tmpval;
     }
 
     /**

@@ -309,7 +309,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     //print load_fiche_titre($langs->trans("Batch"));
 
     $head = productlot_prepare_head($object);
-	dol_fiche_head($head, 'card', $langs->trans("Batch"), 0, 'barcode');
+	dol_fiche_head($head, 'card', $langs->trans("Batch"), -1, 'barcode');
 
 
 	if ($action == 'delete') {

@@ -4,6 +4,7 @@ SuppliersOrdersArea=供應商的訂單面積
 OrderCard=訂單資訊
 OrderId=訂單編號
 Order=訂單
+PdfOrderTitle=訂單
 Orders=訂單
 OrderLine=在線訂單
 OrderDate=訂購日期

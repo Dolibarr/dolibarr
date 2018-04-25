@@ -1,6 +1,7 @@
 # Dolibarr language file - Source file is en_US - categories
 Rubrique=Silt/Kategooria
 Rubriques=Sildid/Kategooriad
+RubriquesTransactions=Tags/Categories of transactions
 categories=sildid/kategooriad
 NoCategoryYet=No tag/category of this type created
 In=Kategoorias

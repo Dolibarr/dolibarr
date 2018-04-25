@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 
 /**
- *	Classe de gestion des factures recurrentes/Modeles
+ *	Class to manage invoice templates
  */
 class FactureRec extends CommonInvoice
 {
@@ -43,7 +43,7 @@ class FactureRec extends CommonInvoice
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
 	public $picto='bill';
-	
+
 	var $entity;
 	var $number;
 	var $date;
@@ -58,7 +58,10 @@ class FactureRec extends CommonInvoice
 	var $date_when;
 	var $nb_gen_done;
 	var $nb_gen_max;
-	
+
+	var $frequency;
+	var $unit_frequency;
+
 	var $rang;
 	var $special_code;
 
@@ -91,20 +94,20 @@ class FactureRec extends CommonInvoice
 		// Clean parameters
 		$this->titre=trim($this->titre);
 		$this->usenewprice=empty($this->usenewprice)?0:$this->usenewprice;
-		
+
 		// No frequency defined then no next date to execution
-		if (empty($this->frequency)) 
+		if (empty($this->frequency))
 		{
 			$this->frequency=0;
 			$this->date_when=NULL;
 		}
-		
-		
+
+
 		$this->frequency=abs($this->frequency);
 		$this->nb_gen_done=0;
 		$this->nb_gen_max=empty($this->nb_gen_max)?0:$this->nb_gen_max;
 		$this->auto_validate=empty($this->auto_validate)?0:$this->auto_validate;
-		
+
 		$this->db->begin();
 
 		// Charge facture modele
@@ -197,20 +200,41 @@ class FactureRec extends CommonInvoice
 						$error++;
 					}
 				}
-				
-			    // Add object linked
-			    if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
-			    {
-			        foreach($this->linked_objects as $origin => $origin_id)
-			        {
-			            $ret = $this->add_object_linked($origin, $origin_id);
-			            if (! $ret)
-			            {
-			                $this->error=$this->db->lasterror();
-			                $error++;
-			            }
-			        }
-			    }				    
+
+				if (! empty($this->linkedObjectsIds) && empty($this->linked_objects))	// To use new linkedObjectsIds instead of old linked_objects
+				{
+					$this->linked_objects = $this->linkedObjectsIds;	// TODO Replace linked_objects with linkedObjectsIds
+				}
+
+				// Add object linked
+				if (! $error && $this->id && is_array($this->linked_objects) && ! empty($this->linked_objects))
+				{
+					foreach($this->linked_objects as $origin => $tmp_origin_id)
+					{
+					    if (is_array($tmp_origin_id))       // New behaviour, if linked_object can have several links per type, so is something like array('contract'=>array(id1, id2, ...))
+					    {
+					        foreach($tmp_origin_id as $origin_id)
+					        {
+					            $ret = $this->add_object_linked($origin, $origin_id);
+					            if (! $ret)
+					            {
+					                $this->error=$this->db->lasterror();
+					                $error++;
+					            }
+					        }
+					    }
+					    else                                // Old behaviour, if linked_object has only one link per type, so is something like array('contract'=>id1))
+					    {
+					        $origin_id = $tmp_origin_id;
+	    					$ret = $this->add_object_linked($origin, $origin_id);
+	    					if (! $ret)
+	    					{
+	    						$this->error=$this->db->lasterror();
+	    						$error++;
+	    					}
+					    }
+					}
+				}
 
 				if ($error)
 				{
@@ -268,7 +292,7 @@ class FactureRec extends CommonInvoice
 		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
 		if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
 		*/
-		
+
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -361,8 +385,8 @@ class FactureRec extends CommonInvoice
 	{
 	    return $this->fetch_lines();
 	}
-	
-	
+
+
 	/**
 	 *	Recupere les lignes de factures predefinies dans this->lines
 	 *
@@ -386,7 +410,7 @@ class FactureRec extends CommonInvoice
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 		$sql.= ' WHERE l.fk_facture = '.$this->id;
 		$sql.= ' ORDER BY l.rang';
-		
+
 		dol_syslog('FactureRec::fetch_lines', LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
@@ -431,7 +455,7 @@ class FactureRec extends CommonInvoice
 				$line->special_code 	= $objp->special_code;
 				$line->fk_unit          = $objp->fk_unit;
                 $line->fk_contract_line = $objp->fk_contract_line;
-                
+
 				// Ne plus utiliser
 				$line->price            = $objp->price;
 				$line->remise           = $objp->remise;
@@ -446,7 +470,7 @@ class FactureRec extends CommonInvoice
 		}
 		else
 		{
-			$this->error=$this->db-lasterror();
+			$this->error=$this->db->lasterror();
 			return -3;
 		}
 	}
@@ -463,12 +487,12 @@ class FactureRec extends CommonInvoice
 	function delete($user, $notrigger=0, $idwarehouse=-1)
 	{
 	    $rowid=$this->id;
-	    
+
 	    dol_syslog(get_class($this)."::delete rowid=".$rowid, LOG_DEBUG);
-	    
+
         $error=0;
 		$this->db->begin();
-		
+
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = ".$rowid;
 		dol_syslog($sql);
 		if ($this->db->query($sql))
@@ -481,7 +505,7 @@ class FactureRec extends CommonInvoice
 				$res = $this->deleteObjectLinked();
 				if ($res < 0) $error=-3;
 			}
-			else 
+			else
 			{
 				$this->error=$this->db->lasterror();
 				$error=-1;
@@ -492,7 +516,7 @@ class FactureRec extends CommonInvoice
 			$this->error=$this->db->lasterror();
 			$error=-2;
 		}
-		
+
 		if (! $error)
 		{
 		    $this->db->commit();
@@ -531,7 +555,7 @@ class FactureRec extends CommonInvoice
 	function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
 	    global $mysoc;
-	    
+
 		$facid=$this->id;
 
 		dol_syslog(get_class($this)."::addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
@@ -557,11 +581,14 @@ class FactureRec extends CommonInvoice
 			if (empty($remise_percent)) $remise_percent=0;
 			$qty=price2num($qty);
 			if (! $info_bits) $info_bits=0;
-			$pu_ht=price2num($pu_ht);
-			$pu_ttc=price2num($pu_ttc);
-			$txtva=price2num($txtva);
-			$txlocaltax1	= price2num($txlocaltax1);
-			$txlocaltax2	= price2num($txlocaltax2);
+			$pu_ht = price2num($pu_ht);
+			$pu_ttc = price2num($pu_ttc);
+			$txtva = price2num($txtva);
+			$txlocaltax1 = price2num($txlocaltax1);
+			$txlocaltax2 = price2num($txlocaltax2);
+			if (empty($txtva)) $txtva=0;
+			if (empty($txlocaltax1)) $txlocaltax1=0;
+			if (empty($txlocaltax2)) $txlocaltax2=0;
 
 			if ($price_base_type=='HT')
 			{
@@ -584,7 +611,7 @@ class FactureRec extends CommonInvoice
 			$total_ttc = $tabprice[2];
 			$total_localtax1=$tabprice[9];
 			$total_localtax2=$tabprice[10];
-			
+
 			$product_type=$type;
 			if ($fk_product)
 			{
@@ -685,12 +712,12 @@ class FactureRec extends CommonInvoice
 	function updateline($rowid, $desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $info_bits=0, $fk_remise_except='', $pu_ttc=0, $type=0, $rang=-1, $special_code=0, $label='', $fk_unit=null)
 	{
 	    global $mysoc;
-	     
+
 	    $facid=$this->id;
-	
+
 	    dol_syslog(get_class($this)."::updateline facid=".$facid." rowid=$rowid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,txlocaltax1=$txlocaltax1,txlocaltax2=$txlocaltax2,fk_product=$fk_product,remise_percent=$remise_percent,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc,type=$type,fk_unit=$fk_unit", LOG_DEBUG);
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
-	
+
 	    // Check parameters
 	    if ($type < 0) return -1;
 
@@ -715,7 +742,7 @@ class FactureRec extends CommonInvoice
 	        $txtva=price2num($txtva);
 		    $txlocaltax1	= price2num($txlocaltax1);
 		    $txlocaltax2	= price2num($txlocaltax2);
-	
+
 	        if ($price_base_type=='HT')
 	        {
 	            $pu=$pu_ht;
@@ -724,7 +751,7 @@ class FactureRec extends CommonInvoice
 	        {
 	            $pu=$pu_ttc;
 	        }
-	
+
 	        // Calcul du total TTC et de la TVA pour la ligne a partir de
 	        // qty, pu, remise_percent et txtva
 	        // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
@@ -736,7 +763,7 @@ class FactureRec extends CommonInvoice
 	        $total_ttc = $tabprice[2];
 		    $total_localtax1=$tabprice[9];
 		    $total_localtax2=$tabprice[10];
-	        	
+
 	        $product_type=$type;
 	        if ($fk_product)
 	        {
@@ -744,7 +771,7 @@ class FactureRec extends CommonInvoice
 	            $result=$product->fetch($fk_product);
 	            $product_type=$product->type;
 	        }
-	
+
 	        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
 	        $sql.= "fk_facture = '".$facid."'";
 	        $sql.= ", label=".(! empty($label)?"'".$this->db->escape($label)."'":"null");
@@ -784,12 +811,12 @@ class FactureRec extends CommonInvoice
 	            return -1;
 	        }
 	    }
-	}	
-	
-	
+	}
+
+
 	/**
-	 * Return the next date of 
-	 * 
+	 * Return the next date of
+	 *
 	 * @return	timestamp	false if KO, timestamp if OK
 	 */
 	function getNextDate()
@@ -797,27 +824,27 @@ class FactureRec extends CommonInvoice
 		if (empty($this->date_when)) return false;
 		return dol_time_plus_duree($this->date_when, $this->frequency, $this->unit_frequency);
 	}
-	
+
 	/**
 	 *  Create all recurrents invoices (for all entities if multicompany is used).
 	 *  A result may also be provided into this->output.
-	 *  
-	 *  WARNING: This method change context $conf->entity to be in correct context for each recurring invoice found. 
-	 * 
-	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK) 
+	 *
+	 *  WARNING: This method change context $conf->entity to be in correct context for each recurring invoice found.
+	 *
+	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
 	function createRecurringInvoices()
 	{
 		global $conf, $langs, $db, $user;
-		
+
 		$langs->load("bills");
-		
+
 		$nb_create=0;
-		
+
 		$now = dol_now();
 		$tmparray=dol_getdate($now);
 		$today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year']);   // Today is last second of current day
-		
+
 		dol_syslog("createRecurringInvoices");
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql.= ' WHERE frequency > 0';      // A recurring invoice is an invoice with a frequency
@@ -825,41 +852,43 @@ class FactureRec extends CommonInvoice
 		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
-		
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
 		    $i=0;
 		    $num = $db->num_rows($resql);
-		    
+
 		    if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
 		    else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
-		    
+
 		    $saventity = $conf->entity;
-		
+
 		    while ($i < $num)     // Loop on each template invoice
 			{
 			    $line = $db->fetch_object($resql);
 
 			    $db->begin();
-			    
+
 				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
-			
+
 				// Set entity context
 				$conf->entity = $facturerec->entity;
-				
+
 				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
 
 			    $error=0;
 
 			    $facture = new Facture($db);
 				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
+				$facture->fk_fac_rec_source = $facturerec->id;    // We will create $facture from this recurring invoice
+
 			    $facture->type = self::TYPE_STANDARD;
 			    $facture->brouillon = 1;
 			    $facture->date = $facturerec->date_when;	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
 			    $facture->socid = $facturerec->socid;
-			    
+
 			    $invoiceidgenerated = $facture->create($user);
 			    if ($invoiceidgenerated <= 0)
 			    {
@@ -892,16 +921,16 @@ class FactureRec extends CommonInvoice
 
 				$i++;
 			}
-			
+
 			$conf->entity = $saventity;      // Restore entity context
 		}
 		else dol_print_error($db);
-		
+
 		$this->output=trim($this->output);
-		
+
 		return $error?$error:0;
 	}
-	
+
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
@@ -918,13 +947,13 @@ class FactureRec extends CommonInvoice
 
 		$result='';
         $label=$langs->trans("ShowInvoice").': '.$this->ref;
-        
+
         $url = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id;
-        
+
         if ($short) return $url;
-        
+
 		$picto='bill';
-        
+
 		$link = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
@@ -956,10 +985,10 @@ class FactureRec extends CommonInvoice
         // Load array of products prodids
 		$num_prods = 0;
 		$prodids = array();
-		
+
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product";
-		$sql.= " WHERE entity IN (".getEntity('product', 1).")";
+		$sql.= " WHERE entity IN (".getEntity('product').")";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1069,7 +1098,7 @@ class FactureRec extends CommonInvoice
 			$this->lines[$xnbp]=$line;
 			$xnbp++;
 		}
-		
+
 		$this->usenewprice = 1;
 	}
 
@@ -1089,7 +1118,7 @@ class FactureRec extends CommonInvoice
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-	
+
 	/**
      *	Update frequency and unit
      *
@@ -1113,12 +1142,12 @@ class FactureRec extends CommonInvoice
 
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= ' SET frequency = '.($frequency?$this->db->escape($frequency):'null');
-        if (!empty($unit)) 
+        if (!empty($unit))
         {
         	$sql.= ', unit_frequency = \''.$this->db->escape($unit).'\'';
 		}
         $sql.= ' WHERE rowid = '.$this->id;
-        
+
         dol_syslog(get_class($this)."::setFrequencyAndUnit", LOG_DEBUG);
         if ($this->db->query($sql))
         {
@@ -1132,7 +1161,7 @@ class FactureRec extends CommonInvoice
             return -1;
         }
     }
-    
+
 	/**
      *	Update the next date of execution
      *
@@ -1165,7 +1194,7 @@ class FactureRec extends CommonInvoice
             return -1;
         }
     }
-	
+
 	/**
      *	Update the maximum period
      *
@@ -1179,9 +1208,9 @@ class FactureRec extends CommonInvoice
             dol_syslog(get_class($this)."::setMaxPeriod was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
-		
+
         if (empty($nb)) $nb=0;
-        
+
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= ' SET nb_gen_max = '.$nb;
         $sql.= ' WHERE rowid = '.$this->id;
@@ -1198,7 +1227,7 @@ class FactureRec extends CommonInvoice
             return -1;
         }
     }
-	
+
 	/**
      *	Update the auto validate invoice
      *
@@ -1212,7 +1241,7 @@ class FactureRec extends CommonInvoice
             dol_syslog(get_class($this)."::setAutoValidate was called on objet with property table_element not defined",LOG_ERR);
             return -1;
         }
-		
+
         $sql = 'UPDATE '.MAIN_DB_PREFIX.$this->table_element;
         $sql.= ' SET auto_validate = '.$validate;
         $sql.= ' WHERE rowid = '.$this->id;
@@ -1239,7 +1268,7 @@ class FactureRec extends CommonInvoice
  */
 class FactureLigneRec extends CommonInvoiceLine
 {
-    
+
     /**
      * 	Delete line in database
      *
@@ -1248,11 +1277,11 @@ class FactureLigneRec extends CommonInvoiceLine
     function delete()
     {
         global $conf,$langs,$user;
-    
+
         $error=0;
-    
+
         $this->db->begin();
-    
+
         // Call trigger
         /*$result=$this->call_trigger('LINEBILLREC_DELETE',$user);
         if ($result < 0)
@@ -1261,8 +1290,8 @@ class FactureLigneRec extends CommonInvoiceLine
             return -1;
         }*/
         // End call triggers
-    
-    
+
+
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE rowid = ".($this->rowid > 0 ? $this->rowid : $this->id);
         dol_syslog(get_class($this)."::delete", LOG_DEBUG);
         if ($this->db->query($sql) )
@@ -1277,5 +1306,5 @@ class FactureLigneRec extends CommonInvoiceLine
             return -1;
         }
     }
-    
+
 }

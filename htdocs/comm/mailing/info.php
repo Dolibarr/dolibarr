@@ -27,6 +27,8 @@ require_once DOL_DOCUMENT_ROOT .'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
+$id=GETPOST('id');
+
 $langs->load("mails");
 
 // Security check
@@ -45,11 +47,11 @@ $form = new Form($db);
 
 $object = new Mailing($db);
 
-if ($object->fetch($_REQUEST["id"]) >= 0)
+if ($object->fetch($id) >= 0)
 {
 	$head = emailing_prepare_head($object);
 
-	dol_fiche_head($head, 'info', $langs->trans("Mailing"), 0, 'email');
+	dol_fiche_head($head, 'info', $langs->trans("Mailing"), -1, 'email');
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/comm/mailing/list.php">'.$langs->trans("BackToList").'</a>';
 

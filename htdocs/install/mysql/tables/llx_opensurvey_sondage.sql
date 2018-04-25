@@ -23,7 +23,7 @@ CREATE TABLE llx_opensurvey_sondage (
 	nom_admin VARCHAR(64),
 	fk_user_creat integer NOT NULL,
 	titre TEXT NOT NULL,
-	date_fin DATETIME NOT NULL,
+	date_fin DATETIME NULL,
     status integer DEFAULT 1,
 	format VARCHAR(2) NOT NULL,                 -- 'A' = Text choice (choices are saved into sujet field), 'D' = Date choice (choices are saved into sujet field), 'F' = Form survey
 	mailsonde tinyint NOT NULL DEFAULT 0,

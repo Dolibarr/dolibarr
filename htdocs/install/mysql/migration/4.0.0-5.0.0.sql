@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 4.0.0 or higher.
+-- when current version is 5.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- 							-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_table_rowid_seq RENAME TO llx_table_new_rowid_seq;
@@ -24,6 +24,7 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 -- -- VPGSQL8.2 DELETE FROM llx_usergroup_user      WHERE fk_user      NOT IN (SELECT rowid from llx_user);
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
+
 
 -- after changing const name, please insure that old constant was rename
 UPDATE llx_const SET name = __ENCRYPT('THIRDPARTY_DEFAULT_CREATE_CONTACT')__ WHERE name = __ENCRYPT('MAIN_THIRPARTY_CREATION_INDIVIDUAL')__;  -- under 3.9.0
@@ -224,7 +225,7 @@ create table llx_user_employment
   tms               timestamp,
   fk_user_creat     integer,
   fk_user_modif     integer,
-  job				varchar(128),				-- job position. may be a dictionnary
+  job				varchar(128),				-- job position. may be a dictionary
   status            integer NOT NULL,			-- draft, active, closed
   salary			double(24,8),				-- last and current value stored into llx_user
   salaryextra		double(24,8),				-- last and current value stored into llx_user

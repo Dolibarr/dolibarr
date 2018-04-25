@@ -32,5 +32,6 @@ create table llx_c_email_templates
   position        smallint,					      -- Position
   active          tinyint DEFAULT 1  NOT NULL,
   topic			  text,                           -- Predefined topic
-  content         text                            -- Predefined text
+  content         text,                           -- Predefined text
+  content_lines   text                            -- Predefined lines
 )ENGINE=innodb;

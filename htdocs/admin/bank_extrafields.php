@@ -71,7 +71,7 @@ print load_fiche_titre($langs->trans("BankSetupModule"),$linkback,'title_setup')
 
 $head = bank_admin_prepare_head(null);
 
-dol_fiche_head($head, 'attributes', $langs->trans("BankSetupModule"), 0, 'account');
+dol_fiche_head($head, 'attributes', $langs->trans("BankSetupModule"), -1, 'account');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

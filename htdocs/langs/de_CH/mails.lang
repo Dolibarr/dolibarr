@@ -11,7 +11,6 @@ NbOfCompaniesContacts=Einzigartige Geschäftspartner-Kontakte
 EMailRecipient=E-Mailadresses des Empfängers
 TagMailtoEmail=Empfänger E-Mail (Inklusive html "mailto:" link)
 NoNotificationsWillBeSent=Für dieses Ereignis und diesen Geschäftspartner sind keine Benachrichtigungen geplant
-AddNewNotification=Neues E-Mail-Beachrichtigungsziel aktivieren
 MailSendSetupIs2=Sie müssen zuerst mit einem Admin-Konto im Menü %sStart - Einstellungen - EMails%s den Parameter <strong>'%s'</strong> auf den Modus '%s' ändern. Dann können Sie die Daten des SMTP-Servers von Ihrem Internetdienstanbieter eingeben und die E-Mail-Kampagnen-Funktion nutzen.
 MailAdvTargetRecipients=Empfänger (Erweiterte Selektion)
 AdvTgtSearchIntHelp=Intervall verwenden um den Zahlenwert auszuwählen

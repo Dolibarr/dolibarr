@@ -119,8 +119,8 @@ $liste=$model->liste_modeles($db);
 
 foreach($liste as $key)
 {
-	$var=!$var;
-	print '<tr '.$bc[$var].'>';
+	
+	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
 	print '<td>'.$form->textwithpicto($model->getDriverLabelForKey($key),$text).'</td>';

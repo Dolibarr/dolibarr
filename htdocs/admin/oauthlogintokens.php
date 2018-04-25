@@ -211,7 +211,7 @@ if ($mode == 'setup' && $user->admin)
         print '<th></th>';
         print "</tr>\n";
         
-        print '<tr '.$bc[$var].'>';
+        print '<tr class="oddeven">';
         print '<td'.($key['required']?' class="required"':'').'>';
         //var_dump($key);
         print $langs->trans("OAuthIDSecret").'</td>';
@@ -223,7 +223,7 @@ if ($mode == 'setup' && $user->admin)
         print '</tr>'."\n";
         
         $var = ! $var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr class="oddeven">';
         print '<td'.($key['required']?' class="required"':'').'>';
         //var_dump($key);
         print $langs->trans("IsTokenGenerated");
@@ -250,7 +250,7 @@ if ($mode == 'setup' && $user->admin)
         print '</tr>';
         
         $var = ! $var;
-        print '<tr '.$bc[$var].'>';
+        print '<tr class="oddeven">';
         print '<td'.($key['required']?' class="required"':'').'>';
         //var_dump($key);
         print $langs->trans("Token").'</td>';
@@ -273,7 +273,7 @@ if ($mode == 'setup' && $user->admin)
         {
             // Token refresh
             $var = ! $var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td'.($key['required']?' class="required"':'').'>';
             //var_dump($key);
             print $langs->trans("TOKEN_REFRESH").'</td>';
@@ -284,7 +284,7 @@ if ($mode == 'setup' && $user->admin)
     
             // Token expired
             $var = ! $var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td'.($key['required']?' class="required"':'').'>';
             //var_dump($key);
             print $langs->trans("TOKEN_EXPIRED").'</td>';
@@ -295,7 +295,7 @@ if ($mode == 'setup' && $user->admin)
             
             // Token expired at
             $var = ! $var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td'.($key['required']?' class="required"':'').'>';
             //var_dump($key);
             print $langs->trans("TOKEN_EXPIRE_AT").'</td>';
@@ -368,8 +368,8 @@ if ($mode == 'userconf' && $user->admin)
     $sql = 'SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
     $resql = $db->query($sql);
     while ($row=$db->fetch_array($resql)) {
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
+        
+        print '<tr class="oddeven">';
         print '<td>'.$row['login'].'</td>';
         print '<td>'.$row['module'].'</td>';
         print '<td>'.$row['driver'].'</td>';

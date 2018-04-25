@@ -96,6 +96,7 @@ class MouvementStock extends CommonObject
 
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
+		$langs->load("errors");
 		$error = 0;
 		dol_syslog(get_class($this)."::_create start userid=$user->id, fk_product=$fk_product, warehouse_id=$entrepot_id, qty=$qty, type=$type, price=$price, label=$label, inventorycode=$inventorycode, datem=".$datem.", eatby=".$eatby.", sellby=".$sellby.", batch=".$batch.", skip_batch=".$skip_batch);
 
@@ -141,7 +142,7 @@ class MouvementStock extends CommonObject
 		{
 			if (empty($batch))
 			{
-				$this->errors[]=$langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->name);
+				$this->errors[]=$langs->trans("ErrorTryToMakeMoveOnProductRequiringBatchData", $product->ref);
 				dol_syslog("Try to make a movement of a product with status_batch on without any batch data");
 
 				$this->db->rollback();
@@ -895,6 +896,33 @@ class MouvementStock extends CommonObject
 
 		return '';
 	}
+	
+	/**
+	 * Set attribute origin to object
+	 * 
+	 * @param	string	$origin_element	type of element
+	 * @param	int		$origin_id		id of element
+	 * 
+	 * @return	void
+	 */
+	function setOrigin($origin_element, $origin_id)
+	{
+		if (!empty($origin_element) && $origin_id > 0)
+		{
+			$origin='';
+			if ($origin_element == 'project')
+			{
+				if (!class_exists('Project')) require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+				$origin = new Project($this->db);
+			}
+
+			if (!empty($origin))
+			{
+				$this->origin = $origin;
+				$this->origin->id = $origin_id;
+			}
+		}
+	}
 
 
 	/**
@@ -913,4 +941,89 @@ class MouvementStock extends CommonObject
 
         // There is no specific properties. All data into insert are provided as method parameter.
     }
+	
+	/**
+	 *  Return a link (with optionaly the picto)
+	 * 	Use this->id,this->lastname, this->firstname
+	 *
+	 *	@param	int		$withpicto			Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option				On what the link point to
+	 *  @param	integer	$notooltip			1=Disable tooltip
+	 *  @param	int		$maxlen				Max length of visible user name
+	 *  @param  string  $morecss            Add more css on link
+	 *	@return	string						String with URL
+	 */
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $maxlen=24, $morecss='')
+	{
+		global $langs, $conf, $db;
+
+		$result = '';
+		$companylink = '';
+
+		$label = '<u>' . $langs->trans("Movement") . ' '.$this->id.'</u>';
+		$label.= '<div width="100%">';
+		$label.= '<b>' . $langs->trans('Label') . ':</b> ' . $this->label;
+		$label.= '<br /><b>' . $langs->trans('Qty') . ':</b> ' .$this->qty;
+		$label.= '</div>';
+
+		$link = '<a href="'.DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$this->warehouse_id.'&msid='.$this->id.'"';
+		$link.= ($notooltip?'':' title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip'.($morecss?' '.$morecss:'').'"');
+		$link.= '>';
+		$linkend='</a>';
+
+		if ($withpicto)
+		{
+			$result.=($link.img_object(($notooltip?'':$label), 'stock', ($notooltip?'':'class="classfortooltip"')).$linkend);
+			if ($withpicto != 2) $result.=' ';
+		}
+		$result.= $link . $this->id . $linkend;
+		return $result;
+	}
+	
+	/**
+	 *  Return label statut
+	 *
+	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return	string 			       Label of status
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($mode);
+	}
+	
+	/**
+	 *  Renvoi le libelle d'un status donne
+	 *
+	 *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return string 			       	Label of status
+	 */
+	function LibStatut($mode=0)
+	{
+		global $langs;
+
+		if ($mode == 0)
+		{
+			return $langs->trans('StatusNotApplicable');
+		}
+		if ($mode == 1)
+		{
+			return $langs->trans('StatusNotApplicable');
+		}
+		if ($mode == 2)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
+		}
+		if ($mode == 3)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'),'statut9');
+		}
+		if ($mode == 4)
+		{
+			return img_picto($langs->trans('StatusNotApplicable'),'statut9').' '.$langs->trans('StatusNotApplicable');
+		}
+		if ($mode == 5)
+		{
+			return $langs->trans('StatusNotApplicable').' '.img_picto($langs->trans('StatusNotApplicable'),'statut9');
+		}
+	}
 }

@@ -72,7 +72,7 @@ class mailing_contacts1 extends MailingTargets
 		$statssql[0] = "SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label,";
 		$statssql[0].= " count(distinct(c.email)) as nb";
 		$statssql[0].= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$statssql[0].= " WHERE c.entity IN (".getEntity('societe', 1).")";
+		$statssql[0].= " WHERE c.entity IN (".getEntity('societe').")";
 		$statssql[0].= " AND c.email != ''";      // Note that null != '' is false
 		$statssql[0].= " AND c.no_email = 0";
 		$statssql[0].= " AND c.statut = 1";
@@ -96,7 +96,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql  = "SELECT count(distinct(c.email)) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
-		$sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
+		$sql.= " WHERE c.entity IN (".getEntity('societe').")";
 		$sql.= " AND c.email != ''"; // Note that null != '' is false
 		$sql.= " AND c.no_email = 0";
 		$sql.= " AND c.statut = 1";
@@ -203,7 +203,7 @@ class mailing_contacts1 extends MailingTargets
 		$sql.= " s.nom as companyname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
     	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
-		$sql.= " WHERE c.entity IN (".getEntity('societe', 1).")";
+		$sql.= " WHERE c.entity IN (".getEntity('societe').")";
 		$sql.= " AND c.email <> ''";
 		$sql.= " AND c.no_email = 0";
 		$sql.= " AND c.statut = 1";

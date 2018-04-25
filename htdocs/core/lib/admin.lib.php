@@ -607,6 +607,50 @@ function translation_prepare_head()
 }
 
 
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function defaultvalues_prepare_head()
+{
+    global $langs, $conf, $user;
+    $h = 0;
+    $head = array();
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=createform";
+    $head[$h][1] = $langs->trans("DefaultCreateForm");
+    $head[$h][2] = 'createform';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=filters";
+    $head[$h][1] = $langs->trans("DefaultSearchFilters");
+    $head[$h][2] = 'filters';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=sortorder";
+    $head[$h][1] = $langs->trans("DefaultSortOrder");
+    $head[$h][2] = 'sortorder';
+    $h++;
+
+    $head[$h][0] = DOL_URL_ROOT."/admin/defaultvalues.php?mode=focus";
+    $head[$h][1] = $langs->trans("DefaultFocus");
+    $head[$h][2] = 'focus';
+    $h++;
+
+    /*$head[$h][0] = DOL_URL_ROOT."/admin/translation.php?mode=searchkey";
+    $head[$h][1] = $langs->trans("TranslationKeySearch");
+    $head[$h][2] = 'searchkey';
+    $h++;*/
+
+    complete_head_from_modules($conf,$langs,null,$head,$h,'defaultvalues_admin');
+
+    complete_head_from_modules($conf,$langs,null,$head,$h,'defaultvalues_admin','remove');
+
+
+    return $head;
+}
+
 
 /**
  * 	Return list of session
@@ -721,7 +765,7 @@ function purgeSessions($mysessionid)
  */
 function activateModule($value,$withdeps=1)
 {
-    global $db, $modules, $langs, $conf;
+    global $db, $modules, $langs, $conf, $mysoc;
 
 	// Check parameters
 	if (empty($value)) {
@@ -777,7 +821,7 @@ function activateModule($value,$withdeps=1)
         return $ret;
     }
 
-    $result=$objMod->init();
+    $result=$objMod->init();    // Enable module
     if ($result <= 0)
     {
         $ret['errors'][]=$objMod->error;
@@ -788,16 +832,21 @@ function activateModule($value,$withdeps=1)
         {
             if (isset($objMod->depends) && is_array($objMod->depends) && ! empty($objMod->depends))
             {
-                // Activation des modules dont le module depend
-                $num = count($objMod->depends);
-                for ($i = 0; $i < $num; $i++)
+                // Activation of modules this module depends on
+                // this->depends may be array('modModule1', 'mmodModule2') or array('always'=>"modModule1", 'FR'=>'modModule2')
+                foreach ($objMod->depends as $key => $modulestring)
                 {
+                    if ((! is_numeric($key)) && $key != 'always' && $key != $mysoc->country_code)
+                    {
+                        dol_syslog("We are not concerned by dependency with key=".$key." because our country is ".$mysoc->country_code);
+                        continue;
+                    }
                 	$activate = false;
                 	foreach ($modulesdir as $dir)
                 	{
-                		if (file_exists($dir.$objMod->depends[$i].".class.php"))
+                		if (file_exists($dir.$modulestring.".class.php"))
                 		{
-                			$resarray = activateModule($objMod->depends[$i]);
+                			$resarray = activateModule($modulestring);
     						if (empty($resarray['errors'])){
     						    $activate = true;
                             }else{
@@ -816,7 +865,7 @@ function activateModule($value,$withdeps=1)
     				}
     				else
     				{
-    				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $objMod->depends[$i]);
+    				    $ret['errors'][] = $langs->trans('activateModuleDependNotSatisfied', $objMod->name, $modulestring);
     				}
                 }
             }
@@ -891,7 +940,8 @@ function unActivateModule($value, $requiredby=1)
     {
         //print $dir.$modFile;
     	// TODO Replace this after DolibarrModules is moved as abstract class with a try catch to show module we try to disable has not been found or could not be loaded
-        $genericMod = new DolibarrModules($db);
+        include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
+    	$genericMod = new DolibarrModules($db);
         $genericMod->name=preg_replace('/^mod/i','',$modName);
         $genericMod->rights_class=strtolower(preg_replace('/^mod/i','',$modName));
         $genericMod->const_name='MAIN_MODULE_'.strtoupper(preg_replace('/^mod/i','',$modName));
@@ -1140,9 +1190,10 @@ function complete_elementList_with_modules(&$elementList)
  *
  *	@param	array	$tableau		Array of constants
  *	@param	int		$strictw3c		0=Include form into table (deprecated), 1=Form is outside table to respect W3C (no form into table), 2=No form nor button at all
+ *  @param  string  $helptext       Help
  *	@return	void
  */
-function form_constantes($tableau,$strictw3c=0)
+function form_constantes($tableau, $strictw3c=0, $helptext='')
 {
     global $db,$bc,$langs,$conf,$_Avery_Labels;
 
@@ -1153,7 +1204,10 @@ function form_constantes($tableau,$strictw3c=0)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("Description").'</td>';
-    print '<td>'.$langs->trans("Value").'*</td>';
+    print '<td>';
+    $text = $langs->trans("Value");
+    print $form->textwithpicto($text, $helptext, 1, 'help', '', 0, 2, 'idhelptext');
+    print '</td>';
     if (empty($strictw3c)) print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
     print "</tr>\n";
     $var=true;
@@ -1177,7 +1231,7 @@ function form_constantes($tableau,$strictw3c=0)
         if ($result)
         {
             $obj = $db->fetch_object($result);	// Take first result of select
-            $var=!$var;
+
 
             // For avoid warning in strict mode
             if (empty($obj)) {
@@ -1186,7 +1240,7 @@ function form_constantes($tableau,$strictw3c=0)
 
             if (empty($strictw3c)) print "\n".'<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 
-            print "<tr ".$bc[$var].">";
+            print '<tr class="oddeven">';
 
             // Show constant
             print '<td>';

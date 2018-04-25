@@ -111,8 +111,12 @@ jQuery(document).ready(function() {
 <?php
 
 print load_fiche_titre($langs->trans("Backup"),'','title_setup');
+//print_barre_liste($langs->trans("Backup"), '', '', '', '', '', $langs->trans("BackupDesc",DOL_DATA_ROOT), 0, 0, 'title_setup');
 
-print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
+print '<div class="center">';
+print $langs->trans("BackupDesc",DOL_DATA_ROOT);
+print '</div>';
+print '<br>';
 
 ?>
 
@@ -121,7 +125,7 @@ print $langs->trans("BackupDesc",DOL_DATA_ROOT).'<br><br>';
 	name="token" value="<?php echo $_SESSION['newtoken']; ?>" /> <input
 	type="hidden" name="export_type" value="server" />
 
-<fieldset id="fieldsetexport"><legend style="font-size: 3em">1</legend>
+<fieldset id="fieldsetexport"><legend class="legendforfieldsetstep" style="font-size: 3em">1</legend>
 
 <?php
 print $langs->trans("BackupDesc3",$dolibarr_main_db_name).'<br>';
@@ -461,14 +465,18 @@ if (! empty($_SESSION["commandbackuplastdone"]))
 }
 ?>
 
-</div>
+</div> <!-- end div center button -->
 
 <?php
-print '</td></tr></table>';
+print '</td></tr>';
+print '</table>';
+
+
 ?>
 
-</div>
-<div id="backupdatabaseright" class="fichehalfright" style="height:400px; overflow: auto;">
+</div> 	<!-- end div fichehalfleft -->
+
+<div id="backupdatabaseright" class="fichehalfright" style="height:480px; overflow: auto;">
 <div class="ficheaddleft">
 
 <?php
@@ -477,6 +485,7 @@ $result=$formfile->list_of_documents($filearray,null,'systemtools','',1,'backup/
 print '<br>';
 ?>
 
+
 </div>
 </div>
 
@@ -484,7 +493,7 @@ print '<br>';
 
 <br>
 
-<fieldset><legend style="font-size: 3em">2</legend>
+<fieldset><legend class="legendforfieldsetstep" style="font-size: 3em">2</legend>
 <?php
 print $langs->trans("BackupDesc2",DOL_DATA_ROOT).'<br>';
 print $langs->trans("BackupDescX").'<br><br>';

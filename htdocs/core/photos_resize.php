@@ -59,6 +59,18 @@ elseif ($modulepart == 'holiday')
 	if (! $user->rights->holiday->read) accessforbidden();
 	$accessallowed=1;
 }
+elseif ($modulepart == 'expensereport')
+{
+	$result=restrictedArea($user,'expensereport',$id,'expensereport');
+	if (! $user->rights->expensereport->lire) accessforbidden();
+	$accessallowed=1;
+}
+elseif ($modulepart == 'user')
+{
+    $result=restrictedArea($user,'user',$id,'user');
+    if (! $user->rights->user->user->lire) accessforbidden();
+    $accessallowed=1;
+}
 
 // Security:
 // Limit access if permissions are wrong
@@ -103,12 +115,36 @@ elseif ($modulepart == 'holiday')
 		$dir=$conf->holiday->dir_output;	// By default
 	}
 }
+elseif ($modulepart == 'user')
+{
+    require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
+    $object = new User($db);
+    if ($id > 0)
+    {
+        $result = $object->fetch($id);
+        if ($result <= 0) dol_print_error($db,'Failed to load object');
+        $dir=$conf->user->dir_output;	// By default
+    }
+}
+elseif ($modulepart == 'expensereport')
+{
+    require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+    $object = new ExpenseReport($db);
+    if ($id > 0)
+    {
+        $result = $object->fetch($id);
+        if ($result <= 0) dol_print_error($db,'Failed to load object');
+        $dir=$conf->expensereport->dir_output;	// By default
+    }
+}
 
 if (empty($backtourl))
 {
     if (in_array($modulepart, array('product','produit','service','produit|service'))) $backtourl=DOL_URL_ROOT."/product/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('expensereport'))) $backtourl=DOL_URL_ROOT."/expensereport/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('holiday'))) $backtourl=DOL_URL_ROOT."/holiday/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('project'))) $backtourl=DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('user'))) $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 
 
@@ -139,6 +175,45 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 	{
 		$object->addThumbs($fullpath);
 
+		// Update/create database for file $fullpath
+		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
+		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
+
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', $rel_filename);
+		if ($result > 0)   // If found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));
+		    $result = $ecmfile->update($user);
+		}
+		elseif ($result == 0)   // If not found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+		    $ecmfile->filepath = $rel_dir;
+		    $ecmfile->filename = $filename;
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
+		    $ecmfile->fullpath_orig = $fullpath;
+		    $ecmfile->gen_or_uploaded = 'unknown';
+		    $ecmfile->description = '';    // indexed content
+		    $ecmfile->keyword = '';        // keyword content
+		    $result = $ecmfile->create($user);
+		    if ($result < 0)
+		    {
+		        setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+		    }
+		    $result = $ecmfile->create($user);
+		}
+
 		if ($backtourl)
 		{
 			header("Location: ".$backtourl);
@@ -146,7 +221,7 @@ if ($action == 'confirm_resize' && (isset($_POST["file"]) != "") && (isset($_POS
 		}
 		else
 		{
-    	    dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
+    	    dol_print_error('', 'confirm_resize on photo_resize without backtourl defined for modulepart='.$modulepart);
     	    exit;
 		}
 	}
@@ -168,6 +243,45 @@ if ($action == 'confirm_crop')
 	{
 		$object->addThumbs($fullpath);
 
+		// Update/create database for file $fullpath
+		$rel_filename = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $fullpath);
+		$rel_filename = preg_replace('/^[\\/]/','',$rel_filename);
+
+		include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+		$ecmfile=new EcmFiles($db);
+		$result = $ecmfile->fetch(0, '', $rel_filename);
+		if ($result > 0)   // If found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));
+		    $result = $ecmfile->update($user);
+		}
+		elseif ($result == 0)   // If not found
+		{
+		    $filename = basename($rel_filename);
+		    $rel_dir = dirname($rel_filename);
+		    $rel_dir = preg_replace('/[\\/]$/', '', $rel_dir);
+		    $rel_dir = preg_replace('/^[\\/]/', '', $rel_dir);
+
+		    $ecmfile->filepath = $rel_dir;
+		    $ecmfile->filename = $filename;
+		    $ecmfile->label = md5_file(dol_osencode($fullpath));        // $fullpath is a full path to file
+		    $ecmfile->fullpath_orig = $fullpath;
+		    $ecmfile->gen_or_uploaded = 'unknown';
+		    $ecmfile->description = '';    // indexed content
+		    $ecmfile->keyword = '';        // keyword content
+		    $result = $ecmfile->create($user);
+		    if ($result < 0)
+		    {
+		        setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+		    }
+		    $result = $ecmfile->create($user);
+		}
+
 		if ($backtourl)
 		{
 			header("Location: ".$backtourl);
@@ -175,7 +289,7 @@ if ($action == 'confirm_crop')
 		}
 		else
 		{
-    	    dol_print_error('', 'Cancel on photo_resize with a not supported value of modulepart='.$modulepart);
+    	    dol_print_error('', 'confirm_crop on photo_resize without backtourl defined for modulepart='.$modulepart);
     	    exit;
 		}
 	}
@@ -197,7 +311,7 @@ llxHeader($head, $langs->trans("Image"), '', '', 0, 0, array('/includes/jquery/p
 
 print load_fiche_titre($langs->trans("ImageEditor"));
 
-$infoarray=dol_getImageSize($dir."/".GETPOST("file"));
+$infoarray=dol_getImageSize($dir."/".GETPOST("file",'alpha'));
 $height=$infoarray['height'];
 $width=$infoarray['width'];
 print $langs->trans("CurrentInformationOnImage").': ';
@@ -216,12 +330,13 @@ print '<form name="redim_file" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" meth
 print '<fieldset id="redim_file">';
 print '<legend>'.$langs->trans("Resize").'</legend>';
 print $langs->trans("ResizeDesc").'<br>';
-print $langs->trans("NewLength").': <input class="flat" name="sizex" size="10" type="text" > px  &nbsp; '.$langs->trans("or").' &nbsp; ';
-print $langs->trans("NewHeight").': <input class="flat" name="sizey" size="10" type="text" > px &nbsp; <br>';
+print $langs->trans("NewLength").': <input name="sizex" type="number" class="flat maxwidth50"> px  &nbsp; '.$langs->trans("or").' &nbsp; ';
+print $langs->trans("NewHeight").': <input name="sizey" type="number" class="flat maxwidth50"> px &nbsp; <br>';
+
 print '<input type="hidden" name="file" value="'.dol_escape_htmltag(GETPOST('file')).'" />';
 print '<input type="hidden" name="action" value="confirm_resize" />';
 print '<input type="hidden" name="product" value="'.$id.'" />';
-print '<input type="hidden" name="modulepart" value="'.$modulepart.'" />';
+print '<input type="hidden" name="modulepart" value="'.dol_escape_htmltag($modulepart).'" />';
 print '<input type="hidden" name="id" value="'.$id.'" />';
 print '<br>';
 print '<input class="button" id="submitresize" name="sendit" value="'.dol_escape_htmltag($langs->trans("Resize")).'" type="submit" />';
@@ -244,11 +359,12 @@ if (! empty($conf->use_javascript_ajax))
 	$height=$infoarray['height'];
 	$width=$infoarray['width'];
 	$widthforcrop=$width; $refsizeforcrop='orig'; $ratioforcrop=1;
+	// If image is too large, we use another scale.
 	if (! empty($_SESSION['dol_screenwidth']) && ($widthforcrop > round($_SESSION['dol_screenwidth']/2)))
 	{
-		$widthforcrop=min(round($_SESSION['dol_screenwidth']/2),$widthforcrop);
+		$widthforcrop=round($_SESSION['dol_screenwidth']/2);
 		$refsizeforcrop='screenwidth';
-		$ratioforcrop=2;
+		$ratioforcrop=1;
 	}
 
 	print '<!-- Form to crop -->'."\n";
@@ -257,18 +373,18 @@ if (! empty($conf->use_javascript_ajax))
 	print $langs->trans("DefineNewAreaToPick").'...<br>';
 	print '<br><div class="center">';
 	print '<div style="border: 1px solid #888888; width: '.$widthforcrop.'px;">';
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.$original_file.'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart='.$modulepart.'&entity='.$object->entity.'&file='.urlencode($original_file).'" alt="" id="cropbox" width="'.$widthforcrop.'px"/>';
 	print '</div>';
 	print '</div><br>';
 	print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$id.'" method="POST">
 	      <div class="jc_coords">
 	         '.$langs->trans("NewSizeAfterCropping").':
-	         <label>X1 <input type="text" size="4" id="x" name="x" /></label>
-	         <label>Y1 <input type="text" size="4" id="y" name="y" /></label>
-	         <label>X2 <input type="text" size="4" id="x2" name="x2" /></label>
-	         <label>Y2 <input type="text" size="4" id="y2" name="y2" /></label>
-	         <label>W <input type="text" size="4" id="w" name="w" /></label>
-	         <label>H <input type="text" size="4" id="h" name="h" /></label>
+	         <label>X1 <input type="number" class="flat maxwidth50" id="x" name="x" /></label>
+	         <label>Y1 <input type="number" class="flat maxwidth50" id="y" name="y" /></label>
+	         <label>X2 <input type="number" class="flat maxwidth50" id="x2" name="x2" /></label>
+	         <label>Y2 <input type="number" class="flat maxwidth50" id="y2" name="y2" /></label>
+	         <label>W  <input type="number" class="flat maxwidth50" id="w" name="w" /></label>
+	         <label>H  <input type="number" class="flat maxwidth50" id="h" name="h" /></label>
 	      </div>
 
 	      <input type="hidden" id="file" name="file" value="'.dol_escape_htmltag($original_file).'" />
@@ -291,6 +407,7 @@ if (! empty($conf->use_javascript_ajax))
 print '<script type="text/javascript" language="javascript">
 jQuery(document).ready(function() {
 	$("#submitcrop").click(function(e) {
+        console.log("We click on submitcrop");
 	    var idClicked = e.target.id;
 	    if (parseInt(jQuery(\'#w\').val())) return true;
 	    alert(\''.dol_escape_js($langs->trans("ErrorFieldRequired", $langs->trans("Dimension"))).'\');

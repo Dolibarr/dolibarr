@@ -67,7 +67,7 @@ class modCron extends DolibarrModules
 
         // Dependancies
         //-------------
-		$this->hidden = ! empty($conf->global->CRON_MODULE_DISABLED);	// A condition to disable module
+		$this->hidden = ! empty($conf->global->MODULE_CRON_DISABLED);	// A condition to disable module
 		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
@@ -105,7 +105,7 @@ class modCron extends DolibarrModules
 			1=>array('label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>20, 'status'=>0, 'test'=>in_array($db->type, array('mysql','mysqli'))),
 		    // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
 		);
-		
+
 		$this->rights[$r][0] = 23001;
 		$this->rights[$r][1] = 'Read cron jobs';
 		$this->rights[$r][3] = 0;
@@ -138,7 +138,7 @@ class modCron extends DolibarrModules
 						        'url'=>'/cron/list.php?status=-2&leftmenu=admintools',
 						        'langs'=>'cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
-						        'enabled'=>'($leftmenu==\'admintools\' || $leftmenu==\'admintools_info\')',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+						        'enabled'=>'$conf->cron->enabled && preg_match(\'/^admintools/\', $leftmenu)',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 						        'perms'=>'$user->rights->cron->read',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both

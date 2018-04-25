@@ -6,7 +6,6 @@ LastUsersCreated=%s neueste Benutzer
 LinkToCompanyContact=Mit Geschäftspartner/Kontakt verknüpfen
 LinkedToDolibarrThirdParty=Mit Geschäftspartner verknüpft
 CreateDolibarrThirdParty=Neuen Geschäftspartner erstellen
-CreateInternalUserDesc=Dieses Formular erlaubt Ihnen das Anlegen eines unternehmensinternen Benutzers. Zum Anlegen eines externen Benutzers (Kunden, Lieferanten, ...), verwenden Sie bitte die 'Benutzer erstellen'-Schaltfläche in der Kontaktkarte des jeweiligen Geschäftspartner-Kontakts.
 PermissionInheritedFromAGroup=Berechtigung durch eine Gruppenzugehörigkeit gererbt.
 UserWillBeInternalUser=Erstellter Benutzer ist intern (mit keinem bestimmten Geschäftspartner verknüpft)
 UserWillBeExternalUser=Erstellter Benutzer ist extern (mit einem bestimmten Geschäftspartner verknüpft)

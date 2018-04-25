@@ -28,11 +28,14 @@ require ("../main.inc.php");
 $langs->load("externalsite");
 
 top_htmlhead("","");
+
+print '<body id="mainbody">' . "\n";
+
 top_menu("","","_top");
 
+print '</body>';
 
 /*
 $website = new Website($db);
 $listofwebsites = $website->fetchAll();
 */
-print 'rrr';

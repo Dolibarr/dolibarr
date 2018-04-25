@@ -358,7 +358,7 @@ class FormCompany
 	 *
 	 *  @param  string	$selected   	Title preselected
 	 * 	@param	string	$htmlname		Name of HTML select combo field
-	 *  @param  string  $morecss        Add more css on SELECT element      
+	 *  @param  string  $morecss        Add more css on SELECT element
 	 *  @return	string					String with HTML select
 	 */
 	function select_civility($selected='',$htmlname='civility_id',$morecss='maxwidth100')
@@ -563,11 +563,11 @@ class FormCompany
 			$events=array();
 			// Add an entry 'method' to say 'yes, we must execute url with param action = method';
 			// Add an entry 'url' to say which url to execute
-			// Add an entry htmlname to say which element we must change once url is called 
-			// Add entry params => array('cssid' => 'attr') to say to remov or add attribute attr if answer of url return  0 or >0 lines 
+			// Add an entry htmlname to say which element we must change once url is called
+			// Add entry params => array('cssid' => 'attr') to say to remov or add attribute attr if answer of url return  0 or >0 lines
 			// To refresh contacts list on thirdparty list change
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-			
+
 			if (count($events))	// If there is some ajax events to run once selection is done, we add code here to run events
 			{
 				print '<script type="text/javascript">
@@ -583,7 +583,7 @@ class FormCompany
 						/* Clean contact */
 						$("div#s2id_contactid>a>span").html(\'\');
 					});
-								    
+
 					// Function used to execute events when search_htmlname change
 					function runJsCodeForEvent'.$htmlname.'(obj) {
 						var id = $("#'.$htmlname.'").val();
@@ -629,7 +629,7 @@ class FormCompany
 			// Search to list thirdparties
 			$sql = "SELECT s.rowid, s.nom as name FROM";
 			$sql.= " ".MAIN_DB_PREFIX."societe as s";
-			$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+			$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 			// For ajax search we limit here. For combo list, we limit later
 			if (is_array($limitto) && count($limitto))
 			{
@@ -693,16 +693,17 @@ class FormCompany
      *  @param  string		$source			Source ('internal' or 'external')
      *  @param  string		$sortorder		Sort criteria ('position', 'code', ...)
      *  @param  int			$showempty      1=Add en empty line
+     *  @param  string      $morecss        Add more css to select component
      *  @return	void
      */
-	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='position', $showempty=0)
+	function selectTypeContact($object, $selected, $htmlname = 'type', $source='internal', $sortorder='position', $showempty=0, $morecss='')
 	{
 	    global $user, $langs;
-	    
+
 		if (is_object($object) && method_exists($object, 'liste_type_contact'))
 		{
 			$lesTypes = $object->liste_type_contact($source, $sortorder, 0, 1);
-			print '<select class="flat valignmiddle" name="'.$htmlname.'" id="'.$htmlname.'">';
+			print '<select class="flat valignmiddle'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
 			if ($showempty) print '<option value="0"></option>';
 			foreach($lesTypes as $key=>$value)
 			{
@@ -791,7 +792,7 @@ class FormCompany
 
         $maxlength=$formlength;
         if (empty($formlength)) { $formlength=24; $maxlength=128; }
-        
+
         $out = '<input type="text" '.($morecss?'class="'.$morecss.'" ':'').'name="'.$htmlname.'" id="'.$htmlname.'" maxlength="'.$maxlength.'" value="'.$selected.'">';
 
         return $out;

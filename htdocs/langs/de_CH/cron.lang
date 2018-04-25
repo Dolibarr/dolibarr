@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - cron
 CronMethodDoesNotExists=Klasse %s hat keine %s Methode
 EnabledAndDisabled=Aktiviert und deaktiviert
-CronInfo=Das Schedule Cron-Jobs Module  erlaubt die geplanten Cron-Jobs die programmiert wurden durchzuführen.
 CronDtStart=Nicht vor
 CronDtEnd=Nicht nach
 CronMaxRun=Max. Anzahl Starts

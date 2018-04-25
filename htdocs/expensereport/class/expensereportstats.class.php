@@ -61,7 +61,7 @@ class ExpenseReportStats extends Stats
 
 		//$this->where = " e.fk_statut > 0";
 		//$this->where.= " AND e.date_valid > '2000-01-01'";    // To filter only correct "valid date". If date is invalid, the group by on it will fails. Launch a repair.php if you have. 
-		$this->where.= ' e.entity IN ('.getEntity('expensereport', 1).')';
+		$this->where.= ' e.entity IN ('.getEntity('expensereport').')';
 		
 		//$this->where.= " AND entity = ".$conf->entity;
 		if ($this->socid)

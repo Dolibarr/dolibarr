@@ -313,7 +313,7 @@ foreach ($dirmodels as $reldir)
                             if ($modulequalified)
                             {
                                 $var = !$var;
-                                print '<tr '.$bc[$var].'><td width="100">';
+                                print '<tr class="oddeven"><td width="100">';
                                 print (empty($module->name)?$name:$module->name);
                                 print "</td><td>\n";
                                 if (method_exists($module,'info')) print $module->info($langs);
@@ -422,7 +422,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            $var=!$var;
+            
             if (!$obj->fk_soc)
             {
                 $username=dolGetFirstLastname($obj->firstname,$obj->lastname);
@@ -495,9 +495,9 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($resql);
-	        $var=!$var;
+	        
 
-	        print "<tr ".$bc[$var].">";
+	        print '<tr class="oddeven">';
 	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';
 	        $label=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->label);
 	        print '<td>'.$label.'</td>';

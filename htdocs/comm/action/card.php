@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2001-2005	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005		Simon TOSSER			<simon@kornog-computing.com>
- * Copyright (C) 2005-2017	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2010-2013	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2014		Cedric GROSS			<c.gross@kreiz-it.fr>
- * Copyright (C) 2015		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2013 Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
+ * Copyright (C) 2014      Cedric GROSS         <c.gross@kreiz-it.fr>
+ * Copyright (C) 2015	   Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,11 +38,8 @@ require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-if (! empty($conf->projet->enabled))
-{
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
-}
+require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("companies");
@@ -95,7 +92,7 @@ $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 //var_dump($_POST);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('actioncard','globalcard'));
 
 
@@ -144,6 +141,14 @@ if (GETPOST('addassignedtouser') || GETPOST('updateassignedtouser'))
 	if ($action == 'update') $action = 'edit';
 
 	$listUserAssignedUpdated = true;
+}
+
+// Link to a project
+if ($action == 'classin' && ($user->rights->agenda->allactions->create ||
+    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create)))
+{
+    $object->fetch($id);
+    $object->setProject(GETPOST('projectid'));
 }
 
 // Action clone object
@@ -329,7 +334,7 @@ if ($action == 'add')
 				unset($_SESSION['assignedtouser']);
 
 				$moreparam='';
-				if ($user->id != $object->userownerid) $moreparam="usertodo=-1";	// We force to remove filter so created record is visible when going back to per user view.
+				if ($user->id != $object->userownerid) $moreparam="filtert=-1";	// We force to remove filter so created record is visible when going back to per user view.
 
 				$db->commit();
 				if (! empty($backtopage))
@@ -574,13 +579,15 @@ if ($action == 'mupdate')
 
 // Actions to delete doc
 $upload_dir = $conf->agenda->dir_output.'/'.dol_sanitizeFileName($object->ref);
-$permissioncreate = ($user->rights->agenda->allactions->delete ||	(($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->delete));
+$permissioncreate = ($user->rights->agenda->allactions->create || (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->read));
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 
 /*
  * View
  */
+
+$formproject=new FormProjets($db);
 
 $help_url='EN:Module_Agenda_En|FR:Module_Agenda|ES:M&omodulodulo_Agenda';
 llxHeader('',$langs->trans("Agenda"),$help_url);
@@ -663,7 +670,7 @@ if ($action == 'create')
 	}
 
 	// Title
-	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Title").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
+	print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired titlefieldcreate"':'').'>'.$langs->trans("Label").'</td><td><input type="text" id="label" name="label" class="soixantepercent" value="'.GETPOST('label').'"></td></tr>';
 
     // Full day
     print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td><input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').'></td></tr>';
@@ -701,13 +708,13 @@ if ($action == 'create')
 		if (GETPOST('complete') == '0' || GETPOST("afaire") == 1) $percent='0';
 		else if (GETPOST('complete') == 100 || GETPOST("afaire") == 2) $percent=100;
 	}
-	$formactions->form_select_status_action('formaction',$percent,1,'complete');
+	$formactions->form_select_status_action('formaction', $percent, 1, 'complete', 0, 0, 'maxwidth200');
 	print '</td></tr>';
 
     // Location
     if (empty($conf->global->AGENDA_DISABLE_LOCATION))
     {
-		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
+		print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth100" value="'.(GETPOST('location')?GETPOST('location'):$object->location).'"></td></tr>';
     }
 
 	// Assigned to
@@ -747,9 +754,11 @@ if ($action == 'create')
 
 	print '</table>';
 	print '<br><br>';
+
+
 	print '<table class="border" width="100%">';
 
-	// Societe, contact
+	// Related company
 	print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("ActionOnCompany").'</td><td>';
 	if (GETPOST('socid','int') > 0)
 	{
@@ -760,7 +769,6 @@ if ($action == 'create')
 	}
 	else
 	{
-
 		$events=array();
 		$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 		//For external user force the company to user company
@@ -773,6 +781,7 @@ if ($action == 'create')
 	}
 	print '</td></tr>';
 
+	// Related contact
 	print '<tr><td class="nowrap">'.$langs->trans("ActionOnContact").'</td><td>';
 	$form->select_contacts(GETPOST('socid','int'), GETPOST('contactid'), 'contactid', 1, '', '', 0, 'minwidth200');
 	print '</td></tr>';
@@ -781,8 +790,6 @@ if ($action == 'create')
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
-		$formproject=new FormProjets($db);
-
 		// Projet associe
 		$langs->load("projects");
 
@@ -823,13 +830,11 @@ if ($action == 'create')
     $doleditor->Create();
     print '</td></tr>';
 
-
     // Other attributes
-    $parameters=array('id'=>$object->id);
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-
-
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+    print $hookmanager->resPrint;
+    if (empty($reshook) && ! empty($extrafields->attribute_label))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -952,13 +957,20 @@ if ($id > 0)
 		// Type of event
 		if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 		{
-			print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
-			$formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+		    print '<tr><td class="fieldrequired">'.$langs->trans("Type").'</td><td colspan="3">';
+		    if ($object->type_code != 'AC_OTH_AUTO')
+		    {
+                $formactions->select_type_actions(GETPOST("actioncode")?GETPOST("actioncode"):$object->type_code, "actioncode","systemauto");
+		    }
+		    else
+		    {
+                print '<input type="hidden" name="actioncode" value="'.$object->type_code.'">'.$langs->trans("Action".$object->type_code);
+		    }
 			print '</td></tr>';
 		}
 
 		// Title
-		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" size="50" value="'.$object->label.'"></td></tr>';
+		print '<tr><td'.(empty($conf->global->AGENDA_USE_EVENT_TYPE)?' class="fieldrequired"':'').'>'.$langs->trans("Title").'</td><td colspan="3"><input type="text" name="label" class="minwidth100" value="'.$object->label.'"></td></tr>';
 
         // Full day event
         print '<tr><td>'.$langs->trans("EventOnFullDay").'</td><td colspan="3"><input type="checkbox" id="fullday" name="fullday" '.($object->fulldayevent?' checked':'').'></td></tr>';
@@ -1042,7 +1054,7 @@ if ($id > 0)
         // Location
 	    if (empty($conf->global->AGENDA_DISABLE_LOCATION))
 	    {
-			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" size="50" value="'.$object->location.'"></td></tr>';
+			print '<tr><td>'.$langs->trans("Location").'</td><td colspan="3"><input type="text" name="location" class="minwidth100" value="'.$object->location.'"></td></tr>';
 	    }
 
 		// Assigned to
@@ -1097,22 +1109,22 @@ if ($id > 0)
 
 		print '<table class="border" width="100%">';
 
-		// Thirdparty - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
+		    // Related company
+		    print '<tr><td class="titlefieldcreate">'.$langs->trans("ActionOnCompany").'</td>';
 			print '<td>';
 			print '<div class="maxwidth200onsmartphone">';
 			$events=array();     // 'method'=parameter action of url, 'url'=url to call that return new list of contacts
 			$events[]=array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php?showempty=1',1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
 			// TODO Refresh also list of project if $conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY not defined with list linked to socid ?
 			// FIXME If we change company, we may get a project that does not match
-			print $form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0);
+			print $form->select_company($object->socid, 'socid', '', 'SelectThirdParty', 1, 0, $events, 0, 'minwidth200');
 			print '</div>';
 			print '</td></tr>';
 
-			// Contact
-			print '<tr><td>'.$langs->trans("Contact").'</td><td>';
+			// related contact
+			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
 			print '<div class="maxwidth200onsmartphone">';
 			$form->select_contacts($object->socid, $object->contactid, 'contactid', 1, '', '', 0, 'minwidth200');
 			print '</div>';
@@ -1123,8 +1135,6 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			$formproject=new FormProjets($db);
-
 			$langs->load("projects");
 
 			print '<tr><td class="titlefieldcreate">'.$langs->trans("Project").'</td><td>';
@@ -1158,9 +1168,10 @@ if ($id > 0)
         print '</td></tr>';
 
         // Other attributes
-        $parameters=array('id'=>$object->id);
+        $parameters=array();
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+        print $hookmanager->resPrint;
+        if (empty($reshook) && ! empty($extrafields->attribute_label))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1179,7 +1190,7 @@ if ($id > 0)
 	}
 	else
 	{
-		dol_fiche_head($head, 'card', $langs->trans("Action"),0,'action');
+		dol_fiche_head($head, 'card', $langs->trans("Action"), -1, 'action');
 
 
 		// Clone event
@@ -1206,7 +1217,50 @@ if ($id > 0)
 		$out.='<a href="'.DOL_URL_ROOT.'/comm/action/index.php?action=show_day&year='.dol_print_date($object->datep,'%Y').'&month='.dol_print_date($object->datep,'%m').'&day='.dol_print_date($object->datep,'%d').'">'.$langs->trans("ViewDay").'</a>';
 		$linkback.=$out;
 
-		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', '');
+		$morehtmlref='<div class="refidno">';
+		// Thirdparty
+		//$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+		// Project
+		if (! empty($conf->projet->enabled))
+		{
+		    $langs->load("projects");
+		    //$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		    $morehtmlref.=$langs->trans('Project') . ' ';
+    		if ($user->rights->agenda->allactions->create ||
+	       	    (($object->authorid == $user->id || $object->userownerid == $user->id) && $user->rights->agenda->myactions->create))
+		    {
+		        if ($action != 'classify')
+		            $morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+		            if ($action == 'classify') {
+		                //$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+		                $morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+		                $morehtmlref.='<input type="hidden" name="action" value="classin">';
+		                $morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		                $morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+		                $morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+		                $morehtmlref.='</form>';
+		            } else {
+		                $morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+		            }
+		    } else {
+		        if (! empty($object->fk_project)) {
+		            $proj = new Project($db);
+		            $proj->fetch($object->fk_project);
+		            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
+		            $morehtmlref.=$proj->ref;
+		            $morehtmlref.='</a>';
+		            if ($proj->title) $morehtmlref.=' - '.$proj->title;
+		        } else {
+		            $morehtmlref.='';
+		        }
+		    }
+		}
+		$morehtmlref.='</div>';
+
+
+		dol_banner_tab($object, 'id', $linkback, ($user->societe_id?0:1), 'id', 'ref', $morehtmlref);
+
+	    print '<div class="fichecenter">';
 
 		print '<div class="underbanner clearboth"></div>';
 
@@ -1275,6 +1329,8 @@ if ($id > 0)
 		print '</div>';
 		if ($object->datep != $object->datef && in_array($user->id,array_keys($listofuserid)))
 		{
+			//var_dump($object->userassigned);
+			//var_dump($listofuserid);
 			print '<div class="myavailability">';
 			print $langs->trans("MyAvailability").': '.(($object->userassigned[$user->id]['transparency'] > 0)?$langs->trans("Busy"):$langs->trans("Available"));	// We show nothing if event is assigned to nobody
 			print '</div>';
@@ -1296,14 +1352,15 @@ if ($id > 0)
 
 		print '</table>';
 
-		print '<br><br>';
+		print '<br>';
 
+		print '<div class="underbanner clearboth"></div>';
 		print '<table class="border" width="100%">';
 
-		// Third party - Contact
 		if ($conf->societe->enabled)
 		{
-			print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td>'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):$langs->trans("None"));
+		    // Related company
+		    print '<tr><td class="titlefield">'.$langs->trans("ActionOnCompany").'</td><td colspan="3">'.($object->thirdparty->id?$object->thirdparty->getNomUrl(1):('<span class="opacitymedium">'.$langs->trans("None").'</span>'));
 			if (is_object($object->thirdparty) && $object->thirdparty->id > 0 && $object->type_code == 'AC_TEL')
 			{
 				if ($object->thirdparty->fetch($object->thirdparty->id))
@@ -1311,9 +1368,11 @@ if ($id > 0)
 					print "<br>".dol_print_phone($object->thirdparty->phone);
 				}
 			}
-			print '</td>';
-			print '<td>'.$langs->trans("Contact").'</td>';
-			print '<td>';
+			print '</td></tr>';
+
+			// Related contact
+			print '<tr><td>'.$langs->trans("ActionOnContact").'</td>';
+			print '<td colspan="3">';
 			if ($object->contactid > 0)
 			{
 				print $object->contact->getNomUrl(1);
@@ -1327,20 +1386,7 @@ if ($id > 0)
 			}
 			else
 			{
-				print $langs->trans("None");
-			}
-			print '</td></tr>';
-		}
-
-		// Project
-		if (! empty($conf->projet->enabled))
-		{
-			print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-			if ($object->fk_project)
-			{
-				$project=new Project($db);
-				$project->fetch($object->fk_project);
-				print $project->getNomUrl(1,'',1);
+				print '<span class="opacitymedium">'.$langs->trans("NoneOrSeveral").'</span>';
 			}
 			print '</td></tr>';
 		}
@@ -1355,7 +1401,11 @@ if ($id > 0)
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td colspan="3">'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
+			$link=dolGetElementUrl($object->fk_element,$object->elementtype,1);
+			print '<td colspan="3">';
+			if (empty($link)) print '<span class="opacitymedium">'.$langs->trans("ObjectDeleted").'</span>';
+			else print $link;
+			print '</td></tr>';
 		}
 
 		// Description
@@ -1364,33 +1414,12 @@ if ($id > 0)
 		print '</td></tr>';
 
         // Other attributes
-		$parameters=array('colspan'=>' colspan="3"', 'colspanvalue'=>'3', 'id'=>$object->id);
-        $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+        $cols=3;
+        include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 
-		//Extra field
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
-		{
-			print '<br><br><table class="border" width="100%">';
-			foreach($extrafields->attribute_label as $key=>$label)
-			{
-				if (isset($_POST["options_" . $key])) {
-					if (is_array($_POST["options_" . $key])) {
-						// $_POST["options"] is an array but following code expects a comma separated string
-						$value = implode(",", $_POST["options_" . $key]);
-					} else {
-						$value = $_POST["options_" . $key];
-					}
-				} else {
-					$value = $object->array_options["options_" . $key];
-				}
-				print '<tr><td width="30%">'.$label.'</td><td>';
-				print $extrafields->showOutputField($key,$value);
-				print "</td></tr>\n";
-			}
-			print '</table>';
-		}
+		print '</div>';
 
 		dol_fiche_end();
 	}
@@ -1446,7 +1475,7 @@ if ($id > 0)
 	{
 		if (empty($conf->global->AGENDA_DISABLE_BUILDDOC))
 		{
-			print '<div style="clear:both;">&nbsp;<br><br></div><div class="fichecenter"><div class="fichehalfleft">';
+			print '<div style="clear:both;"></div><div class="fichecenter"><div class="fichehalfleft">';
             print '<a name="builddoc"></a>'; // ancre
 
             /*
@@ -1456,8 +1485,8 @@ if ($id > 0)
             $filedir=$conf->agenda->multidir_output[$conf->entity].'/'.$object->id;
             $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 
-            $genallowed=$user->rights->agenda->myactions->create;
-	        $delallowed=$user->rights->agenda->myactions->delete;
+            $genallowed=$user->rights->agenda->myactions->read;
+	        $delallowed=$user->rights->agenda->myactions->create;
 
             $var=true;
 
@@ -1467,8 +1496,6 @@ if ($id > 0)
 
 
 			print '</div></div></div>';
-
-            print '<div style="clear:both;">&nbsp;</div>';
 	    }
 	}
 }

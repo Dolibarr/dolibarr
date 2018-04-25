@@ -31,8 +31,17 @@ if (! isset($usedbyinclude) || empty($usedbyinclude))
     if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
     if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
     if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+    if (! defined('NOREDIRECTBYMAINTOLOGIN')) define('NOREDIRECTBYMAINTOLOGIN','1');
 
     $res=@include '../../main.inc.php';
+    if ($res == 'ERROR_NOT_LOGGED')
+    {
+    	$langs->load("other");
+    	$arrayresult['jumptologin']=array('img'=>'object_generic', 'label'=>$langs->trans("JumpToLogin"), 'text'=>'<span class="fa fa-sign-in"></span> '.$langs->trans("JumpToLogin"), 'url'=>DOL_URL_ROOT.'/index.php');
+    	print json_encode($arrayresult);
+    	if (is_object($db)) $db->close();
+    	exit;
+    }
 }
 
 include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';

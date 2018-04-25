@@ -35,14 +35,14 @@ $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
 
-$statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
+$statut=(GETPOST("statut",'intcomma')!='')?GETPOST("statut",'intcomma'):"-1";
 $search_all=GETPOST('sall', 'alphanohtml');
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
@@ -52,7 +52,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 if (!$user->rights->don->lire) accessforbidden();
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_all="";
     $search_ref="";
@@ -61,7 +61,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_amount="";
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('orderlist'));
 
 
@@ -72,7 +72,7 @@ $fieldstosearchall = array(
     'd.lastname'=>'Lastname',
     'd.firstname'=>'Firstname',
 );
-        
+
 /*
  * View
  */
@@ -89,14 +89,14 @@ $sql = "SELECT d.rowid, d.datedon, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql.= " ON p.rowid = d.fk_projet WHERE 1 = 1";
-if ($statut >= 0)
+$sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
+if ($statut != '' && $statut != '-1')
 {
-	$sql .= " AND d.fk_statut = ".$statut;
+	$sql .= " AND d.fk_statut IN (".$db->escape($statut).")";
 }
 if (trim($search_ref) != '')
 {
-    $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
+    $sql.= natural_search('d.ref', $search_ref);
 }
 if (trim($search_all) != '')
 {
@@ -110,7 +110,7 @@ if (trim($search_name) != '')
 {
     $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
-if ($search_amount) $sql.= natural_search(array('d.amount'), price2num(trim($search_amount)), 1);
+if ($search_amount) $sql.= natural_search('d.amount', $search_amount, 1);
 
 $sql.= $db->order($sortfield,$sortorder);
 $nbtotalofrecords = '';
@@ -131,17 +131,7 @@ if ($resql)
     //if ($page > 0) $param.= '&page='.$page;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-	if ($statut >= 0)
-	{
-	    $donationstatic->statut=$statut;
-	    $label=$donationstatic->getLibStatut(0);
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
-	}
-	else
-	{
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
-	}
-
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords);
 
     print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -149,6 +139,7 @@ if ($resql)
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
     if ($search_all)
@@ -156,27 +147,12 @@ if ($resql)
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
         print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
     }
-    
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
-	if (! empty($conf->projet->enabled))
-	{
-		$langs->load("projects");
-		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
-	}
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre('');
-	print "</tr>\n";
-
     // Filters lines
-    print '<tr class="liste_titre">';
+    print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
@@ -198,17 +174,31 @@ if ($resql)
     print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
     print '<td class="liste_titre" align="right"></td>';
     print '<td class="liste_titre" align="right">';
-    $searchpitco=$form->showFilterAndCheckAddButtons(0);
-    print $searchpitco;
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
     print '</td>';
 	print "</tr>\n";
 
-	$var=True;
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    print_liste_field_titre("Project",$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
+	}
+	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
+	print "</tr>\n";
+
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+
+		print '<tr class="oddeven">';
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->lastname=$objp->lastname;

@@ -26,6 +26,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
@@ -41,6 +42,11 @@ $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
 
 $object = new PaiementFourn($db);
+
+// PDF
+$hidedetails = (GETPOST('hidedetails', 'int') ? GETPOST('hidedetails', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS) ? 1 : 0));
+$hidedesc = (GETPOST('hidedesc', 'int') ? GETPOST('hidedesc', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_DESC) ? 1 : 0));
+$hideref = (GETPOST('hideref', 'int') ? GETPOST('hideref', 'int') : (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_HIDE_REF) ? 1 : 0));
 
 /*
  * Actions
@@ -133,6 +139,12 @@ if ($action == 'setdatep' && ! empty($_POST['datepday']))
 	}
 }
 
+// Build document
+$upload_dir = $conf->fournisseur->payment->dir_output;
+// TODO: get the appropriate permisson
+$permissioncreate = true;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 
 /*
  * View
@@ -143,10 +155,11 @@ llxHeader();
 $result=$object->fetch($id);
 
 $form = new Form($db);
+$formfile = new FormFile($db);
 
 $head = payment_supplier_prepare_head($object);
 
-dol_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), 0, 'payment');
+dol_fiche_head($head, 'payment', $langs->trans('SupplierPayment'), -1, 'payment');
 
 if ($result > 0)
 {
@@ -168,15 +181,23 @@ if ($result > 0)
 
 	}
 
+	$linkback = '<a href="' . DOL_URL_ROOT . '/fourn/facture/paiement.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+
+	dol_banner_tab($object,'id',$linkback,1,'rowid','ref');
+
+	print '<div class="fichecenter">';
+	print '<div class="underbanner clearboth"></div>';
+
 	print '<table class="border" width="100%">';
 
-	print '<tr>';
+	/*print '<tr>';
 	print '<td width="20%" colspan="2">'.$langs->trans('Ref').'</td><td colspan="3">';
     print $form->showrefnav($object,'id','',1,'rowid','ref');
-	print '</td></tr>';
+	print '</td></tr>';*/
 
 	// Date payment
-    print '<tr><td colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
+    print '<tr><td class="titlefield" colspan="2">'.$form->editfieldkey("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
     print $form->editfieldval("Date",'datep',$object->date,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
     print '</td></tr>';
 
@@ -236,6 +257,8 @@ if ($result > 0)
 
 	print '</table>';
 
+	print '</div>';
+
 	print '<br>';
 
 	/**
@@ -272,8 +295,8 @@ if ($result > 0)
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
+
+				print '<tr class="oddeven">';
 				// Ref
 				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/card.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' ';
 				print ($objp->ref?$objp->ref:$objp->rowid);
@@ -298,7 +321,7 @@ if ($result > 0)
 				$i++;
 			}
 		}
-		$var=!$var;
+
 
 		print "</table>\n";
 		$db->free($resql);
@@ -343,6 +366,33 @@ if ($result > 0)
 		}
 	}
 	print '</div>';
+
+	print '<div class="fichecenter"><div class="fichehalfleft">';
+
+	/*
+     * Documents generes
+     */
+    $ref=dol_sanitizeFileName($object->ref);
+    $filedir = $conf->fournisseur->payment->dir_output.'/'.dol_sanitizeFileName($object->ref);
+    $urlsource=$_SERVER['PHP_SELF'].'?id='.$object->id;
+    $genallowed=$user->rights->fournisseur->facture->lire;
+    $delallowed=$user->rights->fournisseur->facture->creer;
+    $modelpdf=(! empty($object->modelpdf)?$object->modelpdf:(empty($conf->global->SUPPLIER_PAYMENT_ADDON_PDF)?'':$conf->global->SUPPLIER_PAYMENT_ADDON_PDF));
+
+    print $formfile->showdocuments('supplier_payment',$ref,$filedir,$urlsource,$genallowed,$delallowed,$modelpdf,1,0,0,40,0,'','','',$societe->default_lang);
+    $somethingshown=$formfile->numoffiles;
+
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+    //print '</td><td valign="top" width="50%">';
+    //print '<br>';
+
+    // List of actions on element
+    include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+    $formactions=new FormActions($db);
+    $somethingshown=$formactions->showactions($object,'supplier_payment',$socid,0,'listaction'.($genallowed?'largetitle':''));
+
+	print '</div></div></div>';
+    //print '</td></tr></table>';
 
 }
 else

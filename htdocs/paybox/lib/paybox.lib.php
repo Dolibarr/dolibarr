@@ -24,53 +24,6 @@
 
 
 
-/**
- * Show header
- *
- * @param 	string	$title		Title of page
- * @param 	string	$head		Head string to add int head section
- * @return	void
- */
-function llxHeaderPaybox($title, $head = "")
-{
-	global $user, $conf, $langs;
-
-	header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
-	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
-	print "\n";
-	print "<html>\n";
-	print "<head>\n";
-	print '<meta name="robots" content="noindex,nofollow">'."\n";
-	print '<meta name="keywords" content="dolibarr,payment,online">'."\n";
-	print '<meta name="description" content="Welcome on Dolibarr online payment form">'."\n";
-	print "<title>".$title."</title>\n";
-	if ($head) print $head."\n";
-	if (! empty($conf->global->PAYBOX_CSS_URL)) print '<link rel="stylesheet" type="text/css" href="'.$conf->global->PAYBOX_CSS_URL.'?lang='.$langs->defaultlang.'">'."\n";
-	else
-	{
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.$conf->css.'?lang='.$langs->defaultlang.'">'."\n";
-		print '<style type="text/css">';
-		print '.CTableRow1      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #e6E6eE; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-		print '.CTableRow2      { margin: 1px; padding: 3px; font: 12px verdana,arial; background: #FFFFFF; color: #000000; -moz-border-radius-topleft:6px; -moz-border-radius-topright:6px; -moz-border-radius-bottomleft:6px; -moz-border-radius-bottomright:6px;}';
-		print '</style>';
-	}
-	print "</head>\n";
-	print '<body style="margin: 20px;">'."\n";
-}
-
-/**
- * Show footer
- *
- * @return	void
- */
-function llxFooterPayBox()
-{
-	print "</body>\n";
-	print "</html>\n";
-}
-
 
 /**
  * Create a redirect form to paybox form
@@ -80,7 +33,7 @@ function llxFooterPayBox()
  * @param   string	$EMAIL		EMail
  * @param   string	$urlok		Url to go back if payment is OK
  * @param   string	$urlko		Url to go back if payment is KO
- * @param   string	$TAG		Tag
+ * @param   string	$TAG		Full tag
  * @return  int              	1 if OK, -1 if ERROR
  */
 function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
@@ -171,7 +124,8 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     dol_syslog("PBX_TYPEPAIEMENT: $PBX_TYPEPAIEMENT", LOG_DEBUG);
 
     header("Content-type: text/html; charset=".$conf->file->character_set_client);
-
+    header("X-Content-Type-Options: nosniff");
+    
     print '<html>'."\n";
     print '<head>'."\n";
     print "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$conf->file->character_set_client."\">\n";
@@ -216,73 +170,5 @@ function print_paybox_redirect($PRICE,$CURRENCY,$EMAIL,$urlok,$urlko,$TAG)
     print "\n";
 
 	return;
-}
-
-
-/**
- * Show footer of company in HTML pages
- *
- * @param   Societe		$fromcompany	Third party
- * @param   Translate	$langs			Output language
- * @return	void
- */
-function html_print_paybox_footer($fromcompany,$langs)
-{
-	global $conf;
-
-	// Juridical status
-	$line1="";
-	if ($fromcompany->forme_juridique_code)
-	{
-		$line1.=($line1?" - ":"").getFormeJuridiqueLabel($fromcompany->forme_juridique_code);
-	}
-	// Capital
-	if ($fromcompany->capital)
-	{
-		$line1.=($line1?" - ":"").$langs->transnoentities("CapitalOf",$fromcompany->capital)." ".$langs->transnoentities("Currency".$conf->currency);
-	}
-	// Prof Id 1
-	if ($fromcompany->idprof1 && ($fromcompany->country_code != 'FR' || ! $fromcompany->idprof2))
-	{
-		$field=$langs->transcountrynoentities("ProfId1",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof1;
-	}
-	// Prof Id 2
-	if ($fromcompany->idprof2)
-	{
-		$field=$langs->transcountrynoentities("ProfId2",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line1.=($line1?" - ":"").$field.": ".$fromcompany->idprof2;
-	}
-
-	// Second line of company infos
-	$line2="";
-	// Prof Id 3
-	if ($fromcompany->idprof3)
-	{
-		$field=$langs->transcountrynoentities("ProfId3",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof3;
-	}
-	// Prof Id 4
-	if ($fromcompany->idprof4)
-	{
-		$field=$langs->transcountrynoentities("ProfId4",$fromcompany->country_code);
-		if (preg_match('/\((.*)\)/i',$field,$reg)) $field=$reg[1];
-		$line2.=($line2?" - ":"").$field.": ".$fromcompany->idprof4;
-	}
-	// IntraCommunautary VAT
-	if ($fromcompany->tva_intra != '')
-	{
-		$line2.=($line2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$fromcompany->tva_intra;
-	}
-
-	print '<br><br><hr>'."\n";
-	print '<div class="center"><font style="font-size: 10px;">'."\n";
-	print $fromcompany->name.'<br>';
-	print $line1.'<br>';
-	print $line2;
-	print '</font></div>'."\n";
 }
 

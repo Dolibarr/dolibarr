@@ -128,7 +128,7 @@ class CommandeApi extends DolibarrApi
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
-        $sql.= ' WHERE s.entity IN ('.getEntity('commande', 1).')';
+        $sql.= ' WHERE s.entity IN ('.getEntity('commande').')';
         if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socid) || $search_sale > 0) $sql.= " AND s.fk_soc = sc.fk_soc";
         if ($socid) $sql.= " AND s.fk_soc = ".$socid;
         if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc";		// Join for the needed table to filter by sale
@@ -163,7 +163,8 @@ class CommandeApi extends DolibarrApi
         {
         	$i=0;
             $num = $db->num_rows($result);
-            while ($i < min($num, ($limit <= 0 ? $num : $limit)))
+            $min = min($num, ($limit <= 0 ? $num : $limit));
+            while ($i < $min)
             {
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);

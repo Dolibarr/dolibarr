@@ -29,3 +29,8 @@ RessourceSuccessfullyDeleted=Resurss veiksmīgi dzēsts
 DictionaryResourceType=Resursa veids
 
 SelectResource=Izvēlēties resursu
+
+IdResource=Id resource
+AssetNumber=Sērijas numurs
+ResourceTypeCode=Resource type code
+ImportDataset_resource_1=Resursi

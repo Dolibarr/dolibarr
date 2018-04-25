@@ -29,6 +29,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent_type.class.php';
 
 $langs->load("members");
 $langs->load("admin");
@@ -49,12 +50,15 @@ if ($action == 'update')
 	$editamount=GETPOST('MEMBER_NEWFORM_EDITAMOUNT');
 	$payonline=GETPOST('MEMBER_NEWFORM_PAYONLINE');
 	$email=GETPOST('MEMBER_PAYONLINE_SENDEMAIL');
+        $forcetype=GETPOST('MEMBER_NEWFORM_FORCETYPE');
 
     $res=dolibarr_set_const($db, "MEMBER_ENABLE_PUBLIC",$public,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_AMOUNT",$amount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_EDITAMOUNT",$editamount,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_NEWFORM_PAYONLINE",$payonline,'chaine',0,'',$conf->entity);
     $res=dolibarr_set_const($db, "MEMBER_PAYONLINE_SENDEMAIL",$email,'chaine',0,'',$conf->entity);
+    if ($forcetype < 0) $res=dolibarr_del_const($db, "MEMBER_NEWFORM_FORCETYPE",$conf->entity);
+    else                $res=dolibarr_set_const($db, "MEMBER_NEWFORM_FORCETYPE",$forcetype,'chaine',0,'',$conf->entity);
 
     if (! $res > 0) $error++;
 
@@ -88,8 +92,9 @@ $head = member_admin_prepare_head();
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 
-dol_fiche_head($head, 'public', $langs->trans("Members"), 0, 'user');
+dol_fiche_head($head, 'public', $langs->trans("Members"), -1, 'user');
 
 if ($conf->use_javascript_ajax)
 {
@@ -110,16 +115,11 @@ if ($conf->use_javascript_ajax)
                 {
 					if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'0\')
                     {
-                        jQuery("#tramount").hide();
-                        jQuery("#tredit").hide();
-                        jQuery("#trpayment").hide();
-                        jQuery("#tremail").hide();
+                        jQuery("#trforcetype, #tramount, #tredit, #trpayment, #tremail").hide();
                     }
                     if (jQuery("#MEMBER_ENABLE_PUBLIC").val()==\'1\')
                     {
-                        jQuery("#tramount").show();
-                        jQuery("#tredit").show();
-                        jQuery("#trpayment").show();
+                        jQuery("#trforcetype, #tramount, #tredit, #trpayment").show();
                         if (jQuery("#MEMBER_NEWFORM_PAYONLINE").val()==\'-1\') jQuery("#tremail").hide();
                         else jQuery("#tremail").show();
 					}
@@ -141,63 +141,57 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="right">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
-$var=true;
 
 // Allow public form
-$var=! $var;
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("EnablePublicSubscriptionForm");
 print '</td><td align="right">';
 print $form->selectyesno("MEMBER_ENABLE_PUBLIC",(! empty($conf->global->MEMBER_ENABLE_PUBLIC)?$conf->global->MEMBER_ENABLE_PUBLIC:0),1);
 print "</td></tr>\n";
 
-// Type
-/*$var=! $var;
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].' class="drag"><td>';
-print $langs->trans("EnablePublicSubscriptionForm");
-print '</td><td width="60" align="center">';
-print $form->selectyesno("forcedate",$conf->global->MEMBER_NEWFORM_FORCETYPE,1);
-print "</td></tr>\n"; */
+// Force Type
+$adht = new AdherentType($db);
+print '<tr class="oddeven drag" id="trforcetype"><td>';
+print $langs->trans("ForceMemberType");
+print '</td><td width="60" align="right">';
+$listofval = array(-1 => $langs->trans("Undefined"));
+$listofval += $adht->liste_array();
+$forcetype = $conf->global->MEMBER_NEWFORM_FORCETYPE ?: -1;
+print $form->selectarray("MEMBER_NEWFORM_FORCETYPE", $listofval, $forcetype, count($listetype)>1?1:0);
+print "</td></tr>\n";
 
 // Amount
-$var=! $var;
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].' id="tramount"><td>';
+print '<tr class="oddeven" id="tramount"><td>';
 print $langs->trans("DefaultAmount");
 print '</td><td align="right">';
 print '<input type="text" id="MEMBER_NEWFORM_AMOUNT" name="MEMBER_NEWFORM_AMOUNT" size="5" value="'.(! empty($conf->global->MEMBER_NEWFORM_AMOUNT)?$conf->global->MEMBER_NEWFORM_AMOUNT:'').'">';
 print "</td></tr>\n";
 
 // Can edit
-$var=! $var;
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<tr '.$bc[$var].' id="tredit"><td>';
+print '<tr class="oddeven" id="tredit"><td>';
 print $langs->trans("CanEditAmount");
 print '</td><td align="right">';
 print $form->selectyesno("MEMBER_NEWFORM_EDITAMOUNT",(! empty($conf->global->MEMBER_NEWFORM_EDITAMOUNT)?$conf->global->MEMBER_NEWFORM_EDITAMOUNT:0),1);
 print "</td></tr>\n";
 
-if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
+if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled))
 {
 	// Jump to an online payment page
-	$var=! $var;
-	print '<tr '.$bc[$var].' id="trpayment"><td>';
+	print '<tr class="oddeven" id="trpayment"><td>';
 	print $langs->trans("MEMBER_NEWFORM_PAYONLINE");
 	print '</td><td align="right">';
 	$listofval=array();
 	if (! empty($conf->paybox->enabled)) $listofval['paybox']='Paybox';
 	if (! empty($conf->paypal->enabled)) $listofval['paypal']='PayPal';
+	if (! empty($conf->stripe->enabled)) $listofval['stripe']='Stripe';
 	print $form->selectarray("MEMBER_NEWFORM_PAYONLINE",$listofval,(! empty($conf->global->MEMBER_NEWFORM_PAYONLINE)?$conf->global->MEMBER_NEWFORM_PAYONLINE:''),1);
 	print "</td></tr>\n";
 }
 
-if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled))
+if (! empty($conf->paybox->enabled) || ! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled))
 {
     // Jump to an online payment page
-    $var=! $var;
-    print '<tr '.$bc[$var].' id="tremail"><td>';
+    print '<tr class="oddeven" id="tremail"><td>';
     print $langs->trans("MEMBER_PAYONLINE_SENDEMAIL");
     print '</td><td align="right">';
     print '<input type="text" id="MEMBER_PAYONLINE_SENDEMAIL" name="MEMBER_PAYONLINE_SENDEMAIL" size="24" value="'.(! empty($conf->global->MEMBER_PAYONLINE_SENDEMAIL)?$conf->global->MEMBER_PAYONLINE_SENDEMAIL:'').'">';

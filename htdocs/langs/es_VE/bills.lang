@@ -2,6 +2,7 @@
 BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
 BillsSuppliersUnpaid=Facturas de proveedores pendientes de pago
 CreateCreditNote=Crear factura de abono
+BillShortStatusConverted=Pagada
 ErrorVATIntraNotConfigured=IVA aún no configurado
 SupplierBillsToPay=Facturas de proveedores pendientes de pago
 CustomerBillsUnpaid=Facturas a clientes pendientes de cobro

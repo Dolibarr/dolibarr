@@ -154,7 +154,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
      */
 	function write_file($object,$outputlangs='',$srctemplatepath='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
-		global $user,$langs,$conf,$hookmanager,$mysoc;
+		global $user,$langs,$conf,$hookmanager,$mysoc,$nblignes;
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -405,15 +405,16 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->MultiCell($this->posxqty-$this->posxup-0.8, 3, $up_excl_tax, 0, 'R', 0);
 
 					// Quantity
+					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
 					// Enough for 6 chars
 					if($conf->global->PRODUCT_USE_UNITS)
 					{
-						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $object->lines[$i]->qty, 0, 'R');
+						$pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 4, $qty, 0, 'R');
 					}
 					else
 					{
-						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $object->lines[$i]->qty, 0, 'R');
+						$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 4, $qty, 0, 'R');
 					}
 
 					// Unit
@@ -428,7 +429,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$pdf->SetXY($this->posxdiscount, $curY);
 					if ($object->lines[$i]->remise_percent)
 					{
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $object->lines[$i]->remise_percent."%", 0, 'R');
+					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent."%", 0, 'R');
 					}
 
 					// Total HT line
@@ -439,7 +441,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					// Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					if ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) $tvaligne=$object->lines[$i]->multicurrency_total_tva;
 					else $tvaligne=$object->lines[$i]->total_tva;
-						
+
 					$localtax1ligne=$object->lines[$i]->total_localtax1;
 					$localtax2ligne=$object->lines[$i]->total_localtax2;
 					$localtax1_rate=$object->lines[$i]->localtax1_tx;
@@ -718,7 +720,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					$tvacompl = " (".$outputlangs->transnoentities("NonPercuRecuperable").")";
 				}
 
-				$totalvat =$outputlangs->transnoentities("TotalVAT").' ';
+				$totalvat =$outputlangs->transcountrynoentities("TotalVAT",$mysoc->country_code).' ';
 				$totalvat.=vatrate($tvakey,1).$tvacompl;
 				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $totalvat, 0, 'L', 1);
 
@@ -730,7 +732,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		{
 			$index++;
 			$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transcountrynoentities("TotalVAT", $mysoc->country_code), 0, 'L', 1);
 
 			$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 			$pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
@@ -829,7 +831,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 		$pdf->SetFillColor(224,224,224);
 		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
-		$total_ttc = ($conf->multicurrency->enabled && $object->multiccurency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
+		$total_ttc = ($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? $object->multicurrency_total_ttc : $object->total_ttc;
 		$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 		$pdf->MultiCell($largcol2, $tab2_hl, price($total_ttc), $useborder, 'R', 1);
 		$pdf->SetFont('','', $default_font_size - 1);
@@ -1124,7 +1126,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     		    $pdf->MultiCell(100, 3, $langs->trans("BuyerName")." : ".$usertmp->getFullName($langs), '', 'R');
     		}
 		}
-		
+
 		$posy+=1;
 		$pdf->SetTextColor(0,0,60);
 
@@ -1133,8 +1135,17 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
 		if ($showaddress)
 		{
-			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+		    // Sender properties
+		    $carac_emetteur='';
+		    // Add internal contact of proposal if defined
+		    $arrayidcontact=$object->getIdContact('internal','SALESREPFOLL');
+		    if (count($arrayidcontact) > 0)
+		    {
+		        $object->fetch_user($arrayidcontact[0]);
+		        $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->convToOutputCharset($object->user->getFullName($outputlangs))."\n";
+		    }
+		    
+			$carac_emetteur .= pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
 
 			// Show sender
 			$posy=42;

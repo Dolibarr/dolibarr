@@ -1,30 +1,30 @@
 # Dolibarr language file - Source file is en_US - oauth
-ConfigOAuth=Oauth Konfiguration
-OAuthServices=OAuth services
-ManualTokenGeneration=Manual token generation
-TokenManager=Token manager
-IsTokenGenerated=Is token generated ?
+ConfigOAuth=OAuth Konfiguration
+OAuthServices=OAuth Dienste
+ManualTokenGeneration=Manuelle Token Generation
+TokenManager=Token-Manager
+IsTokenGenerated=Ist der Token generiert?
 NoAccessToken=Kein Zugriffstoken in der lokalen Datenbank gespeichert
 HasAccessToken=Ein Token wurde erstellt und in der lokalen Datenbank gespeichert
-NewTokenStored=Token received and saved
-ToCheckDeleteTokenOnProvider=Click here to check/delete authorization saved by %s OAuth provider
+NewTokenStored=Token empfangen und gespeichert
+ToCheckDeleteTokenOnProvider=Klicke hier um prüfen/entfernen Authentifizierung gespeichert durch den OAuth Anbieter %s
 TokenDeleted=Token gelöscht
-RequestAccess=Hier klcien, um Zugriff anzufordern/zu verlängern und einen neuen Token zu bekommen.
+RequestAccess=Hier klicken, um Zugang anzufordern/verlängern und neue Token zu speichern
 DeleteAccess=Hier klicken, um das Token zu löschen
 UseTheFollowingUrlAsRedirectURI=Benutzen Sie diese URL zur Weiterleitung, wenn Sie die Anmeldedaten Ihres OAuth Anbieters erstellen.
 ListOfSupportedOauthProviders=Hier Anmeldedaten Ihres OAuth2 Anbieters eintragen. Nur OAuth2 Anbieter werden hier angezeigt. Diese Einstellungen können von anderen Module genutzt werden, die OAuth2 Authentifizierung benötigen.
-OAuthSetupForLogin=Page to generate an OAuth token
-SeePreviousTab=See previous tab
-OAuthIDSecret=OAuth ID and Secret
+OAuthSetupForLogin=Seite um einen OAuth-Token zu erzeugen
+SeePreviousTab=Siehe vorherigen Registerkarte
+OAuthIDSecret=OAuth-ID und Secret
 TOKEN_REFRESH=Aktualisierung des Tokens vorhanden
-TOKEN_EXPIRED=Token expired
+TOKEN_EXPIRED=Token abgelaufen
 TOKEN_EXPIRE_AT=Token läuft ab am
 TOKEN_DELETE=Lösche gespeicherten Token
-OAUTH_GOOGLE_NAME=Oauth Google service
-OAUTH_GOOGLE_ID=Oauth Google Id
-OAUTH_GOOGLE_SECRET=Oauth Google Secret
-OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub Id
-OAUTH_GITHUB_SECRET=Oauth GitHub Secret
-OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials
+OAUTH_GOOGLE_NAME=Google API OAuth
+OAUTH_GOOGLE_ID=Google OpenID OAuth
+OAUTH_GOOGLE_SECRET=Google Secret OAuth
+OAUTH_GOOGLE_DESC=Gehen Sie auf <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> diese Seite </a>  und dann die „Autorisierung“ Google OAuth-Anmeldeinformationen zu erstellen
+OAUTH_GITHUB_NAME=Oauth GitHub Dienst
+OAUTH_GITHUB_ID=Github Client-ID OAuth
+OAUTH_GITHUB_SECRET=Github Client-Secret OAuth
+OAUTH_GITHUB_DESC=Gehen Sie auf <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> diese Seite </a> dann „eine neue Anwendung registrieren“ Oauth Github Berechtigungsnachweise erstellen

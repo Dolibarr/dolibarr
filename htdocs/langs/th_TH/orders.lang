@@ -4,6 +4,7 @@ SuppliersOrdersArea=ซัพพลายเออร์ในพื้นที
 OrderCard=สั่งซื้อบัตร
 OrderId=รหัสการสั่งซื้อ
 Order=สั่งซื้อ
+PdfOrderTitle=สั่งซื้อ
 Orders=คำสั่งซื้อ
 OrderLine=สายการสั่งซื้อ
 OrderDate=วันที่สั่งซื้อ

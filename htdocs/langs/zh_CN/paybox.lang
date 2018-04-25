@@ -11,6 +11,7 @@ YourEMail=付款确认的电子邮件
 Creditor=债权人
 PaymentCode=付款代码
 PayBoxDoPayment=前往付款
+ToPay=执行付款
 YouWillBeRedirectedOnPayBox=您将被重定向担保Paybox页，输入您的信用卡信息
 Continue=下一个
 ToOfferALinkForOnlinePayment=网址为%s支付

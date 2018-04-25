@@ -14,7 +14,7 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
--- Table of "Plan de comptes" for accountancy expert module
+-- Table to setup advanced targeting for emailing
 -- ============================================================================
 
 CREATE TABLE llx_advtargetemailing
@@ -28,4 +28,4 @@ CREATE TABLE llx_advtargetemailing
   datec datetime NOT NULL,
   fk_user_mod integer NOT NULL,
   tms timestamp NOT NULL
-)ENGINE=InnoDB;
+)ENGINE=innodb;

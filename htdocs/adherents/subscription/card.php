@@ -25,7 +25,9 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/member.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+if (! empty($conf->banque->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+}
 
 $langs->load("companies");
 $langs->load("bills");
@@ -187,7 +189,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$object->fk_bank."\">";
-	
+
 	dol_fiche_head($head, 'general', $langs->trans("Subscription"), 0, 'payment');
 
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
@@ -199,7 +201,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     print '<tr><td class="titlefieldcreate">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="3">';
 	print $form->showrefnav($object, 'rowid', $linkback, 1);
-	print '</td></tr>';	
+	print '</td></tr>';
 
     // Member
 	$adh->ref=$adh->getFullName($langs);
@@ -231,32 +233,32 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
-	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
+		{
+			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur" colspan="2">';
 			if ($object->fk_bank)
 			{
-	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($object->fk_bank);
+				$bankline=new AccountLine($db);
+				$result=$bankline->fetch($object->fk_bank);
 				print $bankline->getNomUrl(1,0,'showall');
 			}
 			else
 			{
 				print $langs->trans("NoneF");
 			}
-	    	print '</td></tr>';
-	    }
+			print '</td></tr>';
+		}
 	}
 
 	print '</table>';
-	
+
 	dol_fiche_end();
-	
+
     print '<div class="center">';
     print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
     print '</div>';
-    
+
 	print '</form>';
 	print "\n";
 }
@@ -274,7 +276,7 @@ if ($rowid && $action != 'edit')
 
 	$head = subscription_prepare_head($object);
 
-	dol_fiche_head($head, 'general', $langs->trans("Subscription"), '', 'payment');
+	dol_fiche_head($head, 'general', $langs->trans("Subscription"), -1, 'payment');
 
     // Confirmation to delete subscription
     if ($action == 'delete')
@@ -292,13 +294,13 @@ if ($rowid && $action != 'edit')
     $linkback = '<a href="'.DOL_URL_ROOT.'/adherents/subscription/list.php">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'rowid', $linkback, 1);
-    
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
+
     print '<table class="border" width="100%">';
-    
+
     // Member
 	$adh->ref=$adh->getFullName($langs);
     print '<tr>';
@@ -326,30 +328,29 @@ if ($rowid && $action != 'edit')
     // Amount
     print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur">'.$object->note.'</td></tr>';
 
-    // Bank line
+	// Bank line
 	if (! empty($conf->banque->enabled))
 	{
 		if ($conf->global->ADHERENT_BANK_USE || $object->fk_bank)
-	    {
-    		print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
+		{
+			print '<tr><td>'.$langs->trans("BankTransactionLine").'</td><td class="valeur">';
 			if ($object->fk_bank)
 			{
-	    		$bankline=new AccountLine($db);
-		    	$result=$bankline->fetch($object->fk_bank);
-		    	print $bankline->getNomUrl(1,0,'showall');
+				$bankline=new AccountLine($db);
+				$result=$bankline->fetch($object->fk_bank);
+				print $bankline->getNomUrl(1,0,'showall');
 			}
 			else
 			{
 				print $langs->trans("NoneF");
 			}
-	    	print '</td></tr>';
-	    }
+			print '</td></tr>';
+		}
 	}
-
 
     print "</table>\n";
     print '</div>';
-    
+
     print '</form>';
 
     dol_fiche_end();
@@ -379,30 +380,30 @@ if ($rowid && $action != 'edit')
     }
 
     print '</div>';
-    
-    
+
+
     print '<div class="fichecenter"><div class="fichehalfleft">';
     print '<a name="builddoc"></a>'; // ancre
-    
+
     // Documents generes
     /*
     $filename = dol_sanitizeFileName($object->ref);
     $filedir = $conf->facture->dir_output . '/' . dol_sanitizeFileName($object->ref);
     $urlsource = $_SERVER['PHP_SELF'] . '?facid=' . $object->id;
-    $genallowed = $user->rights->facture->creer;
-    $delallowed = $user->rights->facture->supprimer;
-    
+    $genallowed = $user->rights->facture->lire;
+    $delallowed = $user->rights->facture->creer;
+
     print $formfile->showdocuments('facture', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
     $somethingshown = $formfile->numoffiles;
     */
 	// Show links to link elements
 	//$linktoelem = $form->showLinkToObjectBlock($object, null, array('subscription'));
     $somethingshown = $form->showLinkedObjectBlock($object, '');
-    
+
     // Show links to link elements
     /*$linktoelem = $form->showLinkToObjectBlock($object,array('order'));
 	if ($linktoelem) print ($somethingshown?'':'<br>').$linktoelem;
-    
+
     // Link for paypal payment
     /*
     if (! empty($conf->paypal->enabled) && $object->statut != 0) {
@@ -411,15 +412,15 @@ if ($rowid && $action != 'edit')
     }
     */
     print '</div><div class="fichehalfright"><div class="ficheaddleft">';
-    
+
     // List of actions on element
     /*
     include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
     $formactions = new FormActions($db);
     $somethingshown = $formactions->showactions($object, 'invoice', $socid);
     */
-    
-    print '</div></div></div>';    
+
+    print '</div></div></div>';
 }
 
 

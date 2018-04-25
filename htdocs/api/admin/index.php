@@ -34,7 +34,7 @@ $langs->load("admin");
 if (! $user->admin)
 	accessforbidden();
 
-$action=GETPOST("action");
+$action=GETPOST('action','aZ09');
 
 //Activate ProfId
 if ($action == 'setproductionmode')
@@ -128,7 +128,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 
 // Show message
 $message='';
-$url='<a href="'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword" target="_blank">'.$urlwithroot.'/api/index.php/login?login='.urlencode($user->login).'&password=yourpassword[&reset=1]</a>';
+$url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
 $message.=img_picto('','object_globe.png').' '.$url;
 print $message;

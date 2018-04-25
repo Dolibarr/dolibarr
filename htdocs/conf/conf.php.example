@@ -324,14 +324,4 @@ $dolibarr_nocsrfcheck='0';
 // External module
 //##############################
 
-// multicompany_transverse_mode
-// Prerequisite: Need external module "multicompany"
-// Pyramidal   (0): The rights and groups are managed in each entity. Each user belongs to the entity he was created into.
-// Transversal (1): The user is created and managed only into master entity but can login to all entities if he is admmin
-//                  of entity or belongs to at least one user group created into entity.
-
-// Default value: 0 (pyramidal)
-// Examples:
-// $multicompany_transverse_mode='1';
-
 

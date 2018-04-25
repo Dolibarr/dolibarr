@@ -1,0 +1,12 @@
+# Dolibarr language file - Source file is en_US - hrm
+HRM_EMAIL_EXTERNAL_SERVICE=Email pour empêcher le service externe de GRH
+Establishments=Établissements
+Establishment=Établissement
+ConfirmDeleteEstablishment=Êtes-vous sûr de supprimer cet établissement?
+OpenEtablishment=Établissement ouvert
+CloseEtablishment=Établissement proche
+DictionaryDepartment=HRM - liste du département
+DictionaryFunction=HRM - Liste des fonctions
+Employees=Employés
+Employee=Employé
+NewEmployee=Nouvel employé

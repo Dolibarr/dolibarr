@@ -60,7 +60,7 @@ $result = restrictedArea($user, 'don', $id);
 // fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('doncard','globalcard'));
 
 /*
@@ -322,9 +322,9 @@ if ($action == 'create')
 	print $form->selectyesno("public",isset($_POST["public"])?$_POST["public"]:1,1);
 	print "</td></tr>\n";
 
-	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.dol_escape_htmltag(GETPOST("societe")).'" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" size="40"></td></tr>';
-	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" value="'.dol_escape_htmltag(GETPOST("societe")).'" class="maxwidth200"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" value="'.dol_escape_htmltag(GETPOST("lastname")).'" class="maxwidth200"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" value="'.dol_escape_htmltag(GETPOST("firstname")).'" class="maxwidth200"></td></tr>';
 	print "<tr>".'<td>'.$langs->trans("Address").'</td><td>';
 	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="3">'.dol_escape_htmltag(GETPOST("address")).'</textarea></td></tr>';
 
@@ -336,17 +336,17 @@ if ($action == 'create')
     print '</tr>';
 
 	// Country
-    print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td colspan="3" class="maxwidthonsmartphone">';
+    print '<tr><td><label for="selectcountry_id">'.$langs->trans('Country').'</label></td><td class="maxwidthonsmartphone">';
     print $form->select_country(GETPOST('country_id')!=''?GETPOST('country_id'):$object->country_id);
     if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
     print '</td></tr>';
 
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" size="40"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" value="'.dol_escape_htmltag(GETPOST("email")).'" class="maxwidth200"></td></tr>';
 
 	// Public note
 	print '<tr>';
-	print '<td class="border" valign="top">' . $langs->trans('NotePublic') . '</td>';
-	print '<td valign="top" colspan="2">';
+	print '<td class="tdtop">' . $langs->trans('NotePublic') . '</td>';
+	print '<td>';
 
     $doleditor = new DolEditor('note_public', $note_public, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 	print $doleditor->Create(1);
@@ -355,8 +355,8 @@ if ($action == 'create')
 	// Private note
 	if (empty($user->societe_id)) {
 		print '<tr>';
-		print '<td class="border" valign="top">' . $langs->trans('NotePrivate') . '</td>';
-		print '<td valign="top" colspan="2">';
+		print '<td class="tdtop">' . $langs->trans('NotePrivate') . '</td>';
+		print '<td>';
 
 		$doleditor = new DolEditor('note_private', $note_private, '', 80, 'dolibarr_notes', 'In', 0, false, true, ROWS_3, '90%');
 		print $doleditor->Create(1);
@@ -371,8 +371,9 @@ if ($action == 'create')
     }
 
     // Other attributes
-    $parameters=array('colspan' => 3);
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
 		print $object->showOptionals($extrafields,'edit',$parameters);
@@ -442,7 +443,7 @@ if (! empty($id) && $action == 'edit')
 	}
 	else
 	{
-		print '<tr><td>'.$langs->trans("Amount").'</td><td colspan="2">';
+		print '<tr><td>'.$langs->trans("Amount").'</td><td>';
 		print price($object->amount,0,$langs,0,0,-1,$conf->currency);
 		print '</td></tr>';
 	}
@@ -453,9 +454,9 @@ if (! empty($id) && $action == 'edit')
 	print "</tr>\n";
 
 	$langs->load("companies");
-	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.dol_escape_htmltag($object->societe).'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" size="40" value="'.dol_escape_htmltag($object->lastname).'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" size="40" value="'.dol_escape_htmltag($object->firstname).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" class="maxwidth200" value="'.dol_escape_htmltag($object->societe).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="lastname" class="maxwidth200" value="'.dol_escape_htmltag($object->lastname).'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="firstname" class="maxwidth200" value="'.dol_escape_htmltag($object->firstname).'"></td></tr>';
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
 	print '<textarea name="address" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.dol_escape_htmltag($object->address).'</textarea></td></tr>';
 
@@ -467,12 +468,12 @@ if (! empty($id) && $action == 'edit')
 	print '</tr>';
 
 	// Country
-	print '<tr><td class="titlefieldcreate">'.$langs->trans('Country').'</td><td colspan="3">';
+	print '<tr><td class="titlefieldcreate">'.$langs->trans('Country').'</td><td>';
 	print $form->select_country((!empty($object->country_id)?$object->country_id:$mysoc->country_code),'country_id');
 	if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td></tr>';
 
-	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.dol_escape_htmltag($object->email).'"></td></tr>';
+	print "<tr>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" class="maxwidth200" value="'.dol_escape_htmltag($object->email).'"></td></tr>';
 
     print "<tr><td>".$langs->trans("PaymentMode")."</td><td>\n";
 
@@ -496,8 +497,9 @@ if (! empty($id) && $action == 'edit')
     }
 
     // Other attributes
-    $parameters=array('colspan' => ' colspan="2"');
+    $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
     if (empty($reshook) && ! empty($extrafields->attribute_label))
     {
       	print $object->showOptionals($extrafields,'edit');
@@ -540,7 +542,7 @@ if (! empty($id) && $action != 'edit')
 	$hselected='card';
 
 	$head = donation_prepare_head($object);
-	dol_fiche_head($head, $hselected, $langs->trans("Donation"), 0, 'generic');
+	dol_fiche_head($head, $hselected, $langs->trans("Donation"), -1, 'generic');
 
 	// Print form confirm
 	print $formconfirm;
@@ -652,12 +654,11 @@ if (! empty($id) && $action != 'edit')
    		print '<td align="right">'.$langs->trans("Amount").'</td>';
    		print '</tr>';
 
-		$var=True;
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			$var=!$var;
-			print "<tr ".$bc[$var]."><td>";
+
+			print '<tr class="oddeven"><td>';
 			print '<a href="'.DOL_URL_ROOT.'/don/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 			print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 		    $labeltype=$langs->trans("PaymentType".$objp->type_code)!=("PaymentType".$objp->type_code)?$langs->trans("PaymentType".$objp->type_code):$objp->paiement_type;
@@ -759,10 +760,8 @@ if (! empty($id) && $action != 'edit')
 	$filename	=	dol_sanitizeFileName($object->id);
 	$filedir	=	$conf->don->dir_output . "/" . dol_sanitizeFileName($object->id);
 	$urlsource	=	$_SERVER['PHP_SELF'].'?rowid='.$object->id;
-	$genallowed	=	($object->statut == 2 && ($object->paid == 0 || $user->admin) && $user->rights->don->creer);
-	$delallowed	=	$user->rights->don->supprimer;
-
-	$var=true;
+	$genallowed	=	($object->statut == 2 && ($object->paid == 0 || $user->admin) && $user->rights->don->lire);
+	$delallowed	=	$user->rights->don->creer;
 
 	print $formfile->showdocuments('donation',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 

@@ -25,7 +25,8 @@ create table llx_usergroup
   entity        integer DEFAULT 1 NOT NULL,	-- multi company id
   datec         datetime,
   tms           timestamp,
-  note          text
+  note          text,
+  model_pdf     varchar(255) DEFAULT NULL
 )ENGINE=innodb;
 
 -- 

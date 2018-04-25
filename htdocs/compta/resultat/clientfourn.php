@@ -52,11 +52,11 @@ if ($user->societe_id > 0) $socid = $user->societe_id;
 if (! empty($conf->comptabilite->enabled)) $result=restrictedArea($user,'compta','','','resultat');
 if (! empty($conf->accounting->enabled)) $result=restrictedArea($user,'accounting','','','comptarapport');
 
-$limit = GETPOST("limit")?GETPOST("limit","int"):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -177,12 +177,12 @@ if ($date_endyear) $param.='&date_endyear='.$date_startyear;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre('');
-print_liste_field_titre($langs->trans("Name"), $_SERVER["PHP_SELF"],'s.nom, s.rowid','',$param,'',$sortfield,$sortorder);
+print_liste_field_titre("Name", $_SERVER["PHP_SELF"],'s.nom, s.rowid','',$param,'',$sortfield,$sortorder);
 if ($modecompta == 'CREANCES-DETTES')
 {
-	print_liste_field_titre($langs->trans("AmountHT"), $_SERVER["PHP_SELF"],'amount_ht','',$param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("AmountHT", $_SERVER["PHP_SELF"],'amount_ht','',$param,'align="right"',$sortfield,$sortorder);
 }
-print_liste_field_titre($langs->trans("AmountTTC"), $_SERVER["PHP_SELF"],'amount_ttc','',$param,'align="right"',$sortfield,$sortorder);
+print_liste_field_titre("AmountTTC", $_SERVER["PHP_SELF"],'amount_ttc','',$param,'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 /*
@@ -231,13 +231,11 @@ $result = $db->query($sql);
 if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
-    $var=true;
     while ($i < $num)
     {
         $objp = $db->fetch_object($result);
-        $var=!$var;
 
-        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+        print '<tr class="oddeven"><td>&nbsp;</td>';
         print "<td>".$langs->trans("Bills").' <a href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$objp->socid.'">'.$objp->name."</td>\n";
 
         if ($modecompta == 'CREANCES-DETTES')
@@ -265,7 +263,7 @@ if ($modecompta != 'CREANCES-DETTES')
     $sql.= " WHERE pf.rowid IS NULL";
     $sql.= " AND p.fk_bank = b.rowid";
     $sql.= " AND b.fk_account = ba.rowid";
-    $sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+    $sql.= " AND ba.entity IN (".getEntity('bank_account').")";
     if (! empty($date_start) && ! empty($date_end))
     	$sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
     $sql.= " GROUP BY name, idp";
@@ -280,9 +278,9 @@ if ($modecompta != 'CREANCES-DETTES')
             while ($i < $num)
             {
                 $objp = $db->fetch_object($result);
-                $var=!$var;
 
-                print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+
+                print '<tr class="oddeven"><td>&nbsp;</td>';
                 print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (".$langs->trans("PaymentsNotLinkedToInvoice").")\n";
 
                 if ($modecompta == 'CREANCES-DETTES')
@@ -304,8 +302,7 @@ if ($modecompta != 'CREANCES-DETTES')
 
 if ($total_ttc == 0)
 {
-    $var=!$var;
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
     print '</tr>';
 }
@@ -361,15 +358,13 @@ $result = $db->query($sql);
 if ($result) {
     $num = $db->num_rows($result);
     $i = 0;
-    $var=true;
     if ($num > 0)
     {
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
-            $var=!$var;
 
-            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+            print '<tr class="oddeven"><td>&nbsp;</td>';
             print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/list.php?socid=".$objp->socid."\">".$objp->name."</a></td>\n";
 
             if ($modecompta == 'CREANCES-DETTES')
@@ -387,8 +382,7 @@ if ($result) {
     }
     else
     {
-        $var=!$var;
-        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+        print '<tr class="oddeven"><td>&nbsp;</td>';
         print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -447,7 +441,6 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($result) {
     $num = $db->num_rows($result);
-    $var=true;
     $i = 0;
     if ($num) {
         while ($i < $num) {
@@ -458,8 +451,7 @@ if ($result) {
             $subtotal_ht += $obj->amount;
             $subtotal_ttc += $obj->amount;
 
-            $var = !$var;
-            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+            print '<tr class="oddeven"><td>&nbsp;</td>';
             print '<td>'.$obj->label.'</td>';
             if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
             print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -468,8 +460,7 @@ if ($result) {
         }
     }
     else {
-        $var = !$var;
-        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+        print '<tr class="oddeven"><td>&nbsp;</td>';
         print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -526,7 +517,6 @@ $subtotal_ht = 0;
 $subtotal_ttc = 0;
 if ($result) {
     $num = $db->num_rows($result);
-    $var=true;
     $i = 0;
     if ($num) {
         while ($i < $num) {
@@ -537,8 +527,7 @@ if ($result) {
             $subtotal_ht += $obj->amount;
             $subtotal_ttc += $obj->amount;
 
-            $var = !$var;
-            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+            print '<tr class="oddeven"><td>&nbsp;</td>';
             print '<td>'.$obj->label.'</td>';
             if ($modecompta == 'CREANCES-DETTES')
             	print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -548,8 +537,7 @@ if ($result) {
         }
     }
     else {
-        $var = !$var;
-        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+        print '<tr class="oddeven"><td>&nbsp;</td>';
         print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -593,7 +581,7 @@ if (! empty($conf->salaries->enabled))
 	    $column = 'p.datep';
 	}
 
-	print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';    
+	print '<tr><td colspan="4">'.$langs->trans("Salaries").'</td></tr>';
 	$sql = "SELECT u.rowid, u.firstname, u.lastname, p.fk_user, p.label as label, date_format($column,'%Y-%m') as dm, sum(p.amount) as amount";
 	$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as p";
 	$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user";
@@ -607,7 +595,7 @@ if (! empty($conf->salaries->enabled))
     if ($newsortfield == 'amount_ht') $newsortfield = 'amount';
     if ($newsortfield == 'amount_ttc') $newsortfield = 'amount';
 	$sql.= $db->order($newsortfield, $sortorder);
-	
+
 	dol_syslog("get payment salaries");
 	$result=$db->query($sql);
 	$subtotal_ht = 0;
@@ -615,7 +603,6 @@ if (! empty($conf->salaries->enabled))
 	if ($result)
 	{
 	    $num = $db->num_rows($result);
-	    $var=true;
 	    $i = 0;
 	    if ($num)
 	    {
@@ -628,8 +615,7 @@ if (! empty($conf->salaries->enabled))
 	            $subtotal_ht += $obj->amount;
 	            $subtotal_ttc += $obj->amount;
 
-	            $var = !$var;
-	            print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+	            print '<tr class="oddeven"><td>&nbsp;</td>';
 
 	            print "<td>".$langs->trans("Salary")." <a href=\"".DOL_URL_ROOT."/compta/salaries/index.php?filtre=s.fk_user=".$obj->fk_user."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
@@ -641,8 +627,7 @@ if (! empty($conf->salaries->enabled))
 	    }
 	    else
 	    {
-	        $var = !$var;
-	        print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+	        print '<tr class="oddeven"><td>&nbsp;</td>';
 	        print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 	        print '</tr>';
 	    }
@@ -669,7 +654,7 @@ if (! empty($conf->expensereport->enabled))
 		$sql = "SELECT p.rowid, p.ref, u.rowid as userid, u.firstname, u.lastname, date_format(date_valid,'%Y-%m') as dm, sum(p.total_ht) as amount_ht,sum(p.total_ttc) as amount_ttc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
-		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " WHERE p.entity = ".getEntity('expensereport');
 		$sql.= " AND p.fk_statut>=5";
 
 		$column='p.date_valid';
@@ -679,7 +664,7 @@ if (! empty($conf->expensereport->enabled))
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-		$sql.= " WHERE p.entity = ".getEntity('expensereport',1);
+		$sql.= " WHERE p.entity = ".getEntity('expensereport');
 		$sql.= " AND p.fk_statut>=5";
 
 		$column='pe.datep';
@@ -691,7 +676,7 @@ if (! empty($conf->expensereport->enabled))
 	{
 		$sql.= " AND $column >= '".$db->idate($date_start)."' AND $column <= '".$db->idate($date_end)."'";
 	}
-	
+
 	$sql.= " GROUP BY u.rowid, p.rowid, p.ref, u.firstname, u.lastname, dm";
     $newsortfield = $sortfield;
     if ($newsortfield == 's.nom, s.rowid') $newsortfield = 'p.ref';
@@ -704,7 +689,6 @@ if (! empty($conf->expensereport->enabled))
 	if ($result)
 	{
 		$num = $db->num_rows($result);
-		$var=true;
 		if ($num)
 		{
 			while ($obj = $db->fetch_object($result))
@@ -714,8 +698,7 @@ if (! empty($conf->expensereport->enabled))
 				$subtotal_ht += $obj->amount_ht;
 				$subtotal_ttc += $obj->amount_ttc;
 
-				$var = !$var;
-				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+				print '<tr class="oddeven"><td>&nbsp;</td>';
 
 				print "<td>".$langs->trans("ExpenseReport")." <a href=\"".DOL_URL_ROOT."/expensereport/list.php?search_user=".$obj->userid."\">".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
@@ -726,8 +709,7 @@ if (! empty($conf->expensereport->enabled))
 		}
 		else
 		{
-			$var = !$var;
-			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
 		}
@@ -763,8 +745,8 @@ if (! empty($conf->don->enabled))
 	    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 	    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
 	    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
-	    $sql.= " WHERE p.entity = ".getEntity('donation',1);
-	    $sql.= " AND fk_statut >= 2";	 
+	    $sql.= " WHERE p.entity = ".getEntity('donation');
+	    $sql.= " AND fk_statut >= 2";
 	}
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND p.datedon >= '".$db->idate($date_start)."' AND p.datedon <= '".$db->idate($date_end)."'";
@@ -782,7 +764,6 @@ if (! empty($conf->don->enabled))
 	if ($result)
 	{
 		$num = $db->num_rows($result);
-		$var=true;
 		$i = 0;
 		if ($num)
 		{
@@ -795,8 +776,7 @@ if (! empty($conf->don->enabled))
 				$subtotal_ht += $obj->amount;
 				$subtotal_ttc += $obj->amount;
 
-				$var = !$var;
-				print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+				print '<tr class="oddeven"><td>&nbsp;</td>';
 
 				print "<td>".$langs->trans("Donation")." <a href=\"".DOL_URL_ROOT."/don/list.php?search_company=".$obj->name."&search_name=".$obj->firstname." ".$obj->lastname."\">".$obj->name. " ".$obj->firstname." ".$obj->lastname."</a></td>\n";
 
@@ -808,8 +788,7 @@ if (! empty($conf->don->enabled))
 		}
 		else
 		{
-			$var = !$var;
-			print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+			print '<tr class="oddeven"><td>&nbsp;</td>';
 			print '<td colspan="3" class="opacitymedium">'.$langs->trans("None").'</td>';
 			print '</tr>';
 		}
@@ -859,7 +838,6 @@ if ($modecompta == 'CREANCES-DETTES')
     if ($result)
     {
         $num = $db->num_rows($result);
-        $var=false;
         $i = 0;
         if ($num)
         {
@@ -878,7 +856,7 @@ if ($modecompta == 'CREANCES-DETTES')
     } else {
         dol_print_error($db);
     }
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print "<td>".$langs->trans("VATToPay")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -908,7 +886,6 @@ if ($modecompta == 'CREANCES-DETTES')
     if ($result)
     {
         $num = $db->num_rows($result);
-        $var=true;
         $i = 0;
         if ($num)
         {
@@ -928,7 +905,7 @@ if ($modecompta == 'CREANCES-DETTES')
     } else {
         dol_print_error($db);
     }
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print "<td>".$langs->trans("VATToCollect")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -955,7 +932,6 @@ else
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
-        $var=false;
         $i = 0;
         if ($num) {
             while ($i < $num) {
@@ -974,7 +950,7 @@ else
     } else {
         dol_print_error($db);
     }
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print "<td>".$langs->trans("VATPaid")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES')
     	print "<td align=\"right\">".price($amount)."</td>\n";
@@ -1000,7 +976,6 @@ else
     $result=$db->query($sql);
     if ($result) {
         $num = $db->num_rows($result);
-        $var=true;
         $i = 0;
         if ($num) {
             while ($i < $num) {
@@ -1021,7 +996,7 @@ else
     {
         dol_print_error($db);
     }
-    print "<tr ".$bc[$var]."><td>&nbsp;</td>";
+    print '<tr class="oddeven"><td>&nbsp;</td>';
     print "<td>".$langs->trans("VATCollected")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES')
     	print "<td align=\"right\">".price($amount)."</td>\n";

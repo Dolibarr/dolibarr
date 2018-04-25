@@ -260,7 +260,7 @@ if (is_array($coll_list)) {
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			$var=!$var;
+			
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if(empty($intra)) {
 				if($coll->assuj == '1') {
@@ -270,7 +270,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;
@@ -340,7 +340,7 @@ if (is_array($coll_list)) {
 	$i = 1;
 	foreach ($coll_list as $coll) {
 		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-			$var=!$var;
+			
 			$intra = str_replace($find,$replace,$coll->tva_intra);
 			if (empty($intra)) {
 				if ($coll->assuj == '1') {
@@ -350,7 +350,7 @@ if (is_array($coll_list)) {
 					$intra = '';
 				}
 			}
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			print '<td class="nowrap">'.$i."</td>";
 			$company_static->id=$coll->socid;
 			$company_static->name=$coll->name;
