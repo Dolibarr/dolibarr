@@ -542,6 +542,13 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 				if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
 			}
 			break;
+		case 'aZ09comma':		// great to sanitize sortfield or sortorder params that can be t.abc,t.def_gh
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z0-9_\-\.,]+/i',$out)) $out='';
+			}
+			break;
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
