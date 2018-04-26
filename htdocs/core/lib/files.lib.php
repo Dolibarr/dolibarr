@@ -455,6 +455,18 @@ function dol_is_file($pathoffile)
 }
 
 /**
+ * Return if path is a symbolic link
+ *
+ * @param   string		$pathoffile		Path of file
+ * @return  boolean     			    True or false
+ */
+function dol_is_link($pathoffile)
+{
+	$newpathoffile=dol_osencode($pathoffile);
+	return is_link($newpathoffile);
+}
+
+/**
  * Return if path is an URL
  *
  * @param   string		$url	Url

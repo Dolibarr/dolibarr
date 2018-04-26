@@ -96,7 +96,7 @@ class modDav extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/dav/temp","/dav/subdir");
-		$this->dirs = array("/dav/temp","/dav/public");
+		$this->dirs = array("/dav/temp","/dav/public","/dav/private");
 
 		// Config pages. Put here list of php page, stored into dav/admin directory, to use to setup module.
 		$this->config_page_url = array("dav.php");

@@ -542,6 +542,13 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 				if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
 			}
 			break;
+		case 'aZ09comma':		// great to sanitize sortfield or sortorder params that can be t.abc,t.def_gh
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z0-9_\-\.,]+/i',$out)) $out='';
+			}
+			break;
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
@@ -3090,7 +3097,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
 		if (empty($srconly) && in_array($pictowithoutext, array(
-				'bank', 'close_title', 'delete', 'edit', 'filter', 'grip', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
 				'switch_off', 'switch_on', 'unlink', 'uparrow')
 			)) {
 			$fakey = $pictowithoutext;
