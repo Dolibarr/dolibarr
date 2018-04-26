@@ -513,7 +513,8 @@ if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 	}
 }
 
-$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse);	// $daytoparse is a date with hours = 0
+$statusofholidaytocheck = '3';
+$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholiday);	// $daytoparse is a date with hours = 0
 $isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
 $tmparray = dol_getdate($daytoparse,true);	// detail of current day
