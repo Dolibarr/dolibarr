@@ -503,7 +503,8 @@ for ($i=0;$i<7;$i++)
 	//print dol_print_date($dayinloopwithouthours, 'dayhour').' ';
 	//print dol_print_date($dayinloopfromfirstdaytoshow, 'dayhour').'<br>';
 
-	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow);
+	$statusofholidaytocheck = '3';
+	$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $dayinloopfromfirstdaytoshow, $statusofholidaytocheck);
 	$isavailable[$dayinloopfromfirstdaytoshow]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 	print '<td width="6%" align="center" class="hide'.$i.'">'.dol_print_date($dayinloopfromfirstdaytoshow, '%a').'<br>'.dol_print_date($dayinloopfromfirstdaytoshow, 'dayreduceformat').'</td>';
 }
