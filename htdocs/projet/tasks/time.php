@@ -420,16 +420,16 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			{
     				if ($projectstatic->public || $userWrite > 0)
     			    {
-    			    	$linktocreatetime = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?withproject=1'.($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTimeSpent').'</a>';
+    			    	$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?withproject=1'.($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTimeSpent').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
     			    }
     			    else
     			    {
-    			    	$linktocreatetime = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTime').'</a>';
+    			    	$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTime').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
     			    }
     			}
     			else
     			{
-    				$linktocreatetime = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTime').'</a>';
+    				$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTime').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
     			}
 			//}
 		}
@@ -949,7 +949,11 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			print '<td class="nowrap">';
     			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
     			{
-    				print $form->select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
+    				if (empty($task_time->task_date_withhour))
+    				{
+    					print $form->select_date(($date2?$date2:$date1),'timeline',3,3,2,"timespent_date",1,0,1);
+    				}
+    				else print $form->select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
     			}
     			else
     			{
@@ -1086,7 +1090,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print $hookmanager->resPrint;
 
             // Action column
-			print '<td class="center"">';
+			print '<td class="center nowraponall">';
 			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
 				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';

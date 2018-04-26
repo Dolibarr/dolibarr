@@ -411,7 +411,7 @@ print '<div class="taskiddiv inline-block">';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
 print '</div>';
 print ' ';
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0, 'maxwidth200');
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0, 'maxwidth150onsmartphone');
 print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
@@ -471,6 +471,19 @@ if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
 $moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
 $moreforfilter.='</div>';
 
+if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
+{
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.='<div class="inline-block">'.$langs->trans('Project'). ' </div>';
+	$moreforfilter.='<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter.='</div>';
+
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.='<div class="inline-block">'.$langs->trans('ThirdParty'). ' </div>';
+	$moreforfilter.='<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter.='</div>';
+}
+
 if (! empty($moreforfilter))
 {
 	print '<div class="liste_titre liste_titre_bydiv centpercent">';
@@ -485,9 +498,8 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
-//print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -505,9 +517,8 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Project").'</td>';
-print '<td>'.$langs->trans("ThirdParty").'</td>';
-//print '<td>'.$langs->trans("RefTask").'</td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
 print '<td align="right" class="leftborder plannedworkload maxwidth75">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right" class="maxwidth75">'.$langs->trans("ProgressDeclared").'</td>';
@@ -540,7 +551,7 @@ for ($idw=0; $idw<7; $idw++)
 print '<td></td>';
 print "</tr>\n";
 
-$colspan=7;
+$colspan=5+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);
 
 if ($conf->use_javascript_ajax)
 {
@@ -634,7 +645,7 @@ if (count($tasksarray) > 0)
 	if ($isdiff)
 	{
 		print '<tr class="oddeven othertaskwithtime">';
-        print '<td colspan="'.$colspan.'">';
+        print '<td colspan="'.$colspan.'" class="opacitymedium">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';
 		for ($idw = 0; $idw < 7; $idw++)
