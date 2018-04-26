@@ -70,6 +70,7 @@ $search_task_ref=GETPOST('search_task_ref', 'alpha');
 $search_task_label=GETPOST('search_task_label', 'alpha');
 $search_project_ref=GETPOST('search_project_ref', 'alpha');
 $search_thirdparty=GETPOST('search_thirdparty', 'alpha');
+$search_declared_progress=GETPOST('search_declared_progress', 'alpha');
 
 $monthofday=GETPOST('addtimemonth');
 $dayofday=GETPOST('addtimeday');
@@ -113,6 +114,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_task_label = '';
 	$search_project_ref = '';
 	$search_thirdparty = '';
+	$search_declared_progress = '';
 }
 if (GETPOST("button_search_x",'alpha') || GETPOST("button_search.x",'alpha') || GETPOST("button_search",'alpha'))
 {
@@ -331,6 +333,7 @@ if ($search_project_ref) $morewherefilter.=natural_search("p.ref", $search_proje
 if ($search_task_ref)    $morewherefilter.=natural_search("t.ref", $search_task_ref);
 if ($search_task_label)  $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
 if ($search_thirdparty)  $morewherefilter.=natural_search("s.nom", $search_thirdparty);
+if ($search_declared_progress)  $morewherefilter.=natural_search("t.progress", $search_declared_progress, 1);
 
 $tasksarray=$taskstatic->getTasksArray(0, 0, ($project->id?$project->id:0), $socid, 0, $search_project_ref, $onlyopenedproject, $morewherefilter, ($search_usertoprocessid?$search_usertoprocessid:0));    // We want to see all task of opened project i am allowed to see and that match filter, not only my tasks. Later only mine will be editable later.
 if ($morewherefilter)	// Get all task without any filter, so we can show total of time spent for not visible tasks
@@ -469,7 +472,7 @@ if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<t
 if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"></td>';
-print '<td class="liste_titre"></td>';
+print '<td class="liste_titre right"><input type="text" size="4" name="search_declared_progress" value="'.dol_escape_htmltag($search_declared_progress).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
