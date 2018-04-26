@@ -4776,8 +4776,8 @@ class Form
 	 *
 	 *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date (emptydate must be 0).
 	 *	@param	string		$prefix			Prefix for fields name
-	 *	@param	int			$h				1=Show also hours (-1 has same effect, but hour and minutes are prefilled with 23:59 if $set_time = -1)
-	 *	@param	int			$m				1=Show also minutes
+	 *	@param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
+	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
 	 *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 *	@param	string		$form_name 		Not used
 	 *	@param	int			$d				1=Show days, month, years
@@ -4850,6 +4850,8 @@ class Form
 			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_MIN;
 			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_SEC;
 		}
+		if ($h == 3) $shour = '';
+		if ($m == 3) $smin = '';
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar='combo';
