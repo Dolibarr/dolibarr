@@ -409,7 +409,7 @@ print '<div class="taskiddiv inline-block">';
 $formproject->selectTasks($socid?$socid:-1, $taskid, 'taskid', 32, 0, 1, 1);
 print '</div>';
 print ' ';
-print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0, 'maxwidth200');
+print $formcompany->selectTypeContact($object, '', 'type','internal','rowid', 0, 'maxwidth150onsmartphone');
 print '<input type="submit" class="button valignmiddle" name="assigntask" value="'.dol_escape_htmltag($titleassigntask).'">';
 print '</div>';
 
@@ -433,8 +433,21 @@ $moreforfilter.='<div class="divsearchfield">';
 $moreforfilter.='<div class="inline-block hideonsmartphone">'.$langs->trans('User'). ' </div>';
 $includeonly='hierachyme';
 if (empty($user->rights->user->user->lire)) $includeonly=array($user->id);
-$moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200');
+$moreforfilter.=$form->select_dolusers($search_usertoprocessid?$search_usertoprocessid:$usertoprocess->id, 'search_usertoprocessid', $user->rights->user->user->lire?0:0, null, 0, $includeonly, null, 0, 0, 0, '', 0, '', 'maxwidth200 marginleftonly');
 $moreforfilter.='</div>';
+
+if (empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT))
+{
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.='<div class="inline-block">'.$langs->trans('Project'). ' </div>';
+	$moreforfilter.='<input type="text" size="4" name="search_project_ref" class="marginleftonly" value="'.dol_escape_htmltag($search_project_ref).'">';
+	$moreforfilter.='</div>';
+
+	$moreforfilter.='<div class="divsearchfield">';
+	$moreforfilter.='<div class="inline-block">'.$langs->trans('ThirdParty'). ' </div>';
+	$moreforfilter.='<input type="text" size="4" name="search_thirdparty" class="marginleftonly" value="'.dol_escape_htmltag($search_thirdparty).'">';
+	$moreforfilter.='</div>';
+}
 
 if (! empty($moreforfilter))
 {
@@ -451,9 +464,8 @@ print '<div class="div-table-responsive">';
 print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'" id="tablelines3">'."\n";
 
 print '<tr class="liste_titre_filter">';
-print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
-print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
-//print '<td class="liste_titre"><input type="text" size="4" name="search_task_ref" value="'.dol_escape_htmltag($search_task_ref).'"></td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_project_ref" value="'.dol_escape_htmltag($search_project_ref).'"></td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td class="liste_titre"><input type="text" size="4" name="search_thirdparty" value="'.dol_escape_htmltag($search_thirdparty).'"></td>';
 print '<td class="liste_titre"><input type="text" size="4" name="search_task_label" value="'.dol_escape_htmltag($search_task_label).'"></td>';
 print '<td class="liste_titre"></td>';
 print '<td class="liste_titre"></td>';
@@ -470,9 +482,8 @@ print '</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Project").'</td>';
-print '<td>'.$langs->trans("ThirdParty").'</td>';
-//print '<td>'.$langs->trans("RefTask").'</td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("Project").'</td>';
+if (! empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)) print '<td>'.$langs->trans("ThirdParty").'</td>';
 print '<td>'.$langs->trans("Task").'</td>';
 print '<td align="right" class="leftborder plannedworkload maxwidth100">'.$langs->trans("PlannedWorkload").'</td>';
 print '<td align="right" class="maxwidth100">'.$langs->trans("ProgressDeclared").'</td>';
@@ -522,7 +533,7 @@ print '<td class="center">'.$langs->trans("Note").'</td>';
 print '<td class="center"></td>';
 print "</tr>\n";
 
-$colspan = 8;
+$colspan = 6+(empty($conf->global->PROJECT_TIMESHEET_DISABLEBREAK_ON_PROJECT)?0:2);;
 
 if ($conf->use_javascript_ajax)
 {
@@ -607,13 +618,9 @@ if (count($tasksarray) > 0)
 	if ($isdiff)
 	{
 		print '<tr class="oddeven othertaskwithtime">';
-        print '<td colspan="3">';
+		print '<td colspan="'.($colspan-1).'" class="opacitymedium">';
 		print $langs->trans("OtherFilteredTasks");
 		print '</td>';
-		print '<td align="right" class="leftborder plannedworkload"></td>';
-		print '<td></td>';
-		print '<td></td>';
-		print '<td></td>';
 		print '<td class="leftborder"></td>';
 		print '<td class="center">';
 		$timeonothertasks=($totalforeachday[$daytoparse] - $totalforvisibletasks[$daytoparse]);
