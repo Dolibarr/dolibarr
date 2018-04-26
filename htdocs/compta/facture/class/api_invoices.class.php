@@ -969,7 +969,7 @@ class Invoices extends DolibarrApi
      *
      * @url     POST /payments
      *
-     * @return array  Payment ID
+     * @return int  Payment ID
      * @throws 400
      * @throws 401
      * @throws 404
