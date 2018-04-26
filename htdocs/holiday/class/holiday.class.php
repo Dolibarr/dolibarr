@@ -71,6 +71,27 @@ class Holiday extends CommonObject
 	var $optValue = '';
 	var $optRowid = '';
 
+	/**
+	 * Draft status
+	 */
+	const STATUS_DRAFT = 1;
+	/**
+	 * Validated status
+	 */
+	const STATUS_VALIDATED = 2;
+	/**
+	 * Approved
+	 */
+	const STATUS_APPROVED = 3;
+	/**
+	 * Canceled
+	 */
+	const STATUS_CANCELED = 4;
+	/**
+	 * Refused
+	 */
+	const STATUS_REFUSED = 5;
+
 
 	/**
 	 *   Constructor
