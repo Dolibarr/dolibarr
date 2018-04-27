@@ -563,6 +563,59 @@ class Invoices extends DolibarrApi
     }
 
     /**
+     * Adds a contact to an invoice
+     *
+     * @param   int 	$id             	Order ID
+     * @param   int 	$fk_socpeople       	Id of thirdparty contact (if source = 'external') or id of user (if souce = 'internal') to link
+     * @param   string 	$type_contact           Type of contact (code). Must a code found into table llx_c_type_contact. For example: BILLING
+     * @param   string  $source             	external=Contact extern (llx_socpeople), internal=Contact intern (llx_user)
+     * @param   int     $notrigger              Disable all triggers 
+     *
+     * @url POST    {id}/contacts
+     *
+     * @return  array
+     *
+     * @throws 200
+     * @throws 304
+     * @throws 401
+     * @throws 404
+     * @throws 500
+     *
+     */
+    function addContact($id, $fk_socpeople, $type_contact, $source, $notrigger=0)
+    {
+        if(! DolibarrApiAccess::$user->rights->facture->creer) {
+                throw new RestException(401);
+        }
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        $result = $this->invoice->add_contact($fk_socpeople,$type_contact,$source,$notrigger);
+        if ($result < 0) {
+                throw new RestException(500, 'Error : '.$this->invoice->error);
+        }
+
+        $result = $this->invoice->fetch($id);
+        if( ! $result ) {
+            throw new RestException(404, 'Invoice not found');
+        }
+
+        if( ! DolibarrApi::_checkAccessToResource('facture',$this->invoice->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
+
+        return $this->_cleanObjectDatas($this->invoice);
+    }
+
+
+
+    /**
      * Sets an invoice as draft
      *
      * @param   int $id             Order ID
@@ -904,7 +957,7 @@ class Invoices extends DolibarrApi
      *
      * The model schema is defined by the PaymentData class.
      *
-     * @param int     $id                               Id of invoice
+     * @param array   $ids                {@from body}  Id of invoice	    {@type int}
      * @param string  $datepaye 	  {@from body}  Payment date        {@type timestamp}
      * @param int     $paiementid 	  {@from body}  Payment mode Id {@min 1}
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}
@@ -914,72 +967,60 @@ class Invoices extends DolibarrApi
      * @param string  $chqemetteur        {@from body}  Payment issuer (mandatory if paiementcode = 'CHQ')
      * @param string  $chqbank            {@from body}  Issuer bank name (optional)
      *
-     * @url     POST {id}/payments
+     * @url     POST /payments
      *
      * @return int  Payment ID
      * @throws 400
      * @throws 401
      * @throws 404
      */
-    function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement='', $comment='', $chqemetteur='', $chqbank='') {
+    function addPayment($ids, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement='', $comment='', $chqemetteur='', $chqbank='') {
         global $conf;
-
         require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
-
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
                 throw new RestException(401);
         }
-        if(empty($id)) {
+	foreach($ids as $id) {
+            if(empty($id)) {
                 throw new RestException(400, 'Invoice ID is mandatory');
-        }
-
-        if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
-                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-        }
-
-        if (! empty($conf->banque->enabled)) {
-            if(empty($accountid)) {
-                throw new RestException(400, 'Account ID is mandatory');
             }
-        }
-
-        if(empty($paiementid)) {
-            throw new RestException(400, 'Paiement ID or Paiement Code is mandatory');
-        }
-
-
-        $result = $this->invoice->fetch($id);
-        if( ! $result ) {
-            throw new RestException(404, 'Invoice not found');
-        }
-
-        // Calculate amount to pay
-        $totalpaye = $this->invoice->getSommePaiement();
-        $totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
-        $totaldeposits = $this->invoice->getSumDepositsUsed();
-        $resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
-
+            if( ! DolibarrApi::_checkAccessToResource('facture',$id)) {
+                throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+            }
+            $request_data = (object) $payment_data;
+            if (! empty($conf->banque->enabled)) {
+                if(empty($accountid)) {
+                    throw new RestException(400, 'Account ID is mandatory');
+                }
+            }
+            if(empty($paiementid)) {
+                throw new RestException(400, 'Paiement ID or Paiement Code is mandatory');
+            }
+            $result = $this->invoice->fetch($id);
+            if( ! $result ) {
+                throw new RestException(404, 'Invoice not found');
+            }
+            // Calculate amount to pay
+            $totalpaye = $this->invoice->getSommePaiement();
+            $totalcreditnotes = $this->invoice->getSumCreditNotesUsed();
+            $totaldeposits = $this->invoice->getSumDepositsUsed();
+            $resteapayer = price2num($this->invoice->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+            // Clean parameters amount if payment is for a credit note
+            if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
+                $resteapayer = price2num($resteapayer,'MT');
+                $amounts[$id] = -$resteapayer;
+                // Multicurrency
+                $newvalue = price2num($this->invoice->multicurrency_total_ttc,'MT');
+                $multicurrency_amounts[$id] = -$newvalue;
+            } else {
+                $resteapayer = price2num($resteapayer,'MT');
+                $amounts[$id] = $resteapayer;
+                // Multicurrency
+                $newvalue = price2num($this->invoice->multicurrency_total_ttc,'MT');
+                $multicurrency_amounts[$id] = $newvalue;
+            }
+	}
         $this->db->begin();
-
-        $amounts = array();
-        $multicurrency_amounts = array();
-
-        // Clean parameters amount if payment is for a credit note
-        if ($this->invoice->type == Facture::TYPE_CREDIT_NOTE) {
-            $resteapayer = price2num($resteapayer,'MT');
-            $amounts[$id] = -$resteapayer;
-            // Multicurrency
-            $newvalue = price2num($this->invoice->multicurrency_total_ttc,'MT');
-            $multicurrency_amounts[$id] = -$newvalue;
-        } else {
-            $resteapayer = price2num($resteapayer,'MT');
-            $amounts[$id] = $resteapayer;
-            // Multicurrency
-            $newvalue = price2num($this->invoice->multicurrency_total_ttc,'MT');
-            $multicurrency_amounts[$id] = $newvalue;
-        }
-
-
         // Creation of payment line
         $paiement = new Paiement($this->db);
         $paiement->datepaye     = $datepaye;
@@ -989,17 +1030,14 @@ class Invoices extends DolibarrApi
         $paiement->paiementcode = dol_getIdFromCode($this->db,$paiementid,'c_paiement','id','code',1);
         $paiement->num_paiement = $num_paiement;
         $paiement->note         = $comment;
-
         $paiement_id = $paiement->create(DolibarrApiAccess::$user, ($closepaidinvoices=='yes'?1:0));    // This include closing invoices
         if ($paiement_id < 0)
         {
             $this->db->rollback();
             throw new RestException(400, 'Payment error : '.$paiement->error);
         }
-
         if (! empty($conf->banque->enabled)) {
             $label='(CustomerInvoicePayment)';
-
             if($paiement->paiementcode == 'CHQ' && empty($chqemetteur)) {
                   throw new RestException(400, 'Emetteur is mandatory when payment code is '.$paiement->paiementcode);
             }
