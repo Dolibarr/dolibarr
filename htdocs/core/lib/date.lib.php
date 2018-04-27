@@ -584,14 +584,14 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			$countryfound=1;
 
 			// Definition of fixed working days
-			if($jour == 1 && $mois == 1)   $ferie=true; // 1er janvier
-			if($jour == 1 && $mois == 5)   $ferie=true; // 1er mai
-			if($jour == 8 && $mois == 5)   $ferie=true; // 5 mai
-			if($jour == 14 && $mois == 7)  $ferie=true; // 14 juillet
-			if($jour == 15 && $mois == 8)  $ferie=true; // 15 août
-			if($jour == 1 && $mois == 11)  $ferie=true; // 1 novembre
-			if($jour == 11 && $mois == 11) $ferie=true; // 11 novembre
-			if($jour == 25 && $mois == 12) $ferie=true; // 25 decembre
+			if($jour == 1 && $mois == 1)   $ferie=true; // 1er january
+			if($jour == 1 && $mois == 5)   $ferie=true; // 1er may
+			if($jour == 8 && $mois == 5)   $ferie=true; // 5 may
+			if($jour == 14 && $mois == 7)  $ferie=true; // 14 july
+			if($jour == 15 && $mois == 8)  $ferie=true; // 15 august
+			if($jour == 1 && $mois == 11)  $ferie=true; // 1 november
+			if($jour == 11 && $mois == 11) $ferie=true; // 11 november
+			if($jour == 25 && $mois == 12) $ferie=true; // 25 december
 
 			// Calculation for easter date
 			$date_paques = easter_date($annee);
