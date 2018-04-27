@@ -983,15 +983,13 @@ if (empty($reshook))
 				// Add link between credit note and origin
 				if(! empty($object->fk_facture_source)) {
 					$facture_source->fetch($object->fk_facture_source);
-				}
-				$facture_source->fetchObjectLinked();
+					$facture_source->fetchObjectLinked();
 
-				if(! empty($facture_source->linkedObjectsIds)) {
-					$linkedObjectIds = $facture_source->linkedObjectsIds;
-					$sourcetype = key($linkedObjectIds);
-					$fk_origin = current($facture_source->linkedObjectsIds[$sourcetype]);
-
-					$object->add_object_linked($sourcetype, $fk_origin);
+					if(! empty($facture_source->linkedObjectsIds)) {
+						foreach($facture_source->linkedObjectsIds as $sourcetype => $TIds) {
+							$object->add_object_linked($sourcetype, current($TIds));
+						}
+					}
 				}
 			}
 		}
