@@ -1934,7 +1934,7 @@ class Ticketsup extends CommonObject
 
         // Generation requete recherche
         $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "socpeople";
-        $sql .= " WHERE entity IN (" . getEntity('ticketsup', 1) . ")";
+        $sql .= " WHERE entity IN (" . getEntity('socpeople') . ")";
         if (!empty($socid)) {
             $sql .= " AND fk_soc='" . $this->db->escape($socid) . "'";
         }
