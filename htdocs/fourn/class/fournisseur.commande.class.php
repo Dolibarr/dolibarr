@@ -1401,7 +1401,7 @@ class CommandeFournisseur extends CommonOrder
             $pu=$pu_ttc;
         }
         $desc=trim($desc);
-        $ref_supplier=''; // Ref of supplier price when we add line
+        $ref_supplier=$fourn_ref; // Ref of supplier price when we add line
 
         // Check parameters
         if ($qty < 1 && ! $fk_product)
