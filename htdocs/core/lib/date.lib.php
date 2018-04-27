@@ -640,7 +640,7 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 			$jour_pentecote = date("d", $date_pentecote);
 			$mois_pentecote = date("m", $date_pentecote);
 			if($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie=true;
-			// Pentecôte
+			// "Pentecote"
 
 			// Calul des samedis et dimanches
 			$jour_julien = unixtojd($timestampStart);
