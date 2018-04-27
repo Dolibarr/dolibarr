@@ -112,7 +112,7 @@ if (empty($reshook))
 {
 	$error=0;
 
-	$permissiontoadd = $user->rights->mymodule->create;
+	$permissiontoadd = $user->rights->mymodule->write;
 	$permissiontodelete = $user->rights->mymodule->delete;
 	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
 
