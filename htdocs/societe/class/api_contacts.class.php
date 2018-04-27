@@ -127,7 +127,7 @@ class Contacts extends DolibarrApi
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
 		}
 		$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON t.fk_soc = s.rowid";
-		$sql.= ' WHERE t.entity IN (' . getEntity('socpeople') . ')';
+		$sql.= ' WHERE t.entity IN (' . getEntity('societe') . ')';
 		if ($socids) $sql.= " AND t.fk_soc IN (" . $socids . ")";
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0)
