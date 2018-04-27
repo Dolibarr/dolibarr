@@ -139,8 +139,6 @@ $linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values
 print load_fiche_titre($langs->trans("AdvancedEditor"),$linkback,'title_setup');
 print '<br>';
 
-$var=true;
-
 if (empty($conf->use_javascript_ajax))
 {
 	setEventMessages(array($langs->trans("NotAvailable"), $langs->trans("JavascriptDisabled")), null, 'errors');
@@ -158,7 +156,6 @@ else
     {
         // Si condition non remplie, on ne propose pas l'option
         if (! $conditions[$const]) continue;
-
         
         print '<tr class="oddeven">';
         print '<td width="16">'.img_object("",$picto[$const]).'</td>';
