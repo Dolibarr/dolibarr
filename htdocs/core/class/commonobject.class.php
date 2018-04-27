@@ -1116,7 +1116,7 @@ abstract class CommonObject
 		$sql.= " WHERE ec.element_id = ".$id;
 		$sql.= " AND ec.fk_socpeople = c.rowid";
 		if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
-		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe').")";
+		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
@@ -5582,7 +5582,7 @@ abstract class CommonObject
 						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
 							$("'.dol_escape_js($newInput).'").insertBefore(this);
 						});
-	
+
 						$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
 							$(this).parent().remove();
 						});

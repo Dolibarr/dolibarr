@@ -687,7 +687,10 @@ class Contact extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
-		elseif ($ref_ext) $sql .= " WHERE c.ref_ext = '".$this->db->escape($ref_ext)."'";
+		elseif ($ref_ext) {
+			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
+			$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
+		}
 
 		$resql=$this->db->query($sql);
 		if ($resql)
