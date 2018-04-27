@@ -401,7 +401,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 	dol_syslog("POST keys  : ".join(',', array_keys($_POST)), LOG_DEBUG, 0, '_stripe');
 	dol_syslog("POST values: ".join(',', $_POST), LOG_DEBUG, 0, '_stripe');
   
-  if (GETPOST("paymenttoken",'alpha') or GETPOST("modepayment",'alpha')=='src_newcard'){
+  if (GETPOST("paymenttoken",'alpha') || GETPOST("modepayment",'alpha')=='src_newcard'){
   if (GETPOST("paymenttoken",'alpha') && NULL!==GETPOST("paymenttoken",'alpha')){
   $stripeSource = GETPOST("paymenttoken",'alpha');
   }else{
