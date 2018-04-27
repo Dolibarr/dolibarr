@@ -583,56 +583,70 @@ function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR', $
 		{
 			$countryfound=1;
 
-			// Definition des dates feriees fixes
-			if($jour == 1 && $mois == 1)   $ferie=true; // 1er janvier
-			if($jour == 1 && $mois == 5)   $ferie=true; // 1er mai
-			if($jour == 8 && $mois == 5)   $ferie=true; // 5 mai
-			if($jour == 14 && $mois == 7)  $ferie=true; // 14 juillet
-			if($jour == 15 && $mois == 8)  $ferie=true; // 15 aout
-			if($jour == 1 && $mois == 11)  $ferie=true; // 1 novembre
-			if($jour == 11 && $mois == 11) $ferie=true; // 11 novembre
-			if($jour == 25 && $mois == 12) $ferie=true; // 25 decembre
+			// Definition of fixed working days
+			if($jour == 1 && $mois == 1)   $ferie=true; // 1er january
+			if($jour == 1 && $mois == 5)   $ferie=true; // 1er may
+			if($jour == 8 && $mois == 5)   $ferie=true; // 5 may
+			if($jour == 14 && $mois == 7)  $ferie=true; // 14 july
+			if($jour == 15 && $mois == 8)  $ferie=true; // 15 august
+			if($jour == 1 && $mois == 11)  $ferie=true; // 1 november
+			if($jour == 11 && $mois == 11) $ferie=true; // 11 november
+			if($jour == 25 && $mois == 12) $ferie=true; // 25 december
 
-			// Calcul du jour de paques
+			// Calculation for easter date
 			$date_paques = easter_date($annee);
 			$jour_paques = date("d", $date_paques);
 			$mois_paques = date("m", $date_paques);
 			if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
-			// Paques
+			// Pâques
 
-			// Calcul du jour de l ascension (38 jours apres Paques)
+			// Calculation for the monday of easter date
+            $date_lundi_paques = mktime(
+                date("H", $date_paques),
+                date("i", $date_paques),
+                date("s", $date_paques),
+                date("m", $date_paques),
+                date("d", $date_paques) + 1,
+                date("Y", $date_paques)
+            );
+			$jour_lundi_ascension = date("d", $date_lundi_paques);
+			$mois_lundi_ascension = date("m", $date_lundi_paques);
+			if($jour_lundi_ascension == $jour && $mois_lundi_ascension == $mois) $ferie=true;
+			// Lundi de Pâques
+
+			// Calcul du jour de l'ascension (38 days after easter day)
             $date_ascension = mktime(
                 date("H", $date_paques),
                 date("i", $date_paques),
                 date("s", $date_paques),
                 date("m", $date_paques),
-                date("d", $date_paques) + 38,
+                date("d", $date_paques) + 39,
                 date("Y", $date_paques)
             );
 			$jour_ascension = date("d", $date_ascension);
 			$mois_ascension = date("m", $date_ascension);
 			if($jour_ascension == $jour && $mois_ascension == $mois) $ferie=true;
-			//Ascension
+			// Ascension
 
-			// Calcul de Pentecote (11 jours apres Paques)
+			// Calculation of "Pentecote" (11 days after easter day)
             $date_pentecote = mktime(
-                date("H", $date_ascension),
-                date("i", $date_ascension),
-                date("s", $date_ascension),
-                date("m", $date_ascension),
-                date("d", $date_ascension) + 11,
-                date("Y", $date_ascension)
+                date("H", $date_paques),
+                date("i", $date_paques),
+                date("s", $date_paques),
+                date("m", $date_paques),
+                date("d", $date_paques) + 49,
+                date("Y", $date_paques)
             );
 			$jour_pentecote = date("d", $date_pentecote);
 			$mois_pentecote = date("m", $date_pentecote);
 			if($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie=true;
-			//Pentecote
+			// "Pentecote"
 
 			// Calul des samedis et dimanches
 			$jour_julien = unixtojd($timestampStart);
 			$jour_semaine = jddayofweek($jour_julien, 0);
 			if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
-			//Samedi (6) et dimanche (0)
+			// Samedi (6) et dimanche (0)
 		}
 
 		// Pentecoste and Ascensione in Italy go to the sunday after: isn't holiday.
