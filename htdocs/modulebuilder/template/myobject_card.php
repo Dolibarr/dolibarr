@@ -120,6 +120,7 @@ if (empty($reshook))
 
 	$permissiontoadd = $user->rights->mymodule->write;
 	$permissiontodelete = $user->rights->mymodule->delete;
+	if (empty($backtopage)) $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).'?id=__ID__';
 	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
 	$triggermodname = 'MYMODULE_MODIFY';
 
