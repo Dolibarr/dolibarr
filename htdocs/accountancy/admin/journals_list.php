@@ -417,7 +417,6 @@ if ($id)
 	if ($tabname[$id])
 	{
 		$alabelisused=0;
-		$var=false;
 
 		$fieldlist=explode(',',$tabfield[$id]);
 
@@ -497,7 +496,6 @@ if ($id)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$var=true;
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
