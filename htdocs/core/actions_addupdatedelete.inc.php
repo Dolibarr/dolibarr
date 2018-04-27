@@ -26,7 +26,6 @@
 // $object must be defined
 // $permissiontoadd must be defined
 // $permissiontodelete must be defined
-// $backurlforcard must be defined
 // $backurlforlist must be defined
 // $backtopage may be defined
 
