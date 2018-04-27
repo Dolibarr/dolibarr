@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
@@ -212,8 +213,8 @@ while ((($y < $yend) || ($y == $yend && $m < $mend)) && $mcursor < 1000)	// $mcu
 	if ($m > 12) $m -= 12;
 	$mcursor++;
 
-	$coll_listsell = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'sell', $m);
-	$coll_listbuy = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'buy', $m);
+	$coll_listsell = tax_by_rate('vat', $db, $y, 0, 0, 0, $modetax, 'sell', $m);
+	$coll_listbuy = tax_by_rate('vat', $db, $y, 0, 0, 0, $modetax, 'buy', $m);
 
     $action = "tva";
     $object = array(&$coll_listsell, &$coll_listbuy);
@@ -241,7 +242,7 @@ while ((($y < $yend) || ($y == $yend && $m < $mend)) && $mcursor < 1000)	// $mcu
 
     print '<tr class="oddeven">';
     print '<td class="nowrap"><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
-    
+
     if ($CalcLT==0) {
         $x_coll = 0;
         foreach($coll_listsell as $vatrate=>$val) {

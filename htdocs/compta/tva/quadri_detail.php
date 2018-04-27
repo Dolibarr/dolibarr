@@ -22,7 +22,7 @@
 /**
  *		\file       htdocs/compta/tva/quadri_detail.php
  *		\ingroup    tax
- *		\brief      Trimestrial page - detailed version
+ *		\brief      VAT by rate
  */
 
 require '../../main.inc.php';
@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
@@ -55,10 +56,10 @@ $date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GE
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q");
+	$q=GETPOST("q","int");
 	if (empty($q))
 	{
-		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,GETPOST("month"),false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
+		if (GETPOST("month","int")) { $date_start=dol_get_first_day($year_start,GETPOST("month","int"),false); $date_end=dol_get_last_day($year_start,GETPOST("month","int"),false); }
 		else
 		{
 			$date_start=dol_get_first_day($year_start,empty($conf->global->SOCIETE_FISCAL_MONTH_START)?1:$conf->global->SOCIETE_FISCAL_MONTH_START,false);
@@ -96,6 +97,16 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * View
  */
 
+$form=new Form($db);
+$company_static=new Societe($db);
+$invoice_customer=new Facture($db);
+$invoice_supplier=new FactureFournisseur($db);
+$expensereport=new ExpenseReport($db);
+$product_static=new Product($db);
+$payment_static=new Paiement($db);
+$paymentfourn_static=new PaiementFourn($db);
+$paymentexpensereport_static=new PaymentExpenseReport($db);
+
 $morequerystring='';
 $listofparams=array('date_startmonth','date_startyear','date_startday','date_endmonth','date_endyear','date_endday');
 foreach ($listofparams as $param)
@@ -105,16 +116,6 @@ foreach ($listofparams as $param)
 
 llxHeader('',$langs->trans("VATReport"),'','',0,0,'','',$morequerystring);
 
-$form=new Form($db);
-
-$company_static=new Societe($db);
-$invoice_customer=new Facture($db);
-$invoice_supplier=new FactureFournisseur($db);
-$expensereport=new ExpenseReport($db);
-$product_static=new Product($db);
-$payment_static=new Paiement($db);
-$paymentfourn_static=new PaiementFourn($db);
-$paymentexpensereport_static=new PaymentExpenseReport($db);
 
 //print load_fiche_titre($langs->trans("VAT"),"");
 
@@ -185,6 +186,7 @@ $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
 $vatexpensereport=$langs->trans("VATPaid");
 
+
 // VAT Received and paid
 print '<table class="noborder" width="100%">';
 
@@ -194,8 +196,8 @@ $i=0;
 $columns = 5;
 
 // Load arrays of datas
-$x_coll = tax_by_date('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
-$x_paye = tax_by_date('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'buy');
+$x_coll = tax_by_rate('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = tax_by_rate('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 if (! is_array($x_coll) || ! is_array($x_paye))
 {
@@ -362,7 +364,6 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 		if (is_array($x_both[$rate]['coll']['detail']))
 		{
 			// VAT Rate
-			$var=true;
 			print "<tr>";
 			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.($span+1).'"></td>';
 			print '</tr>'."\n";
@@ -504,7 +505,7 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 		print '</tr>';
 	}
 
-	if (count($x_coll) == 0)   // Show a total ine if nothing shown
+	if (count($x_coll) == 0)   // Show a total line if nothing shown
 	{
 		print '<tr class="liste_total">';
 		print '<td colspan="4"></td>';
@@ -544,7 +545,6 @@ if (! is_array($x_coll) || ! is_array($x_paye))
 
 		if (is_array($x_both[$rate]['paye']['detail']))
 		{
-			$var=true;
 			print "<tr>";
 			print '<td class="tax_rate">'.$langs->trans("Rate").': '.vatrate($rate).'%</td><td colspan="'.($span+1).'"></td>';
 			print '</tr>'."\n";

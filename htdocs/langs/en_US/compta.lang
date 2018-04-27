@@ -171,6 +171,7 @@ LT1ReportByCustomersES=Report by third party RE
 LT2ReportByCustomersES=Report by third party IRPF
 VATReport=Sale tax report
 VATReportByPeriods=Sale tax report by period
+VATReportByThirdParties=Sale tax report by third parties
 VATReportByCustomers=Sale tax report by customer
 VATReportByCustomersInInputOutputMode=Report by the customer VAT collected and paid
 VATReportByQuartersInInputOutputMode=Report by Sale tax rate of the tax collected and paid
