@@ -1050,7 +1050,7 @@ if (empty($reshook))
 								if (empty($lines[$i]->subprice) || $lines[$i]->qty <= 0)
 									continue;
 
-								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : $lines[$i]->product_label);
+								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
 								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->product_desc);
 								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
