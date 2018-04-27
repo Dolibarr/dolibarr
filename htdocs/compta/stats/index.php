@@ -492,7 +492,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 		}
 		if (! $total[$annee-1] && $total[$annee])
 		{
-			print '<td align="right" class="borderrightlight">+zzzz'.$total[$annee-1].$langs->trans('Inf').'%</td>';
+			print '<td align="right" class="borderrightlight">+'.$langs->trans('Inf').'%</td>';
 		}
 		if (! $total[$annee-1] && ! $total[$annee])
 		{
