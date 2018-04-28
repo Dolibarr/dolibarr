@@ -388,7 +388,11 @@ class PaymentSalary extends CommonObject
 						-abs($this->amount),
 						$this->num_payment,
 						'',
-						$user
+						$user,
+						'',
+						'',
+						'',
+						$this->datev
 					);
 
 					// Update fk_bank into llx_paiement.

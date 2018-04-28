@@ -3964,7 +3964,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$name        		Translation key of field
  *	@param	int		$thead		 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        		Url used when we click on sort picto
- *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable.
+ *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
  *	@param	string	$begin       		("" by defaut)
  *	@param	string	$moreparam   		Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  		Add more attributes on th ("" by defaut, example: 'align="center"'). To add more css class, use param $prefix.
@@ -4005,16 +4005,31 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		if ($field1 != $sortfield1) // We are on another field
+		$sortordertouseinlink='';
+		if ($field1 != $sortfield1) // We are on another field than current sorted field
 		{
-			if (preg_match('/^DESC/', $sortorder)) $out.= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
-			else $out.= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+			if (preg_match('/^DESC/i', $sortorder))
+			{
+				$sortordertouseinlink.=str_repeat('desc,', count(explode(',',$field)));
+			}
+			else		// We reverse the var $sortordertouseinlink
+			{
+				$sortordertouseinlink.=str_repeat('asc,', count(explode(',',$field)));
+			}
 		}
-		else                      // We are of first sorting criteria
+		else                        // We are on field that is the first current sorting criteria
 		{
-			if (preg_match('/^ASC/', $sortorder)) $out.= '<a class="reposition" href="'.$file.'?sortfield='.$sortfield.'&sortorder=desc&begin='.$begin.$options.'">';
-			else $out.= '<a class="reposition" href="'.$file.'?sortfield='.$sortfield.'&sortorder=asc&begin='.$begin.$options.'">';
+			if (preg_match('/^ASC/i', $sortorder))	// We reverse the var $sortordertouseinlink
+			{
+				$sortordertouseinlink.=str_repeat('desc,', count(explode(',',$field)));
+			}
+			else
+			{
+				$sortordertouseinlink.=str_repeat('asc,', count(explode(',',$field)));
+			}
 		}
+		$sortordertouseinlink=preg_replace('/,$/', '', $sortordertouseinlink);
+		$out.= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder='.$sortordertouseinlink.'&begin='.$begin.$options.'">';
 	}
 
 	if ($tooltip) $out.=$form->textwithpicto($langs->trans($name), $langs->trans($tooltip));

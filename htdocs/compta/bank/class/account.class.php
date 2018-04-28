@@ -395,9 +395,10 @@ class Account extends CommonObject
 	 *  @param	string		$emetteur		Name of cheque writer
 	 *  @param	string		$banque			Bank of cheque writer
 	 *  @param	string		$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
+	 *  @param	int			$datevalue		Date value
 	 *  @return	int							Rowid of added entry, <0 if KO
 	 */
-	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='')
+	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='', $datev=null)
 	{
 		// Deprecatîon warning
 		if (is_numeric($oper)) {
@@ -447,7 +448,7 @@ class Account extends CommonObject
 
 		$this->db->begin();
 
-		$datev = $date;
+		if (is_null($datev) || empty($datev)) $datev = $date;
 
 		$accline = new AccountLine($this->db);
 		$accline->datec = $now;
