@@ -96,10 +96,10 @@ function pt ($db, $sql, $date)
         $i = 0;
         $total = 0;
         print '<table class="noborder" width="100%">';
+
         print '<tr class="liste_titre">';
         print '<td class="nowrap" width="60%">'.$date.'</td>';
         print '<td align="right">'.$langs->trans("Amount").'</td>';
-        print '<td>&nbsp;</td>'."\n";
         print "</tr>\n";
 
         while ($i < $num) {
@@ -109,12 +109,12 @@ function pt ($db, $sql, $date)
             print '<td class="nowrap">'.$obj->dm."</td>\n";
             $total = $total + $obj->mm;
 
-            print '<td class="nowrap" align="right">'.price($obj->mm)."</td><td >&nbsp;</td>\n";
+            print '<td class="nowrap" align="right">'.price($obj->mm)."</td\n";
             print "</tr>\n";
 
             $i++;
         }
-        print '<tr class="liste_total"><td align="right">'.$langs->trans("Total")." :</td><td class=\"nowrap\" align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>";
+        print '<tr class="liste_total"><td align="right">'.$langs->trans("Total")." :</td><td class=\"nowrap\" align=\"right\"><b>".price($total)."</b></td></tr>";
 
         print "</table>";
         $db->free($result);
@@ -470,9 +470,10 @@ $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND f.datep >= '".$db->idate($date_start)."'";
 $sql.= " AND f.datep <= '".$db->idate($date_end)."'";
-$sql.= " GROUP BY dm ORDER BY dm ASC";
+$sql.= " GROUP BY dm";
+$sql.= " ORDER BY dm ASC";
 
-pt($db, $sql,$langs->trans("Year")." $y");
+pt($db, $sql, $langs->trans("Month"));
 
 
 print '<br>';

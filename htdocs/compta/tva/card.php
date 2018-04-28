@@ -248,7 +248,7 @@ if ($action == 'create')
     print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 
-    print '<tr><td class="fieldrequired">'.$langs->trans("DateValue").'</td><td>';
+    print '<tr><td class="fieldrequired">'.$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")).'</td><td>';
     print $form->select_date($datev,"datev",'','','','add',1,1);
     print '</td></tr>';
 
@@ -261,7 +261,7 @@ if ($action == 'create')
 	print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input class="minwidth300" name="label" id="label" value="'.($_POST["label"]?GETPOST("label",'',2):$label).'"></td></tr>';
 
 	// Amount
-	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount").'"></td></tr>';
+	print '<tr><td class="fieldrequired">'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value="'.GETPOST("amount","alpha").'"></td></tr>';
 
     if (! empty($conf->banque->enabled))
     {
@@ -325,9 +325,9 @@ if ($id)
 
 
 	print '<tr><td>';
-	print $form->editfieldkey("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	print '</td><td>';
-	print $form->editfieldval("DateValue", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
+	print $form->editfieldval("PeriodEndDate", 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
 	//print dol_print_date($object->datev,'day');
 	print '</td></tr>';
 
