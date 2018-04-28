@@ -45,13 +45,12 @@ if (empty($year))
 }
 $date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
 $date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
-// Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q");
+	$q=GETPOST("q","int");
 	if (empty($q))
 	{
-		if (GETPOST("month")) { $date_start=dol_get_first_day($year_start,GETPOST("month"),false); $date_end=dol_get_last_day($year_start,GETPOST("month"),false); }
+		if (GETPOST("month","int")) { $date_start=dol_get_first_day($year_start,GETPOST("month","int"),false); $date_end=dol_get_last_day($year_start,GETPOST("month","int"),false); }
 		else
 		{
 			$date_start=dol_get_first_day($year_start, $conf->global->SOCIETE_FISCAL_MONTH_START,false);
@@ -150,11 +149,12 @@ if($localTaxType==1) {
 	$CalcLT= $conf->global->MAIN_INFO_LOCALTAX_CALC2;
 }
 
-$description = '';
+$fsearch.='  <input type="hidden" name="localTaxType" value="'.$localTaxType.'">';
+$description = $fsearch;
 
 // Show report header
 $name = $langs->trans("ReportByMonth");
-$description = $langs->trans($LT);
+$description .= $langs->trans($LT);
 $calcmode = $langs->trans("LTReportBuildWithOptionDefinedInModule").' ';
 $calcmode.= '('.$langs->trans("TaxModuleSetupToModifyRulesLT",DOL_URL_ROOT.'/admin/company.php').')<br>';
 
@@ -173,6 +173,7 @@ llxHeader('', $name);
 
 report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 //report_header($name,'',$textprevyear.$langs->trans("Year")." ".$year_start.$textnextyear,'',$description,$builddate,$exportlink,array(),$calcmode);
+
 
 print '<br>';
 
@@ -208,16 +209,141 @@ $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0; $mcursor=0;
 while ((($y < $yend) || ($y == $yend && $m < $mend)) && $mcursor < 1000)	// $mcursor is to avoid too large loop
 {
-	$m = $conf->global->SOCIETE_FISCAL_MONTH_START + ($mcursor % 12);
+	//$m = $conf->global->SOCIETE_FISCAL_MONTH_START + ($mcursor % 12);
 	if ($m == 13) $y++;
 	if ($m > 12) $m -= 12;
 	$mcursor++;
 
-	$coll_listsell = tax_by_rate('vat', $db, $y, 0, 0, 0, $modetax, 'sell', $m);
-	$coll_listbuy = tax_by_rate('vat', $db, $y, 0, 0, 0, $modetax, 'buy', $m);
+	// Get array with details of each line
+	$x_coll = tax_by_rate(($localTaxType==1?'localtax1':'localtax2'), $db, $y, 0, 0, 0, $modetax, 'sell', $m);
+	$x_paye = tax_by_rate(($localTaxType==1?'localtax1':'localtax2'), $db, $y, 0, 0, 0, $modetax, 'buy', $m);
+
+	$x_both = array();
+	//now, from these two arrays, get another array with one rate per line
+	foreach(array_keys($x_coll) as $my_coll_rate)
+	{
+		$x_both[$my_coll_rate]['coll']['totalht'] = $x_coll[$my_coll_rate]['totalht'];
+		$x_both[$my_coll_rate]['coll']['vat']	 = $x_coll[$my_coll_rate]['vat'];
+		$x_both[$my_coll_rate]['coll']['localtax1']	 = $x_coll[$my_coll_rate]['localtax1'];
+		$x_both[$my_coll_rate]['coll']['localtax2']	 = $x_coll[$my_coll_rate]['localtax2'];
+		$x_both[$my_coll_rate]['paye']['totalht'] = 0;
+		$x_both[$my_coll_rate]['paye']['vat'] = 0;
+		$x_both[$my_coll_rate]['paye']['localtax1'] = 0;
+		$x_both[$my_coll_rate]['paye']['localtax2'] = 0;
+		$x_both[$my_coll_rate]['coll']['links'] = '';
+		$x_both[$my_coll_rate]['coll']['detail'] = array();
+		foreach($x_coll[$my_coll_rate]['facid'] as $id=>$dummy) {
+			//$invoice_customer->id=$x_coll[$my_coll_rate]['facid'][$id];
+			//$invoice_customer->ref=$x_coll[$my_coll_rate]['facnum'][$id];
+			//$invoice_customer->type=$x_coll[$my_coll_rate]['type'][$id];
+			//$company_static->fetch($x_coll[$my_coll_rate]['company_id'][$id]);
+			$x_both[$my_coll_rate]['coll']['detail'][] = array(
+			'id'        =>$x_coll[$my_coll_rate]['facid'][$id],
+			'descr'     =>$x_coll[$my_coll_rate]['descr'][$id],
+			'pid'       =>$x_coll[$my_coll_rate]['pid'][$id],
+			'pref'      =>$x_coll[$my_coll_rate]['pref'][$id],
+			'ptype'     =>$x_coll[$my_coll_rate]['ptype'][$id],
+			'payment_id'=>$x_coll[$my_coll_rate]['payment_id'][$id],
+			'payment_amount'=>$x_coll[$my_coll_rate]['payment_amount'][$id],
+			'ftotal_ttc'=>$x_coll[$my_coll_rate]['ftotal_ttc'][$id],
+			'dtotal_ttc'=>$x_coll[$my_coll_rate]['dtotal_ttc'][$id],
+			'dtype'     =>$x_coll[$my_coll_rate]['dtype'][$id],
+			'datef'     =>$x_coll[$my_coll_rate]['datef'][$id],
+			'datep'     =>$x_coll[$my_coll_rate]['datep'][$id],
+			//'company_link'=>$company_static->getNomUrl(1,'',20),
+			'ddate_start'=>$x_coll[$my_coll_rate]['ddate_start'][$id],
+			'ddate_end'  =>$x_coll[$my_coll_rate]['ddate_end'][$id],
+
+			'totalht'   =>$x_coll[$my_coll_rate]['totalht_list'][$id],
+			'vat'       =>$x_coll[$my_coll_rate]['vat_list'][$id],
+			'localtax1' =>$x_coll[$my_coll_rate]['localtax1_list'][$id],
+			'localtax2' =>$x_coll[$my_coll_rate]['localtax2_list'][$id],
+			//'link'      =>$invoice_customer->getNomUrl(1,'',12)
+			);
+		}
+	}
+
+	// tva paid
+	foreach (array_keys($x_paye) as $my_paye_rate) {
+		$x_both[$my_paye_rate]['paye']['totalht'] = $x_paye[$my_paye_rate]['totalht'];
+		$x_both[$my_paye_rate]['paye']['vat'] = $x_paye[$my_paye_rate]['vat'];
+		$x_both[$my_paye_rate]['paye']['localtax1'] = $x_paye[$my_paye_rate]['localtax1'];
+		$x_both[$my_paye_rate]['paye']['localtax2'] = $x_paye[$my_paye_rate]['localtax2'];
+		if (!isset($x_both[$my_paye_rate]['coll']['totalht'])) {
+			$x_both[$my_paye_rate]['coll']['totalht'] = 0;
+			$x_both[$my_paye_rate]['coll']['vat'] = 0;
+			$x_both[$my_paye_rate]['coll']['localtax1'] = 0;
+			$x_both[$my_paye_rate]['coll']['localtax2'] = 0;
+		}
+		$x_both[$my_paye_rate]['paye']['links'] = '';
+		$x_both[$my_paye_rate]['paye']['detail'] = array();
+
+		foreach ($x_paye[$my_paye_rate]['facid'] as $id=>$dummy)
+		{
+			// ExpenseReport
+			if ($x_paye[$my_paye_rate]['ptype'][$id] == 'ExpenseReportPayment')
+			{
+				//$expensereport->id=$x_paye[$my_paye_rate]['facid'][$id];
+				//$expensereport->ref=$x_paye[$my_paye_rate]['facnum'][$id];
+				//$expensereport->type=$x_paye[$my_paye_rate]['type'][$id];
+
+				$x_both[$my_paye_rate]['paye']['detail'][] = array(
+				'id'				=>$x_paye[$my_paye_rate]['facid'][$id],
+				'descr'				=>$x_paye[$my_paye_rate]['descr'][$id],
+				'pid'				=>$x_paye[$my_paye_rate]['pid'][$id],
+				'pref'				=>$x_paye[$my_paye_rate]['pref'][$id],
+				'ptype'				=>$x_paye[$my_paye_rate]['ptype'][$id],
+				'payment_id'		=>$x_paye[$my_paye_rate]['payment_id'][$id],
+				'payment_amount'	=>$x_paye[$my_paye_rate]['payment_amount'][$id],
+				'ftotal_ttc'		=>price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
+				'dtotal_ttc'		=>price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
+				'dtype'				=>$x_paye[$my_paye_rate]['dtype'][$id],
+				'ddate_start'		=>$x_paye[$my_paye_rate]['ddate_start'][$id],
+				'ddate_end'			=>$x_paye[$my_paye_rate]['ddate_end'][$id],
+
+				'totalht'			=>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
+				'vat'				=>$x_paye[$my_paye_rate]['vat_list'][$id],
+				'localtax1'			=>$x_paye[$my_paye_rate]['localtax1_list'][$id],
+				'localtax2'			=>$x_paye[$my_paye_rate]['localtax2_list'][$id],
+				//'link'				=>$expensereport->getNomUrl(1)
+				);
+			}
+			else
+			{
+				//$invoice_supplier->id=$x_paye[$my_paye_rate]['facid'][$id];
+				//$invoice_supplier->ref=$x_paye[$my_paye_rate]['facnum'][$id];
+				//$invoice_supplier->type=$x_paye[$my_paye_rate]['type'][$id];
+				//$company_static->fetch($x_paye[$my_paye_rate]['company_id'][$id]);
+				$x_both[$my_paye_rate]['paye']['detail'][] = array(
+				'id'        =>$x_paye[$my_paye_rate]['facid'][$id],
+				'descr'     =>$x_paye[$my_paye_rate]['descr'][$id],
+				'pid'       =>$x_paye[$my_paye_rate]['pid'][$id],
+				'pref'      =>$x_paye[$my_paye_rate]['pref'][$id],
+				'ptype'     =>$x_paye[$my_paye_rate]['ptype'][$id],
+				'payment_id'=>$x_paye[$my_paye_rate]['payment_id'][$id],
+				'payment_amount'=>$x_paye[$my_paye_rate]['payment_amount'][$id],
+				'ftotal_ttc'=>price2num($x_paye[$my_paye_rate]['ftotal_ttc'][$id]),
+				'dtotal_ttc'=>price2num($x_paye[$my_paye_rate]['dtotal_ttc'][$id]),
+				'dtype'     =>$x_paye[$my_paye_rate]['dtype'][$id],
+				'datef'     =>$x_paye[$my_paye_rate]['datef'][$id],
+				'datep'     =>$x_paye[$my_paye_rate]['datep'][$id],
+				//'company_link'=>$company_static->getNomUrl(1,'',20),
+				'ddate_start'=>$x_paye[$my_paye_rate]['ddate_start'][$id],
+				'ddate_end'  =>$x_paye[$my_paye_rate]['ddate_end'][$id],
+
+				'totalht'   =>price2num($x_paye[$my_paye_rate]['totalht_list'][$id]),
+				'vat'       =>$x_paye[$my_paye_rate]['vat_list'][$id],
+				'localtax1' =>$x_paye[$my_paye_rate]['localtax1_list'][$id],
+				'localtax2' =>$x_paye[$my_paye_rate]['localtax2_list'][$id],
+				//'link'      =>$invoice_supplier->getNomUrl(1,'',12)
+				);
+			}
+		}
+	}
+	//now we have an array (x_both) indexed by rates for coll and paye
 
     $action = "tva";
-    $object = array(&$coll_listsell, &$coll_listbuy);
+    $object = array(&$x_coll, &$x_paye, &$x_both);
     $parameters["mode"] = $modetax;
     $parameters["year"] = $y;
     $parameters["month"] = $m;
@@ -227,13 +353,13 @@ while ((($y < $yend) || ($y == $yend && $m < $mend)) && $mcursor < 1000)	// $mcu
     $hookmanager->initHooks(array('externalbalance'));
     $reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
-    if (! is_array($coll_listbuy) && $coll_listbuy == -1)
+    if (! is_array($x_coll) && $coll_listbuy == -1)
     {
         $langs->load("errors");
         print '<tr><td colspan="5">'.$langs->trans("ErrorNoAccountancyModuleLoaded").'</td></tr>';
         break;
     }
-    if (! is_array($coll_listbuy) && $coll_listbuy == -2)
+    if (! is_array($x_paye) && $coll_listbuy == -2)
     {
         print '<tr><td colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
         break;
@@ -241,76 +367,121 @@ while ((($y < $yend) || ($y == $yend && $m < $mend)) && $mcursor < 1000)	// $mcu
 
 
     print '<tr class="oddeven">';
-    print '<td class="nowrap"><a href="quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
+    print '<td class="nowrap"><a href="'.DOL_URL_ROOT.'/compta/localtax/quadri_detail.php?leftmenu=tax_vat&month='.$m.'&year='.$y.'">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</a></td>';
 
-    if ($CalcLT==0) {
-        $x_coll = 0;
-        foreach($coll_listsell as $vatrate=>$val) {
-	        $x_coll+=$val[$localTaxType==1?'localtax1':'localtax2'];
-	    }
-	    $subtotalcoll = $subtotalcoll + $x_coll;
-	    print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td>";
+    $x_coll_sum = 0;
+    foreach (array_keys($x_coll) as $rate)
+    {
+    	$subtot_coll_total_ht = 0;
+    	$subtot_coll_vat = 0;
 
-	    $x_paye = 0;
-	    foreach($coll_listbuy as $vatrate=>$val) {
-	        $x_paye+=$val[$localTaxType==1?'localtax1':'localtax2'];
-	    }
-	    $subtotalpaye = $subtotalpaye + $x_paye;
-	    print "<td class=\"nowrap\" align=\"right\">".price($x_paye)."</td>";
-    } elseif($CalcLT==1) {
-    	$x_paye = 0;
-    	foreach($coll_listbuy as $vatrate=>$val) {
-    		$x_paye+=$val[$localTaxType==1?'localtax1':'localtax2'];
+    	foreach ($x_both[$rate]['coll']['detail'] as $index => $fields)
+    	{
+    		// Payment
+    		$ratiopaymentinvoice=1;
+    		if ($modetax != 1)
+    		{
+    			// Define type
+    			// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
+    			$type=(isset($fields['dtype'])?$fields['dtype']:$fields['ptype']);
+    			// Try to enhance type detection using date_start and date_end for free lines where type
+    			// was not saved.
+    			if (!empty($fields['ddate_start'])) {
+    				$type=1;
+    			}
+    			if (!empty($fields['ddate_end'])) {
+    				$type=1;
+    			}
+
+    			if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
+    				|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice'))
+    			{
+    				//print $langs->trans("NA");
+    			} else {
+    				if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
+    					$ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+    				}
+    			}
+    		}
+    		//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
+    		$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
+    		$temp_vat=$fields['localtax'.$localTaxType]*$ratiopaymentinvoice;
+    		$subtot_coll_total_ht += $temp_ht;
+    		$subtot_coll_vat      += $temp_vat;
+    		$x_coll_sum           += $temp_vat;
     	}
-    	$subtotalpaye = $subtotalpaye + $x_paye;
-    	print "<td class=\"nowrap\" align=\"right\">".price($x_paye)."</td><td></td>";
-    } elseif($CalcLT==2) {
-    	$x_coll = 0;
-    	foreach($coll_listsell as $vatrate=>$val) {
-    		$x_coll+=$val[$localTaxType==1?'localtax1':'localtax2'];
+    }
+    print "<td class=\"nowrap\" align=\"right\">".price(price2num($x_coll_sum,'MT'))."</td>";
+
+    $x_paye_sum = 0;
+    foreach (array_keys($x_paye) as $rate)
+    {
+    	$subtot_paye_total_ht = 0;
+    	$subtot_paye_vat = 0;
+
+    	foreach ($x_both[$rate]['paye']['detail'] as $index => $fields)
+    	{
+    		// Payment
+    		$ratiopaymentinvoice=1;
+    		if ($modetax != 1)
+    		{
+    			// Define type
+    			// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
+    			$type=(isset($fields['dtype'])?$fields['dtype']:$fields['ptype']);
+    			// Try to enhance type detection using date_start and date_end for free lines where type
+    			// was not saved.
+    			if (!empty($fields['ddate_start'])) {
+    				$type=1;
+    			}
+    			if (!empty($fields['ddate_end'])) {
+    				$type=1;
+    			}
+
+    			if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
+    				|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice'))
+    			{
+    				//print $langs->trans("NA");
+    			} else {
+    				if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
+    					$ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+    				}
+    			}
+    		}
+    		//var_dump('type='.$type.' '.$fields['totalht'].' '.$ratiopaymentinvoice);
+    		$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
+    		$temp_vat=$fields['localtax'.$localTaxType]*$ratiopaymentinvoice;
+    		$subtot_paye_total_ht += $temp_ht;
+    		$subtot_paye_vat      += $temp_vat;
+    		$x_paye_sum           += $temp_vat;
     	}
-    	$subtotalcoll = $subtotalcoll + $x_coll;
-    	print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td><td></td>";
-
     }
+    print "<td class=\"nowrap\" align=\"right\">".price(price2num($x_paye_sum,'MT'))."</td>";
 
-    if($CalcLT==0) {
-        $diff= $x_coll - $x_paye;
-    } elseif($CalcLT==1) {
-        $diff= $x_paye;
-    } elseif($CalcLT==2) {
-        $diff= $x_coll;
-    }
+    $subtotalcoll = $subtotalcoll + $x_coll_sum;
+    $subtotalpaye = $subtotalpaye + $x_paye_sum;
 
+    $diff = $x_coll_sum - $x_paye_sum;
     $total = $total + $diff;
-    $subtotal = $subtotal + $diff;
+    $subtotal = price2num($subtotal + $diff, 'MT');
 
-    print "<td class=\"nowrap\" align=\"right\">".price($diff)."</td>\n";
+    print "<td class=\"nowrap\" align=\"right\">".price(price2num($diff,'MT'))."</td>\n";
     print "<td>&nbsp;</td>\n";
     print "</tr>\n";
 
-    $i++;
+    $i++; $m++;
     if ($i > 2)
     {
-        print '<tr class="liste_total">';
-        print '<td align="right">'.$langs->trans("SubTotal").':</td>';
-        if($CalcLT==0) {
-        	print '<td class="nowrap" align="right">'.price($subtotalcoll).'</td>';
-        	print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td>';
-        	print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
-        } elseif($CalcLT==1) {
-        	print '<td class="nowrap" align="right">'.price($subtotalpaye).'</td><td></td>';
-        	print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
-        } elseif($CalcLT==2) {
-        	print '<td class="nowrap" align="right">'.price($subtotalcoll).'</td><td></td>';
-        	print '<td class="nowrap" align="right">'.price($subtotal).'</td>';
-        }
-        print '<td>&nbsp;</td></tr>';
-        $i = 0;
-        $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
+    	print '<tr class="liste_total">';
+    	print '<td align="right"><a href="quadri_detail.php?leftmenu=tax_vat&q='.($m/3).'&year='.$y.'">'.$langs->trans("SubTotal").'</a>:</td>';
+    	print '<td class="nowrap" align="right">'.price(price2num($subtotalcoll,'MT')).'</td>';
+    	print '<td class="nowrap" align="right">'.price(price2num($subtotalpaye,'MT')).'</td>';
+    	print '<td class="nowrap" align="right">'.price(price2num($subtotal,'MT')).'</td>';
+    	print '<td>&nbsp;</td></tr>';
+    	$i = 0;
+    	$subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
     }
 }
-print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td class="nowrap" align="right">'.price($total).'</td>';
+print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("TotalToPay").':</td><td class="nowrap" align="right">'.price(price2num($total, 'MT')).'</td>';
 print "<td>&nbsp;</td>\n";
 print '</tr>';
 
@@ -319,11 +490,13 @@ print '</table>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-print load_fiche_titre($langs->transcountry($LTPaid,$mysoc->country_code), '', '');
+
 
 /*
  * Payed
  */
+
+print load_fiche_titre($langs->transcountry($LTPaid,$mysoc->country_code), '', '');
 
 $sql = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm";
 $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f";
@@ -336,10 +509,10 @@ $sql.= " ORDER BY dm ASC";
 
 pt($db, $sql,$langs->trans("Year")." $y");
 
+
 print '<br>';
 
 print '</div></div>';
-
 
 llxFooter();
 $db->close();

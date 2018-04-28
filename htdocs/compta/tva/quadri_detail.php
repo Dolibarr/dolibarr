@@ -127,7 +127,7 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 
 
 // Show report header
-$name=$langs->trans("VATReportByPeriods");
+$name=$langs->trans("VATReportByRates");
 $calcmode='';
 if ($modetax == 0) $calcmode=$langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
