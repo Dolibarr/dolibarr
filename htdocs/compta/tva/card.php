@@ -59,10 +59,18 @@ if ($_POST["cancel"] == $langs->trans("Cancel") && ! $id)
 	exit;
 }
 
+if ($action == 'setlib' && $user->rights->tax->charges->creer)
+{
+	$object->fetch($id);
+	$result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
+	if ($result < 0)
+		setEventMessages($object->error, $object->errors, 'errors');
+}
+
 if ($action == 'setdatev' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
-    $object->datev=dol_mktime(12,0,0,$_POST['datevmonth'],$_POST['datevday'],$_POST['datevyear']);
+    $object->datev=dol_mktime(12,0,0,GETPOST('datevmonth','int'),GETPOST('datevday','int'),GETPOST('datevyear','int'));
     $result=$object->update($user);
     if ($result < 0) dol_print_error($db,$object->error);
 
@@ -309,6 +317,13 @@ if ($id)
 
 	dol_fiche_head($head, 'card', $langs->trans("VATPayment"), -1, 'payment');
 
+	$morehtmlref='<div class="refidno">';
+	// Label of social contribution
+	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
+	// Project
+	$morehtmlref.='</div>';
+
 	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/tva/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref, '', 0, '', '');
@@ -319,13 +334,12 @@ if ($id)
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	//print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	print "<tr>";
-	print '<td>'.$langs->trans("DatePayment").'</td><td>';
+	print '<td class="titlefield">'.$langs->trans("DatePayment").'</td><td>';
 	print dol_print_date($object->datep,'day');
 	print '</td></tr>';
-
 
 	print '<tr><td>';
 	print $form->editfieldkey($form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo")), 'datev', $object->datev, $object, $user->rights->tax->charges->creer, 'day');
