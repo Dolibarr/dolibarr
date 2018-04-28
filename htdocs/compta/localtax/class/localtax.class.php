@@ -29,7 +29,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Localtax extends CommonObject
 {
-    var $ltt;
+	public $element='localtax';			//!< Id that identify managed objects
+	public $table_element='localtax';	//!< Name of table without prefix where object is stored
+	public $picto='payment';
+
+	var $ltt;
 	var $tms;
 	var $datep;
 	var $datev;
@@ -605,6 +609,31 @@ class Localtax extends CommonObject
 		if ($withpicto && $withpicto != 2) $result.=' ';
 		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
+	}
+
+	/**
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
+	 */
+	function LibStatut($status,$mode=0)
+	{
+		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
+		return '';
 	}
 
 }

@@ -172,7 +172,8 @@ if ($action == 'delete')
 	}
 	else
 	{
-        setEventMessages('Error try do delete a line linked to a conciliated bank transaction', null, 'errors');
+		$mesg='Error try do delete a line linked to a conciliated bank transaction';
+		setEventMessages($mesg, null, 'errors');
 	}
 }
 
@@ -180,11 +181,13 @@ if ($action == 'delete')
 /*
  *	View
  */
+
+$form = new Form($db);
+
 $title=$langs->trans("VAT") . " - " . $langs->trans("Card");
 $help_url='';
 llxHeader("",$title,$helpurl);
 
-$form = new Form($db);
 
 if ($id)
 {
