@@ -36,6 +36,8 @@ $date_endmonth=GETPOST('date_endmonth');
 $date_endday=GETPOST('date_endday');
 $date_endyear=GETPOST('date_endyear');
 
+$display_cumul=intval(GETPOST('display_cumul'));
+
 $nbofyear=4;
 
 // Date range
@@ -111,6 +113,12 @@ if ($modecompta=="CREANCES-DETTES")
 {
 	$name=$langs->trans("SalesTurnover");
 	$calcmode=$langs->trans("CalcModeDebt");
+	if ($display_cumul) {
+		$calcmode.=$langs->trans("CalcModeWithTTC",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=0">','</a>');
+	}
+	else {
+		$calcmode.=$langs->trans("CalcModeWithCumul",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=1">','</a>');
+	}
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -125,7 +133,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 {
 	$name=$langs->trans("SalesTurnover");
 	$calcmode=$langs->trans("CalcModeEngagement");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtModeCols",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=0">','</a>','<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=1">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
@@ -138,7 +146,7 @@ else if ($modecompta=="BOOKKEEPING")
 {
 	$name=$langs->trans("SalesTurnover");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtModeCols",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=0">','</a>','<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=1">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
@@ -285,10 +293,15 @@ print '</tr>';
 print '<tr class="liste_titre"><td class="liste_titre">'.$langs->trans("Month").'</td>';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	if ($modecompta == 'CREANCES-DETTES') {print '<td class="liste_titre" align="right">'.$langs->trans("AmountHT").'</td>';
-		print '<td class="liste_titre" align="right">'.$langs->trans("Cumul").'</td>';}
+	if ($modecompta == 'CREANCES-DETTES') {
+		print '<td class="liste_titre" align="right">'.$langs->trans("AmountHT").'</td>';
+	}
+	if ($display_cumul and $modecompta == 'CREANCES-DETTES') {
+			print '<td class="liste_titre" align="right">'.$langs->trans("Cumul").'</td>';
+		}
 	else {
-		print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';}
+		print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
+	}
 	print '<td class="liste_titre" align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
 	if ($annee != $year_end) print '<td class="liste_titre" width="15">&nbsp;</td>';
 }
@@ -343,7 +356,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			{
 				$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
 				if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">';
-				if ($modecompta == "CREANCES-DETTES") print price($annual_cum_ht[$case], 1); else print price($cum[$case], 1);
+				if ($modecompta == "CREANCES-DETTES" and $display_cumul) print price($annual_cum_ht[$case], 1); else print price($cum[$case], 1);
 				if ($modecompta != 'BOOKKEEPING') print '</a>';
 			}
 			else
@@ -358,7 +371,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			{
 				if ($cum[$caseprev] && $cum[$case])
 				{
-					if ($modecompta == "CREANCES-DETTES") {
+					if ($modecompta == "CREANCES-DETTES" and $display_cumul) {
 					$percent=(round(($annual_cum_ht[$case]-$annual_cum_ht[$caseprev])/$annual_cum_ht[$caseprev],4)*100);
 					}
 					else 
@@ -467,10 +480,21 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 
 // Affiche total
 // Sauf si cumul
-if ($modecompta == "RECETTES-DEPENSES"){
+if (! $display_cumul){
   print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td>';
   for ($annee = $year_start ; $annee <= $year_end ; $annee++)
   {
+	if ($modecompta == 'CREANCES-DETTES') {
+		// Montant total HT
+		if ($total_ht[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
+		{
+			print '<td align="right" class="nowrap">'.($total_ht[$annee]?price($total_ht[$annee]):"0")."</td>";
+		}
+		else
+		{
+			print '<td>&nbsp;</td>';
+		}
+	}
 	// Montant total
 	if ($total[$annee] || ($annee >= $minyear && $annee <= max($nowyear,$maxyear)))
 	{
