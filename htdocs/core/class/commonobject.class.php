@@ -6659,7 +6659,7 @@ abstract class CommonObject
 					}
 					$queryarray[$field] = serialize($this->{$field});
 				} else {
-					$queryarray[$field] = NULL;
+					$queryarray[$field] = null;
 				}
 			}
 			else if($this->isInt($info))
