@@ -65,7 +65,7 @@ class modDav extends DolibarrModules
 		// Module description, used if translation string 'ModuledavDesc' not found (MyModue is name of module).
 		$this->description = "davDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "davDescription (Long)";
+		$this->descriptionlong = "davDescription";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'experimental';
