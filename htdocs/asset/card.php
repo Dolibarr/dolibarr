@@ -18,18 +18,18 @@
 
 /**
  *  \file       card.php
- *  \ingroup    assets
- *  \brief      Page to create/edit/view assets
+ *  \ingroup    asset
+ *  \brief      Page to create/edit/view asset
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/assets/class/assets.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("assets"));
+$langs->loadLangs(array("asset"));
 
 // Get parameters
 $id         = GETPOST('id', 'int');
@@ -39,12 +39,12 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object=new Assets($db);
+$object=new Asset($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->assets->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('assetscard'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction=$conf->asset->dir_output . '/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('assetcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('assets');
+$extralabels = $extrafields->fetch_name_optionals_label('asset');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Initialize array of search criterias
@@ -60,7 +60,7 @@ if (empty($action) && empty($id) && empty($ref)) $action='view';
 // Security check - Protection if external user
 //if ($user->societe_id > 0) access_forbidden();
 //if ($user->societe_id > 0) $socid = $user->societe_id;
-//$result = restrictedArea($user, 'assets', $id);
+//$result = restrictedArea($user, 'asset', $id);
 
 // fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -84,9 +84,9 @@ if (empty($reshook))
 {
 	$error=0;
 
-	$permissiontoadd = $user->rights->assets->create;
-	$permissiontodelete = $user->rights->assets->delete;
-	$backurlforlist = dol_buildpath('/assets/list.php',1);
+	$permissiontoadd = $user->rights->asset->create;
+	$permissiontodelete = $user->rights->asset->delete;
+	$backurlforlist = dol_buildpath('/asset/list.php',1);
 
 	// Actions cancel, add, update or delete
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -97,7 +97,7 @@ if (empty($reshook))
 	// Actions to send emails
 	$trigger_name='MYOBJECT_SENTBYMAIL';
 	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
-	$trackid='assets'.$object->id;
+	$trackid='asset'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
 
@@ -241,13 +241,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/assets/list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' .dol_buildpath('/asset/list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	$morehtmlref='<div class="refidno">';
 	/*
 	// Ref bis
-	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->assets->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->assets->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->asset->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefBis", 'ref_client', $object->ref_client, $object, $user->rights->asset->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $soc->getNomUrl(1);
 	*/
@@ -289,7 +289,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Send
 			print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
-			if ($user->rights->assets->write)
+			if ($user->rights->asset->write)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
 			}
@@ -298,7 +298,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
 			}
 
-			if ($user->rights->assets->delete)
+			if ($user->rights->asset->delete)
 			{
 				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>'."\n";
 			}
@@ -324,15 +324,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Documents
 		/*$objref = dol_sanitizeFileName($object->ref);
 		$relativepath = $comref . '/' . $comref . '.pdf';
-		$filedir = $conf->assets->dir_output . '/' . $objref;
+		$filedir = $conf->asset->dir_output . '/' . $objref;
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
-		$genallowed = $user->rights->assets->read;	// If you can read, you can build the PDF to read content
-		$delallowed = $user->rights->assets->create;	// If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('assets', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
+		$genallowed = $user->rights->asset->read;	// If you can read, you can build the PDF to read content
+		$delallowed = $user->rights->asset->create;	// If you can create/edit, you can remove a file on card
+		print $formfile->showdocuments('asset', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $soc->default_lang);
 		*/
 
 		// Show links to link elements
-		$linktoelem = $form->showLinkToObjectBlock($object, null, array('assets'));
+		$linktoelem = $form->showLinkToObjectBlock($object, null, array('asset'));
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 
@@ -340,14 +340,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		$MAXEVENT = 10;
 
-		$morehtmlright = '<a href="'.dol_buildpath('/assets/assets_info.php', 1).'?id='.$object->id.'">';
+		$morehtmlright = '<a href="'.dol_buildpath('/asset/asset_info.php', 1).'?id='.$object->id.'">';
 		$morehtmlright.= $langs->trans("SeeAll");
 		$morehtmlright.= '</a>';
 
 		// List of actions on element
 		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
 		$formactions = new FormActions($db);
-		$somethingshown = $formactions->showactions($object, 'assets', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
+		$somethingshown = $formactions->showactions($object, 'asset', $socid, 1, '', $MAXEVENT, '', $morehtmlright);
 
 		print '</div></div></div>';
 	}

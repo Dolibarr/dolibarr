@@ -117,7 +117,7 @@ FirstApprovalAlreadyDone=First approval already done
 SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=Purchase Order %s received %s
 SupplierOrderSubmitedInDolibarr=Purchase Order %s submited
-SupplierOrderClassifiedBilled=Vendor order %s set billed
+SupplierOrderClassifiedBilled=Purchase Order %s set billed
 OtherOrders=Other orders
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representative following-up customer order
@@ -125,7 +125,7 @@ TypeContact_commande_internal_SHIPPING=Representative following-up shipping
 TypeContact_commande_external_BILLING=Customer invoice contact
 TypeContact_commande_external_SHIPPING=Customer shipping contact
 TypeContact_commande_external_CUSTOMER=Customer contact following-up order
-TypeContact_order_supplier_internal_SALESREPFOLL=Representative following-up vendor order
+TypeContact_order_supplier_internal_SALESREPFOLL=Representative following-up purchase order
 TypeContact_order_supplier_internal_SHIPPING=Representative following-up shipping
 TypeContact_order_supplier_external_BILLING=Vendor invoice contact
 TypeContact_order_supplier_external_SHIPPING=Vendor shipping contact

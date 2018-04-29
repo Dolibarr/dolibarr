@@ -17,9 +17,9 @@
  */
 
 /**
- * \file        assets/class/assets.class.php
- * \ingroup     assets
- * \brief       This file is a CRUD class file for assets (Create/Read/Update/Delete)
+ * \file        asset/class/asset.class.php
+ * \ingroup     asset
+ * \brief       This file is a CRUD class file for asset (Create/Read/Update/Delete)
  */
 
 require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
@@ -27,30 +27,30 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
- * Class for Assets
+ * Class for Asset
  */
-class Assets extends CommonObject
+class Asset extends CommonObject
 {
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'assets';
+	public $element = 'asset';
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'assets';
+	public $table_element = 'asset';
 	/**
-	 * @var int  Does assets support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var int  Does module support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
 	/**
-	 * @var int  Does assets support extrafields ? 0=No, 1=Yes
+	 * @var int  Does asset support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
 	/**
-	 * @var string String with name of icon for assets. Must be the part after the 'object_' into object_assets.png
+	 * @var string String with name of icon for asset. Must be the part after the 'object_' into object_asset.png
 	 */
-	public $picto = 'assets';
+	public $picto = 'asset';
 
 
 	/**
@@ -111,21 +111,21 @@ class Assets extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'assetsdet';
+	//public $table_element_line = 'assetdet';
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_assets';
+	//public $fk_element = 'fk_asset';
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'Assetsline';
+	//public $class_element_line = 'Assetline';
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
-	//protected $childtables=array('assetsdet');
+	//protected $childtables=array('assetdet');
 	/**
-	 * @var AssetsLine[]     Array of subtable lines
+	 * @var AssetLine[]     Array of subtable lines
 	 */
 	//public $lines = array();
 

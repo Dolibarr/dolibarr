@@ -519,11 +519,11 @@ if (! empty($arrayfields['c.date_contrat']['checked']))
 	// Date contract
 	print '<td class="liste_titre center nowraponall">';
 	//print $langs->trans('Month').': ';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.$day.'">';
+	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.$month.'">';
 	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
-	print $formother->selectyear($syear,'year',1, 20, 5, 0, 0, '', 'widthauto');
+	print $formother->selectyear($syear,'year',1, 20, 5);
 	print '</td>';
 }
 // Extra fields

@@ -174,7 +174,7 @@ if ($result)
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre"></td>';
 	print '<td class="liste_titre" colspan="1" align="center">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
+	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 	$syear = $year;
 	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
 	print '</td>';

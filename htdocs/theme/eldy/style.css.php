@@ -1011,7 +1011,7 @@ select.selectarrowonleft option {
 
 	select {
 		padding-top: 4px;
-		padding-bottom: 5px;
+		padding-bottom: 4px;
 	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;

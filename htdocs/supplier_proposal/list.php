@@ -477,13 +477,13 @@ if ($resql)
 	if (! empty($arrayfields['sp.ref']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="12" name="search_societe" value="'.$search_societe.'">';
+		print '<input class="flat" type="text" size="12" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
@@ -514,7 +514,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre" colspan="1" align="center">';
 		//print $langs->trans('Month').': ';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="monthvalid" value="'.$monthvalid.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="monthvalid" value="'.dol_escape_htmltag($monthvalid).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$syearvalid = $yearvalid;
 		$formother->select_year($syearvalid,'yearvalid',1, 20, 5);
@@ -525,7 +525,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre" colspan="1" align="center">';
 		//print $langs->trans('Month').': ';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$syear = $year;
 		$formother->select_year($syear,'year',1, 20, 5);
@@ -536,28 +536,28 @@ if ($resql)
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.$search_montant_ht.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['sp.total_vat']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.$search_montant_vat.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['sp.total_ttc']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['u.login']['checked']))
 	{
 		// Author
 		print '<td class="liste_titre" align="center">';
-		print '<input class="flat" size="4" type="text" name="search_login" value="'.$search_author.'">';
+		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_author).'">';
 		print '</td>';
 	}
 	// Extra fields

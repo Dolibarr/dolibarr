@@ -487,25 +487,25 @@ if ($resql)
 	if (! empty($arrayfields['p.ref']['checked']))
 	{
 		print '<td class="liste_titre">';
-		print '<input class="flat" size="6" type="text" name="search_ref" value="'.$search_ref.'">';
+		print '<input class="flat" size="6" type="text" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
  		print '</td>';
 	}
 	if (! empty($arrayfields['p.ref_client']['checked']))
 	{
 		print '<td class="liste_titre">';
-	   print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.$search_refcustomer.'">';
+		print '<input class="flat" size="6" type="text" name="search_refcustomer" value="'.dol_escape_htmltag($search_refcustomer).'">';
 	   print '</td>';
 	}
 	if (! empty($arrayfields['pr.ref']['checked']))
 	{
     	print '<td class="liste_titre">';
-	   print '<input class="flat" size="6" type="text" name="search_refproject" value="'.$search_refproject.'">';
+    	print '<input class="flat" size="6" type="text" name="search_refproject" value="'.dol_escape_htmltag($search_refproject).'">';
 	   print '</td>';
 	}
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="10" name="search_societe" value="'.$search_societe.'">';
+		print '<input class="flat" type="text" size="10" name="search_societe" value="'.dol_escape_htmltag($search_societe).'">';
 	   print '</td>';
 	}
 	if (! empty($arrayfields['s.town']['checked'])) print '<td class="liste_titre"><input class="flat" type="text" size="6" name="search_town" value="'.$search_town.'"></td>';
@@ -529,15 +529,16 @@ if ($resql)
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="center">';
 		print $form->selectarray("search_type_thirdparty", $formcompany->typent_array(0), $search_type_thirdparty, 0, 0, 0, '', 0, 0, 0, (empty($conf->global->SOCIETE_SORT_ON_TYPEENT)?'ASC':$conf->global->SOCIETE_SORT_ON_TYPEENT));
+		print ajax_combobox('search_type_thirdparty');
 		print '</td>';
 	}
 	// Date
 	if (! empty($arrayfields['p.date']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		//print $langs->trans('Month').': ';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25" type="text" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$formother->select_year($search_year,'search_year',1, 20, 5);
 		print '</td>';
@@ -551,28 +552,28 @@ if ($resql)
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.$search_montant_ht.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_ht" value="'.dol_escape_htmltag($search_montant_ht).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['p.total_vat']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.$search_montant_vat.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_vat" value="'.dol_escape_htmltag($search_montant_vat).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['p.total_ttc']['checked']))
 	{
 		// Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.$search_montant_ttc.'">';
+		print '<input class="flat" type="text" size="5" name="search_montant_ttc" value="'.dol_escape_htmltag($search_montant_ttc).'">';
 		print '</td>';
 	}
 	if (! empty($arrayfields['u.login']['checked']))
 	{
 		// Author
 		print '<td class="liste_titre" align="center">';
-		print '<input class="flat" size="4" type="text" name="search_login" value="'.$search_login.'">';
+		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
 	// Extra fields

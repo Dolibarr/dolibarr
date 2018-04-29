@@ -851,8 +851,8 @@ if (empty($action))
         print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
         print '<td class="liste_titre" align="center">';
-        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-        print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+        print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
         $formother->select_year($year?$year:-1,'year',1, 20, 5);
         print '</td>';
         print '<td class="liste_titre" align="left">';

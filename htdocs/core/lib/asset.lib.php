@@ -17,7 +17,7 @@
 
 /**
  * \file    core/lib/assets.lib.php
- * \ingroup assets
+ * \ingroup asset
  * \brief   Library files with common functions for Assets
  */
 
@@ -35,7 +35,7 @@ function AssetsAdminPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/assets/admin/setup.php';
+	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/setup.php';
 	$head[$h][1] = $langs->trans("Settings");
 	$head[$h][2] = 'settings';
 	$h++;
@@ -43,19 +43,19 @@ function AssetsAdminPrepareHead()
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	//$this->tabs = array(
-	//	'entity:+tabname:Title:@assets:/assets/mypage.php?id=__ID__'
+	//	'entity:+tabname:Title:@assets:/asset/mypage.php?id=__ID__'
 	//); // to add new tab
 	//$this->tabs = array(
-	//	'entity:-tabname:Title:@assets:/assets/mypage.php?id=__ID__'
+	//	'entity:-tabname:Title:@assets:/asset/mypage.php?id=__ID__'
 	//); // to remove a tab
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assets_admin');
 
-	$head[$h][0] = DOL_URL_ROOT . '/assets/admin/assets_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/assets_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFields");
 	$head[$h][2] = 'attributes';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/assets/admin/assets_type_extrafields.php';
+	$head[$h][0] = DOL_URL_ROOT . '/asset/admin/assets_type_extrafields.php';
 	$head[$h][1] = $langs->trans("ExtraFieldsAssetsType");
 	$head[$h][2] = 'attributes_type';
 	$h++;
@@ -74,7 +74,7 @@ function AssetsPrepareHead()
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT . '/assets/card.php';
+	$head[$h][0] = DOL_URL_ROOT . '/asset/card.php';
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
@@ -94,7 +94,7 @@ function AssetsPrepareHead()
 	$upload_dir = $conf->assets->dir_output . '/' . get_exdir($filename,2,0,1,$object,'assets'). '/'. dol_sanitizeFileName($object->ref);
 	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
 	$nbLinks=Link::count($db, $object->element, $object->id);
-	$head[$h][0] = DOL_URL_ROOT.'/assets/document.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/asset/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
 	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'documents';
@@ -103,18 +103,18 @@ function AssetsPrepareHead()
 	$nbNote = 0;
 	if(!empty($object->note_private)) $nbNote++;
 	if(!empty($object->note_public)) $nbNote++;
-	$head[$h][0] = DOL_URL_ROOT.'/assets/note.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/asset/note.php?id='.$object->id;
 	$head[$h][1] = $langs->trans("Notes");
 	if ($nbNote > 0) $head[$h][1].= ' <span class="badge">'.$nbNote.'</span>';
 	$head[$h][2] = 'note';
 	$h++;
 
-	$head[$h][0] = DOL_URL_ROOT . '/assets/info.php?id=' . $object->id;
+	$head[$h][0] = DOL_URL_ROOT . '/asset/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
 
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'assets', 'remove');
+	complete_head_from_modules($conf, $langs, $object, $head, $h, 'asset', 'remove');
 
 	return $head;
 }

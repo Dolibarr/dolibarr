@@ -437,3 +437,5 @@ ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_pare
 
 ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
 
+UPDATE llx_rights_def set module = 'asset' where module = 'assets';
+

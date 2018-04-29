@@ -17,16 +17,16 @@
 
 /**
  *  \file       info.php
- *  \ingroup    assets
+ *  \ingroup    asset
  *  \brief      Page to show an asset information
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/assets/class/assets.class.php';
+require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 
-$langs->loadLangs(array("assets"));
+$langs->loadLangs(array("asset"));
 
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -34,9 +34,9 @@ $action=GETPOST('action','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'assets', $id, '');
+$result = restrictedArea($user, 'asset', $id, '');
 
-$object = new Assets($db);
+$object = new Asset($db);
 $object->fetch($id);
 
 /*
