@@ -340,7 +340,7 @@ class Products extends DolibarrApi
 		}
 
 		if ($result < 0) {
-			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+			throw new RestException(503, 'Error when retrieve category list : '.array_merge(array($categories->error), $categories->errors));  
 		}
 
 		return $result;
@@ -374,7 +374,7 @@ class Products extends DolibarrApi
     	}
 
     	if ($result < 0) {
-    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    		throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
     	}
 
     	return array(
@@ -416,7 +416,7 @@ class Products extends DolibarrApi
     	}
 
     	if ($result < 0) {
-    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    		throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
     	}
 
     	throw new RestException(501, 'Feature not yet available');
@@ -451,7 +451,7 @@ class Products extends DolibarrApi
     	}
 
     	if ($result < 0) {
-    		throw new RestException(503, 'Error when retrieve prices list : '.$categories->error);
+    		throw new RestException(503, 'Error when retrieve prices list : '.array_merge(array($this->product->error), $this->product->errors));
     	}
 
     	return array(
