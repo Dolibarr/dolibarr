@@ -27,7 +27,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->loadLangs(array('compta','bills','donation','salaries'));
+$langs->loadLangs(array('compta','bills','donation','salaries','accountancy'));
 
 $date_startmonth=GETPOST('date_startmonth');
 $date_startday=GETPOST('date_startday');
