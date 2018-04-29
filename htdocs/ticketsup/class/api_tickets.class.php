@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
  *
  *
  */
-class Ticketsups extends DolibarrApi
+class Tickets extends DolibarrApi
 {
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
@@ -53,36 +53,93 @@ class Ticketsups extends DolibarrApi
 
     /**
      * Constructor
-     *
-     * @url     GET ticketsup/
-     *
      */
     public function __construct()
     {
-    		global $db;
-    		$this->db = $db;
+    	global $db;
+    	$this->db = $db;
         $this->ticketsup = new Ticketsup($this->db);
     }
 
     /**
-    * Get properties of a ticketsup object
-    *
-    * Return an array with ticketsup informations
-    *
-    * @param 	int 	$id ID of ticketsup
-    * @param   string  $track_id Tracking ID of ticket
-    * @param   string  $ref    Reference for ticket
-    * @return 	array|mixed data without useless information
-    *
-    * @url GET track_id/{track_id}
-    * @url GET ref/{ref}
-    * @url GET {id}
-    * @throws 	RestException
-    */
-    public function get($id = 0, $track_id = '', $ref = '')
+     * Get properties of a Ticket object.
+     *
+     * Return an array with ticket informations
+     *
+     * @param	int 			$id 		ID of ticketsup
+     * @return 	array|mixed 				Data without useless information
+     *
+     * @throws 	401
+     * @throws 	403
+     * @throws 	404
+     */
+    function get($id)
+    {
+    	return $this->getCommon($id, '', '');
+    }
+
+    /**
+     * Get properties of a Ticket object from track id
+     *
+     * Return an array with ticket informations
+     *
+     * @param	string  		$track_id 	Tracking ID of ticket
+     * @return 	array|mixed 				Data without useless information
+     *
+     * @url GET track_id/{track_id}
+     *
+     * @throws 	401
+     * @throws 	403
+     * @throws 	404
+     */
+    public function getByTrackId($track_id)
+    {
+		return $this->getCommon(0, $track_id, '');
+    }
+
+    /**
+     * Get properties of a Ticket object from ref
+     *
+     * Return an array with ticket informations
+     *
+     * @param	string  		$ref    	Reference for ticket
+     * @return 	array|mixed 				Data without useless information
+     *
+     * @url GET ref/{ref}
+     *
+     * @throws 	401
+     * @throws 	403
+     * @throws 	404
+     */
+    public function getByRef($ref)
+    {
+    	try {
+    		return $this->getCommon(0, '', $ref);
+    	}
+    	catch(Exception $e)
+    	{
+   			throw $e;
+    	}
+    }
+
+    /**
+     * Get properties of a Ticket object
+     *
+     * Return an array with ticket informations
+     *
+     * @param	int 			$id 		ID of ticketsup
+     * @param	string  		$track_id 	Tracking ID of ticket
+     * @param	string  		$ref    	Reference for ticket
+     * @return 	array|mixed 				Data without useless information
+     *
+     * @throws 	401
+     * @throws 	403
+     * @throws 	404
+     */
+    public function getCommon($id = 0, $track_id = '', $ref = '')
     {
         if (! DolibarrApiAccess::$user->rights->ticketsup->read) {
-            throw new RestException(401);
+            throw new RestException(403);
         }
 
         // Check parameters
@@ -474,9 +531,9 @@ class Ticketsups extends DolibarrApi
     function _cleanObjectDatas($object)
     {
 
-        // Remove $db object property for object
-        unset($object->db);
+    	$object = parent::_cleanObjectDatas($object);
 
+    	// Other attributes to clean
         $attr2clean = array(
             "contact",
             "contact_id",
@@ -515,7 +572,9 @@ class Ticketsups extends DolibarrApi
             "firstname",
             "civility_id",
             "cache_msgs_ticket",
-            "cache_logs_ticket"
+            "cache_logs_ticket",
+        	"statuts_short",
+        	"statuts"
         );
         foreach ($attr2clean as $toclean) {
             unset($object->$toclean);

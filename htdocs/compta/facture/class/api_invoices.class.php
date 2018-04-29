@@ -1072,8 +1072,9 @@ class Invoices extends DolibarrApi
     /**
      * Add a payment to pay partially or completely one or several invoices.
      * Warning: Take care that all invoices are owned by the same customer.
+     * Example of value for parameter arrayofamounts: {"1": "99.99", "2": "10"}
      *
-     * @param array   $arrayofamounts     {@from body}  Array with id of invoices with amount to pay for each invoice. Example {"1": "99.99", "2": "10"}
+     * @param string  $arrayofamounts     {@from body}  Array with id of invoices with amount to pay for each invoice
      * @param string  $datepaye           {@from body}  Payment date        {@type timestamp}
      * @param int     $paiementid         {@from body}  Payment mode Id {@min 1}
      * @param string  $closepaidinvoices  {@from body}  Close paid invoices {@choice yes,no}

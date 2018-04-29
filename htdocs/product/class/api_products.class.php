@@ -59,16 +59,16 @@ class Products extends DolibarrApi
      *
      * @param 	int 	$id     			ID of product
      * @param	int		$includestockdata	Load also information about stock (slower)
-     * @return 	array|mixed data without useless information
+     * @return 	array|mixed 				Data without useless information
 	 *
-     * @throws RestException
      * @throws 401
+     * @throws 403
      * @throws 404
      */
     function get($id, $includestockdata=0)
     {
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
         $result = $this->product->fetch($id);
