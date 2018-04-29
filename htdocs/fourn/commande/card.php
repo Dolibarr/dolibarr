@@ -1104,7 +1104,7 @@ if (empty($reshook))
 									if ($result > 0)
 									{
 										$ref_supplier = $productsupplier->ref_supplier;
-										$product_fourn_price_id = $productsupplier->product_fourn_price_id
+										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
 									}
 								}
 								else
