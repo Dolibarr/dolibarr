@@ -245,3 +245,5 @@ ListSocialContributionAssociatedProject=List of social contributions associated 
 DeleteFromCat=Remove from accounting group
 AccountingAffectation=Accounting assignement
 LastDayTaxIsRelatedTo=Last day of period the tax is related to
+ClaimedForThisPeriod=Claimed for the period
+PaidDuringThisPeriod=Paid during this period
