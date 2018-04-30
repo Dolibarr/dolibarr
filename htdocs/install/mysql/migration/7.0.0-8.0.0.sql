@@ -435,6 +435,8 @@ UPDATE llx_accounting_account set account_parent = 0 WHERE account_parent = '' O
 -- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent SET DEFAULT 0;
 ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_parent (account_parent);
 
+UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
+
 ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
 
 UPDATE llx_rights_def set module = 'asset' where module = 'assets';

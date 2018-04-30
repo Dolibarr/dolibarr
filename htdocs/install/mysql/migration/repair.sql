@@ -438,6 +438,8 @@ update llx_facture_fourn_det set product_type = 0 where product_type = 1 AND fk_
 update llx_facture_fourn_det set product_type = 1 where product_type = 0 AND fk_product > 0 AND fk_product IN (SELECT rowid FROM llx_product WHERE fk_product_type = 1);
  
  
+UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
+
  
 -- UPDATE llx_contratdet set label = NULL WHERE label IS NOT NULL;
 -- UPDATE llx_facturedet_rec set label = NULL WHERE label IS NOT NULL;
