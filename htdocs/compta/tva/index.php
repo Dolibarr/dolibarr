@@ -150,7 +150,7 @@ function pt ($db, $sql, $date)
 
             $i++;
         }
-        
+
         if ($obj->mode == 'claimed' && ! empty($previousmode))
         {
         	print '<tr class="oddeven">';
@@ -158,11 +158,11 @@ function pt ($db, $sql, $date)
         	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
         	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
         	print "</tr>\n";
-        	
+
         	$amountclaimed = 0;
         	$amountpaid = 0;
         }
-        
+
         print '<tr class="liste_total">';
         print '<td align="right">'.$langs->trans("Total").'</td>';
         print '<td class="nowrap" align="right">'.price($totalclaimed).'</td>';
@@ -543,12 +543,12 @@ pt($db, $sql, $langs->trans("Month"));
 if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 {
 	print '<br>';
-	
+
 	/*
      * Recap
      */
 
-    print load_fiche_titre($langs->trans("VATRecap"), '', ''); // need to add translation
+    print load_fiche_titre($langs->trans("VATBalance"), '', ''); // need to add translation
 
     $sql1 = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y') as dm";
     $sql1 .= " FROM " . MAIN_DB_PREFIX . "tva as f";
@@ -563,7 +563,7 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
         print '<table class="noborder" width="100%">';
 
         print "<tr>";
-        print '<td align="right">' . $langs->trans("VATDue") . '</td>'; // need to add translation
+        print '<td align="right">' . $langs->trans("VATDue") . '</td>';
         print '<td class="nowrap" align="right">' . price(price2num($total, 'MT')) . '</td>';
         print "</tr>\n";
 
@@ -574,7 +574,7 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 
         $restopay = $total - $obj->mm;
         print "<tr>";
-        print '<td align="right">' . $langs->trans("VATRestopay") . '</td>'; // need to add translation
+        print '<td align="right">' . $langs->trans("RemainToPay") . '</td>';
         print '<td class="nowrap" align="right">' . price(price2num($restopay, 'MT')) . '</td>';
         print "</tr>\n";
 
