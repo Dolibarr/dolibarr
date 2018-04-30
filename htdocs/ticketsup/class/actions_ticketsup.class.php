@@ -383,31 +383,6 @@ class ActionsTicketsup
             $action = 'view';
         }
 
-        if ($action == "change_property" && GETPOST('btn_update_ticket_prop') && $user->rights->ticketsup->write) {
-            $this->fetch('', '', GETPOST('track_id','alpha'));
-
-            $fieldtomodify = GETPOST('property') . '_code';
-            $fieldtomodify_label = GETPOST('property') . '_label';
-
-            $oldvalue_code = $object->$fieldtomodify;
-            $newvalue_code = $object->getValueFrom('c_ticketsup_' . GETPOST('property'), GETPOST('update_value'), 'code');
-
-            $oldvalue_label = $object->$fieldtomodify_label;
-            $newvalue_label = $object->getValueFrom('c_ticketsup_' . GETPOST('property'), GETPOST('update_value'), 'label');
-
-            $object->$fieldtomodify = $newvalue_code;
-
-            $ret = $object->update($user);
-            if ($ret > 0) {
-                $log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
-                $ret = $object->createTicketLog($user, $log_action);
-                if ($ret > 0) {
-                    setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
-                }
-            }
-            $action = 'view';
-        }
-
         if ($action == "new_message" && GETPOST('btn_add_message') && $user->rights->ticketsup->read) {
             $ret = $this->newMessage($user, $action);
             if ($ret) {
@@ -1152,16 +1127,16 @@ class ActionsTicketsup
     	print '<div class="underbanner clearboth"></div>';
     	print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     	print '<table class="border centpercent margintable">';
-    	print '<tr class="liste_titre"><td class="nowrap" colspan="2">';
-    	print '<strong>' . $langs->trans("InitialMessage") . '</strong> ';
+    	print '<tr class="liste_titre"><td class="nowrap titlefield">';
+    	print $langs->trans("InitialMessage");
+    	print '</td><td>';
     	if ($user->rights->ticketsup->manage) {
-    		print '<a  href="' . $_SERVER['PHP_SELF'] . '?action=edit_message_init&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . ' ' . $langs->trans('Modify') . '</a>';
+    		print '<a  href="' . $_SERVER['PHP_SELF'] . '?action=edit_message_init&amp;track_id=' . $object->track_id . '">' . img_edit($langs->trans('Modify')) . '</a>';
     	}
     	print '</td></tr>';
 
     	print '<tr>';
-
-    	print '<td>';
+    	print '<td colspan="2">';
     	if (!empty($user->rights->ticketsup->manage) && $action == 'edit_message_init') {
     		// MESSAGE
     		$msg = GETPOST('message_initial', 'alpha') ? GETPOST('message_initial', 'alpha') : $object->message;
@@ -1470,7 +1445,7 @@ class ActionsTicketsup
         global $langs;
 
         print '<div class="div-table-responsive-no-min">';
-        print '<div class="tagtable noborder ">';
+        print '<div class="tagtable centpercent">';
         print '<div class="tagtr liste_titre">';
         print '<div class="tagtd">';
         print '<strong>' . $langs->trans('TicketChangeStatus') . '</strong>';
