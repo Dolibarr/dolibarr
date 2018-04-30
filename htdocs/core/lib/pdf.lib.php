@@ -124,7 +124,6 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 
 	// We need to instantiate tcpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
 	if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
-	else if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
 
 	//$arrayformat=pdf_getFormat();
 	//$format=array($arrayformat['width'],$arrayformat['height']);
