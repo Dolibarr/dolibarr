@@ -103,26 +103,66 @@ function pt ($db, $sql, $date)
         print '<td align="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
         print "</tr>\n";
 
+        $amountclaimed = 0;
+        $amountpaid = 0;
+        $previousmode = '';
         while ($i < $num) {
             $obj = $db->fetch_object($result);
 
-            print '<tr class="oddeven">';
-            print '<td class="nowrap">'.$obj->dm."</td>\n";
+            if ($obj->mode == 'claimed' && ! empty($previousmode))
+            {
+            	print '<tr class="oddeven">';
+            	print '<td class="nowrap">'.$obj->dm."</td>\n";
+            	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
+            	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+            	print "</tr>\n";
 
-            $amountclaimed = 0;
-            $amountpaid = 0;
-            if ($obj->mode == 'claimed') $amountclaimed = $obj->mm;
-            if ($obj->mode == 'paid') $amountpaid = $obj->mm;
+            	$amountclaimed = 0;
+            	$amountpaid = 0;
+            }
 
-            $totalclaimed = $totalclaimed + $amountclaimed;
-            $totalpaid = $totalpaid + $amountpaied;
+            if ($obj->mode == 'claimed')
+            {
+            	$amountclaimed = $obj->mm;
+            	$totalclaimed = $totalclaimed + $amountclaimed;
+            }
+            if ($obj->mode == 'paid')
+            {
+            	$amountpaid = $obj->mm;
+            	$totalpaid = $totalpaid + $amountpaied;
+            }
 
-            print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
-            print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
-            print "</tr>\n";
+            if ($obj->mode == 'paid')
+            {
+            	print '<tr class="oddeven">';
+            	print '<td class="nowrap">'.$obj->dm."</td>\n";
+            	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
+            	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+            	print "</tr>\n";
+            	$amountclaimed = 0;
+            	$amountpaid = 0;
+            	$previousmode = '';
+            }
+            else
+            {
+            	$previousmode = $obj->mode;
+            }
 
             $i++;
         }
+        
+        if ($obj->mode == 'claimed' && ! empty($previousmode))
+        {
+        	print '<tr class="oddeven">';
+        	print '<td class="nowrap">'.$obj->dm."</td>\n";
+        	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
+        	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+        	print "</tr>\n";
+        	
+        	$amountclaimed = 0;
+        	$amountpaid = 0;
+        }
+        
         print '<tr class="liste_total">';
         print '<td align="right">'.$langs->trans("Total").'</td>';
         print '<td class="nowrap" align="right">'.price($totalclaimed).'</td>';
@@ -529,7 +569,8 @@ $sql.= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->id
 $sql.= " AND localtaxtype=".$localTaxType;
 $sql.= " GROUP BY dm";
 
-$sql.= " ORDER BY dm ASC";
+$sql.= " ORDER BY dm ASC, mode ASC";
+//print $sql;
 
 pt($db, $sql, $langs->trans("Month"));
 
