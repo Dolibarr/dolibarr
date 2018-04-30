@@ -34,7 +34,7 @@ $langs->loadLangs(array("admin","compta","accountancy"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
-$id=GETPOST('id','int');
+$id=35;
 $rowid=GETPOST('rowid','alpha');
 $code=GETPOST('code','alpha');
 
@@ -399,24 +399,9 @@ if ($id)
 	$sql=$tabsql[$id];
 	$sql.= " WHERE a.entity = ".$conf->entity;
 
-	if ($sortfield)
-	{
-		// If sort order is "country", we use country_code instead
-		if ($sortfield == 'country') $sortfield='country_code';
-		$sql.= " ORDER BY ".$sortfield;
-		if ($sortorder)
-		{
-			$sql.=" ".strtoupper($sortorder);
-		}
-		$sql.=", ";
-		// Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
-		$tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
-		$tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
-	}
-	else {
-		$sql.=" ORDER BY ";
-	}
-	$sql.=$tabsqlsort[$id];
+	// If sort order is "country", we use country_code instead
+	if ($sortfield == 'country') $sortfield='country_code';
+	$sql.=$db->order($sortfield,$sortorder);
 	$sql.=$db->plimit($listlimit+1,$offset);
 
 	$fieldlist=explode(',',$tabfield[$id]);
@@ -432,7 +417,6 @@ if ($id)
 	if ($tabname[$id])
 	{
 		$alabelisused=0;
-		$var=false;
 
 		$fieldlist=explode(',',$tabfield[$id]);
 
@@ -512,7 +496,6 @@ if ($id)
 	{
 		$num = $db->num_rows($resql);
 		$i = 0;
-		$var=true;
 
 		$param = '&id='.$id;
 		if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;

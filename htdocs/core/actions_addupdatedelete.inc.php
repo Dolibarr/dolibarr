@@ -76,7 +76,7 @@ if ($action == 'add' && ! empty($permissiontoadd))
 		if ($result > 0)
 		{
 			// Creation OK
-			$urltogo=$backtopage?$backtopage:$backurlforlist;
+			$urltogo=$backtopage?str_replace('__ID__', $result, $backtopage):$backurlforlist;
 			header("Location: ".$urltogo);
 			exit;
 		}

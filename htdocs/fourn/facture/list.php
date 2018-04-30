@@ -643,18 +643,18 @@ if ($resql)
 	// Date invoice
 	if (! empty($arrayfields['f.datef']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+		print '<input class="flat width25 valignmiddle" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
 		$formother->select_year($year?$year:-1,'year',1, 20, 5);
 		print '</td>';
 	}
 	// Date due
 	if (! empty($arrayfields['f.date_lim_reglement']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day_lim" value="'.dol_escape_htmltag($day_lim).'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="month_lim" value="'.$month_lim.'">';
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day_lim" value="'.dol_escape_htmltag($day_lim).'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month_lim" value="'.$month_lim.'">';
 		$formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5);
 		print '<br><input type="checkbox" name="option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
 		print '</td>';

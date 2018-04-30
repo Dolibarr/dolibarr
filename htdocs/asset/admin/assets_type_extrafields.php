@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2017      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2018      Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,19 +13,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * or see http://www.gnu.org/
  */
 
 /**
- *      \file       htdocs/assets/admin/assets_extrafields.php
- *		\ingroup    assets
- *		\brief      Page to setup extra fields of assets
+/**
+ * \file        htdocs/asset/admin/assets_type_extrafields.php
+ * \ingroup     asset
+ * \brief       Page to setup extra fields type of assets
  */
-
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->loadLangs(array("assets","admin","companies"));
+$langs->load("assets");
+$langs->load("admin");
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -38,7 +39,7 @@ foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentiti
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
-$elementtype='don'; //Must be the $table_element of the class that manage extrafield
+$elementtype='adherent_type'; //Must be the $table_element of the class that manage extrafield
 
 if (!$user->admin) accessforbidden();
 
@@ -55,7 +56,7 @@ require DOL_DOCUMENT_ROOT.'/core/actions_extrafields.inc.php';
  * View
  */
 
-$textobject=$langs->transnoentitiesnoconv("Assets");
+$textobject=$langs->transnoentitiesnoconv("AssetsTypes");
 
 llxHeader('',$langs->trans("AssetsSetup"));
 
@@ -65,45 +66,44 @@ print load_fiche_titre($langs->trans("AssetsSetup"),$linkback,'title_setup');
 
 $head = AssetsAdminPrepareHead();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Assets"), -1, 'generic');
+dol_fiche_head($head, 'attributes_type', $langs->trans("Assets"), -1, 'generic');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
 dol_fiche_end();
 
-
 // Buttons
 if ($action != 'create' && $action != 'edit')
 {
-    print '<div class="tabsAction">';
-    print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=create">'.$langs->trans("NewAttribute").'</a></div>';
-    print "</div>";
+	print '<div class="tabsAction">';
+	print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute").'</a></div>';
+	print "</div>";
 }
 
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Create optional field                                                      */
+/* Creation of an optional field											  */
 /*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
 {
-    print "<br>";
-    print load_fiche_titre($langs->trans('NewAttribute'));
+	print "<br>";
+	print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';
 }
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Edit optional field                                                        */
+/* Edition of an optional field                                               */
 /*                                                                            */
 /* ************************************************************************** */
 if ($action == 'edit' && ! empty($attrname))
 {
-    print "<br>";
-    print load_fiche_titre($langs->trans("FieldEdition", $attrname));
+	print "<br>";
+	print load_fiche_titre($langs->trans("FieldEdition", $attrname));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_edit.tpl.php';
 }

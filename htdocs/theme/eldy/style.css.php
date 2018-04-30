@@ -722,6 +722,9 @@ select.flat.selectlimit {
 .marginleftonly {
 	margin-left: 10px !important;
 }
+.nomarginleft {
+	margin-left: 0px !important;
+}
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
     border-top: none !important;
@@ -1008,7 +1011,7 @@ select.selectarrowonleft option {
 
 	select {
 		padding-top: 4px;
-		padding-bottom: 5px;
+		padding-bottom: 4px;
 	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;

@@ -489,7 +489,8 @@ class Ticketsup extends CommonObject
         dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
-            if ($this->db->num_rows($resql)) {
+            if ($this->db->num_rows($resql))
+            {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
@@ -529,10 +530,14 @@ class Ticketsup extends CommonObject
                 $this->tms = $this->db->jdate($obj->tms);
 
                 $this->fetch_optionals();
-            }
-            $this->db->free($resql);
 
-            return 1;
+                $this->db->free($resql);
+                return 1;
+            }
+			else
+			{
+            	return 0;
+			}
         } else {
             $this->error = "Error " . $this->db->lasterror();
             dol_syslog(get_class($this) . "::fetch " . $this->error, LOG_ERR);
@@ -1934,7 +1939,7 @@ class Ticketsup extends CommonObject
 
         // Generation requete recherche
         $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "socpeople";
-        $sql .= " WHERE entity IN (" . getEntity('ticketsup', 1) . ")";
+        $sql .= " WHERE entity IN (" . getEntity('socpeople') . ")";
         if (!empty($socid)) {
             $sql .= " AND fk_soc='" . $this->db->escape($socid) . "'";
         }

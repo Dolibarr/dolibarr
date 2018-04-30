@@ -16,15 +16,15 @@
  */
 
 /**
- *  \file       htdocs/assets/type.php
- *  \ingroup    assets
+ *  \file       htdocs/asset/type.php
+ *  \ingroup    asset
  *  \brief      Asset's type setup
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/assets/class/asset.class.php';
-require_once DOL_DOCUMENT_ROOT.'/assets/class/asset_type.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
+require_once DOL_DOCUMENT_ROOT.'/asset/class/asset_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
 $langs->load("assets");
@@ -51,7 +51,7 @@ $label=GETPOST("label","alpha");
 $comment=GETPOST("comment");
 
 // Security check
-$result=restrictedArea($user,'assets',$rowid,'asset_type');
+$result=restrictedArea($user,'asset',$rowid,'asset_type');
 
 $object = new AssetType($db);
 
@@ -86,7 +86,7 @@ if ($cancel) {
 	}
 }
 
-if ($action == 'add' && $user->rights->assets->write)
+if ($action == 'add' && $user->rights->asset->write)
 {
 	$object->label									= trim($label);
 	$object->accountancy_code_asset					= trim($accountancy_code_asset);
@@ -135,7 +135,7 @@ if ($action == 'add' && $user->rights->assets->write)
 	}
 }
 
-if ($action == 'update' && $user->rights->assets->write)
+if ($action == 'update' && $user->rights->asset->write)
 {
 	$object->fetch($rowid);
 
@@ -166,7 +166,7 @@ if ($action == 'update' && $user->rights->assets->write)
 	exit;
 }
 
-if ($action == 'confirm_delete' && $user->rights->assets->write)
+if ($action == 'confirm_delete' && $user->rights->asset->write)
 {
 	$object->fetch($rowid);
 	$res=$object->delete();
@@ -255,7 +255,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
 			print '<td align="center">'.yn($objp->subscription).'</td>';
 			print '<td align="center">'.yn($objp->vote).'</td>';
-			if ($user->rights->adherent->configurer)
+			if ($user->rights->asset->configurer)
 				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			else
 				print '<td align="right">&nbsp;</td>';
@@ -281,7 +281,7 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 /* ************************************************************************** */
 if ($action == 'create')
 {
-	$object = new AdherentType($db);
+	$object = new AssetType($db);
 
 	print load_fiche_titre($langs->trans("NewMemberType"));
 
@@ -344,7 +344,7 @@ if ($rowid > 0)
 {
 	if ($action != 'edit')
 	{
-		$object = new AdherentType($db);
+		$object = new AssetType($db);
 		$object->fetch($rowid);
 		$object->fetch_optionals();
 
@@ -360,7 +360,7 @@ if ($rowid > 0)
 
 		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/adherents/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/asset/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		dol_banner_tab($object, 'rowid', $linkback);
 
@@ -398,7 +398,7 @@ if ($rowid > 0)
 		print '<div class="tabsAction">';
 
 		// Edit
-		if ($user->rights->adherent->configurer)
+		if ($user->rights->asset->configurer)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
@@ -407,7 +407,7 @@ if ($rowid > 0)
 		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 
 		// Delete
-		if ($user->rights->adherent->configurer)
+		if ($user->rights->asset->configurer)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
@@ -575,7 +575,7 @@ if ($rowid > 0)
 
 				$datefin=$db->jdate($objp->datefin);
 
-				$adh=new Adherent($db);
+				$adh=new Asset($db);
 				$adh->lastname=$objp->lastname;
 				$adh->firstname=$objp->firstname;
 
@@ -643,12 +643,12 @@ if ($rowid > 0)
 
 				// Actions
 				print '<td align="center">';
-				if ($user->rights->adherent->creer)
+				if ($user->rights->asset->creer)
 				{
 					print '<a href="card.php?rowid='.$objp->rowid.'&action=edit&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.img_edit().'</a>';
 				}
 				print '&nbsp;';
-				if ($user->rights->adherent->supprimer)
+				if ($user->rights->asset->supprimer)
 				{
 					print '<a href="card.php?rowid='.$objp->rowid.'&action=resign">'.img_picto($langs->trans("Resiliate"),'disable.png').'</a>';
 				}
@@ -682,7 +682,7 @@ if ($rowid > 0)
 
 	if ($action == 'edit')
 	{
-		$object = new AdherentType($db);
+		$object = new AssetType($db);
 		$object->fetch($rowid);
 		$object->fetch_optionals();
 

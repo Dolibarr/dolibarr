@@ -18,13 +18,13 @@
 
 /**
  *  \file       document.php
- *  \ingroup    assets
+ *  \ingroup    asset
  *  \brief      Tab for documents linked to Assets
  */
 
 require '../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/assets/class/assets.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
@@ -42,7 +42,7 @@ $ref = GETPOST('ref', 'alpha');
 // Security check - Protection if external user
 //if ($user->societe_id > 0) access_forbidden();
 //if ($user->societe_id > 0) $socid = $user->societe_id;
-//$result = restrictedArea($user, 'assets', $id);
+//$result = restrictedArea($user, 'asset', $id);
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
@@ -56,12 +56,12 @@ if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
 // Initialize technical objects
-$object=new Assets($db);
+$object=new Asset($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->assets->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('assetsdocument'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('assetdocument'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('assets');
+$extralabels = $extrafields->fetch_name_optionals_label('asset');
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
@@ -110,7 +110,7 @@ if ($object->id)
 
 	// Object card
 	// ------------------------------------------------------------
-	$linkback = '<a href="' .dol_buildpath('/assets/list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+	$linkback = '<a href="' .dol_buildpath('/asset/list.php',1) . '?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -131,15 +131,15 @@ if ($object->id)
 
 	dol_fiche_end();
 
-	$modulepart = 'assets';
-	//$permission = $user->rights->assets->create;
+	$modulepart = 'asset';
+	//$permission = $user->rights->asset->create;
 	$permission = 1;
-	//$permtoedit = $user->rights->assets->create;
+	//$permtoedit = $user->rights->asset->create;
 	$permtoedit = 1;
 	$param = '&id=' . $object->id;
 
-	//$relativepathwithnofile='assets/' . dol_sanitizeFileName($object->id).'/';
-	$relativepathwithnofile='assets/' . dol_sanitizeFileName($object->ref).'/';
+	//$relativepathwithnofile='asset/' . dol_sanitizeFileName($object->id).'/';
+	$relativepathwithnofile='asset/' . dol_sanitizeFileName($object->ref).'/';
 
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

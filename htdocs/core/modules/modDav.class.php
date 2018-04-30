@@ -65,7 +65,7 @@ class modDav extends DolibarrModules
 		// Module description, used if translation string 'ModuledavDesc' not found (MyModue is name of module).
 		$this->description = "davDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "davDescription (Long)";
+		$this->descriptionlong = "davDescription";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'experimental';
@@ -96,7 +96,7 @@ class modDav extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/dav/temp","/dav/subdir");
-		$this->dirs = array("/dav/temp","/dav/public");
+		$this->dirs = array("/dav/temp","/dav/public","/dav/private");
 
 		// Config pages. Put here list of php page, stored into dav/admin directory, to use to setup module.
 		$this->config_page_url = array("dav.php");

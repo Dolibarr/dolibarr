@@ -642,16 +642,17 @@ class Form
 	/**
 	 *  Return combo list of activated countries, into language of user
 	 *
-	 *  @param	string	$selected       Id or Code or Label of preselected country
-	 *  @param  string	$htmlname       Name of html select object
-	 *  @param  string	$htmloption     Options html on select object
-	 *  @param	integer	$maxlength		Max length for labels (0=no limit)
-	 *  @param	string	$morecss		More css class
-	 *  @param	string	$usecodeaskey	'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
-	 *  @param	int		$showempty		Show empty choice
-	 *  @return string           		HTML string with select
+	 *  @param	string	$selected       	Id or Code or Label of preselected country
+	 *  @param  string	$htmlname       	Name of html select object
+	 *  @param  string	$htmloption     	Options html on select object
+	 *  @param	integer	$maxlength			Max length for labels (0=no limit)
+	 *  @param	string	$morecss			More css class
+	 *  @param	string	$usecodeaskey		'code3'=Use code on 3 alpha as key, 'code2"=Use code on 2 alpha as key
+	 *  @param	int		$showempty			Show empty choice
+	 *  @param	int		$disablefavorites	Disable favorites
+	 *  @return string           			HTML string with select
 	 */
-	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1)
+	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1, $disablefavorites=0)
 	{
 		global $conf,$langs;
 
@@ -692,13 +693,14 @@ class Form
 					$i++;
 				}
 
-				array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
+				if (empty($disablefavorites)) array_multisort($favorite, SORT_DESC, $label, SORT_ASC, $countryArray);
+				else $countryArray = dol_sort_array($countryArray, 'label');
 
 				foreach ($countryArray as $row)
 				{
 					if (empty($showempty) && empty($row['rowid'])) continue;
 
-					if ($row['favorite'] && $row['code_iso']) $atleastonefavorite++;
+					if (empty($disablefavorites) && $row['favorite'] && $row['code_iso']) $atleastonefavorite++;
 					if (empty($row['favorite']) && $atleastonefavorite)
 					{
 						$atleastonefavorite=0;
@@ -1330,7 +1332,7 @@ class Form
 		if ($showsoc > 0) $sql.= " , s.nom as company";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
 		if ($showsoc > 0) $sql.= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX ."societe as s ON s.rowid=sp.fk_soc";
-		$sql.= " WHERE sp.entity IN (".getEntity('societe').")";
+		$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
 		if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
 		if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut <> 0";
 		$sql.= " ORDER BY sp.lastname ASC";
@@ -4774,8 +4776,8 @@ class Form
 	 *
 	 *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date (emptydate must be 0).
 	 *	@param	string		$prefix			Prefix for fields name
-	 *	@param	int			$h				1=Show also hours (-1 has same effect, but hour and minutes are prefilled with 23:59 if $set_time = -1)
-	 *	@param	int			$m				1=Show also minutes
+	 *	@param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
+	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
 	 *	@param	int			$empty			0=Fields required, 1=Empty inputs are allowed, 2=Empty inputs are allowed for hours only
 	 *	@param	string		$form_name 		Not used
 	 *	@param	int			$d				1=Show days, month, years
@@ -4848,6 +4850,8 @@ class Form
 			$smin = !isset($conf->global->MAIN_DEFAULT_DATE_MIN) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_MIN;
 			$ssec = !isset($conf->global->MAIN_DEFAULT_DATE_SEC) ? ($h == -1 ? '59' : '') : $conf->global->MAIN_DEFAULT_DATE_SEC;
 		}
+		if ($h == 3) $shour = '';
+		if ($m == 3) $smin = '';
 
 		// You can set MAIN_POPUP_CALENDAR to 'eldy' or 'jquery'
 		$usecalendar='combo';

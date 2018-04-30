@@ -16,8 +16,8 @@
  */
 
 /**
- *  \file       htdocs/assets/class/asset_type.class.php
- *  \ingroup    assets
+ *  \file       htdocs/asset/class/asset_type.class.php
+ *  \ingroup    asset
  *  \brief      File of class to manage asset types
  */
 
@@ -375,7 +375,7 @@ class AssetType extends CommonObject
 		$result='';
 		$label=$langs->trans("ShowTypeCard",$this->label);
 
-		$linkstart = '<a href="'.DOL_URL_ROOT.'/assets/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/asset/type.php?rowid='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$result .= $linkstart;

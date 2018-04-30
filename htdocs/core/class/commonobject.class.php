@@ -1116,7 +1116,7 @@ abstract class CommonObject
 		$sql.= " WHERE ec.element_id = ".$id;
 		$sql.= " AND ec.fk_socpeople = c.rowid";
 		if ($source == 'internal') $sql.= " AND c.entity IN (0,".$conf->entity.")";
-		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('societe').")";
+		if ($source == 'external') $sql.= " AND c.entity IN (".getEntity('socpeople').")";
 		$sql.= " AND ec.fk_c_type_contact = tc.rowid";
 		$sql.= " AND tc.element = '".$element."'";
 		$sql.= " AND tc.source = '".$source."'";
@@ -5058,7 +5058,8 @@ abstract class CommonObject
 			$type = 'varchar';		// convert varchar(xx) int varchar
 			$size = $reg[1];
 		}
-		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) into varchar
+		elseif (preg_match('/double/', $type)) $type = 'double';		// convert double(xx) into double
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -5132,7 +5133,6 @@ abstract class CommonObject
 			}
 		}
 		//var_dump($showsize.' '.$size);
-
 		if (in_array($type,array('date','datetime')))
 		{
 			$tmp=explode(',',$size);
@@ -5555,6 +5555,41 @@ abstract class CommonObject
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out='<input type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$showsize.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
+		elseif ($type == 'array')
+		{
+			$newval = $val;
+			$newval['type'] = 'varchar(256)';
+
+			$out='';
+
+			$inputs = array();
+			if(! empty($value)) {
+				foreach($value as $option) {
+					$out.= '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
+					$out.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', $option, $moreparam, '', '', $showsize).'<br></span>';
+				}
+			}
+
+			$out.= '<a id="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_add" href="javascript:;"><span class="fa fa-plus-circle valignmiddle"></span></a>';
+
+			$newInput = '<span><a class="'.dol_escape_htmltag($keyprefix.$key.$keysuffix).'_del" href="javascript:;"><span class="fa fa-minus-circle valignmiddle"></span></a> ';
+			$newInput.= $this->showInputField($newval, $keyprefix.$key.$keysuffix.'[]', '', $moreparam, '', '', $showsize).'<br></span>';
+
+			if(! empty($conf->use_javascript_ajax)) {
+				$out.= '
+					<script type="text/javascript">
+					$(document).ready(function() {
+						$("a#'.dol_escape_js($keyprefix.$key.$keysuffix).'_add").click(function() {
+							$("'.dol_escape_js($newInput).'").insertBefore(this);
+						});
+
+						$(document).on("click", "a.'.dol_escape_js($keyprefix.$key.$keysuffix).'_del", function() {
+							$(this).parent().remove();
+						});
+					});
+					</script>';
+			}
+		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
 		}
@@ -5925,6 +5960,10 @@ abstract class CommonObject
 		elseif ($type == 'password')
 		{
 			$value=preg_replace('/./i','*',$value);
+		}
+		elseif ($type == 'array')
+		{
+			$value = implode('<br>', $value);
 		}
 
 		//print $type.'-'.$size;
@@ -6614,7 +6653,14 @@ abstract class CommonObject
 			}
 			else if($this->isArray($info))
 			{
-				$queryarray[$field] = serialize($this->{$field});
+				if(! empty($this->{$field})) {
+					if(! is_array($this->{$field})) {
+						$this->{$field} = array($this->{$field});
+					}
+					$queryarray[$field] = serialize($this->{$field});
+				} else {
+					$queryarray[$field] = null;
+				}
 			}
 			else if($this->isInt($info))
 			{
@@ -6658,9 +6704,13 @@ abstract class CommonObject
 			}
 			elseif($this->isArray($info))
 			{
-				$this->{$field} = @unserialize($obj->{$field});
-				// Hack for data not in UTF8
-				if($this->{$field } === false) @unserialize(utf8_decode($obj->{$field}));
+				if(! empty($obj->{$field})) {
+					$this->{$field} = @unserialize($obj->{$field});
+					// Hack for data not in UTF8
+					if($this->{$field } === false) @unserialize(utf8_decode($obj->{$field}));
+				} else {
+					$this->{$field} = array();
+				}
 			}
 			elseif($this->isInt($info))
 			{
