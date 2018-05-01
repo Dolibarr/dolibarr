@@ -441,3 +441,4 @@ ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
 
 UPDATE llx_rights_def set module = 'asset' where module = 'assets';
 
+update llx_c_email_templates set lang = '' where lang IS NULL;
