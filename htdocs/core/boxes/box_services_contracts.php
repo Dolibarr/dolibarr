@@ -115,12 +115,12 @@ class box_services_contracts extends ModeleBoxes
 					$contratlignestatic->id=$objp->cdid;
 					$contratlignestatic->fk_contrat=$objp->rowid;
 					$contratlignestatic->label=$objp->label;
-					$contratlignestatic->description=$objp->description;
+					$contratlignestatic->description=dol_trunc($objp->description);
 					$contratlignestatic->type=$objp->type;
 					$contratlignestatic->product_id=$objp->product_id;
 					$contratlignestatic->product_ref=$objp->product_ref;
 
-                    $contractstatic->statut=$objp->contract_status;
+					$contractstatic->statut=$objp->contract_status;
 					$contractstatic->id=$objp->rowid;
 					$contractstatic->ref=$objp->ref;
 
