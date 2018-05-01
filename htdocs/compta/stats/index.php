@@ -214,7 +214,7 @@ if ($result)
 		$mois = intval(substr($obj->dm, -2));
 		$cum_ht[$obj->dm] = !empty($obj->amount) ? $obj->amount : 0;
 		$cum[$obj->dm] = $obj->amount_ttc;
-		if ($previous_dm == "" or ($mois == ($nb_mois_decalage+1))) {
+		if ($previous_dm == "" || ($mois == ($nb_mois_decalage+1))) {
 			$annual_cum_ht[$obj->dm]=$cum_ht[$obj->dm]; }
 		else {
 			$annual_cum_ht[$obj->dm]=$annual_cum_ht[$previous_dm] +$cum_ht[$obj->dm] ;}
