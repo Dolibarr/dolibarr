@@ -9,8 +9,8 @@
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
--- To drop an index:        -- VMYSQL4.0 DROP INDEX nomindex on llx_table
--- To drop an index:        -- VPGSQL8.0 DROP INDEX nomindex
+-- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table
+-- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
 -- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
@@ -440,4 +440,13 @@ UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS
 ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
 
 UPDATE llx_rights_def set module = 'asset' where module = 'assets';
+
+
+ALTER TABLE llx_c_accounting_category ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
+-- VMYSQL4.1 DROP INDEX uk_c_accounting_category on llx_c_accounting_category
+-- VPGSQL8.2 DROP INDEX uk_c_accounting_category
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code,entity);
+-- VMYSQL4.1 DROP INDEX uk_accounting_journal_code on llx_accounting_journal
+-- VPGSQL8.2 DROP INDEX uk_accounting_journal_code
+ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (code,entity);
 
