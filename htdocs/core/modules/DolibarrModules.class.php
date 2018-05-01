@@ -953,7 +953,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
 		$sql.= " AND entity IN (0, ".$entity.")";
 
-		dol_syslog(get_class($this)."::_active", LOG_DEBUG);
+		dol_syslog(get_class($this)."::_active delect activation constant", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql) $err++;
 
@@ -965,7 +965,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$sql.= ", 0, ".$entity;
 		$sql.= ", '".$this->db->escape($note)."')";
 
-		dol_syslog(get_class($this)."::_active", LOG_DEBUG);
+		dol_syslog(get_class($this)."::_active insert activation constant", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql) $err++;
 
@@ -1133,6 +1133,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 		if (is_array($this->boxes))
 		{
+			dol_syslog(get_class($this)."::insert_boxes", LOG_DEBUG);
+
 			$pos_name = InfoBox::getListOfPagesForBoxes();
 
 			foreach ($this->boxes as $key => $value)
@@ -1150,7 +1152,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				$sql.= " AND entity = ".$conf->entity;
 				if ($note) $sql.=" AND note ='".$this->db->escape($note)."'";
 
-				dol_syslog(get_class($this)."::insert_boxes", LOG_DEBUG);
 				$result=$this->db->query($sql);
 				if ($result)
 				{
@@ -1304,6 +1305,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 		if (is_array($this->cronjobs))
 		{
+			dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
+
 			foreach ($this->cronjobs as $key => $value)
 			{
 				$entity  = isset($this->cronjobs[$key]['entity'])?$this->cronjobs[$key]['entity']:$conf->entity;
@@ -1332,7 +1335,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 				$now=dol_now();
 
-				dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
 				$result=$this->db->query($sql);
 				if ($result)
 				{
@@ -1369,7 +1371,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 							$sql.= "'".$this->db->escape($test)."'";
 							$sql.= ")";
 
-							dol_syslog(get_class($this)."::insert_cronjobs", LOG_DEBUG);
 							$resql=$this->db->query($sql);
 							if (! $resql) $err++;
 
@@ -1466,6 +1467,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 		if (! empty($this->tabs))
 		{
+			dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
+
 			$i=0;
 			foreach ($this->tabs as $key => $value)
 			{
@@ -1499,7 +1502,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$sql.= ", ".$entity;
 					$sql.= ")";
 
-					dol_syslog(get_class($this)."::insert_tabs", LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if (! $resql)
 					{
@@ -1531,6 +1533,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$err=0;
 
 		if (empty($this->const)) return 0;
+
+		dol_syslog(get_class($this)."::insert_const", LOG_DEBUG);
 
 		foreach ($this->const as $key => $value)
 		{
@@ -1567,8 +1571,6 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$sql.= ",".$entity;
 					$sql.= ")";
 
-
-					dol_syslog(get_class($this)."::insert_const", LOG_DEBUG);
 					if (! $this->db->query($sql) )
 					{
 						$err++;
@@ -1638,13 +1640,14 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$err=0;
 		$entity=(! empty($force_entity) ? $force_entity : $conf->entity);
 
+		dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
+
 		// Test if module is activated
 		$sql_del = "SELECT ".$this->db->decrypt('value')." as value";
 		$sql_del.= " FROM ".MAIN_DB_PREFIX."const";
 		$sql_del.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
 		$sql_del.= " AND entity IN (0,".$entity.")";
 
-		dol_syslog(get_class($this)."::insert_permissions", LOG_DEBUG);
 		$resql=$this->db->query($sql_del);
 
 		if ($resql)
@@ -1801,6 +1804,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		if (! is_array($this->menu) || empty($this->menu)) return 0;
 
 		require_once DOL_DOCUMENT_ROOT . '/core/class/menubase.class.php';
+
+		dol_syslog(get_class($this)."::insert_menus", LOG_DEBUG);
 
 		$err=0;
 
@@ -2110,7 +2115,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				$sql.= ", ".$entity;
 				$sql.= ")";
 
-				dol_syslog(get_class($this)."::insert_const_".$key."", LOG_DEBUG);
+				dol_syslog(get_class($this)."::insert_module_parts for key=".$this->const_name."_".strtoupper($key), LOG_DEBUG);
+
 				$resql=$this->db->query($sql,1);
 				if (! $resql)
 				{
@@ -2121,7 +2127,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					}
 					else
 					{
-						dol_syslog(get_class($this)."::insert_const_".$key." Record already exists.", LOG_WARNING);
+						dol_syslog(get_class($this)."::insert_module_parts for ".$this->const_name."_".strtoupper($key)." Record already exists.", LOG_WARNING);
 					}
 				}
 			}
