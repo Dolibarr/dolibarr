@@ -6181,7 +6181,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 			{
 				$module=$reg[1];
 
-				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
+				dol_syslog("Library ".$substitfile['name']." found into ".$dir);
 				// Include the user's functions file
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined
