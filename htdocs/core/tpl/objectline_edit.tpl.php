@@ -122,7 +122,7 @@ $coldisplay=-1; // We remove first td
 	if ($this->situation_counter > 1) print ' readonly';
 	print '></td>';
 
-	if (!empty($conf->multicurrency->enabled)) {
+	if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) {
 		$colspan++;
 		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
