@@ -277,7 +277,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 print '<tr class="liste_titre"><td>&nbsp;</td>';
 
-for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+for ($annee = $year_start; $annee <= $year_end; $annee++)
 {
 	if ($modecompta == 'CREANCES-DETTES') print '<td align="center" width="10%" colspan="3">';
 	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
@@ -296,7 +296,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="liste_titre" align="right">'.$langs->trans("AmountHT").'</td>';
 	}
-	if ($display_cumul and $modecompta == 'CREANCES-DETTES') {
+	if ($display_cumul && $modecompta == 'CREANCES-DETTES') {
 			print '<td class="liste_titre" align="right">'.$langs->trans("Cumul").'</td>';
 		}
 	else {
@@ -356,7 +356,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			{
 				$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
 				if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">';
-				if ($modecompta == "CREANCES-DETTES" and $display_cumul) print price($annual_cum_ht[$case], 1); else print price($cum[$case], 1);
+				if ($modecompta == "CREANCES-DETTES" && $display_cumul) print price($annual_cum_ht[$case], 1); else print price($cum[$case], 1);
 				if ($modecompta != 'BOOKKEEPING') print '</a>';
 			}
 			else
@@ -371,7 +371,7 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			{
 				if ($cum[$caseprev] && $cum[$case])
 				{
-					if ($modecompta == "CREANCES-DETTES" and $display_cumul) {
+					if ($modecompta == "CREANCES-DETTES" && $display_cumul) {
 					$percent=(round(($annual_cum_ht[$case]-$annual_cum_ht[$caseprev])/$annual_cum_ht[$caseprev],4)*100);
 					}
 					else 
