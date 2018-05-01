@@ -158,14 +158,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *      // Set this to relative path of js file if module must load a js on all pages
 	 *      'js' => '/mymodule/js/mymodule.js',
 	 *      // Set here all hooks context managed by module
-	 *      'hooks' => array('hookcontext1','hookcontext2'),
-	 *      // Set here all workflow context managed by module
-	 *      'workflow' => array(
-	 *          'WORKFLOW_MODULE1_YOURACTIONTYPE_MODULE2' = >array(
-	 *              'enabled' => '! empty($conf->module1->enabled) && ! empty($conf->module2->enabled)',
-	 *              'picto'=>'yourpicto@mymodule'
-	 *          )
-	 *      )
+	 *      'hooks' => array('hookcontext1','hookcontext2')
 	 *  )
 	 */
 	public $module_parts = array();
@@ -2083,7 +2076,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 				if (is_array($value))
 				{
 					// Can defined other parameters
-					if (is_array($value['data']) && ! empty($value['data']))
+					// Example when $key='hooks', then $value is an array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>X)
+					if (isset($value['data']) && is_array($value['data']))
 					{
 						$newvalue = json_encode($value['data']);
 						if (isset($value['entity'])) $entity = $value['entity'];
@@ -2093,7 +2087,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 						$newvalue = $value['data'];
 						if (isset($value['entity'])) $entity = $value['entity'];
 					}
-					else
+					else	// when hook is declared with syntax 'hook'=>array('hookcontext1','hookcontext2',...)
 					{
 						$newvalue = json_encode($value);
 					}
