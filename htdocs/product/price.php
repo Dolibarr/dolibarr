@@ -1236,7 +1236,7 @@ if ($action == 'edit_price' && $object->getRights()->creer)
 		}
 		print '</td>';
 		print '</tr>';
-
+		
 		$parameters=array('colspan' => 2);
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 
