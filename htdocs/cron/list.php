@@ -508,7 +508,10 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if ($obj->lastresult != '') {print dol_trunc($obj->lastresult);}
+		if ($obj->lastresult != '') {
+			if (empty($obj->lastresult)) print $obj->lastresult;
+			else print '<span class="error">'.dol_trunc($obj->lastresult).'</div>';
+		}
 		print '</td>';
 
 		print '<td>';

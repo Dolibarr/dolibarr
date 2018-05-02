@@ -441,7 +441,6 @@ ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
 
 UPDATE llx_rights_def set module = 'asset' where module = 'assets';
 
-
 ALTER TABLE llx_c_accounting_category ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
 -- VMYSQL4.1 DROP INDEX uk_c_accounting_category on llx_c_accounting_category
 -- VPGSQL8.2 DROP INDEX uk_c_accounting_category
@@ -449,4 +448,6 @@ ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(
 -- VMYSQL4.1 DROP INDEX uk_accounting_journal_code on llx_accounting_journal
 -- VPGSQL8.2 DROP INDEX uk_accounting_journal_code
 ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (code,entity);
+
+UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
 

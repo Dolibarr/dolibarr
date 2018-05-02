@@ -105,7 +105,7 @@ function dol_decode($chain, $key='1')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO then md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @getRandomPassword
  */
@@ -447,7 +447,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		if ($feature == 'project') $feature='projet';
 		if ($feature == 'task')    $feature='projet_task';
 
-		$check = array('adherent','banque','don','user','usergroup','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent','banque','don','user','usergroup','product','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet','project'); // Test for project object

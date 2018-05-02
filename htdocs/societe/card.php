@@ -56,7 +56,7 @@ $mesg=''; $error=0; $errors=array();
 $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel		= GETPOST('cancel','alpha');
 $backtopage	= GETPOST('backtopage','alpha');
-$confirm		= GETPOST('confirm');
+$confirm	= GETPOST('confirm','alpha');
 
 $socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -1949,7 +1949,9 @@ else
 
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
-	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
+	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
+	        print dol_escape_htmltag(price($object->capital));
+	        print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
 			// Assign a Name
             print '<tr>';
