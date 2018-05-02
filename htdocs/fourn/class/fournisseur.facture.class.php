@@ -743,6 +743,13 @@ class FactureFournisseur extends CommonInvoice
 					$line->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
 					$line->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 					$line->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
+					
+					// Retrieve all extrafields
+					// fetch optionals attributes and labels
+					require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+					$extrafields=new ExtraFields($this->db);
+					$extralabels=$extrafields->fetch_name_optionals_label($line->table_element,true);
+					$line->fetch_optionals($line->id,$extralabels);
 
 	                $this->lines[$i] = $line;
 
@@ -2498,6 +2505,13 @@ class SupplierInvoiceLine extends CommonObjectLine
 		$this->multicurrency_total_ht	= $obj->multicurrency_total_ht;
 		$this->multicurrency_total_tva	= $obj->multicurrency_total_tva;
 		$this->multicurrency_total_ttc	= $obj->multicurrency_total_ttc;
+		
+		// Retreive all extrafield for invoice
+		// fetch optionals attributes and labels
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields=new ExtraFields($this->db);
+		$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+		$this->fetch_optionals($this->id,$extralabels);
 
 		return 1;
 	}

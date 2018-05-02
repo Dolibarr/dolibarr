@@ -358,6 +358,13 @@ class CommandeFournisseur extends CommonOrder
 
                     $line->rang                = $objp->rang;
 
+                    // Retrieve all extrafields
+                    // fetch optionals attributes and labels
+                    require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+                    $extrafields=new ExtraFields($this->db);
+                    $extralabels=$extrafields->fetch_name_optionals_label($line->table_element,true);
+                    $line->fetch_optionals($line->id,$extralabels);
+                    
                     $this->lines[$i]      = $line;
 
                     $i++;
@@ -3055,6 +3062,13 @@ class CommandeFournisseurLigne extends CommonOrderLine
 			$this->multicurrency_total_ht	= $objp->multicurrency_total_ht;
 			$this->multicurrency_total_tva	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc	= $objp->multicurrency_total_ttc;
+			
+			// Retreive all extrafield for invoice
+			// fetch optionals attributes and labels
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields=new ExtraFields($this->db);
+			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+			$this->fetch_optionals($this->id,$extralabels);
 
             $this->db->free($result);
             return 1;
@@ -3280,7 +3294,6 @@ class CommandeFournisseurLigne extends CommonOrderLine
         {
             if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
             {
-
                 $result=$this->insertExtraFields();
                 if ($result < 0)
                 {
