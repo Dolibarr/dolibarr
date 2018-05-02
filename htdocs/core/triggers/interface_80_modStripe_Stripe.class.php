@@ -28,7 +28,6 @@
  *              - Le nom de la propriete name doit etre Mytrigger
  */
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-$path=dirname(__FILE__).'/';
 
 
 /**
@@ -122,7 +121,7 @@ class InterfaceStripe
 
 		$ok = 0;
 
-		include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
 
 		if (empty($conf->stripe->enabled)) return 0;

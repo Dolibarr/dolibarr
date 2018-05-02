@@ -24,8 +24,6 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
-require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 
 /**
@@ -59,6 +57,9 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 			dol_syslog("Warning, module LDAP is enabled but LDAP functions not available in this PHP", LOG_WARNING);
 			return 0;
 		}
+
+		require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+		require_once DOL_DOCUMENT_ROOT."/user/class/usergroup.class.php";
 
 		$result=0;
 
