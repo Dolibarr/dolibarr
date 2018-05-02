@@ -3925,7 +3925,7 @@ class Product extends CommonObject
 	 */
     function load_virtual_stock()
     {
-        global $conf;
+        global $conf, $user, $langs;
 
         $stock_commande_client=0;
         $stock_commande_fournisseur=0;
@@ -3975,6 +3975,16 @@ class Product extends CommonObject
         if (! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_BILL)) {
             $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
         }
+
+	// Call triggers
+	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	$interface=new Interfaces($this->db);
+	$result=$interface->run_triggers('LOAD_VIRTUAL_STOCK', $this, $user, $langs, $conf);
+	if ($result < 0) {
+		$this->errors=$interface->errors;
+	return -1;
+	}
+
     }
 
 
