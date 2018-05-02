@@ -84,7 +84,7 @@ include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 if ($action == 'setlib' && $user->rights->tax->charges->creer)
 {
     $object->fetch($id);
-    $result = $object->setValueFrom('libelle', GETPOST('lib'), '', '', 'text', '', $user, 'TAX_MODIFY');
+    $result = $object->setValueFrom('label', GETPOST('lib','alpha'), '', '', 'text', '', $user, 'TAX_MODIFY');
     if ($result < 0)
         setEventMessages($object->error, $object->errors, 'errors');
 }
@@ -111,23 +111,8 @@ if ($object->id)
 
 	$morehtmlref='<div class="refidno">';
 	// Label of social contribution
-	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->lib, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
-    // Project
-	if (! empty($conf->projet->enabled))
-	{
-	    $langs->load("projects");
-	    $morehtmlref.='<br>'.$langs->trans('Project') . ' : ';
-        if (! empty($object->fk_project)) {
-            $proj = new Project($db);
-            $proj->fetch($object->fk_project);
-            $morehtmlref.='<a href="'.DOL_URL_ROOT.'/projet/card.php?id=' . $object->fk_project . '" title="' . $langs->trans('ShowProject') . '">';
-            $morehtmlref.=$proj->ref;
-            $morehtmlref.='</a>';
-        } else {
-            $morehtmlref.='';
-        }
-	}
+	$morehtmlref.=$form->editfieldkey("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Label", 'lib', $object->label, $object, $user->rights->tax->charges->creer, 'string', '', null, null, '', 1);
 	$morehtmlref.='</div>';
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/tva/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';

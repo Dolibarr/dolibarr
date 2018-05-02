@@ -37,7 +37,7 @@ $search_ref=GETPOST("sref","alpha")?GETPOST("sref","alpha"):GETPOST("search_ref"
 $search_label=GETPOST("snom","alpha")?GETPOST("snom","alpha"):GETPOST("search_label","alpha");
 $search_status=GETPOST("search_status","int");
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield");
 $sortorder = GETPOST("sortorder");
 if (! $sortfield) $sortfield="e.ref";
@@ -133,7 +133,9 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->stock->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuNewWarehouse').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuNewWarehouse');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
     print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';

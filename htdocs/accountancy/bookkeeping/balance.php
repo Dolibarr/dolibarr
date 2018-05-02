@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2016       Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2016       Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2016       Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
 // Langs
-$langs->load("accountancy");
+$langs->loadLangs(array("accountancy"));
 
 $page = GETPOST("page");
 $sortorder = GETPOST("sortorder");
@@ -152,7 +152,6 @@ if ($action == 'export_csv') {
 		print $object->get_compte_desc($line->numero_compte) . $sep;
 		print price($line->debit) . $sep;
 		print price($line->credit) . $sep;
-		print price($line->debit) . $sep;
 		print price($line->credit - $line->debit) . $sep;
 		print "\n";
 	}
@@ -187,7 +186,7 @@ else {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	$button = '<input type="submit" name="exportcsv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+	$button = '<input type="submit" name="exportcsv" class="butActionNew" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
 	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
 
 	$moreforfilter = '';
@@ -253,8 +252,8 @@ else {
 		print '<tr class="oddeven">';
 
 		// Permet d'afficher le compte comptable
-		if ($root_account_description != $displayed_account) {
-
+		if (empty($displayed_account) || $root_account_description != $displayed_account)
+		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
 				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
@@ -262,9 +261,9 @@ else {
 				print '</tr>';
 			}
 
-			// Affiche le compte comptable en d�but de ligne
+			// Affiche le compte comptable en debut de ligne
 			print "<tr>";
-			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $root_account_description . '</td>';
+			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $line->numero_compte . ($root_account_description ? ' - ' . $root_account_description : '') . '</td>';
 			print '</tr>';
 
 			$displayed_account = $root_account_description;

@@ -624,7 +624,7 @@ else
 		}
 		else
 		{
-			$mc->getInfo($obj->entity);
+			$mc->getInfo($object->entity);
 			print $mc->label;
 		}
 		print "</td></tr>";

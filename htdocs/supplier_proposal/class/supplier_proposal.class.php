@@ -124,9 +124,9 @@ class SupplierProposal extends CommonObject
 
     var $cond_reglement_code;
     var $mode_reglement_code;
-    var $remise;
-    var $remise_percent;
-    var $remise_absolue;
+    var $remise = 0;
+    var $remise_percent = 0;
+    var $remise_absolue = 0;
 
     var $products=array();
     var $extraparams=array();
@@ -185,24 +185,11 @@ class SupplierProposal extends CommonObject
         global $conf,$langs;
 
         $this->db = $db;
+
         $this->socid = $socid;
         $this->id = $supplier_proposalid;
-        $this->products = array();
-        $this->remise = 0;
-        $this->remise_percent = 0;
-        $this->remise_absolue = 0;
 
-        $langs->load("supplier_proposal");
-        $this->labelstatut[0]=$langs->trans("SupplierProposalStatusDraft");
-        $this->labelstatut[1]=$langs->trans("SupplierProposalStatusValidated");
-        $this->labelstatut[2]=$langs->trans("SupplierProposalStatusSigned");
-        $this->labelstatut[3]=$langs->trans("SupplierProposalStatusNotSigned");
-        $this->labelstatut[4]=$langs->trans("SupplierProposalStatusClosed");
-        $this->labelstatut_short[0]=$langs->trans("SupplierProposalStatusDraftShort");
-        $this->labelstatut_short[1]=$langs->trans("Opened");
-        $this->labelstatut_short[2]=$langs->trans("SupplierProposalStatusSignedShort");
-        $this->labelstatut_short[3]=$langs->trans("SupplierProposalStatusNotSignedShort");
-        $this->labelstatut_short[4]=$langs->trans("SupplierProposalStatusClosedShort");
+        $this->products = array();
     }
 
 
@@ -407,9 +394,71 @@ class SupplierProposal extends CommonObject
         // Check parameters
         if ($type < 0) return -1;
 
-        if ($this->statut == 0)
+        if ($this->statut == self::STATUS_DRAFT)
         {
             $this->db->begin();
+
+            if ($fk_product > 0)
+            {
+            	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY))
+            	{
+            		// Check quantity is enough
+            		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
+            		$prod = new Product($this->db, $fk_product);
+            		if ($prod->fetch($fk_product) > 0)
+            		{
+            			$product_type = $prod->type;
+            			$label = $prod->label;
+
+            			// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
+            			// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
+            			$result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
+            			if ($result > 0)
+            			{
+            				$pu = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+            				$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+            				// is remise percent not keyed but present for the product we add it
+            				if ($remise_percent == 0 && $prod->remise_percent !=0)
+            					$remise_percent =$prod->remise_percent;
+            			}
+            			if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
+            			{
+            				$langs->load("errors");
+            				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+            				$this->db->rollback();
+            				dol_syslog(get_class($this)."::addline we did not found supplier price, so we can't guess unit price");
+            				//$pu    = $prod->fourn_pu;     // We do not overwrite unit price
+            				//$ref   = $prod->ref_fourn;    // We do not overwrite ref supplier price
+            				return -1;
+            			}
+            			if ($result == -1)
+            			{
+            				$langs->load("errors");
+            				$this->error = "Ref " . $prod->ref . " " . $langs->trans("ErrorQtyTooLowForThisSupplier");
+            				$this->db->rollback();
+            				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_DEBUG);
+            				return -1;
+            			}
+            			if ($result < -1)
+            			{
+            				$this->error=$prod->error;
+            				$this->db->rollback();
+            				dol_syslog(get_class($this)."::addline result=".$result." - ".$this->error, LOG_ERR);
+            				return -1;
+            			}
+            		}
+            		else
+            		{
+            			$this->error=$prod->error;
+            			$this->db->rollback();
+            			return -1;
+            		}
+            	}
+            }
+            else
+            {
+            	$product_type = $type;
+            }
 
             // Calcul du total TTC et de la TVA pour la ligne a partir de
             // qty, pu, remise_percent et txtva
@@ -2072,9 +2121,24 @@ class SupplierProposal extends CommonObject
      */
 	function LibStatut($statut,$mode=1)
     {
-		global $langs;
-		$langs->load("supplier_proposal");
+    	// Init/load array of translation of status
+    	if (empty($this->labelstatut) || empty($this->labelstatut_short))
+    	{
+    		global $langs;
+    		$langs->load("supplier_proposal");
+    		$this->labelstatut[0]=$langs->trans("SupplierProposalStatusDraft");
+    		$this->labelstatut[1]=$langs->trans("SupplierProposalStatusValidated");
+    		$this->labelstatut[2]=$langs->trans("SupplierProposalStatusSigned");
+    		$this->labelstatut[3]=$langs->trans("SupplierProposalStatusNotSigned");
+    		$this->labelstatut[4]=$langs->trans("SupplierProposalStatusClosed");
+    		$this->labelstatut_short[0]=$langs->trans("SupplierProposalStatusDraftShort");
+    		$this->labelstatut_short[1]=$langs->trans("Opened");
+    		$this->labelstatut_short[2]=$langs->trans("SupplierProposalStatusSignedShort");
+    		$this->labelstatut_short[3]=$langs->trans("SupplierProposalStatusNotSignedShort");
+    		$this->labelstatut_short[4]=$langs->trans("SupplierProposalStatusClosedShort");
+    	}
 
+    	$statuttrans='';
 		if ($statut==0) $statuttrans='statut0';
 		if ($statut==1) $statuttrans='statut1';
 		if ($statut==2) $statuttrans='statut3';
@@ -2109,16 +2173,16 @@ class SupplierProposal extends CommonObject
 
         $sql = "SELECT p.rowid, p.ref, p.datec as datec";
         $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->socid)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = " AND";
         }
-        $sql.= $clause." p.entity = ".$conf->entity;
+        $sql.= $clause." p.entity IN (".getEntity('supplier_proposal').")";
         if ($mode == 'opened') $sql.= " AND p.fk_statut = 1";
         if ($mode == 'signed') $sql.= " AND p.fk_statut = 2";
-        if ($user->societe_id) $sql.= " AND p.fk_soc = ".$user->societe_id;
+        if ($user->socid) $sql.= " AND p.fk_soc = ".$user->socid;
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -2266,13 +2330,13 @@ class SupplierProposal extends CommonObject
         $sql = "SELECT count(p.rowid) as nb";
         $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON p.fk_soc = s.rowid";
-        if (!$user->rights->societe->client->voir && !$user->societe_id)
+        if (!$user->rights->societe->client->voir && !$user->socid)
         {
             $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
             $sql.= " WHERE sc.fk_user = " .$user->id;
             $clause = "AND";
         }
-        $sql.= " ".$clause." p.entity = ".$conf->entity;
+        $sql.= " ".$clause." p.entity IN (".getEntity('supplier_proposal').")";
 
         $resql=$this->db->query($sql);
         if ($resql)

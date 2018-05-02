@@ -40,7 +40,11 @@ SetHereVirtualHost=Si pots crear, al teu servidor web (Apache, Nginx...), un Hos
 YouCanAlsoTestWithPHPS=En l'entorn de desenvolupament, és possible que preferiu provar el lloc amb el servidor web incrustat de PHP (requereix PHP 5.5) executant-se<br><strong>php -S 0.0.0.0:8080 -t %s</strong>
 CheckVirtualHostPerms=Check also that virtual host has permission <strong>%s</strong> on files into<br><strong>%s</strong>
 ReadPerm=Llegit
+<<<<<<< HEAD
 WritePerm=Write
+=======
+WritePerm=Escriu
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 PreviewSiteServedByWebServer=<LI>Vista prèvia %s en una nova pestanya.</LI><br><br>El %s serà servit per un servidor web extern (com ara Apache, Nginx, IIS). Heu d'instal·lar i configurar aquest servidor abans d'apuntar al directori:<br><strong>%s</strong><br> URL servit per un servidor extern:<br><strong>%s</strong><br>
 PreviewSiteServedByDolibarr=<u> Previsualitza  %s en una nova pestanya. </li> <br> <br> El servidor %s serà servit pel servidor Dolibarr d'aquesta manera no es necessita instal·la cap servidor web addicional (com ara Apache, Nginx, IIS).<br>L'inconvenient és que l'URL de les pàgines no son amigables i començen per la ruta del vostre Dolibarr. <br>URL servit per Dolibarr:<br><strong> %s </strong> <br> <br> Per utilitzar el vostre propi servidor web extern per a servir a aquest lloc web, creeu un amfitrió ('host') virtual al vostre servidor web que apunti al directori<br><strong> %s </strong><br>, llavors introduïu el nom d'aquest servidor virtual i feu clic a l'altre botó de vista prèvia (botó de 'preview').
 VirtualHostUrlNotDefined=No s'ha definit la URL de l'amfitrió virtual que serveix el servidor web extern

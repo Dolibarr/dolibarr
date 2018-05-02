@@ -234,7 +234,11 @@ AccountingJournal=Diari comptable
 NewAccountingJournal=Nou diari comptable
 ShowAccoutingJournal=Mostrar diari comptable
 Nature=Caràcter
+<<<<<<< HEAD
 AccountingJournalType1=Miscellaneous operations
+=======
+AccountingJournalType1=Operacions diverses
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 AccountingJournalType2=Vendes
 AccountingJournalType3=Compres
 AccountingJournalType4=Banc

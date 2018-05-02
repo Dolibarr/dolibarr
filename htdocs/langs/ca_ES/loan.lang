@@ -52,4 +52,8 @@ LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable per al interès per defecte
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable de l'assegurança per defecte
 FinancialCommitment=Financial commitment
 CreateCalcSchedule=Edit financial commitment
+<<<<<<< HEAD
 InterestAmount=Interest amount
+=======
+InterestAmount=Import d'interès
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git

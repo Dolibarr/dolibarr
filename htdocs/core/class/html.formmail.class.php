@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2017 Nicolas ZABOURI        <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1110,7 +1111,8 @@ class FormMail extends Form
 				elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
 				elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
 				elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
-
+				elseif (!empty($type_template))				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template)); }
+				
 				$ret->label = 'default';
 				$ret->lang = $outputlangs->defaultlang;
 				$ret->topic = '';
@@ -1262,11 +1264,11 @@ class FormMail extends Form
 				if (!empty($line->fk_product))
 				{
 					if (! is_object($extrafields)) $extrafields = new ExtraFields($this->db);
-					$extralabels = $extrafields->fetch_name_optionals_label('product', true);
+					$extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
 					$product->fetch_optionals();
-					if (is_array($extrafieldstmp->attributes[$object->table_element]['label']) && count($extrafieldstmp->attributes[$object->table_element]['label']) > 0)
+					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 					{
 						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
 							$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];

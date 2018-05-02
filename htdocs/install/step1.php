@@ -356,7 +356,7 @@ if (! $error && $db->connected && $action == "set")
     }
 
     // Show title of step
-    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Configuration"> '.$langs->trans("ConfigurationFile").'</h3>';
     print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
 
     // Check parameter main_dir
@@ -878,7 +878,7 @@ function write_conf_file($conffile)
 
     $error=0;
 
-    $key = md5(uniqid(mt_rand(),TRUE)); // Generate random hash
+    $key = md5(uniqid(mt_rand(), true)); // Generate random hash
 
     $fp = fopen("$conffile", "w");
     if($fp)

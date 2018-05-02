@@ -566,7 +566,7 @@ class AccountingAccount extends CommonObject
 	function LibStatut($statut,$mode=0)
 	{
 		global $langs;
-		$langs->load('users');
+		$langs->loadLangs(array("users"));
 
 		if ($mode == 0)
 		{

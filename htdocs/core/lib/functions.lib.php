@@ -1,13 +1,13 @@
 <?php
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville			<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles			<ccomb@free.fr>
  * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2016	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2017	Alexandre Spangaro			<aspangaro@zendsi.com>
  * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
@@ -272,7 +272,7 @@ function GETPOSTISSET($paramname)
  *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|string[]      Value found (string or array), or '' if check fails
  */
-function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NULL, $noreplace=0)
+function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=null, $noreplace=0)
 {
 	global $mysoc,$user,$conf;
 
@@ -542,6 +542,13 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 				if (preg_match('/[^a-z0-9_\-\.]+/i',$out)) $out='';
 			}
 			break;
+		case 'aZ09comma':		// great to sanitize sortfield or sortorder params that can be t.abc,t.def_gh
+			if (! is_array($out))
+			{
+				$out=trim($out);
+				if (preg_match('/[^a-z0-9_\-\.,]+/i',$out)) $out='';
+			}
+			break;
 		case 'array':
 			if (! is_array($out) || empty($out)) $out=array();
 			break;
@@ -574,12 +581,12 @@ function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NU
 		{
 			//var_dump($paramname.' - '.$out.' '.$user->default_values[$relativepathstring]['filters'][$paramname]);
 
-			// We save search key only if:
-			// - not empty, or
-			// - if value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
+			// We save search key only if $out not empty that means:
+			// - posted value not empty, or
+			// - if posted value is empty and a default value exists that is not empty (it means we did a filter to an empty value when default was not).
 
 			//if (! empty($out) || ! empty($user->default_values[$relativepathstring]['filters'][$paramname]))
-			if (! empty($out))
+			if ($out != '')		// $out = '0' like 'abc' is a search criteria to keep
 			{
 				$user->lastsearch_values_tmp[$relativepathstring][$paramname]=$out;
 			}
@@ -2015,7 +2022,7 @@ function dol_now($mode='gmt')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 		$tzsecond=getServerTimeZoneInt('now');    // Contains tz+dayling saving time
-		$ret=(int) dol_now('gmt')+($tzsecond*3600);
+		$ret=(int) (dol_now('gmt')+($tzsecond*3600));
 	}
 	/*else if ($mode == 'tzref')				// Time for now with parent company timezone is added
 	{
@@ -2028,7 +2035,7 @@ function dol_now($mode='gmt')
 		//print 'time: '.time().'-'.mktime().'-'.gmmktime();
 		$offsettz=(empty($_SESSION['dol_tz'])?0:$_SESSION['dol_tz'])*60*60;
 		$offsetdst=(empty($_SESSION['dol_dst'])?0:$_SESSION['dol_dst'])*60*60;
-		$ret=(int) dol_now('gmt')+($offsettz+$offsetdst);
+		$ret=(int) (dol_now('gmt')+($offsettz+$offsetdst));
 	}
 
 	return $ret;
@@ -2040,7 +2047,7 @@ function dol_now($mode='gmt')
  *
  * @param	int		$size		Size to print
  * @param	int		$shortvalue	Tell if we want long value to use another unit (Ex: 1.5Kb instead of 1500b)
- * @param	int		$shortunit	Use short value of size unit
+ * @param	int		$shortunit	Use short label of size unit (for example 'b' instead of 'bytes')
  * @return	string				Link
  */
 function dol_print_size($size,$shortvalue=0,$shortunit=0)
@@ -3089,7 +3096,10 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		$pictowithoutext = preg_replace('/(\.png|\.gif|\.svg)$/', '', $picto);
 
 		//if (in_array($picto, array('switch_off', 'switch_on', 'off', 'on')))
-		if (empty($srconly) && in_array($pictowithoutext, array('bank', 'delete', 'edit', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize', 'switch_off', 'switch_on', 'unlink', 'uparrow'))) {
+		if (empty($srconly) && in_array($pictowithoutext, array(
+				'bank', 'close_title', 'delete', 'edit', 'ellipsis-h', 'filter', 'grip', 'grip_title', 'off', 'on', 'play', 'playdisabled', 'printer', 'resize',
+				'switch_off', 'switch_on', 'unlink', 'uparrow')
+			)) {
 			$fakey = $pictowithoutext;
 			$facolor = '';
 			$fasize = '';
@@ -3115,6 +3125,9 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 				$fakey = 'fa-bank';
 				$facolor = '#444';
 			}
+			elseif ($pictowithoutext == 'close_title') {
+				$fakey = 'fa-window-close';
+			}
 			elseif ($pictowithoutext == 'delete') {
 				$fakey = 'fa-trash';
 				$facolor = '#444';
@@ -3122,6 +3135,12 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 			elseif ($pictowithoutext == 'edit') {
 				$fakey = 'fa-pencil';
 				$facolor = '#444';
+			}
+			elseif ($pictowithoutext == 'filter') {
+				$fakey = 'fa-'.$pictowithoutext;
+			}
+			elseif ($pictowithoutext == 'grip_title' || $pictowithoutext == 'grip') {
+				$fakey = 'fa-arrows';
 			}
 			elseif ($pictowithoutext == 'printer') {
 				$fakey = 'fa-print';
@@ -3894,16 +3913,20 @@ function dol_print_error($db='',$error='',$errors=null)
  * @param   string  $errormessage   Complete error message
  * @param	array	$errormessages	Array of error messages
  * @param	string	$morecss		More css
+ * @param	string	$email			Email
  * @return	void
  */
-function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error')
+function dol_print_error_email($prefixcode, $errormessage='', $errormessages=array(), $morecss='error', $email='')
 {
 	global $langs,$conf;
 
+	if (empty($email)) $email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
+
 	$langs->load("errors");
 	$now=dol_now();
+
 	print '<br><div class="center login_main_message"><div class="'.$morecss.'">';
-	print $langs->trans("ErrorContactEMail", $conf->global->MAIN_INFO_SOCIETE_MAIL, $prefixcode.dol_print_date($now,'%Y%m%d'));
+	print $langs->trans("ErrorContactEMail", $email, $prefixcode.dol_print_date($now,'%Y%m%d'));
 	if ($errormessage) print '<br><br>'.$errormessage;
 	if (is_array($errormessages) && count($errormessages))
 	{
@@ -3941,7 +3964,7 @@ function print_liste_field_titre($name, $file="", $field="", $begin="", $morepar
  *	@param	string	$name        		Translation key of field
  *	@param	int		$thead		 		0=To use with standard table format, 1=To use inside <thead><tr>, 2=To use with <div>
  *	@param	string	$file        		Url used when we click on sort picto
- *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable.
+ *	@param	string	$field       		Field to use for new sorting. Empty if this field is not sortable. Example "t.abc" or "t.abc,t.def"
  *	@param	string	$begin       		("" by defaut)
  *	@param	string	$moreparam   		Add more parameters on sort url links ("" by default)
  *	@param  string	$moreattrib  		Add more attributes on th ("" by defaut, example: 'align="center"'). To add more css class, use param $prefix.
@@ -3982,16 +4005,31 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		if ($field1 != $sortfield1) // We are on another field
+		$sortordertouseinlink='';
+		if ($field1 != $sortfield1) // We are on another field than current sorted field
 		{
-			if (preg_match('/^DESC/', $sortorder)) $out.= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
-			else $out.= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
+			if (preg_match('/^DESC/i', $sortorder))
+			{
+				$sortordertouseinlink.=str_repeat('desc,', count(explode(',',$field)));
+			}
+			else		// We reverse the var $sortordertouseinlink
+			{
+				$sortordertouseinlink.=str_repeat('asc,', count(explode(',',$field)));
+			}
 		}
-		else                      // We are of first sorting criteria
+		else                        // We are on field that is the first current sorting criteria
 		{
-			if (preg_match('/^ASC/', $sortorder)) $out.= '<a class="reposition" href="'.$file.'?sortfield='.$sortfield.'&sortorder=desc&begin='.$begin.$options.'">';
-			else $out.= '<a class="reposition" href="'.$file.'?sortfield='.$sortfield.'&sortorder=asc&begin='.$begin.$options.'">';
+			if (preg_match('/^ASC/i', $sortorder))	// We reverse the var $sortordertouseinlink
+			{
+				$sortordertouseinlink.=str_repeat('desc,', count(explode(',',$field)));
+			}
+			else
+			{
+				$sortordertouseinlink.=str_repeat('asc,', count(explode(',',$field)));
+			}
 		}
+		$sortordertouseinlink=preg_replace('/,$/', '', $sortordertouseinlink);
+		$out.= '<a class="reposition" href="'.$file.'?sortfield='.$field.'&sortorder='.$sortordertouseinlink.'&begin='.$begin.$options.'">';
 	}
 
 	if ($tooltip) $out.=$form->textwithpicto($langs->trans($name), $langs->trans($tooltip));
@@ -4092,12 +4130,11 @@ function load_fiche_titre($titre, $morehtmlright='', $picto='title_generic.png',
 
 	$return='';
 
-	if ($picto == 'setup') $picto='title.png';
-	if (($conf->browser->name == 'ie') && $picto=='title.png') $picto='title.gif';
+	if ($picto == 'setup') $picto='title_generic.png';
 
 	$return.= "\n";
 	$return.= '<table '.($id?'id="'.$id.'" ':'').'summary="" class="centpercent notopnoleftnoright'.($morecssontable?' '.$morecssontable:'').'" style="margin-bottom: 2px;"><tr>';
-	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle" id="pictotitle"', $pictoisfullpath).'</td>';
+	if ($picto) $return.= '<td class="nobordernopadding widthpictotitle opacityhigh" valign="middle">'.img_picto('',$picto, 'class="valignmiddle widthpictotitle" id="pictotitle"', $pictoisfullpath).'</td>';
 	$return.= '<td class="nobordernopadding" valign="middle">';
 	$return.= '<div class="titre">'.$titre.'</div>';
 	$return.= '</td>';
@@ -4163,7 +4200,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 	// Left
 	//if ($picto && $titre) print '<td class="nobordernopadding hideonsmartphone" width="40" align="left" valign="middle">'.img_picto('', $picto, 'id="pictotitle"', $pictoisfullpath).'</td>';
 	print '<td class="nobordernopadding valignmiddle">';
-	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle" id="pictotitle"', $pictoisfullpath);
+	if ($picto && $titre) print img_picto('', $picto, 'class="hideonsmartphone valignmiddle opacityhigh widthpictotitle" id="pictotitle"', $pictoisfullpath);
 	print '<div class="titre inline-block">'.$titre;
 	if (!empty($titre) && $savtotalnboflines >= 0 && (string) $savtotalnboflines != '') print ' ('.$totalnboflines.')';
 	print '</div></td>';
@@ -4690,7 +4727,11 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
 			}
 			else  // i am the seller
 			{
-				if (!isOnlyOneLocalTax($local))  // This is for spain only, we don't return value found into datbase even if there is only one locatax vat.
+				if (in_array($mysoc->country_code, array('ES')))
+				{
+					return $thirdparty_buyer->localtax2_value;
+				}
+				else
 				{
 					return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
 				}
@@ -4872,50 +4913,16 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		$obj = $db->fetch_object($resql);
 		if ($local == 1)
 		{
-			if (! isOnlyOneLocalTax(1))
-			{
-				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-			}
-			else
-			{
-				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell, $obj->accountancy_code_buy);
-			}
+			return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 		elseif ($local == 2)
 		{
-			if (! isOnlyOneLocalTax(2))
-			{
-				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell, $obj->accountancy_code_buy);
-			}
-			else
-			{
-				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell, $obj->accountancy_code_buy);
-			}
+			return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 		else
 		{
-			if(! isOnlyOneLocalTax(1))
-			{
-				if(! isOnlyOneLocalTax(2))
-				{
-					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-				else
-				{
-					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2, $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-				}
-			}
-			else
-			{
-				if(! isOnlyOneLocalTax(2))
-				{
-					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-				}
-				else
-				{
-					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2, $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-				}
-			}
+			return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
+
 		}
 	}
 
@@ -5311,7 +5318,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
-		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment')))
+		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment','expensereport')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
@@ -5792,7 +5799,7 @@ function dol_concatdesc($text1,$text2,$forxml=false)
  */
 function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $object=null)
 {
-	global $db, $conf, $mysoc, $user;
+	global $db, $conf, $mysoc, $user, $extrafields;
 
 	$substitutionarray=array();
 
@@ -5964,13 +5971,16 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 			// Create dynamic tags for __EXTRAFIELD_FIELD__
 			if ($object->table_element && $object->id > 0)
 			{
-				if (! is_object($extrafields)) $extrafieldstmp = new ExtraFields($db);
-				$extralabels = $extrafieldstmp->fetch_name_optionals_label($object->table_element, true);
-				$object->fetch_optionals();
-				if (is_array($extrafieldstmp->attributes[$object->table_element]['label']) && count($extrafieldstmp->attributes[$object->table_element]['label']) > 0)
+				if (! is_object($extrafields)) $extrafields = new ExtraFields($db);
+				$extrafields->fetch_name_optionals_label($object->table_element, true);
+
+				if ($object->fetch_optionals() > 0)
 				{
-					foreach ($extrafieldstmp->attributes[$object->table_element]['label'] as $key => $label) {
-						$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
+					{
+						foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label) {
+							$substitutionarray['__EXTRAFIELD_' . strtoupper($key) . '__'] = $object->array_options['options_' . $key];
+						}
 					}
 				}
 			}
@@ -6171,7 +6181,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 			{
 				$module=$reg[1];
 
-				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
+				dol_syslog("Library ".$substitfile['name']." found into ".$dir);
 				// Include the user's functions file
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined
@@ -6546,7 +6556,7 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 			else
 			{
 				($case_sensitive) ? natsort($temp) : natcasesort($temp);
-				if($order!='asc') $temp=array_reverse($temp,TRUE);
+				if($order!='asc') $temp=array_reverse($temp, true);
 			}
 
 			$sorted = array();
@@ -6900,6 +6910,10 @@ function printCommonFooter($zone='private')
 	if ($zone == 'private') print "\n".'<!-- Common footer for private page -->'."\n";
 	else print "\n".'<!-- Common footer for public page -->'."\n";
 
+	// A div to store page_y POST parameter so we can read it using javascript
+	print "\n<!-- A div to store page_y POST paramater -->\n";
+	print '<div id="page_y" style="display: none;">'.$_POST['page_y'].'</div>'."\n";
+
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printCommonFooter',$parameters);    // Note that $action and $object may have been modified by some hooks
 	if (empty($reshook))
@@ -7227,10 +7241,10 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 }
 
 /**
- * Return string with full Url
+ * Return string with full Url. The file qualified is the one defined by relative path in $object->last_main_doc
  *
- * @param   Object	$object		Object
- * @return	string				Url string
+ * @param   Object	$object				Object
+ * @return	string						Url string
  */
 function showDirectDownloadLink($object)
 {

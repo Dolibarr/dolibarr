@@ -152,7 +152,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 			if ($line->date_start_fill || $line->date_end_fill) echo '</div>';
 		}
 		else {
-			echo '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			if ($line->date_start || $line->date_end) echo '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
 			//echo get_date_range($line->date_start, $line->date_end, $format);
 		}
 
@@ -195,7 +195,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
-	<?php if (!empty($conf->multicurrency->enabled)) { ?>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
 	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
 	<?php } ?>
 
@@ -261,7 +261,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
 	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
-		<?php if (!empty($conf->multicurrency->enabled)) { ?>
+		<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
 		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
 		<?php } ?>
 	<?php } ?>

@@ -97,7 +97,7 @@ class Conf
 		// First level object
 		// TODO Remove this part.
 		$this->expedition_bon	= new stdClass();
-		$this->livraison_bon		= new stdClass();
+		$this->livraison_bon	= new stdClass();
 		$this->fournisseur		= new stdClass();
 		$this->product			= new stdClass();
 		$this->service			= new stdClass();
@@ -107,12 +107,12 @@ class Conf
 		$this->propal			= new stdClass();
 		$this->facture			= new stdClass();
 		$this->contrat			= new stdClass();
-		$this->usergroup			= new stdClass();
+		$this->usergroup		= new stdClass();
 		$this->adherent			= new stdClass();
 		$this->bank				= new stdClass();
 		$this->notification		= new stdClass();
 		$this->mailing			= new stdClass();
-		$this->expensereport		= new stdClass();
+		$this->expensereport	= new stdClass();
 		$this->productbatch		= new stdClass();
 	}
 
@@ -347,6 +347,9 @@ class Conf
 			$this->fournisseur->facture=new stdClass();
 			$this->fournisseur->facture->dir_output =$rootfordata."/fournisseur/facture";
 			$this->fournisseur->facture->dir_temp   =$rootfordata."/fournisseur/facture/temp";
+			$this->supplierproposal=new stdClass();
+			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
+			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
 			$this->fournisseur->payment=new stdClass();
 			$this->fournisseur->payment->dir_output =$rootfordata."/fournisseur/payment";
 			$this->fournisseur->payment->dir_temp   =$rootfordata."/fournisseur/payment/temp";
@@ -362,6 +365,9 @@ class Conf
     			$this->supplier_invoice->enabled=1;
     			$this->supplier_invoice->dir_output=$rootfordata."/fournisseur/facture";
     			$this->supplier_invoice->dir_temp=$rootfordata."/fournisseur/facture/temp";
+    			$this->supplierproposal=new stdClass();
+    			$this->supplierproposal->dir_output=$rootfordata."/supplier_proposal";
+    			$this->supplierproposal->dir_temp=$rootfordata."/supplier_proposal/temp";
 			}
 		}
 

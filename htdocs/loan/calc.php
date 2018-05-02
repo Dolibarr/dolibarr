@@ -28,7 +28,7 @@ $default_sale_price              = "150000";
 $default_annual_interest_percent = 7.0;
 $default_year_term               = 30;
 $default_down_percent            = 10;
-$default_show_progress           = TRUE;
+$default_show_progress           = true;
 
 /* --------------------------------------------------- *
  * Initialize Variables
@@ -241,7 +241,7 @@ if ($form_complete && $monthly_payment)
 	print '</td>';
 	print '</tr>';
 	*/
-	
+
 	print '<tr valign="top" bgcolor="#9999FF">';
 	print '<td align="right">TOTAL Monthly Payment:</td>';
 	print '<td><b>' . number_format(($monthly_payment + $pmi_per_month + $residential_monthly_tax), "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</b><br><font>';
@@ -352,7 +352,7 @@ if ($form_complete && $show_progress) {
 		print '<td align="right">' . number_format($remaining_balance, "2", ".", ",") . ' ' . $langs->trans("Currency".$conf->currency) . '</td>';
 		print '</tr>';
 
-		($current_month % 12) ? $show_legend = FALSE : $show_legend = TRUE;
+		($current_month % 12) ? ($show_legend = false) : ($show_legend = true);
 
 		if ($show_legend) {
 			print '<tr>';

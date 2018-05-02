@@ -893,8 +893,9 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
 				{
 					print '<tr class="oddeven trforbreak">'."\n";
-					print '<td colspan="11">';
-					print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+					print '<td colspan="9">';
+					print $projectstatic->getNomUrl(1,'',0,'<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
+					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);
 					if ($projectstatic->title)
 					{
 						print ' - ';
@@ -916,14 +917,14 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
 				*/
 
 				// Project
-				print "<td>";
+				/*print "<td>";
 				if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
-				print "</td>";
+				print "</td>";*/
 
 				// Thirdparty
-				print '<td class="tdoverflowmax100">';
+				/*print '<td class="tdoverflowmax100">';
 				if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project', 10);
-				print '</td>';
+				print '</td>';*/
 
 				// Ref
 				print '<td>';
@@ -1176,8 +1177,9 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				if (empty($oldprojectforbreak) || ($oldprojectforbreak != -1 && $oldprojectforbreak != $projectstatic->id))
 				{
 					print '<tr class="oddeven trforbreak">'."\n";
-					print '<td colspan="15">';
-					print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
+					print '<td colspan="13">';
+					print $projectstatic->getNomUrl(1,'',0,'<strong>'.$langs->transnoentitiesnoconv("YourRole").':</strong> '.$projectsrole[$lines[$i]->fk_project]);
+					if ($thirdpartystatic->id > 0) print ' - '.$thirdpartystatic->getNomUrl(1);
 					if ($projectstatic->title)
 					{
 						print ' - ';
@@ -1199,14 +1201,14 @@ function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$
 				*/
 
 				// Project
-				print '<td class="nowrap">';
+				/*print '<td class="nowrap">';
 				if ($oldprojectforbreak == -1) print $projectstatic->getNomUrl(1,'',0,$langs->transnoentitiesnoconv("YourRole").': '.$projectsrole[$lines[$i]->fk_project]);
-				print "</td>";
+				print "</td>";*/
 
 				// Thirdparty
-				print '<td class="tdoverflowmax100">';
+				/*print '<td class="tdoverflowmax100">';
 				if ($thirdpartystatic->id > 0) print $thirdpartystatic->getNomUrl(1, 'project');
-				print '</td>';
+				print '</td>';*/
 
 				// Ref
 				print '<td class="nowrap">';

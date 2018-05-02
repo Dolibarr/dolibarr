@@ -42,7 +42,7 @@ $search_label = GETPOST('search_label','alpha');
 $search_amount = GETPOST('search_amount','alpha');
 $search_status = GETPOST('search_status','int');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -149,7 +149,9 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->tax->charges->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create">'.$langs->trans('MenuNewSocialContribution').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/sociales/card.php?action=create">'.$langs->trans('MenuNewSocialContribution');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';

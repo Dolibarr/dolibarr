@@ -1279,20 +1279,15 @@ else
 		            print '<div class="tabsAction">';
 
                     // Boutons d'actions
-                    if ($cancreate && $object->statut == 1)
+		            if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit" class="butAction">'.$langs->trans("EditCP").'</a>';
                     }
-                    if ($cancreate && $object->statut == 1)		// If draft
+                    if ($cancreate && $object->statut == Holiday::STATUS_DRAFT)		// If draft
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=sendToValidate" class="butAction">'.$langs->trans("Validate").'</a>';
                     }
-                    if ($user->rights->holiday->delete && ($object->statut == 1 || $object->statut == 4 || $object->statut == 5))	// If draft or canceled or refused
-                    {
-                    	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
-                    }
-
-                    if ($object->statut == 2)	// If validated
+                    if ($object->statut == Holiday::STATUS_VALIDATED)	// If validated
                     {
                         if ($user->id == $object->fk_validator)
                         {
@@ -1305,16 +1300,18 @@ else
                             print '<a href="#" class="butActionRefused" title="'.$langs->trans("NotTheAssignedApprover").'">'.$langs->trans("ActionRefuseCP").'</a>';
                         }
                     }
-
                     if (($user->id == $object->fk_validator || in_array($object->fk_user, $childids) || ! empty($user->rights->holiday->write_all)) && ($object->statut == 2 || $object->statut == 3))	// Status validated or approved
                     {
                     	if (($object->date_debut > dol_now()) || $user->admin) print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=cancel" class="butAction">'.$langs->trans("ActionCancelCP").'</a>';
                     	else print '<a href="#" class="butActionRefused" title="'.$langs->trans("HolidayStarted").'">'.$langs->trans("ActionCancelCP").'</a>';
                     }
-
-                    if ($cancreate && $object->statut == 4)
+                    if ($cancreate && $object->statut == Holiday::STATUS_CANCELED)
                     {
                         print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=backtodraft" class="butAction">'.$langs->trans("SetToDraft").'</a>';
+                    }
+                    if ($user->rights->holiday->delete && ($object->statut == Holiday::STATUS_DRAFT || $object->statut == Holiday::STATUS_CANCELED || $object->statut == Holiday::STATUS_REFUSED))	// If draft or canceled or refused
+                    {
+                    	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=delete" class="butActionDelete">'.$langs->trans("DeleteCP").'</a>';
                     }
 
                     print '</div>';

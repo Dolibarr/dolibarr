@@ -30,7 +30,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/ccountry.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
@@ -84,10 +91,6 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
-// Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
-$modecompta = $conf->global->ACCOUNTING_MODE;
-if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
-
 
 
 /*
@@ -96,13 +99,19 @@ if (GETPOST("modecompta")) $modecompta=GETPOST("modecompta");
 
 $form=new Form($db);
 $company_static=new Societe($db);
+$invoice_customer=new Facture($db);
+$invoice_supplier=new FactureFournisseur($db);
+$expensereport=new ExpenseReport($db);
+$product_static=new Product($db);
+$payment_static=new Paiement($db);
+$paymentfourn_static=new PaiementFourn($db);
+$paymentexpensereport_static=new PaymentExpenseReport($db);
 
 $morequerystring='';
 $listofparams=array('date_startmonth','date_startyear','date_startday','date_endmonth','date_endyear','date_endday');
-foreach($listofparams as $param) {
-	if (GETPOST($param)!='') {
-		$morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
-	}
+foreach ($listofparams as $param)
+{
+	if (GETPOST($param)!='') $morequerystring.=($morequerystring?'&':'').$param.'='.GETPOST($param);
 }
 
 $special_report = false;
@@ -118,15 +127,28 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 $fsearch.='  '.$langs->trans("SalesTurnoverMinimum").': ';
 $fsearch.='  <input type="text" name="min" id="min" value="'.$min.'" size="6">';
 
-$description='';
-
 // Show report header
-$name=$langs->trans("VATReportByCustomers");
+$name=$langs->trans("VATReportByThirdParties");
 $calcmode='';
 if ($modetax == 0) $calcmode=$langs->trans('OptionVATDefault');
 if ($modetax == 1) $calcmode=$langs->trans('OptionVATDebitOption');
 if ($modetax == 2) $calcmode=$langs->trans('OptionPaymentForProductAndServices');
 $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
+// Set period
+$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+$prevyear=$year_start; $prevquarter=$q;
+if ($prevquarter > 1) {
+	$prevquarter--;
+} else {
+	$prevquarter=4; $prevyear--;
+}
+$nextyear=$year_start; $nextquarter=$q;
+if ($nextquarter < 4) {
+	$nextquarter++;
+} else {
+	$nextquarter=1; $nextyear++;
+}
+$builddate=dol_now();
 
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'invoice') $description.=$langs->trans("RulesVATDueProducts");
 if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment') $description.=$langs->trans("RulesVATInProducts");
@@ -137,23 +159,24 @@ if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 }
 if (! empty($conf->global->MAIN_MODULE_ACCOUNTING)) $description.='<br>'.$langs->trans("ThisIsAnEstimatedValue");
 
-$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 //$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start-1)."&modetax=".$modetax."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+1)."&modetax=".$modetax."'>".img_next()."</a>":"");
 $description.=$fsearch;
-$description.='<br>'
-	. '<input type="radio" name="extra_report" value="0" '.($special_report?'':'checked="checked"').'> '
-	. $langs->trans('SimpleReport')
-	. '</input>'
-	. '<br>'
-	. '<input type="radio" name="extra_report" value="1" '.($special_report?'checked="checked"':'').'> '
-	. $langs->trans('AddExtraReport')
-	. '</input>'
-	. '<br>';
-$builddate=dol_now();
-//$exportlink=$langs->trans("NotYetAvailable");
+if (! empty($conf->global->TAX_REPORT_EXTRA_REPORT))
+{
+	$description.='<br>'
+		. '<input type="radio" name="extra_report" value="0" '.($special_report?'':'checked="checked"').'> '
+		. $langs->trans('SimpleReport')
+		. '</input>'
+		. '<br>'
+		. '<input type="radio" name="extra_report" value="1" '.($special_report?'checked="checked"':'').'> '
+		. $langs->trans('AddExtraReport')
+		. '</input>'
+		. '<br>';
+}
 
 $elementcust=$langs->trans("CustomersInvoices");
 $productcust=$langs->trans("Description");
+$namerate=$langs->trans("VATRate");
 $amountcust=$langs->trans("AmountHT");
 if ($mysoc->tva_assuj) {
 	$vatcust.=' ('.$langs->trans("ToPay").')';
@@ -172,151 +195,546 @@ $vatsup=$langs->trans("VATPaid");
 
 // VAT Received
 
-//print "<br>";
-//print load_fiche_titre($vatcust);
-
 print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre\">";
-print '<td align="left">'.$langs->trans("Num")."</td>";
-print '<td align="left">'.$langs->trans("Customer")."</td>";
-print "<td>".$langs->trans("VATIntra")."</td>";
-print "<td align=\"right\">".$langs->trans("AmountHTVATRealReceived")."</td>";
-print "<td align=\"right\">".$vatcust."</td>";
-print "</tr>\n";
 
-$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
+$y = $year_current;
+$total = 0;
+$i=0;
+$columns = 5;
 
-$action = "tvaclient";
-$object = &$coll_list;
-$parameters["mode"] = $modetax;
-$parameters["start"] = $date_start;
-$parameters["end"] = $date_end;
-$parameters["direction"] = 'sell';
-$parameters["type"] = 'vat';
+// Load arrays of datas
+$x_coll = tax_by_thirdparty('vat', $db, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = tax_by_thirdparty('vat', $db, 0, $date_start, $date_end, $modetax, 'buy');
 
-// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
-$hookmanager->initHooks(array('externalbalance'));
-$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-
-if (is_array($coll_list)) {
-	$var=true;
-	$total = 0;  $totalamount = 0;
-	$i = 1;
-	foreach ($coll_list as $coll) {
-		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-
-			$intra = str_replace($find,$replace,$coll->tva_intra);
-			if(empty($intra)) {
-				if($coll->assuj == '1') {
-					$intra = $langs->trans('Unknown');
-				} else {
-					//$intra = $langs->trans('NotRegistered');
-					$intra = '';
-				}
-			}
-			print '<tr class="oddeven">';
-			print '<td class="nowrap">'.$i."</td>";
-			$company_static->id=$coll->socid;
-			$company_static->name=$coll->name;
-			$company_static->client=1;
-			print '<td class="nowrap">'.$company_static->getNomUrl(1,'customer').'</td>';
-			$find = array(' ','.');
-			$replace = array('','');
-			print '<td class="nowrap">'.$intra."</td>";
-			print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
-			print "<td class=\"nowrap\" align=\"right\">".price($coll->tva)."</td>";
-			$totalamount = $totalamount + $coll->amount;
-			$total = $total + $coll->tva;
-			print "</tr>\n";
-			$i++;
-		}
-	}
-	$x_coll_sum = $total;
-
-	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-	print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
-	print '<td class="nowrap" align="right">'.price($total).'</td>';
-	print '</tr>';
-} else {
+if (! is_array($x_coll) || ! is_array($x_paye))
+{
 	$langs->load("errors");
-	if ($coll_list == -1) {
-		if ($modecompta == 'CREANCES-DETTES')
-		{
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
-		}
-		else
-		{
-			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-		}
-	} else if ($coll_list == -2) {
-		print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
+	if ($x_coll == -1) {
+		print '<tr><td colspan="' . $columns . '">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
+	} else if ($x_coll == -2) {
+		print '<tr><td colspan="' . $columns . '">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
 	} else {
-		print '<tr><td colspan="5">' . $langs->trans("Error") . '</td></tr>';
+		print '<tr><td colspan="' . $columns . '">' . $langs->trans("Error") . '</td></tr>';
 	}
-}
-
-//print '</table>';
-
-
-// VAT Paid
-
-//print "<br>";
-//print load_fiche_titre($vatsup);
-
-//print "<table class=\"noborder\" width=\"100%\">";
-print "<tr class=\"liste_titre liste_titre_topborder\">";
-print '<td align="left">'.$langs->trans("Num")."</td>";
-print '<td align="left">'.$langs->trans("Supplier")."</td>";
-print "<td>".$langs->trans("VATIntra")."</td>";
-print "<td align=\"right\">".$langs->trans("AmountHTVATRealPaid")."</td>";
-print "<td align=\"right\">".$vatsup."</td>";
-print "</tr>\n";
-
-$company_static=new Societe($db);
-
-$coll_list = vat_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
-
-$parameters["direction"] = 'buy';
-$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-if (is_array($coll_list)) {
-	$var=true;
-	$total = 0;  $totalamount = 0;
-	$i = 1;
-	foreach ($coll_list as $coll) {
-		if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-
-			$intra = str_replace($find,$replace,$coll->tva_intra);
-			if (empty($intra)) {
-				if ($coll->assuj == '1') {
-					$intra = $langs->trans('Unknown');
-				} else {
-					//$intra = $langs->trans('NotRegistered');
-					$intra = '';
-				}
-			}
-			print '<tr class="oddeven">';
-			print '<td class="nowrap">'.$i."</td>";
-			$company_static->id=$coll->socid;
-			$company_static->name=$coll->name;
-			$company_static->fournisseur=1;
-			print '<td class="nowrap">'.$company_static->getNomUrl(1,'supplier').'</td>';
-			$find = array(' ','.');
-			$replace = array('','');
-			print '<td class="nowrap">'.$intra."</td>";
-			print "<td class=\"nowrap\" align=\"right\">".price($coll->amount)."</td>";
-			print "<td class=\"nowrap\" align=\"right\">".price($coll->tva)."</td>";
-			$totalamount = $totalamount + $coll->amount;
-			$total = $total + $coll->tva;
-			print "</tr>\n";
-			$i++;
+} else {
+	$x_both = array();
+	//now, from these two arrays, get another array with one rate per line
+	foreach(array_keys($x_coll) as $my_coll_thirdpartyid)
+	{
+		$x_both[$my_coll_thirdpartyid]['coll']['totalht'] = $x_coll[$my_coll_thirdpartyid]['totalht'];
+		$x_both[$my_coll_thirdpartyid]['coll']['vat']	 = $x_coll[$my_coll_thirdpartyid]['vat'];
+		$x_both[$my_coll_thirdpartyid]['paye']['totalht'] = 0;
+		$x_both[$my_coll_thirdpartyid]['paye']['vat'] = 0;
+		$x_both[$my_coll_thirdpartyid]['coll']['links'] = '';
+		$x_both[$my_coll_thirdpartyid]['coll']['detail'] = array();
+		foreach($x_coll[$my_coll_thirdpartyid]['facid'] as $id=>$dummy) {
+			$invoice_customer->id=$x_coll[$my_coll_thirdpartyid]['facid'][$id];
+			$invoice_customer->ref=$x_coll[$my_coll_thirdpartyid]['facnum'][$id];
+			$invoice_customer->type=$x_coll[$my_coll_thirdpartyid]['type'][$id];
+			$company_static->fetch($x_coll[$my_coll_thirdpartyid]['company_id'][$id]);
+			$x_both[$my_coll_thirdpartyid]['coll']['detail'][] = array(
+			'id'        =>$x_coll[$my_coll_thirdpartyid]['facid'][$id],
+			'descr'     =>$x_coll[$my_coll_thirdpartyid]['descr'][$id],
+			'pid'       =>$x_coll[$my_coll_thirdpartyid]['pid'][$id],
+			'pref'      =>$x_coll[$my_coll_thirdpartyid]['pref'][$id],
+			'ptype'     =>$x_coll[$my_coll_thirdpartyid]['ptype'][$id],
+			'payment_id'=>$x_coll[$my_coll_thirdpartyid]['payment_id'][$id],
+			'payment_amount'=>$x_coll[$my_coll_thirdpartyid]['payment_amount'][$id],
+			'ftotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['ftotal_ttc'][$id],
+			'dtotal_ttc'=>$x_coll[$my_coll_thirdpartyid]['dtotal_ttc'][$id],
+			'dtype'     =>$x_coll[$my_coll_thirdpartyid]['dtype'][$id],
+			'drate'     =>$x_coll[$my_coll_thirdpartyid]['drate'][$id],
+			'datef'     =>$x_coll[$my_coll_thirdpartyid]['datef'][$id],
+			'datep'     =>$x_coll[$my_coll_thirdpartyid]['datep'][$id],
+			'company_link'=>$company_static->getNomUrl(1,'',20),
+			'ddate_start'=>$x_coll[$my_coll_thirdpartyid]['ddate_start'][$id],
+			'ddate_end'  =>$x_coll[$my_coll_thirdpartyid]['ddate_end'][$id],
+			'totalht'   =>$x_coll[$my_coll_thirdpartyid]['totalht_list'][$id],
+			'vat'       =>$x_coll[$my_coll_thirdpartyid]['vat_list'][$id],
+			'link'      =>$invoice_customer->getNomUrl(1,'',12)
+			);
 		}
 	}
-	$x_paye_sum = $total;
+	// tva paid
+	foreach (array_keys($x_paye) as $my_paye_thirdpartyid) {
+		$x_both[$my_paye_thirdpartyid]['paye']['totalht'] = $x_paye[$my_paye_thirdpartyid]['totalht'];
+		$x_both[$my_paye_thirdpartyid]['paye']['vat'] = $x_paye[$my_paye_thirdpartyid]['vat'];
+		if (!isset($x_both[$my_paye_thirdpartyid]['coll']['totalht'])) {
+			$x_both[$my_paye_thirdpartyid]['coll']['totalht'] = 0;
+			$x_both[$my_paye_thirdpartyid]['coll']['vat'] = 0;
+		}
+		$x_both[$my_paye_thirdpartyid]['paye']['links'] = '';
+		$x_both[$my_paye_thirdpartyid]['paye']['detail'] = array();
 
-	print '<tr class="liste_total"><td align="right" colspan="3">'.$langs->trans("Total").':</td>';
-	print '<td class="nowrap" align="right">'.price($totalamount).'</td>';
-	print '<td class="nowrap" align="right">'.price($total).'</td>';
+		foreach ($x_paye[$my_paye_thirdpartyid]['facid'] as $id=>$dummy)
+		{
+			// ExpenseReport
+			if ($x_paye[$my_paye_thirdpartyid]['ptype'][$id] == 'ExpenseReportPayment')
+			{
+				$expensereport->id=$x_paye[$my_paye_thirdpartyid]['facid'][$id];
+				$expensereport->ref=$x_paye[$my_paye_thirdpartyid]['facnum'][$id];
+				$expensereport->type=$x_paye[$my_paye_thirdpartyid]['type'][$id];
+
+				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
+				'id'				=>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
+				'descr'				=>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+				'pid'				=>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
+				'pref'				=>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
+				'ptype'				=>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+				'payment_id'		=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+				'payment_amount'	=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
+				'ftotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
+				'dtotal_ttc'		=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
+				'dtype'				=>$x_paye[$my_paye_thirdpartyid]['dtype'][$id],
+				'drate'             =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
+				'ddate_start'		=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
+				'ddate_end'			=>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
+				'totalht'			=>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
+				'vat'				=>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
+				'link'				=>$expensereport->getNomUrl(1)
+				);
+			}
+			else
+			{
+				$invoice_supplier->id=$x_paye[$my_paye_thirdpartyid]['facid'][$id];
+				$invoice_supplier->ref=$x_paye[$my_paye_thirdpartyid]['facnum'][$id];
+				$invoice_supplier->type=$x_paye[$my_paye_thirdpartyid]['type'][$id];
+				$company_static->fetch($x_paye[$my_paye_thirdpartyid]['company_id'][$id]);
+				$x_both[$my_paye_thirdpartyid]['paye']['detail'][] = array(
+				'id'        =>$x_paye[$my_paye_thirdpartyid]['facid'][$id],
+				'descr'     =>$x_paye[$my_paye_thirdpartyid]['descr'][$id],
+				'pid'       =>$x_paye[$my_paye_thirdpartyid]['pid'][$id],
+				'pref'      =>$x_paye[$my_paye_thirdpartyid]['pref'][$id],
+				'ptype'     =>$x_paye[$my_paye_thirdpartyid]['ptype'][$id],
+				'payment_id'=>$x_paye[$my_paye_thirdpartyid]['payment_id'][$id],
+				'payment_amount'=>$x_paye[$my_paye_thirdpartyid]['payment_amount'][$id],
+				'ftotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['ftotal_ttc'][$id]),
+				'dtotal_ttc'=>price2num($x_paye[$my_paye_thirdpartyid]['dtotal_ttc'][$id]),
+				'dtype'     =>$x_paye[$my_paye_thirdpartyid]['dtype'][$id],
+				'drate'     =>$x_paye[$my_coll_thirdpartyid]['drate'][$id],
+				'datef'     =>$x_paye[$my_paye_thirdpartyid]['datef'][$id],
+				'datep'     =>$x_paye[$my_paye_thirdpartyid]['datep'][$id],
+				'company_link'=>$company_static->getNomUrl(1,'',20),
+				'ddate_start'=>$x_paye[$my_paye_thirdpartyid]['ddate_start'][$id],
+				'ddate_end'  =>$x_paye[$my_paye_thirdpartyid]['ddate_end'][$id],
+				'totalht'   =>price2num($x_paye[$my_paye_thirdpartyid]['totalht_list'][$id]),
+				'vat'       =>$x_paye[$my_paye_thirdpartyid]['vat_list'][$id],
+				'link'      =>$invoice_supplier->getNomUrl(1,'',12)
+				);
+			}
+		}
+	}
+	//now we have an array (x_both) indexed by rates for coll and paye
+
+
+	//print table headers for this quadri - incomes first
+
+	$x_coll_sum = 0;
+	$x_coll_ht = 0;
+	$x_paye_sum = 0;
+	$x_paye_ht = 0;
+
+	$span=$columns;
+	if ($modetax != 1) $span+=2;
+
+	//print '<tr><td colspan="'.($span+1).'">'..')</td></tr>';
+
+	// Customers invoices
+	print '<tr class="liste_titre">';
+	print '<td align="left">'.$elementcust.'</td>';
+	print '<td align="left">'.$langs->trans("DateInvoice").'</td>';
+	if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') print '<td align="left">'.$langs->trans("DatePayment").'</td>';
+	else print '<td></td>';
+	print '<td align="right">'.$namerate.'</td>';
+	print '<td align="left">'.$productcust.'</td>';
+	if ($modetax != 1)
+	{
+		print '<td align="right">'.$amountcust.'</td>';
+		print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
+	}
+	print '<td align="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
+	print '<td align="right">'.$vatcust.'</td>';
 	print '</tr>';
+
+	$action = "tvadetail";
+	$parameters["mode"] = $modetax;
+	$parameters["start"] = $date_start;
+	$parameters["end"] = $date_end;
+	$parameters["type"] = 'vat';
+
+	$object = array(&$x_coll, &$x_paye, &$x_both);
+	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
+	$hookmanager->initHooks(array('externalbalance'));
+	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+
+	foreach (array_keys($x_coll) as $thirdparty_id) {
+		$subtot_coll_total_ht = 0;
+		$subtot_coll_vat = 0;
+
+		if (is_array($x_both[$thirdparty_id]['coll']['detail']))
+		{
+
+			// VAT Rate
+			print "<tr>";
+			print '<td class="tax_rate">';
+			if (is_numeric($thirdparty_id))
+			{
+				$company_static->fetch($thirdparty_id);
+				print $langs->trans("ThirdParty").': '.$company_static->getNomUrl(1);
+			}
+			else
+			{
+				$tmpid = preg_replace('/userid_/','',$thirdparty_id);
+				$user_static->fetch($tmpid);
+				print $langs->trans("User").': '.$user_static->getNomUrl(1);
+			}
+			print '</td><td colspan="'.($span+1).'"></td>';
+			print '</tr>'."\n";
+
+			foreach ($x_both[$thirdparty_id]['coll']['detail'] as $index => $fields) {
+				// Define type
+				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
+				$type=(isset($fields['dtype'])?$fields['dtype']:$fields['ptype']);
+				// Try to enhance type detection using date_start and date_end for free lines where type
+				// was not saved.
+				if (!empty($fields['ddate_start'])) {
+					$type=1;
+				}
+				if (!empty($fields['ddate_end'])) {
+					$type=1;
+				}
+
+
+				print '<tr class="oddeven">';
+
+				// Ref
+				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
+
+				// Invoice date
+				print '<td align="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
+
+				// Payment date
+				if ($conf->global->TAX_MODE_SELL_PRODUCT == 'payment' || $conf->global->TAX_MODE_SELL_SERVICE == 'payment') print '<td align="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
+				else print '<td></td>';
+
+				// Rate
+				print '<td align="right">' . $fields['drate'] . '</td>';
+
+				// Description
+				print '<td align="left">';
+				if ($fields['pid'])
+				{
+					$product_static->id=$fields['pid'];
+					$product_static->ref=$fields['pref'];
+					$product_static->type=$fields['dtype'];		// We force with the type of line to have type how line is registered
+					print $product_static->getNomUrl(1);
+					if (dol_string_nohtmltag($fields['descr'])) {
+						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
+					}
+				}
+				else
+				{
+					if ($type) {
+						$text = img_object($langs->trans('Service'),'service');
+					} else {
+						$text = img_object($langs->trans('Product'),'product');
+					}
+					if (preg_match('/^\((.*)\)$/',$fields['descr'],$reg)) {
+						if ($reg[1]=='DEPOSIT') {
+							$fields['descr']=$langs->transnoentitiesnoconv('Deposit');
+						} elseif ($reg[1]=='CREDIT_NOTE') {
+							$fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
+						} else {
+							$fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
+						}
+					}
+					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
+
+					// Show range
+					print_date_range($fields['ddate_start'],$fields['ddate_end']);
+				}
+				print '</td>';
+
+				// Total HT
+				if ($modetax != 1)
+				{
+					print '<td class="nowrap" align="right">';
+					print price($fields['totalht']);
+					if (price2num($fields['ftotal_ttc']))
+					{
+						//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
+						$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
+						//print ' ('.round($ratiolineinvoice*100,2).'%)';
+					}
+					print '</td>';
+				}
+
+				// Payment
+				$ratiopaymentinvoice=1;
+				if ($modetax != 1)
+				{
+					print '<td class="nowrap" align="right">';
+					//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
+					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
+					{
+						$payment_static->id=$fields['payment_id'];
+						print $payment_static->getNomUrl(2);
+					}
+					if (($type == 0 && $conf->global->TAX_MODE_SELL_PRODUCT == 'invoice')
+						|| ($type == 1 && $conf->global->TAX_MODE_SELL_SERVICE == 'invoice'))
+					{
+						print $langs->trans("NA");
+					} else {
+						if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) {
+							$ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+						}
+						print price(price2num($fields['payment_amount'],'MT'));
+						if (isset($fields['payment_amount'])) {
+							print ' ('.round($ratiopaymentinvoice*100,2).'%)';
+						}
+					}
+					print '</td>';
+				}
+
+				// Total collected
+				print '<td class="nowrap" align="right">';
+				$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
+				print price(price2num($temp_ht,'MT'),1);
+				print '</td>';
+
+				// VAT
+				print '<td class="nowrap" align="right">';
+				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
+				print price(price2num($temp_vat,'MT'),1);
+				//print price($fields['vat']);
+				print '</td>';
+				print '</tr>';
+
+				$subtot_coll_total_ht += $temp_ht;
+				$subtot_coll_vat      += $temp_vat;
+				$x_coll_sum           += $temp_vat;
+			}
+		}
+		// Total customers for this vat rate
+		print '<tr class="liste_total">';
+		print '<td colspan="4"></td>';
+		print '<td align="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1) {
+			print '<td class="nowrap" align="right">&nbsp;</td>';
+			print '<td align="right">&nbsp;</td>';
+		}
+		print '<td align="right">'.price(price2num($subtot_coll_total_ht,'MT')).'</td>';
+		print '<td class="nowrap" align="right">'.price(price2num($subtot_coll_vat,'MT')).'</td>';
+		print '</tr>';
+	}
+
+	if (count($x_coll) == 0)   // Show a total ine if nothing shown
+	{
+		print '<tr class="liste_total">';
+		print '<td colspan="4"></td>';
+		print '<td align="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1) {
+			print '<td class="nowrap" align="right">&nbsp;</td>';
+			print '<td align="right">&nbsp;</td>';
+		}
+		print '<td align="right">'.price(price2num(0,'MT')).'</td>';
+		print '<td class="nowrap" align="right">'.price(price2num(0,'MT')).'</td>';
+		print '</tr>';
+	}
+
+	// Blank line
+	print '<tr><td colspan="'.($span+1).'">&nbsp;</td></tr>';
+
+	// Print table headers for this quadri - expenses now
+	print '<tr class="liste_titre liste_titre_topborder">';
+	print '<td align="left">'.$elementsup.'</td>';
+	print '<td align="left">'.$langs->trans("DateInvoice").'</td>';
+	if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') print '<td align="left">'.$langs->trans("DatePayment").'</td>';
+	else print '<td></td>';
+	print '<td align="left">'.$namesup.'</td>';
+	print '<td align="left">'.$productsup.'</td>';
+	if ($modetax != 1) {
+		print '<td align="right">'.$amountsup.'</td>';
+		print '<td align="right">'.$langs->trans("Payment").' ('.$langs->trans("PercentOfInvoice").')</td>';
+	}
+	print '<td align="right">'.$langs->trans("AmountHTVATRealPaid").'</td>';
+	print '<td align="right">'.$vatsup.'</td>';
+	print '</tr>'."\n";
+
+	foreach (array_keys($x_paye) as $thirdparty_id)
+	{
+		$subtot_paye_total_ht = 0;
+		$subtot_paye_vat = 0;
+
+		if (is_array($x_both[$thirdparty_id]['paye']['detail']))
+		{
+			print "<tr>";
+			print '<td class="tax_rate">';
+			if (is_numeric($thirdparty_id))
+			{
+				$company_static->fetch($thirdparty_id);
+				print $langs->trans("ThirdParty").': '.$company_static->getNomUrl(1);
+			}
+			else
+			{
+				$tmpid = preg_replace('/userid_/','',$thirdparty_id);
+				$user_static->fetch($tmpid);
+				print $langs->trans("User").': '.$user_static->getNomUrl(1);
+			}
+			print '<td colspan="'.($span+1).'"></td>';
+			print '</tr>'."\n";
+
+			foreach ($x_both[$thirdparty_id]['paye']['detail'] as $index=>$fields) {
+				// Define type
+				// We MUST use dtype (type in line). We can use something else, only if dtype is really unknown.
+				$type=(isset($fields['dtype'])?$fields['dtype']:$fields['ptype']);
+				// Try to enhance type detection using date_start and date_end for free lines where type
+				// was not saved.
+				if (!empty($fields['ddate_start'])) {
+					$type=1;
+				}
+				if (!empty($fields['ddate_end'])) {
+					$type=1;
+				}
+
+
+				print '<tr class="oddeven">';
+
+				// Ref
+				print '<td class="nowrap" align="left">'.$fields['link'].'</td>';
+
+				// Invoice date
+				print '<td align="left">' . dol_print_date($fields['datef'], 'day') . '</td>';
+
+				// Payment date
+				if ($conf->global->TAX_MODE_BUY_PRODUCT == 'payment' || $conf->global->TAX_MODE_BUY_SERVICE == 'payment') print '<td align="left">' . dol_print_date($fields['datep'], 'day') . '</td>';
+				else print '<td></td>';
+
+				// Company name
+				print '<td align="left">' . $fields['company_link'] . '</td>';
+
+				// Description
+				print '<td align="left">';
+				if ($fields['pid'])
+				{
+					$product_static->id=$fields['pid'];
+					$product_static->ref=$fields['pref'];
+					$product_static->type=$fields['dtype'];		// We force with the type of line to have type how line is registered
+					print $product_static->getNomUrl(1);
+					if (dol_string_nohtmltag($fields['descr'])) {
+						print ' - '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
+					}
+				}
+				else
+				{
+					if ($type) {
+						$text = img_object($langs->trans('Service'),'service');
+					} else {
+						$text = img_object($langs->trans('Product'),'product');
+					}
+					if (preg_match('/^\((.*)\)$/',$fields['descr'],$reg)) {
+						if ($reg[1]=='DEPOSIT') {
+							$fields['descr']=$langs->transnoentitiesnoconv('Deposit');
+						} elseif ($reg[1]=='CREDIT_NOTE') {
+							$fields['descr']=$langs->transnoentitiesnoconv('CreditNote');
+						} else {
+							$fields['descr']=$langs->transnoentitiesnoconv($reg[1]);
+						}
+					}
+					print $text.' '.dol_trunc(dol_string_nohtmltag($fields['descr']),24);
+
+					// Show range
+					print_date_range($fields['ddate_start'],$fields['ddate_end']);
+				}
+				print '</td>';
+
+				// Total HT
+				if ($modetax != 1)
+				{
+					print '<td class="nowrap" align="right">';
+					print price($fields['totalht']);
+					if (price2num($fields['ftotal_ttc']))
+					{
+						//print $fields['dtotal_ttc']."/".$fields['ftotal_ttc']." - ";
+						$ratiolineinvoice=($fields['dtotal_ttc']/$fields['ftotal_ttc']);
+						//print ' ('.round($ratiolineinvoice*100,2).'%)';
+					}
+					print '</td>';
+				}
+
+				// Payment
+				$ratiopaymentinvoice=1;
+				if ($modetax != 1)
+				{
+					print '<td class="nowrap" align="right">';
+					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
+					{
+						$paymentfourn_static->id=$fields['payment_id'];
+						print $paymentfourn_static->getNomUrl(2);
+					}
+
+					if (($type == 0 && $conf->global->TAX_MODE_BUY_PRODUCT == 'invoice')
+						|| ($type == 1 && $conf->global->TAX_MODE_BUY_SERVICE == 'invoice'))
+					{
+						print $langs->trans("NA");
+					}
+					else
+					{
+						if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) {
+							$ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+						}
+						print price(price2num($fields['payment_amount'],'MT'));
+						if (isset($fields['payment_amount'])) {
+							print ' ('.round($ratiopaymentinvoice*100,2).'%)';
+						}
+					}
+					print '</td>';
+				}
+
+				// VAT paid
+				print '<td class="nowrap" align="right">';
+				$temp_ht=$fields['totalht']*$ratiopaymentinvoice;
+				print price(price2num($temp_ht,'MT'),1);
+				print '</td>';
+
+				// VAT
+				print '<td class="nowrap" align="right">';
+				$temp_vat=$fields['vat']*$ratiopaymentinvoice;
+				print price(price2num($temp_vat,'MT'),1);
+				//print price($fields['vat']);
+				print '</td>';
+				print '</tr>';
+
+				$subtot_paye_total_ht += $temp_ht;
+				$subtot_paye_vat	  += $temp_vat;
+				$x_paye_sum		   += $temp_vat;
+			}
+		}
+		// Total suppliers for this vat rate
+		print '<tr class="liste_total">';
+		print '<td colspan="4"></td>';
+		print '<td align="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1) {
+			print '<td class="nowrap" align="right">&nbsp;</td>';
+			print '<td align="right">&nbsp;</td>';
+		}
+		print '<td align="right">'.price(price2num($subtot_paye_total_ht,'MT')).'</td>';
+		print '<td class="nowrap" align="right">'.price(price2num($subtot_paye_vat,'MT')).'</td>';
+		print '</tr>';
+	}
+
+	if (count($x_paye) == 0) {  // Show a total line if nothing shown
+		print '<tr class="liste_total">';
+		print '<td colspan="4"></td>';
+		print '<td align="right">'.$langs->trans("Total").':</td>';
+		if ($modetax != 1) {
+			print '<td class="nowrap" align="right">&nbsp;</td>';
+			print '<td align="right">&nbsp;</td>';
+		}
+		print '<td align="right">'.price(price2num(0,'MT')).'</td>';
+		print '<td class="nowrap" align="right">'.price(price2num(0,'MT')).'</td>';
+		print '</tr>';
+	}
 
 	print '</table>';
 
@@ -325,198 +743,15 @@ if (is_array($coll_list)) {
 	print '<table class="noborder" width="100%">';
 	$diff = $x_coll_sum - $x_paye_sum;
 	print '<tr class="liste_total">';
-	print '<td class="liste_total" colspan="4">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
+	print '<td class="liste_total" colspan="'.$span.'">'.$langs->trans("TotalToPay").($q?', '.$langs->trans("Quadri").' '.$q:'').'</td>';
 	print '<td class="liste_total nowrap" align="right"><b>'.price(price2num($diff,'MT'))."</b></td>\n";
 	print "</tr>\n";
 
-} else {
-	$langs->load("errors");
-	if ($coll_list == -1) {
-		if ($modecompta == 'CREANCES-DETTES')
-		{
-			print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
-		}
-		else
-		{
-			print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-		}
-	} else if ($coll_list == -2) {
-		print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-	} else {
-		print '<tr><td colspan="5">' . $langs->trans("Error") . '</td></tr>';
-	}
+	$i++;
 }
 
 print '</table>';
 
-if ($special_report) {
-	// Get country 2-letters code
-	global $mysoc;
-	$country_id = $mysoc->country_id;
-	$country = new Ccountry($db);
-	$country->fetch($country_id);
-
-	// Print listing of other-country customers as additional report
-	// This matches tax requirements to list all same-country customers (only)
-	print '<h3>'.$langs->trans('OtherCountriesCustomersReport').'</h3>';
-	print $langs->trans('BasedOnTwoFirstLettersOfVATNumberBeingDifferentFromYourCompanyCountry');
-	$coll_list = vat_by_thirdparty($db, 0, $date_start, $date_end, $modetax, 'sell');
-
-	print "<table class=\"noborder\" width=\"100%\">";
-	print "<tr class=\"liste_titre\">";
-	print '<td align="left">' . $langs->trans("Num") . "</td>";
-	print '<td align="left">' . $langs->trans("Customer") . "</td>";
-	print "<td>" . $langs->trans("VATIntra") . "</td>";
-	print "<td align=\"right\">" . $langs->trans("AmountHTVATRealReceived") . "</td>";
-	print "<td align=\"right\">" . $vatcust . "</td>";
-	print "</tr>\n";
-
-	if (is_array($coll_list)) {
-		$var = true;
-		$total = 0;
-		$totalamount = 0;
-		$i = 1;
-		foreach ($coll_list as $coll) {
-			if (substr($coll->tva_intra, 0, 2) == $country->code) {
-				// Only use different-country VAT codes
-				continue;
-			}
-			if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-				$var = !$var;
-				$intra = str_replace($find, $replace, $coll->tva_intra);
-				if (empty($intra)) {
-					if ($coll->assuj == '1') {
-						$intra = $langs->trans('Unknown');
-					} else {
-						//$intra = $langs->trans('NotRegistered');
-						$intra = '';
-					}
-				}
-				print "<tr " . $bc[$var] . ">";
-				print '<td class="nowrap">' . $i . "</td>";
-				$company_static->id = $coll->socid;
-				$company_static->name = $coll->name;
-				$company_static->client = 1;
-				print '<td class="nowrap">' . $company_static->getNomUrl(1,
-						'customer') . '</td>';
-				$find = array(' ', '.');
-				$replace = array('', '');
-				print '<td class="nowrap">' . $intra . "</td>";
-				print "<td class=\"nowrap\" align=\"right\">" . price($coll->amount) . "</td>";
-				print "<td class=\"nowrap\" align=\"right\">" . price($coll->tva) . "</td>";
-				$totalamount = $totalamount + $coll->amount;
-				$total = $total + $coll->tva;
-				print "</tr>\n";
-				$i++;
-			}
-		}
-		$x_coll_sum = $total;
-
-		print '<tr class="liste_total"><td align="right" colspan="3">' . $langs->trans("Total") . ':</td>';
-		print '<td class="nowrap" align="right">' . price($totalamount) . '</td>';
-		print '<td class="nowrap" align="right">' . price($total) . '</td>';
-		print '</tr>';
-	} else {
-		$langs->load("errors");
-		if ($coll_list == -1) {
-			if ($modecompta == 'CREANCES-DETTES')
-			{
-				print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
-			}
-			else
-			{
-				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-			}
-		} else {
-			if ($coll_list == -2) {
-				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-			} else {
-				print '<tr><td colspan="5">' . $langs->trans("Error") . '</td></tr>';
-			}
-		}
-	}
-	print '</table>';
-
-	// Print listing of same-country customers as additional report
-	// This matches tax requirements to list all same-country customers (only)
-	print '<h3>'.$langs->trans('SameCountryCustomersWithVAT').'</h3>';
-	print $langs->trans('BasedOnTwoFirstLettersOfVATNumberBeingTheSameAsYourCompanyCountry');
-	$coll_list = vat_by_thirdparty($db, 0, $date_start, $date_end, $modetax, 'sell');
-
-	print "<table class=\"noborder\" width=\"100%\">";
-	print "<tr class=\"liste_titre\">";
-	print '<td align="left">' . $langs->trans("Num") . "</td>";
-	print '<td align="left">' . $langs->trans("Customer") . "</td>";
-	print "<td>" . $langs->trans("VATIntra") . "</td>";
-	print "<td align=\"right\">" . $langs->trans("AmountHTVATRealReceived") . "</td>";
-	print "<td align=\"right\">" . $vatcust . "</td>";
-	print "</tr>\n";
-
-	if (is_array($coll_list)) {
-		$var = true;
-		$total = 0;
-		$totalamount = 0;
-		$i = 1;
-		foreach ($coll_list as $coll) {
-			if (substr($coll->tva_intra, 0, 2) != $country->code) {
-				// Only use same-country VAT codes
-				continue;
-			}
-			if ($min == 0 or ($min > 0 && $coll->amount > $min)) {
-				$var = !$var;
-				$intra = str_replace($find, $replace, $coll->tva_intra);
-				if (empty($intra)) {
-					if ($coll->assuj == '1') {
-						$intra = $langs->trans('Unknown');
-					} else {
-						//$intra = $langs->trans('NotRegistered');
-						$intra = '';
-					}
-				}
-				print "<tr " . $bc[$var] . ">";
-				print '<td class="nowrap">' . $i . "</td>";
-				$company_static->id = $coll->socid;
-				$company_static->name = $coll->name;
-				$company_static->client = 1;
-				print '<td class="nowrap">' . $company_static->getNomUrl(1, 'customer') . '</td>';
-				$find = array(' ', '.');
-				$replace = array('', '');
-				print '<td class="nowrap">' . $intra . "</td>";
-				print "<td class=\"nowrap\" align=\"right\">" . price($coll->amount) . "</td>";
-				print "<td class=\"nowrap\" align=\"right\">" . price($coll->tva) . "</td>";
-				$totalamount = $totalamount + $coll->amount;
-				$total = $total + $coll->tva;
-				print "</tr>\n";
-				$i++;
-			}
-		}
-		$x_coll_sum = $total;
-
-		print '<tr class="liste_total"><td align="right" colspan="3">' . $langs->trans("Total") . ':</td>';
-		print '<td class="nowrap" align="right">' . price($totalamount) . '</td>';
-		print '<td class="nowrap" align="right">' . price($total) . '</td>';
-		print '</tr>';
-	} else {
-		$langs->load("errors");
-		if ($coll_list == -1) {
-			if ($modecompta == 'CREANCES-DETTES')
-			{
-				print '<tr><td colspan="5">' . $langs->trans("ErrorNoAccountancyModuleLoaded") . '</td></tr>';
-			}
-			else
-			{
-				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-			}
-		} else {
-			if ($coll_list == -2) {
-				print '<tr><td colspan="5">' . $langs->trans("FeatureNotYetAvailable") . '</td></tr>';
-			} else {
-				print '<tr><td colspan="5">' . $langs->trans("Error") . '</td></tr>';
-			}
-		}
-	}
-	print '</table>';
-}
 
 llxFooter();
 

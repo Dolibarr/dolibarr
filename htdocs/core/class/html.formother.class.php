@@ -867,7 +867,7 @@ class FormOther
      *  @param	string		$morecss		More CSS
      *  @return	string
      */
-    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='')
+    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
     {
         print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option,$morecss);
     }
@@ -886,7 +886,7 @@ class FormOther
      *  @param	string	$morecss		More css
      *  @return	string
      */
-    function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='')
+    function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
     {
         $out='';
 

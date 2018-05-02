@@ -103,7 +103,7 @@ if ($option == 'late') {
 }
 $filtre	= GETPOST('filtre','alpha');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -515,6 +515,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1,$offset);
@@ -535,8 +540,8 @@ if ($resql)
 	}
 
 	$param='&socid='.$socid;
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall)				 $param.='&sall='.urlencode($sall);
 	if ($search_day)         $param.='&search_day='.urlencode($search_day);
 	if ($search_month)       $param.='&search_month='.urlencode($search_month);
@@ -592,7 +597,9 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->facture->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create">'.$langs->trans('NewBill').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create">'.$langs->trans('NewBill');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	$i = 0;

@@ -113,10 +113,10 @@ class FormTicketsup
     /**
      * Show the form to input ticket
      *
-     * @param  string $width Width of form
+     * @param  int	 $withdolfichehead			With dol_fiche_head
      * @return void
      */
-    public function showForm($width = '100%')
+    public function showForm($withdolfichehead=0)
     {
         global $conf, $langs, $user, $hookmanager;
 
@@ -140,7 +140,9 @@ class FormTicketsup
 
         print "\n<!-- Begin form TICKETSUP -->\n";
 
-        print '<form method="POST" style="margin-bottom: 30px;" name="ticketsup" id="form_create_ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
+        if ($withdolfichehead) dol_fiche_head(null, 'card', '', 0, '');
+
+        print '<form method="POST" '.($withdolfichehead?'':'style="margin-bottom: 30px;" ').'name="ticketsup" id="form_create_ticket" enctype="multipart/form-data" action="' . $this->param["returnurl"] . '">';
         print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         print '<input type="hidden" name="action" value="' . $this->action . '">';
         foreach ($this->param as $key => $value) {
@@ -148,8 +150,8 @@ class FormTicketsup
         }
         print '<input type="hidden" name="fk_user_create" value="' . $this->fk_user_create . '">';
 
-        print '<div class="">';
-        print '<table class="tableticket"  width="' . $width . '">';
+        dol_fiche_head('');
+        print '<table class="tableticket centpercent">';
 
 
         if ($this->withref) {
@@ -181,7 +183,7 @@ class FormTicketsup
                 print '<tr><td class="titlefield">' . $langs->trans("ThirdParty") . '</td><td>';
                 $events = array();
                 $events[] = array('method' => 'getContacts', 'url' => dol_buildpath('/core/ajax/contacts.php', 1), 'htmlname' => 'contactid', 'params' => array('add-customer-contact' => 'disabled'));
-                print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events);
+                print $form->select_company($this->withfromsocid, 'socid', '', 1, 1, '', $events, 0, 'minwidth200');
                 print '</td></tr>';
                 if (! empty($conf->use_javascript_ajax) && ! empty($conf->global->COMPANY_USE_SEARCH_TO_SELECT)) {
                     $htmlname = 'socid';
@@ -270,7 +272,7 @@ class FormTicketsup
             dol_include_once('/' . $element . '/class/' . $subelement . '.class.php');
             $classname = ucfirst($subelement);
             $objectsrc = new $classname($this->db);
-            $objectsrc->fetch(GETPOST('originid'));
+            $objectsrc->fetch(GETPOST('originid','int'));
 
             if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
                 $objectsrc->fetch_lines();
@@ -297,9 +299,12 @@ class FormTicketsup
         print '</td></tr>';
 
         // Notify thirdparty at creation
-        print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
-        print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
-        print '</td></tr>';
+        if (empty($this->ispublic))
+        {
+	        print '<tr><td><label for="notify_tiers_at_create">' . $langs->trans("TicketNotifyTiersAtCreation") . '</label></td><td>';
+        	print '<input type="checkbox" id="notify_tiers_at_create" name="notify_tiers_at_create"'.($this->withnotifytiersatcreate?' checked="checked"':'').'>';
+        	print '</td></tr>';
+        }
 
         // TITLE
         if ($this->withtitletopic) {
@@ -394,6 +399,8 @@ class FormTicketsup
         print '</table>';
         print '</div>';
 
+        if ($withdolfichehead) dol_fiche_end();
+
         print '<center>';
         print '<input class="button" type="submit" name="add_ticket" value="' . $langs->trans(($this->withthreadid > 0 ? "SendResponse" : "NewTicket")) . '" />';
 
@@ -436,7 +443,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheTypesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_tickettype'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat minwidth100'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -536,7 +543,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheCategoriesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_ticketcategory'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat minwidth100'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -637,7 +644,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheSeveritiesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat select_ticketseverity'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat minwidth150'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -857,7 +864,7 @@ class FormTicketsup
             // Destinataires
             print '<tr class="email_line"><td>' . $langs->trans('MailRecipients') . '</td><td colspan="2">';
             $ticketstat = new Ticketsup($this->db);
-            $res = $ticketstat->fetch('', $this->track_id);
+            $res = $ticketstat->fetch('', '', $this->track_id);
             if ($res) {
                 // Retrieve email of all contacts (internal and external)
                 $contacts = $ticketstat->getInfosTicketInternalContact();
@@ -880,7 +887,7 @@ class FormTicketsup
                     $ticketstat->socid = $ticketstat->fk_soc;
                     $ticketstat->fetch_thirdparty();
 
-                    if (!in_array($ticketstat->thirdparty->email, $sendto)) {
+                    if (is_array($ticketstat->thirdparty->email) && !in_array($ticketstat->thirdparty->email, $sendto)) {
                         $sendto[] = $ticketstat->thirdparty->email . '(' . $langs->trans('Customer') . ')';
                     }
                 }

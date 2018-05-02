@@ -64,14 +64,22 @@ ErrorNoVATRateDefinedForSellerCountry=Error, cap tipus d'IVA definit per al paí
 ErrorNoSocialContributionForSellerCountry=Error, cap tipus d'impost varis definit per al país '%s'.
 ErrorFailedToSaveFile=Error, el registre del fitxer ha fallat.
 ErrorCannotAddThisParentWarehouse=Està intentant afegir un magatzem pare que ja és fill de l'actual
+<<<<<<< HEAD
 MaxNbOfRecordPerPage=Max number of record per page
+=======
+MaxNbOfRecordPerPage=Número màxim de registres per pàgina
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 NotAuthorized=No està autoritzat per fer-ho.
 SetDate=Indica la data
 SelectDate=Seleccioneu una data
 SeeAlso=Veure també %s
 SeeHere=Mira aquí
 ClickHere=Fes clic aquí
+<<<<<<< HEAD
 Here=Here
+=======
+Here=Aquí
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 Apply=Aplicar
 BackgroundColorByDefault=Color de fons
 FileRenamed=L'arxiu s'ha renombrat correctament
@@ -328,7 +336,11 @@ Default=Defecte
 DefaultValue=Valor per defecte
 DefaultValues=Valors per defecte
 Price=Preu
+<<<<<<< HEAD
 PriceCurrency=Price (currency)
+=======
+PriceCurrency=Preu (moneda)
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 UnitPrice=Preu unitari
 UnitPriceHT=Preu base
 UnitPriceHTCurrency=Unit price (net) (currency)
@@ -438,7 +450,11 @@ ActionsOnMember=Esdeveniments d'aquest soci
 ActionsOnProduct=Esdeveniments sobre aquest producte
 NActionsLate=%s en retard
 ToDo=A realitzar
+<<<<<<< HEAD
 Completed=Completed
+=======
+Completed=Finalitzat
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 Running=En progrés
 RequestAlreadyDone=Sol·licitud ja recollida
 Filter=Filtre
@@ -866,7 +882,11 @@ FileNotShared=Fitxer no compartit amb el públic extern
 Project=Projecte
 Projects=Projectes
 Rights=Permisos
+<<<<<<< HEAD
 LineNb=Line no.
+=======
+LineNb=Núm. línia
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 IncotermLabel=Incoterms
 # Week day
 Monday=Dilluns
@@ -933,11 +953,20 @@ CommentDeleted=Comentari suprimit
 Everybody=Projecte compartit
 PayedBy=Pagat per
 PayedTo=Pagat a
+<<<<<<< HEAD
 Monthly=Monthly
 Quarterly=Quarterly
 Annual=Annual
 Local=Local
 Remote=Remote
 LocalAndRemote=Local and Remote
+=======
+Monthly=Mensual
+Quarterly=Trimestral
+Annual=Anual
+Local=Local
+Remote=Remot
+LocalAndRemote=Local i remota
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 KeyboardShortcut=Keyboard shortcut
 AssignedTo=Assignada a

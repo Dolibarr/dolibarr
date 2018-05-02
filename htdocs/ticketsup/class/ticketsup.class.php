@@ -181,7 +181,7 @@ class Ticketsup extends CommonObject
     	'origin_email' => array('type'=>'mail', 'label'=>'OriginEmail', 'visible'=>1, 'enabled'=>1, 'position'=>16, 'notnull'=>1, 'index'=>1, 'searchall'=>1, 'comment'=>"Reference of object"),
     	'subject' => array('type'=>'varchar(255)', 'label'=>'Subject', 'visible'=>1, 'enabled'=>1, 'position'=>18, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
     	'type_code' => array('type'=>'varchar(32)', 'label'=>'Type', 'visible'=>1, 'enabled'=>1, 'position'=>20, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
-	    'category_code' => array('type'=>'varchar(32)', 'label'=>'Category', 'visible'=>1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+    	'category_code' => array('type'=>'varchar(32)', 'label'=>'Category', 'visible'=>1, 'enabled'=>1, 'position'=>21, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
 	    'severity_code' => array('type'=>'varchar(32)', 'label'=>'Severity', 'visible'=>1, 'enabled'=>1, 'position'=>22, 'notnull'=>-1, 'searchall'=>1, 'help'=>"", 'css'=>'maxwidth100'),
     	'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToThirparty"),
 	    'notify_tiers_at_create' => array('type'=>'integer', 'label'=>'NotifyThirdparty', 'visible'=>-2, 'enabled'=>0, 'position'=>51, 'notnull'=>1, 'index'=>1),
@@ -489,7 +489,8 @@ class Ticketsup extends CommonObject
         dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
-            if ($this->db->num_rows($resql)) {
+            if ($this->db->num_rows($resql))
+            {
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id = $obj->rowid;
@@ -529,10 +530,14 @@ class Ticketsup extends CommonObject
                 $this->tms = $this->db->jdate($obj->tms);
 
                 $this->fetch_optionals();
-            }
-            $this->db->free($resql);
 
-            return 1;
+                $this->db->free($resql);
+                return 1;
+            }
+			else
+			{
+            	return 0;
+			}
         } else {
             $this->error = "Error " . $this->db->lasterror();
             dol_syslog(get_class($this) . "::fetch " . $this->error, LOG_ERR);
@@ -810,12 +815,10 @@ class Ticketsup extends CommonObject
         $sql .= " datec=" . (dol_strlen($this->datec) != 0 ? "'" . $this->db->idate($this->datec) . "'" : 'null') . ",";
         $sql .= " date_read=" . (dol_strlen($this->date_read) != 0 ? "'" . $this->db->idate($this->date_read) . "'" : 'null') . ",";
         $sql .= " date_close=" . (dol_strlen($this->date_close) != 0 ? "'" . $this->db->idate($this->date_close) . "'" : 'null') . "";
-
         $sql .= " WHERE rowid=" . $this->id;
 
         $this->db->begin();
 
-        dol_syslog(get_class($this) . "::update sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if (!$resql) {
             $error++;
@@ -1588,7 +1591,7 @@ class Ticketsup extends CommonObject
                     $url_internal_ticket = dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $this->track_id;
                     $message .= "\n" . $langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : ' . '<a href="' . $url_internal_ticket . '">' . $this->track_id . '</a>' . "\n";
                 } else {
-                    $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/ticketsup/public/view.php', 2)) . '?track_id=' . $this->track_id;
+                    $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticketsup/view.php', 2)) . '?track_id=' . $this->track_id;
                     $message .= "\n" . $langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . '<a href="' . $url_public_ticket . '">' . $this->track_id . '</a>' . "\n";
                 }
 
@@ -1639,7 +1642,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_logs_ticket)) {
+        if (is_array($this->cache_logs_ticket) && count($this->cache_logs_ticket)) {
             return 0;
         }
         // Cache deja charge
@@ -1751,7 +1754,7 @@ class Ticketsup extends CommonObject
     {
         global $langs;
 
-        if (count($this->cache_msgs_ticket)) {
+        if (is_array($this->cache_msgs_ticket) && count($this->cache_msgs_ticket)) {
             return 0;
         }
         // Cache deja charge
@@ -1934,7 +1937,7 @@ class Ticketsup extends CommonObject
 
         // Generation requete recherche
         $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . "socpeople";
-        $sql .= " WHERE entity IN (" . getEntity('ticketsup', 1) . ")";
+        $sql .= " WHERE entity IN (" . getEntity('socpeople') . ")";
         if (!empty($socid)) {
             $sql .= " AND fk_soc='" . $this->db->escape($socid) . "'";
         }

@@ -617,7 +617,7 @@ if ($action == 'create')
 						}
 						print '</td>';
 						print '<td><input type="text" class="minwidth100" name="label_compte" value="' . $line->label_compte . '"/></td>';
-						print '<td><input type="text" class="minwidth300" name="label_operation" value="' . $line->label_operation. '"/></td>';
+						print '<td><input type="text" class="minwidth200" name="label_operation" value="' . $line->label_operation. '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="debit" value="' . price($line->debit) . '"/></td>';
 						print '<td align="right"><input type="text" size="6" class="right" name="credit" value="' . price($line->credit) . '"/></td>';
 						print '<td>';
@@ -654,7 +654,7 @@ if ($action == 'create')
 
 				if ($total_debit != $total_credit)
 				{
-					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_credit, $total_debit)), 'warnings');
+					setEventMessages(null, array($langs->trans('MvtNotCorrectlyBalanced', $total_debit, $total_credit)), 'warnings');
 				}
 
 				if ($action == "" || $action == 'add') {
@@ -675,7 +675,7 @@ if ($action == 'create')
 					}
 					print '</td>';
 					print '<td><input type="text" class="minwidth100" name="label_compte" value=""/></td>';
-					print '<td><input type="text" class="minwidth300" name="label_operation" value=""/></td>';
+					print '<td><input type="text" class="minwidth200" name="label_operation" value=""/></td>';
 					print '<td align="right"><input type="text" size="6" class="right" name="debit" value=""/></td>';
 					print '<td align="right"><input type="text" size="6" class="right" name="credit" value=""/></td>';
 					print '<td><input type="submit" class="button" name="save" value="' . $langs->trans("Add") . '"></td>';
@@ -694,7 +694,7 @@ if ($action == 'create')
 					}
 					else
 					{
-						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $credit, $debit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
+						print '<input type="submit" class="button" disabled="disabled" href="#" title="'.dol_escape_htmltag($langs->trans("MvtNotCorrectlyBalanced", $debit, $credit)).'" value="'.dol_escape_htmltag($langs->trans("ValidTransaction")).'">';
 					}
 
 					print ' &nbsp; ';

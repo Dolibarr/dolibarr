@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
+ * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -372,6 +373,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
@@ -441,7 +447,9 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?action=create">'.$langs->trans('NewProject').'</a>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create">'.$langs->trans('NewProject');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -657,7 +665,7 @@ if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);

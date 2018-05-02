@@ -1,12 +1,13 @@
 <?php
 /* Copyright (C) 2001-2002  Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012       Vinícius Nogueira    <viniciusvgn@gmail.com>
  * Copyright (C) 2014       Florian Henry        <florian.henry@open-cooncept.pro>
  * Copyright (C) 2015       Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2016       Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017       Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018       Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,7 +92,7 @@ $num_releve=GETPOST("num_releve","alpha");
 $cat=GETPOST("cat");
 if (empty($dateop)) $dateop=-1;
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -427,9 +428,9 @@ if ($id > 0 || ! empty($ref))
             if ($user->rights->banque->consolidate) {
             	$newparam = $param;
             	$newparam = preg_replace('/search_conciliated=\d+/i','',$newparam);
-            	$buttonreconcile = '<a class="butAction" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butActionNew" style="margin-bottom: 5px !important; margin-top: 5px !important" href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?action=reconcile&search_conciliated=0'.$newparam.'">'.$langs->trans("Conciliate").'</a>';
             } else {
-            	$buttonreconcile = '<a class="butActionRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
+            	$buttonreconcile = '<a class="butActionNewRefused" style="margin-bottom: 5px !important; margin-top: 5px !important" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("Conciliate").'</a>';
             }
         }
     }
@@ -722,7 +723,7 @@ if ($resql)
 	// Title
 	$bankcateg=new BankCateg($db);
 
-	$addbutton = '';
+	$newcardbutton = '';
 	if ($action != 'addline' && $action != 'reconcile')
 	{
 		if (empty($conf->global->BANK_DISABLE_DIRECT_INPUT))
@@ -730,27 +731,37 @@ if ($resql)
 			if (! empty($conf->global->BANK_USE_VARIOUS_PAYMENT))	// If direct entries is done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
-					$addbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$search_account).'">'.$langs->trans("AddBankRecord").'</a>';
+					$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create&accountid='.$search_account.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$search_account).'">'.$langs->trans("AddBankRecord");
+					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+					$newcardbutton.= '</a>';
 				} else {
-					$addbutton = '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord");
+					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+					$newcardbutton.= '</a>';
 				}
 			}
 			else													// If direct entries is not done using miscellaneous payments
 			{
 				if ($user->rights->banque->modifier) {
-					$addbutton = '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord").'</a>';
+					$newcardbutton = '<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?action=addline&page='.$page.$param.'">'.$langs->trans("AddBankRecord");
+					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+					$newcardbutton.= '</a>';
 				} else {
-					$addbutton = '<a class="butActionRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+					$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("NotEnoughPermissions").'" href="#">'.$langs->trans("AddBankRecord");
+					$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+					$newcardbutton.= '</a>';
 				}
 			}
 		}
 		else
 		{
-			$addbutton = '<a class="butActionRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord").'</a>';
+			$newcardbutton = '<a class="butActionNewRefused" title="'.$langs->trans("FeatureDisabled").'" href="#">'.$langs->trans("AddBankRecord");
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
 		}
 	}
 
-	$morehtml='<div class="inline-block '.(($buttonreconcile || $addbutton)?'marginrightonly':'').'">';
+	$morehtml='<div class="inline-block '.(($buttonreconcile || $newcardbutton)?'marginrightonly':'').'">';
 	$morehtml.= '<label for="pageplusone">'.$langs->trans("Page")."</label> "; // ' Page ';
 	$morehtml.='<input type="text" name="pageplusone" id="pageplusone" class="flat right width25" value="'.($page+1).'">';
 	$morehtml.='/'.$nbtotalofpages.' ';
@@ -761,7 +772,7 @@ if ($resql)
 		$morehtml.=$buttonreconcile;
 	}
 
-	$morehtml.=$addbutton;
+	$morehtml.=$newcardbutton;
 
 	$picto='title_bank';
 	if ($id > 0 || ! empty($ref)) $picto='';
@@ -901,7 +912,7 @@ if ($resql)
 	if (! empty($arrayfields['b.conciliated']['checked']))
 	{
         print '<td class="liste_titre" align="center">';
-        print $form->selectyesno('search_conciliated', $search_conciliated, 1, False, 1);
+        print $form->selectyesno('search_conciliated', $search_conciliated, 1, false, 1);
         print '</td>';
 	}
 	print '<td class="liste_titre" align="middle">';
@@ -931,7 +942,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'maxwidthsearch ');

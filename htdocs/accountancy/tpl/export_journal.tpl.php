@@ -28,7 +28,7 @@ $prefix = $conf->global->ACCOUNTING_EXPORT_PREFIX_SPEC;
 $format = $conf->global->ACCOUNTING_EXPORT_FORMAT;
 $nodateexport = $conf->global->ACCOUNTING_EXPORT_NO_DATE_IN_FILENAME;
 
-$date_export = "_" . dol_print_date($now, '%Y%m%d%H%M%S');
+$date_export = "_" . dol_print_date(dol_now(), '%Y%m%d%H%M%S');
 
 header('Content-Type: text/csv');
 

@@ -89,10 +89,9 @@ if (empty($conf) || ! is_object($conf))
 <!-- FIELDS DATA -->
 
 <?php
-$var=True;
 foreach($datas as $line) {
 		?>
-	<tr <?php echo $bc[$var]; ?>>
+	<tr class="oddeven">
    		<?php
    		foreach($line as $key => $value) {
    			foreach($fieldlist as $field) {

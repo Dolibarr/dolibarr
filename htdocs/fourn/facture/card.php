@@ -1000,8 +1000,17 @@ if (empty($reshook))
 				$price_base_type = 'TTC';
 			}
 
-			if (GETPOST('productid'))
+			if (GETPOST('productid') > 0)
 			{
+				$productsupplier = new ProductFournisseur($db);
+				if (! empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY))
+				{
+					if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), GETPOST('productid'), 'none', GETPOST('socid','int')) < 0 )
+					{
+						setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+					}
+				}
+
 				$prod = new Product($db);
 				$prod->fetch(GETPOST('productid'));
 				$label = $prod->description;
@@ -1042,7 +1051,7 @@ if (empty($reshook))
 				}
 			}
 
-	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise, GETPOST('fourn_ref','alpha'));
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);
@@ -1087,6 +1096,8 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')
 		{
@@ -1104,9 +1115,6 @@ if (empty($reshook))
 		$qty = GETPOST('qty'.$predef);
 		$remise_percent=GETPOST('remise_percent'.$predef);
 		$price_ht_devise = GETPOST('multicurrency_price_ht');
-
-		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
-		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
@@ -1167,7 +1175,7 @@ if (empty($reshook))
 			$idprod=0;
 			if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
-			if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice'), $reg))
 			{
 				$idprod=$reg[1];
 				$res=$productsupplier->fetch($idprod);
@@ -1183,7 +1191,6 @@ if (empty($reshook))
 				$res=$productsupplier->fetch($idprod);
 			}
 
-			//Replaces $fk_unit with the product's
 			if ($idprod > 0)
 			{
 				$label = $productsupplier->label;
@@ -1191,14 +1198,16 @@ if (empty($reshook))
 				$desc = $productsupplier->description;
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
-				$tva_tx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
-				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
+				$type = $productsupplier->type;
+				$price_base_type = ($productsupplier->fourn_price_base_type?$productsupplier->fourn_price_base_type:'HT');
+
+				$ref_supplier = $productsupplier->ref_supplier;
+
+				$tva_tx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
 				if (empty($tva_tx)) $tva_npr=0;
 				$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
-
-				$type = $productsupplier->type;
-				$price_base_type = 'HT';
 
 				$result=$object->addline(
 					$desc,
@@ -1221,7 +1230,7 @@ if (empty($reshook))
 					$productsupplier->fk_unit,
 					0,
                     $productsupplier->fourn_multicurrency_unitprice,
-                    $productsupplier->fourn_ref
+                    $ref_supplier
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -2926,7 +2935,10 @@ else
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-		$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
+		$forceall=1; $dateSelector=0; $inputalsopricewithtax=1;
+		$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
+		//if (! empty($conf->global->SUPPLIER_INVOICE_WITH_NOPRICEDEFINED)) $senderissupplier=2;
+		if (! empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
 		// Show object lines
 		if (! empty($object->lines))

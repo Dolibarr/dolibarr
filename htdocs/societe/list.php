@@ -485,6 +485,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -504,6 +509,17 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 {
 	$obj = $db->fetch_object($resql);
 	$id = $obj->rowid;
+	if(!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
+              if( $obj->client > 0) {
+                       header("Location: ".DOL_URL_ROOT.'/comm/card.php?socid='.$id);
+                       exit;
+               }
+               if( $obj->fournisseur > 0){
+                       header("Location: ".DOL_URL_ROOT.'/fourn/card.php?socid='.$id);
+                       exit;
+               }
+       }
+
 	header("Location: ".DOL_URL_ROOT.'/societe/card.php?socid='.$id);
 	exit;
 }
@@ -583,7 +599,9 @@ if ($user->rights->societe->creer)
 		if($type == 'f') $label='NewSupplier';
 	}
 
-	$newcardbutton = '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'">'.$langs->trans($label).'</a>';
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'">'.$langs->trans($label);
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';

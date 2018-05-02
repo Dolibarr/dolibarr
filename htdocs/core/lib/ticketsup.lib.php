@@ -195,7 +195,7 @@ function showlogo()
         $urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
     }
     print '<center>';
-    print '<a href="' . ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE : dol_buildpath('/ticketsup/public/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
+    print '<a href="' . ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticketsup/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
     print '<strong>' . ($conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
     print '</center><br>';
 }

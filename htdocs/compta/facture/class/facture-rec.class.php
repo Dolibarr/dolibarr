@@ -108,7 +108,7 @@ class FactureRec extends CommonInvoice
 		if (empty($this->frequency))
 		{
 			$this->frequency=0;
-			$this->date_when=NULL;
+			$this->date_when=null;
 		}
 
 
@@ -475,7 +475,6 @@ class FactureRec extends CommonInvoice
 
 				$line->id	            = $objp->rowid;
 				$line->rowid	        = $objp->rowid;
-				$line->label            = $objp->custom_label;		// Label line
 				$line->desc             = $objp->description;		// Description line
 				$line->description      = $objp->description;		// Description line
 				$line->product_type     = $objp->product_type;		// Type of line
@@ -487,6 +486,8 @@ class FactureRec extends CommonInvoice
 				$line->fk_product_type  = $objp->fk_product_type;	// Type of product
 				$line->qty              = $objp->qty;
 				$line->subprice         = $objp->subprice;
+
+				$line->label            = $objp->custom_label;		// @deprecated
 
 				$line->vat_src_code     = $objp->vat_src_code;
 				$line->tva_tx           = $objp->tva_tx;
@@ -992,6 +993,7 @@ class FactureRec extends CommonInvoice
 		$sql.= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
 		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql.= ' AND suspended = 0';
+		$sql.= ' AND entity = '.$conf->entity;	// MUST STAY = $conf->entity here
 		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
 
@@ -1006,7 +1008,7 @@ class FactureRec extends CommonInvoice
 
 		    $saventity = $conf->entity;
 
-		    while ($i < $num)     // Loop on each template invoice
+		    while ($i < $num)     // Loop on each template invoice. If $num = 0, test is false at first pass.
 			{
 			    $line = $db->fetch_object($resql);
 
@@ -1015,49 +1017,59 @@ class FactureRec extends CommonInvoice
 				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
 
-				// Set entity context
-				$conf->entity = $facturerec->entity;
+				if ($facturerec->id > 0)
+				{
+					// Set entity context
+					$conf->entity = $facturerec->entity;
 
-				dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
+					dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
 
-			    $error=0;
+				    $error=0;
 
-			    $facture = new Facture($db);
-				$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
-				$facture->fk_fac_rec_source = $facturerec->id;    // We will create $facture from this recurring invoice
+				    $facture = new Facture($db);
+					$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
+					$facture->fk_fac_rec_source = $facturerec->id;    // We will create $facture from this recurring invoice
 
-			    $facture->type = self::TYPE_STANDARD;
-			    $facture->brouillon = 1;
-			    $facture->date = (empty($facturerec->date_when)?$now:$facturerec->date_when);	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
-			    $facture->socid = $facturerec->socid;
+				    $facture->type = self::TYPE_STANDARD;
+				    $facture->brouillon = 1;
+				    $facture->date = (empty($facturerec->date_when)?$now:$facturerec->date_when);	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
+				    $facture->socid = $facturerec->socid;
 
-			    $invoiceidgenerated = $facture->create($user);
-			    if ($invoiceidgenerated <= 0)
-			    {
-			        $this->errors = $facture->errors;
-			        $this->error = $facture->error;
-			        $error++;
-			    }
-			    if (! $error && $facturerec->auto_validate)
-			    {
-			        $result = $facture->validate($user);
-			        if ($result <= 0)
-			        {
-    			        $this->errors = $facture->errors;
-    			        $this->error = $facture->error;
-			            $error++;
-                    }
-			    }
-                if (! $error && $facturerec->generate_pdf)
-                {
-                    $result = $facture->generateDocument($facturerec->modelpdf, $langs);
-                    if ($result <= 0)
-                    {
-                        $this->errors = $facture->errors;
-                        $this->error = $facture->error;
-                        $error++;
-                    }
-                }
+				    $invoiceidgenerated = $facture->create($user);
+				    if ($invoiceidgenerated <= 0)
+				    {
+				        $this->errors = $facture->errors;
+				        $this->error = $facture->error;
+				        $error++;
+				    }
+				    if (! $error && $facturerec->auto_validate)
+				    {
+				        $result = $facture->validate($user);
+				        if ($result <= 0)
+				        {
+	    			        $this->errors = $facture->errors;
+	    			        $this->error = $facture->error;
+				            $error++;
+	                    }
+				    }
+	                if (! $error && $facturerec->generate_pdf)
+	                {
+	                    $result = $facture->generateDocument($facturerec->modelpdf, $langs);
+	                    if ($result <= 0)
+	                    {
+	                        $this->errors = $facture->errors;
+	                        $this->error = $facture->error;
+	                        $error++;
+	                    }
+	                }
+				}
+				else
+				{
+					$error++;
+					$this->error="Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity."\n";
+					$this->errors[]="Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity;
+					dol_syslog("createRecurringInvoices Failed to load invoice template with id=".$line->rowid.", entity=".$conf->entity);
+				}
 
 				if (! $error && $invoiceidgenerated >= 0)
 				{
@@ -1503,7 +1515,7 @@ class FactureRec extends CommonInvoice
     }
 
 	/**
-     *	Update the auto validate invoice
+     *	Update the auto validate flag of invoice
      *
      *	@param     	int		$validate		0 to create in draft, 1 to create and validate invoice
      *	@return		int						<0 if KO, >0 if OK

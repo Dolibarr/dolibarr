@@ -702,7 +702,6 @@ if ($id > 0)
 	  		print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
 	  		print '</tr>';
 
-			$var=True;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);

@@ -188,10 +188,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	$menuqualified=0;
 	if (! empty($conf->comptabilite->enabled)) $menuqualified++;
 	if (! empty($conf->accounting->enabled)) $menuqualified++;
-	if (! empty($conf->assets->enabled)) $menuqualified++;
+	if (! empty($conf->asset->enabled)) $menuqualified++;
 	$tmpentry=array(
 	'enabled'=>$menuqualified,
-	'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->assets->read)),
+	'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
 	'module'=>'comptabilite|accounting');
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
@@ -903,7 +903,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $newmenu->add("/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
 						global $mysoc;
 
-						//Local Taxes
 						//Local Taxes 1
 						if($mysoc->useLocalTax(1) && (isset($mysoc->localtax1_assuj) && $mysoc->localtax1_assuj=="1"))
 						{
@@ -1059,12 +1058,13 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 								if ($objp->nature == 4 && ! empty($conf->banque->enabled)) $nature="bank";
 								if ($objp->nature == 5 && ! empty($conf->expensereport->enabled)) $nature="expensereports";
 								if ($objp->nature == 1) $nature="various";
+								if ($objp->nature == 8) $nature="inventory";
 								if ($objp->nature == 9) $nature="hasnew";
 
 								// To enable when page exists
 								if ($conf->global->MAIN_FEATURES_LEVEL < 2)
 								{
-									if ($nature == 'various' || $nature == 'hasnew') $nature='';
+									if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') $nature='';
 								}
 
 								if ($nature)
@@ -1138,15 +1138,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 			// Assets
-			if (! empty($conf->assets->enabled))
+			if (! empty($conf->asset->enabled))
 			{
 				$langs->load("assets");
-				$newmenu->add("/assets/list.php?leftmenu=assets&amp;mainmenu=accountancy",$langs->trans("MenuAssets"), 0, $user->rights->assets->read, '', $mainmenu, 'assets');
-				$newmenu->add("/assets/card.php?leftmenu=assets&amp;action=create",$langs->trans("MenuNewAsset"), 1, $user->rights->assets->write);
-				$newmenu->add("/assets/type.php?leftmenu=assets",$langs->trans("MenuTypeAssets"), 1, $user->rights->assets->read, '', $mainmenu, 'assets_type');
-				$newmenu->add("/assets/type.php?leftmenu=assets_type&amp;action=create",$langs->trans("MenuNewTypeAssets"), 1, $user->rights->assets->write);
-				$newmenu->add("/assets/type.php?leftmenu=assets_type",$langs->trans("MenuListTypeAssets"), 1, $user->rights->assets->read);
-				$newmenu->add("/assets/list.php?leftmenu=assets",$langs->trans("MenuListAssets"), 1, $user->rights->assets->read);
+				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy",$langs->trans("MenuAssets"), 0, $user->rights->asset->read, '', $mainmenu, 'asset');
+				$newmenu->add("/asset/card.php?leftmenu=asset&amp;action=create",$langs->trans("MenuNewAsset"), 1, $user->rights->asset->write);
+				$newmenu->add("/asset/type.php?leftmenu=asset",$langs->trans("MenuTypeAssets"), 1, $user->rights->asset->read, '', $mainmenu, 'asset_type');
+				$newmenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create",$langs->trans("MenuNewTypeAssets"), 1, $user->rights->asset->write);
+				$newmenu->add("/asset/type.php?leftmenu=asset_type",$langs->trans("MenuListTypeAssets"), 1, $user->rights->asset->read);
+				$newmenu->add("/asset/list.php?leftmenu=asset",$langs->trans("MenuListAssets"), 1, $user->rights->asset->read);
 			}
 		}
 
@@ -1230,6 +1230,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$langs->load("stocks");
 					$newmenu->add("/product/reassortlot.php?type=0", $langs->trans("StocksByLotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
 					$newmenu->add("/product/stock/productlot_list.php", $langs->trans("LotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
+				}
+				if (! empty($conf->variants->enabled))
+				{
+					$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->rights->produit->lire);
 				}
 				if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
 				{

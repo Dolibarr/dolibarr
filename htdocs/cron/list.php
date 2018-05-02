@@ -276,6 +276,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -332,16 +337,21 @@ print '<input type="hidden" name="search_status" value="'.$search_status.'" >';
 print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 // Line with explanation and button new job
-if (! $user->rights->cron->create)
+$newcardbutton='';
+if ($user->rights->cron->create)
 {
-    $buttontoshow.='<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob").'</a>';
+	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob");
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 else
 {
-    $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
+	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob");
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $buttontoshow, '', $limit);
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_setup', 0, $newcardbutton, '', $limit);
 
 
 print $langs->trans('CronInfo').'<br>';
@@ -498,7 +508,10 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if ($obj->lastresult != '') {print dol_trunc($obj->lastresult);}
+		if ($obj->lastresult != '') {
+			if (empty($obj->lastresult)) print $obj->lastresult;
+			else print '<span class="error">'.dol_trunc($obj->lastresult).'</div>';
+		}
 		print '</td>';
 
 		print '<td>';

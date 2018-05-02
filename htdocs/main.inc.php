@@ -198,7 +198,7 @@ if (! empty($_POST["DOL_AUTOSET_COOKIE"]))
 {
 	$tmpautoset=explode(':',$_POST["DOL_AUTOSET_COOKIE"],2);
 	$tmplist=explode(',',$tmpautoset[1]);
-	$cookiearrayvalue='';
+	$cookiearrayvalue=array();
 	foreach ($tmplist as $tmpkey)
 	{
 		$postkey=$tmpautoset[0].'_'.$tmpkey;
@@ -350,7 +350,7 @@ if (! defined('NOTOKENRENEWAL'))
 	if (isset($_SESSION['newtoken'])) $_SESSION['token'] = $_SESSION['newtoken'];
 
 	// Save in $_SESSION['newtoken'] what will be next token. Into forms, we will add param token = $_SESSION['newtoken']
-	$token = dol_hash(uniqid(mt_rand(),TRUE)); // Generates a hash of a random number
+	$token = dol_hash(uniqid(mt_rand(), true)); // Generates a hash of a random number
 	$_SESSION['newtoken'] = $token;
 }
 if ((! defined('NOCSRFCHECK') && empty($dolibarr_nocsrfcheck) && ! empty($conf->global->MAIN_SECURITY_CSRF_WITH_TOKEN))
@@ -468,7 +468,7 @@ if (! defined('NOLOGIN'))
 		if (GETPOST("username","alpha",2) && ! empty($conf->global->MAIN_SECURITY_ENABLECAPTCHA))
 		{
 			$sessionkey = 'dol_antispam_value';
-			$ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+			$ok=(array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
 			// Check code
 			if (! $ok)
@@ -1077,20 +1077,48 @@ if (! function_exists("llxHeader"))
  */
 function top_httphead($contenttype='text/html', $forcenocache=0)
 {
-	global $conf;
+	global $db, $conf, $hookmanager;
 
 	if ($contenttype == 'text/html' ) header("Content-Type: text/html; charset=".$conf->file->character_set_client);
 	else header("Content-Type: ".$contenttype);
 	// Security options
 	header("X-Content-Type-Options: nosniff");  // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
 	header("X-Frame-Options: SAMEORIGIN");      // Frames allowed only if on same domain (stop some XSS attacks)
-	if (! empty($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY))
+	//header("X-XSS-Protection: 1");      		// XSS protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
+	if (! defined('FORCECSP'))
 	{
-		// For example, to restrict script, object, frames or img to some domains
-		// script-src https://api.google.com https://anotherhost.com; object-src https://youtube.com; child-src https://youtube.com; img-src: https://static.example.com
-		// For example, to restrict everything to one domain, except object, ...
-		// default-src https://cdn.example.net; object-src 'none'
-		header("Content-Security-Policy: ".$conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY);
+		//if (! isset($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY))
+		//{
+		//	// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
+		//	$contentsecuritypolicy = "font-src *; img-src *; style-src * 'unsafe-inline' 'unsafe-eval'; default-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; script-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' *.stripe.com; connect-src 'self';";
+		//}
+		//else $contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
+		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
+
+		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
+		$hookmanager->initHooks("main");
+
+		$parameters=array('contentsecuritypolicy'=>$contentsecuritypolicy);
+		$result=$hookmanager->executeHooks('setContentSecurityPolicy',$parameters);    // Note that $action and $object may have been modified by some hooks
+		if ($result > 0) $contentsecuritypolicy = $hookmanager->resPrint;	// Replace CSP
+		else $contentsecuritypolicy .= $hookmanager->resPrint;				// Concat CSP
+
+		if (! empty($contentsecuritypolicy))
+		{
+			// For example, to restrict 'script', 'object', 'frames' or 'img' to some domains:
+			// script-src https://api.google.com https://anotherhost.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: https://static.example.com
+			// For example, to restrict everything to one domain, except 'object', ...:
+			// default-src https://cdn.example.net; object-src 'none'
+			// For example, to restrict everything to itself except img that can be on other servers:
+			// default-src 'self'; img-src *;
+			// Pre-existing site that uses too much inline code to fix but wants to ensure resources are loaded only over https and disable plugins:
+			// default-src http: https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'
+			header("Content-Security-Policy: ".$contentsecuritypolicy);
+		}
+	}
+	elseif (constant('FORCECSP'))
+	{
+		header("Content-Security-Policy: ".constant('FORCECSP'));
 	}
 	if ($forcenocache)
 	{
@@ -1502,7 +1530,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		{
 			$toprightmenu.=$result;	// For backward compatibility
 		}
-		
+
 		// Link to module builder
 		if (! empty($conf->modulebuilder->enabled))
 		{
@@ -1553,6 +1581,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			if ($helpbaseurl && $helppage)
 			{
 				$text='';
+	            if(!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
+                    $langs->load('admin');
+                    $appli .= '<br>' . $langs->trans("Database") . ': ' . $db->database_name;
+                }
 				$title=$appli.'<br>';
 				$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 				if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';
@@ -1634,7 +1666,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		if ($conf->use_javascript_ajax && empty($conf->global->MAIN_USE_OLD_SEARCH_FORM))
 		{
 			//$searchform.=$form->selectArrayAjax('searchselectcombo', DOL_URL_ROOT.'/core/ajax/selectsearchbox.php', $selected, '', '', 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
-			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, 1, 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
+			$searchform.=$form->selectArrayFilter('searchselectcombo', $arrayresult, $selected, '', 1, 0, (empty($conf->global->MAIN_SEARCHBOX_CONTENT_LOADED_BEFORE_KEY)?1:0), 'vmenusearchselectcombo', 1, $langs->trans("Search"), 1);
 		}
 		else
 		{
