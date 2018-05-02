@@ -1116,7 +1116,7 @@ class Product extends CommonObject
 				//If it is a parent product, then we remove the association with child products
 				$prodcomb = new ProductCombination($this->db);
 
-				if ($prodcomb->deleteByFkProductParent($id) < 0) {
+				if ($prodcomb->deleteByFkProductParent($user, $id) < 0) {
 					$error++;
 					$this->errors[] = 'Error deleting combinations';
 				}
