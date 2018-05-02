@@ -736,6 +736,20 @@ if ($massaction == 'confirm_createbills')
 	}
 }
 
+if ($massaction == 'cancelorders')
+{
+	$orders = GETPOST('toselect', 'array');
+	foreach ($orders as $id_order)
+	{
+
+		$cmd = new Commande($db);
+		if ($cmd->fetch($id_order) <= 0)
+			continue;
+		$cmd->cancel();
+	}
+}
+
+
 if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
 {
 	if (empty($diroutputmassaction))

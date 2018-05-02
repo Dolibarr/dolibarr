@@ -208,6 +208,7 @@ if (empty($reshook))
 	$uploaddir = $conf->commande->dir_output;
 	$trigger_name='ORDER_SENTBYMAIL';
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+	
 }
 
 
@@ -419,6 +420,8 @@ if ($resql)
 	$arrayofmassactions =  array(
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
+		'cancelorders'=>$langs->trans("Cancel"),
+
 	);
 	if($user->rights->facture->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
 	if ($user->rights->commande->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
