@@ -28,8 +28,9 @@
  *              - Le nom de la propriete name doit etre Mytrigger
  */
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
-dol_include_once('/stripe/class/stripe.class.php');
 $path=dirname(__FILE__).'/';
+
+
 /**
  *  Class of triggers for stripe module
  */
@@ -47,8 +48,8 @@ class InterfaceStripe
         $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i', '', get_class($this));
-	      $this->family = 'Stripeconnect';
-        $this->description = "Triggers of the module Stripeconnect";
+	    $this->family = 'stripe';
+        $this->description = "Triggers of the module Stripe";
         $this->version = 'dolibarr'; // 'development', 'experimental', 'dolibarr' or version
         $this->picto = 'stripe@stripe';
     }
@@ -120,7 +121,10 @@ class InterfaceStripe
 		$langs->load('other');
 
 		$ok = 0;
+
+		include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
+
 		if (empty($conf->stripe->enabled)) return 0;
 
 		$service = 'StripeTest';
