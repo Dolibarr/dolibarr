@@ -451,3 +451,4 @@ ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (
 
 UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
 
+ALTER TABLE llx_product_fournisseur_price DROP INDEX uk_product_fournisseur_price_ref, ADD UNIQUE uk_product_fournisseur_price_ref (ref_fourn, fk_soc, quantity, entity, fk_product) USING BTREE;
