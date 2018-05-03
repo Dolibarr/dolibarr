@@ -3010,31 +3010,9 @@ class Product extends CommonObject
 
 		$now=dol_now();
 
-    	dol_syslog(get_class($this)."::add_fournisseur id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
+    	dol_syslog(get_class($this)."::add_fournisseur id_product = ".$this->id." id_fourn = ".$id_fourn." ref_fourn=".$ref_fourn." quantity=".$quantity, LOG_DEBUG);
 
-		if ($ref_fourn)
-		{
-    		$sql = "SELECT rowid, fk_product";
-    		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
-    		$sql.= " WHERE fk_soc = ".$id_fourn;
-    		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
-    		$sql.= " AND fk_product != ".$this->id;
-    		$sql.= " AND entity IN (".getEntity('productprice').")";
-
-    		$resql=$this->db->query($sql);
-    		if ($resql)
-    		{
-    			$obj = $this->db->fetch_object($resql);
-                if ($obj)
-                {
-        			// If the supplier ref already exists but for another product (duplicate ref is accepted for different quantity only or different companies)
-                    $this->product_id_already_linked = $obj->fk_product;
-    				return -3;
-    			}
-                $this->db->free($resql);
-    		}
-		}
-
+		
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_soc = ".$id_fourn;
@@ -3197,23 +3175,10 @@ class Product extends CommonObject
 
 		$now=dol_now();
 
-		// les fournisseurs
-		/*$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur ("
-		. " datec, fk_product, fk_soc, ref_fourn, fk_user_author )"
-		. " SELECT '".$this->db->idate($now)."', ".$toId.", fk_soc, ref_fourn, fk_user_author"
-		. " FROM ".MAIN_DB_PREFIX."product_fournisseur"
-		. " WHERE fk_product = ".$fromId;
-
-		if ( ! $this->db->query($sql ) )
-		{
-			$this->db->rollback();
-			return -1;
-		}*/
-
 		// les prix de fournisseurs.
 		$sql = "INSERT ".MAIN_DB_PREFIX."product_fournisseur_price (";
-		$sql.= " datec, fk_product, fk_soc, price, quantity, fk_user)";
-		$sql.= " SELECT '".$this->db->idate($now)."', ".$toId. ", fk_soc, price, quantity, fk_user";
+		$sql.= " datec, fk_product, fk_soc, fk_availability, ref_fourn, price, unitprice, charges, unitcharges, tva_tx, default_vat_code, info_bits, fk_supplier_price_expression, delivery_time_days, supplier_reputation, quantity, remise_percent, remise,  fk_user)";
+		$sql.= " SELECT '".$this->db->idate($now)."', ".$toId. ", fk_soc, fk_availability, ref_fourn, price, unitprice, charges, unitcharges, tva_tx, default_vat_code, info_bits, fk_supplier_price_expression, delivery_time_days, supplier_reputation, quantity, remise_percent, remise, fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price";
 		$sql.= " WHERE fk_product = ".$fromId;
 
