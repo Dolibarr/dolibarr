@@ -59,7 +59,7 @@ if (empty($img))
 }
 
 // Define mime type
-top_httphead('image/png');
+top_httphead('image/png', 1);
 
 $background_color = imagecolorallocate($img, 250, 250, 250);
 $ecriture_color = imagecolorallocate($img, 0, 0, 0);

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Oferte Comercială Furnizor
 supplier_proposalDESC=Gestiioneaza cereri pret la furnizori
-SupplierProposalNew=Cerere noua
+SupplierProposalNew=Cerere Preţ  Noua
 CommRequest=Cerere Preţ 
 CommRequests=Cereri Preţ 
 SearchRequest=Cauta o cerere

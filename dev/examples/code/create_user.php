@@ -60,14 +60,14 @@ $db->begin();
 
 require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
 
-// Create invoice object
+// Create user object
 $obj = new User($db);
 //$obj->initAsSpecimen();
 
 $obj->login = 'ABCDEF';
 $obj->nom   = 'ABCDEF';
 
-// Create invoice
+// Create user
 $idobject=$obj->create($user);
 if ($idobject > 0)
 {

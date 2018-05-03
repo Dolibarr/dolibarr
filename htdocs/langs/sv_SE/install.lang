@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Du använder Dolibarr inställningsguiden från en Ubuntu e
 KeepDefaultValuesMamp=Du använder Dolibarr inställningsguiden från DoliMamp, värden så som här föreslås är redan optimerade. Ändra dem bara om du vet vad du gör.
 KeepDefaultValuesProxmox=Du använder Dolibarr inställningsguiden från en Proxmox virtuell apparat, så som föreslås här är redan optimerade. Ändra dem bara om du vet vad du gör.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix för denormalized data
@@ -191,9 +193,11 @@ MigrationActioncommElement=Uppdatera uppgifter om åtgärder
 MigrationPaymentMode=Datamigrering betalning mode
 MigrationCategorieAssociation=Migreringskategorier
 MigrationEvents=Överföring av händelser för att lägga till händelseägaren i uppdragslista
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Visa ej tillgängliga val
 HideNotAvailableOptions=Dölj ej tillgängliga val
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Linux csomagból (Ubuntun, Fedora vagy Debian, ...) haszná
 KeepDefaultValuesMamp=A DoliMamp-ot használja a Dolibarr telepítéséhez, az itt lévõ értékek már optimalizálva vannak. Csak saját felelõsségre módosítsa ezeket.
 KeepDefaultValuesProxmox=Ön használja az Dolibarr Setup Wizard egy Proxmox virtuális készüléket, így az itt javasolt értékek már optimalizálva. Megváltoztatni őket, ha tudod, mit csinálsz.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix denormalizált adatra
@@ -191,9 +193,11 @@ MigrationActioncommElement=Frissítés adatok akciók
 MigrationPaymentMode=Adatmigráció fizetési mód
 MigrationCategorieAssociation=Kategória migrálása
 MigrationEvents=Az események migrálásához az események tulajdonosát be kell állítani a szükséges táblában
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Üres mező érték frissítése: llx_societe_remise
 MigrationRemiseExceptEntity=Üres mező érték frissítése: llx_societe_remise_except
 MigrationReloadModule=Modul újratöltése %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Nem elérhető opciók mutatása
 HideNotAvailableOptions=Nem elérhető opciók elrejtése
 ErrorFoundDuringMigration=Migráció alatt hiba történt, így nem lehet végrehajtani a következő lépést. A hibák elvetéséhez, végrehajthatja a <a href="%s">kattintson ide</a>, de az alkalmazás egyes lehetőségei nem fognak megfelelően működni a hibajavítás nélkül.

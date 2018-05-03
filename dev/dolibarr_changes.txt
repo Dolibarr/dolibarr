@@ -82,8 +82,14 @@ with
 // LDR To open in same window
 //var OpenWindow=window.open(pRef, "newwin", "height="+vHeight+",width="+vWidth);
 window.location.href=pRef
-* Replace hard coded string with i18n["String"];
 
+* Replace
+vTmpDiv=this.newNode(vTmpCell, 'div', null, null, vTaskList[i].getResource());
+with                       
+var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
+vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
+vTmpNode.setAttribute('href',vTaskList[i].getLink());
+                        
 
 JCROP:
 ------
@@ -110,10 +116,44 @@ to get
         if ($className == 'Luracast\Restler\string') return;
         if ($className == 'Luracast\Restler\mixed') return;
 		...
+
+Change also file Luracast/Restler/explorer/index.html
+
++With swagger 2:
+
+* Add line into Util.php to complete function
+
+    public static function getShortName($className)
+    {
+    	// @CHANGE LDR
+    	if (! is_string($className)) return;
+    	//var_dump($className);
+
     	
     	
 PARSEDOWN
 ---------
+
+* Add support of css by adding in Parsedown.php:
+
+	// @CHANGE LDR
+	'class' => $Link['element']['attributes']['class'] 
+
+	...
+	
+	// @CHANGE LDR
+    if (preg_match('/{([^}]+)}/', $remainder, $matches2))
+    {
+        $Element['attributes']['class'] = $matches2[1];
+       	$remainder = preg_replace('/{'.preg_quote($matches2[1],'/').'}/', '', $remainder);
+    }
+
+
+	// @CHANGE LDR
+	//$markup .= $this->{$Element['handler']}($Element['text']);
+	$markup .= preg_replace('/>{[^}]+}/', '>', $this->{$Element['handler']}($Element['text']));
+
+
 
 * Fix to avoid fatal error when mb_strlen not available:
 
@@ -122,7 +162,6 @@ PARSEDOWN
 	if (function_exists('mb_strlen')) $len = mb_strlen($line, 'utf-8');
 	else $len = strlen($line);
 	$shortage = 4 - $len % 4;
-                	
 
 
 JEDITABLE.JS
@@ -130,5 +169,4 @@ JEDITABLE.JS
 
 * <button type="submit" />  =>  <button class="button" type="submit" />
 * <button type="cancel" />  =>  <button class="button" type="cancel" />
-
 

@@ -5,10 +5,31 @@ namespace Stripe;
 /**
  * Class ApplicationFee
  *
+ * @property string $id
+ * @property string $object
+ * @property string $account
+ * @property int $amount
+ * @property int $amount_refunded
+ * @property string $application
+ * @property string $balance_transaction
+ * @property string $charge
+ * @property int $created
+ * @property string $currency
+ * @property bool $livemode
+ * @property string $originating_transaction
+ * @property bool $refunded
+ * @property Collection $refunds
+ *
  * @package Stripe
  */
 class ApplicationFee extends ApiResource
 {
+    use ApiOperations\All;
+    use ApiOperations\NestedResource;
+    use ApiOperations\Retrieve;
+
+    const PATH_REFUNDS = '/refunds';
+
     /**
      * This is a special case because the application fee endpoint has an
      *    underscore in it. The parent `className` function strips underscores.
@@ -18,40 +39,6 @@ class ApplicationFee extends ApiResource
     public static function className()
     {
         return 'application_fee';
-    }
-
-    /**
-     * @param string $id The ID of the application fee to retrieve.
-     * @param array|string|null $opts
-     *
-     * @return ApplicationFee
-     */
-    public static function retrieve($id, $opts = null)
-    {
-        return self::_retrieve($id, $opts);
-    }
-
-    /**
-     * @param string $id The ID of the application fee to update.
-     * @param array|null $params
-     * @param array|string|null $options
-     *
-     * @return ApplicationFee The updated application fee.
-     */
-    public static function update($id, $params = null, $options = null)
-    {
-        return self::_update($id, $params, $options);
-    }
-
-    /**
-     * @param array|null $params
-     * @param array|string|null $opts
-     *
-     * @return Collection of ApplicationFees
-     */
-    public static function all($params = null, $opts = null)
-    {
-        return self::_all($params, $opts);
     }
 
     /**
@@ -65,5 +52,55 @@ class ApplicationFee extends ApiResource
         $this->refunds->create($params, $opts);
         $this->refresh();
         return $this;
+    }
+
+    /**
+     * @param array|null $id The ID of the application fee on which to create the refund.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return ApplicationFeeRefund
+     */
+    public static function createRefund($id, $params = null, $opts = null)
+    {
+        return self::_createNestedResource($id, static::PATH_REFUNDS, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the application fee to which the refund belongs.
+     * @param array|null $refundId The ID of the refund to retrieve.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return ApplicationFeeRefund
+     */
+    public static function retrieveRefund($id, $refundId, $params = null, $opts = null)
+    {
+        return self::_retrieveNestedResource($id, static::PATH_REFUNDS, $refundId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the application fee to which the refund belongs.
+     * @param array|null $refundId The ID of the refund to update.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return ApplicationFeeRefund
+     */
+    public static function updateRefund($id, $refundId, $params = null, $opts = null)
+    {
+        return self::_updateNestedResource($id, static::PATH_REFUNDS, $refundId, $params, $opts);
+    }
+
+    /**
+     * @param array|null $id The ID of the application fee on which to retrieve the refunds.
+     * @param array|null $params
+     * @param array|string|null $opts
+     *
+     * @return ApplicationFeeRefund
+     */
+    public static function allRefunds($id, $params = null, $opts = null)
+    {
+        return self::_allNestedResources($id, static::PATH_REFUNDS, $params, $opts);
     }
 }

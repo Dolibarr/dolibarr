@@ -4,7 +4,6 @@ DeleteWebsite=Webseite löschen
 ConfirmDeleteWebsite=Möchten sie wirklich diesen Webauftritt löschen? Alle Seiten und Inhalte werden dadurch auch gelöscht.
 WEBSITE_CSS_URL=URL zu externer CSS Datei
 EditPageMeta=Metadaten bearbeiten
-Website=Website
 PreviewOfSiteNotYetAvailable=Vorschau des Webauftritt <strong>%s</strong> noch nicht verfügbar. Sie müssen zuerst eine Seite hinzufügen.
 ViewSiteInNewTab=Webauftritt in neuem Tab anzeigen
 SetAsHomePage=Als Startseite definieren

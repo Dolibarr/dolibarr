@@ -69,6 +69,8 @@ class box_services_expired extends ModeleBoxes
 
     	$this->max=$max;
 
+    	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+
     	$now=dol_now();
 
     	$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices",$max));
@@ -77,7 +79,7 @@ class box_services_expired extends ModeleBoxes
     	{
     	    // Select contracts with at least one expired service
 			$sql = "SELECT ";
-    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat,";
+    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.ref_customer, c.ref_supplier,";
 			$sql.= " s.nom as name, s.rowid as socid,";
 			$sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
     		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
@@ -87,7 +89,7 @@ class box_services_expired extends ModeleBoxes
     		$sql.= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
             if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
             if (!$user->rights->societe->client->voir  && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		$sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, s.nom, s.rowid";
+    		$sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
     		$sql.= " ORDER BY date_line ASC";
     		$sql.= $db->plimit($max, 0);
 
@@ -99,6 +101,7 @@ class box_services_expired extends ModeleBoxes
     			$i = 0;
 
     			$thirdpartytmp = new Societe($this->db);
+    			$contract = new Contrat($this->db);
 
     			while ($i < $num)
     			{
@@ -106,30 +109,33 @@ class box_services_expired extends ModeleBoxes
 
     				$objp = $db->fetch_object($resql);
 
-					$dateline=$db->jdate($objp->date_line);
-					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
-
-    				$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-    				'logo' => $this->boximg,
-    				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
-
-    				$this->info_box_contents[$i][1] = array('td' => '',
-    				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-    				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
-
     				$thirdpartytmp->id = $objp->socid;
     				$thirdpartytmp->name = $objp->name;
 
-    				$this->info_box_contents[$i][2] = array('td' => 'class="tdoverflowmax100 maxwidth100onsmartphone" align="left"',
+    				$contract->id = $objp->rowid;
+    				$contract->ref = $objp->ref;
+    				$contract->statut = $objp->fk_statut;
+    				$contract->ref_customer = $objp->ref_customer;
+    				$contract->ref_supplier = $objp->ref_supplier;
+
+					$dateline=$db->jdate($objp->date_line);
+					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
+
+    				$this->info_box_contents[$i][] = array('td' => '',
+    				'text' => $contract->getNomUrl(1),
+    				'asis' => 1
+    				);
+
+    				$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" align="left"',
     				'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
     				'asis' => 1
     				);
 
-    				$this->info_box_contents[$i][4] = array('td' => 'align="center"',
+    				$this->info_box_contents[$i][] = array('td' => 'align="center"',
     				'text' => dol_print_date($dateline,'day'),
     				'text2'=> $late);
 
-    				$this->info_box_contents[$i][5] = array('td' => 'class="right"',
+    				$this->info_box_contents[$i][] = array('td' => 'class="right"',
     				'text' => $objp->nb_services);
 
 
@@ -139,14 +145,14 @@ class box_services_expired extends ModeleBoxes
     			if ($num==0)
     			{
     			    $langs->load("contracts");
-    			    $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoExpiredServices"));
+    			    $this->info_box_contents[$i][] = array('td' => 'align="center" class="nohover opacitymedium"','text'=>$langs->trans("NoExpiredServices"));
     			}
 
 				$db->free($resql);
     		}
     		else
     		{
-    			$this->info_box_contents[0][0] = array(  'td' => '',
+    			$this->info_box_contents[0][] = array(  'td' => '',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
     		}

@@ -278,12 +278,19 @@ class RssParser
                 dol_syslog(get_class($this)."::parser cache file ".$newpathofdestfile." is saved onto disk.");
                 if (! dol_is_dir($cachedir)) dol_mkdir($cachedir);
                 $fp = fopen($newpathofdestfile, 'w');
-                fwrite($fp, $str);
-                fclose($fp);
-                if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
-                @chmod($newpathofdestfile, octdec($newmask));
+                if ($fp)
+                {
+                	fwrite($fp, $str);
+                	fclose($fp);
+                	if (! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+                	@chmod($newpathofdestfile, octdec($newmask));
 
-                $this->_lastfetchdate=$nowgmt;
+	                $this->_lastfetchdate=$nowgmt;
+                }
+                else
+                {
+                	print 'Error, failed to open file '.$newpathofdestfile.' for write';
+                }
             }
 
             unset($str);    // Free memory
@@ -746,7 +753,7 @@ function xml2php($xml)
         {
             //If this element is already in the array we will create an indexed array
             $tmp = $array[$key];
-            $array[$key] = NULL;
+            $array[$key] = null;
             $array[$key][] = $tmp;
             $array[$key][] = $child;
             $tab = true;

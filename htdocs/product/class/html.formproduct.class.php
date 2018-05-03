@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2008-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2016	   Francis Appels       <francis.appels@yahoo.com>
+ * Copyright (C) 2015-2017 Francis Appels       <francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@ class FormProduct
 
 	// Cache arrays
 	var $cache_warehouses=array();
+	var $cache_lot=array();
 
 
 	/**
@@ -86,7 +87,7 @@ class FormProduct
 			$warehouseStatus[] = Entrepot::STATUS_OPEN_INTERNAL;
 		}
 
-		$sql = "SELECT e.rowid, e.label, e.description, e.fk_parent";
+		$sql = "SELECT e.rowid, e.ref as label, e.description, e.fk_parent";
 		if (!empty($fk_product))
 		{
 			if (!empty($batch))
@@ -124,8 +125,8 @@ class FormProduct
 
 		if(!empty($exclude)) $sql.= ' AND e.rowid NOT IN('.$this->db->escape(implode(',', $exclude)).')';
 
-		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.label, e.description, e.fk_parent";
-		$sql.= " ORDER BY e.label";
+		if ($sumStock && empty($fk_product)) $sql.= " GROUP BY e.rowid, e.ref, e.description, e.fk_parent";
+		$sql.= " ORDER BY e.ref";
 
 		dol_syslog(get_class($this).'::loadWarehouses', LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -219,10 +220,9 @@ class FormProduct
 			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 			$comboenhancement = ajax_combobox($htmlname, $events);
 			$out.= $comboenhancement;
-			$nodatarole=($comboenhancement?' data-role="none"':'');
 		}
 
-		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'"'.$nodatarole.'>';
+		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
 		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
 		foreach($this->cache_warehouses as $id => $arraytypes)
 		{
@@ -330,5 +330,157 @@ class FormProduct
 		return $return;
 	}
 
-}
+	/**
+	 *  Return list of lot numbers (stock from product_batch) with stock location and stock qty
+	 *
+	 *  @param	int		$selected		Id of preselected lot stock id ('' for no value, 'ifone'=select value if one value otherwise no value)
+	 *  @param  string	$htmlname		Name of html select html
+	 *  @param  string	$filterstatus	lot status filter, following comma separated filter options can be used
+	 *  @param  int		$empty			1=Can be empty, 0 if not
+	 * 	@param	int		$disabled		1=Select is disabled
+	 * 	@param	int		$fk_product		show lot numbers of product with id fk_product. All from objectLines if 0.
+	 * 	@param	int		$fk_entrepot	filter lot numbers for warehouse with id fk_entrepot. All if 0.
+	 * 	@param	array	$objectLines	Only cache lot numbers for products in lines of object. If no lines only for fk_product. If no fk_product, all.
+	 *  @param	string	$empty_label	Empty label if needed (only if $empty=1)
+	 *  @param	int		$forcecombo		1=Force combo iso ajax select2
+	 *  @param	array	$events			Events to add to select2
+	 *  @param  string  $morecss		Add more css classes to HTML select
+	 *
+	 * 	@return	string					HTML select
+	 */
+	function selectLotStock($selected='',$htmlname='batch_id',$filterstatus='',$empty=0,$disabled=0,$fk_product=0,$fk_entrepot=0,$objectLines = array(),$empty_label='', $forcecombo=0, $events=array(), $morecss='minwidth200')
+	{
+		global $langs;
 
+		dol_syslog(get_class($this)."::selectLot $selected, $htmlname, $filterstatus, $empty, $disabled, $fk_product, $fk_entrepot, $empty_label, $showstock, $forcecombo, $morecss",LOG_DEBUG);
+
+		$out='';
+		$productIdArray = array();
+		if (! is_array($objectLines) || ! count($objectLines))
+		{
+			if (! empty($fk_product)) $productIdArray[] = $fk_product;
+		}
+		else
+		{
+			foreach ($objectLines as $line) {
+				if ($line->fk_product) $productIdArray[] = $line->fk_product;
+			}
+		}
+
+		$nboflot = $this->loadLotStock($productIdArray);
+
+		if ($conf->use_javascript_ajax && ! $forcecombo)
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$comboenhancement = ajax_combobox($htmlname, $events);
+			$out.= $comboenhancement;
+		}
+
+		$out.='<select class="flat'.($morecss?' '.$morecss:'').'"'.($disabled?' disabled':'').' id="'.$htmlname.'" name="'.($htmlname.($disabled?'_disabled':'')).'">';
+		if ($empty) $out.='<option value="-1">'.($empty_label?$empty_label:'&nbsp;').'</option>';
+		if (! empty($fk_product))
+		{
+			$productIdArray = array($fk_product); // only show lot stock for product
+		}
+		else
+		{
+			foreach($this->cache_lot as $key => $value)
+			{
+				$productIdArray[] = $key;
+			}
+		}
+
+		foreach($productIdArray as $productId)
+		{
+			foreach($this->cache_lot[$productId] as $id => $arraytypes)
+			{
+				if (empty($fk_entrepot) || $fk_entrepot == $arraytypes['entrepot_id'])
+				{
+					$out.='<option value="'.$id.'"';
+					if ($selected == $id || ($selected == 'ifone' && $nboflot == 1)) $out.=' selected';
+					$out.='>';
+					$out.=$arraytypes['entrepot_label'].' - ';
+					$out.=$arraytypes['batch'];
+					$out.=' ('.$langs->trans("Stock").':'.$arraytypes['qty'].')';
+					$out.='</option>';
+				}
+			}
+		}
+		$out.='</select>';
+		if ($disabled) $out.='<input type="hidden" name="'.$htmlname.'" value="'.(($selected>0)?$selected:'').'">';
+
+		return $out;
+	}
+
+	/**
+	 * Load in cache array list of lot available in stock from a given list of products
+	 *
+	 * @param	array	$productIdArray		array of product id's from who to get lot numbers. A
+	 *
+	 * @return	int							Nb of loaded lines, 0 if nothing loaded, <0 if KO
+	 */
+	private function loadLotStock($productIdArray = array())
+	{
+		global $conf, $langs;
+
+		$cacheLoaded = false;
+		if (empty($productIdArray))
+		{
+			// only Load lot stock for given products
+			$this->cache_lot = array();
+			return 0;
+		}
+		if (count($productIdArray) && count($this->cache_lot))
+		{
+			// check cache already loaded for product id's
+			foreach ($productIdArray as $productId)
+			{
+				$cacheLoaded = ! empty($this->cache_lot[$productId]) ? true : false;
+			}
+		}
+		if ($cacheLoaded)
+		{
+			return count($this->cache_lot);
+		}
+		else
+		{
+			// clear cache
+			$this->cache_lot = array();
+			$productIdList = implode(',', $productIdArray);
+			$sql = "SELECT pb.batch, pb.rowid, ps.fk_entrepot, pb.qty, e.ref as label, ps.fk_product";
+			$sql.= " FROM ".MAIN_DB_PREFIX."product_batch as pb";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as ps on ps.rowid = pb.fk_product_stock";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."entrepot as e on e.rowid = ps.fk_entrepot AND e.entity IN (".getEntity('stock').")";
+			if (!empty($productIdList))
+			{
+				$sql.= " WHERE ps.fk_product IN (".$productIdList.")";
+			}
+			$sql.= " ORDER BY e.ref, pb.batch";
+
+			dol_syslog(get_class($this).'::loadLotStock', LOG_DEBUG);
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['id'] =$obj->rowid;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['batch']=$obj->batch;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_id']=$obj->fk_entrepot;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['entrepot_label']=$obj->label;
+					$this->cache_lot[$obj->fk_product][$obj->rowid]['qty'] = $obj->qty;
+					$i++;
+				}
+
+				return $num;
+			}
+			else
+			{
+				dol_print_error($this->db);
+				return -1;
+			}
+		}
+	}
+}

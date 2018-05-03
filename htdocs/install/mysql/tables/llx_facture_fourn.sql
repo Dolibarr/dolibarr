@@ -1,6 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2007-2012 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
 --
@@ -22,8 +22,8 @@
 create table llx_facture_fourn
 (
   rowid					integer AUTO_INCREMENT PRIMARY KEY,
-  ref					varchar(255) NOT NULL,
-  ref_supplier			varchar(255) NOT NULL,
+  ref					varchar(180) NOT NULL,
+  ref_supplier			varchar(180) NOT NULL,
   entity				integer  DEFAULT 1 NOT NULL,	 -- multi company id
 
   ref_ext				varchar(255),                  -- reference into an external system (not used by dolibarr)
@@ -33,6 +33,8 @@ create table llx_facture_fourn
   
   datec					datetime,                      -- date de creation de la facture
   datef					date,                          -- date de la facture
+  date_pointoftax		date DEFAULT NULL,			   -- date point of tax (for GB)
+  date_valid			date,						   -- date validation
   tms					timestamp,                     -- date creation/modification
   libelle				varchar(255),
   paye					smallint         DEFAULT 0 NOT NULL,
@@ -69,6 +71,8 @@ create table llx_facture_fourn
   fk_incoterms          integer,						-- for incoterms
   location_incoterms    varchar(255),					-- for incoterms
   model_pdf				varchar(255),
+  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
+
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
   

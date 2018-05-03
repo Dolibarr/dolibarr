@@ -42,17 +42,14 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once '../lib/mymodule.lib.php';
 
 // Translations
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("mymodule@mymodule");
+$langs->loadLangs(array("errors","admin","mymodule@mymodule"));
 
 // Access control
-if (! $user->admin) {
-	accessforbidden();
-}
+if (! $user->admin) accessforbidden();
 
 // Parameters
 $action = GETPOST('action', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
 
 
 /*
@@ -72,24 +69,13 @@ $page_name = "MyModuleAbout";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">'
-	. $langs->trans("BackToModuleList") . '</a>';
-print load_fiche_titre($langs->trans($page_name), $linkback);
+$linkback = '<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1').'">'.$langs->trans("BackToModuleList").'</a>';
+
+print load_fiche_titre($langs->trans($page_name), $linkback, 'object_mymodule@mymodule');
 
 // Configuration header
 $head = mymoduleAdminPrepareHead();
-dol_fiche_head(
-	$head,
-	'about',
-	$langs->trans("MyModuleName"),
-	0,
-	'mymodule@mymodule'
-);
-
-// About page goes here
-echo $langs->trans("MyModuleAboutPage");
-
-echo '<br>';
+dol_fiche_head($head, 'about', '', 0, 'mymodule@mymodule');
 
 dol_include_once('/mymodule/core/modules/modMyModule.class.php');
 $tmpmodule = new modMyModule($db);

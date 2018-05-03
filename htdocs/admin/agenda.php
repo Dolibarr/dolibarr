@@ -38,6 +38,7 @@ $langs->load("agenda");
 $action = GETPOST('action','alpha');
 $cancel = GETPOST('cancel','alpha');
 
+$search_event = GETPOST('search_event', 'alpha');
 
 // Get list of triggers available
 $sql = "SELECT a.rowid, a.code, a.label, a.elementtype";
@@ -70,6 +71,18 @@ else
  *	Actions
  */
 
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+{
+	$search_event = '';
+	$action = '';
+}
+
+if (GETPOST('button_search_x','alpha') || GETPOST('button_search.x','alpha') ||GETPOST('button_search','alpha'))	// To avoid the save when we click on search
+{
+	$action = '';
+}
+
 if ($action == "save" && empty($cancel))
 {
     $i=0;
@@ -78,11 +91,13 @@ if ($action == "save" && empty($cancel))
 
 	foreach ($triggers as $trigger)
 	{
-		$param='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+		$keyparam='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
 		//print "param=".$param." - ".$_POST[$param];
-		if (GETPOST($param,'alpha')) $res = dolibarr_set_const($db,$param,GETPOST($param,'alpha'),'chaine',0,'',$conf->entity);
-		else $res = dolibarr_del_const($db,$param,$conf->entity);
-		if (! $res > 0) $error++;
+		if ($search_event === '' || preg_match('/'.preg_quote($search_event,'/').'/i', $keyparam))
+		{
+			$res = dolibarr_set_const($db,$keyparam,(GETPOST($keyparam,'alpha')?GETPOST($keyparam,'alpha'):''),'chaine',0,'',$conf->entity);
+			if (! $res > 0) $error++;
+		}
 	}
 
  	if (! $error)
@@ -97,34 +112,6 @@ if ($action == "save" && empty($cancel))
     }
 }
 
-if (preg_match('/set_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
-	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
-
-if (preg_match('/del_(.*)/',$action,$reg))
-{
-	$code=$reg[1];
-	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
-	{
-		Header("Location: ".$_SERVER["PHP_SELF"]);
-		exit;
-	}
-	else
-	{
-		dol_print_error($db);
-	}
-}
 
 
 /**
@@ -134,26 +121,40 @@ if (preg_match('/del_(.*)/',$action,$reg))
 $wikihelp='EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 llxHeader('', $langs->trans("AgendaSetup"), $wikihelp);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="save">';
 
+$param = '';
+$param.= '&search_event='.urlencode($search_event);
 
 $head=agenda_prepare_head();
 
 dol_fiche_head($head, 'autoactions', $langs->trans("Agenda"), -1, 'action');
 
 print $langs->trans("AgendaAutoActionDesc")."<br>\n";
-print $langs->trans("OnlyActiveElementsAreShown").'<br>';
+print $langs->trans("OnlyActiveElementsAreShown", 'modules.php').'<br>';
 print "<br>\n";
 
+print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("ActionsEvents").'</td>';
-print '<td><a href="'.$_SERVER["PHP_SELF"].'?action=selectall">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone">'.$langs->trans("None").'</a>';
+print '<td class="liste_titre"><input type="text" name="search_event" value="'.dol_escape_htmltag($search_event).'"></td>';
+print '<td class="liste_titre"></td>';
+// Action column
+print '<td class="liste_titre" align="right">';
+$searchpicto=$form->showFilterButtons();
+print $searchpicto;
+print '</td>';
+print '</tr>';
+print '</tr>'."\n";
+
+print '<tr class="liste_titre">';
+print '<th class="liste_titre" colspan="2">'.$langs->trans("ActionsEvents").'</th>';
+print '<th class="liste_titre"><a href="'.$_SERVER["PHP_SELF"].'?action=selectall'.($param?$param:'').'">'.$langs->trans("All").'</a>/<a href="'.$_SERVER["PHP_SELF"].'?action=selectnone'.($param?$param:'').'">'.$langs->trans("None").'</a></th>';
 print '</tr>'."\n";
 // Show each trigger (list is in c_action_trigger)
 if (! empty($triggers))
@@ -165,6 +166,8 @@ if (! empty($triggers))
 		if ($module == 'shipping') $module = 'expedition_bon';
 		if ($module == 'member') $module = 'adherent';
 		if ($module == 'project') $module = 'projet';
+		if ($module == 'proposal_supplier') $module = 'supplier_proposal';
+
 		//print 'module='.$module.'<br>';
 		if (! empty($conf->$module->enabled))
 		{
@@ -172,19 +175,22 @@ if (! empty($triggers))
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_BILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 			if ($trigger['code'] == 'FICHINTER_CLASSIFY_UNBILLED' && empty($conf->global->FICHINTER_CLASSIFY_BILLED)) continue;
 
-
-			print '<tr class="oddeven">';
-			print '<td>'.$trigger['code'].'</td>';
-			print '<td>'.$trigger['label'].'</td>';
-			print '<td align="right" width="40">';
-			$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
-			$value=$conf->global->$key;
-			print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
-			print '</td></tr>'."\n";
+			if ($search_event === '' || preg_match('/'.preg_quote($search_event,'/').'/i', $trigger['code']))
+			{
+				print '<tr class="oddeven">';
+				print '<td>'.$trigger['code'].'</td>';
+				print '<td>'.$trigger['label'].'</td>';
+				print '<td align="right" width="40">';
+				$key='MAIN_AGENDA_ACTIONAUTO_'.$trigger['code'];
+				$value=$conf->global->$key;
+				print '<input class="oddeven" type="checkbox" name="'.$key.'" value="1"'.((($action=='selectall'||$value) && $action!="selectnone")?' checked':'').'>';
+				print '</td></tr>'."\n";
+			}
 		}
 	}
 }
 print '</table>';
+print '</div>';
 
 dol_fiche_end();
 

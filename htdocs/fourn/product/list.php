@@ -54,6 +54,8 @@ if (! $sortfield) $sortfield="p.ref"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
 $fourn_id = GETPOST('fourn_id', 'intcomma');
+if ($user->societe_id) $fourn_id=$user->societe_id;
+
 $catid = GETPOST('catid', 'intcomma');
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
@@ -69,8 +71,8 @@ $extrafields = new ExtraFields($db);
  * Put here all code to do according to value of "action" parameter
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -118,8 +120,8 @@ $arrayofmassactions =  array(
     'presend'=>$langs->trans("SendByMail"),
     'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->mymodule->supprimer) $arrayofmassactions['delete']=$langs->trans("Delete");
-if ($massaction == 'presend') $arrayofmassactions=array();
+if ($user->rights->mymodule->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 
@@ -155,14 +157,22 @@ if ($fourn_id > 0)
 {
 	$sql .= " AND ppf.fk_soc = ".$fourn_id;
 }
+
+$sql .= $db->order($sortfield,$sortorder);
+
 // Count total nb of records without orderby and limit
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
-$sql .= $db->order($sortfield,$sortorder);
+
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("fourn/product/list.php:", LOG_DEBUG);
@@ -209,6 +219,12 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
+	$topicmail="Information";
+	$modelmail="product";
+	$objecttmp=new Product($db);
+	$trackid='prod'.$object->id;
+	include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
+
 	print '<table class="liste" width="100%">';
 
 	// Lignes des champs de filtre
@@ -245,7 +261,7 @@ if ($resql)
 	print "</tr>\n";
 
 	$oldid = '';
-	$var=True;
+
 	while ($i < min($num,$limit))
 	{
 		$objp = $db->fetch_object($resql);

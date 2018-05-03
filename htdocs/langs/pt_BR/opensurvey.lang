@@ -46,3 +46,4 @@ ErrorInsertingComment=Houve um erro ao inserir o seu comentário
 MoreChoices=Digite mais opções para os votos
 SurveyExpiredInfo=A enquete foi encerrada ou o período de votação expirou.
 EmailSomeoneVoted=%s preencheu uma linha.\nVocê pode encontrar sua enquete no link:\n%s
+ShowSurvey=Mostrar pesquisa

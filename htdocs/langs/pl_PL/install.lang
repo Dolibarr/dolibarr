@@ -11,7 +11,7 @@ PHPSupportSessions=PHP obsługuje sesje.
 PHPSupportPOSTGETOk=PHP obsługuje zmienne POST i GET.
 PHPSupportPOSTGETKo=Możliwe, że PHP nie obsługuje zmiennych POST i/lub GET. Sprawdź parametr <b>variables_order</b> w php.ini.
 PHPSupportGD=PHP obsługuje graficzne funkcje GD.
-PHPSupportCurl=To wsparcie PHP Curl.
+PHPSupportCurl=Ta wersja PHP wspiera Curl
 PHPSupportUTF8=Ta wersja PHP oferuje wsparcie funkcji UTF8.
 PHPMemoryOK=Maksymalna ilość pamięci sesji PHP ustawiona jest na <b>%s</b>. Powinno wystarczyć.
 PHPMemoryTooLow=Maksymalna ilość pamięci sesji PHP <b>%s</b> bajtów. To może nie wystarczyć. Zmień w <b>php.ini</b> parametr <b>memory_limit</b> na przynajmniej <b>%s</b> bajtów.
@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Używasz kreatora instalacji Dolibarr z pakietu Linux (Ubut
 KeepDefaultValuesMamp=Używasz kreatora instalacji, więc zaproponowane wartości są zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 KeepDefaultValuesProxmox=Możesz skorzystać z kreatora konfiguracji Dolibarr z urządzeniem wirtualnym Proxmox, więc wartości zaproponowane tutaj są już zoptymalizowane. Zmieniaj je tylko jeśli wiesz co robisz.
 UpgradeExternalModule=Uruchom dedykowany proces uaktualniania modułów zewnętrznych
-
+SetAtLeastOneOptionAsUrlParameter=Ustaw przynajmniej jedną opcję jako parametr w adresie URL. Na przykład: '...repair.php?standard=confirmed'
+NothingToDelete=Nic do wyczyszczenia/usunięcia
+NothingToDo=Nic do zrobienia
 #########
 # upgrade
 MigrationFixData=Napraw nieznormalizowane dane
@@ -148,7 +150,7 @@ MigrationSupplierOrder=Migracja danych zamówień dostawców
 MigrationProposal=Migracja danych dla ofert handlowych
 MigrationInvoice=Migracja dla danych faktur odbiorców
 MigrationContract=Migracja danych kontraktów
-MigrationSuccessfullUpdate=Aktualizacja zakoczona pomyślnie
+MigrationSuccessfullUpdate=Aktualizacja zakończona pomyślnie
 MigrationUpdateFailed=Aktualizacja nie powiodła się
 MigrationRelationshipTables=Migracja dla danych propozycji handlowych (%s)
 MigrationPaymentsUpdate=Korekta danych płatności
@@ -191,9 +193,11 @@ MigrationActioncommElement=Aktualizacja danych na temat działań
 MigrationPaymentMode=Migracji danych w trybie płatności
 MigrationCategorieAssociation=Migracja kategorii
 MigrationEvents=Przenieś wydarzenie by dodać nowego właściciela do przypisanej tabeli.
+MigrationEventsContact=Migracja zdarzeń w celu dodania kontaktu zdarzenia do tabeli przydziału
 MigrationRemiseEntity=Zaktualizuj wartość pola podmiotu llx_societe_remise
 MigrationRemiseExceptEntity=Zaktualizuj wartość pola podmiotu llx_societe_remise_except
 MigrationReloadModule=Odśwież moduł %s
+MigrationResetBlockedLog=Zresetuj moduł BlockedLog dla algorytmu v7
 ShowNotAvailableOptions=Pokaż niedostępne opcje.
 HideNotAvailableOptions=Ukryj niedostępne opcje.
 ErrorFoundDuringMigration=Wystąpiły błędy podczas procesu migracji więc następny krok jest nie dostępny. Żeby zignorować błędy, możesz <a href="%s">kliknąć tutaj</a>, ale aplikacja bądź jakieś jej funkcje mogą działać niepoprawnie do póki nie zostaną naprawione.

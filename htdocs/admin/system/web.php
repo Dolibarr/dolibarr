@@ -53,11 +53,19 @@ print '<tr class="oddeven"><td>'.$langs->trans("IP")."</td><td>".$_SERVER["SERVE
 print '<tr><td>'.$langs->trans("Port")."</td><td>" . $_SERVER["SERVER_PORT"] . "</td></tr>\n";
 print '<tr><td>'.$langs->trans("DocumentRootServer")."</td><td>".$_SERVER["DOCUMENT_ROOT"]."</td></tr>\n";
 print '<tr><td>'.$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
+// Web user group by default
 $labeluser=dol_getwebuser('user');
 $labelgroup=dol_getwebuser('group');
 if ($labeluser && $labelgroup)
 {
-	print '<tr><td>'.$langs->trans("WebUserGroup")."</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("WebUserGroup")." (env vars)</td><td>".$labeluser.'/'.$labelgroup."</td></tr>\n";
+}
+// Web user group real (detected by 'id' external command)
+$arrayout=array(); $varout=0;
+exec('id', $arrayout, $varout);
+if (empty($varout))	// Test command is ok. Work only on Linux OS.
+{
+	print '<tr><td>'.$langs->trans("WebUserGroup")." (real, 'id' command)</td><td>".join(',', $arrayout)."</td></tr>\n";
 }
 print '</table>';
 print '</div>';

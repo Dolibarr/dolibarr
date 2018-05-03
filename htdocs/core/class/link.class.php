@@ -89,7 +89,7 @@ class Link extends CommonObject
         $sql .= " VALUES ('".$conf->entity."', '".$this->db->idate($this->datea)."'";
         $sql .= ", '" . $this->db->escape($this->url) . "'";
         $sql .= ", '" . $this->db->escape($this->label) . "'";
-        $sql .= ", '" . $this->objecttype . "'";
+        $sql .= ", '" . $this->db->escape($this->objecttype) . "'";
         $sql .= ", " . $this->objectid . ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -100,7 +100,7 @@ class Link extends CommonObject
             if ($this->id > 0) {
                 // Call trigger
                 $result=$this->call_trigger('LINK_CREATE',$user);
-                if ($result < 0) $error++;            
+                if ($result < 0) $error++;
                 // End call triggers
             } else {
                 $error++;
@@ -283,20 +283,20 @@ class Link extends CommonObject
     public static function count($db, $objecttype, $objectid)
     {
         global $conf;
-    
+
         $sql = "SELECT COUNT(rowid) as nb FROM " . MAIN_DB_PREFIX . "links";
         $sql .= " WHERE objecttype = '" . $objecttype . "' AND objectid = " . $objectid;
         if ($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
-    
+
         $resql = $db->query($sql);
         if ($resql)
         {
             $obj = $db->fetch_object($resql);
             if ($obj) return $obj->nb;
-        } 
+        }
         return -1;
     }
-    
+
     /**
      *  Loads a link from database
      *
@@ -354,8 +354,8 @@ class Link extends CommonObject
 
         // Call trigger
         $result=$this->call_trigger('LINK_DELETE',$user);
-        if ($result < 0) return -1;            
-        // End call triggers         
+        if ($result < 0) return -1;
+        // End call triggers
 
         $this->db->begin();
 

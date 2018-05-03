@@ -21,10 +21,10 @@
 create table llx_contrat
 (
   rowid						integer AUTO_INCREMENT PRIMARY KEY,
-  ref						varchar(30),		            -- contrat reference
-  ref_customer				varchar(30),		            -- customer contract ref
-  ref_supplier				varchar(30),		            -- supplier contract ref
-  ref_ext					varchar(30),		            -- external contract ref
+  ref						varchar(255),		            -- contrat reference
+  ref_customer				varchar(255),		            -- customer contract ref
+  ref_supplier				varchar(255),		            -- supplier contract ref
+  ref_ext					varchar(255),		            -- external contract ref
   entity					integer DEFAULT 1 NOT NULL,		-- multi company id
   tms						timestamp,
   datec						datetime,                   	-- creation date
@@ -44,6 +44,7 @@ create table llx_contrat
   note_private				text,
   note_public				text,
   model_pdf					varchar(255),
+  last_main_doc			    varchar(255),					-- relative filepath+filename of last main generated document
   import_key				varchar(14),
   extraparams				varchar(255)
 )ENGINE=innodb;

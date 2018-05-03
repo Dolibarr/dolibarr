@@ -27,8 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("workflow");
+$langs->loadLangs(array("admin","workflow","propal","workflow","orders","supplier_proposals"));
 
 if (! $user->admin) accessforbidden();
 
@@ -60,7 +59,7 @@ if (preg_match('/del(.*)/',$action,$reg))
 
 llxHeader('',$langs->trans("WorkflowSetup"),'');
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("WorkflowSetup"),$linkback,'title_setup');
 
 print $langs->trans("WorkflowDesc").'<br>';
@@ -68,21 +67,26 @@ print "<br>";
 
 // List of workflow we can enable
 
-print '<table class="noborder" width="100%">'."\n";
-
 clearstatcache();
 
 $workflowcodes=array(
     // Automatic creation
     'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('family'=>'create', 'position'=>10, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('family'=>'create', 'position'=>20, 'enabled'=>'! empty($conf->commande->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'bill'),
-    // Automatic classification
-	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>''),
-	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'order','warning'=>''),
+    'separator1'=>array('family'=>'separator', 'position'=>25),
+	// Automatic classification proposal
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'propal','warning'=>''),
+	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>31, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'propal','warning'=>''),
+	// Automatic classification invoice
+	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array('family'=>'classify_order', 'position'=>40, 'enabled'=>'! empty($conf->expedition->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
 	// For the following 2 options, if module invoice is disabled, they does not exists, so "Classify billed" for order must be done manually from order card.
-	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>50, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>''),
-    'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify', 'position'=>40, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'bill','warning'=>''),
-	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array('family'=>'classify', 'position'=>30, 'enabled'=>'! empty($conf->expedition->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>41, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>''),
+    //Moved as hidden feature: 'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>42, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>''),
+    'separator2'=>array('family'=>'separator', 'position'=>50),
+	// Automatic classification supplier proposal
+	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array('family'=>'classify_supplier_proposal', 'position'=>60, 'enabled'=>'! empty($conf->supplier_proposal->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'propal','warning'=>''),
+	// Automatic classification supplier order
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER'=>array('family'=>'classify_supplier_order', 'position'=>62, 'enabled'=>'! empty($conf->fournisseur->enabled)', 'picto'=>'order','warning'=>''),
 );
 
 if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['workflow']))
@@ -93,27 +97,53 @@ if (! empty($conf->modules_parts['workflow']) && is_array($conf->modules_parts['
 	}
 }
 
-// TODO We must sort on position here
+// Sort on position
+$workflowcodes = dol_sort_array($workflowcodes, 'position');
 
 $nbqualified=0;
 $oldfamily='';
+
+print '<table class="noborder" width="100%">'."\n";
 
 foreach($workflowcodes as $key => $params)
 {
 	$picto=$params['picto'];
 	$enabled=$params['enabled'];
 	$family=$params['family'];
-   	if (! verifCond($enabled)) continue;
+
+	if ($family == 'separator')
+	{
+		print '</table><br>';
+		print '<table class="noborder" width="100%">'."\n";
+
+		continue;
+	}
+
+	if (! verifCond($enabled)) continue;
 
    	$nbqualified++;
+
 
    	if ($oldfamily != $family)
    	{
 	   	print '<tr class="liste_titre">'."\n";
 		print '  <td>';
-		if ($family == 'create') print $langs->trans("AutomaticCreation");
-		elseif ($family == 'classify') print $langs->trans("AutomaticClassification");
-		else print $langs->trans("Description");
+		if ($family == 'create')
+		{
+			print $langs->trans("AutomaticCreation");
+		}
+		elseif (preg_match('/classify_(.*)/', $family, $reg))
+		{
+			print $langs->trans("AutomaticClassification");
+			if ($reg[1] == 'proposal') print ' - '.$langs->trans('Proposal');
+			if ($reg[1] == 'order') print ' - '.$langs->trans('Order');
+			if ($reg[1] == 'supplier_proposal') print ' - '.$langs->trans('SupplierProposal');
+			if ($reg[1] == 'supplier_order') print ' - '.$langs->trans('SupplierOrder');
+		}
+		else
+		{
+			print $langs->trans("Description");
+		}
 		print '</td>';
 		print '  <td align="center">'.$langs->trans("Status").'</td>';
 		print "</tr>\n";

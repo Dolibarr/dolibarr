@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=الموافقة الثانية فعلت
 SupplierOrderReceivedInDolibarr=Supplier order %s received %s
 SupplierOrderSubmitedInDolibarr=Supplier order %s submited
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=أوامر أخرى
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=ممثل العميل متابعة النظام
 TypeContact_commande_internal_SHIPPING=ممثل الشحن متابعة
@@ -151,5 +152,7 @@ OrderCreated=وقد تم إنشاء طلباتكم
 OrderFail=حدث خطأ أثناء إنشاء طلباتكم
 CreateOrders=إنشاء أوامر
 ToBillSeveralOrderSelectCustomer=لإنشاء فاتورة لعدة أوامر، انقر أولا على العملاء، ثم اختر "٪ الصورة".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

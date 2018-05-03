@@ -77,7 +77,7 @@ if ($id > 0)
 {
 	$res=$object->fetch($id);
 	if ($res < 0) { dol_print_error($db,$object->error); exit; }
-	$res=$object->fetch_optionals($object->id,$extralabels);
+	$res=$object->fetch_optionals();
 
 	print load_fiche_titre($langs->trans("MemberCard"), '', '');
 
@@ -107,7 +107,7 @@ if ($id > 0)
 			print $form->showphoto('memberphoto', $object, 64);
 			print '</td></tr>'."\n";
 		}
-		//  foreach($objecto->attribute_label as $key=>$value){
+		//  foreach($extrafields->attributes[$object->table_element]['label'] as $key=>$value){
 		//    print "<tr><td>$value</td><td>".$object->array_options["options_$key"]."&nbsp;</td></tr>\n";
 		//  }
 

@@ -38,7 +38,7 @@ $action=GETPOST('action','alpha');
 $month=GETPOST('month');
 $year=GETPOST('year');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -93,6 +93,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit+1,$offset);
@@ -116,7 +121,7 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("Actions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_agenda', 0, '', '', $limit);
+	print_barre_liste($langs->trans("EventReports"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_agenda', 0, '', '', $limit);
 
 	$moreforfilter='';
 
@@ -170,15 +175,15 @@ if ($resql)
 				$out='';
 
 				// Show file name with link to download
-				$tmp = $formfile->showPreview($filearray,$modulepart,$relativepath,0,$param);
-				$out.= ($tmp?$tmp.' ':'');
 				$out.= '<a href="'.$documenturl.'?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).($param?'&'.$param:'').'"';
 				$mime=dol_mimetype($relativepath,'',0);
 				if (preg_match('/text/',$mime)) $out.= ' target="_blank"';
 				$out.= ' target="_blank">';
-				$out.= img_mime($filearray["name"],$langs->trans("File").': '.$filearray["name"]).' '.$filearray["name"];
+				$out.= img_mime($filearray["name"],$langs->trans("File").': '.$filearray["name"]);
+				$out.= $filearray["name"];
 				$out.= '</a>'."\n";
-                print $out;
+				$out.= $formfile->showPreview($filearray,$modulepart,$relativepath,0,$param);
+				print $out;
 
 				print '</td>';
 				print '<td align="center">'.dol_print_date(dol_filemtime($file),'dayhour').'</td>';

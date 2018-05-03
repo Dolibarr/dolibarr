@@ -451,7 +451,7 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	{
 	    $sql.= ", " . MAIN_DB_PREFIX . "element_contact as ect";
 	}
-	$sql.= " WHERE p.entity = ".$conf->entity;
+	$sql.= " WHERE p.entity IN (".getEntity('project').")";
 	if ($mine || empty($user->rights->projet->all->lire)) $sql.= " AND p.rowid IN (".$projectsListId.")";  // project i have permission on
 	if ($mine)     // this may duplicate record if we are contact twice
 	{

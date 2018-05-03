@@ -139,12 +139,12 @@ if ($id > 0 || ! empty($ref))
 		$object->fetch_thirdparty();
 
 		$alreadypaid=$object->getSommePaiement();
-		
+
 		$head = facturefourn_prepare_head($object);
 
 		dol_fiche_head($head, 'contact', $langs->trans('SupplierInvoice'), -1, 'bill');
 
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
 
 		$morehtmlref='<div class="refidno">';
     	// Ref supplier
@@ -190,7 +190,7 @@ if ($id > 0 || ! empty($ref))
 		$object->totalpaye = $alreadypaid;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
 
 		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-		
+
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
 

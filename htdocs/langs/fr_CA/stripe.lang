@@ -1,9 +1,7 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Configuration du module Stripe
-StripeDesc=Ce module offre des pages pour permettre le paiement sur <a href="http://www.stripe.com" target="_blank"> Stripe </a> par les clients. Cela peut être utilisé pour un paiement gratuit ou pour un paiement sur un objet Dolibarr particulier (facture, commande, ...)
 StripeOrCBDoPayment=Payer avec carte de crédit ou Stripe
 STRIPE_PAYONLINE_SENDEMAIL=EMail à avertir après un paiement (succès ou non)
-StripeDoPayment=Aller au paiement
 YouWillBeRedirectedOnStripe=Vous serez redirigé sur la page Stripe sécurisée pour vous fournir des informations sur votre carte de crédit
 SetupStripeToHavePaymentCreatedAutomatically=Configurez votre Stripe avec url <b> %s</b> pour que le paiement soit créé automatiquement lorsqu'il est validé par Stripe.
 STRIPE_CGI_URL_V2=Url of Stripe CGI module de paiement

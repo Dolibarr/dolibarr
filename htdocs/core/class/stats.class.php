@@ -39,9 +39,10 @@ abstract class Stats
 	 * @param 	int		$endyear		Start year
 	 * @param 	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+     *	@param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array					Array of values
 	 */
-	function getNbByMonthWithPrevYear($endyear,$startyear,$cachedelay=0)
+	function getNbByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
 	{
 		global $conf,$user,$langs;
 
@@ -76,7 +77,6 @@ abstract class Stats
 				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
 			}
 		}
-
 		// Load file into $data
 		if ($foundintocache)    // Cache file found and is not too old
 		{
@@ -88,7 +88,7 @@ abstract class Stats
 			$year=$startyear;
 			while ($year <= $endyear)
 			{
-				$datay[$year] = $this->getNbByMonth($year);
+				$datay[$year] = $this->getNbByMonth($year, $format);
 				$year++;
 			}
 
@@ -133,9 +133,10 @@ abstract class Stats
 	 * @param	int		$endyear		Start year
 	 * @param	int		$startyear		End year
 	 * @param	int		$cachedelay		Delay we accept for cache file (0=No read, no save of cache, -1=No read but save)
+     * @param	int		$format			0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array					Array of values
 	 */
-	function getAmountByMonthWithPrevYear($endyear,$startyear,$cachedelay=0)
+	function getAmountByMonthWithPrevYear($endyear, $startyear, $cachedelay=0, $format=0)
 	{
 		global $conf,$user,$langs;
 
@@ -182,7 +183,7 @@ abstract class Stats
 			$year=$startyear;
 			while($year <= $endyear)
 			{
-				$datay[$year] = $this->getAmountByMonth($year);
+				$datay[$year] = $this->getAmountByMonth($year, $format);
 				$year++;
 			}
 
@@ -409,11 +410,13 @@ abstract class Stats
 	 *
      *     @param   int		$year       Year
      *     @param   string	$sql        SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
      *     @return	array				Array of nb each month
 	 */
 	function _getNbByMonth($year, $sql, $format=0)
 	{
+		global $langs;
+
 		$result=array();
 		$res=array();
 
@@ -446,8 +449,12 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
-			$month=dol_substr($month,0,3);
+			$month='unknown';
+			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
+			elseif ($format == 1) $month=$i;
+			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
+			//$month=dol_substr($month,0,3);
 			$data[$i-1] = array($month, $res[$i]);
 		}
 
@@ -460,11 +467,13 @@ abstract class Stats
 	 *
 	 *     @param	int		$year       Year
 	 *     @param   string	$sql		SQL
-     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *     @return	array
 	 */
 	function _getAmountByMonth($year, $sql, $format=0)
 	{
+		global $langs;
+
 		$result=array();
 		$res=array();
 
@@ -495,8 +504,12 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
-			$month=dol_substr($month,0,3);
+			$month='unknown';
+			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
+			elseif ($format == 1) $month=$i;
+			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
+			//$month=dol_substr($month,0,3);
 			$data[$i-1] = array($month, $res[$i]);
 		}
 
@@ -508,11 +521,13 @@ abstract class Stats
 	 *
      *     @param	int		$year       Year
      *     @param  	string	$sql        SQL
-	 *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is a number
+     *     @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *     @return	array
 	 */
 	function _getAverageByMonth($year, $sql, $format=0)
 	{
+		global $langs;
+
 		$result=array();
 		$res=array();
 
@@ -542,8 +557,12 @@ abstract class Stats
 
 		for ($i = 1 ; $i < 13 ; $i++)
 		{
-			$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
-			$month=dol_substr($month,0,3);
+			$month='unknown';
+			if ($format == 0) $month=$langs->transnoentitiesnoconv('MonthShort'.sprintf("%02d", $i));
+			elseif ($format == 1) $month=$i;
+			elseif ($format == 2) $month=$langs->transnoentitiesnoconv('MonthVeryShort'.sprintf("%02d", $i));
+			//$month=dol_print_date(dol_mktime(12,0,0,$i,1,$year),($format?"%m":"%b"));
+			//$month=dol_substr($month,0,3);
 			$data[$i-1] = array($month, $res[$i]);
 		}
 

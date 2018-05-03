@@ -86,7 +86,7 @@ if (! empty($conf->syslog->enabled))
 	$filelogparam=$filelog;
 	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
 	{
-	   $filelogparam ='<a href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
+	   $filelogparam ='<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
 	   $filelogparam.=basename($filelog);
 	   $filelogparam.='">'.$filelog.'</a>';
 	}

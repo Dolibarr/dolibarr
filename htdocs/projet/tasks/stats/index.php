@@ -199,7 +199,7 @@ print '</table>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow.= '<table class="border" width="100%"><tr valign="top"><td align="center">';
+$stringtoshow.= '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
 	$stringtoshow.= $px1->show();
