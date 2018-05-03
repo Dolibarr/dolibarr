@@ -227,16 +227,7 @@ if (empty($reshook))
 			if (! $error)
 			{
 				$ret=$object->add_fournisseur($user, $id_fourn, $ref_fourn, $quantity);    // This insert record with no value for price. Values are update later with update_buyprice
-				if ($ret == -3)
-				{
-					$error++;
-
-					$object->fetch($object->product_id_already_linked);
-					$productLink = $object->getNomUrl(1,'supplier');
-
-					setEventMessages($langs->trans("ReferenceSupplierIsAlreadyAssociatedWithAProduct",$productLink), null, 'errors');
-				}
-				else if ($ret < 0)
+				if ($ret < 0)
 				{
 					$error++;
 					setEventMessages($object->error, $object->errors, 'errors');
