@@ -1234,6 +1234,54 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print '<link rel="stylesheet" type="text/css" href="'.$themepath.$themeparam.'">'."\n";
 		if (! empty($conf->global->MAIN_FIX_FLASH_ON_CHROME)) print '<!-- Includes CSS that does not exists as a workaround of flash bug of chrome -->'."\n".'<link rel="stylesheet" type="text/css" href="filethatdoesnotexiststosolvechromeflashbug">'."\n";
 
+		//Overload css files to the current theme
+		// Check if the /theme/nameoftheme/style folder exists and Add the contains css files to head
+		if (file_exists(dirname(dol_buildpath($conf->css, 0))."/style"))
+		{
+			//browse the css dir and add the contains css files
+			if ($handle = opendir(dirname(dol_buildpath($conf->css, 0))."/style"))
+			{
+				while (false !== ($entry = readdir($handle))) 
+				{
+					list($filename, $extension) = explode(".", $entry);
+					if ($entry !== '.' && $entry !== '..' && $extension == 'css')
+					{
+						print '<link rel="stylesheet" type="text/css" href="'.dirname(dol_buildpath($conf->css, 1))."/style/".$entry.'">'."\n";
+					}
+				}
+				closedir($handle);
+			}
+		}
+
+		//Overload css files to the current module
+		// Check if the /module/style folder exists and Add the contains css files to head
+		$cur_modulepart = explode("/",$_SERVER["PHP_SELF"]);
+		if(is_array($cur_modulepart) && count($cur_modulepart)>0)
+		{
+			foreach($conf->modules as $module)
+			{
+				if(in_array($module, $cur_modulepart))
+				{
+					if (file_exists(getcwd().DIRECTORY_SEPARATOR."style"))
+					{
+						//browse the style dir and add the contains css files
+						if ($handle = opendir(getcwd().DIRECTORY_SEPARATOR."style"))
+						{
+							while (false !== ($entry = readdir($handle))) 
+							{
+								list($filename, $extension) = explode(".", $entry);
+								if ($entry !== '.' && $entry !== '..' && $extension == 'css')
+								{
+									print '<link rel="stylesheet" type="text/css" href="'.dirname($_SERVER["PHP_SELF"])."/style/".$entry.'">'."\n";
+								}
+							}
+							closedir($handle);
+						}
+					}
+				}
+			}
+		}
+
 		// CSS forced by modules (relative url starting with /)
 		if (! empty($conf->modules_parts['css']))
 		{
