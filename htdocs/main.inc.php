@@ -1235,10 +1235,10 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		if (! empty($conf->global->MAIN_FIX_FLASH_ON_CHROME)) print '<!-- Includes CSS that does not exists as a workaround of flash bug of chrome -->'."\n".'<link rel="stylesheet" type="text/css" href="filethatdoesnotexiststosolvechromeflashbug">'."\n";
 
 		//Overload css files to the current theme
-		// Check if the /theme/nameoftheme/style folder exists and Add the contains css files to head
+		// Check if the /theme/nameoftheme/style folder exists and add the contains css files to head
 		if (file_exists(dirname(dol_buildpath($conf->css, 0))."/style"))
 		{
-			//browse the css dir and add the contains css files
+			//browse the style dir and add the contains css files
 			if ($handle = opendir(dirname(dol_buildpath($conf->css, 0))."/style"))
 			{
 				while (false !== ($entry = readdir($handle))) 
@@ -1254,7 +1254,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		}
 
 		//Overload css files to the current module
-		// Check if the /module/style folder exists and Add the contains css files to head
+		// Check if the /module/style folder exists and add the contains css files to head
 		$cur_modulepart = explode("/",$_SERVER["PHP_SELF"]);
 		if(is_array($cur_modulepart) && count($cur_modulepart)>0)
 		{
