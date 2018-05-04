@@ -3514,6 +3514,7 @@ class Product extends CommonObject
         }
         if (! empty($conf->accounting->enabled) && $this->status_buy)
         {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
         	$label.= '<br><b>' . $langs->trans('ProductAccountancyBuyCode') . ':</b> '. length_accountg($this->accountancy_code_buy);
         }
         if (! empty($this->entity))
