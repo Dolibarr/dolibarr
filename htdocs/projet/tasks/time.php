@@ -320,7 +320,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ($withproject)
 		{
 			// Tabs for project
-			$tab='tasks';
+			if (empty($id)) $tab='timespent';
+			else $tab='tasks';
 			$head=project_prepare_head($projectstatic);
 			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
@@ -695,9 +696,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print '<!-- List of time spent for project -->'."\n";
 
 				$title=$langs->trans("ListTaskTimeUserProject");
-			    $linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
+			    //$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
 			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-			    print load_fiche_titre($title,$linktotasks.' &nbsp; '.$linktocreatetime, 'title_generic.png');
+			    print load_fiche_titre($title, $linktocreatetime, 'title_generic.png');
 			}
 
 			$i = 0;
@@ -868,8 +869,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if (! empty($arrayfields['t.task_date']['checked']))
 		{
 			print '<td class="liste_titre">';
-			if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-			print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+			if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+			print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
 			$formother->select_year($search_year,'search_year',1, 20, 5);
 			print '</td>';
 		}

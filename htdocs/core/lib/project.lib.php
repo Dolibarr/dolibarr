@@ -104,10 +104,10 @@ function project_prepare_head($object)
 		$head[$h][2] = 'tasks';
 		$h++;
 
-		$head[$h][0] = DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Gantt");
-		if ($nbTasks > 0) $head[$h][1].= ' <span class="badge">'.($nbTasks).'</span>';
-		$head[$h][2] = 'gantt';
+		$head[$h][0] = DOL_URL_ROOT.'/projet/tasks/time.php?withproject=1&projectid='.$object->id;
+		$head[$h][1] = $langs->trans("TimeSpent");
+		//if ($nbTasks > 0) $head[$h][1].= ' <span class="badge">'.($nbTasks).'</span>';
+		$head[$h][2] = 'timespent';
 		$h++;
 	}
 
