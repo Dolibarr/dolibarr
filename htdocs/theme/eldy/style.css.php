@@ -822,6 +822,9 @@ select.flat.selectlimit {
 .fa-trash, .fa-crop, .fa-pencil {
 	font-size: 1.4em;
 }
+.fa-15 {
+	font-size: 1.5em;
+}
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
 /*.table-responsive {
