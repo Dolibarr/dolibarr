@@ -452,5 +452,5 @@ ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (
 UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
 
 -- Warehouse
-ALTER TABLE llx_entrepot ADD model_pdf VARCHAR(255) AFTER fk_user_author;
-ALTER TABLE llx_stock_mouvement ADD model_pdf VARCHAR(255) AFTER origintype;
+ALTER TABLE llx_entrepot ADD COLUMN model_pdf VARCHAR(255) AFTER fk_user_author;
+ALTER TABLE llx_stock_mouvement ADD COLUMN model_pdf VARCHAR(255) AFTER origintype;
