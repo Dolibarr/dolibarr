@@ -941,3 +941,5 @@ Remote=Distant
 LocalAndRemote=Local et distant
 KeyboardShortcut=Raccourci clavier
 AssignedTo=Assigné à
+Deletedraft=Supprimer brouillon
+ConfirmMassDraftDeletion=Confirmation de suppression brouillons en masse
