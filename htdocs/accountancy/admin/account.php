@@ -94,9 +94,9 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     if (! empty($cancel)) $action = '';
-    
+
     include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
-    
+
     if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') ||GETPOST('button_removefilter','alpha')) // All test are required to be compatible with all browsers
     {
     	$search_account = "";
@@ -106,13 +106,13 @@ if (empty($reshook))
     	$search_pcgsubtype = "";
 		$search_array_options=array();
     }
-    
+
     if (GETPOST('change_chart'))
     {
         $chartofaccounts = GETPOST('chartofaccounts', 'int');
-        
+
         if (! empty($chartofaccounts)) {
-        
+
             if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
                 $error ++;
             }
@@ -120,12 +120,12 @@ if (empty($reshook))
             $error ++;
         }
     }
-    
+
     if ($action == 'disable') {
     	if ($accounting->fetch($id)) {
     		$result = $accounting->account_desactivate($id);
     	}
-    	
+
     	$action = 'update';
     	if ($result < 0) {
     		setEventMessages($accounting->error, $accounting->errors, 'errors');
@@ -160,10 +160,10 @@ $pcgver = $conf->global->CHARTOFACCOUNTS;
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = " . $conf->entity;
 // Dirty hack wainting that foreign key account_parent is an integer to be compared correctly with rowid
-if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS INTEGER)";
-else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS UNSIGNED)";
+if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS INTEGER) AND a2.entity = " . $conf->entity;
+else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS UNSIGNED) AND a2.entity = " . $conf->entity;
 $sql .= " WHERE asy.rowid = " . $pcgver;
 
 if (strlen(trim($search_account)))			$sql .= natural_search("aa.account_number", $search_account);
@@ -179,7 +179,7 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$resql = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($resql);
-}	
+}
 
 $sql .= $db->plimit($limit + 1, $offset);
 
@@ -209,11 +209,11 @@ if ($resql)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
-	
+
 	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
-	
+
     print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd);
-	
+
 	// Box to select active chart of account
     print $langs->trans("Selectchartofaccounts") . " : ";
     print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
@@ -227,22 +227,22 @@ if ($resql)
         $i = 0;
         while ( $i < $numbis ) {
             $row = $db->fetch_row($resqlchart);
-    
+
             print '<option value="' . $row[0] . '"';
             print $pcgver == $row[0] ? ' selected' : '';
             print '>' . $row[1] . ' - ' . $row[2] . '</option>';
-    
+
             $i ++;
         }
     }
     print "</select>";
     print '<input type="submit" class="button" name="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
-    print '<br>';    
+    print '<br>';
 	print '<br>';
-	
+
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
     $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
-	
+
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
@@ -259,7 +259,7 @@ if ($resql)
 	print $searchpicto;
 	print '</td>';
 	print '</tr>';
-	
+
     print '<tr class="liste_titre">';
 	if (! empty($arrayfields['aa.account_number']['checked']))	print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"],"aa.account_number","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['aa.label']['checked']))			print_liste_field_titre($arrayfields['aa.label']['label'], $_SERVER["PHP_SELF"],"aa.label","",$param,'',$sortfield,$sortorder);
@@ -274,14 +274,14 @@ if ($resql)
 	$accountparent = new AccountingAccount($db);
 
 	$i=0;
-	while ($i < min($num, $limit)) 
+	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 
 		$accountstatic->id = $obj->rowid;
 		$accountstatic->label = $obj->label;
 		$accountstatic->account_number = $obj->account_number;
-		
+
 		print '<tr class="oddeven">';
 
 		// Account number
@@ -310,7 +310,7 @@ if ($resql)
 				$accountparent->id = $obj->rowid2;
 				$accountparent->label = $obj->label2;
 				$accountparent->account_number = $obj->account_number2;
-			
+
 				print "<td>";
 				print $accountparent->getNomUrl(1);
 				print "</td>\n";
@@ -371,11 +371,11 @@ if ($resql)
 		}
 		print '</td>' . "\n";
 		if (! $i) $totalarray['nbfield']++;
-		
+
 		print "</tr>\n";
 		$i++;
 	}
-	
+
 	print "</table>";
 	print "</div>";
 	print '</form>';
