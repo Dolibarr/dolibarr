@@ -736,6 +736,56 @@ if ($massaction == 'confirm_createbills')
 	}
 }
 
+if (!$error && $massaction == 'cancelorders')
+{
+
+	$db->begin();
+
+	$nbok = 0;
+
+
+	$orders = GETPOST('toselect', 'array');
+	foreach ($orders as $id_order)
+	{
+
+		$cmd = new Commande($db);
+		if ($cmd->fetch($id_order) <= 0)
+			continue;
+
+		if ($cmd->statut != Commande::STATUS_VALIDATED)
+		{
+			$langs->load('errors');
+			setEventMessages($langs->trans("ErrorObjectMustHaveStatusValidToBeCanceled", $cmd->ref), null, 'errors');
+			$error++;
+			break;
+		}
+		else
+			$result = $cmd->cancel();
+
+		if ($result < 0)
+		{
+			setEventMessages($cmd->error, $cmd->errors, 'errors');
+			$error++;
+			break;
+		}
+		else
+			$nbok++;
+	}
+	if (!$error)
+	{
+		if ($nbok > 1)
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		else
+			setEventMessages($langs->trans("RecordsModified", $nbok), null, 'mesgs');
+		$db->commit();
+	}
+	else
+	{
+		$db->rollback();
+	}
+}
+
+
 if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_search'))
 {
 	if (empty($diroutputmassaction))
