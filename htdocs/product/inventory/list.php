@@ -78,7 +78,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 else
 {
-	$result = restrictedArea($user, 'stock', $objectid, '', 'advance_inventory');	
+	$result = restrictedArea($user, 'stock', $objectid, '', 'inventory_advance');
 }
 
 // Initialize array of search criterias
