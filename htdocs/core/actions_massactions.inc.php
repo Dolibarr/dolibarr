@@ -1079,16 +1079,24 @@ if (! $error && ($massaction == 'delete' || ($action == 'delete' && $confirm == 
 		$result=$objecttmp->fetch($toselectid);
 		if ($result > 0)
 		{
-       		if ($objectclass != 'Facture' || empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY) || (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY) && $objecttmp->statut == Facture::STATUS_DRAFT) ) {
-                if (in_array($objecttmp->element, array('societe', 'member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
-                else $result = $objecttmp->delete($user);
+			// Refuse deletion for some objects/status
+	       		if ($objectclass == 'Facture' && empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED) && $objecttmp->status != Facture::STATUS_DRAFT))
+       			{
+       				$langs->load("errors");
+       				$nbignored++;
+       				$resaction.='<div class="error">'.$langs->trans('ErrorOnlyDraftStatusCanBeDeletedInMassAction',$objecttmp->ref).'</div><br>';
+       				continue;
+       			}
+	
+			if (in_array($objecttmp->element, array('societe', 'member'))) $result = $objecttmp->delete($objecttmp->id, $user, 1);
+			else $result = $objecttmp->delete($user);
 
-                if ($result <= 0) {
-                    setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
-                    $error++;
-                    break;
-                } else $nbok++;
-            }
+			if ($result <= 0) {
+			    setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+			    $error++;
+			    break;
+			} else $nbok++;
+
 		}
 		else
 		{
