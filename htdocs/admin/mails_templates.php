@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2017  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -447,7 +447,6 @@ $fieldlist=explode(',',$tabfield[$id]);
 
 // Form to add a new line
 $alabelisused=0;
-$var=false;
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -591,9 +590,7 @@ $colspan=count($fieldlist)+1;
 
 print '</table>';
 print '</div>';
-
 print '</form>';
-
 print '<br>';
 
 
@@ -611,7 +608,6 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
-    $var=true;
 
     $param = '&id='.$id;
     $paramwithsearch = $param;
