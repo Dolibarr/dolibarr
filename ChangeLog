@@ -21,7 +21,7 @@ Following changes may create regressions for some external modules, but were nec
 * Removed method fetch_prods() and get_each_prod() not used, keep only get_arbo_each_prod() that is better.
 * The hook contaxt commcard has been renamed thirdpartycomm
 * The hook contaxt thirdpartycard has been renamed thirdpartycontact
-
+* Remove method Categorie:get_nb_categories() that was not used.
 
 ***** ChangeLog for 7.0.1 compared to 7.0.0 *****
 FIX: #8139 User search does not work if MAIN_USE_OLD_SEARCH_FORM, missing list.php

@@ -1208,30 +1208,6 @@ class Categorie extends CommonObject
 	}
 
 	/**
-	 * 	Returns total number of categories
-	 *
-	 *	@return		int		Number of categories
-	 *	@deprecated function not used ?
-	 */
-	function get_nb_categories()
-	{
-		$sql = "SELECT count(rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category').")";
-		$res = $this->db->query($sql);
-		if ($res)
-		{
-			$res = $this->db->fetch_array($res);
-			return $res[0];
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
 	 * 	Check if no category with same label already exists for this cat's parent or root and for this cat's type
 	 *
 	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
