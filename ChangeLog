@@ -3,7 +3,22 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 6.0.6 compared to 6.0.6 *****
+***** ChangeLog for 6.0.7 compared to 6.0.6 *****
+FIX: #8023
+FIX: #8259 can't update contact birthday with REST API
+FIX: #8478 !empty instead of count to avoid warning
+FIX: #8488
+FIX: actioncomm export: type filtering not working
+FIX: addline on invoice supplier manage rank on its own if not provided
+FIX: issue #8037
+FIX: label in getnomurl projectlist
+FIX: payment term doc-specific label was not used
+FIX: payment term doc-specific label was not used (issue #8414)
+FIX: project category is type 6 not 5 !!
+FIX: some localtaxes errors
+FIX: weird password autocompletion in Google Chrome (issue #8479)
+
+***** ChangeLog for 6.0.6 compared to 6.0.5 *****
 FIX: #7974 Contract - Invalid reference on the document
 FIX: #8139
 FIX: #8139 User search does not work if MAIN_USE_OLD_SEARCH_FORM, missing list.php
