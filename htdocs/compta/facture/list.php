@@ -585,24 +585,19 @@ if ($resql)
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	if ($conf->prelevement->enabled)
-	{
-	   $langs->load("withdrawals");
-	   $arrayofmassactions['withdrawrequest']=$langs->trans("MakeWithdrawRequest");
+	if ($conf->prelevement->enabled) {
+        	$langs->load("withdrawals");
+        	$arrayofmassactions['withdrawrequest'] = $langs->trans("MakeWithdrawRequest");
 	}
-	if ($user->rights->facture->supprimer)
-	{
-		//if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) || empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED))
-		if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED))
-		{
-			// mass deletion never possible on invoices on such situation
+	if ($user->rights->facture->supprimer) {
+		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
+        		$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
 		}
-		else
-		{
-		   $arrayofmassactions['predelete']=$langs->trans("Delete");
-		}
-	}
-	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+        	elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
+            		$arrayofmassactions['predelete'] = $langs->trans("Delete");
+        	}
+    	}
+	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
