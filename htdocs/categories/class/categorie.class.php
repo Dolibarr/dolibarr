@@ -761,11 +761,9 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// Save object we want to unlink category off into category instance to provide information to trigger
-			$this->unlinkoff=$obj;
-
             // Call trigger
-            $result=$this->call_trigger('CATEGORY_UNLINK',$user);
+			$this->context=array('unlinkoff'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
+			$result=$this->call_trigger('CATEGORY_UNLINK',$user);
             if ($result < 0) { $error++; }
             // End call triggers
 

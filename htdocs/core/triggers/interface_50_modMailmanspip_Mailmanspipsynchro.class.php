@@ -75,10 +75,10 @@ class InterfaceMailmanSpipsynchro extends DolibarrTriggers
         	dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
         	// We remove subscription if we change category (lessw category may means less mailing-list to subscribe)
-        	if (is_object($object->unlinkoff) && method_exists($object->unlinkoff, 'del_to_abo') && $object->unlinkoff->del_to_abo() < 0)
+        	if (is_object($object->context['unlinkoff']) && method_exists($object->context['unlinkoff'], 'del_to_abo') && $object->context['unlinkoff']->del_to_abo() < 0)
         	{
-    			$this->error=$object->unlinkoff->error;
-        		$this->errors=$object->unlinkoff->errors;
+        		$this->error=$object->context['unlinkoff']->error;
+        		$this->errors=$object->context['unlinkoff']->errors;
         		$return=-1;
         	}
         	else
