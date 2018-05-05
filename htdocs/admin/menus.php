@@ -163,8 +163,6 @@ if ($action == 'edit')
 	clearstatcache();
 
 	// Gestionnaires de menu
-	$var=true;
-
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 	print '<td>';
@@ -176,7 +174,6 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Menu top
-
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuManager").'</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_STANDARD_FORCED)?$conf->global->MAIN_MENU_STANDARD:$conf->global->MAIN_MENU_STANDARD_FORCED, 'MAIN_MENU_STANDARD', $dirstandard, empty($conf->global->MAIN_MENU_STANDARD_FORCED)?'':' disabled');
@@ -187,7 +184,6 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Menu smartphone
-
 	print '<tr class="oddeven"><td>'.$langs->trans("DefaultMenuSmartphoneManager").'</td>';
 	print '<td>';
 	$formadmin->select_menu(empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?$conf->global->MAIN_MENU_SMARTPHONE:$conf->global->MAIN_MENU_SMARTPHONE_FORCED, 'MAIN_MENU_SMARTPHONE', array_merge($dirstandard,$dirsmartphone), empty($conf->global->MAIN_MENU_SMARTPHONE_FORCED)?'':' disabled');
@@ -202,8 +198,6 @@ if ($action == 'edit')
 else
 {
 	// Gestionnaires de menu
-	$var=true;
-
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
 	print '<td>';
@@ -265,7 +259,6 @@ if ($action == 'edit')
 }
 
 print '</form>';
-
 
 
 if ($action != 'edit')
