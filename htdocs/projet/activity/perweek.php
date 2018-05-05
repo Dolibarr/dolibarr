@@ -49,7 +49,8 @@ $projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projectid"];
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+// For external user, no check is done on company because readability is managed by public status of project and assignement.
+// if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now=dol_now();
