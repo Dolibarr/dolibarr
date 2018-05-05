@@ -849,6 +849,8 @@ if ($nboftargetok) {
 			unlink("$NEWDESTI/${FILENAMEDEB}.changes");
 			print "Remove target ${FILENAMEDEB}.debian.tar.gz...\n";
 			unlink("$NEWDESTI/${FILENAMEDEB}.debian.tar.gz");
+			print "Remove target ${FILENAMEDEB}.debian.tar.xz...\n";
+			unlink("$NEWDESTI/${FILENAMEDEB}.debian.tar.xz");
 			print "Remove target ${FILENAMEDEBNATIVE}.orig.tar.gz...\n";
 			unlink("$NEWDESTI/${FILENAMEDEBNATIVE}.orig.tar.gz");
 
@@ -1024,7 +1026,8 @@ if ($nboftargetok) {
 			$ret=`mv $BUILDROOT/*_all.deb "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.dsc "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.orig.tar.gz "$NEWDESTI/"`;
-			$ret=`mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/"`;
+			$ret=`mv $BUILDROOT/*.debian.tar.gz "$NEWDESTI/" 2>/dev/null`;
+			$ret=`mv $BUILDROOT/*.debian.tar.xz "$NEWDESTI/"`;
 			$ret=`mv $BUILDROOT/*.changes "$NEWDESTI/"`;
 			next;
 		}
