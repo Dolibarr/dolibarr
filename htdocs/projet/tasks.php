@@ -488,7 +488,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title=$langs->trans("ListOfTasks");
-	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1">'.$langs->trans("GoToGanttView").' <span class="fa fa-calendar-minus-o valignmiddle"></span></a>';
+	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1">'.$langs->trans("GoToGanttView").'<span class="paddingleft fa fa-calendar-minus-o valignmiddle"></span></a>';
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'title_generic.png');

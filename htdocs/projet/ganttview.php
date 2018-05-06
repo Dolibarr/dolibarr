@@ -209,7 +209,7 @@ else
 	$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 }
 
-$linktolist='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'">'.$langs->trans("GoToListOfTasks").' <span class="fa fa-list-ul valignmiddle"></span></a>';
+$linktolist='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$object->id.'">'.$langs->trans("GoToListOfTasks").'<span class="paddingleft fa fa-list-ul valignmiddle"></span></a>';
 
 //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 print load_fiche_titre($title, $linktolist.' &nbsp; '.$linktocreatetask, 'title_generic.png');
