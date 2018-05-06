@@ -3925,7 +3925,7 @@ class Product extends CommonObject
 	 */
     function load_virtual_stock()
     {
-        global $conf, $user, $langs;
+        global $conf, $action;
 
         $stock_commande_client=0;
         $stock_commande_fournisseur=0;
