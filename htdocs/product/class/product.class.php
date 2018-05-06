@@ -3976,14 +3976,15 @@ class Product extends CommonObject
             $this->stock_theorique+=$stock_commande_fournisseur-$stock_reception_fournisseur;
         }
 
-	// Call triggers
-	include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	$interface=new Interfaces($this->db);
-	$result=$interface->run_triggers('LOAD_VIRTUAL_STOCK', $this, $user, $langs, $conf);
-	if ($result < 0) {
-		$this->errors=$interface->errors;
-	return -1;
+	if (! is_object($hookmanager)) {
+	    include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
+	    $hookmanager=new HookManager($this->db);
 	}
+	$hookmanager->initHooks(array('productdao'));
+	$parameters=array('id'=>$this->id);
+	// Note that $action and $object may have been modified by some hooks
+	$reshook=$hookmanager->executeHooks('loadvirtualstock', $parameters, $this, $action);
+	if ($reshook > 0) $this->stock_theorique+= $hookmanager->resPrint;
 
     }
 
