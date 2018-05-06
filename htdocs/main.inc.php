@@ -1236,17 +1236,17 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 
 		//Overload css files to the current theme
 		// Check if the /theme/nameoftheme/style folder exists and add the contains css files to head
-		if (file_exists(dirname(dol_buildpath($conf->css, 0))."/style"))
+		if (file_exists(dirname(dol_buildpath($conf->css, 0)).DIRECTORY_SEPARATOR.(empty($conf->global->CUSTOM_THEME_STYLE_FOLDER)?"style":$conf->global->CUSTOM_THEME_STYLE_FOLDER)))
 		{
 			//browse the style dir and add the contains css files
-			if ($handle = opendir(dirname(dol_buildpath($conf->css, 0))."/style"))
+			if ($handle = opendir(dirname(dol_buildpath($conf->css, 0)).DIRECTORY_SEPARATOR.(empty($conf->global->CUSTOM_THEME_STYLE_FOLDER)?"style":$conf->global->CUSTOM_THEME_STYLE_FOLDER)))
 			{
 				while (false !== ($entry = readdir($handle))) 
 				{
 					list($filename, $extension) = explode(".", $entry);
 					if ($entry !== '.' && $entry !== '..' && $extension == 'css')
 					{
-						print '<link rel="stylesheet" type="text/css" href="'.dirname(dol_buildpath($conf->css, 1))."/style/".$entry.'">'."\n";
+						print '<link rel="stylesheet" type="text/css" href="'.dirname(dol_buildpath($conf->css, 1))."/".(empty($conf->global->CUSTOM_THEME_STYLE_FOLDER)?"style":$conf->global->CUSTOM_THEME_STYLE_FOLDER)."/".$entry.'">'."\n";
 					}
 				}
 				closedir($handle);
@@ -1262,17 +1262,17 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			{
 				if(in_array($module, $cur_modulepart))
 				{
-					if (file_exists(getcwd().DIRECTORY_SEPARATOR."style"))
+					if (file_exists(getcwd().DIRECTORY_SEPARATOR.(empty($conf->global->CUSTOM_MODULE_STYLE_FOLDER)?"style":$conf->global->CUSTOM_MODULE_STYLE_FOLDER)))
 					{
 						//browse the style dir and add the contains css files
-						if ($handle = opendir(getcwd().DIRECTORY_SEPARATOR."style"))
+						if ($handle = opendir(getcwd().DIRECTORY_SEPARATOR.(empty($conf->global->CUSTOM_MODULE_STYLE_FOLDER)?"style":$conf->global->CUSTOM_MODULE_STYLE_FOLDER)))
 						{
 							while (false !== ($entry = readdir($handle))) 
 							{
 								list($filename, $extension) = explode(".", $entry);
 								if ($entry !== '.' && $entry !== '..' && $extension == 'css')
 								{
-									print '<link rel="stylesheet" type="text/css" href="'.dirname($_SERVER["PHP_SELF"])."/style/".$entry.'">'."\n";
+									print '<link rel="stylesheet" type="text/css" href="'.dirname($_SERVER["PHP_SELF"])."/".(empty($conf->global->CUSTOM_MODULE_STYLE_FOLDER)?"style":$conf->global->CUSTOM_MODULE_STYLE_FOLDER)."/".$entry.'">'."\n";
 								}
 							}
 							closedir($handle);
