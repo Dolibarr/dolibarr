@@ -6,7 +6,7 @@
  * Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2015		Bahfir Abbes		<bafbes@gmail.com>
- * Copyright (C) 2016		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2016-2018	Ferran Marcet		<fmarcet@2byte.es>
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -498,7 +498,7 @@ class FormFile
                     $modellist=ModelePDFCards::liste_modeles($this->db);
                 }
             }
-            elseif ($modulepart == 'agenda')
+            elseif ($modulepart == 'actions')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
