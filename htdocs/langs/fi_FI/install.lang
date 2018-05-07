@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Voit käyttää Dolibarr ohjatun peräisin Ubuntu tai Debia
 KeepDefaultValuesMamp=Voit käyttää DoliMamp ohjattua, joten arvojen suhteen täällä on jo optimoitu. Muuttaa vain, jos tiedät mitä teet.
 KeepDefaultValuesProxmox=Käytät Dolibarr ohjatun päässä Proxmox virtuaalinen laite, joten ehdotetut arvot tässä on jo optimoitu. Muuta niitä vain, jos tiedät mitä teet.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Korjaus denormalized tiedot
@@ -191,9 +193,11 @@ MigrationActioncommElement=Päivitä tiedot toimista
 MigrationPaymentMode=Tiedot muuttoliike maksua tilassa
 MigrationCategorieAssociation=Kategorioiden siirto 
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Näytä ei saatavilla olevat valinnat
 HideNotAvailableOptions=Piilota ei saatavilla olevat valinnat
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

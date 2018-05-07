@@ -65,3 +65,86 @@ function expensereport_pdf_create(DoliDB $db, ExpenseReport $object, $message, $
 {
 	return $object->generateDocument($modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 }
+
+/**
+ *  \class      ModeleNumRefExpenseReport
+ *  \brief      Parent class for numbering masks of expense reports
+ */
+
+abstract class ModeleNumRefExpenseReport
+{
+	var $error='';
+
+	/**
+	 *	Return if a module can be used or not
+	 *
+	 *	@return		boolean     true if module can be used
+	 */
+	function isEnabled()
+	{
+		return true;
+	}
+
+	/**
+	 *	Renvoie la description par defaut du modele de numerotation
+	 *
+	 *	@return     string      Texte descripif
+	 */
+	function info()
+	{
+		global $langs;
+		$langs->load("orders");
+		return $langs->trans("NoDescription");
+	}
+
+	/**
+	 *	Renvoie un exemple de numerotation
+	 *
+	 *	@return     string      Example
+	 */
+	function getExample()
+	{
+		global $langs;
+		$langs->load("trips");
+		return $langs->trans("NoExample");
+	}
+
+	/**
+	 *	Test si les numeros deja en vigueur dans la base ne provoquent pas de conflits qui empecheraient cette numerotation de fonctionner.
+	 *
+	 *	@return     boolean     false si conflit, true si ok
+	 */
+	function canBeActivated()
+	{
+		return true;
+	}
+
+	/**
+	 *	Renvoie prochaine valeur attribuee
+	 *
+	 *	@param	Object		$object		Object we need next value for
+	 *	@return	string      Valeur
+	 */
+	function getNextValue($object)
+	{
+		global $langs;
+		return $langs->trans("NotAvailable");
+	}
+
+	/**
+	 *	Renvoie version du module numerotation
+	 *
+	 *	@return     string      Valeur
+	 */
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		if ($this->version) return $this->version;
+		return $langs->trans("NotAvailable");
+	}
+}

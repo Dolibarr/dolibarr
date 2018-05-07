@@ -14,14 +14,14 @@ PHPSupportGD=Ovaj PHP podržava GD grafičke funkcije.
 PHPSupportCurl=This PHP support Curl.
 PHPSupportUTF8=Ovaj PHP podržava UTF8 funkcije.
 PHPMemoryOK=Vaša maksimalna memorija za PHP  sesiju je postavljena na <b>%s</b>. To bi trebalo biti dovoljno.
-PHPMemoryTooLow=Your PHP max session memory is set to <b>%s</b> bytes. This should be too low. Change your <b>php.ini</b> to set <b>memory_limit</b> parameter to at least <b>%s</b> bytes.
-Recheck=Click here for a more significative test
-ErrorPHPDoesNotSupportSessions=Your PHP installation does not support sessions. This feature is required to make Dolibarr working. Check your PHP setup.
-ErrorPHPDoesNotSupportGD=Your PHP installation does not support graphical function GD. No graph will be available.
+PHPMemoryTooLow=Vaša maks. PHP memorija sesije postavljena je na <b>%s</b> bajta. To je isuviše malo. Promijenite vaš <b>php.ini</b> da parametar <b>memory_limit</b> ima najmanje <b>%s</b> bajta.
+Recheck=Kliknite ovdje za više značajan test
+ErrorPHPDoesNotSupportSessions=Vaša PHP instalacija ne podržava sesije. Ova osobina je neophodna da bi Dolibarr uopće radio. Provjerite vašu PHP instalaciju.
+ErrorPHPDoesNotSupportGD=Vaša PHP instalacija ne podržava grafičku funkciju GD. Neće biti dostupni grafikoni.
 ErrorPHPDoesNotSupportCurl=Your PHP installation does not support Curl.
 ErrorPHPDoesNotSupportUTF8=Your PHP installation does not support UTF8 functions. Dolibarr can't work correctly. Solve this before installing Dolibarr.
-ErrorDirDoesNotExists=Directory %s does not exist.
-ErrorGoBackAndCorrectParameters=Go backward and correct wrong parameters.
+ErrorDirDoesNotExists=Direktorij %s ne postoji.
+ErrorGoBackAndCorrectParameters=Vratite se nazad i ispravite pogrešne parametre.
 ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
 ErrorFailedToCreateDatabase=Failed to create database '%s'.
 ErrorFailedToConnectToDatabase=Failed to connect to database '%s'.
@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubu
 KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
 KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Ništa za čišćenje/brisanje
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix for denormalized data
@@ -191,9 +193,13 @@ MigrationActioncommElement=Update data on actions
 MigrationPaymentMode=Data migration for payment mode
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Premještanje događaja da bi se dodao kontakt događaja u tabelu dodjeljivanja
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
+MigrationUserRightsEntity=Update entity field value of llx_user_rights
+MigrationUserGroupRightsEntity=Update entity field value of llx_usergroup_rights
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

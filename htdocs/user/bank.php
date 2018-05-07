@@ -30,12 +30,19 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/userbankaccount.class.php';
+if (! empty($conf->holiday->enabled)) require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
+if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
+if (! empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
 $langs->load("companies");
 $langs->load("commercial");
 $langs->load("banks");
 $langs->load("bills");
+$langs->load("trips");
+$langs->load("holiday");
+$langs->load("salaries");
 
 $id = GETPOST('id','int');
 $bankid = GETPOST('bankid','int');
@@ -198,7 +205,7 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
-    print '<div class="fichecenter">';
+    print '<div class="fichecenter"><div class="fichehalfleft">';
 
     print '<div class="underbanner clearboth"></div>';
 
@@ -282,7 +289,178 @@ if ($action != 'edit' && $action != 'create')		// If not bank account yet, $acco
 		print '<div class="warning">'.$langs->trans("RIBControlError").'</div>';
 	}
 
-    print "</div>";
+	print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+	// Nbre max d'elements des petites listes
+	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
+
+	/*
+	 * Last salaries
+	 */
+	if (! empty($conf->salaries->enabled) &&
+		($user->rights->salaries->read || ($user->rights->salaries->read && $object->id == $user->id))
+		)
+	{
+		$salary = new PaymentSalary($db);
+
+		$sql = "SELECT ps.rowid, ps.datesp, ps.dateep, ps.amount";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as ps";
+		$sql.= " WHERE ps.fk_user = ".$object->id;
+		$sql.= " AND ps.entity = ".$conf->entity;
+		$sql.= " ORDER BY ps.datesp DESC";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+
+	        print '<table class="noborder" width="100%">';
+
+            print '<tr class="liste_titre">';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSalaries",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/salaries/index.php?search_user='.$object->login.'">'.$langs->trans("AllSalaries").' <span class="badge">'.$num.'</span></a></td>';
+   			print '</tr></table></td>';
+   			print '</tr>';
+
+			$i = 0;
+			while ($i < $num && $i < $MAXLIST)
+			{
+				$objp = $db->fetch_object($resql);
+
+				print '<tr class="oddeven">';
+                print '<td class="nowrap">';
+                $salary->id = $objp->rowid;
+				$salary->ref = $objp->rowid;
+
+                print $salary->getNomUrl(1);
+				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->datesp),'day')."</td>\n";
+				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dateep),'day')."</td>\n";
+				print '<td align="right" style="min-width: 60px">'.price($objp->amount).'</td></tr>';
+				$i++;
+			}
+			$db->free($resql);
+
+			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			print "</table>";
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+	/*
+	 * Last holidays
+	 */
+	if (! empty($conf->holiday->enabled) &&
+		($user->rights->holiday->read_all || ($user->rights->holiday->read && $object->id == $user->id))
+		)
+	{
+		$holiday = new Holiday($db);
+
+		$sql = "SELECT h.rowid, h.statut, h.fk_type, h.date_debut, h.date_fin, h.halfday";
+		$sql.= " FROM ".MAIN_DB_PREFIX."holiday as h";
+		$sql.= " WHERE h.fk_user = ".$object->id;
+		$sql.= " AND h.entity = ".$conf->entity;
+		$sql.= " ORDER BY h.date_debut DESC";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+
+	        print '<table class="noborder" width="100%">';
+
+            print '<tr class="liste_titre">';
+  			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastHolidays",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/holiday/list.php?id='.$object->id.'">'.$langs->trans("AllHolidays").' <span class="badge">'.$num.'</span></a></td>';
+   			print '</tr></table></td>';
+   			print '</tr>';
+
+			$i = 0;
+			while ($i < $num && $i < $MAXLIST)
+			{
+				$objp = $db->fetch_object($resql);
+
+				print '<tr class="oddeven">';
+                print '<td class="nowrap">';
+                $holiday->id = $objp->rowid;
+				$holiday->ref = $objp->rowid;
+                $holiday->fk_type = $objp->fk_type;
+				$nbopenedday=num_open_day($db->jdate($objp->date_debut), $db->jdate($objp->date_fin), 0, 1, $objp->halfday);
+
+                print $holiday->getNomUrl(1);
+				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut),'day')."</td>\n";
+				print '<td align="right" style="min-width: 60px">'.$nbopenedday.' '.$langs->trans('DurationDays').'</td>';
+				print '<td align="right" style="min-width: 60px" class="nowrap">'.$holiday->LibStatut($objp->statut,5).'</td></tr>';
+				$i++;
+			}
+			$db->free($resql);
+
+			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			print "</table>";
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+	/*
+	 * Last expense report
+	 */
+	if (! empty($conf->expensereport->enabled) &&
+		($user->rights->expensereport->readall || ($user->rights->expensereport->lire && $object->id == $user->id))
+		)
+	{
+		$exp = new ExpenseReport($db);
+
+		$sql = "SELECT e.rowid, e.ref, e.fk_statut, e.date_debut, e.total_ttc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e";
+		$sql.= " WHERE e.fk_user_author = ".$object->id;
+		$sql.= " AND e.entity = ".$conf->entity;
+		$sql.= " ORDER BY e.date_debut DESC";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+
+	        print '<table class="noborder" width="100%">';
+
+            print '<tr class="liste_titre">';
+   			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastExpenseReports",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expensereport/list.php?id='.$object->id.'">'.$langs->trans("AllExpenseReports").' <span class="badge">'.$num.'</span></a></td>';
+   			print '</tr></table></td>';
+   			print '</tr>';
+
+			$i = 0;
+			while ($i < $num && $i < $MAXLIST)
+			{
+				$objp = $db->fetch_object($resql);
+
+				print '<tr class="oddeven">';
+                print '<td class="nowrap">';
+                $exp->id = $objp->rowid;
+				$exp->ref = $objp->ref;
+                $exp->fk_type = $objp->fk_type;
+
+                print $exp->getNomUrl(1);
+				print '</td><td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_debut),'day')."</td>\n";
+				print '<td align="right" style="min-width: 60px">'.price($objp->total_ttc).'</td>';
+				print '<td align="right" style="min-width: 60px" class="nowrap">'.$exp->LibStatut($objp->fk_statut,5).'</td></tr>';
+				$i++;
+			}
+			$db->free($resql);
+
+			if ($num <= 0) print '<td colspan="4" class="opacitymedium">'.$langs->trans("None").'</a>';
+			print "</table>";
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+    print '</div></div></div>';
+	print '<div style="clear:both"></div>';
 
     dol_fiche_end();
 

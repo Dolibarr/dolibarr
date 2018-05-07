@@ -36,7 +36,7 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action','alpha');
 $value = GETPOST('value','alpha');
 $label = GETPOST('label','alpha');
-$scandir = GETPOST('scandir','alpha');
+$scandir = GETPOST('scan_dir','alpha');
 $type='invoice';
 
 if (empty($conf->global->PAYMENT_ADDON)) $conf->global->PAYMENT_ADDON = 'mod_payment_cicada.php';
@@ -100,7 +100,7 @@ llxHeader("",$langs->trans("BillsSetup"),'EN:Invoice_Configuration|FR:Configurat
 $form=new Form($db);
 
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("BillsSetup"),$linkback,'title_setup');
 
 $head = invoice_admin_prepare_head();
@@ -188,7 +188,7 @@ foreach ($dirmodels as $reldir)
                             }
                             else
                             {
-                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scandir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+                                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&value='.preg_replace('/\.php$/','',$file).'&scan_dir='.$module->scandir.'&label='.urlencode($module->name).'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
                             }
                             print '</td>';
 
@@ -233,7 +233,7 @@ foreach ($dirmodels as $reldir)
 
 print '</table>';
 
-print "<br />";
+print "<br>";
 
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
@@ -256,17 +256,6 @@ print '</td><td width="60" align="center">';
 print $form->selectyesno("FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS",$conf->global->FACTURE_PAYMENTS_ON_DIFFERENT_THIRDPARTIES_BILLS,1);
 print '</td><td align="right">';
 print "</td></tr>\n";
-
-// Add js auto fill amount on paiement form
-/* always on now
-$var=! $var;
-print '<tr class="oddeven"><td>';
-print $langs->trans("JSOnPaimentBill");
-print '</td><td width="60" align="center">';
-print $form->selectyesno("INVOICE_AUTO_FILLJS",$conf->global->INVOICE_AUTO_FILLJS,1);
-print '</td><td align="right">';
-print "</td></tr>\n";
-*/
 
 print '</table>';
 

@@ -22,7 +22,7 @@ LoanCalc=Bank Loans Calculator
 PurchaseFinanceInfo=Purchase & Financing Information
 SalePriceOfAsset=Sale Price of Asset
 PercentageDown=Percentage Down
-LengthOfMortgage=Duration of loan
+LengthOfMortgage=Aizdevuma ilgums
 AnnualInterestRate=Annual Interest Rate
 ExplainCalculations=Explain Calculations
 ShowMeCalculationsAndAmortization=Show me the calculations and amortization
@@ -42,7 +42,7 @@ MonthlyPayment=Monthly Payment
 LoanCalcDesc=This <b>mortgage calculator</b> can be used to figure out monthly payments of a loaning, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is put as a down payment. Also taken into consideration are the town property taxes, and their effect on the total monthly mortgage payment.<br>
 GoToInterest=%s will go towards INTEREST
 GoToPrincipal=%s will go towards PRINCIPAL
-YouWillSpend=You will spend %s in year %s
+YouWillSpend=Jūs iztērēsiet %s gadā %s
 ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
 # Admin

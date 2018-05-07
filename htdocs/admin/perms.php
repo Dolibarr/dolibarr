@@ -127,7 +127,7 @@ print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 
-// Affiche lignes des permissions
+// Show permissions lines
 $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"

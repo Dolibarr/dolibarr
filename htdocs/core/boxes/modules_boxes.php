@@ -231,7 +231,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             $nblines=count($contents);
 
             $out.= "\n<!-- Box ".get_class($this)." start -->\n";
-            $out.= '<div class="box" id="boxto_'.$this->box_id.'">'."\n";
+
+            $out.= '<div class="box boxdraggable" id="boxto_'.$this->box_id.'">'."\n";
 
             if (! empty($head['text']) || ! empty($head['sublink']) || ! empty($head['subpicto']) || $nblines)
             {
@@ -247,7 +248,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 $out.= '>';
                 if ($conf->use_javascript_ajax)
                 {
-                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax100 maxwidth100onsmartphone">';
+                    $out.= '<table summary="" class="nobordernopadding" width="100%"><tr><td class="tdoverflowmax150 maxwidth150onsmartphone">';
                 }
                 if (! empty($head['text']))
                 {
@@ -259,7 +260,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                 if (! empty($conf->use_javascript_ajax))
                 {
                     $sublink='';
-                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?' target="_blank"':'').'>';
+                    if (! empty($head['sublink']))  $sublink.= '<a href="'.$head['sublink'].'"'.(empty($head['target'])?'':' target="'.$head['target'].'"').'>';
                     if (! empty($head['subpicto'])) $sublink.= img_picto($head['subtext'], $head['subpicto'], 'class="'.(empty($head['subclass'])?'':$head['subclass']).'" id="idsubimg'.$this->boxcode.'"');
                     if (! empty($head['sublink']))  $sublink.= '</a>';
 
@@ -269,7 +270,8 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     $out.= img_picto($langs->trans("MoveBox",$this->box_id),'grip_title','class="boxhandle hideonsmartphone cursormove"');
                     $out.= img_picto($langs->trans("CloseBox",$this->box_id),'close_title','class="boxclose cursorpointer" rel="x:y" id="imgclose'.$this->box_id.'"');
                     $label=$head['text'];
-                    if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                    //if (! empty($head['graph'])) $label.=' ('.$langs->trans("Graph").')';
+                    if (! empty($head['graph'])) $label.=' <span class="fa fa-bar-chart"></span>';
                     $out.= '<input type="hidden" id="boxlabelentry'.$this->box_id.'" value="'.dol_escape_htmltag($label).'">';
                     $out.= '</td></tr></table>';
                 }
@@ -286,7 +288,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
                     if (isset($contents[$i]))
                     {
                         // TR
-                        if (isset($contents[$i][0]['tr'])) $out.= '<tr class="tdtop" '.$contents[$i][0]['tr'].'>';
+                        if (isset($contents[$i][0]['tr'])) $out.= '<tr '.$contents[$i][0]['tr'].'>';
                         else $out.= '<tr class="oddeven">';
 
                         // Loop on each TD
@@ -359,6 +361,7 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
             if (empty($head['text']) && empty($head['sublink']) && empty($head['subpicto']) && ! $nblines) $out.= "<br>\n";
 
             $out.= "</div>\n";
+
             $out.= "<!-- Box ".get_class($this)." end -->\n\n";
             if (! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
                 dol_filecache($cachedir, $filename, $out);

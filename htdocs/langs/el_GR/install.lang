@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Χρησιμοποιείτε τον οδηγό εγκατά
 KeepDefaultValuesMamp=Χρησιμοποιείτε τον οδηγό εγκατάστασης του Dolibarr από το DoliMamp, οπότε οι προτεινόμενες ρυθμίσεις είναι ήδη προεπιλεγμένες. Αλλάξτε τις μόνο σε περίπτωση που γνωρίζετε ακριβώς τι κάνετε.
 KeepDefaultValuesProxmox=Χρησιμοποιείτε τον οδηγό εγκατάστασης του Dolibarr από μία εικονική συσκευή Proxmox, οπότε οι προτεινόμενες ρυθμίσεις είναι ήδη προεπιλεγμένες. Αλλάξτε τις μόνο σε περίπτωση που γνωρίζετε ακριβώς τι κάνετε.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix for denormalized data
@@ -191,9 +193,11 @@ MigrationActioncommElement=Ενημέρωση στοιχεία για τις δ�
 MigrationPaymentMode=Η μεταφορά δεδομένων για την κατάσταση πληρωμής
 MigrationCategorieAssociation=Μετακίνηση των κατηγοριών
 MigrationEvents=Μετακίνηση γεγονότων για να προσθέσετε ιδιοκτήτη γεγονότων σε πίνακα εκχώρησης
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Ενημέρωση φορέα τιμών πεδίου στον πίνακα llx_societe_remise
 MigrationRemiseExceptEntity=Ενημέρωση φορέα τιμών πεδίου στον πίνακα llx_societe_remise_except
 MigrationReloadModule=Επαναφόρτωση ενθεμάτων %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Εμφάνιση μη διαθέσιμων επιλογών
 HideNotAvailableOptions=Απόκρυψη μη μη διαθέσιμων επιλογών
 ErrorFoundDuringMigration=Αναφέρθηκε σφάλμα κατά τη διαδικασία μεταφοράς, οπότε το επόμενο βήμα δεν είναι δυνατό. Για να αγνοήστε το σφάλμα, μπορείτε να <a href="%s">πατήσετε εδώ</a>, αλλά η εφαρμογή ή κάποιες λειτουργείες μπορεί να μην λειτουργού σωστά μέχρι να διορθωθεί.

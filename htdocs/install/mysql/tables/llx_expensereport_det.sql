@@ -21,6 +21,7 @@ CREATE TABLE llx_expensereport_det
    rowid integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
    fk_expensereport integer NOT NULL,
    fk_c_type_fees integer NOT NULL,
+   fk_c_exp_tax_cat integer,
    fk_projet integer,
    comments text NOT NULL,
    product_type integer DEFAULT -1,
@@ -50,5 +51,6 @@ CREATE TABLE llx_expensereport_det
    fk_facture					integer DEFAULT 0,				-- ID of customer invoice line if expense is rebilled to a customer
    fk_code_ventilation			integer DEFAULT 0,
    rang							integer DEFAULT 0,				-- position of line
-   import_key					varchar(14)
+   import_key					varchar(14),
+   rule_warning_message text
 ) ENGINE=innodb;

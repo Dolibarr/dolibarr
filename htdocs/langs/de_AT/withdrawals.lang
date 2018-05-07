@@ -6,3 +6,4 @@ StatusMotif2=Abbuchung angefochten
 StatusMotif4=Ablehnung durch Kontoinhaber
 StatusMotif5=Fehlerhafte Kontodaten
 OrderWaiting=Wartestellung
+RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved

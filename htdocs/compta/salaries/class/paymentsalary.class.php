@@ -108,7 +108,7 @@ class PaymentSalary extends CommonObject
 		$sql.= " datesp='".$this->db->idate($this->datesp)."',";
 		$sql.= " dateep='".$this->db->idate($this->dateep)."',";
 		$sql.= " note='".$this->db->escape($this->note)."',";
-		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->fk_bank."'":"null").",";
+		$sql.= " fk_bank=".($this->fk_bank > 0 ? "'".$this->db->escape($this->fk_bank)."'":"null").",";
 		$sql.= " fk_user_author=".$this->fk_user_author.",";
 		$sql.= " fk_user_modif=".$this->fk_user_modif;
 
@@ -344,18 +344,18 @@ class PaymentSalary extends CommonObject
 		$sql.= ", entity";
 		$sql.= ") ";
 		$sql.= " VALUES (";
-		$sql.= "'".$this->fk_user."'";
+		$sql.= "'".$this->db->escape($this->fk_user)."'";
 		$sql.= ", '".$this->db->idate($this->datep)."'";
 		$sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", ".$this->amount;
 		$sql.= ", ".($this->salary > 0 ? $this->salary : "null");
-		$sql.= ", '".$this->type_payment."'";
-		$sql.= ", '".$this->num_payment."'";
+		$sql.= ", ".$this->db->escape($this->type_payment);
+		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->idate($this->datesp)."'";
 		$sql.= ", '".$this->db->idate($this->dateep)."'";
-		$sql.= ", '".$user->id."'";
+		$sql.= ", '".$this->db->escape($user->id)."'";
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
@@ -500,14 +500,16 @@ class PaymentSalary extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 

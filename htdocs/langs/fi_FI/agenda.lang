@@ -12,6 +12,7 @@ Event=Tapahtuma
 Events=Tapahtumat
 EventsNb=Number of events
 ListOfActions=Luettelo tapahtumista
+EventReports=Event reports
 Location=Sijainti
 ToUserOfGroup=To any user in group
 EventOnFullDay=Tapahtuma on koko päivä
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Define here events for which you want Dolibarr to create a
 AgendaSetupOtherDesc= Tämän sivun avulla määrittää muita muuttujia Esityslistan moduuli.
 AgendaExtSitesDesc=Tällä sivulla voit ilmoittaa ulkoisten kalenterien näkemään tapahtumiin otetaan Dolibarr asialistalle.
 ActionsEvents=Tapahtumat, joista Dolibarr luo toimia esityslistan automaattisesti
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
 ContractValidatedInDolibarr=Contract %s validated
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Member %s validated
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Member %s deleted
-MemberSubscriptionAddedInDolibarr=Subscription for member %s added
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Shipment %s validated
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Tilaa %s hyväksytty
 OrderRefusedInDolibarr=Order %s refused
 OrderBackToDraftInDolibarr=Tilaa %s palata luonnos tila
 ProposalSentByEMail=Liiketoimintaehdotukset %s lähetetään sähköpostilla
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=Asiakas tilaa %s lähetetään sähköpostilla
 InvoiceSentByEMail=Asiakas lasku %s lähetetään sähköpostilla
 SupplierOrderSentByEMail=Toimittaja järjestys %s lähetetään sähköpostilla
@@ -78,6 +83,14 @@ InvoiceDeleted=Invoice deleted
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=Project %s created
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Aloituspäivämäärä
@@ -86,7 +99,8 @@ AgendaUrlOptions1=Voit myös lisätä seuraavat parametrit suodattaa output:
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Busy
@@ -98,7 +112,7 @@ ExportCal=Vie kalenteri
 ExtSites=Tuo ulkoinen kalenterit
 ExtSitesEnableThisTool=Show external calendars (defined into global setup) into agenda. Does not affect external calendars defined by users.
 ExtSitesNbOfAgenda=Määrä kalenterit
-AgendaExtNb=Kalenteri nb %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL päästä. ICal-tiedostona
 ExtSiteNoLabel=Ei kuvausta
 VisibleTimeRange=Visible time range

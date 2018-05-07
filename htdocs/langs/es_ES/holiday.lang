@@ -79,6 +79,8 @@ HolidaysCancelation=Anulación días libres
 EmployeeLastname=Apellidos del empleado
 EmployeeFirstname=Nombre del empleado
 TypeWasDisabledOrRemoved=El tipo de día libre (id %s) ha sido desactivado o eliminado
+LastHolidays=Últimas %s solicitudes de días libres
+AllHolidays=Todas las solicitudes de días libres
 
 ## Configuration du Module ##
 LastUpdateCP=Última actualización automática de días retribuidos

@@ -169,7 +169,7 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
     print "<tr>";
-    print '<td class="fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
+    print '<td class="titlefieldcreate fieldrequired">'.$langs->trans("DatePayment").'</td><td>';
     print $form->select_date($datep,"datep",'','','','add',1,1);
     print '</td></tr>';
 

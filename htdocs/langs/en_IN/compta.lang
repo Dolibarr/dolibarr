@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - compta
-VATReceived=VAT received
-VATToCollect=VAT purchases
-VATSummary=VAT Balance
-VATPaid=VAT paid
+VATReport=Sale tax report
+VATReportByQuartersInInputOutputMode=Report by Sale tax rate of the tax collected and paid
+RulesVATInProducts=- For material assets, the report includes the VAT received or issued on the basis of the date of payment.
+RulesVATDueProducts=- For material assets, the report includes the VAT invoices, based on the invoice date.
 ProposalStats=Statistics on quotations
+ACCOUNTING_VAT_SOLD_ACCOUNT=Accounting account by default for VAT on sales (used if not defined on VAT dictionary setup)
+ACCOUNTING_VAT_BUY_ACCOUNT=Accounting account by default for VAT on purchases (used if not defined on VAT dictionary setup)

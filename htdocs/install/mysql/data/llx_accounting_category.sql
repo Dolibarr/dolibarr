@@ -1,4 +1,5 @@
 -- Copyright (C) 2016 		Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+-- Copyright (C) 2017 		Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,15 +16,9 @@
 --
 --
 
---
--- Ne pas placer de commentaire en fin de ligne, ce fichier est parsé lors
--- de l'install et tous les sigles '--' sont supprimés.
---
 
---
--- Categories compte de résultat Français
---
+-- Group of accounting accounts for report. This is a minimal default setup.
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'INCOMES',   'Income of products/services',               'Example: 7xxxxx', 0, 0, '',                 '10', 0, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2, 'EXPENSES',  'Expenses of products/services',             'Example: 6xxxxx', 0, 0, '',                 '20', 0, 1);
+INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3, 'PROFIT',    'Balance',                                   '',                0, 1, 'INCOMES+EXPENSES', '30', 0, 1);
 
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1,'VTE',  'Ventes de marchandises', '707xxx', 0, 0, '', '10', 1, 1);
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  2,'MAR',  'Coût achats marchandises vendues', '603xxx | 607xxx | 609xxx', 0, 0, '', '20', 1, 1);
-INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  3,'MARGE','Marge commerciale', '', 0, 1, '1 + 2', '30', 1, 1);

@@ -84,7 +84,7 @@ if ($action == 'setvalue' && $user->admin)
  */
 
 llxHeader('',$langs->trans("LDAPSetup"),'EN:Module_LDAP_En|FR:Module_LDAP|ES:M&oacute;dulo_LDAP');
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("LDAPSetup"),$linkback,'title_setup');
 
@@ -220,8 +220,9 @@ if (function_exists("ldap_connect"))
 			$dn=$object->_load_ldap_dn($info);
 
 			// Get a gid number for objectclass PosixGroup
-			if(in_array('posixGroup',$info['objectclass']))
-				$info['gidNumber'] = $ldap->getNextGroupGid();
+			if (in_array('posixGroup',$info['objectclass'])) {
+				$info['gidNumber'] = $ldap->getNextGroupGid('LDAP_KEY_GROUPS');
+			}
 
 			$result1=$ldap->delete($dn);			// To be sure to delete existing records
 			$result2=$ldap->add($dn,$info,$user);	// Now the test

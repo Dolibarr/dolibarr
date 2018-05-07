@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2013-2016 Alexandre Spangaro 	<aspangaro.dolibarr@gmail.com>
@@ -50,8 +50,8 @@ $langs->load("commercial");
 $mesg=''; $error=0; $errors=array();
 
 $action		= (GETPOST('action','alpha') ? GETPOST('action','alpha') : 'view');
-$confirm	= GETPOST('confirm','alpha');
-$backtopage = GETPOST('backtopage','alpha');
+$confirm		= GETPOST('confirm','alpha');
+$backtopage	= GETPOST('backtopage','alpha');
 $id			= GETPOST('id','int');
 $socid		= GETPOST('socid','int');
 
@@ -91,7 +91,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 if (empty($reshook))
 {
     // Cancel
-    if (GETPOST("cancel") && ! empty($backtopage))
+    if (GETPOST('cancel','alpha') && ! empty($backtopage))
     {
         header("Location: ".$backtopage);
         exit;
@@ -137,64 +137,65 @@ if (empty($reshook))
     }
 
 
-    // Confirmation desactivation
-    if ($action == 'disable')
-    {
-    	$object->fetch($id);
-    	if ($object->setstatus(0)<0)
-    	{
-    	    setEventMessages($object->error, $object->errors, 'errors');
-    	}
-    	else
-    	{
-        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-        	exit;
-    	}
-    }
+	// Confirmation desactivation
+	if ($action == 'disable')
+	{
+		$object->fetch($id);
+		if ($object->setstatus(0)<0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
+		}
+	}
 
-    // Confirmation activation
-    if ($action == 'enable')
-    {
-    	$object->fetch($id);
-        	if ($object->setstatus(1)<0)
-    	{
-    	    setEventMessages($object->error, $object->errors, 'errors');
-    	}
-    	else
-    	{
-        	header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
-        	exit;
-    	}
-    }
+	// Confirmation activation
+	if ($action == 'enable')
+	{
+		$object->fetch($id);
+		if ($object->setstatus(1)<0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+		}
+		else
+		{
+			header("Location: ".$_SERVER['PHP_SELF'].'?id='.$id);
+			exit;
+		}
+	}
 
-    // Add contact
-    if ($action == 'add' && $user->rights->societe->contact->creer)
-    {
-        $db->begin();
+	// Add contact
+	if ($action == 'add' && $user->rights->societe->contact->creer)
+	{
+		$db->begin();
 
         if ($canvas) $object->canvas=$canvas;
 
+        $object->entity			= (GETPOSTISSET('entity')?GETPOST('entity', 'int'):$conf->entity);
         $object->socid			= GETPOST("socid",'int');
-        $object->lastname		= GETPOST("lastname");
-        $object->firstname		= GETPOST("firstname");
+        $object->lastname		= GETPOST("lastname",'alpha');
+        $object->firstname		= GETPOST("firstname",'alpha');
         $object->civility_id	= GETPOST("civility_id",'alpha');
-        $object->poste			= GETPOST("poste");
-        $object->address		= GETPOST("address");
-        $object->zip			= GETPOST("zipcode");
-        $object->town			= GETPOST("town");
+        $object->poste			= GETPOST("poste",'alpha');
+        $object->address		= GETPOST("address",'alpha');
+        $object->zip			= GETPOST("zipcode",'alpha');
+        $object->town			= GETPOST("town",'alpha');
         $object->country_id		= GETPOST("country_id",'int');
-        $object->state_id       = GETPOST("state_id",'int');
-        $object->skype			= GETPOST("skype");
+        $object->state_id		= GETPOST("state_id",'int');
+        $object->skype			= GETPOST("skype",'alpha');
         $object->email			= GETPOST("email",'alpha');
-        $object->phone_pro		= GETPOST("phone_pro");
-        $object->phone_perso	= GETPOST("phone_perso");
-        $object->phone_mobile	= GETPOST("phone_mobile");
-        $object->fax			= GETPOST("fax");
+        $object->phone_pro		= GETPOST("phone_pro",'alpha');
+        $object->phone_perso	= GETPOST("phone_perso",'alpha');
+        $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
+        $object->fax			= GETPOST("fax",'alpha');
         $object->jabberid		= GETPOST("jabberid",'alpha');
 		$object->no_email		= GETPOST("no_email",'int');
         $object->priv			= GETPOST("priv",'int');
-        $object->note_public	= GETPOST("note_public");
-        $object->note_private	= GETPOST("note_private");
+        $object->note_public	= GETPOST("note_public",'none');
+        $object->note_private	= GETPOST("note_private",'none');
         $object->statut			= 1; //Defult status to Actif
 
         // Note: Correct date should be completed with location to have exact GM time of birth.
@@ -224,7 +225,7 @@ if (empty($reshook))
                 $action = 'create';
 			} else {
 				// Categories association
-				$contcats = GETPOST( 'contcats', 'array' );
+				$contcats = GETPOST( 'contcats', 'array');
 				$object->setCategories($contcats);
 			}
         }
@@ -278,15 +279,13 @@ if (empty($reshook))
             $action = 'edit';
         }
 
+		if (! $error)
+		{
+			$contactid=GETPOST("contactid",'int');
+			$object->fetch($contactid);
 
-        if (! $error)
-        {
-        	$contactid=GETPOST("contactid",'int');
-
-            $object->fetch($contactid);
-
-            // Photo save
-            $dir = $conf->societe->dir_output."/contact/".$object->id."/photos";
+			// Photo save
+			$dir = $conf->societe->multidir_output[$object->entity]."/contact/".$object->id."/photos";
             $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
             if (GETPOST('deletephoto') && $object->photo)
             {
@@ -341,33 +340,33 @@ if (empty($reshook))
 
 			$object->oldcopy = clone $object;
 
-            $object->old_lastname	= GETPOST("old_lastname");
-            $object->old_firstname	= GETPOST("old_firstname");
+			$object->old_lastname	= GETPOST("old_lastname",'alpha');
+			$object->old_firstname	= GETPOST("old_firstname",'alpha');
 
             $object->socid			= GETPOST("socid",'int');
-            $object->lastname		= GETPOST("lastname");
-            $object->firstname		= GETPOST("firstname");
+            $object->lastname		= GETPOST("lastname",'alpha');
+            $object->firstname		= GETPOST("firstname",'alpha');
             $object->civility_id	= GETPOST("civility_id",'alpha');
-            $object->poste			= GETPOST("poste");
+            $object->poste			= GETPOST("poste",'alpha');
 
-            $object->address		= GETPOST("address");
-            $object->zip			= GETPOST("zipcode");
-            $object->town			= GETPOST("town");
+            $object->address		= GETPOST("address",'alpha');
+            $object->zip			= GETPOST("zipcode",'alpha');
+            $object->town			= GETPOST("town",'alpha');
             $object->state_id   	= GETPOST("state_id",'int');
             $object->fk_departement	= GETPOST("state_id",'int');	// For backward compatibility
             $object->country_id		= GETPOST("country_id",'int');
 
             $object->email			= GETPOST("email",'alpha');
             $object->skype			= GETPOST("skype",'alpha');
-            $object->phone_pro		= GETPOST("phone_pro");
-            $object->phone_perso	= GETPOST("phone_perso");
-            $object->phone_mobile	= GETPOST("phone_mobile");
-            $object->fax			= GETPOST("fax");
+            $object->phone_pro		= GETPOST("phone_pro",'alpha');
+            $object->phone_perso	= GETPOST("phone_perso",'alpha');
+            $object->phone_mobile	= GETPOST("phone_mobile",'alpha');
+            $object->fax			= GETPOST("fax",'alpha');
             $object->jabberid		= GETPOST("jabberid",'alpha');
 			$object->no_email		= GETPOST("no_email",'int');
             $object->priv			= GETPOST("priv",'int');
-        	$object->note_public	= GETPOST("note_public");
-       		$object->note_private	= GETPOST("note_private");
+            $object->note_public	= GETPOST("note_public",'none');
+       		$object->note_private	= GETPOST("note_private",'none');
 
             // Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -383,7 +382,7 @@ if (empty($reshook))
 				$db->query( $sql );
 
 				// Then we add the associated categories
-				$categories = GETPOST( 'contcats', 'array' );
+				$categories = GETPOST( 'contcats', 'array');
 				$object->setCategories($categories);
 
                 $object->old_lastname='';
@@ -395,6 +394,15 @@ if (empty($reshook))
                 setEventMessages($object->error, $object->errors, 'errors');
                 $action = 'edit';
             }
+        }
+
+        if (! $error && empty($errors))
+        {
+       		if (! empty($backtopage))
+       		{
+       			header("Location: ".$backtopage);
+       			exit;
+       		}
         }
     }
 }
@@ -522,17 +530,19 @@ else
             print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
             print '<input type="hidden" name="action" value="add">';
             print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+			if (! empty($objsoc)) {
+				print '<input type="hidden" name="entity" value="'.$objsoc->entity.'">';
+            }
 
             dol_fiche_head($head, 'card', '', 0, '');
 
             print '<table class="border" width="100%">';
 
-
             // Name
             print '<tr><td class="titlefieldcreate fieldrequired"><label for="lastname">'.$langs->trans("Lastname").' / '.$langs->trans("Label").'</label></td>';
-	        print '<td><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname")?GETPOST("lastname"):$object->lastname).'" autofocus="autofocus"></td>';
+            print '<td><input name="lastname" id="lastname" type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("lastname",'alpha')?GETPOST("lastname",'alpha'):$object->lastname).'" autofocus="autofocus"></td>';
             print '<td><label for="firstname">'.$langs->trans("Firstname").'</label></td>';
-	        print '<td><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname")?GETPOST("firstname"):$object->firstname).'"></td></tr>';
+            print '<td><input name="firstname" id="firstname"type="text" class="maxwidth100onsmartphone" maxlength="80" value="'.dol_escape_htmltag(GETPOST("firstname",'alpha')?GETPOST("firstname",'alpha'):$object->firstname).'"></td></tr>';
 
             // Company
             if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -541,7 +551,7 @@ else
                 {
                     print '<tr><td><label for="socid">'.$langs->trans("ThirdParty").'</label></td>';
                     print '<td colspan="3" class="maxwidthonsmartphone">';
-                    print $objsoc->getNomUrl(1);
+                    print $objsoc->getNomUrl(1, 'contact');
                     print '</td>';
                     print '<input type="hidden" name="socid" id="socid" value="'.$objsoc->id.'">';
                     print '</td></tr>';
@@ -584,8 +594,8 @@ else
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->zip)) == 0) $object->zip = $objsoc->zip;			// Predefined with third party
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->town)) == 0) $object->town = $objsoc->town;	// Predefined with third party
             print '<tr><td><label for="zipcode">'.$langs->trans("Zip").'</label> / <label for="town">'.$langs->trans("Town").'</label></td><td colspan="'.$colspan.'" class="maxwidthonsmartphone">';
-            print $formcompany->select_ziptown((GETPOST("zipcode")?GETPOST("zipcode"):$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
-            print $formcompany->select_ziptown((GETPOST("town")?GETPOST("town"):$object->town),'town',array('zipcode','selectcountry_id','state_id'));
+            print $formcompany->select_ziptown((GETPOST("zipcode",'alpha')?GETPOST("zipcode",'alpha'):$object->zip),'zipcode',array('town','selectcountry_id','state_id'),6).'&nbsp;';
+            print $formcompany->select_ziptown((GETPOST("town",'alpha')?GETPOST("town",'alpha'):$object->town),'town',array('zipcode','selectcountry_id','state_id'));
             print '</td></tr>';
 
             // Country
@@ -625,7 +635,7 @@ else
             // EMail
             if (($objsoc->typent_code == 'TE_PRIVATE' || ! empty($conf->global->CONTACT_USE_COMPANY_ADDRESS)) && dol_strlen(trim($object->email)) == 0) $object->email = $objsoc->email;	// Predefined with third party
             print '<tr><td><label for="email">'.$langs->trans("Email").'</label></td>';
-	        print '<td><input name="email" id="email" type="text" class="maxwidth100onsmartphone" value="'.(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
+	        print '<td><input name="email" id="email" type="text" class="maxwidth100onsmartphone" value="'.dol_escape_htmltag(GETPOST("email",'alpha')?GETPOST("email",'alpha'):$object->email).'"></td>';
             if (! empty($conf->mailing->enabled))
             {
             	print '<td><label for="no_email">'.$langs->trans("No_Email").'</label></td>';
@@ -639,13 +649,13 @@ else
 
             // Instant message and no email
             print '<tr><td><label for="jabberid">'.$langs->trans("IM").'</label></td>';
-	        print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.(GETPOST("jabberid",'alpha')?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
+            print '<td colspan="3"><input name="jabberid" id="jabberid" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("jabberid",'alpha')?GETPOST("jabberid",'alpha'):$object->jabberid).'"></td></tr>';
 
             // Skype
             if (! empty($conf->skype->enabled))
             {
                 print '<tr><td><label for="skype">'.$langs->trans("Skype").'</label></td>';
-	            print '<td colspan="3"><input name="skype" id="skype" type="text" class="minwidth100" maxlength="80" value="'.(GETPOST("skype",'alpha')?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
+                print '<td colspan="3"><input name="skype" id="skype" type="text" class="minwidth100" maxlength="80" value="'.dol_escape_htmltag(GETPOST("skype",'alpha')?GETPOST("skype",'alpha'):$object->skype).'"></td></tr>';
             }
 
             // Visibility
@@ -664,7 +674,7 @@ else
 			}
 
             // Other attributes
-            $parameters=array('colspan' => ' colspan="3"','cols'=>3);
+            $parameters=array('socid' => $socid, 'objsoc' => $objsoc, 'colspan' => ' colspan="3"', 'cols' => 3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
             if (empty($reshook) && ! empty($extrafields->attribute_label))
@@ -1055,7 +1065,7 @@ else
 
         }
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $morehtmlref='<div class="refidno">';
         if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -1063,7 +1073,7 @@ else
             $objsoc->fetch($object->socid);
             // Thirdparty
             $morehtmlref.=$langs->trans('ThirdParty') . ' : ';
-            if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1);
+            if ($objsoc->id > 0) $morehtmlref.=$objsoc->getNomUrl(1, 'contact');
             else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
         }
         $morehtmlref.='</div>';

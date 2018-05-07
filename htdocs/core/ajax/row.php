@@ -63,9 +63,9 @@ if ((isset($_POST['roworder']) && ! empty($_POST['roworder'])) && (isset($_POST[
 	$row->table_element_line = $table_element_line;
 	$row->fk_element = $fk_element;
 	$row->id = $element_id;
-	$row->line_ajaxorder($newrowordertab);
+	$row->line_ajaxorder($newrowordertab);		// This update field rank or position in table table_element_line
 
-	// Reorder line to have position of chilren lines sharing same counter than parent lines
+	// Reorder line to have position of children lines sharing same counter than parent lines
 	// This should be useless because there is no need to have children sharing same counter than parent, but well, it's cleaner into database.
 	if (in_array($fk_element,array('fk_facture','fk_propal','fk_commande')))
 	{

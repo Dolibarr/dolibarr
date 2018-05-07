@@ -100,7 +100,7 @@ class mailing_advthirdparties extends MailingTargets
     								'source_url' => $this->url($obj->id,'thirdparty'),
     								'source_id' => $obj->id,
     								'source_type' => 'thirdparty'
-    						);
+    							);
     						}
     					}
 
@@ -116,7 +116,7 @@ class mailing_advthirdparties extends MailingTargets
 			}
 		}
 
-		if  (($type_of_target==1) || ($type_of_target==2)) {
+		if  (($type_of_target==1) || ($type_of_target==2) || ($type_of_target==4)) {
 			// Select the third parties from category
 			if (count($socid)>0 || count($contactid)>0)
 			{
@@ -289,11 +289,11 @@ class mailing_advthirdparties extends MailingTargets
 		if ($type=='thirdparty') {
 			$companystatic=new Societe($this->db);
 			$companystatic->fetch($id);
-			return $companystatic->getNomUrl(0);
+			return $companystatic->getNomUrl(0, '', 0, 1);
 		} elseif ($type=='contact') {
 			$contactstatic=new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0);
+			return $contactstatic->getNomUrl(0, '', 0, '', -1, 0);
 		}
 	}
 

@@ -34,13 +34,13 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 $langs->load("categories");
 
-$id=GETPOST('id','int');
-$label=GETPOST('label');
-$type=GETPOST('type');
+$id   = GETPOST('id','int');
+$label= GETPOST('label','alpha');
+$type = GETPOST('type','az09');
 $action=GETPOST('action','aZ09');
-$confirm=GETPOST('confirm');
+$confirm    = GETPOST('confirm','alpha');
 $removeelem = GETPOST('removeelem','int');
-$elemid=GETPOST('elemid');
+$elemid     = GETPOST('elemid','alpha');
 
 if ($id == "" && $label == "")
 {
@@ -61,6 +61,7 @@ if ($result <= 0)
 }
 
 $type=$object->type;
+if (is_numeric($type)) $type=Categorie::$MAP_ID_TO_CODE[$type];	// For backward compatibility
 
 $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -87,13 +88,13 @@ if ($id > 0 && $removeelem > 0)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
-		$elementtype = 'fournisseur';
+		$elementtype = 'supplier';
 	}
 	else if ($type == Categorie::TYPE_CUSTOMER && $user->rights->societe->creer)
 	{
 		$tmpobject = new Societe($db);
 		$result = $tmpobject->fetch($removeelem);
-		$elementtype = 'societe';
+		$elementtype = 'customer';
 	}
 	else if ($type == Categorie::TYPE_MEMBER && $user->rights->adherent->creer)
 	{
@@ -187,6 +188,7 @@ elseif ($type == Categorie::TYPE_MEMBER)    $title=$langs->trans("MembersCategor
 elseif ($type == Categorie::TYPE_CONTACT)   $title=$langs->trans("ContactCategoriesShort");
 elseif ($type == Categorie::TYPE_ACCOUNT)   $title=$langs->trans("AccountsCategoriesShort");
 elseif ($type == Categorie::TYPE_PROJECT)   $title=$langs->trans("ProjectsCategoriesShort");
+elseif ($type == Categorie::TYPE_USER)      $title=$langs->trans("ProjectsCategoriesShort");
 else                                        $title=$langs->trans("Category");
 
 $head = categories_prepare_head($object,$type);
@@ -317,7 +319,7 @@ else
 
 
 // List of products or services (type is type of category)
-if ($object->type == Categorie::TYPE_PRODUCT)
+if ($type == Categorie::TYPE_PRODUCT)
 {
 	$prods = $object->getObjectsInCateg("product");
 	if ($prods < 0)
@@ -389,7 +391,7 @@ if ($object->type == Categorie::TYPE_PRODUCT)
 	}
 }
 
-if ($object->type == Categorie::TYPE_SUPPLIER)
+if ($type == Categorie::TYPE_SUPPLIER)
 {
 	$socs = $object->getObjectsInCateg("supplier");
 	if ($socs < 0)
@@ -438,7 +440,7 @@ if ($object->type == Categorie::TYPE_SUPPLIER)
 	}
 }
 
-if($object->type == Categorie::TYPE_CUSTOMER)
+if($type == Categorie::TYPE_CUSTOMER)
 {
 	$socs = $object->getObjectsInCateg("customer");
 	if ($socs < 0)
@@ -492,7 +494,7 @@ if($object->type == Categorie::TYPE_CUSTOMER)
 }
 
 // List of members
-if ($object->type == Categorie::TYPE_MEMBER)
+if ($type == Categorie::TYPE_MEMBER)
 {
 	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
@@ -545,7 +547,7 @@ if ($object->type == Categorie::TYPE_MEMBER)
 }
 
 // Categorie contact
-if($object->type == Categorie::TYPE_CONTACT)
+if ($type == Categorie::TYPE_CONTACT)
 {
 	$contacts = $object->getObjectsInCateg("contact");
 	if ($contacts < 0)
@@ -598,7 +600,7 @@ if($object->type == Categorie::TYPE_CONTACT)
 }
 
 // List of accounts
-if ($object->type == Categorie::TYPE_ACCOUNT)
+if ($type == Categorie::TYPE_ACCOUNT)
 {
     require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
@@ -651,7 +653,7 @@ if ($object->type == Categorie::TYPE_ACCOUNT)
 }
 
 // List of Project
-if ($object->type == Categorie::TYPE_PROJECT)
+if ($type == Categorie::TYPE_PROJECT)
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
@@ -672,7 +674,7 @@ if ($object->type == Categorie::TYPE_PROJECT)
 			{
 				print "\t".'<tr class="oddeven">'."\n";
 				print '<td class="nowrap" valign="top">';
-				print $project->getNomUrl(1,0);
+				print $project->getNomUrl(1);
 				print "</td>\n";
 				print '<td class="tdtop">'.$project->ref."</td>\n";
 				print '<td class="tdtop">'.$project->title."</td>\n";

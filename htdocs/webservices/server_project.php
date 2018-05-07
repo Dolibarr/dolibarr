@@ -163,7 +163,8 @@ $project_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('project',true);
-if (count($extrafields)>0) {
+$extrafield_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
     $extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -174,7 +175,7 @@ foreach($extrafields->attribute_label as $key=>$label)
     else {$type='xsd:string';}
     $extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
-$project_fields=array_merge($project_fields,$extrafield_array);
+if (is_array($extrafield_array)) $project_fields=array_merge($project_fields,$extrafield_array);
 
 $server->wsdl->addComplexType(
     'project',

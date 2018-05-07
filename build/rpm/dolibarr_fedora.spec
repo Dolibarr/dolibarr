@@ -25,7 +25,7 @@ BuildArch: noarch
 BuildRoot: %{_tmppath}/%{name}-%{version}-build
 
 Group: Applications/Productivity
-Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysql, php-adodb, php-nusoap, dejavu-sans-fonts
+Requires: httpd, php >= 5.3.0, php-cli, php-gd, php-ldap, php-imap, php-mysqli, php-adodb, php-nusoap, dejavu-sans-fonts
 Requires: mysql-server, mysql
 #BuildRequires: desktop-file-utils
 
@@ -213,7 +213,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
-%_datadir/dolibarr/htdocs/websites
+%_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
 %_datadir/dolibarr/htdocs/*.php

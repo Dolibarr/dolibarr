@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Add current page to bookmarks
+AddThisPageToBookmarks=Lägg till aktuell sida till bokmärken
 Bookmark=Bokmärke
 Bookmarks=Bokmärken
 ListOfBookmarks=Listan över bokmärken
-EditBookmarks=List/edit bookmarks
+EditBookmarks=Lista/Ändra bokmärken
 NewBookmark=Nytt bokmärke
 ShowBookmark=Visa bokmärke
 OpenANewWindow=Öppna ett nytt fönster
@@ -12,9 +12,9 @@ BookmarkTargetNewWindowShort=Nytt fönster
 BookmarkTargetReplaceWindowShort=Nuvarande fönster
 BookmarkTitle=Bokmärk titel
 UrlOrLink=URL
-BehaviourOnClick=Behaviour when a bookmark URL is selected
+BehaviourOnClick=Beteende när en bokmärkes-URL är vald
 CreateBookmark=Skapa bokmärke
 SetHereATitleForLink=Ange en titel för bokmärket
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Använd en extern http URL eller en relativ Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Välj om länkad sida ska öppnas i nytt fönster eller ej
 BookmarksManagement=Förvaltning av bokmärken förvaltning

@@ -100,7 +100,7 @@ if ($id > 0 || ! empty($ref))
         print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+        $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
@@ -228,7 +228,7 @@ if ($id > 0 || ! empty($ref))
 	                    print '<td>'.$societestatic->getNomUrl(1).'</td>';
 	                    print "<td>".$objp->code_client."</td>\n";
 						print '<td align="center">';
-						print dol_print_date($db->jdate($objp->date_commande))."</td>";
+						print dol_print_date($db->jdate($objp->date_commande), 'dayhour')."</td>";
 						print  '<td align="center">'.$objp->qty."</td>\n";
 	                    print '<td align="right">'.price($objp->total_ht)."</td>\n";
 						print '<td align="right">'.$orderstatic->LibStatut($objp->statut,$objp->facture,5).'</td>';

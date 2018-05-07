@@ -44,7 +44,8 @@ class modWebServices extends DolibarrModules
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
         $this->description = "Enable the Dolibarr web services server";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -63,6 +64,7 @@ class modWebServices extends DolibarrModules
         //-------------
         $this->depends = array();
         $this->requiredby = array();
+        //$this->phpmax = array(7,1);					// Maximum version of PHP required by module
         $this->langfiles = array("other");
 
         // Constants

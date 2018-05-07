@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       build/generate_filecheck_xml.php
+ *      \file       build/generate_filelist_xml.php
  *		\ingroup    dev
  * 		\brief      This script create a xml checksum file
  */
@@ -45,10 +45,12 @@ $includeconstants=array();
 
 if (empty($argv[1]))
 {
-    print "Usage:   ".$script_file." release=x.y.z[-...] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
+    print "Usage:   ".$script_file." release=auto|x.y.z[-mybuild] [includecustom=1] [includeconstant=CC:MY_CONF_NAME:value]\n";
     print "Example: ".$script_file." release=6.0.0 includecustom=1 includeconstant=FR:INVOICE_CAN_ALWAYS_BE_REMOVED:0 includeconstant=all:MAILING_NO_USING_PHPMAIL:1\n";
     exit -1;
 }
+parse_str($argv[1]);
+
 $i=0;
 while ($i < $argc)
 {
@@ -66,11 +68,20 @@ while ($i < $argc)
     $i++;
 }
 
+// If release is auto, we take current version
+$tmpver=explode('-', $release, 2);
+if ($tmpver[0] == 'auto')
+{
+	$release=DOL_VERSION;
+	if ($tmpver[1]) $release.='-'.$tmpver[1];
+}
+
 if (empty($includecustom))
 {
-    if (DOL_VERSION != $release)
+	$tmpver=explode('-', $release, 2);
+	if (DOL_VERSION != $tmpver[0])
     {
-        print 'Error: When parameter "includecustom" is not set, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$release.')'."\n";
+    	print 'Error: When parameter "includecustom" is not set and there is no suffix in release parameter, version declared into filefunc.in.php ('.DOL_VERSION.') must be exact same value than "release" parameter ('.$tmpver[0].')'."\n";
         print "Usage: ".$script_file." release=x.y.z[-...] [includecustom=1]\n";
         exit -1;
     }
@@ -98,9 +109,9 @@ foreach ($includeconstants as $countrycode => $tmp)
 print "\n";
 
 //$outputfile=dirname(__FILE__).'/../htdocs/install/filelist-'.$release.'.xml';
-$outputdir=dirname(__FILE__).'/../htdocs/install';
-print 'Delete current files '.$outputdir.'/filelist-'.$release.'.xml'."\n";
-dol_delete_file($outputdir.'/filelist-'.$release.'.xml',0,1,1);
+$outputdir=dirname(dirname(__FILE__)).'/htdocs/install';
+print 'Delete current files '.$outputdir.'/filelist*.xml'."\n";
+dol_delete_file($outputdir.'/filelist*.xml',0,1,1);
 
 $checksumconcat=array();
 
@@ -129,7 +140,7 @@ $iterator1 = new RecursiveIteratorIterator($dir_iterator1);
 $files = new RegexIterator($iterator1, '#^(?:[A-Z]:)?(?:/(?!(?:'.($includecustom?'':'custom\/|').'documents\/|conf\/|install\/))[^/]+)+/[^/]+\.(?:php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$#i');
 */
 $regextoinclude='\.(php|css|html|js|json|tpl|jpg|png|gif|sql|lang)$';
-$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install)$';  // Exclude dirs
+$regextoexclude='('.($includecustom?'':'custom|').'documents|conf|install|public\/test|Shared\/PCLZip|nusoap\/lib\/Mail|php\/example|php\/test|geoip\/sample.*\.php|ckeditor\/samples|ckeditor\/adapters)$';  // Exclude dirs
 $files = dol_dir_list(DOL_DOCUMENT_ROOT, 'files', 1, $regextoinclude, $regextoexclude, 'fullname');
 $dir='';
 $needtoclose=0;

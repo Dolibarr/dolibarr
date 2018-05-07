@@ -4,7 +4,6 @@ Proposal=Komercinis pasiūlymas
 ProposalShort=Pasiūlymas
 ProposalsDraft=Komercinių pasiūlymų projektai
 ProposalsOpened=Open commercial proposals
-Prop=Komerciniai pasiūlymai
 CommercialProposal=Komercinis pasiūlymas
 PdfCommercialProposalTitle=Komercinis pasiūlymas
 ProposalCard=Pasiūlymo kortelė
@@ -64,6 +63,7 @@ ProposalLine=Pasiūlymo eilutė
 AvailabilityPeriod=Tinkamumo vėlavimas
 SetAvailability=Nustatykite tinkamumo vėlavimą
 AfterOrder=po užsakymo
+OtherProposals=Kiti pasiūlymai
 ##### Availability #####
 AvailabilityTypeAV_NOW=Nedelsiamas
 AvailabilityTypeAV_1W=1 savaitė

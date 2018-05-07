@@ -325,8 +325,9 @@ class Interfaces
             {
                 $module=preg_replace('/^mod/i','',$reg[2]);
                 $constparam='MAIN_MODULE_'.strtoupper($module);
-                if (strtolower($reg[2]) == 'all') $disabledbymodule=0;
+                if (strtolower($module) == 'all') $disabledbymodule=0;
                 else if (empty($conf->global->$constparam)) $disabledbymodule=2;
+                $triggers[$j]['module']=strtolower($module);
             }
 
 			// We set info of modules

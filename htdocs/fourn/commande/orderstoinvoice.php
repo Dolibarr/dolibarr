@@ -53,7 +53,7 @@ $action = GETPOST('action', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $sref = GETPOST('sref');
 $sref_client = GETPOST('sref_client');
-$sall = GETPOST('sall', 'alphanohtml');
+$sall = trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $socid = GETPOST('socid', 'int');
 $selected = GETPOST('orders_to_invoice');
 $sortfield = GETPOST("sortfield", 'alpha');
@@ -155,8 +155,8 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			$object->libelle = GETPOST('libelle');
 			$object->date = $datefacture;
 			$object->date_echeance = $datedue;
-			$object->note_public = GETPOST('note_public');
-			$object->note_private = GETPOST('note_private');
+			$object->note_public = GETPOST('note_public','none');
+			$object->note_private = GETPOST('note_private','none');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
 			$projectid = GETPOST('projectid');
@@ -171,16 +171,15 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 			if ($ret < 0) $error++;
 
 			if ($_POST['origin'] && $_POST['originid']) {
-				$object->linked_objects = $orders_id;
+				$linked_orders_ids=array();
+				foreach ( $orders_id as $origin => $origin_id ) {
+					$origin_id = (! empty($origin_id) ? $origin_id : $orders_id[$ii]);
+					$linked_orders_ids[]=$origin_id;
+				}
+				$object->linked_objects = array(GETPOST('origin')=>$linked_orders_ids);
 				$id = $object->create($user);
 
 				if ($id > 0) {
-					foreach ( $orders_id as $origin => $origin_id ) {
-						$origin_id = (! empty($origin_id) ? $origin_id : $orders_id[$ii]);
-
-						$object->add_object_linked(GETPOST('origin'), $origin_id);
-					}
-
 					while ( $ii < $nn ) {
 						$objectsrc = new CommandeFournisseur($db);
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");

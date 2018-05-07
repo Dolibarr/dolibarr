@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuração do módulo do PayPal
 PaypalDesc=Esta oferta módulo de páginas para permitir o pagamento em <a href="http://www.paypal.com" target="_blank">PayPal</a> pelos clientes. Isto pode ser utilizado para um pagamento livre ou para um pagamento por um objecto Dolibarr particular (factura, ordem, ...)
-PaypalOrCBDoPayment=Pagar com cartão de crédito ou Paypal
+PaypalOrCBDoPayment=Pagar com Paypal (Cartão de Crédito ou Paypal)
 PaypalDoPayment=Pague com Paypal
 PAYPAL_API_SANDBOX=Modo de teste / sandbox
 PAYPAL_API_USER=Nome de utilizador API
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Versão do Curl SSL
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Oferta de pagamento "integral" (Cartão de Crédito + Paypal) ou apenas "Paypal"
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Apenas Paypal
-PAYPAL_CSS_URL=URL opcional da folha de estilo CSS na página de pagamento
+ONLINE_PAYMENT_CSS_URL=URL opcional da folha de estilo CSS na página de pagamento online
 ThisIsTransactionId=Esta é id. da transação: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Adicionar o url de pagamento Paypal quando enviar um documento por correio eletrónico
 PredefinedMailContentLink=Pode clicar na hiperligação segura abaixo para efetuar o seu pagamento (Paypal), se este ainda não tiver sido efetuado.\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=Atualmente, está no modo de "sandbox"
+YouAreCurrentlyInSandboxMode=Você está atualmente no modo %s "sandbox"
 NewOnlinePaymentReceived=Novo pagamento online recebido
 NewOnlinePaymentFailed=Novo pagamento em linha tentado, mas falhado
-PAYPAL_PAYONLINE_SENDEMAIL=Correio eletrónico para avisar depois de um pagamento (bem sucedido ou não)
+ONLINE_PAYMENT_SENDEMAIL=Correio eletrónico para avisar depois de um pagamento (bem sucedido ou não)
 ReturnURLAfterPayment=URL de retorno depois do pagamento
 ValidationOfOnlinePaymentFailed=Falha na validação do pagamento online
 PaymentSystemConfirmPaymentPageWasCalledButFailed=A página de confirmação de pagamento foi chamada pelo sistema de pagamento mas retornou um erro

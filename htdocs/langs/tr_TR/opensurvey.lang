@@ -57,3 +57,4 @@ ErrorInsertingComment=Yorumunuzu eklerken bir hata oluştu
 MoreChoices=Oy kullananlar için daha çok seçenek girin
 SurveyExpiredInfo=Anket kapandı veya oylama süresi doldu.
 EmailSomeoneVoted=%s bir satır doldurdu.\nAnketi bu bağlantıda bulabilirsiniz: \n%s
+ShowSurvey=Show survey

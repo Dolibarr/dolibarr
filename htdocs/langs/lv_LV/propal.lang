@@ -4,7 +4,6 @@ Proposal=Komerciālais priekšlikums
 ProposalShort=Priekšlikums
 ProposalsDraft=Sagatave komerciālajiem priekšlikumiem
 ProposalsOpened=Open commercial proposals
-Prop=Komerciālie priekšlikumi
 CommercialProposal=Komerciālais priekšlikums
 PdfCommercialProposalTitle=Komerciālais priekšlikums
 ProposalCard=Priekšlikuma kartiņa
@@ -64,6 +63,7 @@ ProposalLine=Priekšlikums līnija
 AvailabilityPeriod=Pieejamība kavēšanās
 SetAvailability=Uzstādīt pieejamību kavēšanos
 AfterOrder=pēc pasūtījuma
+OtherProposals=Citi priekšlikumi
 ##### Availability #####
 AvailabilityTypeAV_NOW=Nekavējoties
 AvailabilityTypeAV_1W=1 nedēļa

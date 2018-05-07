@@ -50,7 +50,6 @@ class modUser extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des utilisateurs (requis)";
-		$this->always_enabled = true;	// Can't be disabled
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
@@ -69,6 +68,7 @@ class modUser extends DolibarrModules
 		$this->depends = array();
 		$this->requiredby = array();
 		$this->langfiles = array("main","users","companies","members",'salaries');
+		$this->always_enabled = true;	// Can't be disabled
 
 		// Constants
 		$this->const = array();
@@ -204,13 +204,13 @@ class modUser extends DolibarrModules
 		$this->rights[$r][4] = 'user';
 		$this->rights[$r][5] = 'export';
 
-		
+
         // Menus
         //-------
-        
+
         $this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
@@ -230,7 +230,7 @@ class modUser extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .=' WHERE u.entity IN ('.getEntity('user').')';
-		
+
 		// Imports
 		//--------
 		$r=0;
@@ -266,7 +266,7 @@ class modUser extends DolibarrModules
 		$this->import_regex_array[$r]=array('u.employee'=>'^[0|1]','u.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
 		$this->import_examplevalues_array[$r]=array('u.lastname'=>"Doe",'u.firstname'=>'John','u.login'=>'jdoe','u.employee'=>'0 or 1','u.status'=>"0 (closed) or 1 (active)",'u.fk_soc'=>'0 (internal user) or company name (external user)','u.datec'=>dol_print_date(dol_now(),'%Y-%m-%d'),'u.address'=>"61 jump street",'u.zip'=>"123456",'u.town'=>"Big town",'u.fk_country'=>'US, FR, DE...','u.office_phone'=>"0101010101",'u.office_fax'=>"0101010102",'u.email'=>"test@mycompany.com",'u.salary'=>"10000",'u.note'=>"This is an example of note for record",'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00");
 		$this->import_updatekeys_array[$r]=array('u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>'Login');
-		
+
 	}
 
 

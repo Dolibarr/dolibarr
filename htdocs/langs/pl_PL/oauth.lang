@@ -24,7 +24,7 @@ OAUTH_GOOGLE_NAME=Oauth Google service
 OAUTH_GOOGLE_ID=Oauth Google Id
 OAUTH_GOOGLE_SECRET=Oauth Google Secret
 OAUTH_GOOGLE_DESC=Go on <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">this page</a> then "Credentials" to create Oauth credentials
-OAUTH_GITHUB_NAME=Oauth GitHub service
-OAUTH_GITHUB_ID=Oauth GitHub Id
+OAUTH_GITHUB_NAME=Serwis Oauth GitHub
+OAUTH_GITHUB_ID=Identyfikator Oauth GitHub 
 OAUTH_GITHUB_SECRET=Oauth GitHub Secret
 OAUTH_GITHUB_DESC=Go on <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">this page</a> then "Register a new application" to create Oauth credentials

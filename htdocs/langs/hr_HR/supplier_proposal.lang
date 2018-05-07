@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Ponude dobavljača
 supplier_proposalDESC=Upravljaj zahtjevima za cijene prema dobavljačima
-SupplierProposalNew=Novi zahtjev
+SupplierProposalNew=Novo traženje cijene
 CommRequest=Tražena cijena
 CommRequests=Tražene cijene
 SearchRequest=Pronađi zahtjev

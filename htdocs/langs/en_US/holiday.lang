@@ -59,6 +59,7 @@ DateRefusCP=Date of refusal
 DateCancelCP=Date of cancellation
 DefineEventUserCP=Assign an exceptional leave for a user
 addEventToUserCP=Assign leave
+NotTheAssignedApprover=You are not the assigned approver
 MotifCP=Reason
 UserCP=User
 ErrorAddEventToUserCP=An error occurred while adding the exceptional leave.
@@ -79,7 +80,12 @@ HolidaysCancelation=Leave request cancelation
 EmployeeLastname=Employee last name
 EmployeeFirstname=Employee first name
 TypeWasDisabledOrRemoved=Leave type (id %s) was disabled or removed
-
+LastHolidays=Latest %s leave requests
+AllHolidays=All leave requests
+LEAVE_PAID=Paid vacation
+LEAVE_SICK=Sick leave
+LEAVE_OTHER=Other leave
+LEAVE_PAID_FR=Paid vacation
 ## Configuration du Module ##
 LastUpdateCP=Latest automatic update of leaves allocation
 MonthOfLastMonthlyUpdate=Month of latest automatic update of leaves allocation

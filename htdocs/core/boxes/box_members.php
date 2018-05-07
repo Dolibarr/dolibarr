@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Frederic France      <frederic.france@free.fr>
  *
@@ -88,7 +88,7 @@ class box_members extends ModeleBoxes
 			$sql.= " a.datec, a.tms, a.statut as status, a.datefin as date_end_subscription,";
 			$sql.= " t.subscription";
 			$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as t";
-			$sql.= " WHERE a.entity = ".$conf->entity;
+			$sql.= " WHERE a.entity IN (".getEntity('member').")";
 			$sql.= " AND a.fk_adherent_type = t.rowid";
 			$sql.= " ORDER BY a.tms DESC";
 			$sql.= $db->plimit($max, 0);
@@ -109,6 +109,7 @@ class box_members extends ModeleBoxes
 					$memberstatic->firstname=$objp->firstname;
 					$memberstatic->id = $objp->rowid;
                     $memberstatic->ref = $objp->rowid;
+                    $memberstatic->company = $objp->company;
 
 					if (! empty($objp->fk_soc)) {
 						$memberstatic->socid = $objp->fk_soc;
@@ -126,7 +127,7 @@ class box_members extends ModeleBoxes
 
                     $this->info_box_contents[$line][] = array(
                         'td' => '',
-                        'text' => $memberstatic->getFullName($langs),
+                        'text' => $memberstatic->company,
                         'url' => DOL_URL_ROOT."/adherents/card.php?rowid=".$objp->rowid,
                     );
 

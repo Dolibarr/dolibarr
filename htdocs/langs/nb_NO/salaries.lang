@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - salaries
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT=Regnskapskonto brukt til tredjepartsbrukere
 SALARIES_ACCOUNTING_ACCOUNT_PAYMENT_Desc=Regnskapskontoen som er definert på brukerkort, vil kun bli brukt til bruk av Subledger regnskap. Denne vil bli brukt til hovedboken og som standardverdi for Subledger-regnskap hvis dedikert bruker-regnskapskonto ikke er definert.
-SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Standard regnskapskonto for personalutgifter
+SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Regnskapskonto som standard for lønnsutbetalinger
 Salary=Lønn
 Salaries=Lønn
 NewSalaryPayment=Ny lønnsutbetaling
@@ -13,3 +13,5 @@ TJM=Gjennomsnittlig dagspris
 CurrentSalary=Nåværende lønn
 THMDescription=Denne verdien kan brukes til å kalkulere tidsforbruket på et prosjekt hvis prosjekt-modulen er i bruk
 TJMDescription=Dene verdien er foreløpig brukt til informasjon, og er ikke brukt i noen kalkulasjoner
+LastSalaries=Siste %s lønnsutbetalinger
+AllSalaries=Alle lønnsutbetalinger

@@ -295,13 +295,13 @@ class Livraison extends CommonObject
 
 				//Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
-				$this->location_incoterms = $obj->location_incoterms;									
+				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
 				$this->db->free($result);
 
 				if ($this->statut == 0) $this->brouillon = 1;
-				
-				
+
+
 				// Retrieve all extrafields for delivery
 				// fetch optionals attributes and labels
 				require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
@@ -524,7 +524,7 @@ class Livraison extends CommonObject
 		$this->fk_delivery_address  = $expedition->fk_delivery_address;
 		$this->socid                = $expedition->socid;
 		$this->ref_customer			= $expedition->ref_customer;
-		
+
 		//Incoterms
 		$this->fk_incoterms		= $expedition->fk_incoterms;
 		$this->location_incoterms = $expedition->location_incoterms;
@@ -543,26 +543,26 @@ class Livraison extends CommonObject
 	{
 		global $conf;
 		$error = 0;
-	
+
 		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 		{
 			$livraisonline = new LivraisonLigne($this->db);
 			$livraisonline->array_options=$array_options;
 			$livraisonline->id=$id;
 			$result=$livraisonline->insertExtraFields();
-			
+
 			if ($result < 0)
 			{
 				$this->error[]=$livraisonline->error;
 				$error++;
 			}
 		}
-	
+
 		if (! $error) return 1;
 		else return -1;
 	}
-	
-	
+
+
 	/**
 	 * 	Add line
 	 *
@@ -696,26 +696,36 @@ class Livraison extends CommonObject
 	/**
 	 *	Return clicable name (with picto eventually)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@return	string					Chaine avec URL
+	 *	@param	int		$withpicto					0=No picto, 1=Include picto into link, 2=Only picto
+     *  @param  int     $save_lastsearch_value		-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto=0, $save_lastsearch_value=-1)
 	{
 		global $langs;
 
 		$result='';
-		$urlOption='';
-        $label=$langs->trans("ShowReceiving").': '.$this->ref;
-
-
-        $link = '<a href="'.DOL_URL_ROOT.'/livraison/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
-
 		$picto='sending';
 
-		if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
+		$label=$langs->trans("ShowReceiving").': '.$this->ref;
+
+		$url=DOL_URL_ROOT.'/livraison/card.php?id='.$this->id;
+
+        //if ($option !== 'nolink')
+        //{
+        	// Add param to save lastsearch_values or not
+        	$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+        	if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+        	if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+        //}
+
+
+        $linkstart = '<a href="'.$url.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkend='</a>';
+
+		if ($withpicto) $result.=($linkstart.img_object($label, $picto, 'class="classfortooltip"').$linkend);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$link.$this->ref.$linkend;
+		$result.=$linkstart.$this->ref.$linkend;
 		return $result;
 	}
 
@@ -1052,7 +1062,7 @@ class Livraison extends CommonObject
 class LivraisonLigne extends CommonObjectLine
 {
 	var $db;
-	
+
 	// From llx_expeditiondet
 	var $qty;
 	var $qty_asked;
@@ -1075,7 +1085,7 @@ class LivraisonLigne extends CommonObjectLine
 
 	public $product_ref;
 	public $product_label;
-	
+
 	public $element='livraisondet';
 	public $table_element='livraisondet';
 

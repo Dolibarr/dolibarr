@@ -2,7 +2,7 @@
 /* Copyright (C) 2007-2008 Jeremie Ollivier      <jeremie.o@laposte.net>
  * Copyright (C) 2008-2010 Laurent Destailleur   <eldy@uers.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2011      Juanjo Menent         <jmenent@2byte.es>
+ * Copyright (C) 2017      Juanjo Menent         <jmenent@2byte.es>
  * Copyright (C) 2012      Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,6 +18,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
@@ -71,7 +79,7 @@ print '<li class="menu_choix0">'.$langs->trans("User").': '.$_SESSION['firstname
 print ' <a href="deconnexion.php">'.img_picto($langs->trans('Logout'), 'logout.png').'</a><br>';
 print '<form id="frmThirdparty" class="formulaire1 inline-block" method="post" action="facturation_verif.php?action=change_thirdparty">';
 print $langs->trans("CashDeskThirdParty").': ';
-print $form->select_company($_SESSION["CASHDESK_ID_THIRDPARTY"], 'CASHDESK_ID_THIRDPARTY', 's.client IN (1,3)', '', 0, 0, null, 0, 'valignmiddle inline-block');
+print $form->select_company($_SESSION["CASHDESK_ID_THIRDPARTY"], 'CASHDESK_ID_THIRDPARTY', 's.client IN (1,3) AND s.status = 1', '', 0, 0, null, 0, 'valignmiddle inline-block');
 print '<input class="button bouton_change_thirdparty inline-block valignmiddle" type="submit" id="bouton_change_thirdparty" value="'.$langs->trans("Modify").'">';
 //print $companyLink;
 print '<br>';

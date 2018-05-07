@@ -133,7 +133,7 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 // Affiche en-tete du rapport
 if ($modetax==1)	// Calculate on invoice for goods and services
 {
-    $nom=$langs->trans("VATReportByQuartersInDueDebtMode");
+    $name=$langs->trans("VATReportByQuartersInDueDebtMode");
     $calcmode=$langs->trans("CalcModeVATDebt");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -152,7 +152,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
     if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.='<br>'.$langs->trans("DepositsAreNotIncluded");
 	else  $description.='<br>'.$langs->trans("DepositsAreIncluded");
     $description.=$fsearch;
-    $builddate=time();
+    $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 
 	// Customers invoices
@@ -172,7 +172,7 @@ if ($modetax==1)	// Calculate on invoice for goods and services
 }
 if ($modetax==0) 	// Invoice for goods, payment for services
 {
-    $nom=$langs->trans("VATReportByQuartersInInputOutputMode");
+    $name=$langs->trans("VATReportByQuartersInInputOutputMode");
     $calcmode=$langs->trans("CalcModeVATEngagement");
     $calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
     $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -192,7 +192,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
     //if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
     //if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
     $description.=$fsearch;
-	$builddate=time();
+	$builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 
 	// Customers invoices
@@ -210,7 +210,7 @@ if ($modetax==0) 	// Invoice for goods, payment for services
 	if ($mysoc->tva_assuj) $vatsup.=' ('.$langs->trans("ToGetBack").')';
 
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -224,8 +224,8 @@ $total = 0;
 $i=0;
 
 // Load arrays of datas
-$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
-$x_paye = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy');
+$x_coll = tax_by_date('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = tax_by_date('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 if (! is_array($x_coll) || ! is_array($x_paye))
 {
@@ -396,7 +396,7 @@ else
 				if (! empty($fields['ddate_start'])) $type=1;
 				if (! empty($fields['ddate_end'])) $type=1;
 
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref
@@ -447,7 +447,7 @@ else
 				$ratiopaymentinvoice=1;
 				if ($modetax == 0)
 				{
-					if (isset($fields['payment_amount']) && $fields['ftotal_ttc']) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
+					if (isset($fields['payment_amount']) && price2num($fields['ftotal_ttc'])) $ratiopaymentinvoice=($fields['payment_amount']/$fields['ftotal_ttc']);
 					print '<td class="nowrap" align="right">';
 					//print $fields['totalht']."-".$fields['payment_amount']."-".$fields['ftotal_ttc'];
 					if ($fields['payment_amount'] && $fields['ftotal_ttc'])
@@ -553,7 +553,7 @@ else
 				if (! empty($fields['ddate_start'])) $type=1;
 				if (! empty($fields['ddate_end'])) $type=1;
 
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref

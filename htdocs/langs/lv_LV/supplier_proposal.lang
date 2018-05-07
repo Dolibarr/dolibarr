@@ -1,13 +1,13 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Supplier commercial proposals
 supplier_proposalDESC=Manage price requests to suppliers
-SupplierProposalNew=Jauns pieprasījums
+SupplierProposalNew=Jauns cenas pieprasījums
 CommRequest=Cenas pieprasījums
 CommRequests=Cenas pieprasījumi
 SearchRequest=Atrast pieprasījumu
 DraftRequests=Pieprasījuma melnraksts
 SupplierProposalsDraft=Draft supplier proposals
-LastModifiedRequests=Latest %s modified price requests
+LastModifiedRequests=Pēdējie %s labotie cenu pieprasījumi
 RequestsOpened=Atvērt cenas pieprasījumu
 SupplierProposalArea=Supplier proposals area
 SupplierProposalShort=Supplier proposal

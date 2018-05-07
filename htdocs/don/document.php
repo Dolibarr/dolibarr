@@ -104,7 +104,7 @@ if ($object->id)
 
 	$head=donation_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',  $langs->trans("Donation"), 0, 'generic');
+	dol_fiche_head($head, 'documents',  $langs->trans("Donation"), -1, 'generic');
 
 
 	// Construit liste des fichiers
@@ -116,7 +116,7 @@ if ($object->id)
 	}
 
 	$linkback = '<a href="'.DOL_URL_ROOT.'/don/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -151,13 +151,13 @@ if ($object->id)
 	    }
 	}
 	$morehtmlref.='</div>';
-	
-	
+
+
 	dol_banner_tab($object, 'rowid', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-	
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
     print '<table class="border" width="100%">';
 
 	// Ref
@@ -166,7 +166,7 @@ if ($object->id)
 	print $form->showrefnav($object, 'id', $linkback, 1, 'rowid', 'ref', '');
 	print '</td></tr>';
     */
-    
+
 	// Societe
 	//print "<tr><td>".$langs->trans("Company")."</td><td>".$object->client->getNomUrl(1)."</td></tr>";
 
@@ -175,9 +175,9 @@ if ($object->id)
     print '</table>';
 
     print '</div>';
-    
+
     print '<div class="clearboth"></div>';
-    
+
     dol_fiche_end();
 
     $modulepart = 'don';

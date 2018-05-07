@@ -47,7 +47,7 @@ ListLoanAssociatedProject=List of loan associated with the project
 AddLoan=Create loan
 # Admin
 ConfigLoan=Configuration of the module loan
-LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
-LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
-LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standaard grootboekrekening kapitaal
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standaard grootboekrekening rente
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standaard grootboekrekening verzekeringen
 CreateCalcSchedule=Créer / Modifier échéancier de pret

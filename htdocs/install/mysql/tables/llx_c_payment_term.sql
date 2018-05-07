@@ -1,6 +1,7 @@
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2002-2003	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+-- Copyright (C) 2016		Laurent Destailleur		<eldy@users.sourceforge.net>
+-- Copyright (C) 2017		Regis Houssin			<regis.houssin@capnetworks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,14 +20,16 @@
 
 create table llx_c_payment_term
 (
-  rowid           integer PRIMARY KEY,
-  code            varchar(16),
-  sortorder       smallint,
-  active          tinyint DEFAULT 1,
-  libelle         varchar(255),
-  libelle_facture text,
-  type_cdr        tinyint,    			-- Type of change date reckoning. 1=Payment at end of current month, 2=the Nth of next month
-  nbjour          smallint,
-  decalage		  smallint,
-  module          varchar(32) NULL
+  rowid				integer,
+  entity				integer	DEFAULT 1 NOT NULL,	-- multi company id
+  code				varchar(16),
+  sortorder			smallint,
+  active				tinyint DEFAULT 1,
+  libelle			varchar(255),
+  libelle_facture	text,
+  type_cdr			tinyint,    			-- Type of change date reckoning. 1=Payment at end of current month, 2=the Nth of next month
+  nbjour				smallint,
+  decalage			smallint,
+  module				varchar(32) NULL,
+  position			integer NOT NULL DEFAULT 0
 )ENGINE=innodb;

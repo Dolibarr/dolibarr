@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=供应商订单 %s 接收 %s
 SupplierOrderSubmitedInDolibarr=供应商订单 %s 提交
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=其他订单
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=代表跟进客户订单
 TypeContact_commande_internal_SHIPPING=送货跟进
@@ -151,5 +152,7 @@ OrderCreated=您的订单已创建
 OrderFail=您的订单创建期间发生了错误
 CreateOrders=创建订单
 ToBillSeveralOrderSelectCustomer=要为多个订单创建一张发票, 首先点击客户，然后选择  "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

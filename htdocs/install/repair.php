@@ -42,14 +42,10 @@ error_reporting(0);
 @set_time_limit(120);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
+$setuplang=GETPOST("selectlang",'az09',3)?GETPOST("selectlang",'az09',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 
-$langs->load("admin");
-$langs->load("install");
-$langs->load("other");
+$langs->loadLangs(array("admin","install","other"));
 
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql") $choix=2;
@@ -71,13 +67,16 @@ $actiondone=1;
 
 print '<h3>'.$langs->trans("Repair").'</h3>';
 
-print 'Option restore_thirdparties_logos is '.(GETPOST('restore_thirdparties_logos','alpha')?GETPOST('restore_thirdparties_logos','alpha'):'0').'<br>'."\n";
-print 'Option clean_linked_elements is '.(GETPOST('clean_linked_elements','alpha')?GETPOST('clean_linked_elements','alpha'):'0').'<br>'."\n";
+print 'Option standard (0 or \'confirmed\') is '.(GETPOST('standard','alpha')?GETPOST('standard','alpha'):'0').'<br>'."\n";
+print 'Option restore_thirdparties_logos (0 or \'confirmed\') is '.(GETPOST('restore_thirdparties_logos','alpha')?GETPOST('restore_thirdparties_logos','alpha'):'0').'<br>'."\n";
+print 'Option clean_linked_elements (0 or \'confirmed\') is '.(GETPOST('clean_linked_elements','alpha')?GETPOST('clean_linked_elements','alpha'):'0').'<br>'."\n";
+print 'Option clean_menus (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_menus','alpha')?GETPOST('clean_menus','alpha'):'0').'<br>'."\n";
 print 'Option clean_orphelin_dir (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_orphelin_dir','alpha')?GETPOST('clean_orphelin_dir','alpha'):'0').'<br>'."\n";
 print 'Option clean_product_stock_batch (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_product_stock_batch','alpha')?GETPOST('clean_product_stock_batch','alpha'):'0').'<br>'."\n";
 print 'Option set_empty_time_spent_amount (0 or \'test\' or \'confirmed\') is '.(GETPOST('set_empty_time_spent_amount','alpha')?GETPOST('set_empty_time_spent_amount','alpha'):'0').'<br>'."\n";
 print 'Option rebuild_product_thumbs (0 or \'test\' or \'confirmed\') is '.(GETPOST('rebuild_product_thumbs','alpha')?GETPOST('rebuild_product_thumbs','alpha'):'0').'<br>'."\n";
 print 'Option force_disable_of_modules_not_found (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_disable_of_modules_not_found','alpha')?GETPOST('force_disable_of_modules_not_found','alpha'):'0').'<br>'."\n";
+print 'Option clean_perm_table (0 or \'test\' or \'confirmed\') is '.(GETPOST('clean_perm_table','alpha')?GETPOST('clean_perm_table','alpha'):'0').'<br>'."\n";
 print 'Option force_utf8_on_tables, for mysql/mariadb only (0 or \'test\' or \'confirmed\') is '.(GETPOST('force_utf8_on_tables','alpha')?GETPOST('force_utf8_on_tables','alpha'):'0').'<br>'."\n";
 print '<br>';
 
@@ -153,18 +152,31 @@ if ($ok)
     //print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 }
 
-// Show wait message
-print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'<br><br></td></tr>';
-flush();
+$conf->setValues($db);
+// Reset forced setup after the setValues
+if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
 
 /* Start action here */
+$oneoptionset=0;
+$oneoptionset=(GETPOST('standard', 'alpha') || GETPOST('restore_thirdparties_logos','alpha') || GETPOST('clean_linked_elements','alpha') || GETPOST('clean_menus','alpha')
+	|| GETPOST('clean_orphelin_dir','alpha') || GETPOST('clean_product_stock_batch','alpha') || GETPOST('set_empty_time_spent_amount','alpha') || GETPOST('rebuild_product_thumbs','alpha')
+	|| GETPOST('clean_perm_table','alpha')
+	|| GETPOST('force_disable_of_modules_not_found','alpha') || GETPOST('force_utf8_on_tables','alpha'));
+
+if ($ok && $oneoptionset)
+{
+	// Show wait message
+	print '<tr><td colspan="2">'.$langs->trans("PleaseBePatient").'<br><br></td></tr>';
+	flush();
+}
 
 
 // run_sql: Run repair SQL file
-if ($ok)
+if ($ok && GETPOST('standard', 'alpha'))
 {
-    $dir = "mysql/migration/";
+	$dir = "mysql/migration/";
 
     $filelist=array();
     $i = 0;
@@ -206,12 +218,13 @@ if ($ok)
 
 // sync_extrafields: Search list of fields declared and list of fields created into databases, then create fields missing
 
-if ($ok)
+if ($ok && GETPOST('standard', 'alpha'))
 {
 	$extrafields=new ExtraFields($db);
 	$listofmodulesextra=array('societe'=>'societe','adherent'=>'adherent','product'=>'product',
 				'socpeople'=>'socpeople', 'commande'=>'commande', 'facture'=>'facture',
-				'commande_fournisseur'=>'commande_fournisseur', 'actioncomm'=>'actioncomm',
+				'supplier_proposal'=>'supplier_proposal', 'commande_fournisseur'=>'commande_fournisseur', 'facture_fourn'=>'facture_fourn',
+				'actioncomm'=>'actioncomm',
 				'adherent_type'=>'adherent_type','user'=>'user','projet'=>'projet', 'projet_task'=>'projet_task');
 	print '<tr><td colspan="2"><br>*** Check fields into extra table structure match table of definition. If not add column into table</td></tr>';
 	foreach($listofmodulesextra as $tablename => $elementtype)
@@ -303,13 +316,17 @@ if ($ok)
 
 	        print "</td><td>&nbsp;</td></tr>\n";
 	    }
+	    else
+	    {
+	    	dol_print_error($db);
+	    }
 	}
 }
 
 
 
 // clean_data_ecm_dir: Clean data into ecm_directories table
-if ($ok)
+if ($ok && GETPOST('standard', 'alpha'))
 {
 	clean_data_ecm_directories();
 }
@@ -478,11 +495,99 @@ if ($ok && GETPOST('clean_linked_elements','alpha'))
 }
 
 
+// clean_menus: Check orphelins menus
+if ($ok && GETPOST('clean_menus','alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean menu entries coming from disabled modules</td></tr>';
+
+	$sql ="SELECT rowid, module";
+	$sql.=" FROM ".MAIN_DB_PREFIX."menu as c";
+	$sql.=" WHERE module IS NOT NULL AND module <> ''";
+	$sql.=" ORDER BY module";
+
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+
+				$modulecond=$obj->module;
+				$modulecondarray = explode('|',$obj->module);				// Name of module
+
+				print '<tr><td>';
+				print $modulecond;
+
+				$db->begin();
+
+				if ($modulecond)		// And menu entry for module $modulecond was found in database.
+				{
+					$moduleok=0;
+					foreach($modulecondarray as $tmpname)
+					{
+						if ($tmpname == 'margins') $tmpname='margin';		// TODO Remove this when normalized
+
+						$result = 0;
+						if (! empty($conf->$tmpname)) $result = $conf->$tmpname->enabled;
+						if ($result) $moduleok++;
+					}
+
+					if (! $moduleok && $modulecond)
+					{
+						print ' - Module condition '.$modulecond.' seems ko, we delete menu entry.';
+						if (GETPOST('clean_menus') == 'confirmed')
+						{
+							$sql2 ="DELETE FROM ".MAIN_DB_PREFIX."menu WHERE module = '".$modulecond."'";
+							$resql2=$db->query($sql2);
+							if (! $resql2)
+							{
+								$error++;
+								dol_print_error($db);
+							}
+							else
+								print ' - <font class="warning">Cleaned</font>';
+						}
+						else
+						{
+							print ' - <font class="warning">Canceled (test mode)</font>';
+						}
+					}
+					else
+					{
+						print ' - Module condition '.$modulecond.' is ok, we do nothing.';
+					}
+				}
+
+				if (!$error) $db->commit();
+				else $db->rollback();
+
+				print'</td></tr>';
+
+				if ($error) break;
+
+				$i++;
+			}
+		}
+		else
+		{
+			print '<tr><td>No menu entries of disabled menus found</td></tr>';
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
+}
+
+
+
 // clean_orphelin_dir: Run purge of directory
 if ($ok && GETPOST('clean_orphelin_dir','alpha'))
 {
-    $conf->setValues($db);
-
     $listmodulepart=array('company','invoice','invoice_supplier','propal','order','order_supplier','contract','tax');
     foreach ($listmodulepart as $modulepart)
     {
@@ -797,107 +902,182 @@ if ($ok && GETPOST('set_empty_time_spent_amount','alpha'))
 
 
 // clean_old_module_entries: Clean data into const when files of module were removed without being
-// clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Force modules not found to be disabled</td></tr>';
+    print '<tr><td colspan="2"><br>*** Force modules not found to be disabled (only modules adding js, css or hooks can be detected as removed)</td></tr>';
 
-    $sql ="SELECT DISTINCT name";
-    $sql.=" FROM ".MAIN_DB_PREFIX."const as c";
-    $sql.=" WHERE name LIKE 'MAIN_MODULE_%_HOOKS'";
-    $sql.=" ORDER BY name";
+    $arraylistofkey=array('hooks','js','css');
 
-    $resql = $db->query($sql);
-    if ($resql)
+    foreach($arraylistofkey as $key)
     {
-        $num = $db->num_rows($resql);
-        if ($num)
-        {
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj=$db->fetch_object($resql);
-                $majname = $obj->name;
+	    $sql ="SELECT DISTINCT name, value";
+	    $sql.=" FROM ".MAIN_DB_PREFIX."const as c";
+	    $sql.=" WHERE name LIKE 'MAIN_MODULE_%_".strtoupper($key)."'";
+	    $sql.=" ORDER BY name";
 
-                print '<tr><td>';
-                print $majname;
+	    $resql = $db->query($sql);
+	    if ($resql)
+	    {
+	        $num = $db->num_rows($resql);
+	        if ($num)
+	        {
+	            $i = 0;
+	            while ($i < $num)
+	            {
+	                $obj=$db->fetch_object($resql);
+	                $constantname = $obj->name;				// Name of constant for hook or js or css declaration
 
-                $db->begin();
+	                print '<tr><td>';
+	                print $constantname;
 
-                if (preg_match('/MAIN_MODULE_(.*)_HOOKS/i', $majname, $reg))
-                {
-                    $name=strtolower($reg[1]);
+	                $db->begin();
 
-                    if ($name)
-                    {
-                        $reloffile=$name.'/class/actions_'.$name.'.class.php';
-                        $result = dol_include_once($reloffile);
-                        if (! $result)
-                        {
-                            print ' - File of hooks ('.$reloffile.') NOT found, we disable the module.';
-                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
-                            {
-                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_HOOKS'";
-                                $resql2=$db->query($sql2);
-                                if (! $resql2)
-                                {
-                                    $error++;
-                                    dol_print_error($db);
-                                }
-                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
-                                $resql2=$db->query($sql2);
-                                if (! $resql2)
-                                {
-                                    $error++;
-                                    dol_print_error($db);
-                                }
-                                else
-                                    print " - Cleaned";
-                            }
-                            else
-                            {
-                                print ' - Canceled (test mode)';
-                            }
-                        }
-                        else
-                        {
-                            print ' - File of hooks ('.$reloffile.') found, we do nothing.';
-                        }
-                    }
+	                if (preg_match('/MAIN_MODULE_(.*)_'.strtoupper($key).'/i', $constantname, $reg))
+	                {
+	                    $name=strtolower($reg[1]);
 
-                    if (!$error) $db->commit();
-                    else $db->rollback();
-                }
+	                    if ($name)		// And entry for key $key and module $name was found in database.
+	                    {
+	                    	if ($key == 'hooks') $reloffile=$name.'/class/actions_'.$name.'.class.php';
+	                    	if ($key == 'js')
+	                    	{
+		                    	$value=$obj->value;
+		                    	$valuearray=json_decode($value);
+	                    		$reloffile=$valuearray[0];
+	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
+	                    	}
+	                    	if ($key == 'css')
+	                    	{
+		                    	$value=$obj->value;
+		                    	$valuearray=json_decode($value);
+		                    	if ($value && count($valuearray)==0) $valuearray[0]=$value;	// If value was not a json array but a string
+	                    		$reloffile=preg_replace('/^\//','',$valuearray[0]);
+	                    	}
 
-                print'</td></tr>';
+	                    	//var_dump($key.' - '.$value.' - '.$reloffile);
+	                    	try {
+	                        	$result = dol_buildpath($reloffile, 0, 2);
+	                    	}
+	                    	catch(Exception $e)
+	                    	{
+								// No catch yet
+	                    	}
 
-                if ($error) break;
+	                        if (! $result)
+	                        {
+	                            print ' - File of '.$key.' ('.$reloffile.') NOT found, we disable the module.';
+	                            if (GETPOST('force_disable_of_modules_not_found') == 'confirmed')
+	                            {
+	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."_".strtoupper($key)."'";
+	                                $resql2=$db->query($sql2);
+	                                if (! $resql2)
+	                                {
+	                                    $error++;
+	                                    dol_print_error($db);
+	                                }
+	                                $sql2 ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_MODULE_".strtoupper($name)."'";
+	                                $resql2=$db->query($sql2);
+	                                if (! $resql2)
+	                                {
+	                                    $error++;
+	                                    dol_print_error($db);
+	                                }
+	                                else
+	                                    print ' - <font class="warning">Cleaned</font>';
+	                            }
+	                            else
+	                            {
+	                                print ' - <font class="warning">Canceled (test mode)</font>';
+	                            }
+	                        }
+	                        else
+	                        {
+	                            print ' - File of '.$key.' ('.$reloffile.') found, we do nothing.';
+	                        }
+	                    }
 
-                $i++;
-            }
-        }
-        else
-        {
-            print '<tr><td>No active module with missing files found</td></tr>';
-        }
+	                    if (!$error) $db->commit();
+	                    else $db->rollback();
+	                }
+
+	                print'</td></tr>';
+
+	                if ($error) break;
+
+	                $i++;
+	            }
+	        }
+	        else
+	        {
+	            print '<tr><td>No active module with missing files found by searching on MAIN_MODULE_(.*)_'.strtoupper($key).'</td></tr>';
+	        }
+	    }
+	    else
+	    {
+	        dol_print_error($db);
+	    }
     }
-    else
-    {
-        dol_print_error($db);
-    }
+}
 
+
+// clean_old_module_entries: Clean data into const when files of module were removed without being
+if ($ok && GETPOST('clean_perm_table','alpha'))
+{
+	print '<tr><td colspan="2"><br>*** Clean table user_rights from lines of external modules no more enabled</td></tr>';
+
+	$listofmods='';
+	foreach($conf->modules as $key => $val)
+	{
+		$listofmods.=($listofmods?',':'')."'".$val."'";
+	}
+	$sql = 'SELECT id, libelle, module from '.MAIN_DB_PREFIX.'rights_def WHERE module not in ('.$listofmods.') AND id > 100000';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj=$db->fetch_object($resql);
+				if ($obj->id > 0)
+				{
+					print '<tr><td>Found line with id '.$obj->id.', label "'.$obj->libelle.'" of module "'.$obj->module.'" to delete';
+					if (GETPOST('clean_perm_table','alpha') == 'confirmed')
+					{
+						$sqldelete = 'DELETE FROM '.MAIN_DB_PREFIX.'rights_def WHERE id = '.$obj->id;
+						$resqldelete = $db->query($sqldelete);
+						if (! $resqldelete)
+						{
+							dol_print_error($db);
+						}
+						print ' - deleted';
+					}
+					print '</td></tr>';
+				}
+				$i++;
+			}
+		}
+		else
+		{
+			print '<tr><td>No lines of a disabled external module (with id > 100000) found into table rights_def</td></tr>';
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+	}
 }
 
 
 
-
-// clean_old_module_entries: Clean data into const when files of module were removed without being
 // clean_linked_elements: Check and clean linked elements
 if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 {
-    print '<tr><td colspan="2"><br>*** Force page code and collation with utf8 (for mysql/mariadb only)</td></tr>';
+    print '<tr><td colspan="2"><br>*** Force page code and collation of tables into utf8/utf8_unicode_ci (for mysql/mariadb only)</td></tr>';
 
-    if ($db->type == "mysql")
+    if ($db->type == "mysql" || $db->type == "mysqli")
     {
         $listoftables = $db->DDLListTables($db->database_name);
 
@@ -906,10 +1086,13 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
             print '<tr><td colspan="2">';
             print $table;
             $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
+            print '<!-- '.$sql.' -->';
             if (GETPOST('force_utf8_on_tables','alpha') == 'confirmed')
             {
-                $db->query($sql);
+            	$resql = $db->query($sql);
+            	print ' - Done ('.($resql?'OK':'KO').')';
             }
+            else print ' - Disabled';
             print '</td></tr>';
         }
     }
@@ -929,10 +1112,18 @@ if (empty($actiondone))
     print '<div class="error">'.$langs->trans("ErrorWrongParameters").'</div>';
 }
 
-
-print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-print $langs->trans("GoToDolibarr");
-print '</a></div>';
+if ($oneoptionset)
+{
+	print '<div class="center" style="padding-top: 10px"><a href="../index.php?mainmenu=home&leftmenu=home'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+	print $langs->trans("GoToDolibarr");
+	print '</a></div>';
+}
+else
+{
+	print '<div class="center warning" style="padding-top: 10px">';
+	print $langs->trans("SetAtLeastOneOptionAsUrlParameter");
+	print '</div>';
+}
 
 dolibarr_install_syslog("--- repair: end");
 pFooter(1,$setuplang);

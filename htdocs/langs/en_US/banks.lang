@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
 MenuBankCash=Bank/Cash
+MenuVariousPayment=Miscellaneous payments
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=Bank name
 FinancialAccount=Account
 BankAccount=Bank account
@@ -87,6 +89,7 @@ AccountIdShort=Number
 LineRecord=Transaction
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=Reconciled by
 DateConciliating=Reconcile date
 BankLineConciliated=Entry reconciled
@@ -154,4 +157,7 @@ DocumentModelBan=Template to print a page with BAN information.
 NewVariousPayment=New miscellaneous payments
 VariousPayment=Miscellaneous payments
 VariousPayments=Miscellaneous payments
-ShowVariousPayment=Show miscellaneous payments 
+ShowVariousPayment=Show miscellaneous payments
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to 

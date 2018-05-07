@@ -13,8 +13,6 @@ ListOfValidatedPublicMembers=قائمة الأعضاء العامة المصاد
 ErrorThisMemberIsNotPublic=ليست عضوا في هذا العام
 ErrorMemberIsAlreadyLinkedToThisThirdParty=عضو آخر (الاسم : <b>٪ ق</b> ، ادخل : <b>٪)</b> مرتبطة بالفعل الى طرف ثالث <b>٪ ق.</b> إزالة هذه الوصلة الاولى بسبب طرف ثالث لا يمكن أن يرتبط فقط عضو (والعكس بالعكس).
 ErrorUserPermissionAllowsToLinksToItselfOnly=لأسباب أمنية ، يجب أن تمنح أذونات لتحرير جميع المستخدمين لتكون قادرة على ربط عضو لمستخدم هذا ليس لك.
-ThisIsContentOfYourCard=Hi.<br><br>This is a remind of the information we get about you. Feel free to contact us if something looks wrong.<br><br>
-CardContent=مضمون البطاقة الخاصة بك عضوا
 SetLinkToUser=وصلة إلى مستخدم Dolibarr
 SetLinkToThirdParty=وصلة إلى طرف ثالث Dolibarr
 MembersCards=أعضاء طباعة البطاقات
@@ -57,6 +55,11 @@ NewCotisation=مساهمة جديدة
 PaymentSubscription=دفع مساهمة جديدة
 SubscriptionEndDate=تاريخ انتهاء الاكتتاب
 MembersTypeSetup=أعضاء نوع الإعداد
+MemberTypeModified=Member type modified
+DeleteAMemberType=Delete a member type
+ConfirmDeleteMemberType=Are you sure you want to delete this member type?
+MemberTypeDeleted=Member type deleted
+MemberTypeCanNotBeDeleted=Member type can not be deleted
 NewSubscription=إشتراك جديد
 NewSubscriptionDesc=هذا النموذج يسمح لك لتسجيل الاشتراك الخاص بك كعضو جديد من الأساس. إذا كنت ترغب في تجديد الاشتراك (إذا كان بالفعل عضوا)، يرجى الاتصال مؤسسة المجلس بدلا من %s البريد الإلكتروني.
 Subscription=الاكتتاب
@@ -87,9 +90,9 @@ ValidateMember=صحة عضوا
 ConfirmValidateMember=Are you sure you want to validate this member?
 FollowingLinksArePublic=الارتباطات التالية تفتح صفحة لا يحمي أي Dolibarr تصريح. فهي ليست formated صفحة ، تقدم مثالا على الكيفية التي تظهر في قائمة الأعضاء في قاعدة البيانات.
 PublicMemberList=عضو في لائحة عامة
-BlankSubscriptionForm=استمارة الاشتراك
-BlankSubscriptionFormDesc=يمكن أن توفر لك Dolibarr URL العام للسماح للزوار خارجي لطرح للاكتتاب للمؤسسة. إذا تم تمكين وحدة الدفع عبر الإنترنت، سيتم أيضا نموذج الدفع سيتم توفيرها تلقائيا.
-EnablePublicSubscriptionForm=تمكين الجمهور لصناعة السيارات في شكل اكتتاب
+BlankSubscriptionForm=Public self-subscription form
+BlankSubscriptionFormDesc=Dolibarr can provide you a public URL/website to allow external visitors to ask to subscribe to the foundation. If an online payment module is enabled, a payment form may also be automatically provided.
+EnablePublicSubscriptionForm=Enable the public website with self-subscription form
 ForceMemberType=Force the member type
 ExportDataset_member_1=واشتراكات الأعضاء
 ImportDataset_member_1=أعضاء
@@ -103,17 +106,33 @@ PublicMemberCard=عضو بطاقة العامة
 SubscriptionNotRecorded=Subscription not recorded
 AddSubscription=إنشاء الاشتراك
 ShowSubscription=وتظهر اكتتاب
-SendAnEMailToMember=البريد الإلكتروني لإرسال معلومات العضو
+# Label of email templates
+SendingAnEMailToMember=Sending information email to member
+SendingEmailOnAutoSubscription=Sending email on auto registration
+SendingEmailOnMemberValidation=Sending email on new member validation
+SendingEmailOnNewSubscription=Sending email on new subscription
+SendingReminderForExpiredSubscription=Sending reminder for expired subscription
+SendingEmailOnCancelation=Sending email on cancelation
+# Topic of email templates
+YourMembershipRequestWasReceived=Your membership was received.
+YourMembershipWasValidated=Your membership was validated
+YourSubscriptionWasRecorded=Your new subscription was recorded
+SubscriptionReminderEmail=Subscription reminder
+YourMembershipWasCanceled=Your membership was canceled
+CardContent=مضمون البطاقة الخاصة بك عضوا
+# Text of email templates
+ThisIsContentOfYourMembershipRequestWasReceived=We want to let you know that your membership request was received.<br><br>
+ThisIsContentOfYourMembershipWasValidated=We want to let you know that your membership was validated with the following information:<br><br>
+ThisIsContentOfYourSubscriptionWasRecorded=We want to let you know that your new subscription was recorded.<br><br>
+ThisIsContentOfSubscriptionReminderEmail=We want to let you know thet your subscription is about to expire. We hope you can make a renewal of it.<br><br>
+ThisIsContentOfYourCard=This is a remind of the information we get about you. Feel free to contact us if something looks wrong.<br><br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=موضوع البريد الإلكتروني وردت في حالة لصناعة السيارات في نقش أحد النزلاء
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL=البريد الإلكتروني وردت في حالة لصناعة السيارات في نقش أحد النزلاء
-DescADHERENT_AUTOREGISTER_MAIL_SUBJECT=بريد إلكتروني الموضوع لautosubscription الأعضاء
-DescADHERENT_AUTOREGISTER_MAIL=البريد الإلكتروني لعضو autosubscription
-DescADHERENT_MAIL_VALID_SUBJECT=البريد الإلكتروني لعضو في موضوع المصادقة
-DescADHERENT_MAIL_VALID=البريد الإلكتروني لعضو المصادقة
-DescADHERENT_MAIL_COTIS_SUBJECT=موضوع البريد الالكتروني للاكتتاب
-DescADHERENT_MAIL_COTIS=البريد الالكتروني للاكتتاب
-DescADHERENT_MAIL_RESIL_SUBJECT=موضوع البريد الإلكتروني لعضو resiliation
-DescADHERENT_MAIL_RESIL=البريد الإلكتروني لعضو resiliation
+DescADHERENT_EMAIL_TEMPLATE_AUTOREGISTER=Template Email to use to send email to a member on member autosubscription
+DescADHERENT_EMAIL_TEMPLATE_MEMBER_VALIDATION=Template EMail to use to send email to a member on member validation
+DescADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION=Template Email to use to send email to a member on new subscription recording
+DescADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION=Template Email to use to send email remind when subscription is about to expire
+DescADHERENT_EMAIL_TEMPLATE_CANCELATION=Template Email to use to send email to a member on member cancelation
 DescADHERENT_MAIL_FROM=البريد الإلكتروني للمرسل البريد الإلكتروني التلقائي
 DescADHERENT_ETIQUETTE_TYPE=علامات الشكل
 DescADHERENT_ETIQUETTE_TEXT=النص المطبوع على أوراق عنوان الأعضاء
@@ -163,11 +182,17 @@ TurnoverOrBudget=دوران (لشركة) أو الميزانية (على أسا�
 DefaultAmount=المبلغ الافتراضي للاكتتاب
 CanEditAmount=يمكن للزائر اختيار / تحرير كمية من اكتتابها
 MEMBER_NEWFORM_PAYONLINE=القفز على صفحة الدفع عبر الانترنت المتكاملة
-ByProperties=حسب الخصائص
-MembersStatisticsByProperties=إحصائيات الأعضاء حسب الخصائص
+ByProperties=By nature
+MembersStatisticsByProperties=Members statistics by nature
 MembersByNature=هذه الشاشة تظهر لك إحصاءات عن أعضاء من الطبيعة.
 MembersByRegion=هذه الشاشة تظهر لك إحصاءات عن أعضاء حسب المنطقة.
 VATToUseForSubscriptions=معدل ضريبة القيمة المضافة لاستخدامه في اشتراكات
 NoVatOnSubscription=لا TVA للاشتراكات
 MEMBER_PAYONLINE_SENDEMAIL=Email to use for email warning when Dolibarr receive a confirmation of a validated payment for a subscription (Example: paymentdone@example.com)
 ADHERENT_PRODUCT_ID_FOR_SUBSCRIPTIONS=المنتج يستخدم لخط الاشتراك في فاتورة و:٪ الصورة
+NameOrCompany=Name or company
+SubscriptionRecorded=Subscription recorded
+NoEmailSentToMember=No email sent to member
+EmailSentToMember=Email sent to member at %s
+SendReminderForExpiredSubscriptionTitle=Send reminder by email for expired subscription
+SendReminderForExpiredSubscription=Send reminder by email to members when subscription is about to expire (parameter is number of days before end of subscription to send the remind)

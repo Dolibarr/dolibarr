@@ -79,18 +79,18 @@ abstract class ActionsContactCardCommon
      */
     function getObject($id)
     {
-    	$ret = $this->getInstanceDao();
+    	/*$ret = $this->getInstanceDao();
 
     	if (is_object($this->object) && method_exists($this->object,'fetch'))
     	{
     		if (! empty($id)) $this->object->fetch($id);
     	}
     	else
-    	{
+    	{*/
     		$object = new Contact($this->db);
     		if (! empty($id)) $object->fetch($id);
             $this->object = $object;
-    	}
+    	//}
     }
 
     /**

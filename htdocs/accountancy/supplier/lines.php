@@ -32,6 +32,8 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
 // Langs
 $langs->load("compta");
@@ -52,6 +54,9 @@ $search_desc = GETPOST('search_desc', 'alpha');
 $search_amount = GETPOST('search_amount', 'alpha');
 $search_account = GETPOST('search_account', 'alpha');
 $search_vat = GETPOST('search_vat', 'alpha');
+$search_day=GETPOST("search_day","int");
+$search_month=GETPOST("search_month","int");
+$search_year=GETPOST("search_year","int");
 $search_country = GETPOST('search_country', 'alpha');
 $search_tvaintra = GETPOST('search_tvaintra', 'alpha');
 
@@ -60,8 +65,8 @@ $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):(empty($conf->global->AC
 $sortfield = GETPOST('sortfield', 'alpha');
 $sortorder = GETPOST('sortorder', 'alpha');
 $page = GETPOST('page', 'int');
-if ($page < 0) $page = 0;
-$offset = $conf->liste_limit * $page;
+if (empty($page) || $page < 0) $page = 0;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield)
@@ -96,6 +101,9 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_amount = '';
 	$search_account = '';
 	$search_vat = '';
+	$search_day = '';
+	$search_month = '';
+	$search_year = '';
 	$search_country = '';
 	$search_tvaintra = '';
 }
@@ -103,33 +111,45 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 if (is_array($changeaccount) && count($changeaccount) > 0) {
 	$error = 0;
 
+	if (! (GETPOST('account_parent','int') >= 0))
+	{
+		$error++;
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
+	}
+
 	$db->begin();
 
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as l";
-	$sql1 .= " SET l.fk_code_ventilation=" . GETPOST('account_parent');
-	$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
+	if (! $error)
+	{
+		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det as l";
+		$sql1 .= " SET l.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
+		$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
 
-	dol_syslog('accountancy/supplier/lines.php::changeaccount sql= ' . $sql1);
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		setEventMessages($db->lasterror(), null, 'errors');
-	}
-	if (! $error) {
-		$db->commit();
-		setEventMessages($langs->trans('Save'), null, 'mesgs');
-	} else {
-		$db->rollback();
-		setEventMessages($db->lasterror(), null, 'errors');
-	}
+		dol_syslog('accountancy/supplier/lines.php::changeaccount sql= ' . $sql1);
+		$resql1 = $db->query($sql1);
+		if (! $resql1) {
+			$error ++;
+			setEventMessages($db->lasterror(), null, 'errors');
+		}
+		if (! $error) {
+			$db->commit();
+			setEventMessages($langs->trans('Save'), null, 'mesgs');
+		} else {
+			$db->rollback();
+			setEventMessages($db->lasterror(), null, 'errors');
+		}
 
-	$account_parent = '';   // Protection to avoid to mass apply it a second time
+		$account_parent = '';   // Protection to avoid to mass apply it a second time
+	}
 }
 
 
 /*
  * View
  */
+
+$form = new Form($db);
+$formother = new FormOther($db);
 
 llxHeader('', $langs->trans("SuppliersVentilation") . ' - ' . $langs->trans("Dispatched"));
 
@@ -184,16 +204,29 @@ if (strlen(trim($search_amount))) {
 	$sql .= natural_search("l.total_ht", $search_amount, 1);
 }
 if (strlen(trim($search_account))) {
-	$sql .= natural_search("aa.account_number", $search_account, 1);
+	$sql .= natural_search("aa.account_number", $search_account);
 }
 if (strlen(trim($search_vat))) {
-	$sql .= natural_search("l.tva_tx", $search_vat, 1);
+	$sql .= natural_search("l.tva_tx", price2num($search_vat), 1);
+}
+if ($search_month > 0)
+{
+	if ($search_year > 0 && empty($search_day))
+		$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+		else if ($search_year > 0 && ! empty($search_day))
+			$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $search_year))."'";
+			else
+				$sql.= " AND date_format(f.datef, '%m') = '".$db->escape($search_month)."'";
+}
+else if ($search_year > 0)
+{
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
 if (strlen(trim($search_country))) {
-	$sql .= " AND (co.label like'" . $search_country . "%')";
+	$sql .= natural_search("co.label", $search_country);
 }
 if (strlen(trim($search_tvaintra))) {
-	$sql .= " AND (s.tva_intra like'" . $search_tvaintra . "%')";
+	$sql .= natural_search("s.tva_intra", $search_tvaintra);
 }
 $sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";  // We don't share object for accountancy
 
@@ -217,24 +250,19 @@ if ($result) {
 	$i = 0;
 
 	$param='';
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-	if ($search_invoice)
-		$param .= "&search_invoice=" . $search_invoice;
-	if ($search_ref)
-		$param .= "&search_ref=" . $search_ref;
-	if ($search_label)
-		$param .= "&search_label=" . $search_label;
-	if ($search_desc)
-		$param .= "&search_desc=" . $search_desc;
-	if ($search_account)
-		$param .= "&search_account=" . $search_account;
-	if ($search_vat)
-		$param .= "&search_vat=" . $search_vat;
-	if ($search_country)
-		$param .= "&search_country=" . $search_country;
-	if ($search_tvaintra)
-		$param .= "&search_tvaintra=" . $search_tvaintra;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($search_invoice)	$param .= "&search_invoice=" . urlencode($search_invoice);
+	if ($search_ref)		$param .= "&search_ref=" . urlencode($search_ref);
+	if ($search_label)		$param .= "&search_label=" . urlencode($search_label);
+	if ($search_desc)		$param .= "&search_desc=" . urlencode($search_desc);
+	if ($search_account)	$param .= "&search_account=" . urlencode($search_account);
+	if ($search_vat)		$param .= "&search_vat=" . urlencode($search_vat);
+	if ($search_day)        $param .= '&search_day='.urlencode($search_day);
+	if ($search_month)      $param .= '&search_month='.urlencode($search_month);
+	if ($search_year)       $param .= '&search_year='.urlencode($search_year);
+	if ($search_country) 	$param .= "&search_country=" . urlencode($search_country);
+	if ($search_tvaintra)	$param .= "&search_tvaintra=" . urlencode($search_tvaintra);
 
 	print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">' . "\n";
 	print '<input type="hidden" name="action" value="ventil">';
@@ -250,7 +278,7 @@ if ($result) {
 	print $langs->trans("DescVentilDoneSupplier") . '<br>';
 
 	print '<br><div class="inline-block divButAction">' . $langs->trans("ChangeAccount") . '<br>';
-	print $formaccounting->select_account(GETPOST('account_parent'), 'account_parent', 1);
+	print $formaccounting->select_account($account_parent, 'account_parent', 2, array(), 0, 0, 'maxwidth300 maxwidthonsmartphone valignmiddle');
 	print '<input type="submit" class="button valignmiddle" value="' . $langs->trans("ChangeBinding") . '" /></div>';
 
 	$moreforfilter = '';
@@ -262,7 +290,11 @@ if ($result) {
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_lineid" value="' . dol_escape_htmltag($search_lineid) . '""></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_invoice" value="' . dol_escape_htmltag($search_invoice) . '"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre"></td>';
+	print '<td class="liste_titre center">';
+   	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+   	print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+   	$formother->select_year($search_year,'search_year',1, 20, 5);
+	print '</td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_ref" value="' . dol_escape_htmltag($search_ref) . '"></td>';
 	//print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat maxwidth50" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
@@ -337,13 +369,13 @@ if ($result) {
 		print '</td>';
 
 		print '<td align="right">' . price($objp->total_ht) . '</td>';
-		print '<td align="center">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
-		print '<td align="left">';
-		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid . '">';
+		print '<td align="right">' . vatrate($objp->tva_tx.($objp->vat_src_code?' ('.$objp->vat_src_code.')':'')) . '</td>';
+		print '<td align="center">';
+		print $codecompta . ' <a href="./card.php?id=' . $objp->rowid  . '&backtopage='.urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:'')) . '">';
 		print img_edit();
 		print '</a></td>';
-		print '<td align="right">' . $objp->country .'</td>';
-		print '<td align="center">' . $objp->tva_intra . '</td>';
+		print '<td>' . $objp->country .'</td>';
+		print '<td>' . $objp->tva_intra . '</td>';
 		print '<td class="center"><input type="checkbox" class="checkforaction" name="changeaccount[]" value="' . $objp->rowid . '"/></td>';
 
 		print "</tr>";
@@ -358,7 +390,7 @@ if ($result) {
 
     print '</form>';
 } else {
-	print $db->error();
+	print $db->lasterror();
 }
 
 

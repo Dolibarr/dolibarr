@@ -48,4 +48,4 @@ SmsInfoNumero= (Snið International þ.e.: 33899701761)
 DelayBeforeSending=Töf áður en þú sendir (mínútur)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Engin markmið í boði. Athugaðu uppsetningu SMS gefur.
-
+DisableStopIfSupported=Disable STOP message (if supported)

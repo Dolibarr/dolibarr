@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Nastavitev modula PayPal
 PaypalDesc=Ta modul ponuja stran, ki kupcem omogoča plačila na <a href="http://www.paypal.com" target="_blank">PayPal</a>. Lahko se uporablja za prosta plačila ali za plačila določenih Dolibarr objektov (računi, naročila, ...)
-PaypalOrCBDoPayment=Plačilo s kreditnimi karticami ali Paypal
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Plačilo z Paypal
 PAYPAL_API_SANDBOX=Način test/sandbox
 PAYPAL_API_USER=API ime uporabnika
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Ponujeno plačilo "integral" (kreditna kartica+Paypal) ali samo "Paypal"
 PaypalModeIntegral=Celovito
 PaypalModeOnlyPaypal=Samo PayPal
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=To je ID transakcije: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Pri pošiljanju dokumenta po pošti dodaj url Paypal plačila
 PredefinedMailContentLink=Za izvedbo vašega plačila (PayPal)lahko kliknete na spodnjo varno povezavo, če plačilo še ni bilo izvršeno.\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=Trenutno ste v &quot;peskovniku&quot; načinu
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=E-poštno opozorilo po plačilu (uspešno ali ne)
+ONLINE_PAYMENT_SENDEMAIL=E-poštno opozorilo po plačilu (uspešno ali ne)
 ReturnURLAfterPayment=URL za vrnitev po izvedenem plačilu
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

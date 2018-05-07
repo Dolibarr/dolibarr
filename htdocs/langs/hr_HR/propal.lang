@@ -4,7 +4,6 @@ Proposal=Ponuda
 ProposalShort=Ponuda
 ProposalsDraft=Skice ponuda
 ProposalsOpened=Otvori ponude
-Prop=Ponude
 CommercialProposal=Ponuda
 PdfCommercialProposalTitle=Ponuda
 ProposalCard=Kartica ponude
@@ -64,6 +63,7 @@ ProposalLine=Stavka ponude
 AvailabilityPeriod=Odgoda dostupnosti
 SetAvailability=Odredi odgodu dostupnosti
 AfterOrder=poslije narudžbe
+OtherProposals=Ostale ponude
 ##### Availability #####
 AvailabilityTypeAV_NOW=Odmah
 AvailabilityTypeAV_1W=Tjedan dana

@@ -69,7 +69,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	$listofsearchfields['search_contact']=array('text'=>'Contact');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -85,7 +85,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -95,7 +95,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 /*
  * Statistics area
  */
- 
+
 $third = array(
 		'customer' => 0,
 		'prospect' => 0,
@@ -127,37 +127,45 @@ if ($result)
 }
 else dol_print_error($db);
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder nohover" width="100%">'."\n";
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->use_javascript_ajax) && ((round($third['prospect'])?1:0)+(round($third['customer'])?1:0)+(round($third['supplier'])?1:0)+(round($third['other'])?1:0) >= 2))
 {
-    print '<tr '.$bc[0].'><td align="center" colspan="2">';
+    print '<tr><td align="center" colspan="2">';
     $dataseries=array();
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))     $dataseries[]=array('label'=>$langs->trans("Prospects"),'data'=>round($third['prospect']));
-    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))     $dataseries[]=array('label'=>$langs->trans("Customers"),'data'=>round($third['customer']));
-    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[]=array('label'=>$langs->trans("Suppliers"),'data'=>round($third['supplier']));
-    if (! empty($conf->societe->enabled))                                                              $dataseries[]=array('label'=>$langs->trans("Others"),'data'=>round($third['other']));
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',0,'',0);
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))     $dataseries[]=array($langs->trans("Prospects"), round($third['prospect']));
+    if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))     $dataseries[]=array($langs->trans("Customers"), round($third['customer']));
+    if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->lire && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS)) $dataseries[]=array($langs->trans("Suppliers"), round($third['supplier']));
+    if (! empty($conf->societe->enabled)) $dataseries[]=array($langs->trans("Others"), round($third['other']));
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+	$dolgraph->SetData($dataseries);
+	$dolgraph->setShowLegend(1);
+	$dolgraph->setShowPercent(1);
+	$dolgraph->SetType(array('pie'));
+	$dolgraph->setWidth('100%');
+	$dolgraph->draw('idgraphthirdparties');
+	print $dolgraph->show();
     print '</td></tr>'."\n";
 }
 else
 {
     if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS_STATS))
     {
-        $statstring = "<tr ".$bc[0].">";
+        $statstring = "<tr>";
         $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=p">'.$langs->trans("Prospects").'</a></td><td align="right">'.round($third['prospect']).'</td>';
         $statstring.= "</tr>";
     }
     if (! empty($conf->societe->enabled) && $user->rights->societe->lire && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS_STATS))
     {
-        $statstring.= "<tr ".$bc[1].">";
+        $statstring.= "<tr>";
         $statstring.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=c">'.$langs->trans("Customers").'</a></td><td align="right">'.round($third['customer']).'</td>';
         $statstring.= "</tr>";
     }
     if (! empty($conf->fournisseur->enabled) && empty($conf->global->SOCIETE_DISABLE_SUPPLIERS_STATS) && $user->rights->fournisseur->lire)
     {
-        $statstring2 = "<tr ".$bc[0].">";
+        $statstring2 = "<tr>";
         $statstring2.= '<td><a href="'.DOL_URL_ROOT.'/societe/list.php?type=f">'.$langs->trans("Suppliers").'</a></td><td align="right">'.round($third['supplier']).'</td>';
         $statstring2.= "</tr>";
     }
@@ -168,6 +176,7 @@ print '<tr class="liste_total"><td>'.$langs->trans("UniqueThirdParties").'</td><
 print $total;
 print '</td></tr>';
 print '</table>';
+print '</div>';
 
 if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_THIRDPARTIES))
 {
@@ -176,6 +185,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 
 	print '<br>';
 
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder nohover" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	print '<tr '.$bc[0].'><td align="center" colspan="2">';
@@ -202,24 +212,36 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			{
 				$obj = $db->fetch_object($result);
 				if ($i < $nbmax)
-					$dataseries[]=array('label'=>$obj->label,'data'=>round($obj->nb));
+				{
+					$dataseries[]=array($obj->label, round($obj->nb));
+				}
 				else
+				{
 					$rest+=$obj->nb;
+				}
 				$total+=$obj->nb;
 				$i++;
 			}
 			if ($i > $nbmax)
-				$dataseries[]=array('label'=>$langs->trans("Other"),'data'=>round($rest));
-			$data=array('series'=>$dataseries);
-			dol_print_graph('statscategclient',300,180,$data,1,'pie',0);
+			{
+				$dataseries[]=array($langs->trans("Other"), round($rest));
+			}
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			$dolgraph = new DolGraph();
+			$dolgraph->SetData($dataseries);
+			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowPercent(1);
+			$dolgraph->SetType(array('pie'));
+			$dolgraph->setWidth('100%');
+			$dolgraph->draw('idgraphcateg');
+			print $dolgraph->show();
 		}
 		else
 		{
-			$var=true;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
-				
+
 				print '<tr class="oddeven"><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total+=$obj->nb;
 				$i++;
@@ -231,6 +253,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print $total;
 	print '</td></tr>';
 	print '</table>';
+	print '</div>';
 }
 
 //print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
@@ -268,6 +291,7 @@ if ($result)
         $transRecordedType = $langs->trans("LastModifiedThirdParties",$max);
 
         print "\n<!-- last thirdparties modified -->\n";
+        print '<div class="div-table-responsive-no-min">';
         print '<table class="noborder" width="100%">';
 
         print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
@@ -275,16 +299,10 @@ if ($result)
         print '<th align="right">'.$langs->trans('Status').'</th>';
         print '</tr>'."\n";
 
-        $var=True;
-
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);
 
-            
-            print '<tr class="oddeven">';
-            // Name
-            print '<td class="nowrap">';
             $thirdparty_static->id=$objp->rowid;
             $thirdparty_static->name=$objp->name;
             $thirdparty_static->client=$objp->client;
@@ -295,6 +313,10 @@ if ($result)
             $thirdparty_static->code_client = $objp->code_client;
             $thirdparty_static->code_fournisseur = $objp->code_fournisseur;
             $thirdparty_static->canvas=$objp->canvas;
+
+            print '<tr class="oddeven">';
+            // Name
+            print '<td class="nowrap">';
             print $thirdparty_static->getNomUrl(1);
             print "</td>\n";
             // Type
@@ -331,6 +353,7 @@ if ($result)
         $db->free($result);
 
         print "</table>\n";
+        print '</div>';
         print "<!-- End last thirdparties modified -->\n";
     }
 }

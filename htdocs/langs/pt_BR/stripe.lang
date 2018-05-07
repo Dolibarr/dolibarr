@@ -1,3 +1,16 @@
 # Dolibarr language file - Source file is en_US - stripe
+StripeSetup=Configuração do módulo de boleto
+StripeDesc=Módulo para oferecer uma página de pagamento on-line aceitando pagamentos com cartão de crédito / débito via <a href="http://www.stripe.com" target="_blank"> Stripe </a>. Isso pode ser usado para permitir que seus clientes façam pagamentos gratuitos ou para um pagamento em um determinado objeto Dolibarr (fatura, pedido, ...)
+StripeOrCBDoPayment=Pagar com cartão de crédito ou boleto
 STRIPE_PAYONLINE_SENDEMAIL=Endereço e-mail para aviso apos o pagamento (positivo ou nao)
-StripeDoPayment=Continuar o pagamento com cartão
+StripeDoPayment=Pagar com cartão de crédito ou débito (boleto)
+YouWillBeRedirectedOnStripe=Você será redirecionado na página de boleto protegida para inserir as informações do cartão de crédito
+SetupStripeToHavePaymentCreatedAutomatically=Configure seu boleto com url <b> %s </b> para que o pagamento seja criado automaticamente quando validado por boleto
+STRIPE_CGI_URL_V2=Url de boleto CGI módulo para pagamento
+NewStripePaymentReceived=Pagamento de novo boleto recebido
+NewStripePaymentFailed=O pagamento do novo boleto tentou, mas falhou
+STRIPE_TEST_SECRET_KEY=Senha
+STRIPE_TEST_PUBLISHABLE_KEY=Senha editável
+STRIPE_LIVE_SECRET_KEY=Chave ao vivo secreta
+STRIPE_LIVE_PUBLISHABLE_KEY=Chave editável
+StripeLiveEnabled=Boleto ativado (caso contrário teste / modo cx)

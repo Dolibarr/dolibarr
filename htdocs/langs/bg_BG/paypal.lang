@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Настройки на модул PayPal
 PaypalDesc=В този модул се предлагат страници, които да дават възможност за заплащане от клиентите на <a href="http://www.paypal.com" target="_blank">PayPal</a> . Това може да се използва за плащане или за плащане на даден обект Dolibarr (фактура, поръчка, ...)
-PaypalOrCBDoPayment=Плащане с кредитна карта или Paypal
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Плащане с Paypal
 PAYPAL_API_SANDBOX=Mode тест / пясък
 PAYPAL_API_USER=API потребителско име
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Оферта плащане &quot;неразделна&quot; (кредитна карта + Paypal) или &quot;Paypal&quot;
 PaypalModeIntegral=Интеграл
 PaypalModeOnlyPaypal=Paypal само
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=Това е номер на сделката: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Добавяне на URL адреса на Paypal плащане, когато ви изпрати документа по пощата
 PredefinedMailContentLink=Можете да кликнете върху сигурна връзка по-долу, за да направите плащане чрез PayPal \n\n %s \n\n
-YouAreCurrentlyInSandboxMode=В момента сте в режим &quot;пясък&quot;
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=Имейл за предупреждаване след заплащане (успешно или не)
+ONLINE_PAYMENT_SENDEMAIL=Имейл за предупреждаване след заплащане (успешно или не)
 ReturnURLAfterPayment=Връщане на URL след заплащане
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

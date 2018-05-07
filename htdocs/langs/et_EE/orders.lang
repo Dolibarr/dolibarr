@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=Supplier order %s received %s
 SupplierOrderSubmitedInDolibarr=Supplier order %s submited
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=Muud tellimused
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Müügitellimuse järelkajaga tegelev müügiesindaja
 TypeContact_commande_internal_SHIPPING=Saatmise järelkajaga tegelev müügiesindaja
@@ -151,5 +152,7 @@ OrderCreated=Sinu tellimused on loodud
 OrderFail=Sinu tellimuste loomise ajal tekkis viga
 CreateOrders=Loo tellimused
 ToBillSeveralOrderSelectCustomer=Mitme erineva tellimuse põhjal müügiarve loomiseks klõpsa kõigepealt kliendi kaardile ning seejärel vali "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

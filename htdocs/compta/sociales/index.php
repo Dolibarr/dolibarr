@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2016      Frédéric France      <frederic.france@free.fr>
  *
@@ -187,7 +187,7 @@ if ($resql)
 		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.$search_label.'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
-	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,16,0);
+	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,0,0,'maxwidth100onsmartphone');
 	    print '</td>';
 		// Period end date
 		print '<td class="liste_titre">&nbsp;</td>';

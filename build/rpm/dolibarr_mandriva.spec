@@ -163,6 +163,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/bookmarks
 %_datadir/dolibarr/htdocs/cashdesk
 %_datadir/dolibarr/htdocs/categories
+%_datadir/dolibarr/htdocs/collab
 %_datadir/dolibarr/htdocs/comm
 %_datadir/dolibarr/htdocs/commande
 %_datadir/dolibarr/htdocs/compta
@@ -209,7 +210,7 @@ done >>%{name}.lang
 %_datadir/dolibarr/htdocs/user
 %_datadir/dolibarr/htdocs/variants
 %_datadir/dolibarr/htdocs/webservices
-%_datadir/dolibarr/htdocs/websites
+%_datadir/dolibarr/htdocs/website
 %_datadir/dolibarr/htdocs/*.ico
 %_datadir/dolibarr/htdocs/*.patch
 %_datadir/dolibarr/htdocs/*.php

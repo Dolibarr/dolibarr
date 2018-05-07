@@ -42,6 +42,7 @@ $id=GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
+$backtopage=GETPOST('backtopage','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -60,7 +61,7 @@ if ($action == 'setnote' && $user->rights->facture->paiement)
     $db->begin();
 
     $object->fetch($id);
-    $result = $object->update_note(GETPOST('note'));
+    $result = $object->update_note(GETPOST('note','none'));
     if ($result > 0)
     {
         $db->commit();
@@ -82,8 +83,17 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->facture->
 	if ($result > 0)
 	{
         $db->commit();
-        header("Location: list.php");
-        exit;
+
+        if ($backtopage)
+        {
+        	header("Location: ".$backtopage);
+        	exit;
+        }
+        else
+        {
+        	header("Location: list.php");
+        	exit;
+        }
 	}
 	else
 	{
@@ -226,7 +236,7 @@ print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$objec
 print '</td></tr>';
 
 // Amount
-print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->montant,'',$langs,0,0,-1,$conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 // Note
 print '<tr><td class="tdtop">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
@@ -263,7 +273,7 @@ if (! empty($conf->banque->enabled))
     	print '</td>';
     	print '</tr>';
 
-		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0) 
+		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0)
 		{
 			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
 			$bordereau = new RemiseCheque($db);
@@ -303,14 +313,14 @@ if ($resql)
 
 	$i = 0;
 	$total = 0;
-	
+
 	$moreforfilter='';
-	
+
 	print '<br>';
-	
+
 	print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
-	
+
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans('Bill').'</td>';
 	print '<td>'.$langs->trans('Company').'</td>';
@@ -327,16 +337,19 @@ if ($resql)
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
-			
-			print '<tr class="oddeven">';
 
-            $invoice=new Facture($db);
-            $invoice->fetch($objp->facid);
-            $paiement = $invoice->getSommePaiement();
-            $creditnotes=$invoice->getSumCreditNotesUsed();
-            $deposits=$invoice->getSumDepositsUsed();
-            $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-            $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+			$thirdpartystatic->fetch($objp->socid);
+
+			$invoice=new Facture($db);
+			$invoice->fetch($objp->facid);
+
+			$paiement = $invoice->getSommePaiement();
+			$creditnotes=$invoice->getSumCreditNotesUsed();
+			$deposits=$invoice->getSumDepositsUsed();
+			$alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
+			$remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+
+			print '<tr class="oddeven">';
 
             // Invoice
 			print '<td>';
@@ -345,8 +358,6 @@ if ($resql)
 
 			// Third party
 			print '<td>';
-			$thirdpartystatic->id=$objp->socid;
-			$thirdpartystatic->name=$objp->name;
 			print $thirdpartystatic->getNomUrl(1);
 			print '</td>';
 
@@ -372,11 +383,11 @@ if ($resql)
 			$i++;
 		}
 	}
-	
+
 
 	print "</table>\n";
 	print '</div>';
-	
+
 	$db->free($resql);
 }
 else

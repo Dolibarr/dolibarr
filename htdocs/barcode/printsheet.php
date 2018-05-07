@@ -236,7 +236,10 @@ if ($action == 'builddoc')
 			{
 				$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("DescADHERENT_ETIQUETTE_TYPE"));
 			}
-			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, 'tmp_barcode_sheet.pdf');
+
+			$outfile = $langs->trans("BarCode").'_sheets_'.dol_print_date(dol_now(),'dayhourlog').'.pdf';
+
+			if (! $mesg) $result=doc_label_pdf_create($db, $arrayofrecords, $modellabel, $outputlangs, $diroutput, $template, dol_sanitizeFileName($outfile));
 		}
 
 		if ($result <= 0)
@@ -292,9 +295,9 @@ foreach(array_keys($_Avery_Labels) as $codecards)
     $labeltoshow=$_Avery_Labels[$codecards]['name'];
     //$labeltoshow.=' ('.$_Avery_Labels[$row['code']]['paper-size'].')';
 	$arrayoflabels[$codecards]=$labeltoshow;
-	$arrayoflabels[$codecards]=$_Avery_Labels[$codecards]['name'];
 }
-print $form->selectarray('modellabel',$arrayoflabels,(GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE),1,0,0);
+asort($arrayoflabels);
+print $form->selectarray('modellabel', $arrayoflabels, (GETPOST('modellabel')?GETPOST('modellabel'):$conf->global->ADHERENT_ETIQUETTE_TYPE), 1, 0, 0, '', 0, 0, 0, '', '', 1);
 print '</div></div>';
 
 // Number of stickers to print

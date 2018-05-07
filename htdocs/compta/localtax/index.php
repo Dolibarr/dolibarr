@@ -45,14 +45,14 @@ if ($year == 0)
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($user->societe_id) 
+if ($user->societe_id)
     $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 
 // Define modetax (0 or 1)
 // 0=normal, 1=option vat for services is on debit
 $modetax = $conf->global->TAX_MODE;
-if (isset($_GET["modetax"])) 
+if (isset($_GET["modetax"]))
     $modetax=$_GET["modetax"];
 
 /**
@@ -81,7 +81,7 @@ function pt ($db, $sql, $date)
         $var=True;
         while ($i < $num) {
             $obj = $db->fetch_object($result);
-            
+
             print '<tr class="oddeven">';
             print '<td class="nowrap">'.$obj->dm."</td>\n";
             $total = $total + $obj->mm;
@@ -166,16 +166,16 @@ $var=True;
 $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ ) {
-    $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
-    $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
-    
+	$coll_listsell = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'sell', $m);
+	$coll_listbuy = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'buy', $m);
+
     $action = "tva";
     $object = array(&$coll_listsell, &$coll_listbuy);
     $parameters["mode"] = $modetax;
     $parameters["year"] = $y;
     $parameters["month"] = $m;
     $parameters["type"] = 'localtax'.$localTaxType;
-    
+
     // Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
     $hookmanager->initHooks(array('externalbalance'));
     $reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -190,7 +190,7 @@ for ($m = 1 ; $m < 13 ; $m++ ) {
         break;
     }
 
-    
+
     print '<tr class="oddeven">';
     print '<td class="nowrap">'.dol_print_date(dol_mktime(0,0,0,$m,1,$y),"%b %Y").'</td>';
     if($CalcLT==0) {
@@ -221,7 +221,7 @@ for ($m = 1 ; $m < 13 ; $m++ ) {
     	}
     	$subtotalcoll = $subtotalcoll + $x_coll;
     	print "<td class=\"nowrap\" align=\"right\">".price($x_coll)."</td><td></td>";
-    
+
     }
 
     if($CalcLT==0) {
@@ -231,7 +231,7 @@ for ($m = 1 ; $m < 13 ; $m++ ) {
     } elseif($CalcLT==2) {
         $diff= $x_coll;
     }
-    
+
     $total = $total + $diff;
     $subtotal = $subtotal + $diff;
 

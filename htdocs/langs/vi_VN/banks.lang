@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Ngân hàng
 MenuBankCash=Ngân hàng / Tiền
+MenuVariousPayment=Miscellaneous payments
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=Tên ngân hàng
 FinancialAccount=Tài khoản
 BankAccount=Tài khoản ngân hàng
@@ -87,6 +89,7 @@ AccountIdShort=Số
 LineRecord=Giao dịch
 AddBankRecord=Thêm kê khai
 AddBankRecordLong=Thêm kê khai thủ công
+Conciliated=Đã đối chiếu
 ConciliatedBy=Đối chiếu bởi
 DateConciliating=Ngày đối chiếu
 BankLineConciliated=Kê khai đã đối chiếu
@@ -155,3 +158,6 @@ NewVariousPayment=New miscellaneous payments
 VariousPayment=Miscellaneous payments
 VariousPayments=Miscellaneous payments
 ShowVariousPayment=Show miscellaneous payments
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

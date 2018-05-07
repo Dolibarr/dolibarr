@@ -73,6 +73,8 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$dateep=dol_mktime(12,0,0, $_POST["dateepmonth"], $_POST["dateepday"], $_POST["dateepyear"]);
 	if (empty($datev)) $datev=$datep;
 
+	$type_payment = dol_getIdFromCode($db, GETPOST("paymenttype", 'alpha'), 'c_paiement');
+
 	$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 	$object->fk_user=GETPOST("fk_user") > 0 ? GETPOST("fk_user","int") : 0;
 	$object->datev=$datev;
@@ -82,7 +84,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 	$object->datesp=$datesp;
 	$object->dateep=$dateep;
 	$object->note=GETPOST("note");
-	$object->type_payment=GETPOST("paymenttype") > 0 ? GETPOST("paymenttype", "int") : 0;
+	$object->type_payment=($type_payment > 0 ? $type_payment : 0);
 	$object->num_payment=GETPOST("num_payment");
 	$object->fk_user_author=$user->id;
 
@@ -101,7 +103,7 @@ if ($action == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Employee")), null, 'errors');
 		$error++;
 	}
-	if (empty($object->type_payment) || $object->type_payment < 0)
+	if (empty($type_payment) || $type_payment < 0)
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("PaymentMode")), null, 'errors');
 		$error++;
@@ -214,6 +216,12 @@ if ($action == 'create')
 		$pastmonthyear--;
 	}
 
+	$datespmonth = GETPOST('datespmonth', 'int');
+	$datespday = GETPOST('datespday', 'int');
+	$datespyear = GETPOST('datespyear', 'int');
+	$dateepmonth = GETPOST('dateepmonth', 'int');
+	$dateepday = GETPOST('dateepday', 'int');
+	$dateepyear = GETPOST('dateepyear', 'int');
 	$datesp=dol_mktime(0, 0, 0, $datespmonth, $datespday, $datespyear);
 	$dateep=dol_mktime(23, 59, 59, $dateepmonth, $dateepday, $dateepyear);
 
@@ -247,13 +255,14 @@ if ($action == 'create')
 	// Employee
 	print '<tr><td>';
 	print fieldLabel('Employee','fk_user',1).'</td><td>';
-	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+	$noactive=0;	// We keep active and unactive users
+	print $form->select_dolusers(GETPOST('fk_user','int'), 'fk_user', 1, '', 0, '', '', 0, 0, 0, 'AND employee=1', 0, '', 'maxwidth300', $noactive);
 	print '</td></tr>';
 
 	// Label
 	print '<tr><td>';
 	print fieldLabel('Label','label',1).'</td><td>';
-	print '<input name="label" id="label" class="minwidth300" value="'.($_POST["label"]?GETPOST("label",'',2):$langs->trans("SalaryPayment")).'">';
+	print '<input name="label" id="label" class="minwidth300" value="'.(GETPOST("label")?GETPOST("label"):$langs->trans("SalaryPayment")).'">';
 	print '</td></tr>';
 
 	// Date start period
@@ -286,7 +295,7 @@ if ($action == 'create')
 	// Type payment
 	print '<tr><td>';
 	print fieldLabel('PaymentMode','selectpaymenttype',1).'</td><td>';
-	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype");
+	$form->select_types_paiements(GETPOST("paymenttype"), "paymenttype", '', 2);
 	print '</td></tr>';
 
 	// Number

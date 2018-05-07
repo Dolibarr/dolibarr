@@ -267,14 +267,14 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 	{
 		global $conf;
 
-		$res = 0;
+		$result = 0;
 
 		// Get Mask value
 		$mask = empty($conf->global->BARCODE_STANDARD_PRODUCT_MASK)?'':$conf->global->BARCODE_STANDARD_PRODUCT_MASK;
 		if (! $mask)
 		{
 			$this->error='NotConfigured';
-			return '';
+			return -1;
 		}
 
 		dol_syslog(get_class($this).'::verif_syntax codefortest='.$codefortest." typefortest=".$typefortest);
@@ -292,6 +292,11 @@ class mod_barcode_product_standard extends ModeleNumRefBarCode
 		}
 
 		$result=check_value($mask,$newcodefortest);
+		if (is_string($result))
+		{
+			$this->error = $result;
+			return -1;
+		}
 
 		return $result;
 	}

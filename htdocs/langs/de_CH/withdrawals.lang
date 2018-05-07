@@ -1,4 +1,4 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 ThirdPartyBankCode=BLZ Geschäftspartner
-NoInvoiceCouldBeWithdrawed=Keine Rechnung erfolgreich abgebucht. Überprüfen Sie die Kontonummern der den Rechnungen zugewiesenen Geschäftspartnern.
 WithdrawalRefusedConfirm=Möchten Sie wirklich eine Abbuchungsablehnung zu diesem Geschäftspartner erstellen?
+RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved

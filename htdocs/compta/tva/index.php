@@ -116,7 +116,6 @@ $tva = new Tva($db);
 $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous($langs->trans("Previous"), 'class="valignbottom"')."</a>";
 $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next($langs->trans("Next"), 'class="valignbottom"')."</a>";
 
-print $conf->dol_optimize_smallscreen;
 print load_fiche_titre($langs->transcountry("VAT", $mysoc->country_code), $textprevyear." ".$langs->trans("Year")." ".$year_start." ".$textnextyear, 'title_accountancy.png');
 
 print $langs->trans("VATReportBuildWithOptionDefinedInModule").'<br>';
@@ -145,8 +144,8 @@ $total=0; $subtotalcoll=0; $subtotalpaye=0; $subtotal=0;
 $i=0;
 for ($m = 1 ; $m < 13 ; $m++ )
 {
-    $coll_listsell = vat_by_date($db, $y, 0, 0, 0, $modetax, 'sell', $m);
-    $coll_listbuy = vat_by_date($db, $y, 0, 0, 0, $modetax, 'buy', $m);
+	$coll_listsell = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'sell', $m);
+	$coll_listbuy = tax_by_date('vat', $db, $y, 0, 0, 0, $modetax, 'buy', $m);
 
     $action = "tva";
     $object = array(&$coll_listsell, &$coll_listbuy);

@@ -94,21 +94,25 @@ $langs->load("oauth");
  */
 
 
-if ($action == 'delete') 
+if ($action == 'delete')
 {
     $storage->clearToken('GitHub');
-    
+
     setEventMessages($langs->trans('TokenDeleted'), null, 'mesgs');
-    
+
     header('Location: ' . $backtourl);
     exit();
-} 
+}
 
 if (! empty($_GET['code']))     // We are coming from oauth provider page
 {
+	// We should have
+	//$_GET=array('code' => string 'aaaaaaaaaaaaaa' (length=20), 'state' => string 'user,public_repo' (length=16))
+
+	dol_syslog("We are coming fr mthe oauth provider page");
     //llxHeader('',$langs->trans("OAuthSetup"));
 
-    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+    //$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
     //print load_fiche_titre($langs->trans("OAuthSetup"),$linkback,'title_setup');
 
     //dol_fiche_head();
@@ -121,29 +125,29 @@ if (! empty($_GET['code']))     // We are coming from oauth provider page
         //var_dump($_GET['code']);
         //var_dump($state);
         //var_dump($apiService);      // OAuth\OAuth2\Service\GitHub
-        
+    	
         //$token = $apiService->requestAccessToken($_GET['code'], $state);
-        $token = $apiService->requestAccessToken($_GET['code']);                
-        // Github is a service that does not need state yo be stored.
+        $token = $apiService->requestAccessToken($_GET['code']);
+        // Github is a service that does not need state to be stored.
         // Into constructor of GitHub, the call
         // parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri)
         // has not the ending parameter to true like the Google class constructor.
-
+		
         setEventMessages($langs->trans('NewTokenStored'), null, 'mesgs');   // Stored into object managed by class DoliStorage so into table oauth_token
+
+        $backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
+        unset($_SESSION["backtourlsavedbeforeoauthjump"]);
+
+        header('Location: ' . $backtourl);
+        exit();
     } catch (Exception $e) {
         print $e->getMessage();
     }
-
-    $backtourl = $_SESSION["backtourlsavedbeforeoauthjump"];
-    unset($_SESSION["backtourlsavedbeforeoauthjump"]);
-    
-    header('Location: ' . $backtourl);
-    exit();
 }
 else // If entry on page with no parameter, we arrive here
 {
     $_SESSION["backtourlsavedbeforeoauthjump"]=$backtourl;
-    
+
     // This may create record into oauth_state before the header redirect.
     // Creation of record with state in this tables depend on the Provider used (see its constructor).
     if (GETPOST('state'))
@@ -154,7 +158,7 @@ else // If entry on page with no parameter, we arrive here
     {
         $url = $apiService->getAuthorizationUri();      // Parameter state will be randomly generated
     }
-    
+
     // we go on oauth provider authorization page
     header('Location: ' . $url);
     exit();

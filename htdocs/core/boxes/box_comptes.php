@@ -80,13 +80,16 @@ class box_comptes extends ModeleBoxes
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
         if ($user->rights->banque->lire) {
-			$sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
-			$sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix as iban,";
-			$sql.= " domiciliation, proprio, owner_address,";
-			$sql.= " account_number, currency_code,";
-			$sql.= " min_allowed, min_desired, comment";
-			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql.= " WHERE entity = ".$conf->entity;
+			$sql = "SELECT b.rowid, b.ref, b.label, b.bank,b.number, b.courant, b.clos, b.rappro, b.url";
+			$sql.= ", b.code_banque, b.code_guichet, b.cle_rib, b.bic, b.iban_prefix as iban";
+			$sql.= ", b.domiciliation, b.proprio, b.owner_address";
+			$sql.= ", b.account_number, b.currency_code";
+			$sql.= ", b.min_allowed, b.min_desired, comment";
+            $sql.= ', b.fk_accountancy_journal';
+            $sql.= ', aj.code as accountancy_journal';
+            $sql.= " FROM ".MAIN_DB_PREFIX."bank_account as b";
+            $sql.= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'accounting_journal as aj ON aj.rowid=b.fk_accountancy_journal';
+            $sql.= " WHERE b.entity = ".$conf->entity;
 			$sql.= " AND clos = 0";
 			//$sql.= " AND courant = 1";
 			$sql.= " ORDER BY label";
@@ -108,6 +111,9 @@ class box_comptes extends ModeleBoxes
 					$account_static->ref = $objp->ref;
                     $account_static->label = $objp->label;
                     $account_static->number = $objp->number;
+                    $account_static->account_number = $objp->account_number;
+                    $account_static->currency_code = $objp->currency_code;
+                    $account_static->accountancy_journal = $objp->accountancy_journal;
                     $solde=$account_static->solde(0);
 
                     $solde_total[$objp->currency_code] += $solde;

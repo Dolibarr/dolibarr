@@ -97,7 +97,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 	 */
 	public function runTrigger($action, $object, User $user, Translate $langs, Conf $conf)
 	{
-        if (!empty($conf->mymodule->enabled)) return 0;     // Module not active, we do nothing
+        if (empty($conf->mymodule->enabled)) return 0;     // Module not active, we do nothing
 
 	    // Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
@@ -211,6 +211,7 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 		        // Contracts
 		    case 'CONTRACT_CREATE':
 		    case 'CONTRACT_ACTIVATE':
+		    case 'CONTRACT_MODIFY':
 		    case 'CONTRACT_CANCEL':
 		    case 'CONTRACT_CLOSE':
 		    case 'CONTRACT_DELETE':

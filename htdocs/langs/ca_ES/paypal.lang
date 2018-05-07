@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Configuració mòdul PayPal
 PaypalDesc=Aquest mòdul ofereix una pàgina de pagament a través del proveïdor <a href="http://www.paypal.com" target="_blank">Paypal</a> per realitzar qualsevol pagament o un pagament en relació amb un objecte Dolibarr (factures, comandes ...)
-PaypalOrCBDoPayment=Continuar el pagament mitjançant targeta o Paypal
+PaypalOrCBDoPayment=Pagament amb Paypal (Targeta de crèdit o Paypal)
 PaypalDoPayment=Continuar el pagament mitjançant Paypal
 PAYPAL_API_SANDBOX=Mode de proves(sandbox)
 PAYPAL_API_USER=Nom usuari API
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Versió Curl SSL
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Proposar pagament integral (Targeta+Paypal) o només Paypal
 PaypalModeIntegral=Integral
 PaypalModeOnlyPaypal=Només PayPal
-PAYPAL_CSS_URL=URL opcional de la fulla d'estil CSS per a pàgina de pagament
+ONLINE_PAYMENT_CSS_URL=URL opcional del full d'estil CSS a la pàgina de pagament en línia
 ThisIsTransactionId=Identificador de la transacció: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Afegir la url del pagament Paypal en enviar un document per e-mail
 PredefinedMailContentLink=Podeu fer clic a l'enllaç assegurança de sota per realitzar el seu pagament a través de PayPal\n\n%s\n\n
-YouAreCurrentlyInSandboxMode=Actualment es troba en mode "sandbox"
+YouAreCurrentlyInSandboxMode=Actualment esteu en el mode %s "sandbox"
 NewOnlinePaymentReceived=Nou pagament online rebut
 NewOnlinePaymentFailed=S'ha intentat el nou pagament online però ha fallat
-PAYPAL_PAYONLINE_SENDEMAIL=E-Mail a avisar en cas de pagament (amb èxit o no)
+ONLINE_PAYMENT_SENDEMAIL=E-Mail a avisar en cas de pagament (amb èxit o no)
 ReturnURLAfterPayment=URL de retorn després del pagament
 ValidationOfOnlinePaymentFailed=Ha fallat la validació del pagament online
 PaymentSystemConfirmPaymentPageWasCalledButFailed=La pàgina de confirmació de pagament sol·licitada pel sistema de pagament ha retornat un error

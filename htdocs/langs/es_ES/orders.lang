@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Segunda aprobación realizada
 SupplierOrderReceivedInDolibarr=Pedido a proveedor %s recibido %s
 SupplierOrderSubmitedInDolibarr=Pedido a proveedor %s enviado
 SupplierOrderClassifiedBilled=Pedido a proveedor %s clasificado como facturado
+OtherOrders=Otros pedidos
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsable seguimiento pedido cliente
 TypeContact_commande_internal_SHIPPING=Responsable envío pedido cliente
@@ -151,5 +152,7 @@ OrderCreated=Sus pedidos han sido creados
 OrderFail=Se ha producido un error durante la creación de sus pedidos
 CreateOrders=Crear pedidos
 ToBillSeveralOrderSelectCustomer=Para crear una factura para numerosos pedidos, haga primero click sobre el cliente y luego elija "%s".
+OptionToSetOrderBilledNotEnabled=La opción (del módulo Flujo de trabajo) para configurar automáticamente el pedido como 'Facturado' cuando se valida la factura está desactivado, por lo que deberá establecer el estado de la orden en 'Facturado' manualmente.
+IfValidateInvoiceIsNoOrderStayUnbilled=Si la validación de la factura es 'No', la orden permanecerá en estado 'Sin facturar' hasta que la factura sea validada.
 CloseReceivedSupplierOrdersAutomatically=Cerrar el pedido automáticamente a "%s" si se han recibido todos los productos
 SetShippingMode=Indica el modo de envío

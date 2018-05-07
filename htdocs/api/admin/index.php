@@ -77,6 +77,8 @@ if ($action == 'setproductionmode')
 	}
 }
 
+dol_mkdir(DOL_DATA_ROOT.'/api/temp');		// May have been deleted by a purge
+
 
 /*
  *	View
@@ -84,7 +86,7 @@ if ($action == 'setproductionmode')
 
 llxHeader();
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ApiSetup"),$linkback,'title_setup');
 
 print $langs->trans("ApiDesc")."<br>\n";
@@ -128,7 +130,7 @@ $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain
 
 // Show message
 $message='';
-$url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&userpassword=<strong>thepassword</strong>[&reset=1]';
+$url=$urlwithroot.'/api/index.php/login?login=<strong>auserlogin</strong>&password=<strong>thepassword</strong>[&reset=1]';
 $message.=$langs->trans("UrlToGetKeyToUseAPIs").':<br>';
 $message.=img_picto('','object_globe.png').' '.$url;
 print $message;

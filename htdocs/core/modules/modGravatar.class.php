@@ -23,7 +23,7 @@
  *  \ingroup    gravatar
  *  \brief      Description and activation file for module Gravatar
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -50,7 +50,7 @@ class modGravatar extends DolibarrModules
 		// It is used to group modules in module setup page
 		$this->family = "technic";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace('/^mod/i','',get_class($this));
+		$this->name = preg_replace('/^mod/i', '', get_class($this));
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Use online Gravatar service (www.gravatar.com) to show photo of users/members (found with their emails).<br>Need an internet access.";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
@@ -62,25 +62,25 @@ class modGravatar extends DolibarrModules
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/images directory, use this->picto=DOL_URL_ROOT.'/module/images/file.png'
-		$this->picto='gravatar';
+		$this->picto = 'gravatar';
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
 		$this->dirs = array();
-		$r=0;
+		$r = 0;
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		$this->config_page_url = array();
 
 		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->phpmin = array(4,3);					// Minimum version of PHP required by module
-		$this->need_dolibarr_version = array(2,7);	// Minimum version of Dolibarr required by module
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->phpmin = array(4, 3); // Minimum version of PHP required by module
+		$this->need_dolibarr_version = array(2, 7); // Minimum version of Dolibarr required by module
 		$this->langfiles = array();
 
 		// Constants
-		$this->const = array();			// List of particular constants to add when module is enabled
+		$this->const = array(); // List of particular constants to add when module is enabled
 		//Example: $this->const=array(0=>array('MODULE_MY_NEW_CONST1','chaine','myvalue','This is a constant to add',0),
 		//                            1=>array('MODULE_MY_NEW_CONST2','chaine','myvalue','This is another constant to add',0) );
 
@@ -88,8 +88,8 @@ class modGravatar extends DolibarrModules
 		$this->tabs = array();
 
 		// Boxes
-		$this->boxes = array();			// List of boxes
-		$r=0;
+		$this->boxes = array(); // List of boxes
+		$r = 0;
 
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
 		// Example:
@@ -99,16 +99,9 @@ class modGravatar extends DolibarrModules
 		//$r++;
 
 
-		// Cronjobs
-		$this->cronjobs = array();			// List of cron jobs entries to add
-		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600),
-		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>3600, 'unitfrequency'=>3600)
-		// );
-		$r=0;
-
 		// Permissions
-		$this->rights = array();		// Permission array used by this module
-		$r=0;
+		$this->rights = array(); // Permission array used by this module
+		$r = 0;
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
@@ -121,8 +114,8 @@ class modGravatar extends DolibarrModules
 
 
 		// Main menu entries
-		$this->menus = array();			// List of menus to add
-		$r=0;
+		$this->menus = array(); // List of menus to add
+		$r = 0;
 
 		// Add here entries to declare new menus
 		// Example to declare the Top Menu entry:
@@ -169,7 +162,7 @@ class modGravatar extends DolibarrModules
 
 
 		// Exports
-		$r=1;
+		$r = 1;
 
 		// Example:
 		// $this->export_code[$r]=$this->rights_class.'_'.$r;

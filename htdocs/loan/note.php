@@ -5,6 +5,7 @@
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  * Copyright (C) 2016       Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +30,9 @@
 require '../main.inc.php';
 require_once(DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/loan.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 $action = GETPOST('action','aZ09');
 

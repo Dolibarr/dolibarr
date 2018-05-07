@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2017		Alexandre Spangaro		<aspangaro@zendsi.com>
  * Copyright (C) 2017		Saasprov				<saasprov@gmail.com>
+ * Copyright (C) 2017		Ferran Marcet			<fmarcet@2byte.es.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,19 +33,19 @@ global $conf;
 //use \includes\stripe as stripe;
 $stripe = array();
 
-if (empty($conf->global->SKYPE_LIVE))
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
 {
 	$stripe = array(
 		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
 		"publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
 	);
 }
-else 
+else
 {
 	$stripe = array(
 		"secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
 		"publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
-	);	
+	);
 }
 
 require_once DOL_DOCUMENT_ROOT."/includes/stripe/lib/Stripe.php";

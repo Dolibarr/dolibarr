@@ -106,14 +106,23 @@ print "</tr>\n";
 $listoftype=$tripandexpense_static->listOfTypes();
 foreach ($listoftype as $code => $label)
 {
-    $dataseries[]=array('label'=>$label,'data'=>(isset($nb[$code])?(int) $nb[$code]:0));
+    $dataseries[]=array($label, (isset($nb[$code])?(int) $nb[$code]:0));
 }
 
 if ($conf->use_javascript_ajax)
 {
-    print '<tr '.$bc[false].'><td align="center" colspan="4">';
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
+    print '<tr><td align="center" colspan="4">';
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+    $dolgraph->SetData($dataseries);
+    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowPercent(1);
+    $dolgraph->SetType(array('pie'));
+    $dolgraph->setWidth('100%');
+    $dolgraph->draw('idgraphstatus');
+    print $dolgraph->show($totalnb?0:1);
+
     print '</td></tr>';
 }
 
@@ -180,7 +189,7 @@ if ($result)
             print '<td align="right">'.dol_print_date($db->jdate($obj->dm),'day').'</td>';
             print '<td>'.$deplacementstatic->LibStatut($obj->fk_statut,3).'</td>';
             print '</tr>';
-            
+
             $i++;
         }
 

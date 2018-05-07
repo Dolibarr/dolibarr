@@ -154,7 +154,7 @@ INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'VEF'
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'VND', '[8363]', 1,				'Viet Nam Dong');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XAF', NULL, 1,					'Communaute Financiere Africaine (BEAC) CFA Franc');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XOF', NULL, 1,					'Communaute Financiere Africaine (BCEAO) Franc');
-INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XPF', NULL, 1,                   'Franc pacifique (XPF)');
+INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'XPF', '[70]', 1,                'Franc CFP');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'YER', '[65020]', 1,				'Yemen Rial');
 INSERT INTO llx_c_currencies ( code_iso, unicode, active, label ) VALUES ( 'ZWD', '[90,36]', 1,				'Zimbabwe Dollar');
 

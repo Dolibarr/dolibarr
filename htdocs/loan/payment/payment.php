@@ -101,8 +101,8 @@ if ($action == 'add_payment')
 			$payment->amount_interest	= GETPOST('amount_interest');
 			$payment->paymenttype		= GETPOST('paymenttype');
     		$payment->num_payment		= GETPOST('num_payment');
-    		$payment->note_private      = GETPOST('note_private');
-    		$payment->note_public       = GETPOST('note_public');
+    		$payment->note_private      = GETPOST('note_private','none');
+    		$payment->note_public       = GETPOST('note_public','none');
 
     		if (! $error)
     		{

@@ -4,7 +4,6 @@ Proposal=Teklif
 ProposalShort=Teklif
 ProposalsDraft=Taslak teklifler
 ProposalsOpened=Açık teklifler
-Prop=Teklifler
 CommercialProposal=Teklif
 PdfCommercialProposalTitle=Teklif
 ProposalCard=Teklif kartı
@@ -64,6 +63,7 @@ ProposalLine=Teklif satırı
 AvailabilityPeriod=Teslim süresi
 SetAvailability=Teslim süresi ayarla
 AfterOrder=siparişten sonra
+OtherProposals=Diğer teklifler
 ##### Availability #####
 AvailabilityTypeAV_NOW=İvedi
 AvailabilityTypeAV_1W=1 hafta

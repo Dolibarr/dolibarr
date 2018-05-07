@@ -93,7 +93,7 @@ function getPaypalPaymentUrl($mode,$type,$ref='',$amount='9.99',$freetag='your_f
 	global $conf;
 
 	$ref=str_replace(' ','',$ref);
-	
+
     if ($type == 'free')
     {
 	    $out=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?amount='.($mode?'<font color="#666666">':'').$amount.($mode?'</font>':'').'&tag='.($mode?'<font color="#666666">':'').$freetag.($mode?'</font>':'');
@@ -355,7 +355,7 @@ function callSetExpressCheckout($paymentAmount, $currencyCodeType, $paymentType,
     if (! empty($desc))  $nvpstr = $nvpstr . "&DESC=" . urlencode($desc);        // DESC deprecated by paypal -> PAYMENTREQUEST_n_DESC
 
 
-	$_SESSION["Payment_Amount"] = $paymentAmount;
+	$_SESSION["FinalPaymentAmt"] = $paymentAmount;
     $_SESSION["currencyCodeType"] = $currencyCodeType;
     $_SESSION["PaymentType"] = $paymentType;
     $_SESSION['ipaddress'] = $_SERVER['REMOTE_ADDR '];  // Payer ip
@@ -535,7 +535,7 @@ function hash_call($methodName,$nvpStr)
 
     // TODO problem with triggers
     $API_version="56";
-	if (! empty($conf->global->PAYPAL_API_SANDBOX))
+	if (! empty($conf->global->PAYPAL_API_SANDBOX) || GETPOST('forcesandbox','alpha'))		// We can force sand box with param 'forcesandbox'
 	{
 	    $API_Endpoint = "https://api-3t.sandbox.paypal.com/nvp";
 	    $API_Url = "https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&token=";

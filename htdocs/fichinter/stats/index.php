@@ -75,7 +75,7 @@ print load_fiche_titre($title,'','title_commercial.png');
 dol_mkdir($dir);
 
 $stats = new FichinterStats($db, $socid, $mode, ($userid>0?$userid:0));
-if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$object_status.')';
+if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -291,7 +291,7 @@ foreach ($data as $val)
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		
+
 		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 
@@ -304,7 +304,7 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	
+
 	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';

@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal moduļa iestatīšana
 PaypalDesc=Šis modulis piedāvā lapas, lai ļautu maksājumu ar <a href="http://www.paypal.com" target="_blank">PayPal</a> klienti. To var izmantot par brīvu maksājumu vai maksājumu par konkrētu Dolibarr objektu (rēķins, rīkojums, ...)
-PaypalOrCBDoPayment=Maksāt ar kredītkarti vai Paypal
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Maksāt ar Paypal
 PAYPAL_API_SANDBOX=Mode tests / sandbox
 PAYPAL_API_USER=API lietotājvārds
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Akcija maksājums &quot;neatņemama sastāvdaļa&quot; (Kredītkaršu + Paypal), vai &quot;Paypal&quot; tikai
 PaypalModeIntegral=Integrālis
 PaypalModeOnlyPaypal=PayPal tikai
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=Tas ir id darījuma: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Pievieno url Paypal maksājumu, kad jūs sūtīt dokumentu pa pastu
 PredefinedMailContentLink=Jūs varat noklikšķināt uz drošu saites zemāk, lai padarītu jūsu maksājumu (PayPal), ja tas jau nav izdarīts. \n\n %s \n\n
-YouAreCurrentlyInSandboxMode=Jūs pašlaik esat "smilšu" režīmā
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=Saņemts jauns tiešsaistes maksājums
 NewOnlinePaymentFailed=Jauns tiešsaistes maksājums tika izmēģināts, bet neizdevās
-PAYPAL_PAYONLINE_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai ne)
+ONLINE_PAYMENT_SENDEMAIL=E-pastu, lai brīdinātu pēc maksājuma (veiksme vai ne)
 ReturnURLAfterPayment=Return URL after payment
 ValidationOfOnlinePaymentFailed=Neveiksmīgs tiešsaistes maksājumu apstiprinājums
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

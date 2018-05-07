@@ -146,7 +146,7 @@ $fsearch.='  <input type="hidden" name="modetax" value="'.$modetax.'">';
 
 // Affiche en-tete du rapport
 if ($modetax==1) { // Calculate on invoice for goods and services
-	$nom=$langs->trans("VATReportByQuartersInDueDebtMode");
+	$name=$langs->trans("VATReportByQuartersInDueDebtMode");
 	$calcmode=$langs->trans("CalcModeVATDebt");
 	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -174,7 +174,7 @@ if ($modetax==1) { // Calculate on invoice for goods and services
 		$description.='<br>'.$langs->trans("DepositsAreIncluded");
 	}
 	$description.=$fsearch;
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -195,7 +195,7 @@ if ($modetax==1) { // Calculate on invoice for goods and services
 	}
 }
 if ($modetax==0) {	// Invoice for goods, payment for services
-	$nom=$langs->trans("VATReportByQuartersInInputOutputMode");
+	$name=$langs->trans("VATReportByQuartersInInputOutputMode");
 	$calcmode=$langs->trans("CalcModeVATEngagement");
 	$calcmode.='<br>('.$langs->trans("TaxModuleSetupToModifyRules",DOL_URL_ROOT.'/admin/taxes.php').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -224,7 +224,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 	//if ($conf->global->MAIN_MODULE_COMPTABILITE || $conf->global->MAIN_MODULE_ACCOUNTING) $description.='<br>'.img_warning().' '.$langs->trans('OptionVatInfoModuleComptabilite');
 	//if (! empty($conf->global->MAIN_MODULE_COMPTABILITE)) $description.='<br>'.$langs->trans("WarningDepositsNotIncluded");
 	$description.=$fsearch;
-	$builddate=time();
+	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 
 	$elementcust=$langs->trans("CustomersInvoices");
@@ -244,7 +244,7 @@ if ($modetax==0) {	// Invoice for goods, payment for services
 		$vatsup.=' ('.$langs->trans("ToGetBack").')';
 	}
 }
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink,array(),$calcmode);
 
 $vatcust=$langs->trans("VATReceived");
 $vatsup=$langs->trans("VATPaid");
@@ -260,8 +260,8 @@ $i=0;
 $columns = 6;
 
 // Load arrays of datas
-$x_coll = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'sell');
-$x_paye = vat_by_date($db, 0, 0, $date_start, $date_end, $modetax, 'buy');
+$x_coll = tax_by_date('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'sell');
+$x_paye = tax_by_date('vat', $db, 0, 0, $date_start, $date_end, $modetax, 'buy');
 
 if (!is_array($x_coll) || !is_array($x_paye)) {
 	$langs->load("errors");
@@ -373,18 +373,18 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 	print '<td align="right">'.$langs->trans("AmountHTVATRealReceived").'</td>';
 	print '<td align="right">'.$vatcust.'</td>';
 	print '</tr>';
-	
+
 	$action = "tvadetail";
 	$parameters["mode"] = $modetax;
 	$parameters["start"] = $date_start;
 	$parameters["end"] = $date_end;
 	$parameters["type"] = 'vat';
-	
+
 	$object = array(&$x_coll, &$x_paye, &$x_both);
 	// Initialize technical object to manage hooks of expenses. Note that conf->hooks_modules contains array array
 	$hookmanager->initHooks(array('externalbalance'));
 	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-	
+
 	foreach (array_keys($x_coll) as $rate) {
 		$subtot_coll_total_ht = 0;
 		$subtot_coll_vat = 0;
@@ -408,7 +408,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$type=1;
 				}
 
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref
@@ -576,7 +576,7 @@ if (!is_array($x_coll) || !is_array($x_paye)) {
 					$type=1;
 				}
 
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref

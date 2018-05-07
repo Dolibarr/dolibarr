@@ -4,7 +4,6 @@ Proposal=Üzleti ajánlat
 ProposalShort=Javaslat
 ProposalsDraft=Készítsen üzleti ajánlatot
 ProposalsOpened=Open commercial proposals
-Prop=Üzleti ajánlatok
 CommercialProposal=Üzleti ajánlat
 PdfCommercialProposalTitle=Üzleti ajánlat
 ProposalCard=Javaslat kártya
@@ -64,6 +63,7 @@ ProposalLine=Javaslat vonal
 AvailabilityPeriod=Elérhetőség késleltetés
 SetAvailability=Állítsa be a rendelkezésre álló késedelem
 AfterOrder=rendezés után
+OtherProposals=Egyéb javaslatok
 ##### Availability #####
 AvailabilityTypeAV_NOW=Azonnali
 AvailabilityTypeAV_1W=1 hét

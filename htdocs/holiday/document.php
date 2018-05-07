@@ -97,7 +97,7 @@ if ($object->id)
 
 	$head=holiday_prepare_head($object);
 
-	dol_fiche_head($head, 'documents',$langs->trans("CPTitreMenu"),0,'holiday');
+	dol_fiche_head($head, 'documents', $langs->trans("CPTitreMenu"), -1,'holiday');
 
 
 	// Construit liste des fichiers
@@ -109,17 +109,17 @@ if ($object->id)
 	}
 
 
-	$linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback='<a href="'.DOL_URL_ROOT.'/holiday/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
 	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref');
-	
-	
+
+
 	print '<div class="fichecenter">';
 	//print '<div class="fichehalfleft">';
 	print '<div class="underbanner clearboth"></div>';
-	
+
 	print '<table class="border centpercent">';
-	
+
     print '<tr>';
     print '<td class="titlefield">'.$langs->trans("User").'</td>';
 	print '<td>';
@@ -212,16 +212,16 @@ if ($object->id)
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-    
+
     print '</tbody>';
     print '</table>'."\n";
 /*
     print '</div>';
     print '<div class="fichehalfright">';
     print '<div class="ficheaddleft">';
-    
+
     print '<div class="underbanner clearboth"></div>';
-    
+
 	// Info workflow
     print '<table class="border centpercent">'."\n";
     print '<tbody>';
@@ -278,11 +278,11 @@ if ($object->id)
     print '</div>';
     print '</div>'; */
     print '</div>';
-    
+
     print '<div class="clearboth"></div>';
-    
+
     dol_fiche_end();
-    
+
 
 
     $modulepart = 'holiday';

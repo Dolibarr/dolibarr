@@ -76,9 +76,9 @@ $sql.= " SUM(pl.amount_capital) as alreadypayed";
 $sql.= " FROM ".MAIN_DB_PREFIX."loan as l LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl";
 $sql.= " ON l.rowid = pl.fk_loan";
 $sql.= " WHERE l.entity = ".$conf->entity;
-if ($search_amount)	$sql.=" AND l.capital='".$db->escape(price2num(trim($search_amount)))."'";
-if ($search_ref) 	$sql.=" AND l.rowid = ".$db->escape($search_ref);
-if ($search_label)	$sql.=" AND l.label LIKE '%".$db->escape($search_label)."%'";
+if ($search_amount)	$sql.= natural_search("l.capital", $search_amount, 1);
+if ($search_ref) 	$sql.= " AND l.rowid = ".$db->escape($search_ref);
+if ($search_label)	$sql.= natural_search("l.label", $search_label);
 if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
@@ -104,12 +104,12 @@ if ($resql)
 	$var=true;
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-    if ($search_ref) $param.="&amp;search_ref=".$search_ref;
-    if ($search_label) $param.="&amp;search_label=".$search_user;
-    if ($search_amount) $param.="&amp;search_amount=".$search_amount_ht;
-    if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+    if ($search_ref) $param.="&amp;search_ref=".urlencode($search_ref);
+    if ($search_label) $param.="&amp;search_label=".urlencode($search_user);
+    if ($search_amount) $param.="&amp;search_amount=".urlencode($search_amount_ht);
+    if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';

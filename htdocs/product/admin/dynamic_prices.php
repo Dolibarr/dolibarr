@@ -140,14 +140,17 @@ if (!empty($action) && empty($cancel)) {
     $action = '';
 }
 
+
 /*
  * View
  */
 
+$form = new Form($db);
+
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 
-print load_fiche_titre($langs->trans("DynamicPriceConfiguration"));
-$form = new Form($db);
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
+print load_fiche_titre($langs->trans("DynamicPriceConfiguration"), $linkback, 'title_setup');
 
 print $langs->trans("DynamicPriceDesc").'<br>';
 print '<br>';

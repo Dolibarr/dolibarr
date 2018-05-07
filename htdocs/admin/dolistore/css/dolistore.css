@@ -1,0 +1,237 @@
+
+div.divsearchfield {
+    float: left;
+    margin: 4px 12px 4px 2px;
+    padding-left: 2px;
+}
+
+.margeCoteGauche,.margeCote{
+    padding-right: 20px!important;   
+}
+.margeCote,.margeCoteDroite{
+    padding-left: 20px!important;    
+}
+.nomargesupinf{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#category-tree-left{
+    display: none;
+    vertical-align: top;
+    width: 24%;
+}
+#listing-content{
+    box-sizing: border-box;
+    display: inline-block;
+    width: 100%;
+}
+.tree{
+    margin: 0px 0px 0px 0px; 
+    padding:0px;
+    list-style: none; line-height: 2em; font-family: Arial;
+}
+.tree li{
+    font-size: 16px;
+    position: relative;list-style: none; 
+}
+.tree li:before{
+    position: absolute;
+    left: -15px;
+    top: -4px;
+    content: '';
+    display: block;
+    border-left: 1px solid #ddd;
+    height: 1em;
+    border-bottom: 1px solid #ddd;
+    width: 10px;
+}
+.tree li:after{
+    position: absolute;
+    left: -15px;
+    bottom: -7px;
+    content: '';
+    display: block;
+    border-left: 1px solid #ddd;
+    height: 100%;
+}
+
+.tree li.root{
+    margin: 0px 0px 0px 0px;
+}
+.tree li.root:before{
+    display: none;
+}
+
+.tree li.root:after{
+    display: none;
+}
+.tree li:last-child:after{ 
+    display: none
+}
+.blockUI {
+    cursor: auto!important;
+}
+.newAppParent{
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+}
+.newApp, .updatedApp{
+    background-color: orange;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+    color: white;
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    left: -34px;
+    padding: 5px 0;
+    position: absolute;
+    text-align: center;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.35);
+    top: 22px;
+    transform: rotate(-45deg);
+    width: 150px;
+}
+.updatedApp{
+    background-color: greenyellow;
+}
+.notcompatible {
+    color: red;
+}
+.compatibleafterupdate {
+    color: orange;
+}
+.compatible {
+    background-image: url("../img/compatible.png");
+    background-position: left center;
+    background-repeat: no-repeat;
+    color: green;
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    padding-left: 35px;
+}
+tr.app {
+    height:250px;
+}
+tr.app td {
+	border-bottom: 1px solid #888;
+}
+div#newsDoli.tabBar {
+    margin-top: 50px;
+    margin-right: 30px;
+}
+.selected {
+    text-decoration: underline!important;
+}
+.searchDolistore, .searchDolistore:hover {
+    padding-left: 30px;
+    padding-right: 30px;
+    font-weight: bold;
+}
+.searchDolistore:hover {
+    text-decoration: underline!important;
+}
+
+.score{
+    font-size: 16px;
+    font-weight: bold;
+}
+.formReviewArea{
+    display:none;
+}
+.formReview div.divsearchfield{
+    float: none;
+}
+.input100{
+    box-sizing: border-box;
+    width: 100%;
+}
+.input50{
+    box-sizing: border-box;
+    width: 49%;
+}
+textarea.row4{
+    min-height: 100px;
+}
+
+
+.reviewList {
+    max-height: 150px;
+    overflow-y: scroll; 
+}
+
+.reviewRow{
+    margin-bottom: 20px;
+}
+.reviewRow .reviewMarge {
+    float:left;
+    width: 220px;
+    padding: 0 20px 20px 0;
+}
+.reviewRow .score {
+    font-size: 48px;
+    display: block;
+    text-align: center;
+}
+.reviewRow .reviewDate {
+    color:grey;
+}
+.reviewRow:after{
+    clear: both;
+    content:'';
+    display: block;
+}
+h2.appTitle small{
+    font-weight: normal;
+}
+tr.NotCompatible{
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
+
+    /* IE 5-7 */
+    filter: alpha(opacity=25);
+
+    /* Netscape */
+    -moz-opacity: 0.25;
+
+    /* Safari 1.x */
+    -khtml-opacity: 0.25;
+
+    /* Good browsers */
+    opacity: 0.25;
+}
+tr.NotCompatible:hover{
+    /* IE 8 */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+
+    /* IE 5-7 */
+    filter: alpha(opacity=100);
+
+    /* Netscape */
+    -moz-opacity: 1;
+
+    /* Safari 1.x */
+    -khtml-opacity: 1;
+
+    /* Good browsers */
+    opacity: 1;
+}
+@media only screen and (min-width: 1150px) {
+    #categorieArea{
+        display:none;
+    }
+    #category-tree-left{
+        display:inline-block;
+    }
+    #listing-content{
+        width: 75%;
+        float: right;
+    }
+}
+span.details{
+    font-size: 12px;
+    margin-left: 10px;
+    vertical-align: super;
+}

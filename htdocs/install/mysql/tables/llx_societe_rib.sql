@@ -41,6 +41,6 @@ create table llx_societe_rib
   rum            varchar(32),	 				-- RUM value to use for SEPA generation
   date_rum		 date,							-- Date of mandate
   frstrecur      varchar(16) default 'FRST',    -- 'FRST' or 'RECUR'
-
+  	
   import_key     varchar(14)    -- import key
 )ENGINE=innodb;

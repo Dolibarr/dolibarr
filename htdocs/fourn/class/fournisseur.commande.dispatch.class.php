@@ -105,14 +105,11 @@ class CommandeFournisseurDispatch extends CommonObject
 		if (isset($this->status)) $this->status=trim($this->status);
 		if (isset($this->batch)) $this->batch=trim($this->batch);
 
-
-
 		// Check parameters
 		// Put here code to add control on parameters values
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX.$this->table_element."(";
-
 		$sql.= "fk_commande,";
 		$sql.= "fk_product,";
 		$sql.= "fk_commandefourndet,";
@@ -125,24 +122,19 @@ class CommandeFournisseurDispatch extends CommonObject
 		$sql.= "batch,";
 		$sql.= "eatby,";
 		$sql.= "sellby";
-
-
         $sql.= ") VALUES (";
-
-		$sql.= " ".(! isset($this->fk_commande)?'NULL':"'".$this->fk_commande."'").",";
-		$sql.= " ".(! isset($this->fk_product)?'NULL':"'".$this->fk_product."'").",";
-		$sql.= " ".(! isset($this->fk_commandefourndet)?'NULL':"'".$this->fk_commandefourndet."'").",";
-		$sql.= " ".(! isset($this->qty)?'NULL':"'".$this->qty."'").",";
-		$sql.= " ".(! isset($this->fk_entrepot)?'NULL':"'".$this->fk_entrepot."'").",";
-		$sql.= " ".(! isset($this->fk_user)?'NULL':"'".$this->fk_user."'").",";
+		$sql.= " ".(! isset($this->fk_commande)?'NULL':"'".$this->db->escape($this->fk_commande)."'").",";
+		$sql.= " ".(! isset($this->fk_product)?'NULL':"'".$this->db->escape($this->fk_product)."'").",";
+		$sql.= " ".(! isset($this->fk_commandefourndet)?'NULL':"'".$this->db->escape($this->fk_commandefourndet)."'").",";
+		$sql.= " ".(! isset($this->qty)?'NULL':"'".$this->db->escape($this->qty)."'").",";
+		$sql.= " ".(! isset($this->fk_entrepot)?'NULL':"'".$this->db->escape($this->fk_entrepot)."'").",";
+		$sql.= " ".(! isset($this->fk_user)?'NULL':"'".$this->db->escape($this->fk_user)."'").",";
 		$sql.= " ".(! isset($this->datec) || dol_strlen($this->datec)==0?'NULL':"'".$this->db->idate($this->datec)."'").",";
 		$sql.= " ".(! isset($this->comment)?'NULL':"'".$this->db->escape($this->comment)."'").",";
-		$sql.= " ".(! isset($this->status)?'NULL':"'".$this->status."'").",";
+		$sql.= " ".(! isset($this->status)?'NULL':"'".$this->db->escape($this->status)."'").",";
 		$sql.= " ".(! isset($this->batch)?'NULL':"'".$this->db->escape($this->batch)."'").",";
 		$sql.= " ".(! isset($this->eatby) || dol_strlen($this->eatby)==0?'NULL':"'".$this->db->idate($this->eatby)."'").",";
 		$sql.= " ".(! isset($this->sellby) || dol_strlen($this->sellby)==0?'NULL':"'".$this->db->idate($this->sellby)."'")."";
-
-
 		$sql.= ")";
 
 		$this->db->begin();

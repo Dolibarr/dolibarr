@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Andre gangs godkjenning allerede utført
 SupplierOrderReceivedInDolibarr=Leverandørordre %s mottatt %s
 SupplierOrderSubmitedInDolibarr=Leverandørordre %s sendt
 SupplierOrderClassifiedBilled=Leverandørordre %s satt fakturert
+OtherOrders=Andre ordre
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Representant for oppfølging av kundeordre
 TypeContact_commande_internal_SHIPPING=Representant for oppfølging av levering
@@ -151,5 +152,7 @@ OrderCreated=Din ordre har blitt opprettet
 OrderFail=En feil skjedde under opprettelse av din ordre 
 CreateOrders=Lag ordre
 ToBillSeveralOrderSelectCustomer=For å opprette en faktura for flere ordrer, klikk først på kunden, velg deretter "%s".
+OptionToSetOrderBilledNotEnabled=Alternativ (fra modul Workflow) for å sette rekkefølge til 'Fakturert' automatisk når fakturaen er validert, er av, så du må sette status til 'Fakturert' manuelt.
+IfValidateInvoiceIsNoOrderStayUnbilled=Hvis faktura validering er 'Nei', vil bestillingen forbli i status 'ikke fakturert' til fakturaen er validert.
 CloseReceivedSupplierOrdersAutomatically=Lukk ordre til "%s" automatisk hvis alle varer er mottatt
 SetShippingMode=Sett leveransemetode

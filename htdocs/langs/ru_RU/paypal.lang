@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=Настройка модуля PayPal 
 PaypalDesc=Этот модуль предлагает страниц, чтобы выплаты по <a href="http://www.paypal.com" target="_blank">PayPal</a> клиентами. Это может быть использовано для свободного оплаты или оплаты на определенный объект Dolibarr (счет-фактура, заказ, ...)
-PaypalOrCBDoPayment=Оплатить с помощью кредитной карты или Paypal
+PaypalOrCBDoPayment=Pay with Paypal (Credit Card or Paypal)
 PaypalDoPayment=Оплатить с помощью Paypal
 PAYPAL_API_SANDBOX=Режим тестирования / песочницы
 PAYPAL_API_USER=API имя пользователя
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Version
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY=Предлагает платеж &quot;Интегральный&quot; (кредитные карты + Paypal) или только &quot;PayPal&quot;
 PaypalModeIntegral=Интегральный
 PaypalModeOnlyPaypal=только PayPal
-PAYPAL_CSS_URL=Optionnal URL of CSS style sheet on payment page
+ONLINE_PAYMENT_CSS_URL=Optionnal URL of CSS style sheet on online payment page
 ThisIsTransactionId=Это идентификатор транзакции: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Добавить адрес Paypal оплата при отправке документа по почте
 PredefinedMailContentLink=Вы можете нажать на защищённую ссылку нижи для совершения платежа (PayPal), если вы ещё его не производили.\n\n%s\n
-YouAreCurrentlyInSandboxMode=В настоящее время вы в режиме &quot;песочницы&quot;
+YouAreCurrentlyInSandboxMode=You are currently in the %s "sandbox" mode
 NewOnlinePaymentReceived=New online payment received
 NewOnlinePaymentFailed=New online payment tried but failed
-PAYPAL_PAYONLINE_SENDEMAIL=Адрес электронной почты, куда будут высылаться уведомления о платежах (успешных или нет)
+ONLINE_PAYMENT_SENDEMAIL=Адрес электронной почты, куда будут высылаться уведомления о платежах (успешных или нет)
 ReturnURLAfterPayment=Ссылка, куда будет возвращаться пользователь после оплаты
 ValidationOfOnlinePaymentFailed=Validation of online payment failed
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Payment confirmation page was called by payment system returned an error

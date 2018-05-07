@@ -13,4 +13,3 @@ InternalExternalDesc=Un utilisateur <b> interne </b> est un utilisateur qui fait
 ConfirmCreateContact=Êtes-vous sûr de vouloir créer un compte Dolibarr pour ce contact?
 ConfirmCreateLogin=Êtes-vous sûr de vouloir créer un compte Dolibarr pour ce membre?
 ConfirmCreateThirdParty=Êtes-vous sûr de vouloir créer un tiers pour ce membre?
-UserAccountancyCode=code comptabie de l'utilisateur

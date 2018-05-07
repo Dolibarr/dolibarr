@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo		<jlb@j1b.org>
- * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2017	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -59,13 +59,13 @@ $AdherentsResilies=array();
 $AdherentType=array();
 
 // Liste les adherents
-$sql = "SELECT t.rowid, t.libelle, t.subscription,";
+$sql = "SELECT t.rowid, t.libelle as label, t.subscription,";
 $sql.= " d.statut, count(d.rowid) as somme";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d";
 $sql.= " ON t.rowid = d.fk_adherent_type";
 $sql.= " AND d.entity IN (".getEntity('adherent').")";
-$sql.= " WHERE t.entity IN (".getEntity('adherent').")";
+$sql.= " WHERE t.entity IN (".getEntity('member_type').")";
 $sql.= " GROUP BY t.rowid, t.libelle, t.subscription, d.statut";
 
 dol_syslog("index.php::select nb of members by type", LOG_DEBUG);
@@ -81,7 +81,7 @@ if ($result)
 		$adhtype=new AdherentType($db);
 		$adhtype->id=$objp->rowid;
 		$adhtype->subscription=$objp->subscription;
-		$adhtype->libelle=$objp->libelle;
+		$adhtype->label=$objp->label;
 		$AdherentType[$objp->rowid]=$adhtype;
 
 		if ($objp->statut == -1) { $MemberToValidate[$objp->rowid]=$objp->somme; }
@@ -162,14 +162,16 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 
 if ($conf->use_javascript_ajax)
 {
-    print '<table class="noborder nohover" width="100%">';
+	print '<div class="div-table-responsive-no-min">';
+	print '<table class="noborder nohover" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
-    print '<tr '.$bc[0].'><td align="center" colspan="2">';
+    print '<tr><td align="center" colspan="2">';
 
     $SommeA=0;
     $SommeB=0;
     $SommeC=0;
     $SommeD=0;
+    $total=0;
     $dataval=array();
     $datalabels=array();
     $i=0;
@@ -186,19 +188,29 @@ if ($conf->use_javascript_ajax)
         $SommeD+=isset($MembersResiliated[$key])?$MembersResiliated[$key]:0;
         $i++;
     }
-
+    $total = $SommeA + $SommeB + $SommeC + $SommeD;
     $dataseries=array();
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersNotUpToDate"),'data'=>round($SommeB));
-    $dataseries[]=array('label'=>$langs->trans("MenuMembersUpToDate"),'data'=>round($SommeC));
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusResiliated"),'data'=>round($SommeD));
-    $dataseries[]=array('label'=>$langs->trans("MembersStatusToValid"),'data'=>round($SommeA));
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
+    $dataseries[]=array($langs->trans("MenuMembersNotUpToDate"), round($SommeB));
+    $dataseries[]=array($langs->trans("MenuMembersUpToDate"), round($SommeC));
+    $dataseries[]=array($langs->trans("MembersStatusResiliated"), round($SommeD));
+    $dataseries[]=array($langs->trans("MembersStatusToValid"), round($SommeA));
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+    $dolgraph->SetData($dataseries);
+    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowPercent(1);
+    $dolgraph->SetType(array('pie'));
+    $dolgraph->setWidth('100%');
+    $dolgraph->draw('idgraphstatus');
+    print $dolgraph->show($total?0:1);
+
     print '</td></tr>';
     print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">';
     print $SommeA+$SommeB+$SommeC+$SommeD;
     print '</td></tr>';
     print '</table>';
+    print '</div>';
 }
 
 print '<br>';
@@ -234,6 +246,7 @@ if ($result)
     }
 }
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<th>'.$langs->trans("Subscriptions").'</th>';
@@ -261,7 +274,8 @@ print "<td align=\"right\">".$numb."</td>";
 print '<td align="right">'.price($tot)."</td>";
 print "<td align=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td>";
 print "</tr>\n";
-print "</table><br>\n";
+print "</table></div>";
+print "<br>\n";
 
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
@@ -273,7 +287,7 @@ $max=5;
 
 $sql = "SELECT a.rowid, a.statut, a.lastname, a.firstname, a.societe as company, a.fk_soc,";
 $sql.= " a.tms as datem, datefin as date_end_subscription,";
-$sql.= " ta.rowid as typeid, ta.libelle, ta.subscription";
+$sql.= " ta.rowid as typeid, ta.libelle as label, ta.subscription";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
 $sql.= " WHERE a.entity IN (".getEntity('adherent').")";
 $sql.= " AND a.fk_adherent_type = ta.rowid";
@@ -283,6 +297,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="4">'.$langs->trans("LastMembersModified",$max).'</th></tr>';
@@ -310,7 +325,7 @@ if ($resql)
 			}
 			$staticmember->ref=$staticmember->getFullName($langs);
 			$statictype->id=$obj->typeid;
-			$statictype->libelle=$obj->libelle;
+			$statictype->label=$obj->label;
 			print '<td>'.$staticmember->getNomUrl(1,32).'</td>';
 			print '<td>'.$statictype->getNomUrl(1,32).'</td>';
 			print '<td>'.dol_print_date($db->jdate($obj->datem),'dayhour').'</td>';
@@ -319,7 +334,8 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div>";
+	print "<br>";
 }
 else
 {
@@ -344,6 +360,7 @@ $sql.= $db->plimit($max, 0);
 $resql=$db->query($sql);
 if ($resql)
 {
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print '<th colspan="5">'.$langs->trans("LastSubscriptionsModified",$max).'</th></tr>';
@@ -379,7 +396,8 @@ if ($resql)
 			$i++;
 		}
 	}
-	print "</table><br>";
+	print "</table></div>";
+	print "<br>";
 }
 else
 {
@@ -388,6 +406,7 @@ else
 
 
 // Summary of members by type
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<th>'.$langs->trans("MembersTypes").'</th>';
@@ -416,7 +435,7 @@ print '<td class="liste_total" align="right">'.$SommeD.' '.$staticmember->LibSta
 print '</tr>';
 
 print "</table>\n";
-
+print "</div>";
 
 print '</div></div></div>';
 

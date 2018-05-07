@@ -57,3 +57,4 @@ ErrorInsertingComment=Có một lỗi trong khi chèn bình luận của bạn
 MoreChoices=Nhập nhiều lựa chọn hơn cho các cử tri
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=% S đã lấp đầy một đường thẳng. Bạn có thể tìm thăm dò ý kiến ​​của bạn tại liên kết:% s
+ShowSurvey=Show survey

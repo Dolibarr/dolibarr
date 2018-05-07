@@ -1,7 +1,7 @@
 # ProductBATCH language file - en_US - ProductBATCH
 ManageLotSerial=Χρησιμοποίηση Αρ. παρτίδας/σειριακού
-ProductStatusOnBatch=Ναι (Απαιτήται Αρ. παρτίδας/σειριακός)
-ProductStatusNotOnBatch=Όχι (Δεν χρησιμοποιήται Αρ. παρτίδας/σειριακός)
+ProductStatusOnBatch=Ναι (Απαιτείται Αρ. παρτίδας/σειριακός)
+ProductStatusNotOnBatch=Όχι (Δεν χρησιμοποιείται Αρ. παρτίδας/σειριακός)
 ProductStatusOnBatchShort=Ναι
 ProductStatusNotOnBatchShort=Όχι
 Batch=Αρ. παρτίδας/Σειριακός
@@ -11,7 +11,6 @@ BatchNumberShort=Αρ. παρτίδας/Σειριακός
 EatByDate=Φάτε ημερομηνία λήξης
 SellByDate=Ημερομηνία πώλησης
 DetailBatchNumber=Χαρακτηριστικά Αρ. παρτίδας/σειριακός 
-DetailBatchFormat=Αρ. Παρτίδας/σειριακός: %s - Ημερομηνία λήξης: %s - : %s (Ημέρες : %d)
 printBatch=Αρ. Παρτίδας/σειριακός: %s
 printEatby=Eat-by: %s
 printSellby=Πώληση ανά: %s
@@ -22,3 +21,4 @@ ProductDoesNotUseBatchSerial=Αυτό το προιόν δεν χρησιμοπ�
 ProductLotSetup=Setup of module lot/serial
 ShowCurrentStockOfLot=Show current stock for couple product/lot
 ShowLogOfMovementIfLot=Show log of movements for couple product/lot
+StockDetailPerBatch=Stock detail per lot

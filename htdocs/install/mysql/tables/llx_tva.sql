@@ -24,7 +24,7 @@ create table llx_tva
   datec           datetime,                   -- Create date
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur
-  amount          real NOT NULL DEFAULT 0,
+  amount          double(24,8) NOT NULL DEFAULT 0,
   fk_typepayment  integer NULL,
   num_payment     varchar(50),
   label           varchar(255),

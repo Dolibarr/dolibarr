@@ -1,5 +1,5 @@
 # Dolibarr language file - Source file is en_US - ftp
-FTPClientSetup=FTP客戶端模塊設置
+FTPClientSetup=FTP客戶端模組設定
 NewFTPClient=新的FTP連接建立
 FTPArea=的FTP區
 FTPAreaDesc=這個屏幕顯示您的FTP服務器查看內容
