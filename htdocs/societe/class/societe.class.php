@@ -1930,9 +1930,9 @@ class Societe extends CommonObject
 				dol_syslog(get_class($this)."::add_commercial Erreur");
 			}
 			else {
-				$this->commercial_modified = $commid;
+				$this->context=array('commercial_modified'=>$commid);
 				
-				$result=$this->call_trigger('COMPANY_ADD_COMMERCIAL',$user);
+				$result=$this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE',$user);
                 if ($result < 0) $error++;
 			}
 		}
@@ -1948,9 +1948,9 @@ class Societe extends CommonObject
 	function del_commercial(User $user, $commid)
 	{
 		$error=0;
-		$this->commercial_modified = $commid;
+		$this->context=array('commercial_modified'=>$commid);
 				
-		$result=$this->call_trigger('COMPANY_DEL_COMMERCIAL',$user);
+		$result=$this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE',$user);
         if ($result < 0) $error++;
 		
 		if ($this->id > 0 && $commid > 0)
