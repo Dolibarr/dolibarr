@@ -1530,6 +1530,9 @@ class Expedition extends CommonObject
 		$label = '<u>' . $langs->trans("ShowSending") . '</u>';
 		$label .= '<br><b>' . $langs->trans('Ref') . ':</b> '.$this->ref;
 		$label .= '<br><b>'.$langs->trans('RefCustomer').':</b> '.($this->ref_customer ? $this->ref_customer : $this->ref_client);
+		$label .= '<br><b>'.$langs->trans('DateCreation').':</b> '.dol_print_date($this->date_creation,"day");
+		$label .= '<br><b>'.$langs->trans('DateDeliveryPlanned').':</b> '. dol_print_date($this->date_delivery,"day");
+
 
 		$url = DOL_URL_ROOT.'/expedition/card.php?id='.$this->id;
 
