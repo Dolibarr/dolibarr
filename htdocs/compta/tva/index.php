@@ -81,10 +81,10 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
 /**
  * print function
  *
- * @param 	DoliDB	$db		Database handler
- * @param 	string	$sql	SQL Request
- * @param 	string	$date	Date
- * @return	void
+ * @param		DoliDB	$db		Database handler
+ * @param		string	$sql	SQL Request
+ * @param		string	$date	Date
+ * @return		void
  */
 function pt ($db, $sql, $date)
 {
@@ -98,23 +98,76 @@ function pt ($db, $sql, $date)
         print '<table class="noborder" width="100%">';
 
         print '<tr class="liste_titre">';
-        print '<td class="nowrap" width="60%">'.$date.'</td>';
-        print '<td align="right">'.$langs->trans("Amount").'</td>';
+        print '<td class="nowrap">'.$date.'</td>';
+        print '<td align="right">'.$langs->trans("ClaimedForThisPeriod").'</td>';
+        print '<td align="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
         print "</tr>\n";
 
+        $amountclaimed = 0;
+        $amountpaid = 0;
+        $previousmode = '';
         while ($i < $num) {
             $obj = $db->fetch_object($result);
 
-            print '<tr class="oddeven">';
-            print '<td class="nowrap">'.$obj->dm."</td>\n";
-            $total = $total + $obj->mm;
+            if ($obj->mode == 'claimed' && ! empty($previousmode))
+            {
+            	print '<tr class="oddeven">';
+            	print '<td class="nowrap">'.$obj->dm."</td>\n";
+            	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
+            	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+            	print "</tr>\n";
 
-            print '<td class="nowrap" align="right">'.price($obj->mm)."</td\n";
-            print "</tr>\n";
+            	$amountclaimed = 0;
+            	$amountpaid = 0;
+            }
+
+            if ($obj->mode == 'claimed')
+            {
+            	$amountclaimed = $obj->mm;
+            	$totalclaimed = $totalclaimed + $amountclaimed;
+            }
+            if ($obj->mode == 'paid')
+            {
+            	$amountpaid = $obj->mm;
+            	$totalpaid = $totalpaid + $amountpaied;
+            }
+
+            if ($obj->mode == 'paid')
+            {
+            	print '<tr class="oddeven">';
+            	print '<td class="nowrap">'.$obj->dm."</td>\n";
+            	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
+            	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+            	print "</tr>\n";
+            	$amountclaimed = 0;
+            	$amountpaid = 0;
+            	$previousmode = '';
+            }
+            else
+            {
+            	$previousmode = $obj->mode;
+            }
 
             $i++;
         }
-        print '<tr class="liste_total"><td align="right">'.$langs->trans("Total")." :</td><td class=\"nowrap\" align=\"right\"><b>".price($total)."</b></td></tr>";
+
+        if ($obj->mode == 'claimed' && ! empty($previousmode))
+        {
+        	print '<tr class="oddeven">';
+        	print '<td class="nowrap">'.$obj->dm."</td>\n";
+        	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
+        	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
+        	print "</tr>\n";
+
+        	$amountclaimed = 0;
+        	$amountpaid = 0;
+        }
+
+        print '<tr class="liste_total">';
+        print '<td align="right">'.$langs->trans("Total").'</td>';
+        print '<td class="nowrap" align="right">'.price($totalclaimed).'</td>';
+        print '<td class="nowrap" align="right">'.price($totalpaid).'</td>';
+        print "</tr>";
 
         print "</table>";
         $db->free($result);
@@ -465,27 +518,37 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 print load_fiche_titre($langs->trans("VATPaid"), '', '');
 
-$sql = "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm";
+$sql='';
+
+$sql.= "SELECT SUM(amount) as mm, date_format(f.datev,'%Y-%m') as dm, 'claimed' as mode";
 $sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
 $sql.= " WHERE f.entity = ".$conf->entity;
-$sql.= " AND f.datep >= '".$db->idate($date_start)."'";
-$sql.= " AND f.datep <= '".$db->idate($date_end)."'";
+$sql.= " AND (f.datev >= '".$db->idate($date_start)."' AND f.datev <= '".$db->idate($date_end)."')";
 $sql.= " GROUP BY dm";
+
+$sql.= " UNION ";
+
+$sql.= "SELECT SUM(amount) as mm, date_format(f.datep,'%Y-%m') as dm, 'paid' as mode";
+$sql.= " FROM ".MAIN_DB_PREFIX."tva as f";
+$sql.= " WHERE f.entity = ".$conf->entity;
+$sql.= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->idate($date_end)."')";
+$sql.= " GROUP BY dm";
+
 $sql.= " ORDER BY dm ASC";
+//print $sql;
 
 pt($db, $sql, $langs->trans("Month"));
 
 
-print '<br>';
-
-
 if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 {
-    /*
+	print '<br>';
+
+	/*
      * Recap
      */
 
-    print load_fiche_titre($langs->trans("VATRecap"), '', ''); // need to add translation
+    print load_fiche_titre($langs->trans("VATBalance"), '', ''); // need to add translation
 
     $sql1 = "SELECT SUM(amount) as mm, date_format(f.datev,'%Y') as dm";
     $sql1 .= " FROM " . MAIN_DB_PREFIX . "tva as f";
@@ -500,7 +563,7 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
         print '<table class="noborder" width="100%">';
 
         print "<tr>";
-        print '<td align="right">' . $langs->trans("VATDue") . '</td>'; // need to add translation
+        print '<td align="right">' . $langs->trans("VATDue") . '</td>';
         print '<td class="nowrap" align="right">' . price(price2num($total, 'MT')) . '</td>';
         print "</tr>\n";
 
@@ -511,7 +574,7 @@ if (! empty($conf->global->MAIN_FEATURES_LEVEL))
 
         $restopay = $total - $obj->mm;
         print "<tr>";
-        print '<td align="right">' . $langs->trans("VATRestopay") . '</td>'; // need to add translation
+        print '<td align="right">' . $langs->trans("RemainToPay") . '</td>';
         print '<td class="nowrap" align="right">' . price(price2num($restopay, 'MT')) . '</td>';
         print "</tr>\n";
 

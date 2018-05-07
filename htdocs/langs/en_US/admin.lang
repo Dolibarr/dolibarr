@@ -374,7 +374,8 @@ NoSmsEngine=No SMS sender manager available. SMS sender manager are not installe
 PDF=PDF
 PDFDesc=You can set each global options related to the PDF generation
 PDFAddressForging=Rules to forge address boxes
-HideAnyVATInformationOnPDF=Hide all information related to VAT on generated PDF
+HideAnyVATInformationOnPDF=Hide all information related to Sales tax / VAT on generated PDF
+PDFRulesForSalesTax=Rules for Sales Tax / VAT
 PDFLocaltax=Rules for %s
 HideLocalTaxOnPDF=Hide %s rate into pdf column tax sale
 HideDescOnPDF=Hide products description on generated PDF
@@ -484,7 +485,7 @@ Module1Desc=Companies and contact management (customers, prospects...)
 Module2Name=Commercial
 Module2Desc=Commercial management
 Module10Name=Accounting
-Module10Desc=Simple accounting reports (journals, turnover) based onto database content. No dispatching.
+Module10Desc=Simple accounting reports (journals, turnover) based onto database content. Does not use any ledger table.
 Module20Name=Proposals
 Module20Desc=Commercial proposal management
 Module22Name=Mass E-mailings
@@ -618,7 +619,7 @@ Module50100Desc=Point of sales module (POS).
 Module50200Name=Paypal
 Module50200Desc=Module to offer an online payment page accepting payments using PayPal (credit card or PayPal credit). This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
 Module50400Name=Accounting (advanced)
-Module50400Desc=Accounting management (double entries, support general and auxiliary ledgers)
+Module50400Desc=Accounting management (double entries, support general and auxiliary ledgers). Export the ledger in several other accounting software format.
 Module54000Name=PrintIPP
 Module54000Desc=Direct print (without opening the documents) using Cups IPP interface (Printer must be visible from server, and CUPS must be installe on server).
 Module55000Name=Poll, Survey or Vote
@@ -1038,9 +1039,9 @@ Delays_MAIN_DELAY_MEMBERS=Tolerance delay (in days) before alert on delayed memb
 Delays_MAIN_DELAY_CHEQUES_TO_DEPOSIT=Tolerance delay (in days) before alert for cheques deposit to do
 Delays_MAIN_DELAY_EXPENSEREPORTS=Tolerance delay (in days) before alert for expense reports to approve
 SetupDescription1=The setup area is for initial setup parameters before starting to use Dolibarr.
-SetupDescription2=The two mandatory setup steps are the first two in the setup menu on the left: %s setup page and %s setup page :
-SetupDescription3=Parameters in menu <a href="%s">%s -> %s</a> are required because defined data are used on Dolibarr screens and to customize the default behavior of the software (for country-related features for example).
-SetupDescription4=Parameters in menu <a href="%s">%s -> %s</a> are required because Dolibarr ERP/CRM is a collection of several modules/applications, all more or less independent. New features will be added to menus for every module you will activate.
+SetupDescription2=The two mandatory setup steps are the following steps (the two first entries in the left setup menu):
+SetupDescription3=Settings in menu <a href="%s">%s -> %s</a>. This step is required because it defines data used on Dolibarr screens to customize the default behavior of the software (for country-related features for example).
+SetupDescription4=Settings in menu <a href="%s">%s -> %s</a>. This step is required because Dolibarr ERP/CRM is a collection of several modules/applications, all more or less independent. New features are added to menus for every module you activate.
 SetupDescription5=Other menu entries manage optional parameters.
 LogEvents=Security audit events
 Audit=Audit

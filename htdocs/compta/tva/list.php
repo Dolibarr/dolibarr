@@ -173,7 +173,7 @@ if ($result)
 	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" colspan="1" align="center">';
+	print '<td class="liste_titre" align="center">';
 	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 	$syear = $year;
 	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
@@ -266,7 +266,7 @@ if ($result)
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
-    print "<td align=\"right\"><b>".price($total)."</b></td>";
+    print '<td align="right">'.price($total).'</td>';
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";

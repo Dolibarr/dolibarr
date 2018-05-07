@@ -443,7 +443,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheTypesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat minwidth200'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat minwidth100'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -543,7 +543,7 @@ class FormTicketsup
 
         $ticketstat->loadCacheCategoriesTickets();
 
-        print '<select id="select' . $htmlname . '" class="flat minwidth150'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
+        print '<select id="select' . $htmlname . '" class="flat minwidth100'.($morecss?' '.$morecss:'').'" name="' . $htmlname . '">';
         if ($empty) {
             print '<option value="">&nbsp;</option>';
         }
@@ -612,7 +612,7 @@ class FormTicketsup
             print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
         }
 
-        print ajax_combobox('select'.$htmlname,'',0,0,'off');
+        print ajax_combobox('select'.$htmlname);
     }
 
     /**

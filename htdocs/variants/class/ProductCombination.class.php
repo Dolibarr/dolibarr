@@ -275,10 +275,11 @@ class ProductCombination
 	/**
 	 * Deletes all product combinations of a parent product
 	 *
-	 * @param int $fk_product_parent Rowid of parent product
+	 * @param User		$user Object user
+	 * @param int 		$fk_product_parent Rowid of parent product
 	 * @return int <0 KO >0 OK
 	 */
-	public function deleteByFkProductParent($fk_product_parent)
+	public function deleteByFkProductParent($user, $fk_product_parent)
 	{
 		$this->db->begin();
 
@@ -289,11 +290,11 @@ class ProductCombination
 			$res = $prodstatic->fetch($prodcomb->fk_product_child);
 
 			if ($res > 0) {
-				$res = $prodcomb->delete();
+				$res = $prodcomb->delete($user);
 			}
 
 			if ($res > 0 && !$prodstatic->isObjectUsed($prodstatic->id)) {
-				$res = $prodstatic->delete();
+				$res = $prodstatic->delete($user);
 			}
 
 			if ($res < 0) {

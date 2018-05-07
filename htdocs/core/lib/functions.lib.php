@@ -4672,7 +4672,8 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
 
 		if ($local == 2)
 		{
-			if (! $mysoc->localtax2_assuj || (string) $vatratecleaned == "0") return 0;
+			//if (! $mysoc->localtax2_assuj || (string) $vatratecleaned == "0") return 0;
+			if (! $mysoc->localtax2_assuj) return 0;		// If main vat is 0, IRPF may be different than 0.
 			if ($thirdparty_seller->id == $mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;
@@ -6181,7 +6182,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 			{
 				$module=$reg[1];
 
-				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
+				dol_syslog("Library ".$substitfile['name']." found into ".$dir);
 				// Include the user's functions file
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined

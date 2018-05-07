@@ -135,8 +135,11 @@ print '
 				/* If page_y set, we set scollbar with it */
 				page_y=getParameterByName(\'page_y\', 0);				/* search in GET parameter */
 				if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
-				console.log("page_y found is "+page_y);
-				if (page_y > 0) $(\'html, body\').scrollTop(page_y);
+				if (page_y > 0)
+				{
+					console.log("page_y found is "+page_y);
+					$(\'html, body\').scrollTop(page_y);
+				}
 
 				/* Set handler to add page_y param on output (click on href links or submit button) */
 				jQuery(".reposition").click(function() {
