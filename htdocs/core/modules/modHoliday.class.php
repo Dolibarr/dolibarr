@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011      Dimitri Mouillard 	<dmouillard@teclib.com>
  * Copyright (C) 2013      Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2018      Charlene Benke		<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,8 +70,12 @@ class modHoliday extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp");
-		$this->dirs = array();
+		$this->dirs = array("/holiday/temp");
 		$r=0;
+
+		// Config pages
+		$this->config_page_url = array("holiday.php");
+
 
 		// Config pages. Put here list of php page names stored in admmin directory used to setup module.
 		// $this->config_page_url = array("holiday.php?leftmenu=setup@holiday");
@@ -87,7 +92,29 @@ class modHoliday extends DolibarrModules
 		//                             1=>array('MYMODULE_MYNEWCONST2','chaine','myvalue','This is another constant to add',0) );
 		//                             2=>array('MAIN_MODULE_MYMODULE_NEEDSMARTY','chaine',1,'Constant to say module need smarty',0)
 		$this->const = array();			// List of particular constants to add when module is enabled (key, 'chaine', value, desc, visible, 0 or 'allentities')
-
+		$r=0;
+		
+		$this->const[$r][0] = "HOLIDAY_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_holiday_madonna";
+		$this->const[$r][3] = 'Nom du gestionnaire de numerotation des congés';
+		$this->const[$r][4] = 0;
+		$r++;
+		
+		$this->const[$r][0] = "HOLIDAY_ADDON_PDF";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "celebrate";
+		$this->const[$r][3] = 'Name of PDF model of holiday';
+		$this->const[$r][4] = 0;
+		$r++;
+		
+		$this->const[$r][0] = "HOLIDAY_ADDON_PDF_ODT_PATH";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "DOL_DATA_ROOT/doctemplates/holiday";
+		$this->const[$r][3] = "";
+		$this->const[$r][4] = 0;
+		$r++;
+		
 		// Array to add new pages in new tabs
 		$this->tabs[] = array('data'=>'user:+paidholidays:CPTitreMenu:holiday:$user->rights->holiday->read:/holiday/list.php?mainmenu=hrm&id=__ID__');  					// To add a new tab identified by code tabname1
 
