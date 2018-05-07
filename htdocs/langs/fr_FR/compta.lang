@@ -151,6 +151,7 @@ AnnualByCompanies=Balance revenus et dépenses, par groupes prédéfinis de comp
 AnnualByCompaniesDueDebtMode=Bilan des recettes et dépenses, détaillé par regroupements prédéfinis, mode <b>%sCréances-Dettes%s</b> dit <b>comptabilité d'engagement</b>.
 AnnualByCompaniesInputOutputMode=Bilan des recettes et dépenses, détaillé par regroupements prédéfinis, mode <b>%sRecettes-Dépenses%s</b> dit <b>comptabilité de caisse</b>.
 SeeReportInInputOutputMode=Cliquer sur <b>%sRecettes-Dépenses%s</b> dit <b>comptabilité de caisse</b> pour un calcul sur les paiements effectivement réalisés
+SeeReportInInputOutputModeCols=Cliquer sur <b>%sRecettes-Dépenses avec colonne de montant TTC%s</b> ou %savec colonne de cumul%s dit <b>comptabilité de caisse</b> pour un calcul sur les paiements effectivement réalisés
 SeeReportInDueDebtMode=Cliquer sur <b>%sCréances-Dettes%s</b> dit <b>comptabilité d'engagement</b> pour un calcul sur les factures émises
 SeeReportInDueDebtModeCols=Cliquer sur %sCréances-Dettes avec colonne TTC%s ou %savec colonne de cumul%s dit comptabilité d'engagement pour un calcul sur les factures émises
 CalcModeWithCumul=Obtenir un tableau %savec une colonne de cumul%s.

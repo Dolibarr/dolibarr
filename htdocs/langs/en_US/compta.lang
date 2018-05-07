@@ -154,6 +154,7 @@ AnnualByCompanies=Balance of income and expenses, by predefined groups of accoun
 AnnualByCompaniesDueDebtMode=Balance of income and expenses, detail by predefined groups, mode <b>%sClaims-Debts%s</b> said <b>Commitment accounting</b>.
 AnnualByCompaniesInputOutputMode=Balance of income and expenses, detail by predefined groups, mode <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b>.
 SeeReportInInputOutputMode=See report <b>%sIncomes-Expenses%s</b> said <b>cash accounting</b> for a calculation on actual payments made
+SeeReportInInputOutputModeCols=See report <b>%sIncomes-Expenses with amount with tax column%s</b>or %s with an accumulation column%s said <b>cash accounting</b> for a calculation on actual payments made
 SeeReportInDueDebtMode=See report <b>%sClaims-Debts%s</b> said <b>commitment accounting</b> for a calculation on issued invoices
 SeeReportInBookkeepingMode=See report <b>%sBookeeping%s</b> for a calculation on <b>bookkeeping table analysis</b>
 SeeReportInDueDebtModeCols=See report <b>%sClaims-Debts with amount with tax column%s</b> or <b>%s with an accumulation column%s</b> said <b>commitment accounting</b> for a calculation on issued

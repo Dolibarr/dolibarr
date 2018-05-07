@@ -125,7 +125,7 @@ if ($modecompta=="CREANCES-DETTES")
 	else {
 		$calcmode.=$langs->trans("CalcModeWithCumul",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=1">','</a>');
 	}
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputModeCols",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES&display_cumul=0">','</a>','<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES&display_cumul=1">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
@@ -139,6 +139,12 @@ else if ($modecompta=="RECETTES-DEPENSES")
 {
 	$name=$langs->trans("SalesTurnover");
 	$calcmode=$langs->trans("CalcModeEngagement");
+	if ($display_cumul) {
+		$calcmode.=' '.$langs->trans("CalcModeWithTTC",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES&display_cumul=0">','</a>').'.';
+	}
+	else {
+		$calcmode.=' '.$langs->trans("CalcModeWithCumul",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES&display_cumul=1">','</a>').'.';
+	}
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtModeCols",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=0">','</a>','<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=1">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
@@ -153,7 +159,7 @@ else if ($modecompta=="BOOKKEEPING")
 	$name=$langs->trans("SalesTurnover");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtModeCols",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=0">','</a>','<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=1">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputModeCols",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES&display_cumul=0">','</a>','<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES&display_cumul=1">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCATotalSaleJournal");
@@ -221,9 +227,13 @@ if ($result)
 		$cum_ht[$obj->dm] = !empty($obj->amount) ? $obj->amount : 0;
 		$cum[$obj->dm] = $obj->amount_ttc;
 		if ($previous_dm == "" || ($mois == ($nb_mois_decalage+1))) {
-			$annual_cum_ht[$obj->dm]=$cum_ht[$obj->dm]; }
+			$annual_cum_ht[$obj->dm]=$cum_ht[$obj->dm]; 
+			$annual_cum_ttc[$obj->dm]=$cum[$obj->dm]; 
+		}
 		else {
-			$annual_cum_ht[$obj->dm]=$annual_cum_ht[$previous_dm] +$cum_ht[$obj->dm] ;}
+			$annual_cum_ht[$obj->dm]=$annual_cum_ht[$previous_dm] +$cum_ht[$obj->dm] ;
+			$annual_cum_ttc[$obj->dm]=$annual_cum_ttc[$previous_dm] +$cum[$obj->dm] ;
+		}
 		$previous_dm=$obj->dm;
 		if ($obj->amount_ttc)
 		{
@@ -285,7 +295,7 @@ print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 for ($annee = $year_start; $annee <= $year_end; $annee++)
 {
-	if ($modecompta == 'CREANCES-DETTES') print '<td align="center" width="10%" colspan="3">';
+	if ($modecompta == 'CREANCES-DETTES' || (($modecompta == 'RECETTES-DEPENSES') && $display_cumul) ) print '<td align="center" width="10%" colspan="3">';
 	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
 	if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
@@ -302,12 +312,12 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 	if ($modecompta == 'CREANCES-DETTES') {
 		print '<td class="liste_titre" align="right">'.$langs->trans("AmountHT").'</td>';
 	}
-	if ($display_cumul && $modecompta == 'CREANCES-DETTES') {
-			print '<td class="liste_titre" align="right">'.$langs->trans("Cumul").'</td>';
-		}
-	else {
+	if ( ($modecompta ==  'CREANCES-DETTES' && ! $display_cumul) || ($modecompta == 'RECETTES-DEPENSES') || ($modecompta == 'BOOKKEEPING')) {
 		print '<td class="liste_titre" align="right">'.$langs->trans("AmountTTC").'</td>';
 	}
+	if ($display_cumul) {
+			print '<td class="liste_titre" align="right">'.$langs->trans("Cumul").'</td>';
+		}
 	print '<td class="liste_titre" align="right" class="borderrightlight">'.$langs->trans("Delta").'</td>';
 	if ($annee != $year_end) print '<td class="liste_titre" width="15">&nbsp;</td>';
 }
@@ -341,12 +351,20 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 		if ($annee >= $year_start)
 		{
 			if ($modecompta == 'CREANCES-DETTES') {
-				// Valeur CA du mois w/o VAT
+				$cum_case = $cum_ht[$case];
+				$annual_cum_case = $annual_cum_ht[$case];
+			}
+			else {
+				$cum_case = $cum[$case];
+				$annual_cum_case = $annual_cum_ttc[$case];
+			}
+			if ($modecompta != 'BOOKKEEPING')  {
+				// Valeur CA du mois 
 				print '<td align="right">';
-				if ($cum_ht[$case])
+				if ($cum_case)
 				{
 					$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
-					print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum_ht[$case],1).'</a>';
+					print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum_case,1).'</a>';
 				}
 				else
 				{
@@ -356,21 +374,23 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 				print "</td>";
 			}
 
-			// Valeur CA du mois ou cumul
-			print '<td align="right">';
-			if ($cum[$case])
-			{
-				$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
-				if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">';
-				if ($modecompta == "CREANCES-DETTES" && $display_cumul) print price($annual_cum_ht[$case], 1); else print price($cum[$case], 1);
-				if ($modecompta != 'BOOKKEEPING') print '</a>';
+			if ($modecompta != 'RECETTES-DEPENSES' || $display_cumul) {
+				// Valeur CA du mois ou cumul
+				print '<td align="right">';
+				if ($cum_case)
+				{
+					$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
+					if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">';
+					if ($display_cumul) print price($annual_cum_case, 1); else print price($cum_case, 1);
+					if ($modecompta != 'BOOKKEEPING') print '</a>';
+				}
+				else
+				{
+					if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
+					else { print '&nbsp;'; }
+				}
+				print "</td>";
 			}
-			else
-			{
-				if ($minyearmonth < $case && $case <= max($maxyearmonth,$nowyearmonth)) { print '0'; }
-				else { print '&nbsp;'; }
-			}
-			print "</td>";
 
 			// Pourcentage du mois
 			if ($annee_decalage > $minyear && $case <= $casenow)
@@ -378,10 +398,14 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 				if ($cum[$caseprev] && $cum[$case])
 				{
 					if ($modecompta == "CREANCES-DETTES" && $display_cumul) {
-					$percent=(round(($annual_cum_ht[$case]-$annual_cum_ht[$caseprev])/$annual_cum_ht[$caseprev],4)*100);
+						$percent=(round(($annual_cum_ht[$case]-$annual_cum_ht[$caseprev])/$annual_cum_ht[$caseprev],4)*100);
 					}
-					else 
-					{$percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);}
+					elseif ($modecompta == "RECETTES-DEPENSES" && $display_cumul) {
+						$percent=(round(($annual_cum_ttc[$case]-$annual_cum_ttc[$caseprev])/$annual_cum_ttc[$caseprev],4)*100);
+					}
+					else {
+						$percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
+					}
 					print '<td align="right" class="borderrightlight">'.($percent>=0?"+$percent":"$percent").'%</td>';
 				}
 				if ($cum[$caseprev] && ! $cum[$case])
