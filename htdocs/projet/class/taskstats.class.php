@@ -158,10 +158,11 @@ class TaskStats extends Stats
 	/**
 	 * Return Task number by month for a year
 	 *
-	 * @param int $year scan
-	 * @return array of values
+	 * @param 	int 	$year 		Year to scan
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @return 	array 				Array of values
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -177,7 +178,7 @@ class TaskStats extends Stats
 
 		$this->yearmonth=0;
 
-		$res = $this->_getNbByMonth($year, $sql);
+		$res = $this->_getNbByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';
 		return $res;
 	}

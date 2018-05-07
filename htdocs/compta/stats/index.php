@@ -71,7 +71,6 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 			}
 			$month_end=$month_start-1;
 			if ($month_end < 1) $month_end=12;
-			else $year_end++;
 		}
 		else $month_end=$month_start;
 		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
@@ -84,6 +83,12 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 
 $userid=GETPOST('userid','int');
 $socid = GETPOST('socid','int');
+
+$tmps=dol_getdate($date_start);
+$year_start = $tmps['year'];
+$tmpe=dol_getdate($date_end);
+$year_end = $tmpe['year'];
+$nbofyear = ($year_end - $year_start) + 1;
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
@@ -114,7 +119,7 @@ if ($modecompta=="CREANCES-DETTES")
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
@@ -128,7 +133,7 @@ else if ($modecompta=="RECETTES-DEPENSES")
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
 	$builddate=dol_now();
@@ -141,10 +146,8 @@ else if ($modecompta=="BOOKKEEPING")
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
-	$description=$langs->trans("RulesCADue");
-	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
-	else  $description.= $langs->trans("DepositsAreIncluded");
+	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+	$description=$langs->trans("RulesCATotalSaleJournal");
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
@@ -187,15 +190,14 @@ if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 else if ($modecompta=="BOOKKEEPING")
 {
 	$sql  = "SELECT date_format(b.doc_date,'%Y-%m') as dm, sum(b.credit) as amount_ttc";
-	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b";
-	$sql.= " WHERE b.numero_compte IN (SELECT a.account_number" ;
-	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_account as a";
-	$sql.= " WHERE a.fk_accounting_category = 1 ) " ; // todo sql with accounting category, but we need to define category in turnover
+	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as b, ".MAIN_DB_PREFIX."accounting_journal as aj";
+	$sql.= " WHERE b.entity = ".$conf->entity;
+	$sql.= " AND b.code_journal = aj.code AND aj.nature = 2" ; // @TODO currently count amount in sale journal, but we need to define a category group for turnover
 }
-
 
 $sql.= " GROUP BY dm";
 $sql.= " ORDER BY dm";
+//print $sql;
 
 $result = $db->query($sql);
 if ($result)
@@ -221,7 +223,7 @@ else {
 }
 
 // On ajoute les paiements anciennes version, non lies par paiement_facture (very old versions)
-if ($modecompta != 'CREANCES-DETTES')
+if ($modecompta == 'RECETTES-DEPENSES')
 {
 	$sql = "SELECT date_format(p.datep,'%Y-%m') as dm, sum(p.amount) as amount_ttc";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -269,10 +271,11 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	if ($modecompta == 'CREANCES-DETTES') print '<td align="center" width="10%" colspan="3">';
 	else print '<td align="center" width="10%" colspan="2" class="borderrightlight">';
-	print '<a href="casoc.php?year='.$annee.'">';
+	if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee.'">';
 	print $annee;
     if ($conf->global->SOCIETE_FISCAL_MONTH_START > 1) print '-'.($annee+1);
-	print '</a></td>';
+    if ($modecompta != 'BOOKKEEPING') print '</a>';
+    print '</td>';
 	if ($annee != $year_end) print '<td width="15">&nbsp;</td>';
 }
 print '</tr>';
@@ -336,7 +339,9 @@ for ($mois = 1+$nb_mois_decalage ; $mois <= 12+$nb_mois_decalage ; $mois++)
 			if ($cum[$case])
 			{
 				$now_show_delta=1;  // On a trouve le premier mois de la premiere annee generant du chiffre.
-				print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">'.price($cum[$case],1).'</a>';
+				if ($modecompta != 'BOOKKEEPING') print '<a href="casoc.php?year='.$annee_decalage.'&month='.$mois_modulo.($modecompta?'&modecompta='.$modecompta:'').'">';
+				print price($cum[$case], 1);
+				if ($modecompta != 'BOOKKEEPING') print '</a>';
 			}
 			else
 			{
@@ -493,7 +498,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 		}
 		if (! $total[$annee-1] && $total[$annee])
 		{
-			print '<td align="right" class="borderrightlight">+zzzz'.$total[$annee-1].$langs->trans('Inf').'%</td>';
+			print '<td align="right" class="borderrightlight">+'.$langs->trans('Inf').'%</td>';
 		}
 		if (! $total[$annee-1] && ! $total[$annee])
 		{
@@ -551,7 +556,6 @@ print '</div>';
 
  if ($num)
  {
- $var = True;
  $total_ttc_Rac = $totalam_Rac = $total_Rac = 0;
  while ($i < $num)
  {
@@ -602,7 +606,6 @@ print '</div>';
 
  if ($num)
  {
- $var = True;
  $total_pr = 0;
  while ($i < $num)
  {

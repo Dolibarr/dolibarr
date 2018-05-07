@@ -63,9 +63,9 @@ class AntiVir
 		if (preg_match('/\.virus$/i', $file))
 		{
 		    $this->errors='File has an extension saying file is a virus';
-		    return -97;		    
+		    return -97;
 		}
-		
+
 		$fullcommand=$this->getCliCommand($file);
 		//$fullcommand='"c:\Program Files (x86)\ClamWin\bin\clamscan.exe" --database="C:\Program Files (x86)\ClamWin\lib" "c:\temp\aaa.txt"';
         $fullcommand.=' 2>&1';      // This is to get error output

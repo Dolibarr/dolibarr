@@ -8,6 +8,7 @@ LastSendings=Últimas %s remessas
 SendingCard=Cartão de embarque
 QtyReceived=Quant. Recibida
 KeepToShip=Permaneça para enviar
+SendingsAndReceivingForSameOrder=Envios e recibos para esse pedido
 StatusSendingValidated=Validado (produtos a enviar o enviados)
 SendingSheet=Folha de embarque
 ConfirmDeleteSending=Tem certeza que quer remover este envio?

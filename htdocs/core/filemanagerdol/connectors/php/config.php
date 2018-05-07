@@ -48,7 +48,7 @@ $Config['Enabled'] = true ;
 $extEntity=(empty($entity) ? 1 : $entity); // For multicompany with external access
 
 $Config['UserFilesPath'] = DOL_URL_ROOT.'/viewimage.php?modulepart=medias'.(empty($website)?'':'_'.$website).'&entity='.$extEntity.'&file=' ;
-$Config['UserFilesAbsolutePathRelative'] = (empty($website) ? ((!empty($entity) ? '/' . $entity : '') . '/medias/') : ('/websites/'.$website));
+$Config['UserFilesAbsolutePathRelative'] = (empty($website) ? ((!empty($entity) ? '/' . $entity : '') . '/medias/') : ('/website/'.$website));
 
 
 // Fill the following value it you prefer to specify the absolute path for the

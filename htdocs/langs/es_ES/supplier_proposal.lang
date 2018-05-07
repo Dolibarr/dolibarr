@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Presupuestos de proveedor
 supplier_proposalDESC=Gestionar presupuestos de proveedor
-SupplierProposalNew=Nueva petición
+SupplierProposalNew=Nuevo presupuesto
 CommRequest=Presupuesto
 CommRequests=Presupuestos
 SearchRequest=Buscar un presupuesto

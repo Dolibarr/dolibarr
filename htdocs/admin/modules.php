@@ -34,8 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
+$langs->loadLangs(array("errors","admin","modulebuilder"));
 
 $mode=GETPOST('mode', 'alpha');
 if (empty($mode)) $mode='common';
@@ -51,11 +50,11 @@ $search_version=GETPOST('search_version','alpha');
 // For dolistore search
 $options              = array();
 $options['per_page']  = 20;
-$options['categorie'] = GETPOST('categorie', 'int') + 0;
-$options['start']     = GETPOST('start', 'int') + 0;
-$options['end']       = GETPOST('end', 'int') + 0;
+$options['categorie'] = ((GETPOST('categorie', 'int')?GETPOST('categorie', 'int'):0) + 0);
+$options['start']     = ((GETPOST('start', 'int')?GETPOST('start', 'int'):0) + 0);
+$options['end']       = ((GETPOST('end', 'int')?GETPOST('end', 'int'):0) + 0);
 $options['search']    = GETPOST('search_keyword', 'alpha');
-$dolistore            = new Dolistore($options);
+$dolistore            = new Dolistore();
 
 
 if (! $user->admin)
@@ -80,9 +79,9 @@ $familyinfo=array(
 
 $param='';
 if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status)  $param.='&search_status='.urlencode($search_status);
-if ($search_nature)  $param.='&search_nature='.urlencode($search_nature);
-if ($search_version) $param.='&search_version='.urlencode($search_version);
+if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
+if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
+if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
 
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';
@@ -94,6 +93,8 @@ $hookmanager->initHooks(array('adminmodules','globaladmin'));
 /*
  * Actions
  */
+
+$formconfirm = '';
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -237,8 +238,7 @@ if ($action == 'set' && $user->admin)
     header("Location: ".$_SERVER["PHP_SELF"]."?mode=".$mode.$param.($page_y?'&page_y='.$page_y:''));
 	exit;
 }
-
-if ($action == 'reset' && $user->admin)
+else if ($action == 'reset' && $user->admin && GETPOST('confirm') == 'yes')
 {
     $result=unActivateModule($value);
     if ($result) setEventMessages($result, null, 'errors');
@@ -254,7 +254,7 @@ if ($action == 'reset' && $user->admin)
 
 $form = new Form($db);
 
-$morejs  = array("/admin/dolistore/js/dolistore.js.php");
+//$morejs  = array("/admin/dolistore/js/dolistore.js.php");
 $morecss = array("/admin/dolistore/css/dolistore.css");
 
 // Set dir where external modules are installed
@@ -358,8 +358,6 @@ foreach ($modulesdir as $dir)
 		    			            $filename[$i]= $modName;
 		    					    $modules[$modName] = $objMod;
 
-		    			            $special = $objMod->special;
-
 		    			            // Gives the possibility to the module, to provide his own family info and position of this family
 		    			            if (is_array($objMod->familyinfo) && !empty($objMod->familyinfo)) {
 		    			            	$familyinfo = array_merge($familyinfo, $objMod->familyinfo);
@@ -373,8 +371,6 @@ foreach ($modulesdir as $dir)
 		    			            {
 		    			                $moduleposition = 800;
 		    			            }
-
-		    			            if ($special == 1) $familykey='interface';
 
 		    			            // Add list of warnings to show into arrayofwarnings and arrayofwarningsext
 		    			            if (! empty($objMod->warnings_activation))
@@ -390,7 +386,7 @@ foreach ($modulesdir as $dir)
 		    						$dirmod[$i]  = $dir;
 		    						//print $i.'-'.$dirmod[$i].'<br>';
 		    			            // Set categ[$i]
-		    						$specialstring = isset($specialtostring[$special])?$specialtostring[$special]:'unknown';
+		    						$specialstring = 'unknown';
 		    			            if ($objMod->version == 'development' || $objMod->version == 'experimental') $specialstring='expdev';
 		    						if (isset($categ[$specialstring])) $categ[$specialstring]++;					// Array of all different modules categories
 		    			            else $categ[$specialstring]=1;
@@ -424,6 +420,22 @@ foreach ($modulesdir as $dir)
 	}
 }
 
+if ($action == 'reset_confirm' && $user->admin)
+{
+	if(!empty($modules[$value])) {
+		$objMod  = $modules[$value];
+
+		if(!empty($objMod->langfiles)) $langs->loadLangs($objMod->langfiles);
+
+		$form = new Form($db);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?value='.$value.'&mode='.$mode.$param, $langs->trans('ConfirmUnactivation'), $langs->trans(GETPOST('confirm_message_code')), 'reset', '', 'no', 1);
+
+	}
+
+}
+
+print $formconfirm;
+
 asort($orders);
 //var_dump($orders);
 //var_dump($categ);
@@ -450,7 +462,7 @@ if ($mode == 'common')
 {
     dol_set_focus('#search_keyword');
 
-    print '<form method="GET" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
@@ -515,12 +527,9 @@ if ($mode == 'common')
     	$objMod  = $modules[$modName];
     	$dirofmodule = $dirmod[$key];
 
-    	$special = $objMod->special;
-
-    	//print $objMod->name." - ".$key." - ".$objMod->special.' - '.$objMod->version."<br>";
+    	//print $objMod->name." - ".$key." - ".$objMod->version."<br>";
     	//if (($mode != (isset($specialtostring[$special])?$specialtostring[$special]:'unknown') && $mode != 'expdev')
-    	if (($special >= 4 && $mode != 'expdev')
-    		|| ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental')) continue;    // Discard if not for current tab
+    	if ($mode == 'expdev' && $objMod->version != 'development' && $objMod->version != 'experimental') continue;    // Discard if not for current tab
 
         if (! $objMod->getName())
         {
@@ -623,7 +632,7 @@ if ($mode == 'common')
             $imginfo="info_black";
         }
 
-        print '<tr>'."\n";
+        print '<tr class="oddeven">'."\n";
 
         // Picto + Name of module
         print '  <td width="200px">';
@@ -675,20 +684,39 @@ if ($mode == 'common')
         	}
         	else if (! empty($objMod->always_enabled) || ((! empty($conf->multicompany->enabled) && $objMod->core_enabled) && ($user->entity || $conf->entity!=1)))
         	{
-        		print $langs->trans("Required");
+        		if (method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) print $langs->trans("Used");
+        		else print $langs->trans("Required");
         		if (! empty($conf->multicompany->enabled) && $user->entity) $disableSetup++;
         	}
         	else
         	{
-        		print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
-        		print img_picto($langs->trans("Activated"),'switch_on');
-        		print '</a>';
+        		if(!empty($objMod->warnings_unactivation[$mysoc->country_code]) && method_exists($objMod, 'alreadyUsed') && $objMod->alreadyUsed()) {
+        			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset_confirm&amp;confirm_message_code='.$objMod->warnings_unactivation[$mysoc->country_code].'&amp;value=' . $modName . '&amp;mode=' . $mode . $param . '">';
+        			print img_picto($langs->trans("Activated"),'switch_on');
+        			print '</a>';
+
+        		}
+        		else {
+
+        			print '<a class="reposition" href="'.$_SERVER["PHP_SELF"].'?id='.$objMod->numero.'&amp;module_position='.$module_position.'&amp;action=reset&amp;value=' . $modName . '&amp;mode=' . $mode .'&amp;confirm=yes' . $param . '">';
+        			print img_picto($langs->trans("Activated"),'switch_on');
+        			print '</a>';
+
+        		}
+
         	}
         	print '</td>'."\n";
 
         	// Link config
         	if (! empty($objMod->config_page_url) && !$disableSetup)
         	{
+        		$backtourlparam='';
+        		if ($search_keyword != '') $backtourlparam.=($backtourlparam?'&':'?').'search_keyword='.$search_keyword;	// No urlencode here, done later
+        		if ($search_nature > -1)   $backtourlparam.=($backtourlparam?'&':'?').'search_nature='.$search_nature;
+        		if ($search_version > -1)  $backtourlparam.=($backtourlparam?'&':'?').'search_version='.$search_version;
+        		if ($search_status > -1)   $backtourlparam.=($backtourlparam?'&':'?').'search_status='.$search_status;
+        		$backtourl=$_SERVER["PHP_SELF"].$backtourlparam;
+
         		if (is_array($objMod->config_page_url))
         		{
         			print '<td class="tdsetuppicto right" width="60px">';
@@ -705,11 +733,13 @@ if ($mode == 'common')
         				{
         					if (preg_match('/^([^@]+)@([^@]+)$/i',$urlpage,$regs))
         					{
-        						print '<a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
+        						$urltouse=dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1);
+        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         					else
         					{
-        						print '<a href="'.$urlpage.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
+        						$urltouse=$urlpage;
+        						print '<a href="'.$urltouse.(preg_match('/\?/',$urltouse)?'&':'?').'save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a>';
         					}
         				}
         			}
@@ -717,11 +747,11 @@ if ($mode == 'common')
         		}
         		else if (preg_match('/^([^@]+)@([^@]+)$/i',$objMod->config_page_url,$regs))
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.dol_buildpath('/'.$regs[2].'/admin/'.$regs[1],1).'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         		else
         		{
-        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
+        			print '<td class="tdsetuppicto right valignmiddle" width="60px"><a href="'.$objMod->config_page_url.'?save_lastsearch_values=1&backtopage='.urlencode($backtourl).'" title="'.$langs->trans("Setup").'">'.img_picto($langs->trans("Setup"),"setup",'style="padding-right: 6px"').'</a></td>';
         		}
         	}
         	else
@@ -832,44 +862,54 @@ if ($mode == 'marketplace')
 
     if (empty($conf->global->MAIN_DISABLE_DOLISTORE_SEARCH) && $conf->global->MAIN_FEATURES_LEVEL >= 1)
     {
-	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span>';
+    	// $options is array with filter criterias
+    	//var_dump($options);
+    	$dolistore->getRemoteData($options);
 
+	    print '<span class="opacitymedium">'.$langs->trans('DOLISTOREdescriptionLong').'</span><br><br>';
+
+	    $previouslink = $dolistore->get_previous_link();
+	    $nextlink = $dolistore->get_next_link();
+
+	    print '<div class="liste_titre liste_titre_bydiv centpercent"><div class="divsearchfield">'
 
 	    ?>
-	    	<br><br>
-
-	        <div class="tabBar">
-	            <form method="POST" id="searchFormList" action="<?php echo $dolistore->url ?>">
+	            <form method="POST" class="centpercent" id="searchFormList" action="<?php echo $dolistore->url ?>">
 	            	<input type="hidden" name="mode" value="marketplace" />
-	                <div class="divsearchfield"><?php echo $langs->trans('Mot-cle') ?>:
+	                <div class="divsearchfield"><?php echo $langs->trans('Keyword') ?>:
 	                    <input name="search_keyword" placeholder="<?php echo $langs->trans('Chercher un module') ?>" id="search_keyword" type="text" size="50" value="<?php echo $options['search'] ?>"><br>
 	                </div>
 	                <div class="divsearchfield">
-	                    <input class="button butAction searchDolistore" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
-	                    <a class="button butActionDelete" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Tout afficher') ?></a>
-	                </div><br><br><br style="clear: both">
+	                    <input class="button" value="<?php echo $langs->trans('Rechercher') ?>" type="submit">
+	                    <a class="button" href="<?php echo $dolistore->url ?>"><?php echo $langs->trans('Reset') ?></a>
+
+	                    &nbsp;
+					</div>
+	                <div class="divsearchfield right">
+	                <?php
+	                print $previouslink;
+	                print $nextlink;
+	                ?>
+	                </div>
 	            </form>
-	        </div>
+
+	   <?php
+
+	   print '</div></div>';
+	   print '<div class="clearboth"></div>';
+
+	   ?>
+
 	        <div id="category-tree-left">
 	            <ul class="tree">
 	                <?php echo $dolistore->get_categories(); ?>
 	            </ul>
 	        </div>
 	        <div id="listing-content">
-	            <table summary="list_of_modules" id="list_of_modules" class="liste" width="100%">
-	                <thead>
-	                    <tr class="liste_titre">
-	                        <td colspan="100%"><?php echo $dolistore->get_previous_link() ?> <?php echo $dolistore->get_next_link() ?> <span style="float:right"><?php echo $langs->trans('AchatTelechargement') ?></span></td>
-	                    </tr>
-	                </thead>
+	            <table summary="list_of_modules" id="list_of_modules" class="productlist centpercent">
 	                <tbody id="listOfModules">
 	                    <?php echo $dolistore->get_products($categorie); ?>
 	                </tbody>
-	                <tfoot>
-	                    <tr class="liste_titre">
-	                        <td colspan="100%"><?php echo $dolistore->get_previous_link() ?> <?php echo $dolistore->get_next_link() ?> <span style="float:right"><?php echo $langs->trans('AchatTelechargement') ?></span></td>
-	                    </tr>
-	                </tfoot>
 	            </table>
 	        </div>
 
@@ -999,9 +1039,21 @@ if ($mode == 'develop')
 	print '<td>'.$langs->trans("URL").'</td>';
 	print '</tr>';
 
-	print "<tr class=\"oddeven\">\n";
+	print '<tr class="oddeven" height="80">'."\n";
+	print '<td align="left">';
+	//span class="fa fa-bug"></span>
+	//print '<img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png">';
+	print '<div class="imgmaxheight50 logo_setup"></div>';
+	print '</td>';
+	print '<td>'.$langs->trans("TryToUseTheModuleBuilder").'</td>';
+	print '<td>'.$langs->trans("SeeTopRightMenu").'</td>';
+	print '</tr>';
+
+	print '<tr class="oddeven" height="80">'."\n";
 	$url='https://partners.dolibarr.org';
-	print '<td align="left"><a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a></td>';
+	print '<td align="left">';
+	print'<a href="'.$url.'" target="_blank" rel="external"><img border="0" class="imgautosize imgmaxwidth180" src="'.DOL_URL_ROOT.'/theme/dolibarr_preferred_partner_int.png"></a>';
+	print '</td>';
 	print '<td>'.$langs->trans("DoliPartnersDesc").'</td>';
 	print '<td><a href="'.$url.'" target="_blank" rel="external">'.$url.'</a></td>';
 	print '</tr>';

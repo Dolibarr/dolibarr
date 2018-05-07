@@ -50,4 +50,6 @@ ConfigLoan=Oppset av lån-modulen
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Standard regnskapskonto kapital
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Standard regnskapskonto  rente
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Standard regnskapskonto forsikring
-CreateCalcSchedule=Opprett/endre låneplan
+FinancialCommitment=Finansiell forpliktelse
+CreateCalcSchedule=Rediger økonomisk forpliktelse
+InterestAmount=Rentebeløp

@@ -57,3 +57,4 @@ ErrorInsertingComment=Det uppstod ett fel när du skapa din kommentar
 MoreChoices=Ange fler alternativ för väljarna
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=% S har fyllt en rad. Du kan hitta din enkät på länken:% s
+ShowSurvey=Show survey

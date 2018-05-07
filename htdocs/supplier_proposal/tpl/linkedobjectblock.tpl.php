@@ -17,6 +17,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE LINKEDOBJECTBOCK-->
@@ -33,7 +40,7 @@ $var=true;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
-    
+
     $trclass=($var?'pair':'impair');
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
@@ -48,7 +55,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     			echo price($objectlink->total_ht);
     		} ?></td>
     	<td align="right"><?php echo $objectlink->getLibStatut(3); ?></td>
-    	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
+    	<td align="right"><a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     </tr>
 <?php
 }
@@ -64,7 +71,7 @@ if (count($linkedObjectBlock) > 1)
     	<td align="right"></td>
     	<td align="right"></td>
     </tr>
-    <?php  
+    <?php
 }
 ?>
 

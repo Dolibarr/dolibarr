@@ -18,5 +18,3 @@ RejectCheck=Cheque returned
 RejectCheckDate=Date the cheque was returned
 CheckRejected=Cheque returned
 CheckRejectedAndInvoicesReopened=Cheque returned and invoices reopened
-AutoReportLastAccountStatement=Use automatically last account statement to reconcile
-BankAccountReleveModule=Bank Statement

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@ class PaymentVarious extends CommonObject
 	public $table_element='payment_various';	//!< Name of table without prefix where object is stored
 	public $picto = 'bill';
 
+	var $id;
+	var $ref;
 	var $tms;
 	var $datep;
 	var $datev;
@@ -87,8 +89,7 @@ class PaymentVarious extends CommonObject
 
 		// Update request
 		$sql = "UPDATE ".MAIN_DB_PREFIX."payment_various SET";
-
-		$sql.= " tms='".$this->db->idate($this->tms)."',";
+		if ($this->tms) $sql.= " tms='".$this->db->idate($this->tms)."',";
 		$sql.= " datep='".$this->db->idate($this->datep)."',";
 		$sql.= " datev='".$this->db->idate($this->datev)."',";
 		$sql.= " sens=".$this->sens.",";
@@ -102,7 +103,6 @@ class PaymentVarious extends CommonObject
 		$sql.= " fk_bank=".($this->fk_bank > 0 ? $this->fk_bank:"null").",";
 		$sql.= " fk_user_author=".$this->fk_user_author.",";
 		$sql.= " fk_user_modif=".$this->fk_user_modif;
-
 		$sql.= " WHERE rowid=".$this->id;
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -146,7 +146,6 @@ class PaymentVarious extends CommonObject
 		global $langs;
 		$sql = "SELECT";
 		$sql.= " v.rowid,";
-
 		$sql.= " v.tms,";
 		$sql.= " v.datep,";
 		$sql.= " v.datev,";
@@ -164,7 +163,6 @@ class PaymentVarious extends CommonObject
 		$sql.= " b.fk_account,";
 		$sql.= " b.fk_type,";
 		$sql.= " b.rappro";
-
 		$sql.= " FROM ".MAIN_DB_PREFIX."payment_various as v";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON v.fk_bank = b.rowid";
 		$sql.= " WHERE v.rowid = ".$id;
@@ -184,7 +182,7 @@ class PaymentVarious extends CommonObject
 				$this->datev			= $this->db->jdate($obj->datev);
 				$this->sens				= $obj->sens;
 				$this->amount			= $obj->amount;
-				$this->type_payement	= $obj->fk_typepayment;
+				$this->type_payment		= $obj->fk_typepayment;
 				$this->num_payment		= $obj->num_payment;
 				$this->label			= $obj->label;
 				$this->note				= $obj->note;
@@ -266,12 +264,12 @@ class PaymentVarious extends CommonObject
 		$this->fk_user_modif='';
 	}
 
-    /**
-     *  Create in database
-     *
-     *  @param      User	$user       User that create
-     *  @return     int      			<0 if KO, >0 if OK
-     */
+	/**
+	 *  Create in database
+	 *
+	 *  @param   User   $user   User that create
+	 *  @return  int            <0 if KO, >0 if OK
+	 */
 	function create($user)
 	{
 		global $conf,$langs;
@@ -338,6 +336,7 @@ class PaymentVarious extends CommonObject
 		if ($this->note) $sql.= ", '".$this->db->escape($this->note)."'";
 		$sql.= ", '".$this->db->escape($this->label)."'";
 		$sql.= ", '".$this->db->escape($this->accountancy_code)."'";
+		$sql.= ", ".($this->fk_project > 0? $this->fk_project : 0);
 		$sql.= ", ".$user->id;
 		$sql.= ", '".$this->db->idate($now)."'";
 		$sql.= ", NULL";
@@ -349,6 +348,7 @@ class PaymentVarious extends CommonObject
 		if ($result)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."payment_various");
+			$this->ref = $this->id;
 
 			if ($this->id > 0)
 			{
@@ -407,10 +407,10 @@ class PaymentVarious extends CommonObject
 					}
 				}
 
-	            // Call trigger
-	            $result=$this->call_trigger('PAYMENT_VARIOUS_CREATE',$user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+				// Call trigger
+				$result=$this->call_trigger('PAYMENT_VARIOUS_CREATE',$user);
+				if ($result < 0) $error++;
+				// End call triggers
 
 			}
 			else $error++;
@@ -437,8 +437,8 @@ class PaymentVarious extends CommonObject
 	/**
 	 *  Update link between payment various and line generate into llx_bank
 	 *
-	 *  @param	int		$id_bank    Id bank account
-	 *	@return	int					<0 if KO, >0 if OK
+	 *  @param  int     $id_bank    Id bank account
+	 *	@return int                 <0 if KO, >0 if OK
 	 */
 	function update_fk_bank($id_bank)
 	{
@@ -517,33 +517,33 @@ class PaymentVarious extends CommonObject
 	/**
 	 *	Send name clicable (with possibly the picto)
 	 *
-	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
-	 *	@param	string	$option			link option
-	 *	@return	string					Chaine with URL
+	 *	@param  int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
+	 *	@param  string	$option			link option
+	 *	@return string					Chaine with URL
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("ShowVariousPayment").': '.$this->ref;
+		$label=$langs->trans("ShowVariousPayment").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
-		$picto='payment';
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+		$result .= $linkend;
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
 		return $result;
 	}
 
 	/**
 	 * Information on record
 	 *
-	 * @param	int		$id      Id of record
-	 * @return	void
+	 * @param  int      $id      Id of record
+	 * @return void
 	 */
 	function info($id)
 	{

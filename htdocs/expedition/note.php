@@ -100,9 +100,9 @@ if ($id > 0 || ! empty($ref))
 	$head=shipping_prepare_head($object);
 	dol_fiche_head($head, 'note', $langs->trans("Shipment"), -1, 'sending');
 
-    
+
 	// Shipment card
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expedition/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='<div class="refidno">';
 	// Ref customer shipment
@@ -145,13 +145,13 @@ if ($id > 0 || ! empty($ref))
         }
     }
     $morehtmlref.='</div>';
-    
-    
+
+
     dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-    
-    
+
+
     print '<div class="underbanner clearboth"></div>';
-    
+
 	$cssclass='titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

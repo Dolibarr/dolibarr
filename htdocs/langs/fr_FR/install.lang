@@ -138,8 +138,10 @@ KeepDefaultValuesWamp=Si vous utilisez l'installeur automatique DoliWamp, les do
 KeepDefaultValuesDeb=Vous utilisez l'assistant d'installation depuis un environnement Linux (Ubuntu, Debian, Fedor...). Les valeurs présentes ici sont pré-remplies. Seul le mot de passe d'accès du propriétaire de la base de données doit être renseigné. Les autres paramètres ne doivent être modifiés qu'en connaissance de cause.
 KeepDefaultValuesMamp=Vous utilisez l'assistant d'installation DoliMamp. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
 KeepDefaultValuesProxmox=Vous utilisez l'assistant d'installation depuis une application Proxmox. Les valeurs présentes ici sont pré-remplies. Leur modification ne doit être effectuée qu'en connaissance de cause.
-UpgradeExternalModule=Lancer le processus de mise à jour d'un module externe
-
+UpgradeExternalModule=Lancement du processus de mise à jour de modules externes
+SetAtLeastOneOptionAsUrlParameter=Définissez au moins une option en tant que paramètre dans l'URL. Par exemple: '... repair.php?standard=confirmed'
+NothingToDelete=Rien a supprimer
+NothingToDo=Rien à faire
 #########
 # upgrade
 MigrationFixData=Correction de données dé-normalisées
@@ -191,9 +193,13 @@ MigrationActioncommElement=Mise à jour des données des actions des éléments
 MigrationPaymentMode=Migration des modes de paiement
 MigrationCategorieAssociation=Migration des categories
 MigrationEvents=Migration des évènements pour ajouter les propriétaires dans la table des utilisateurs assignés
+MigrationEventsContact=Migration des événements pour ajouter le contact de l'événement dans la table d'affectation
 MigrationRemiseEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise
 MigrationRemiseExceptEntity=Mettre à jour le champ "entity" de la table "llx_societe_remise_except"
+MigrationUserRightsEntity=Mise à jour du champ entity de llx_user_rights
+MigrationUserGroupRightsEntity=Mise à jour du champ entity de llx_usergroup_rights
 MigrationReloadModule=Rechargement du module %s
+MigrationResetBlockedLog=Réinitialiser le module BlockedLog pour l'algorithme v7
 ShowNotAvailableOptions=Afficher les choix non disponibles
 HideNotAvailableOptions=Cacher les choix non disponibles
 ErrorFoundDuringMigration=Une erreur est survenu lors du processus de migration, aussi l'étape suivante ne peut pas être réalisée. Pour ignorer les erreurs, vous pouvez <a href="%s">cliquer ici</a>, mais l'application ou certaines fonctionnalités risquent de présenter des dysfonctionnements jusqu'à la résolution de la ou des erreurs

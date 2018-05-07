@@ -42,7 +42,7 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 		$this->db=$db;
 		if (is_array($conf->modules))
 		{
-			$this->enabled=in_array('mymodule',$conf->modules);
+			$this->enabled=in_array('mymodule',$conf->modules)?1:0;
 		}
 	}
 
@@ -186,15 +186,14 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	 *
 	 *	@param	string	$filter		Filter
 	 *	@param	string	$option		Options
-	 *	@return	int					Nb of recipients
+	 *	@return	int					Nb of recipients or -1 if KO
 	 */
 	function getNbOfRecipients($filter=1,$option='')
 	{
 		$a=parent::getNbOfRecipients("select count(distinct(email)) as nb from ".MAIN_DB_PREFIX."myobject as p where email IS NOT NULL AND email != ''");
 
-		if ($a < 0 || $b < 0) return -1;
-		if ($option == '') return $a;
-		return ($a+$b);
+		if ($a < 0) return -1;
+		return $a;
 	}
 
 }

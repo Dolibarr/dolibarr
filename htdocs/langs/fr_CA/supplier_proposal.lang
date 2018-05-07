@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Propositions commerciales fournisseurs
 supplier_proposalDESC=Gérer les demandes de prix aux fournisseurs
-SupplierProposalNew=Nouvelle requête
 CommRequests=Demande de prix
 SearchRequest=Trouver une demande
 DraftRequests=Requêtes préliminaires

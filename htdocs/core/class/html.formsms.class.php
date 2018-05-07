@@ -130,7 +130,7 @@ function limitChars(textarea, limit, infodiv)
         print "<table class=\"border centpercent\">\n";
 
         // Substitution array
-        if ($this->withsubstit)
+        if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
         {
             print "<tr><td colspan=\"2\">";
             $help="";
@@ -205,8 +205,16 @@ function limitChars(textarea, limit, infodiv)
                     try
                     {
                         $classname=ucfirst($classfile);
-                        $sms = new $classname($this->db);
-                        $resultsender = $sms->SmsSenderList();
+                        if (class_exists($classname))
+                        {
+                        	$sms = new $classname($this->db);
+                        	$resultsender = $sms->SmsSenderList();
+                        }
+                        else
+                        {
+                        	$sms = new stdClass();
+                        	$sms->error='The SMS manager '.$classfile.' defined into SMS setup MAIN_SMS_SENDMODE is not found';
+                        }
                     }
                     catch(Exception $e)
                     {

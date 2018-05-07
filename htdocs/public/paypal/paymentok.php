@@ -170,7 +170,9 @@ if ($PAYPALTOKEN)
 
             print $langs->trans("YourPaymentHasBeenRecorded")."<br>\n";
             print $langs->trans("ThisIsTransactionId",$TRANSACTIONID)."<br><br>\n";
-            if (! empty($conf->global->ONLINE_PAYMENT_MESSAGE_OK)) print $conf->global->ONLINE_PAYMENT_MESSAGE_OK;
+
+			$key='ONLINE_PAYMENT_MESSAGE_OK';
+			if (! empty($conf->global->$key)) print $conf->global->$key;
 
             // Appel des triggers
             include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
@@ -178,6 +180,8 @@ if ($PAYPALTOKEN)
             $result=$interface->run_triggers('PAYPAL_PAYMENT_OK',$object,$user,$langs,$conf);
             if ($result < 0) { $error++; $errors=$interface->errors; }
             // Fin appel triggers
+
+            $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
         	// Send an email
 			if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
@@ -204,12 +208,11 @@ if ($PAYPALTOKEN)
 
 				$urlback=$_SERVER["REQUEST_URI"];
 				$topic='['.$appli.'] '.$langs->transnoentitiesnoconv("NewOnlinePaymentReceived");
-				$tmptag=dolExplodeIntoArray($fulltag,'.','=');
 				$content="";
 				if (! empty($tmptag['MEM']))
 				{
 					$langs->load("members");
-					$url=$urlwithroot."/adherents/card_subscriptions.php?rowid=".$tmptag['MEM'];
+					$url=$urlwithroot."/adherents/subscription.php?rowid=".$tmptag['MEM'];
 					$content.=$langs->trans("PaymentSubscription")."<br>\n";
 					$content.=$langs->trans("MemberId").': '.$tmptag['MEM']."<br>\n";
 					$content.=$langs->trans("Link").': <a href="'.$url.'">'.$url.'</a>'."<br>\n";
@@ -262,6 +265,8 @@ if ($PAYPALTOKEN)
             echo $langs->trans('ErrorSeverityCode') . ": " . $ErrorSeverityCode."<br>\n";
 
             if ($mysoc->email) echo "\nPlease, send a screenshot of this page to ".$mysoc->email."<br>\n";
+
+            $tmptag=dolExplodeIntoArray($fulltag,'.','=');
 
            	// Send an email
 			if (! empty($conf->global->ONLINE_PAYMENT_SENDEMAIL))
@@ -326,7 +331,7 @@ else
 
 print "\n</div>\n";
 
-htmlPrintOnlinePaymentFooter($mysoc,$langs);
+htmlPrintOnlinePaymentFooter($mysoc,$langs,0,$suffix);
 
 
 llxFooter('', 'public');

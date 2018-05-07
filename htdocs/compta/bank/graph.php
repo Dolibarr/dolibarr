@@ -108,7 +108,7 @@ else
 		dol_print_error($db);
 	}
 	if (empty($min)) $min = dol_now - 3600 * 24;
-	
+
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
@@ -760,7 +760,7 @@ $head=bank_prepare_head($object);
 dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 if ($account)
 {

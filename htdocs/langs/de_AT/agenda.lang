@@ -35,7 +35,6 @@ DefaultWorkingHours=Arbeitszeit (Bsp.: 09-18)
 ExportCal=exportiere Kalender
 ExtSites=importiere externe Kalender
 ExtSitesEnableThisTool=zeige externe Kalender (in generellen Einsteillungen) in Agenda. Betrifft nicht die die externen Kalender, welche von Benutzern definiert wurden.
-AgendaExtNb=Kalendernummer %s
 ExtSiteUrlAgenda=URL für .lcal
 ExtSiteNoLabel=keine Beschreibung
 VisibleTimeRange=sichtbare Zeitspanne

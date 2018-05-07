@@ -42,6 +42,8 @@ $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', $id, 'chargesociales','charges');
 
+$object = new ChargeSociales($db);
+
 
 /*
  * Actions
@@ -68,7 +70,6 @@ $title = $langs->trans("SocialContribution") . ' - ' . $langs->trans("Info");
 $help_url = 'EN:Module_Taxes_and_social_contributions|FR:Module Taxes et dividendes|ES:M&oacute;dulo Impuestos y cargas sociales (IVA, impuestos)';
 llxHeader("",$title,$help_url);
 
-$object = new ChargeSociales($db);
 $object->fetch($id);
 $object->info($id);
 

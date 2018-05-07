@@ -23,15 +23,17 @@ create table llx_c_email_templates
   entity		  integer DEFAULT 1 NOT NULL,	  -- multi company id
   module          varchar(32),                    -- Nom du module en rapport avec le modele
   type_template   varchar(32),  				  -- template for which type of email (send invoice by email, send order, ...)
-  lang            varchar(6),
+  lang            varchar(6) DEFAULT '',		  -- We use a default to '' so the unique index that include this field will work
   private         smallint DEFAULT 0 NOT NULL,    -- Template public or private
-  fk_user         integer,                        -- Id utilisateur si modele prive, sinon null
+  fk_user         integer,                        -- Id user owner if template is private, or null
   datec           datetime,
   tms             timestamp,
-  label           varchar(255),					  -- Label of predefined email
+  label           varchar(180),					  -- Label of predefined email
   position        smallint,					      -- Position
+  enabled         varchar(255) DEFAULT '1',		  -- Condition to have this module visible
   active          tinyint DEFAULT 1  NOT NULL,
   topic			  text,                           -- Predefined topic
-  content         text,                           -- Predefined text
+  joinfiles		  text,                           -- Files to attach
+  content         mediumtext,                     -- Predefined text
   content_lines   text                            -- Predefined lines
 )ENGINE=innodb;

@@ -69,9 +69,6 @@ class modResource extends DolibarrModules
 		// Key used in llx_const table to save module status enabled/disabled
 		// (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
-		// Where to store the module in setup page
-		// (0=common,1=interface,2=others,3=very specific)
-		$this->special = 2;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png
 		// use this->picto='pictovalue'
@@ -82,26 +79,7 @@ class modResource extends DolibarrModules
 		// for default path (eg: /resource/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /resource/core/modules/barcode)
 		// for specific css file (eg: /resource/css/resource.css.php)
-		$this->module_parts = array(
-			// Set this to 1 if module has its own trigger directory
-			//'triggers' => 1,
-			// Set this to 1 if module has its own login method directory
-			//'login' => 0,
-			// Set this to 1 if module has its own substitution function file
-			//'substitutions' => 0,
-			// Set this to 1 if module has its own menus handler directory
-			//'menus' => 0,
-			// Set this to 1 if module has its own barcode directory
-			//'barcode' => 0,
-			// Set this to 1 if module has its own models directory
-			//'models' => 0,
-			// Set this to relative path of css if module has its own css file
-			//'css' => '/resource/css/resource.css.php',
-			// Set here all hooks context managed by module
-			// 'hooks' => array('actioncard','actioncommdao','resource_card','element_resource')
-			// Set here all workflow context managed by module
-			//'workflow' => array('order' => array('WORKFLOW_ORDER_AUTOCREATE_INVOICE'))
-		);
+		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/resource/temp");
@@ -226,12 +204,12 @@ class modResource extends DolibarrModules
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'MenuResourceAdd',
 			'mainmenu'=> 'tools',
-			'leftmenu'=> '', // On n'indique rien ici car on ne souhaite pas intégrer de sous-menus à ce menu
-			'url'=> '/resource/add.php',
+			'leftmenu'=> 'resource_add',
+			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
 			'position'=> 101,
 			'enabled'=> '1',
-			'perms'=> '$user->rights->resource->read',
+			'perms'=> '$user->rights->resource->write',
 			'target'=> '',
 			'user'=> 0
 		);
@@ -241,7 +219,7 @@ class modResource extends DolibarrModules
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'List',
 			'mainmenu'=> 'tools',
-			'leftmenu'=> '', // On n'indique rien ici car on ne souhaite pas intégrer de sous-menus à ce menu
+			'leftmenu'=> 'resource_list',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
 			'position'=> 102,
@@ -255,7 +233,7 @@ class modResource extends DolibarrModules
 		// Exports
 		//--------
 		$r=0;
-		
+
 		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]="ResourceSingular";	// Translation key (used only if key ExportDataset_xxx_z not found)
@@ -265,19 +243,19 @@ class modResource extends DolibarrModules
 		$this->export_entities_array[$r]=array('r.rowid'=>'resource','r.ref'=>'resource','c.code'=>'resource','c.label'=>'resource','r.description'=>'resource','r.note_private'=>"resource",'r.resource'=>"resource",'r.asset_number'=>'resource','r.datec'=>"resource",'r.tms'=>"resource");
 		$keyforselect='resource'; $keyforelement='resource'; $keyforaliasextra='extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		
+
 		$this->export_dependencies_array[$r]=array('resource'=>array('r.rowid')); // We must keep this until the aggregate_array is used. To add unique key if we ask a field of a child to avoid the DISTINCT to discard them.
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'resource as r ';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_resource as c ON c.rowid=r.fk_code_type_resource';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'resource_extrafields as extra ON extra.fk_object = c.rowid';
 		$this->export_sql_end[$r] .=' AND r.entity IN ('.getEntity('resource').')';
-		
+
 
 		// Imports
 		//--------
 		$r=0;
-		
+
 		// Import list of third parties and attributes
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
@@ -307,7 +285,7 @@ class modResource extends DolibarrModules
 		$this->import_regex_array[$r]=array('s.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
 		$this->import_examplevalues_array[$r]=array('r.ref'=>"REF1",'r.fk_code_type_resource'=>"Code from dictionary resource type",'r.datec'=>"2017-01-01 or 2017-01-01 12:30:00");
 		$this->import_updatekeys_array[$r]=array('r.rf'=>'ResourceFormLabel_ref');
-		
+
 	}
 
 	/**

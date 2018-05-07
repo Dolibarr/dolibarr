@@ -51,7 +51,7 @@ $substitutionarrayfortest=array(
 '__EMAIL__' => 'TESTEMail',
 '__LASTNAME__' => 'TESTLastname',
 '__FIRSTNAME__' => 'TESTFirstname',
-'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),
+'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),
 //'__PERSONALIZED__' => 'TESTPersonalized'	// Hiden because not used yet
 );
 complete_substitutions_array($substitutionarrayfortest, $langs);
@@ -114,27 +114,7 @@ llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
 
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
-$head[$h][1] = $langs->trans("OutGoingEmailSetup");
-$head[$h][2] = 'common';
-$h++;
-
-if ($conf->mailing->enabled)
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/mails_emailing.php";
-	$head[$h][1] = $langs->trans("OutGoingEmailSetupForEmailing");
-	$head[$h][2] = 'common_emailing';
-	$h++;
-}
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
-$head[$h][2] = 'templates';
-$h++;
-
+$head = email_admin_prepare_head();
 
 // List of sending methods
 $listofmethods=array();
@@ -248,7 +228,6 @@ if ($action == 'edit')
 
 
 	clearstatcache();
-	$var=true;
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
@@ -361,7 +340,6 @@ if ($action == 'edit')
 	// PW
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer'))))
 	{
-
 		$mainsmtppw=(! empty($conf->global->MAIN_MAIL_SMTPS_PW_EMAILING)?$conf->global->MAIN_MAIL_SMTPS_PW_EMAILING:'');
 		print '<tr class="drag drop oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
@@ -425,14 +403,10 @@ else
     print $langs->trans("EMailsDesc")."<br>\n";
     print "<br>\n";
 
-
-	$var=true;
-
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Method
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_MAIL_SENDMODE_EMAILING];
 	if (empty($text)) $text=$langs->trans("Undefined").img_warning();
@@ -442,7 +416,6 @@ else
 	if (! empty($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING != 'default')
 	{
 		// Host server
-
 		if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail'))
 		{
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
@@ -453,7 +426,6 @@ else
 		}
 
 		// Port
-
 		if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && $conf->global->MAIN_MAIL_SENDMODE_EMAILING == 'mail'))
 		{
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
@@ -464,21 +436,18 @@ else
 		}
 
 		// SMTPS ID
-
 		if (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer')))
 		{
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID_EMAILING.'</td></tr>';
 		}
 
 		// SMTPS PW
-
 		if (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer')))
 		{
 			print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./','*',$conf->global->MAIN_MAIL_SMTPS_PW_EMAILING).'</td></tr>';
 		}
 
 		// TLS
-
 		print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 		if (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer')))
 		{
@@ -492,7 +461,6 @@ else
 		print '</td></tr>';
 
 		// STARTTLS
-
 		print '<tr class="oddeven hideifdefault"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 		if (isset($conf->global->MAIN_MAIL_SENDMODE_EMAILING) && in_array($conf->global->MAIN_MAIL_SENDMODE_EMAILING, array('smtps', 'swiftmailer')))
 		{

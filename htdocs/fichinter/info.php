@@ -2,6 +2,7 @@
 /* Copyright (C) 2005-2009  Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2009-2016  Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011       Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,9 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
+if (! empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+}
 
 $langs->load('companies');
 $langs->load("interventions");
@@ -63,7 +67,7 @@ $head = fichinter_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans('InterventionCard'), -1, 'intervention');
 
 // Intervention card
-$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
 $morehtmlref='<div class="refidno">';

@@ -28,15 +28,15 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
+$langs->loadLangs(array("bills","accountancy"));
 
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
@@ -49,8 +49,10 @@ if ($user->societe_id > 0)
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write) {
-	if (! GETPOST('cancel', 'alpha')) {
+if ($action == 'ventil' && $user->rights->accounting->bind->write)
+{
+	if (! $cancel)
+	{
 	    if ($codeventil < 0) $codeventil = 0;
 
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
@@ -64,6 +66,11 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		else
 		{
 		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+		    if ($backtopage)
+		    {
+		    	header("Location: ".$backtopage);
+		    	exit();
+		    }
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -111,6 +118,7 @@ if (! empty($id)) {
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
+			print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 
 			print load_fiche_titre($langs->trans('SuppliersVentilation'), '', 'title_setup');
 

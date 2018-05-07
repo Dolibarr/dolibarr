@@ -118,6 +118,7 @@ SecondApprovalAlreadyDone=Second approval already done
 SupplierOrderReceivedInDolibarr=Supplier order %s received %s
 SupplierOrderSubmitedInDolibarr=Supplier order %s submited
 SupplierOrderClassifiedBilled=Supplier order %s set billed
+OtherOrders=Alte comenzi
 ##### Types de contacts #####
 TypeContact_commande_internal_SALESREPFOLL=Responsabil urmărire comandă client
 TypeContact_commande_internal_SHIPPING=Responsabil urmărire expediere comandă client
@@ -151,5 +152,7 @@ OrderCreated=Comenzile dvs au fost generate
 OrderFail=O eroare întâlnită în timpul creării comezilor dvs
 CreateOrders=Crează Comenzi
 ToBillSeveralOrderSelectCustomer=Pentru crearea unei facturi pentru câteva comenzi, click mai întâi pe client apoi alege "%s".
+OptionToSetOrderBilledNotEnabled=Option (from module Workflow) to set order to 'Billed' automatically when invoice is validated is off, so you will have to set status of order to 'Billed' manually.
+IfValidateInvoiceIsNoOrderStayUnbilled=If invoice validation is 'No', the order will remain to status 'Unbilled' until the invoice is validated.
 CloseReceivedSupplierOrdersAutomatically=Close order to "%s" automatically if all products are received.
 SetShippingMode=Set shipping mode

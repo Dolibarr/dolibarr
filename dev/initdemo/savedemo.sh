@@ -187,6 +187,7 @@ export list="
 	--ignore-table=$base.llx_bt_webseedfiles
 	--ignore-table=$base.llx_c_civilite
 	--ignore-table=$base.llx_c_dolicloud_plans
+	--ignore-table=$base.llx_c_pays
 	--ignore-table=$base.llx_c_source
 	--ignore-table=$base.llx_cabinetmed_c_banques
 	--ignore-table=$base.llx_cabinetmed_c_ccam

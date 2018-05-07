@@ -22,11 +22,13 @@ CREATE TABLE llx_website_page
 	rowid         integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
 	fk_website    integer NOT NULL,
 	pageurl       varchar(255) NOT NULL,
+	aliasalt      varchar(255),
 	title         varchar(255),						
 	description   varchar(255),						
 	keywords      varchar(255),
 	lang          varchar(6),
 	fk_page       integer,          
+	htmlheader	  text,
 	content		  mediumtext,		-- text is not enough in size
     status        integer DEFAULT 1,
 	grabbed_from   varchar(255),

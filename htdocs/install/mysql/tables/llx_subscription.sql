@@ -24,7 +24,7 @@ create table llx_subscription
   fk_adherent     integer,
   dateadh         datetime,
   datef           date,
-  subscription    real,
+  subscription    double(24,8),
   fk_bank         integer DEFAULT NULL,
   note            text
 )ENGINE=innodb;

@@ -12,6 +12,7 @@ Event=Събитие
 Events=Събития
 EventsNb=Брой събития
 ListOfActions=Списък на събитията
+EventReports=Event reports
 Location=Място
 ToUserOfGroup=To any user in group
 EventOnFullDay=Събитие по цял ден (дни)
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Define here events for which you want Dolibarr to create a
 AgendaSetupOtherDesc= Тази страница предоставя възможности да се допусне износ на вашите събития Dolibarr в външен календар (Thunderbird, Google Calendar, ...)
 AgendaExtSitesDesc=Тази страница позволява да се обяви външните източници на календари, за да видят своите събития в дневния ред Dolibarr.
 ActionsEvents=Събития, за които Dolibarr ще създаде действие в дневния ред автоматично
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
 ContractValidatedInDolibarr=Контакт %s е валидиран
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Член %s е валидиран
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Член %s е изтрит
-MemberSubscriptionAddedInDolibarr=Абонамет за член %s е добавен
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Доставка %s е валидирана
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Поръчка %s одобрен
 OrderRefusedInDolibarr=Поръчка %s отказана
 OrderBackToDraftInDolibarr=Поръчка %s се върне в състояние на чернова
 ProposalSentByEMail=Търговски %s предложението, изпратено по електронна поща
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=, Изпратени по електронната поща %s поръчка на клиента
 InvoiceSentByEMail=, Изпратени по електронната поща %s клиенти фактура
 SupplierOrderSentByEMail=%s доставчик реда, изпратени по електронната поща
@@ -78,6 +83,14 @@ InvoiceDeleted=Invoice deleted
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=Проект %s е създаден
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Начална дата
@@ -86,7 +99,8 @@ AgendaUrlOptions1=Можете да добавите и следните пар�
 AgendaUrlOptions3=<b>logina=%s</b> за да ограничи показването до действия притежавани от потребител <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> за да ограничи показването до действия свързани с проект <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Show birthdays of contacts
 AgendaHideBirthdayEvents=Hide birthdays of contacts
 Busy=Зает
@@ -98,7 +112,7 @@ ExportCal=Изнасяне на календар
 ExtSites=Импортиране на външни календари
 ExtSitesEnableThisTool=Показване на външни календари (определени в главната конфигурация) в дневния ред. Не засяга външните календари определени от потребители.
 ExtSitesNbOfAgenda=Брой календари
-AgendaExtNb=Календар No %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL адрес за достъп до файла .Ical
 ExtSiteNoLabel=Няма описание
 VisibleTimeRange=Видим времеви диапазон

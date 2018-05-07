@@ -40,12 +40,12 @@ CREATE TABLE llx_accounting_bookkeeping
   multicurrency_code    varchar(255),				-- FEC:Idevise
   lettering_code        varchar(255),				-- FEC:EcritureLet
   date_lettering        datetime,					-- FEC:DateLet
-  date_lim_reglement	datetime,					-- 					| date limite de reglement
+  date_lim_reglement    datetime DEFAULT NULL,		-- 					| date limite de reglement
   fk_user_author        integer NOT NULL,			-- 					| user creating
   fk_user_modif         integer,					-- 					| user making last change
   date_creation         datetime,					-- FEC:EcritureDate	| creation date
   tms                   timestamp,					--					| date last modification 
-  fk_user               integer NULL,               -- The id of user that validate the accounting source document  
+  fk_user               integer NULL,               -- The id of user that validate the accounting source document
   code_journal          varchar(32) NOT NULL,		-- FEC:JournalCode
   journal_label         varchar(255),				-- FEC:JournalLib
   piece_num             integer NOT NULL,			-- FEC:EcritureNum  | accounting source document

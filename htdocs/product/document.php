@@ -6,6 +6,7 @@
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2013      Florian Henry          <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +40,10 @@ if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 $langs->load("other");
 $langs->load("products");
 
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
+$action = GETPOST('action','alpha');
+$confirm= GETPOST('confirm','alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -92,7 +93,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	//Delete line if product propal merge is linked to a file
+	// Delete line if product propal merge is linked to a file
 	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 	{
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
@@ -212,7 +213,7 @@ if ($object->id)
 	}
 
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
     $object->next_prev_filter=" fk_product_type = ".$object->type;
 
     $shownav = 1;
@@ -226,7 +227,7 @@ if ($object->id)
     print '<table class="border tableforfield" width="100%">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
     print '</table>';
 
     print '</div>';
@@ -345,7 +346,6 @@ if ($object->id)
     		print  '</form>';
     	}
     }
-
 }
 else
 {

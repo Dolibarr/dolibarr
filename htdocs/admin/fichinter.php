@@ -221,7 +221,36 @@ elseif ($action == 'set_FICHINTER_PRINT_PRODUCTS')
 	} else {
 		setEventMessages($langs->trans("Error"), null, 'errors');
 	}
+} elseif ($action == 'set_FICHINTER_WITHOUT_DURATION') {
+        $val = GETPOST('FICHINTER_WITHOUT_DURATION', 'alpha');
+        $res = dolibarr_set_const($db, "FICHINTER_WITHOUT_DURATION", ($val == 'on' ? 1 : 0), 'bool', 0, '',
+                $conf->entity);
+
+        if (!$res > 0) {
+                $error++;
+        }
+
+        if (!$error) {
+                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+                setEventMessages($langs->trans("Error"), null, 'errors');
+        }
+} elseif ($action == 'set_FICHINTER_DATE_WITHOUT_HOUR') {
+        $val = GETPOST('FICHINTER_DATE_WITHOUT_HOUR', 'alpha');
+        $res = dolibarr_set_const($db, "FICHINTER_DATE_WITHOUT_HOUR", ($val == 'on' ? 1 : 0), 'bool', 0, '',
+                $conf->entity);
+
+        if (!$res > 0) {
+                $error++;
+        }
+
+        if (!$error) {
+                setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+        } else {
+                setEventMessages($langs->trans("Error"), null, 'errors');
+        }
 }
+
 
 
 /*
@@ -234,7 +263,7 @@ llxHeader();
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("InterventionsSetup"),$linkback,'title_setup');
 
 
@@ -505,7 +534,7 @@ print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 
-$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
@@ -515,7 +544,7 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_FICHINTER_FREE_TEXT">';
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnInterventions"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnInterventions"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename='FICHINTER_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -538,7 +567,7 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"set_FICHINTER_DRAFT_WATERMARK\">";
 print '<tr class="oddeven"><td>';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftInterventionCards"), $htmltext).'<br>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftInterventionCards"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '</td><td>';
 print '<input size="50" class="flat" type="text" name="FICHINTER_DRAFT_WATERMARK" value="'.$conf->global->FICHINTER_DRAFT_WATERMARK.'">';
 print '</td><td align="right">';
@@ -575,6 +604,40 @@ print '<input type="submit" class="button" value="' . $langs->trans("Modify") . 
 print '</td>';
 print '</tr>';
 print '</form>';
+// Use duration
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_FICHINTER_WITHOUT_DURATION">';
+print '<tr class="oddeven">';
+print '<td>';
+print $langs->trans("UseDurationOnFichinter");
+print '</td>';
+print '<td align="center">';
+print '<input type="checkbox" name="FICHINTER_WITHOUT_DURATION"' . ($conf->global->FICHINTER_WITHOUT_DURATION?' checked':'') . '>';
+print '</td>';
+print '<td align="right">';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</td>';
+print '</tr>';
+print '</form>';
+// use date without hour
+print '<form action="' . $_SERVER["PHP_SELF"] . '" method="post">';
+print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+print '<input type="hidden" name="action" value="set_FICHINTER_DATE_WITHOUT_HOUR">';
+print '<tr class="oddeven">';
+print '<td>';
+print $langs->trans("UseDateWithoutHourOnFichinter");
+print '</td>';
+print '<td align="center">';
+print '<input type="checkbox" name="FICHINTER_DATE_WITHOUT_HOUR"' . ($conf->global->FICHINTER_DATE_WITHOUT_HOUR?' checked':'') . '>';
+print '</td>';
+print '<td align="right">';
+print '<input type="submit" class="button" value="' . $langs->trans("Modify") . '">';
+print '</td>';
+print '</tr>';
+print '</form>';
+
+
 
 
 print '</table>';

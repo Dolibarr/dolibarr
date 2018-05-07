@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	\file       htdocs/compta/bank/various_payment/info.php
- *	\ingroup    salaries
- *	\brief      Page with info about salaries contribution
+ *  \file       htdocs/compta/bank/various_payment/info.php
+ *  \ingroup    bank
+ *  \brief      Page with info about various payment
  */
 
 require '../../../main.inc.php';
@@ -26,18 +26,15 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("salaries");
+$langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
 
 // Security check
-$socid = GETPOST('socid','int');
+$socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
-$result = restrictedArea($user, 'salaries', '', '', '');
-
+$result = restrictedArea($user, 'banque', '', '', '');
 
 /*
  * View

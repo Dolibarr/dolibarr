@@ -45,7 +45,7 @@ dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/myobject.lib.php');
 
 // Load traductions files requiredby by page
-$langs->loadLangs(array("mymodule@mymodule","companies","other"));
+$langs->loadLangs(array("mymodule@mymodule","companies","other","mails"));
 
 
 $action=GETPOST('action','aZ09');
@@ -68,19 +68,21 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
+//if (! $sortfield) $sortfield="position_name";
 
 // Initialize technical objects
 $object=new MyObject($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->mymodule->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('myobjectdocument'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('myobjectdocument','globalcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('myobject');
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once  // Must be include, not include_once. Include fetch and fetch_thirdparty but not fetch_optionals
-if ($id > 0 || ! empty($ref)) $upload_dir = $conf->mymodule->multidir_output[$object->entity] . "/" . $object->id;
 
+//if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/myobject/" . dol_sanitizeFileName($object->id);
+if ($id > 0 || ! empty($ref)) $upload_dir = $conf->sellyoursaas->multidir_output[$object->entity] . "/myobject/" . dol_sanitizeFileName($object->ref);
 
 
 /*
@@ -106,7 +108,6 @@ if ($object->id)
 	/*
 	 * Show tabs
 	 */
-	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = myobjectPrepareHead($object);
 
 	dol_fiche_head($head, 'document', $langs->trans("MyObject"), -1, 'myobject@mymodule');
@@ -131,30 +132,6 @@ if ($object->id)
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
 
-	// Prefix
-	if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
-	{
-		print '<tr><td class="titlefield">'.$langs->trans('Prefix').'</td><td colspan="3">'.$object->prefix_comm.'</td></tr>';
-	}
-
-	if ($object->client)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('CustomerCode').'</td><td colspan="3">';
-		print $object->code_client;
-		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
-		print '</td></tr>';
-	}
-
-	if ($object->fournisseur)
-	{
-		print '<tr><td class="titlefield">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $object->code_fournisseur;
-		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
-		print '</td></tr>';
-	}
-
 	// Number of files
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
@@ -167,10 +144,16 @@ if ($object->id)
 
 	dol_fiche_end();
 
-	$modulepart = 'societe';
-	$permission = $user->rights->societe->creer;
-	$permtoedit = $user->rights->societe->creer;
+	$modulepart = 'mymodule';
+	//$permission = $user->rights->mymodule->create;
+	$permission = 1;
+	//$permtoedit = $user->rights->mymodule->create;
+	$permtoedit = 1;
 	$param = '&id=' . $object->id;
+
+	//$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->id).'/';
+	$relativepathwithnofile='myobject/' . dol_sanitizeFileName($object->ref).'/';
+
 	include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }
 else

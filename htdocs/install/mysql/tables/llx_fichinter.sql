@@ -42,6 +42,7 @@ create table llx_fichinter
   note_private		text,
   note_public		text,
   model_pdf			varchar(255),
+  last_main_doc		varchar(255),				-- relative filepath+filename of last main generated document
   import_key        varchar(14),
   extraparams		varchar(255)				-- for other parameters with json format
 )ENGINE=innodb;

@@ -10,7 +10,6 @@ ShowDonation=Mostrar doação
 PublicDonation=Doação pública
 DonationsArea=Área de doações
 DonationStatusPromiseNotValidated=Promessa não validada
-DonationStatusPromiseValidated=Promessa validada
 DonationStatusPaid=Doação recebida
 DonationStatusPromiseNotValidatedShort=Não validada
 DonationStatusPromiseValidatedShort=Validada

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2016   Xebax Christy           <xebax@wanadoo.fr>
+/* Copyright (C) 2016	Xebax Christy	<xebax@wanadoo.fr>
+ * Copyright (C) 2017	Regis Houssin	<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,7 @@ use Luracast\Restler\RestException;
 
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 /**
  * API class for members
@@ -89,7 +91,7 @@ class Members extends DolibarrApi
      *
      * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $typeid = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $typeid = '', $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -223,10 +225,14 @@ class Members extends DolibarrApi
 
         // If there is no error, update() returns the number of affected rows
         // so if the update is a no op, the return value is zero.
-        if($member->update(DolibarrApiAccess::$user) >= 0)
+        if ($member->update(DolibarrApiAccess::$user) >= 0)
+        {
             return $this->get($id);
-
-        return false;
+        }
+        else
+        {
+        	throw new RestException(500, $member->error);
+        }
     }
 
     /**
@@ -293,6 +299,17 @@ class Members extends DolibarrApi
 
         // Remove the subscriptions because they are handled as a subresource.
         unset($object->subscriptions);
+        unset($object->fk_incoterms);
+        unset($object->libelle_incoterms);
+        unset($object->location_incoterms);
+        unset($object->fk_delivery_address);
+        unset($object->shipping_method_id);
+
+        unset($object->total_ht);
+        unset($object->total_ttc);
+        unset($object->total_tva);
+        unset($object->total_localtax1);
+        unset($object->total_localtax2);
 
         return $object;
     }
@@ -356,5 +373,39 @@ class Members extends DolibarrApi
 
         return $member->subscription($start_date, $amount, 0, '', $label, '', '', '', $end_date);
     }
+
+    /**
+     * Get categories for a member
+     *
+     * @param int		$id         ID of member
+     * @param string		$sortfield	Sort field
+     * @param string		$sortorder	Sort order
+     * @param int		$limit		Limit for list
+     * @param int		$page		Page number
+     *
+     * @return mixed
+     *
+     * @url GET {id}/categories
+     */
+	function getCategories($id, $sortfield = "s.rowid", $sortorder = 'ASC', $limit = 0, $page = 0)
+	{
+		if (! DolibarrApiAccess::$user->rights->categorie->lire) {
+			throw new RestException(401);
+		}
+
+		$categories = new Categorie($this->db);
+
+		$result = $categories->getListForItem($id, 'member', $sortfield, $sortorder, $limit, $page);
+
+		if (empty($result)) {
+			throw new RestException(404, 'No category found');
+		}
+
+		if ($result < 0) {
+			throw new RestException(503, 'Error when retrieve category list : '.$categories->error);
+		}
+
+		return $result;
+	}
 
 }

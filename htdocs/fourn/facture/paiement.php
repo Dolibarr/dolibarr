@@ -66,7 +66,7 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
 $optioncss = GETPOST('optioncss','alpha');
@@ -524,7 +524,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 						if (!empty($conf->multicurrency->enabled)) print '<td align="center">'.$langs->trans('MulticurrencyPaymentAmount').'</td>';
 	                    print '</tr>';
 
-	                    $var=True;
 	                    $total=0;
 	                    $total_ttc=0;
 	                    $totalrecu=0;
@@ -725,7 +724,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
  */
 if (empty($action))
 {
-    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+    $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
     $sortfield = GETPOST("sortfield",'alpha');
     $sortorder = GETPOST("sortorder",'alpha');
     $page=GETPOST("page",'int');
@@ -773,8 +772,11 @@ if (empty($action))
     if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
     if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
     $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.code, c.libelle, ba.rowid, ba.label";
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+    // Add where from extra fields
+
     $sql.= $db->order($sortfield,$sortorder);
 
     $nbtotalofrecords = '';
@@ -782,6 +784,11 @@ if (empty($action))
     {
         $result = $db->query($sql);
         $nbtotalofrecords = $db->num_rows($result);
+        if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+        {
+        	$page = 0;
+        	$offset = 0;
+        }
     }
 
     $sql.= $db->plimit($limit+1, $offset);
@@ -791,7 +798,6 @@ if (empty($action))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=True;
 
         $param='';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
@@ -805,12 +811,7 @@ if (empty($action))
         if ($search_payment_num)    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
     	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
     	// Add $param from extra fields
-    	foreach ($search_array_options as $key => $val)
-    	{
-    	    $crit=$val;
-    	    $tmpkey=preg_replace('/search_options_/','',$key);
-    	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-    	}
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
     	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
@@ -850,8 +851,8 @@ if (empty($action))
         print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
         print '<td class="liste_titre" align="center">';
-        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-        print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+        print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
         $formother->select_year($year?$year:-1,'year',1, 20, 5);
         print '</td>';
         print '<td class="liste_titre" align="left">';
@@ -913,7 +914,7 @@ if (empty($action))
             print '<td>'.$objp->num_paiement.'</td>';
 
             print '<td>';
-            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
+            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
             else print '&nbsp;';
             print '</td>';
 

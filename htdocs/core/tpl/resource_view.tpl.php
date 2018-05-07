@@ -1,6 +1,12 @@
 <!-- BEGIN TEMPLATE resource_view.tpl.php -->
 <?php
-//var_dump($linked_resources);
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $form= new Form($db);
 
@@ -34,11 +40,11 @@ if( (array) $linked_resources && count($linked_resources) > 0)
 
 	foreach ($linked_resources as $linked_resource)
 	{
-		
+
 		$object_resource = fetchObjectByElement($linked_resource['resource_id'],$linked_resource['resource_type']);
-		
+
 		//$element_id = $linked_resource['rowid'];
-		
+
 		if ($mode == 'edit' && $linked_resource['rowid'] == GETPOST('lineid'))
 		{
 

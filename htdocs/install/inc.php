@@ -169,8 +169,8 @@ if (! empty($dolibarr_main_document_root_alt))
 }
 
 
-// Security check
-if (preg_match('/install.lock/i',$_SERVER["SCRIPT_FILENAME"]))
+// Security check (old method, when directory is renamed /install.lock)
+if (preg_match('/install\.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
     print 'Install pages have been disabled for security reason (directory renamed with .lock suffix).';
     if (! empty($dolibarr_main_url_root))
@@ -220,8 +220,8 @@ if (! defined('SYSLOG_FILE'))	// To avoid warning on systems with constant alrea
 	else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
 	else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
 	//print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
-	if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
 }
+if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
 if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
 // We init log handler for install
 $handlers = array('mod_syslog_file');
@@ -326,8 +326,8 @@ function conf($dolibarr_main_document_root)
         else if (@is_writable('../../../../') && @file_exists('../../../../startdoliwamp.bat')) define('SYSLOG_FILE','../../../../dolibarr_install.log');	// For DoliWamp
         else if (@is_writable('../../')) define('SYSLOG_FILE','../../dolibarr_install.log');				// For others
         //print 'SYSLOG_FILE='.SYSLOG_FILE;exit;
-        if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
     }
+    if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
     if (! defined('SYSLOG_FILE_NO_ERROR')) define('SYSLOG_FILE_NO_ERROR',1);
     // We init log handler for install
     $handlers = array('mod_syslog_file');
@@ -371,7 +371,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
     $langs->load("main");
     $langs->load("admin");
 
-    $jquerytheme='smoothness';
+    $jquerytheme='base';
 
     if ($forcejqueryurl)
     {
@@ -391,8 +391,9 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
     print '<!DOCTYPE HTML>'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
-    print '<meta charset='.$conf->file->character_set_client.'">'."\n";
+    print '<meta charset="'.$conf->file->character_set_client.'">'."\n";
     print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
+    print '<meta name="generator" content="Dolibarr installer">'."\n";
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
     print '<!-- Includes CSS for JQuery -->'."\n";

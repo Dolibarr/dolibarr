@@ -23,8 +23,8 @@ ErrorPHPDoesNotSupportUTF8=Your PHP installation does not support UTF8 functions
 ErrorDirDoesNotExists=Directory %s does not exist.
 ErrorGoBackAndCorrectParameters=Go backward and correct wrong parameters.
 ErrorWrongValueForParameter=You may have typed a wrong value for parameter '%s'.
-ErrorFailedToCreateDatabase=Failed to create database '%s'.
-ErrorFailedToConnectToDatabase=Failed to connect to database '%s'.
+ErrorFailedToCreateDatabase=Dёshtim nё krijimin e bazёs sё tё dhёnave '%s'
+ErrorFailedToConnectToDatabase=Dёshtim pёr tu lidhur me bazёn e tё dhёnave '%s'
 ErrorDatabaseVersionTooLow=Database version (%s) too old. Version %s or higher is required.
 ErrorPHPVersionTooLow=PHP version too old. Version %s is required.
 ErrorConnectedButDatabaseNotFound=Connection to server successfull but database '%s' not found.
@@ -32,9 +32,9 @@ ErrorDatabaseAlreadyExists=Database '%s' already exists.
 IfDatabaseNotExistsGoBackAndUncheckCreate=If database does not exists, go back and check option "Create database".
 IfDatabaseExistsGoBackAndCheckCreate=If database already exists, go back and uncheck "Create database" option.
 WarningBrowserTooOld=Too old version of browser. Upgrading your browser to a recent version of Firefox, Chrome or Opera is highly recommanded.
-PHPVersion=PHP Version
+PHPVersion=Versioni i PHP
 License=Using license
-ConfigurationFile=Configuration file
+ConfigurationFile=Skedari i konfigurimit
 WebPagesDirectory=Directory where web pages are stored
 DocumentsDirectory=Directory to store uploaded and generated documents
 URLRoot=URL Root
@@ -43,7 +43,7 @@ CheckToForceHttps=Check this option to force secure connections (https).<br>This
 DolibarrDatabase=Dolibarr Database
 DatabaseType=Database type
 DriverType=Driver type
-Server=Server
+Server=Serveri
 ServerAddressDescription=Name or ip address for database server, usually 'localhost' when database server is hosted on same server than web server
 ServerPortDescription=Database server port. Keep empty if unknown.
 DatabaseServer=Database server
@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=You use the Dolibarr setup wizard from a Linux package (Ubu
 KeepDefaultValuesMamp=You use the Dolibarr setup wizard from DoliMamp, so values proposed here are already optimized. Change them only if you know what you do.
 KeepDefaultValuesProxmox=You use the Dolibarr setup wizard from a Proxmox virtual appliance, so values proposed here are already optimized. Change them only if you know what you do.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Fix for denormalized data
@@ -191,9 +193,11 @@ MigrationActioncommElement=Update data on actions
 MigrationPaymentMode=Data migration for payment mode
 MigrationCategorieAssociation=Migration of categories
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Show not available options
 HideNotAvailableOptions=Hide not available options
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

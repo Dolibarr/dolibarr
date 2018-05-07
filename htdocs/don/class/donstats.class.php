@@ -42,7 +42,7 @@ class DonationStats extends Stats
     var $from;
 	var $field;
     var $where;
-    
+
 
     /**
      * Constructor
@@ -55,13 +55,13 @@ class DonationStats extends Stats
     function __construct($db, $socid, $mode, $userid=0)
     {
 		global $user, $conf;
-    	
+
 		$this->db = $db;
-        
+
 		$this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-		$this->cachefilesuffix = $mode; 
-        
+		$this->cachefilesuffix = $mode;
+
         $object=new Don($this->db);
 		$this->from = MAIN_DB_PREFIX.$object->table_element." as d";
 		//$this->from.= ", ".MAIN_DB_PREFIX."societe as s";
@@ -77,9 +77,10 @@ class DonationStats extends Stats
      * Return shipment number by month for a year
      *
 	 * @param	int		$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
      */
-    function getNbByMonth($year)
+    function getNbByMonth($year, $format=0)
     {
         global $user;
 
@@ -90,7 +91,7 @@ class DonationStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql);
+		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
     }
 

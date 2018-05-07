@@ -427,7 +427,18 @@ class SMTPs
 
 		if ($usetls) $host='tls://'.$host;
 
-		if ( $_retVal = $this->socket_send_str('EHLO ' . $host, '250') )
+		$hosth = $host;
+
+		if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
+		{
+			// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+			$hosth = $this->getFrom('addr');
+			$hosth = preg_replace('/^.*</', '', $hosth);
+			$hosth = preg_replace('/>.*$/', '', $hosth);
+			$hosth = preg_replace('/.*@/', '', $hosth);
+		}
+
+		if ( $_retVal = $this->socket_send_str('EHLO ' . $hosth, '250') )
 		{
 			if ($usetls)
 			{
@@ -512,6 +523,8 @@ class SMTPs
 	 */
 	function sendMsg($_bolTestMsg = false, $_bolDebug = false)
 	{
+		global $conf;
+
 		/**
 		 * Default return value
 		 */
@@ -538,7 +551,18 @@ class SMTPs
 				$host=preg_replace('@ssl://@i','',$host);	// Remove prefix
 				$host=preg_replace('@tls://@i','',$host);	// Remove prefix
 
-				$_retVal = $this->socket_send_str('HELO ' . $host, '250');
+				$hosth = $host;
+
+				if (! empty($conf->global->MAIL_SMTP_USE_FROM_FOR_HELO))
+				{
+					// If the from to is 'aaa <bbb@ccc.com>', we will keep 'ccc.com'
+					$hosth = $this->getFrom('addr');
+					$hosth = preg_replace('/^.*</', '', $hosth);
+					$hosth = preg_replace('/>.*$/', '', $hosth);
+					$hosth = preg_replace('/.*@/', '', $hosth);
+				}
+
+				$_retVal = $this->socket_send_str('HELO ' . $hosth, '250');
 			}
 
 			// Well, did we get to the server?
@@ -623,7 +647,7 @@ class SMTPs
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
@@ -631,7 +655,7 @@ class SMTPs
 		if ( ! empty ($_strConfigPath) )
 		{
 			// If the path is not valid, this will NOT generate an error,
-			// it will simply return FALSE.
+			// it will simply return false.
 			if ( ! @include ( $_strConfigPath ) )
 			{
 				$this->_setErr(110, '"' . $_strConfigPath . '" is not a valid path.');
@@ -1283,6 +1307,7 @@ class SMTPs
 		{
 			$_header .= 'Message-ID: <' . time() . '.SMTPs@' . $host . ">\r\n";
 		}
+		if (! empty($_SERVER['REMOTE_ADDR'])) $_header .= "X-RemoteAddr: " . $_SERVER['REMOTE_ADDR']. "\r\n";
 		if ( $this->getMoreInHeader() )
 		    $_header .= $this->getMoreInHeader();     // Value must include the "\r\n";
 
@@ -1385,7 +1410,7 @@ class SMTPs
 			$content = 'Content-Type: ' . $_msgData['mimeType'] . '; charset="' . $this->getCharSet() . '"' . "\r\n"
 			. 'Content-Transfer-Encoding: ' . $this->getTransEncodeType() . "\r\n"
 			. 'Content-Disposition: inline'  . "\r\n"
-			. 'Content-Description: message' . "\r\n";
+			. 'Content-Description: Message' . "\r\n";
 
 			if ( $this->getMD5flag() )
 			$content .= 'Content-MD5: ' . $_msgData['md5'] . "\r\n";
@@ -1434,7 +1459,7 @@ class SMTPs
 						.  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Transfer-Encoding: base64' . "\r\n"
-						.  'Content-Description: File Attachment' . "\r\n";
+						.  'Content-Description: ' . $_data['fileName'] ."\r\n";
 
 						if ( $this->getMD5flag() )
 						$content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
@@ -1724,32 +1749,34 @@ class SMTPs
 	 * using SMTP Extensions
 	 *
 	 * @param	Handler		$socket			Socket handler
-	 * @param	string		$response		Response
+	 * @param	string		$response		Response. Example: "550 5.7.1  https://support.google.com/a/answer/6140680#invalidcred j21sm814390wre.3"
 	 * @return	boolean						True or false
 	 */
 	function server_parse($socket, $response)
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
 		$server_response = '';
+
         // avoid infinite loop
         $limit=0;
 
-		while ( substr($server_response,3,1) != ' ' && $limit<100)
+		while (substr($server_response,3,1) != ' ' && $limit<100)
 		{
-			if( !( $server_response = fgets($socket, 256) ) )
+			if (! ($server_response = fgets($socket, 256)))
 			{
 				$this->_setErr(121, "Couldn't get mail server response codes");
 				$_retVal = false;
+				break;
 			}
             $limit++;
 		}
 
-		if( !( substr($server_response, 0, 3) == $response ) )
+		if (! (substr($server_response, 0, 3) == $response))
 		{
 			$this->_setErr(120, "Ran into problems sending Mail.\r\nResponse: $server_response");
 			$_retVal = false;

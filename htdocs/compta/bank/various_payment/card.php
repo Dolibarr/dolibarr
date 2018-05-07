@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2017		Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2017       Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,9 @@
  */
 
 /**
- *	    \file       htdocs/compta/bank/various_expenses/card.php
- *      \ingroup    bank
- *		\brief      Page of various expenses
+ *  \file       htdocs/compta/bank/various_expenses/card.php
+ *  \ingroup    bank
+ *  \brief      Page of various expenses
  */
 
 require '../../../main.inc.php';
@@ -26,9 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
-if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
+require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 if (! empty($conf->projet->enabled))
 {
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
@@ -40,8 +40,8 @@ $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 // Get parameters
 $id			= GETPOST('id', 'int');
 $action		= GETPOST('action', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
-$backtopage = GETPOST('backtopage', 'alpha');
+$cancel		= GETPOST('cancel', 'aZ09');
+$backtopage	= GETPOST('backtopage', 'alpha');
 
 $accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
 $label=GETPOST("label","alpha");
@@ -49,7 +49,7 @@ $sens=GETPOST("sens","int");
 $amount=GETPOST("amount");
 $paymenttype=GETPOST("paymenttype");
 $accountancy_code=GETPOST("accountancy_code","int");
-$projectid = (GETPOST('projectid') ? GETPOST('projectid', 'int') : 0);
+$projectid = (GETPOST('projectid','int') ? GETPOST('projectid', 'int') : GETPOST('fk_project','int'));
 
 // Security check
 $socid = GETPOST("socid","int");
@@ -96,22 +96,23 @@ if (empty($reshook))
 	{
 		$error=0;
 
-		$datep=dol_mktime(12,0,0, GETPOST("datepmonth"), GETPOST("datepday"), GETPOST("datepyear"));
-		$datev=dol_mktime(12,0,0, GETPOST("datevmonth"), GETPOST("datevday"), GETPOST("datevyear"));
+		$datep=dol_mktime(12,0,0, GETPOST("datepmonth",'int'), GETPOST("datepday",'int'), GETPOST("datepyear",'int'));
+		$datev=dol_mktime(12,0,0, GETPOST("datevmonth",'int'), GETPOST("datevday",'int'), GETPOST("datevyear",'int'));
 		if (empty($datev)) $datev=$datep;
 
-		$object->accountid=GETPOST("accountid") > 0 ? GETPOST("accountid","int") : 0;
+		$object->ref='';	// TODO
+		$object->accountid=GETPOST("accountid",'int') > 0 ? GETPOST("accountid","int") : 0;
 		$object->datev=$datev;
 		$object->datep=$datep;
-		$object->amount=price2num(GETPOST("amount"));
-		$object->label=GETPOST("label");
-		$object->note=GETPOST("note");
-		$object->type_payment=GETPOST("paymenttype") > 0 ? GETPOST("paymenttype", "int") : 0;
-		$object->num_payment=GETPOST("num_payment");
+		$object->amount=price2num(GETPOST("amount",'alpha'));
+		$object->label=GETPOST("label",'none');
+		$object->note=GETPOST("note",'none');
+		$object->type_payment=GETPOST("paymenttype",'int') > 0 ? GETPOST("paymenttype", "int") : 0;
+		$object->num_payment=GETPOST("num_payment",'alpha');
 		$object->fk_user_author=$user->id;
 		$object->accountancy_code=GETPOST("accountancy_code") > 0 ? GETPOST("accountancy_code","int") : "";
 		$object->sens=GETPOST('sens');
-		$object->fk_project= GETPOST('fk_project');
+		$object->fk_project= GETPOST('fk_project','int');
 
 		if (empty($datep) || empty($datev))
 		{
@@ -348,7 +349,7 @@ if ($action == 'create')
 	print '<div class="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
 	print ' &nbsp; ';
-	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '<input type="button" class="button" value="'.$langs->trans("Cancel").'" onclick="javascript:history.go(-1)">';
 	print '</div>';
 
 	print '</form>';
@@ -411,7 +412,7 @@ if ($id)
 	print '<table class="border" width="100%">';
 
 	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	print '<tr><td class="titlefield">'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
 
 	// Payment date
 	print "<tr>";
@@ -437,7 +438,7 @@ if ($id)
 	if (! empty($conf->accounting->enabled))
 	{
 		$accountingaccount = new AccountingAccount($db);
-		$accountingaccount->fetch('',$object->accountancy_code);
+		$accountingaccount->fetch('',$object->accountancy_code, 1);
 
 		print $accountingaccount->getNomUrl(0,1,1,'',1);
 	} else {

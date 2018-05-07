@@ -1,5 +1,5 @@
 // Copyright (C) 2014 Cedric GROSS		<c.gross@kreiz-it.fr>
-// Copyright (C) 2015 Francis Appels	<francis.appels@z-application.com>
+// Copyright (C) 2017 Francis Appels	<francis.appels@z-application.com>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  * addDispatchLine
  * Adds new table row for dispatching to multiple stock locations
  * 
- * @param	index	int		index of produt line. 0 = first product line
+ * @param	index	int		index of product line. 0 = first product line
  * @param	type	string	type of dispatch (batch = batch dispatch, dispatch = non batch dispatch)
  * @param	mode	string	'qtymissing' will create new line with qty missing, 'lessone' will keep 1 in old line and the rest in new one
  */
@@ -35,17 +35,17 @@ function addDispatchLine(index, type, mode)
 	console.log("Split line type="+type+" index="+index+" mode="+mode);
 	var $row = $("tr[name='"+type+'_0_'+index+"']").clone(true), // clone first batch line to jQuery object
 		nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length, // position of line for batch
-		qtyOrdered = parseFloat($("#qty_ordered_"+(nbrTrs - 1)+"_"+index).val()),
+		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()), // Qty ordered is same for all rows
 		qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val()),
 		qtyDispatched;
 			
 	if (mode === 'lessone') 
 	{
-		qtyDispatched = parseFloat($("#qty_dispatched_"+(nbrTrs - 1)+"_"+index).val()) + 1;
+		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()) + 1;
 	}
 	else
 	{
-		qtyDispatched = parseFloat($("#qty_dispatched_"+(nbrTrs - 1)+"_"+index).val()) + qty;
+		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()) + qty;
 	}
 	
 	if (qtyDispatched < qtyOrdered)
@@ -63,10 +63,10 @@ function addDispatchLine(index, type, mode)
 		//insert new row before last row
 		$("tr[name^='"+type+"_'][name$='_"+index+"']:last").after($row);
 		//remove cloned select2 with duplicate id.
-		$("#s2id_entrepot_"+nbrTrs+'_'+index).detach();		
+		$("#s2id_entrepot_"+nbrTrs+'_'+index).detach();
 		/*  Suffix of lines are:  _ trs.length _ index  */
 		$("#qty_"+nbrTrs+"_"+index).focus();
-		$("#qty_dispatched_"+(nbrTrs)+"_"+index).val(qtyDispatched);
+		$("#qty_dispatched_0_"+index).val(qtyDispatched);
 		
 		//hide all buttons then show only the last one
 		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
@@ -74,15 +74,51 @@ function addDispatchLine(index, type, mode)
 		
 		if (mode === 'lessone')
 		{
-			$("#qty_"+(nbrTrs)+"_"+index).val(qty-1);
-			$("#qty_"+(nbrTrs-1)+"_"+index).val(1);
+			qty = 1; // keep 1 in old line
+			$("#qty_"+(nbrTrs-1)+"_"+index).val(qty);
 		}
-		else
-		{
-			$("#qty_"+nbrTrs+"_"+index).val(qtyOrdered - qtyDispatched);	
-		}
-		
+		$("#qty_"+nbrTrs+"_"+index).val(qtyOrdered - qtyDispatched);
+		// Store arbitrary data for dispatch qty input field change event
+		$("#qty_"+(nbrTrs-1)+"_"+index).data('qty', qty);
+		$("#qty_"+(nbrTrs-1)+"_"+index).data('type', type);
+		$("#qty_"+(nbrTrs-1)+"_"+index).data('index', index);
+		// Update dispatched qty when value dispatch qty input field changed
+		$("#qty_"+(nbrTrs-1)+"_"+index).change(this.onChangeDispatchLineQty);
 		//set focus on lot of new line (if it exists)
 		$("#lot_number_"+(nbrTrs)+"_"+index).focus();
+	}
+}
+
+/**
+ * onChangeDispatchLineQty
+ * 
+ * Change event handler for dispatch qty input field, 
+ * recalculate qty dispatched when qty input has changed.
+ * If qty is more then qty ordered reset input qty to max qty to dispatch.
+ * 
+ * element requires arbitrary data qty (value before change), type (type of dispatch) and index (index of product line)
+ */
+
+function onChangeDispatchLineQty() {
+	var	index = $(this).data('index'),
+		type = $(this).data('type'),
+		qty = parseFloat($(this).data('qty')),
+		changedQty, nbrTrs, dispatchingQty, qtyOrdered, qtyDispatched;
+
+	if (index >= 0 && type && qty >= 0) {
+		nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length;
+		qtyChanged = parseFloat($(this).val()) - qty; // qty changed
+		qtyDispatching = parseFloat($("#qty_"+(nbrTrs-1)+"_"+index).val()); // qty currently being dispatched
+		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()); // qty ordered
+		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()); // qty already dispatched
+
+		console.log("onChangeDispatchLineQty qtyChanged: " + qtyChanged + " qtyDispatching: " + qtyDispatching + " qtyOrdered: " + qtyOrdered + " qtyDispatched: "+ qtyDispatched);
+
+		if ((qtyChanged) <= (qtyOrdered - (qtyDispatched + qtyDispatching))) {
+			$("#qty_dispatched_0_"+index).val(qtyDispatched + qtyChanged);
+		} else {
+			$(this).val($(this).data('qty'));
+		}
+		$(this).data('qty', $(this).val());
 	}
 }

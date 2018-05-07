@@ -30,6 +30,13 @@
  * $inputalsopricewithtax (0 by default, 1 to also show column with unit price including tax)
  */
 
+// Protection to avoid direct call of template
+if (empty($object) || ! is_object($object))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
 
 $usemargins=0;
 if (! empty($conf->margin->enabled) && ! empty($object->element) && in_array($object->element,array('facture','propal','commande'))) $usemargins=1;
@@ -46,7 +53,7 @@ $colspan = 3;	// Col total ht + col edit + col delete
 if (! empty($inputalsopricewithtax)) $colspan++;	// We add 1 if col total ttc
 if (in_array($object->element,array('propal','supplier_proposal','facture','invoice','commande','order','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 if (empty($user->rights->margins->creer)) $colspan++;
-if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_edit.tpl.php -->
@@ -55,7 +62,10 @@ if (!empty($conf->multicurrency->enabled)) $colspan+=2;
 $coldisplay=-1; // We remove first td
 ?>
 <tr <?php echo $bc[$var]; ?>>
-	<td<?php echo (! empty($conf->global->MAIN_VIEW_LINE_NUMBER) ? ' colspan="2"' : ''); ?>><?php $coldisplay+=(! empty($conf->global->MAIN_VIEW_LINE_NUMBER))?2:1; ?>
+	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+		<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
+	<?php } ?>
+	<td>
 	<div id="line_<?php echo $line->id; ?>"></div>
 
 	<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
@@ -76,7 +86,7 @@ $coldisplay=-1; // We remove first td
 		echo ' - '.nl2br($line->product_label);
 		?>
 
-		<br>
+		<br><br>
 
 	<?php }	?>
 
@@ -103,14 +113,29 @@ $coldisplay=-1; // We remove first td
 	} else {
 		print '<textarea id="product_desc" class="flat" name="product_desc" readonly style="width: 200px; height:80px;">' . $line->description . '</textarea>';
 	}
+
+	// Show autofill date for recuring invoices
+	if (! empty($conf->service->enabled) && $line->product_type == 1 && $line->element == 'facturedetrec')
+	{
+		echo '<br>';
+		echo $langs->trans('AutoFillDateFrom').' ';
+		echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
+		echo ' - ';
+		echo $langs->trans('AutoFillDateTo').' ';
+		echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
+	}
+
 	?>
 	</td>
 
-	<?php if ($object->element == 'supplier_proposal') { ?>
-		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat" value="<?php echo $line->ref_fourn; ?>" size="12"></td>
-	<?php } ?>
-
 	<?php
+	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
+	{
+	?>
+		<td align="right"><input id="fourn_ref" name="fourn_ref" class="flat minwidth75" value="<?php echo ($line->ref_supplier ? $line->ref_supplier : $line->ref_fourn); ?>"></td>
+	<?php
+	}
+
 	$coldisplay++;
 	if ($this->situation_counter == 1 || !$this->situation_cycle_ref) {
 		print '<td align="right">' . $form->load_tva('tva_tx', $line->tva_tx.($line->vat_src_code?(' ('.$line->vat_src_code.')'):''), $seller, $buyer, 0, $line->info_bits, $line->product_type, false, 1) . '</td>';
@@ -123,7 +148,7 @@ $coldisplay=-1; // We remove first td
 	if ($this->situation_counter > 1) print ' readonly';
 	print '></td>';
 
-	if (!empty($conf->multicurrency->enabled)) {
+	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) {
 		print '<td align="right"><input rel="'.$object->multicurrency_tx.'" type="text" class="flat right" size="5" id="multicurrency_subprice" name="multicurrency_subprice" value="'.price($line->multicurrency_subprice).'" /></td>';
 	}
 
@@ -179,7 +204,7 @@ $coldisplay=-1; // We remove first td
 		<td align="right" class="margininfos"><?php $coldisplay++; ?>
 			<!-- For predef product -->
 			<?php if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) { ?>
-			<select id="fournprice_predef" name="fournprice_predef" class="flat right" data-role="none" style="display: none;"></select>
+			<select id="fournprice_predef" name="fournprice_predef" class="flat right" style="display: none;"></select>
 			<?php } ?>
 			<!-- For free product -->
 			<input class="flat right" type="text" size="5" id="buying_price" name="buying_price" class="hideobject" value="<?php echo price($line->pa_ht,0,'',0); ?>">
@@ -215,18 +240,21 @@ $coldisplay=-1; // We remove first td
 		<input type="submit" class="button" id="savelinebutton" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
 		<input type="submit" class="button" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
 	</td>
-
-	<?php
-	//Line extrafield
-	if (!empty($extrafieldsline))
-	{
-		print $line->showOptionals($extrafieldsline,'edit',array('style'=>$bc[$var],'colspan'=>$coldisplay));
-	}
-	?>
 </tr>
+
+<?php
+//Line extrafield
+if (!empty($extrafieldsline))
+{
+	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var],'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+}
+?>
 
 <?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector)	 { ?>
 <tr id="service_duration_area" <?php echo $bc[$var]; ?>>
+	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+		<td class="linecolnum" align="center"><?php $coldisplay++; ?></td>
+	<?php } ?>
 	<td colspan="<?php echo 7+$colspan ?>"><?php echo $langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' '; ?>
 	<?php
 	$hourmin=(isset($conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE)?$conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE:'');
@@ -254,7 +282,8 @@ $coldisplay=-1; // We remove first td
 	?>
 	</td>
 </tr>
-<?php } ?>
+<?php }
+?>
 
 
 <script type="text/javascript">
@@ -266,21 +295,21 @@ jQuery(document).ready(function()
 		if (event.which != 9 && (event.which < 37 ||event.which > 40) && jQuery("#price_ht").val() != '') {
 			jQuery("#price_ttc").val('');
 			jQuery("#multicurrency_subprice").val('');
-		} 
+		}
 	});
 	jQuery("#price_ttc").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
 		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#multicurrency_subprice").val('');
-		} 
+		}
 	});
 	jQuery("#multicurrency_subprice").keyup(function(event) {
 		// console.log(event.which);		// discard event tag and arrows
 		if (event.which != 9 && (event.which < 37 || event.which > 40) && jQuery("#price_ttc").val() != '') {
 			jQuery("#price_ht").val('');
 			jQuery("#price_ttc").val('');
-		} 
+		}
 	});
 
     <?php

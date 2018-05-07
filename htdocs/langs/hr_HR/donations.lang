@@ -31,3 +31,4 @@ DONATION_ART200=Prikaži članak 200 iz CGI ako ste zabrinuti
 DONATION_ART238=Prikaži članak 238 iz CGI ako ste zabrinuti
 DONATION_ART885=Prikaži članak 885 iz CGI ako ste zabrinuti
 DonationPayment=Isplata donacije
+DonationValidated=Donation %s validated

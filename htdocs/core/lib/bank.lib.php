@@ -42,7 +42,7 @@ function bank_prepare_head(Account $object)
     $head[$h][2] = 'bankname';
     $h++;
 
-    $head[$h][0] = DOL_URL_ROOT . "/compta/bank/bankentries.php?id=" . $object->id;
+    $head[$h][0] = DOL_URL_ROOT . "/compta/bank/bankentries_list.php?id=" . $object->id;
     $head[$h][1] = $langs->trans("BankTransactions");
     $head[$h][2] = 'journal';
     $h++;
@@ -67,8 +67,24 @@ function bank_prepare_head(Account $object)
 
     if ($object->courant != Account::TYPE_CASH)
     {
+    	$nbReceipts=0;
+
+    	// List of all standing receipts
+    	$sql = "SELECT COUNT(DISTINCT(b.num_releve)) as nb";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+    	$sql.= " WHERE b.fk_account = ".$object->id;
+
+    	$resql = $db->query($sql);
+    	if ($resql)
+    	{
+    		$obj = $db->fetch_object($resql);
+    		if ($obj) $nbReceipts = $obj->nb;
+    		$db->free($resql);
+    	}
+
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$object->id;
 	    $head[$h][1] = $langs->trans("AccountStatements");
+	    if (($nbReceipts) > 0) $head[$h][1].= ' <span class="badge">'.($nbReceipts).'</span>';
 	    $head[$h][2] = 'statement';
 	    $h++;
 	}
@@ -95,7 +111,7 @@ function bank_prepare_head(Account $object)
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';
     $h++;*/
-    
+
 	complete_head_from_modules($conf, $langs, $object, $head, $h, 'bank', 'remove');
 
     return $head;
@@ -146,9 +162,9 @@ function bank_admin_prepare_head($object)
  * @return  array				Array of tabs to shoc
  */
 function various_payment_prepare_head($object) {
-	
+
 	global $db, $langs, $conf;
-	
+
 	$h = 0;
 	$head = array();
 
@@ -178,7 +194,7 @@ function various_payment_prepare_head($object) {
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
 	$h++;
-    
+
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'various_payment', 'remove');
 
 	return $head;
@@ -247,7 +263,7 @@ function checkBanForAccount($account)
         $rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz", "12345678912345678923456789");
         // Separation du rib en 3 groupes de 7 + 1 groupe de 2.
         // Multiplication de chaque groupe par les coef du tableau
-    
+
         for ($i = 0, $s = 0; $i < 3; $i++) {
             $code = substr($rib, 7 * $i, 7);
             $s += (0 + (int) $code) * $coef[$i];

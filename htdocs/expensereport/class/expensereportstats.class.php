@@ -60,9 +60,9 @@ class ExpenseReportStats extends Stats
 		$this->field='total_ht';
 
 		//$this->where = " e.fk_statut > 0";
-		//$this->where.= " AND e.date_valid > '2000-01-01'";    // To filter only correct "valid date". If date is invalid, the group by on it will fails. Launch a repair.php if you have. 
+		//$this->where.= " AND e.date_valid > '2000-01-01'";    // To filter only correct "valid date". If date is invalid, the group by on it will fails. Launch a repair.php if you have.
 		$this->where.= ' e.entity IN ('.getEntity('expensereport').')';
-		
+
 		//$this->where.= " AND entity = ".$conf->entity;
 		if ($this->socid)
 		{
@@ -100,10 +100,11 @@ class ExpenseReportStats extends Stats
 	/**
 	 * 	Renvoie le nombre de facture par mois pour une annee donnee
 	 *
-	 *	@param	string	$year	Year to scan
-	 *	@return	array			Array of values
+	 *	@param	string	$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 *	@return	array				Array of values
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		$sql = "SELECT MONTH(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').") as dm, count(*)";
 		$sql.= " FROM ".$this->from;
@@ -112,7 +113,7 @@ class ExpenseReportStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql);
+		$res=$this->_getNbByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
 		return $res;
 	}
@@ -122,9 +123,10 @@ class ExpenseReportStats extends Stats
 	 * 	Renvoie le montant de facture par mois pour une annee donnee
 	 *
 	 *	@param	int		$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 *	@return	array				Array of values
 	 */
-	function getAmountByMonth($year)
+	function getAmountByMonth($year, $format=0)
 	{
 		$sql = "SELECT date_format(".$this->db->ifsql('e.date_valid IS NULL','e.date_create','e.date_valid').",'%m') as dm, sum(".$this->field.")";
 		$sql.= " FROM ".$this->from;
@@ -133,7 +135,7 @@ class ExpenseReportStats extends Stats
 		$sql.= " GROUP BY dm";
 		$sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getAmountByMonth($year, $sql);
+		$res=$this->_getAmountByMonth($year, $sql, $format);
 		//var_dump($res);print '<br>';
 		return $res;
 	}

@@ -115,7 +115,9 @@ div.divsearchfield {
 tr.app {
     height:250px;
 }
-
+tr.app td {
+	border-bottom: 1px solid #888;
+}
 div#newsDoli.tabBar {
     margin-top: 50px;
     margin-right: 30px;
@@ -225,6 +227,7 @@ tr.NotCompatible:hover{
     }
     #listing-content{
         width: 75%;
+        float: right;
     }
 }
 span.details{

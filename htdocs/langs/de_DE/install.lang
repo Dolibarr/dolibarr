@@ -53,10 +53,10 @@ AdminLogin=Administrator Benutzername für Dolibarr Datenbank
 PasswordAgain=Passwort wiederholen
 AdminPassword=Passwort des dolibarr-Datenbankadministrators
 CreateDatabase=Datenbank erstellen
-CreateUser=Create owner or grant him permission on database
+CreateUser=Erzeuge Besitzer oder erteile dem Benutzer Berechtigung für die Datenbank
 DatabaseSuperUserAccess=Datenbankserver - Superadministrator-Zugriff
 CheckToCreateDatabase=Aktivieren Sie dieses Kontrollkästchen, falls Sie noch keine Datenbank angelegt haben und diese im Zuge der Installation erstellt werden soll.<br>Hierfür müssen Sie Benutzername und Passwort des Datenbank-Superusers am Ende der Seite angeben.
-CheckToCreateUser=Check box if database owner does not exist and must be created, or if it exists but database does not exists and permissions must be granted.<br>In this case, you must choose its login and password and also fill the login/password for the superuser account at the bottom of this page. If this box is unchecked, owner database and its passwords must exists.
+CheckToCreateUser=Aktivieren Sie dieses Kontrollkästchen, falls Sie noch keinen Datenbankbenutzer angelegt haben und dieser im Zuge der Installation erstellt werden soll.<br>Hierfür müssen Sie Benutzername und Passwort des Datenbank-Superusers am Ende der Seite angeben. Wenn dies nicht angekreuzt ist, müssen Datenbankeigentümer und Passwort schon existieren.
 DatabaseRootLoginDescription=Anmeldedaten des Datenbank-Superusers zur Erstellung neuer Datenbanken und -benutzer. Sollten diese bereits existieren (z.B. weil Ihre Website bei einem Hosting-Provider liegt), ist diese Option nutzlos.
 KeepEmptyIfNoPassword=Leer lassen wenn der Benutzer kein Passwort hat (nicht empfohlen)
 SaveConfigurationFile=Konfigurationsdatei wird gespeichert
@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Sie verwenden den Dolibarr-Installationsassistenten in eine
 KeepDefaultValuesMamp=Sie verwenden den DoliMamp-Installationsassistent, entsprechend werden hier bereits Werte vorgeschlagen. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
 KeepDefaultValuesProxmox=Sie verwenden den Dolibarr Installationsassistenten einer Proxmox "virtual appliance". Die hier vorgeschlagenen Werte sind bereits optimiert. Bitte nehmen Sie nur Änderungen vor wenn Sie wissen was Sie tun.
 UpgradeExternalModule=Dedizierten Upgradeprozess für externe Module ausführen
-
+SetAtLeastOneOptionAsUrlParameter=Zumindest eine Option für die URL Argumente ist notwendig. z.B. '...repair.php?standard=confirmed'
+NothingToDelete=Nichts zu säubern / zu löschen
+NothingToDo=Keine Aufgaben zum erledigen
 #########
 # upgrade
 MigrationFixData=Denormalisierte Daten bereinigen
@@ -191,9 +193,11 @@ MigrationActioncommElement=Aktualisiere die Termine/Aufgaben
 MigrationPaymentMode=Migration der Daten für die Zahlungsart
 MigrationCategorieAssociation=Migration von Kategorien
 MigrationEvents=Ereignisse migrierern, um den Besitzer des Ereignisses der Zuordnungstabelle hinzuzufügen
+MigrationEventsContact=Migration der Ereignisse um die Kontaktinformationen in die Zuweisungstabelle hinzuzufügen
 MigrationRemiseEntity=Aktualisieren Sie den Wert des Feld "entity" der Tabelle "llx_societe_remise"
 MigrationRemiseExceptEntity=Aktualisieren Sie den Wert des Feld "entity" der Tabelle "llx_societe_remise_except"
 MigrationReloadModule=Neu Laden von Modul %s
+MigrationResetBlockedLog=Modul BlockedLog für v7 Algorithmus zurücksetzen
 ShowNotAvailableOptions=Nicht verfügbare Optionen anzeigen
 HideNotAvailableOptions=Nicht verfügbare Optionen ausblenden
 ErrorFoundDuringMigration=Während der Migration ist ein Fehler aufgetaucht, dadurch ist der nächste Schritt nicht verfügbar. Sie können <a href="%s">hier cklicken</a> um den Fehler zu ignorieren, aber die Anwendung oder manche Features werden unter Umständen nicht richtig funktionieren, solange der Fehler nicht behoben wurde.

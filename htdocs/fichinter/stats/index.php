@@ -75,7 +75,7 @@ print load_fiche_titre($title,'','title_commercial.png');
 dol_mkdir($dir);
 
 $stats = new FichinterStats($db, $socid, $mode, ($userid>0?$userid:0));
-if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$object_status.')';
+if ($object_status != '' && $object_status > -1) $stats->where .= ' AND c.fk_statut IN ('.$db->escape($object_status).')';
 
 // Build graphic number of object
 $data = $stats->getNbByMonthWithPrevYear($endyear,$startyear);
@@ -255,6 +255,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	// Status
 	print '<tr><td align="left">'.$langs->trans("Status").'</td><td align="left">';
+	$tmp = $objectstatic->LibStatut(0);		// To load $this->statuts_short
 	$liststatus=$objectstatic->statuts_short;
 	if (empty($conf->global->FICHINTER_CLASSIFY_BILLED)) unset($liststatus[2]);   // Option deprecated. In a future, billed must be managed with a dedicated field to 0 or 1
 	print $form->selectarray('object_status', $liststatus, $object_status, 1, 0, 0, '', 1);
@@ -291,7 +292,7 @@ foreach ($data as $val)
 	while (! empty($year) && $oldyear > $year+1)
 	{ // If we have empty year
 		$oldyear--;
-		
+
 		print '<tr '.$bc[$var].' height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 
@@ -304,7 +305,7 @@ foreach ($data as $val)
 		print '</tr>';
 	}
 
-	
+
 	print '<tr '.$bc[$var].' height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
@@ -324,7 +325,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

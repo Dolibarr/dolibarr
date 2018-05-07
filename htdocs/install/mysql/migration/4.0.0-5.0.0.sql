@@ -4,6 +4,7 @@
 -- when current version is 5.0.0 or higher.
 --
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
+-- 							-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_table_rowid_seq RENAME TO llx_table_new_rowid_seq;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
@@ -60,6 +61,8 @@ ALTER TABLE llx_facturedet ADD COLUMN fk_user_modif integer after fk_unit;
 ALTER TABLE llx_user DROP COLUMN phenix_login;
 ALTER TABLE llx_user DROP COLUMN phenix_pass;
 ALTER TABLE llx_user ADD COLUMN dateemployment datetime;
+
+ALTER TABLE llx_user MODIFY login varchar(50) NOT NULL;
 
 ALTER TABLE llx_societe ADD COLUMN fk_account integer;
 
@@ -119,6 +122,8 @@ create table llx_expensereport_extrafields
 ALTER TABLE llx_expensereport_extrafields ADD INDEX idx_expensereport_extrafields (fk_object);
 
 ALTER TABLE llx_cotisation RENAME TO llx_subscription;
+-- VPGSQL8.2 ALTER SEQUENCE IF EXISTS llx_cotisation_rowid_seq RENAME TO llx_subscription_rowid_seq;
+
 ALTER TABLE llx_subscription ADD UNIQUE INDEX uk_subscription (fk_adherent,dateadh);
 ALTER TABLE llx_subscription CHANGE COLUMN cotisation subscription real;
 ALTER TABLE llx_adherent_type CHANGE COLUMN cotisation subscription varchar(3) NOT NULL DEFAULT '1';

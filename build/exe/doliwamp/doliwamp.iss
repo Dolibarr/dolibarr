@@ -28,11 +28,11 @@ OutputBaseFilename=__FILENAMEEXEDOLIWAMP__
 SourceDir=..\..\..
 AppId=doliwamp
 AppPublisher=NLTechno
-AppPublisherURL=http://www.nltechno.com
-AppSupportURL=http://www.dolibarr.org
-AppUpdatesURL=http://www.dolibarr.org
+AppPublisherURL=https://www.nltechno.com
+AppSupportURL=https://www.dolibarr.org
+AppUpdatesURL=https://www.dolibarr.org
 AppComments=DoliWamp includes Dolibarr, Apache, PHP and Mysql softwares.
-AppCopyright=Copyright (C) 2008-2016 Laurent Destailleur, NLTechno
+AppCopyright=Copyright (C) 2008-2017 Laurent Destailleur (NLTechno), Fabian Rodriguez (Le Goût du Libre)
 DefaultDirName=c:\dolibarr
 DefaultGroupName=Dolibarr
 ;LicenseFile=COPYING
@@ -100,9 +100,9 @@ Source: "build\exe\doliwamp\builddemosslfiles.bat.install"; DestDir: "{app}\"; F
 Source: "build\exe\doliwamp\UsedPort.exe"; DestDir: "{app}\"; Flags: ignoreversion;
 ; PhpMyAdmin, Apache, Php, Mysql
 ; Put here path of Wampserver applications
-; Value OK: apache 2.2.6, php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45
+; Value OK: apache 2.2.6,  php 5.2.5 (5.2.11, 5.3.0 and 5.3.1 fails if php_exif, php_pgsql, php_zip is on), mysql 5.0.45
 ; Value OK: apache 2.2.11, php 5.3.0 (if no php_exif, php_pgsql, php_zip), mysql 5.0.45
-; Value ???: apache 2.4.19, php 5.5.12, mysql 5.0.45 instead of 5.6.17 (wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe)
+; Value OK: apache 2.4.19, php 5.5.12, mysql 5.0.45 instead of 5.6.17 (wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe)
 Source: "C:\Program Files\Wamp\apps\phpmyadmin4.1.14\*.*"; DestDir: "{app}\apps\phpmyadmin4.1.14"; Flags: ignoreversion recursesubdirs; Excludes: "config.inc.php,wampserver.conf,*.log,*_log,darkblue_orange"
 Source: "C:\Program Files\Wamp\bin\apache\apache2.4.9\*.*"; DestDir: "{app}\bin\apache\apache2.4.9"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,httpd.conf,wampserver.conf,*.log,*_log"
 Source: "C:\Program Files\Wamp\bin\php\php5.5.12\*.*"; DestDir: "{app}\bin\php\php5.5.12"; Flags: ignoreversion recursesubdirs; Excludes: "php.ini,phpForApache.ini,wampserver.conf,*.log,*_log"
@@ -202,10 +202,30 @@ var value: String;
 function InitializeSetup(): Boolean;
 begin
   Result := MsgBox(CustomMessage('YouWillInstallDoliWamp')+#13#13+CustomMessage('ThisAssistantInstallOrUpgrade')+#13#13+CustomMessage('IfYouHaveTechnicalKnowledge')+#13#13+CustomMessage('ButIfYouLook')+#13#13+CustomMessage('DoYouWantToStart'), mbConfirmation, MB_YESNO) = IDYES;
+
+  if Result then
+  begin
+  
+	//----------------------------------------------
+	// Test if msvcr110 DLL has been installed
+	//----------------------------------------------
+	
+	if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
+	begin
+	    // TODO - offer to install the component by opening the URL in the default browser, abort installation if user doesn't accept 
+	    Result := MsgBox(CustomMessage('DLLMissing')+#13#13+CustomMessage('ContinueAnyway'), mbConfirmation, MB_YESNO) = IDYES;
+	    
+	end;
+	// Pb seems similar with msvcp110.dll
+	//vcredist_x64.exe
+	  
+  end;
+
 end;
 
 procedure InitializeWizard();
 begin
+
   //version des applis, a modifier pour chaque version de WampServer 2
   apacheVersion := '2.4.9';
   phpVersion := '5.5.12' ;
@@ -216,6 +236,7 @@ begin
   apachePort := '80';
   mysqlPort := '3306';
   newPassword := 'changeme';
+
 
   firstinstall := true;
 
@@ -344,19 +365,6 @@ begin
     exedirold := pathWithSlashes+'/bin/mysql/mysql5.0.45';
     exedirnew := pathWithSlashes+'/bin/mysql/mysql5.0.45';
 
-
-    //----------------------------------------------
-    // Test if msvcr110 DLL has been installed
-    //----------------------------------------------
-	
-    if not FileExists ('c:/windows/system32/msvcr110.dll') and not FileExists ('c:/windows/sysWOW64/msvcr110.dll') and not FileExists ('c:/winnt/system32/msvcr110.dll') and not FileExists ('c:/winnt/sysWOW64/msvcr110.dll') then
-    begin
-      // TODO Copy file or ask to install package ?
-      //CustomMessage('YouWillInstallDoliWamp')+#13#13
-      MsgBox('The package vcredist_x86.exe must have been installed first. It seems it is not. Please install it first from <a href="http://www.microsoft.com/en-us/download/details.aspx?id=30679">http://www.microsoft.com/en-us/download/details.aspx?id=30679</a> then restart DoliWamp installation/upgrade.',mbInformation,MB_OK);
-    end;
-	// Pb seems similar with msvcp110.dll
-	//vcredist_x64.exe
 	
 	
     // If we have a new database version, we should only copy old my.ini file into new directory

@@ -30,8 +30,8 @@ CREATE TABLE llx_menu
 	mainmenu      varchar(100) NOT NULL,					-- Name family/module for top menu (home, companies, ...)
     leftmenu      varchar(100) NULL,						-- Name family/module for left menu (setup, info, ...)
 	fk_menu       integer NOT NULL,							-- 0 or Id of mother menu line, or -1 if we use fk_mainmenu and fk_leftmenu
-    fk_mainmenu   varchar(24),								-- 
-    fk_leftmenu   varchar(24),								-- 
+    fk_mainmenu   varchar(100),								-- 
+    fk_leftmenu   varchar(100),								-- 
 	position      integer NOT NULL,							-- Sort order of entry
 	url           varchar(255) NOT NULL,					-- Relative (or absolute) url to go
 	target        varchar(100) NULL,						-- Target of Url link

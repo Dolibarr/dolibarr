@@ -29,4 +29,3 @@ ECMDirectoryForFiles=Répertoire relatif des fichiers
 CannotRemoveDirectoryContainsFiles=Supprimé n'est pas possible car il contient certains fichiers
 ECMFileManager=Gestionnaire de fichiers
 ECMSelectASection=Sélectionnez un répertoire sur l'arbre de gauche ...
-DirNotSynchronizedSyncFirst=Ce répertoire semble être créé ou modifié en dehors du module ECM. Vous devez d'abord cliquer sur le bouton "Actualiser" pour synchroniser le disque et la base de données pour obtenir le contenu de ce répertoire.
