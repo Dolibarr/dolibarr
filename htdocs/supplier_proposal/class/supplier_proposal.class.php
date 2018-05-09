@@ -1296,6 +1296,13 @@ class SupplierProposal extends CommonObject
 						$line->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 						$line->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 						$line->fk_unit					= $objp->fk_unit;
+						
+						// Retrieve all extrafields
+						// fetch optionals attributes and labels
+						require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+						$extrafields=new ExtraFields($this->db);
+						$extralabels=$extrafields->fetch_name_optionals_label($line->table_element,true);
+						$line->fetch_optionals($line->id,$extralabels);
 
                         $this->lines[$i]        = $line;
 
@@ -2783,6 +2790,13 @@ class SupplierProposalLine extends CommonObjectLine
 			$this->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 			$this->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 			$this->fk_unit				 	= $objp->fk_unit;
+			
+			// Retreive all extrafield for invoice
+			// fetch optionals attributes and labels
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields=new ExtraFields($this->db);
+			$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
+			$this->fetch_optionals($this->id,$extralabels);
 
 			$this->db->free($result);
 		}
