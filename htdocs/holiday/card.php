@@ -38,7 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
 // Get parameters
-$myparam = GETPOST("myparam");
 $action=GETPOST('action', 'alpha');
 $id=GETPOST('id', 'int');
 $fuserid = (GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id);
@@ -864,7 +863,7 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<table class="border" width="100%">';
         print '<tbody>';
 
-        // User
+        // User for leave request
         print '<tr>';
         print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
         print '<td>';
@@ -932,11 +931,24 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '</td>';
         print '</tr>';
 
-        // Approved by
+        // Approver
         print '<tr>';
         print '<td class="fieldrequired">'.$langs->trans("ReviewedByCP").'</td>';
         print '<td>';
-        print $form->select_dolusers((GETPOST('valideur','int')>0?GETPOST('valideur','int'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
+
+        $object = new Holiday($db);
+        $include_users = $object->fetch_users_approver_holiday();
+        if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
+        else
+        {
+        	$defaultselectuser=$user->fk_user;	// Will work only if supervisor has permission to approve so is inside include_users
+        	if (! empty($conf->global->HOLIDAY_DEFAULT_VALIDATOR)) $defaultselectuser=$conf->global->HOLIDAY_DEFAULT_VALIDATOR;   // Can force default approver
+        	if (GETPOST('valideur', 'int') > 0) $defaultselectuser=GETPOST('valideur', 'int');
+        	$s=$form->select_dolusers($defaultselectuser, "valideur", 1, "", 0, $include_users);
+        	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+        }
+
+        //print $form->select_dolusers((GETPOST('valideur','int')>0?GETPOST('valideur','int'):$user->fk_user), "valideur", 1, ($user->admin ? '' : array($user->id)), 0, '', 0, 0, 0, 0, '', 0, '', '', 1);	// By default, hierarchical parent
         print '</td>';
         print '</tr>';
 
@@ -1181,7 +1193,13 @@ else
                 	print '<tr>';
                     print '<td class="titlefield">'.$langs->trans('ReviewedByCP').'</td>';
                     print '<td>';
-        			print $form->select_dolusers($object->fk_validator, "valideur", 1, ($user->admin ? '' : array($user->id)));	// By default, hierarchical parent
+                    $include_users = $object->fetch_users_approver_holiday();
+                    if (empty($include_users)) print img_warning().' '.$langs->trans("NobodyHasPermissionToValidateHolidays");
+                    else
+                    {
+                    	$s=$form->select_dolusers($object->fk_validator, "valideur", 1, ($user->admin ? '' : array($user->id)), 0, $include_users);
+                    	print $form->textwithpicto($s, $langs->trans("AnyOtherInThisListCanValidate"));
+                    }
                     print '</td>';
                     print '</tr>';
                 }
