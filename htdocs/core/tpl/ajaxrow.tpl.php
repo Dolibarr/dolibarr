@@ -55,6 +55,7 @@ $(document).ready(function(){
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
 			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
+			$('#<?php echo $tagidfortablednd; ?> tr[data-element=extrafield]').attr('id', '');	// Set extrafields id to empty value in order to ignore them in tableDnDSerialize function
 			var roworder = cleanSerialize(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
