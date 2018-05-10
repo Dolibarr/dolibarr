@@ -576,7 +576,7 @@ class Translate
         	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
         }
-	dol_syslog(__METHOD__."missing translation ".$newstr." in ".$_SERVER["PHP_SELF"], LOG_DEBUG);	
+        dol_syslog(__METHOD__."missing translation for key '".$newstr."' in ".$_SERVER["PHP_SELF"], LOG_DEBUG);	
         return $newstr;
 	}
 
