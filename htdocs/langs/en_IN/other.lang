@@ -1,2 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
-PredefinedMailContentSendProposal=__CONTACTCIVNAME__ \n\n You will find here the quotation __PROPREF__\n\n__PERSONALIZED__Sincerely\n\n__SIGNATURE__
+Notify_PROPAL_VALIDATE=Quotation validated
+Notify_PROPAL_SENTBYMAIL=Quotation sent by mail
+NumberOfProposals=Number of quotations
+NumberOfUnitsProposals=Number of units on quotations

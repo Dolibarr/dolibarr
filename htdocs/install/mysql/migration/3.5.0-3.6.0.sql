@@ -62,6 +62,21 @@ ALTER TABLE llx_societe MODIFY COLUMN fk_currency varchar(3) NULL;
 ALTER TABLE llx_bookmark ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_bookmark MODIFY COLUMN url varchar(255) NOT NULL;
 
+
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT '2001-01-01 00:00:00';
+
+-- Clean corrupted values for tms
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_opensurvey_sondage set tms = date_fin where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- Remove default not null on date_fin
+-- VMYSQL4.3 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN date_fin DATETIME NULL DEFAULT NULL;
+-- VPGSQL8.2 ALTER TABLE llx_opensurvey_sondage ALTER COLUMN date_fin DROP NOT NULL;
+
+-- VMYSQL4.1 ALTER TABLE llx_opensurvey_sondage MODIFY COLUMN tms timestamp DEFAULT CURRENT_TIMESTAMP;
+
+
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN entity integer DEFAULT 1 NOT NULL;
 ALTER TABLE llx_opensurvey_sondage ADD COLUMN allow_comments tinyint NOT NULL DEFAULT 1;
 -- ALTER TABLE llx_opensurvey_sondage DROP COLUMN survey_link_visible;
@@ -189,8 +204,13 @@ CREATE TABLE llx_payment_salary (
   fk_user_modif integer
 )ENGINE=innodb;
 
+
+DELETE FROM llx_product_batch where fk_product_stock NOT IN (SELECT rowid from llx_product_stock);
+
 ALTER TABLE llx_product_batch ADD INDEX idx_fk_product_stock (fk_product_stock);
 ALTER TABLE llx_product_batch ADD CONSTRAINT fk_product_batch_fk_product_stock FOREIGN KEY (fk_product_stock) REFERENCES llx_product_stock (rowid);
+
+DELETE FROM llx_expeditiondet_batch where fk_expeditiondet NOT IN (SELECT rowid from llx_expeditiondet);
 
 ALTER TABLE llx_expeditiondet_batch ADD INDEX idx_fk_expeditiondet (fk_expeditiondet);
 ALTER TABLE llx_expeditiondet_batch ADD CONSTRAINT fk_expeditiondet_batch_fk_expeditiondet FOREIGN KEY (fk_expeditiondet) REFERENCES llx_expeditiondet(rowid);
@@ -620,7 +640,7 @@ INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype,
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (305,'PCG99-BASE','FINAN', 'XXXXXX',  '511', '304', 'Valeurs à l''encaissement', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (306,'PCG99-BASE','FINAN', 'BANK',    '512', '304', 'Banques', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (307,'PCG99-BASE','FINAN', 'XXXXXX',  '514', '304', 'Chèques postaux', '1');
-INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (308,'PCG99-BASE','FINAN', 'XXXXXX',  '515', '304', '"Caisses" du Trésor et des établissements publics', '1');
+INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (308,'PCG99-BASE','FINAN', 'XXXXXX',  '515', '304', 'Caisses du Trésor et des établissements publics', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (309,'PCG99-BASE','FINAN', 'XXXXXX',  '516', '304', 'Sociétés de bourse', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (310,'PCG99-BASE','FINAN', 'XXXXXX',  '517', '304', 'Autres organismes financiers', '1');
 INSERT INTO llx_accountingaccount (rowid, fk_pcg_version, pcg_type, pcg_subtype, account_number, account_parent, label, active) VALUES (311,'PCG99-BASE','FINAN', 'XXXXXX',  '518', '304', 'Intérêts courus', '1');

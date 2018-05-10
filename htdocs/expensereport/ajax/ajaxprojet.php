@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2005-2009 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010      Cyrille de Lambert   <info@auguria.net>
  *
@@ -46,7 +46,7 @@ require '../../main.inc.php';
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 dol_syslog(join(',',$_GET));
 

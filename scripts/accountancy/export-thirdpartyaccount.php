@@ -1,4 +1,5 @@
-<?PHP
+#!/usr/bin/env php
+<?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
@@ -103,7 +104,7 @@ $exportlink = '';
 $nom = $langs->trans("ReportThirdParty");
 $period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 $description = $langs->trans("DescThirdPartyReport");
-$builddate = time();
+$builddate=dol_now();
 
 $moreparam=array('action' => '');
 report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam);
@@ -158,7 +159,7 @@ if ($resql) {
 	$i = 0;
 
 	// export csv
-	if (GETPOST('action') == 'export_csv') {
+	if (GETPOST('action','aZ09') == 'export_csv') {
 
 		header('Content-Type: text/csv');
 		header('Content-Disposition: attachment;filename=export_csv.csv');
@@ -200,13 +201,9 @@ if ($resql) {
 	print '<td align="left">' . $langs->trans("Phone") . '</td>';
 	print '<td align="left">' . $langs->trans("Fax") . '</td></tr>';
 
-	$var = True;
-
-	while ( $obj = $db->fetch_object($resql) ) {
-
-		$var = ! $var;
-
-		print "<tr $bc[$var]>";
+	while ($obj = $db->fetch_object($resql))
+	{
+		print '<tr class="oddeven">';
 		print '<td>';
 		$thirdpartystatic->id = $obj->rowid;
 		$thirdpartystatic->name = $obj->name;

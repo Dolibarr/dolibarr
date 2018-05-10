@@ -44,7 +44,7 @@ require '../main.inc.php';
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 dol_syslog(join(',',$_GET));
 
@@ -61,7 +61,7 @@ if (GETPOST('newcompany') || GETPOST('socid','int') || GETPOST('id_fourn'))
 
 	$sql = "SELECT rowid, nom";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-	$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+	$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 	if ($socid)
 	{
         $sql.=" AND (";

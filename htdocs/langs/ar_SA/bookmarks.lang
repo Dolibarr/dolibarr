@@ -2,6 +2,8 @@
 AddThisPageToBookmarks=أضف هذه الصفحة إلى المفضلة
 Bookmark=احفظ
 Bookmarks=العناوين
+ListOfBookmarks=قائمة العناوين
+EditBookmarks=List/edit bookmarks
 NewBookmark=إشارة مرجعية جديدة
 ShowBookmark=وتظهر علامة
 OpenANewWindow=فتح نافذة جديدة
@@ -14,6 +16,5 @@ BehaviourOnClick=السلوك على الضغط على العنوان
 CreateBookmark=إيجاد المرجعية
 SetHereATitleForLink=مجموعة هنا عنوان المرجعية
 UseAnExternalHttpLinkOrRelativeDolibarrLink=استخدام خارجي عنوان النص المتشعب أو قريب Dolibarr عنوان
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=إذا كان الاختيار قد فتحت صفحة ويجب أن تظهر على وصلة الحالية أو نافذة جديدة
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=إدارة العناوين
-ListOfBookmarks=قائمة العناوين

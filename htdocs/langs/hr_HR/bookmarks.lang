@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - marque pages
-AddThisPageToBookmarks=Dodaj ovu stranicu u zabilješke
+AddThisPageToBookmarks=Dodaj trenutnu stranicu u zabilješke
 Bookmark=Zabilješka
 Bookmarks=Zabilješke
+ListOfBookmarks=Lista zabilješki
+EditBookmarks=Prikaži/izmjeni zabilješke
 NewBookmark=Nova zabilješka
 ShowBookmark=Prikaži zabilješku
 OpenANewWindow=Otvori novi prozor
@@ -10,10 +12,9 @@ BookmarkTargetNewWindowShort=Novi prozor
 BookmarkTargetReplaceWindowShort=Trenutno prozor
 BookmarkTitle=Naziv zabilješke
 UrlOrLink=URL
-BehaviourOnClick=Ponašanje kad se klikne na URL
+BehaviourOnClick=Behaviour when a bookmark URL is selected
 CreateBookmark=Kreiraj zabilješku
 SetHereATitleForLink=Postavi naslov za zabilješku
-UseAnExternalHttpLinkOrRelativeDolibarrLink=Koristi eksterni http URL ili relativni Bolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Izaberi da li će se stanica otvorena sa linka otvorini u trenutnom ili novom prozoru
+UseAnExternalHttpLinkOrRelativeDolibarrLink=Koristi eksterni http URL ili relativni Dolibarr URL
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Odaberite ako se povezana stranica mora/ne mora otvoriti u novom prozoru 
 BookmarksManagement=Upravljanje zabilješkama
-ListOfBookmarks=Lista zabilješki

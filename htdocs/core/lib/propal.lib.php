@@ -31,14 +31,15 @@
  */
 function propal_prepare_head($object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 	$langs->load("propal");
 	$langs->load("compta");
+	$langs->load("companies");
 
 	$h = 0;
 	$head = array();
 
-	$head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?id='.$object->id;
+	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/card.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('ProposalCard');
 	$head[$h][2] = 'comm';
 	$h++;
@@ -54,18 +55,13 @@ function propal_prepare_head($object)
 		$head[$h][2] = 'shipping';
 		$h++;
 	}
-	if (! empty($conf->global->MAIN_USE_PREVIEW_TABS))
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/apercu.php?id='.$object->id;
-		$head[$h][1] = $langs->trans("Preview");
-		$head[$h][2] = 'preview';
-		$h++;
-	}
 
 	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 	{
+	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
 		$head[$h][0] = DOL_URL_ROOT.'/comm/propal/contact.php?id='.$object->id;
 		$head[$h][1] = $langs->trans('ContactsAddresses');
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
 		$head[$h][2] = 'contact';
 		$h++;
 	}
@@ -89,11 +85,13 @@ function propal_prepare_head($object)
     }
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-	$upload_dir = $conf->propal->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
+    $upload_dir = $conf->propal->multidir_output[$object->entity] . "/" . dol_sanitizeFileName($object->ref);
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$h][0] = DOL_URL_ROOT.'/comm/propal/document.php?id='.$object->id;
 	$head[$h][1] = $langs->trans('Documents');
-	if($nbFiles > 0) $head[$h][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$h][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$h][2] = 'document';
 	$h++;
 

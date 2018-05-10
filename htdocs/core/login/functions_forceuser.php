@@ -44,5 +44,6 @@ function check_user_password_forceuser($usertotest,$passwordtotest,$entitytotest
 
 	if ($_SESSION["dol_loginmesg"]) $login='';
 
+	dol_syslog("functions_forceuser::check_user_password_forceuser ok. forced user = ".$login);
 	return $login;
 }

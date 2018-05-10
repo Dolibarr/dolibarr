@@ -1,5 +1,0 @@
-
-exports.main = function(options)
-{
-	
-}

@@ -14,10 +14,18 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $contact = $GLOBALS['objcanvas']->control->object;
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE ADHERENTCARD_VIEW.TPL.PHP DEFAULT -->
@@ -102,7 +110,7 @@ dol_htmloutput_errors($this->control->tpl['error'],$this->control->tpl['errors']
 </tr>
 
 <tr>
-	<td valign="top"><?php echo $langs->trans("Note"); ?></td>
+	<td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
 	<td colspan="3"><?php echo $this->control->tpl['note']; ?></td>
 </tr>
 

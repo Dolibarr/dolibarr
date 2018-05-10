@@ -206,7 +206,7 @@ class ExportCsv extends ModeleExports
 		foreach($array_selected_sorted as $code => $value)
 		{
 			$newvalue=$outputlangs->transnoentities($array_export_fields_label[$code]);		// newvalue is now $outputlangs->charset_output encoded
-			$newvalue=$this->csv_clean($newvalue,$outputlangs->charset_output);
+			$newvalue=$this->csvClean($newvalue,$outputlangs->charset_output);
 
 			fwrite($this->handle,$newvalue.$this->separator);
 		}
@@ -240,7 +240,7 @@ class ExportCsv extends ModeleExports
 		$this->col=0;
 		foreach($array_selected_sorted as $code => $value)
 		{
-			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-'),'_',$code);
+			if (strpos($code,' as ') == 0) $alias=str_replace(array('.','-','(',')'),'_',$code);
 			else $alias=substr($code, strpos($code, ' as ') + 4);
 			if (empty($alias)) dol_print_error('','Bad value for field with key='.$code.'. Try to redefine export.');
 
@@ -250,7 +250,7 @@ class ExportCsv extends ModeleExports
 			// Translation newvalue
 			if (preg_match('/^\((.*)\)$/i',$newvalue,$reg)) $newvalue=$outputlangs->transnoentities($reg[1]);
 
-			$newvalue=$this->csv_clean($newvalue,$outputlangs->charset_output);
+			$newvalue=$this->csvClean($newvalue,$outputlangs->charset_output);
 
 			if (preg_match('/^Select:/i', $typefield, $reg) && $typefield = substr($typefield, 7))
 			{
@@ -292,24 +292,36 @@ class ExportCsv extends ModeleExports
 
 	/**
 	 * Clean a cell to respect rules of CSV file cells
+	 * Note: It uses $this->separator
+	 * Note: We keep this function public to be able to test
 	 *
 	 * @param 	string	$newvalue	String to clean
 	 * @param	string	$charset	Input AND Output character set
 	 * @return 	string				Value cleaned
 	 */
-	function csv_clean($newvalue, $charset)
+	public function csvClean($newvalue, $charset)
 	{
+		global $conf;
 		$addquote=0;
+		
 
 		// Rule Dolibarr: No HTML
-		//print $charset.' '.$newvalue."\n";
-		$newvalue=dol_string_nohtmltag($newvalue,1,$charset);
-		//print $charset.' '.$newvalue."\n";
-
-		// Rule 1 CSV: No CR, LF in cells
+   		//print $charset.' '.$newvalue."\n";
+   		//$newvalue=dol_string_nohtmltag($newvalue,0,$charset);
+   		$newvalue=dol_htmlcleanlastbr($newvalue);
+   		//print $charset.' '.$newvalue."\n";
+		
+		// Rule 1 CSV: No CR, LF in cells (except if USE_STRICT_CSV_RULES is on, we can keep record as it is but we must add quotes)
+		$oldvalue=$newvalue;
 		$newvalue=str_replace("\r",'',$newvalue);
 		$newvalue=str_replace("\n",'\n',$newvalue);
-
+		if (! empty($conf->global->USE_STRICT_CSV_RULES) && $oldvalue != $newvalue)
+		{
+			// If strict use of CSV rules, we just add quote
+			$newvalue=$oldvalue;
+			$addquote=1;
+		}
+		
 		// Rule 2 CSV: If value contains ", we must escape with ", and add "
 		if (preg_match('/"/',$newvalue))
 		{

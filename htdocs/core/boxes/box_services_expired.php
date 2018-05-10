@@ -43,6 +43,21 @@ class box_services_expired extends ModeleBoxes
 
 
     /**
+     *  Constructor
+     *
+     *  @param  DoliDB  $db         Database handler
+     *  @param  string  $param      More parameters
+     */
+    function __construct($db,$param)
+    {
+        global $user;
+
+        $this->db=$db;
+
+        $this->hidden=! ($user->rights->contrat->lire);
+    }
+
+    /**
      *  Load data for box to show them later
      *
      *  @param	int		$max        Maximum number of records to load
@@ -54,6 +69,8 @@ class box_services_expired extends ModeleBoxes
 
     	$this->max=$max;
 
+    	include_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
+
     	$now=dol_now();
 
     	$this->info_box_head = array('text' => $langs->trans("BoxLastExpiredServices",$max));
@@ -62,16 +79,17 @@ class box_services_expired extends ModeleBoxes
     	{
     	    // Select contracts with at least one expired service
 			$sql = "SELECT ";
-    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat,";
+    		$sql.= " c.rowid, c.ref, c.statut as fk_statut, c.date_contrat, c.ref_customer, c.ref_supplier,";
 			$sql.= " s.nom as name, s.rowid as socid,";
 			$sql.= " MIN(cd.date_fin_validite) as date_line, COUNT(cd.rowid) as nb_services";
     		$sql.= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe s, ".MAIN_DB_PREFIX."contratdet as cd";
             if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     		$sql.= " WHERE cd.statut = 4 AND cd.date_fin_validite <= '".$db->idate($now)."'";
+    		$sql.= " AND c.entity = ".$conf->entity;
     		$sql.= " AND c.fk_soc=s.rowid AND cd.fk_contrat=c.rowid AND c.statut > 0";
             if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
             if (!$user->rights->societe->client->voir  && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-    		$sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, s.nom, s.rowid";
+    		$sql.= " GROUP BY c.rowid, c.ref, c.statut, c.date_contrat, c.ref_customer, c.ref_supplier, s.nom, s.rowid";
     		$sql.= " ORDER BY date_line ASC";
     		$sql.= $db->plimit($max, 0);
 
@@ -82,49 +100,59 @@ class box_services_expired extends ModeleBoxes
 
     			$i = 0;
 
+    			$thirdpartytmp = new Societe($this->db);
+    			$contract = new Contrat($this->db);
+
     			while ($i < $num)
     			{
     			    $late='';
 
     				$objp = $db->fetch_object($resql);
 
+    				$thirdpartytmp->id = $objp->socid;
+    				$thirdpartytmp->name = $objp->name;
+
+    				$contract->id = $objp->rowid;
+    				$contract->ref = $objp->ref;
+    				$contract->statut = $objp->fk_statut;
+    				$contract->ref_customer = $objp->ref_customer;
+    				$contract->ref_supplier = $objp->ref_supplier;
+
 					$dateline=$db->jdate($objp->date_line);
 					if (($dateline + $conf->contrat->services->expires->warning_delay) < $now) $late=img_warning($langs->trans("Late"));
 
-    				$this->info_box_contents[$i][0] = array('td' => 'align="left" width="16"',
-    				'logo' => $this->boximg,
-    				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
+    				$this->info_box_contents[$i][] = array('td' => '',
+    				'text' => $contract->getNomUrl(1),
+    				'asis' => 1
+    				);
 
-    				$this->info_box_contents[$i][1] = array('td' => 'align="left"',
-    				'text' => ($objp->ref?$objp->ref:$objp->rowid),	// Some contracts have no ref
-    				'url' => DOL_URL_ROOT."/contrat/card.php?id=".$objp->rowid);
+    				$this->info_box_contents[$i][] = array('td' => 'class="tdoverflowmax150 maxwidth150onsmartphone" align="left"',
+    				'text' => $thirdpartytmp->getNomUrl(1, 'customer'),
+    				'asis' => 1
+    				);
 
-    				$this->info_box_contents[$i][2] = array('td' => 'align="left" width="16"',
-    				'logo' => 'company',
-    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
-
-    				$this->info_box_contents[$i][3] = array('td' => 'align="left"',
-    				'text' => dol_trunc($objp->name,40),
-    				'url' => DOL_URL_ROOT."/comm/card.php?socid=".$objp->socid);
-
-    				$this->info_box_contents[$i][4] = array('td' => 'align="center"',
+    				$this->info_box_contents[$i][] = array('td' => 'align="center"',
     				'text' => dol_print_date($dateline,'day'),
     				'text2'=> $late);
 
-    				$this->info_box_contents[$i][5] = array('td' => 'align="right"',
+    				$this->info_box_contents[$i][] = array('td' => 'class="right"',
     				'text' => $objp->nb_services);
 
 
     				$i++;
     			}
 
-    			if ($num==0) $this->info_box_contents[$i][0] = array('td' => 'align="center"','text'=>$langs->trans("NoExpiredServices"));
+    			if ($num==0)
+    			{
+    			    $langs->load("contracts");
+    			    $this->info_box_contents[$i][] = array('td' => 'align="center" class="nohover opacitymedium"','text'=>$langs->trans("NoExpiredServices"));
+    			}
 
 				$db->free($resql);
     		}
     		else
     		{
-    			$this->info_box_contents[0][0] = array(  'td' => 'align="left"',
+    			$this->info_box_contents[0][] = array(  'td' => '',
                                                         'maxlength'=>500,
                                                         'text' => ($db->error().' sql='.$sql));
     		}
@@ -133,8 +161,10 @@ class box_services_expired extends ModeleBoxes
     	}
     	else
     	{
-    		$this->info_box_contents[0][0] = array('td' => 'align="left"',
-    		'text' => $langs->trans("ReadPermissionNotAllowed"));
+    		$this->info_box_contents[0][0] = array(
+    		    'td' => 'align="left" class="nohover opacitymedium"',
+    		    'text' => $langs->trans("ReadPermissionNotAllowed")
+    		);
     	}
     }
 
@@ -143,11 +173,12 @@ class box_services_expired extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
+	 *  @param	int		$nooutput	No print, only return string
+	 *	@return	string
 	 */
-    function showBox($head = null, $contents = null)
+    function showBox($head = null, $contents = null, $nooutput=0)
     {
-        parent::showBox($this->info_box_head, $this->info_box_contents);
+        return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
     }
 
  }

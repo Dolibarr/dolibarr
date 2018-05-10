@@ -17,8 +17,8 @@
 
 /**
  *       \file       htdocs/core/ajax/security.php
- *       \brief      This ajax component is used to generated has keys for security purposes 
- *                   like key to use into URL to protect them. 
+ *       \brief      This ajax component is used to generated has keys for security purposes
+ *                   like key to use into URL to protect them.
  */
 
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token renewal
@@ -27,7 +27,6 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOREQUIREHOOK'))  define('NOREQUIREHOOK','1');
 
 require '../../main.inc.php';
 
@@ -38,7 +37,7 @@ require '../../main.inc.php';
 //top_htmlhead("", "", 1);  // Replaced with top_httphead. An ajax page does not need html header.
 top_httphead();
 
-//print '<!-- Ajax page called with url '.$_SERVER["PHP_SELF"].'?'.$_SERVER["QUERY_STRING"].' -->'."\n";
+//print '<!-- Ajax page called with url '.dol_escape_htmltag($_SERVER["PHP_SELF"]).'?'.dol_escape_htmltag($_SERVER["QUERY_STRING"]).' -->'."\n";
 
 // Registering the location of boxes
 if (isset($_GET['action']) && ! empty($_GET['action']))

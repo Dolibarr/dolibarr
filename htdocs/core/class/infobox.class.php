@@ -45,9 +45,10 @@ class InfoBox
      *  @param	string		$zone			Name or area (-1 for all, 0 for Homepage, 1 for xxx, ...)
      *  @param  User|null   $user	  		Object user to filter
      *  @param	array		$excludelist	Array of box id (box.box_id = boxes_def.rowid) to exclude
+     *  @param  int         $includehidden  Include also hidden boxes
      *  @return array       	        	Array of boxes
      */
-    static function listBoxes($db, $mode, $zone, $user=null, $excludelist=array())
+    static function listBoxes($db, $mode, $zone, $user=null, $excludelist=array(), $includehidden=1)
     {
         global $conf;
 
@@ -60,7 +61,7 @@ class InfoBox
             $sql.= " d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
             $sql.= " WHERE b.box_id = d.rowid";
-            $sql.= " AND b.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+            $sql.= " AND b.entity IN (0,".$conf->entity.")";
             if ($zone >= 0) $sql.= " AND b.position = ".$zone;
             if (is_object($user)) $sql.= " AND b.fk_user IN (0,".$user->id.")";
             else $sql.= " AND b.fk_user = 0";
@@ -70,7 +71,7 @@ class InfoBox
 		{
             $sql = "SELECT d.rowid as box_id, d.file, d.note, d.tms";
             $sql.= " FROM ".MAIN_DB_PREFIX."boxes_def as d";
-           	$sql.= " WHERE d.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+           	$sql.= " WHERE d.entity IN (0,".$conf->entity.")";
         }
 
         dol_syslog(get_class()."::listBoxes get default box list for mode=".$mode." userid=".(is_object($user)?$user->id:'')."", LOG_DEBUG);
@@ -145,7 +146,7 @@ class InfoBox
     	                        	if (! empty($conf->$tmpmodule->enabled)) $tmpenabled=1;
                             		//print $boxname.'-'.$module.'-module enabled='.(empty($conf->$tmpmodule->enabled)?0:1).'<br>';
                             	}
-                            	if (empty($tmpenabled))	// We found at least one module required that disabled
+                            	if (empty($tmpenabled))	// We found at least one module required that is disabled
         	                    {
         	                    	$enabled=0;
         	                    	break;
@@ -155,7 +156,7 @@ class InfoBox
                         //print '=>'.$boxname.'-enabled='.$enabled.'<br>';
 
                         //print 'xx module='.$module.' enabled='.$enabled;
-                        if ($enabled) $boxes[]=$box;
+                        if ($enabled && ($includehidden || empty($box->hidden))) $boxes[]=$box;
                         else unset($box);
                     }
                     else
@@ -183,7 +184,7 @@ class InfoBox
      *  @param	string	$zone       	Name of area (0 for Homepage, ...)
      *  @param  string  $boxorder   	List of boxes with correct order 'A:123,456,...-B:789,321...'
      *  @param  int     $userid     	Id of user
-     *  @return int                   	<0 if KO, >= 0 if OK
+     *  @return int                   	<0 if KO, 0=Nothing done, > 0 if OK
      */
     static function saveboxorder($db, $zone,$boxorder,$userid=0)
     {

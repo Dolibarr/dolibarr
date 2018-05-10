@@ -1,2 +1,20 @@
 # Dolibarr language file - Source file is en_US - bills
-MarsNumRefModelDesc1=Return number with format %syymm-nnnn for standard invoices, %syymm-nnnn for replacement invoices, %syymm-nnnn for deposit invoices and %syymm-nnnn for credit notes where yy is year, mm is month and nnnn is a sequence with no break and no return to 0
+PaymentTypeCHQ=Cheque
+PaymentTypeShortCHQ=Cheque
+BankCode=BSB
+ChequeNumber=Cheque N°
+ChequeOrTransferNumber=Cheque/Transfer N°
+ChequeMaker=Cheque/Transfer transmitter
+ChequeBank=Bank of Cheque
+CheckBank=Cheque
+PaymentByChequeOrderedTo=Cheque payment (including GST) is payable to %s send to
+PaymentByChequeOrderedToShort=Cheque payment (including GST) is payable to
+MenuChequeDeposits=Cheque deposits
+MenuCheques=Cheques
+MenuChequesReceipts=Cheque receipts
+NewChequeDeposit=New Cheque deposit
+ChequesReceipts=Cheque receipts
+ChequesArea=Cheque deposits area
+ChequeDeposits=Cheque deposits
+Cheques=Cheques
+NbCheque=Number of cheques

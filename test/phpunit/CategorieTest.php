@@ -200,7 +200,7 @@ class CategorieTest extends PHPUnit_Framework_TestCase
 
         // Get list of categories for product
         $localcateg=new Categorie($this->savdb);
-        $listofcateg=$localcateg->containing($localobject2->id, 'product', 'label');
+        $listofcateg=$localcateg->containing($localobject2->id, Categorie::TYPE_PRODUCT, 'label');
         $this->assertTrue(in_array('Specimen Category for product',$listofcateg), 'Categ not found linked to product when it should');
 
         return $id;

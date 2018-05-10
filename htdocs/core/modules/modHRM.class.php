@@ -31,38 +31,40 @@ class modHRM extends DolibarrModules
 	 * Constructor.
 	 * Define names, constants, directories, boxes, permissions
 	 *
-	 * @param DoliDB $db        	
+	 * @param 	DoliDB 	$db		Database handler
 	 */
 	public function __construct($db)
 	{
 		global $langs, $conf;
-		
+
 		$this->db = $db;
 
 		$this->numero = 4000;
 		$this->rights_class = 'hrm';
-		
+
 		$this->family = "hr";
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-		$this->name = preg_replace ( '/^mod/i', '', get_class ( $this ) );
-		$this->description = "Gestion des ressources humaines";
-		
+		$this->name = preg_replace( '/^mod/i', '', get_class($this));
+		$this->description = "Management of employees carrier and feelings (department, employment contract)";
+
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'development';
-		
-		$this->const_name = 'MAIN_MODULE_' . strtoupper ( $this->name );
-		$this->special = 0;
-		// $this->picto = '';
-		
+
+		$this->const_name = 'MAIN_MODULE_' . strtoupper($this->name);
+	    // Name of image file used for this module.
+		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
+		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
+		$this->picto='generic';
+
 		// define triggers
 		$this->module_parts = array();
-		
+
 		// Data directories to create when module is enabled
 		$this->dirs = array();
-		
+
 		// Config pages
 		$this->config_page_url = array('admin_hrm.php@hrm');
-		
+
 		// Dependencies
 		$this->depends = array();
 		$this->requiredby = array(/*"
@@ -73,56 +75,18 @@ class modHRM extends DolibarrModules
 		$this->conflictwith = array();
 		$this->phpmin = array (
 			5,
-			3 
+			3
 		); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array (
 			3,
-			7 
+			9
 		); // Minimum version of Dolibarr required by module
 		$this->langfiles = array (
-			"hrm" 
+			"hrm"
 		);
 
 		// Dictionnaries
-		$this->dictionnaries=array(
-			'langs'=>'hrm',
-			'tabname'=>array(
-				MAIN_DB_PREFIX."c_hrm_department",
-				MAIN_DB_PREFIX."c_hrm_function"
-			),
-			'tablib'=>array(
-				"DepartmentDict",
-				"FunctionDict"
-			),
-			'tabsql'=>array(
-				'SELECT rowid, pos, code, label, active FROM '.MAIN_DB_PREFIX.'c_hrm_department',
-				'SELECT rowid, pos, code, label, c_level, active FROM '.MAIN_DB_PREFIX.'c_hrm_department'
-			),
-			'tabsqlsort'=>array(
-				'rowid ASC',
-				'rowid ASC'
-			),
-			'tabfield'=>array(
-				"code,label",
-				"code,label"
-			),
-			'tabfieldvalue'=>array(
-				"code,label",
-				"code,label"
-			),
-			'tabfieldinsert'=>array(
-				"code,label",
-				"code,label"
-			),
-			'tabrowid'=>array(
-				"rowid",
-				"rowid"
-			),
-			'tabcond'=>array(
-				'$conf->hrm->enabled',
-				'$conf->hrm->enabled'
-			)
-		);
+		$this->dictionnaries=array();
 
 		// Constantes
 		$this->const = array ();
@@ -130,32 +94,32 @@ class modHRM extends DolibarrModules
 
 		// Boxes
 		$this->boxes = array ();
-		
+
 		// Permissions
 		$this->rights = array(); // Permission array used by this module
 		$r = 0;
 
 		$this->rights[$r][0] = 4001;
 		$this->rights[$r][1] = 'See employees';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'employee';
 		$this->rights[$r][5] = 'read';
 		$r ++;
-		
+
 		$this->rights[$r][0] = 4002;
 		$this->rights[$r][1] = 'Create employees';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'employee';
 		$this->rights[$r][5] = 'write';
 		$r ++;
-		
+
 		$this->rights[$r][0] = 4003;
 		$this->rights[$r][1] = 'Delete employees';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'employee';
 		$this->rights[$r][5] = 'delete';
 		$r ++;
-		
+
 		$this->rights[$r][0] = 4004;
 		$this->rights[$r][1] = 'Export employees';
 		$this->rights[$r][3] = 0;
@@ -163,72 +127,13 @@ class modHRM extends DolibarrModules
 		$this->rights[$r][5] = 'export';
 		$r ++;
 
-		// Main menu entries
-		$this->menus = array (); // List of menus to add
-		$r = 0;
 
-		$this->menu[$r] = array (
-				'fk_menu' => 'fk_mainmenu=hrm',
-				'type' => 'left',
-				'titre' => 'Employees',
-				'leftmenu' => 'employee',
-				'mainmenu' => 'hrm',
-				'url' => '/hrm/employee/index.php',
-				'langs' => 'hrm',
-				'position' => 100,
-				'enabled' => '$user->rights->hrm->employee->read',
-				'perms' => '$user->rights->hrm->employee->read',
-				'target' => '',
-				'user' => 0 
-		);
-		$r ++;
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
-		$this->menu[$r] = array(
-			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=employee',
-			'type' => 'left',
-			'titre' => 'NewEmployee',
-			'mainmenu' => 'hrm',
-			'url' => '/hrm/employee/card.php?action=create',
-			'langs' => 'hrm',
-			'position' => 101,
-			'enabled' => '$user->rights->hrm->employee->write',
-			'perms' => '$user->rights->hrm->employee->write',
-			'target' => '',
-			'user' => 0
-		);
-		$r ++;
-
-		$this->menu[$r] = array(
-			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=employee',
-			'type' => 'left',
-			'titre' => 'List',
-			'mainmenu' => 'hrm',
-			'url' => '/hrm/employee/list.php',
-			'langs' => 'hrm',
-			'position' => 102,
-			'enabled' => '$user->rights->hrm->employee->read',
-			'perms' => '$user->rights->hrm->employee->read',
-			'target' => '',
-			'user' => 0
-		);
-		$r ++;
-
-		$this->menu[$r] = array(
-			'fk_menu' => 'fk_mainmenu=hrm,fk_leftmenu=employee',
-			'type' => 'left',
-			'titre' => 'Statistics',
-			'mainmenu' => 'hrm',
-			'url' => '/hrm/employee/stats.php',
-			'langs' => 'hrm',
-			'position' => 103,
-			'enabled' => '$user->rights->hrm->employee->read',
-			'perms' => '$user->rights->hrm->employee->read',
-			'target' => '',
-			'user' => 0
-		);
-		$r ++;
 	}
-	
+
 	/**
 	 * Function called when module is enabled.
 	 * The init function add constants, boxes, permissions and menus

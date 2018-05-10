@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Wyślij Email do poprzedniego serwisanta HRM
+Establishments=Kierujących
+Establishment=Kierownictwo
+NewEstablishment=Nowe kierownictwo
+DeleteEstablishment=Usuń kierownictwo
+ConfirmDeleteEstablishment=Czy na pewno chcesz usunąć to przedsiębiorstwo?
+OpenEtablishment=Otwórz kierownictwo
+CloseEtablishment=Zakończ kierownictwo
+# Dictionary
+DictionaryDepartment=HR - Lisa departamentów
+DictionaryFunction=HR - Lista funkcji
+# Module
+Employees=Zatrudnionych
+Employee=Pracownik
+NewEmployee=Nowy pracownik

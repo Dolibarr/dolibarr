@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C)           Kai Blankenhorn      <kaib@bitfolge.de>
- * Copyright (C) 2005-2010 Laurent Destailleur  <eldy@users.sourceforge.org>
+ * Copyright (C) 2005-2017 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,11 +14,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- *      v2.0		Initial creation		Kai Blankenhorn
- * 2007	v3.0		Laurent Destailleur		eldy@users.sourceforge.net
- *					Added functions (as in http://www.ietf.org/rfc/rfc2426.txt):
- *					setTitle  setOrg setProdId	setUID
  */
 
 /**
@@ -160,8 +155,9 @@ class vCard
      *	@return	void
      */
     function setBirthday($date)
-    { // $date format is YYYY-MM-DD
-        $this->properties["BDAY"] = $date;
+    { 
+        // $date format is YYYY-MM-DD - RFC 2425 and RFC 2426
+        $this->properties["BDAY"] = dol_print_date($date, 'dayrfc');
     }
 
     /**

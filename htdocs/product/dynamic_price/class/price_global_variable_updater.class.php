@@ -84,7 +84,7 @@ class PriceGlobalVariableUpdater
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -135,7 +135,7 @@ class PriceGlobalVariableUpdater
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -191,7 +191,7 @@ class PriceGlobalVariableUpdater
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -260,7 +260,7 @@ class PriceGlobalVariableUpdater
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid = ".$rowid;
 
-            dol_syslog(get_class($this)."::delete");
+            dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
             if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         }
@@ -270,7 +270,7 @@ class PriceGlobalVariableUpdater
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -346,7 +346,7 @@ class PriceGlobalVariableUpdater
         $sql = "SELECT rowid, type, description, parameters, fk_variable, update_interval, next_update, last_status";
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
 
-        dol_syslog(get_class($this)."::listUpdaters");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -388,7 +388,7 @@ class PriceGlobalVariableUpdater
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE next_update < ".dol_now();
 
-        dol_syslog(get_class($this)."::processUpdaters");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -428,6 +428,7 @@ class PriceGlobalVariableUpdater
     {
         global $langs, $user;
         $langs->load("errors");
+        dol_syslog(__METHOD__, LOG_DEBUG);
 
         $this->error = null;
         $this->checkParameters();
@@ -464,24 +465,18 @@ class PriceGlobalVariableUpdater
             }
             $result = "";
             if ($this->type == 0) {
-                //CURL client
-                $handle = curl_init();
-                curl_setopt_array($handle, array(
-                    CURLOPT_URL => $url,
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_TIMEOUT => 5,
-                    CURLOPT_POST => false,
-                    CURLOPT_HEADER => false,
-                ));
+                // Call JSON request
+                include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
+                $tmpresult=getURLContent($url);
+                $code=$tmpresult['http_code'];
+                $result=$tmpresult['content'];
 
-                $result = curl_exec($handle);
-                $code = curl_getinfo($handle, CURLINFO_HTTP_CODE);
                 if (!isset($result)) {
                     $this->error = $langs->trans("ErrorGlobalVariableUpdater0", "empty response");
                     return -1;
                 }
                 if ($code !== 200) {
-                    $this->error = $langs->trans("ErrorGlobalVariableUpdater0", $code);
+                    $this->error = $langs->trans("ErrorGlobalVariableUpdater0", $code.' '.$tmpresult['curl_error_msg']);
                     return -1;
                 }
 
@@ -557,7 +552,7 @@ class PriceGlobalVariableUpdater
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update_next_update");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -566,7 +561,7 @@ class PriceGlobalVariableUpdater
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update_next_update ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -601,7 +596,7 @@ class PriceGlobalVariableUpdater
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update_status");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -610,7 +605,7 @@ class PriceGlobalVariableUpdater
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update_status ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();

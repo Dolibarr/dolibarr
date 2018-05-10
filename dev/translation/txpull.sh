@@ -26,15 +26,21 @@ fi
 
 if [ "x$1" = "xall" ]
 then
-	for dir in `find htdocs/langs/* -type d`
-	do
-	    fic=`basename $dir`
-	    if [ $fic != "en_US" ]
-	    then
-		    echo "tx pull -l $fic $2 $3"
-		    tx pull -l $fic $2 $3
-		fi
-	done
+	if [ "x$2" = "x" ]
+	then
+	    echo "tx pull"
+	    tx pull
+	else
+		for dir in `find htdocs/langs/* -type d`
+		do
+		    fic=`basename $dir`
+		    if [ $fic != "en_US" ]
+		    then
+			    echo "tx pull -l $fic $2 $3"
+			    tx pull -l $fic $2 $3
+			fi
+		done
+	fi
 	cd -
 else
 	echo "tx pull -l $1 $2 $3 $4 $5"
@@ -42,4 +48,4 @@ else
 fi
 
 echo Think to launch also: 
-echo "> dev/fixaltlanguages.sh fix all"
+echo "> dev/tools/fixaltlanguages.sh fix all"

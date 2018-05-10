@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015	Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2013-2014 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2014      Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,25 +21,19 @@
 
 /**
  * \file		htdocs/accountancy/bookkeeping/balancebymonth.php
- * \ingroup		Accounting Expert
+ * \ingroup		Advanced accountancy
  * \brief		Balance by month
  */
-
 require '../../main.inc.php';
-	
-// Class
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 
-// Langs
-$langs->load("main");
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("accountancy");
+require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
+
+// Load traductions files requiredby by page
+$langs->loadLangs(array("bills","compta","accountancy","other"));
 
 // Filter
-$year = $_GET["year"];
+$year = GETPOST("year",'int');
 if ($year == 0) {
 	$year_current = strftime("%Y", time());
 	$year_start = $year_current;
@@ -48,9 +42,11 @@ if ($year == 0) {
 	$year_start = $year;
 }
 
+
 /*
  * View
  */
+
 llxHeader('', $langs->trans("Bookkeeping"));
 
 $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current - 1) . '">' . img_previous() . '</a>';
@@ -73,8 +69,6 @@ if ($result) {
 }
 
 $y = $year_current;
-
-$var = true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width=150>' . $langs->trans("Label") . '</td><td align="center">' . $langs->trans("JanuaryMin") . '</td><td align="center">' . $langs->trans("FebruaryMin") . '</td><td align="center">' . $langs->trans("MarchMin") . '</td><td align="center">' . $langs->trans("AprilMin") . '</td><td align="center">' . $langs->trans("MayMin") . '</td><td align="center">' . $langs->trans("JuneMin") . '</td><td align="center">' . $langs->trans("JulyMin") . '</td><td align="center">' . $langs->trans("AugustMin") . '</td><td align="center">' . $langs->trans("SeptemberMin") . '</td><td align="center">' . $langs->trans("OctoberMin") . '</td><td align="center">' . $langs->trans("NovemberMin") . '</td><td align="center">' . $langs->trans("DecemberMin") . '</td><td align="center"><b>Total</b></td></tr>';
@@ -107,7 +101,7 @@ if ($resql) {
 		
 		$row = $db->fetch_row($resql);
 		
-		print '<tr><td width="14%">' . length_accountg($row[0]) . '</td>';
+		print '<tr class="oddeven"><td width="14%">' . length_accountg($row[0]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[1]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[2]) . '</td>';
 		print '<td align="right" width="6.5%">' . price($row[3]) . '</td>';

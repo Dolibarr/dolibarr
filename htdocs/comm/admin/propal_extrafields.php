@@ -38,7 +38,7 @@ $form = new Form($db);
 // List of supported format
 $tmptype2label=ExtraFields::$type2label;
 $type2label=array('');
-foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->trans($val);
+foreach ($tmptype2label as $key => $val) $type2label[$key]=$langs->transnoentitiesnoconv($val);
 
 $action=GETPOST('action', 'alpha');
 $attrname=GETPOST('attrname', 'alpha');
@@ -63,13 +63,13 @@ $textobject=$langs->transnoentitiesnoconv("Proposals");
 
 llxHeader('',$langs->trans("PropalSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("PropalSetup"),$linkback,'title_setup');
 
 
 $head = propal_admin_prepare_head();
 
-dol_fiche_head($head, 'attributes', $langs->trans("Proposals"), 0, 'propal');
+dol_fiche_head($head, 'attributes', $langs->trans("Proposals"), -1, 'propal');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 
@@ -87,8 +87,8 @@ if ($action != 'create' && $action != 'edit')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Creation d'un champ optionnel
- /*                                                                            */
+/* Creation of an optional field											  */
+/*                                                                            */
 /* ************************************************************************** */
 
 if ($action == 'create')
@@ -101,7 +101,7 @@ if ($action == 'create')
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Edition d'un champ optionnel                                               */
+/* Edition of an optional field                                               */
 /*                                                                            */
 /* ************************************************************************** */
 if ($action == 'edit' && ! empty($attrname))

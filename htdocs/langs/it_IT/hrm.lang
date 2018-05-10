@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Ma
+Establishments=Aziende
+Establishment=Azienda
+NewEstablishment=Nuova azienda
+DeleteEstablishment=Cancella azienda
+ConfirmDeleteEstablishment=Sei sicuro di voler cancellare questa azienda?
+OpenEtablishment=Apri azienda
+CloseEtablishment=Chiudi azienda
+# Dictionary
+DictionaryDepartment=HRM - Lista dipartimenti
+DictionaryFunction=HRM - Lista funzioni
+# Module
+Employees=Dipendenti
+Employee=Dipendente
+NewEmployee=Nuovo dipendente

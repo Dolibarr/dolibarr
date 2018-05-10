@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2005-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2014       Marcos García       <marcosgdf@gmail.com>
+/* Copyright (C) 2005-2009	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2009-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2014		Marcos García		<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,6 +64,7 @@ class InterfaceLogevents extends DolibarrTriggers
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
+            $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogged,".$object->login.")";
             $text.=(empty($object->trigger_mesg)?'':' - '.$object->trigger_mesg);
@@ -82,6 +83,7 @@ class InterfaceLogevents extends DolibarrTriggers
         {
             dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
+            $langs->load("users");
             // Initialisation donnees (date,duree,texte,desc)
             $text="(UserLogoff,".$object->login.")";
             $desc="(UserLogoff,".$object->login.")";
@@ -173,6 +175,9 @@ class InterfaceLogevents extends DolibarrTriggers
         }
 */
 
+		// Add more information into desc from the context property
+		if (! empty($desc) && ! empty($object->context['audit'])) $desc.=' - '.$object->context['audit'];
+
         // Add entry in event table
 		include_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 
@@ -196,8 +201,6 @@ class InterfaceLogevents extends DolibarrTriggers
             dol_syslog(get_class($this).": ".$this->error, LOG_ERR);
             return -1;
         }
-
-		return 0;
     }
 
 }

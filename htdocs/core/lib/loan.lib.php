@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2014		Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2014-2016	Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2015		Frederic France		<frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  */
 function loan_prepare_head($object)
 {
-    global $langs, $conf;
+    global $db, $langs, $conf;
 
     $tab = 0;
     $head = array();
@@ -41,16 +41,6 @@ function loan_prepare_head($object)
 	$head[$tab][2] = 'card';
 	$tab++;
 
-    if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
-    {
-        $nbNote = (empty($object->note_private)?0:1)+(empty($object->note_public)?0:1);
-        $head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
-        $head[$tab][1] = $langs->trans("Notes");
-        if($nbNote > 0) $head[$tab][1].= ' <span class="badge">'.$nbNote.'</span>';
-        $head[$tab][2] = 'note';
-        $tab++;
-    }
-
     // Show more tabs from modules
     // Entries must be declared in modules descriptor with line
     // $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
@@ -58,13 +48,25 @@ function loan_prepare_head($object)
     complete_head_from_modules($conf, $langs, $object, $head, $tab,'loan');
 
 	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
 	$upload_dir = $conf->loan->dir_output . "/" . dol_sanitizeFileName($object->ref);
-	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+	$nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
 	$head[$tab][0] = DOL_URL_ROOT.'/loan/document.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Documents");
-	if($nbFiles > 0) $head[$tab][1].= ' <span class="badge">'.$nbFiles.'</span>';
+	if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
 	$head[$tab][2] = 'documents';
 	$tab++;
+
+	if (empty($conf->global->MAIN_DISABLE_NOTES_TAB))
+	{		
+		$nbNote = (empty($object->note_private)?0:1)+(empty($object->note_public)?0:1);
+		$head[$tab][0] = DOL_URL_ROOT."/loan/note.php?id=".$object->id;
+		$head[$tab][1] = $langs->trans("Notes");
+		if($nbNote > 0) $head[$tab][1].= ' <span class="badge">'.$nbNote.'</span>';
+		$head[$tab][2] = 'note';
+		$tab++;
+	}
 
     $head[$tab][0] = DOL_URL_ROOT.'/loan/info.php?id='.$object->id;
     $head[$tab][1] = $langs->trans("Info");

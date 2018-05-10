@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2017	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,14 +31,14 @@ if (! $user->admin)
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
-$choice=GETPOST('choice');
+$choice=GETPOST('choice','aZ09');
 
 
 // Define filelog to discard it from purge
 $filelog='';
 if (! empty($conf->syslog->enabled))
 {
-	$filelog=SYSLOG_FILE;
+	$filelog=$conf->global->SYSLOG_FILE;
 	$filelog=preg_replace('/DOL_DATA_ROOT/i',DOL_DATA_ROOT,$filelog);
 }
 
@@ -48,64 +48,12 @@ if (! empty($conf->syslog->enabled))
  */
 if ($action=='purge' && ! preg_match('/^confirm/i',$choice) && ($choice != 'allfiles' || $confirm == 'yes') )
 {
-	$filesarray=array();
+	require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+	$utils = new Utils($db);
+	$result = $utils->purgeFiles($choice);
 
-	if ($choice=='tempfiles')
-	{
-		// Delete temporary files
-		if ($dolibarr_main_data_root)
-		{
-			$filesarray=dol_dir_list($dolibarr_main_data_root,"directories",1,'\/temp$');
-		}
-	}
-
-	if ($choice=='allfiles')
-	{
-		// Delete all files
-		if ($dolibarr_main_data_root)
-		{
-			$filesarray=dol_dir_list($dolibarr_main_data_root,"all",0,'','install\.lock$');
-		}
-	}
-
-	if ($choice=='logfile')
-	{
-		$filesarray[]=array('fullname'=>$filelog,'type'=>'file');
-	}
-
-	$count=0;
-	if (count($filesarray))
-	{
-
-		foreach($filesarray as $key => $value)
-		{
-			//print "x ".$filesarray[$key]['fullname']."<br>\n";
-			if ($filesarray[$key]['type'] == 'dir')
-			{
-				$count+=dol_delete_dir_recursive($filesarray[$key]['fullname']);
-			}
-			elseif ($filesarray[$key]['type'] == 'file')
-			{
-				// If (file that is not logfile) or (if logfile with option logfile)
-				if ($filesarray[$key]['fullname'] != $filelog || $choice=='logfile')
-				{
-					$count+=(dol_delete_file($filesarray[$key]['fullname'])?1:0);
-				}
-			}
-		}
-
-		// Update cachenbofdoc
-		if (! empty($conf->ecm->enabled) && $choice=='allfiles')
-		{
-			require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
-			$ecmdirstatic = new EcmDirectory($db);
-			$result = $ecmdirstatic->refreshcachenboffile(1);
-		}
-	}
-
-	if ($count) $mesg=$langs->trans("PurgeNDirectoriesDeleted", $count);
-	else $mesg=$langs->trans("PurgeNothingToDelete");
-	setEventMessage($mesg);
+	$mesg = $utils->output;
+	setEventMessages($mesg, null, 'mesgs');
 }
 
 
@@ -135,7 +83,15 @@ if (! empty($conf->syslog->enabled))
 {
 	print '<input type="radio" name="choice" value="logfile"';
 	print ($choice && $choice=='logfile') ? ' checked' : '';
-	print '> '.$langs->trans("PurgeDeleteLogFile",$filelog).'<br><br>';
+	$filelogparam=$filelog;
+	if ($user->admin && preg_match('/^dolibarr.*\.log$/', basename($filelog)))
+	{
+	   $filelogparam ='<a class="wordbreak" href="'.DOL_URL_ROOT.'/document.php?modulepart=logs&file=';
+	   $filelogparam.=basename($filelog);
+	   $filelogparam.='">'.$filelog.'</a>';
+	}
+	print '> '.$langs->trans("PurgeDeleteLogFile", $filelogparam);
+	print '<br><br>';
 }
 
 print '<input type="radio" name="choice" value="tempfiles"';
@@ -160,7 +116,7 @@ if (preg_match('/^confirm/i',$choice))
 {
 	print '<br>';
 	$formquestion=array();
-	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').' '.img_warning(), 'purge', $formquestion, 'no', 2);
+	print $form->formconfirm($_SERVER["PHP_SELF"].'?choice=allfiles', $langs->trans('Purge'), $langs->trans('ConfirmPurge').img_warning().' ', 'purge', $formquestion, 'no', 2);
 }
 
 

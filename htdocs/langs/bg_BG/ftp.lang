@@ -11,4 +11,4 @@ FTPFailedToRemoveFile=Неуспешно премахване на файла <b
 FTPFailedToRemoveDir=Неуспешно премахване на директорията <b>%s</b> (Проверете правата и дали директорията е празна).
 FTPPassiveMode=Пасивен режим
 ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
-FailedToGetFile=Failed to get files %s
+FailedToGetFile=Неуспешно взимане на файлове %s

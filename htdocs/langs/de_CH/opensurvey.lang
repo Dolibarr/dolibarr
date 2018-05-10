@@ -1,0 +1,6 @@
+# Dolibarr language file - Source file is en_US - opensurvey
+ToReceiveEMailForEachVote=EMail für jede Stimme erhalten
+CheckBox=Einfache Checkbox
+YouAreInivitedToVote=Du bist eingeladen, Deine Stimme abzugeben
+SelectDayDesc=Für jeden ausgewählen Tag kann man die Besprechungszeiten im folgenden Format auswählen:<br>- leer,<br>- "8h", "8H" oder "8:00" für eine Besprechungs-Startzeit,<br>- "8-11", "8h-11h", "8H-11H" oder "8:00-11:00" für eine Besprechungs-Start und -Endzeit,<br>- "8h15-11h15", "8H15-11H15" oder "8:15-11:15" für das Gleiche aber mit Minuten.
+SurveyExpiredInfo=Diese Umfrage ist abgelaufen oder wurde beendet.

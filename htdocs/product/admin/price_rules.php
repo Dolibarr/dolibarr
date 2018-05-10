@@ -52,10 +52,10 @@ if ($_POST) {
 			continue;
 		}
 
+		$i_var_percent = 0;
+
 		if ($i != 1) {
 			$i_var_percent = (float) price2num($var_percent[$i]);
-		} else {
-			$i_var_percent = 0;
 		}
 
 		$i_var_min_percent = (float) price2num($var_min_percent[$i]);
@@ -72,15 +72,15 @@ if ($_POST) {
 		if (!$check1 || !$check2) {
 
 			//If the level is between range but percent fields are empty, then we ensure it does not exist in DB
-			if ($check1 && !$check2) {
+			if ($check1) {
 				$db->query("DELETE FROM ".MAIN_DB_PREFIX."product_pricerules WHERE level = ".(int) $i);
 			}
 
 			continue;
 		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_pricerules
-		SET level = ".(int) $i.", fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent;
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_pricerules (level, fk_level, var_percent, var_min_percent) VALUES (
+		".(int) $i.", ".$db->escape($i_fk_level).", ".$i_var_percent.", ".$i_var_min_percent.")";
 
 		if (!$db->query($sql)) {
 
@@ -89,13 +89,13 @@ if ($_POST) {
 			SET fk_level = ".$db->escape($i_fk_level).", var_percent = ".$i_var_percent.", var_min_percent = ".$i_var_min_percent." WHERE level = ".$i;
 
 			if (!$db->query($sql)) {
-				setEventMessage($langs->trans('ErrorSavingChanges'), 'errors');
+				setEventMessages($langs->trans('ErrorSavingChanges'), null, 'errors');
 			}
 		}
 
 	}
 
-	setEventMessage($langs->trans("RecordSaved"));
+	setEventMessages($langs->trans("RecordSaved"), null, 'mesgs');
 }
 
 /*
@@ -124,7 +124,7 @@ if (empty($conf->produit->enabled)) {
 
 llxHeader('', $langs->trans('MultipriceRules'));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title,$linkback,'title_setup');
 
 
@@ -155,7 +155,6 @@ $genPriceOptions = function($level) use ($price_options) {
 
 	return $return;
 };
-
 ?>
 
 	<table class="noborder">
@@ -166,24 +165,25 @@ $genPriceOptions = function($level) use ($price_options) {
 		<tr>
 			<td class="fieldrequired" style="text-align: center"><?php echo $langs->trans('SellingPrice') ?> 1</td>
 			<td></td>
-			<td style="text-align: center"><input type="text"  style="text-align: right" name="var_min_percent[1]" size="5" value="<?php echo isset($rules[1]) ? price($rules[1]->var_min_percent, 2) : '' ?>"> <?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' 1') ?></td>
+			<td style="text-align: center"><input type="text"  style="text-align: right" name="var_min_percent[1]" size="5" value="<?php echo price(isset($rules[1]) ? $rules[1]->var_min_percent : 0, 2) ?>"> <?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' 1') ?></td>
 		</tr>
 		<?php for ($i = 2; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++): ?>
 			<tr>
 				<td class="fieldrequired" style="text-align: center"><?php
 					echo $langs->trans('SellingPrice').' '.$i;
 					// Label of price
-					if (! empty($conf->global->{"PRODUIT_MULTIPRICES_LABEL$i"})) {
+					$keyforlabel='PRODUIT_MULTIPRICES_LABEL'.$i;
+					if (! empty($conf->global->$keyforlabel)) {
 						print ' - '.$langs->trans($conf->global->$keyforlabel);
 					}
 					?>
 					</td>
 				<td style="text-align: center">
-					<input type="text" style="text-align: right" name="var_percent[<?php echo $i ?>]" size="5" value="<?php echo isset($rules[$i]) ? price($rules[$i]->var_percent, 2) : '' ?>">
+					<input type="text" style="text-align: right" name="var_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_percent : 0, 2) ?>">
 					<?php echo $langs->trans('PercentVariationOver', Form::selectarray("fk_level[$i]", $genPriceOptions($i), (isset($rules[$i]) ? $rules[$i]->fk_level : null))) ?>
 				</td>
 				<td style="text-align: center">
-					<input type="text" style="text-align: right" name="var_min_percent[<?php echo $i ?>]" size="5" value="<?php echo isset($rules[$i]) ? price($rules[$i]->var_min_percent, 2) : '' ?>">
+					<input type="text" style="text-align: right" name="var_min_percent[<?php echo $i ?>]" size="5" value="<?php echo price(isset($rules[$i]) ? $rules[$i]->var_min_percent : 0, 2) ?>">
 					<?php echo $langs->trans('PercentDiscountOver', $langs->trans('SellingPrice').' '.$i) ?>
 				</td>
 			</tr>

@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Email to prevent HRM external service
+Establishments=موسسات
+Establishment=موسسه
+NewEstablishment=موسسه جدید
+DeleteEstablishment=حذف موسسه
+ConfirmDeleteEstablishment=آیا مطمئنید که میخواهید این موسسه را حذف کنید؟
+OpenEtablishment=باز کردن موسسه
+CloseEtablishment=بستن موسسه
+# Dictionary
+DictionaryDepartment=HRM - Department list
+DictionaryFunction=HRM - Function list
+# Module
+Employees=کارمندان
+Employee=کارمند
+NewEmployee=کارمند جدید

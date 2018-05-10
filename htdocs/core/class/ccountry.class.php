@@ -88,11 +88,11 @@ class Ccountry // extends CommonObject
 		$sql.= "label,";
 		$sql.= "active";
         $sql.= ") VALUES (";
-		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->rowid."'").",";
+		$sql.= " ".(! isset($this->rowid)?'NULL':"'".$this->db->escape($this->rowid)."'").",";
 		$sql.= " ".(! isset($this->code)?'NULL':"'".$this->db->escape($this->code)."'").",";
 		$sql.= " ".(! isset($this->code_iso)?'NULL':"'".$this->db->escape($this->code_iso)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
-		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->active."'")."";
+		$sql.= " ".(! isset($this->active)?'NULL':"'".$this->db->escape($this->active)."'")."";
 		$sql.= ")";
 
 		$this->db->begin();
@@ -143,7 +143,7 @@ class Ccountry // extends CommonObject
      *
      *  @param      int		$id    	Id object
      *  @param		string	$code	Code
-     *  @return     int          	<0 if KO, >0 if OK
+     *  @return     int          	>0 if OK, 0 if not found, <0 if KO
      */
     function fetch($id,$code='')
     {
@@ -171,10 +171,13 @@ class Ccountry // extends CommonObject
 				$this->code_iso = $obj->code_iso;
 				$this->label = $obj->label;
 				$this->active = $obj->active;
-            }
-            $this->db->free($resql);
 
-            return 1;
+                $this->db->free($resql);
+                return 1;
+            }
+            else {
+                return 0;
+            }
         }
         else
         {

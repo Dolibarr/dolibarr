@@ -51,8 +51,9 @@ abstract class CommonObjectLine extends CommonObject
 
 
     /**
-     *	Returns the text label from units dictionnary
-     *
+     *	Returns the translation key from units dictionary.
+     *  A langs->trans() must be called on result to get translated value.
+     *  
      * 	@param	string $type Label type (long or short)
      *	@return	string|int <0 if ko, label if ok
      */
@@ -65,8 +66,6 @@ abstract class CommonObjectLine extends CommonObject
 		}
 
 		$langs->load('products');
-
-		$this->db->begin();
 
 		$label_type = 'label';
 

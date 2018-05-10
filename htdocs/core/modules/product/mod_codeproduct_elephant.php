@@ -229,6 +229,7 @@ class mod_codeproduct_elephant extends ModeleProductCode
 	 * 								-2 ErrorCustomerCodeRequired
 	 * 								-3 ErrorCustomerCodeAlreadyUsed
 	 * 								-4 ErrorPrefixRequired
+	 * 								-5 Other (see this->error)
 	 */
 	function verif($db, &$code, $product, $type)
 	{
@@ -252,14 +253,19 @@ class mod_codeproduct_elephant extends ModeleProductCode
 			// Get Mask value
 			$mask = '';
 			if ($type==0) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT)?'':$conf->global->PRODUCT_ELEPHANT_MASK_PRODUCT;
-			if ($type==1) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_SSERVICE)?'':$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
+			if ($type==1) $mask = empty($conf->global->PRODUCT_ELEPHANT_MASK_SERVICE)?'':$conf->global->PRODUCT_ELEPHANT_MASK_SERVICE;
 			if (! $mask)
 			{
 				$this->error='NotConfigured';
-				return '';
+				return -5;
 			}
 
 			$result=check_value($mask,$code);
+			if (is_string($result))
+			{
+				$this->error = $result;
+				return -5;
+			}
 		}
 
 		dol_syslog("mod_codeclient_elephant::verif type=".$type." result=".$result);

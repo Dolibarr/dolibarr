@@ -81,7 +81,8 @@ else
 {
 	if ($base == 1)
 	{
-		print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td colspan="2">'.$langs->trans("Type").'</td>';
@@ -102,13 +103,11 @@ else
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			$var=True;
 			$i=0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 
 				print '<td><a href="dbtable.php?table='.$obj->Name.'">'.$obj->Name.'</a></td>';
 				print '<td>'.$obj->Engine.'</td>';
@@ -134,11 +133,13 @@ else
 			}
 		}
 		print '</table>';
+		print '</div>';
 	}
 
 	if ($base == 2)
 	{
-		print '<table class="noborder">';
+        print '<div class="div-table-responsive-no-min">';
+	    print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>Nb of tuples</td>';
@@ -155,13 +156,11 @@ else
 		if ($resql)
 		{
 			$num = $db->num_rows($resql);
-			$var=True;
 			$i=0;
 			while ($i < $num)
 			{
 				$row = $db->fetch_row($resql);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td>'.$row[0].'</td>';
 				print '<td align="right">'.$row[1].'</td>';
 				print '<td align="right">'.$row[2].'</td>';
@@ -173,12 +172,14 @@ else
 			}
 		}
 		print '</table>';
+		print '</div>';
 	}
 
 	if ($base == 4)
 	{
 		// Sqlite by PDO or by Sqlite3
-		print '<table class="noborder">';
+    print '<div class="div-table-responsive-no-min">';
+	  print '<table class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("TableName").'</td>';
 		print '<td>'.$langs->trans("NbOfRecord").'</td>';
@@ -189,7 +190,6 @@ else
 
 		if ($resql)
 		{
-			$var=True;
 			while ($row = $db->fetch_row($resql)) {
 
 				$rescount = $db->query("SELECT COUNT(*) FROM " . $row[0]);
@@ -200,13 +200,15 @@ else
 					$count = '?';
 				}
 
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td>'.$row[0].'</td>';
 				print '<td>'.$count.'</td>';
 				print '</tr>';
 			}
 		}
 
+		print '</table>';
+		print '</div>';
 	}
 }
 

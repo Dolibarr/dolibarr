@@ -28,8 +28,6 @@
  * 				write = system,call,log,verbose,command,agent,user
  */
 
-//if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');
 if (! defined('NOREQUIRESOC'))    define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))   define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))     define('NOCSRFCHECK','1');
@@ -79,12 +77,16 @@ if (! isset($conf->global->ASTERISK_TYPE))      $conf->global->ASTERISK_TYPE="SI
 if (! isset($conf->global->ASTERISK_INDICATIF)) $conf->global->ASTERISK_INDICATIF="0";
 if (! isset($conf->global->ASTERISK_PORT))      $conf->global->ASTERISK_PORT=5038;
 if ($conf->global->ASTERISK_INDICATIF=='NONE')  $conf->global->ASTERISK_INDICATIF='';
+if (! isset($conf->global->ASTERISK_CONTEXT))   $conf->global->ASTERISK_CONTEXT="from-internal";
+if (! isset($conf->global->ASTERISK_WAIT_TIME)) $conf->global->ASTERISK_WAIT_TIME="30";
+if (! isset($conf->global->ASTERISK_PRIORITY))  $conf->global->ASTERISK_PRIORITY="1";
+if (! isset($conf->global->ASTERISK_MAX_RETRY)) $conf->global->ASTERISK_MAX_RETRY="2";
 
 
-$login = $_GET['login'];
-$password = $_GET['password'];
-$caller = $_GET['caller'];
-$called = $_GET['called'];
+$login = GETPOST('login');
+$password = GETPOST('password');
+$caller = GETPOST('caller');
+$called = GETPOST('called');
 
 // IP address of Asterisk server
 $strHost = $conf->global->ASTERISK_HOST;
@@ -96,14 +98,13 @@ $prefix = $conf->global->ASTERISK_INDICATIF;
 // Port
 $port = $conf->global->ASTERISK_PORT;
 // Context ( generalement from-internal )
-$strContext = "from-internal";
-
+$strContext = $conf->global->ASTERISK_CONTEXT;
 // Delai d'attente avant de raccrocher
-$strWaitTime = "30";
+$strWaitTime = $conf->global->ASTERISK_WAIT_TIME;
 // Priority
-$strPriority = "1";
+$strPriority = $conf->global->ASTERISK_PRIORITY;
 // Nomber of try
-$strMaxRetry = "2";
+$strMaxRetry = $conf->global->ASTERISK_MAX_RETRY;
 
 
 /*
@@ -114,7 +115,7 @@ llxHeader();
 
 $sql = "SELECT s.nom as name FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON sp.fk_soc = s.rowid";
-$sql.= " WHERE s.entity IN (".getEntity('societe', 1).")";
+$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 $sql.= " AND (s.phone='".$db->escape($called)."'";
 $sql.= " OR sp.phone='".$db->escape($called)."'";
 $sql.= " OR sp.phone_perso='".$db->escape($called)."'";
@@ -190,3 +191,4 @@ else {
 }
 
 llxFooter();
+$db->close();

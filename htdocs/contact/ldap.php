@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010	Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2006-2017	Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ $langs->load("companies");
 $langs->load("ldap");
 $langs->load("admin");
 
-$action=GETPOST('action');
+$action=GETPOST('action','aZ09');
 
 // Security check
 $id = GETPOST('id', 'int');
@@ -65,12 +65,12 @@ if ($action == 'dolibarr2ldap')
 
 	if ($result >= 0)
 	{
-		setEventMessage($langs->trans("ContactSynchronized"));
+		setEventMessages($langs->trans("ContactSynchronized"), null, 'mesgs');
 		$db->commit();
 	}
 	else
 	{
-		setEventMessage($ldap->error, 'errors');
+		setEventMessages($ldap->error, $ldap->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -88,10 +88,12 @@ $form = new Form($db);
 
 $head = contact_prepare_head($object);
 
-dol_fiche_head($head, 'ldap', $title, 0, 'contact');
+dol_fiche_head($head, 'ldap', $title, -1, 'contact');
+
+$linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', '');
-    
+
 print '<div class="fichecenter">';
 
 print '<div class="underbanner clearboth"></div>';
@@ -170,12 +172,12 @@ if ($result > 0)
 	$info=$object->_load_ldap_info();
 	$dn=$object->_load_ldap_dn($info,1);
 	$search = "(".$object->_load_ldap_dn($info,2).")";
-	$records=$ldap->getAttribute($dn,$search);
+	$records = $ldap->getAttribute($dn,$search);
 
 	//var_dump($records);
 
 	// Affichage arbre
-	if (count($records) && $records != false && (! isset($records['count']) || $records['count'] > 0))
+    if ((! is_numeric($records) || $records != 0) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
@@ -196,15 +198,11 @@ if ($result > 0)
 }
 else
 {
-	dol_print_error('',$ldap->error);
+	setEventMessages($ldap->error, $ldap->errors, 'errors');
 }
 
 
 print '</table>';
 
-
-
-
 llxFooter();
-
 $db->close();

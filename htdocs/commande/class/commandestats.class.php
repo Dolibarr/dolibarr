@@ -60,8 +60,8 @@ class CommandeStats extends Stats
 
 		$this->socid = ($socid > 0 ? $socid : 0);
         $this->userid = $userid;
-		$this->cachefilesuffix = $mode; 
-        
+		$this->cachefilesuffix = $mode;
+
 		if ($mode == 'customer')
 		{
 			$object=new Commande($this->db);
@@ -81,7 +81,8 @@ class CommandeStats extends Stats
 			$this->where.= " c.fk_statut > 2";    // Only approved & ordered
 		}
 		//$this->where.= " AND c.fk_soc = s.rowid AND c.entity = ".$conf->entity;
-		$this->where.= " AND c.entity = ".$conf->entity;
+		$this->where.= ' AND c.entity IN ('.getEntity('commande').')';
+
 		if (!$user->rights->societe->client->voir && !$this->socid) $this->where .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($this->socid)
 		{
@@ -94,9 +95,10 @@ class CommandeStats extends Stats
 	 * Return orders number by month for a year
 	 *
 	 * @param	int		$year		Year to scan
+     *	@param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return	array				Array with number by month
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -108,7 +110,7 @@ class CommandeStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getNbByMonth($year, $sql);
+		$res=$this->_getNbByMonth($year, $sql, $format);
 		return $res;
 	}
 
@@ -135,10 +137,11 @@ class CommandeStats extends Stats
 	/**
 	 * Return the orders amount by month for a year
 	 *
-	 * @param	int		$year	Year to scan
-	 * @return	array			Array with amount by month
+	 * @param	int		$year		Year to scan
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @return	array				Array with amount by month
 	 */
-	function getAmountByMonth($year)
+	function getAmountByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -150,7 +153,7 @@ class CommandeStats extends Stats
 		$sql.= " GROUP BY dm";
         $sql.= $this->db->order('dm','DESC');
 
-		$res=$this->_getAmountByMonth($year, $sql);
+		$res=$this->_getAmountByMonth($year, $sql, $format);
 		return $res;
 	}
 
@@ -206,7 +209,7 @@ class CommandeStats extends Stats
 
 		$sql = "SELECT product.ref, COUNT(product.ref) as nb, SUM(tl.".$this->field_line.") as total, AVG(tl.".$this->field_line.") as avg";
 		$sql.= " FROM ".$this->from.", ".$this->from_line.", ".MAIN_DB_PREFIX."product as product";
-		//if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE ".$this->where;
 		$sql.= " AND c.rowid = tl.fk_commande AND tl.fk_product = product.rowid";
     	$sql.= " AND c.date_commande BETWEEN '".$this->db->idate(dol_get_first_day($year,1,false))."' AND '".$this->db->idate(dol_get_last_day($year,12,false))."'";
@@ -216,6 +219,6 @@ class CommandeStats extends Stats
 
 		return $this->_getAllByProduct($sql);
 	}
-		
+
 }
 

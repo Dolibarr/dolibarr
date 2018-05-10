@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2016 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -14,16 +15,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program. If not, see <http://www.gnu.org/licenses/>.
 --
+-- Table to declare permanent notifications (per workflow event)
 -- ===================================================================
 
 create table llx_notify_def
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  datec           date,             -- date de creation
+  datec           date,             			-- date de creation
   fk_action       integer NOT NULL,
-  fk_soc          integer NOT NULL,
+  fk_soc          integer,
   fk_contact      integer,
   fk_user		  integer,
-  type            varchar(16) DEFAULT 'email'
+  type            varchar(16) DEFAULT 'email'	-- 'browser', 'email', 'sms', 'webservice', ...
 )ENGINE=innodb;

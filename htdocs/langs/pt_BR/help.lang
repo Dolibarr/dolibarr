@@ -8,7 +8,7 @@ HelpCenter=Central de ajuda
 DolibarrHelpCenter=Centro de suporte e ajuda Dolibarr
 ToGoBackToDolibarr=Caso contrário, clique aqui para usar Dolibarr
 TypeOfSupport=Fonte de suporte
-NeedHelpCenter=Precisa de ajuda ou suporte ?
+NeedHelpCenter=PRecisa de ajuda ou suporte?
 Efficiency=eficiência
 TypeHelpOnly=Somente ajuda
 TypeHelpDev=Ajuda+Desenvolvimento
@@ -19,6 +19,5 @@ ToGetHelpGoOnSparkAngels2=Às vezes, não há nenhuma empresa disponível no mom
 BackToHelpCenter=Caso contrário, clique aqui para ir para trás para ajudar a home page .
 LinkToGoldMember=Você pode ligar para um dos técnicos pré-selecionada por Dolibarr para o seu idioma, clicando em seu Widget (status e preço máximo são atualizados automaticamente):
 PossibleLanguages=Os idiomas suportados
-MakeADonation=Ajude o projeto Dolibarr, faça uma doação
 SubscribeToFoundation=Ajuda projeto Dolibarr, assine a fundação
 SeeOfficalSupport=Para obter suporte oficial do Dolibarr no seu idioma:  <br><b><a href="%s" target="_blank">%s</a></b>

@@ -23,35 +23,6 @@
 $langs->load('hrm');
 
 /**
- * Return head table for employee tabs screen
- *
- * @param object $object contact
- * @return array head table of tabs
- */
-function employee_prepare_head($object) {
-	global $langs, $conf, $user;
-	
-	$h = 0;
-	$head = array ();
-	
-	$head [$h] [0] = DOL_URL_ROOT.'/hrm/employee/card.php?id=' . $object->id;
-	$head [$h] [1] = $langs->trans("Card");
-	$head [$h] [2] = 'card';
-	$h ++;
-
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'employee');
-
-	$head [$h] [0] = DOL_URL_ROOT.'/hrm/employee/info.php?id=' . $object->id;
-	$head [$h] [1] = $langs->trans("Info");
-	$head [$h] [2] = 'info';
-	$h ++;
-
-	complete_head_from_modules($conf, $langs, $object, $head, $h, 'employee', 'remove');
-
-	return $head;
-}
-
-/**
  * Return head table for establishment tabs screen
  *
  * @param   Establishment	$object		Object related to tabs

@@ -127,13 +127,13 @@ class ModulesTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$modulelist=array('Accounting','Adherent','Agenda','Banque','Barcode','Bookmark',
-		'CashDesk','Categorie','ClickToDial','Commande','Comptabilite','Contrat','Cron','Deplacement','DocumentGeneration','Don','DynamicPrices',
-		'ECM','Expedition','Export','ExternalRss','ExternalSite',
-		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','Import','Label','Ldap',
-		'Mailing','MailmanSpip','Margin',
-		'Notification','OpenSurvey','Paybox','Paypal','Prelevement','Product','ProductBatch','Projet','Propale',
-		'Salaries','Service','Skype','Societe','Stock','WebServicesClient','Syslog','Tax','User','WebServices','Workflow');
+		$modulelist=array('Accounting','Adherent','Agenda','Banque','Barcode','BlockedLog','Bookmark',
+		'CashDesk','Categorie','ClickToDial','Collab','Commande','Comptabilite','Contrat','Cron','Deplacement','DocumentGeneration','Don','DynamicPrices',
+		'ECM','Expedition','ExpenseReport','Export','ExternalRss','ExternalSite',
+		'Facture','Fckeditor','Ficheinter','Fournisseur','FTP','GeoIPMaxmind','Gravatar','Holiday','HRM','Import','Incoterm','Label','Ldap','Loan',
+		'Mailing','MailmanSpip','Margin','ModuleBuilder','MultiCurrency',
+		'Notification','Oauth','OpenSurvey','Paybox','Paypal','Prelevement','Printing','Product','ProductBatch','Projet','Propale','ReceiptPrinter','Resource',
+		'Salaries','Service','Skype','Societe','Stock','Stripe','SupplierProposal','Syslog','Tax','Ticketsup','User','Variants','WebServices','WebServicesClient','Website','Workflow');
 		foreach($modulelist as $modlabel)
 		{
     		require_once(DOL_DOCUMENT_ROOT.'/core/modules/mod'.$modlabel.'.class.php');
@@ -142,7 +142,12 @@ class ModulesTest extends PHPUnit_Framework_TestCase
             $result=$mod->remove();
             $result=$mod->init();
         	$this->assertLessThan($result, 0, $modlabel);
-        	print __METHOD__." result=".$result."\n";
+        	print __METHOD__." test remove/init for module ".$modlabel.", result=".$result."\n";
+
+        	if (in_array($modlabel, array('Ldap', 'MailmanSpip')))
+        	{
+        	    $result=$mod->remove();
+        	}
 		}
 
         return 0;

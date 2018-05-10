@@ -42,6 +42,7 @@ llxHeader();
 print load_fiche_titre($langs->trans("InfoDatabase"),'','title_setup');
 
 // Database
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Database").'</td></tr>'."\n";
 print '<tr '.$bc[0].'><td width="300">'.$langs->trans("Version").'</td><td>'.$db::LABEL.' '.$db->getVersion().'</td></tr>'."\n";
@@ -54,14 +55,16 @@ print '<tr '.$bc[0].'><td width="300">'.$langs->trans("Password").'</td><td>'.pr
 print '<tr '.$bc[1].'><td width="300">'.$langs->trans("DBStoringCharset").'</td><td>'.$db->getDefaultCharacterSetDatabase().'</td></tr>'."\n";
 print '<tr '.$bc[0].'><td width="300">'.$langs->trans("DBSortingCharset").'</td><td>'.$db->getDefaultCollationDatabase().'</td></tr>'."\n";
 print '</table>';
+print '</div>';
 
 // Tables
 print '<br>';
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Tables").'</td></tr>'."\n";
 print '<tr '.$bc[0].'><td width="300"><a href="'.DOL_URL_ROOT.'/admin/system/database-tables.php?mainmenu=home">'.$langs->trans("List").'</a></td></tr>'."\n";
 print '</table>';
-
+print '</div>';
 
 $listofvars=$db->getServerParametersValues();
 $listofstatus=$db->getServerStatusValues();
@@ -76,6 +79,7 @@ else
 	foreach($arraylist as $listname)
 	{
 		print '<br>';
+        print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
 		print '<td width="300">'.$langs->trans("Parameters").'</td>';
@@ -88,7 +92,7 @@ else
 		{
 			$arraytest=array(
 				'character_set_database'=>array('var'=>'dolibarr_main_db_character_set','valifempty'=>'utf8'),
-				'collation_database'=>array('var'=>'dolibarr_main_db_collation','valifempty'=>'utf8_general_ci')
+				'collation_database'=>array('var'=>'dolibarr_main_db_collation','valifempty'=>'utf8_unicode_ci')
 			);
 		}
 
@@ -96,11 +100,9 @@ else
 		if ($listname == 'listofvars') $listtouse=$listofvars;
 		if ($listname == 'listofstatus') $listtouse=$listofstatus;
 
-		$var=true;
 		foreach($listtouse as $param => $paramval)
 		{
-			$var=!$var;
-			print '<tr '.$bc[$var].'>';
+			print '<tr class="oddeven">';
 			print '<td>';
 			print $param;
 			print '</td>';
@@ -120,6 +122,7 @@ else
 			print '</tr>'."\n";
 		}
 		print '</table>'."\n";
+		print '</div>';
 	}
 }
 

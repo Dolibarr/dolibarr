@@ -19,14 +19,18 @@
 CREATE TABLE llx_holiday 
 (
 rowid          integer NOT NULL AUTO_INCREMENT PRIMARY KEY,
+ref			   varchar(30) NULL,       -- number
+ref_ext		   varchar(255),
+entity         integer DEFAULT 1 NOT NULL,		-- Multi company id
 fk_user        integer NOT NULL,
 fk_user_create integer,
+fk_user_modif  integer,
 fk_type        integer NOT NULL,
 date_create    DATETIME NOT NULL,
 description    VARCHAR( 255 ) NOT NULL,
 date_debut     DATE NOT NULL,
 date_fin       DATE NOT NULL,
-halfday        integer DEFAULT 0,
+halfday        integer DEFAULT 0,				-- 0=start morning and end afternoon, -1=start afternoon end afternoon, 1=start morning and end morning, 2=start afternoon and end morning
 statut         integer NOT NULL DEFAULT '1',
 fk_validator   integer NOT NULL,
 date_valid     DATETIME DEFAULT NULL,
@@ -37,6 +41,9 @@ date_cancel    DATETIME DEFAULT NULL,
 fk_user_cancel integer DEFAULT NULL,
 detail_refuse  varchar( 250 ) DEFAULT NULL,
 note_private   text,
-note_public    text
+note_public    text,
+tms            timestamp,
+import_key			varchar(14),
+extraparams			varchar(255)				-- for other parameters with json format
 ) 
 ENGINE=innodb;

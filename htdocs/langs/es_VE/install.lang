@@ -1,0 +1,2 @@
+# Dolibarr language file - Source file is en_US - install
+KeepDefaultValuesDeb=Está utilizando el asistente de instalación Dolibarr de un paquete Linux o BSD (Ubuntu, Debian, Fedora...), los valores propuestos aquí están optimizados. Sólo será necesaria la contraseña del propietario de la base de datos a crear. Cambie la otra información sólamente si está seguro de ello.

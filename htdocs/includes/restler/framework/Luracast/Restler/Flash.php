@@ -2,6 +2,7 @@
 namespace Luracast\Restler;
 
 use Luracast\Restler\Format\HtmlFormat;
+use ArrayAccess;
 
 /**
  * Storing and retrieving a message or array of key value pairs for one time use using $_SESSION
@@ -14,9 +15,9 @@ use Luracast\Restler\Format\HtmlFormat;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
  */
-class Flash //implements \JsonSerializable
+class Flash implements ArrayAccess
 {
     const SUCCESS = 'success';
     const INFO = 'info';
@@ -104,18 +105,22 @@ class Flash //implements \JsonSerializable
      */
     public static function set(array $data)
     {
-        if (!static::$instance)
+        if (!static::$instance) {
             static::$instance = new Flash();
-        if (!isset($_SESSION['flash']))
+        }
+        if (!isset($_SESSION['flash'])) {
             $_SESSION['flash'] = array();
+        }
         $_SESSION['flash'] += $data;
         HtmlFormat::$data['flash'] = static::$instance;
+
         return static::$instance;
     }
 
     public function __get($name)
     {
         $this->usedOnce = true;
+
         return Util::nestedValue($_SESSION, 'flash', $name);
     }
 
@@ -126,8 +131,9 @@ class Flash //implements \JsonSerializable
 
     public function __destruct()
     {
-        if ($this->usedOnce)
+        if ($this->usedOnce) {
             unset($_SESSION['flash']);
+        }
     }
 
     /**
@@ -139,8 +145,30 @@ class Flash //implements \JsonSerializable
     public function jsonSerialize()
     {
         $this->usedOnce = true;
+
         return isset($_SESSION['flash'])
             ? $_SESSION['flash']
             : array();
+    }
+
+
+    public function offsetExists($offset)
+    {
+        return $this->__isset($offset);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->__get($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        //not implemented
+    }
+
+    public function offsetUnset($offset)
+    {
+        //not implemented
     }
 }

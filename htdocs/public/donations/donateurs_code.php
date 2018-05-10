@@ -73,15 +73,11 @@ if ($resql)
 		print "<td align=\"right\">".$langs->trans("Amount")."</TD>";
 		print "</TR>\n";
 
-		$var=True;
-		$bc[1]='bgcolor="#f5f5f5"';
-		$bc[0]='bgcolor="#f0f0f0"';
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
 
-			$var=!$var;
-			print "<tr ".$bc[$var].">";
+			print '<tr class="oddeven">';
 			if ($objp->public)
 			{
 				print "<td>".dolGetFirstLastname($objp->firstname, $objp->lastname)." ".$objp->societe."</td>\n";

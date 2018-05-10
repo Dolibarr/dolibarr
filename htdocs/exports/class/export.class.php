@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2005-2011	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012	Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2012		Charles-Fr BENKE	<charles.fr@benke.fr>
+/* Copyright (C) 2005-2011  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2012       Charles-Fr BENKE    <charles.fr@benke.fr>
+ * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,7 @@ class Export
 	var $array_export_sql_start=array();        // Tableau des "requetes sql"
 	var $array_export_sql_end=array();          // Tableau des "requetes sql"
 	var $array_export_sql_order=array();        // Tableau des "requetes sql"
+
 	var $array_export_fields=array();           // Tableau des listes de champ+libelle a exporter
 	var $array_export_TypeFields=array();		// Tableau des listes de champ+Type de filtre
 	var $array_export_FilterValue=array();		// Tableau des listes de champ+Valeur a filtrer
@@ -44,7 +46,7 @@ class Export
 	var $array_export_dependencies=array();     // array of list of entities that must take care of the DISTINCT if a field is added into export
 	var $array_export_special=array();          // Tableau des operations speciales sur champ
     var $array_export_examplevalues=array();    // array with examples
-    
+
 	// To store export modules
 	var $hexa;
 	var $hexafiltervalue;
@@ -125,20 +127,23 @@ class Export
 
                                     // Test if permissions are ok
 									$bool=true;
-									foreach($module->export_permission[$r] as $val)
+									if (isset($module->export_permission))
 									{
-    									$perm=$val;
-    									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
-    									if (! empty($perm[2]))
-    									{
-    										$bool=$user->rights->$perm[0]->$perm[1]->$perm[2];
-    									}
-    									else
-    									{
-    										$bool=$user->rights->$perm[0]->$perm[1];
-    									}
-    									if ($perm[0]=='user' && $user->admin) $bool=true;
-    									if (! $bool) break;
+										foreach($module->export_permission[$r] as $val)
+										{
+	    									$perm=$val;
+	    									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
+	    									if (! empty($perm[2]))
+	    									{
+	    										$bool=$user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
+	    									}
+	    									else
+	    									{
+	    										$bool=$user->rights->{$perm[0]}->{$perm[1]};
+	    									}
+	    									if ($perm[0]=='user' && $user->admin) $bool=true;
+	    									if (! $bool) break;
+										}
 									}
 									//print $bool." $perm[0]"."<br>";
 
@@ -177,7 +182,7 @@ class Export
 									$this->array_export_special[$i]=(! empty($module->export_special_array[$r])?$module->export_special_array[$r]:'');
             						// Array of examples
             						$this->array_export_examplevalues[$i]=$module->export_examplevalues_array[$r];
-									
+
 									// Requete sql du dataset
 									$this->array_export_sql_start[$i]=$module->export_sql_start[$r];
 									$this->array_export_sql_end[$i]=$module->export_sql_end[$r];
@@ -219,12 +224,12 @@ class Export
 		foreach ($this->array_export_fields[$indice] as $key => $value)
 		{
 			if (! array_key_exists($key, $array_selected)) continue;		// Field not selected
-
+            if (preg_match('/^none\./', $key)) continue;                    // A field that must not appears into SQL
 			if ($i > 0) $sql.=', ';
 			else $i++;
 
 			if (strpos($key, ' as ')===false) {
-				$newfield=$key.' as '.str_replace(array('.', '-'),'_',$key);
+				$newfield=$key.' as '.str_replace(array('.', '-','(',')'),'_',$key);
 			} else {
 				$newfield=$key;
 			}
@@ -233,18 +238,31 @@ class Export
 		}
 		$sql.=$this->array_export_sql_end[$indice];
 
-		// Add the filtering into sql if a filtering array is provided
+		// Add the WHERE part. Filtering into sql if a filtering array is provided
 		if (is_array($array_filterValue) && !empty($array_filterValue))
 		{
 			$sqlWhere='';
 			// Loop on each condition to add
 			foreach ($array_filterValue as $key => $value)
 			{
+			    if (preg_match('/GROUP_CONCAT/i', $key)) continue;
 				if ($value != '') $sqlWhere.=" and ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
 			}
 			$sql.=$sqlWhere;
 		}
+
+		// Add the order
 		$sql.=$this->array_export_sql_order[$indice];
+
+		// Add the HAVING part.
+		if (is_array($array_filterValue) && !empty($array_filterValue))
+		{
+		    // Loop on each condition to add
+		    foreach ($array_filterValue as $key => $value)
+		    {
+		        if (preg_match('/GROUP_CONCAT/i', $key) and $value != '') $sql.=" HAVING ".$this->build_filterQuery($this->array_export_TypeFields[$indice][$key], $key, $array_filterValue[$key]);
+		    }
+		}
 
 		return $sql;
 	}
@@ -267,22 +285,22 @@ class Export
 				if (! (strpos($ValueField, '%') === false))
 					$szFilterQuery.=" ".$NameField." LIKE '".$ValueField."'";
 				else
-					$szFilterQuery.=" ".$NameField."='".$ValueField."'";
+					$szFilterQuery.=" ".$NameField." = '".$ValueField."'";
 				break;
 			case 'Date':
 				if (strpos($ValueField, "+") > 0)
 				{
 					// mode plage
 					$ValueArray = explode("+", $ValueField);
-					$szFilterQuery ="(".$this->conditionDate($NameField,$ValueArray[0],">=");
-					$szFilterQuery.=" AND ".$this->conditionDate($NameField,$ValueArray[1],"<=").")";
+					$szFilterQuery ="(".$this->conditionDate($NameField,trim($ValueArray[0]),">=");
+					$szFilterQuery.=" AND ".$this->conditionDate($NameField,trim($ValueArray[1]),"<=").")";
 				}
 				else
 				{
 					if (is_numeric(substr($ValueField,0,1)))
-						$szFilterQuery=$this->conditionDate($NameField,$ValueField,"=");
+						$szFilterQuery=$this->conditionDate($NameField,trim($ValueField),"=");
 					else
-						$szFilterQuery=$this->conditionDate($NameField,substr($ValueField,1),substr($ValueField,0,1));
+						$szFilterQuery=$this->conditionDate($NameField,trim(substr($ValueField,1)),substr($ValueField,0,1));
 				}
 				break;
 			case 'Duree':
@@ -311,11 +329,15 @@ class Export
 			case 'List':
 				if (is_numeric($ValueField))
 					$szFilterQuery=" ".$NameField."=".$ValueField;
-				else
-					$szFilterQuery=" ".$NameField."='".$ValueField."'";
+				else {
+                    if (! (strpos($ValueField, '%') === false))
+                        $szFilterQuery=" ".$NameField." LIKE '".$ValueField."'";
+                    else
+                        $szFilterQuery=" ".$NameField." = '".$ValueField."'";
+				}
 				break;
 			default:
-			    dol_syslog("Error we try to forge an sql export request with a condition on a field with type '".$InfoFieldList[0]."' (defined into module descriptor) but this type is unknown/not supported. It looks like a bug into module descriptor.", LOG_ERROR);
+			    dol_syslog("Error we try to forge an sql export request with a condition on a field with type '".$InfoFieldList[0]."' (defined into module descriptor) but this type is unknown/not supported. It looks like a bug into module descriptor.", LOG_ERR);
 		}
 
 		return $szFilterQuery;
@@ -363,6 +385,9 @@ class Export
 			case 'Duree':
 			case 'Numeric':
 			case 'Number':
+				// Must be a string text to allow to use comparison strings like "<= 999"
+			    $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
+				break;
 			case 'Status':
 				if (! empty($conf->global->MAIN_ACTIVATE_HTML5)) $szFilterField='<input type="number" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
 				else $szFilterField='<input type="text" size="6" name="'.$NameField.'" value="'.$ValueField.'">';
@@ -512,7 +537,7 @@ class Export
 			return -1;
 		}
 
-		// Creation de la classe d'export du model ExportXXX
+		// Creation of class to export using model ExportXXX
 		$dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
 		$file = "export_".$model.".modules.php";
 		$classname = "Export".$model;
@@ -572,10 +597,8 @@ class Export
 
 				$var=true;
 
-				while ($objp = $this->db->fetch_object($resql))
+				while ($obj = $this->db->fetch_object($resql))
 				{
-					$var=!$var;
-
 					// Process special operations
 					if (! empty($this->array_export_special[$indice]))
 					{
@@ -586,20 +609,50 @@ class Export
 							if ($this->array_export_special[$indice][$key]=='NULLIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-'),'_',$key);
-								if ($objp->$alias < 0) $objp->$alias='';
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
+								if ($obj->$alias < 0) $obj->$alias='';
 							}
 							// Operation ZEROIFNEG
-							if ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
+							elseif ($this->array_export_special[$indice][$key]=='ZEROIFNEG')
 							{
 								//$alias=$this->array_export_alias[$indice][$key];
-								$alias=str_replace(array('.', '-'),'_',$key);
-								if ($objp->$alias < 0) $objp->$alias='0';
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
+								if ($obj->$alias < 0) $obj->$alias='0';
+							}
+							// Operation INVOICEREMAINTOPAY
+							elseif ($this->array_export_special[$indice][$key]=='getRemainToPay')
+							{
+								//$alias=$this->array_export_alias[$indice][$key];
+								$alias=str_replace(array('.', '-','(',')'),'_',$key);
+								$remaintopay='';
+								if ($obj->f_rowid > 0)
+								{
+								    global $tmpobjforcomputecall;
+								    if (! is_object($tmpobjforcomputecall))
+								    {
+								        include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+								        $tmpobjforcomputecall=new Facture($this->db);
+								    }
+								    $tmpobjforcomputecall->id = $obj->f_rowid;
+								    $tmpobjforcomputecall->total_ttc = $obj->f_total_ttc;
+								    $remaintopay=$tmpobjforcomputecall->getRemainToPay();
+								}
+								$obj->$alias=$remaintopay;
+							}
+							else
+							{
+							    // TODO FIXME Export of compute field does not work. $obj containt $obj->alias_field and formulat will contains $obj->field
+							    $computestring=$this->array_export_special[$indice][$key];
+							    $tmp=dol_eval($computestring, 1, 0);
+							    $obj->$alias=$tmp;
+
+							    $this->error="ERROPNOTSUPPORTED. Operation ".$this->array_export_special[$indice][$key]." not supported. Export of 'computed' extrafields is not yet supported, please remove field.";
+							    return -1;
 							}
 						}
 					}
 					// end of special operation processing
-					$objmodel->write_record($array_selected,$objp,$outputlangs,$this->array_export_TypeFields[$indice]);
+					$objmodel->write_record($array_selected,$obj,$outputlangs,$this->array_export_TypeFields[$indice]);
 				}
 
 				// Genere en-tete
@@ -644,11 +697,13 @@ class Export
 		$sql.= 'label,';
 		$sql.= 'type,';
 		$sql.= 'field,';
+		$sql.= 'fk_user,';
 		$sql.= 'filter';
 		$sql.= ') VALUES (';
 		$sql.= "'".$this->db->escape($this->model_name)."',";
 		$sql.= "'".$this->db->escape($this->datatoexport)."',";
 		$sql.= "'".$this->db->escape($this->hexa)."',";
+		$sql.= "'".$user->id."',";
 		$sql.= "'".$this->db->escape($this->hexafiltervalue)."'";
 		$sql.= ")";
 
@@ -690,7 +745,7 @@ class Export
 				$this->id				= $obj->rowid;
 				$this->model_name		= $obj->label;
 				$this->datatoexport		= $obj->type;
-				
+
 				$this->hexa				= $obj->field;
 				$this->hexafiltervalue	= $obj->filter;
 

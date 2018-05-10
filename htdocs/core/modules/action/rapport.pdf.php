@@ -178,6 +178,8 @@ class CommActionRapport
 			if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+			$this->result = array('fullpath'=>$file);
+
 			return 1;
 		}
 	}
@@ -229,7 +231,7 @@ class CommActionRapport
 				$obj = $this->db->fetch_object($resql);
 
 				$eventstatic->id=$obj->id;
-				$eventstatic->percentage=$obj->percentage;
+				$eventstatic->percentage=$obj->percent;
 				$eventstatic->fulldayevent=$obj->fulldayevent;
 				$eventstatic->punctual=$obj->punctual;
 
@@ -266,7 +268,14 @@ class CommActionRapport
 
 				// Date
 				$pdf->SetXY($this->marge_gauche, $y);
-				$pdf->MultiCell(22, $height, dol_print_date($this->db->jdate($obj->dp),"day")."\n".dol_print_date($this->db->jdate($obj->dp),"hour"), 0, 'L', 0);
+				$textdate = dol_print_date($this->db->jdate($obj->dp),"day")."\n".dol_print_date($this->db->jdate($obj->dp),"hour");
+				if ($obj->dp2) {
+					if (dol_print_date($this->db->jdate($obj->dp),"day") != dol_print_date($this->db->jdate($obj->dp2),"day"))
+						$textdate.= " -> ".dol_print_date($this->db->jdate($obj->dp2), "day")." - ".dol_print_date($this->db->jdate($obj->dp2), "hour");
+					else
+						$textdate.= " -> ".dol_print_date($this->db->jdate($obj->dp2), "hour");
+				}
+				$pdf->MultiCell(22, $height, $textdate, 0, 'L', 0);
 				$y0 = $pdf->GetY();
 
 				// Third party
@@ -282,7 +291,9 @@ class CommActionRapport
 					if ($code == 'AC_OTH_AUTO') $code='AC_AUTO';
 				}
 				$pdf->SetXY(60,$y);
-				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Action".$code)),32), 0, 'L', 0);
+				$labelactiontype = $outputlangs->transnoentitiesnoconv("Action".$code);
+				$labelactiontypeshort = $outputlangs->transnoentitiesnoconv("Action".$code.'Short');
+				$pdf->MultiCell(32, $height, dol_trunc($outputlangs->convToOutputCharset($labelactiontypeshort == "Action".$code.'Short' ? $labelactiontype : $labelactiontypeshort),32), 0, 'L', 0);
 				$y2 = $pdf->GetY();
 
 				// Description of event

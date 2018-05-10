@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2011	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2013		Cédric Salvador			<csalvador@gpcsolutions.fr>
  *
@@ -34,16 +34,16 @@ $langs->load("donations");
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
-$offset = $conf->liste_limit * $page;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="d.datedon";
-$limit = $conf->liste_limit;
 
-$statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
-$search_all=GETPOST('sall','alpha');
+$statut=(GETPOST("statut",'intcomma')!='')?GETPOST("statut",'intcomma'):"-1";
+$search_all=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $search_ref=GETPOST('search_ref','alpha');
 $search_company=GETPOST('search_company','alpha');
 $search_name=GETPOST('search_name','alpha');
@@ -52,7 +52,7 @@ $optioncss = GETPOST('optioncss','alpha');
 
 if (!$user->rights->don->lire) accessforbidden();
 
-if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETPOST("button_removefilter")) // Both test are required to be compatible with all browsers
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
 	$search_all="";
     $search_ref="";
@@ -61,7 +61,7 @@ if (GETPOST("button_removefilter_x") || GETPOST("button_removefilter.x") || GETP
 	$search_amount="";
 }
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('orderlist'));
 
 
@@ -72,13 +72,12 @@ $fieldstosearchall = array(
     'd.lastname'=>'Lastname',
     'd.firstname'=>'Firstname',
 );
-    
 
-    
 /*
  * View
  */
 
+$form=new Form($db);
 if (! empty($conf->projet->enabled)) $projectstatic=new Project($db);
 
 llxHeader('',$langs->trans("Donations"),'EN:Module_Donations|FR:Module_Dons|ES:M&oacute;dulo_Donaciones');
@@ -90,14 +89,14 @@ $sql = "SELECT d.rowid, d.datedon, d.firstname, d.lastname, d.societe,";
 $sql.= " d.amount, d.fk_statut as statut, ";
 $sql.= " p.rowid as pid, p.ref, p.title, p.public";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d LEFT JOIN ".MAIN_DB_PREFIX."projet AS p";
-$sql.= " ON p.rowid = d.fk_projet WHERE 1 = 1";
-if ($statut >= 0)
+$sql.= " ON p.rowid = d.fk_projet WHERE d.entity IN (".getEntity('donation').")";
+if ($statut != '' && $statut != '-1')
 {
-	$sql .= " AND d.fk_statut = ".$statut;
+	$sql .= " AND d.fk_statut IN (".$db->escape($statut).")";
 }
 if (trim($search_ref) != '')
 {
-    $sql.= ' AND d.rowid LIKE \'%'.$db->escape(trim($search_ref)) . '%\'';
+    $sql.= natural_search('d.ref', $search_ref);
 }
 if (trim($search_all) != '')
 {
@@ -111,9 +110,22 @@ if (trim($search_name) != '')
 {
     $sql .= natural_search(array('d.lastname', 'd.firstname'), $search_name);
 }
-if ($search_amount) $sql.=" AND d.amount='".$db->escape(price2num(trim($search_amount)))."'";
+if ($search_amount) $sql.= natural_search('d.amount', $search_amount, 1);
 
 $sql.= $db->order($sortfield,$sortorder);
+
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
+}
+
 $sql.= $db->plimit($limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -123,52 +135,39 @@ if ($resql)
 	$i = 0;
 
 	$param = '&statut='.$statut;
-    if ($page > 0) $param.= '&page='.$page;
+    //if ($page > 0) $param.= '&page='.$page;
 	if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
-	if ($statut >= 0)
+	$newcardbutton='';
+	if ($user->rights->don->creer)
 	{
-	    $donationstatic->statut=$statut;
-	    $label=$donationstatic->getLibStatut(0);
-		print_barre_liste($label, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
-	}
-	else
-	{
-		print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num);
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create">'.$langs->trans('NewDonation');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
-
-    print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+    print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
 
-    if ($search_all)
+	print_barre_liste($langs->trans("Donations"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num,$nbtotalofrecords, 'title_generic.png', 0, $newcardbutton);
+
+	if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $search_all, join(', ',$fieldstosearchall));
+        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
     }
-    
-	print "<table class=\"noborder\" width=\"100%\">";
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Name"),$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
-	if (! empty($conf->projet->enabled))
-	{
-		$langs->load("projects");
-		print_liste_field_titre($langs->trans("Project"),$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
-	}
-	print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
-	print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
-	print "</tr>\n";
+
+    print '<div class="div-table-responsive">';
+    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
     // Filters lines
-    print '<tr class="liste_titre">';
+    print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre">';
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
     print '</td>';
@@ -188,16 +187,33 @@ if ($resql)
         print '</td>';
     }
     print '<td class="liste_titre" align="right"><input name="search_amount" class="flat" type="text" size="8" value="'.$search_amount.'"></td>';
-    print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" name="button_search" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-	print '<input type="image" class="liste_titre" name="button_removefilter" src="'.img_picto($langs->trans("Search"),'searchclear.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'" title="'.dol_escape_htmltag($langs->trans("RemoveFilter")).'">';
-	print "</td></tr>\n";
+    print '<td class="liste_titre" align="right"></td>';
+    print '<td class="liste_titre" align="right">';
+    $searchpicto=$form->showFilterAndCheckAddButtons(0);
+    print $searchpicto;
+    print '</td>';
+	print "</tr>\n";
 
-	$var=True;
+	print '<tr class="liste_titre">';
+	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"d.rowid","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Company",$_SERVER["PHP_SELF"],"d.societe","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Name",$_SERVER["PHP_SELF"],"d.lastname","", $param,"",$sortfield,$sortorder);
+	print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"d.datedon","", $param,'align="center"',$sortfield,$sortorder);
+	if (! empty($conf->projet->enabled))
+	{
+	    $langs->load("projects");
+	    print_liste_field_titre("Project",$_SERVER["PHP_SELF"],"fk_projet","", $param,"",$sortfield,$sortorder);
+	}
+	print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"d.amount","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"d.fk_statut","", $param,'align="right"',$sortfield,$sortorder);
+	print_liste_field_titre('');
+	print "</tr>\n";
+
 	while ($i < min($num,$limit))
 	{
-		$objp = $db->fetch_object($result);
-		$var=!$var;
-		print "<tr ".$bc[$var].">";
+		$objp = $db->fetch_object($resql);
+
+		print '<tr class="oddeven">';
 		$donationstatic->id=$objp->rowid;
 		$donationstatic->ref=$objp->rowid;
 		$donationstatic->lastname=$objp->lastname;
@@ -223,11 +239,12 @@ if ($resql)
 		}
 		print '<td align="right">'.price($objp->amount).'</td>';
 		print '<td align="right">'.$donationstatic->LibStatut($objp->statut,5).'</td>';
-
+        print '<td></td>';
 		print "</tr>";
 		$i++;
 	}
 	print "</table>";
+	print '</div>';
     print "</form>\n";
     $db->free($resql);
 }
@@ -236,7 +253,5 @@ else
 	dol_print_error($db);
 }
 
-
-$db->close();
-
 llxFooter();
+$db->close();

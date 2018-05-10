@@ -2,6 +2,8 @@
 AddThisPageToBookmarks=Добавяне на тази страница към отметките
 Bookmark=Отметка
 Bookmarks=Отметки
+ListOfBookmarks=Списък с отметки
+EditBookmarks=List/edit bookmarks
 NewBookmark=Нова отметка
 ShowBookmark=Показване на отметката
 OpenANewWindow=Отваряне в нов прозорец
@@ -14,6 +16,5 @@ BehaviourOnClick=Поведение когато се кликне на URL-а
 CreateBookmark=Създаване
 SetHereATitleForLink=Настройте заглавие на отметката
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Използвайте външен http URL или релативен Dolibarr URL
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Изберете отметката да се отваря в текущия или в нов прозорец
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Choose if linked page must open in new window or not
 BookmarksManagement=Управление на отметките
-ListOfBookmarks=Списък с отметки

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015   Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2016	Laurent Destailleur		<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,7 +16,21 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Create the autoloader for Luracast
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/AutoLoader.php';
+call_user_func(function () {
+    $loader = Luracast\Restler\AutoLoader::instance();
+    spl_autoload_register($loader);
+    return $loader;
+});
+
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iAuthenticate.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/iUseAuthentication.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Resources.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/Defaults.php';
+require_once DOL_DOCUMENT_ROOT.'/includes/restler/framework/Luracast/Restler/RestException.php';
 use \Luracast\Restler\iAuthenticate;
+use \Luracast\Restler\iUseAuthentication;
 use \Luracast\Restler\Resources;
 use \Luracast\Restler\Defaults;
 use \Luracast\Restler\RestException;
@@ -54,18 +69,44 @@ class DolibarrApiAccess implements iAuthenticate
 	 */
 	public function __isAllowed()
 	{
-		global $db;
+		global $conf, $db;
 
+		$login = '';
 		$stored_key = '';
 
 		$userClass = Defaults::$userIdentifierClass;
 
-		if (isset($_GET['api_key'])) 
+		/*foreach ($_SERVER as $key => $val)
 		{
+		    dol_syslog($key.' - '.$val);
+		}*/
+
+		// api key can be provided in url with parameter api_key=xxx or ni header with header DOLAPIKEY:xxx
+		$api_key = '';
+		if (isset($_GET['api_key']))	// For backward compatibility
+		{
+		    // TODO Add option to disable use of api key on url. Return errors if used.
+		    $api_key = $_GET['api_key'];
+		}
+		if (isset($_GET['DOLAPIKEY']))
+		{
+		    // TODO Add option to disable use of api key on url. Return errors if used.
+		    $api_key = $_GET['DOLAPIKEY'];                     // With GET method
+		}
+		if (isset($_SERVER['HTTP_DOLAPIKEY']))         // Param DOLAPIKEY in header can be read with HTTP_DOLAPIKEY
+		{
+		    $api_key = $_SERVER['HTTP_DOLAPIKEY'];     // With header method (recommanded)
+		}
+
+		if ($api_key)
+		{
+			$userentity = 0;
+
 			$sql = "SELECT u.login, u.datec, u.api_key, ";
 			$sql.= " u.tms as date_modification, u.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-			$sql.= " WHERE u.api_key = '".$db->escape($_GET['api_key'])."'";
+			$sql.= " WHERE u.api_key = '".$db->escape($api_key)."'";
+			// TODO Check if 2 users has same API key.
 
 			$result = $db->query($sql);
 			if ($result)
@@ -75,20 +116,34 @@ class DolibarrApiAccess implements iAuthenticate
 					$obj = $db->fetch_object($result);
 					$login = $obj->login;
 					$stored_key = $obj->api_key;
+					$userentity = $obj->entity;
+
+					if (! defined("DOLENTITY") && $conf->entity != ($obj->entity?$obj->entity:1))		// If API was not forced with HTTP_DOLENTITY, and user is on another entity, so we reset entity to entity of user
+					{
+						$conf->entity = ($obj->entity?$obj->entity:1);
+						// We must also reload global conf to get params from the entity
+						dol_syslog("Entity was not set on http header with HTTP_DOLAPIENTITY (recommanded for performance purpose), so we switch now on entity of user (".$conf->entity .") and we have to reload configuration.", LOG_WARNING);
+						$conf->setValues($db);
+					}
 				}
 			}
 			else {
 				throw new RestException(503, 'Error when fetching user api_key :'.$db->error_msg);
 			}
 
-			if ( $stored_key != $_GET['api_key']) {
-				$userClass::setCacheIdentifier($_GET['api_key']);
+			if ($stored_key != $api_key) {		// This should not happen since we did a search on api_key
+				$userClass::setCacheIdentifier($api_key);
 				return false;
 			}
 
+			if (! $login)
+			{
+			    throw new RestException(503, 'Error when searching login user from api key');
+			}
 			$fuser = new User($db);
-			if(! $fuser->fetch('',$login)) {
-				throw new RestException(503, 'Error when fetching user :'.$fuser->error);
+			$result = $fuser->fetch('', $login, '', 0, (empty($userentity) ? -1 : $conf->entity));	// If user is not entity 0, we search in working entity $conf->entity  (that may have been forced to a different value than user entity)
+			if ($result <= 0) {
+				throw new RestException(503, 'Error when fetching user :'.$fuser->error.' (conf->entity='.$conf->entity.')');
 			}
 			$fuser->getrights();
 			static::$user = $fuser;
@@ -101,14 +156,14 @@ class DolibarrApiAccess implements iAuthenticate
         }
 		else
 		{
-		    throw new RestException(401, "Failed to login to API. No parameter 'api_key' provided");
-		    //dol_syslog("Failed to login to API. No parameter key provided", LOG_DEBUG);
-			//return false;
+		    throw new RestException(401, "Failed to login to API. No parameter 'HTTP_DOLAPIKEY' on HTTP header (and no parameter DOLAPIKEY in URL).");
 		}
 
-        $userClass::setCacheIdentifier(static::$role);
-        Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
-        return in_array(static::$role, (array) static::$requires) || static::$role == 'admin';
+	    $userClass::setCacheIdentifier(static::$role);
+	    Resources::$accessControlFunction = 'DolibarrApiAccess::verifyAccess';
+	    $requirefortest = static::$requires;
+	    if (! is_array($requirefortest)) $requirefortest=explode(',',$requirefortest);
+	    return in_array(static::$role, (array) $requirefortest) || static::$role == 'admin';
 	}
 
 	/**

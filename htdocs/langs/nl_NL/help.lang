@@ -4,7 +4,6 @@ EMailSupport=E-mailondersteuning
 RemoteControlSupport=Directe online ondersteuning en ondersteuning op afstand
 OtherSupport=Andere ondersteuning
 ToSeeListOfAvailableRessources=Om contact op te nemen zie de beschikbare bronnen:
-ClickHere=Klik hier
 HelpCenter=Ondersteuningscentrum
 DolibarrHelpCenter=Dolibarr Help- en ondersteuningscentrum
 ToGoBackToDolibarr=Klik anders <a href="%s">hier om Dolibarr te gebruiken</a>
@@ -12,7 +11,7 @@ TypeOfSupport=Ondersteuningsbron
 TypeSupportCommunauty=Gemeenschap (gratis)
 TypeSupportCommercial=Commercieel (betaald)
 TypeOfHelp=Soort
-NeedHelpCenter=Hulp of ondersteuning nodig?
+NeedHelpCenter=Hulp of support nodig?
 Efficiency=Efficiëntie
 TypeHelpOnly=Alleen Hulp
 TypeHelpDev=Hulp & Ontwikkeling
@@ -23,6 +22,5 @@ ToGetHelpGoOnSparkAngels2=Soms is er geen bedrijf te vinden op het moment van uw
 BackToHelpCenter=Klik anders hier om <a href="%s"> terug te gaan naar de hoofdpagina van het ondersteuningscentrum.</a>
 LinkToGoldMember=U kunt een van de, vooraf door Dolibarr geselecteerde, coaches voor uw taal bellen (%s) door te klikken op zijn Widget (status en de maximale prijs worden automatisch bijgewerkt):
 PossibleLanguages=Ondersteunde talen
-MakeADonation=Help het Dolibarr project door een donatie te doen
 SubscribeToFoundation=Help het Dolibarr project, wordt lid van de stichting
 SeeOfficalSupport=Voor officiële Dolibarr ondersteuning in uw taal: <br><b><a href="%s" target="_blank">%s</a></b>

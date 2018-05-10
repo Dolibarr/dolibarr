@@ -15,6 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $object=$GLOBALS['object'];
 ?>
 
@@ -53,7 +61,7 @@ $object=$GLOBALS['object'];
 </tr>
 
 <tr>
-<td valign="top"><?php echo $langs->trans("Description"); ?></td>
+<td class="tdtop"><?php echo $langs->trans("Description"); ?></td>
 <td colspan="2"><?php echo $object->description; ?></td>
 </tr>
 
@@ -83,7 +91,7 @@ $object=$GLOBALS['object'];
 </tr>
 
 <tr>
-<td valign="top"><?php echo $langs->trans("Note"); ?></td>
+<td class="tdtop"><?php echo $langs->trans("Note"); ?></td>
 <td colspan="2"><?php echo $object->note; ?></td>
 </tr>
 

@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=E-mail pentru a preveni serviciu extern HRM
+Establishments=Sedii
+Establishment=Sediu
+NewEstablishment=Sediu nou
+DeleteEstablishment=Sterge Sediu
+ConfirmDeleteEstablishment=Sunteți sigur că doriti ștergerea acestei unităti?
+OpenEtablishment=Deschide Sediu
+CloseEtablishment=Inchide Sediu
+# Dictionary
+DictionaryDepartment=HRM - Lista Departamente
+DictionaryFunction=HRM - Lista Functiuni
+# Module
+Employees=Angajati
+Employee=Angajat
+NewEmployee=Angajat nou

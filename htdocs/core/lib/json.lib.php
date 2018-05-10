@@ -19,14 +19,14 @@
 
 /**
  *	    \file       htdocs/core/lib/json.lib.php
- *		\brief      Functions to emulate json function for PHP < 5.3 compatibility
+ *		\brief      Functions to emulate json function when there were not activated
  * 		\ingroup	core
  */
 
 if (! function_exists('json_encode'))
 {
 	/**
-	 * Implement json_encode for PHP that does not support it
+	 * Implement json_encode for PHP that does not have module enabled.
 	 *
 	 * @param	mixed	$elements		PHP Object to json encode
 	 * @return 	string					Json encoded string
@@ -38,22 +38,25 @@ if (! function_exists('json_encode'))
 }
 
 /**
- * Implement json_encode for PHP that does not support it
+ * Implement json_encode for PHP that does not support it.
+ * Use json_encode and json_decode in your code !
  *
  * @param	mixed	$elements		PHP Object to json encode
  * @return 	string					Json encoded string
- * @deprecated PHP >= 5.3 supports native json_encode
  * @see json_encode()
  */
 function dol_json_encode($elements)
 {
-	dol_syslog('dol_json_encode() is deprecated. Please update your code to use native json_encode().', LOG_WARNING);
+	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
 
-	$num=count($elements);
+	$num=0;
 	if (is_object($elements))	// Count number of properties for an object
 	{
-		$num=0;
 		foreach($elements as $key => $value) $num++;
+	}
+	else
+	{
+	    $num=count($elements);
 	}
 	//var_dump($num);
 
@@ -219,16 +222,16 @@ if (! function_exists('json_decode'))
 
 /**
  * Implement json_decode for PHP that does not support it
+ * Use json_encode and json_decode in your code !
  *
  * @param	string	$json		Json encoded to PHP Object or Array
  * @param	bool	$assoc		False return an object, true return an array. Try to always use it with true !
  * @return 	mixed				Object or Array or false on error
- * @deprecated PHP >= 5.3 supports native json_decode
  * @see json_decode()
  */
 function dol_json_decode($json, $assoc=false)
 {
-	dol_syslog('dol_json_decode() is deprecated. Please update your code to use native json_decode().', LOG_WARNING);
+	dol_syslog("For better performance, enable the native json in your PHP", LOG_WARNING);
 
 	$comment = false;
 
@@ -355,20 +358,20 @@ function utf82utf16($utf8)
 	}
 
 	switch(strlen($utf8)) {
-	case 1:
-	        // this case should never be reached, because we are in ASCII range
-	// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-	return $utf8;
+		case 1:
+	        	// this case should never be reached, because we are in ASCII range
+		// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
+		return $utf8;
 
-	case 2:
-	// return a UTF-16 character from a 2-byte UTF-8 char
-	// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-	return chr(0x07 & (ord($utf8{0}) >> 2)) . chr((0xC0 & (ord($utf8{0}) << 6)) | (0x3F & ord($utf8{1})));
+		case 2:
+		// return a UTF-16 character from a 2-byte UTF-8 char
+		// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
+		return chr(0x07 & (ord($utf8{0}) >> 2)) . chr((0xC0 & (ord($utf8{0}) << 6)) | (0x3F & ord($utf8{1})));
 
-	case 3:
-	// return a UTF-16 character from a 3-byte UTF-8 char
-	// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-	return chr((0xF0 & (ord($utf8{0}) << 4)) | (0x0F & (ord($utf8{1}) >> 2))) . chr((0xC0 & (ord($utf8{1}) << 6)) | (0x7F & ord($utf8{2})));
+		case 3:
+		// return a UTF-16 character from a 3-byte UTF-8 char
+		// see: http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
+		return chr((0xF0 & (ord($utf8{0}) << 4)) | (0x0F & (ord($utf8{1}) >> 2))) . chr((0xC0 & (ord($utf8{1}) << 6)) | (0x7F & ord($utf8{2})));
 	}
 
 	// ignoring UTF-32 for now, sorry

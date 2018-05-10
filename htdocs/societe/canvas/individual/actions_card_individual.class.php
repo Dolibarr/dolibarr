@@ -69,6 +69,7 @@ class ActionsCardIndividual extends ActionsCardCommon
 
 	/**
 	 * Execute actions
+     * @deprecated Use the doActions of hooks instead of this.
 	 *
 	 * @param	string	$action	Action
 	 * @param	int		$id			Id of object (may be empty for creation)

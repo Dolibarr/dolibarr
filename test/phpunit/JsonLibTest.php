@@ -134,7 +134,7 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
         // Do a test with an array starting with 0
         $arraytotest=array(0=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
 		$arrayencodedexpected='[{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}]';
-		
+
         $encoded=json_encode($arraytotest);
         $this->assertEquals($arrayencodedexpected,$encoded);
         $decoded=json_decode($encoded,true);
@@ -148,7 +148,7 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
 		// Same test but array start with 2 instead of 0
         $arraytotest=array(2=>array('key'=>1,'value'=>'PRODREF','label'=>'Product ref with é and special chars \\ \' "'));
 		$arrayencodedexpected='{"2":{"key":1,"value":"PRODREF","label":"Product ref with \u00e9 and special chars \\\\ \' \""}}';
-		
+
         $encoded=json_encode($arraytotest);
         $this->assertEquals($arrayencodedexpected,$encoded);
         $decoded=json_decode($encoded,true);
@@ -158,7 +158,7 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($arrayencodedexpected,$encoded);
         $decoded=dol_json_decode($encoded,true);
         $this->assertEquals($arraytotest,$decoded,'test for dol_json_xxx');
-        
+
         // Test with object
         $now=gmmktime(12,0,0,1,1,1970);
         $objecttotest=new stdClass();
@@ -167,7 +167,5 @@ class JsonLibTest extends PHPUnit_Framework_TestCase
         $objecttotest->property3=$now;
         $encoded=dol_json_encode($objecttotest);
         $this->assertEquals('{"property1":"abc","property2":1234,"property3":43200}',$encoded);
-
     }
-
 }

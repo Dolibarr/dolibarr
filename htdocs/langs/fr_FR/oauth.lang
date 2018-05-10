@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Configuration OAuth
+OAuthServices=Services OAuth
+ManualTokenGeneration=Génération manuelle du jeton
+TokenManager=Gestionnaire de jeton
+IsTokenGenerated=Jeton généré ?
+NoAccessToken=Aucun jeton d'accès sauvegardé dans la base de donnée locale
+HasAccessToken=Un jeton a été généré et sauvegardé dans la base de donnée locale
+NewTokenStored=Jeton reçu et sauvegardé
+ToCheckDeleteTokenOnProvider=Cliquer ici pour vérifier/effacer les autorisations sauvées par le fournisseur OAuth %s
+TokenDeleted=Jeton effacé
+RequestAccess=Cliquez ici pour demander/renouveler un accès et recevoir un nouveau jeton à sauvegarder
+DeleteAccess=Cliquez ici pour effacer le jeton
+UseTheFollowingUrlAsRedirectURI=Utilisez l'URL suivante comme URI de redirection quand vous créez un crédit avec votre fournisseur OAuth :
+ListOfSupportedOauthProviders=Saisissez ici le crédit fourni par votre fournisseur OAuth2. Seuls les fournisseurs OAuth2 supportés sont visibles ici. Ce paramétrage est potentiellement utilisé par d'autres modules qui nécessitent une authentification OAuth2.
+OAuthSetupForLogin=Page pour générer le jeton OAuth
+SeePreviousTab=Voir onglet précédent
+OAuthIDSecret=OAuth ID et secret
+TOKEN_REFRESH=Token Refresh présent
+TOKEN_EXPIRED=Token expiré
+TOKEN_EXPIRE_AT=Token expire le
+TOKEN_DELETE=Supprimer jeton enregistré
+OAUTH_GOOGLE_NAME=Service Oauth Google
+OAUTH_GOOGLE_ID=Oauth Google Id
+OAUTH_GOOGLE_SECRET=Oauth Google secret
+OAUTH_GOOGLE_DESC=Allez sur <a class="notasortlink" href="https://console.developers.google.com/" target="_blank">cette page</a> puis «Autorisation» pour créer les informations d'identification OAuth
+OAUTH_GITHUB_NAME=Service Oauth GitHub
+OAUTH_GITHUB_ID=Oauth GitHub Id
+OAUTH_GITHUB_SECRET=Oauth GitHub secret
+OAUTH_GITHUB_DESC=Allez sur <a class="notasortlink" href="https://github.com/settings/developers" target="_blank">cette page</a> , puis "Enregistrer une nouvelle application" pour créer les informations d'identification OAuth

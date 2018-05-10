@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
- * Copyright (C) 2004-2008 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
+ * Copyright (C) 2004       Sebastien DiCintio      <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004-2008  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,9 @@ include_once 'inc.php';
 require_once $dolibarr_main_document_root.'/core/class/conf.class.php';
 require_once $dolibarr_main_document_root.'/core/lib/admin.lib.php';
 
+global $langs;
 
-$setuplang=(GETPOST('selectlang','',3)?GETPOST('selectlang','',3):'auto');
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[1])?'auto':$argv[1]);
 $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
@@ -41,11 +42,14 @@ $langs->load("install");
 $useforcedwizard=false;
 $forcedfile="./install.forced.php";
 if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.forced.php";
-if (@file_exists($forcedfile)) { $useforcedwizard=true; include_once $forcedfile; }
+if (@file_exists($forcedfile)) {
+	$useforcedwizard = true;
+	include_once $forcedfile;
+}
 
 dolibarr_install_syslog("--- step4: entering step4.php page");
 
-$err=0;
+$error=0;
 $ok = 0;
 
 
@@ -65,7 +69,9 @@ if (! is_writable($conffile))
 }
 
 
-print '<br>'.$langs->trans("LastStepDesc").'<br><br>';
+print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/key.svg" width="20" alt="Database"> '.$langs->trans("DolibarrAdminLogin").'</h3>';
+
+print $langs->trans("LastStepDesc").'<br><br>';
 
 
 print '<table cellspacing="0" cellpadding="2" width="100%">';
@@ -74,8 +80,8 @@ $db=getDoliDBInstance($conf->db->type,$conf->db->host,$conf->db->user,$conf->db-
 
 if ($db->ok)
 {
-    print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
-    print '<input name="login" type="text" value="'.(! empty($_GET["login"])?$_GET["login"]:(isset($force_install_dolibarrlogin)?$force_install_dolibarrlogin:'')).'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Login").' :</td><td>';
+	print '<input name="login" type="text" value="' . (!empty($_GET["login"]) ? GETPOST("login") : (isset($force_install_dolibarrlogin) ? $force_install_dolibarrlogin : '')) . '"' . (@$force_install_noedit == 2 && $force_install_dolibarrlogin !== null ? ' disabled' : '') . '></td></tr>';
     print '<tr><td>'.$langs->trans("Password").' :</td><td>';
     print '<input type="password" name="pass"></td></tr>';
     print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
@@ -86,7 +92,7 @@ if ($db->ok)
     {
         print '<br>';
         print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
-        $err=0;	// We show button
+        $error=0;	// We show button
     }
 
     if (isset($_GET["error"]) && $_GET["error"] == 2)
@@ -95,20 +101,28 @@ if ($db->ok)
         print '<div class="error">';
         print $langs->trans("PleaseTypePassword");
         print '</div>';
-        $err=0;	// We show button
+        $error=0;	// We show button
     }
 
     if (isset($_GET["error"]) && $_GET["error"] == 3)
     {
         print '<br>';
         print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
-        $err=0;	// We show button
+        $error=0;	// We show button
     }
 
 }
 
+
+$ret=0;
+if ($error && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step4: end");
 
-pFooter($err,$setuplang);
+pFooter($error,$setuplang);
 
 $db->close();
+
+// Return code if ran from command line
+if ($ret) exit($ret);

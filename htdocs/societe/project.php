@@ -32,13 +32,14 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 $langs->load("companies");
+$langs->load("projects");
 
 // Security check
 $socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'societe', $socid, '&societe');
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('projectthirdparty'));
 
 
@@ -71,26 +72,23 @@ if ($socid)
 	$object = new Societe($db);
 	$result = $object->fetch($socid);
 
-	$title=$langs->trans("Agenda");
+	$title=$langs->trans("Projects");
 	if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/',$conf->global->MAIN_HTML_TITLE) && $object->name) $title=$object->name." - ".$title;
 	llxHeader('',$title);
 
 	if (! empty($conf->notification->enabled)) $langs->load("mails");
 	$head = societe_prepare_head($object);
 
-	dol_fiche_head($head, 'project', $langs->trans("ThirdParty"),0,'company');
+	dol_fiche_head($head, 'project', $langs->trans("ThirdParty"), -1, 'company');
 
-    dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom');
-        
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+
+    dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
 	print '<table class="border centpercent">';
-
-	// Alias names (commercial, trademark or alias names)
-	print '<tr><td class="titlefield">'.$langs->trans('AliasNames').'</td><td colspan="3">';
-	print $object->name_alias;
-	print "</td></tr>";
 
     if (! empty($conf->global->SOCIETE_USEPREFIX))  // Old not used prefix field
     {
@@ -99,7 +97,7 @@ if ($socid)
 
 	if ($object->client)
 	{
-		print '<tr><td>';
+		print '<tr><td class="titlefield">';
 		print $langs->trans('CustomerCode').'</td><td colspan="3">';
 		print $object->code_client;
 		if ($object->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
@@ -108,7 +106,7 @@ if ($socid)
 
 	if ($object->fournisseur)
 	{
-		print '<tr><td>';
+		print '<tr><td class="titlefield">';
 		print $langs->trans('SupplierCode').'</td><td colspan="3">';
 		print $object->code_fournisseur;
 		if ($object->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
@@ -121,33 +119,32 @@ if ($socid)
 
 	dol_fiche_end();
 
-	
+
     /*
      * Barre d'action
      */
 
-    print '<div class="tabsAction">';
+    /*print '<div class="tabsAction">';
 
     if (! empty($conf->projet->enabled))
     {
     	if (! empty($conf->projet->enabled) && ! empty($user->rights->projet->creer))
-    	{
-        	print '<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-    	}
+    	{*/
+        	$addbutton = '<a href="'.DOL_URL_ROOT.'/projet/card.php?action=create&socid='.$object->id.'&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
+    /*	}
     	else
     	{
         	print '<a class="butActionRefused" href="#">'.$langs->trans("AddProject").'</a>';
     	}
     }
 
-    print '</div>';
-    
-	
+    print '</div>'; */
+
     print '<br>';
 
-    
-    // Projects list
-    $result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1);
+
+	// Projects list
+	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
 }
 
 

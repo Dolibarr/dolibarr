@@ -121,8 +121,95 @@ class ExportTest extends PHPUnit_Framework_TestCase
 
 
     /**
+     * Other tests
+     *
+     * @return void
+     */
+    public function testExportOther()
+    {
+        global $conf,$user,$langs,$db;
+    
+        $model='csv';
+    
+        // Creation of class to export using model ExportXXX
+        $dir = DOL_DOCUMENT_ROOT . "/core/modules/export/";
+        $file = "export_".$model.".modules.php";
+        $classname = "Export".$model;
+        require_once $dir.$file;
+        $objmodel = new $classname($this->db);
+    
+        // First test without option USE_STRICT_CSV_RULES
+        unset($conf->global->USE_STRICT_CSV_RULES);
+        
+        $valtotest='A simple string';
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, 'A simple string');
+        
+        $valtotest='A string with , and ; inside';
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, '"A string with , and ; inside"');
+        
+        $valtotest='A string with " inside';
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, '"A string with "" inside"');
+
+        $valtotest='A string with " inside and '."\r\n".' carriage returns';
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, '"A string with "" inside and \n carriage returns"');
+        
+        $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
+        
+        // Same tests with strict mode
+        $conf->global->USE_STRICT_CSV_RULES=1;
+        
+        $valtotest='A simple string';
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, 'A simple string');
+        
+        $valtotest='A string with , and ; inside';
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, '"A string with , and ; inside"');
+        
+        $valtotest='A string with " inside';
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, '"A string with "" inside"');
+        
+        $valtotest='A string with " inside and '."\r\n".' carriage returns';
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, "\"A string with \"\" inside and \r\n carriage returns\"");
+        
+        $valtotest='A string with <a href="aaa"><strong>html<br>content</strong></a> inside<br>'."\n";
+        print __METHOD__." valtotest=".$valtotest."\n";
+        $result = $objmodel->csvClean($valtotest, $langs->charset_output);
+        print __METHOD__." result=".$result."\n";
+        $this->assertEquals($result, '"A string with <a href=""aaa""><strong>html<br>content</strong></a> inside"');
+        
+    }
+    
+    /**
      * Test export function for a personalized dataset
      *
+     * @depends	testExportOther
 	 * @return void
      */
     public function testExportPersonalizedExport()
@@ -149,21 +236,21 @@ class ExportTest extends PHPUnit_Framework_TestCase
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($result,$expectedresult);
+        $this->assertEquals($expectedresult,$result);
 
         $model='tsv';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($result,$expectedresult);
+        $this->assertEquals($expectedresult,$result);
 
         $model='excel';
 
         // Build export file
         $result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 		$expectedresult=1;
-        $this->assertEquals($result,$expectedresult);
+        $this->assertEquals($expectedresult,$result);
 
         return true;
     }
@@ -200,21 +287,21 @@ class ExportTest extends PHPUnit_Framework_TestCase
     	// Build export file
     	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
-    	$this->assertEquals($result,$expectedresult);
+    	$this->assertEquals($expectedresult,$result);
 
     	$model='tsv';
 
     	// Build export file
     	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
-    	$this->assertEquals($result,$expectedresult);
+    	$this->assertEquals($expectedresult,$result);
 
     	$model='excel';
 
     	// Build export file
     	$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, $array_filtervalue, $sql);
     	$expectedresult=1;
-    	$this->assertEquals($result,$expectedresult);
+    	$this->assertEquals($expectedresult,$result);
 */
     	return true;
     }
@@ -259,11 +346,12 @@ class ExportTest extends PHPUnit_Framework_TestCase
         	$sql = "";
 			$result=$objexport->build_file($user, $model, $datatoexport, $array_selected, array(), $sql);
 			$expectedresult=1;
-	        $this->assertEquals($result, $expectedresult, 'Call build_file to export '.$exportfile.' failed');
+	        $this->assertEquals($expectedresult, $result, "Call build_file() to export ".$exportfile.' failed');
 	        $result=dol_is_file($exportfile);
-	        $this->assertTrue($result, $expectedresult, 'File '.$exportfile.' not found');
+	        $this->assertTrue($result, 'File '.$exportfile.' not found');
         }
 
         return true;
     }
+    
 }

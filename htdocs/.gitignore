@@ -4,6 +4,7 @@
 /dolimed*
 /ecommerce*
 /extensions*
+/forceproject*
 /google*
 /lead
 /multicompany*
@@ -15,3 +16,11 @@
 /teclib*
 /test.php
 /ultimatepdf*
+/lead
+/dolimed*
+/allscreens*
+/ecommerce/
+/cabinetmed*
+/webmail*
+/conf/conf.php
+/subtotal/

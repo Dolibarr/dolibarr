@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -140,7 +139,8 @@ $server->wsdl->addComplexType(
         'date_modification' => array('name'=>'date_modification','type'=>'xsd:dateTime'),
         'date_invoice' => array('name'=>'date_invoice','type'=>'xsd:date'),
         'date_term' => array('name'=>'date_modification','type'=>'xsd:date'),
-        'type' => array('name'=>'type','type'=>'xsd:int'),
+    	'label' => array('name'=>'label','type'=>'xsd:date'),
+    	'type' => array('name'=>'type','type'=>'xsd:int'),
         'total_net' => array('name'=>'type','type'=>'xsd:double'),
         'total_vat' => array('name'=>'type','type'=>'xsd:double'),
         'total' => array('name'=>'type','type'=>'xsd:double'),

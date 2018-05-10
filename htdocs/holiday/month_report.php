@@ -1,10 +1,10 @@
 <?php
-/* Copyright (C) 2007-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2007-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2011      François Legastelois <flegastelois@teclib.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 3 of the License, or
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -17,24 +17,27 @@
  */
 
 /**
- *   	\file       htdocs/holiday/month_report.php
- *		\ingroup    holiday
- *		\brief      Monthly report of paid holiday.
+ *      \file       month_report.php
+ *      \ingroup    holiday
+ *      \brief      Monthly report of leave requests.
  */
 
 require('../main.inc.php');
-require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
+require_once(DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/user/class/user.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
-// Protection if external user
-if ($user->societe_id > 0) accessforbidden();
+$langs->loadLangs(array("holiday"));
 
-
-// Si l'utilisateur n'a pas le droit de lire cette page
-if(!$user->rights->holiday->read_all) accessforbidden();
+// Security check
+$socid=0;
+if ($user->societe_id > 0)	// Protection if external user
+{
+	//$socid = $user->societe_id;
+	accessforbidden();
+}
+$result = restrictedArea($user, 'holiday', $id, '');
 
 
 
@@ -42,114 +45,154 @@ if(!$user->rights->holiday->read_all) accessforbidden();
  * View
  */
 
-$html = new Form($db);
-$htmlother = new FormOther($db);
 $holidaystatic = new Holiday($db);
 
-llxHeader(array(),$langs->trans('CPTitreMenu'));
-
-$cp = new Holiday($db);
-
-$month = GETPOST('month_start');
-$year = GETPOST('year_start');
-
-if(empty($month)) {
-	$month = date('n');
-}
-if(empty($year)) {
-	$year = date('Y');
-}
-
-$sql = "SELECT cp.rowid, cp.fk_user, cp.date_debut, cp.date_fin, cp.halfday";
-$sql.= " FROM " . MAIN_DB_PREFIX . "holiday cp";
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "user u ON cp.fk_user = u.rowid";
-$sql.= " WHERE cp.statut = 3";	// Approved
-// TODO Use BETWEEN instead of date_format
-$sql.= " AND (date_format(cp.date_debut, '%Y-%c') = '$year-$month' OR date_format(cp.date_fin, '%Y-%c') = '$year-$month')";
-$sql.= " ORDER BY u.lastname,cp.date_debut";
-
-$result  = $db->query($sql);
-$num = $db->num_rows($result);
-
-print load_fiche_titre($langs->trans('MenuReportMonth'), '', 'title_hrm.png');
-
-// Get month of last update
-$lastUpdate = $cp->getConfCP('lastUpdate', 0);
-$monthLastUpdate = $lastUpdate[4].$lastUpdate[5];
-$yearLastUpdate = $lastUpdate[0].$lastUpdate[1].$lastUpdate[2].$lastUpdate[3];
-print $langs->trans("MonthOfLastMonthlyUpdate").': <strong>'.$yearLastUpdate.'-'.$monthLastUpdate.'</strong><br><br>'."\n";
+$listhalfday=array('morning'=>$langs->trans("Morning"),"afternoon"=>$langs->trans("Afternoon"));
 
 
-print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+llxHeader('', $langs->trans('CPTitreMenu'));
 
-dol_fiche_head();
+print_fiche_titre($langs->trans('MenuReportMonth'));
 
-print $langs->trans('Month').': ';
-print $htmlother->select_month($month, 'month_start').' ';
-print $htmlother->select_year($year,'year_start',1,10,3);
+$html = new Form($db);
+$formother = new FormOther($db);
 
-print '<input type="submit" value="'.$langs->trans("Refresh").'" class="button" />';
 
-print '<br>';
-print '<br>';
+// Selection filter
+print '<div class="tabBar">';
 
-$var=true;
-print '<table class="noborder" width="40%;">';
+print '<form method="POST" action="' . $_SERVER["PHP_SELF"] . '">' . "\n";
 
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans('Ref').'</td>';
-print '<td>'.$langs->trans('Employee').'</td>';
-print '<td>'.$langs->trans('DateDebCP').'</td>';
-print '<td>'.$langs->trans('DateFinCP').'</td>';
-print '<td align="right">'.$langs->trans('nbJours').'</td>';
-print '</tr>';
+$search_month = GETPOST("remonth",'int')?GETPOST("remonth",'int'):date("m", time());
+$search_year = GETPOST("reyear",'int')?GETPOST("reyear",'int'):date("Y", time());
 
-if($num == '0') {
+$month_year = sprintf("%02d",$search_month).'-'.sprintf("%04d",$search_year);
+$year_month = sprintf("%04d",$search_year).'-'.sprintf("%02d",$search_month);
 
-	print '<tr class="pair">';
-	print '<td colspan="5">'.$langs->trans('None').'</td>';
-	print '</tr>';
+print $formother->select_month($search_month,'remonth');
 
-} else {
+print $formother->select_year($search_year,'reyear');
 
-	$langs->load('users');
-
-	while ($holiday = $db->fetch_array($result))
-	{
-		$user = new User($db);
-		$user->fetch($holiday['fk_user']);
-		$var=!$var;
-
-		$holidaystatic->id=$holiday['rowid'];
-		$holidaystatic->ref=$holiday['rowid'];
-
-		$start_date=$db->jdate($holiday['date_debut']);
-		$end_date=$db->jdate($holiday['date_fin']);
-		$start_date_gmt=$db->jdate($holiday['date_debut'],1);
-		$end_date_gmt=$db->jdate($holiday['date_fin'],1);
-
-		print '<tr '.$bc[$var].'>';
-		print '<td>'.$holidaystatic->getNomUrl(1).'</td>';
-		print '<td>'.$user->getNomUrl(1).'</td>';
-		print '<td>'.dol_print_date($start_date,'day');
-		print '</td>';
-		print '<td>'.dol_print_date($end_date,'day');
-		print '</td>';
-		print '<td align="right">';
-		$nbopenedday=num_open_day($start_date_gmt, $end_date_gmt, 0, 1, $holiday['halfday']);
-		print $nbopenedday;
-		print '</td>';
-		print '</tr>';
-	}
-}
-print '</table>';
-
-dol_fiche_end();
+print '<input type="submit" class="button" value="'.dol_escape_htmltag($langs->trans("Search")).'" />';
 
 print '</form>';
 
 
-// Fin de page
-llxFooter();
+$sql = "SELECT cp.rowid, cp.fk_user, cp.date_debut, cp.date_fin, ct.label, cp.description, cp.halfday";
+$sql .= " FROM ".MAIN_DB_PREFIX."holiday cp";
+$sql .= " LEFT JOIN llx_user u ON cp.fk_user = u.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_holiday_types ct ON cp.fk_type = ct.rowid";
+$sql .= " WHERE cp.rowid > 0";
+$sql .= " AND cp.statut = 3";		// Approved
+$sql .= " AND (date_format(cp.date_debut, '%Y-%m') = '".$db->escape($year_month)."' OR date_format(cp.date_fin, '%Y-%m') = '".$db->escape($year_month)."')";
+$sql .= " ORDER BY u.lastname, cp.date_debut";
 
+$resql = $db->query($sql);
+if (empty($resql))
+{
+	dol_print_error($db);
+	exit;
+}
+
+$num = $db->num_rows($resql);
+
+print '</div>';
+
+
+print '<br>';
+
+print '<div class="div-table-responsive">';
+print '<table class="noborder" width="100%">';
+
+print '<tr class="liste_titre">';
+print '<td>' . $langs->trans('Ref') . '</td>';
+print '<td>' . $langs->trans('Employee') . '</td>';
+print '<td>' . $langs->trans('Type') . '</td>';
+print '<td align="center">' . $langs->trans('DateDebCP') . '</td>';
+print '<td align="center">' . $langs->trans('DateFinCP') . '</td>';
+print '<td align="right">' . $langs->trans('NbUseDaysCPShort') . '</td>';
+print '<td align="center">' . $langs->trans('DateStartInMonth') . '</td>';
+print '<td align="center">' . $langs->trans('DateEndInMonth') . '</td>';
+print '<td align="right">' . $langs->trans('NbUseDaysCPShortInMonth') . '</td>';
+print '<td class="maxwidth300">' . $langs->trans('DescCP') . '</td>';
+print '</tr>';
+
+if ($num == 0)
+{
+   print '<tr><td colspan="6" class="opacitymedium">'.$langs->trans('None').'</td></tr>';
+}
+else
+{
+   while ($obj = $db->fetch_object($resql))
+   {
+      $user = new User($db);
+      $user->fetch($obj->fk_user);
+
+      $date_start = $db->jdate($obj->date_debut, true);
+      $date_end = $db->jdate($obj->date_fin, true);
+
+      $tmpstart = dol_getdate($date_start);
+      $tmpend = dol_getdate($date_end);
+
+      $starthalfday=($obj->halfday == -1 || $obj->halfday == 2)?'afternoon':'morning';
+      $endhalfday=($obj->halfday == 1 || $obj->halfday == 2)?'morning':'afternoon';
+
+      $halfdayinmonth = $obj->halfday;
+      $starthalfdayinmonth = $starthalfday;
+      $endhalfdayinmonth = $endhalfday;
+
+      //0:Full days, 2:Start afternoon end morning, -1:Start afternoon end afternoon, 1:Start morning end morning
+
+      // Set date_start_gmt and date_end_gmt that are date to show for the selected month
+      $date_start_inmonth = $db->jdate($obj->date_debut, true);
+      $date_end_inmonth = $db->jdate($obj->date_fin, true);
+      if ($tmpstart['year'] < $search_year || $tmpstart['mon'] < $search_month)
+      {
+      	$date_start_inmonth = dol_get_first_day($search_year, $search_month, true);
+      	$starthalfdayinmonth = 'morning';
+      	if ($halfdayinmonth ==  2) $halfdayinmonth=1;
+      	if ($halfdayinmonth == -1) $halfdayinmonth=0;
+      }
+      if ($tmpend['year'] > $search_year || $tmpend['mon'] > $search_month)
+      {
+      	$date_end_inmonth = dol_get_last_day($search_year, $search_month, true) - ((24 * 3600) - 1);
+      	$endhalfdayinmonth = 'afternoon';
+      	if ($halfdayinmonth ==  2) $halfdayinmonth=-1;
+      	if ($halfdayinmonth ==  1) $halfdayinmonth=0;
+      }
+
+      // Leave request
+      $holidaystatic->id=$obj->rowid;
+      $holidaystatic->ref=$obj->rowid;
+
+      print '<tr class="oddeven">';
+      	 print '<td>';
+      	 print $holidaystatic->getNomUrl(1, 1);
+      	 print '</td>';
+         print '<td>' . $user->getFullName($langs) . '</td>';
+         print '<td>' . $obj->label . '</td>';
+         print '<td align="center">' . dol_print_date($obj->date_debut, 'day');
+         print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfday]).')</span>';
+         print '</td>';
+         print '<td align="center">' . dol_print_date($obj->date_fin, 'day');
+         print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfday]).')</span>';
+         print '</td>';
+         print '<td align="right">' . num_open_day($date_start, $date_end, 0, 1, $obj->halfday) . '</td>';
+         print '<td align="center">' . dol_print_date($date_start_inmonth, 'day');
+         print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$starthalfdayinmonth]).')</span>';
+         print '</td>';
+         print '<td align="center">' . dol_print_date($date_end_inmonth, 'day');
+         print ' <span class="opacitymedium">('.$langs->trans($listhalfday[$endhalfdayinmonth]).')</span>';
+         print '</td>';
+         print '<td align="right">' . num_open_day($date_start_inmonth, $date_end_inmonth, 0, 1, $halfdayinmonth) . '</td>';
+         print '<td class="maxwidth300">' . dol_escape_htmltag(dolGetFirstLineOfText($obj->description)) . '</td>';
+      print '</tr>';
+   }
+
+}
+print '</table>';
+print '</div>';
+
+// Fin de page
 $db->close();
+llxFooter();

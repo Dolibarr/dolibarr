@@ -32,7 +32,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 /**
  *	Class to describe and enable module Donation
  */
-class modDon  extends DolibarrModules
+class modDon extends DolibarrModules
 {
 
 	/**
@@ -49,9 +49,9 @@ class modDon  extends DolibarrModules
 		// Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Gestion des dons";
-		$this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		// Name of png file (without png) used for this module.
 		// Png file must be in theme/yourtheme/img directory under name object_pictovalue.png.
 		$this->picto='bill';
@@ -107,7 +107,7 @@ class modDon  extends DolibarrModules
 		$r++;
 		$this->const[$r][0] = "DONATION_ACCOUNTINGACCOUNT";
 		$this->const[$r][1] = "chaine";
-		$this->const[$r][2] = "7581";
+		$this->const[$r][2] = "758";
 		$this->const[$r][3] = 'Compte comptable de remise des versements ou dons';
 		$this->const[$r][4] = 0;
 
@@ -136,6 +136,11 @@ class modDon  extends DolibarrModules
 		$this->rights[3][3] = 0;
 		$this->rights[3][4] = 'supprimer';
 
+
+		// Menus
+		//-------
+		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
+
 	}
 
 
@@ -152,8 +157,8 @@ class modDon  extends DolibarrModules
 		global $conf;
 
 		$sql = array(
-			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."' AND entity = ".$conf->entity,
-			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->const[0][2]."','donation',".$conf->entity.")",
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->db->escape($this->const[0][2])."' AND type = 'donation' AND entity = ".$conf->entity,
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('".$this->db->escape($this->const[0][2])."','donation',".$conf->entity.")",
 		);
 
 		return $this->_init($sql,$options);

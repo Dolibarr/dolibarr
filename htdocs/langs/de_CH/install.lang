@@ -1,0 +1,16 @@
+# Dolibarr language file - Source file is en_US - install
+InstallEasy=Wir haben uns bemüht, die Installation von Dolibarr so einfach wie möglich zu gestalten. \nBefolgen Sie einfach die Schritte auf dem Bildschirm.
+ConfFileIsNotWritable=Die Konfigurationsdatei <b>%s</b> ist nicht beschreibbar. Bitte überprüfen Sie die Dateizugriffsrechte. Für die Erstinstallation muss Ihr Webserver in die Konfigurationsdatei schreiben können, sezzten Sie die Dateiberechtigungen entsprechend (z.B. mittels "chmod 666" auf Unix-Betriebssystemen).
+ErrorDatabaseAlreadyExists=Eine Datenbank mit dem Namen '%s' exisitiert bereits.
+IfDatabaseExistsGoBackAndCheckCreate=Sollte die Datebank bereits existieren, gehen Sie bitte zurück und deaktivieren Sie das Kontrollkästchen "Datenbank erstellen".
+AdminLoginCreatedSuccessfuly=Das dolibarr-Administratorkonto '<b>%s</b>' wurde erfolgreich erstellt.
+DirectoryRecommendation=Es empfiehlt sich die Verwendung eines Ordners ausserhalb Ihres Webverzeichnisses.
+ChooseYourSetupMode=Wählen Sie Ihre Installationsart und klicken Sie anschliessend auf "Start"...
+CorrectProblemAndReloadPage=Bitte beheben Sie das Problem und klicken Sie anschliessend auf F5 um die Seite neu zu laden.
+ErrorDatabaseVersionForbiddenForMigration=Die Version Ihres Datenbankmanager ist %s.\nDies ist einen kritischer Bug welcher zu Datenverlust führen kann, wenn Sie die Struktur der Datenbank wie vom Migrationsprozess erforderlich  ändern. Aus diesem Grund, ist die Migration nicht erlaubt bevor der Datenbankmanager auf eine später Version aktualisiert wurde (Liste betroffer Versionen %s )
+KeepDefaultValuesWamp=Sie verwenden den DoliWamp-Installationsassistent, entsprechend sind die hier vorgeschlagenen Werte bereits optimiert. Ändern Sie diese nur wenn Sie wissen was Sie tun.
+KeepDefaultValuesDeb=Sie verwenden den dolibarr-Installationsassistenten auf einem Ubuntu oder Debian-Paket, entsprechend sind die hier vorgeschlagenen Werte bereits optimiert. Sie müssen lediglich das Passwort des anzulegenden Datenbankbenutzers angeben. Ändern Sie die übrigen Parameter nur, wenn Sie wissen was Sie tun.
+KeepDefaultValuesMamp=Sie verwenden den DoliMamp-Installationsassistent, entsprechend sind die hier vorgeschlagenen Werte bereits optimiert. Ändern Sie diese nur wenn Sie wissen was Sie tun.
+MigrationContractsEmptyDatesUpdateSuccess=Korrektur der undefinierten Vertragsdaten erfolgreich
+MigrationContractsIncoherentCreationDateUpdateSuccess=Korrektur ungültiger Vertragserstellungsdaten erfolgreich
+ErrorFoundDuringMigration=Fehler wurden beim Migrationsprozess entdeckt, daher ist der nächste Schritt nicht verfügbar. Um den Fehler zu ignorieren können sie <a href="%s">hier klicken</a>, aber Anwendungen oder manche Funktionen können eventuell nicht richtig funktionieren solange der Fehler nicht behoben wurde.

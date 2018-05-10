@@ -33,7 +33,7 @@ $langs->load("dict");
 if ($langs->defaultlang != 'en_US')
 {
 	print "Error: Default language for company to run tests must be set to en_US or auto. Current is ".$langs->defaultlang."\n";
-	exit;
+	exit(1);
 }
 
 if (empty($user->id))

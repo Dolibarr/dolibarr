@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - stocks
+inventoryDraft=Actief
+inventoryConfirmCreate=Aanmaken
+inventoryDeleteLine=Verwijder lijn

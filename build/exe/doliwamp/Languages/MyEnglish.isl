@@ -31,6 +31,7 @@ FailedToDeleteLock=Failed to delete the file %1/www/dolibarr/install.lock. You c
 PortAlreadyInUse=Port %1 seems to be already in use. You should cancel to go back and choose another value for %2 port. Cancel choice and choose another value ?
 
 FirefoxDetected=Firefox has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?
+ChromeDetected=Chrome has been detected on your computer. Would you like to use it as the default browser for Dolibarr ?
 ChooseDefaultBrowser=Please choose your default browser. If you are not sure, just click Open :
 
 LaunchNow=Launch Dolibarr now
@@ -42,3 +43,5 @@ DoliWampWillStartApacheMysql=DoliWamp installer will now start or restart Apache
 OldVersionFoundAndMoveInNew=An old database version has been found and moved to be used by new Dolibarr version
 OldVersionFoundButFailedToMoveInNew=An old database version has been found but could not be moved to be used with new Dolibarr version
 
+DLLMissing=The "Visual C++ Redistributable for Visual Studio 2012" component is missing. Please install the 32-bit version (vcredit_x86.exe) first from https://www.microsoft.com/en-us/download/details.aspx?id=30679 and restart DoliWamp installation/upgrade.
+ContinueAnyway=Continue anyway (install process may fails without this prerequisite)

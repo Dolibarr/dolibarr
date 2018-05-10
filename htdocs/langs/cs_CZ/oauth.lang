@@ -1,0 +1,30 @@
+# Dolibarr language file - Source file is en_US - oauth
+ConfigOAuth=Konfigurace Oauth
+OAuthServices=Služby OAuth
+ManualTokenGeneration=Ruční generování tokenů
+TokenManager=Správce tokenů
+IsTokenGenerated=Je token generován?
+NoAccessToken=Žádný přístupový token uložený v místní databázi
+HasAccessToken=Token byl generován a uložen do lokální databáze
+NewTokenStored=Token přijat a uložen
+ToCheckDeleteTokenOnProvider=Klikněte zde pro kontrolu / odstranění oprávnění uloženého zprostředkovatelem %s OAuth
+TokenDeleted=Token byl smazán
+RequestAccess=Kliknutím sem můžete požádat/obnovit přístup a obdržet nový token, který chcete uložit
+DeleteAccess=Klikněte zde pro smazání tokenu
+UseTheFollowingUrlAsRedirectURI=Při vytváření pověření u poskytovatele OAuth použijte následující adresu URL jako URI přesměrování:
+ListOfSupportedOauthProviders=Zadejte zde pověření poskytnuté poskytovatelem OAuth2. Zde jsou zobrazena pouze podporovaní poskytovatelé OAuth2. Toto nastavení mohou používat jiné moduly, které potřebují ověření OAuth2.
+OAuthSetupForLogin=Page pro vygenerování tokenu OAuth
+SeePreviousTab=Viz předchozí tabulka
+OAuthIDSecret=OAuth ID a tajemství
+TOKEN_REFRESH=Token obnovit přítomnost
+TOKEN_EXPIRED=Token vypršel
+TOKEN_EXPIRE_AT=Token vyprší na
+TOKEN_DELETE=Odstranění uloženého tokenu
+OAUTH_GOOGLE_NAME=O službě Google Oauth
+OAUTH_GOOGLE_ID=ID Google Oauth
+OAUTH_GOOGLE_SECRET=Oauth Google Secret
+OAUTH_GOOGLE_DESC=Přejděte na <a class="notasortlink" href="https://console.developers.google.com/" target="_blank"> tuto stránku </a> a poté na "pověření" pro vytvoření pověření Oauth
+OAUTH_GITHUB_NAME=Služba Oauth GitHub
+OAUTH_GITHUB_ID=ID Oauth GitHub
+OAUTH_GITHUB_SECRET=Oauth GitHub Secret
+OAUTH_GITHUB_DESC=Přejděte na <a class="notasortlink" href="https://github.com/settings/developers" target="_blank"> tuto stránku </a> a pak na "Registrace nové aplikace" pro vytvoření pověření Oauth

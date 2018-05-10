@@ -1,4 +1,4 @@
-<?php //ligne 86
+<?php
 /* Copyright (c) 2004-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,9 +53,8 @@ $langs->load("companies");
  * View
  */
 
-$arrayjs=array('http://www.google.com/jsapi');
+$arrayjs=array('https://www.google.com/jsapi');
 if (! empty($conf->dol_use_jmobile)) $arrayjs=array();
-llxHeader('','','','',0,0,$arrayjs);
 
 $title=$langs->trans("Statistics");
 if ($mode == 'memberbycountry') $title=$langs->trans("MembersStatisticsByCountries");
@@ -63,6 +62,7 @@ if ($mode == 'memberbystate') $title=$langs->trans("MembersStatisticsByState");
 if ($mode == 'memberbytown') $title=$langs->trans("MembersStatisticsByTown");
 if ($mode == 'memberbyregion') $title=$langs->trans("MembersStatisticsByRegion");
 
+llxHeader('', $title,'','',0,0,$arrayjs);
 
 print load_fiche_titre($title, $mesg);
 
@@ -79,7 +79,7 @@ if ($mode)
         $data = array();
         $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.label";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
-        $sql.=" WHERE d.entity IN (".getEntity().")";
+        $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code";
         //print $sql;
@@ -96,7 +96,7 @@ if ($mode)
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
-        $sql.=" WHERE d.entity IN (".getEntity().")";
+        $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, c.nom";
         //print $sql;
@@ -112,7 +112,7 @@ if ($mode)
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d LEFT JOIN ".MAIN_DB_PREFIX."c_departements as c on d.state_id = c.rowid";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_regions as r on c.fk_region = r.code_region";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as co on d.country = co.rowid";
-        $sql.=" WHERE d.entity IN (".getEntity().")";
+        $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY co.label, co.code, r.nom"; //+
         //print $sql;
@@ -127,7 +127,7 @@ if ($mode)
         $sql.="SELECT COUNT(d.rowid) as nb, MAX(d.datevalid) as lastdate, c.code, c.label, d.town as label2";
         $sql.=" FROM ".MAIN_DB_PREFIX."adherent as d";
         $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."c_country as c on d.country = c.rowid";
-        $sql.=" WHERE d.entity IN (".getEntity().")";
+        $sql.=" WHERE d.entity IN (".getEntity('adherent').")";
         $sql.=" AND d.statut = 1";
         $sql.=" GROUP BY c.label, c.code, d.town";
         //print $sql;
@@ -198,7 +198,7 @@ if ($mode)
 
 $head = member_stats_prepare_head($adh);
 
-dol_fiche_head($head, $tab, $langs->trans("Statistics"), 0, 'user');
+dol_fiche_head($head, $tab, $langs->trans("Statistics"), -1, 'user');
 
 
 // Print title
@@ -282,25 +282,23 @@ if (count($arrayjs) && $mode == 'memberbycountry')
 if ($mode)
 {
     // Print array / Affiche le tableau
-    print '<table class="noborder" width="100%">';
+    print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td align="center">'.$label.'</td>';
+    print '<td>'.$label.'</td>';
     if ($label2) print '<td align="center">'.$label2.'</td>';
-    print '<td align="center">'.$langs->trans("NbOfMembers").'</td>';
+    print '<td align="right">'.$langs->trans("NbOfMembers").'</td>';
     print '<td align="center">'.$langs->trans("LastMemberDate").'</td>';
     print '</tr>';
 
     $oldyear=0;
-    $var=true;
     foreach ($data as $val)
     {
         $year = $val['year'];
-        $var=!$var;
-        print '<tr '.$bc[$var].'>';
-        print '<td align="center">'.$val['label'].'</td>';
+        print '<tr class="oddeven">';
+        print '<td>'.$val['label'].'</td>';
         if ($label2) print '<td align="center">'.$val['label2'].'</td>';
         print '<td align="right">'.$val['nb'].'</td>';
-        print '<td align="right">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
+        print '<td align="center">'.dol_print_date($val['lastdate'],'dayhour').'</td>';
         print '</tr>';
         $oldyear=$year;
     }

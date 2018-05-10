@@ -5,6 +5,5 @@ ErrorForbidden3=Кажется, что Dolibarr не используется п
 ErrorNoImagickReadimage=Класс Imagick не найден в этом PHP. Нет предварительного просмотра могут быть недоступны. Администраторы могут отключить эту вкладку из меню Setup - Display.
 ErrorCantReadFile=Не удалось прочитать файл %s
 ErrorCantReadDir=Не удалось прочитать %s каталог
-ErrorFailedToFindEntity=Не удалось прочитать %s окружающая среда
 ErrorBadLoginPassword=Плохо значение Войти или пароль
 ErrorLoginDisabled=Ваша учетная запись отключена

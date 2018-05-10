@@ -21,11 +21,37 @@ use Luracast\Restler\Format\UrlEncodedFormat;
  * @copyright  2010 Luracast
  * @license    http://www.opensource.org/licenses/lgpl-license.php LGPL
  * @link       http://luracast.com/products/restler/
- * @version    3.0.0rc5
+ * @version    3.0.0rc6
+ *
+ * @method static void onGet() onGet(Callable $function) fired before reading the request details
+ * @method static void onRoute() onRoute(Callable $function) fired before finding the api method
+ * @method static void onNegotiate() onNegotiate(Callable $function) fired before content negotiation
+ * @method static void onPreAuthFilter() onPreAuthFilter(Callable $function) fired before pre auth filtering
+ * @method static void onAuthenticate() onAuthenticate(Callable $function) fired before auth
+ * @method static void onPostAuthFilter() onPostAuthFilter(Callable $function) fired before post auth filtering
+ * @method static void onValidate() onValidate(Callable $function) fired before validation
+ * @method static void onCall() onCall(Callable $function) fired before api method call
+ * @method static void onCompose() onCompose(Callable $function) fired before composing response
+ * @method static void onRespond() onRespond(Callable $function) fired before sending response
+ * @method static void onComplete() onComplete(Callable $function) fired after sending response
+ * @method static void onMessage() onMessage(Callable $function) fired before composing error response
+ *
+ * @method void onGet() onGet(Callable $function) fired before reading the request details
+ * @method void onRoute() onRoute(Callable $function) fired before finding the api method
+ * @method void onNegotiate() onNegotiate(Callable $function) fired before content negotiation
+ * @method void onPreAuthFilter() onPreAuthFilter(Callable $function) fired before pre auth filtering
+ * @method void onAuthenticate() onAuthenticate(Callable $function) fired before auth
+ * @method void onPostAuthFilter() onPostAuthFilter(Callable $function) fired before post auth filtering
+ * @method void onValidate() onValidate(Callable $function) fired before validation
+ * @method void onCall() onCall(Callable $function) fired before api method call
+ * @method void onCompose() onCompose(Callable $function) fired before composing response
+ * @method void onRespond() onRespond(Callable $function) fired before sending response
+ * @method void onComplete() onComplete(Callable $function) fired after sending response
+ * @method void onMessage() onMessage(Callable $function) fired before composing error response
  */
 class Restler extends EventDispatcher
 {
-    const VERSION = '3.0.0rc5';
+    const VERSION = '3.0.0rc6';
 
     // ==================================================================
     //
@@ -78,9 +104,9 @@ class Restler extends EventDispatcher
     /**
      * Http status code
      *
-     * @var int
+     * @var int|null when specified it will override @status comment
      */
-    public $responseCode=200;
+    public $responseCode=null;
     /**
      * @var string base url of the api service
      */
@@ -278,11 +304,20 @@ class Restler extends EventDispatcher
             $this->call();
             $this->compose();
             $this->postCall();
+            if (Defaults::$returnResponse) {
+                return $this->respond();
+            }
             $this->respond();
         } catch (Exception $e) {
             try{
+                if (Defaults::$returnResponse) {
+                    return $this->message($e);
+                }
                 $this->message($e);
             } catch (Exception $e2) {
+                if (Defaults::$returnResponse) {
+                    return $this->message($e2);
+                }
                 $this->message($e2);
             }
         }
@@ -427,6 +462,31 @@ class Restler extends EventDispatcher
     }
 
     /**
+     * Set one or more string to be considered as the base url
+     *
+     * When more than one base url is provided, restler will make
+     * use of $_SERVER['HTTP_HOST'] to find the right one
+     *
+     * @param string ,... $url
+     */
+    public function setBaseUrls($url /*[, $url2...$urlN]*/)
+    {
+        if (func_num_args() > 1) {
+            $urls = func_get_args();
+            usort($urls, function ($a, $b) {
+                return strlen($a) - strlen($b);
+            });
+            foreach ($urls as $u) {
+                if (0 === strpos($_SERVER['HTTP_HOST'], parse_url($u, PHP_URL_HOST))) {
+                    $this->baseUrl = $u;
+                    return;
+                }
+            }
+        }
+        $this->baseUrl = $url;
+    }
+
+    /**
      * Parses the request url and get the api path
      *
      * @return string api path
@@ -436,41 +496,49 @@ class Restler extends EventDispatcher
         // fix SCRIPT_NAME for PHP 5.4 built-in web server
         if (false === strpos($_SERVER['SCRIPT_NAME'], '.php'))
             $_SERVER['SCRIPT_NAME']
-                = '/' . Util::removeCommonPath($_SERVER['SCRIPT_FILENAME'], $_SERVER['DOCUMENT_ROOT']);
+                = '/' . substr($_SERVER['SCRIPT_FILENAME'], strlen($_SERVER['DOCUMENT_ROOT']) + 1);
 
-        $fullPath = urldecode($_SERVER['REQUEST_URI']);
-        $path = Util::removeCommonPath(
-            $fullPath,
+        list($base, $path) = Util::splitCommonPath(
+            strtok(urldecode($_SERVER['REQUEST_URI']), '?'), //remove query string
             $_SERVER['SCRIPT_NAME']
         );
-        $port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : '80';
-        $https = $port == '443' ||
-            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') || // Amazon ELB
-            (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
 
-        $baseUrl = ($https ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'];
+        if (!$this->baseUrl) {
+            // Fix port number retrieval if port is specified in HOST header.
+            $host = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
+            $portPos = strpos($host,":");
+            if ($portPos){
+               $port = substr($host,$portPos+1);
+            } else {
+               $port = isset($_SERVER['SERVER_PORT']) ? $_SERVER['SERVER_PORT'] : '80';
+               $port = isset($_SERVER['HTTP_X_FORWARDED_PORT']) ? $_SERVER['HTTP_X_FORWARDED_PORT'] : $port; // Amazon ELB
+            }
+            $https = $port == '443' ||
+                (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') || // Amazon ELB
+                (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on');
+            $baseUrl = ($https ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'];
+            if (!$https && $port != '80' || $https && $port != '443')
+                $baseUrl .= ':' . $port;
+            $this->baseUrl = $baseUrl . $base;
+        } elseif (!empty($base) && false === strpos($this->baseUrl, $base)) {
+            $this->baseUrl .= $base;
+        }
 
-        if (!$https && $port != '80' || $https && $port != '443')
-            $baseUrl .= ':' . $port;
-
-        $this->baseUrl = rtrim($baseUrl
-            . substr($fullPath, 0, strlen($fullPath) - strlen($path)), '/');
-
-        $path = rtrim(strtok($path, '?'), '/'); //remove query string and trailing slash if found any
         $path = str_replace(
             array_merge(
                 $this->formatMap['extensions'],
                 $this->formatOverridesMap['extensions']
             ),
             '',
-            $path
+            rtrim($path, '/') //remove trailing slash if found
         );
+
         if (Defaults::$useUrlBasedVersioning && strlen($path) && $path{0} == 'v') {
             $version = intval(substr($path, 1));
             if ($version && $version <= $this->apiVersion) {
                 $this->requestedApiVersion = $version;
                 $path = explode('/', $path, 2);
-                $path = $path[1];
+                $path = count($path) == 2 ? $path[1] : '';
             }
         } else {
             $this->requestedApiVersion = $this->apiMinimumVersion;
@@ -650,7 +718,8 @@ class Restler extends EventDispatcher
                     . $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']);
 
             header('Access-Control-Allow-Origin: ' .
-                (Defaults::$accessControlAllowOrigin == '*' ? $_SERVER['HTTP_ORIGIN'] : Defaults::$accessControlAllowOrigin));
+                ((Defaults::$accessControlAllowOrigin == '*' && isset($_SERVER['HTTP_ORIGIN']))
+                    ? $_SERVER['HTTP_ORIGIN'] : Defaults::$accessControlAllowOrigin));
             header('Access-Control-Allow-Credentials: true');
 
             exit(0);
@@ -865,23 +934,21 @@ class Restler extends EventDispatcher
 
     protected function authenticate()
     {
-        $o = & $this->apiMethodInfo;
-        $accessLevel = max(Defaults::$apiAccessLevel,
-            $o->accessLevel);
-        try {
-            if ($accessLevel || count($this->postAuthFilterClasses)) {
-                $this->dispatch('authenticate');
-                if (!count($this->authClasses)) {
-                    throw new RestException(
-                        403,
-                        'at least one Authentication Class is required'
-                    );
-                }
-                foreach ($this->authClasses as $authClass) {
+        $o = &$this->apiMethodInfo;
+        $accessLevel = max(Defaults::$apiAccessLevel, $o->accessLevel);
+        if ($accessLevel || count($this->postAuthFilterClasses)) {
+            $this->dispatch('authenticate');
+            if (!count($this->authClasses) && $accessLevel > 1) {
+                throw new RestException(
+                    403,
+                    'at least one Authentication Class is required'
+                );
+            }
+            $unauthorized = false;
+            foreach ($this->authClasses as $authClass) {
+                try {
                     $authObj = Scope::get($authClass);
-                    if (!method_exists($authObj,
-                        Defaults::$authenticationMethod)
-                    ) {
+                    if (!method_exists($authObj, Defaults::$authenticationMethod)) {
                         throw new RestException (
                             500, 'Authentication Class ' .
                             'should implement iAuthenticate');
@@ -890,16 +957,26 @@ class Restler extends EventDispatcher
                     ) {
                         throw new RestException(401);
                     }
+                    $unauthorized = false;
+                    break;
+                } catch (InvalidAuthCredentials $e) {
+                    $this->authenticated = false;
+                    throw $e;
+                } catch (RestException $e) {
+                    if (!$unauthorized) {
+                        $unauthorized = $e;
+                    }
                 }
-                $this->authenticated = true;
             }
             $this->authVerified = true;
-        } catch (RestException $e) {
-            $this->authVerified = true;
-            if ($accessLevel > 1) { //when it is not a hybrid api
-                throw ($e);
+            if ($unauthorized) {
+                if ($accessLevel > 1) { //when it is not a hybrid api
+                    throw $unauthorized;
+                } else {
+                    $this->authenticated = false;
+                }
             } else {
-                $this->authenticated = false;
+                $this->authenticated = true;
             }
         }
     }
@@ -936,6 +1013,8 @@ class Restler extends EventDispatcher
                 }
                 //convert to instance of ValidationInfo
                 $info = new ValidationInfo($param);
+                //initialize validator
+                Scope::get(Defaults::$validatorClass);
                 $validator = Defaults::$validatorClass;
                 //if(!is_subclass_of($validator, 'Luracast\\Restler\\Data\\iValidate')) {
                 //changed the above test to below for addressing this php bug
@@ -964,6 +1043,8 @@ class Restler extends EventDispatcher
         $o = & $this->apiMethodInfo;
         $accessLevel = max(Defaults::$apiAccessLevel,
             $o->accessLevel);
+        if (function_exists('newrelic_name_transaction'))
+            newrelic_name_transaction("{$o->className}/{$o->methodName}");
         $object =  Scope::get($o->className);
         switch ($accessLevel) {
             case 3 : //protected method
@@ -1057,6 +1138,8 @@ class Restler extends EventDispatcher
         if (!Defaults::$suppressResponseCode) {
             if ($e) {
                 $code = $e->getCode();
+            } elseif ($this->responseCode) {
+                $code = $this->responseCode;
             } elseif (isset($this->apiMethodInfo->metadata['status'])) {
                 $code = $this->apiMethodInfo->metadata['status'];
             }
@@ -1084,9 +1167,13 @@ class Restler extends EventDispatcher
                 : 'Unknown';
             @header('WWW-Authenticate: ' . $authString, false);
         }
-        echo $this->responseData;
         $this->dispatch('complete');
-        exit;
+        if (Defaults::$returnResponse) {
+            return $this->responseData;
+        } else {
+            echo $this->responseData;
+            exit;
+        }
     }
 
     protected function message(Exception $exception)
@@ -1109,7 +1196,7 @@ class Restler extends EventDispatcher
         foreach ($this->errorClasses as $className) {
             if (method_exists($className, $method)) {
                 $obj = Scope::get($className);
-                if ($obj->$method())
+                if ($obj->$method($exception))
                     $handled = true;
             }
         }
@@ -1128,6 +1215,9 @@ class Restler extends EventDispatcher
             $compose->message($exception),
             !$this->productionMode
         );
+        if (Defaults::$returnResponse) {
+            return $this->respond();
+        }
         $this->respond();
     }
 
@@ -1309,6 +1399,135 @@ class Restler extends EventDispatcher
     }
 
     /**
+     * protected methods will need at least one authentication class to be set
+     * in order to allow that method to be executed.  When multiple authentication
+     * classes are in use, this function provides better performance by setting
+     * all auth classes through a single function call.
+     *
+     * @param array $classNames     array of associative arrays containing
+     *                              the authentication class name & optional
+     *                              url prefix for mapping.
+     */
+    public function setAuthClasses(array $classNames)
+    {
+        $this->authClasses = array_merge($this->authClasses, array_values($classNames));
+    }
+
+    /**
+     * Add multiple api classes through this method.
+     *
+     * This method provides better performance when large number
+     * of API classes are in use as it processes them all at once,
+     * as opposed to hundreds (or more) addAPIClass calls.
+     *
+     *
+     * All the public methods that do not start with _ (underscore)
+     * will be will be exposed as the public api by default.
+     *
+     * All the protected methods that do not start with _ (underscore)
+     * will exposed as protected api which will require authentication
+     *
+     * @param array $map        array of associative arrays containing
+     *                          the class name & optional url prefix
+     *                          for mapping.
+     *
+     * @return null
+     *
+     * @throws Exception when supplied with invalid class name
+     */
+    public function mapAPIClasses(array $map)
+    {
+        try {
+            if ($this->productionMode && is_null($this->cached)) {
+                $routes = $this->cache->get('routes');
+                if (isset($routes) && is_array($routes)) {
+                    $this->apiVersionMap = $routes['apiVersionMap'];
+                    unset($routes['apiVersionMap']);
+                    Routes::fromArray($routes);
+                    $this->cached = true;
+                } else {
+                    $this->cached = false;
+                }
+            }
+            $maxVersionMethod = '__getMaximumSupportedVersion';
+            if (!$this->productionMode || !$this->cached) {
+                foreach ($map as $className => $resourcePath) {
+                    if (is_numeric($className)) {
+                        $className = $resourcePath;
+                        $resourcePath = null;
+                    }
+                    if (isset(Scope::$classAliases[$className])) {
+                        $className = Scope::$classAliases[$className];
+                    }
+                    if (class_exists($className)) {
+                        if (method_exists($className, $maxVersionMethod)) {
+                            $max = $className::$maxVersionMethod();
+                            for ($i = 1; $i <= $max; $i++) {
+                                $this->apiVersionMap[$className][$i] = $className;
+                            }
+                        } else {
+                            $this->apiVersionMap[$className][1] = $className;
+                        }
+                    }
+                    //versioned api
+                    if (false !== ($index = strrpos($className, '\\'))) {
+                        $name = substr($className, 0, $index)
+                            . '\\v{$version}' . substr($className, $index);
+                    } else {
+                        if (false !== ($index = strrpos($className, '_'))) {
+                            $name = substr($className, 0, $index)
+                                . '_v{$version}' . substr($className, $index);
+                        } else {
+                            $name = 'v{$version}\\' . $className;
+                        }
+                    }
+
+                    for ($version = $this->apiMinimumVersion;
+                         $version <= $this->apiVersion;
+                         $version++) {
+
+                        $versionedClassName = str_replace('{$version}', $version,
+                            $name);
+                        if (class_exists($versionedClassName)) {
+                            Routes::addAPIClass($versionedClassName,
+                                Util::getResourcePath(
+                                    $className,
+                                    $resourcePath
+                                ),
+                                $version
+                            );
+                            if (method_exists($versionedClassName, $maxVersionMethod)) {
+                                $max = $versionedClassName::$maxVersionMethod();
+                                for ($i = $version; $i <= $max; $i++) {
+                                    $this->apiVersionMap[$className][$i] = $versionedClassName;
+                                }
+                            } else {
+                                $this->apiVersionMap[$className][$version] = $versionedClassName;
+                            }
+                        } elseif (isset($this->apiVersionMap[$className][$version])) {
+                            Routes::addAPIClass($this->apiVersionMap[$className][$version],
+                                Util::getResourcePath(
+                                    $className,
+                                    $resourcePath
+                                ),
+                                $version
+                            );
+                        }
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $e = new Exception(
+                "mapAPIClasses failed. " . $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+            $this->setSupportedFormats('JsonFormat');
+            $this->message($e);
+        }
+    }
+
+    /**
      * Associated array that maps formats to their respective format class name
      *
      * @return array
@@ -1395,6 +1614,19 @@ class Restler extends EventDispatcher
     public function __destruct()
     {
         if ($this->productionMode && !$this->cached) {
+            if (empty($this->url) && empty($this->requestMethod)) {
+                // url and requestMethod is NOT set:
+                // This can only happen, when an exception was thrown outside of restler, so that the method Restler::handle was NOT called.
+                // In this case, the routes can now be corrupt/incomplete, because we don't know, if all API-classes could be registered
+                // before the exception was thrown. So, don't cache the routes, because the routes can now be corrupt/incomplete!
+                return;
+            }
+            if ($this->exception instanceof RestException && $this->exception->getStage() === 'setup') {
+                // An exception has occured during configuration of restler. Maybe we could not add all API-classes correctly!
+                // So, don't cache the routes, because the routes can now be corrupt/incomplete!
+                return;
+            }
+
             $this->cache->set(
                 'routes',
                 Routes::toArray() +

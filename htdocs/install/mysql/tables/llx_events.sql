@@ -30,7 +30,7 @@ create table llx_events
   dateevent      datetime,                    -- date event
   fk_user        integer,                     -- id user
   description    varchar(250) NOT NULL,       -- full description of action
-  ip             varchar(32) NOT NULL,        -- ip
+  ip             varchar(250) NOT NULL,       -- ip (must contains ip v4 and v6 or dns names)
   user_agent     varchar(255) NULL,           -- user agent
   fk_object      integer                      -- id of related object
 ) ENGINE=innodb;

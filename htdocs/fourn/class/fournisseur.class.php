@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 class Fournisseur extends Societe
 {
 	var $next_prev_filter="te.fournisseur = 1";		// Used to add a filter in Form::showrefnav method
-	
-	
+
+
 	/**
 	 *	Constructor
 	 *
@@ -44,10 +44,9 @@ class Fournisseur extends Societe
 	function __construct($db)
 	{
 		$this->db = $db;
+
 		$this->client = 0;
-		$this->fournisseur = 0;
-		$this->effectif_id  = 0;
-		$this->forme_juridique_code  = 0;
+		$this->fournisseur = 1;
 	}
 
 
@@ -124,7 +123,7 @@ class Fournisseur extends Societe
 			$clause = "AND";
 		}
 		$sql.= " ".$clause." s.fournisseur = 1";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		$sql.= " AND s.entity IN (".getEntity('societe').")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -189,7 +188,7 @@ class Fournisseur extends Societe
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 		$sql.= " WHERE s.fournisseur = 1";
-		$sql.= " AND s.entity IN (".getEntity('societe', 1).")";
+		$sql.= " AND s.entity IN (".getEntity('societe').")";
 		if (!$user->rights->societe->client->voir && !$user->societe_id) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 		$resql=$this->db->query($sql);

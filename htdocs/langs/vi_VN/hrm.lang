@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Email để ngăn chặn dịch vụ HRM bên ngoài
+Establishments=Cơ sở
+Establishment=Cơ sở
+NewEstablishment=Tạo cơ sở
+DeleteEstablishment=Xóa cơ sở
+ConfirmDeleteEstablishment=Bạn có chắc chắn muốn xóa cơ sở này?
+OpenEtablishment=Mở cơ sở
+CloseEtablishment=Đóng cơ sở
+# Dictionary
+DictionaryDepartment=HRM - Danh sách phòng/ban
+DictionaryFunction=HRM - Danh sách vai trò
+# Module
+Employees=Nhân viên
+Employee=Nhân viên
+NewEmployee=Tạo nhân viên

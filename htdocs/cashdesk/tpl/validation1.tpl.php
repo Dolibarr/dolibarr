@@ -16,8 +16,17 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protection to avoid direct call of template
+if (empty($langs) || ! is_object($langs))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $langs->load("main");
 $langs->load("bills");
+$langs->load("banks");
 
 // Object $form must de defined
 
@@ -83,7 +92,7 @@ $langs->load("bills");
 			// Affichage des infos en fonction du mode de paiement
 			if ( $obj_facturation->getsetPaymentMode() == 'DIF' ) {
 
-				echo ('<tr><td class="resume_label">'.$langs->trans("DateEcheance").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
+				echo ('<tr><td class="resume_label">'.$langs->trans("DateDue").'</td><td>'.$obj_facturation->paiementLe().'</td></tr>');
 
 			} else {
 
@@ -113,7 +122,7 @@ $langs->load("bills");
 		<p class="note_label"><?php echo $langs->trans("Notes"); ?><br><textarea class="textarea_note" name="txtaNotes"></textarea></p>
 
 		<div class="center"><input class="button" type="submit" name="btnValider" value="<?php echo $langs->trans("ValidateInvoice"); ?>" /><br>
-		<br><a class="lien1" href="affIndex.php?menu=facturation"><?php echo $langs->trans("RestartSelling"); ?></a>
+		<br><a class="lien1" href="affIndex.php?menutpl=facturation"><?php echo $langs->trans("RestartSelling"); ?></a>
 		</div>
 	</form>
 

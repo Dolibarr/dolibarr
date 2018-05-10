@@ -26,15 +26,18 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
-require DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 
 $langs->load("bills");
 $langs->load("suppliers");
 $langs->load("companies");
 
-$paiement = new PaiementFourn($db);
-$paiement->fetch($_GET["id"], $user);
-$paiement->info($_GET["id"]);
+$id			= GETPOST('id','int');
+
+$object = new PaiementFourn($db);
+$object->fetch($id);
+$object->info($id);
+
 
 /*
  * View
@@ -42,15 +45,17 @@ $paiement->info($_GET["id"]);
 
 llxHeader();
 
-$head = payment_supplier_prepare_head($paiement);
+$head = payment_supplier_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("SupplierPayment"), 0, 'payment');
 
-print '<table width="100%"><tr><td>';
-dol_print_object_info($paiement);
-print '</td></tr></table>';
+dol_banner_tab($object, 'id', $linkback, -1, 'rowid', 'ref');
 
-print '</div>';
+dol_fiche_end();
+
+print '<table width="100%"><tr><td>';
+dol_print_object_info($object);
+print '</td></tr></table>';
 
 llxFooter();
 

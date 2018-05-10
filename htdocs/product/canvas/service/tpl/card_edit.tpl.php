@@ -15,6 +15,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Protection to avoid direct call of template
+if (empty($conf) || ! is_object($conf))
+{
+	print "Error, template page can't be called as URL";
+	exit;
+}
+
+
 $object=$GLOBALS['object'];
 
 $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
@@ -62,7 +70,7 @@ dol_htmloutput_errors($object->error,$object->errors);
 <?php echo $object->duration_unit; ?>
 </td></tr>
 
-<tr><td valign="top"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
+<tr><td class="tdtop"><?php echo $langs->trans("NoteNotVisibleOnBill"); ?></td><td>
 <?php echo $object->textarea_note; ?>
 </td></tr>
 </table>

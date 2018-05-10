@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2006-2010  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2012  Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010-2017  Regis Houssin       <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
@@ -32,7 +32,7 @@
  */
 function contact_prepare_head(Contact $object)
 {
-	global $langs, $conf, $user;
+	global $db, $langs, $conf, $user;
 
 	$tab = 0;
 	$head = array();
@@ -42,7 +42,8 @@ function contact_prepare_head(Contact $object)
 	$head[$tab][2] = 'card';
 	$tab++;
 
-	if (! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
+	if ((! empty($conf->ldap->enabled) && ! empty($conf->global->LDAP_CONTACT_ACTIVE))
+		&& (empty($conf->global->MAIN_DISABLE_LDAP_TAB) || ! empty($user->admin)))
 	{
 		$langs->load("ldap");
 
@@ -74,19 +75,33 @@ function contact_prepare_head(Contact $object)
     }
 
     require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    require_once DOL_DOCUMENT_ROOT.'/core/class/link.class.php';
     $upload_dir = $conf->societe->dir_output . "/contact/" . dol_sanitizeFileName($object->ref);
-    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview\.png)$'));
+    $nbFiles = count(dol_dir_list($upload_dir,'files',0,'','(\.meta|_preview.*\.png)$'));
+    $nbLinks=Link::count($db, $object->element, $object->id);
     $head[$tab][0] = DOL_URL_ROOT.'/contact/document.php?id='.$object->id;
     $head[$tab][1] = $langs->trans("Documents");
-    if($nbFiles > 0) $head[$tab][1].= ' <span class="badge">'.$nbFiles.'</span>';
+    if (($nbFiles+$nbLinks) > 0) $head[$tab][1].= ' <span class="badge">'.($nbFiles+$nbLinks).'</span>';
     $head[$tab][2] = 'documents';
     $tab++;
 
-    // Info
+    // Agenda / Events
+    $head[$tab][0] = DOL_URL_ROOT.'/contact/agenda.php?id='.$object->id;
+    $head[$tab][1].= $langs->trans("Events");
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+        $head[$tab][1].= '/';
+        $head[$tab][1].= $langs->trans("Agenda");
+    }
+    $head[$tab][2] = 'agenda';
+    $tab++;
+
+    // Log
+    /*
     $head[$tab][0] = DOL_URL_ROOT.'/contact/info.php?id='.$object->id;
 	$head[$tab][1] = $langs->trans("Info");
 	$head[$tab][2] = 'info';
-	$tab++;
+	$tab++;*/
 
 	complete_head_from_modules($conf,$langs,$object,$head,$tab,'contact','remove');
 

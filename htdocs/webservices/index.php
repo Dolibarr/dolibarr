@@ -50,55 +50,8 @@ if (empty($conf->global->MAIN_MODULE_WEBSERVICES))
 
 
 // WSDL
-print '<u>'.$langs->trans("WSDLCanBeDownloadedHere").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php?wsdl';
-print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-if (! empty($conf->societe->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php?wsdl';
-	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-}
-if (! empty($conf->facture->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php?wsdl';
-	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-}
-if (! empty($conf->fournisseur->enabled))
-{
-    $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php?wsdl';
-    print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-}
-$url=DOL_MAIN_URL_ROOT.'/webservices/server_user.php?wsdl';
-print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-print '<br>';
+print 'List of available SOAP Web services is visible on the setup area, setup page of module WebService SOAP.';
 
-
-// Endpoint
-print '<u>'.$langs->trans("EndPointIs").':</u><br>';
-$url=DOL_MAIN_URL_ROOT.'/webservices/server_other.php';
-print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-if (! empty($conf->societe->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_thirdparty.php';
-	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-}
-if (! empty($conf->facture->enabled))
-{
-	$url=DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
-	print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-}
-if (! empty($conf->fournisseur->enabled))
-{
-    $url=DOL_MAIN_URL_ROOT.'/webservices/server_supplier_invoice.php';
-    print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-}
-$url=DOL_MAIN_URL_ROOT.'/webservices/server_user.php';
-print img_picto('','object_globe.png') . ' <a href="' . $url . '" target="_blank">' . $url . "</a><br>\n";
-print '<br>';
-
-print '<br>';
-print 'NUSoap library path used by Dolibarr: ' . NUSOAP_PATH . '<br>';
-print '<br>';
 
 $db->close();
 

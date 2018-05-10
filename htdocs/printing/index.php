@@ -1,6 +1,6 @@
 <?php
-/*
- * Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+/* Copyright (C) 2014-2015  Frederic France      <frederic.france@free.fr>
+ * Copyright (C) 2016       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,23 @@
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
+$langs->load("printing");
+
+
+/*
+ * Actions
+ */
+
+// None
+
+
+/*
+ * View
+ */
+
 llxHeader("",$langs->trans("Printing"));
 
-print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0);
+print_barre_liste($langs->trans("Printing"), 0, $_SERVER["PHP_SELF"], '', '', '', '<a class="button" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("Refresh").'</a>', 0, 0, 'title_setup.png');
 
 print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 

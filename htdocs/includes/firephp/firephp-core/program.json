@@ -1,5 +1,0 @@
-{
-    "extends": {
-        "location": "./workspace/program.json"
-    }
-}

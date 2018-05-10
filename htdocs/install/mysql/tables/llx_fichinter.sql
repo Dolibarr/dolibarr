@@ -31,14 +31,18 @@ create table llx_fichinter
   date_valid		datetime,                   -- date de validation
   datei				date,						-- date de livraison du bon d'intervention
   fk_user_author	integer,					-- user making creation
-  fk_user_modif     integer,                   -- user making last change
-  fk_user_valid		integer,                   -- valideur de la fiche
+  fk_user_modif     integer,                    -- user making last change
+  fk_user_valid		integer,                    -- user validating record
   fk_statut			smallint  DEFAULT 0,
+  dateo				date,						-- date de début d'intervention
+  datee				date,						-- date de fin d'intervention
+  datet				date,						-- date de terminaison de l'intervention
   duree				real,                       -- duree totale de l'intervention
   description		text,
   note_private		text,
   note_public		text,
   model_pdf			varchar(255),
-  extraparams		varchar(255)				-- for stock other parameters with json format
-  
+  last_main_doc		varchar(255),				-- relative filepath+filename of last main generated document
+  import_key        varchar(14),
+  extraparams		varchar(255)				-- for other parameters with json format
 )ENGINE=innodb;

@@ -24,7 +24,7 @@
 
 /**
  * GetFolders
- * 
+ *
  * @param	string	$resourceType		Resource type
  * @param 	string 	$currentFolder		Current folder
  * @return 	void
@@ -145,7 +145,7 @@ function CreateFolder( $resourceType, $currentFolder )
 		$sNewFolderName = $_GET['NewFolderName'] ;
 		$sNewFolderName = SanitizeFolderName($sNewFolderName);
 
-		if (strpos($sNewFolderName, '..') !== FALSE)
+		if (strpos($sNewFolderName, '..') !== false)
 			$sErrorNumber = '102' ;		// Invalid folder name.
 		else
 		{
@@ -160,14 +160,14 @@ function CreateFolder( $resourceType, $currentFolder )
 
 				switch ( $sErrorMsg )
 				{
-					case '' :
+					case '':
 						$sErrorNumber = '0' ;
-						break ;
+						break;
 					case 'Invalid argument' :
 					case 'No such file or directory' :
 						$sErrorNumber = '102' ;		// Path too long.
 						break ;
-					default :
+					default:
 						$sErrorNumber = '110' ;
 						break ;
 				}
@@ -183,11 +183,11 @@ function CreateFolder( $resourceType, $currentFolder )
 	echo '<Error number="' . $sErrorNumber . '" />' ;
 }
 
-// DOL_CHANGE
+// @CHANGE
 //function FileUpload( $resourceType, $currentFolder, $sCommand )
 /**
  * FileUpload
- * 
+ *
  * @param	string	$resourceType	Resource type
  * @param 	string 	$currentFolder	Current folder
  * @param	string	$sCommand		Command
@@ -266,15 +266,15 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 							break ;
 						}
 
-						$permissions = 0777;
-
+						$permissions = '0777';
 						if ( isset( $Config['ChmodOnUpload'] ) && $Config['ChmodOnUpload'] )
 						{
-							$permissions = $Config['ChmodOnUpload'] ;
+							$permissions = (string) $Config['ChmodOnUpload'] ;
 						}
-
+						$permissionsdec = octdec($permissions);
+						dol_syslog("commands.php permission = ".$permissions." ".$permissionsdec." ".decoct($permissionsdec));
 						$oldumask = umask(0);
-						chmod($sFilePath, $permissions);
+						chmod($sFilePath, $permissionsdec);
 						umask($oldumask);
 					}
 
@@ -308,7 +308,7 @@ function FileUpload($resourceType, $currentFolder, $sCommand, $CKEcallback = '')
 	$sFileUrl = CombinePaths($sFileUrl, $sFileName);
 
 
-	// DOL_CHANGE
+	// @CHANGE
 	//SendUploadResults( $sErrorNumber, $sFileUrl, $sFileName );
 	if($CKEcallback == '')
     {

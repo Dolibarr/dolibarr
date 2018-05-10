@@ -59,7 +59,7 @@ class GoogleAPI
 		$i=0;
 
 		// Desired address
-		$urladdress = "http://maps.google.com/maps/geo?q=".urlencode($address)."&output=xml&key=".$this->key;
+		$urladdress = "https://maps.google.com/maps/geo?q=".urlencode($address)."&output=xml&key=".$this->key;
 
 		// Retrieve the URL contents
 		$page = file_get_contents($urladdress);

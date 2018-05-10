@@ -1,0 +1,25 @@
+# Dolibarr language file - Source file is en_US - donations
+Donor=Donneur
+DeleteADonation=Supprimer un don
+ConfirmDeleteADonation=Êtes-vous sûr de vouloir supprimer ce don?
+ShowDonation=Montrer le don
+DonationsArea=Domaine de donations
+DonationStatusPromiseNotValidated=Projet de promesse
+DonationStatusPaid=Dons reçus
+DonationStatusPromiseNotValidatedShort=Brouillon
+DonationStatusPaidShort=Reçu
+DonationTitle=Reçu de don
+DonationDatePayment=Date de règlement
+ValidPromess=Valider la promesse
+DonationReceipt=Reçu de don
+DonationsModels=Modèles de documents pour les reçus de dons
+LastModifiedDonations=Derniers %s dons modifiés
+DonationRecipient=Destinataire du don
+IConfirmDonationReception=Le destinataire déclare réception, en tant que don, du montant suivant
+MinimumAmount=Le montant minimum est %s
+FreeTextOnDonations=Texte gratuit à afficher en bas de page
+FrenchOptions=Options pour la France
+DONATION_ART200=Afficher l'article 200 de CGI si vous êtes concerné
+DONATION_ART238=Afficher l'article 238 de CGI si vous êtes concerné
+DONATION_ART885=Afficher l'article 885 de CGI si vous êtes concerné
+DonationPayment=Paiement de donation

@@ -5,7 +5,7 @@
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 -- Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2007 	   Patrick Raguin       <patrick.raguin@gmail.com>
--- Copyright (C) 2010-2011 Juanjo Menent        <jmenent@2byte.es>
+-- Copyright (C) 2010-2016 Juanjo Menent        <jmenent@2byte.es>
 -- Copyright (C) 2012 	   Sebastian Neuwert    <sebastian.neuwert@modula71.de>
 -- Copyright (C) 2012 	   Tommaso Basilici     <t.basilici@19.coop>
 -- Copyright (C) 2012	   Ricardo Schluter     <info@ripasch.nl>
@@ -53,6 +53,23 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2311', 'Sociedad Anónima', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2312', 'Sociedad Anónima con Participación Estatal Mayoritaria', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (23, '2313', 'Sociedad en Comandita por Acciones (arts. 315 a 324, LSC)', 1);
+
+-- Austria
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4100', 'GmbH - Gesellschaft mit beschränkter Haftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4101', 'GesmbH - Gesellschaft mit beschränkter Haftung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4102', 'AG - Aktiengesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4103', 'EWIV - Europäische wirtschaftliche Interessenvereinigung', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4104', 'KEG - Kommanditerwerbsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4105', 'OEG - Offene Erwerbsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4106', 'OHG - Offene Handelsgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4107', 'AG & Co KG - Kommanditgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4108', 'GmbH & Co KG - Kommanditgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4109', 'KG - Kommanditgesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4110', 'OG - Offene Gesellschaft', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4111', 'GbR - Gesellschaft nach bürgerlichem Recht', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4112', 'GesbR - Gesellschaft nach bürgerlichem Recht', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4113', 'GesnbR - Gesellschaft nach bürgerlichem Recht', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (41, '4114', 'e.U. - eingetragener Einzelunternehmer', 1);
 
 -- France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'11','Artisan Commerçant (EI)');
@@ -261,3 +278,39 @@ INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, 
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15404', 'Sociedad anónima', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15405', 'Sociedad en comandita por acciones', 1);
 INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (154, '15406', 'Sociedad cooperativa', 1);
+
+-- Luxembourg
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14001', 'Entreprise individuelle', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14002', 'Société en nom collectif (SENC)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14003', 'Société en commandite simple (SECS)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14004', 'Société en commandite par actions (SECA)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14005', 'Société à responsabilité limitée (SARL)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14006', 'Société anonyme (SA)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14007', 'Société coopérative (SC)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (140, '14008', 'Société européenne (SE)', 1);
+
+-- Romania
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18801', 'AFJ - Alte forme juridice', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18802', 'ASF - Asociatie familialã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18803', 'CON - Concesiune', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18804', 'CRL - Soc civilã profesionala cu pers. juridica si rãspundere limitata (SPRL)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18805', 'INC - Închiriere', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18806', 'LOC - Locaţie de gestiune', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18807', 'OC1 - Organizaţie cooperatistã meşteşugãreascã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18808', 'OC2 - Organizaţie cooperatistã de consum', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18809', 'OC3 - Organizaţie cooperatistã de credit', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18810', 'PFA - Persoanã fizicã independentã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18811', 'RA - Regie autonomã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18812', 'SA - Societate comercialã pe acţiuni', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18813', 'SCS - Societate comercialã în comanditã simplã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18814', 'SNC - Societate comercialã în nume colectiv', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18815', 'SPI - Societate profesionala practicieni in insolventa (SPPI)', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18816', 'SRL - Societate comercialã cu rãspundere limitatã', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (188, '18817', 'URL - Intreprindere profesionala unipersonala cu rãspundere limitata (IPURL)', 1);
+
+-- Panama
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17801', 'Empresa individual', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17802', 'Asociación General', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17803', 'Sociedad de Responsabilidad Limitada', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17804', 'Sociedad Civil', 1);
+INSERT INTO llx_c_forme_juridique (fk_pays, code, libelle, active) VALUES (178, '17805', 'Sociedad Anónima', 1);

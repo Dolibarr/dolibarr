@@ -1,8 +1,8 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
-/* Copyright (C) 2012   Nicolas Villa aka Boyquotes http://informetic.fr
- * Copyright (C) 2013   Florian Henry <forian.henry@open-concept.pro
- * Copyright (C) 2013   Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2012      Nicolas Villa aka Boyquotes http://informetic.fr
+ * Copyright (C) 2013      Florian Henry <forian.henry@open-concept.pro
+ * Copyright (C) 2013-2015 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOLOGIN'))        define('NOLOGIN','1');
 //if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 
@@ -56,9 +55,9 @@ $key=$argv[1];
 if (! isset($argv[2]) || ! $argv[2]) {
 	usage($path,$script_file);
 	exit(-1);
-} else {
-	$userlogin=$argv[2];
 }
+
+$userlogin=$argv[2];
 
 
 // Global variables
@@ -70,14 +69,48 @@ $error=0;
  * Main
  */
 
+// current date
+$now=dol_now();
+
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . dol_print_date($now, 'dayrfc') . " *****\n";
+
+// Check module cron is activated
+if (empty($conf->cron->enabled))
+{
+	print "Error: module Scheduled jobs (cron) not activated\n";
+	exit(-1);
+}
+
+// Check module cron is activated
+if (empty($conf->cron->enabled))
+{
+	print "Error: module Scheduled jobs (cron) not activated\n";
+	exit(-1);
+}
 
 // Check security key
 if ($key != $conf->global->CRON_KEY)
 {
 	print "Error: securitykey is wrong\n";
 	exit(-1);
+}
+
+// If param userlogin is reserved word 'firstadmin'
+if ($userlogin == 'firstadmin')
+{
+    $sql='SELECT login, entity from '.MAIN_DB_PREFIX.'user WHERE admin = 1 and statut = 1 ORDER BY entity LIMIT 1';
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+        $obj=$db->fetch_object($resql);
+        if ($obj)
+        {
+            $userlogin = $obj->login;
+            echo "First admin user found is login '".$userlogin."', entity ".$obj->entity."\n";
+        }
+    }
+    else dol_print_error($db);
 }
 
 // Check user login
@@ -93,11 +126,12 @@ else
 {
 	if (empty($user->id))
 	{
-		echo " User user login: ".$userlogin." do not exists";
-		dol_syslog(" User user login:".$userlogin." do not exists", LOG_ERR);
+		echo "User login: ".$userlogin." does not exists";
+		dol_syslog("User login:".$userlogin." does not exists", LOG_ERR);
 		exit(-1);
 	}
 }
+$user->getrights();
 
 if (isset($argv[3]) || $argv[3])
 {
@@ -108,12 +142,11 @@ if (isset($argv[3]) || $argv[3])
 $object = new Cronjob($db);
 
 $filter=array();
-if (empty($id)) {
-	$filter=array();
+if (! empty($id)) {
 	$filter['t.rowid']=$id;
 }
 
-$result = $object->fetch_all('DESC','t.rowid', 0, 0, 1, $filter);
+$result = $object->fetch_all('ASC,ASC,ASC','t.priority,t.entity,t.rowid', 0, 0, 1, $filter, 0);
 if ($result<0)
 {
 	echo "Error: ".$object->error;
@@ -121,46 +154,82 @@ if ($result<0)
 	exit(-1);
 }
 
-// current date
-$now=dol_now();
 
-if(is_array($object->lines) && (count($object->lines)>0))
+$qualifiedjobs = array();
+foreach($object->lines as $val)
 {
-		// Loop over job
-		foreach($object->lines as $line)
+	if (! verifCond($val->test)) continue;
+	$qualifiedjobs[] = $val;
+}
+
+// TODO This sequence of code must be shared with code into public/cron/cron_run_jobs.php php page.
+
+$nbofjobs=count($qualifiedjobs);
+$nbofjobslaunchedok=0;
+$nbofjobslaunchedko=0;
+
+if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
+{
+	// Loop over job
+	foreach($qualifiedjobs as $line)
+	{
+		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
+		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label."\n";
+
+		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
+		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
 		{
-			//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
-			if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
+			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+
+			$cronjob=new Cronjob($db);
+			$result=$cronjob->fetch($line->id);
+			if ($result < 0)
 			{
-				$cronjob=new Cronjob($db);
-				$result=$cronjob->fetch($line->id);
-				if ($result<0) {
-					echo "Error:".$cronjob->error;
-					dol_syslog("cron_run_jobs.php:: fetch Error".$cronjob->error, LOG_ERR);
-					exit(-1);
-				}
-				// execute methode
-				$result=$cronjob->run_jobs($userlogin);
-				if ($result<0) {
-					echo "Error:".$cronjob->error;
-					dol_syslog("cron_run_jobs.php:: run_jobs Error".$cronjob->error, LOG_ERR);
-					exit(-1);
-				}
-
-					// we re-program the next execution and stores the last execution time for this job
-				$result=$cronjob->reprogram_jobs($userlogin);
-				if ($result<0) {
-					echo "Error:".$cronjob->error;
-					dol_syslog("cron_run_jobs.php:: reprogram_jobs Error".$cronjob->error, LOG_ERR);
-					exit(-1);
-				}
-
+				echo "Error cronjob->fetch: ".$cronjob->error."\n";
+				echo "Failed to fetch job ".$line->id."\n";
+				dol_syslog("cron_run_jobs.php::fetch Error ".$cronjob->error, LOG_ERR);
+				exit(-1);
 			}
+			// Execute job
+			$result=$cronjob->run_jobs($userlogin);
+			if ($result < 0)
+			{
+				echo "Error cronjob->run_job: ".$cronjob->error."\n";
+				echo "At least one job failed. Go on menu Home-Setup-Admin tools to see result for each job.\n";
+				echo "You can also enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
+				dol_syslog("cron_run_jobs.php::run_jobs Error ".$cronjob->error, LOG_ERR);
+				$nbofjobslaunchedko++;
+			}
+			else
+			{
+				$nbofjobslaunchedok++;
+			}
+
+			// we re-program the next execution and stores the last execution time for this job
+			$result=$cronjob->reprogram_jobs($userlogin, $now);
+			if ($result<0)
+			{
+				echo "Error cronjob->reprogram_job: ".$cronjob->error."\n";
+				echo "Enable module Log if not yet enabled, run again and take a look into dolibarr.log file\n";
+				dol_syslog("cron_run_jobs.php::reprogram_jobs Error ".$cronjob->error, LOG_ERR);
+				exit(-1);
+			}
+
 		}
+		else
+		{
+			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+		}
+	}
+}
+else
+{
+	echo "cron_run_jobs.php no qualified job found\n";
 }
 
 $db->close();
 
+if ($nbofjobslaunchedko) exit(1);
 exit(0);
 
 
@@ -169,7 +238,7 @@ function usage($path,$script_file)
 {
 	global $conf;
 
-	print "Usage: ".$script_file." securitykey userlogin [cronjobid]\n";
+	print "Usage: ".$script_file." securitykey userlogin|'firstadmin' [cronjobid]\n";
 	print "The script return 0 when everything worked successfully.\n";
 	print "\n";
 	print "On Linux system, you can have cron jobs ran automatically by adding an entry into cron.\n";

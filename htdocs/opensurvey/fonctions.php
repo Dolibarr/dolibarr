@@ -108,7 +108,7 @@ function showlogo()
 	// Print logo
 	if ($mysoc->logo) {
 		if (file_exists($conf->mycompany->dir_output.'/logos/thumbs/'.$mysoc->logo_small)) {
-			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=thumbs/'.urlencode($mysoc->logo_small);
+			$urllogo=DOL_URL_ROOT.'/viewimage.php?cache=1&amp;modulepart=mycompany&amp;file=thumbs/'.urlencode($mysoc->logo_small);
 		}
 	}
 
@@ -190,9 +190,9 @@ function dol_survey_random($car)
 {
 	$string = "";
 	$chaine = "abcdefghijklmnopqrstuvwxyz123456789";
-	srand((double) microtime()*1000000);
+	mt_srand((double) microtime()*1000000);
 	for($i=0; $i<$car; $i++) {
-		$string .= $chaine[rand()%strlen($chaine)];
+		$string .= $chaine[mt_rand() % strlen($chaine)];
 	}
 	return $string;
 }

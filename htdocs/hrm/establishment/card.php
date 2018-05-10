@@ -40,13 +40,17 @@ $id = GETPOST('id','int');
 
 // List of status
 static $tmpstatus2label=array(
-		'0'=>'OpenEtablishment',
-		'1'=>'CloseEtablishment'
+		'0'=>'CloseEtablishment',
+        '1'=>'OpenEtablishment'
 );
 $status2label=array('');
 foreach ($tmpstatus2label as $key => $val) $status2label[$key]=$langs->trans($val);
 
 $object = new Establishment($db);
+
+// Load object
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+
 
 /*
  * Actions
@@ -62,7 +66,7 @@ if ($action == 'confirm_delete' && $confirm == "yes")
     }
     else
     {
-        setEventMessage($object->error, 'errors');
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -75,7 +79,7 @@ else if ($action == 'add')
 		$object->name = GETPOST('name', 'alpha');
         if (empty($object->name))
         {
-	        setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), 'errors');
+	        setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Name")), null, 'errors');
             $error++;
         }
 
@@ -89,7 +93,7 @@ else if ($action == 'add')
 			$object->fk_user_author	= $user->id;
 			$object->datec			= dol_now();
 
-			
+
 
 			$id = $object->create($user);
 
@@ -119,24 +123,26 @@ else if ($action == 'add')
 else if ($action == 'update')
 {
 	$error = 0;
-	
+
 	if (! $cancel) {
 
 		$name = GETPOST('name', 'alpha');
 		if (empty($name)) {
-			setEventMessage($langs->trans('ErrorFieldRequired', $langs->trans('Name')), 'errors');
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->trans('Name')), null, 'errors');
 			$error ++;
 		}
 
-		if (empty($error)) {
+		if (empty($error))
+		{
 			$object->name 			= GETPOST('name', 'alpha');
 			$object->address 		= GETPOST('address', 'alpha');
 			$object->zip 			= GETPOST('zipcode', 'alpha');
 			$object->town			= GETPOST('town', 'alpha');
-			$object->country_id     = $_POST["country_id"];
+			$object->country_id     = GETPOST('country_id', 'int');
 			$object->fk_user_mod	= $user->id;
+			$object->status         = GETPOST('status','int');
 
-			$result = $object->update();
+			$result = $object->update($user);
 
             if ($result > 0)
             {
@@ -179,13 +185,13 @@ if ($action == 'create')
     print '<table class="border" width="100%">';
 
 	// Name
-    print '<tr><td>'. fieldLabel('Name','name',1).'</td><td><input name="name" id="name" size="32" value="' . GETPOST("name") . '"></td></tr>';
+    print '<tr><td>'. fieldLabel('Name','name',1).'</td><td><input name="name" id="name" size="32" value="' . GETPOST("name", "alpha") . '"></td></tr>';
 
 	// Address
 	print '<tr>';
 	print '<td>'.fieldLabel('Address','address',0).'</td>';
 	print '<td>';
-	print '<input name="address" id="address" size="32" value="' . $object->address . '">';
+	print '<input name="address" id="address" class="qutrevingtpercent" value="' . GETPOST('address','alpha') . '">';
 	print '</td>';
 	print '</tr>';
 
@@ -195,18 +201,18 @@ if ($action == 'create')
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('zipcode', 'alpha'), 'zipcode', array (
 			'town',
-			'selectcountry_id' 
+			'selectcountry_id'
 	), 6);
 	print '</td>';
 	print '</tr>';
-	
+
 	// Town
 	print '<tr>';
 	print '<td>'.fieldLabel('Town','town',0).'</td>';
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
 			'zipcode',
-			'selectcountry_id' 
+			'selectcountry_id'
 	));
 	print '</td>';
 	print '</tr>';
@@ -215,7 +221,7 @@ if ($action == 'create')
 	print '<tr>';
 	print '<td>'.fieldLabel('Country','selectcountry_id',0).'</td>';
 	print '<td class="maxwidthonsmartphone">';
-	print $form->select_country($mysoc->country_id,'country_id');
+	print $form->select_country(GETPOST('country_id','int')>0?GETPOST('country_id','int'):$mysoc->country_id,'country_id');
 		if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 	print '</td>';
 	print '</tr>';
@@ -224,11 +230,11 @@ if ($action == 'create')
     print '<tr>';
     print '<td>'.fieldLabel('Status','status',1).'</td>';
 	print '<td>';
-	print $form->selectarray('status',$status2label,GETPOST('status'));
+	print $form->selectarray('status',$status2label,GETPOST('status','alpha'));
     print '</td></tr>';
 
     print '</table>';
-	
+
 	dol_fiche_end();
 
     print '<div class="center">';
@@ -239,7 +245,9 @@ if ($action == 'create')
 
     print '</form>';
 }
-else if ($id)
+
+// Part to edit record
+if (($id || $ref) && $action == 'edit')
 {
     $result = $object->fetch($id);
     if ($result > 0)
@@ -278,12 +286,12 @@ else if ($id)
 			print '<tr><td>'.fieldLabel('Zip','zipcode',0).'</td><td>';
 			print $formcompany->select_ziptown($object->zip, 'zipcode', array (
 					'town',
-					'selectcountry_id' 
+					'selectcountry_id'
 			), 6) . '</tr>';
 			print '<tr><td>'.fieldLabel('Town','town',0).'</td><td>';
 			print $formcompany->select_ziptown($object->town, 'town', array (
 					'zipcode',
-					'selectcountry_id' 
+					'selectcountry_id'
 			)) . '</td></tr>';
 
 			// Country
@@ -292,7 +300,7 @@ else if ($id)
 			print $form->select_country($object->fk_country,'country_id');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td>';
-			print '</tr>';			
+			print '</tr>';
 
 			// Status
 			print '<tr><td>'.fieldLabel('Status','status',1).'</td><td>';
@@ -311,90 +319,94 @@ else if ($id)
 
             print '</form>';
         }
-        else
-        {
-            /*
-             * Confirm delete
-             */
-            if ($action == 'delete')
-            {
-                print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
-
-            }
-
-        	dol_fiche_head($head, 'card', $langs->trans("Establishment"), 0, 'building');
-
-        	print '<table class="border" width="100%">';
-
-            $linkback = '<a href="../admin/admin_establishment.php">'.$langs->trans("BackToList").'</a>';
-
-            // Ref
-            print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td width="50%">';
-            print $object->id;
-			print '</td><td width="25%">';
-			print $linkback;
-            print '</td></tr>';
-
-			// Name
-			print '<tr>';
-			print '<td>'.$langs->trans("Name").'</td>';
-			print '<td colspan="2">'.$object->name.'</td>';
-			print '</tr>';
-
-			// Address
-			print '<tr>';
-			print '<td>'.$langs->trans("Address").'</td>';
-			print '<td colspan="2">'.$object->address.'</td>';
-			print '</tr>';
-
-			// Zipcode
-			print '<tr>';
-			print '<td>'.$langs->trans("Zipcode").'</td>';
-			print '<td colspan="2">'.$object->zip.'</td>';
-			print '</tr>';
-
-			// Town
-			print '<tr>';
-			print '<td>'.$langs->trans("Town").'</td>';
-			print '<td colspan="2">'.$object->town.'</td>';
-			print '</tr>';
-
-			// Country
-			print '<tr>';
-			print '<td>'.$langs->trans("Country").'</td>';
-			print '<td colspan="2">';
-			if ($object->country_id > 0)
-			{
-				$img=picto_from_langcode($object->country_code);
-				print $img?$img.' ':'';
-				print getCountry($object->getCountryCode(),0,$db);
-			}
-			print '</td>';
-			print '</tr>';
-
-            // Status
-            print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$object->getLibStatus(4).'</td></tr>';
-
-            print "</table>";
-
-            dol_fiche_end();
-
-            /*
-             * Barre d'actions
-            */
-
-            print '<div class="tabsAction">';
-            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
-			print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
-            print '</div>';
-        }
     }
-    else
+    else dol_print_error($db);
+}
+
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
+{
+    $res = $object->fetch_optionals();
+
+    $head = establishment_prepare_head($object);
+    dol_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
+
+    // Confirmation to delete
+    if ($action == 'delete')
     {
-        dol_print_error($db);
+        print $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$id,$langs->trans("DeleteEstablishment"),$langs->trans("ConfirmDeleteEstablishment"),"confirm_delete");
+
     }
+
+
+	// Object card
+	// ------------------------------------------------------------
+
+	$linkback = '<a href="' . DOL_URL_ROOT . '/hrm/admin/admin_establishment.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
+	$morehtmlref='<div class="refidno">';
+    $morehtmlref.='</div>';
+
+    dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', $morehtmlref);
+
+
+    print '<div class="fichecenter">';
+    //print '<div class="fichehalfleft">';
+    print '<div class="underbanner clearboth"></div>';
+    print '<table class="border centpercent">'."\n";
+
+	// Name
+	print '<tr>';
+	print '<td class="titlefield">'.$langs->trans("Name").'</td>';
+	print '<td>'.$object->name.'</td>';
+	print '</tr>';
+
+	// Address
+	print '<tr>';
+	print '<td>'.$langs->trans("Address").'</td>';
+	print '<td>'.$object->address.'</td>';
+	print '</tr>';
+
+	// Zipcode
+	print '<tr>';
+	print '<td>'.$langs->trans("Zipcode").'</td>';
+	print '<td>'.$object->zip.'</td>';
+	print '</tr>';
+
+	// Town
+	print '<tr>';
+	print '<td>'.$langs->trans("Town").'</td>';
+	print '<td>'.$object->town.'</td>';
+	print '</tr>';
+
+	// Country
+	print '<tr>';
+	print '<td>'.$langs->trans("Country").'</td>';
+	print '<td>';
+	if ($object->country_id > 0)
+	{
+		$img=picto_from_langcode($object->country_code);
+		print $img?$img.' ':'';
+		print getCountry($object->getCountryCode(),0,$db);
+	}
+	print '</td>';
+	print '</tr>';
+
+    print '</table>';
+    print '</div>';
+
+    print '<div class="clearboth"></div><br>';
+
+    dol_fiche_end();
+
+    /*
+     * Barre d'actions
+    */
+
+    print '<div class="tabsAction">';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$id.'">'.$langs->trans('Modify').'</a>';
+	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
+    print '</div>';
 }
 
 llxFooter();
-
 $db->close();

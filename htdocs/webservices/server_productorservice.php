@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -135,7 +134,8 @@ $productorservice_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('product',true);
-if (count($extrafields)>0) {
+$extrafield_array=null;
+if (is_array($extrafields) && count($extrafields) > 0) {
 	$extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -147,7 +147,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
-$productorservice_fields=array_merge($productorservice_fields,$extrafield_array);
+if (is_array($extrafield_array)) $productorservice_fields=array_merge($productorservice_fields,$extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -374,7 +374,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$product->load_stock();
 
             	$dir = (!empty($conf->product->dir_output)?$conf->product->dir_output:$conf->service->dir_output);
-            	$pdir = get_exdir($product->id,2,0,0,$product,'product') . $product->id ."/photos/";
+            	$pdir = get_exdir($product->id,2,0,0,$product,'product') . $product->ref . "/";
             	$dir = $dir . '/'. $pdir;
 
             	if (! empty($product->multilangs[$langs->defaultlang]["label"]))     		$product->label =  $product->multilangs[$langs->defaultlang]["label"];
@@ -411,7 +411,8 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
 	            	'localtax1_tx' => $product->localtax1_tx,
 	            	'localtax2_tx' => $product->localtax2_tx,
 
-	            	'stock_real' => $product->stock_reel,
+            	    'stock_real' => $product->stock_reel,
+            	    'stock_virtual' => $product->stock_theorique,
 	            	'stock_alert' => $product->seuil_stock_alerte,
 	            	'pmp' => $product->pmp,
 	            	'import_key' => $product->import_key,
@@ -424,7 +425,7 @@ function getProductOrService($authentication,$id='',$ref='',$ref_ext='',$lang=''
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('product',true);
             	//Get extrafield values
-            	$product->fetch_optionals($product->id,$extralabels);
+            	$product->fetch_optionals();
 
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
@@ -572,7 +573,7 @@ function createProductOrService($authentication,$product)
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
-				$newobject->load_stock();		// This overwrite ->stock_reel
+				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel, surely 0 because we have just created product
 				$getstockreal = $newobject->stock_reel;
 
 				if ($savstockreal != $getstockreal)
@@ -741,7 +742,7 @@ function updateProductOrService($authentication,$product)
 				require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
 				$savstockreal=$newobject->stock_reel;
-				$newobject->load_stock();		// This overwrite ->stock_reel
+				$newobject->load_stock('novirtual,nobatch');		// This overwrite ->stock_reel
 				$getstockreal = $newobject->stock_reel;
 
 				if ($savstockreal != $getstockreal)
@@ -872,7 +873,7 @@ function deleteProductOrService($authentication,$listofidstring)
 	        }
 	        else
 			{
-		        $result=$newobject->delete();
+		        $result=$newobject->delete($user);
 		        if ($result <= 0)
 		        {
 		            $error++;
@@ -946,9 +947,9 @@ function getListOfProductsOrServices($authentication,$filterproduct)
         $sql.=" WHERE entity=".$conf->entity;
         foreach($filterproduct as $key => $val)
         {
-        	if ($key == 'type' && $val >= 0)   	$sql.=" AND fk_product_type = ".$db->escape($val);
-        	if ($key == 'tosell') 				$sql.=" AND to_sell = ".$db->escape($val);
-        	if ($key == 'tobuy')  				$sql.=" AND to_buy = ".$db->escape($val);
+		if ($key == 'type' && $val >= 0)   	$sql.=" AND fk_product_type = ".$db->escape($val);
+		if ($key == 'status_tosell') 				$sql.=" AND tosell = ".$db->escape($val);
+		if ($key == 'status_tobuy')  				$sql.=" AND tobuy = ".$db->escape($val);
         }
 		$resql=$db->query($sql);
         if ($resql)
@@ -1095,7 +1096,7 @@ function getProductsForCategory($authentication,$id,$lang='')
 							$extrafields=new ExtraFields($db);
 							$extralabels=$extrafields->fetch_name_optionals_label('product',true);
 							//Get extrafield values
-							$obj->fetch_optionals($obj->id,$extralabels);
+							$obj->fetch_optionals();
 
 							foreach($extrafields->attribute_label as $key=>$label)
 							{

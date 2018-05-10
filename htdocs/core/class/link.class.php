@@ -89,7 +89,7 @@ class Link extends CommonObject
         $sql .= " VALUES ('".$conf->entity."', '".$this->db->idate($this->datea)."'";
         $sql .= ", '" . $this->db->escape($this->url) . "'";
         $sql .= ", '" . $this->db->escape($this->label) . "'";
-        $sql .= ", '" . $this->objecttype . "'";
+        $sql .= ", '" . $this->db->escape($this->objecttype) . "'";
         $sql .= ", " . $this->objectid . ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -100,7 +100,7 @@ class Link extends CommonObject
             if ($this->id > 0) {
                 // Call trigger
                 $result=$this->call_trigger('LINK_CREATE',$user);
-                if ($result < 0) $error++;            
+                if ($result < 0) $error++;
                 // End call triggers
             } else {
                 $error++;
@@ -174,9 +174,9 @@ class Link extends CommonObject
         $sql .= ", datea = '" . $this->db->idate(dol_now()) . "'";
         $sql .= ", url = '" . $this->db->escape($this->url) . "'";
         $sql .= ", label = '" . $this->db->escape($this->label) . "'";
-        $sql .= ", objecttype = '" . $this->objecttype . "'";
+        $sql .= ", objecttype = '" . $this->db->escape($this->objecttype) . "'";
         $sql .= ", objectid = " . $this->objectid;
-        $sql .= " WHERE rowid = '" . $this->id ."'";
+        $sql .= " WHERE rowid = " . $this->id;
 
         dol_syslog(get_class($this)."::update sql = " .$sql);
         $resql = $this->db->query($sql);
@@ -222,19 +222,18 @@ class Link extends CommonObject
     /**
      *  Loads all links from database
      *
-     *  @param  array   $links     array of Link objects to fill
+     *  @param  array   $links      array of Link objects to fill
      *  @param  string  $objecttype type of the associated object in dolibarr
      *  @param  int     $objectid   id of the associated object in dolibarr
      *  @param  string  $sortfield  field used to sort
      *  @param  string  $sortorder  sort order
-     *  @return 1 if ok, 0 if no records, -1 if error
-     *
-     * */
+     *  @return int                 1 if ok, 0 if no records, -1 if error
+     **/
     public function fetchAll(&$links, $objecttype, $objectid, $sortfield=null, $sortorder=null)
     {
         global $conf;
 
-        $sql = "SELECT rowid, entity, datea, url, label , objecttype, objectid FROM " . MAIN_DB_PREFIX . "links";
+        $sql = "SELECT rowid, entity, datea, url, label, objecttype, objectid FROM " . MAIN_DB_PREFIX . "links";
         $sql .= " WHERE objecttype = '" . $objecttype . "' AND objectid = " . $objectid;
         if ($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
         if ($sortfield) {
@@ -274,11 +273,35 @@ class Link extends CommonObject
     }
 
     /**
+     *  Return nb of links
+     *
+     *  @param  DoliDb  $db         Database handler
+     *  @param  string  $objecttype Type of the associated object in dolibarr
+     *  @param  int     $objectid   Id of the associated object in dolibarr
+     *  @return int                 Nb of links, -1 if error
+     **/
+    public static function count($db, $objecttype, $objectid)
+    {
+        global $conf;
+
+        $sql = "SELECT COUNT(rowid) as nb FROM " . MAIN_DB_PREFIX . "links";
+        $sql .= " WHERE objecttype = '" . $objecttype . "' AND objectid = " . $objectid;
+        if ($conf->entity != 0) $sql .= " AND entity = " . $conf->entity;
+
+        $resql = $db->query($sql);
+        if ($resql)
+        {
+            $obj = $db->fetch_object($resql);
+            if ($obj) return $obj->nb;
+        }
+        return -1;
+    }
+
+    /**
      *  Loads a link from database
      *
      *  @param 	int		$rowid 		Id of link to load
      *  @return int 				1 if ok, 0 if no record found, -1 if error
-     *
      **/
     public function fetch($rowid=null)
     {
@@ -331,9 +354,9 @@ class Link extends CommonObject
 
         // Call trigger
         $result=$this->call_trigger('LINK_DELETE',$user);
-        if ($result < 0) return -1;            
-        // End call triggers         
-        
+        if ($result < 0) return -1;
+        // End call triggers
+
         $this->db->begin();
 
         // Remove link
@@ -346,7 +369,6 @@ class Link extends CommonObject
             $error++;
             $this->error = $this->db->lasterror();
         }
-
 
         if (! $error) {
             $this->db->commit();

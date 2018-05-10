@@ -46,6 +46,24 @@ class box_produits extends ModeleBoxes
 
 
 	/**
+	 *  Constructor
+	 *
+	 *  @param  DoliDB  $db         Database handler
+	 *  @param  string  $param      More parameters
+	 */
+	function __construct($db,$param)
+	{
+	    global $conf, $user;
+
+	    $this->db=$db;
+
+	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $tmpentry=array('enabled'=>(! empty($conf->product->enabled) || ! empty($conf->service->enabled)), 'perms'=>(! empty($user->rights->produit->lire) || ! empty($user->rights->service->lire)), 'module'=>'product|service');
+	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $this->hidden=($showmode != 1);
+	}
+
+	/**
 	 *  Load data into info_box_contents array to show array later.
 	 *
 	 *  @param	int		$max        Maximum number of records to load
@@ -53,7 +71,7 @@ class box_produits extends ModeleBoxes
 	 */
 	function loadBox($max=5)
 	{
-		global $user, $langs, $db, $conf;
+		global $user, $langs, $db, $conf, $hookmanager;
 
 		$this->max=$max;
 
@@ -66,9 +84,16 @@ class box_produits extends ModeleBoxes
 		{
 			$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.tosell, p.tobuy, p.fk_price_expression, p.entity";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
+			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
+			// Add where from hooks
+			if (is_object($hookmanager))
+			{
+			    $parameters=array('boxproductlist'=>1);
+			    $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
+			    $sql.=$hookmanager->resPrint;
+			}
 			$sql.= $db->order('p.datec', 'DESC');
 			$sql.= $db->plimit($max, 0);
 
@@ -106,21 +131,21 @@ class box_produits extends ModeleBoxes
 					$productstatic->entity = $objp->entity;
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $productstatic->getNomUrl(1),
                         'asis' => 1,
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'align="left"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $objp->label,
                     );
 
-                    if (empty($objp->fk_price_expression)) {
+                    if (empty($conf->dynamicprices->enabled) || empty($objp->fk_price_expression)) {
                         $price_base_type=$langs->trans($objp->price_base_type);
                         $price=($objp->price_base_type == 'HT')?price($objp->price):$price=price($objp->price_ttc);
 	                }
-	                else //Parse the dinamic price
+	                else //Parse the dynamic price
 	               	{
 						$productstatic->fetch($objp->rowid, '', '', 1);
 	                    $priceparser = new PriceParser($this->db);
@@ -139,28 +164,30 @@ class box_produits extends ModeleBoxes
 	                    }
 	               	}
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => $price,
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="left" class="nowrap"',
+                        'td' => 'class="nowrap"',
                         'text' => $price_base_type,
                     );
 
 					$this->info_box_contents[$line][] = array(
-                        'td' => 'align="right"',
+                        'td' => 'class="right"',
                         'text' => dol_print_date($datem,'day'),
                     );
 
 					$this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $productstatic->LibStatut($objp->tosell,3,0),
+                        'text' => '<span class="statusrefsell">'.$productstatic->LibStatut($objp->tosell,3,0).'<span>',
+					    'asis' => 1
                     );
 
                     $this->info_box_contents[$line][] = array(
                         'td' => 'align="right" width="18"',
-                        'text' => $productstatic->LibStatut($objp->tobuy,3,1),
+                        'text' => '<span class="statusrefbuy">'.$productstatic->LibStatut($objp->tobuy,3,1).'</span>',
+					    'asis' => 1
                     );
 
                     $line++;
@@ -174,15 +201,15 @@ class box_produits extends ModeleBoxes
                 $db->free($result);
             } else {
                 $this->info_box_contents[0][0] = array(
-                    'td' => 'align="left"',
+                    'td' => '',
                     'maxlength'=>500,
                     'text' => ($db->error().' sql='.$sql),
                 );
             }
         } else {
             $this->info_box_contents[0][0] = array(
-                'td' => 'align="left"',
-                'text' => $langs->trans("ReadPermissionNotAllowed"),
+                'td' => 'align="left" class="nohover opacitymedium"',
+                'text' => $langs->trans("ReadPermissionNotAllowed")
             );
         }
     }
@@ -192,11 +219,12 @@ class box_produits extends ModeleBoxes
 	 *
 	 *	@param	array	$head       Array with properties of box title
 	 *	@param  array	$contents   Array with properties of box lines
-	 *	@return	void
+	 *  @param	int		$nooutput	No print, only return string
+	 *	@return	string
 	 */
-	function showBox($head = null, $contents = null)
-	{
-		parent::showBox($this->info_box_head, $this->info_box_contents);
+    function showBox($head = null, $contents = null, $nooutput=0)
+    {
+		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
 
 }

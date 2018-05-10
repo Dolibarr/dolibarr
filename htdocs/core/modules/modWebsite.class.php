@@ -17,16 +17,16 @@
 
 /**
  * 	\defgroup   website     Module website
- *  \brief      Website module descriptor.
+ *  \brief      website module descriptor.
  *  \file       htdocs/core/modules/modWebsite.class.php
- *  \ingroup    website
+ *  \ingroup    websites
  *  \brief      Description and activation file for module Website
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe Website module
+ *	Class to describe Websites module
  */
 class modWebsite extends DolibarrModules
 {
@@ -46,28 +46,28 @@ class modWebsite extends DolibarrModules
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','other'
 		// It is used to group modules in module setup page
         $this->family = "portal";
+        $this->module_position = 50;
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
         $this->name = preg_replace('/^mod/i','',get_class($this));
-        $this->description = "Enable the public website with CMS features";
-        $this->version = 'development';                        // 'experimental' or 'dolibarr' or version
+        $this->description = "Enable to build and serve public web sites with CMS features";
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'experimental';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 0;
         // Name of image file used for this module.
         $this->picto='globe';
 
-        // Data directories to create when module is enabled
-        $this->dirs = array();
+		// Data directories to create when module is enabled
+		$this->dirs = array("/website/temp");
 
         // Config pages
         //-------------
-        $this->config_page_url = array();
+        $this->config_page_url = array('website.php');
 
         // Dependancies
         //-------------
-		$this->hidden = ! empty($conf->global->WEBSITE_MODULE_DISABLED);	// A condition to disable module
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
+		$this->hidden = ! empty($conf->global->MODULE_WEBSITE_DISABLED);	// A condition to disable module
+		$this->depends = array('modFckeditor');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
         $this->langfiles = array("website");
@@ -78,7 +78,7 @@ class modWebsite extends DolibarrModules
 
         // New pages on tabs
         // -----------------
-        $this->tabs = array();
+       	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
         // Boxes
         //------
@@ -91,14 +91,14 @@ class modWebsite extends DolibarrModules
 
 		$this->rights[$r][0] = 10001;
 		$this->rights[$r][1] = 'Read website content';
-		$this->rights[$r][3] = 1;
+		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'read';
 		$r++;
 
 		$this->rights[$r][0] = 10002;
 		$this->rights[$r][1] = 'Create/modify website content';
 		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'create';
+		$this->rights[$r][4] = 'write';
 		$r++;
 
 		$this->rights[$r][0] = 10003;
@@ -109,9 +109,10 @@ class modWebsite extends DolibarrModules
 
         // Main menu entries
         $r=0;
-        $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+        $this->menu[$r]=array(	'fk_menu'=>'0',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 						        'type'=>'top',			                // This is a Left menu entry
-						        'titre'=>'Website',
+						        'titre'=>'Websites',
+                                'mainmenu'=>'website',
 						        'url'=>'/website/index.php',
 						        'langs'=>'website',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>100,
@@ -119,6 +120,23 @@ class modWebsite extends DolibarrModules
 						        'perms'=>'$user->rights->website->read',	// Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
 						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+        $r++;
+
+        // Exports
+        $r=1;
+
+        $this->export_code[$r]=$this->rights_class.'_'.$r;
+        $this->export_label[$r]='MyWebsitePages';	// Translation key (used only if key ExportDataset_xxx_z not found)
+        $this->export_icon[$r]='globe';
+        $keyforclass = 'WebsitePage'; $keyforclassfile='/website/class/websitepage.class.php'; $keyforelement='Website';
+        include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
+        //$keyforselect='myobject'; $keyforelement='myobject'; $keyforaliasextra='extra';
+        //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
+        //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        $this->export_sql_start[$r]='SELECT DISTINCT ';
+        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'website_page as t, '.MAIN_DB_PREFIX.'website as p';
+        $this->export_sql_end[$r] .=' WHERE t.fk_website = p.rowid';
+        $this->export_sql_end[$r] .=' AND p.entity IN ('.getEntity('website').')';
         $r++;
     }
 }

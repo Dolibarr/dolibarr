@@ -6,6 +6,7 @@
  * Copyright (C) 2005      Simon TOSSER          <simon@kornog-computing.com>
  * Copyright (C) 2013      Florian Henry          <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +40,10 @@ if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 $langs->load("other");
 $langs->load("products");
 
-$id = GETPOST('id', 'int');
-$ref = GETPOST('ref', 'alpha');
-$action=GETPOST('action','alpha');
-$confirm=GETPOST('confirm','alpha');
+$id     = GETPOST('id', 'int');
+$ref    = GETPOST('ref', 'alpha');
+$action = GETPOST('action','alpha');
+$confirm= GETPOST('confirm','alpha');
 
 // Security check
 $fieldvalue = (! empty($id) ? $id : (! empty($ref) ? $ref : ''));
@@ -50,19 +51,19 @@ $fieldtype = (! empty($ref) ? 'ref' : 'rowid');
 if ($user->societe_id) $socid=$user->societe_id;
 $result=restrictedArea($user,'produit|service',$fieldvalue,'product&product','','',$fieldtype);
 
-// Initialize technical object to manage hooks of thirdparties. Note that conf->hooks_modules contains array array
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('productdocuments'));
 
 // Get parameters
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if ($page == -1) { $page = 0; }
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortfield) $sortfield="position_name";
 
 
 $object = new Product($db);
@@ -72,7 +73,7 @@ if ($id > 0 || ! empty($ref))
 
     if (! empty($conf->product->enabled)) $upload_dir = $conf->product->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
     elseif (! empty($conf->service->enabled)) $upload_dir = $conf->service->multidir_output[$object->entity].'/'.get_exdir(0, 0, 0, 0, $object, 'product').dol_sanitizeFileName($object->ref);
-    
+
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
 	    if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
@@ -92,7 +93,7 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 if (empty($reshook))
 {
-	//Delete line if product propal merge is linked to a file
+	// Delete line if product propal merge is linked to a file
 	if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 	{
 		if ($action == 'confirm_deletefile' && $confirm == 'yes')
@@ -105,13 +106,13 @@ if (empty($reshook))
 			$filetomerge->file_name=$filename;
 			$result=$filetomerge->delete_by_file($user);
 			if ($result<0) {
-				setEventMessage($filetomerge->error,'errors');
+				setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 			}
 		}
 	}
 
-	// Action sending file
-	include_once DOL_DOCUMENT_ROOT.'/core/tpl/document_actions_pre_headers.tpl.php';
+	// Action submit/delete file/link
+	include_once DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 }
 
@@ -125,7 +126,7 @@ if ($action=='filemerge')
 		$filetomerge_file_array = GETPOST('filetoadd');
 
 		if ($conf->global->MAIN_MULTILANGS) {
-			$lang_id = GETPOST('lang_id');
+			$lang_id = GETPOST('lang_id','aZ09');
 		}
 
 		// Delete all file already associated
@@ -137,7 +138,7 @@ if ($action=='filemerge')
 			$result=$filetomerge->delete_by_product($user, $object->id);
 		}
 		if ($result<0) {
-			setEventMessage($filetomerge->error,'errors');
+			setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 		}
 
 		// for each file checked add it to the product
@@ -152,7 +153,7 @@ if ($action=='filemerge')
 
 				$result=$filetomerge->create($user);
 				if ($result<0) {
-					setEventMessage($filetomerge->error,'errors');
+					setEventMessages($filetomerge->error, $filetomerge->errors, 'errors');
 				}
 			}
 		}
@@ -166,7 +167,21 @@ if ($action=='filemerge')
 
 $form = new Form($db);
 
-llxHeader("","",$langs->trans("CardProduct".$object->type));
+$title = $langs->trans('ProductServiceCard');
+$helpurl = '';
+$shortlabel = dol_trunc($object->label,16);
+if (GETPOST("type") == '0' || ($object->type == Product::TYPE_PRODUCT))
+{
+	$title = $langs->trans('Product')." ". $shortlabel ." - ".$langs->trans('Documents');
+	$helpurl='EN:Module_Products|FR:Module_Produits|ES:M&oacute;dulo_Productos';
+}
+if (GETPOST("type") == '1' || ($object->type == Product::TYPE_SERVICE))
+{
+	$title = $langs->trans('Service')." ". $shortlabel ." - ".$langs->trans('Documents');
+	$helpurl='EN:Module_Services_En|FR:Module_Services|ES:M&oacute;dulo_Servicios';
+}
+
+llxHeader('', $title, $helpurl);
 
 
 if ($object->id)
@@ -174,44 +189,52 @@ if ($object->id)
 	$head=product_prepare_head($object);
 	$titre=$langs->trans("CardProduct".$object->type);
 	$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
-	dol_fiche_head($head, 'documents', $titre, 0, $picto);
 
+	dol_fiche_head($head, 'documents', $titre, -1, $picto);
+
+	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+    print $hookmanager->resPrint;
 	if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 	// Construit liste des fichiers
-	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+	$filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 
 	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
 	{
-		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
+		$filearrayold=dol_dir_list($upload_dirold,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
 		$filearray=array_merge($filearray, $filearrayold);
 	}
-	
+
 	$totalsize=0;
 	foreach($filearray as $key => $file)
 	{
 		$totalsize+=$file['size'];
 	}
-	
 
-    dol_banner_tab($object, 'ref', '', ($user->societe_id?0:1), 'ref');
-    
+
+    $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+    $object->next_prev_filter=" fk_product_type = ".$object->type;
+
+    $shownav = 1;
+    if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
+
+    dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
+
     print '<div class="fichecenter">';
-    
+
     print '<div class="underbanner clearboth"></div>';
     print '<table class="border tableforfield" width="100%">';
 
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
     print '</table>';
 
     print '</div>';
     print '<div style="clear:both"></div>';
-    
+
     dol_fiche_end();
 
-    $modulepart = 'produit';
     $permission = (($object->type == Product::TYPE_PRODUCT && $user->rights->produit->creer) || ($object->type == Product::TYPE_SERVICE && $user->rights->service->creer));
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
@@ -223,7 +246,7 @@ if ($object->id)
     	$filetomerge = new Propalmergepdfproduct($db);
 
     	if ($conf->global->MAIN_MULTILANGS) {
-    		$lang_id = GETPOST('lang_id');
+    		$lang_id = GETPOST('lang_id','aZ09');
     		$result = $filetomerge->fetch_by_product($object->id, $lang_id);
     	} else {
     		$result = $filetomerge->fetch_by_product($object->id);
@@ -231,10 +254,17 @@ if ($object->id)
 
     	$form = new Form($db);
 
+
     	$filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1);
 
+    	if (! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO))    // For backward compatiblity, we scan also old dirs
+    	{
+
+    		$filearray = array_merge($filearray,dol_dir_list($upload_dirold, "files", 0, '', '\.meta$', 'name', SORT_ASC, 1));
+    	}
+
     	// For each file build select list with PDF extention
-    	if (count($filearray) > 0) 
+    	if (count($filearray) > 0)
     	{
     		print '<br>';
     		// Actual file to merge is :
@@ -258,43 +288,11 @@ if ($object->id)
 
     			print  '<tr class="liste_titre"><td>';
 
-    			$delauft_lang = (empty($lang_id)) ? $langs->getDefaultLang() : $lang_id;
+    			$delauft_lang = empty($lang_id) ? $langs->getDefaultLang() : $lang_id;
 
     			$langs_available = $langs->get_available_languages(DOL_DOCUMENT_ROOT, 12);
 
-    			print  '<select class="flat" id="lang_id" name="lang_id">';
-
-    			asort($langs_available);
-
-    			$uncompletelanguages = array (
-    					'da_DA',
-    					'fi_FI',
-    					'hu_HU',
-    					'is_IS',
-    					'pl_PL',
-    					'ro_RO',
-    					'ru_RU',
-    					'sv_SV',
-    					'tr_TR',
-    					'zh_CN'
-    			);
-    			foreach ( $langs_available as $key => $value )
-    			{
-    				if ($showwarning && in_array($key, $uncompletelanguages))
-    				{
-    					// $value.=' - '.$langs->trans("TranslationUncomplete",$key);
-    				}
-    				if ($filter && is_array($filter)) {
-    					if (! array_key_exists($key, $filter)) {
-    						print  '<option value="' . $key . '">' . $value . '</option>';
-    					}
-    				} else if ($delauft_lang == $key) {
-    					print  '<option value="' . $key . '" selected>' . $value . '</option>';
-    				} else {
-    					print  '<option value="' . $key . '">' . $value . '</option>';
-    				}
-    			}
-    			print  '</select>';
+			    print Form::selectarray('lang_id', $langs_available, $delauft_lang, 0, 0, 0, '', 0, 0, 0, 'ASC');
 
     			if ($conf->global->MAIN_MULTILANGS) {
     				print  '<input type="submit" class="button" name="refresh" value="' . $langs->trans('Refresh') . '">';
@@ -317,17 +315,17 @@ if ($object->id)
     				$checked = '';
     				$filename = $filetoadd['name'];
 
-    				if ($conf->global->MAIN_MULTILANGS) 
+    				if ($conf->global->MAIN_MULTILANGS)
     				{
-    					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines)) 
+    					if (array_key_exists($filetoadd['name'] . '_' . $delauft_lang, $filetomerge->lines))
     					{
     						$filename = $filetoadd['name'] . ' - ' . $langs->trans('Language_' . $delauft_lang);
     						$checked = ' checked ';
     					}
     				}
-    				else 
+    				else
     				{
-    					if (array_key_exists($filetoadd['name'], $filetomerge->lines)) 
+    					if (array_key_exists($filetoadd['name'], $filetomerge->lines))
     					{
     						$checked = ' checked ';
     					}
@@ -348,7 +346,6 @@ if ($object->id)
     		print  '</form>';
     	}
     }
-
 }
 else
 {

@@ -21,6 +21,14 @@
  *
  * This is the File Manager Connector for PHP.
  */
+
+/**
+ * CombinePaths
+ * 
+ * @param   string $sBasePath     sBasePath
+ * @param   string $sFolder       sFolder
+ * @return  string                Combined path
+ */
 function CombinePaths( $sBasePath, $sFolder )
 {
 	return RemoveFromEnd($sBasePath, '/') . '/' . RemoveFromStart($sFolder, '/');
@@ -36,7 +44,7 @@ function GetResourceTypePath($resourceType, $sCommand)
 {
 	global $Config ;
 
-	if ( $sCommand == "QuickUpload")
+	if ($sCommand == "QuickUpload")
 		return $Config['QuickUploadPath'][$resourceType] ;
 	else
 		return $Config['FileTypesPath'][$resourceType] ;
@@ -45,14 +53,14 @@ function GetResourceTypePath($resourceType, $sCommand)
 /**
  * GetResourceTypeDirectory
  *
- * @param unknown_type $resourceType	Resource type
- * @param unknown_type $sCommand		Command
+ * @param string $resourceType	Resource type
+ * @param string $sCommand		Command
  * @return string
  */
 function GetResourceTypeDirectory($resourceType, $sCommand)
 {
 	global $Config ;
-	if ( $sCommand == "QuickUpload")
+	if ($sCommand == "QuickUpload")
 	{
 		if ( strlen($Config['QuickUploadAbsolutePath'][$resourceType]) > 0)
 			return $Config['QuickUploadAbsolutePath'][$resourceType] ;
@@ -99,7 +107,7 @@ function RemoveExtension($fileName)
  * @param 	string	$resourceType	Resource type
  * @param 	string	$folderPath		Folder
  * @param 	string	$sCommand		Command
- * @return	void
+ * @return	string
  */
 function ServerMapFolder($resourceType, $folderPath, $sCommand)
 {
@@ -173,14 +181,17 @@ function CreateServerFolder($folderPath, $lastFolder = null)
 		}
 		else
 		{
-			$permissions = 0777 ;
-			if ( isset( $Config['ChmodOnFolderCreate'] ) )
+			$permissions = '0777';
+			if ( isset( $Config['ChmodOnFolderCreate'] ) && $Config['ChmodOnFolderCreate'])
 			{
-				$permissions = $Config['ChmodOnFolderCreate'] ;
+				$permissions = (string) $Config['ChmodOnFolderCreate'];
 			}
+			$permissionsdec = octdec($permissions);
+			$permissionsdec |= octdec('0111');  // Set x bit required for directories
+			dol_syslog("io.php permission = ".$permissions." ".$permissionsdec." ".decoct($permissionsdec));
 			// To create the folder with 0777 permissions, we need to set umask to zero.
 			$oldumask = umask(0);
-			mkdir($folderPath, $permissions);
+			mkdir($folderPath, $permissionsdec);
 			umask($oldumask);
 		}
 
@@ -288,7 +299,7 @@ function IsAllowedCommand($sCommand)
 {
 	global $Config ;
 
-	if ( !in_array($sCommand, $Config['ConfigAllowedCommands']))
+	if (! in_array($sCommand, $Config['ConfigAllowedCommands']))
 		return false ;
 
 	return true ;
@@ -304,7 +315,7 @@ function GetCurrentFolder()
 	if (!isset($_GET)) {
 		global $_GET;
 	}
-	$sCurrentFolder	= isset( $_GET['CurrentFolder'] ) ? $_GET['CurrentFolder'] : '/' ;
+	$sCurrentFolder	= isset( $_GET['CurrentFolder'] ) ? GETPOST('CurrentFolder', '', 1) : '/' ;
 
 	// Check the current folder syntax (must begin and start with a slash).
 	if (!preg_match('|/$|', $sCurrentFolder))
@@ -377,9 +388,17 @@ EOF;
 }
 
 
-// DOL_CHANGE
+// @CHANGE
 
 // This is the function that sends the results of the uploading process to CKE.
+/**
+ * SendCKEditorResults
+ * 
+ * @param   string  $callback       callback
+ * @param   string  $sFileUrl       sFileUrl
+ * @param   string  $customMsg      customMsg
+ * @return  void
+ */
 function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
 {
   echo '<script type="text/javascript">';

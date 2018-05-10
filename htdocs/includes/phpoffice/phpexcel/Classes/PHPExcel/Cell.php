@@ -88,7 +88,7 @@ class PHPExcel_Cell
 	 *
 	 *	@var	int
 	 */
-	private $_xfIndex;
+	private $_xfIndex = 0;
 
 	/**
 	 *	Attributes of the formula
@@ -113,8 +113,6 @@ class PHPExcel_Cell
 	}
 
 	public function attach(PHPExcel_CachedObjectStorage_CacheBase $parent) {
-
-
 		$this->_parent = $parent;
 	}
 
@@ -140,14 +138,9 @@ class PHPExcel_Cell
 			if ($pDataType == PHPExcel_Cell_DataType::TYPE_STRING2)
 				$pDataType = PHPExcel_Cell_DataType::TYPE_STRING;
 			$this->_dataType = $pDataType;
-		} else {
-			if (!self::getValueBinder()->bindValue($this, $pValue)) {
-				throw new PHPExcel_Exception("Value could not be bound to cell.");
-			}
+		} elseif (!self::getValueBinder()->bindValue($this, $pValue)) {
+            throw new PHPExcel_Exception("Value could not be bound to cell.");
 		}
-
-		// set default index to cellXf
-		$this->_xfIndex = 0;
 	}
 
 	/**
@@ -199,7 +192,7 @@ class PHPExcel_Cell
 	{
 		return (string) PHPExcel_Style_NumberFormat::toFormattedString(
 				$this->getCalculatedValue(),
-				$this->getWorksheet()->getParent()->getCellXfByIndex($this->getXfIndex())
+				$this->getStyle()
 					->getNumberFormat()->getFormatCode()
 			);
 	}
@@ -497,13 +490,52 @@ class PHPExcel_Cell
 	}
 
 	/**
+	 *	Is this cell in a merge range
+	 *
+	 *	@return boolean
+	 */
+    public function isInMergeRange() {
+        return (boolean) $this->getMergeRange();
+    }
+
+	/**
+	 *	Is this cell the master (top left cell) in a merge range (that holds the actual data value)
+	 *
+	 *	@return boolean
+	 */
+    public function isMergeRangeValueCell() {
+        if ($mergeRange = $this->getMergeRange()) {
+            $mergeRange = PHPExcel_Cell::splitRange($mergeRange);
+            list($startCell) = $mergeRange[0];
+            if ($this->getCoordinate() === $startCell) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+	/**
+	 *	If this cell is in a merge range, then return the range
+	 *
+	 *	@return string
+	 */
+    public function getMergeRange() {
+        foreach($this->getWorksheet()->getMergeCells() as $mergeRange) {
+            if ($this->isInRange($mergeRange)) {
+                return $mergeRange;
+            }
+        }
+        return false;
+    }
+
+	/**
 	 *	Get cell style
 	 *
 	 *	@return	PHPExcel_Style
 	 */
 	public function getStyle()
 	{
-		return $this->getWorksheet()->getParent()->getCellXfByIndex($this->getXfIndex());
+		return $this->getWorksheet()->getStyle($this->getCoordinate());
 	}
 
 	/**

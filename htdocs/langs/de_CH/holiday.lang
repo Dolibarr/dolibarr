@@ -1,0 +1,21 @@
+# Dolibarr language file - Source file is en_US - holiday
+MenuReportMonth=Monatsauszug
+NotActiveModCP=Sie müssen das Urlaubs-Modul aktivieren um diese Seite zu sehen.
+AddCP=Urlaubs-Antrag einreichen
+CancelCP=widerrufen
+SendRequestCP=Urlaubs-Antrag erstellen
+MenuConfCP=Feriensaldo
+ErrorSQLCreateCP=Ein SQL Fehler trat auf bei der Eerstellung von:
+ErrorUserViewCP=Sie sind nicht berechtigt diesen Urlaubs-Antrag zu lesen.
+InfosWorkflowCP=Informations-Workflow
+DeleteCP=Löschen
+ActionCancelCP=Abbrechen
+NoDateDebut=Sie müssen ein Urlaubsbeginn Datum wählen.
+NoDateFin=Sie müssen ein Urlaubsende Datum wählen.
+DateCancelCP=Datum der Absage
+HolidaysCancelation=Urlaubsanfragen Stornos
+ErrorMailNotSend=Ein Fehler ist beim EMail-Senden aufgetreten:
+HolidaysToValidateAlertSolde=Der Einreicher dieses Urlaubsantrags besitzt nicht mehr genügend verfügbare Tage.
+HolidaysCanceled=Urlaubsantrag storniert
+HolidaysCanceledBody=Ihr Antrag auf Urlaub von %s bis %s wurde storniert.
+GoIntoDictionaryHolidayTypes=Öffnen Sie das Menü <strong>Start - Einstellungen - Wörterbücher - Art des Urlaubs </strong> um die verschiedene Urlaubsarten zu konfigurieren.

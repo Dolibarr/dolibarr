@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2009 Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2005	   Regis Houssin		<regis@dolibarr.fr>
+ * Copyright (C) 2005	   Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2015	   Francis Appels		<francis.appels@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,12 +89,14 @@ class modTcpdfbarcode extends ModeleBarCode
 	/**
 	 *	Return an image file on the fly (no need to write on disk)
 	 *
-	 *	@param		String	  $code		   Value to encode
-	 *	@param		String	  $encoding	   Mode of encoding
-	 *	@param		String	  $readable	   Code can be read
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@param	   string	    $code		      Value to encode
+	 *	@param	   string	    $encoding	      Mode of encoding
+	 *	@param	   string	    $readable	      Code can be read
+	 *	@param	   integer		$scale			  Scale (not used with this engine)
+	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
+	 *	@return	   int			                  <0 if KO, >0 if OK
 	 */
-	function buildBarCode($code,$encoding,$readable='Y')
+	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
 	{
 		global $_GET;
 		
@@ -134,12 +136,14 @@ class modTcpdfbarcode extends ModeleBarCode
 	/**
 	 *	Save an image file on disk (with no output)
 	 *
-	 *	@param		String	  $code			Value to encode
-	 *	@param		String	  $encoding		Mode of encoding
-	 *	@param		String	  $readable		Code can be read
-	 *	@return		int				<0 if KO, >0 if OK
+	 *	@param	   string	    $code		      Value to encode
+	 *	@param	   string	    $encoding	      Mode of encoding
+	 *	@param	   string	    $readable	      Code can be read
+	 *	@param	   integer		$scale			  Scale (not used with this engine)
+	 *  @param     integer      $nooutputiferror  No output if error (not used with this engine)
+	 *	@return	   int			                  <0 if KO, >0 if OK
 	 */
-	function writeBarCode($code,$encoding,$readable='Y')
+	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
 	{
 		global $conf,$_GET;
 

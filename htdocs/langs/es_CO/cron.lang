@@ -1,0 +1,5 @@
+# Dolibarr language file - Source file is en_US - cron
+CronMethod=Método
+CronModule=Módulo
+CronArgs=Parámetros
+CronStatusInactiveBtn=Desactivar

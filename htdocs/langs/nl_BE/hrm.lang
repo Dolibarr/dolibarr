@@ -1,0 +1,10 @@
+# Dolibarr language file - Source file is en_US - hrm
+HRM_EMAIL_EXTERNAL_SERVICE=Email om de HRM externe service te verhinderen
+Establishments=Inrichtingen
+Establishment=Inrichting
+NewEstablishment=Nieuwe inrichting
+DeleteEstablishment=Verwijderen inrichting
+OpenEtablishment=Open inrichting
+CloseEtablishment=Sluit inrichting
+DictionaryDepartment=HRM - afdelingen lijst
+DictionaryFunction=HRM - Functielijst

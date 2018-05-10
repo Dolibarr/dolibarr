@@ -39,10 +39,10 @@ create table llx_propal
   date_valid			datetime,						-- date de validation
   date_cloture			datetime,						-- date de cloture
   fk_user_author		integer,						-- user making creation
-  fk_user_modif         integer,                       -- user making last change
+  fk_user_modif         integer,						-- user making last change
   fk_user_valid			integer,						-- user validating
   fk_user_cloture		integer,						-- user closing (signed or not)
-  fk_statut				smallint DEFAULT 0 NOT NULL,
+  fk_statut				smallint DEFAULT 0 NOT NULL,	-- 0=draft, 1=validated, 2=accepted, 3=refused, 4=billed/closed
   price					real         DEFAULT 0,			-- (obsolete)
   remise_percent		real         DEFAULT 0,			-- remise globale relative en pourcent (obsolete)
   remise_absolue		real         DEFAULT 0,			-- remise globale absolue (obsolete)
@@ -60,7 +60,10 @@ create table llx_propal
  
   note_private			text,
   note_public			text,
-  model_pdf				varchar(255),
+  
+  model_pdf				varchar(255),					-- last template used to generate main document
+  last_main_doc			varchar(255),					-- relative filepath+filename of last main generated document
+  
   date_livraison		date DEFAULT NULL,				-- delivery date
   fk_shipping_method    integer,                        -- shipping method id
   fk_availability		integer NULL,
@@ -69,6 +72,12 @@ create table llx_propal
   location_incoterms    varchar(255),								-- for incoterms
   import_key			varchar(14),
   extraparams			varchar(255),					-- for stock other parameters with json format
-  fk_delivery_address	integer							-- delivery address (deprecated)
+  fk_delivery_address	integer,							-- delivery address (deprecated)
   
+  fk_multicurrency			integer,
+  multicurrency_code			varchar(255),
+  multicurrency_tx			double(24,8) DEFAULT 1,
+  multicurrency_total_ht		double(24,8) DEFAULT 0,
+  multicurrency_total_tva	double(24,8) DEFAULT 0,
+  multicurrency_total_ttc	double(24,8) DEFAULT 0
 )ENGINE=innodb;

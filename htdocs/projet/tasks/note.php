@@ -39,7 +39,7 @@ $project_ref = GETPOST('project_ref','alpha');
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid = $user->societe_id;
+//if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 if (!$user->rights->projet->lire) accessforbidden();
 //$result = restrictedArea($user, 'projet', $id, '', 'task'); // TODO ameliorer la verification
 
@@ -110,102 +110,138 @@ if ($object->id > 0)
 		// Tabs for project
 		$tab='tasks';
 		$head=project_prepare_head($projectstatic);
-		dol_fiche_head($head, $tab, $langs->trans("Project"),0,($projectstatic->public?'projectpub':'project'));
+		dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
 		$param=($mode=='mine'?'&mode=mine':'');
+		// Project card
 
-		print '<table class="border" width="100%">';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-		// Ref
-		print '<tr><td width="30%">';
-		print $langs->trans("Ref");
-		print '</td><td>';
+		$morehtmlref='<div class="refidno">';
+		// Title
+		$morehtmlref.=$projectstatic->title;
+		// Thirdparty
+		if ($projectstatic->thirdparty->id > 0)
+		{
+		    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $projectstatic->thirdparty->getNomUrl(1, 'project');
+		}
+		$morehtmlref.='</div>';
+
 		// Define a complementary filter for search of next/prev ref.
 		if (! $user->rights->projet->all->lire)
 		{
-		    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,0);
-		    $projectstatic->next_prev_filter=" rowid in (".(count($projectsListId)?join(',',array_keys($projectsListId)):'0').")";
+		    $objectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,0);
+		    $projectstatic->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 		}
-		print $form->showrefnav($projectstatic,'project_ref','',1,'ref','ref','',$param.'&withproject=1');
-		print '</td></tr>';
 
-		// Project
-		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projectstatic->title.'</td></tr>';
+		dol_banner_tab($projectstatic, 'project_ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
-		// Company
-		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if (! empty($projectstatic->thirdparty->id)) print $projectstatic->thirdparty->getNomUrl(1);
-		else print '&nbsp;';
-		print '</td>';
-		print '</tr>';
+		print '<div class="fichecenter">';
+		print '<div class="fichehalfleft">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border" width="100%">';
 
 		// Visibility
-		print '<tr><td>'.$langs->trans("Visibility").'</td><td>';
+		print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
 		if ($projectstatic->public) print $langs->trans('SharedProject');
 		else print $langs->trans('PrivateProject');
 		print '</td></tr>';
 
-		// Statut
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$projectstatic->getLibStatut(4).'</td></tr>';
-
-	   	// Date start
-		print '<tr><td>'.$langs->trans("DateStart").'</td><td>';
-		print dol_print_date($projectstatic->date_start,'day');
+		// Date start - end
+		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
+		$start = dol_print_date($projectstatic->date_start,'day');
+		print ($start?$start:'?');
+		$end = dol_print_date($projectstatic->date_end,'day');
+		print ' - ';
+		print ($end?$end:'?');
+		if ($projectstatic->hasDelay()) print img_warning("Late");
 		print '</td></tr>';
 
-		// Date end
-		print '<tr><td>'.$langs->trans("DateEnd").'</td><td>';
-		print dol_print_date($projectstatic->date_end,'day');
+		// Budget
+		print '<tr><td>'.$langs->trans("Budget").'</td><td>';
+		if (strcmp($projectstatic->budget_amount, '')) print price($projectstatic->budget_amount,'',$langs,1,0,0,$conf->currency);
 		print '</td></tr>';
+
+		// Other attributes
+		$cols = 2;
+		//include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
 
 		print '</table>';
 
+		print '</div>';
+		print '<div class="fichehalfright">';
+		print '<div class="ficheaddleft">';
+		print '<div class="underbanner clearboth"></div>';
+
+		print '<table class="border" width="100%">';
+
+		// Description
+		print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
+		print nl2br($projectstatic->description);
+		print '</td></tr>';
+
+		// Categories
+		if($conf->categorie->enabled) {
+		    print '<tr><td valign="middle">'.$langs->trans("Categories").'</td><td>';
+		    print $form->showCategories($projectstatic->id,'project',1);
+		    print "</td></tr>";
+		}
+
+		print '</table>';
+
+		print '</div>';
+		print '</div>';
+		print '</div>';
+
+		print '<div class="clearboth"></div>';
+
 		dol_fiche_end();
+
+		print '<br>';
 	}
 
 	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), 0, 'projecttask');
+	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask', 0, '', 'reposition');
 
-	print '<table class="border" width="100%">';
 
 	$param=(GETPOST('withproject')?'&withproject=1':'');
 	$linkback=GETPOST('withproject')?'<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("BackToList").'</a>':'';
 
-	// Ref
-	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td>';
-	if (empty($withproject) || empty($projectstatic->id))
+	if (! GETPOST('withproject') || empty($projectstatic->id))
 	{
-	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,$mine,1);
+	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1);
 	    $object->next_prev_filter=" fk_projet in (".$projectsListId.")";
 	}
 	else $object->next_prev_filter=" fk_projet = ".$projectstatic->id;
-	print $form->showrefnav($object,'ref',$linkback,1,'ref','ref','',$param);
-	print '</td></tr>';
 
-	// Label
-	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$object->label.'</td></tr>';
+	$morehtmlref='';
 
 	// Project
 	if (empty($withproject))
 	{
-		print '<tr><td>'.$langs->trans("Project").'</td><td colspan="3">';
-		print $projectstatic->getNomUrl(1);
-		print '</td></tr>';
+	    $morehtmlref.='<div class="refidno">';
+	    $morehtmlref.=$langs->trans("Project").': ';
+	    $morehtmlref.=$projectstatic->getNomUrl(1);
+	    $morehtmlref.='<br>';
 
-		// Third party
-		print '<tr><td>'.$langs->trans("ThirdParty").'</td><td>';
-		if ($projectstatic->thirdparty->id > 0) print $projectstatic->thirdparty->getNomUrl(1);
-		else print'&nbsp;';
-		print '</td></tr>';
+	    // Third party
+	    $morehtmlref.=$langs->trans("ThirdParty").': ';
+	    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+	    $morehtmlref.='</div>';
 	}
 
-	print "</table>";
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, $param);
 
-	print '<br>';
+	print '<div class="fichecenter">';
 
-	$colwidth=30;
+    print '<div class="underbanner clearboth"></div>';
+
+	$cssclass='titlefield';
     $moreparam=$param;
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
+
+	print '</div>';
 
 	dol_fiche_end();
 }

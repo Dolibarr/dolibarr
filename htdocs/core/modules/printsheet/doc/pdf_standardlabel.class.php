@@ -61,11 +61,11 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 */
 	function Add_PDF_label(&$pdf,$textleft,$header,$footer,$outputlangs,$textright='',$photo='')
 	{
-		global $mysoc,$conf,$langs;
-		global $forceimgscalewidth,$forceimgscaleheight;
+		global $mysoc, $conf, $langs;
+		global $forceimgscalewidth, $forceimgscaleheight;
 
 		$imgscalewidth=(empty($forceimgscalewidth)?0.3:$forceimgscalewidth);	// Scale of image for width (1=Full width of sticker)
-		$imgscaleheight=(empty($forceimgscalewidth)?0.5:$forceimgscalewidth);	// Scale of image for height (1=Full height of sticker)
+		$imgscaleheight=(empty($forceimgscaleheight)?0.5:$forceimgscaleheight);	// Scale of image for height (1=Full height of sticker)
 
 		// We are in a new page, then we must add a page
 		if (($this->_COUNTX ==0) && ($this->_COUNTY==0) and (!$this->_First==1)) {
@@ -231,9 +231,10 @@ class pdf_standardlabel extends CommonStickerGenerator
 	 *	@param	Translate	$outputlangs		Lang object for output language
 	 *	@param	string		$srctemplatepath	Full path of source filename for generator using a template file
 	 *	@param	string		$outputdir			Output directory for pdf file
+	 *  @param  string      $filename           Short file name of PDF output file
 	 *	@return int								1=OK, 0=KO
 	 */
-	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='')
+	function write_file($arrayofrecords,$outputlangs,$srctemplatepath,$outputdir='',$filename='tmp_address_sheet.pdf')
 	{
 		global $user,$conf,$langs,$mysoc,$_Avery_Labels;
 
@@ -241,7 +242,14 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$this->Tformat = $_Avery_Labels[$this->code];
 		if (empty($this->Tformat)) { dol_print_error('','ErrorBadTypeForCard'.$this->code); exit; }
 		$this->type = 'pdf';
-		$this->format = $this->Tformat['paper-size'];
+        // standard format or custom
+        if ($this->Tformat['paper-size']!='custom') {
+            $this->format = $this->Tformat['paper-size'];
+        } else {
+            //custom
+            $resolution= array($this->Tformat['custom_x'], $this->Tformat['custom_y']);
+            $this->format = $resolution;
+        }
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
@@ -256,7 +264,6 @@ class pdf_standardlabel extends CommonStickerGenerator
 		$keywords=$title." ".$outputlangs->convToOutputCharset($mysoc->name);
 
 		$dir = (empty($outputdir)?$conf->adherent->dir_temp:$outputdir);
-		$filename='tmp_address_sheet.pdf';
 		$file = $dir."/".$filename;
 
 		if (! file_exists($dir))
@@ -268,7 +275,7 @@ class pdf_standardlabel extends CommonStickerGenerator
 			}
 		}
 
-		$pdf=pdf_getInstance($this->format,$this->Tformat['metric']);
+		$pdf=pdf_getInstance($this->format,$this->Tformat['metric'], $this->Tformat['orientation']);
 
 		if (class_exists('TCPDF'))
 		{
@@ -319,8 +326,6 @@ class pdf_standardlabel extends CommonStickerGenerator
 		if (! empty($conf->global->MAIN_UMASK))
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
-
-
 		// Output to http stream
 		clearstatcache();
 
@@ -338,6 +343,8 @@ class pdf_standardlabel extends CommonStickerGenerator
 		header('Pragma: public');
 
 		readfile($file);
+
+		$this->result = array('fullpath'=>$file);
 
 		return 1;
 	}

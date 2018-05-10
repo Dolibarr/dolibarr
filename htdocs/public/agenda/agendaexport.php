@@ -28,18 +28,15 @@
  *              &id=..., &idfrom=..., &idto=...
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOLOGIN'))        define("NOLOGIN",1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 // C'est un wrapper, donc header vierge
+
 /**
  * Header function
  *
@@ -65,19 +62,20 @@ if (! isset($conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY)) $conf->global->MAIN_A
 // Define format, type and filter
 $format='ical';
 $type='event';
-if (! empty($_GET["format"])) $format=$_GET["format"];
-if (! empty($_GET["type"]))   $type=$_GET["type"];
+if (GETPOST("format",'alpha')) $format=GETPOST("format",'apha');
+if (GETPOST("type",'apha'))   $type=GETPOST("type",'alpha');
 
 $filters=array();
-if (! empty($_GET["year"])) 	     $filters['year']=$_GET["year"];
-if (! empty($_GET["id"]))           $filters['id']=$_GET["id"];
-if (! empty($_GET["idfrom"]))       $filters['idfrom']=$_GET["idfrom"];
-if (! empty($_GET["idto"]))         $filters['idto']=$_GET["idto"];
-if (! empty($_GET["project"]))      $filters['project']=$_GET["project"];
-if (! empty($_GET["login"]))        $filters['login']=$_GET["login"];
-if (! empty($_GET["logina"]))       $filters['logina']=$_GET["logina"];
-if (! empty($_GET["logint"]))       $filters['logint']=$_GET["logint"];
-if (GETPOST("notolderthan")) $filters['notolderthan']=GETPOST("notolderthan","int");
+if (GETPOST("year",'int')) 	         $filters['year']=GETPOST("year",'int');
+if (GETPOST("id",'int'))             $filters['id']=GETPOST("id",'int');
+if (GETPOST("idfrom",'int'))         $filters['idfrom']=GETPOST("idfrom",'int');
+if (GETPOST("idto",'int'))           $filters['idto']=GETPOST("idto",'int');
+if (GETPOST("project",'apha'))       $filters['project']=GETPOST("project",'apha');
+if (GETPOST("logina",'apha'))        $filters['logina']=GETPOST("logina",'apha');
+if (GETPOST("logint",'apha'))        $filters['logint']=GETPOST("logint",'apha');
+if (GETPOST("notactiontype",'apha')) $filters['notactiontype']=GETPOST("notactiontype",'apha');
+if (GETPOST("actiontype",'apha'))    $filters['actiontype']=GETPOST("actiontype",'apha');
+if (GETPOST("notolderthan",'int'))   $filters['notolderthan']=GETPOST("notolderthan","int");
 else $filters['notolderthan']=$conf->global->MAIN_AGENDA_EXPORT_PAST_DELAY;
 
 // Check config
@@ -115,9 +113,9 @@ foreach ($filters as $key => $value)
     if ($key == 'idfrom')          $filename.='-idfrom'.$value;
     if ($key == 'idto')            $filename.='-idto'.$value;
     if ($key == 'project')         $filename.='-project'.$value;
-    if ($key == 'login')	       $filename.='-login'.$value;
 	if ($key == 'logina')	       $filename.='-logina'.$value;	// Author
 	if ($key == 'logint')	       $filename.='-logint'.$value;	// Assigned to
+	if ($key == 'notactiontype')   $filename.='-notactiontype'.$value;
 }
 // Add extension
 if ($format == 'vcal') { $shortfilename.='.vcs'; $filename.='.vcs'; }

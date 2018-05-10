@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
- * Copyright (C) 2005-2012 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2011 Regis Houssin         <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent         <jmenent@2byte.es>
- * Copyright (C) 2015      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
+/* Copyright (C) 2005       Marc Barilley / Ocebo   <marc@ocebo.com>
+ * Copyright (C) 2005-2012  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2011  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2010       Juanjo Menent           <jmenent@2byte.es>
+ * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *
  * cd htdocs/install
  * php upgrade.php 3.4.0 3.5.0
- * php upgrade2.php 3.4.0 3.5.0
+ * php upgrade2.php 3.4.0 3.5.0 [MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE]
  *
  * Return code is 0 if OK, >0 if error
  */
@@ -37,7 +37,7 @@ if (! file_exists($conffile))
 {
     print 'Error: Dolibarr config file was not found. This may means that Dolibarr is not installed yet. Please call the page "/install/index.php" instead of "/install/upgrade.php").';
 }
-require_once $conffile; if (! isset($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';	// For backward compatibility
+require_once $conffile;
 require_once $dolibarr_main_document_root . '/compta/facture/class/facture.class.php';
 require_once $dolibarr_main_document_root . '/comm/propal/class/propal.class.php';
 require_once $dolibarr_main_document_root . '/contrat/class/contrat.class.php';
@@ -46,6 +46,8 @@ require_once $dolibarr_main_document_root . '/fourn/class/fournisseur.commande.c
 require_once $dolibarr_main_document_root . '/core/lib/price.lib.php';
 require_once $dolibarr_main_document_root . '/core/class/menubase.class.php';
 require_once $dolibarr_main_document_root . '/core/lib/files.lib.php';
+
+global $langs;
 
 $grant_query='';
 $step = 2;
@@ -59,17 +61,17 @@ error_reporting(0);
 @set_time_limit(300);
 error_reporting($err);
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
+$setuplang=GETPOST("selectlang",'aZ09',3)?GETPOST("selectlang",'aZ09',3):'auto';
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
+$versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
+$enablemodules=GETPOST("enablemodules",'alpha',3)?GETPOST("enablemodules",'alpha',3):(empty($argv[3])?'':$argv[3]);
 
 $langs->load('admin');
 $langs->load('install');
 $langs->load("bills");
 $langs->load("suppliers");
 
-if ($dolibarr_main_db_type == 'mysql')  $choix=1;
 if ($dolibarr_main_db_type == 'mysqli') $choix=1;
 if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
 if ($dolibarr_main_db_type == 'mssql')  $choix=3;
@@ -84,10 +86,10 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
  * View
  */
 
-if (! $versionfrom && ! $versionto)
+if ((! $versionfrom || preg_match('/version/', $versionfrom)) && (! $versionto || preg_match('/version/', $versionto)))
 {
-	print 'Error: Parameter versionfrom or versionto missing.'."\n";
-	print 'Upgrade must be ran from cmmand line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
+	print 'Error: Parameter versionfrom or versionto missing or having a bad format.'."\n";
+	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
@@ -99,12 +101,12 @@ if (! $versionfrom && ! $versionto)
 	exit;
 }
 
-pHeader('','step5',GETPOST("action")?GETPOST("action"):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
+pHeader('','step5',GETPOST('action','aZ09')?GETPOST('action','aZ09'):'upgrade','versionfrom='.$versionfrom.'&versionto='.$versionto);
 
 
-if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
+if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09')))
 {
-    print '<h3>'.$langs->trans('DataMigration').'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans('DataMigration').'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
@@ -134,6 +136,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     // Create the global $hookmanager object
     include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
     $hookmanager=new HookManager($db);
+    $hookmanager->initHooks(array('upgrade'));
 
     if (!$db->connected)
     {
@@ -160,7 +163,13 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
     $conf->db->dolibarr_main_db_cryptkey = $dolibarr_main_db_cryptkey;
 
     // Chargement config
-    if (! $error) $conf->setValues($db);
+    if (! $error)
+    {
+    	$conf->setValues($db);
+    	// Reset forced setup after the setValues
+    	if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+    	$conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
+    }
 
 
     /***************************************************************************************
@@ -168,19 +177,20 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
      * Migration des donnees
      *
      ***************************************************************************************/
+    $db->begin();
+
     if (! $error)
     {
         // Current version is $conf->global->MAIN_VERSION_LAST_UPGRADE
         // Version to install is DOL_VERSION
         $dolibarrlastupgradeversionarray=preg_split('/[\.-]/',isset($conf->global->MAIN_VERSION_LAST_UPGRADE)?$conf->global->MAIN_VERSION_LAST_UPGRADE:$conf->global->MAIN_VERSION_LAST_INSTALL);
 
-        $db->begin();
-
         // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
         // dans la 1ere colonne, la description de l'action a faire
         // dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
 
         $versiontoarray=explode('.',$versionto);
+        $versionranarray=explode('.',DOL_VERSION);
 
         $afterversionarray=explode('.','2.0.0');
         $beforeversionarray=explode('.','2.7.9');
@@ -239,15 +249,9 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
             migrate_restore_missing_links($db,$langs,$conf);
 
-            migrate_directories($db,$langs,$conf,'/compta','/banque');
+            migrate_rename_directories($db,$langs,$conf,'/compta','/banque');
 
-            migrate_directories($db,$langs,$conf,'/societe','/mycompany');
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
+            migrate_rename_directories($db,$langs,$conf,'/societe','/mycompany');
         }
 
         // Script for VX (X<2.8) -> V2.8
@@ -275,12 +279,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             migrate_project_user_resp($db,$langs,$conf);
 
             migrate_project_task_actors($db,$langs,$conf);
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Script for VX (X<2.9) -> V2.9
@@ -295,12 +293,6 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
             migrate_shipping_delivery($db,$langs,$conf);
 
             migrate_shipping_delivery2($db,$langs,$conf);
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Script for VX (X<3.0) -> V3.0
@@ -308,11 +300,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
+            // No particular code
         }
 
         // Script for VX (X<3.1) -> V3.1
@@ -320,15 +308,9 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.1.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-            migrate_directories($db,$langs,$conf,'/rss','/externalrss');
+            migrate_rename_directories($db,$langs,$conf,'/rss','/externalrss');
 
             migrate_actioncomm_element($db,$langs,$conf);
-
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
         }
 
         // Script for VX (X<3.2) -> V3.2
@@ -340,11 +322,7 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
 
         	migrate_mode_reglement($db,$langs,$conf);
 
-            // Reload modules
-            migrate_reload_modules($db,$langs,$conf);
-
-            // Reload menus
-            migrate_reload_menu($db,$langs,$conf,$versionto);
+        	migrate_clean_association($db,$langs,$conf);
         }
 
         // Script for VX (X<3.3) -> V3.3
@@ -371,46 +349,171 @@ if (! GETPOST("action") || preg_match('/upgrade/i',GETPOST('action')))
         $beforeversionarray=explode('.','3.8.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
         {
-        	// Reload modules (this must be always and only into last targeted version)
-			$listofmodule=array(
-				    	'MAIN_MODULE_AGENDA'=>'newboxdefonly',
-						'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-						'MAIN_MODULE_CRON'=>'newboxdefonly',
-				    	'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
-				    	'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
-				    	'MAIN_MODULE_DON'=>'newboxdefonly',
-				    	'MAIN_MODULE_ECM'=>'newboxdefonly',
-				    	'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-				    	'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
-						'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
-						'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
-						'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
-						'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
-						'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
-				    	'MAIN_MODULE_SERVICE'=>'newboxdefonly',
-						'MAIN_MODULE_USER'=>'newboxdefonly'
-			);
-        	migrate_reload_modules($db,$langs,$conf,$listofmodule);
-
-        	// Reload menus (this must be always and only into last targeted version)
-        	migrate_reload_menu($db,$langs,$conf,$versionto);
+        	// No particular code
         }
 
-        print '<tr><td colspan="4"><br>'.$langs->trans("MigrationFinished").'</td></tr>';
+        // Scripts for last version
+        $afterversionarray=explode('.','3.9.9');
+        $beforeversionarray=explode('.','4.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            migrate_rename_directories($db,$langs,$conf,'/fckeditor','/medias');
+        }
 
-        // On commit dans tous les cas.
-        // La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
-        $db->commit();
-        $db->close();
+        // Scripts for last version
+        $afterversionarray=explode('.','4.0.9');
+        $beforeversionarray=explode('.','5.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            // Migrate to add entity value into llx_societe_remise
+            migrate_remise_entity($db,$langs,$conf);
+
+            // Migrate to add entity value into llx_societe_remise_except
+            migrate_remise_except_entity($db,$langs,$conf);
+        }
+
+        // Scripts for last version
+        $afterversionarray=explode('.','5.0.9');
+        $beforeversionarray=explode('.','6.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	if (! empty($conf->multicompany->enabled))
+        	{
+        		global $multicompany_transverse_mode;
+
+        		// Only if the transverse mode is not used
+        		if (empty($multicompany_transverse_mode))
+        		{
+        			// Migrate to add entity value into llx_user_rights
+        			migrate_user_rights_entity($db, $langs, $conf);
+
+        			// Migrate to add entity value into llx_usergroup_rights
+        			migrate_usergroup_rights_entity($db, $langs, $conf);
+        		}
+        	}
+        }
+
+        // Scripts for last version
+        $afterversionarray=explode('.','6.0.9');
+        $beforeversionarray=explode('.','7.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+            // Migrate contact association
+        	migrate_event_assignement_contact($db,$langs,$conf);
+
+        	migrate_reset_blocked_log($db,$langs,$conf);
+        }
+    }
+
+	// Code executed only if migration is LAST ONE. Must always be done.
+	if (versioncompare($versiontoarray,$versionranarray) >= 0 || versioncompare($versiontoarray,$versionranarray) <= -3)
+	{
+		// Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
+		$listofmodule=array(
+			'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
+			'MAIN_MODULE_AGENDA'=>'newboxdefonly',
+			'MAIN_MODULE_BARCODE'=>'newboxdefonly',
+			'MAIN_MODULE_CRON'=>'newboxdefonly',
+			'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
+			'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
+			'MAIN_MODULE_DON'=>'newboxdefonly',
+			'MAIN_MODULE_ECM'=>'newboxdefonly',
+			'MAIN_MODULE_FACTURE'=>'newboxdefonly',
+			'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
+			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
+			'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
+			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
+			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
+			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
+			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
+			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
+			'MAIN_MODULE_USER'=>'newboxdefonly',		//This one must be always done and only into last targeted version)
+			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
+			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
+		);
+		migrate_reload_modules($db,$langs,$conf,$listofmodule);
+
+		// Reload menus (this must be always and only into last targeted version)
+		migrate_reload_menu($db,$langs,$conf,$versionto);
+	}
+
+    // Can force activation of some module during migration with parameter 'enablemodules=MAIN_MODULE_XXX,MAIN_MODULE_YYY,...'
+    // In most cases (online install or upgrade) $enablemodules is empty. Can be forced when ran from command line.
+    if (! $error && $enablemodules)
+    {
+        // Reload modules (this must be always done and only into last targeted version)
+        $listofmodules=array();
+        $enablemodules=preg_replace('/enablemodules=/','',$enablemodules);
+        $tmplistofmodules=explode(',', $enablemodules);
+        foreach($tmplistofmodules as $value)
+        {
+            $listofmodules[$value]='forceactivate';
+        }
+        migrate_reload_modules($db,$langs,$conf,$listofmodules,1);
+    }
 
 
-        // Actions for all version (not in database)
-        migrate_delete_old_files($db,$langs,$conf);
-
-        migrate_delete_old_dir($db,$langs,$conf);
+    // Can call a dedicated external upgrade process
+    if (! $error)
+    {
+        $parameters=array('versionfrom'=>$versionfrom, 'versionto='.$versionto);
+        $object=new stdClass();
+        $action="upgrade";
+        $reshook=$hookmanager->executeHooks('doUpgrade2',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
+        if ($hookmanager->resNbOfHooks > 0)
+        {
+            if ($reshook < 0)
+            {
+                print '<tr><td colspan="4">';
+                print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: ';
+                print $hookmanager->error;
+                print "<!-- (".$reshook.") -->";
+                print '</td></tr>';
+            }
+            else
+            {
+                print '<tr><td colspan="4">';
+                print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: OK';
+                print "<!-- (".$reshook.") -->";
+                print '</td></tr>';
+            }
+        }
+        else
+        {
+            //if (! empty($conf->modules))
+            if (! empty($conf->modules_parts['hooks']))     // If there is at least one module with one hook, we show message to say nothing was done
+            {
+                print '<tr><td colspan="4">';
+                print '<b>'.$langs->trans('UpgradeExternalModule').'</b>: '.$langs->trans("None");
+                print '</td></tr>';
+            }
+        }
     }
 
     print '</table>';
+
+    // We always commit.
+    // Process is designed so we can run it several times whatever is situation.
+    $db->commit();
+    $db->close();
+
+
+    // Copy directory medias
+    $srcroot=DOL_DOCUMENT_ROOT.'/install/medias';
+    $destroot=DOL_DATA_ROOT.'/medias';
+    dolCopyDir($srcroot, $destroot, 0, 0);
+
+
+    // Actions for all versions (no database change, delete files and directories)
+    migrate_delete_old_files($db, $langs, $conf);
+    migrate_delete_old_dir($db, $langs, $conf);
+    // Actions for all versions (no database change, create directories)
+    dol_mkdir(DOL_DATA_ROOT.'/bank');
+    // Actions for all versions (no database change, rename directories)
+    migrate_rename_directories($db, $langs, $conf, '/banque/bordereau', '/bank/checkdeposits');
+
+    print '<div><br>'.$langs->trans("MigrationFinished").'</div>';
 }
 else
 {
@@ -420,10 +523,10 @@ else
 
 $ret=0;
 if ($error && isset($argv[1])) $ret=1;
-dol_syslog("Exit ".$ret);
+dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("--- upgrade2: end");
-pFooter($error,$setuplang);
+pFooter($error?2:0,$setuplang);
 
 if ($db->connected) $db->close();
 
@@ -1224,7 +1327,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
                             print '<tr><td>fk_paiementfourn</td><td>fk_facturefourn</td><td>'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
                         }
 
-                        print '<tr '.$bc[$var].'>';
+                        print '<tr class="oddeven">';
                         print '<td>'.$select_obj->rowid.'</td><td>'.$select_obj->fk_facture_fourn.'</td><td>'.$select_obj->amount.'</td>';
 
                         $insert_sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn_facturefourn SET ';
@@ -1293,6 +1396,9 @@ function migrate_price_facture($db,$langs,$conf)
 {
     $err=0;
 
+    $tmpmysoc=new Societe($db);
+    $tmpmysoc->setMysoc($conf);
+
     $db->begin();
 
     print '<tr><td colspan="4">';
@@ -1333,7 +1439,7 @@ function migrate_price_facture($db,$langs,$conf)
                 $facligne= new FactureLigne($db);
                 $facligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate, 0, 0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate, 0, 0,$remise_percent_global,'HT',$info_bits,$facligne->product_type,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1407,6 +1513,9 @@ function migrate_price_facture($db,$langs,$conf)
  */
 function migrate_price_propal($db,$langs,$conf)
 {
+   	$tmpmysoc=new Societe($db);
+	$tmpmysoc->setMysoc($conf);
+
     $db->begin();
 
     print '<tr><td colspan="4">';
@@ -1445,7 +1554,7 @@ function migrate_price_propal($db,$langs,$conf)
                 $propalligne= new PropaleLigne($db);
                 $propalligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$propalligne->product_type,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1552,9 +1661,9 @@ function migrate_price_contrat($db,$langs,$conf)
                 // On met a jour les 3 nouveaux champs
                 $contratligne= new ContratLigne($db);
                 //$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
-                $contratligne->id=$rowid;
+                $contratligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,0,'HT',$info_bits,0,$tmpmysoc);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,0,'HT',$info_bits,$contratligne->product_type,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1603,6 +1712,9 @@ function migrate_price_commande($db,$langs,$conf)
 {
     $db->begin();
 
+    $tmpmysoc=new Societe($db);
+    $tmpmysoc->setMysoc($conf);
+
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -1639,7 +1751,7 @@ function migrate_price_commande($db,$langs,$conf)
                 $commandeligne= new OrderLine($db);
                 $commandeligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$commandeligne->product_type,$tmpmysoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -1717,6 +1829,9 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
 {
     $db->begin();
 
+    $tmpmysoc=new Societe($db);
+    $tmpmysoc->setMysoc($conf);
+
     print '<tr><td colspan="4">';
 
     print '<br>';
@@ -1753,7 +1868,7 @@ function migrate_price_commande_fournisseur($db,$langs,$conf)
                 $commandeligne= new CommandeFournisseurLigne($db);
                 $commandeligne->fetch($rowid);
 
-                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,0);
+                $result=calcul_price_total($qty,$pu,$remise_percent,$vatrate,0,0,$remise_percent_global,'HT',$info_bits,$commandeligne->product_type,$tmpsoc);
                 $total_ht  = $result[0];
                 $total_tva = $result[1];
                 $total_ttc = $result[2];
@@ -3440,6 +3555,95 @@ function migrate_mode_reglement($db,$langs,$conf)
 	print '</td></tr>';
 }
 
+
+/**
+ * Delete duplicates in table categorie_association
+ *
+ * @param	DoliDB		$db			Database handler
+ * @param	Translate	$langs		Object langs
+ * @param	Conf		$conf		Object conf
+ * @param	string		$versionto	Version target
+ * @return	void
+ */
+function migrate_clean_association($db,$langs,$conf,$versionto)
+{
+    $result = $db->DDLDescTable(MAIN_DB_PREFIX."categorie_association");
+    if ($result)	// result defined for version 3.2 or -
+    {
+        $obj = $db->fetch_object($result);
+        if ($obj)	// It table categorie_association exists
+        {
+            $couples=array();
+            $filles=array();
+            $sql = "SELECT fk_categorie_mere, fk_categorie_fille";
+            $sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+            dolibarr_install_syslog("upgrade: search duplicate");
+            $resql = $db->query($sql);
+            if ($resql)
+            {
+                $num=$db->num_rows($resql);
+                while ($obj=$db->fetch_object($resql))
+                {
+                    if (! isset($filles[$obj->fk_categorie_fille]))	// Only one record as child (a child has only on parent).
+                    {
+                        if ($obj->fk_categorie_mere != $obj->fk_categorie_fille)
+                        {
+                            $filles[$obj->fk_categorie_fille]=1;	// Set record for this child
+                            $couples[$obj->fk_categorie_mere.'_'.$obj->fk_categorie_fille]=array('mere'=>$obj->fk_categorie_mere, 'fille'=>$obj->fk_categorie_fille);
+                        }
+                    }
+                }
+
+                dolibarr_install_syslog("upgrade: result is num=" . $num . " count(couples)=" . count($couples));
+
+                // If there is duplicates couples or child with two parents
+                if (count($couples) > 0 && $num > count($couples))
+                {
+                    $error=0;
+
+                    $db->begin();
+
+                    // We delete all
+                    $sql="DELETE FROM ".MAIN_DB_PREFIX."categorie_association";
+                    dolibarr_install_syslog("upgrade: delete association");
+                    $resqld=$db->query($sql);
+                    if ($resqld)
+                    {
+                        // And we insert only each record once
+                        foreach($couples as $key => $val)
+                        {
+                            $sql ="INSERT INTO ".MAIN_DB_PREFIX."categorie_association(fk_categorie_mere,fk_categorie_fille)";
+                            $sql.=" VALUES(".$val['mere'].", ".$val['fille'].")";
+                            dolibarr_install_syslog("upgrade: insert association");
+                            $resqli=$db->query($sql);
+                            if (! $resqli) $error++;
+                        }
+                    }
+
+                    if (! $error)
+                    {
+                        print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
+                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Success").' ('.$num.'=>'.count($couples).')</td></tr>';
+                        $db->commit();
+                    }
+                    else
+                    {
+                        print '<tr><td>'.$langs->trans("MigrationCategorieAssociation").'</td>';
+                        print '<td align="right">'.$langs->trans("RemoveDuplicates").' '.$langs->trans("Failed").'</td></tr>';
+                        $db->rollback();
+                    }
+                }
+            }
+            else
+            {
+                print '<tr><td>'.$langs->trans("Error").'</td>';
+                print '<td align="right"><div class="error">'.$db->lasterror().'</div></td></tr>';
+            }
+        }
+    }
+}
+
+
 /**
  * Migrate categorie association
  *
@@ -3611,22 +3815,559 @@ function migrate_event_assignement($db,$langs,$conf)
 }
 
 /**
+ * Migrate event assignement to owner
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_event_assignement_contact($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationEventsContact')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_event_assignement");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT a.id, a.fk_contact";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	$sqlSelect.= " LEFT JOIN ".MAIN_DB_PREFIX."actioncomm_resources as ar ON ar.fk_actioncomm = a.id AND ar.element_type = 'socpeople' AND ar.fk_element = a.fk_contact";
+	$sqlSelect.= " WHERE fk_contact > 0 AND fk_contact NOT IN (SELECT fk_element FROM ".MAIN_DB_PREFIX."actioncomm_resources as ar WHERE ar.fk_actioncomm = a.id AND ar.element_type = 'socpeople')";
+	$sqlSelect.= " ORDER BY a.id";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm_resources(fk_actioncomm, element_type, fk_element) ";
+				$sqlUpdate.= "VALUES(".$obj->id.", 'socpeople', ".$obj->fk_contact.")";
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+
+/**
+ * Migrate to reset the blocked log for V7+ algorithm
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_reset_blocked_log($db,$langs,$conf)
+{
+	global $user;
+
+	require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationResetBlockedLog')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_reset_blocked_log");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT DISTINCT entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."blockedlog";
+
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				print 'Process entity '.$obj->entity;
+
+				$sqlSearch = "SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."blockedlog WHERE action = 'MODULE_SET' and entity = ".$obj->entity;
+				$resqlSearch = $db->query($sqlSearch);
+				if ($resqlSearch)
+				{
+					$objSearch = $db->fetch_object($resqlSearch);
+					//var_dump($objSearch);
+					if ($objSearch && $objSearch->nb == 0)
+					{
+						print ' - Record for entity must be reset...';
+
+						$sqlUpdate = "DELETE FROM ".MAIN_DB_PREFIX."blockedlog";
+						$sqlUpdate.= " WHERE entity = " . $obj->entity;
+						$resqlUpdate=$db->query($sqlUpdate);
+						if (! $resqlUpdate)
+						{
+							$error++;
+							dol_print_error($db);
+						}
+						else
+						{
+							// Add set line
+							$object=new stdClass();
+							$object->id = 1;
+							$object->element = 'module';
+							$object->ref = 'systemevent';
+							$object->entity = $obj->entity;
+							$object->date = dol_now();
+
+							$b=new BlockedLog($db);
+							$b->setObjectData($object, 'MODULE_SET', 0);
+
+							$res = $b->create($user);
+							if ($res<=0) {
+								$error++;
+							}
+						}
+					}
+					else
+					{
+						print ' - '.$langs->trans('AlreadyInV7').'<br>';
+					}
+				}
+				else
+				{
+					dol_print_error($db);
+				}
+
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('NothingToDo')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+
+/**
+ * Migrate to add entity value into llx_societe_remise
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_remise_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationRemiseEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_remise_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT sr.rowid, s.entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."societe_remise as sr, ".MAIN_DB_PREFIX."societe as s";
+	$sqlSelect.= " WHERE sr.fk_soc = s.rowid and sr.entity != s.entity";
+
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise SET";
+				$sqlUpdate.= " entity = " . $obj->entity;
+				$sqlUpdate.= " WHERE rowid = " . $obj->rowid;
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate to add entity value into llx_societe_remise_except
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_remise_except_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationRemiseExceptEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_remise_except_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT sr.rowid, sr.fk_soc, sr.fk_facture_source, sr.fk_facture, sr.fk_facture_line";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				if (!empty($obj->fk_facture_source) || !empty($obj->fk_facture))
+				{
+					$fk_facture = (!empty($obj->fk_facture_source) ? $obj->fk_facture_source : $obj->fk_facture);
+
+					$sqlSelect2 = "SELECT f.entity";
+					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f";
+					$sqlSelect2.= " WHERE f.rowid = " . $fk_facture;
+				}
+				else if (!empty($obj->fk_facture_line))
+				{
+					$sqlSelect2 = "SELECT f.entity";
+					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as fd";
+					$sqlSelect2.= " WHERE fd.rowid = " . $obj->fk_facture_line;
+					$sqlSelect2.= " AND fd.fk_facture = f.rowid";
+				}
+				else
+				{
+					$sqlSelect2 = "SELECT s.entity";
+					$sqlSelect2.= " FROM ".MAIN_DB_PREFIX."societe as s";
+					$sqlSelect2.= " WHERE s.rowid = " . $obj->fk_soc;
+				}
+
+				$resql2 = $db->query($sqlSelect2);
+				if ($resql2)
+				{
+					if ($db->num_rows($resql2) > 0)
+					{
+						$obj2 = $db->fetch_object($resql2);
+
+						$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except SET";
+						$sqlUpdate.= " entity = " . $obj2->entity;
+						$sqlUpdate.= " WHERE rowid = " . $obj->rowid;
+
+						$result=$db->query($sqlUpdate);
+						if (! $result)
+						{
+							$error++;
+							dol_print_error($db);
+						}
+					}
+				}
+				else
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate to add entity value into llx_user_rights
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_user_rights_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<b>'.$langs->trans('MigrationUserRightsEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_user_rights_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT u.rowid, u.entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."user as u";
+	$sqlSelect.= " WHERE u.entity > 1";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."user_rights SET";
+				$sqlUpdate.= " entity = " . $obj->entity;
+				$sqlUpdate.= " WHERE fk_user = " . $obj->rowid;
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+/**
+ * Migrate to add entity value into llx_usergroup_rights
+ *
+ * @param	DoliDB		$db				Database handler
+ * @param	Translate	$langs			Object langs
+ * @param	Conf		$conf			Object conf
+ * @return	void
+ */
+function migrate_usergroup_rights_entity($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<b>'.$langs->trans('MigrationUserGroupRightsEntity')."</b><br>\n";
+
+	$error = 0;
+
+	dolibarr_install_syslog("upgrade2::migrate_usergroup_rights_entity");
+
+	$db->begin();
+
+	$sqlSelect = "SELECT u.rowid, u.entity";
+	$sqlSelect.= " FROM ".MAIN_DB_PREFIX."usergroup as u";
+	$sqlSelect.= " WHERE u.entity > 1";
+	//print $sqlSelect;
+
+	$resql = $db->query($sqlSelect);
+	if ($resql)
+	{
+		$i = 0;
+		$num = $db->num_rows($resql);
+
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$sqlUpdate = "UPDATE ".MAIN_DB_PREFIX."usergroup_rights SET";
+				$sqlUpdate.= " entity = " . $obj->entity;
+				$sqlUpdate.= " WHERE fk_usergroup = " . $obj->rowid;
+
+				$result=$db->query($sqlUpdate);
+				if (! $result)
+				{
+					$error++;
+					dol_print_error($db);
+				}
+
+				print ". ";
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans('AlreadyDone')."<br>\n";
+		}
+
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else
+		{
+			$db->rollback();
+		}
+	}
+	else
+	{
+		dol_print_error($db);
+		$db->rollback();
+	}
+
+
+	print '</td></tr>';
+}
+
+/**
  * Migration directory
  *
  * @param	DoliDB		$db			Database handler
  * @param	Translate	$langs		Object langs
  * @param	Conf		$conf		Object conf
- * @param	string		$oldname	Old name
- * @param	string		$newname	New name
+ * @param	string		$oldname	Old name (relative to DOL_DATA_ROOT)
+ * @param	string		$newname	New name (relative to DOL_DATA_ROOT)
  * @return	void
  */
-function migrate_directories($db,$langs,$conf,$oldname,$newname)
+function migrate_rename_directories($db,$langs,$conf,$oldname,$newname)
 {
-    dolibarr_install_syslog("upgrade2::migrate_directories");
+    dolibarr_install_syslog("upgrade2::migrate_rename_directories");
 
     if (is_dir(DOL_DATA_ROOT.$oldname) && ! file_exists(DOL_DATA_ROOT.$newname))
     {
-        dolibarr_install_syslog("upgrade2::migrate_directories move " . DOL_DATA_ROOT . $oldname . ' into ' . DOL_DATA_ROOT . $newname);
+        dolibarr_install_syslog("upgrade2::migrate_rename_directories move " . DOL_DATA_ROOT . $oldname . ' into ' . DOL_DATA_ROOT . $newname);
         @rename(DOL_DATA_ROOT.$oldname,DOL_DATA_ROOT.$newname);
     }
 }
@@ -3667,12 +4408,24 @@ function migrate_delete_old_files($db,$langs,$conf)
     DOL_DOCUMENT_ROOT.'/core/menus/standard/auguria_frontoffice.php',
     DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_backoffice.php',
     DOL_DOCUMENT_ROOT.'/core/menus/standard/eldy_frontoffice.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts2.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts3.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/contacts4.modules.php',
+    DOL_DOCUMENT_ROOT.'/core/modules/mailings/framboise.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/dolibarr_services_expired.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/peche.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/poire.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/mailings/kiwi.modules.php',
     DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_crabe.modules.php',
-    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php'
+    DOL_DOCUMENT_ROOT.'/core/modules/facture/pdf_oursin.modules.php',
+
+    DOL_DOCUMENT_ROOT.'/compta/facture/class/api_invoice.class.php',
+    DOL_DOCUMENT_ROOT.'/commande/class/api_commande.class.php',
+    DOL_DOCUMENT_ROOT.'/user/class/api_user.class.php',
+    DOL_DOCUMENT_ROOT.'/product/class/api_product.class.php',
+    DOL_DOCUMENT_ROOT.'/societe/class/api_contact.class.php',
+    DOL_DOCUMENT_ROOT.'/societe/class/api_thirdparty.class.php'
+
     );
 
     foreach ($filetodeletearray as $filetodelete)
@@ -3744,210 +4497,222 @@ function migrate_delete_old_dir($db,$langs,$conf)
  * @param	Translate	$langs			Object langs
  * @param	Conf		$conf			Object conf
  * @param	array		$listofmodule	List of modules
+ * @param   int         $force          1=Reload module even if not already loaded
  * @return	void
  */
-function migrate_reload_modules($db,$langs,$conf,$listofmodule=array())
+function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 {
-    dolibarr_install_syslog("upgrade2::migrate_reload_modules");
+	if (count($listofmodule) == 0) return;
 
-    // If no info is provided, we reload all modules with mode newboxdefonly.
-    if (count($listofmodule) == 0)
-    {
-    	$listofmodule=array(
-	    	'MAIN_MODULE_AGENDA'=>'newboxdefonly',
-	    	'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
-	    	'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
-	    	'MAIN_MODULE_SERVICE'=>'newboxdefonly',
-	    	'MAIN_MODULE_COMMANDE'=>'newboxdefonly',
-	    	'MAIN_MODULE_FACTURE'=>'newboxdefonly',
-	    	'MAIN_MODULE_FOURNISSEUR'=>'newboxdefonly',
-    		'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
-    		'MAIN_MODULE_USER'=>'newboxdefonly',
-	    	'MAIN_MODULE_DEPLACEMENT'=>'newboxdefonly',
-	    	'MAIN_MODULE_DON'=>'newboxdefonly',
-	    	'MAIN_MODULE_ECM'=>'newboxdefonly',
-	    	'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
-    		'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly'
-    	);
-    }
+	dolibarr_install_syslog("upgrade2::migrate_reload_modules force=".$force);
 
-    foreach($listofmodule as $moduletoreload => $reloadmode)
-    {
-    	if (empty($moduletoreload) || empty($conf->global->$moduletoreload)) continue;
+	foreach($listofmodule as $moduletoreload => $reloadmode)	// reloadmodule can be 'noboxes', 'newboxdefonly', 'forceactivate'
+	{
+		if (empty($moduletoreload) || (empty($conf->global->$moduletoreload) && ! $force)) continue; // Discard reload if module not enabled
 
-    	$mod=null;
-    	
-	    if ($moduletoreload == 'MAIN_MODULE_AGENDA')
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Agenda module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php';
-	        if ($res) {
-	            $mod=new modAgenda($db);
-	            $mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-        if ($moduletoreload == 'MAIN_MODULE_BARCODE')
-    	{
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Barcode module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modBarcode.class.php';
-	        if ($res) {
-	            $mod=new modBarcode($db);
-	            $mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_CRON')
-    	{
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Cron module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCron.class.php';
-	        if ($res) {
-	            $mod=new modCron($db);
-	            $mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_SOCIETE')
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Societe module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
-	        if ($res) {
-	            $mod=new modSociete($db);
-	            $mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_PRODUIT')    // Permission has changed into 2.7
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Produit module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
-	        if ($res) {
-	            $mod=new modProduct($db);
-	            //$mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Service module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
-	        if ($res) {
-	            $mod=new modService($db);
-	            //$mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Commande module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
-	        if ($res) {
-	            $mod=new modCommande($db);
-	            //$mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Facture module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
-	        if ($res) {
-	            $mod=new modFacture($db);
-	            //$mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR')    // Permission has changed into 2.9
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Fournisseur module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
-	        if ($res) {
-	            $mod=new modFournisseur($db);
-	            //$mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-    	if ($moduletoreload == 'MAIN_MODULE_HOLIDAY')    // Permission and tabs has changed into 3.8
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Leave Request module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modHoliday.class.php';
-	        if ($res) {
-	            $mod=new modHoliday($db);
-	            $mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT')    // Permission has changed into 3.0
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Deplacement module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
-	        if ($res) {
-	            $mod=new modDeplacement($db);
-	            //$mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Don module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
-	        if ($res) {
-	            $mod=new modDon($db);
-	            //$mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate ECM module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
-	        if ($res) {
-	            $mod=new modECM($db);
-	            $mod->remove('noboxes');	// We need to remove because a permission id has been removed
-	            $mod->init($reloadmode);
-	        }
-	    }
-	    if ($moduletoreload == 'MAIN_MODULE_PAYBOX')    // Permission has changed into 3.0
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Paybox module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
-	        if ($res) {
-	            $mod=new modPaybox($db);
-	            $mod->remove('noboxes');  // We need to remove because id of module has changed
-	            $mod->init($reloadmode);
-	        }
-	    }
-    	if ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Opensurvey module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modOpenSurvey.class.php';
-	        if ($res) {
-	            $mod=new modOpenSurvey($db);
-	            $mod->remove('noboxes');  // We need to remove because menu entries has changed
-	            $mod->init($reloadmode);
-	        }
-	    }
-    	if ($moduletoreload == 'MAIN_MODULE_USER')    // Permission has changed into 3.0
-	    {
-	        dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate User module");
-	        $res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
-	        if ($res) {
-	            $mod=new modUser($db);
-	            //$mod->remove('noboxes');
-	            $mod->init($reloadmode);
-	        }
-	    }
+		$mod=null;
+
+		if ($moduletoreload == 'MAIN_MODULE_AGENDA')
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Agenda module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modAgenda.class.php';
+			if ($res) {
+				$mod=new modAgenda($db);
+				$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_API')
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Rest API module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modApi.class.php';
+			if ($res) {
+				$mod=new modApi($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_BARCODE')
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Barcode module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modBarcode.class.php';
+			if ($res) {
+				$mod=new modBarcode($db);
+				$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_CRON')
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Cron module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCron.class.php';
+			if ($res) {
+				$mod=new modCron($db);
+				$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_SOCIETE')
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Societe module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
+			if ($res) {
+				$mod=new modSociete($db);
+				$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_PRODUIT')    // Permission has changed into 2.7
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Produit module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
+			if ($res) {
+				$mod=new modProduct($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Service module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
+			if ($res) {
+				$mod=new modService($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Commande module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
+			if ($res) {
+				$mod=new modCommande($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Facture module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
+			if ($res) {
+				$mod=new modFacture($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR')    // Permission has changed into 2.9
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Fournisseur module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
+			if ($res) {
+				$mod=new modFournisseur($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_HOLIDAY')    // Permission and tabs has changed into 3.8
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Leave Request module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modHoliday.class.php';
+			if ($res) {
+				$mod=new modHoliday($db);
+				$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT')    // Permission has changed into 3.0
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Deplacement module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
+			if ($res) {
+				$mod=new modDeplacement($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Don module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
+			if ($res) {
+				$mod=new modDon($db);
+				//$mod->remove('noboxes');
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate ECM module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
+			if ($res) {
+				$mod=new modECM($db);
+				$mod->remove('noboxes');	// We need to remove because a permission id has been removed
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_PAYBOX')    // Permission has changed into 3.0
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Paybox module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
+			if ($res) {
+				$mod=new modPaybox($db);
+				$mod->remove('noboxes');  // We need to remove because id of module has changed
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_SUPPLIERPROPOSAL')		// Module after 3.5
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Supplier Proposal module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSupplierProposal.class.php';
+			if ($res) {
+				$mod=new modSupplierProposal($db);
+				$mod->remove('noboxes');  // We need to remove because id of module has changed
+				$mod->init($reloadmode);
+			}
+		}
+		elseif ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
+		{
+			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Opensurvey module");
+			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modOpenSurvey.class.php';
+			if ($res) {
+				$mod=new modOpenSurvey($db);
+				$mod->remove('noboxes');  // We need to remove because menu entries has changed
+				$mod->init($reloadmode);
+			}
+		}
+		else
+		{
+			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
+			if (! empty($reg[1]))
+			{
+				$moduletoreloadshort = ucfirst(strtolower($reg[1]));
+				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort);
+				$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php';
+				if ($res) {
+					$classname = 'mod'.$moduletoreloadshort;
+					$mod=new $classname($db);
+					//$mod->remove('noboxes');
+					$mod->init($reloadmode);
+				}
+			}
+			else
+			{
+				print "Error, can't find module name";
+			}
+		}
 
 		if (! empty($mod) && is_object($mod))
-		{	    
-    		print '<tr><td colspan="4">';
-        	print '<b>'.$langs->trans('Upgrade').'</b>: ';
-        	print $langs->trans('MigrationReloadModule')." ".$mod->getName();
-        	print "<!-- (".$reloadmode.") -->";
-        	print "<br>\n";
-        	print '</td></tr>';
+		{
+			print '<tr><td colspan="4">';
+			print '<b>'.$langs->trans('Upgrade').'</b>: ';
+			print $langs->trans('MigrationReloadModule').' '.$mod->getName();  // We keep getName outside of trans because getName is already encoded/translated
+			print "<!-- (".$reloadmode.") -->";
+			print "<br>\n";
+			print '</td></tr>';
 		}
-    }
+	}
 }
 
 
@@ -3968,31 +4733,10 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
 
     // Define list of menu handlers to initialize
     $listofmenuhandler=array();
-
-    $versiontoarray=explode('.',$versionto);
-
-    // Migration required when target version is between 
-    $afterversionarray=explode('.','2.8.9');
-    $beforeversionarray=explode('.','2.9.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+    if ($conf->global->MAIN_MENU_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENU_SMARTPHONE == 'auguria_menu'
+    	|| $conf->global->MAIN_MENUFRONT_STANDARD == 'auguria_menu' || $conf->global->MAIN_MENUFRONT_SMARTPHONE == 'auguria_menu')
     {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
-    }
-
-    // Migration required when target version is between 
-    $afterversionarray=explode('.','3.1.9');
-    $beforeversionarray=explode('.','3.2.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-    {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
-    }
-
-    // Migration required when target version is between 
-    $afterversionarray=explode('.','3.7.9');
-    $beforeversionarray=explode('.','3.8.9');
-    if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
-    {
-        $listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
+    	$listofmenuhandler['auguria']=1;   // We set here only dynamic menu handlers
     }
 
     foreach ($listofmenuhandler as $key => $val)
@@ -4014,6 +4758,7 @@ function migrate_reload_menu($db,$langs,$conf,$versionto)
         print '</td></tr>';
     }
 }
+
 
 
 

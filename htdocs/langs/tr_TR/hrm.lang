@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=İK dış hizmeti önlemek için eposta
+Establishments=Kuruluşlar
+Establishment=Kuruluş
+NewEstablishment=Yeni kuruluş
+DeleteEstablishment=Kuruluş sil
+ConfirmDeleteEstablishment=Bu kuruluşu silmek istediğinizden emin misiniz?
+OpenEtablishment=Kuruluş aç
+CloseEtablishment=Kuruluş kapat
+# Dictionary
+DictionaryDepartment=İK - Bölüm listesi
+DictionaryFunction=İK - İşlev listesi
+# Module
+Employees=Çalışanlar
+Employee=Çalışanlar
+NewEmployee=Yeni çalışan

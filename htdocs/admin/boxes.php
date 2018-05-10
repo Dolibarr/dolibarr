@@ -48,7 +48,8 @@ $boxes = array();
 
 if ($action == 'addconst')
 {
-    dolibarr_set_const($db, "MAIN_BOXES_MAXLINES",$_POST["MAIN_BOXES_MAXLINES"],'',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_BOXES_MAXLINES", $_POST["MAIN_BOXES_MAXLINES"],'',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_ACTIVATE_FILECACHE", $_POST["MAIN_ACTIVATE_FILECACHE"],'chaine',0,'',$conf->entity);
 }
 
 if ($action == 'add') {
@@ -234,7 +235,7 @@ $sql = "SELECT b.rowid, b.box_id, b.position, b.box_order,";
 $sql.= " bd.rowid as boxid";
 $sql.= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as bd";
 $sql.= " WHERE b.box_id = bd.rowid";
-$sql.= " AND b.entity IN (0,".(! empty($conf->multicompany->enabled) && ! empty($conf->multicompany->transverse_mode)?"1,":"").$conf->entity.")";
+$sql.= " AND b.entity IN (0,".$conf->entity.")";
 $sql.= " AND b.fk_user=0";
 $sql.= " ORDER by b.position, b.box_order";
 
@@ -247,10 +248,8 @@ if ($resql)
 	// Check record to know if we must recalculate sort order
 	$i = 0;
 	$decalage=0;
-	$var=false;
 	while ($i < $num)
 	{
-		$var = ! $var;
 		$obj = $db->fetch_object($resql);
 		$boxes[$obj->position][$obj->box_id]=1;
 		$i++;
@@ -320,6 +319,8 @@ if ($resql)
 
 // Available boxes to activate
 $boxtoadd=InfoBox::listBoxes($db,'available',-1,null,$actives);
+// Activated boxes
+$boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 
 print "<br>\n";
 print "\n\n".'<!-- Boxes Available -->'."\n";
@@ -328,18 +329,19 @@ print load_fiche_titre($langs->trans("BoxesAvailable"));
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">'."\n";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">'."\n";
 print '<input type="hidden" name="action" value="add">'."\n";
-print '<table class="noborder" width="100%">'."\n";
+
+print '<div class="div-table-responsive-no-min">';
+print '<table class="tagtable liste centpercent">'."\n";
+
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
 print '<td width="160" align="center">'.$langs->trans("ActivateOn").'</td>';
 print "</tr>\n";
-$var=true;
+
 foreach($boxtoadd as $box)
 {
-    $var=!$var;
-
     if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
     {
         $logo = $box->boximg;
@@ -350,7 +352,7 @@ foreach($boxtoadd as $box)
     }
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-    print '<tr '.$bc[$var].'>'."\n";
+    print '<tr class="oddeven">'."\n";
     print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
     if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
     print '</td>'."\n";
@@ -372,8 +374,13 @@ foreach($boxtoadd as $box)
 
     print '</tr>'."\n";
 }
-
+if (! count($boxtoadd) && count($boxactivated))
+{
+	print '<tr><td class="opacitymedium" colspan="4">'.$langs->trans("AllWidgetsWereEnabled").'</td></tr>';
+}
 print '</table>'."\n";
+print '</div>';
+
 print '<div class="right">';
 print '<input type="submit" class="button"'.(count($boxtoadd)?'':' disabled').' value="'.$langs->trans("Activate").'">';
 print '</div>'."\n";
@@ -381,13 +388,13 @@ print '</form>';
 print "\n".'<!-- End Boxes Available -->'."\n";
 
 
-// Activated boxes
-$boxactivated=InfoBox::listBoxes($db,'activated',-1,null);
 //var_dump($boxactivated);
 print "<br>\n\n";
 print load_fiche_titre($langs->trans("BoxesActivated"));
 
-print '<table class="noborder" width="100%">';
+print '<div class="div-table-responsive-no-min">';
+print '<table class="tagtable liste">'."\n";
+
 print '<tr class="liste_titre">';
 print '<td width="300">'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("Note").'/'.$langs->trans("Parameters").'</td>';
@@ -396,13 +403,10 @@ print '<td align="center" width="60" colspan="2">'.$langs->trans("PositionByDefa
 print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
 print '</tr>'."\n";
 
-$var=true;
 $box_order=1;
 $foundrupture=1;
 foreach($boxactivated as $key => $box)
 {
-    $var = ! $var;
-
 	if (preg_match('/^([^@]+)@([^@]+)$/i',$box->boximg))
 	{
 		$logo = $box->boximg;
@@ -413,7 +417,7 @@ foreach($boxactivated as $key => $box)
 	}
 
     print "\n".'<!-- Box '.$box->boxcode.' -->'."\n";
-	print '<tr '.$bc[$var].'>';
+	print '<tr class="oddeven">';
 	print '<td>'.img_object("",$logo).' '.$langs->transnoentitiesnoconv($box->boxlabel);
 	if (! empty($box->class) && preg_match('/graph_/',$box->class)) print ' ('.$langs->trans("Graph").')';
 	print '</td>';
@@ -440,7 +444,9 @@ foreach($boxactivated as $key => $box)
 	print '</tr>'."\n";
 }
 
-print '</table><br>';
+print '</table>';
+print '</div>';
+print '<br>';
 
 
 // Other parameters
@@ -452,25 +458,33 @@ print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="addconst">';
 print '<table class="noborder" width="100%">';
 
-$var=false;
 print '<tr class="liste_titre">';
 print '<td class="liste_titre">'.$langs->trans("Parameter").'</td>';
 print '<td class="liste_titre">'.$langs->trans("Value").'</td>';
-print '<td class="liste_titre"></td>';
 print '</tr>';
-print '<tr '.$bc[$var].'>';
+
+print '<tr class="oddeven">';
 print '<td>';
 print $langs->trans("MaxNbOfLinesForBoxes");
 print '</td>'."\n";
 print '<td>';
 print '<input type="text" class="flat" size="6" name="MAIN_BOXES_MAXLINES" value="'.$conf->global->MAIN_BOXES_MAXLINES.'">';
 print '</td>';
-print '<td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button">';
-print '</td>'."\n";
 print '</tr>';
 
+// Activate FileCache - Developement
+if ($conf->global->MAIN_FEATURES_LEVEL == 2 || ! empty($conf->global->MAIN_ACTIVATE_FILECACHE)) {
+
+    print '<tr class="oddeven"><td width="35%">'.$langs->trans("EnableFileCache").'</td><td>';
+    print $form->selectyesno('MAIN_ACTIVATE_FILECACHE',$conf->global->MAIN_ACTIVATE_FILECACHE,1);
+    print '</td>';
+    print '</tr>';
+}
+
 print '</table>';
+
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Save").'" name="Button"></div>';
+
 print '</form>';
 print "\n".'<!-- End Other Const -->'."\n";
 

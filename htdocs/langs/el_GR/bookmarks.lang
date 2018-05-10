@@ -2,6 +2,8 @@
 AddThisPageToBookmarks=Προσθέστε αυτή τη σελίδα στους σελιδοδείκτες
 Bookmark=Σελιδοδείκτης
 Bookmarks=Σελιδοδείκτες
+ListOfBookmarks=Λίστα σελιδοδεικτών
+EditBookmarks=List/edit bookmarks
 NewBookmark=Νέος σελιδοδείκτης
 ShowBookmark=Εμφάνιση σελιδοδείκτη
 OpenANewWindow=Άνοιγμα σε νέο παράθυρο
@@ -14,6 +16,5 @@ BehaviourOnClick=Μετάβαση σε
 CreateBookmark=Δημιουργία σελιδοδείκτη
 SetHereATitleForLink=Ορισμός τίτλου για τον σελιδοδείκτη
 UseAnExternalHttpLinkOrRelativeDolibarrLink=Χρησιμοποιήστε μια εξωτερική διεύθυνση URL ή μια σχετική διεύθυνση URL του Dolibarr
-ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Με ποιον τρόπο θα ανοίξει η σελίδα
+ChooseIfANewWindowMustBeOpenedOnClickOnBookmark=Επιλέξτε εάν η συνδεδεμένη σελίδα πρέπει να ανοίγει σε νέο παράθυρο ή όχι
 BookmarksManagement=Διαχείριση σελιδοδεικτών
-ListOfBookmarks=Λίστα σελιδοδεικτών

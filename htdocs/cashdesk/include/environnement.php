@@ -44,7 +44,7 @@ $conf_fkaccount_cb = (! empty($_SESSION["CASHDESK_ID_BANKACCOUNT_CB"]))?$_SESSIO
 
 
 // View parameters
-$conf_taille_listes = (empty($conf->global->PRODUIT_LIMIT_SIZE)?500:$conf->global->PRODUIT_LIMIT_SIZE);	// Nombre max de lignes a afficher dans les listes
+$conf_taille_listes = (empty($conf->global->PRODUIT_LIMIT_SIZE)?1000:$conf->global->PRODUIT_LIMIT_SIZE);	// Nombre max de lignes a afficher dans les listes
 $conf_nbr_car_listes = 60;	// Nombre max de caracteres par ligne dans les listes
 
 // Add hidden option to force decrease of stock whatever is user setup

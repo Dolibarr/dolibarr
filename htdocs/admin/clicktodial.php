@@ -30,7 +30,7 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
-$action = GETPOST("action");
+$action = GETPOST('action','aZ09');
 
 
 /*
@@ -62,7 +62,7 @@ $user->fetch_clicktodial();
 $wikihelp='EN:Module_ClickToDial_En|FR:Module_ClickToDial|ES:Módulo_ClickTodial_Es';
 llxHeader('',$langs->trans("ClickToDialSetup"),$wikihelp);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ClickToDialSetup"),$linkback,'title_setup');
 
 print $langs->trans("ClickToDialDesc")."<br>\n";
@@ -72,26 +72,25 @@ print '<form method="post" action="clicktodial.php">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
 
-$var=true;
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("ClickToDialUseTelLink").'</td><td>';
 print $form->selectyesno("CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS", $conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS, 1).'<br>';
 print '<br>';
 print $langs->trans("ClickToDialUseTelLinkDesc");
 print '</td></tr>';
 
-$var=!$var;
-print '<tr '.$bc[$var].'><td>';
+
+print '<tr class="oddeven"><td>';
 print $langs->trans("DefaultLink").'</td><td>';
-print '<input size="92" type="text" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS?' disabled="disabled"':'').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print '<input class="quatrevingtpercent" type="text" id="CLICKTODIAL_URL" name="CLICKTODIAL_URL"'.($conf->global->CLICKTODIAL_USE_TEL_LINK_ON_PHONE_NUMBERS?' disabled="disabled"':'').' value="'.$conf->global->CLICKTODIAL_URL.'"><br>';
+print ajax_autoselect('CLICKTODIAL_URL');
 print '<br>';
 print $langs->trans("ClickToDialUrlDesc").'<br>';
 print $langs->trans("Example").':<br>http://myphoneserver/mypage?login=__LOGIN__&password=__PASS__&caller=__PHONEFROM__&called=__PHONETO__';

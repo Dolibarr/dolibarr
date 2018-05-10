@@ -192,8 +192,12 @@ class DoliDBMssql extends DoliDB
 	function getVersion()
 	{
 		$resql=$this->query("SELECT @@VERSION");
-		$version=$this->fetch_array($resql);
-		return $version['computed'];
+		if ($resql)
+		{
+            $version=$this->fetch_array($resql);
+            return $version['computed'];
+		}
+		else return '';
 	}
 
 	/**
@@ -203,10 +207,7 @@ class DoliDBMssql extends DoliDB
 	 */
 	function getDriverInfo()
 	{
-		// FIXME: Dummy method
-		// TODO: Implement
-
-		return '';
+		return 'php mssql driver';
 	}
 
     /**
@@ -359,7 +360,7 @@ class DoliDBMssql extends DoliDB
                             $query_comp[]=$fld->COLUMN_NAME." IS NOT NULL";
                         }
                     }
-                    if ($query_comp)
+                    if (! empty($query_comp))
                         $query.=" WHERE ".implode(" AND ",$query_comp);
                 }
     		}
@@ -562,7 +563,7 @@ class DoliDBMssql extends DoliDB
 	 *   Function to use to build INSERT, UPDATE or WHERE predica
 	 *
 	 *   @param	    string	$param      Date TMS to convert
-	 *   @return	string      		Date in a string YYYYMMDDHHMMSS
+	 *   @return	string      		Date in a string YYYY-MM-DD HH:MM:SS
 	 */
 	function idate($param)
 	{
@@ -648,7 +649,7 @@ class DoliDBMssql extends DoliDB
 	function last_insert_id($tab,$fieldid='rowid')
 	{
 		$res = $this->query("SELECT @@IDENTITY as id");
-		if ($data = $this->fetch_array($res))
+		if ($res && $data = $this->fetch_array($res))
 		{
 			return $data["id"];
 		}
@@ -709,8 +710,12 @@ class DoliDBMssql extends DoliDB
 	function DDLGetConnectId()
 	{
 		$resql=$this->query('SELECT CONNECTION_ID()');
-		$row=$this->fetch_row($resql);
-		return $row[0];
+		if ($resql)
+		{
+            $row=$this->fetch_row($resql);
+            return $row[0];
+		}
+		else return '?';
 	}
 
 	/**
@@ -856,6 +861,22 @@ class DoliDBMssql extends DoliDB
 		return -1;
 		else
 		return 1;
+	}
+
+	/**
+	 *	Drop a table into database
+	 *
+	 *	@param	    string	$table 			Name of table
+	 *	@return	    int						<0 if KO, >=0 if OK
+	 */
+	function DDLDropTable($table)
+	{
+		$sql = "DROP TABLE ".$table;
+
+		if (! $this->query($sql))
+			return -1;
+		else
+			return 1;
 	}
 
 	/**

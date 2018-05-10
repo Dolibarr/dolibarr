@@ -101,26 +101,25 @@ if ($action == 'edit')
     print '<input type="hidden" name="action" value="update">';
 
     clearstatcache();
-    $var=true;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+
+    print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td><input class="flat" name="MAIN_MAX_DECIMALS_UNIT" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_UNIT . '"></td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+
+    print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td><input class="flat" name="MAIN_MAX_DECIMALS_TOT" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_TOT . '"></td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
+
+
+    print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td><input class="flat" name="MAIN_ROUNDING_RULE_TOT" size="3" value="' . $conf->global->MAIN_ROUNDING_RULE_TOT . '"></td></tr>';
 
@@ -135,26 +134,24 @@ if ($action == 'edit')
 }
 else
 {
-    $var=true;
-
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+
+    print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_UNIT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_UNIT.'</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+
+    print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_MAX_DECIMALS_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_TOT.'</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>';
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';
+
+
+    print '<tr class="oddeven"><td>';
     print $form->textwithpicto($langs->trans("MAIN_ROUNDING_RULE_TOT"),$langs->trans("ParameterActiveForNextInputOnly"));
     print '</td><td align="right">'.$conf->global->MAIN_ROUNDING_RULE_TOT.'</td></tr>';
 
@@ -169,7 +166,7 @@ else
 if (empty($mysoc->country_code))
 {
 	$langs->load("errors");
-	$warnpicto=img_error($langs->trans("WarningMandatorySetupNotComplete"));
+	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
 	print '<br><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a>';
 }
 else
@@ -180,21 +177,21 @@ else
 
 	// Always show vat rates with vat 0
 	$s=2/7;$qty=1;$vat=0;
-	$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0,0);
+	$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0,0,$mysoc);
 	print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 	print " x ".$langs->trans("Quantity").": ".$qty;
 	print " - ".$langs->trans("VAT").": ".$vat.'%';
 	print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	$s=10/3;$qty=1;$vat=0;
-	$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0,0);
+	$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0,0,$mysoc);
 	print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 	print " x ".$langs->trans("Quantity").": ".$qty;
 	print " - ".$langs->trans("VAT").": ".$vat.'%';
 	print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	$s=10/3;$qty=2;$vat=0;
-	$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0, 0);
+	$tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0, 0,$mysoc);
 	print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 	print " x ".$langs->trans("Quantity").": ".$qty;
 	print " - ".$langs->trans("VAT").": ".$vat.'%';
@@ -230,7 +227,7 @@ else
 	        for ($qty=1; $qty<=2; $qty++)
 	        {
 	            $s=10/3;
-	            $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0, 0);
+	            $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0, 0,$mysoc);
 	            print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 	            print " x ".$langs->trans("Quantity").": ".$qty;
 	            print " - ".$langs->trans("VAT").": ".$vat.'%';
@@ -245,14 +242,14 @@ else
 	    // were calculated to show all possible cases of rounding. If we change this, examples becomes useless or show the same rounding rule.
 
 	    $s=10/3;$qty=1;$vat=10;
-	    $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0, 0);
+	    $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0, 0,$mysoc);
 	    print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 	    print " x ".$langs->trans("Quantity").": ".$qty;
 	    print " - ".$langs->trans("VAT").": ".$vat.'%';
 	    print " &nbsp; -> &nbsp; ".$langs->trans("TotalPriceAfterRounding").": ".$tmparray[0].' / '.$tmparray[1].' / '.$tmparray[2]."<br>\n";
 
 	    $s=10/3;$qty=2;$vat=10;
-	    $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0, 0);
+	    $tmparray=calcul_price_total(1,$qty*price2num($s,'MU'),0,$vat,0,0,0,'HT',0, 0,$mysoc);
 	    print $langs->trans("UnitPriceOfProduct").": ".price2num($s,'MU');
 	    print " x ".$langs->trans("Quantity").": ".$qty;
 	    print " - ".$langs->trans("VAT").": ".$vat.'%';
@@ -272,8 +269,8 @@ else
 			$s2=2/7;
 
 			// Round by line
-			$tmparray1=calcul_price_total(1,$qty*price2num($s1,'MU'),0,$vat,0,0,0,'HT',0, 0);
-			$tmparray2=calcul_price_total(1,$qty*price2num($s2,'MU'),0,$vat,0,0,0,'HT',0, 0);
+			$tmparray1=calcul_price_total(1,$qty*price2num($s1,'MU'),0,$vat,0,0,0,'HT',0, 0,$mysoc);
+			$tmparray2=calcul_price_total(1,$qty*price2num($s2,'MU'),0,$vat,0,0,0,'HT',0, 0,$mysoc);
 			$total_ht = $tmparray1[0] + $tmparray2[0];
 			$total_tva = $tmparray1[1] + $tmparray2[1];
 			$total_ttc = $tmparray1[2] + $tmparray2[2];
@@ -296,7 +293,7 @@ else
 
 			// Global round
 			$subtotal_ht = (($qty*price2num($s1,'MU')) + ($qty*price2num($s2,'MU')));
-			$tmparray3=calcul_price_total(1,$subtotal_ht,0,$vat,0,0,0,'HT',0, 0);
+			$tmparray3=calcul_price_total(1,$subtotal_ht,0,$vat,0,0,0,'HT',0, 0,$mysoc);
 			$total_ht = $tmparray3[0];
 			$total_tva = $tmparray3[1];
 			$total_ttc = $tmparray3[2];

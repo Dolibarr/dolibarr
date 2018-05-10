@@ -89,15 +89,14 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 }
 
 $nom=$langs->trans("SellsJournal");
-$nomlink='';
 $periodlink='';
 $exportlink='';
-$builddate=time();
+$builddate=dol_now();
 $description=$langs->trans("DescSellsJournal").'<br>';
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 else  $description.= $langs->trans("DepositsAreIncluded");
 $period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$exportlink);
+report_header($name,'',$period,$periodlink,$description,$builddate,$exportlink);
 
 $p = explode(":", $conf->global->MAIN_INFO_SOCIETE_COUNTRY);
 $idpays = $p[0];
@@ -166,14 +165,15 @@ if ($result)
 
 		// Situation invoices handling
 		$line = new FactureLigne($db);
-		$line->fetch($obj->id);
-		$prev_progress = $line->get_prev_progress();
+		$line->fetch($obj->id);   // id of line
+		$prev_progress = 0;
 		if ($obj->type==Facture::TYPE_SITUATION) {
 			// Avoid divide by 0
-			if ($obj->situation_percent == 0) { 
+			if ($obj->situation_percent == 0) {
 				$situation_ratio = 0;
 			} else {
-				$situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
+		        $prev_progress = $line->get_prev_progress($obj->rowid);   // id on invoice
+			    $situation_ratio = ($obj->situation_percent - $prev_progress) / $obj->situation_percent;
 			}
 		} else {
 			$situation_ratio = 1;
@@ -215,7 +215,6 @@ print '<td>'.$langs->trans('Account').'</td>';
 print '<td>'.$langs->trans('Type').'</td><td align="right">'.$langs->trans('Debit').'</td><td align="right">'.$langs->trans('Credit').'</td>';
 print "</tr>\n";
 
-$var=false;
 
 $invoicestatic=new Facture($db);
 $companystatic=new Client($db);
@@ -261,8 +260,8 @@ foreach ($tabfac as $key => $val)
 		{
 			if (isset($line['nomtcheck']) || $mt)
 			{
-				print "<tr ".$bc[$var]." >";
-				print "<td>".dol_print_date($val["date"])."</td>";
+				print '<tr class="oddeven">';
+				print "<td>".dol_print_date($db->jdate($val["date"]))."</td>";
 				print "<td>".$invoicestatic->getNomUrl(1)."</td>";
 				print "<td>".$k."</td><td>".$line['label']."</td>";
 
@@ -281,8 +280,6 @@ foreach ($tabfac as $key => $val)
 			}
 		}
 	}
-
-	$var = !$var;
 }
 
 print "</table>";

@@ -24,8 +24,8 @@ create table llx_stock_mouvement
   datem           datetime,							-- Date and hour of movement
   fk_product      integer NOT NULL,				-- Id of product
   batch           varchar(30) DEFAULT NULL,		-- Lot or serial number
-  eatby           date DEFAULT NULL,				-- Eatby date
-  sellby          date DEFAULT NULL,				-- Sellby date
+  eatby           date DEFAULT NULL,			-- Eatby date (deprecated, we should get value from batch number in table llx_product_lot)
+  sellby          date DEFAULT NULL,			-- Sellby date (deprecated, we should get value from batch number in table llx_product_lot) 
   fk_entrepot     integer NOT NULL,				-- Id warehouse
   value			  real,								-- Qty of movement
   price           double(24,8) DEFAULT 0,			-- Entry price (used to calculate PMP, FIFO or LIFO value)
@@ -34,5 +34,6 @@ create table llx_stock_mouvement
   label           varchar(255),						-- Comment on movement
   inventorycode   varchar(128),						-- Code used to group different movement line into one operation (may be an inventory, a mass picking)
   fk_origin       integer,
-  origintype      varchar(32)
+  origintype      varchar(32),
+  model_pdf       varchar(255)
 )ENGINE=innodb;

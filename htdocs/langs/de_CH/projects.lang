@@ -1,0 +1,20 @@
+# Dolibarr language file - Source file is en_US - projects
+ProjectsArea=Projektbereiche
+PrivateProject=Projekt Kontakte
+TasksOnProjectsPublicDesc=Diese Ansicht zeigt alle Projektaufgaben, die Sie Lesenberechtigt sind.
+TasksOnProjectsDesc=Es werden alle Projekteaufgaben aller Projekte angezeigt (Ihre Berechtigungen berechtigen Sie alles zu sehen).
+OnlyOpenedProject=Nur offene Projekte sind sichtbar. (Projekte im Entwurf- oder Geschlossenstatus sind nicht sichtbar)
+TimeSpentByYou=Dein Zeitaufwand
+MyProjectsArea=Mein Projektbereich
+GoToListOfTimeConsumed=Zur Stundenaufwandsliste wechseln
+GoToListOfTasks=Zur Aufgabenliste gehen
+ListFichinterAssociatedProject=Liste Eingriffe, die mit diesem Projekt verknüpft sind
+ChildOfProjectTask=Kindelement von Projekt/Aufgabe
+CloseAProject=Projekt schliessen
+ProjectsDedicatedToThisThirdParty=Mit diesem Geschäftspartner verknüpfte Projekte
+LinkedToAnotherCompany=Mit Geschäftspartner verknüpft
+ThisWillAlsoRemoveTasks=Diese Aktion löscht ebenfalls alle Aufgaben zum Projekt (<b>%s</b> akutelle Aufgaben) und alle Zeitaufwände.
+CloneTaskFiles=Aufgabe (n) clonen beigetreten Dateien (falls Aufgabe (n) geklont)
+ProjectReferers=Verknüpfte Objekte
+ResourceNotAssignedToTheTask=Nicht der Aufgabe zugewiesen
+OpportunityPonderatedAmount=Verkaufschancen geschätzer Betrag

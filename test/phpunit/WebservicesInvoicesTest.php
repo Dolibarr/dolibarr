@@ -39,6 +39,8 @@ if (empty($user->id))
 }
 $conf->global->MAIN_DISABLE_ALL_MAILS=1;
 
+$conf->global->MAIN_UMASK='0666';
+
 
 /**
  * Class for PHPUnit tests
@@ -54,10 +56,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	protected $savlangs;
 	protected $savdb;
 	protected $soapclient;
-	protected $socid;
-	
+
+	private static $socid;
+
 	protected $ns = 'http://www.dolibarr.org/ns/';
-	
+
 	/**
 	 * Constructor
 	 * We save global variables into local variables
@@ -72,10 +75,9 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$this->savuser=$user;
 		$this->savlangs=$langs;
 		$this->savdb=$db;
-		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
-		
-		
+
 		// Set the WebService URL
+		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
 		$this->soapclient = new nusoap_client($WS_DOL_URL);
 		if ($this->soapclient)
@@ -83,38 +85,52 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			$this->soapclient->soap_defencoding='UTF-8';
 			$this->soapclient->decodeUTF8(false);
 		}
-		
-		// create a third_party, needed to create an invoice
-		$societe=new Societe($db);
-		$societe->ref='';
-		$societe->name='name';
-		$societe->ref_ext='209';
-		$societe->status=1;
-		$societe->client=1;
-		$societe->fournisseur=0;
-		$societe->date_creation=$now;
-		$societe->tva_assuj=0;
-		$societe->particulier=0;
-		
-		$societe->create($user);
-		
-		$this->socid = $societe->id;
-		
-		print __METHOD__." societe created id=".$societe->id."\n";
 
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
 		print "\n";
 	}
 
-	// Static methods
-  	public static function setUpBeforeClass()
+    public static function setUpBeforeClass()
     {
-    	global $conf,$user,$langs,$db;
+        global $conf,$user,$langs,$db;
+
+		// create a third_party, needed to create an invoice
+		//
+		// The third party is created in setUpBeforeClass() and not in the
+		// constructor to avoid creating several objects (the constructor is
+		// called for each test).
+		//
+		// The third party must be created before beginning the DB transaction
+		// because there is a foreign key constraint between invoices and third
+		// parties (tables: lx_facture and llx_societe) and with MySQL,
+		// constraints are checked immediately, they are not deferred to
+		// transaction commit. So if the invoice is created in the same
+		// transaction than the third party, the FK constraint fails.
+		// See this post for more detail: http://stackoverflow.com/a/5014744/5187108
+		$societe=new Societe($db);
+		$societe->ref='';
+		$societe->name='name';
+		$societe->ref_ext='ref-phpunit';
+		$societe->status=1;
+		$societe->client=1;
+		$societe->code_client='CU0901-1234';
+		$societe->code_fournisseur='SU0901-1234';
+		$societe->fournisseur=0;
+		$societe->date_creation=$now;
+		$societe->tva_assuj=0;
+		$societe->particulier=0;
+
+		$societe->create($user);
+
+		self::$socid = $societe->id;
+		print __METHOD__." societe created id=".$societe->id."\n";
+
 		$db->begin();	// This is to have all actions inside a transaction even if test launched without suite.
 
-    	print __METHOD__."\n";
+        print __METHOD__."\n";
     }
+
     public static function tearDownAfterClass()
     {
     	global $conf,$user,$langs,$db;
@@ -135,9 +151,8 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-				
+
 		print __METHOD__."\n";
-		
     }
 
 	/**
@@ -166,19 +181,13 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	$WS_METHOD  = 'createInvoice';
 
-    	// load societe first
-    	$societe=new Societe($db);
-    	$societe->fetch('', '', '209');
-    	print __METHOD__." societe loaded id=".$societe->id."\n";
-    
-    	
     	$body = array (
-    			"id" => NULL,
-				"ref" => NULL,
-				"ref_ext" => "165",
-				"thirdparty_id" => $societe->id,
-				"fk_user_author" => NULL,
-				"fk_user_valid" => NULL,
+    			"id" => null,
+				"ref" => null,
+				"ref_ext" => "ref-phpunit-2",
+				"thirdparty_id" => self::$socid,
+				"fk_user_author" => null,
+				"fk_user_valid" => null,
 				"date" => "2015-04-19 20:16:53",
 				"date_due" => "",
 				"date_creation" => "",
@@ -192,11 +201,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 				"note_private" => "Synchronised from Prestashop",
 				"note_public" => "",
 				"status" => "1",
-				"close_code" => NULL ,
-				"close_note" => NULL,
-				"project_id" => NULL,
+				"close_code" => null ,
+				"close_note" => null,
+				"project_id" => null,
 				"lines" => array(
-					array("id" => NULL,
+					array("id" => null,
 					"type" => 0,
 					"desc" => "Horloge Vinyle Serge",
 					"vat_rate" => 20,
@@ -247,18 +256,18 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__." result=".$result['result']['result_code']."\n";
     	$this->assertEquals('OK',$result['result']['result_code']);
-    	$this->assertEquals('165', $result['ref_ext']);
+    	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
 
     	return $result;
     }
-    
+
     /**
      * testWSInvoicesGetInvoiceByRefExt
-     * 
+     *
      * Retrieve an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     * 
+     *
      * @param	array	$result		Invoice created by create method
      * @return	array				Invoice
      */
@@ -282,7 +291,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// Test URL
     	$result='';
-    	$parameters = array('authentication'=>$authentication,'id'=>NULL,'ref'=>NULL,'ref_ext'=>165);
+    	$parameters = array('authentication'=>$authentication, 'id'=>null, 'ref'=>null, 'ref_ext'=>'ref-phpunit-2');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
@@ -303,18 +312,18 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	}
     	print __METHOD__." result=".$result['result']['result_code']."\n";
     	$this->assertEquals('OK',$result['result']['result_code']);
-    	$this->assertEquals('165', $result['invoice']['ref_ext']);
+    	$this->assertEquals('ref-phpunit-2', $result['invoice']['ref_ext']);
 
 
     	return $result;
     }
-    
+
     /**
      * testWSInvoicesUpdateInvoiceByRefExt
-     * 
+     *
      * Update an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     * 
+     *
      * @param	array	$result		invoice created by create method
      * @return	array 				Invoice
      */
@@ -330,12 +339,12 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// update status to 2
     	$body = array (
-    		"id" => NULL,
-			"ref" => NULL,
-			"ref_ext" => "165",
-			"thirdparty_id" => "209",
-			"fk_user_author" => NULL,
-			"fk_user_valid" => NULL,
+    		"id" => null,
+			"ref" => null,
+			"ref_ext" => "ref-phpunit-2",
+			"thirdparty_id" => self::$socid,
+			"fk_user_author" => null,
+			"fk_user_valid" => null,
 			"date" => "2015-04-19 20:16:53",
 			"date_due" => "",
 			"date_creation" => "",
@@ -349,12 +358,12 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			"note_private" => "Synchronised from Prestashop",
 			"note_public" => "",
 			"status" => "2",
-			"close_code" => NULL ,
-			"close_note" => NULL,
-			"project_id" => NULL,
+			"close_code" => null ,
+			"close_note" => null,
+			"project_id" => null,
 			"lines"  => array(
 				array(
-				"id"  => NULL,
+				"id"  => null,
 				"type" => 0,
 				"desc" => "Horloge Vinyle Serge",
 				"vat_rate" => 20,
@@ -404,7 +413,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	print __METHOD__." result=".$result['result']['result_code'].$result['result']['result_label']."\n";
     	$this->assertEquals('OK',$result['result']['result_code']);
-    	$this->assertEquals('165', $result['ref_ext']);
+    	$this->assertEquals('ref-phpunit-2', $result['ref_ext']);
 
 
     	return $result;

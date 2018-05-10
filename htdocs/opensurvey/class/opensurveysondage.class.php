@@ -34,19 +34,20 @@ require_once(DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php");
  */
 class Opensurveysondage extends CommonObject
 {
-	var $element='opensurvey_sondage';			//!< Id that identify managed objects
-	var $table_element='opensurvey_sondage';	//!< Name of table without prefix where object is stored
+	public $element='opensurvey_sondage';			//!< Id that identify managed objects
+	public $table_element='opensurvey_sondage';	//!< Name of table without prefix where object is stored
+    public $picto = 'opensurvey';
 
-	var $id_sondage;
+	public $id_sondage;
 	/**
 	 * @deprecated
 	 * @see description
 	 */
-	var $commentaires;
+	public $commentaires;
 	public $description;
 
-	var $mail_admin;
-	var $nom_admin;
+	public $mail_admin;
+	public $nom_admin;
 
 	/**
 	 * Id of user author of the poll
@@ -54,10 +55,11 @@ class Opensurveysondage extends CommonObject
 	 */
 	public $fk_user_creat;
 
-	var $titre;
-	var $date_fin='';
-	var $format;
-	var $mailsonde;
+	public $titre;
+	public $date_fin='';
+	public $status=1;
+	public $format;
+	public $mailsonde;
 
 	public $sujet;
 
@@ -72,6 +74,22 @@ class Opensurveysondage extends CommonObject
 	 * @var bool
 	 */
 	public $allow_spy;
+
+
+	/**
+	 * Draft status (not used)
+	 */
+	const STATUS_DRAFT = 0;
+	/**
+	 * Validated/Opened status
+	 */
+	const STATUS_VALIDATED = 1;
+	/**
+	 * Closed
+	 */
+	const STATUS_CLOSED = 2;
+
+
 
     /**
      *  Constructor
@@ -92,7 +110,7 @@ class Opensurveysondage extends CommonObject
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
-    function create($user, $notrigger=0)
+    function create(User $user, $notrigger=0)
     {
 		$error=0;
 
@@ -115,6 +133,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= "fk_user_creat,";
 		$sql.= "titre,";
 		$sql.= "date_fin,";
+		$sql.= "status,";
 		$sql.= "format,";
 		$sql.= "mailsonde,";
 		$sql.= "allow_comments,";
@@ -127,6 +146,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " ".$user->id.",";
 		$sql.= " '".$this->db->escape($this->titre)."',";
 		$sql.= " '".$this->db->idate($this->date_fin)."',";
+		$sql.= " ".$this->status.",";
 		$sql.= " '".$this->db->escape($this->format)."',";
 		$sql.= " ".$this->db->escape($this->mailsonde).",";
 		$sql.= " ".$this->db->escape($this->allow_comments).",";
@@ -180,7 +200,7 @@ class Opensurveysondage extends CommonObject
      *  @param	string	$numsurvey			Ref of survey (admin or not)
      *  @return int          				<0 if KO, >0 if OK
      */
-    function fetch($id,$numsurvey='')
+    function fetch($id, $numsurvey='')
     {
     	$sql = "SELECT";
 		$sql.= " t.id_sondage,";
@@ -190,6 +210,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " t.fk_user_creat,";
 		$sql.= " t.titre,";
 		$sql.= " t.date_fin,";
+		$sql.= " t.status,";
 		$sql.= " t.format,";
 		$sql.= " t.mailsonde,";
 		$sql.= " t.allow_comments,";
@@ -208,8 +229,7 @@ class Opensurveysondage extends CommonObject
                 $obj = $this->db->fetch_object($resql);
 
 				$this->id_sondage = $obj->id_sondage;
-				//For compatibility
-				$this->ref = $this->id_sondage;
+				$this->ref = $this->id_sondage;             //For compatibility
 
 				$this->commentaires = $obj->description;	// deprecated
 				$this->description = $obj->description;
@@ -217,6 +237,7 @@ class Opensurveysondage extends CommonObject
 				$this->nom_admin = $obj->nom_admin;
 				$this->titre = $obj->titre;
 				$this->date_fin = $this->db->jdate($obj->date_fin);
+				$this->status = $obj->status;
 				$this->format = $obj->format;
 				$this->mailsonde = $obj->mailsonde;
 				$this->allow_comments = $obj->allow_comments;
@@ -254,7 +275,7 @@ class Opensurveysondage extends CommonObject
      *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
      *  @return int     		   	 <0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update(User $user, $notrigger=0)
     {
     	global $conf, $langs;
 		$error=0;
@@ -274,6 +295,7 @@ class Opensurveysondage extends CommonObject
 		$sql.= " nom_admin=".(isset($this->nom_admin)?"'".$this->db->escape($this->nom_admin)."'":"null").",";
 		$sql.= " titre=".(isset($this->titre)?"'".$this->db->escape($this->titre)."'":"null").",";
 		$sql.= " date_fin=".(dol_strlen($this->date_fin)!=0 ? "'".$this->db->idate($this->date_fin)."'" : 'null').",";
+		$sql.= " status=".(isset($this->status)?"'".$this->db->escape($this->status)."'":"null").",";
 		$sql.= " format=".(isset($this->format)?"'".$this->db->escape($this->format)."'":"null").",";
 		$sql.= " mailsonde=".(isset($this->mailsonde)?$this->db->escape($this->mailsonde):"null").",";
 		$sql.= " allow_comments=".$this->db->escape($this->allow_comments).",";
@@ -291,15 +313,12 @@ class Opensurveysondage extends CommonObject
 		{
 			if (! $notrigger)
 			{
-	            // Uncomment this and change MYOBJECT to your own tag if you
-	            // want this action calls a trigger.
-
-	            //// Call triggers
-	            //include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
-	            //$interface=new Interfaces($this->db);
-	            //$result=$interface->run_triggers('MYOBJECT_MODIFY',$this,$user,$langs,$conf);
-	            //if ($result < 0) { $error++; $this->errors=$interface->errors; }
-	            //// End call triggers
+	            // Call triggers
+	            include_once DOL_DOCUMENT_ROOT . '/core/class/interfaces.class.php';
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('OPENSURVEY_MODIFY',$this,$user,$langs,$conf);
+	            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	            // End call triggers
 	    	}
 		}
 
@@ -321,17 +340,16 @@ class Opensurveysondage extends CommonObject
 		}
     }
 
-
- 	/**
-	 *  Delete object in database
-	 *
+    /**
+     *  Delete object in database
+     *
      *	@param  User	$user        		User that deletes
      *  @param  int		$notrigger	 		0=launch triggers after, 1=disable triggers
      *  @param	string	$numsondage			Num sondage admin to delete
-	 *  @return	int					 		<0 if KO, >0 if OK
-	 */
-	function delete($user, $notrigger, $numsondage)
-	{
+     *  @return	int					 		<0 if KO, >0 if OK
+     */
+    function delete(User $user, $notrigger, $numsondage)
+    {
 		global $conf, $langs;
 		$error=0;
 
@@ -385,6 +403,63 @@ class Opensurveysondage extends CommonObject
 	}
 
 	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
+	 */
+	function getNomUrl($withpicto=0, $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	{
+		global $db, $conf, $langs;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+
+		$result = '';
+		$companylink = '';
+
+		$label = '<u>' . $langs->trans("ShowSurvey") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref.'<br>';
+		$label.= '<b>' . $langs->trans('Title') . ':</b> ' . $this->title.'<br>';
+
+		$url = DOL_URL_ROOT.'/opensurvey/card.php?id='.$this->id;
+
+		// Add param to save lastsearch_values or not
+		$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+		if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+		if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+
+		$linkclose='';
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowMyObject");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		}
+		else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
+		return $result;
+	}
+
+	/**
 	 * Return array of lines
 	 *
 	 * @return 	int		<0 if KO, >0 if OK
@@ -428,12 +503,13 @@ class Opensurveysondage extends CommonObject
 		$this->id=0;
 
 		$this->id_sondage='';
-		$this->commentaires='';
+		$this->commentaires='Comment of the specimen survey';
 		$this->mail_admin='';
 		$this->nom_admin='';
-		$this->titre='';
-		$this->date_fin='';
-		$this->format='';
+		$this->titre='This is a specimen survey';
+		$this->date_fin=dol_now()+3600*24*10;
+		$this->status=1;
+		$this->format='classic';
 		$this->mailsonde='';
 	}
 
@@ -518,10 +594,74 @@ class Opensurveysondage extends CommonObject
 		$this->mail_admin = trim($this->mail_admin);
 		$this->nom_admin = trim($this->nom_admin);
 		$this->titre = trim($this->titre);
+		$this->status = trim($this->status);
 		$this->format = trim($this->format);
 		$this->mailsonde = ($this->mailsonde ? 1 : 0);
 		$this->allow_comments = ($this->allow_comments ? 1 : 0);
 		$this->allow_spy = ($this->allow_spy ? 1 : 0);
 		$this->sujet = trim($this->sujet);
 	}
+
+
+	/**
+	 *	Return status label of Order
+	 *
+	 *	@param      int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *	@return     string      		Libelle
+	 */
+	function getLibStatut($mode)
+	{
+	    return $this->LibStatut($this->status,$mode);
+	}
+
+	/**
+	 *	Return label of status
+	 *
+	 *	@param		int		$status      	  Id statut
+	 *	@param      int		$mode        	  0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @return     string					  Label of status
+	 */
+	function LibStatut($status,$mode)
+	{
+	    global $langs, $conf;
+
+	    //print 'x'.$status.'-'.$billed;
+	    if ($mode == 0)
+	    {
+	        if ($status==self::STATUS_DRAFT) return $langs->trans('Draft');
+	        if ($status==self::STATUS_VALIDATED) return $langs->trans('Opened');
+	        if ($status==self::STATUS_CLOSED) return $langs->trans('Closed');
+	    }
+	    elseif ($mode == 1)
+	    {
+	        if ($status==self::STATUS_DRAFT) return $langs->trans('Draft');
+	        if ($status==self::STATUS_VALIDATED) return $langs->trans('Opened');
+	        if ($status==self::STATUS_CLOSED) return $langs->trans('Closed');
+	    }
+	    elseif ($mode == 2)
+	    {
+	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'),'statut1').' '.$langs->trans('Opened');
+	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6').' '.$langs->trans('Closed');
+	    }
+	    elseif ($mode == 3)
+	    {
+	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0');
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened'),'statut1');
+	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6');
+	    }
+	    elseif ($mode == 4)
+	    {
+	        if ($status==self::STATUS_DRAFT) return img_picto($langs->trans('Draft'),'statut0').' '.$langs->trans('Draft');
+	        if ($status==self::STATUS_VALIDATED) return img_picto($langs->trans('Opened').$billedtext,'statut1').' '.$langs->trans('Opened');
+	        if ($status==self::STATUS_CLOSED) return img_picto($langs->trans('Closed'),'statut6').' '.$langs->trans('Closed');
+	    }
+	    elseif ($mode == 5)
+	    {
+	        if ($status==self::STATUS_DRAFT) return '<span class="hideonsmartphone">'.$langs->trans('Draft').' </span>'.img_picto($langs->trans('Draft'),'statut0');
+	        if ($status==self::STATUS_VALIDATED) return '<span class="hideonsmartphone">'.$langs->trans('Opened').' </span>'.img_picto($langs->trans('Opened'),'statut1');
+	        if ($status==self::STATUS_CLOSED) return '<span class="hideonsmartphone">'.$langs->trans('Closed').' </span>'.img_picto($langs->trans('Closed'),'statut6');
+	    }
+	}
+
 }

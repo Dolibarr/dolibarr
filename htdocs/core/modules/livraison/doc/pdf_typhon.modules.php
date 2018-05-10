@@ -3,7 +3,7 @@
  * Copyright (C) 2005-2014 Regis Houssin         <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  * Copyright (C) 2008      Chiptronik
- * Copyright (C) 2011-2012 Philippe Grand        <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand        <philippe.grand@atoo-net.com>
  * Copyright (C) 2015      Marcos García         <marcosgdf@gmail.com>
 
  * This program is free software; you can redistribute it and/or modify
@@ -65,11 +65,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("sendings");
-		$langs->load("companies");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills", "sendings", "companies"));
 
 		$this->db = $db;
 		$this->name = "typhon";
@@ -139,14 +137,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("deliveries");
-		$outputlangs->load("sendings");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "products", "sendings", "deliveries"));
 
 		if ($conf->expedition->dir_output)
 		{
@@ -204,7 +197,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
                 // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -283,11 +276,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 						$pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
 						$nexY = $pdf->GetY();
 						$height_incoterms=$nexY-$tab_top;
-	
+
 						// Rect prend une longueur en 3eme param
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
-	
+
 						$tab_top = $nexY+6;
 						$height_incoterms += 4;
 					}
@@ -315,9 +308,9 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					$height_note=0;
 				}
 
-				$iniY = $tab_top + 7;
-				$curY = $tab_top + 7;
-				$nexY = $tab_top + 7;
+				$iniY = $tab_top + 11;
+				$curY = $tab_top + 11;
+				$nexY = $tab_top + 11;
 
 				// Loop on each lines
 				for ($i = 0 ; $i < $nblines ; $i++)
@@ -422,7 +415,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 					if (! empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
-						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(210,210,210)));
+						$pdf->SetLineStyle(array('dash'=>'1,1','color'=>array(80,80,80)));
 						//$pdf->SetDrawColor(190,190,200);
 						$pdf->line($this->marge_gauche, $nexY+1, $this->page_largeur - $this->marge_droite, $nexY+1);
 						$pdf->SetLineStyle(array('dash'=>0));
@@ -566,6 +559,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 				if (! empty($conf->global->MAIN_UMASK))
 					@chmod($file, octdec($conf->global->MAIN_UMASK));
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;	// pas d'erreur
 			}
 			else
@@ -637,7 +632,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
 		if (empty($hidetop))
 		{
-			$pdf->line($this->marge_gauche, $tab_top+6, $this->page_largeur-$this->marge_droite, $tab_top+6);
+			$pdf->line($this->marge_gauche, $tab_top+10, $this->page_largeur-$this->marge_droite, $tab_top+10);
 		}
 
 		$pdf->SetDrawColor(128,128,128);
@@ -660,14 +655,14 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		$pdf->line($this->posxqty, $tab_top, $this->posxqty, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxqty, $tab_top+1);
-			$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 2, $outputlangs->transnoentities("QtyShipped"),'','R');
+			$pdf->MultiCell($this->posxremainingqty - $this->posxqty, 2, $outputlangs->transnoentities("QtyShippedShort"),'','R');
 		}
 
 		// Remain to ship
 		$pdf->line($this->posxremainingqty, $tab_top, $this->posxremainingqty, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxremainingqty, $tab_top+1);
-			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxremainingqty, 2, $outputlangs->transnoentities("KeepToShip"),'','R');
+			$pdf->MultiCell($this->page_largeur-$this->marge_droite-$this->posxremainingqty, 2, $outputlangs->transnoentities("KeepToShipShort"),'','R');
 		}
 	}
 
@@ -742,12 +737,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			$pdf->SetTextColor(0,0,60);
 		}
 
-		if ($object->client->code_client)
+		if ($object->thirdparty->code_client)
 		{
 			$posy+=5;
 			$pdf->SetXY($posx,$posy);
 			$pdf->SetTextColor(0,0,60);
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->client->code_client), '', 'R');
+			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("CustomerCode")." : " . $outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
 		}
 
 		$pdf->SetTextColor(0,0,60);
@@ -797,7 +792,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur);
+			$carac_emetteur = pdf_build_address($outputlangs,$this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=42;
@@ -849,12 +844,12 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {
-				$thirdparty = $object->client;
+				$thirdparty = $object->thirdparty;
 			}
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->client,($usecontact?$object->contact:''),$usecontact,'target');
+			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target',$object);
 
 			// Show recipient
 			$widthrecbox=100;
@@ -897,7 +892,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	 */
 	function _pagefoot(&$pdf,$object,$outputlangs,$hidefreetext=0)
 	{
-		$showdetails=0;
+		global $conf;
+		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'DELIVERY_FREE_TEXT',$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 

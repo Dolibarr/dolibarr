@@ -144,24 +144,3 @@ abstract class ModeleNumRefDeliveryOrder
 		return $langs->trans("NotAvailable");
 	}
 }
-
-
-
-/**
- *	Create object on disk
- *
- *	@param	DoliDB		$db  			objet base de donnee
- *	@param	Livraison		$object			object delivery
- *	@param	string		$modele			force le modele a utiliser ('' to not force)
- *	@param	Translate	$outputlangs	objet lang a utiliser pour traduction
- *  @return int         				0 if KO, 1 if OK
- * @deprecated Use the new function generateDocument of Livraison class
- * @see Livraison::generateDocument()
- */
-function delivery_order_pdf_create(DoliDB $db, Livraison $object, $modele, $outputlangs='')
-{
-	dol_syslog(__METHOD__ . " is deprecated", LOG_WARNING);
-
-	return $object->generateDocument($modele, $outputlangs);
-}
-

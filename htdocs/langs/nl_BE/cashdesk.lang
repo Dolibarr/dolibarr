@@ -1,0 +1,9 @@
+# Dolibarr language file - Source file is en_US - cashdesk
+CashDeskBankCheque=Bankrekening (cheque)
+CashdeskShowServices=Verkoop van diensten
+SellFinished=Verkoop afgerond
+BankToPay=Betalingsaccount
+ShowCompany=Toon bedrijf
+ShowStock=Toon magazijn
+UserNeedPermissionToEditStockToUsePos=U vraagt ​​om de stock te verminderen bij de aanmaak van een factuur, dus de gebruiker die POS gebruikt moet rechten hebben om stock te bewerken.
+DolibarrReceiptPrinter=Dolibarr Ontvangsten Printer

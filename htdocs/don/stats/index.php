@@ -49,6 +49,7 @@ $endyear=$year;
 
 $langs->load("sendings");
 $langs->load("other");
+$langs->load("companies");
 
 
 /*
@@ -223,7 +224,7 @@ $type='donation_stats';
 
 complete_head_from_modules($conf,$langs,null,$head,$h,$type);
 
-dol_fiche_head($head,'byyear',$langs->trans("Statistics"));
+dol_fiche_head($head, 'byyear', $langs->trans("Statistics"), -1);
 
 
 print '<div class="fichecenter"><div class="fichethirdleft">';
@@ -240,11 +241,11 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 	print '<tr><td align="left">'.$langs->trans("ThirdParty").'</td><td align="left">';
 	if ($mode == 'customer') $filter='s.client in (1,2,3)';
 	if ($mode == 'supplier') $filter='s.fournisseur = 1';
-	print $form->select_company($socid,'socid',$filter,1);
+	print $form->select_company($socid,'socid',$filter,1,0,0,array(),0,'','style="width: 95%"');
 	print '</td></tr>';
 	// User
 	print '<tr><td align="left">'.$langs->trans("CreatedBy").'</td><td align="left">';
-	print $form->select_dolusers($userid,'userid',1);
+	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
 	print '</td></tr>';
 	// Year
 	print '<tr><td align="left">'.$langs->trans("Year").'</td><td align="left">';
@@ -276,7 +277,7 @@ foreach ($data as $val)
 		$oldyear--;
 		print '<tr height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.'">'.$oldyear.'</a></td>';
-	
+
 		print '<td align="right">0</td>';
 		/*print '<td align="right">0</td>';
 		print '<td align="right">0</td>';*/
@@ -299,7 +300,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

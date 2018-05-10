@@ -1,0 +1,4 @@
+# Dolibarr language file - Source file is en_US - workflow
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Maak automatisch een klantenfactuur na validatie van een contract
+AutomaticCreation=Automatische aanmaak
+AutomaticClassification=Automatische classificatie

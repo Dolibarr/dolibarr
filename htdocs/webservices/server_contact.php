@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      JF FERRY             <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,8 +21,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-// This is to make Dolibarr working with Plesk
-set_include_path($_SERVER['DOCUMENT_ROOT'].'/htdocs');
+if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
 
 require_once("../master.inc.php");
 require_once(NUSOAP_PATH.'/nusoap.php');		// Include SOAP
@@ -121,7 +120,8 @@ $contact_fields = array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
-if (count($extrafields)>0) {
+$extrafield_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -133,7 +133,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
-$contact_fields=array_merge($contact_fields,$extrafield_array);
+if (is_array($extrafield_array)) $contact_fields=array_merge($contact_fields,$extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -311,7 +311,7 @@ function getContact($authentication,$id,$ref_ext)
             	$extrafields=new ExtraFields($db);
             	$extralabels=$extrafields->fetch_name_optionals_label('socpeople',true);
             	//Get extrafield values
-            	$contact->fetch_optionals($contact->id,$extralabels);
+            	$contact->fetch_optionals();
 
             	foreach($extrafields->attribute_label as $key=>$label)
             	{
@@ -660,7 +660,7 @@ function updateContact($authentication,$contact)
 			$object->civility_id=$contact['civility_id'];
 			$object->poste=$contact['poste'];
 
-			$object->statut=$contact['statut'];
+			$object->statut=$contact['status'];
 
 
 			//Retreive all extrafield for contact

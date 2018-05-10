@@ -2,6 +2,7 @@
 /* Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2009      Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2016      Juanjo Menent	    <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,15 +50,13 @@ llxHeader('',$langs->trans("ChequesArea"));
 
 print load_fiche_titre($langs->trans("ChequesArea"));
 
-//print '<table border="0" width="100%" class="notopnoleftnoright">';
-//print '<tr><td valign="top" width="30%" class="notopnoleft">';
 print '<div class="fichecenter"><div class="fichethirdleft">';
 
 $sql = "SELECT count(b.rowid)";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE ba.rowid = b.fk_account";
-$sql.= " AND ba.entity IN (".getEntity('bank_account', 1).")";
+$sql.= " AND ba.entity IN (".getEntity('bank_account').")";
 $sql.= " AND b.fk_type = 'CHQ'";
 $sql.= " AND b.fk_bordereau = 0";
 $sql.= " AND b.amount > 0";
@@ -66,7 +65,7 @@ $resql = $db->query($sql);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("BankChecks")."</td>\n";
+print '<th colspan="2">'.$langs->trans("BankChecks")."</th>\n";
 print "</tr>\n";
 
 if ($resql)
@@ -76,7 +75,7 @@ if ($resql)
     {
       $num = $row[0];
     }
-  print "<tr ".$bc[$var].">";
+  print '<tr class="oddeven">';
   print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
   print '<td align="right">';
   print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/card.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
@@ -89,33 +88,32 @@ else
 }
 
 
-//print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $max=10;
 
-$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.number as ref";
-$sql.= ", bc.statut, bc.nbcheque";
-$sql.= ", ba.label, ba.rowid as bid";
-$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-$sql.= ", ".MAIN_DB_PREFIX."bank_account as ba";
+$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
+$sql.= " bc.statut, bc.nbcheque,";
+$sql.= " ba.ref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
+$sql.= " aj.code";
+$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
 $sql.= " WHERE ba.rowid = bc.fk_bank_account";
 $sql.= " AND bc.entity = ".$conf->entity;
 $sql.= " ORDER BY bc.date_bordereau DESC, rowid DESC";
 $sql.= $db->plimit($max);
 
 $resql = $db->query($sql);
-
 if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("LastCheckReceiptShort",$max).'</td>';
-	print '<td>'.$langs->trans("Date")."</td>";
-	print '<td>'.$langs->trans("Account").'</td>';
-	print '<td align="right">'.$langs->trans("NbOfCheques").'</td>';
-	print '<td align="right">'.$langs->trans("Amount").'</td>';
-	print '<td align="right">'.$langs->trans("Status").'</td>';
+	print '<th>'.$langs->trans("LastCheckReceiptShort",$max).'</th>';
+	print '<th>'.$langs->trans("Date")."</th>";
+	print '<th>'.$langs->trans("Account").'</th>';
+	print '<th align="right">'.$langs->trans("NbOfCheques").'</th>';
+	print '<th align="right">'.$langs->trans("Amount").'</th>';
+	print '<th align="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
 	$var=true;
@@ -126,10 +124,15 @@ if ($resql)
 	    $checkdepositstatic->statut=$objp->statut;
 
 		$accountstatic->id=$objp->bid;
+		$accountstatic->ref=$objp->ref;
 		$accountstatic->label=$objp->label;
+		$accountstatic->number=$objp->number;
+		$accountstatic->currency_code=$objp->currency_code;
+		$accountstatic->account_number=$objp->account_number;
+		$accountstatic->accountancy_journal=$objp->code;
+		$accountstatic->fk_accountancy_journal=$objp->fk_accountancy_journal;
 
-		$var=!$var;
-		print "<tr ".$bc[$var].">\n";
+		print '<tr class="oddeven">'."\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
 		print '<td>'.dol_print_date($db->jdate($objp->db),'day').'</td>';
@@ -141,15 +144,15 @@ if ($resql)
 		print '</tr>';
 	}
 	print "</table>";
+
 	$db->free($resql);
 }
 else
 {
-  dol_print_error($db);
+    dol_print_error($db);
 }
 
 
-//print "</td></tr></table>\n";
 print '</div></div></div>';
 
 llxFooter();

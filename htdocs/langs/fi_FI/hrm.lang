@@ -1,0 +1,17 @@
+# Dolibarr language file - en_US - hrm
+# Admin
+HRM_EMAIL_EXTERNAL_SERVICE=Sähköposti esto HRM ulkoinen palvelu
+Establishments=Laitokset
+Establishment=Laitos
+NewEstablishment=Uusi laitos
+DeleteEstablishment=Poista laitos
+ConfirmDeleteEstablishment=Haluatko varmasti poistaa tämän laitoksen
+OpenEtablishment=Avaa laitos
+CloseEtablishment=Sulje laitos
+# Dictionary
+DictionaryDepartment=HRM - Osastolista
+DictionaryFunction=HRM - Toimintolista
+# Module
+Employees=Työntekijät
+Employee=Työntekijä
+NewEmployee=Uusi työntekijä

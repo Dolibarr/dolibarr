@@ -33,12 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
 $langs->load("banks");
 $langs->load("categories");
+$langs->load("bills");
+$langs->load("withdrawals");
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();
-
-$langs->load("bills");
-$langs->load("withdrawals");
 
 // Get supervariables
 $action = GETPOST('action','alpha');
@@ -68,7 +67,7 @@ if ($action == 'confirm_rejet')
 		{
 			$error++;
 			$langs->load("error");
-			setEventMessage($langs->transnoentities("ErrorDateMustBeBeforeToday"),'errors');
+			setEventMessages($langs->transnoentities("ErrorDateMustBeBeforeToday"), null, 'errors');
 		}
 
 		if (GETPOST('motif','alpha') == 0)
@@ -251,7 +250,7 @@ if ($id)
 
 
 
-	if ($page == -1) { $page = 0 ; }
+	if ($page == -1 || $page == null) { $page = 0 ; }
 
 	$offset = $conf->liste_limit * $page ;
 	$pageprev = $page - 1;
@@ -261,7 +260,7 @@ if ($id)
 	if ($sortfield == "") $sortfield="pl.fk_soc";
 
 	/*
-	 * Liste des factures
+	 * List of invoices
 	 */
 	$sql = "SELECT pf.rowid";
 	$sql.= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc, f.paye, f.fk_statut";
@@ -298,22 +297,19 @@ if ($id)
 		print '<td>'.$langs->trans("Invoice").'</td><td>'.$langs->trans("ThirdParty").'</td><td align="right">'.$langs->trans("Amount").'</td><td align="right">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
-		$var=True;
-
 		$total = 0;
 
-		$var=false;
 		while ($i < min($num,$conf->liste_limit))
 		{
 			$obj = $db->fetch_object($result);
 
-			print "<tr ".$bc[$var]."><td>";
+			print '<tr class="oddeven"><td>';
 
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
+			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">';
 			print img_object($langs->trans("ShowBill"),"bill");
 			print '</a>&nbsp;';
 
-			print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
+			print '<a href="'.DOL_URL_ROOT.'/compta/facture/card.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
 			print '<td><a href="'.DOL_URL_ROOT.'/comm/card.php?socid='.$obj->socid.'">';
 			print img_object($langs->trans("ShowCompany"),"company"). ' '.$obj->name."</a></td>\n";
