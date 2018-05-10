@@ -186,15 +186,15 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
     //print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
-    if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
-
 	// Get more permissions checks from hooks
 	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
 	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
 	if (! empty($hookmanager->resArray['result'])) return true;
 	if ($reshook > 0) return false;
 
-    // Features/modules to check
+	if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
+
+	// Features/modules to check
     $featuresarray = array($features);
     if (preg_match('/&/', $features)) $featuresarray = explode("&", $features);
     else if (preg_match('/\|/', $features)) $featuresarray = explode("|", $features);
