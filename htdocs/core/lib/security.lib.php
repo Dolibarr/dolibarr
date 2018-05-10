@@ -111,21 +111,23 @@ function dol_hash($chain,$type=0)
  */
 function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
-    global $db, $conf;
+	global $db, $conf;
+	global $hookmanager;
 
     //dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
     //print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
     //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
     //print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
-    // If we use canvas, we try to use function that overlod restrictarea if provided with canvas
-    if (is_object($objcanvas))
-    {
-        if (method_exists($objcanvas->control,'restrictedArea')) return $objcanvas->control->restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
-    }
-
     if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 
+	// Get more permissions checks from hooks
+	$hookmanager->initHooks(array('permissions'));
+	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
+	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
+	if (isset($hookmanager->resArray['result']) && empty($hookmanager->resArray['result']) return false;
+	if ($reshook > 0) return true;
+	
     // Features/modules to check
     $featuresarray = array($features);
     if (preg_match('/&/', $features)) $featuresarray = explode("&", $features);
@@ -206,7 +208,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check write permission from module
     $createok=1; $nbko=0;
-    if (GETPOST("action")  == 'create')
+    if (GETPOST("action","apha")  == 'create')
     {
         foreach ($featuresarray as $feature)
         {
@@ -261,7 +263,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check create user permission
     $createuserok=1;
-    if (GETPOST("action") == 'confirm_create_user' && GETPOST("confirm") == 'yes')
+    if (GETPOST("action","alpha") == 'confirm_create_user' && GETPOST("confirm","alpha") == 'yes')
     {
         if (! $user->rights->user->user->creer) $createuserok=0;
 
@@ -271,7 +273,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check delete permission from module
     $deleteok=1; $nbko=0;
-    if ((GETPOST("action")  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST("action")  == 'delete')
+    if ((GETPOST("action","alpha")  == 'confirm_delete' && GETPOST("confirm","alpha") == 'yes') || GETPOST("action","alpha")  == 'delete')
     {
         foreach ($featuresarray as $feature)
         {
@@ -334,13 +336,6 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     	if (!checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select))
 			accessforbidden();
     }
-
-	// get more permissions checks from hooks
-	global $hookmanager;
-	$hookmanager->initHooks(array('permissions'));
-	$parameters=array('features'=>$features,'objectid'=>preg_replace("/'/", '', $objectid),'idtype'=>$dbt_select);
-	$reshook=$hookmanager->executeHooks('restricted',$parameters);
-	if ($reshook < 0) accessforbidden();
 
     return 1;
 }
