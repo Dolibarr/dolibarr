@@ -189,7 +189,6 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 
 	// Get more permissions checks from hooks
-	$hookmanager->initHooks(array('permissions'));
 	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
 	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
 	if (! empty($hookmanager->resArray['result']) return true;
