@@ -182,6 +182,7 @@ class HookManager
 				'printTabsHead',
 				'printObjectLine',
 				'printObjectSubLine',
+				'restrictedArea',
 				'sendMail',
 				'sendMailAfter',
 				'showLinkToObjectBlock',

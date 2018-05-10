@@ -165,14 +165,6 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'approuver';
 
-		/*$r++;
-		$this->rights[$r][0] = 1191;
-		$this->rights[$r][1] = 'Approuver une commande fournisseur (si supérieur hiérarchique)';
-		$this->rights[$r][2] = 'w';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'commande';
-		$this->rights[$r][5] = 'approve_ifsupervisor_advance';*/
-
 		$r++;
 		$this->rights[$r][0] = 1186;
 		$this->rights[$r][1] = 'Commander une commande fournisseur';
@@ -205,6 +197,24 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][4] = 'commande';
 		$this->rights[$r][5] = 'supprimer';
 
+		if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
+		{
+			$r++;
+			$this->rights[$r][0] = 1190;
+			$this->rights[$r][1] = 'Approve supplier order (second level)';		// $langs->trans("Permission1190");
+			$this->rights[$r][2] = 'w';
+			$this->rights[$r][3] = 0;
+			$this->rights[$r][4] = 'commande';
+			$this->rights[$r][5] = 'approve2';
+		}
+
+		$r++;
+		$this->rights[$r][0] = 1191;
+		$this->rights[$r][1] = 'Exporter les commande fournisseurs, attributs';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'commande';
+		$this->rights[$r][5] = 'export';
 
 		$r++;
 		$this->rights[$r][0] = 1231;
@@ -253,25 +263,6 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'facture';
 		$this->rights[$r][5] = 'export';
-
-		$r++;
-		$this->rights[$r][0] = 1237;
-		$this->rights[$r][1] = 'Exporter les commande fournisseurs, attributs';
-		$this->rights[$r][2] = 'r';
-		$this->rights[$r][3] = 0;
-		$this->rights[$r][4] = 'commande';
-		$this->rights[$r][5] = 'export';
-
-	    if (! empty($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED))
-	    {
-			$r++;
-		    $this->rights[$r][0] = 1190;
-			$this->rights[$r][1] = 'Approve supplier order (second level)';		// $langs->trans("Permission1190");
-			$this->rights[$r][2] = 'w';
-			$this->rights[$r][3] = 0;
-			$this->rights[$r][4] = 'commande';
-			$this->rights[$r][5] = 'approve2';
-	    }
 
 
 	    // Menus
