@@ -191,9 +191,9 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 	// Get more permissions checks from hooks
 	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
 	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
-	if (! empty($hookmanager->resArray['result']) return true;
+	if (! empty($hookmanager->resArray['result'])) return true;
 	if ($reshook > 0) return false;
-	
+
     // Features/modules to check
     $featuresarray = array($features);
     if (preg_match('/&/', $features)) $featuresarray = explode("&", $features);
