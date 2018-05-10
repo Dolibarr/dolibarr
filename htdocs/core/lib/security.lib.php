@@ -333,8 +333,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     // is linked to a company allowed to $user.
     if (! empty($objectid) && $objectid > 0)
     {
-    	if (!checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select))
-			accessforbidden();
+		$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);	+    	if (!checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select))
+		return $ok ? 1 : accessforbidden();
     }
 
     return 1;
