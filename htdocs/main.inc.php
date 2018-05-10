@@ -1253,35 +1253,6 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 			}
 		}
 
-		//Overload css files to the current module
-		// Check if the /module/style folder exists and add the contains css files to head
-		$cur_modulepart = explode("/",$_SERVER["PHP_SELF"]);
-		if(is_array($cur_modulepart) && count($cur_modulepart)>0)
-		{
-			foreach($conf->modules as $module)
-			{
-				if(in_array($module, $cur_modulepart))
-				{
-					if (file_exists(getcwd().DIRECTORY_SEPARATOR."style"))
-					{
-						//browse the style dir and add the contains css files
-						if ($handle = opendir(getcwd().DIRECTORY_SEPARATOR."style"))
-						{
-							while (false !== ($entry = readdir($handle))) 
-							{
-								list($filename, $extension) = explode(".", $entry);
-								if ($entry !== '.' && $entry !== '..' && $extension == 'css')
-								{
-									print '<link rel="stylesheet" type="text/css" href="'.dirname($_SERVER["PHP_SELF"])."/style/".$entry.'">'."\n";
-								}
-							}
-							closedir($handle);
-						}
-					}
-				}
-			}
-		}
-
 		// CSS forced by modules (relative url starting with /)
 		if (! empty($conf->modules_parts['css']))
 		{
