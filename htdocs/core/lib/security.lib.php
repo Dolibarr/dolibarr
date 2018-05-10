@@ -125,8 +125,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 	$hookmanager->initHooks(array('permissions'));
 	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
 	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
-	if (isset($hookmanager->resArray['result']) && empty($hookmanager->resArray['result']) return false;
-	if ($reshook > 0) return true;
+	if (! empty($hookmanager->resArray['result']) return true;
+	if ($reshook > 0) return false;
 	
     // Features/modules to check
     $featuresarray = array($features);
