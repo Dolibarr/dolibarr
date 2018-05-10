@@ -42,8 +42,12 @@ $amounts = $_POST['amounts'];				// from text inputs : invoice amount payment (c
 $remains = $_POST['remains'];				// from dolibarr's object (no need to check)
 $currentInvId = $_POST['imgClicked'];		// from DOM elements : imgId (equals invoice id)
 
+if (empty($amountPayment)) {
+	$amountPayment = false;
+}
+
 // Getting the posted keys=>values, sanitize the ones who are from text inputs
-$amountPayment = $amountPayment!='' ? 	( is_numeric(price2num($amountPayment))	? price2num($amountPayment) : '' ) : '';			// keep void if not a valid entry
+$amountPayment = $amountPayment ?	( is_numeric(price2num($amountPayment))	? price2num($amountPayment) : false ) : false;			// keep void if not a valid entry
 
 // Clean checkamounts
 foreach ($amounts as $key => $value)
@@ -61,7 +65,7 @@ foreach ($remains as $key => $value)
 }
 
 // Treatment
-$result = $amountPayment != '' ? ($amountPayment - array_sum($amounts)) : ($amountPayment + array_sum($amounts));					// Remaining amountPayment
+$result = $amountPayment ? ($amountPayment - array_sum($amounts)) : array_sum($amounts);					// Remaining amountPayment
 $toJsonArray = 	array();
 $totalRemaining = price2num(array_sum($remains));
 $toJsonArray['label'] = $amountPayment == '' ? '' : $langs->transnoentities('RemainingAmountPayment');
