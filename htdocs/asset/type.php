@@ -26,6 +26,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset_type.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
+if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
 $langs->load("assets");
 
@@ -232,8 +235,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 		print '<tr class="liste_titre">';
 		print '<th>'.$langs->trans("Ref").'</th>';
 		print '<th>'.$langs->trans("Label").'</th>';
-		print '<th align="center">'.$langs->trans("SubscriptionRequired").'</th>';
-		print '<th align="center">'.$langs->trans("VoteAllowed").'</th>';
+		print '<th align="center">'.$langs->trans("AccountancyCodeAsset").'</th>';
+		print '<th align="center">'.$langs->trans("AccountancyCodeDepreciationAsset").'</th>';
+		print '<th align="center">'.$langs->trans("AccountancyCodeDepreciationExpense").'</th>';
 		print '<th>&nbsp;</th>';
 		print "</tr>\n";
 
@@ -253,9 +257,44 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 			//<a href="'.$_SERVER["PHP_SELF"].'?rowid='.$objp->rowid.'">'.img_object($langs->trans("ShowType"),'group').' '.$objp->rowid.'</a>
 			print '</td>';
 			print '<td>'.dol_escape_htmltag($objp->label).'</td>';
-			print '<td align="center">'.yn($objp->subscription).'</td>';
-			print '<td align="center">'.yn($objp->vote).'</td>';
-			if ($user->rights->asset->configurer)
+
+			print '<td>';
+			if (! empty($conf->accounting->enabled))
+			{
+				$accountingaccount = new AccountingAccount($db);
+				$accountingaccount->fetch('',$object->accountancy_code_asset,1);
+
+				print $accountingaccount->getNomUrl(0,1,1,'',1);
+			} else {
+				print $object->accountancy_code_asset;
+			}
+			print '</td>';
+
+			print '<td>';
+			if (! empty($conf->accounting->enabled))
+			{
+				$accountingaccount2 = new AccountingAccount($db);
+				$accountingaccount2->fetch('',$object->accountancy_code_depreciation_asset,1);
+
+				print $accountingaccount2->getNomUrl(0,1,1,'',1);
+			} else {
+				print $object->accountancy_code_depreciation_asset;
+			}
+			print '</td>';
+
+			print '<td>';
+			if (! empty($conf->accounting->enabled))
+			{
+				$accountingaccount3 = new AccountingAccount($db);
+				$accountingaccount3->fetch('',$object->accountancy_code_depreciation_expense,1);
+
+				print $accountingaccount3->getNomUrl(0,1,1,'',1);
+			} else {
+				print $object->accountancy_code_depreciation_expense;
+			}
+			print '</td>';
+
+			if ($user->rights->asset->write)
 				print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</a></td>';
 			else
 				print '<td align="right">&nbsp;</td>';
@@ -282,8 +321,9 @@ if (! $rowid && $action != 'create' && $action != 'edit')
 if ($action == 'create')
 {
 	$object = new AssetType($db);
+	if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
-	print load_fiche_titre($langs->trans("NewMemberType"));
+	print load_fiche_titre($langs->trans("NewAssetType"));
 
 	print '<form action="'.$_SERVER['PHP_SELF'].'" method="POST">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -296,22 +336,47 @@ if ($action == 'create')
 
 	print '<tr><td class="titlefieldcreate fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40"></td></tr>';
 
-	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-	print $form->selectyesno("subscription",1,1);
-	print '</td></tr>';
+	if (! empty($conf->accounting->enabled))
+	{
+		// Accountancy_code_asset
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_asset, 'accountancy_code_asset', 1, '', 1, 1);
+		print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-	print $form->selectyesno("vote",0,1);
-	print '</td></tr>';
+		// Accountancy_code_depreciation_expense
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationAsset").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_depreciation_asset, 'accountancy_code_depreciation_asset', 1, '', 1, 1);
+		print '</td></tr>';
+
+		// Accountancy_code_depreciation_expense
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationExpense").'</td>';
+		print '<td>';
+		print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
+		print '</td></tr>';
+
+	}
+	else // For external software
+	{
+		// Accountancy_code_asset
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
+		print '<td><input name="accountancy_code_asset" class="maxwidth200" value="'.$object->accountancy_code_asset.'">';
+		print '</td></tr>';
+
+		// Accountancy_code_depreciation_asset
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationAsset").'</td>';
+		print '<td><input name="accountancy_code_depreciation_asset" class="maxwidth200" value="'.$object->accountancy_code_depreciation_asset.'">';
+		print '</td></tr>';
+
+		// Accountancy_code_depreciation_expense
+		print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationExpense").'</td>';
+		print '<td><input name="accountancy_code_depreciation_expense" class="maxwidth200" value="'.$object->accountancy_code_depreciation_expense.'">';
+		print '</td></tr>';
+	}
 
 	print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 	print '<textarea name="comment" wrap="soft" class="centpercent" rows="3"></textarea></td></tr>';
-
-	print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-	$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
-	$doleditor->Create();
-	print '</td></tr>';
 
 	// Other attributes
 	$parameters=array();
@@ -356,9 +421,9 @@ if ($rowid > 0)
 			print $form->formconfirm($_SERVER['PHP_SELF']."?rowid=".$object->id,$langs->trans("DeleteAMemberType"),$langs->trans("ConfirmDeleteMemberType",$object->label),"confirm_delete", '',0,1);
 		}
 
-		$head = member_type_prepare_head($object);
+		$head = asset_type_prepare_head($object);
 
-		dol_fiche_head($head, 'card', $langs->trans("MemberType"), -1, 'group');
+		dol_fiche_head($head, 'card', $langs->trans("AssetType"), -1, 'setup');
 
 		$linkback = '<a href="'.DOL_URL_ROOT.'/asset/type.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
@@ -369,19 +434,44 @@ if ($rowid > 0)
 
 		print '<table class="border" width="100%">';
 
-		print '<tr><td class="titlefield">'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print yn($object->subscription);
 		print '</tr>';
+		if (! empty($conf->accounting->enabled))
+		{
+			$accountingaccount = new AccountingAccount($db);
+			$accountingaccount->fetch('',$object->accountancy_code_asset,1);
 
-		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-		print yn($object->vote);
+			print $accountingaccount->getNomUrl(0,1,1,'',1);
+		} else {
+			print $object->accountancy_code_asset;
+		}
+		print '</td>';
+
+		print '<td>';
+		if (! empty($conf->accounting->enabled))
+		{
+			$accountingaccount2 = new AccountingAccount($db);
+			$accountingaccount2->fetch('',$object->accountancy_code_depreciation_asset,1);
+
+			print $accountingaccount2->getNomUrl(0,1,1,'',1);
+		} else {
+			print $object->accountancy_code_depreciation_asset;
+		}
+		print '</td>';
+
+		print '<td>';
+		if (! empty($conf->accounting->enabled))
+		{
+			$accountingaccount3 = new AccountingAccount($db);
+			$accountingaccount3->fetch('',$object->accountancy_code_depreciation_expense,1);
+
+			print $accountingaccount3->getNomUrl(0,1,1,'',1);
+		} else {
+			print $object->accountancy_code_depreciation_expense;
+		}
 		print '</tr>';
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print nl2br($object->note)."</td></tr>";
-
-		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		print nl2br($object->mail_valid)."</td></tr>";
 
 		// Other attributes
 		include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -612,35 +702,6 @@ if ($rowid > 0)
 				print $adh->LibStatut($objp->statut,$objp->subscription,$datefin,2);
 				print "</td>";
 
-				// Date end subscription
-				if ($datefin)
-				{
-					print '<td align="center" class="nowrap">';
-					if ($datefin < dol_now() && $objp->statut > 0)
-					{
-						print dol_print_date($datefin,'day')." ".img_warning($langs->trans("SubscriptionLate"));
-					}
-					else
-					{
-						print dol_print_date($datefin,'day');
-					}
-					print '</td>';
-				}
-				else
-				{
-					print '<td align="left" class="nowrap">';
-					if ($objp->subscription == 'yes')
-					{
-						print $langs->trans("SubscriptionNotReceived");
-						if ($objp->statut > 0) print " ".img_warning();
-					}
-					else
-					{
-						print '&nbsp;';
-					}
-					print '</td>';
-				}
-
 				// Actions
 				print '<td align="center">';
 				if ($user->rights->asset->creer)
@@ -685,15 +746,16 @@ if ($rowid > 0)
 		$object = new AssetType($db);
 		$object->fetch($rowid);
 		$object->fetch_optionals();
+		if (! empty($conf->accounting->enabled)) $formaccounting = new FormAccounting($db);
 
-		$head = member_type_prepare_head($object);
+		$head = asset_type_prepare_head($object);
 
 		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$object->id.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 		print '<input type="hidden" name="rowid" value="'.$object->id.'">';
 		print '<input type="hidden" name="action" value="update">';
 
-		dol_fiche_head($head, 'card', $langs->trans("MemberType"), 0, 'group');
+		dol_fiche_head($head, 'card', $langs->trans("AssetsType"), -1, 'setup');
 
 		print '<table class="border" width="100%">';
 
@@ -701,22 +763,47 @@ if ($rowid > 0)
 
 		print '<tr><td class="fieldrequired">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="40" value="'.dol_escape_htmltag($object->label).'"></td></tr>';
 
-		print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-		print $form->selectyesno("subscription",$object->subscription,1);
-		print '</td></tr>';
+		if (! empty($conf->accounting->enabled))
+		{
+			// Accountancy_code_asset
+			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
+			print '<td>';
+			print $formaccounting->select_account($object->accountancy_code_asset, 'accountancy_code_asset', 1, '', 1, 1);
+			print '</td></tr>';
 
-		print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-		print $form->selectyesno("vote",$object->vote,1);
-		print '</td></tr>';
+			// Accountancy_code_depreciation_expense
+			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationAsset").'</td>';
+			print '<td>';
+			print $formaccounting->select_account($object->accountancy_code_depreciation_asset, 'accountancy_code_depreciation_asset', 1, '', 1, 1);
+			print '</td></tr>';
+
+			// Accountancy_code_depreciation_expense
+			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationExpense").'</td>';
+			print '<td>';
+			print $formaccounting->select_account($object->accountancy_code_depreciation_expense, 'accountancy_code_depreciation_expense', 1, '', 1, 1);
+			print '</td></tr>';
+
+		}
+		else // For external software
+		{
+			// Accountancy_code_asset
+			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeAsset").'</td>';
+			print '<td><input name="accountancy_code_asset" class="maxwidth200" value="'.$object->accountancy_code_asset.'">';
+			print '</td></tr>';
+
+			// Accountancy_code_depreciation_asset
+			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationAsset").'</td>';
+			print '<td><input name="accountancy_code_depreciation_asset" class="maxwidth200" value="'.$object->accountancy_code_depreciation_asset.'">';
+			print '</td></tr>';
+
+			// Accountancy_code_depreciation_expense
+			print '<tr><td class="titlefield">'.$langs->trans("AccountancyCodeDepreciationExpense").'</td>';
+			print '<td><input name="accountancy_code_depreciation_expense" class="maxwidth200" value="'.$object->accountancy_code_depreciation_expense.'">';
+			print '</td></tr>';
+		}
 
 		print '<tr><td class="tdtop">'.$langs->trans("Description").'</td><td>';
 		print '<textarea name="comment" wrap="soft" class="centpercent" rows="3">'.$object->note.'</textarea></td></tr>';
-
-		print '<tr><td class="tdtop">'.$langs->trans("WelcomeEMail").'</td><td>';
-		require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
-		$doleditor=new DolEditor('mail_valid',$object->mail_valid,'',280,'dolibarr_notes','',false,true,$conf->fckeditor->enabled,15,'90%');
-		$doleditor->Create();
-		print "</td></tr>";
 
 		// Other attributes
 		$parameters=array();
