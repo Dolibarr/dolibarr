@@ -373,7 +373,7 @@ class Stripe extends CommonObject
 		);
 		$return = new Stripe($this->db);
 		try {
-			if (empty($conf->stripeconnect->enabled))
+			if (empty($conf->stripeconnect->enabled) || $conf->entity==1)
 			{
 				if (preg_match('/acct_/i', $source))
 				{
