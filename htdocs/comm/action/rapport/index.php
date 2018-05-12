@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/action/rapport.pdf.php';
 
-$langs->load("agenda");
-$langs->load("commercial");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("agenda", "commercial"));
 
 $action=GETPOST('action','alpha');
 $month=GETPOST('month');
@@ -138,7 +138,6 @@ if ($resql)
 	print '<td align="center">'.$langs->trans("Size").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	while ($i < min($num,$limit))
 	{
 		$obj=$db->fetch_object($resql);

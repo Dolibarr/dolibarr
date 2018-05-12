@@ -42,12 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("other");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("agenda");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda"));
 
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
@@ -1603,7 +1599,6 @@ if ($id > 0)
             $genallowed=$user->rights->agenda->myactions->read;
 	        $delallowed=$user->rights->agenda->myactions->create;
 
-            $var=true;
 
             print $formfile->showdocuments('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
 
