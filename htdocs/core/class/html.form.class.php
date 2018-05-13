@@ -5542,7 +5542,7 @@ class Form
 
 
 	/**
-	 *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
+	 *	Return a HTML select string, built from an array of key+value, but content returned into select come from an Ajax call of an URL.
 	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
 	 *	@param	string	$htmlname       		Name of html select area
@@ -5557,7 +5557,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
-	 *  @see ajax_combobox in ajax.lib.php
+	 *  @see selectArrayFilter, ajax_combobox in ajax.lib.php
 	 */
 	static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
 	{
@@ -5618,7 +5618,7 @@ class Form
                 /* Code to execute a GET when we select a value */
                 $(".'.$htmlname.'").change(function() {
 			    	var selected = $(".'.$htmlname.'").val();
-                	console.log("We select "+selected)
+                	console.log("We select in selectArrayAjax the entry "+selected)
 			        $(".'.$htmlname.'").val("");  /* reset visible combo value */
     			    $.each( saveRemoteData, function( key, value ) {
     				        if (key == selected)
@@ -5644,7 +5644,7 @@ class Form
 	}
 
 	/**
-	 *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
+	 *	Return a HTML select string, built from an array of key+value, but content returned into select is defined into $array parameter.
 	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
 	 *	@param	string	$htmlname       		Name of html select area
@@ -5659,7 +5659,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
-	 *  @see ajax_combobox in ajax.lib.php
+	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
 	 */
 	static function selectArrayFilter($htmlname, $array, $id='', $moreparam='', $disableFiltering=0, $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
 	{
@@ -5708,8 +5708,9 @@ class Form
 
 						var urlBase = data.url;
 						var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
-
-						saveRemoteData[data.id].url = urlBase + separ + "sall=" + params.term;';
+						/* console.log("params.term="+params.term); */
+						/* console.log("params.term encoded="+encodeURIComponent(params.term)); */
+						saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term);';
 		}
 
 		if(! $disableFiltering) {
