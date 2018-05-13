@@ -108,12 +108,12 @@ class FormContract
 						else
 						{
 							$disabled=0;
-							if (! $obj->statut > 0)
+							if ( $obj->statut ==  0)
 							{
 								$disabled=1;
 								$labeltoshow.=' ('.$langs->trans("Draft").')';
 							}
-							if ($socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
+							if ( empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY) &&  $socid > 0 && (! empty($obj->fk_soc) && $obj->fk_soc != $socid))
 							{
 								$disabled=1;
 								$labeltoshow.=' - '.$langs->trans("LinkedToAnotherCompany");
