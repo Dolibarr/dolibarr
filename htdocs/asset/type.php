@@ -488,7 +488,7 @@ if ($rowid > 0)
 		print '<div class="tabsAction">';
 
 		// Edit
-		if ($user->rights->asset->configurer)
+		if ($user->rights->asset->write)
 		{
 			print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=edit&amp;rowid='.$object->id.'">'.$langs->trans("Modify").'</a></div>';
 		}
@@ -497,7 +497,7 @@ if ($rowid > 0)
 		print '<div class="inline-block divButAction"><a class="butAction" href="card.php?action=create&typeid='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?rowid='.$object->id).'">'.$langs->trans("AddMember").'</a></div>';
 
 		// Delete
-		if ($user->rights->asset->configurer)
+		if ($user->rights->asset->write)
 		{
 			print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&rowid='.$object->id.'">'.$langs->trans("DeleteType").'</a></div>';
 		}
@@ -505,8 +505,7 @@ if ($rowid > 0)
 		print "</div>";
 
 
-		// Show list of members (nearly same code than in page list.php)
-
+		// Show list of assets (nearly same code than in page list.php)
 		$assettypestatic=new AssetType($db);
 
 		$now=dol_now();
@@ -516,7 +515,7 @@ if ($rowid > 0)
 		$sql.= " a.fk_asset_type as type_id,";
 		$sql.= " t.label as type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."asset as a, ".MAIN_DB_PREFIX."asset_type as t";
-		$sql.= " WHERE a.fk_asset_type = t.rowid ";
+		$sql.= " WHERE a.fk_asset_type = t.rowid";
 		$sql.= " AND a.entity IN (".getEntity('asset').")";
 		$sql.= " AND t.rowid = ".$object->id;
 		if ($sall)
@@ -531,8 +530,8 @@ if ($rowid > 0)
 		{
 			if (GETPOST('search','alpha'))
 			{
-		  		$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search','alpha'));
-		  	}
+				$sql.= natural_search(array("d.firstname","d.lastname"), GETPOST('search','alpha'));
+			}
 		}
 		if (! empty($search_lastname))
 		{
