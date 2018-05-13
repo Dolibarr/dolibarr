@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2012-2013  Charles-Fr BENKE		<charles.fr@benke.fr>
+/* Copyright (C) 2012-2018  Charlene BENKE	<charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,7 +57,7 @@ class FormContract
 		global $db,$user,$conf,$langs;
 
 		$hideunselectables = false;
-		if (! empty($conf->global->PROJECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (! empty($conf->global->SELECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		// Search all contacts
 		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut';
