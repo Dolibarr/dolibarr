@@ -72,7 +72,7 @@ class FormContract
 		    	else if ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')
 			{
 		        	$sql.= " AND (c.fk_soc IN (".$socid.", ".$conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") ";
-				$sql.= " OR p.fk_soc IS NULL)";
+				$sql.= " OR c.fk_soc IS NULL)";
 		    	}
 		}	
 		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
