@@ -45,13 +45,17 @@ $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object,
 print $hookmanager->resPrint;
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-//var_dump($extrafields->attributes);
+//var_dump($extrafields->attributes[$object->table_element]);
 if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]['label']))
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
 		// Discard if extrafield is a hidden field on form
 		$enabled = 1;
+		if ($enabled && isset($extrafields->attributes[$object->table_element]['enabled'][$key]))
+		{
+			$enabled = dol_eval($extrafields->attributes[$object->table_element]['enabled'][$key], 1);
+		}
 		if ($enabled && isset($extrafields->attributes[$object->table_element]['list'][$key]))
 		{
 			$enabled = dol_eval($extrafields->attributes[$object->table_element]['list'][$key], 1);

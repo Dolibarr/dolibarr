@@ -39,38 +39,50 @@ class ExtraFields
 	var $db;
 
 	// type of element (for what object is the extrafield)
+	// @deprecated
 	var $attribute_elementtype;
-
 	// Array with type of the extra field
+	// @deprecated
 	var $attribute_type;
 	// Array with label of extra field
+	// @deprecated
 	var $attribute_label;
 	// Array with size of extra field
+	// @deprecated
 	var $attribute_size;
 	// array with list of possible values for some types of extra fields
+	// @deprecated
 	var $attribute_choice;
 	// Array to store compute formula for computed fields
+	// @deprecated
 	var $attribute_computed;
 	// Array to store default value
+	// @deprecated
 	var $attribute_default;
 	// Array to store if attribute is unique or not
+	// @deprecated
 	var $attribute_unique;
 	// Array to store if attribute is required or not
+	// @deprecated
 	var $attribute_required;
 	// Array to store parameters of attribute (used in select type)
+	// @deprecated
 	var $attribute_param;
 	// Array to store position of attribute
+	// @deprecated
 	var $attribute_pos;
 	// Array to store if attribute is editable regardless of the document status
+	// @deprecated
 	var $attribute_alwayseditable;
 	// Array to store permission to check
+	// @deprecated
 	var $attribute_perms;
 	// Array to store language file to translate label of values
+	// @deprecated
 	var $attribute_langfile;
 	// Array to store if field is visible by default on list
+	// @deprecated
 	var $attribute_list;
-	// Array to store if extra field is hidden
-	var $attribute_hidden;		// warning, do not rely on this. If your module need a hidden data, it must use its own table.
 
 	// New array to store extrafields definition
 	var $attributes;
@@ -126,7 +138,6 @@ class ExtraFields
 		$this->attribute_perms = array();
 		$this->attribute_langfile = array();
 		$this->attribute_list = array();
-		$this->attribute_hidden = array();
 	}
 
 	/**
@@ -758,7 +769,7 @@ class ExtraFields
 		// We should not have several time this log. If we have, there is some optimization to do by calling a simple $object->fetch_optionals() that include cache management.
 		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity,enabled";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";	// Filed with object->table_element
@@ -812,6 +823,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
 					$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
+					$this->attributes[$tab->elementtype]['enabled'][$tab->name]=$tab->enabled;
 
 					$this->attributes[$tab->elementtype]['loaded']=1;
 				}
@@ -884,7 +896,7 @@ class ExtraFields
 			$param=$this->attribute_param[$key];
 			$langfile=$this->attribute_langfile[$key];
 			$list=$this->attribute_list[$key];
-			$hidden=$this->attribute_hidden[$key];
+			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
 		if ($computed)
