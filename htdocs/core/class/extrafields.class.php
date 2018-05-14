@@ -1779,13 +1779,14 @@ class ExtraFields
 				}
 				else if (in_array($key_type,array('price','double')))
 				{
-					$value_arr=GETPOST("options_".$key);
+					$value_arr=GETPOST("options_".$key, 'alpha');
 					$value_key=price2num($value_arr);
 				}
 				else
 				{
 					$value_key=GETPOST("options_".$key);
 				}
+
 				$object->array_options["options_".$key]=$value_key;
 			}
 

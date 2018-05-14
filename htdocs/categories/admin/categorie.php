@@ -38,7 +38,7 @@ $action=GETPOST('action','aZ09');
  *	Actions
  */
 
-if (preg_match('/set_(.*)/',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -52,7 +52,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
     }
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)

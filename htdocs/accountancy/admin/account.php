@@ -176,10 +176,10 @@ $pcgver = $conf->global->CHARTOFACCOUNTS;
 $sql = "SELECT aa.rowid, aa.fk_pcg_version, aa.pcg_type, aa.pcg_subtype, aa.account_number, aa.account_parent , aa.label, aa.active, ";
 $sql .= " a2.rowid as rowid2, a2.label as label2, a2.account_number as account_number2";
 $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version AND aa.entity = " . $conf->entity;
 // Dirty hack wainting that foreign key account_parent is an integer to be compared correctly with rowid
-if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS INTEGER)";
-else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS UNSIGNED)";
+if ($db->type == 'pgsql') $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS INTEGER) AND a2.entity = " . $conf->entity;
+else $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_account as a2 ON a2.rowid = CAST(aa.account_parent AS UNSIGNED) AND a2.entity = " . $conf->entity;
 $sql .= " WHERE asy.rowid = " . $pcgver;
 
 if (strlen(trim($search_account)))			$sql .= natural_search("aa.account_number", $search_account);

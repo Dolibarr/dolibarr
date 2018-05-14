@@ -1072,8 +1072,6 @@ if (empty($reshook))
 							$fk_parent_line = 0;
 							$num = count($lines);
 
-							$productsupplier = new ProductFournisseur($db);
-
 							for($i = 0; $i < $num; $i ++)
 							{
 
@@ -1081,7 +1079,7 @@ if (empty($reshook))
 									continue;
 
 								$label = (! empty($lines[$i]->label) ? $lines[$i]->label : '');
-								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->libelle);
+								$desc = (! empty($lines[$i]->desc) ? $lines[$i]->desc : $lines[$i]->product_desc);
 								$product_type = (! empty($lines[$i]->product_type) ? $lines[$i]->product_type : 0);
 
 								// Reset fk_parent_line for no child products and special product
@@ -1097,43 +1095,57 @@ if (empty($reshook))
 									$array_option = $lines[$i]->array_options;
 								}
 
-								$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $srcobject->socid);
-								if ($result>=0)
+								$ref_supplier = '';
+								$product_fourn_price_id = 0;
+								if ($origin == "commande")
 								{
-									$tva_tx = $lines[$i]->tva_tx;
-
-									if ($origin=="commande")
+									$productsupplier = new ProductFournisseur($db);
+									$result = $productsupplier->find_min_price_product_fournisseur($lines[$i]->fk_product, $lines[$i]->qty, $srcobject->socid);
+									if ($result > 0)
 									{
-										$soc=new societe($db);
-										$soc->fetch($socid);
-										$tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $productsupplier->product_fourn_price_id);
+										$ref_supplier = $productsupplier->ref_supplier;
+										$product_fourn_price_id = $productsupplier->product_fourn_price_id;
 									}
-
-									$result = $object->addline(
-										$desc,
-										$lines[$i]->subprice,
-										$lines[$i]->qty,
-										$tva_tx,
-										$lines[$i]->localtax1_tx,
-										$lines[$i]->localtax2_tx,
-										$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
-										$productsupplier->product_fourn_price_id,
-										$productsupplier->ref_supplier,
-										$lines[$i]->remise_percent,
-										'HT',
-										0,
-										$lines[$i]->product_type,
-										'',
-										'',
-										null,
-										null,
-										array(),
-										$lines[$i]->fk_unit,
-										0,
-										$element,
-										!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
-									);
 								}
+								else
+								{
+									$ref_supplier = $lines[$i]->ref_fourn;
+									$product_fourn_price_id = 0;
+								}
+
+								$tva_tx = $lines[$i]->tva_tx;
+
+								if ($origin=="commande")
+								{
+									$soc=new societe($db);
+									$soc->fetch($socid);
+									$tva_tx=get_default_tva($soc, $mysoc, $lines[$i]->fk_product, $product_fourn_price_id);
+								}
+
+								$result = $object->addline(
+									$desc,
+									$lines[$i]->subprice,
+									$lines[$i]->qty,
+									$tva_tx,
+									$lines[$i]->localtax1_tx,
+									$lines[$i]->localtax2_tx,
+									$lines[$i]->fk_product > 0 ? $lines[$i]->fk_product : 0,
+									$product_fourn_price_id,
+									$ref_supplier,
+									$lines[$i]->remise_percent,
+									'HT',
+									0,
+									$lines[$i]->product_type,
+									'',
+									'',
+									null,
+									null,
+									array(),
+									$lines[$i]->fk_unit,
+									0,
+									$element,
+									!empty($lines[$i]->id) ? $lines[$i]->id : $lines[$i]->rowid
+								);
 
 								if ($result < 0) {
 									$error++;

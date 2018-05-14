@@ -4847,7 +4847,8 @@ abstract class CommonObject
 			$type = 'varchar';		// convert varchar(xx) int varchar
 			$size = $reg[1];
 		}
-		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) int varchar
+		elseif (preg_match('/varchar/', $type)) $type = 'varchar';		// convert varchar(xx) into varchar
+		elseif (preg_match('/double/', $type)) $type = 'double';		// convert double(xx) into double
 		if (is_array($val['arrayofkeyval'])) $type='select';
 		if (preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)) $type='link';
 
@@ -4922,7 +4923,6 @@ abstract class CommonObject
 			}
 		}
 		//var_dump($showsize.' '.$size);
-
 		if (in_array($type,array('date','datetime')))
 		{
 			$tmp=explode(',',$size);
@@ -5469,11 +5469,19 @@ abstract class CommonObject
 		elseif ($key == 'status' && method_exists($this, 'getLibStatut')) $value=$this->getLibStatut(3);
 		elseif ($type == 'date')
 		{
-			$value=dol_print_date($value,'day');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'day');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'datetime')
 		{
-			$value=dol_print_date($value,'dayhour');
+			if(! empty($value)) {
+				$value=dol_print_date($value,'dayhour');
+			} else {
+				$value='';
+			}
 		}
 		elseif ($type == 'double')
 		{
@@ -5775,9 +5783,9 @@ abstract class CommonObject
 						} else {
 							$value = $this->array_options["options_" . $key];			// No GET, no POST, no default value, so we take value of object.
 						}
+						//var_dump($keyprefix.' - '.$key.' - '.$keysuffix.' - '.$keyprefix.'options_'.$key.$keysuffix.' - '.$this->array_options["options_".$key.$keysuffix].' - '.$getposttemp.' - '.$value);
 						break;
 				}
-				//var_dump($value);
 
 				if ($extrafields->attribute_type[$key] == 'separate')
 				{
@@ -5802,12 +5810,12 @@ abstract class CommonObject
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
 					}
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
 					if (in_array($extrafields->attribute_type[$key],array('price','double')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix,'int',3)):$this->array_options['options_'.$key];
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?price2num(GETPOST($keyprefix.'options_'.$key.$keysuffix, 'alpha', 3)):$this->array_options['options_'.$key];
 					}
 
 					$labeltoshow = $langs->trans($label);
@@ -6278,7 +6286,7 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]))
+			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);

@@ -23,8 +23,8 @@
 
 // $mysoc must be defined
 // $id must be defined
-// $paramname must be defined
-// $mode must be defined (used to know the automatic BCC to add)
+// $paramname may be defined
+// $autocopy may be defined (used to know the automatic BCC to add)
 // $trigger_name must be set (can be '')
 // $actiontypecode can be set
 // $object and $uobject may be defined

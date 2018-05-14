@@ -49,7 +49,8 @@ $projectid=isset($_GET["id"])?$_GET["id"]:$_POST["projectid"];
 
 // Security check
 $socid=0;
-if ($user->societe_id > 0) $socid=$user->societe_id;
+// For external user, no check is done on company because readability is managed by public status of project and assignement.
+//if ($user->societe_id > 0) $socid=$user->societe_id;
 $result = restrictedArea($user, 'projet', $projectid);
 
 $now=dol_now();
@@ -496,7 +497,8 @@ $restrictviewformytask=(empty($conf->global->PROJECT_TIME_SHOW_TASK_NOT_ASSIGNED
 $holiday = new Holiday($db);
 $isavailable=array();
 
-$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse);	// $daytoparse is a date with hours = 0
+$statusofholidaytocheck = '3';
+$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholiday);	// $daytoparse is a date with hours = 0
 $isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
 if (count($tasksarray) > 0)

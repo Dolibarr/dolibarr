@@ -1410,7 +1410,7 @@ class SMTPs
 			$content = 'Content-Type: ' . $_msgData['mimeType'] . '; charset="' . $this->getCharSet() . '"' . "\r\n"
 			. 'Content-Transfer-Encoding: ' . $this->getTransEncodeType() . "\r\n"
 			. 'Content-Disposition: inline'  . "\r\n"
-			. 'Content-Description: message' . "\r\n";
+			. 'Content-Description: Message' . "\r\n";
 
 			if ( $this->getMD5flag() )
 			$content .= 'Content-MD5: ' . $_msgData['md5'] . "\r\n";
@@ -1459,7 +1459,7 @@ class SMTPs
 						.  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Transfer-Encoding: base64' . "\r\n"
-						.  'Content-Description: File Attachment' . "\r\n";
+						.  'Content-Description: ' . $_data['fileName'] ."\r\n";
 
 						if ( $this->getMD5flag() )
 						$content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";

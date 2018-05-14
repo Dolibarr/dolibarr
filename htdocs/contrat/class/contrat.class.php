@@ -237,7 +237,13 @@ class Contrat extends CommonObject
 	 */
 	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
-		return $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
+		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
+		if ($result < 0)
+		{
+			$this->error = $this->lines[$this->lines_id_index_mapper[$line_id]]->error;
+			$this->errors = $this->lines[$this->lines_id_index_mapper[$line_id]]->errors;
+		}
+		return $result;
 	}
 
 
@@ -252,7 +258,13 @@ class Contrat extends CommonObject
 	 */
 	function close_line($user, $line_id, $date_end, $comment='')
 	{
-		return $this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
+		$result=$this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
+		if ($result < 0)
+		{
+			$this->error = $this->lines[$this->lines_id_index_mapper[$line_id]]->error;
+			$this->errors = $this->lines[$this->lines_id_index_mapper[$line_id]]->errors;
+		}
+		return $result;
 	}
 
 
