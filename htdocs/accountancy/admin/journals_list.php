@@ -102,7 +102,7 @@ $tabfieldvalue[35]= "code,label,nature";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[35]= "code,label,nature,entity";
+$tabfieldinsert[35]= "code,label,nature";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
