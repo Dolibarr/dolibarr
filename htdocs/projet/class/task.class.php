@@ -1215,7 +1215,8 @@ class Task extends CommonObject
         $sql.= " task_date_withhour = ".(empty($this->timespent_withhour)?0:1).",";
         $sql.= " task_duration = ".$this->timespent_duration.",";
         $sql.= " fk_user = ".$this->timespent_fk_user.",";
-        $sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null");
+        $sql.= " note = ".(isset($this->timespent_note)?"'".$this->db->escape($this->timespent_note)."'":"null").',';
+        $sql.= " thm = (SELECT thm FROM ".MAIN_DB_PREFIX."user WHERE rowid = ".$this->timespent_fk_user.")";
         $sql.= " WHERE rowid = ".$this->timespent_id;
 
         dol_syslog(get_class($this)."::updateTimeSpent", LOG_DEBUG);
