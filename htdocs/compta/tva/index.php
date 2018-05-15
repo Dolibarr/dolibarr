@@ -105,14 +105,15 @@ function pt ($db, $sql, $date)
 
         $amountclaimed = 0;
         $amountpaid = 0;
+        $previousmonth = '';
         $previousmode = '';
         while ($i < $num) {
             $obj = $db->fetch_object($result);
-
+            //print $obj->dm.' '.$obj->mode.' '.$previousmonth.' '.$previousmode;
             if ($obj->mode == 'claimed' && ! empty($previousmode))
             {
             	print '<tr class="oddeven">';
-            	print '<td class="nowrap">'.$obj->dm."</td>\n";
+            	print '<td class="nowrap">'.$previousmonth."</td>\n";
             	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
             	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
             	print "</tr>\n";
@@ -129,7 +130,7 @@ function pt ($db, $sql, $date)
             if ($obj->mode == 'paid')
             {
             	$amountpaid = $obj->mm;
-            	$totalpaid = $totalpaid + $amountpaied;
+            	$totalpaid = $totalpaid + $amountpaid;
             }
 
             if ($obj->mode == 'paid')
@@ -142,10 +143,12 @@ function pt ($db, $sql, $date)
             	$amountclaimed = 0;
             	$amountpaid = 0;
             	$previousmode = '';
+            	$previousmonth = '';
             }
             else
             {
             	$previousmode = $obj->mode;
+            	$previousmonth = $obj->dm;
             }
 
             $i++;
@@ -154,7 +157,7 @@ function pt ($db, $sql, $date)
         if ($obj->mode == 'claimed' && ! empty($previousmode))
         {
         	print '<tr class="oddeven">';
-        	print '<td class="nowrap">'.$obj->dm."</td>\n";
+        	print '<td class="nowrap">'.$previousmonth."</td>\n";
         	print '<td class="nowrap" align="right">'.price($amountclaimed)."</td>\n";
         	print '<td class="nowrap" align="right">'.price($amountpaid)."</td>\n";
         	print "</tr>\n";
@@ -534,7 +537,7 @@ $sql.= " WHERE f.entity = ".$conf->entity;
 $sql.= " AND (f.datep >= '".$db->idate($date_start)."' AND f.datep <= '".$db->idate($date_end)."')";
 $sql.= " GROUP BY dm";
 
-$sql.= " ORDER BY dm ASC";
+$sql.= " ORDER BY dm ASC, mode ASC";
 //print $sql;
 
 pt($db, $sql, $langs->trans("Month"));
