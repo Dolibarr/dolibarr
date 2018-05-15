@@ -90,8 +90,8 @@ $date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GE
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q")?GETPOST("q"):0;
-	if ($q==0)
+	$q=GETPOST("q","int")?GETPOST("q","int"):0;
+	if (empty($q))
 	{
 		// We define date_start and date_end
 		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
