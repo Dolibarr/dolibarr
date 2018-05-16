@@ -311,23 +311,15 @@ class Expedition extends CommonObject
 					}
 				}
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$hookmanager->initHooks(array('expeditiondao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error && ! $notrigger)
 				{
@@ -1105,7 +1097,7 @@ class Expedition extends CommonObject
 			$error++;
 		}
 
-		if (! $error) 
+		if (! $error)
 		{
 			if (! $notrigger)
 			{
@@ -2690,19 +2682,21 @@ class ExpeditionLigne extends CommonObjectLine
 				$this->errors[]=$this->db->lasterror()." - sql=$sql";
 				$error++;
 			}
-			else
+		}
+
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$this->errors[]=$this->error;
-						$error++;
-					}
+					$this->errors[]=$this->error;
+					$error++;
 				}
 			}
 		}
+
 		if (! $error && ! $notrigger)
 		{
 			// Call trigger

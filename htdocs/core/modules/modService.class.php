@@ -85,28 +85,28 @@ class modService extends DolibarrModules
 		$r=0;
 
 		$this->rights[$r][0] = 531; // id de la permission
-		$this->rights[$r][1] = 'Lire les services'; // libelle de la permission
+		$this->rights[$r][1] = 'Read services'; // libelle de la permission
 		$this->rights[$r][2] = 'r'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'lire';
         $r++;
 
 		$this->rights[$r][0] = 532; // id de la permission
-		$this->rights[$r][1] = 'Creer/modifier les services'; // libelle de la permission
+		$this->rights[$r][1] = 'Create/modify services'; // libelle de la permission
 		$this->rights[$r][2] = 'w'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'creer';
         $r++;
 
 		$this->rights[$r][0] = 534; // id de la permission
-		$this->rights[$r][1] = 'Supprimer les services'; // libelle de la permission
+		$this->rights[$r][1] = 'Delete les services'; // libelle de la permission
 		$this->rights[$r][2] = 'd'; // type de la permission (deprecie a ce jour)
 		$this->rights[$r][3] = 0; // La permission est-elle une permission par defaut
 		$this->rights[$r][4] = 'supprimer';
         $r++;
 
 		$this->rights[$r][0] = 538;	// Must be same permission than in product module
-		$this->rights[$r][1] = 'Exporter les services';
+		$this->rights[$r][1] = 'Export services';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';

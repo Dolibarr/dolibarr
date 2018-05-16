@@ -90,12 +90,13 @@ $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_user = GETPOST('search_user','int');
 $search_sale = GETPOST('search_sale','int');
-$day	= GETPOST('day','int');
-$month	= GETPOST('month','int');
-$year	= GETPOST('year','int');
-$day_lim	= GETPOST('day_lim','int');
-$month_lim	= GETPOST('month_lim','int');
-$year_lim	= GETPOST('year_lim','int');
+$search_day	= GETPOST('search_day','int');
+$search_month	= GETPOST('search_month','int');
+$search_year	= GETPOST('search_year','int');
+$search_day_lim	= GETPOST('search_day_lim','int');
+$search_month_lim	= GETPOST('search_month_lim','int');
+$search_year_lim	= GETPOST('search_year_lim','int');
+$search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -103,7 +104,7 @@ if ($option == 'late') {
 }
 $filtre	= GETPOST('filtre','alpha');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -218,16 +219,18 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','a
 	$search_type='';
 	$search_country='';
 	$search_type_thirdparty='';
-	$day='';
-	$year='';
-	$month='';
+	$search_day='';
+	$search_year='';
+	$search_month='';
 	$option='';
 	$filter='';
-	$day_lim='';
-	$year_lim='';
-	$month_lim='';
+	$search_day_lim='';
+	$search_year_lim='';
+	$search_month_lim='';
 	$toselect='';
 	$search_array_options=array();
+	$search_categ_cus=0;
+
 }
 
 if (empty($reshook))
@@ -369,6 +372,8 @@ $sql.= " p.rowid as project_id, p.ref as project_ref, p.title as project_label";
 // We need dynamount_payed to be able to sort on status (value is surely wrong because we can count several lines several times due to other left join or link with contacts. But what we need is just 0 or > 0)
 // TODO Better solution to be able to sort on already payed or remain to pay is to store amount_payed in a denormalized field.
 if (! $sall) $sql.= ', SUM(pf.amount) as dynamount_payed';
+if ($search_categ_cus) $sql .= ", cc.fk_categorie, cc.fk_soc";
+
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -379,6 +384,8 @@ $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_country as country on (country.rowid = s.fk_pays)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_typent as typent on (typent.id = s.fk_typent)";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as state on (state.rowid = s.fk_departement)";
+if (! empty($search_categ_cus)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cc ON s.rowid = cc.fk_soc"; // We'll need this table joined to the select in order to filter by categ
+
 $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_extrafields as ef on (f.rowid = ef.fk_object)";
 if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid';
@@ -435,6 +442,8 @@ if ($search_montant_vat != '') $sql.= natural_search('f.tva', $search_montant_va
 if ($search_montant_localtax1 != '') $sql.= natural_search('f.localtax1', $search_montant_localtax1, 1);
 if ($search_montant_localtax2 != '') $sql.= natural_search('f.localtax2', $search_montant_localtax2, 1);
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
+if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
+if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
 if ($search_status != '' && $search_status >= 0)
 {
 	if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
@@ -443,31 +452,31 @@ if ($search_status != '' && $search_status >= 0)
 	if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
-if ($month > 0)
+if ($search_month > 0)
 {
-	if ($year > 0 && empty($day))
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
-	else if ($year > 0 && ! empty($day))
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+	if ($search_year > 0 && empty($search_day))
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,$search_month,false))."' AND '".$db->idate(dol_get_last_day($search_year,$search_month,false))."'";
+	else if ($search_year > 0 && ! empty($search_day))
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $serch_year))."'";
 	else
 	$sql.= " AND date_format(f.datef, '%m') = '".$month."'";
 }
-else if ($year > 0)
+else if ($search_year > 0)
 {
-	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
 if ($month_lim > 0)
 {
-	if ($year_lim > 0 && empty($day_lim))
-		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($year_lim,$month_lim,false))."' AND '".$db->idate(dol_get_last_day($year_lim,$month_lim,false))."'";
-	else if ($year_lim > 0 && ! empty($day_lim))
-		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month_lim, $day_lim, $year_lim))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month_lim, $day_lim, $year_lim))."'";
+	if ($search_year_lim > 0 && empty($search_day_lim))
+		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($search_year_lim,$search_month_lim,false))."' AND '".$db->idate(dol_get_last_day($search_year_lim,$search_month_lim,false))."'";
+	else if ($search_year_lim > 0 && ! empty($search_day_lim))
+		$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_lim, $search_day_lim, $search_year_lim))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_lim, $search_day_lim, $search_year_lim))."'";
 	else
-		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$db->escape($month_lim)."'";
+		$sql.= " AND date_format(f.date_lim_reglement, '%m') = '".$db->escape($search_month_lim)."'";
 }
-else if ($year_lim > 0)
+else if ($search_year_lim > 0)
 {
-	$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($year_lim,1,false))."' AND '".$db->idate(dol_get_last_day($year_lim,12,false))."'";
+	$sql.= " AND f.date_lim_reglement BETWEEN '".$db->idate(dol_get_first_day($search_year_lim,1,false))."' AND '".$db->idate(dol_get_last_day($search_year_lim,12,false))."'";
 }
 if ($option == 'late') $sql.=" AND f.date_lim_reglement < '".$db->idate(dol_now() - $conf->facture->client->warning_delay)."'";
 if ($search_sale > 0) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$search_sale;
@@ -515,6 +524,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1,$offset);
@@ -535,15 +549,15 @@ if ($resql)
 	}
 
 	$param='&socid='.$socid;
-	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall)				 $param.='&sall='.urlencode($sall);
-	if ($day)                $param.='&day='.urlencode($day);
-	if ($month)              $param.='&month='.urlencode($month);
-	if ($year)               $param.='&year=' .urlencode($year);
-	if ($day_lim)            $param.='&day_lim='.urlencode($day_lim);
-	if ($month_lim)          $param.='&month_lim='.urlencode($month_lim);
-	if ($year_lim)           $param.='&year_lim=' .urlencode($year_lim);
+	if ($search_day)         $param.='&search_day='.urlencode($search_day);
+	if ($search_month)       $param.='&search_month='.urlencode($search_month);
+	if ($search_year)        $param.='&search_year=' .urlencode($search_year);
+	if ($search_day_lim)     $param.='&search_day_lim='.urlencode($search_day_lim);
+	if ($search_month_lim)   $param.='&search_month_lim='.urlencode($search_month_lim);
+	if ($search_year_lim)    $param.='&search_year_lim=' .urlencode($search_year_lim);
 	if ($search_ref)         $param.='&search_ref=' .urlencode($search_ref);
 	if ($search_refcustomer) $param.='&search_refcustomer=' .urlencode($search_refcustomer);
 	if ($search_type != '')  $param.='&search_type='.urlencode($search_type);
@@ -558,9 +572,11 @@ if ($resql)
 	if ($search_montant_ttc != '') $param.='&search_montant_ttc='.urlencode($search_montant_ttc);
 	if ($search_status != '') $param.='&search_status='.urlencode($search_status);
 	if ($search_paymentmode > 0) $param.='search_paymentmode='.urlencode($search_paymentmode);
-	if ($show_files)         $param.='&show_files=' .$show_files;
-	if ($option)             $param.="&search_option=".$option;
-	if ($optioncss != '')    $param.='&optioncss='.$optioncss;
+	if ($show_files)         $param.='&show_files='.urlencode($show_files);
+	if ($option)             $param.="&search_option=".urlencode($option);
+	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
+	if ($search_categ_cus > 0) $param.='&search_categ_cus='.urlencode($search_categ_cus);
+
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -569,30 +585,27 @@ if ($resql)
 		'presend'=>$langs->trans("SendByMail"),
 		'builddoc'=>$langs->trans("PDFMerge"),
 	);
-	if ($conf->prelevement->enabled)
-	{
-	   $langs->load("withdrawals");
-	   $arrayofmassactions['withdrawrequest']=$langs->trans("MakeWithdrawRequest");
+	if ($conf->prelevement->enabled) {
+        	$langs->load("withdrawals");
+        	$arrayofmassactions['withdrawrequest'] = $langs->trans("MakeWithdrawRequest");
 	}
-	if ($user->rights->facture->supprimer)
-	{
-		//if (! empty($conf->global->STOCK_CALCULATE_ON_BILL) || empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED))
-		if (empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED))
-		{
-			// mass deletion never possible on invoices on such situation
+	if ($user->rights->facture->supprimer) {
+		if (!empty($conf->global->INVOICE_CAN_REMOVE_DRAFT_ONLY)) {
+        		$arrayofmassactions['predeletedraft'] = $langs->trans("Deletedraft");
 		}
-		else
-		{
-		   $arrayofmassactions['predelete']=$langs->trans("Delete");
-		}
-	}
-	if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+        	elseif (!empty($conf->global->INVOICE_CAN_ALWAYS_BE_REMOVED)) {	// mass deletion never possible on invoices on such situation
+            		$arrayofmassactions['predelete'] = $langs->trans("Delete");
+        	}
+    	}
+	if (in_array($massaction, array('presend', 'predelete'))) $arrayofmassactions = array();
 	$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
 	$newcardbutton='';
 	if($user->rights->facture->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create">'.$langs->trans('NewBill').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/facture/card.php?action=create">'.$langs->trans('NewBill');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	$i = 0;
@@ -649,6 +662,14 @@ if ($resql)
 		$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, null, 'parent', null, null, 1);
 		$moreforfilter.=$form->selectarray('search_product_category', $cate_arbo, $search_product_category, 1, 0, 0, '', 0, 0, 0, 0, 'maxwidth300', 1);
 		$moreforfilter.='</div>';
+	}
+	if (! empty($conf->categorie->enabled))
+	{
+		require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+		$moreforfilter.='<div class="divsearchfield">';
+	 	$moreforfilter.=$langs->trans('CustomersProspectsCategoriesShort').': ';
+		$moreforfilter.=$formother->select_categories('customer',$search_categ_cus,'search_categ_cus',1);
+	 	$moreforfilter.='</div>';
 	}
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -707,18 +728,18 @@ if ($resql)
 	if (! empty($arrayfields['f.date']['checked']))
 	{
 		print '<td class="liste_titre nowraponall" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
-		$formother->select_year($year?$year:-1,'year',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+		$formother->select_year($search_year?$search_year:-1,'search_year',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
 	}
 	// Date due
 	if (! empty($arrayfields['f.date_lim_reglement']['checked']))
 	{
 		print '<td class="liste_titre nowraponall" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="day_lim" value="'.dol_escape_htmltag($day_lim).'">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_lim" value="'.dol_escape_htmltag($month_lim).'">';
-		$formother->select_year($year_lim?$year_lim:-1,'year_lim',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
+		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
+		$formother->select_year($search_year_lim?$search_year_lim:-1,'search_year_lim',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
 		print '</td>';
 	}

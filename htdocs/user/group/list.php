@@ -45,6 +45,14 @@ $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alp
 $search_group=GETPOST('search_group');
 $optioncss = GETPOST('optioncss','alpha');
 
+// Defini si peux lire/modifier utilisateurs et permisssions
+$caneditperms=($user->admin || $user->rights->user->user->creer);
+// Advanced permissions
+if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+{
+	$caneditperms=($user->admin || $user->rights->user->group_advance->write);
+}
+
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield','alpha');
@@ -130,6 +138,14 @@ if ($resql)
 
     $text = $langs->trans("ListOfGroups");
 
+    $newcardbutton='';
+    if ($caneditperms)
+    {
+    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=">'.$langs->trans('NewGroup');
+    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    	$newcardbutton.= '</a>';
+    }
+
     print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -140,7 +156,7 @@ if ($resql)
     print '<input type="hidden" name="mode" value="'.$mode.'">';
     print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+    print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
 
     if ($sall)
     {

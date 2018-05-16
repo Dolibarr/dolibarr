@@ -33,6 +33,7 @@ PropalStatusSigned=Potpisana (za naplatu)
 PropalStatusNotSigned=Nepotpisana (zatvorena)
 PropalStatusBilled=Naplaćena
 PropalStatusDraftShort=Nacrt
+PropalStatusValidatedShort=Potvrđen
 PropalStatusClosedShort=Zatvorena
 PropalStatusSignedShort=Potpisana
 PropalStatusNotSignedShort=Nepotpisana

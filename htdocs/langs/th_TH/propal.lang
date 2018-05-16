@@ -33,6 +33,7 @@ PropalStatusSigned=ลงนาม (ความต้องการของ�
 PropalStatusNotSigned=ไม่ได้ลงชื่อ (ปิด)
 PropalStatusBilled=การเรียกเก็บเงิน
 PropalStatusDraftShort=ร่าง
+PropalStatusValidatedShort=ผ่านการตรวจสอบ
 PropalStatusClosedShort=ปิด
 PropalStatusSignedShort=ลงนาม
 PropalStatusNotSignedShort=ไม่ได้ลงนาม

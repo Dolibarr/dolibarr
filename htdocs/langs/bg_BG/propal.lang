@@ -33,6 +33,7 @@ PropalStatusSigned=Подписано (нужди фактуриране)
 PropalStatusNotSigned=Не сте (затворен)
 PropalStatusBilled=Таксува
 PropalStatusDraftShort=Проект
+PropalStatusValidatedShort=Валидирано
 PropalStatusClosedShort=Затворен
 PropalStatusSignedShort=Подписан
 PropalStatusNotSignedShort=Не сте

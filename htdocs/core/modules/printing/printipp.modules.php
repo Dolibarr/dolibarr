@@ -287,12 +287,11 @@ class printing_printipp extends PrintingDriver
         $html .= '<td>Cancel</td>';
         $html .= '</tr>'."\n";
         $jobs = $ipp->jobs_attributes;
-        $var = True;
+
         //$html .= '<pre>'.print_r($jobs,true).'</pre>';
         foreach ($jobs as $value )
         {
-            $var = !$var;
-            $html .= '<tr '.$bc[$var].'>';
+            $html .= '<tr class="oddeven">';
             $html .= '<td>'.$value->job_id->_value0.'</td>';
             $html .= '<td>'.$value->job_originating_user_name->_value0.'</td>';
             $html .= '<td>'.$value->printer_uri->_value0.'</td>';

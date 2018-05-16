@@ -460,7 +460,6 @@ else
 			{
 				$num = $db->num_rows($resql);
 				$i = 0;
-				$var=True;
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($resql);
@@ -491,7 +490,7 @@ else
 					$productstatic->label = $objp->produit;
 					$productstatic->type=$objp->type;
 					$productstatic->entity=$objp->entity;
-					$productstatic->status_batch=$objp->tobatch; 
+					$productstatic->status_batch=$objp->tobatch;
 					print $productstatic->getNomUrl(1,'stock',16);
 					print '</td>';
 

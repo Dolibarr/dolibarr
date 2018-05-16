@@ -56,6 +56,9 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 
+// Define value to know what current user can do on users
+$canadduser=(! empty($user->admin) || $user->rights->user->user->creer);
+
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new User($db);
 $hookmanager->initHooks(array('userlist'));
@@ -271,6 +274,14 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 $text = $langs->trans("ListOfUsers");
 
+$newcardbutton='';
+if ($canadduser)
+{
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=">'.$langs->trans('NewUser');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -281,7 +292,9 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="mode" value="'.$mode.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, '', '', $limit);
+
+
+print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, "", $num, $nbtotalofrecords, 'title_generic', 0, $newcardbutton, '', $limit);
 
 if ($sall)
 {

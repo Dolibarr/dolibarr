@@ -9,12 +9,16 @@
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
--- To drop an index:        -- VMYSQL4.0 DROP INDEX nomindex on llx_table
--- To drop an index:        -- VPGSQL8.0 DROP INDEX nomindex
+-- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table
+-- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
--- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_c_shipment_mode CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
--- To make pk to be auto increment (postgres): -- VPGSQL8.2 NOT POSSIBLE. MUST DELETE/CREATE TABLE
+-- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
+-- To make pk to be auto increment (postgres):
+-- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
+-- -- VPGSQL8.2 ALTER TABLE llx_table ADD PRIMARY KEY (rowid);
+-- -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN rowid SET DEFAULT nextval('llx_table_rowid_seq');
+-- -- VPGSQL8.2 SELECT setval('llx_table_rowid_seq', MAX(rowid)) FROM llx_table;
 -- To set a field as NULL:                     -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NULL;
 -- To set a field as NULL:                     -- VPGSQL8.2 ALTER TABLE llx_table ALTER COLUMN name DROP NOT NULL;
 -- To set a field as NOT NULL:                 -- VMYSQL4.3 ALTER TABLE llx_table MODIFY COLUMN name varchar(60) NOT NULL;
@@ -36,6 +40,7 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
+-- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
 
@@ -46,8 +51,36 @@ ALTER TABLE llx_inventory ADD COLUMN fk_user_modif integer;
 ALTER TABLE llx_inventory ADD COLUMN fk_user_valid integer;
 ALTER TABLE llx_inventory ADD COLUMN import_key varchar(14);
 
+-- Missing Chart of accounts in migration 7.0.0
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG14-DEV', 'The developed accountancy french plan 2014', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'PCG_SUISSE', 'Switzerland plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (140, 'PCN-LUXEMBURG', 'Plan comptable normalisé Luxembourgeois', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 80, 'DK-STD', 'Standardkontoplan fra SKAT', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 10, 'PCT', 'The Tunisia plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 12, 'PCG', 'The Moroccan chart of accounts', 1);
+
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 67,'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  7,'ENG-BASE',  'England plan', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 49,'SYSCOHADA-BJ', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 60,'SYSCOHADA-BF', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 24,'SYSCOHADA-CM', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 65,'SYSCOHADA-CF', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 71,'SYSCOHADA-KM', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 72,'SYSCOHADA-CG', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 21,'SYSCOHADA-CI', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 16,'SYSCOHADA-GA', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 87,'SYSCOHADA-GQ', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (147,'SYSCOHADA-ML', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (168,'SYSCOHADA-NE', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 73,'SYSCOHADA-CD', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 22,'SYSCOHADA-SN', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 66,'SYSCOHADA-TD', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 15,'SYSCOHADA-TG', 'Plan comptable Ouest-Africain', 1);
 
 -- For 8.0
+
+-- delete old permission no more used
+DELETE FROM llx_rights_def WHERE perms = 'main' and module = 'commercial';
 
 delete from llx_rights_def where perms IS NULL;
 delete from llx_user_rights where fk_user not IN (select rowid from llx_user);
@@ -112,12 +145,20 @@ ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 DELETE FROM llx_c_paiement WHERE code = '' or code = '-' or id = 0;
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
-ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
+-- VMYSQL4.3 ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;
+-- VPGSQL8.2 ALTER TABLE llx_c_paiement ADD PRIMARY KEY (id);
+-- VPGSQL8.2 ALTER TABLE llx_c_paiement ALTER COLUMN id SET DEFAULT nextval('llx_c_paiement_id_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_paiement_id_seq', MAX(id)) FROM llx_c_paiement;
 
 -- Add missing keys and primary key
 ALTER TABLE llx_c_payment_term DROP INDEX uk_c_payment_term;
-ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
 ALTER TABLE llx_c_payment_term ADD UNIQUE INDEX uk_c_payment_term_code(entity, code);
+-- VMYSQL4.3 ALTER TABLE llx_c_payment_term CHANGE COLUMN rowid rowid INTEGER AUTO_INCREMENT PRIMARY KEY;
+-- VPGSQL8.2 CREATE SEQUENCE llx_c_payment_term_rowid_seq OWNED BY llx_c_payment_term.rowid;
+-- VPGSQL8.2 ALTER TABLE llx_c_payment_term ADD PRIMARY KEY (rowid);
+-- VPGSQL8.2 ALTER TABLE llx_c_payment_term ALTER COLUMN rowid SET DEFAULT nextval('llx_c_payment_term_rowid_seq');
+-- VPGSQL8.2 SELECT setval('llx_c_payment_term_rowid_seq', MAX(rowid)) FROM llx_c_payment_term;
 
 ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
 
@@ -171,8 +212,8 @@ CREATE TABLE llx_ticketsup
 )ENGINE=innodb;
 
 ALTER TABLE llx_ticketsup ADD COLUMN notify_tiers_at_create integer;
-ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_rowid_track_id (rowid, track_id);
-ALTER TABLE llx_ticketsup ADD INDEX id_ticketsup_track_id (track_id);
+ALTER TABLE llx_ticketsup DROP INDEX uk_ticketsup_rowid_track_id;
+ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_track_id (track_id);
 
 CREATE TABLE llx_ticketsup_msg
 (
@@ -368,7 +409,6 @@ ALTER TABLE llx_asset ADD INDEX idx_asset_entity (entity);
 ALTER TABLE llx_asset ADD INDEX idx_asset_fk_soc (fk_soc);
 
 ALTER TABLE llx_asset ADD INDEX idx_asset_fk_asset_type (fk_asset_type);
-ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_asset_type FOREIGN KEY (fk_asset_type)    REFERENCES llx_asset_type (rowid);
 
 create table llx_asset_extrafields
 (
@@ -392,6 +432,8 @@ create table llx_asset_type
 
 ALTER TABLE llx_asset_type ADD UNIQUE INDEX uk_asset_type_label (label, entity);
 
+ALTER TABLE llx_asset ADD CONSTRAINT fk_asset_asset_type FOREIGN KEY (fk_asset_type)    REFERENCES llx_asset_type (rowid);
+
 create table llx_asset_type_extrafields
 (
   rowid                     integer AUTO_INCREMENT PRIMARY KEY,
@@ -403,3 +445,31 @@ create table llx_asset_type_extrafields
 ALTER TABLE llx_asset_type_extrafields ADD INDEX idx_asset_type_extrafields (fk_object);
 
 INSERT INTO llx_accounting_journal (rowid, code, label, nature, active) VALUES (7,'INV', 'Inventory journal', 8, 1);
+
+UPDATE llx_accounting_account set account_parent = 0 WHERE account_parent = '' OR account_parent IS NULL;
+-- VMYSQL4.1 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer DEFAULT 0;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent DROP DEFAULT;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent integer USING account_parent::integer;
+-- VPGSQL8.2 ALTER TABLE llx_accounting_account ALTER COLUMN account_parent SET DEFAULT 0;
+ALTER TABLE llx_accounting_account ADD INDEX idx_accounting_account_account_parent (account_parent);
+
+UPDATE llx_accounting_bookkeeping set date_creation = tms where date_creation IS NULL;
+
+ALTER TABLE llx_extrafields MODIFY COLUMN list VARCHAR(128);
+
+UPDATE llx_rights_def set module = 'asset' where module = 'assets';
+
+ALTER TABLE llx_c_accounting_category ADD COLUMN entity integer NOT NULL DEFAULT 1 AFTER rowid;
+-- VMYSQL4.1 DROP INDEX uk_c_accounting_category on llx_c_accounting_category;
+-- VPGSQL8.2 DROP INDEX uk_c_accounting_category;
+ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(code,entity);
+-- VMYSQL4.1 DROP INDEX uk_accounting_journal_code on llx_accounting_journal;
+-- VPGSQL8.2 DROP INDEX uk_accounting_journal_code;
+ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (code,entity);
+
+UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
+
+-- Warehouse
+ALTER TABLE llx_entrepot ADD COLUMN model_pdf VARCHAR(255) AFTER fk_user_author;
+ALTER TABLE llx_stock_mouvement ADD COLUMN model_pdf VARCHAR(255) AFTER origintype;
+

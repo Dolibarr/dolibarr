@@ -139,7 +139,7 @@ KeepDefaultValuesDeb=Você pode usar o assistente de configuração Dolibarr de 
 KeepDefaultValuesMamp=Você usa o DoliMamp Setup Wizard, para valores propostos aqui já estão otimizados. Alterá-los apenas se souber o que você faz.
 KeepDefaultValuesProxmox=Você usa o assistente de configuração Dolibarr de um appliance virtual Proxmox, para valores propostos aqui já são otimizados. Alterá-los apenas se você sabe o que fazer.
 UpgradeExternalModule=Corra o processo de atualização dedicado dos módulos externos
-SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+SetAtLeastOneOptionAsUrlParameter=Defina pelo menos uma opção como um parâmetro no URL. Por exemplo: '...repair.php?standard=confirmed'
 NothingToDelete=Nada para limpar/eliminar
 NothingToDo=Nada para fazer
 #########
@@ -180,8 +180,8 @@ MigrationReopenedContractsNumber=%s contratos modificados
 MigrationReopeningContractsNothingToUpdate=Não fechado. contrato para abrir
 MigrationBankTransfertsUpdate=Atualizar as ligações entre a entrada bancária e a transferência bancária
 MigrationBankTransfertsNothingToUpdate=Todas as ligações são até à data
-MigrationShipmentOrderMatching=Envio recepção atualização
-MigrationDeliveryOrderMatching=Entrega recepção atualização
+MigrationShipmentOrderMatching=Atualização da receção de envios
+MigrationDeliveryOrderMatching=Atualização da receção de encomendas
 MigrationDeliveryDetail=Actualização de entrega
 MigrationStockDetail=Atualizar stock valor dos produtos
 MigrationMenusDetail=Atualização dinâmica menus quadros
@@ -193,11 +193,13 @@ MigrationActioncommElement=Atualizar os dados nas ações
 MigrationPaymentMode=A migração de dados para o modo de pagamento
 MigrationCategorieAssociation=Migração de categorias
 MigrationEvents=Migração dos eventos de forma a adicionar o criador do evento à tabela de atribuições
-MigrationEventsContact=Migration of events to add event contact into assignement table
+MigrationEventsContact=Migração dos eventos de forma a adicionar o contacto do evento à tabela de atribuições
 MigrationRemiseEntity=Atualize o valor do campo entity da tabela llx_societe_remise
 MigrationRemiseExceptEntity=Atualize o valor do campo entity da tabela llx_societe_remise_except
+MigrationUserRightsEntity=Update entity field value of llx_user_rights
+MigrationUserGroupRightsEntity=Update entity field value of llx_usergroup_rights
 MigrationReloadModule=Recarregar módulo %s
-MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
+MigrationResetBlockedLog=Restabelecer o módulo BlockedLog para o algoritmo v7
 ShowNotAvailableOptions=Mostrar opções indisponíveis
 HideNotAvailableOptions=Ocultar opções indisponíveis
 ErrorFoundDuringMigration=Não pode proceder ao próximo passo porque foram reportados erros durante o processo de migração. Para ignorar os erros, pode <a href="%s">clicar aqui</a>, mas a aplicação ou algumas funcionalidades desta poderão não funcionar corretamente.

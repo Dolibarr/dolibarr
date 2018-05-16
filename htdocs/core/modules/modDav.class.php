@@ -65,7 +65,7 @@ class modDav extends DolibarrModules
 		// Module description, used if translation string 'ModuledavDesc' not found (MyModue is name of module).
 		$this->description = "davDescription";
 		// Used only if file README.md and README-LL.md not found.
-		$this->descriptionlong = "davDescription (Long)";
+		$this->descriptionlong = "davDescription";
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = 'experimental';
@@ -80,23 +80,11 @@ class modDav extends DolibarrModules
 		// for default path (eg: /dav/core/xxxxx) (0=disable, 1=enable)
 		// for specific path of parts (eg: /dav/core/modules/barcode)
 		// for specific css file (eg: /dav/css/dav.css.php)
-		$this->module_parts = array(
-		                        	'triggers' => 0,                                 	// Set this to 1 if module has its own trigger directory (core/triggers)
-									'login' => 0,                                    	// Set this to 1 if module has its own login method file (core/login)
-									'substitutions' => 0,                            	// Set this to 1 if module has its own substitution function file (core/substitutions)
-									'menus' => 0,                                    	// Set this to 1 if module has its own menus handler directory (core/menus)
-									'theme' => 0,                                    	// Set this to 1 if module has its own theme directory (theme)
-		                        	'tpl' => 0,                                      	// Set this to 1 if module overwrite template dir (core/tpl)
-									'barcode' => 0,                                  	// Set this to 1 if module has its own barcode directory (core/modules/barcode)
-									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
-									'css' => array(''),	// Set this to relative path of css file if module has its own css file
-	 								'js' => array(''),          // Set this to relative path of js file if module must load a js on all pages
-									'hooks' => array() 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
-		                        );
+		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/dav/temp","/dav/subdir");
-		$this->dirs = array("/dav/temp","/dav/public");
+		$this->dirs = array("/dav/temp","/dav/public","/dav/private");
 
 		// Config pages. Put here list of php page, stored into dav/admin directory, to use to setup module.
 		$this->config_page_url = array("dav.php");
@@ -305,7 +293,7 @@ class modDav extends DolibarrModules
 	 */
 	public function init($options='')
 	{
-		$this->_load_tables();
+		//$this->_load_tables('/dav/sql/');
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

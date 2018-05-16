@@ -143,6 +143,7 @@ $langs->load("modulebuilder");
 <table summary="listofattributes" class="border centpercent">
 
 <?php
+$label=$extrafields->attributes[$elementtype]['label'][$attrname];
 $type=$extrafields->attributes[$elementtype]['type'][$attrname];
 $size=$extrafields->attributes[$elementtype]['size'][$attrname];
 $computed=$extrafields->attributes[$elementtype]['computed'][$attrname];
@@ -175,7 +176,7 @@ elseif (($type== 'sellist') || ($type == 'chkbxlst') || ($type == 'link') || ($t
 }
 ?>
 <!-- Label -->
-<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $extrafields->attribute_label[$attrname]; ?>"></td></tr>
+<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo $label; ?>"></td></tr>
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><?php echo $attrname; ?></td></tr>
 <!-- Type -->
@@ -252,7 +253,7 @@ else
 <?php } ?>
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
-</td><td class="valeur"><input id="list" size="1" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
+</td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
 </table>
 
 <?php dol_fiche_end(); ?>

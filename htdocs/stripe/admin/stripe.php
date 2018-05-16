@@ -46,9 +46,7 @@ $action = GETPOST('action','alpha');
 if ($action == 'setvalue' && $user->admin)
 {
 	$db->begin();
-	$result = dolibarr_set_const($db, "STRIPE_LIVE", GETPOST('STRIPE_LIVE', 'alpha'), 'chaine', 0, '', $conf->entity);
-	if (! $result > 0)
-		$error ++;
+
 	if (empty($conf->stripeconnect->enabled)) {
 		$result = dolibarr_set_const($db, "STRIPE_TEST_PUBLISHABLE_KEY", GETPOST('STRIPE_TEST_PUBLISHABLE_KEY', 'alpha'), 'chaine', 0, '', $conf->entity);
 		if (! $result > 0)
@@ -78,6 +76,9 @@ if ($action == 'setvalue' && $user->admin)
 	$result = dolibarr_set_const($db, "STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS", GETPOST('STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
+  $result = dolibarr_set_const($db, "STRIPE_MINIMAL_3DSECURE", GETPOST('STRIPE_MINIMAL_3DSECURE', 'int'), 'chaine', 0, '', $conf->entity);
+	if (! $result > 0)
+		$error ++;  
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
@@ -97,6 +98,7 @@ if ($action == 'setvalue' && $user->admin)
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_WAREHOUSE", (GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') > 0 ? GETPOST('ONLINE_PAYMENT_WAREHOUSE', 'alpha') : ''), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
+
 	// Payment token for URL
 	$result = dolibarr_set_const($db, "PAYMENT_SECURITY_TOKEN", GETPOST('PAYMENT_SECURITY_TOKEN', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
@@ -264,6 +266,11 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 	print $form->select_comptes($conf->global->STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS, 'STRIPE_BANK_ACCOUNT_FOR_BANKTRANSFERS', 0, '', 1);
 	print '</td></tr>';
 }
+
+// Minimal amount for force 3Dsecure if it's optionnal
+print '<tr class="oddeven"><td>';
+print $langs->trans("STRIPE_MINIMAL_3DSECURE").'</td><td>';
+print '<input class="flat" name="STRIPE_MINIMAL_3DSECURE" size="3" value="' .$conf->global->STRIPE_MINIMAL_3DSECURE . '">'.$langs->getCurrencySymbol($conf->currency).'</td></tr>';
 
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 {

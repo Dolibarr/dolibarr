@@ -1048,15 +1048,13 @@ if (empty($reshook))
 				// Add link between credit note and origin
 				if(! empty($object->fk_facture_source)) {
 					$facture_source->fetch($object->fk_facture_source);
-				}
-				$facture_source->fetchObjectLinked();
+					$facture_source->fetchObjectLinked();
 
-				if(! empty($facture_source->linkedObjectsIds)) {
-					$linkedObjectIds = $facture_source->linkedObjectsIds;
-					$sourcetype = key($linkedObjectIds);
-					$fk_origin = current($facture_source->linkedObjectsIds[$sourcetype]);
-
-					$object->add_object_linked($sourcetype, $fk_origin);
+					if(! empty($facture_source->linkedObjectsIds)) {
+						foreach($facture_source->linkedObjectsIds as $sourcetype => $TIds) {
+							$object->add_object_linked($sourcetype, current($TIds));
+						}
+					}
 				}
 			}
 		}
@@ -2386,7 +2384,7 @@ if (empty($reshook))
 	        }
 	    }
 	}
-
+	
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
@@ -2412,22 +2410,15 @@ if (empty($reshook))
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
-		if (! $error) {
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('invoicedao'));
-			$parameters = array('id' => $object->id);
-			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-			// some hooks
-			if (empty($reshook)) {
-				$result = $object->insertExtraFields('BILL_MODIFY');
-				if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-			} else if ($reshook < 0)
-				$error ++;
+		if (! $error)
+		{
+			// Actions on extra fields
+			$result = $object->insertExtraFields('BILL_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 
 		if ($error)
@@ -3067,7 +3058,7 @@ if ($action == 'create')
 	$parameters = array('objectsrc' => $objectsrc,'colspan' => ' colspan="2"', 'cols'=>2);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -4815,8 +4806,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
 				}
 			}
-			
-			
+
 			// For situation invoice with excess received
 			if ($object->statut == Facture::STATUS_VALIDATED
 			    && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) > 0
@@ -4854,7 +4844,7 @@ else if ($id > 0 || ! empty($ref))
 			        print '<div class="inline-block divButAction"><a id="butSituationOutRefused" class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotEnouthCreditNote") . '" >' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
 			    }
 			}
-
+			
 			// Create next situation invoice
 			if ($user->rights->facture->creer && ($object->type == 5) && ($object->statut == 1 || $object->statut == 2)) {
 				if ($object->is_last_in_cycle() && $object->situation_final != 1) {
@@ -4923,6 +4913,7 @@ else if ($id > 0 || ! empty($ref))
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice'));
+		
 		$compatibleImportElementsList = false;
 		if($user->rights->facture->creer 
 		    && $object->statut == Facture::STATUS_DRAFT 
@@ -4931,7 +4922,7 @@ else if ($id > 0 || ! empty($ref))
 		    $compatibleImportElementsList = array('commande'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem,$compatibleImportElementsList);
-
+		
 
 		// Show online payment link
 		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));

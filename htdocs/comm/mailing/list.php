@@ -32,7 +32,7 @@ $result=restrictedArea($user,'mailing');
 
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
@@ -104,14 +104,18 @@ if ($result)
 	$title=$langs->trans("ListOfEMailings");
 	if ($filteremail) $title.=' ('.$langs->trans("SentTo",$filteremail).')';
 
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create">'.$langs->trans('NewMailing').'</a>';
-
-	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '',$num, '', 'title_generic.png', 0, $newcardbutton);
+	$newcardbutton='';
+	if ($user->rights->mailing->creer)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/mailing/card.php?action=create">'.$langs->trans('NewMailing');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
 
 	$i = 0;
 
-	$param = "&amp;sall=".urlencode($sall);
-	if ($filteremail) $param.='&amp;filteremail='.urlencode($filteremail);
+	$param = "&sall=".urlencode($sall);
+	if ($filteremail) $param.='&filteremail='.urlencode($filteremail);
 
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -121,7 +125,9 @@ if ($result)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-    $moreforfilter = '';
+	print_barre_liste($title, $page, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '',$num, '', 'title_generic.png', 0, $newcardbutton);
+
+	$moreforfilter = '';
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";

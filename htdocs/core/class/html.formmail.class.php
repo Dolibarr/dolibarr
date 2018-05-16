@@ -3,6 +3,7 @@
  * Copyright (C) 2005-2012 Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015-2017 Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2015-2017 Nicolas ZABOURI        <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +81,9 @@ class FormMail extends Form
 	var $substit=array();
 	var $substit_lines=array();
 	var $param=array();
+
+	public $withtouser=array();
+	public $withtoccuser=array();
 
 	var $error;
 
@@ -624,6 +628,28 @@ class FormMail extends Form
 				$out.= "</td></tr>\n";
 			}
 
+			// To User
+			if (! empty($this->withtouser) && is_array($this->withtouser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
+			{
+				$out.= '<tr><td>';
+				$out.= $langs->trans("MailToSalaries");
+				$out.= '</td><td>';
+
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withtouser;
+				foreach($tmparray as $key => $val)
+				{
+					$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+				$withtoselected=GETPOST("receiveruser",'none');     // Array of selected value
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+				{
+					$withtoselected = array_keys($tmparray);
+				}
+				$out.= $form->multiselectarray("receiveruser", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
+				$out.= "</td></tr>\n";
+			}
+
 			// withoptiononeemailperrecipient
 			if (! empty($this->withoptiononeemailperrecipient))
 			{
@@ -665,6 +691,28 @@ class FormMail extends Form
 						$out.= $form->multiselectarray("receivercc", $tmparray, $withtoccselected, null, null, 'inline-block minwidth500',null, "");
 					}
 				}
+				$out.= "</td></tr>\n";
+			}
+
+			// To User cc
+			if (! empty($this->withtoccuser) && is_array($this->withtoccuser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
+			{
+				$out.= '<tr><td>';
+				$out.= $langs->trans("MailToCCSalaries");
+				$out.= '</td><td>';
+
+				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
+				$tmparray = $this->withtoccuser;
+				foreach($tmparray as $key => $val)
+				{
+					$tmparray[$key]=dol_htmlentities($tmparray[$key], null, 'UTF-8', true);
+				}
+				$withtoselected=GETPOST("receiverccuser",'none');     // Array of selected value
+				if (empty($withtoselected) && count($tmparray) == 1 && GETPOST('action','aZ09') == 'presend')
+				{
+					$withtoselected = array_keys($tmparray);
+				}
+				$out.= $form->multiselectarray("receiverccuser", $tmparray, $withtoselected, null, null, 'inline-block minwidth500', null, "");
 				$out.= "</td></tr>\n";
 			}
 
@@ -1063,7 +1111,8 @@ class FormMail extends Form
 				elseif ($type_template=='fichinter_send')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendFichInter"); }
 				elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
 				elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
-
+				elseif (!empty($type_template))				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template)); }
+				
 				$ret->label = 'default';
 				$ret->lang = $outputlangs->defaultlang;
 				$ret->topic = '';
@@ -1208,20 +1257,22 @@ class FormMail extends Form
 					'__QUANTITY__' => $line->qty,
 					'__SUBPRICE__' => price($line->subprice),
 					'__AMOUNT__' => price($line->total_ttc),
-					'__AMOUNT_EXCL_TAX__' => price($line->total_ht),
-					//'__PRODUCT_EXTRAFIELD_FIELD__' Done dinamically just after
+					'__AMOUNT_EXCL_TAX__' => price($line->total_ht)
 				);
 
 				// Create dynamic tags for __PRODUCT_EXTRAFIELD_FIELD__
 				if (!empty($line->fk_product))
 				{
-					$extrafields = new ExtraFields($this->db);
-					$extralabels = $extrafields->fetch_name_optionals_label('product', true);
+					if (! is_object($extrafields)) $extrafields = new ExtraFields($this->db);
+					$extrafields->fetch_name_optionals_label('product', true);
 					$product = new Product($this->db);
 					$product->fetch($line->fk_product, '', '', 1);
 					$product->fetch_optionals();
-					foreach ($extrafields->attribute_label as $key => $label) {
-						$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
+					if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
+					{
+						foreach ($extrafields->attributes[$product->table_element]['label'] as $key => $label) {
+							$substit_line['__PRODUCT_EXTRAFIELD_' . strtoupper($key) . '__'] = $product->array_options['options_' . $key];
+						}
 					}
 				}
 				$this->substit_lines[] = $substit_line;

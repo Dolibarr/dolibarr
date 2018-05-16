@@ -108,7 +108,7 @@ class pdf_crabe extends ModelePDFFactures
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-		
+
 		// Translations
 		$langs->loadLangs(array("main", "bills"));
 
@@ -182,7 +182,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
-		$this->situationinvoice=False;
+		$this->situationinvoice=false;
 	}
 
 
@@ -204,7 +204,7 @@ class pdf_crabe extends ModelePDFFactures
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-		
+
 		// Translations
 		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
@@ -301,7 +301,7 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
                 // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
 				    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 				    $tplidx = $pdf->importPage(1);
@@ -342,7 +342,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Situation invoice handling
 				if ($object->situation_cycle_ref)
 				{
-					$this->situationinvoice = True;
+					$this->situationinvoice = true;
 					$progress_width = 18;
 					$this->posxtva -= $progress_width;
 					$this->posxup -= $progress_width;
@@ -1543,7 +1543,7 @@ class pdf_crabe extends ModelePDFFactures
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf, $langs;
-		
+
 		// Translations
 		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));
 

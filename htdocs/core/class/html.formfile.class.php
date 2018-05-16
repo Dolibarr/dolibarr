@@ -469,6 +469,15 @@ class FormFile
 					$modellist=ModelePDFProduct::liste_modeles($this->db);
 				}
 			}
+			elseif ($modulepart == 'product_batch')
+			{
+				if (is_array($genallowed)) $modellist=$genallowed;
+				else
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/product_batch/modules_product_batch.class.php';
+					$modellist=ModelePDFProductBatch::liste_modeles($this->db);
+				}
+			}
 			elseif ($modulepart == 'export')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
@@ -586,7 +595,7 @@ class FormFile
 					$file=dol_buildpath('/'.$modulepart.'/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
 					$res=include_once $file;
 				}
-				$class='Modele'.ucfirst($modulepart);
+				$class='ModelePDF'.ucfirst($modulepart);
 				if (class_exists($class))
 				{
 					$modellist=call_user_func($class.'::liste_modeles',$this->db);
@@ -740,7 +749,7 @@ class FormFile
 
 					// Show file size
 					$size=(! empty($file['size'])?$file['size']:dol_filesize($filedir."/".$file["name"]));
-					$out.= '<td align="right" class="nowrap">'.dol_print_size($size).'</td>';
+					$out.= '<td align="right" class="nowrap">'.dol_print_size($size,1,1).'</td>';
 
 					// Show file date
 					$date=(! empty($file['date'])?$file['date']:dol_filemtime($filedir."/".$file["name"]));
@@ -858,13 +867,21 @@ class FormFile
 		}
 		else
 		{
-			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir).'$/', $filedir, $regs);
+			preg_match('/\/([0-9]+)\/[^\/]+\/'.preg_quote($modulesubdir,'/').'$/', $filedir, $regs);
 			$entity = ((! empty($regs[1]) && $regs[1] > 1) ? $regs[1] : $conf->entity);
 		}
 
-		$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
-
-		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files)
+		// Get list of files starting with name of ref (but not followed by "-" to discard uploaded files and get only generated files)
+		// @TODO Why not showing by default all files by just removing the '[^\-]+' at end of regex ?
+		if (! empty($conf->global->MAIN_SHOW_ALL_FILES_ON_DOCUMENT_TOOLTIP))
+		{
+			$filterforfilesearch = preg_quote(basename($modulesubdir),'/');
+		}
+		else
+		{
+			$filterforfilesearch = preg_quote(basename($modulesubdir),'/').'[^\-]+';
+		}
+		$file_list=dol_dir_list($filedir, 'files', 0, $filterforfilesearch, '\.meta$|\.png$');	// We also discard .meta and .png preview
 
 		//var_dump($file_list);
 		// For ajax treatment
@@ -973,6 +990,10 @@ class FormFile
 		global $user, $conf, $langs, $hookmanager;
 		global $sortfield, $sortorder, $maxheightmini;
 		global $dolibarr_main_url_root;
+		global $form;
+
+		$disablecrop=1;
+		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticketsup','user'))) $disablecrop=0;
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
@@ -1017,6 +1038,12 @@ class FormFile
 		}
 		else
 		{
+			if (! is_object($form))
+			{
+				include_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';		// The compoent may be included into ajax page that does not include the Form class
+				$form=new Form($this->db);
+			}
+
 			if (! preg_match('/&id=/', $param) && isset($object->id)) $param.='&id='.$object->id;
 			$relativepathwihtoutslashend=preg_replace('/\/$/', '', $relativepath);
 			if ($relativepathwihtoutslashend) $param.= '&file='.urlencode($relativepathwihtoutslashend);
@@ -1144,7 +1171,15 @@ class FormFile
 					print "</td>\n";
 
 					// Size
-					print '<td align="right" width="80px">'.dol_print_size($file['size'],1,1).'</td>';
+					$sizetoshow = dol_print_size($file['size'],1,1);
+					$sizetoshowbytes = dol_print_size($file['size'],0,1);
+
+					print '<td align="right" width="80px">';
+					if ($sizetoshow == $sizetoshowbytes) print $sizetoshow;
+					else {
+						print $form->textwithpicto($sizetoshow, $sizetoshowbytes, -1);
+					}
+					print '</td>';
 
 					// Date
 					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
@@ -1224,9 +1259,6 @@ class FormFile
 						{
 							$newmodulepart=$modulepart;
 							if (in_array($modulepart, array('product','produit','service'))) $newmodulepart='produit|service';
-
-							$disablecrop=1;
-							if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticketsup','user'))) $disablecrop=0;
 
 							if (! $disablecrop && image_format_supported($file['name']) > 0)
 							{

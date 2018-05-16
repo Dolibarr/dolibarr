@@ -237,7 +237,13 @@ class Contrat extends CommonObject
 	 */
 	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
-		return $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
+		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
+		if ($result < 0)
+		{
+			$this->error = $this->lines[$this->lines_id_index_mapper[$line_id]]->error;
+			$this->errors = $this->lines[$this->lines_id_index_mapper[$line_id]]->errors;
+		}
+		return $result;
 	}
 
 
@@ -252,7 +258,13 @@ class Contrat extends CommonObject
 	 */
 	function close_line($user, $line_id, $date_end, $comment='')
 	{
-		return $this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
+		$result=$this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
+		if ($result < 0)
+		{
+			$this->error = $this->lines[$this->lines_id_index_mapper[$line_id]]->error;
+			$this->errors = $this->lines[$this->lines_id_index_mapper[$line_id]]->errors;
+		}
+		return $result;
 	}
 
 
@@ -767,17 +779,7 @@ class Contrat extends CommonObject
 				$line->fk_user_cloture  = $objp->fk_user_cloture;
 				$line->fk_unit           = $objp->fk_unit;
 
-				$line->ref				= $objp->product_ref;						// deprecated
-				if (empty($objp->fk_product))
-				{
-					$line->label			= '';         			// deprecated
-					$line->libelle 			= $objp->description;	// deprecated
-				}
-				else
-				{
-					$line->label			= $objp->product_label;         			// deprecated
-					$line->libelle			= $objp->product_label;         		// deprecated
-				}
+				$line->ref				= $objp->product_ref;	// deprecated
 				$line->product_ref		= $objp->product_ref;   // Ref product
 				$line->product_desc		= $objp->product_desc;  // Description product
 				$line->product_label	= $objp->product_label; // Label product
@@ -2459,12 +2461,15 @@ class ContratLigne extends CommonObjectLine
 	var $fk_contrat;
 	var $fk_product;
 	var $statut;					// 0 inactive, 4 active, 5 closed
-	var $type;                     // 0 for product, 1 for service
+	var $type;						// 0 for product, 1 for service
+	/**
+	 * @var string
+	 * @deprecated
+	 */
 	var $label;
 	/**
 	 * @var string
-	 * @deprecated Use $label instead
-	 * @see label
+	 * @deprecated
 	 */
 	public $libelle;
 

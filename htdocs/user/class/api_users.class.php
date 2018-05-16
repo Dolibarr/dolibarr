@@ -162,7 +162,7 @@ class Users extends DolibarrApi
 	 * @param array $request_data New user data
 	 * @return int
 	 */
-	function post($request_data = NULL) {
+	function post($request_data = null) {
 	    // check user authorization
 	    //if(! DolibarrApiAccess::$user->rights->user->creer) {
 	    //   throw new RestException(401, "User creation not allowed");
@@ -194,7 +194,7 @@ class Users extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = NULL) {
+	function put($id, $request_data = null) {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 			//throw new RestException(401);
 		//}

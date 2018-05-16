@@ -33,6 +33,7 @@ PropalStatusSigned=Aláírt (szükséges számlázási)
 PropalStatusNotSigned=Nem írta alá (zárt)
 PropalStatusBilled=Kiszámlázott
 PropalStatusDraftShort=Tervezet
+PropalStatusValidatedShort=Hitelesítetve
 PropalStatusClosedShort=Zárva
 PropalStatusSignedShort=Aláírt
 PropalStatusNotSignedShort=Nem írták alá

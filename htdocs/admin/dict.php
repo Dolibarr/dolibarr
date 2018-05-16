@@ -53,6 +53,7 @@ $code=GETPOST('code','alpha');
 $allowed=$user->admin;
 if ($id == 7 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;     // Tax page allowed to manager of chart account
 if ($id == 10 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Vat page allowed to manager of chart account
+if ($id == 17 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with type of expense report and accounting account allowed to manager of chart account
 if (! $allowed) accessforbidden();
 
 $acts[0] = "activate";
@@ -952,14 +953,14 @@ if (empty($id))
 print "<br>\n";
 
 
-$param = '&id='.$id;
-if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
+$param = '&id='.urlencode($id);
+if ($search_country_id > 0) $param.= '&search_country_id='.urlencode($search_country_id);
 if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
 if ($entity != '') $param.= '&entity=' . (int) $entity;
 $paramwithsearch = $param;
-if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
-if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+if ($sortorder) $paramwithsearch.= '&sortorder='.urlencode($sortorder);
+if ($sortfield) $paramwithsearch.= '&sortfield='.urlencode($sortfield);
+if (GETPOST('from')) $paramwithsearch.= '&from='.urlencode(GETPOST('from','alpha'));
 
 
 // Confirmation de la suppression de la ligne
@@ -986,10 +987,10 @@ if ($id)
     {
         // If sort order is "country", we use country_code instead
     	if ($sortfield == 'country') $sortfield='country_code';
-        $sql.= " ORDER BY ".$sortfield;
+        $sql.= " ORDER BY ".$db->escape($sortfield);
         if ($sortorder)
         {
-            $sql.=" ".strtoupper($sortorder);
+        	$sql.=" ".strtoupper($db->escape($sortorder));
         }
         $sql.=", ";
         // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value

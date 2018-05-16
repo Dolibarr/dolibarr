@@ -831,9 +831,9 @@ class UserGroup extends CommonObject
 			{
 				$langs->load("users");
 				$label=$langs->trans("ShowGroup");
-				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1, 1).'"';
 			}
-			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
 		}
 		/*if (! is_object($hookmanager))

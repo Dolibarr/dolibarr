@@ -629,7 +629,7 @@ if ($action == 'create' && $user->rights->projet->creer)
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -869,7 +869,7 @@ elseif ($object->id > 0)
 		$parameters=array();
 		$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 		print $hookmanager->resPrint;
-		if (empty($reshook) && ! empty($extrafields->attribute_label))
+		if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1047,11 +1047,21 @@ elseif ($object->id > 0)
                         jQuery("#divtocloseproject").hide();
                     }
 
-                    /* Change percent of default percent of new status is higher */
-                    if (parseFloat(jQuery("#opp_percent").val()) != parseFloat(defaultpercent))
+                    /* Change percent with default percent (defaultpercent) if new status (defaultpercent) is higher than current (jQuery("#opp_percent").val()) */
+                    console.log("oldpercent="+oldpercent);
+                    if (oldpercent != \'\' && (parseFloat(defaultpercent) < parseFloat(oldpercent)))
                     {
                         if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+oldpercent+\' %\');
-                        jQuery("#opp_percent").val(defaultpercent);
+                        if (parseFloat(oldpercent) != 100) { jQuery("#opp_percent").val(oldpercent); }
+                        else { jQuery("#opp_percent").val(defaultpercent); }
+                    }
+                    else
+                    {
+                    	if ((parseFloat(jQuery("#opp_percent").val()) < parseFloat(defaultpercent)));
+                    	{
+                        	if (jQuery("#opp_percent").val() != \'\' && oldpercent != \'\') jQuery("#oldopppercent").text(\' - '.dol_escape_js($langs->transnoentities("PreviousValue")).': \'+oldpercent+\' %\');
+                        	jQuery("#opp_percent").val(defaultpercent);
+                    	}
                     }
             	}
 

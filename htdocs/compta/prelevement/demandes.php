@@ -129,8 +129,6 @@ if ($resql)
 	print '</td>';
 	print '</tr>';
 
-	$var = True;
-
 	$users = array();
 
 	while ($i < min($num,$limit))

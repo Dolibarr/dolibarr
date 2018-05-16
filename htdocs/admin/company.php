@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -80,7 +80,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("zipcode",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", GETPOST("state_id",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency",'aZ09'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL", GETPOST("tel",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX", GETPOST("fax",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL", GETPOST("mail",'alpha'),'chaine',0,'',$conf->entity);
@@ -156,26 +156,27 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		}
 	}
 
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE", GETPOST("forme_juridique_code",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SIREN", GETPOST("siren",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SIRET", GETPOST("siret",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_APE", GETPOST("ape",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_RCS", GETPOST("rcs",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE", GETPOST("forme_juridique_code",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SIREN", GETPOST("siren",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SIRET", GETPOST("siret",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_APE", GETPOST("ape",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_RCS", GETPOST("rcs",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID5", GETPOST("MAIN_INFO_PROFID5",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_PROFID6", GETPOST("MAIN_INFO_PROFID6",'nohtml'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA", GETPOST("tva",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_OBJECT", GETPOST("object",'nohtml'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START", GETPOST("SOCIETE_FISCAL_MONTH_START",'int'),'chaine',0,'',$conf->entity);
 
-	dolibarr_set_const($db, "FACTURE_TVAOPTION", GETPOST("optiontva",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_TVAOPTION", GETPOST("optiontva",'aZ09'),'chaine',0,'',$conf->entity);
 
 	// Local taxes
-	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", GETPOST("optionlocaltax1",'alpha'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", GETPOST("optionlocaltax2",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_LOCAL_TAX1_OPTION", GETPOST("optionlocaltax1",'aZ09'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "FACTURE_LOCAL_TAX2_OPTION", GETPOST("optionlocaltax2",'aZ09'),'chaine',0,'',$conf->entity);
 
 	if($_POST["optionlocaltax1"]=="localtax1on")
 	{
@@ -185,9 +186,9 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		}
 		else
 		{
-			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", GETPOST('lt1','alpha'),'chaine',0,'',$conf->entity);
+			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX1", GETPOST('lt1','aZ09'),'chaine',0,'',$conf->entity);
 		}
-		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC1",  GETPOST("clt1",'alpha'),'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC1",  GETPOST("clt1",'aZ09'),'chaine',0,'',$conf->entity);
 	}
 	if($_POST["optionlocaltax2"]=="localtax2on")
 	{
@@ -197,9 +198,9 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 		}
 		else
 		{
-			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2','alpha'),'chaine',0,'',$conf->entity);
+			dolibarr_set_const($db, "MAIN_INFO_VALUE_LOCALTAX2", GETPOST('lt2','aZ09'),'chaine',0,'',$conf->entity);
 		}
-		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2",  GETPOST("clt2",'alpha'),'chaine',0,'',$conf->entity);
+		dolibarr_set_const($db,"MAIN_INFO_LOCALTAX_CALC2",  GETPOST("clt2",'aZ09'),'chaine',0,'',$conf->entity);
 	}
 
 	if ($action != 'updateedit' && ! $error)
@@ -415,7 +416,7 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	// IDs of the company (country-specific)
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefield">'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	$langs->load("companies");
 
@@ -423,6 +424,13 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
 	print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth200" value="' . $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '"></td></tr>';
+
+	// GDPR contact
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
+	print '</td><td>';
+	print '<input name="MAIN_INFO_GDPR" id="director" class="minwidth500" value="' . $conf->global->MAIN_INFO_GDPR . '"></td></tr>';
 
 	// Capital
 
@@ -568,7 +576,7 @@ if ($action == 'edit' || $action == 'updateedit')
 	print '<br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td class="titlefield">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
+	print '<td width="140">'.$langs->trans("VATManagement").'</td><td>'.$langs->trans("Description").'</td>';
 	print '<td align="right">&nbsp;</td>';
 	print "</tr>\n";
 
@@ -601,7 +609,7 @@ if ($action == 'edit' || $action == 'updateedit')
 		print '<br>';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
+		print '<td width="140">'.$langs->transcountry("LocalTax1Management",$mysoc->country_code).'</td><td>'.$langs->trans("Description").'</td>';
 		print '<td align="right">&nbsp;</td>';
 		print "</tr>\n";
 
@@ -814,6 +822,11 @@ else
 
 	print '<tr class="oddeven"><td>'.$langs->trans("ManagingDirectors").'</td><td>';
 	print $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '</td></tr>';
+
+	// GDPR Contact
+
+	print '<tr class="oddeven"><td>'.$langs->trans("GDPRContact").'</td><td>';
+	print $conf->global->MAIN_INFO_GDPR . '</td></tr>';
 
 	// Capital
 

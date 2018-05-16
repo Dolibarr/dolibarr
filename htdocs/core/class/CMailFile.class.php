@@ -775,9 +775,6 @@ class CMailFile
 				if (! empty($this->error) || ! $result) {
 					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
 					$res=false;
-				} else {
-                    $this->error = $langs->trans("SentXXXmessages", $result);
-					$this->errors[] = $langs->trans("SentXXXmessages", $result);
 				}
 			}
 			else
@@ -1158,7 +1155,7 @@ class CMailFile
 					$out.= "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"".$this->eol;
 					$out.= "Content-Type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\"".$this->eol;
 					$out.= "Content-Transfer-Encoding: base64".$this->eol;
-					$out.= "Content-Description: File Attachment".$this->eol;
+					$out.= "Content-Description: ".$filename_list[$i].$this->eol;
 					$out.= $this->eol;
 					$out.= $encoded;
 					$out.= $this->eol;

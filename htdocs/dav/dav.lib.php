@@ -38,3 +38,35 @@ if(!defined('CDAV_URI_KEY'))
 		else
 			define('CDAV_URI_KEY', substr(md5($_SERVER['HTTP_HOST']),0,8));
 }
+
+
+
+
+/**
+ * Prepare array with list of tabs
+ *
+ * @return  array				Array of tabs to show
+ */
+function dav_admin_prepare_head()
+{
+	global $db, $langs, $conf;
+
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/admin/dav.php?id='.$object->id;
+	$head[$h][1] = $langs->trans("WebDAV");
+	$head[$h][2] = 'webdav';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname);   												to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'admindav');
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'admindav','remove');
+
+	return $head;
+}
+

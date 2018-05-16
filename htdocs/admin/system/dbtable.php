@@ -66,7 +66,6 @@ else
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
-		$var=True;
 		$i=0;
 		while ($i < $num)
 		{
@@ -109,7 +108,7 @@ else
 
 		//$sql = "DESCRIBE ".$table;
 		$sql = "SHOW FULL COLUMNS IN ".$db->escape($table);
-		
+
 		$resql = $db->query($sql);
 		if ($resql)
 		{
@@ -129,7 +128,7 @@ else
 
 				print "<td>".(isset($link[$row[0]][0])?$link[$row[0]][0]:'').".";
 				print (isset($link[$row[0]][1])?$link[$row[0]][1]:'')."</td>";
-				
+
 				print '<!-- ALTER ALTER TABLE '.$table.' MODIFY '.$row[0].' '.$row[1].' COLLATE utf8_unicode_ci; -->';
 				print '</tr>';
 				$i++;

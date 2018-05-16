@@ -62,6 +62,8 @@ if (empty($conf->stock->enabled)) {
 	accessforbidden();
 }
 
+$hookmanager->initHooks(array('ordersupplierdispatch'));
+
 // Recuperation de l'id de projet
 $projectid = 0;
 if ($_GET["projectid"])
@@ -84,6 +86,10 @@ if ($id > 0 || ! empty($ref)) {
 /*
  * Actions
  */
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if ($action == 'checkdispatchline' && ! ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande->receptionner)) || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->fournisseur->commande_advance->check))))
 {
@@ -237,7 +243,7 @@ if ($action == 'dispatch' && $user->rights->fournisseur->commande->receptionner)
 			$fk_commandefourndet = "fk_commandefourndet_" . $reg[1] . '_' . $reg[2];
 
 			// We ask to move a qty
-			if (GETPOST($qty) > 0) {
+			if (GETPOST($qty) != 0) {
 				if (! (GETPOST($ent, 'int') > 0)) {
 					dol_syslog('No dispatch for line ' . $key . ' as no warehouse choosed');
 					$text = $langs->transnoentities('Warehouse') . ', ' . $langs->transnoentities('Line') . ' ' . ($numline);
@@ -430,6 +436,9 @@ if ($id > 0 || ! empty($ref)) {
 	print '<tr><td class="titlefield">' . $langs->trans("AuthorRequest") . '</td>';
 	print '<td>' . $author->getNomUrl(1, '', 0, 0, 0) . '</td>';
 	print '</tr>';
+
+  $parameters=array();
+  $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
 
 	print "</table>";
 
@@ -701,7 +710,7 @@ if ($id > 0 || ! empty($ref)) {
 
 		if ($nbproduct)
 		{
-            $checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv($object->statuts[5]));
+			$checkboxlabel=$langs->trans("CloseReceivedSupplierOrdersAutomatically", $langs->transnoentitiesnoconv('StatusOrderReceivedAll'));
 
 			print '<br><div class="center">';
             print $langs->trans("Comment") . ' : ';
@@ -844,7 +853,7 @@ if ($id > 0 || ! empty($ref)) {
 				}
 				// date
 				print '<td>' . dol_print_date($objp->datec) . '</td>';
-				
+
 				print "</tr>\n";
 
 				$i ++;

@@ -250,8 +250,6 @@ if ($resql)
         $rssparser=new RssParser($db);
 		$result = $rssparser->parser($conf->global->$keyrssurl, 5, 300, $conf->externalrss->dir_temp);
 
-		$var=true;
-
 		print "<br>";
 		print "<form name=\"externalrssconfig\" action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 
