@@ -397,8 +397,10 @@ class DiscountAbsolute
         if ($invoice->element == 'facture' || $invoice->element == 'invoice')
         {
             $sql = 'SELECT sum(rc.amount_ttc) as amount, sum(rc.multicurrency_amount_ttc) as multicurrency_amount';
-            $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc, '.MAIN_DB_PREFIX.'facture as f';
-            $sql.= ' WHERE rc.fk_facture_source=f.rowid AND rc.fk_facture = '.$invoice->id;
+            $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except as rc';
+            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet fd ON (fd.rowid=rc.fk_facture_line)';
+            $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture f ON (rc.fk_facture_source=f.rowid)';
+            $sql.= ' WHERE fd.fk_facture = '.$invoice->id;
             $sql.= ' AND f.type = 3';
         }
         else if ($invoice->element == 'invoice_supplier')

@@ -99,10 +99,28 @@ abstract class CommonInvoice extends CommonObject
 	 */
 	function getRemainToPay($multicurrency=0)
 	{
+	    global $conf;
+
 	    $alreadypaid=0;
 	    $alreadypaid+=$this->getSommePaiement($multicurrency);
 	    $alreadypaid+=$this->getSumDepositsUsed($multicurrency);
 	    $alreadypaid+=$this->getSumCreditNotesUsed($multicurrency);
+
+	    if (! empty($conf->global->INVOICE_USE_SITUATION) && $this->situation_cycle_ref>0)
+	    {
+	        $this->fetchPreviousNextSituationInvoice();
+
+	        if(!empty($this->tab_previous_situation_invoice)) {
+	            $previous_deposits = 0;
+
+	            foreach($this->tab_previous_situation_invoice as &$previous_situation_invoice) {
+	                $previous_deposits+= $previous_situation_invoice->getSumDepositsUsed();
+	            }
+
+	            $alreadypaid+=$previous_deposits;
+	        }
+	    }
+
     	return $this->total_ttc - $alreadypaid;
 	}
 

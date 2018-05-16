@@ -2986,7 +2986,21 @@ else if ($id > 0 || ! empty($ref))
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
-	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits, 'MT');
+	if (! empty($conf->global->INVOICE_USE_SITUATION) && $object->situation_cycle_ref>0)
+	{
+	    $object->fetchPreviousNextSituationInvoice();
+
+	    if(!empty($object->tab_previous_situation_invoice)) {
+	        $previous_deposits = 0;
+
+	        foreach($object->tab_previous_situation_invoice as &$previous_situation_invoice) {
+	            $previous_deposits+= $previous_situation_invoice->getSumDepositsUsed();
+	        }
+
+	    }
+	}
+
+	$resteapayer = price2num($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits - $previous_deposits, 'MT');
 
 	if ($object->paye)
 	{
@@ -4006,6 +4020,15 @@ else if ($id > 0 || ! empty($ref))
 		print ' :</td><td align="right"'.(($totalpaye > 0)?' class="amountalreadypaid"':'').'>' . price($totalpaye) . '</td><td>&nbsp;</td></tr>';
 
 		$resteapayeraffiche = $resteapayer;
+
+		if (! empty($conf->global->INVOICE_USE_SITUATION) && $object->situation_cycle_ref>0)
+		{
+	        if($previous_deposits>0) {
+	          print '<tr><td colspan="' . $nbcols . '" align="right">'.$langs->trans('PreviousDepositUsed');
+	          print ' :</td><td align="right" class="situationcreditnotes">' . price($previous_deposits) . '</td><td>&nbsp;</td></tr>';
+	        }
+	    }
+
 		$cssforamountpaymentcomplete = 'amountpaymentcomplete';
 
 		// Loop on each credit note or deposit amount applied
