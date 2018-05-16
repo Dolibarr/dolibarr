@@ -4683,6 +4683,7 @@ else if ($id > 0 || ! empty($ref))
 			    && $user->rights->facture->creer
 			    && !$objectidnext
 			    && $object->is_last_in_cycle()
+			    && $conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE
 			    )
 			{
 			    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
