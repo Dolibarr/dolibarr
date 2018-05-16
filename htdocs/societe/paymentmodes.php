@@ -614,7 +614,7 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
-		elseif ($action == 'deletecard')
+		elseif ($action == 'deletecard' && $source)
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
@@ -918,7 +918,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print img_picto($langs->trans("Modify"),'edit');
 								print '</a>';
 								print '&nbsp;';
-								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';	// source='.$companypaymentmodetemp->stripe_card_ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}

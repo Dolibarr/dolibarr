@@ -973,9 +973,11 @@ class FactureRec extends CommonInvoice
 	 *
 	 *  WARNING: This method change temporarly context $conf->entity to be in correct context for each recurring invoice found.
 	 *
-	 *  @return	int						0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
+	 *  @param	int		$restictoninvoiceid		0=All qualified template invoices found. > 0 = restrict action on invoice ID
+	 *  @param	int		$forcevalidation		1=Force validation of invoice whatever is template auto_validate flag.
+	 *  @return	int								0 if OK, < 0 if KO (this function is used also by cron so only 0 is OK)
 	 */
-	function createRecurringInvoices()
+	function createRecurringInvoices($restictoninvoiceid=0, $forcevalidation=0)
 	{
 		global $conf, $langs, $db, $user;
 
@@ -989,13 +991,15 @@ class FactureRec extends CommonInvoice
 		$tmparray=dol_getdate($now);
 		$today = dol_mktime(23,59,59,$tmparray['mon'],$tmparray['mday'],$tmparray['year']);   // Today is last second of current day
 
-		dol_syslog("createRecurringInvoices");
+		dol_syslog("createRecurringInvoices restictoninvoiceid=".$restictoninvoiceid." forcevalidation=".$forcevalidation);
+
 		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'facture_rec';
 		$sql.= ' WHERE frequency > 0';      // A recurring invoice is an invoice with a frequency
 		$sql.= " AND (date_when IS NULL OR date_when <= '".$db->idate($today)."')";
 		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql.= ' AND suspended = 0';
 		$sql.= ' AND entity = '.$conf->entity;	// MUST STAY = $conf->entity here
+		if ($restictoninvoiceid > 0) $sql.=' AND rowid = '.$restictoninvoiceid;
 		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
 
@@ -1044,7 +1048,7 @@ class FactureRec extends CommonInvoice
 				        $this->error = $facture->error;
 				        $error++;
 				    }
-				    if (! $error && $facturerec->auto_validate)
+				    if (! $error && ($facturerec->auto_validate || $forcevalidation))
 				    {
 				        $result = $facture->validate($user);
 				        if ($result <= 0)
