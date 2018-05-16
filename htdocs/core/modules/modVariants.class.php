@@ -110,24 +110,6 @@ class modVariants extends DolibarrModules
 
 		// Permissions
 		$this->rights = array();		// Permission array used by this module
-
-		// Main menu entries
-		$this->menu = array(
-			array(
-				'fk_menu' => 'fk_mainmenu=products,fk_leftmenu=product',
-				'type' => 'left',
-				'titre' => 'VariantAttributes',
-				'mainmenu' => 'products',
-				'leftmenu' => 'product',
-				'url' => '/variants/list.php',
-				'langs' => 'products',
-				'position' => 100,
-				'enabled' => '$conf->product->enabled',
-				'perms' => 1,
-				'target' => '',
-				'user' => 0
-			)
-		);			// List of menus to add
 	}
 }
 

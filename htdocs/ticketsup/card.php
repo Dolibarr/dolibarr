@@ -45,11 +45,11 @@ if (!empty($conf->contrat->enabled)) {
 $langs->loadLangs(array("companies","other","ticketsup"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
-$track_id = GETPOST('track_id', 'alpha', 3);
-$ref = GETPOST('ref', 'alpha');
+$id        = GETPOST('id', 'int');
+$track_id  = GETPOST('track_id', 'alpha', 3);
+$ref       = GETPOST('ref', 'alpha');
 $projectid = GETPOST('projectid', 'int');
-$action = GETPOST('action', 'alpha', 3);
+$action    = GETPOST('action', 'alpha', 3);
 
 // Initialize technical object to manage hooks of ticketsup. Note that conf->hooks_modules contains array array
 $hookmanager->initHooks(array('ticketsupcard','globalcard'));
@@ -63,7 +63,7 @@ if (!$action) {
     $action = 'view';
 }
 //Select mail models is same action as add_message
-if (GETPOST('modelselected')) {
+if (GETPOST('modelselected','alpha')) {
     $action = 'add_message';
 }
 
@@ -119,6 +119,25 @@ if ($action == "update_extras" && ! empty($permissiontoadd))
 		setEventMessages($object->error, $object->errors, 'errors');
 		$action = 'edit_extras';
 	}
+}
+
+if ($action == "change_property" && GETPOST('btn_update_ticket_prop','alpha') && $user->rights->ticketsup->write)
+{
+	$object->fetch(GETPOST('id','int'), '', GETPOST('track_id','alpha'));
+
+	$object->type_code = GETPOST('update_value_type','az09');
+	$object->category_code = GETPOST('update_value_category','az09');
+	$object->severity_code = GETPOST('update_value_severity','az09');
+
+	$ret = $object->update($user);
+	if ($ret > 0) {
+		$log_action = $langs->trans('TicketLogPropertyChanged', $oldvalue_label, $newvalue_label);
+		$ret = $object->createTicketLog($user, $log_action);
+		if ($ret > 0) {
+			setEventMessages($langs->trans('TicketUpdated'), null, 'mesgs');
+		}
+	}
+	$action = 'view';
 }
 
 $permissiondellink = $user->rights->ticketsup->write;
@@ -471,92 +490,82 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
          *      Classification and actions on ticket
          *
          ***************************************************/
-        /*
-         * Ticket properties
-         */
+
+        print '<form method="post" name="formticketsupproperties" action="' . $url_page_current . '">';
+        print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
+        print '<input type="hidden" name="action" value="change_property">';
+        print '<input type="hidden" name="property" value="' . $property['dict'] . '">';
+        print '<input type="hidden" name="track_id" value="' . $track_id . '">';
+
         print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
         print '<table class="border centpercent margintable">';
         print '<tr class="liste_titre">';
-        print '<td colspan="2">';
+        print '<td>';
         print $langs->trans('Properties');
         print '</td>';
+        print '<td>';
+        if (GETPOST('set','alpha') == 'properties' && $user->rights->ticketsup->write) {
+        	print '<input class="button" type="submit" name="btn_update_ticket_prop" value="' . $langs->trans("Modify") . '" />';
+        }
+        else {
+        	//    Button to edit Properties
+        	if ($object->fk_statut < 5 && $user->rights->ticketsup->write) {
+        		print '<a href="card.php?track_id=' . $object->track_id . '&action=view&set=properties">' . img_edit($langs->trans('Modify')) . '</a>';
+        	}
+        }
+        print '</td>';
         print '</tr>';
-        if (GETPOST('set') == 'properties' && $user->rights->ticketsup->write) {
-            /*
-             *  Form to change ticket properties
-             */
-            $j = 0;
-            $ticketprop[$j] = array(
-                'dict' => 'type',
-                'list_function' => 'selectTypesTickets',
-                'label' => 'TicketChangeType',
-            );
-            $j++;
-            $ticketprop[$j] = array(
-                'dict' => 'category',
-                'list_function' => 'selectCategoriesTickets',
-                'label' => 'TicketChangeCategory',
-            );
-            $j++;
-            $ticketprop[$j] = array(
-                'dict' => 'severity',
-                'list_function' => 'selectSeveritiesTickets',
-                'label' => 'TicketChangeSeverity',
-            );
-            foreach ($ticketprop as $property) {
-                print '<tr>';
-                print '<td>';
-
-                print '<form method="post" name="ticketsup" action="' . $url_page_current . '">';
-                print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
-                print '<input type="hidden" name="action" value="change_property">';
-                print '<input type="hidden" name="property" value="' . $property['dict'] . '">';
-                print '<input type="hidden" name="track_id" value="' . $track_id . '">';
-                print '<table class="nobordernopadding" style="width:100%;">';
-                print '<tr>';
-                print '<td width="40%">';
-                print '<label for="type_code">' . $langs->trans($property['label']) . '</label> ';
-                print '</td><td width="50%">';
-                print $formticket->{$property['list_function']}($object->type_code, 'update_value', '', 0);
-                print '</td><td>';
-                print ' <input class="button" type="submit" name="btn_update_ticket_prop" value="' . $langs->trans("Modify") . '" />';
-                print '</td>';
-                print '</tr></table>';
-                print '</form>';
-
-                print '</td>';
-                print '</tr>';
-            }
+        if (GETPOST('set','alpha') == 'properties' && $user->rights->ticketsup->write) {
+            print '<tr>';
+            print '<td class="titlefield">';
+            print $langs->trans('TicketChangeType');
+            print '</td><td>';
+            print $formticket->selectTypesTickets($object->type_code, 'update_value_type', '', 2);
+            print '</td>';
+            print '</tr>';
+            print '<tr>';
+            print '<td>';
+            print $langs->trans('TicketChangeCategory');
+            print '</td><td>';
+            print $formticket->selectCategoriesTickets($object->category_code, 'update_value_category', '', 2);
+            print '</td>';
+            print '</tr>';
+            print '<tr>';
+            print '<td>';
+            print $langs->trans('TicketChangeSeverity');
+            print '</td><td>';
+            print $formticket->selectSeveritiesTickets($object->severity_code, 'update_value_severity', '', 2);
+            print '</td>';
+            print '</tr>';
         } else {
             // Type
-            print '<tr><td width="40%">' . $langs->trans("Type") . '</td><td>';
-            print $object->type_label;
+            print '<tr><td class="titlefield">' . $langs->trans("Type") . '</td><td>';
+            print $langs->getLabelFromKey($db, $object->type_code, 'c_ticketsup_type', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             }*/
-
             print '</td></tr>';
 
             // Category
             print '<tr><td>' . $langs->trans("Category") . '</td><td>';
-            print $object->category_label;
+            print $langs->getLabelFromKey($db, $object->category_code, 'c_ticketsup_category', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             }*/
-
             print '</td></tr>';
 
             // Severity
             print '<tr><td>' . $langs->trans("TicketSeverity") . '</td><td>';
-            print $object->severity_label;
+            print $langs->getLabelFromKey($db, $object->severity_code, 'c_ticketsup_severity', 'code', 'label');
             /*if ($user->admin && !$noadmininfo) {
                 print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"), 1);
             }*/
-
             print '</td></tr>';
         }
         print '</table>'; // End table actions
-		print '</div>';
+
+        print '</form>';
+        print '</div>';
 
         // Display navbar with links to change ticket status
         print '<!-- navbar with status -->';
@@ -716,11 +725,6 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         }
         if ($object->fk_soc > 0 && $object->fk_statut < 8 && $user->rights->ficheinter->creer) {
             print '<div class="inline-block divButAction"><a class="butAction" href="' . dol_buildpath('/fichinter/card.php', 1) . '?action=create&socid=' . $object->fk_soc . '&origin=ticketsup_ticketsup&originid=' . $object->id . '">' . $langs->trans('TicketAddIntervention') . '</a></div>';
-        }
-
-        //    Button to edit Properties
-        if ($object->fk_statut < 5 && $user->rights->ticketsup->write) {
-            print '<div class="inline-block divButAction"><a class="butAction" href="card.php?track_id=' . $object->track_id . '&action=view&set=properties">' . $langs->trans('TicketEditProperties') . '</a></div>';
         }
 
         //    Button to link to a contract

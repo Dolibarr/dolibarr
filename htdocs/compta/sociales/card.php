@@ -327,12 +327,22 @@ if ($action == 'create')
 	// Date end period
 	print '<tr>';
 	print '<td class="fieldrequired">';
-	print $langs->trans("PeriodEndDate");
+	print $form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"));
 	print '</td>';
    	print '<td>';
 	print $form->select_date(! empty($dateperiod)?$dateperiod:'-1', 'period', 0, 0, 0, 'charge', 1);
 	print '</td>';
 	print '</tr>';
+
+	// Date due
+	print '<tr>';
+	print '<td class="fieldrequired">';
+	print $langs->trans("DateDue");
+	print '</td>';
+	print '<td>';
+	print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
+	print '</td>';
+	print "</tr>\n";
 
 	// Amount
 	print '<tr>';
@@ -369,16 +379,6 @@ if ($action == 'create')
 		$form->select_comptes($fk_account, 'fk_account', 0, '', 1);
 		print '</td></tr>';
 	}
-
-	// Date due
-	print '<tr>';
-	print '<td class="fieldrequired">';
-	print $langs->trans("DateDue");
-	print '</td>';
-	print '<td>';
-	print $form->select_date(! empty($dateech)?$dateech:'-1', 'ech', 0, 0, 0, 'charge', 1);
-	print '</td>';
-	print "</tr>\n";
 
 	print '</table>';
 
@@ -496,7 +496,7 @@ if ($id > 0)
 		print "</tr>";
 
 		// Period end date
-		print "<tr><td>".$langs->trans("PeriodEndDate")."</td>";
+		print "<tr><td>".$form->textwithpicto($langs->trans("PeriodEndDate"), $langs->trans("LastDayTaxIsRelatedTo"))."</td>";
 		print "<td>";
 		if ($action == 'edit')
 		{

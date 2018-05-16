@@ -24,9 +24,8 @@
 /**
  *   \file       htdocs/fourn/commande/list.php
  *   \ingroup    fournisseur
- *   \brief      List of suppliers orders
+ *   \brief      List of vendor orders
  */
-
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -40,13 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load("orders");
-$langs->load("sendings");
-$langs->load('deliveries');
-$langs->load('companies');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('projects');
+$langs->loadLangs(array("orders","sendings",'deliveries','companies','compta','bills','projects','suppliers'));
 
 $action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
@@ -825,19 +818,19 @@ if ($resql)
 	// Date order
 	if (! empty($arrayfields['cf.date_commande']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_orderday" value="'.$search_orderday.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_ordermonth" value="'.$search_ordermonth.'">';
 		$formother->select_year($search_orderyear?$search_orderyear:-1,'search_orderyear',1, 20, 5);
 		print '</td>';
 	}
 	// Date delivery
 	if (! empty($arrayfields['cf.date_delivery']['checked']))
 	{
-		print '<td class="liste_titre" align="center">';
-		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
-		print '<input class="flat" type="text" size="1" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
-		$formother->select_year($search_deliveryyear?$search_deliveryyear:-1,'search_deliveryyear',1, 20, 5);
+		print '<td class="liste_titre nowraponall" align="center">';
+		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliveryday" value="'.$search_deliveryday.'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_deliverymonth" value="'.$search_deliverymonth.'">';
+		$formother->select_year($search_deliveryyear?$search_deliveryyear:-1, 'search_deliveryyear', 1, 20, 5);
 		print '</td>';
 	}
 	if (! empty($arrayfields['cf.total_ht']['checked']))

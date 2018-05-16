@@ -1077,20 +1077,48 @@ if (! function_exists("llxHeader"))
  */
 function top_httphead($contenttype='text/html', $forcenocache=0)
 {
-	global $conf;
+	global $db, $conf, $hookmanager;
 
 	if ($contenttype == 'text/html' ) header("Content-Type: text/html; charset=".$conf->file->character_set_client);
 	else header("Content-Type: ".$contenttype);
 	// Security options
 	header("X-Content-Type-Options: nosniff");  // With the nosniff option, if the server says the content is text/html, the browser will render it as text/html (note that most browsers now force this option to on)
 	header("X-Frame-Options: SAMEORIGIN");      // Frames allowed only if on same domain (stop some XSS attacks)
-	if (! empty($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY))
+	//header("X-XSS-Protection: 1");      		// XSS protection of some browsers (note: use of Content-Security-Policy is more efficient). Disabled as deprecated.
+	if (! defined('FORCECSP'))
 	{
-		// For example, to restrict script, object, frames or img to some domains
-		// script-src https://api.google.com https://anotherhost.com; object-src https://youtube.com; child-src https://youtube.com; img-src: https://static.example.com
-		// For example, to restrict everything to one domain, except object, ...
-		// default-src https://cdn.example.net; object-src 'none'
-		header("Content-Security-Policy: ".$conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY);
+		//if (! isset($conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY))
+		//{
+		//	// A default security policy that keep usage of js external component like ckeditor, stripe, google, working
+		//	$contentsecuritypolicy = "font-src *; img-src *; style-src * 'unsafe-inline' 'unsafe-eval'; default-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; script-src 'self' *.stripe.com 'unsafe-inline' 'unsafe-eval'; frame-src 'self' *.stripe.com; connect-src 'self';";
+		//}
+		//else $contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
+		$contentsecuritypolicy = $conf->global->MAIN_HTTP_CONTENT_SECURITY_POLICY;
+
+		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
+		$hookmanager->initHooks("main");
+
+		$parameters=array('contentsecuritypolicy'=>$contentsecuritypolicy);
+		$result=$hookmanager->executeHooks('setContentSecurityPolicy',$parameters);    // Note that $action and $object may have been modified by some hooks
+		if ($result > 0) $contentsecuritypolicy = $hookmanager->resPrint;	// Replace CSP
+		else $contentsecuritypolicy .= $hookmanager->resPrint;				// Concat CSP
+
+		if (! empty($contentsecuritypolicy))
+		{
+			// For example, to restrict 'script', 'object', 'frames' or 'img' to some domains:
+			// script-src https://api.google.com https://anotherhost.com; object-src https://youtube.com; frame-src https://youtube.com; img-src: https://static.example.com
+			// For example, to restrict everything to one domain, except 'object', ...:
+			// default-src https://cdn.example.net; object-src 'none'
+			// For example, to restrict everything to itself except img that can be on other servers:
+			// default-src 'self'; img-src *;
+			// Pre-existing site that uses too much inline code to fix but wants to ensure resources are loaded only over https and disable plugins:
+			// default-src http: https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'
+			header("Content-Security-Policy: ".$contentsecuritypolicy);
+		}
+	}
+	elseif (constant('FORCECSP'))
+	{
+		header("Content-Security-Policy: ".constant('FORCECSP'));
 	}
 	if ($forcenocache)
 	{
@@ -1553,6 +1581,10 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 			if ($helpbaseurl && $helppage)
 			{
 				$text='';
+	            if(!empty($conf->global->MAIN_SHOWDATABASENAMEINHELPPAGESLINK)) {
+                    $langs->load('admin');
+                    $appli .= '<br>' . $langs->trans("Database") . ': ' . $db->database_name;
+                }
 				$title=$appli.'<br>';
 				$title.=$langs->trans($mode == 'wiki' ? 'GoToWikiHelpPage': 'GoToHelpPage');
 				if ($mode == 'wiki') $title.=' - '.$langs->trans("PageWiki").' &quot;'.dol_escape_htmltag(strtr($helppage,'_',' ')).'&quot;';

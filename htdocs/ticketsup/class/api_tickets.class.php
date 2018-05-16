@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
  *
  *
  */
-class Ticketsups extends DolibarrApi
+class Tickets extends DolibarrApi
 {
     /**
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
@@ -53,36 +53,93 @@ class Ticketsups extends DolibarrApi
 
     /**
      * Constructor
-     *
-     * @url     GET ticketsup/
-     *
      */
     public function __construct()
     {
-    		global $db;
-    		$this->db = $db;
+    	global $db;
+    	$this->db = $db;
         $this->ticketsup = new Ticketsup($this->db);
     }
 
     /**
-    * Get properties of a ticketsup object
-    *
-    * Return an array with ticketsup informations
-    *
-    * @param 	int 	$id ID of ticketsup
-    * @param   string  $track_id Tracking ID of ticket
-    * @param   string  $ref    Reference for ticket
-    * @return 	array|mixed data without useless information
-    *
-    * @url GET track_id/{track_id}
-    * @url GET ref/{ref}
-    * @url GET {id}
-    * @throws 	RestException
-    */
-    public function get($id = 0, $track_id = '', $ref = '')
+     * Get properties of a Ticket object.
+     *
+     * Return an array with ticket informations
+     *
+     * @param	int 			$id 		ID of ticketsup
+     * @return 	array|mixed 				Data without useless information
+     *
+     * @throws 	401
+     * @throws 	403
+     * @throws 	404
+     */
+    function get($id)
+    {
+    	return $this->getCommon($id, '', '');
+    }
+
+    /**
+     * Get properties of a Ticket object from track id
+     *
+     * Return an array with ticket informations
+     *
+     * @param	string  		$track_id 	Tracking ID of ticket
+     * @return 	array|mixed 				Data without useless information
+     *
+     * @url GET track_id/{track_id}
+     *
+     * @throws 	401
+     * @throws 	403
+     * @throws 	404
+     */
+    public function getByTrackId($track_id)
+    {
+		return $this->getCommon(0, $track_id, '');
+    }
+
+    /**
+     * Get properties of a Ticket object from ref
+     *
+     * Return an array with ticket informations
+     *
+     * @param	string  		$ref    	Reference for ticket
+     * @return 	array|mixed 				Data without useless information
+     *
+     * @url GET ref/{ref}
+     *
+     * @throws 	401
+     * @throws 	403
+     * @throws 	404
+     */
+    public function getByRef($ref)
+    {
+    	try {
+    		return $this->getCommon(0, '', $ref);
+    	}
+    	catch(Exception $e)
+    	{
+   			throw $e;
+    	}
+    }
+
+    /**
+     * Get properties of a Ticket object
+     *
+     * Return an array with ticket informations
+     *
+     * @param	int 			$id 		ID of ticketsup
+     * @param	string  		$track_id 	Tracking ID of ticket
+     * @param	string  		$ref    	Reference for ticket
+     * @return 	array|mixed 				Data without useless information
+     *
+     * @throws 	401
+     * @throws 	403
+     * @throws 	404
+     */
+    public function getCommon($id = 0, $track_id = '', $ref = '')
     {
         if (! DolibarrApiAccess::$user->rights->ticketsup->read) {
-            throw new RestException(401);
+            throw new RestException(403);
         }
 
         // Check parameters
@@ -421,6 +478,190 @@ class Ticketsups extends DolibarrApi
         );
     }
 
+
+    /**
+     * Get the list of tickets categories.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return List of events types
+     *
+     * @url     GET setup/dictionary/categories
+     *
+     * @throws RestException
+     */
+    function getTicketsCategories($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
+    	$list = array();
+
+    	$sql = "SELECT rowid, code, pos,  label, use_default, description";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticketsup_category as t";
+    	$sql.= " WHERE t.active = 1";
+    	// Add sql filters
+    	if ($sqlfilters)
+    	{
+    		if (! DolibarrApi::_checkFilters($sqlfilters))
+    		{
+    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+    		}
+    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    	}
+
+
+    	$sql.= $this->db->order($sortfield, $sortorder);
+
+    	if ($limit) {
+    		if ($page < 0) {
+    			$page = 0;
+    		}
+    		$offset = $limit * $page;
+
+    		$sql .= $this->db->plimit($limit, $offset);
+    	}
+
+    	$result = $this->db->query($sql);
+
+    	if ($result) {
+    		$num = $this->db->num_rows($result);
+    		$min = min($num, ($limit <= 0 ? $num : $limit));
+    		for ($i = 0; $i < $min; $i++) {
+    			$list[] = $this->db->fetch_object($result);
+    		}
+    	} else {
+    		throw new RestException(503, 'Error when retrieving list of ticketsup categories : '.$this->db->lasterror());
+    	}
+
+    	return $list;
+    }
+
+    /**
+     * Get the list of tickets severity.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return List of events types
+     *
+     * @url     GET setup/dictionary/severities
+     *
+     * @throws RestException
+     */
+    function getTicketsSeverities($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
+    	$list = array();
+
+    	$sql = "SELECT rowid, code, pos,  label, use_default, color, description";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticketsup_severity as t";
+    	$sql.= " WHERE t.active = 1";
+    	// Add sql filters
+    	if ($sqlfilters)
+    	{
+    		if (! DolibarrApi::_checkFilters($sqlfilters))
+    		{
+    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+    		}
+    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    	}
+
+
+    	$sql.= $this->db->order($sortfield, $sortorder);
+
+    	if ($limit) {
+    		if ($page < 0) {
+    			$page = 0;
+    		}
+    		$offset = $limit * $page;
+
+    		$sql .= $this->db->plimit($limit, $offset);
+    	}
+
+    	$result = $this->db->query($sql);
+
+    	if ($result) {
+    		$num = $this->db->num_rows($result);
+    		$min = min($num, ($limit <= 0 ? $num : $limit));
+    		for ($i = 0; $i < $min; $i++) {
+    			$list[] = $this->db->fetch_object($result);
+    		}
+    	} else {
+    		throw new RestException(503, 'Error when retrieving list of ticketsup severities : '.$this->db->lasterror());
+    	}
+
+    	return $list;
+    }
+
+    /**
+     * Get the list of tickets types.
+     *
+     * @param string    $sortfield  Sort field
+     * @param string    $sortorder  Sort order
+     * @param int       $limit      Number of items per page
+     * @param int       $page       Page number (starting from zero)
+     * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.code:like:'A%') and (t.active:>=:0)"
+     * @return List of events types
+     *
+     * @url     GET setup/dictionary/types
+     *
+     * @throws RestException
+     */
+    function getTicketsTypes($sortfield = "code", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
+    	$list = array();
+
+    	$sql = "SELECT rowid, code, pos,  label, use_default, description";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ticketsup_type as t";
+    	$sql.= " WHERE t.active = 1";
+    	if ($type) $sql.=" AND t.type LIKE '%" . $this->db->escape($type) . "%'";
+    	if ($module)    $sql.=" AND t.module LIKE '%" . $this->db->escape($module) . "%'";
+    	// Add sql filters
+    	if ($sqlfilters)
+    	{
+    		if (! DolibarrApi::_checkFilters($sqlfilters))
+    		{
+    			throw new RestException(503, 'Error when validating parameter sqlfilters '.$sqlfilters);
+    		}
+    		$regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
+    		$sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
+    	}
+
+
+    	$sql.= $this->db->order($sortfield, $sortorder);
+
+    	if ($limit) {
+    		if ($page < 0) {
+    			$page = 0;
+    		}
+    		$offset = $limit * $page;
+
+    		$sql .= $this->db->plimit($limit, $offset);
+    	}
+
+    	$result = $this->db->query($sql);
+
+    	if ($result) {
+    		$num = $this->db->num_rows($result);
+    		$min = min($num, ($limit <= 0 ? $num : $limit));
+    		for ($i = 0; $i < $min; $i++) {
+    			$list[] = $this->db->fetch_object($result);
+    		}
+    	} else {
+    		throw new RestException(503, 'Error when retrieving list of ticketsup types : '.$this->db->lasterror());
+    	}
+
+    	return $list;
+    }
+
+
+
+
+
     /**
      * Validate fields before create or update object
      *
@@ -474,9 +715,9 @@ class Ticketsups extends DolibarrApi
     function _cleanObjectDatas($object)
     {
 
-        // Remove $db object property for object
-        unset($object->db);
+    	$object = parent::_cleanObjectDatas($object);
 
+    	// Other attributes to clean
         $attr2clean = array(
             "contact",
             "contact_id",
@@ -515,7 +756,9 @@ class Ticketsups extends DolibarrApi
             "firstname",
             "civility_id",
             "cache_msgs_ticket",
-            "cache_logs_ticket"
+            "cache_logs_ticket",
+        	"statuts_short",
+        	"statuts"
         );
         foreach ($attr2clean as $toclean) {
             unset($object->$toclean);

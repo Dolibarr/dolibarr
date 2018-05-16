@@ -51,10 +51,10 @@ if ($user->rights->tax->charges->creer)
 
 print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments",$mysoc->country_code), $newcardbutton);
 
-$sql = "SELECT rowid, amount, label, f.datev as dm";
+$sql = "SELECT rowid, amount, label, f.datev, f.datep";
 $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f ";
 $sql.= " WHERE f.entity = ".$conf->entity." AND localtaxtype=".$db->escape($ltt);
-$sql.= " ORDER BY dm DESC";
+$sql.= " ORDER BY datev DESC";
 
 $result = $db->query($sql);
 if ($result)
@@ -67,6 +67,7 @@ if ($result)
     print '<tr class="liste_titre">';
     print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
     print "<td>".$langs->trans("Label")."</td>";
+    print "<td>".$langs->trans("PeriodEndDate")."</td>";
     print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
     print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
@@ -81,7 +82,8 @@ if ($result)
 		$localtax_static->ref=$obj->rowid;
 		print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
-        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
+        print '<td align="left">'.dol_print_date($db->jdate($obj->datev),'day')."</td>\n";
+        print '<td align="left">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
         $total = $total + $obj->amount;
 
         print "<td align=\"right\">".price($obj->amount)."</td>";
@@ -89,8 +91,8 @@ if ($result)
 
         $i++;
     }
-    print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td>';
-    print "<td align=\"right\"><b>".price($total)."</b></td></tr>";
+    print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
+    print '<td align="right">'.price($total).'</td></tr>';
 
     print "</table>";
     $db->free($result);

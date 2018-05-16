@@ -170,11 +170,11 @@ if ($result)
 	print '<table class="noborder" width="100%">';
 
 	print '<tr class="liste_titre_filter">';
-	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.$search_ref.'"></td>';
-	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.$search_label.'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
+	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 	print '<td class="liste_titre"></td>';
-	print '<td class="liste_titre" colspan="1" align="center">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	print '<td class="liste_titre" align="center">';
+	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
 	$syear = $year;
 	$formother->select_year($syear?$syear:-1,'year',1, 20, 5);
 	print '</td>';
@@ -199,7 +199,7 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"t.rowid","",$param,"",$sortfield,$sortorder);
 	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"t.label","",$param,'align="left"',$sortfield,$sortorder);
-	print_liste_field_titre("DateValue",$_SERVER["PHP_SELF"],"t.datev","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("PeriodEndDate",$_SERVER["PHP_SELF"],"t.datev","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"t.datep","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Type",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
 	if (! empty($conf->banque->enabled)) print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
@@ -266,7 +266,7 @@ if ($result)
     $colspan=5;
     if (! empty($conf->banque->enabled)) $colspan++;
     print '<tr class="liste_total"><td colspan="'.$colspan.'">'.$langs->trans("Total").'</td>';
-    print "<td align=\"right\"><b>".price($total)."</b></td>";
+    print '<td align="right">'.price($total).'</td>';
 	print "<td>&nbsp;</td></tr>";
 
     print "</table>";

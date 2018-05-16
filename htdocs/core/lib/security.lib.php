@@ -105,7 +105,7 @@ function dol_decode($chain, $key='1')
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO then md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @getRandomPassword
  */
@@ -178,22 +178,23 @@ function dol_verifyHash($chain, $hash, $type='0')
  */
 function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
-    global $db, $conf;
+	global $db, $conf;
+	global $hookmanager;
 
     //dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
     //print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
     //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
     //print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
-    // If we use canvas, we try to use function that overlod restrictarea if provided with canvas
-    if (is_object($objcanvas))
-    {
-        if (method_exists($objcanvas->control,'restrictedArea')) return $objcanvas->control->restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
-    }
+	// Get more permissions checks from hooks
+	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
+	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
+	if (! empty($hookmanager->resArray['result'])) return true;
+	if ($reshook > 0) return false;
 
-    if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
+	if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 
-    // Features/modules to check
+	// Features/modules to check
     $featuresarray = array($features);
     if (preg_match('/&/', $features)) $featuresarray = explode("&", $features);
     else if (preg_match('/\|/', $features)) $featuresarray = explode("|", $features);
@@ -331,7 +332,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check create user permission
     $createuserok=1;
-    if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm") == 'yes')
+    if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm",'aZ09') == 'yes')
     {
         if (! $user->rights->user->user->creer) $createuserok=0;
 
@@ -341,7 +342,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check delete permission from module
     $deleteok=1; $nbko=0;
-    if ((GETPOST('action','aZ09')  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST('action','aZ09')  == 'delete')
+    if ((GETPOST("action","aZ09")  == 'confirm_delete' && GETPOST("confirm","aZ09") == 'yes') || GETPOST("action","aZ09")  == 'delete')
     {
         foreach ($featuresarray as $feature)
         {
@@ -408,8 +409,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     // is linked to a company allowed to $user.
     if (! empty($objectid) && $objectid > 0)
     {
-    	$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
-		return $ok ? 1 : accessforbidden();
+        $ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
+        return $ok ? 1 : accessforbidden();
     }
 
     return 1;
@@ -447,7 +448,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		if ($feature == 'project') $feature='projet';
 		if ($feature == 'task')    $feature='projet_task';
 
-		$check = array('adherent','banque','don','user','usergroup','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent','banque','don','user','usergroup','product','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet','project'); // Test for project object

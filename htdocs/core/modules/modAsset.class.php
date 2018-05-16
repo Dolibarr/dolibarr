@@ -17,11 +17,11 @@
  */
 
 /**
- * 	\defgroup   assets     Module Assets
- *  \brief      Assets module descriptor.
+ * 	\defgroup   asset     Module Assets
+ *  \brief      Asset module descriptor.
  *
- *  \file       htdocs/core/modules/modAssets.class.php
- *  \ingroup    assets
+ *  \file       htdocs/core/modules/modAsset.class.php
+ *  \ingroup    asset
  *  \brief      Description and activation file for module Assets
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
@@ -33,7 +33,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 /**
  *  Description and activation class for module FixedAssets
  */
-class modAssets extends DolibarrModules
+class modAsset extends DolibarrModules
 {
 	// @codingStandardsIgnoreEnd
 	/**
@@ -51,7 +51,7 @@ class modAssets extends DolibarrModules
 		// Use here a free id (See in Home -> System information -> Dolibarr for list of used modules id).
 		$this->numero = 51000;		// TODO Go on page https://wiki.dolibarr.org/index.php/List_of_modules_id to reserve id number for your module
 		// Key text used to identify module (for permissions, menus, etc...)
-		$this->rights_class = 'assets';
+		$this->rights_class = 'asset';
 
 		// Family can be 'crm','financial','hr','projects','products','ecm','technic','interface','other'
 		// It is used to group modules by family in module setup page
@@ -78,17 +78,17 @@ class modAssets extends DolibarrModules
 		$this->picto='generic';
 
 		// Defined all module parts (triggers, login, substitutions, menus, css, etc...)
-		// for default path (eg: /assets/core/xxxxx) (0=disable, 1=enable)
-		// for specific path of parts (eg: /assets/core/modules/barcode)
-		// for specific css file (eg: /assets/css/assets.css.php)
+		// for default path (eg: /asset/core/xxxxx) (0=disable, 1=enable)
+		// for specific path of parts (eg: /asset/core/modules/barcode)
+		// for specific css file (eg: /asset/css/assets.css.php)
 		$this->module_parts = array();
 
 		// Data directories to create when module is enabled.
-		// Example: this->dirs = array("/assets/temp","/assets/subdir");
+		// Example: this->dirs = array("/asset/temp","/asset/subdir");
 		$this->dirs = array();
 
 		// Config pages. Put here list of php page, stored into assets/admin directory, to use to setup module.
-		$this->config_page_url = array("setup.php@assets");
+		$this->config_page_url = array("setup.php@asset");
 
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
@@ -109,14 +109,14 @@ class modAssets extends DolibarrModules
 		//                             1=>array('ASSETS_MYNEWCONST2','chaine','myvalue','This is another constant to add',0, 'current', 1)
 		// );
 		$this->const = array(
-			1=>array('ASSETS_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
+			1=>array('ASSET_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
 
-		if (! isset($conf->assets) || ! isset($conf->assets->enabled))
+		if (! isset($conf->asset) || ! isset($conf->asset->enabled))
 		{
-			$conf->assets=new stdClass();
-			$conf->assets->enabled=0;
+			$conf->asset=new stdClass();
+			$conf->asset->enabled=0;
 		}
 
 
@@ -170,16 +170,16 @@ class modAssets extends DolibarrModules
 		// Boxes/Widgets
 		// Add here list of php file(s) stored in assets/core/boxes that contains class to show a widget.
 		$this->boxes = array(
-			//0=>array('file'=>'assetswidget1.php@assets','note'=>'Widget provided by Assets','enabledbydefaulton'=>'Home'),
-			//1=>array('file'=>'assetswidget2.php@assets','note'=>'Widget provided by Assets'),
-			//2=>array('file'=>'assetswidget3.php@assets','note'=>'Widget provided by Assets')
+			//0=>array('file'=>'assetswidget1.php@asset','note'=>'Widget provided by Assets','enabledbydefaulton'=>'Home'),
+			//1=>array('file'=>'assetswidget2.php@asset','note'=>'Widget provided by Assets'),
+			//2=>array('file'=>'assetswidget3.php@asset','note'=>'Widget provided by Assets')
 		);
 
 
 		// Cronjobs (List of cron jobs entries to add when module is enabled)
 		// unit_frequency must be 60 for minute, 3600 for hour, 86400 for day, 604800 for week
 		$this->cronjobs = array(
-			0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/assets/class/assets.class.php', 'objectname'=>'Assets', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
+			0=>array('label'=>'MyJob label', 'jobtype'=>'method', 'class'=>'/asset/class/asset.class.php', 'objectname'=>'Asset', 'method'=>'doScheduledJob', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true)
 		);
 		// Example: $this->cronjobs=array(0=>array('label'=>'My label', 'jobtype'=>'method', 'class'=>'/dir/class/file.class.php', 'objectname'=>'MyClass', 'method'=>'myMethod', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>2, 'unitfrequency'=>3600, 'status'=>0, 'test'=>true),
 		//                                1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'param1, param2', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24, 'status'=>0, 'test'=>true)
@@ -193,22 +193,22 @@ class modAssets extends DolibarrModules
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Read assets';		// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->assets->level1->level2)
-		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->assets->level1->level2)
+		$this->rights[$r][4] = 'read';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Create/Update assets';	// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->assets->level1->level2)
-		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->assets->level1->level2)
+		$this->rights[$r][4] = 'write';				// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = 'Delete assets';		// Permission label
 		$this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		$this->rights[$r][4] = 'delete';			// In php code, permission will be checked by test if ($user->rights->assets->level1->level2)
-		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->assets->level1->level2)
+		$this->rights[$r][4] = 'delete';			// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
+		$this->rights[$r][5] = '';					// In php code, permission will be checked by test if ($user->rights->asset->level1->level2)
 
 
 		// Main menu entries

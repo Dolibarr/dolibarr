@@ -761,11 +761,9 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// Save object we want to unlink category off into category instance to provide information to trigger
-			$this->unlinkoff=$obj;
-
             // Call trigger
-            $result=$this->call_trigger('CATEGORY_UNLINK',$user);
+			$this->context=array('unlinkoff'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
+			$result=$this->call_trigger('CATEGORY_UNLINK',$user);
             if ($result < 0) { $error++; }
             // End call triggers
 
@@ -1199,30 +1197,6 @@ class Categorie extends CommonObject
 				$cats[$rec['rowid']] = $cat;
 			}
 			return $cats;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
-	 * 	Returns total number of categories
-	 *
-	 *	@return		int		Number of categories
-	 *	@deprecated function not used ?
-	 */
-	function get_nb_categories()
-	{
-		$sql = "SELECT count(rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category').")";
-		$res = $this->db->query($sql);
-		if ($res)
-		{
-			$res = $this->db->fetch_array($res);
-			return $res[0];
 		}
 		else
 		{

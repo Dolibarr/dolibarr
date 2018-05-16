@@ -148,7 +148,6 @@ print "<br>\n";
 $selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 
 print "<tr class=\"liste_titre\">";
@@ -202,7 +201,6 @@ print '<td align="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 
 $i=1;
-$var=true;
 while ($i <= $MAXAGENDA)
 {
 	$key=$i;

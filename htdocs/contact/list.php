@@ -260,7 +260,7 @@ if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_conta
 if (! empty($search_categ_thirdparty)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";       // We need this table joined to the select in order to filter by categ
 if (! empty($search_categ_supplier)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc";       // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-$sql.= ' WHERE p.entity IN ('.getEntity('societe').')';
+$sql.= ' WHERE p.entity IN ('.getEntity('socpeople').')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";

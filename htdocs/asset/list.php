@@ -19,8 +19,8 @@
 
 /**
  *   	\file       list.php
- *		\ingroup    assets
- *		\brief      List page for assets
+ *		\ingroup    asset
+ *		\brief      List page for asset
  */
 
 // Load Dolibarr environment
@@ -28,7 +28,7 @@ require '../main.inc.php';
 require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
-require_once DOL_DOCUMENT_ROOT.'/assets/class/assets.class.php';
+require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 
 // Load traductions files requiredby by page
 $langs->loadLangs(array("assets"));
@@ -56,12 +56,12 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical objects
-$object=new Assets($db);
+$object=new Asset($db);
 $extrafields = new ExtraFields($db);
-$diroutputmassaction=$conf->assets->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('assetslist'));     // Note that conf->hooks_modules contains array
+$diroutputmassaction=$conf->asset->dir_output . '/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('assetlist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('assets');
+$extralabels = $extrafields->fetch_name_optionals_label('asset');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Default sort order (if not yet defined by previous GETPOST)
@@ -75,7 +75,7 @@ if ($user->societe_id > 0)
 	//$socid = $user->societe_id;
 	accessforbidden();
 }
-//$result = restrictedArea($user, 'assets', $id,'');
+//$result = restrictedArea($user, 'asset', $id,'');
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all",'alpha'));
@@ -147,11 +147,11 @@ if (empty($reshook))
 	}
 
 	// Mass actions
-	$objectclass='Assets';
-	$objectlabel='Assets';
-	$permtoread = $user->rights->assets->read;
-	$permtodelete = $user->rights->assets->delete;
-	$uploaddir = $conf->assets->dir_output;
+	$objectclass='Asset';
+	$objectlabel='Asset';
+	$permtoread = $user->rights->asset->read;
+	$permtodelete = $user->rights->asset->delete;
+	$uploaddir = $conf->asset->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
 
@@ -167,7 +167,7 @@ $form=new Form($db);
 
 $now=dol_now();
 
-//$help_url="EN:Module_Assets|FR:Module_Assets_FR|ES:Módulo_Assets";
+//$help_url="EN:Module_Asset|FR:Module_Asset_FR|ES:Módulo_Asset";
 $help_url='';
 $title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Assets"));
 
@@ -291,7 +291,7 @@ $arrayofmassactions =  array(
 	//'presend'=>$langs->trans("SendByMail"),
 	//'builddoc'=>$langs->trans("PDFMerge"),
 );
-if ($user->rights->assets->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
+if ($user->rights->asset->delete) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
@@ -309,8 +309,8 @@ print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sort
 
 // Add code for pre mass action (confirmation or email presend form)
 $topicmail="SendAssetsRef";
-$modelmail="assets";
-$objecttmp=new Assets($db);
+$modelmail="asset";
+$objecttmp=new Asset($db);
 $trackid='xxxx'.$object->id;
 include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 
@@ -515,10 +515,10 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 		$urlsource.=str_replace('&amp;','&',$param);
 
 		$filedir=$diroutputmassaction;
-		$genallowed=$user->rights->assets->read;
-		$delallowed=$user->rights->assets->create;
+		$genallowed=$user->rights->asset->read;
+		$delallowed=$user->rights->asset->create;
 
-		print $formfile->showdocuments('massfilesarea_assets','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
+		print $formfile->showdocuments('massfilesarea_asset','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
 	}
 	else
 	{

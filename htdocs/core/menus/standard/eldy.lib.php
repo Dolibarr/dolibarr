@@ -188,10 +188,10 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	$menuqualified=0;
 	if (! empty($conf->comptabilite->enabled)) $menuqualified++;
 	if (! empty($conf->accounting->enabled)) $menuqualified++;
-	if (! empty($conf->assets->enabled)) $menuqualified++;
+	if (! empty($conf->asset->enabled)) $menuqualified++;
 	$tmpentry=array(
 	'enabled'=>$menuqualified,
-	'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->assets->read)),
+	'perms'=>(! empty($user->rights->compta->resultat->lire) || ! empty($user->rights->accounting->mouvements->lire) || ! empty($user->rights->asset->read)),
 	'module'=>'comptabilite|accounting');
 	$showmode=isVisibleToUserType($type_user, $tmpentry, $listofmodulesforexternal);
 	if ($showmode)
@@ -699,7 +699,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				}
 				//if ($usemenuhider || empty($leftmenu) || $leftmenu=="cat") $newmenu->add("/categories/list.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 			}
-
 		}
 
 		/*
@@ -903,7 +902,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 						if ($usemenuhider || empty($leftmenu) || preg_match('/^tax_vat/i',$leftmenu)) $newmenu->add("/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
 						global $mysoc;
 
-						//Local Taxes
 						//Local Taxes 1
 						if($mysoc->useLocalTax(1) && (isset($mysoc->localtax1_assuj) && $mysoc->localtax1_assuj=="1"))
 						{
@@ -1070,7 +1068,8 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 								if ($nature)
 								{
-									$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, dol_trunc($objp->label,25), 2, $user->rights->accounting->comptarapport->lire);
+								    $langs->load('accountancy');
+									$newmenu->add('/accountancy/journal/'.$nature.'journal.php?mainmenu=accountancy&leftmenu=accountancy_journal&id_journal='.$objp->rowid, $langs->trans($objp->label), 2, $user->rights->accounting->comptarapport->lire);
 								}
 								$i++;
 							}
@@ -1103,6 +1102,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report",$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report", $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
+				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/byratecountry.php?leftmenu=accountancy_report", $langs->trans("ByVatRate"),3,$user->rights->accounting->comptarapport->lire);
 			}
 
 			// Accountancy (simple)
@@ -1131,6 +1131,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=report",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=report",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=report", $langs->trans("ByProductsAndServices"),2,$user->rights->compta->resultat->lire);
+				if ($usemenuhider || empty($leftmenu) || preg_match('/report/',$leftmenu)) $newmenu->add("/compta/stats/byratecountry.php?leftmenu=report", $langs->trans("ByVatRate"),2,$user->rights->compta->resultat->lire);
 
 				// Journaux
 				//if ($leftmenu=="ca") $newmenu->add("/compta/journaux/index.php?leftmenu=ca",$langs->trans("Journaux"),1,$user->rights->compta->resultat->lire||$user->rights->accounting->comptarapport->lire);
@@ -1139,15 +1140,15 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 			// Assets
-			if (! empty($conf->assets->enabled))
+			if (! empty($conf->asset->enabled))
 			{
 				$langs->load("assets");
-				$newmenu->add("/assets/list.php?leftmenu=assets&amp;mainmenu=accountancy",$langs->trans("MenuAssets"), 0, $user->rights->assets->read, '', $mainmenu, 'assets');
-				$newmenu->add("/assets/card.php?leftmenu=assets&amp;action=create",$langs->trans("MenuNewAsset"), 1, $user->rights->assets->write);
-				$newmenu->add("/assets/type.php?leftmenu=assets",$langs->trans("MenuTypeAssets"), 1, $user->rights->assets->read, '', $mainmenu, 'assets_type');
-				$newmenu->add("/assets/type.php?leftmenu=assets_type&amp;action=create",$langs->trans("MenuNewTypeAssets"), 1, $user->rights->assets->write);
-				$newmenu->add("/assets/type.php?leftmenu=assets_type",$langs->trans("MenuListTypeAssets"), 1, $user->rights->assets->read);
-				$newmenu->add("/assets/list.php?leftmenu=assets",$langs->trans("MenuListAssets"), 1, $user->rights->assets->read);
+				$newmenu->add("/asset/list.php?leftmenu=asset&amp;mainmenu=accountancy",$langs->trans("MenuAssets"), 0, $user->rights->asset->read, '', $mainmenu, 'asset');
+				$newmenu->add("/asset/card.php?leftmenu=asset&amp;action=create",$langs->trans("MenuNewAsset"), 1, $user->rights->asset->write);
+				$newmenu->add("/asset/type.php?leftmenu=asset",$langs->trans("MenuTypeAssets"), 1, $user->rights->asset->read, '', $mainmenu, 'asset_type');
+				$newmenu->add("/asset/type.php?leftmenu=asset_type&amp;action=create",$langs->trans("MenuNewTypeAssets"), 1, $user->rights->asset->write);
+				$newmenu->add("/asset/type.php?leftmenu=asset_type",$langs->trans("MenuListTypeAssets"), 1, $user->rights->asset->read);
+				$newmenu->add("/asset/list.php?leftmenu=asset",$langs->trans("MenuListAssets"), 1, $user->rights->asset->read);
 			}
 		}
 
@@ -1232,6 +1233,10 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 					$newmenu->add("/product/reassortlot.php?type=0", $langs->trans("StocksByLotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
 					$newmenu->add("/product/stock/productlot_list.php", $langs->trans("LotSerial"), 1, $user->rights->produit->lire && $user->rights->stock->lire);
 				}
+				if (! empty($conf->variants->enabled))
+				{
+					$newmenu->add("/variants/list.php", $langs->trans("VariantAttributes"), 1, $user->rights->produit->lire);
+				}
 				if (! empty($conf->propal->enabled) || ! empty($conf->commande->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
 				{
 					$newmenu->add("/product/stats/card.php?id=all&leftmenu=stats&type=0", $langs->trans("Statistics"), 1, $user->rights->produit->lire && $user->rights->propale->lire);
@@ -1278,18 +1283,18 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
     			if (! empty($conf->stock->enabled))
     			{
     				$langs->load("stocks");
-				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
-				{
-    					$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
-    					$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->creer);
-    					$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
-				}
-				else
-				{
-					$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->advance_inventory->read, '', $mainmenu, 'stock');
-    					$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->advance_inventory->write);
-    					$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->advance_inventory->read);
-				}
+					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
+					{
+						$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->lire, '', $mainmenu, 'stock');
+						$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->creer);
+						$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->lire);
+					}
+					else
+					{
+						$newmenu->add("/product/inventory/list.php?leftmenu=stock", $langs->trans("Inventory"), 0, $user->rights->stock->inventory_advance->read, '', $mainmenu, 'stock');
+						$newmenu->add("/product/inventory/card.php?action=create", $langs->trans("NewInventory"), 1, $user->rights->stock->inventory_advance->write);
+						$newmenu->add("/product/inventory/list.php", $langs->trans("List"), 1, $user->rights->stock->inventory_advance->read);
+					}
     			}
 			}
 

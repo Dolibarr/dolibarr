@@ -31,8 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("users");
-$langs->load("projects");
+$langs->loadLangs(array("users", "projects"));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -464,16 +463,16 @@ else if ($id > 0 || ! empty($ref))
 	{
 		if ($object->public || $userWrite > 0)
 		{
-			$linktocreatetask = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'</a>';
+			$linktocreatetask = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=create'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
 		else
 		{
-			$linktocreatetask = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'</a>';
+			$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
 	}
 	else
 	{
-		$linktocreatetask = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'</a>';
+		$linktocreatetask = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTask').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
 	}
 
 
@@ -489,7 +488,7 @@ else if ($id > 0 || ! empty($ref))
 	print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 	$title=$langs->trans("ListOfTasks");
-	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?projectid='.$object->id.'&withproject=1">'.$langs->trans("GoToListOfTimeConsumed").'</a>';
+	$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/ganttview.php?id='.$object->id.'&withproject=1">'.$langs->trans("GoToGanttView").'<span class="paddingleft fa fa-calendar-minus-o valignmiddle"></span></a>';
 
 	//print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
 	print load_fiche_titre($title, $linktotasks.' &nbsp; '.$linktocreatetask, 'title_generic.png');

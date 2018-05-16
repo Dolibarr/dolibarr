@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Tva extends CommonObject
 {
-	//public $element='tva';			//!< Id that identify managed objects
-	//public $table_element='tva';	//!< Name of table without prefix where object is stored
+	public $element='tva';			//!< Id that identify managed objects
+	public $table_element='tva';	//!< Name of table without prefix where object is stored
 	public $picto='payment';
 
 	var $tms;
@@ -48,8 +48,6 @@ class Tva extends CommonObject
 	var $fk_user_creat;
 	var $fk_user_modif;
 
-
-
     /**
 	 *	Constructor
 	 *
@@ -58,8 +56,6 @@ class Tva extends CommonObject
     function __construct($db)
     {
         $this->db = $db;
-        $this->element = 'tva';
-        $this->table_element = 'tva';
     }
 
 

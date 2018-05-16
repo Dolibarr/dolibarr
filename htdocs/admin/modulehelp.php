@@ -17,7 +17,7 @@
  */
 
 /**
- *  \file       htdocs/admin/modules.php
+ *  \file       htdocs/admin/modulehelp.php
  *  \brief      Page to activate/disable all modules
  */
 

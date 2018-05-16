@@ -90,7 +90,7 @@ $tmps=dol_getdate($date_start);
 $year_start = $tmps['year'];
 $tmpe=dol_getdate($date_end);
 $year_end = $tmpe['year'];
-$nbofyear = ($year_end - $start_year) + 1;
+$nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
 

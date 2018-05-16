@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007	Rodolphe Quiedeville		<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2013	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2011-2017	Philippe Grand			<philippe.grand@atoo-net.com>
@@ -157,6 +157,7 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 	}
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MANAGERS", GETPOST("MAIN_INFO_SOCIETE_MANAGERS",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_GDPR", GETPOST("MAIN_INFO_GDPR",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_CAPITAL", GETPOST("capital",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE", GETPOST("forme_juridique_code",'nohtml'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SIREN", GETPOST("siren",'nohtml'),'chaine',0,'',$conf->entity);
@@ -423,6 +424,13 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	print '<tr class="oddeven"><td><label for="director">'.$langs->trans("ManagingDirectors").'</label></td><td>';
 	print '<input name="MAIN_INFO_SOCIETE_MANAGERS" id="director" class="minwidth200" value="' . $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '"></td></tr>';
+
+	// GDPR contact
+
+	print '<tr class="oddeven"><td>';
+	print $form->textwithpicto($langs->trans("GDPRContact"), $langs->trans("GDPRContactDesc"));
+	print '</td><td>';
+	print '<input name="MAIN_INFO_GDPR" id="director" class="minwidth500" value="' . $conf->global->MAIN_INFO_GDPR . '"></td></tr>';
 
 	// Capital
 
@@ -814,6 +822,11 @@ else
 
 	print '<tr class="oddeven"><td>'.$langs->trans("ManagingDirectors").'</td><td>';
 	print $conf->global->MAIN_INFO_SOCIETE_MANAGERS . '</td></tr>';
+
+	// GDPR Contact
+
+	print '<tr class="oddeven"><td>'.$langs->trans("GDPRContact").'</td><td>';
+	print $conf->global->MAIN_INFO_GDPR . '</td></tr>';
 
 	// Capital
 

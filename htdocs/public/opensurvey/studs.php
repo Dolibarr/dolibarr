@@ -66,22 +66,28 @@ if (GETPOST('ajoutcomment','alpha'))
 
 	$error=0;
 
-	if (! GETPOST('comment','none'))
+	$comment = GETPOST("comment",'none');
+	$comment_user = GETPOST('commentuser','nohtml');
+
+	if (! $comment)
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 	}
-	if (! GETPOST('commentuser','nohtml'))
+	if (! $comment_user)
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
 	}
 
+	if (! in_array($comment_user, $listofvoters))
+	{
+		setEventMessages($langs->trans("UserMustBeSameThanUserUsedToVote"), null, 'errors');
+		$error++;
+	}
+
 	if (! $error)
 	{
-		$comment = GETPOST("comment",'none');
-		$comment_user = GETPOST('commentuser','nohtml');
-
 		$resql = $object->addComment($comment, $comment_user);
 
 		if (! $resql) dol_print_error($db);
@@ -729,8 +735,12 @@ if ($comments)
 	print "<br><b>" . $langs->trans("CommentsOfVoters") . ":</b><br>\n";
 
 	foreach ($comments as $obj) {
+		// ligne d'un usager pré-authentifié
+		//$mod_ok = (in_array($obj->name, $listofvoters));
+
 		print '<div class="comment"><span class="usercomment">';
-		if (in_array($obj->usercomment, $listofvoters)) print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png').'</a> ';
+		if (in_array($obj->usercomment, $listofvoters)) print '<a href="'.$_SERVER["PHP_SELF"].'?deletecomment='.$obj->id_comment.'&sondage='.$numsondage.'"> '.img_picto('', 'delete.png', '', false, 0, 0, '', 'nomarginleft').'</a> ';
+		//else print img_picto('', 'ellipsis-h', '', false, 0, 0, '', 'nomarginleft').' ';
 		print dol_htmlentities($obj->usercomment).':</span> <span class="comment">'.dol_nl2br(dol_htmlentities($obj->comment))."</span></div>";
 	}
 }

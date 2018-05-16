@@ -135,21 +135,27 @@ print '
 				/* If page_y set, we set scollbar with it */
 				page_y=getParameterByName(\'page_y\', 0);				/* search in GET parameter */
 				if (page_y == 0) page_y = jQuery("#page_y").text();		/* search in POST parameter that is filed at bottom of page */
-				console.log("page_y found is "+page_y);
-				if (page_y > 0) $(\'html, body\').scrollTop(page_y);
+				if (page_y > 0)
+				{
+					console.log("page_y found is "+page_y);
+					$(\'html, body\').scrollTop(page_y);
+				}
 
 				/* Set handler to add page_y param on output (click on href links or submit button) */
 				jQuery(".reposition").click(function() {
 					var page_y = $(document).scrollTop();
-					if (this.href)
+					if (page_y > 0)
 					{
-						this.href=this.href+\'&page_y=\'+page_y;
-						console.log("We click on tag with .reposition class. this.ref is now "+this.href);
-					}
-					else
-					{
-						console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update form field page_y with value "+page_y);
-						jQuery("input[type=hidden][name=page_y]").val(page_y);
+						if (this.href)
+						{
+							this.href=this.href+\'&page_y=\'+page_y;
+							console.log("We click on tag with .reposition class. this.ref is now "+this.href);
+						}
+						else
+						{
+							console.log("We click on tag with .reposition class but element is not an <a> html tag, so we try to update form field page_y with value "+page_y);
+							jQuery("input[type=hidden][name=page_y]").val(page_y);
+						}
 					}
 				});
 			});'."\n";
