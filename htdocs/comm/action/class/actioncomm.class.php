@@ -281,6 +281,7 @@ class ActionComm extends CommonObject
                 return -1;
             }
         }
+        $code = empty($this->code)?$this->type_code:$this->code;
 
         // Check parameters
         if (! $this->type_id)
@@ -316,7 +317,7 @@ class ActionComm extends CommonObject
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").", ";
         $sql.= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '')?"'".$this->db->escape($this->durationp)."'":"null").", ";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
-        $sql.= (isset($this->type_code)?" '".$this->db->escape($this->type_code)."'":"null").", ";
+        $sql.= ($code?("'".$code."'"):"null").", ";
         $sql.= ((isset($this->socid) && $this->socid > 0) ? $this->socid:"null").", ";
         $sql.= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project:"null").", ";
         $sql.= " '".$this->db->escape($this->note)."', ";
