@@ -1010,7 +1010,7 @@ class Don extends CommonObject
 			$object=$this;
 
 			$classname = $modele;
-			$obj = new $classname($db);
+			$obj = new $classname($this->db);
 
 			// We save charset_output to restore it because write_file can change it if needed for
 			// output format that does not support UTF8.
@@ -1028,7 +1028,7 @@ class Don extends CommonObject
 			{
 				$outputlangs->charset_output=$sav_charset_output;
 				dol_syslog("Erreur dans don_create");
-				dol_print_error($db,$obj->error);
+				dol_print_error($this->db,$obj->error);
 				return 0;
 			}
 		}

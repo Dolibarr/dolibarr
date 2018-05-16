@@ -403,7 +403,7 @@ class SupplierProposal extends CommonObject
             	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY))
             	{
             		// Check quantity is enough
-            		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
+            		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_fournprice=".$fk_fournprice." qty=".$qty." ref_supplier=".$ref_supplier);
             		$prod = new Product($this->db, $fk_product);
             		if ($prod->fetch($fk_product) > 0)
             		{

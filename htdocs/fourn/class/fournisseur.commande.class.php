@@ -573,9 +573,9 @@ class CommandeFournisseur extends CommonOrder
      */
     function LibStatut($statut,$mode=0,$billed=0)
     {
-    	if (empty($this->statuts) || empty($statutshort))
+    	if (empty($this->statuts) || empty($this->statutshort))
     	{
-	        global $langs;
+	        global $conf, $langs;
 	        $langs->load('orders');
 
 	        $this->statuts[0] = 'StatusOrderDraft';
@@ -591,18 +591,16 @@ class CommandeFournisseur extends CommonOrder
 	        $this->statuts[9] = 'StatusOrderRefused';
 
 	        // List of language codes for status
-	        $statutshort[0] = 'StatusOrderDraftShort';
-	        $statutshort[1] = 'StatusOrderValidatedShort';
-	        $statutshort[2] = 'StatusOrderApprovedShort';
-	        $statutshort[3] = 'StatusOrderOnProcessShort';
-	        $statutshort[4] = 'StatusOrderReceivedPartiallyShort';
-	        $statutshort[5] = 'StatusOrderReceivedAllShort';
-	        $statutshort[6] = 'StatusOrderCanceledShort';
-	        $statutshort[7] = 'StatusOrderCanceledShort';
-	        $statutshort[9] = 'StatusOrderRefusedShort';
+	        $this->statutshort[0] = 'StatusOrderDraftShort';
+	        $this->statutshort[1] = 'StatusOrderValidatedShort';
+	        $this->statutshort[2] = 'StatusOrderApprovedShort';
+	        $this->statutshort[3] = 'StatusOrderOnProcessShort';
+	        $this->statutshort[4] = 'StatusOrderReceivedPartiallyShort';
+	        $this->statutshort[5] = 'StatusOrderReceivedAllShort';
+	        $this->statutshort[6] = 'StatusOrderCanceledShort';
+	        $this->statutshort[7] = 'StatusOrderCanceledShort';
+	        $this->statutshort[9] = 'StatusOrderRefusedShort';
     	}
-
-    	$langs->load('orders');
 
         $billedtext='';
 		//if ($statut==5 && $this->billed == 1) $statut = 8;
@@ -614,7 +612,7 @@ class CommandeFournisseur extends CommonOrder
         }
         if ($mode == 1)
         {
-            return $langs->trans($statutshort[$statut]);
+        	return $langs->trans($this->statutshort[$statut]);
         }
         if ($mode == 2)
         {
@@ -644,14 +642,14 @@ class CommandeFournisseur extends CommonOrder
         }
         if ($mode == 5)
         {
-            if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
-            if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut1');
-            if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
-            if ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
-            if ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
-            if ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+        	if ($statut==0) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut0');
+        	if ($statut==1) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut1');
+        	if ($statut==2) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	if ($statut==3) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	if ($statut==4) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut3');
+        	if ($statut==5) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+        	if ($statut==6 || $statut==7) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
+        	if ($statut==9) return '<span class="hideonsmartphone">'.$langs->trans($this->statutshort[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),'statut5');
         }
     }
 

@@ -979,6 +979,8 @@ class FactureRec extends CommonInvoice
 	{
 		global $conf, $langs, $db, $user;
 
+		$error=0;
+
 		$langs->load("bills");
 
 		$nb_create=0;
@@ -1010,11 +1012,13 @@ class FactureRec extends CommonInvoice
 
 		    while ($i < $num)     // Loop on each template invoice. If $num = 0, test is false at first pass.
 			{
-			    $line = $db->fetch_object($resql);
+				$line = $db->fetch_object($resql);
 
 			    $db->begin();
 
-				$facturerec = new FactureRec($db);
+			    $invoiceidgenerated = 0;
+
+			    $facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0)
@@ -1023,8 +1027,6 @@ class FactureRec extends CommonInvoice
 					$conf->entity = $facturerec->entity;
 
 					dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
-
-				    $error=0;
 
 				    $facture = new Facture($db);
 					$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice

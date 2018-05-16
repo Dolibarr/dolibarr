@@ -20,13 +20,12 @@
 require 'ticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/ticketsup.lib.php';
 
+
 /**
  * API class for ticketsup object
  *
  * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
- *
- *
  */
 class Tickets extends DolibarrApi
 {
@@ -311,18 +310,14 @@ class Tickets extends DolibarrApi
 
         $sql.= $db->order($sortfield, $sortorder);
 
-        $nbtotalofrecords = 0;
-        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-            $result = $db->query($sql);
-            $nbtotalofrecords = $db->num_rows($result);
-            if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-            {
-            	$page = 0;
-            	$offset = 0;
-            }
-        }
+        if ($limit) {
+        	if ($page < 0) {
+        		$page = 0;
+        	}
+        	$offset = $limit * $page;
 
-        $sql.= $db->plimit($limit + 1, $offset);
+        	$sql .= $this->db->plimit($limit, $offset);
+        }
 
         $result = $db->query($sql);
         if ($result) {
