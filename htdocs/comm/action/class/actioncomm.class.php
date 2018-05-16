@@ -1203,15 +1203,16 @@ class ActionComm extends CommonObject
      *    	Return URL of event
      *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
-     * 		@param	int		$withpicto			0=No picto, 1=Include picto into link, 2=Only picto
-     *		@param	int		$maxlength			Max number of charaters into label. If negative, use the ref as label.
-     *		@param	string	$classname			Force style class on a link
-     * 		@param	string	$option				''=Link to action, 'birthday'=Link to contact
-     * 		@param	int		$overwritepicto		1=Overwrite picto
-     *      @param	int   	$notooltip		    1=Disable tooltip
-     *		@return	string						Chaine avec URL
+     * 		@param	int		$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+     *		@param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
+     *		@param	string	$classname				Force style class on a link
+     * 		@param	string	$option					''=Link to action, 'birthday'=Link to contact
+     * 		@param	int		$overwritepicto			1=Overwrite picto
+     *      @param	int   	$notooltip		    	1=Disable tooltip
+     *  	@param  int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *		@return	string							Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0, $notooltip=0)
+    function getNomUrl($withpicto=0, $maxlength=0, $classname='', $option='', $overwritepicto=0, $notooltip=0, $save_lastsearch_value=-1)
     {
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1275,6 +1276,13 @@ class ActionComm extends CommonObject
 			$url = DOL_URL_ROOT.'/contact/perso.php?id='.$this->id;
 		else
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
