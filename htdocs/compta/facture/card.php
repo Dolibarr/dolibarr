@@ -926,7 +926,6 @@ if (empty($reshook))
 				}
 				$id = $object->create($user);
 
-	            $facture_source = new Facture($db); // fetch origin object
 				if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0)
 				{
 					if (!empty($facture_source->lines))
