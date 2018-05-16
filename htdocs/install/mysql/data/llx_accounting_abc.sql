@@ -29,13 +29,13 @@
 --
 
 
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT', 'Sale Journal',           2, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC', 'Purchase Journal',       3, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ', 'Bank Journal',           4, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD', 'Other Journal',          1, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN', 'Has new Journal',        9, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER', 'Expense Report Journal', 5, 1, 1);
-INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'Inventory Journal'    , 8, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('VT', 'ACCOUNTING_SELL_JOURNAL',           2, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AC', 'ACCOUNTING_PURCHASE_JOURNAL',       3, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('BQ', 'FinanceJournal',           4, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('OD', 'ACCOUNTING_MISCELLANEOUS_JOURNAL',          1, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('AN', 'ACCOUNTING_HAS_NEW_JOURNAL',        9, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('ER', 'ExpenseReportsJournal', 5, 1, 1);
+INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES ('INV', 'InventoryJournal'    , 8, 1, 1);
 
 
 -- Description of chart of account FR PCG99-ABREGE
@@ -44,7 +44,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account FR PCG99-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG99-BASE', 'The base accountancy french plan', 1);
 
--- Description of chart of account FR PCG14-BASE
+-- Description of chart of account FR PCG14-DEV
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG14-DEV', 'The developed accountancy french plan 2014', 1);
 
 -- Description of chart of account BE PCMN-BASE

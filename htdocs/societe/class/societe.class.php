@@ -107,22 +107,22 @@ class Societe extends CommonObject
 	 * Thirdparty status : 0=activity ceased, 1= in activity
 	 * @var int
 	 */
-	var $status;
+	public $status=1;
 
 	/**
 	 * Id of department
 	 * @var int
 	 */
-	var $state_id;
-	var $state_code;
-	var $state;
+	public $state_id;
+	public $state_code;
+	public $state;
 
 	/**
 	 * Id of region
 	 * @var int
 	 */
-	var $region_code;
-	var $region;
+	public $region_code;
+	public $region;
 
 	/**
 	 * State code
@@ -130,54 +130,54 @@ class Societe extends CommonObject
 	 * @deprecated Use state_code instead
 	 * @see state_code
 	 */
-	var $departement_code;
+	public $departement_code;
 
 	/**
 	 * @var string
 	 * @deprecated Use state instead
 	 * @see state
 	 */
-	var $departement;
+	public $departement;
 
 	/**
 	 * @var string
 	 * @deprecated Use country instead
 	 * @see country
 	 */
-	var $pays;
+	public $pays;
 
 	/**
 	 * Phone number
 	 * @var string
 	 */
-	var $phone;
+	public $phone;
 	/**
 	 * Fax number
 	 * @var string
 	 */
-	var $fax;
+	public $fax;
 	/**
 	 * Email
 	 * @var string
 	 */
-	var $email;
+	public $email;
 	/**
 	 * Skype username
 	 * @var string
 	 */
-	var $skype;
+	public $skype;
 	/**
 	 * Webpage
 	 * @var string
 	 */
-	var $url;
+	public $url;
 
 	//! barcode
 	/**
 	 * Barcode value
 	 * @var string
 	 */
-	var $barcode;
+	public $barcode;
 
 	// 6 professional id (usage depends on country)
 
@@ -185,68 +185,68 @@ class Societe extends CommonObject
 	 * Professional ID 1 (Ex: Siren in France)
 	 * @var string
 	 */
-	var $idprof1;
+	public $idprof1;
 
 	/**
 	 * Professional ID 2 (Ex: Siret in France)
 	 * @var string
 	 */
-	var $idprof2;
+	public $idprof2;
 
 	/**
 	 * Professional ID 3 (Ex: Ape in France)
 	 * @var string
 	 */
-	var $idprof3;
+	public $idprof3;
 
 	/**
 	 * Professional ID 4 (Ex: RCS in France)
 	 * @var string
 	 */
-	var $idprof4;
+	public $idprof4;
 
 	/**
 	 * Professional ID 5
 	 * @var string
 	 */
-	var $idprof5;
+	public $idprof5;
 
 	/**
 	 * Professional ID 6
 	 * @var string
 	 */
-	var $idprof6;
+	public $idprof6;
 
-	var $prefix_comm;
+	public $prefix_comm;
 
-	var $tva_assuj;
+	public $tva_assuj=1;
 	/**
 	 * Intracommunitary VAT ID
 	 * @var string
 	 */
-	var $tva_intra;
+	public $tva_intra;
 
 	// Local taxes
-	var $localtax1_assuj;
-	var $localtax1_value;
-	var $localtax2_assuj;
-	var $localtax2_value;
+	public $localtax1_assuj;
+	public $localtax1_value;
+	public $localtax2_assuj;
+	public $localtax2_value;
 
-	var $managers;
-	var $capital;
-	var $typent_id;
-	var $typent_code;
-	var $effectif;
-	var $effectif_id;
-	var $forme_juridique_code;
-	var $forme_juridique;
+	public $managers;
+	public $capital;
+	public $typent_id=0;
+	public $typent_code;
+	public $effectif;
+	public $effectif_id=0;
+	public $forme_juridique_code;
+	public $forme_juridique=0;
 
-	var $remise_percent;
-	var $remise_supplier_percent;
-	var $mode_reglement_supplier_id;
-	var $cond_reglement_supplier_id;
-	var $fk_prospectlevel;
-	var $name_bis;
+	public $remise_percent;
+	public $remise_supplier_percent;
+	public $mode_reglement_supplier_id;
+	public $cond_reglement_supplier_id;
+	public $fk_prospectlevel;
+	public $name_bis;
 
 	//Log data
 
@@ -254,127 +254,127 @@ class Societe extends CommonObject
 	 * Date of last update
 	 * @var string
 	 */
-	var $date_modification;
+	public $date_modification;
 	/**
 	 * User that made last update
 	 * @var string
 	 */
-	var $user_modification;
+	public $user_modification;
 	/**
 	 * Date of creation
 	 * @var string
 	 */
-	var $date_creation;
+	public $date_creation;
 	/**
 	 * User that created the thirdparty
 	 * @var User
 	 */
-	var $user_creation;
+	public $user_creation;
 
 
-	var $specimen;
+	public $specimen;
 
 	/**
 	 * 0=no customer, 1=customer, 2=prospect, 3=customer and prospect
 	 * @var int
 	 */
-	var $client;
+	public $client=0;
 	/**
 	 * 0=no prospect, 1=prospect
 	 * @var int
 	 */
-	var $prospect;
+	public $prospect=0;
 	/**
 	 * 0=no supplier, 1=supplier
 	 * @var int
 	 */
-	var $fournisseur;
+	public $fournisseur;
 
 	/**
 	 * Client code. E.g: CU2014-003
 	 * @var string
 	 */
-	var $code_client;
+	public $code_client;
 
 	/**
 	 * Supplier code. E.g: SU2014-003
 	 * @var string
 	 */
-	var $code_fournisseur;
+	public $code_fournisseur;
 
 	/**
 	 * Accounting code for client
 	 * @var string
 	 */
-	var $code_compta;
+	public $code_compta;
 
 	/**
 	 * Accounting code for suppliers
 	 * @var string
 	 */
-	var $code_compta_fournisseur;
+	public $code_compta_fournisseur;
 
 	/**
 	 * @var string
 	 * @deprecated Note is split in public and private notes
 	 * @see note_public, note_private
 	 */
-	var $note;
+	public $note;
 
 	/**
 	 * Private note
 	 * @var string
 	 */
-	var $note_private;
+	public $note_private;
 
 	/**
 	 * Public note
 	 * @var string
 	 */
-	var $note_public;
+	public $note_public;
 
 	//! code statut prospect
-	var $stcomm_id;
-	var $statut_commercial;
+	public $stcomm_id;
+	public $statut_commercial;
 
 	/**
 	 * Assigned price level
 	 * @var int
 	 */
-	var $price_level;
-	var $outstanding_limit;
+	public $price_level;
+	public $outstanding_limit;
 
 	/**
 	 * Min order amounts
 	 */
-	var $order_min_amount;
-	var $supplier_order_min_amount;
+	public $order_min_amount;
+	public $supplier_order_min_amount;
 
 	/**
 	 * Id of sales representative to link (used for thirdparty creation). Not filled by a fetch, because we can have several sales representatives.
 	 * @var int
 	 */
-	var $commercial_id;
+	public $commercial_id;
 	/**
 	 * Id of parent thirdparty (if one)
 	 * @var int
 	 */
-	var $parent;
+	public $parent;
 	/**
 	 * Default language code of thirdparty (en_US, ...)
 	 * @var string
 	 */
-	var $default_lang;
+	public $default_lang;
 
-	var $ref;
-	var $ref_int;
+	public $ref;
+	public $ref_int;
 	/**
 	 * External user reference.
 	 * This is to allow external systems to store their id and make self-developed synchronizing functions easier to
 	 * build.
 	 * @var string
 	 */
-	var $ref_ext;
+	public $ref_ext;
 
 	/**
 	 * Import key.
@@ -382,44 +382,38 @@ class Societe extends CommonObject
 	 * to an import process
 	 * @var string
 	 */
-	var $import_key;
+	public $import_key;
 
 	/**
 	 * Supplier WebServices URL
 	 * @var string
 	 */
-	var $webservices_url;
+	public $webservices_url;
 
 	/**
 	 * Supplier WebServices Key
 	 * @var string
 	 */
-	var $webservices_key;
+	public $webservices_key;
 
-	var $logo;
-	var $logo_small;
-	var $logo_mini;
+	public $logo;
+	public $logo_small;
+	public $logo_mini;
 
-	var $array_options;
+	public $array_options;
 
 	// Incoterms
-	var $fk_incoterms;
-	var $location_incoterms;
-	var $libelle_incoterms;  //Used into tooltip
+	public $fk_incoterms;
+	public $location_incoterms;
+	public $libelle_incoterms;  //Used into tooltip
 
 	// Multicurrency
-	var $fk_multicurrency;
-	var $multicurrency_code;
+	public $fk_multicurrency;
+	public $multicurrency_code;
 
 
 	// END MODULEBUILDER PROPERTIES
 
-
-	/**
-	 * To contains a clone of this when we need to save old properties of object
-	 *  @var Societe
-	 */
-	var $oldcopy;
 
 	/**
 	 *    Constructor
@@ -961,7 +955,7 @@ class Societe extends CommonObject
 			$sql .= ",fk_effectif = ".(! empty($this->effectif_id)?"'".$this->db->escape($this->effectif_id)."'":"null");
 			if (isset($this->stcomm_id))
 			{
-				$sql .= ",fk_stcomm=".($this->stcomm_id > 0 ? $this->stcomm_id : "0");
+				$sql .= ",fk_stcomm=".(!empty($this->stcomm_id)  ? $this->stcomm_id : "0");
 			}
 			$sql .= ",fk_typent = ".(! empty($this->typent_id)?"'".$this->db->escape($this->typent_id)."'":"0");
 
@@ -1056,23 +1050,15 @@ class Societe extends CommonObject
 
 				$action='update';
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$hookmanager->initHooks(array('thirdpartydao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error && $call_trigger)
 				{
@@ -1981,6 +1967,13 @@ class Societe extends CommonObject
 
 		$name=$this->name?$this->name:$this->nom;
 
+		if(!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD)){
+
+             if(empty($option) && $this->client > 0) $option = 'customer';
+             if(empty($option) && $this->fournisseur > 0) $option = 'supplier';
+         }
+
+
 		if (! empty($conf->global->SOCIETE_ADD_REF_IN_LIST) && (!empty($withpicto)))
 		{
 			if (($this->client) && (! empty ( $this->code_client ))
@@ -2407,7 +2400,7 @@ class Societe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				if ($mode == 'email') $contact_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
+				if ($mode == 'email') $contact_property = dol_string_nospecial(dolGetFirstLastname($obj->firstname, $obj->lastname), ' ', array(","))." <".$obj->email.">";
 				else if ($mode == 'mobile') $contact_property = $obj->phone_mobile;
 			}
 			return $contact_property;

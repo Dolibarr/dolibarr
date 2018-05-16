@@ -28,17 +28,14 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("compta");
-$langs->load("salaries");
-$langs->load("bills");
-$langs->load("hrm");
+$langs->loadLangs(array("compta","salaries","bills","hrm"));
 
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref','int');
 $search_user = GETPOST('search_user','alpha');
 $search_label = GETPOST('search_label','alpha');
@@ -52,8 +49,8 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortfield) $sortfield="s.datep";
-if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="s.datep,s.rowid";
+if (! $sortorder) $sortorder="DESC,DESC";
 $optioncss = GETPOST('optioncss','alpha');
 
 $filtre=$_GET["filtre"];
@@ -150,9 +147,15 @@ if ($result)
 	if ($typeid) $param.='&amp;typeid='.$typeid;
 	if ($optioncss != '') $param.='&amp;optioncss='.$optioncss;
 
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create">'.$langs->trans('NewSalaryPayment').'</a>';
+	$newcardbutton='';
+	if ($user->rights->salaries->payment->write)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create">'.$langs->trans('NewSalaryPayment');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
 
-	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -202,7 +205,7 @@ if ($result)
     print_liste_field_titre("Ref",$_SERVER["PHP_SELF"],"s.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre("Employee",$_SERVER["PHP_SELF"],"u.rowid","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"s.label","",$param,'align="left"',$sortfield,$sortorder);
-    print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"s.datep","",$param,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"s.datep,s.rowid","",$param,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre("PaymentMode",$_SERVER["PHP_SELF"],"type","",$param,'align="left"',$sortfield,$sortorder);
     if (! empty($conf->banque->enabled)) print_liste_field_titre("BankAccount",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
     print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);

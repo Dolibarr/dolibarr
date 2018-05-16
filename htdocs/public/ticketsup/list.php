@@ -16,9 +16,9 @@
  */
 
 /**
- *       \file       ticketsup/public/index.php
- *        \ingroup    ticketsup
- *        \brief      Public file to add and manage ticket
+ *       \file       htdocs/public/ticketsup/list.php
+ *       \ingroup    ticketsup
+ *       \brief      Public file to add and manage ticket
  */
 
 if (!defined('NOCSRFCHECK')) {
@@ -36,13 +36,11 @@ if (!defined("NOLOGIN")) {
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/html.formticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/ticketsup/lib/ticketsup.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
 
 // Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
-$langs->load("ticketsup");
+$langs->loadLangs(array("companies","other","ticketsup"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
@@ -61,6 +59,13 @@ if (isset($_SESSION['email_customer'])) {
 }
 
 $object = new ActionsTicketsup($db);
+
+
+
+
+/*
+ * Actions
+ */
 
 if ($action == "view_ticketlist") {
     $error = 0;
@@ -84,7 +89,8 @@ if ($action == "view_ticketlist") {
     }
 
     if (!$error) {
-        $ret = $object->fetch('', $track_id);
+    	$ret = $object->fetch('', '', $track_id);
+
         if ($ret && $object->dao->id > 0) {
             // vérifie si l'adresse email est bien dans les contacts du ticket
             $contacts = $object->dao->liste_contact(-1, 'external');
@@ -120,12 +126,14 @@ if ($action == "view_ticketlist") {
         $action = '';
     }
 }
+
 $object->doActions($action);
 
-/***************************************************
- * VIEW
- *
- ****************************************************/
+
+
+/*
+ * View
+ */
 
 $form = new Form($db);
 $user_assign = new User($db);
@@ -133,7 +141,7 @@ $user_create = new User($db);
 $formticket = new FormTicketsup($db);
 
 $arrayofjs = array();
-$arrayofcss = array('/ticketsup/css/styles.css', '/ticketsup/css/bg.css.php');
+$arrayofcss = array('/ticketsup/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
@@ -144,11 +152,13 @@ if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
 
 print '<div style="margin: 0 auto; width:60%">';
 
-if ($action == "view_ticketlist") {
+if ($action == "view_ticketlist")
+{
+
     if ($display_ticket_list) {
         // Filters
         $search_fk_status = GETPOST("search_fk_status", 'alpha');
-        $search_subject = GETPOST("search_subject");
+        $search_subject = GETPOST("search_subject", 'alpha');
         $search_type = GETPOST("search_type", 'alpha');
         $search_category = GETPOST("search_category", 'alpha');
         $search_severity = GETPOST("search_severity", 'alpha');
@@ -156,7 +166,7 @@ if ($action == "view_ticketlist") {
         $search_fk_user_assign = GETPOST("search_fk_user_assign", 'int');
 
         // Store current page url
-        $url_page_current = dol_buildpath('/ticketsup/public/list.php', 1);
+        $url_page_current = dol_buildpath('/public/ticketsup/list.php', 1);
 
         // Do we click on purge search criteria ?
         if (GETPOST("button_removefilter_x")) {
@@ -200,10 +210,10 @@ if ($action == "view_ticketlist") {
         );
 
         // Extra fields
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-            foreach ($extrafields->attribute_label as $key => $val) {
-                if ($extrafields->attribute_type[$key] != 'separate') {
-                    $arrayfields["ef." . $key] = array('label' => $extrafields->attribute_label[$key], 'checked' => $extrafields->attribute_list[$key], 'position' => $extrafields->attribute_pos[$key], 'enabled' => $extrafields->attribute_perms[$key]);
+        if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+        	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
+        		if ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate') {
+        			$arrayfields["ef." . $key] = array('label' => $extrafields->attributes[$object->table_element]['label'][$key], 'checked' => $extrafields->attributes[$object->table_element]['list'][$key], 'position' => $extrafields->attributes[$object->table_element]['pos'][$key], 'enabled' => $extrafields->attributes[$object->table_element]['perms'][$key]);
                 }
             }
         }
@@ -264,15 +274,13 @@ if ($action == "view_ticketlist") {
         $limit = $conf->liste_limit;
 
         $page = GETPOST("page", 'int');
-        if ($page == -1) {
-            $page = 0;
-        }
+        if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
         $offset = $limit * $page;
         $pageprev = $page - 1;
         $pagenext = $page + 1;
 
         // Request SQL
-        $sql = "SELECT";
+        $sql = "SELECT DISTINCT";
         $sql .= " t.rowid,";
         $sql .= " t.ref,";
         $sql .= " t.track_id,";
@@ -293,11 +301,12 @@ if ($action == "view_ticketlist") {
         $sql .= " t.datec,";
         $sql .= " t.date_read,";
         $sql .= " t.date_close,";
-        $sql .= " t.tms";
-        $sql .= ", type.label as type_label, category.label as category_label, severity.label as severity_label";
+        $sql .= " t.tms,";
+        $sql .= " type.label as type_label, category.label as category_label, severity.label as severity_label";
         // Add fields for extrafields
-        foreach ($extrafields->attribute_list as $key => $val) {
-        	$sql .= ($extrafields->attribute_type[$key] != 'separate' ? ",ef." . $key . ' as options_' . $key : '');
+        if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+        	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+        		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef." . $key . ' as options_' . $key : '');
         }
         $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup as t";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_type as type ON type.code=t.type_code";
@@ -309,16 +318,16 @@ if ($action == "view_ticketlist") {
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "element_contact as ec ON ec.element_id=t.rowid";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_contact as tc ON ec.fk_c_type_contact=tc.rowid";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople sp ON ec.fk_socpeople=sp.rowid";
-        if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
+        if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
             $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "ticketsup_extrafields as ef on (t.rowid = ef.fk_object)";
         }
         $sql .= " WHERE t.entity IN (" . getEntity('ticketsup') . ")";
-        $sql .= " AND tc.source = 'external'";
-        $sql .= " AND tc.element='" . $object->dao->element . "'";
-        $sql .= " AND tc.active=1";
-        $sql .= " AND (sp.email='" . $db->escape($_SESSION['email_customer']) . "'";
+        $sql .= " AND ((tc.source = 'external'";
+        $sql .= " AND tc.element='" . $db->escape($object->dao->element) . "'";
+        $sql .= " AND tc.active=1)";
+        $sql .= " OR (sp.email='" . $db->escape($_SESSION['email_customer']) . "'";
         $sql .= " OR s.email='" . $db->escape($_SESSION['email_customer']) . "'";
-        $sql .= " OR t.origin_email='" . $db->escape($_SESSION['email_customer']) . "')";
+        $sql .= " OR t.origin_email='" . $db->escape($_SESSION['email_customer']) . "'))";
         // Manage filter
         if (!empty($filter)) {
             foreach ($filter as $key => $value) {
@@ -337,7 +346,7 @@ if ($action == "view_ticketlist") {
                 }
             }
         }
-        $sql .= " GROUP BY t.track_id";
+        //$sql .= " GROUP BY t.track_id";
         $sql .= " ORDER BY " . $sortfield . ' ' . $sortorder;
 
         $resql = $db->query($sql);
@@ -350,7 +359,7 @@ if ($action == "view_ticketlist") {
             $resql = $db->query($sql);
             if ($resql) {
                 $num = $db->num_rows($resql);
-                print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticketsup-32@ticketsup');
+                print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticketsup');
 
                 /*
                 * Search bar
@@ -407,8 +416,8 @@ if ($action == "view_ticketlist") {
                     print_liste_field_titre($arrayfields['t.tms']['label'], $url_page_current, 't.tms', '', $param, '', $sortfield, $sortorder);
                 }
                 // Extra fields
-                if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-                    foreach ($extrafields->attribute_label as $key => $val) {
+                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                         if (!empty($arrayfields["ef." . $key]['checked'])) {
                             $align = $extrafields->getAlignFlag($key);
                             print_liste_field_titre($extralabels[$key], $url_page_current, "ef." . $key, "", $param, ($align ? 'align="' . $align . '"' : ''), $sortfield, $sortorder);
@@ -442,9 +451,9 @@ if ($action == "view_ticketlist") {
 
                 // Status
                 if (!empty($arrayfields['t.fk_statut']['checked'])) {
-                    print '<td>';
+                    print '<td class="liste_titre">';
                     $selected = ($search_fk_status != "non_closed" ? $search_fk_status : '');
-                    $object->printSelectStatus($selected);
+                    //$object->printSelectStatus($selected);
                     print '</td>';
                 }
 
@@ -489,24 +498,23 @@ if ($action == "view_ticketlist") {
                 }
 
                 // Extra fields
-                if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-                    foreach ($extrafields->attribute_label as $key => $val) {
+                if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+                	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                         if (!empty($arrayfields["ef." . $key]['checked'])) {
                             print '<td class="liste_titre"></td>';
                         }
                     }
                 }
 
-                print '<td class="liste_titre" align="right">';
+                print '<td class="liste_titre nowraponall" align="right">';
                 print '<input type="image" class="liste_titre" name="button_search" src="' . img_picto($langs->trans("Search"), 'search.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("Search")) . '" title="' . dol_escape_htmltag($langs->trans("Search")) . '">';
                 print '<input type="image" class="liste_titre" name="button_removefilter" src="' . img_picto($langs->trans("Search"), 'searchclear.png', '', '', 1) . '" value="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '" title="' . dol_escape_htmltag($langs->trans("RemoveFilter")) . '">';
                 print '</td>';
                 print '</tr>';
 
-                $var = true;
-                while ($obj = $db->fetch_object($resql)) {
-                    $var = !$var;
-                    print "<tr " . $bc[$var] . ">";
+                while ($obj = $db->fetch_object($resql))
+                {
+                    print '<tr class="oddeven">';
 
                     // Date ticket
                     if (!empty($arrayfields['t.datec']['checked'])) {
@@ -582,11 +590,11 @@ if ($action == "view_ticketlist") {
                     // Message author
                     if (!empty($arrayfields['t.fk_user_create']['checked'])) {
                         print '<td>';
-                        if ($obj->fk_user_create) {
+                        if ($obj->fk_user_create > 0) {
                             $user_create->firstname = (!empty($obj->user_create_firstname) ? $obj->user_create_firstname : '');
                             $user_create->name = (!empty($obj->user_create_lastname) ? $obj->user_create_lastname : '');
                             $user_create->id = (!empty($obj->fk_user_create) ? $obj->fk_user_create : '');
-                            print $user_create->getFullName();
+                            print $user_create->getFullName($langs);
                         } else {
                             print $langs->trans('Email');
                         }
@@ -596,11 +604,11 @@ if ($action == "view_ticketlist") {
                     // Assigned author
                     if (!empty($arrayfields['t.fk_user_assign']['checked'])) {
                         print '<td>';
-                        if ($obj->fk_user_assign) {
+                        if ($obj->fk_user_assig > 0) {
                             $user_assign->firstname = (!empty($obj->user_assign_firstname) ? $obj->user_assign_firstname : '');
                             $user_assign->lastname = (!empty($obj->user_assign_lastname) ? $obj->user_assign_lastname : '');
                             $user_assign->id = (!empty($obj->fk_user_assign) ? $obj->fk_user_assign : '');
-                            print $user_assign->getFullName();
+                            print $user_assign->getFullName($langs);
                         } else {
                             print $langs->trans('None');
                         }
@@ -612,8 +620,8 @@ if ($action == "view_ticketlist") {
                     }
 
                     // Extra fields
-                    if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) {
-                        foreach ($extrafields->attribute_label as $key => $val) {
+                    if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
+                    	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) {
                             if (!empty($arrayfields["ef." . $key]['checked'])) {
                                 print '<td';
                                 $align = $extrafields->getAlignFlag($key);
@@ -635,7 +643,7 @@ if ($action == "view_ticketlist") {
                 print '</table>';
                 print '</form>';
 
-                print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="' . dol_buildpath('/ticketsup/public/view.php', 1) . '" style="display:none;">';
+                print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticketsup/view.php', 1) . '" style="display:none;">';
                 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
                 print '<input type="hidden" name="action" value="view_ticket">';
                 print '<input type="hidden" name="btn_view_ticket_list" value="1">';

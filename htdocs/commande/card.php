@@ -28,9 +28,9 @@
  */
 
 /**
- * \file htdocs/commande/card.php
+ * \file 	htdocs/commande/card.php
  * \ingroup commande
- * \brief Page to show customer order
+ * \brief 	Page to show customer order
  */
 
 require '../main.inc.php';
@@ -68,6 +68,7 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
+$projectid = GETPOST('projectid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 
@@ -220,7 +221,7 @@ if (empty($reshook))
 	// Link to a project
 	else if ($action == 'classin' && $user->rights->commande->creer)
 	{
-		$object->setProject(GETPOST('projectid'));
+		$object->setProject(GETPOST('projectid','int'));
 	}
 
 	// Add order
@@ -251,8 +252,8 @@ if (empty($reshook))
 			$object->note_private = GETPOST('note_private','none');
 			$object->note_public = GETPOST('note_public','none');
 			$object->source = GETPOST('source_id');
-			$object->fk_project = GETPOST('projectid');
-			$object->ref_client = GETPOST('ref_client');
+			$object->fk_project = GETPOST('projectid','int');
+			$object->ref_client = GETPOST('ref_client','alpha');
 			$object->modelpdf = GETPOST('model');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -1269,24 +1270,16 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			$hookmanager->initHooks(array('orderdao'));
-			$parameters = array('id' => $object->id);
-			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-																								  // some hooks
-			if (empty($reshook)) {
-				$result = $object->insertExtraFields('ORDER_MODIFY');
-				if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-			} else if ($reshook < 0)
+			// Actions on extra fields
+			$result = $object->insertExtraFields('ORDER_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
+			}
 		}
 
-		if ($error)
-			$action = 'edit_extras';
+		if ($error) $action = 'edit_extras';
 	}
 
 	if ($action == 'set_thirdparty' && $user->rights->commande->creer)
@@ -1383,7 +1376,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
-	$projectid = 0;
 	$remise_absolue = 0;
 
 	$currency_code = $conf->currency;
@@ -1480,14 +1472,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
-		$projectid          = 0;
 
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 
 		$note_private = $object->getDefaultCreateValueFor('note_private');
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
-
 
 	print '<form name="crea_commande" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1654,7 +1644,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$parameters = array('objectsrc' => $objectsrc, 'socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -2623,9 +2613,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online payment link
-			//$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
-			$useonlinepayment = $conf->global->ORDER_SHOW_ONLINE_PAYMENT_ON_ORDER;
-
+			$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+			if (! empty($conf->global->ORDER_HIDE_ONLINE_PAYMENT_ON_ORDER)) $useonlinepayment = 0;
 			if ($object->statut != Commande::STATUS_DRAFT && $useonlinepayment)
 			{
 				print '<br><!-- Link to pay -->';

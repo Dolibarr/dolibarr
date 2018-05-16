@@ -455,6 +455,18 @@ function dol_is_file($pathoffile)
 }
 
 /**
+ * Return if path is a symbolic link
+ *
+ * @param   string		$pathoffile		Path of file
+ * @return  boolean     			    True or false
+ */
+function dol_is_link($pathoffile)
+{
+	$newpathoffile=dol_osencode($pathoffile);
+	return is_link($newpathoffile);
+}
+
+/**
  * Return if path is an URL
  *
  * @param   string		$url	Url
@@ -1139,7 +1151,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 	if (preg_match('/\.\./',$file) || preg_match('/[<>|]/',$file))
 	{
 		dol_syslog("Refused to delete file ".$file, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	if (empty($nohook))
@@ -1238,7 +1250,7 @@ function dol_delete_dir($dir,$nophperrors=0)
 	if (preg_match('/\.\./',$dir) || preg_match('/[<>|]/',$dir))
 	{
 		dol_syslog("Refused to delete dir ".$dir, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	$dir_osencoded=dol_osencode($dir);
@@ -1949,7 +1961,7 @@ function dol_uncompress($inputfile,$outputdir)
 		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
 		$zip = new ZipArchive;
 		$res = $zip->open($inputfile);
-		if ($res === TRUE)
+		if ($res === true)
 		{
 			$zip->extractTo($outputdir.'/');
 			$zip->close();
@@ -2623,6 +2635,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (! empty($conf->product->enabled)) $original_file=$conf->product->multidir_output[$entity].'/'.$original_file;
 		elseif (! empty($conf->service->enabled)) $original_file=$conf->service->multidir_output[$entity].'/'.$original_file;
+	}
+
+	// Wrapping pour les lots produits
+	else if ($modulepart == 'product_batch' || $modulepart == 'produitlot')
+	{
+		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+		if (($fuser->rights->produit->{$lire} ) || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		if (! empty($conf->productbatch->enabled)) $original_file=$conf->productbatch->multidir_output[$entity].'/'.$original_file;
 	}
 
 	// Wrapping pour les contrats

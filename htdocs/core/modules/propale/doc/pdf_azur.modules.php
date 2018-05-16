@@ -283,7 +283,7 @@ class pdf_azur extends ModelePDFPropales
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
                 // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -1624,6 +1624,7 @@ class pdf_azur extends ModelePDFPropales
 	 */
 	function _signature_area(&$pdf, $object, $posy, $outputlangs)
 	{
+		global $conf;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$tab_top = $posy + 4;
 		$tab_hl = 4;
@@ -1640,6 +1641,9 @@ class pdf_azur extends ModelePDFPropales
 
 		$pdf->SetXY($posx, $tab_top + $tab_hl);
 		$pdf->MultiCell($largcol, $tab_hl*3, '', 1, 'R');
+		if (! empty($conf->global->MAIN_PDF_PROPAL_USE_ELECTRONIC_SIGNING)) {
+			$pdf->addEmptySignatureAppearance($posx, $tab_top + $tab_hl, $largcol, $tab_hl*3);
+		}
 
 		return ($tab_hl*7);
 	}

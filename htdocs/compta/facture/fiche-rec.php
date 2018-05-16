@@ -69,7 +69,7 @@ $projectid = GETPOST('projectid','int');
 $year_date_when=GETPOST('year_date_when');
 $month_date_when=GETPOST('month_date_when');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -417,7 +417,8 @@ if (empty($reshook))
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
-		if (! $error) {
+		if (! $error)
+		{
 			$result = $object->insertExtraFields('BILLREC_MODIFY');
 			if ($result < 0)
 			{
@@ -1496,7 +1497,7 @@ else
 		}
 		print '</td></tr>';
 
-		// Date when
+		// Date when (next invoice generation)
 		print '<tr><td>';
 		if ($action == 'date_when' || $object->frequency > 0)
 		{
@@ -1512,7 +1513,14 @@ else
 			print $form->editfieldval($langs->trans("NextDateToExecution"), 'date_when', $object->date_when, $object, $user->rights->facture->creer, 'day', $object->date_when, null, '', '', 0, 'strikeIfMaxNbGenReached');
 		}
 		//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
-		if ($action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
+		if (! $object->isMaxNbGenReached())
+		{
+			if ($action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
+		}
+		else
+		{
+			print img_info($langs->trans("MaxNumberOfGenerationReached"));
+		}
 		print '</td>';
 		print '</tr>';
 

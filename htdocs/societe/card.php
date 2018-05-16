@@ -56,7 +56,7 @@ $mesg=''; $error=0; $errors=array();
 $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel		= GETPOST('cancel','alpha');
 $backtopage	= GETPOST('backtopage','alpha');
-$confirm		= GETPOST('confirm');
+$confirm	= GETPOST('confirm','alpha');
 
 $socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -1399,7 +1399,7 @@ else
 			$langs->load('categories');
 
 			// Customer
-			if ($object->prospect || $object->client) {
+			if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
 				print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
@@ -1431,7 +1431,7 @@ else
         $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        if (empty($reshook))
         {
         	print $object->showOptionals($extrafields,'edit');
         }
@@ -1949,7 +1949,9 @@ else
 
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
-	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
+	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
+	        print dol_escape_htmltag(price($object->capital));
+	        print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
 			// Assign a Name
             print '<tr>';
@@ -1974,7 +1976,7 @@ else
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 			{
 				// Customer
-				if ($object->prospect || $object->client) {
+				if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 					print '<tr><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
 					print '<td colspan="3">';
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
@@ -2018,7 +2020,7 @@ else
             $parameters=array('colspan' => ' colspan="3"', 'colspanvalue' => '3');
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            if (empty($reshook))
             {
             	print $object->showOptionals($extrafields,'edit');
             }
@@ -2368,7 +2370,7 @@ else
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 		{
 			// Customer
-			if ($object->prospect || $object->client) {
+			if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 				print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
 				print '<td>';
 				print $form->showCategories($object->id, 'customer', 1);

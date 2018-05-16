@@ -119,23 +119,15 @@ class Dolresource extends CommonObject
     	{
     		$action='create';
 
-    		// Actions on extra fields (by external module or standard code)
-    		// TODO le hook fait double emploi avec le trigger !!
-    		$hookmanager->initHooks(array('actioncommdao'));
-    		$parameters=array('actcomm'=>$this->id);
-    		$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-    		if (empty($reshook))
-    		{
-    			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-    			{
-    				$result=$this->insertExtraFields();
-    				if ($result < 0)
-    				{
-    					$error++;
-    				}
-    			}
+    		// Actions on extra fields
+   			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+   			{
+   				$result=$this->insertExtraFields();
+   				if ($result < 0)
+   				{
+   					$error++;
+   				}
     		}
-    		else if ($reshook < 0) $error++;
     	}
 
     	if (! $error)
@@ -305,23 +297,15 @@ class Dolresource extends CommonObject
 		{
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('actioncommdao'));
-			$parameters=array('actcomm'=>$this->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 		}
 
 		// Commit or rollback

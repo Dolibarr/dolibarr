@@ -142,9 +142,9 @@ class Propal extends CommonObject
 
 	public $cond_reglement_code;
 	public $mode_reglement_code;
-	public $remise;
-	public $remise_percent;
-	public $remise_absolue;
+	public $remise = 0;
+	public $remise_percent = 0;
+	public $remise_absolue = 0;
 	public $fk_address;
 	public $address_type;
 	public $address;
@@ -198,6 +198,7 @@ class Propal extends CommonObject
 	 */
 	const STATUS_BILLED = 4;   // Todo rename into STATUS_CLOSE ?
 
+
 	/**
 	 *	Constructor
 	 *
@@ -210,26 +211,13 @@ class Propal extends CommonObject
 		global $conf,$langs;
 
 		$this->db = $db;
+
 		$this->socid = $socid;
 		$this->id = $propalid;
+
 		$this->products = array();
-		$this->remise = 0;
-		$this->remise_percent = 0;
-		$this->remise_absolue = 0;
 
 		$this->duree_validite=$conf->global->PROPALE_VALIDITY_DURATION;
-
-		$langs->load("propal");
-		$this->labelstatut[0]=(! empty($conf->global->PROPAL_STATUS_DRAFT_LABEL) ? $conf->global->PROPAL_STATUS_DRAFT_LABEL : $langs->trans("PropalStatusDraft"));
-		$this->labelstatut[1]=(! empty($conf->global->PROPAL_STATUS_VALIDATED_LABEL) ? $conf->global->PROPAL_STATUS_VALIDATED_LABEL : $langs->trans("PropalStatusValidated"));
-		$this->labelstatut[2]=(! empty($conf->global->PROPAL_STATUS_SIGNED_LABEL) ? $conf->global->PROPAL_STATUS_SIGNED_LABEL : $langs->trans("PropalStatusSigned"));
-		$this->labelstatut[3]=(! empty($conf->global->PROPAL_STATUS_NOTSIGNED_LABEL) ? $conf->global->PROPAL_STATUS_NOTSIGNED_LABEL : $langs->trans("PropalStatusNotSigned"));
-		$this->labelstatut[4]=(! empty($conf->global->PROPAL_STATUS_BILLED_LABEL) ? $conf->global->PROPAL_STATUS_BILLED_LABEL : $langs->trans("PropalStatusBilled"));
-		$this->labelstatut_short[0]=(! empty($conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL) ? $conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("PropalStatusDraftShort"));
-		$this->labelstatut_short[1]=(! empty($conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
-		$this->labelstatut_short[2]=(! empty($conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("PropalStatusSignedShort"));
-		$this->labelstatut_short[3]=(! empty($conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("PropalStatusNotSignedShort"));
-		$this->labelstatut_short[4]=(! empty($conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("PropalStatusBilledShort"));
 	}
 
 
@@ -1114,12 +1102,8 @@ class Propal extends CommonObject
 					{
 						$action='update';
 
-						// Actions on extra fields (by external module or standard code)
-						// TODO le hook fait double emploi avec le trigger !!
-						$hookmanager->initHooks(array('propaldao'));
-						$parameters=array('socid'=>$this->id);
-						$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-						if (empty($reshook))
+						// Actions on extra fields
+						if (! $error)
 						{
 							if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 							{
@@ -1130,9 +1114,8 @@ class Propal extends CommonObject
 								}
 							}
 						}
-						else if ($reshook < 0) $error++;
 
-						if (! $notrigger)
+						if (! $error && ! $notrigger)
 						{
 							// Call trigger
 							$result=$this->call_trigger('PROPAL_CREATE',$user);
@@ -1658,7 +1641,7 @@ class Propal extends CommonObject
 
 			$this->db->free($result);
 
-			return 1;
+			return $num;
 		}
 		else
 		{
@@ -3096,10 +3079,24 @@ class Propal extends CommonObject
 	 *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
-	 function LibStatut($statut,$mode=1)
+	function LibStatut($statut,$mode=1)
 	{
-		global $langs;
-		$langs->load("propal");
+		// Init/load array of translation of status
+		if (empty($this->labelstatut) || empty($this->labelstatut_short))
+		{
+			global $langs;
+			$langs->load("propal");
+			$this->labelstatut[0]=(! empty($conf->global->PROPAL_STATUS_DRAFT_LABEL) ? $conf->global->PROPAL_STATUS_DRAFT_LABEL : $langs->trans("PropalStatusDraft"));
+			$this->labelstatut[1]=(! empty($conf->global->PROPAL_STATUS_VALIDATED_LABEL) ? $conf->global->PROPAL_STATUS_VALIDATED_LABEL : $langs->trans("PropalStatusValidated"));
+			$this->labelstatut[2]=(! empty($conf->global->PROPAL_STATUS_SIGNED_LABEL) ? $conf->global->PROPAL_STATUS_SIGNED_LABEL : $langs->trans("PropalStatusSigned"));
+			$this->labelstatut[3]=(! empty($conf->global->PROPAL_STATUS_NOTSIGNED_LABEL) ? $conf->global->PROPAL_STATUS_NOTSIGNED_LABEL : $langs->trans("PropalStatusNotSigned"));
+			$this->labelstatut[4]=(! empty($conf->global->PROPAL_STATUS_BILLED_LABEL) ? $conf->global->PROPAL_STATUS_BILLED_LABEL : $langs->trans("PropalStatusBilled"));
+			$this->labelstatut_short[0]=(! empty($conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL) ? $conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("PropalStatusDraftShort"));
+			$this->labelstatut_short[1]=(! empty($conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
+			$this->labelstatut_short[2]=(! empty($conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("PropalStatusSignedShort"));
+			$this->labelstatut_short[3]=(! empty($conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("PropalStatusNotSignedShort"));
+			$this->labelstatut_short[4]=(! empty($conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("PropalStatusBilledShort"));
+		}
 
 		$statuttrans='';
 		if ($statut==self::STATUS_DRAFT) $statuttrans='statut0';
@@ -3819,6 +3816,8 @@ class PropaleLigne extends CommonObjectLine
 				$this->multicurrency_total_tva 	= $objp->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $objp->multicurrency_total_ttc;
 
+				$this->fetch_optionals();
+
 				$this->db->free($result);
 
 				return 1;
@@ -3953,7 +3952,7 @@ class PropaleLigne extends CommonObjectLine
 				}
 			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINEPROPAL_INSERT',$user);
@@ -4136,7 +4135,7 @@ class PropaleLigne extends CommonObjectLine
 				}
 			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('LINEPROPAL_UPDATE',$user);

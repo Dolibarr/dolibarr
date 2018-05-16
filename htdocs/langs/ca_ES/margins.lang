@@ -41,4 +41,4 @@ rateMustBeNumeric=El marge ha de ser un valor numèric
 markRateShouldBeLesserThan100=El marge té que ser menor que 100
 ShowMarginInfos=Mostrar info de marges
 CheckMargins=Detall de marges
-MarginPerSaleRepresentativeWarning=L'informe de marges per usuari utilitza l'enllaç entre tercers i agents comercials per calcular el marge de cada usuari. Degut a que alguns tercers no es poden enllaçar a cap agent comercial i que alguns tercers poden estar enllaçats amb varis agents comercials, alguns marges poden no aparèixer o aparèixer en vàries línies diferents.
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

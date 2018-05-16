@@ -14,16 +14,12 @@ ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opni
 ShipmentDeletedInDolibarr=Shipment %s gewist
 ContractSentByEMail=Contract %s verstuurd via Email
 ProposalDeleted=Offerte verwijderd
-PRODUCT_CREATEInDolibarr=Product %s aangemaakt
-PRODUCT_MODIFYInDolibarr=Product %s aangepast
-PRODUCT_DELETEInDolibarr=Product %s verwijderd
 EXPENSE_REPORT_CREATEInDolibarr=Onkostenrapport %s aangemaakt
 EXPENSE_REPORT_VALIDATEInDolibarr=Onkostenrapport %s gevalideerd
 EXPENSE_REPORT_APPROVEInDolibarr=Onkostenrapport %s goedgekeurd
 EXPENSE_REPORT_DELETEInDolibarr=Onkostenrapport %s verwijderd
 EXPENSE_REPORT_REFUSEDInDolibarr=Onkostenrapport %s geweigerd
 PROJECT_MODIFYInDolibarr=Project %s gewijzigd
-PROJECT_DELETEInDolibarr=Project %s verwijderd
 AgendaModelModule=Document sjablonen voor een gebeurtenis
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> om de uitvoer van acties te beperken die niet werden toegewezen aan de gebruiker <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> om de uitvoer van acties te beperken die aan de gebruiker <b>%s</b> is toegewezen. (eigenaar en anderen).

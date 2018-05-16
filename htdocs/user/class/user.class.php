@@ -115,7 +115,7 @@ class User extends CommonObject
 	public $lastsearch_values_tmp;  // To store current search criterias for user
 	public $lastsearch_values;      // To store last saved search criterias for user
 
-	public $users;					// To store all tree of users hierarchy
+	public $users = array();		// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.
 	private $cache_childids;
 
@@ -1572,7 +1572,7 @@ class User extends CommonObject
 
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
+			// Actions on extra fields
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
@@ -3001,6 +3001,106 @@ class User extends CommonObject
 		$modelpath = "core/modules/user/doc/";
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+	}
+
+	/**
+	 *  Return property of user from its id
+	 *
+	 *  @param	int		$rowid      id of contact
+	 *  @param  string	$mode       'email' or 'mobile'
+	 *  @return string  			Email of user with format: "Full name <email>"
+	 */
+	function user_get_property($rowid,$mode)
+	{
+		$user_property='';
+
+		if (empty($rowid)) return '';
+
+		$sql = "SELECT rowid, email, user_mobile, civility, lastname, firstname";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE rowid = '".$rowid."'";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				if ($mode == 'email') $user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
+				else if ($mode == 'mobile') $user_property = $obj->user_mobile;
+			}
+			return $user_property;
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
+	 *	Load all objects into $this->users
+	 *
+	 *  @param	string		$sortorder    sort order
+	 *  @param	string		$sortfield    sort field
+	 *  @param	int			$limit		  limit page
+	 *  @param	int			$offset    	  page
+	 *  @param	array		$filter    	  filter output
+	 *  @return int          	<0 if KO, >0 if OK
+	 */
+	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array())
+	{
+		global $conf;
+
+		$sql="SELECT t.rowid";
+		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
+		$sql.= " WHERE 1";
+
+		//Manage filter
+		if (!empty($filter)){
+			foreach($filter as $key => $value) {
+				if (strpos($key,'date')) {
+					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key=='customsql') {
+					$sql.= ' AND '.$value;
+				} else {
+					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+				}
+			}
+		}
+		$sql.= $this->db->order($sortfield,$sortorder);
+		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->users=array();
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$line = new self($this->db);
+					$result = $line->fetch($obj->rowid);
+					if ($result>0 && !empty($line->id)) {
+						$this->users[$obj->rowid] = clone $line;
+					}
+				}
+				$this->db->free($resql);
+			}
+			return $num;
+		}
+		else
+		{
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+
 	}
 
 }

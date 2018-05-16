@@ -30,7 +30,6 @@ RulesResultDue=- Dit omvat openstaande facturen, uitgaven, BTW, donaties, zowel 
 RulesResultInOut=- Dit omvat alle betalingen van facturen, uitgaven, BTW en lonen. <br>- Dit is gebaseerd op de betalingsdata van de facturen, uitgaven, BTW en lonen. De donatiedatum voor donaties.
 RulesCADue=- Dit omvat de verschuldigde afnemersfacturen, betaald of niet. <br>- Dit is gebaseerd op de validatiedata van deze facturen.<br>
 RulesCAIn=- Dit omvat alle effectieve betalingen van afnemersfacturen.<br>- Het is gebaseerd op de betaaldatum van deze facturen<br>
-VATReport=BTW rapport
 CloneTax=Kopieer een sociale bijdrage/belasting
 ConfirmCloneTax=Bevestig kopie van betaling sociale bijdrage/belasting
 SimpleReport=Eenvoudig rapport

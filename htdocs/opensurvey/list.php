@@ -97,9 +97,17 @@ $fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':
 
 
 $newcardbutton='';
-if ($user->rights->opensurvey->read)
+if (!$user->rights->opensurvey->creer)
 {
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php">'.$langs->trans('NewSurvey').'</a>';
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php">'.$langs->trans('NewSurvey');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
+else
+{
+	$newcardbutton='<a class="butActionNewRefused" href="#">'.$langs->trans('NewSurvey');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 
@@ -107,13 +115,6 @@ $sql = "SELECT p.id_sondage, p.fk_user_creat, p.format, p.date_fin, p.status, p.
 $sql.= " u.login, u.firstname, u.lastname";
 $sql.= " FROM ".MAIN_DB_PREFIX."opensurvey_sondage as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user u ON u.rowid = p.fk_user_creat";
-// Count total nb of records
-$nbtotalofrecords = '';
-if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
-{
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-}
 $sql.= " WHERE p.entity IN (".getEntity('survey').")";
 if ($search_status != '-1' && $search_status != '') $sql.=natural_search("p.status", $search_status, 2);
 if ($search_expired == 'expired') $sql.=" AND p.date_fin < '".$db->idate($now)."'";
@@ -128,6 +129,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -213,7 +219,7 @@ while ($i < min($num, $limit))
 {
 	$obj = $db->fetch_object($resql);
 	if (empty($obj)) break;		// Should not happen
-	
+
 	$sql2='select COUNT(*) as nb from '.MAIN_DB_PREFIX."opensurvey_user_studs where id_sondage='".$db->escape($obj->id_sondage)."'";
 	$resql2=$db->query($sql2);
 	if ($resql2)

@@ -170,7 +170,7 @@ class Setup extends DolibarrApi
                     // and then apply the filter if there is one.
                     $this->translateLabel($country, $lang);
 
-                    if (empty($filter) || stripos($country->label, $filter) !== FALSE) {
+                    if (empty($filter) || stripos($country->label, $filter) !== false) {
                         $list[] = $this->_cleanObjectDatas($country);
                     }
                 }
@@ -385,7 +385,7 @@ class Setup extends DolibarrApi
      * @param string	$sortorder	Sort order
      * @param string    $type       Type of element ('adherent', 'commande', 'thirdparty', 'facture', 'propal', 'product', ...)
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'SO-%')"
-     * @return List of events types
+     * @return List of extra fields
      *
      * @url     GET extrafields
      *
@@ -584,7 +584,7 @@ class Setup extends DolibarrApi
      * Do a test of integrity for files and setup.
      *
      * @param string	$target			Can be 'local' or 'default' or Url of the signatures file to use for the test. Must be reachable by the tested Dolibarr.
-     * @return Result of file and setup integrity check
+     * @return 							Result of file and setup integrity check
      *
      * @url     GET checkintegrity
      *

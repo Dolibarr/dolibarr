@@ -217,7 +217,7 @@ class Stripe extends CommonObject
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.type = 'card'";
 
-		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -225,13 +225,15 @@ class Stripe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
+				dol_syslog("*************".$cardref);
 				if ($cardref)
 				{
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->retrieve($cardref);
 						} else {
-							$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));
+							//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
+							$card = $cu->sources->retrieve($cardref);
 						}
 					}
 					catch(Exception $e)
@@ -334,10 +336,10 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$key = $obj->fk_soc;
 			} else {
-				$key = NULL;
+				$key = null;
 			}
 		} else {
-			$key = NULL;
+			$key = null;
 		}
 
 		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');

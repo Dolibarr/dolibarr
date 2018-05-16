@@ -310,8 +310,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-        	$var=true;
-
             while (($file = readdir($handle))!==false)
             {
                 if (! is_dir($dir.$file) || (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS'))
@@ -342,7 +340,6 @@ foreach ($dirmodels as $reldir)
 
                         if ($module->isEnabled())
                         {
-                            $var = !$var;
                             print '<tr class="oddeven"><td width="100">';
                             echo preg_replace('/\-.*$/','',preg_replace('/mod_facture_/','',preg_replace('/\.php$/','',$file)));
                             print "</td><td>\n";
@@ -495,8 +492,9 @@ print '<td align="center" width="32">'.$langs->trans("Preview").'</td>';
 print "</tr>\n";
 
 clearstatcache();
+
 $activatedModels = array();
-$var=true;
+
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -533,7 +531,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
@@ -614,8 +611,6 @@ foreach ($dirmodels as $reldir)
 print '</table>';
 
 
-
-
 /*
  *  Document templates generators
  */
@@ -666,7 +661,6 @@ print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 
 print '<table class="noborder" width="100%">';
-$var=True;
 
 print '<tr class="liste_titre">';
 print '<td>';
@@ -730,7 +724,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 $sql.= " WHERE clos = 0";
 $sql.= " AND courant = 1";
 $sql.= " AND entity IN (".getEntity('bank_account').")";
-$var=True;
+
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -763,10 +757,8 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-$var=true;
 
 // Force date validation
-$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="setforcedate" />';
@@ -785,7 +777,6 @@ $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
-$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
 print '<input type="hidden" name="action" value="set_INVOICE_FREE_TEXT" />';

@@ -121,11 +121,13 @@ if (empty($reshook))
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 
         if ($ret < 0) $error++;
+
         if (! $error)
         {
             $result = $object->insertExtraFields('COMPANY_MODIFY');
             if ($result < 0) $error++;
         }
+
         if ($error) $action = 'edit_extras';
     }
 }
@@ -428,8 +430,6 @@ if ($object->id > 0)
 	print $boxstat;
 
 
-	$var=true;
-
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
@@ -547,11 +547,9 @@ if ($object->id > 0)
 	            print '</td></tr>';
 	        }
 
-	        $var = True;
 	        while ($i < $num && $i <= $MAXLIST)
 	        {
 	            $obj = $db->fetch_object($resql);
-
 
 	            print '<tr class="oddeven">';
 	            print '<td class="nowrap">';
@@ -652,11 +650,9 @@ if ($object->id > 0)
     			print '</td></tr>';
 			}
 
-			$var = True;
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
-
 
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
@@ -725,7 +721,7 @@ if ($object->id > 0)
     			print '</tr></table>';
     			print '</td></tr>';
 			}
-			$var=True;
+
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);

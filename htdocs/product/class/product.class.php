@@ -160,16 +160,16 @@ class Product extends CommonObject
 	//! Average price value for product entry into stock (PMP)
 	public $pmp;
 
-    	/**
+	/**
 	 * Stock alert
 	 * @var int
 	 */
-	public $seuil_stock_alerte;
+	public $seuil_stock_alerte=0;
 
 	/**
 	 * Ask for replenishment when $desiredstock < $stock_reel
 	 */
-	public $desiredstock;
+	public $desiredstock=0;
 
 	/*
 	 * Service expiration
@@ -185,13 +185,13 @@ class Product extends CommonObject
 	 * Status indicates whether the product is on sale '1' or not '0'
 	 * @var int
 	 */
-	public $status;
+	public $status=0;
 
 	/**
 	 * Status indicate whether the product is available for purchase '1' or not '0'
 	 * @var int
 	 */
-	public $status_buy;
+	public $status_buy=0;
 
 	/**
 	 * Status indicates whether the product is a finished product '1' or a raw material '0'
@@ -203,7 +203,7 @@ class Product extends CommonObject
 	 * We must manage lot/batch number, sell-by date and so on : '1':yes '0':no
 	 * @var int
 	 */
-	public $status_batch;
+	public $status_batch=0;
 
 	/**
 	 * Customs code
@@ -227,10 +227,10 @@ class Product extends CommonObject
 	public $volume;
 	public $volume_units;
 
-	public $accountancy_code_buy;
-	public $accountancy_code_buy_intra;
-	public $accountancy_code_buy_export;
 	public $accountancy_code_sell;
+	public $accountancy_code_sell_intra;
+	public $accountancy_code_sell_export;
+	public $accountancy_code_buy;
 
 	/**
 	 * Main barcode
@@ -266,7 +266,7 @@ class Product extends CommonObject
 	//! Product ID already linked to a reference supplier
 	public $product_id_already_linked;
 
-	public $nbphoto;
+	public $nbphoto=0;
 
 	//! Contains detail of stock of product into each warehouse
 	public $stock_warehouse=array();
@@ -332,14 +332,7 @@ class Product extends CommonObject
 		global $langs;
 
 		$this->db = $db;
-		$this->status = 0;
-		$this->status_buy = 0;
-		$this->nbphoto = 0;
-		$this->stock_reel = 0;
-		$this->seuil_stock_alerte = 0;
-		$this->desiredstock = 0;
 		$this->canvas = '';
-		$this->status_batch=0;
 	}
 
 	/**
@@ -886,7 +879,7 @@ class Product extends CommonObject
 			$sql.= ", surface_units = " . ($this->surface_units!='' ? "'".$this->db->escape($this->surface_units)."'" : 'null');
 			$sql.= ", volume = " . ($this->volume!='' ? "'".$this->db->escape($this->volume)."'" : 'null');
 			$sql.= ", volume_units = " . ($this->volume_units!='' ? "'".$this->db->escape($this->volume_units)."'" : 'null');
-			$sql.= ", fk_default_warehouse = " . (! empty($this->fk_default_warehouse) ? $this->db->escape($this->fk_default_warehouse) : 'null');
+			$sql.= ", fk_default_warehouse = " . ($this->fk_default_warehouse > 0 ? $this->db->escape($this->fk_default_warehouse) : 'null');
 			$sql.= ", seuil_stock_alerte = " . ((isset($this->seuil_stock_alerte) && $this->seuil_stock_alerte != '') ? "'".$this->db->escape($this->seuil_stock_alerte)."'" : "null");
 			$sql.= ", description = '" . $this->db->escape($this->description) ."'";
 			$sql.= ", url = " . ($this->url?"'".$this->db->escape($this->url)."'":'null');
@@ -926,22 +919,15 @@ class Product extends CommonObject
 
 				$action='update';
 
-				// Actions on extra fields (by external module or standard code)
-				$hookmanager->initHooks(array('productdao'));
-				$parameters=array('id'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error && ! $notrigger)
 				{
@@ -1117,7 +1103,7 @@ class Product extends CommonObject
 				//If it is a parent product, then we remove the association with child products
 				$prodcomb = new ProductCombination($this->db);
 
-				if ($prodcomb->deleteByFkProductParent($id) < 0) {
+				if ($prodcomb->deleteByFkProductParent($user, $id) < 0) {
 					$error++;
 					$this->errors[] = 'Error deleting combinations';
 				}
@@ -2774,7 +2760,7 @@ class Product extends CommonObject
 		else $sql.=" AND d.fk_product > 0";
 		if ($filteronproducttype >= 0) $sql.= " AND prod.rowid = d.fk_product AND prod.fk_product_type =".$filteronproducttype;
 		$sql.= " AND p.fk_soc = s.rowid";
-		$sql.= " AND p.entity IN (".getEntity('propal').")";
+		$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
 		if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		if ($socid > 0)	$sql.= " AND p.fk_soc = ".$socid;
 		$sql.=$morefilter;
@@ -3528,6 +3514,7 @@ class Product extends CommonObject
         }
         if (! empty($conf->accounting->enabled) && $this->status_buy)
         {
+        	include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
         	$label.= '<br><b>' . $langs->trans('ProductAccountancyBuyCode') . ':</b> '. length_accountg($this->accountancy_code_buy);
         }
         if (! empty($this->entity))

@@ -4,7 +4,7 @@
  * Copyright (C) 2004       Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016  Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2017  Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018  Philippe Grand          <philippe.grand@atoo-net.com>
  * Copyright (C) 2011       Remy Younes             <ryounes@gmail.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@ltairis.fr>
@@ -169,9 +169,6 @@ if ($conf->adherent->enabled)          $elementList['member']=$langs->trans('Mai
 if ($conf->contrat->enabled)           $elementList['contract']=$langs->trans('MailToSendContract');
 if ($conf->projet->enabled)            $elementList['project']=$langs->trans('MailToProject');
 $elementList['user']=$langs->trans('MailToUser');
-$elementList['all'] =$langs->trans('VisibleEverywhere');
-$elementList['none']=$langs->trans('VisibleNowhere');
-
 
 $parameters=array('elementList'=>$elementList);
 $reshook=$hookmanager->executeHooks('emailElementlist',$parameters);    // Note that $action and $object may have been modified by some hooks
@@ -180,6 +177,12 @@ if ($reshook == 0) {
 		$elementList[$item] = $value;
 	}
 }
+
+// Add all and none after the sort
+$elementList['all'] ='-- '.$langs->trans("All").' -- ('.$langs->trans('VisibleEverywhere').')';
+$elementList['none']='-- '.$langs->trans("None").' -- ('.$langs->trans('VisibleNowhere').')';
+
+asort($elementList);
 
 $id = 25;
 
@@ -210,7 +213,7 @@ if (empty($reshook))
     }
 
     // Actions add or modify an entry into a dictionary
-    if (GETPOST('actionadd') || GETPOST('actionmodify'))
+    if (GETPOST('actionadd','alpha') || GETPOST('actionmodify','alpha'))
     {
         $listfield=explode(',', str_replace(' ', '',$tabfield[$id]));
         $listfieldinsert=explode(',',$tabfieldinsert[$id]);
@@ -226,7 +229,7 @@ if (empty($reshook))
             if ($value == 'content') continue;
             if ($value == 'content_lines') continue;
 
-            if (GETPOST('actionmodify') && $value == 'topic') $_POST['topic']=$_POST['topic-'.$rowid];
+            if (GETPOST('actionmodify','alpha') && $value == 'topic') $_POST['topic']=$_POST['topic-'.$rowid];
 
             if ((! isset($_POST[$value]) || $_POST[$value]=='' || $_POST[$value]=='-1') && $value != 'lang' && $value != 'fk_user' && $value != 'position')
             {
@@ -268,8 +271,8 @@ if (empty($reshook))
                 if ($value == 'fk_user' && ! ($_POST[$keycode] > 0)) $_POST[$keycode]='';
                 if ($value == 'private' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='0';
                 if ($value == 'position' && ! is_numeric($_POST[$keycode])) $_POST[$keycode]='1';
-                if ($_POST[$keycode] == '' && $keycode != 'langcode') $sql.="null";		// lang must be '' if not defined so the unique key that include lang will work
-                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql.="null";
+                if ($_POST[$keycode] == '' && $keycode != 'langcode')      $sql.="null";	// lang must be '' if not defined so the unique key that include lang will work
+                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql.="''";		// lang must be '' if not defined so the unique key that include lang will work
                 else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
@@ -315,12 +318,16 @@ if (empty($reshook))
                 if ($field == 'entity') $_POST[$keycode] = $conf->entity;
                 if ($i) $sql.=",";
                 $sql.= $field."=";
-                if ($_POST[$keycode] == '' || ($keycode == 'langcode' && empty($_POST[$keycode]))) $sql.="null";  // For vat, we want/accept code = ''
+
+//                print $keycode.' - '.$_POST[$keycode].'<br>';
+                if ($_POST[$keycode] == '' || ($keycode != 'langcode' && $keycode != 'private' && empty($_POST[$keycode]))) $sql.="null";  // lang must be '' if not defined so the unique key that include lang will work
+                elseif ($_POST[$keycode] == '0' && $keycode == 'langcode') $sql.="''";													   // lang must be '' if not defined so the unique key that include lang will work
+                elseif ($keycode == 'private') $sql.=((int) $_POST[$keycode]);													  		   // private must be 0 or 1
                 else $sql.="'".$db->escape($_POST[$keycode])."'";
                 $i++;
             }
             $sql.= " WHERE ".$rowidcol." = '".$rowid."'";
-
+//print $sql;exit;
             dol_syslog("actionmodify", LOG_DEBUG);
             //print $sql;
             $resql = $db->query($sql);
@@ -430,24 +437,9 @@ if ($search_type_template != '' && $search_type_template != '-1') $sql.=natural_
 if ($search_lang) $sql.=natural_search('lang', $search_lang);
 if ($search_fk_user != '' && $search_fk_user != '-1') $sql.=natural_search('fk_user', $search_fk_user, 2);
 if ($search_topic) $sql.=natural_search('topic', $search_topic);
-if ($sortfield)
-{
-    // If sort order is "country", we use country_code instead
-	if ($sortfield == 'country') $sortfield='country_code';
-    $sql.= " ORDER BY ".$sortfield;
-    if ($sortorder)
-    {
-        $sql.=" ".strtoupper($sortorder);
-    }
-    $sql.=", ";
-    // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
-    $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
-    $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
-}
-else {
-    $sql.=" ORDER BY ";
-}
-$sql.=$tabsqlsort[$id];
+// If sort order is "country", we use country_code instead
+if ($sortfield == 'country') $sortfield='country_code';
+$sql.=$db->order($sortfield,$sortorder);
 $sql.=$db->plimit($listlimit+1,$offset);
 //print $sql;
 
@@ -455,7 +447,6 @@ $fieldlist=explode(',',$tabfield[$id]);
 
 // Form to add a new line
 $alabelisused=0;
-$var=false;
 
 print '<form action="'.$_SERVER['PHP_SELF'].'?id='.$id.'" method="POST">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -599,9 +590,7 @@ $colspan=count($fieldlist)+1;
 
 print '</table>';
 print '</div>';
-
 print '</form>';
-
 print '<br>';
 
 
@@ -619,7 +608,6 @@ if ($resql)
 {
     $num = $db->num_rows($resql);
     $i = 0;
-    $var=true;
 
     $param = '&id='.$id;
     $paramwithsearch = $param;
@@ -726,10 +714,10 @@ if ($resql)
         {
             $obj = $db->fetch_object($resql);
 
-            print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
-
             if ($action == 'edit' && ($rowid == (! empty($obj->rowid)?$obj->rowid:$obj->code)))
             {
+            	print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
             	$tmpaction='edit';
                 $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                 $reshook=$hookmanager->executeHooks('editEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
@@ -787,10 +775,23 @@ if ($resql)
                         print '<td></td>';
                     }
                 }
+
+                print "</tr>\n";
             }
             else
             {
-              	$tmpaction = 'view';
+            	$keyforobj='type_template';
+            	if (! in_array($obj->$keyforobj, array_keys($elementList)))
+            	{
+            		$i++;
+            		continue;		// It means this is a type of template not into elementList (may be because enabled condition of this type is false because module is not enabled)
+            	}
+				// TODO Test on 'enabled'
+
+
+            	print '<tr class="oddeven" id="rowid-'.$obj->rowid.'">';
+
+            	$tmpaction = 'view';
                 $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
                 $reshook=$hookmanager->executeHooks('viewEmailTemplateFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
@@ -876,7 +877,6 @@ if ($resql)
                 }
                 print '</td>';
 
-
                 /*
                 $fieldsforcontent = array('content');
                 if (! empty($conf->global->MAIN_EMAIL_TEMPLATES_FOR_OBJECT_LINES))
@@ -904,8 +904,9 @@ if ($resql)
 
                     }
                 }*/
+
+                print "</tr>\n";
             }
-            print "</tr>\n";
 
 
             $i++;

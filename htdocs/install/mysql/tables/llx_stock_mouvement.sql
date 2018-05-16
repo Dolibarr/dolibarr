@@ -34,5 +34,6 @@ create table llx_stock_mouvement
   label           varchar(255),						-- Comment on movement
   inventorycode   varchar(128),						-- Code used to group different movement line into one operation (may be an inventory, a mass picking)
   fk_origin       integer,
-  origintype      varchar(32)
+  origintype      varchar(32),
+  model_pdf       varchar(255)
 )ENGINE=innodb;

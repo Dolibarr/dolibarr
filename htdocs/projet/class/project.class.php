@@ -223,7 +223,7 @@ class Project extends CommonObject
         }
 
         // Update extrafield
-        if (!$error) {
+        if (! $error) {
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
         	{
         		$result=$this->insertExtraFields();
@@ -234,13 +234,13 @@ class Project extends CommonObject
         	}
         }
 
-        if (!$error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
+        if (! $error && !empty($conf->global->MAIN_DISABLEDRAFTSTATUS))
         {
             $res = $this->setValid($user);
             if ($res < 0) $error++;
         }
 
-        if (!$error)
+        if (! $error)
         {
             $this->db->commit();
             return $ret;
@@ -320,7 +320,7 @@ class Project extends CommonObject
                 	}
                 }
 
-                if (! $error && !$notrigger)
+                if (! $error && ! $notrigger)
                 {
                 	// Call trigger
                 	$result=$this->call_trigger('PROJECT_MODIFY',$user);
@@ -1723,23 +1723,26 @@ class Project extends CommonObject
     {
         global $conf, $langs;
 
-        $mine=0; $socid=$user->societe_id;
+        // For external user, no check is done on company because readability is managed by public status of project and assignement.
+        //$socid=$user->societe_id;
 
-        $projectsListId = $this->getProjectsAuthorizedForUser($user,$mine?$mine:($user->rights->projet->all->lire?2:0),1,$socid);
-
+        if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user,0,1,$socid);
+        
         $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
         $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
         $sql.= ")";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s on p.fk_soc = s.rowid";
-        if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
+        // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+        //if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
         $sql.= " WHERE p.fk_statut = 1";
         $sql.= " AND p.entity IN (".getEntity('project', 0).')';
-        if ($mine || ! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
+        if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
         // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-        if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
-        if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-
+        // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
+        //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
+        
+        //print $sql;
         $resql=$this->db->query($sql);
         if ($resql)
         {

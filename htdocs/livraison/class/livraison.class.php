@@ -540,7 +540,7 @@ class Livraison extends CommonObject
 		global $conf;
 		$error = 0;
 
-		if ($id > 0 && !$error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
+		if ($id > 0 && ! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($array_options) && count($array_options)>0) // For avoid conflicts if trigger used
 		{
 			$livraisonline = new LivraisonLigne($this->db);
 			$livraisonline->array_options=$array_options;

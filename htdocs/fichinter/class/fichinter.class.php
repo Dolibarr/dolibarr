@@ -55,9 +55,10 @@ class Fichinter extends CommonObject
 	var $datet;
 	var $datem;
 	var $duration;
-	var $statut;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
+	var $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 	var $description;
-	var $fk_contrat;
+	var $fk_contrat = 0;
+	var $fk_project = 0;
 	var $extraparams=array();
 
 	var $lines = array();
@@ -87,24 +88,8 @@ class Fichinter extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		$this->products = array();
-		$this->fk_project = 0;
-		$this->fk_contrat = 0;
-		$this->statut = 0;
 
-		// List of language codes for status
-		$this->statuts[0]='Draft';
-		$this->statuts[1]='Validated';
-		$this->statuts[2]='StatusInterInvoiced';
-		$this->statuts[3]='Done';
-		$this->statuts_short[0]='Draft';
-		$this->statuts_short[1]='Validated';
-		$this->statuts_short[2]='StatusInterInvoiced';
-		$this->statuts_short[3]='Done';
-		$this->statuts_logo[0]='statut0';
-		$this->statuts_logo[1]='statut1';
-		$this->statuts_logo[2]='statut6';
-		$this->statuts_logo[3]='statut6';
+		$this->products = array();
 	}
 
 	/**
@@ -253,7 +238,7 @@ class Fichinter extends CommonObject
 			}
 
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('FICHINTER_CREATE',$user);
@@ -634,22 +619,40 @@ class Fichinter extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
-		global $langs;
+		// Init/load array of translation of status
+		if (empty($this->statuts) || empty($this->statuts_short))
+		{
+			global $langs;
+			$langs->load("fichinter");
+
+			$this->statuts[0]=$langs->trans('Draft');
+			$this->statuts[1]=$langs->trans('Validated');
+			$this->statuts[2]=$langs->trans('StatusInterInvoiced');
+			$this->statuts[3]=$langs->trans('Done');
+			$this->statuts_short[0]=$langs->trans('Draft');
+			$this->statuts_short[1]=$langs->trans('Validated');
+			$this->statuts_short[2]=$langs->trans('StatusInterInvoiced');
+			$this->statuts_short[3]=$langs->trans('Done');
+			$this->statuts_logo[0]='statut0';
+			$this->statuts_logo[1]='statut1';
+			$this->statuts_logo[2]='statut6';
+			$this->statuts_logo[3]='statut6';
+		}
 
 		if ($mode == 0)
-			return $langs->trans($this->statuts[$statut]);
+			return $this->statuts[$statut];
 		if ($mode == 1)
-			return $langs->trans($this->statuts_short[$statut]);
+			return $this->statuts_short[$statut];
 		if ($mode == 2)
-			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]).' '.$langs->trans($this->statuts_short[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts_short[$statut];
 		if ($mode == 3)
-			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]);
 		if ($mode == 4)
-			return img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]).' '.$langs->trans($this->statuts[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts[$statut];
 		if ($mode == 5)
-			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+			return '<span class="hideonsmartphone">'.$this->statuts_short[$statut].' </span>'.img_picto($this->statuts[$statut],$this->statuts_logo[$statut]);
 		if ($mode == 6)
-			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+			return '<span class="hideonsmartphone">'.$this->statuts[$statut].' </span>'.img_picto($this->statuts[$statut],$this->statuts_logo[$statut]);
 
 		return '';
 	}

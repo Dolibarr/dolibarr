@@ -245,9 +245,6 @@ if ($action == 'create')
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$var=True;
-
-
 	print '<tr class="oddeven">';
 
 	if ($loan->datestart > 0)

@@ -750,20 +750,12 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('interventiondao'));
-			$parameters=array('id'=>$object->id);
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			$result=$object->insertExtraFields('INTERVENTION_MODIFY');
+			if ($result < 0)
 			{
-				$result=$object->insertExtraFields('INTERVENTION_MODIFY');
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
-			else if ($reshook < 0) $error++;
 		}
 
 		if ($error) $action = 'edit_extras';
@@ -1010,7 +1002,7 @@ if ($action == 'create')
         $parameters=array('colspan' => ' colspan="2"');
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}

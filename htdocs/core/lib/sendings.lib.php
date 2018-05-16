@@ -241,11 +241,10 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			}
 			print "</tr>\n";
 
-			$var=True;
 			while ($i < $num)
 			{
-
 				$objp = $db->fetch_object($resql);
+
 				print '<tr class="oddeven">';
 
 				// Sending id

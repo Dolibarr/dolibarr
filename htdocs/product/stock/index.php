@@ -86,7 +86,6 @@ if ($result)
     {
         $entrepot=new Entrepot($db);
 
-        $var=True;
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);

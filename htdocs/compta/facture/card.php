@@ -983,15 +983,13 @@ if (empty($reshook))
 				// Add link between credit note and origin
 				if(! empty($object->fk_facture_source)) {
 					$facture_source->fetch($object->fk_facture_source);
-				}
-				$facture_source->fetchObjectLinked();
+					$facture_source->fetchObjectLinked();
 
-				if(! empty($facture_source->linkedObjectsIds)) {
-					$linkedObjectIds = $facture_source->linkedObjectsIds;
-					$sourcetype = key($linkedObjectIds);
-					$fk_origin = current($facture_source->linkedObjectsIds[$sourcetype]);
-
-					$object->add_object_linked($sourcetype, $fk_origin);
+					if(! empty($facture_source->linkedObjectsIds)) {
+						foreach($facture_source->linkedObjectsIds as $sourcetype => $TIds) {
+							$object->add_object_linked($sourcetype, current($TIds));
+						}
+					}
 				}
 			}
 		}
@@ -2117,7 +2115,7 @@ if (empty($reshook))
 	    $fromElement = GETPOST('fromelement');
 	    $fromElementid = GETPOST('fromelementid');
 	    $importLines = GETPOST('line_checkbox');
-	    
+
 	    if(!empty($importLines) && is_array($importLines) && !empty($fromElement) && ctype_alpha($fromElement) && !empty($fromElementid))
 	    {
 	        if($fromElement == 'commande')
@@ -2164,7 +2162,7 @@ if (empty($reshook))
                     $fk_prev_id = '';
                     $fk_unit = $originLine->fk_unit;
                     $pu_ht_devise = $originLine->multicurrency_subprice;
-                    
+
                     $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $ventil, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit,$pu_ht_devise);
                     if($res > 0){
                         $importCount++;
@@ -2172,18 +2170,18 @@ if (empty($reshook))
                         $error++;
                     }
                 }
-                else{ 
-                    $error++; 
+                else{
+                    $error++;
                 }
 	        }
-	        
+
 	        if($error)
 	        {
 	            setEventMessage($langs->trans('ErrorsOnXLines',$error), 'errors');
 	        }
 	    }
 	}
-	
+
 	// Actions when printing a doc from card
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
@@ -2209,22 +2207,15 @@ if (empty($reshook))
 		$ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute','none'));
 		if ($ret < 0) $error++;
 
-		if (! $error) {
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('invoicedao'));
-			$parameters = array('id' => $object->id);
-			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-			// some hooks
-			if (empty($reshook)) {
-				$result = $object->insertExtraFields('BILL_MODIFY');
-				if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-			} else if ($reshook < 0)
-				$error ++;
+		if (! $error)
+		{
+			// Actions on extra fields
+			$result = $object->insertExtraFields('BILL_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 		}
 
 		if ($error)
@@ -2902,7 +2893,7 @@ if ($action == 'create')
 	$parameters = array('objectsrc' => $objectsrc,'colspan' => ' colspan="2"', 'cols'=>2);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -4577,16 +4568,16 @@ else if ($id > 0 || ! empty($ref))
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('invoice'));
-		
+
 		$compatibleImportElementsList = false;
-		if($user->rights->facture->creer 
-		    && $object->statut == Facture::STATUS_DRAFT 
+		if($user->rights->facture->creer
+		    && $object->statut == Facture::STATUS_DRAFT
 		    && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) )
 		{
 		    $compatibleImportElementsList = array('commande'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem,$compatibleImportElementsList);
-		
+
 
 		// Show online payment link
 		$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));

@@ -161,11 +161,11 @@ class WebservicesThirdpartyTest extends PHPUnit_Framework_TestCase
     			'entity'=>'');
 
     	$body = array (
-    			"id" => NULL,
+    			"id" => null,
     			"ref" => "name",
     			"ref_ext" => "12",
-    			"fk_user_author" => NULL,
-    			"status" => NULL,
+    			"fk_user_author" => null,
+    			"status" => null,
     			"client" => 1,
     			"supplier" => 0,
     			"customer_code" => "CU0901-5678",

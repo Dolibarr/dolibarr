@@ -27,6 +27,7 @@ ProductAccountancySellExportCode=Accounting code (sale export)
 ProductOrService=محصولات و خدمات
 ProductsAndServices=محصولات و خدمات
 ProductsOrServices=محصولات و خدمات
+ProductsPipeServices=Products | Services
 ProductsOnSaleOnly=Products for sale only
 ProductsOnPurchaseOnly=Products for purchase only
 ProductsNotOnSell=Products not for sale and not for purchase
@@ -122,6 +123,7 @@ ConfirmDeleteProductLine=آیا مطمئن هستید که می خواهید ا�
 ProductSpecial=ویژه
 QtyMin=حداقل تعداد
 PriceQtyMin=قیمت این دقیقه. تعداد (W / O تخفیف)
+PriceQtyMinCurrency=Price for this min. qty (w/o discount) (currency)
 VATRateForSupplierProduct=نرخ مالیات بر ارزش افزوده (برای این عرضه کننده کالا / محصول)
 DiscountQtyMin=به طور پیش فرض تخفیف ویژه برای تعداد
 NoPriceDefinedForThisSupplier=بدون قیمت / تعداد تعریف شده برای این عرضه کننده کالا / محصول

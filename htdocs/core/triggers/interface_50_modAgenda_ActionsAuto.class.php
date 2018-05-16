@@ -889,6 +889,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		$actioncomm->fk_element  = $elementid;
 		$actioncomm->elementtype = $elementtype;
 
+		if (property_exists($object,'sendtouserid') && is_array($object->sendtouserid) && count($object->sendtouserid)>0) {
+			$actioncomm->userassigned=$object->sendtouserid;
+		}
+
 		$ret=$actioncomm->create($user);       // User creating action
 
 		if ($ret > 0 && $conf->global->MAIN_COPY_FILE_IN_EVENT_AUTO)

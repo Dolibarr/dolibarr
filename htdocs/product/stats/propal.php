@@ -216,13 +216,11 @@ if ($id > 0 || ! empty($ref))
 
 				if ($num > 0)
 				{
-					$var = True;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($result);
-						$var = ! $var;
 
-						print '<tr ' . $bc[$var] . '>';
+						print '<tr class="oddeven">';
 						print '<td>';
 						$propalstatic->id=$objp->propalid;
 						$propalstatic->ref=$objp->ref;

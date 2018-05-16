@@ -32,10 +32,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("admin");
-$langs->load("accountancy");
+$langs->loadLangs(array("compta","bills","admin","accountancy"));
 
 // Security access
 if (empty($user->rights->accounting->chartofaccount))

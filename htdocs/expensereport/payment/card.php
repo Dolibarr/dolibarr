@@ -73,7 +73,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 	$db->begin();
 
 	$result=$object->valide();
-	
+
 	if ($result > 0)
 	{
 		$db->commit();
@@ -112,7 +112,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 
 llxHeader('', $langs->trans("ExpenseReportPayment"));
 
-if ($id > 0) 
+if ($id > 0)
 {
 	$result=$object->fetch($id);
 	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
@@ -240,8 +240,6 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
@@ -277,7 +275,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	
+
 
 	print "</table>\n";
 	print '</div>';
