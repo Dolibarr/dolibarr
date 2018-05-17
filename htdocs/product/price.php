@@ -152,7 +152,7 @@ if (empty($reshook))
 	    $db->begin();
 
 	    $resql = $object->update($object->id, $user);
-	    if (! $resql)
+	    if (! $resql || $resql < 0)
 	    {
 	        $error++;
 	        setEventMessages($object->error, $object->errors, 'errors');
