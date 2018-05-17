@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018 	   Juanjo Menent  <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -601,6 +602,13 @@ if ($massaction == 'confirm_createbills')
 						{
 							$fk_parent_line = 0;
 						}
+
+						// Extrafields
+						if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+							$lines[$i]->fetch_optionals($lines[$i]->rowid);
+							$array_options = $lines[$i]->array_options;
+						}
+
 						$result = $objecttmp->addline(
 							$desc,
 							$lines[$i]->subprice,
@@ -625,7 +633,8 @@ if ($massaction == 'confirm_createbills')
 							$fk_parent_line,
 							$lines[$i]->fk_fournprice,
 							$lines[$i]->pa_ht,
-							$lines[$i]->label
+							$lines[$i]->label,
+							$array_options
 							);
 						if ($result > 0)
 						{
