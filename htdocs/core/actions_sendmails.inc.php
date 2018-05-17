@@ -418,7 +418,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						}
 					}*/
 
-					// Initialisation of datas
+					// Initialisation of datas of object to call trigger
 					if (is_object($object))
 					{
 					    if (empty($actiontypecode)) $actiontypecode='AC_OTH_AUTO'; // Event insert into agenda automatically
