@@ -758,7 +758,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '</td><td>';
 		//print $stripecu;
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
-		if ($stripecu)
+		if ($stripecu && $action != 'editkey_account')
 		{
 			$url='https://dashboard.stripe.com/test/customers/'.$stripecu;
 			if ($servicestatus)

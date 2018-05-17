@@ -710,7 +710,9 @@ else
 
 	print '<tr><td>';
 	print $langs->trans('CronLastResult')."</td><td>";
+	if ($object->lastresult) print '<span class="error">';
 	print $object->lastresult;
+	if ($object->lastresult) print '</span>';
 	print "</td></tr>";
 
 	print '<tr><td>';
