@@ -119,12 +119,12 @@ class InterfaceStripe
 		$langs->load("mails");
 		$langs->load('other');
 
-		$ok = 0;
-
 		require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 		$stripe = new Stripe($db);
 
 		if (empty($conf->stripe->enabled)) return 0;
+
+		$ok = 1;
 
 		$service = 'StripeTest';
 		$servicestatus = 0;
@@ -175,28 +175,38 @@ class InterfaceStripe
 		if ($action == 'COMPANYPAYMENTMODE_MODIFY' && $object->type == 'card') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this
-			$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
+			if (! empty($object->stripe_card_ref))
+			{
+				$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this
+				$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
 
-			if ($stripecu) {
-				// Get customer (required to get a card)
-				if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-					$customer = \Stripe\Customer::retrieve($stripecu);
-				} else {
-					$customer = \Stripe\Customer::retrieve($stripecu, array("stripe_account" => $stripeacc));
-				}
-
-				if ($customer)
+				if (empty($stripeacc))
 				{
-					$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
-					if ($card) {
-						$card->metadata=array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']));
-						try {
-							$card->save($dataforcard);
-						}
-						catch(Exception $e)
-						{
-							$this->error = $e->getMessages();
+					$ok = -1;
+					$this->error = "Stripe API keys are not defined into Stripe module setup for mode ".$service;
+				}
+				elseif ($stripecu)
+				{
+					// Get customer (required to get a card)
+					if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+						$customer = \Stripe\Customer::retrieve($stripecu);
+					} else {
+						$customer = \Stripe\Customer::retrieve($stripecu, array("stripe_account" => $stripeacc));
+					}
+
+					if ($customer)
+					{
+						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
+						if ($card) {
+							$card->metadata=array('dol_id'=>$object->id, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR']));
+							try {
+								$card->save($dataforcard);
+							}
+							catch(Exception $e)
+							{
+								$ok = -1;
+								$this->error = $e->getMessages();
+							}
 						}
 					}
 				}
@@ -205,24 +215,31 @@ class InterfaceStripe
 		if ($action == 'COMPANYPAYMENTMODE_DELETE' && $object->type == 'card') {
 			dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-			$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this
-			$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
-
-			if ($stripecu)
+			if (! empty($object->stripe_card_ref))
 			{
-				// Get customer (required to get a card)
-				if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
-					$customer = \Stripe\Customer::retrieve($stripecu);
-				} else {
-					$customer = \Stripe\Customer::retrieve($stripecu, array("stripe_account" => $stripeacc));
-				}
-
-				if ($customer)
+				$stripeacc = $stripe->getStripeAccount($service);				// No need of network access for this
+				$stripecu = $stripe->getStripeCustomerAccount($object->fk_soc);	// No need of network access for this
+				if (empty($stripeacc))
 				{
-					$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
-					if ($card) {
-						if (method_exists($card, 'detach')) $card->detach();
-						else $card->delete();
+					$ok = -1;
+					$this->error = "Stripe API keys are not defined into Stripe module setup for mode ".$service;
+				}
+				elseif ($stripecu)
+				{
+					// Get customer (required to get a card)
+					if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
+						$customer = \Stripe\Customer::retrieve($stripecu);
+					} else {
+						$customer = \Stripe\Customer::retrieve($stripecu, array("stripe_account" => $stripeacc));
+					}
+
+					if ($customer)
+					{
+						$card = $stripe->cardStripe($customer, $object, $stripeacc, $servicestatus);
+						if ($card) {
+							if (method_exists($card, 'detach')) $card->detach();
+							else $card->delete();
+						}
 					}
 				}
 			}
