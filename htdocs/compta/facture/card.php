@@ -2191,7 +2191,7 @@ if (empty($reshook))
 	// Outing situation invoice from cycle 
 	elseif ($action == 'confirm_situationout' && $confirm == 'yes' && $user->rights->facture->creer)
 	{
-	    $object->fetch($id,'', '','', TRUE);
+	    $object->fetch($id,'', '','', true);
 	    
 	    if ($object->statut == Facture::STATUS_VALIDATED
 	        && $object->type == Facture::TYPE_SITUATION
