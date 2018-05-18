@@ -18,9 +18,11 @@
 #
 Assets = Assets
 NewAsset = New asset
-AccountancyAccountAsset = Accounting code (asset)
-AccountancyAccountDepreciationAsset = Accounting code (depreciation asset account)
-AccountancyAccountDepreciationExpense = Accounting code (depreciation expense account) 
+AccountancyCodeAsset = Accounting code (asset)
+AccountancyCodeDepreciationAsset = Accounting code (depreciation asset account)
+AccountancyCodeDepreciationExpense = Accounting code (depreciation expense account)
+NewAssetType=New asset type
+AssetsLines=Assets
 
 # Module label 'ModuleAssetsName'
 ModuleAssetsName = Assets
@@ -44,5 +46,7 @@ AssetsTypes=Assets types
 #
 MenuAssets = Assets
 MenuNewAsset = New asset
-MenuTypeAssets = Type
+MenuTypeAssets = Type assets
 MenuListAssets = List
+MenuNewTypeAssets = New type
+MenuListTypeAssets = List
