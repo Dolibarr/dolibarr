@@ -327,9 +327,10 @@ function project_admin_prepare_head()
  * @param	int			$projectsListId		List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		Add a tick to move task
  * @param   int         $projectidfortotallink     0 or Id of project to use on total line (link to see all time consumed for project)
+ * @param   string      $filterprogresscalc     filter text
  * @return	void
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0)
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0, $filterprogresscalc='')
 {
 	global $user, $bc, $langs, $conf;
 	global $projectstatic, $taskstatic;
@@ -337,6 +338,17 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 	$lastprojectid=0;
 
 	$projectsArrayId=explode(',',$projectsListId);
+	if ($filterprogresscalc!=='') {
+		foreach ($lines as $key=>$line) {
+			if (!empty($line->planned_workload) && !empty($line->duration)) {
+				$filterprogresscalc = str_replace(' = ', ' == ', $filterprogresscalc);
+				if (!eval($filterprogresscalc)) {
+					unset($lines[$key]);
+					$lines=array_values($lines);
+				}
+			}
+		}
+	}
 
 	$numlines=count($lines);
 
