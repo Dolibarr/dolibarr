@@ -610,8 +610,19 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                     $paiement = $invoice->getSommePaiement();
                     $creditnotes=$invoice->getSumCreditNotesUsed();
                     $deposits=$invoice->getSumDepositsUsed();
-                    $alreadypayed=price2num($paiement + $creditnotes + $deposits,'MT');
-                    $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
+                    if (! empty($conf->global->INVOICE_USE_SITUATION) && $invoice->situation_cycle_ref>0)
+                    {
+                        $invoice->fetchPreviousNextSituationInvoice();
+                        if(!empty($invoice->tab_previous_situation_invoice)) {
+                            $previous_deposits=0;
+                            foreach($invoice->tab_previous_situation_invoice as &$previous_situation_invoice) {
+                                $previous_deposits+= $previous_situation_invoice->getSumDepositsUsed();
+                            }
+                        }
+                    }
+
+                    $alreadypayed=price2num($paiement + $creditnotes + $deposits + $previous_deposits,'MT');
+                    $remaintopay=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits - $previous_deposits,'MT');
 
 					// Multicurrency Price
 					if (!empty($conf->multicurrency->enabled))

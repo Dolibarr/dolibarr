@@ -198,6 +198,7 @@ DescPurchasesJournal=Purchases Journal
 InvoiceRef=Invoice ref.
 CodeNotDef=Not defined
 WarningDepositsNotIncluded=Down payment invoices are not included in this version with this accountancy module.
+PreviousDepositUsed=Previous used deposits
 DatePaymentTermCantBeLowerThanObjectDate=Payment term date can't be lower than object date.
 Pcg_version=Chart of accounts models
 Pcg_type=Pcg type

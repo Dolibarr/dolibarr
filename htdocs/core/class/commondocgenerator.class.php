@@ -342,6 +342,21 @@ abstract class CommonDocGenerator
 			}
 			$sumpayed = $object->getSommePaiement();
 			$sumdeposit = $object->getSumDepositsUsed();
+
+			if (! empty($conf->global->INVOICE_USE_SITUATION) && $object->situation_cycle_ref>0)
+			{
+			    $object->fetchPreviousNextSituationInvoice();
+
+			    if(!empty($object->tab_previous_situation_invoice)) {
+			        $previous_deposits = 0;
+
+			        foreach($object->tab_previous_situation_invoice as &$previous_situation_invoice) {
+			            $previous_deposits+= $previous_situation_invoice->getSumDepositsUsed();
+			        }
+			        $sumdeposit+=$previous_deposits;
+			    }
+			}
+
 			$sumcreditnote = $object->getSumCreditNotesUsed();
 		}
 
@@ -425,7 +440,7 @@ abstract class CommonDocGenerator
 			{
 				$object->fetch_projet();
 			}
-			
+
 			$resarray[$array_key.'_project_ref'] = $object->project->ref;
 			$resarray[$array_key.'_project_title'] = $object->project->title;
 			$resarray[$array_key.'_project_description'] = $object->project->description;
@@ -510,7 +525,7 @@ abstract class CommonDocGenerator
 		    'line_multicurrency_total_tva_locale' => price($line->multicurrency_total_tva, 0, $outputlangs),
 		    'line_multicurrency_total_ttc_locale' => price($line->multicurrency_total_ttc, 0, $outputlangs),
 		);
-		
+
 		    // Units
 		if ($conf->global->PRODUCT_USE_UNITS)
 		{
