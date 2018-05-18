@@ -517,7 +517,7 @@ class FormFile
                     $modellist=ModelePDFCards::liste_modeles($this->db);
                 }
             }
-            elseif ($modulepart == 'agenda')
+            elseif ($modulepart == 'agenda' || $modulepart == 'actions')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else

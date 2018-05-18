@@ -668,6 +668,7 @@ while ($i < min($num,$limit))
 	$object->datee = $db->jdate($obj->date_end);
 	$object->statut = $obj->fk_statut;
 	$object->opp_status = $obj->fk_opp_status;
+	$object->title = $obj->title;
 
 	$userAccess = $object->restrictedProjectArea($user);    // why this ?
 	if ($userAccess >= 0)
