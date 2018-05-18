@@ -186,13 +186,17 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		$result = $object->delete($user, 0, $idwarehouse);
-		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
-			exit();
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action='';
+		if($object->is_erasable()) {
+		
+			$result = $object->delete($user, 0, $idwarehouse);
+			if ($result > 0) {
+				header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php');
+				exit();
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action='';
+			}
+			
 		}
 	}
 
