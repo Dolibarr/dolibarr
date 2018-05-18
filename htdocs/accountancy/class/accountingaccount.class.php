@@ -189,9 +189,13 @@ class AccountingAccount extends CommonObject
 		$sql .= ", pcg_type";
 		$sql .= ", pcg_subtype";
 		$sql .= ", account_number";
-		$sql .= ", account_parent";
+		if (! empty($this->account_parent)) {
+			$sql .= ", account_parent";
+		}
 		$sql .= ", label";
-		$sql .= ", fk_accounting_category";
+		if (! empty($this->account_category)) {
+			$sql .= ", fk_accounting_category";
+		}
 		$sql .= ", fk_user_author";
 		$sql .= ", active";
 		$sql .= ") VALUES (";
@@ -201,9 +205,13 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (empty($this->pcg_type) ? 'NULL' : "'" . $this->db->escape($this->pcg_type) . "'");
 		$sql .= ", " . (empty($this->pcg_subtype) ? 'NULL' : "'" . $this->db->escape($this->pcg_subtype) . "'");
 		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->db->escape($this->account_number) . "'");
-		$sql .= ", " . (empty($this->account_parent) ? 'NULL' : "'" . $this->db->escape($this->account_parent) . "'");
+		if (! empty($this->account_parent)) {
+			$sql .= ", " . "'" . $this->db->escape($this->account_parent) . "'";
+		}
 		$sql .= ", " . (empty($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
-		$sql .= ", " . (empty($this->account_category) ? 'NULL' : "'" . $this->db->escape($this->account_category) . "'");
+		if (! empty($this->account_category)) {
+			$sql .= ", " . $this->db->escape($this->account_category);
+		}
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (! isset($this->active) ? 'NULL' : $this->db->escape($this->active));
 		$sql .= ")";
@@ -274,7 +282,9 @@ class AccountingAccount extends CommonObject
 		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
 		$sql .= " , account_parent = '" . $this->db->escape($this->account_parent) . "'";
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
-		$sql .= " , fk_accounting_category = '" . $this->db->escape($this->account_category) . "'";
+		if (! empty($this->account_category)) {
+			$sql .= " , fk_accounting_category = " . $this->db->escape($this->account_category);
+		}
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = " . $this->active;
 		$sql .= " WHERE rowid = " . $this->id;
