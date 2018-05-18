@@ -2939,7 +2939,7 @@ class Societe extends CommonObject
 			//algorithm checking type code CIF
 			$sum = $num[2] + $num[4] + $num[6];
 			for ($i = 1; $i < 8; $i += 2)
-			$sum += substr((2 * $num[$i]),0,1) + substr((2 * $num[$i]),1,1);
+			$sum += intval(substr((2 * $num[$i]),0,1)) + intval(substr((2 * $num[$i]),1,1));
 			$n = 10 - substr($sum, strlen($sum) - 1, 1);
 
 			//Chek special NIF
