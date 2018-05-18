@@ -2120,8 +2120,13 @@ if (empty($reshook))
 	    {
 	        if($fromElement == 'commande')
 	        {
-	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class');
+	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 	            $lineClassName = 'OrderLine';
+	        }
+	        elseif($fromElement == 'propal')
+	        {
+	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+	            $lineClassName = 'PropaleLigne';
 	        }
 	        $nextRang = count($object->lines) + 1;
 	        $importCount = 0;
@@ -2164,6 +2169,7 @@ if (empty($reshook))
                     $pu_ht_devise = $originLine->multicurrency_subprice;
 
                     $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $ventil, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit,$pu_ht_devise);
+                    
                     if($res > 0){
                         $importCount++;
                     }else{
@@ -4534,7 +4540,7 @@ else if ($id > 0 || ! empty($ref))
 		    && $object->statut == Facture::STATUS_DRAFT
 		    && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) )
 		{
-		    $compatibleImportElementsList = array('commande'); // import from linked elements
+		    $compatibleImportElementsList = array('commande','propal'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem,$compatibleImportElementsList);
 
