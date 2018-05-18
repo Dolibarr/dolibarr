@@ -344,10 +344,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				$filterprogresscalc = str_replace(' = ', ' == ', $filterprogresscalc);
 				if (!eval($filterprogresscalc)) {
 					unset($lines[$key]);
-					$lines=array_values($lines);
 				}
 			}
 		}
+		$lines=array_values($lines);
 	}
 
 	$numlines=count($lines);
