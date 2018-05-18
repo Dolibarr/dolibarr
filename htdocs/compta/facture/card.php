@@ -2986,6 +2986,7 @@ else if ($id > 0 || ! empty($ref))
 	// For example print 239.2 - 229.3 - 9.9; does not return 0.
 	// $resteapayer=bcadd($object->total_ttc,$totalpaye,$conf->global->MAIN_MAX_DECIMALS_TOT);
 	// $resteapayer=bcadd($resteapayer,$totalavoir,$conf->global->MAIN_MAX_DECIMALS_TOT);
+	$previous_deposits=0;
 	if (! empty($conf->global->INVOICE_USE_SITUATION) && $object->situation_cycle_ref>0)
 	{
 	    $object->fetchPreviousNextSituationInvoice();

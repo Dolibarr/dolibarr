@@ -1291,8 +1291,23 @@ class pdf_crabe extends ModelePDFFactures
 
 		$creditnoteamount=$object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
 		$depositsamount=$object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
+
+		$previous_deposits = 0;
+		if (! empty($conf->global->INVOICE_USE_SITUATION) && $object->situation_cycle_ref>0)
+		{
+		    $object->fetchPreviousNextSituationInvoice();
+
+		    if(!empty($object->tab_previous_situation_invoice)) {
+		        $previous_deposits = 0;
+
+		        foreach($object->tab_previous_situation_invoice as &$previous_situation_invoice) {
+		            $previous_deposits+= $previous_situation_invoice->getSumDepositsUsed();
+		        }
+
+		    }
+		}
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
-		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
+		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount - $previous_deposits, 'MT');
 		if ($object->paye) $resteapayer=0;
 
 		if (($deja_regle > 0 || $creditnoteamount > 0 || $depositsamount > 0) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS))
@@ -1688,7 +1703,7 @@ class pdf_crabe extends ModelePDFFactures
 		{
 			$top_shift = $pdf->getY() - $current_y;
 		}
-		
+
 		if ($showaddress)
 		{
 			// Sender properties
