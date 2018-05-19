@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2017  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -32,9 +32,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accoun
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("loan");
+$langs->loadLangs(array("compta","bills","loan"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -308,7 +306,7 @@ if ($action == 'create')
 		$formproject=new FormProjets($db);
 
 		// Projet associe
-		$langs->load("projects");
+		$langs->loadLangs(array("projects"));
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
@@ -444,7 +442,7 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			$langs->load("projects");
+			$langs->loadLangs(array("projects"));
 			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			if ($user->rights->loan->write)
 			{

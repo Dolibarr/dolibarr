@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017	Franck Moreau   <franck.moreau@theobald.com>
+/* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/loan/createecheancier.php
- *		\ingroup    loan
- *		\brief      Schedule card
+ *  \file       htdocs/loan/createschedule.php
+ *  \ingroup    loan
+ *  \brief      Schedule card
  */
 
 require '../main.inc.php';
@@ -33,7 +34,7 @@ $action = GETPOST('action','aZ09');
 $object = new Loan($db);
 $object->fetch($loanid);
 
-$langs->load('loan');
+$langs->loadLangs(array("loan"));
 
 if ($action == 'createecheancier') {
 

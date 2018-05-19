@@ -4,8 +4,8 @@
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
- * Copyright (C) 2016       Alexandre Spangaro      <aspangaro@zendsi.com>
- * Copyright (C) 2017      Ferran Marcet       	 <fmarcet@2byte.es>
+ * Copyright (C) 2016-2018  Alexandre Spangaro      <aspangaro@zendsi.com>
+ * Copyright (C) 2017       Ferran Marcet       	 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ if (! empty($conf->projet->enabled)) {
 
 $action = GETPOST('action','aZ09');
 
-$langs->load('loan');
+$langs->loadLangs(array("loan"));
 
 // Security check
 $id = GETPOST('id','int');
@@ -82,7 +82,7 @@ if ($id > 0)
 	$morehtmlref.=$form->editfieldval("Label", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 	// Project
 	if (! empty($conf->projet->enabled)) {
-		$langs->load("projects");
+		$langs->loadLangs(array("projects"));
 		$morehtmlref .= '<br>' . $langs->trans('Project') . ' : ';
 		if ($user->rights->loan->write) {
 			//if ($action != 'classify')
