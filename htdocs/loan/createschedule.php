@@ -152,7 +152,7 @@ Print '<th width="10%" align="center">'.$langs->trans("DueDate").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Date").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Amount").'</th>';
 Print '<th width="20%" align="center">'.$langs->trans("InterestAmount").'</th>';
-Print '<th width="40%" align="center">'.$langs->trans("Remain");
+Print '<th width="40%" align="center">'.$langs->trans("CapitalRemain");
 print ' ('.price2num($object->capital).')';
 print '<input type="hidden" name="hi_capital0" id ="hi_capital0" value="'.$object->capital.'">';
 print '</th>';
