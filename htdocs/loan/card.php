@@ -768,7 +768,7 @@ if ($id > 0)
 				print '<div class="tabsAction">';
 
 				// Edit
-				if ($user->rights->loan->write)
+				if ($object->paid == 0 && $user->rights->loan->write)
 				{
 					print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
 
@@ -788,7 +788,7 @@ if ($id > 0)
 				}
 
 				// Delete
-				if ($user->rights->loan->delete)
+				if ($object->paid == 0 && $user->rights->loan->delete)
 				{
 					print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}
