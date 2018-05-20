@@ -148,7 +148,7 @@ print '</th>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-Print '<th width="10%" align="center">'.$langs->trans("DueDate").'</th>';
+Print '<th width="10%" align="center">'.$langs->trans("Term").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Date").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Amount").'</th>';
 Print '<th width="20%" align="center">'.$langs->trans("InterestAmount").'</th>';

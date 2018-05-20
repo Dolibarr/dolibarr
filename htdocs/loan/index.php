@@ -19,9 +19,9 @@
  */
 
 /**
- *   	\file       htdocs/loan/index.php
- *		\ingroup    loan
- *		\brief      Page to list all loans
+ *  \file       htdocs/loan/index.php
+ *  \ingroup    loan
+ *  \brief      Page to list all loans
  */
 
 require '../main.inc.php';
@@ -54,7 +54,7 @@ $optioncss = GETPOST('optioncss','alpha');
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter','alpha')) // Both test are required to be compatible with all browsers
 {
-    $search_ref="";
+	$search_ref="";
 	$search_label="";
 	$search_amount="";
 }
@@ -68,7 +68,7 @@ $loan_static = new Loan($db);
 
 llxHeader();
 
-$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend,";
+$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend, l.paid,";
 $sql.= " SUM(pl.amount_capital) as alreadypayed";
 $sql.= " FROM ".MAIN_DB_PREFIX."loan as l LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl";
 $sql.= " ON l.rowid = pl.fk_loan";
@@ -77,8 +77,8 @@ if ($search_amount)	$sql.= natural_search("l.capital", $search_amount, 1);
 if ($search_ref) 	$sql.= " AND l.rowid = ".$db->escape($search_ref);
 if ($search_label)	$sql.= natural_search("l.label", $search_label);
 if ($filtre) {
-    $filtre=str_replace(":","=",$filtre);
-    $sql .= " AND ".$filtre;
+	$filtre=str_replace(":","=",$filtre);
+	$sql .= " AND ".$filtre;
 }
 $sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
@@ -86,13 +86,13 @@ $sql.= $db->order($sortfield,$sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-    $result = $db->query($sql);
-    $nbtotalofrecords = $db->num_rows($result);
-    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
-    {
-    	$page = 0;
-    	$offset = 0;
-    }
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -105,41 +105,42 @@ if ($resql)
 	$i = 0;
 	$var=true;
 
-    $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
-    if ($search_ref) $param.="&amp;search_ref=".urlencode($search_ref);
-    if ($search_label) $param.="&amp;search_label=".urlencode($search_user);
-    if ($search_amount) $param.="&amp;search_amount=".urlencode($search_amount_ht);
-    if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
+	$param='';
+	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if ($search_ref) $param.="&amp;search_ref=".urlencode($search_ref);
+	if ($search_label) $param.="&amp;search_label=".urlencode($search_user);
+	if ($search_amount) $param.="&amp;search_amount=".urlencode($search_amount_ht);
+	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
-    $newcardbutton='';
-    if ($user->rights->loan->write)
-    {
-    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create">'.$langs->trans('NewLoan');
-    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
-    	$newcardbutton.= '</a>';
-    }
+	$newcardbutton='';
+	if ($user->rights->loan->write)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create">'.$langs->trans('NewLoan');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
 
-    print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-    if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
+	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print '<input type="hidden" name="action" value="list">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
-    print '<input type="hidden" name="page" value="'.$page.'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
 	print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
-    print '<div class="div-table-responsive">';
-    print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
+	print '<div class="div-table-responsive">';
+	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	// Filters lines
 	print '<tr class="liste_titre_filter">';
 	print '<td class="liste_titre"><input class="flat" size="4" type="text" name="search_ref" value="'.$search_ref.'"></td>';
 	print '<td class="liste_titre"><input class="flat" size="12" type="text" name="search_label" value="'.$search_label.'"></td>';
 	print '<td class="liste_titre" align="right" ><input class="flat" size="8" type="text" name="search_amount" value="'.$search_amount.'"></td>';
+	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre">&nbsp;</td>';
 	print '<td class="liste_titre"></td>';
 	print '<td align="right" class="liste_titre">';
@@ -153,6 +154,7 @@ if ($resql)
 	print_liste_field_titre("Label",$_SERVER["PHP_SELF"],"l.label","",$param,'align="left"',$sortfield,$sortorder);
 	print_liste_field_titre("LoanCapital",$_SERVER["PHP_SELF"],"l.capital","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("DateStart",$_SERVER["PHP_SELF"],"l.datestart","",$param,'align="center"',$sortfield,$sortorder);
+	print_liste_field_titre("DateEnd",$_SERVER["PHP_SELF"],"l.dateend","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"l.paid","",$param,'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";
@@ -160,9 +162,9 @@ if ($resql)
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-        $loan_static->id = $obj->rowid;
-        $loan_static->ref = $obj->rowid;
-        $loan_static->label = $obj->label;
+		$loan_static->id = $obj->rowid;
+		$loan_static->ref = $obj->rowid;
+		$loan_static->label = $obj->label;
 
 		$var = !$var;
 		print '<tr class="oddeven">';
@@ -179,23 +181,26 @@ if ($resql)
 		// Date start
 		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->datestart), 'day').'</td>';
 
+		// Date end
+		print '<td width="110" align="center">'.dol_print_date($db->jdate($obj->dateend), 'day').'</td>';
+
 		print '<td align="right" class="nowrap">'.$loan_static->LibStatut($obj->paid,5,$obj->alreadypayed).'</a></td>';
 
 		print '<td></td>';
 
-        print "</tr>\n";
+		print "</tr>\n";
 
 		$i++;
 	}
 
-    print "</table>";
-    print '</div>';
-    print "</form>\n";
-    $db->free($resql);
+	print "</table>";
+	print '</div>';
+	print "</form>\n";
+	$db->free($resql);
 }
 else
 {
-    dol_print_error($db);
+	dol_print_error($db);
 }
 
 llxFooter();

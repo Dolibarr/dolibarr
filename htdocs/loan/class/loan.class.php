@@ -344,7 +344,7 @@ class Loan extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *  Return label of loan status (unpaid, paid)

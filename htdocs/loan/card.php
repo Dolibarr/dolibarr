@@ -697,8 +697,8 @@ if ($id > 0)
 			print '<td>'.$langs->trans("Type").'</td>';
 			print '<td align="right">'.$langs->trans("Insurance").'</td>';
 			print '<td align="right">'.$langs->trans("Interest").'</td>';
-	  		print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
-	  		print '</tr>';
+			print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
+			print '</tr>';
 
 			while ($i < $num)
 			{
@@ -708,9 +708,9 @@ if ($id > 0)
 				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-				print '<td align="right">'.price($objp->amount_insurance, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_interest, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_capital, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
 				print "</tr>";
 				$total_capital += $objp->amount_capital;
 				$i++;
