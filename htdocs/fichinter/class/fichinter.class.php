@@ -369,8 +369,8 @@ class Fichinter extends CommonObject
 				$this->statut       = $obj->fk_statut;
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
-				$this->datee        = $this->db->jdate($obj->dateo);
-				$this->dateo        = $this->db->jdate($obj->datee);
+				$this->dateo        = $this->db->jdate($obj->dateo);
+				$this->datee        = $this->db->jdate($obj->datee);
 				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
