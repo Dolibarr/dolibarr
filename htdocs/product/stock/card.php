@@ -26,6 +26,7 @@
  */
 
 require '../../main.inc.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/stock.lib.php';
@@ -63,6 +64,10 @@ $object = new Entrepot($db);
 /*
  * Actions
  */
+
+$usercanread = (($user->rights->stock->lire));
+$usercancreate = (($user->rights->stock->creer));
+$usercandelete = (($user->rights->stock->supprimer));
 
 // Ajout entrepot
 if ($action == 'add' && $user->rights->stock->creer)
@@ -164,6 +169,55 @@ if ($cancel == $langs->trans("Cancel"))
 	$action = '';
 }
 
+/*
+ * Build document
+ */
+if ($action == 'builddoc')	// En get ou en post
+{
+	if ($id > 0 || $ref)
+	{
+		$object = new Entrepot($db);
+		$result = $object->fetch($id, $ref);
+		if ($result <= 0)
+		{
+			print 'No record found';
+			exit;
+		}
+	}
+
+	// Save last template used to generate document	
+	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
+
+	// Define output language
+	$outputlangs = $langs;
+	$newlang='';
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
+	if (! empty($newlang))
+	{
+		$outputlangs = new Translate("",$conf);
+		$outputlangs->setDefaultLang($newlang);
+	}
+    $ret=$object->fetch($id);    // Reload to get new records
+	$result= $object->generateDocument($object->modelpdf, $outputlangs);
+	if ($result < 0)
+	{
+		setEventMessages($object->error, $object->errors, 'errors');
+        $action='';
+	}
+}
+
+// Delete file in doc form
+elseif ($action == 'remove_file')
+{
+	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+
+	$upload_dir =	$conf->stock->dir_output ;
+	$file =	$upload_dir	. '/' .	GETPOST('file');
+	$ret=dol_delete_file($file,0,0,0,$object);
+	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
+	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
+}
 
 
 /*
@@ -174,6 +228,7 @@ $productstatic=new Product($db);
 $form=new Form($db);
 $formproduct=new FormProduct($db);
 $formcompany=new FormCompany($db);
+$formfile = new FormFile($db);
 
 $help_url='EN:Module_Stocks_En|FR:Module_Stock|ES:M&oacute;dulo_Stocks';
 llxHeader("",$langs->trans("WarehouseCard"),$help_url);
@@ -652,6 +707,47 @@ else
 
 		}
 	}
+}
+
+/*
+ * Documents generes
+ */
+
+$modulepart='stock';
+
+if ($action != 'create' && $action != 'edit' && $action != 'delete')
+{
+	print '<br/>';
+    print '<div class="fichecenter"><div class="fichehalfleft">';
+    print '<a name="builddoc"></a>'; // ancre
+
+    // Documents
+    $objectref = dol_sanitizeFileName($object->ref);
+    $relativepath = $comref . '/' . $objectref . '.pdf';
+    $filedir = $conf->stock->dir_output . '/' . $objectref;
+    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+    $genallowed=$usercanread;
+    $delallowed=$usercancreate;
+
+    $var=true;
+
+    print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+    $somethingshown=$formfile->numoffiles;
+
+    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+
+    $MAXEVENT = 10;
+
+    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
+    $morehtmlright.= $langs->trans("SeeAll");
+    $morehtmlright.= '</a>';
+
+    // List of actions on element
+    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+    $formactions = new FormActions($db);
+    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+
+    print '</div></div></div>';
 }
 
 
