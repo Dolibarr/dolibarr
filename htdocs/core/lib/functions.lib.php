@@ -1,13 +1,13 @@
 <?php
 /* Copyright (C) 2000-2007	Rodolphe Quiedeville			<rodolphe@quiedeville.org>
  * Copyright (C) 2003		Jean-Louis Bergamo			<jlb@j1b.org>
- * Copyright (C) 2004-2013	Laurent Destailleur			<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018	Laurent Destailleur			<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Sebastien Di Cintio			<sdicintio@ressource-toi.org>
  * Copyright (C) 2004		Benoit Mortier				<benoit.mortier@opensides.be>
  * Copyright (C) 2004		Christophe Combelles			<ccomb@free.fr>
  * Copyright (C) 2005-2017	Regis Houssin				<regis.houssin@capnetworks.com>
  * Copyright (C) 2008		Raphael Bertrand (Resultic)	<raphael.bertrand@resultic.fr>
- * Copyright (C) 2010-2016	Juanjo Menent				<jmenent@2byte.es>
+ * Copyright (C) 2010-2018	Juanjo Menent				<jmenent@2byte.es>
  * Copyright (C) 2013		Cédric Salvador				<csalvador@gpcsolutions.fr>
  * Copyright (C) 2013-2017	Alexandre Spangaro			<aspangaro@zendsi.com>
  * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
@@ -1318,6 +1318,8 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 	    if (! empty($conf->use_javascript_ajax) && $user->rights->societe->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE))
     	{
 	       	$morehtmlstatus.=ajax_object_onoff($object, 'status', 'status', 'InActivity', 'ActivityCeased');
+    	} else {
+    		$morehtmlstatus.='<span class="statusrefactiv">'.$object->getLibStatut(5,0).'</span>';
     	}
 	}
 	elseif ($object->element == 'product')
@@ -4058,10 +4060,14 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
     		}
     		else  // i am the seller
     		{
-    			if (!isOnlyOneLocalTax($local))  // This is for spain only, we don't return value found into datbase even if there is only one locatax vat.
-    			{
-    				return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
-    			}
+				if (in_array($mysoc->country_code, array('ES')))
+				{
+					return $thirdparty_buyer->localtax2_value;
+				}
+				else
+				{
+					return $conf->global->MAIN_INFO_VALUE_LOCALTAX2;
+				}
     		}
     	}
 	}
@@ -4238,50 +4244,16 @@ function getLocalTaxesFromRate($vatrate, $local, $buyer, $seller, $firstparamisi
 		$obj = $db->fetch_object($resql);
 		if ($local == 1)
 		{
-			if (! isOnlyOneLocalTax(1))
-			{
-				return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-			}
-			else
-			{
-				return array($obj->localtax1_type, $obj->localtax1,$obj->accountancy_code_sell, $obj->accountancy_code_buy);
-			}
+			return array($obj->localtax1_type, get_localtax($vatrate, $local, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 		elseif ($local == 2)
 		{
-			if (! isOnlyOneLocalTax(2))
-			{
-				return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell, $obj->accountancy_code_buy);
-			}
-			else
-			{
-				return array($obj->localtax2_type, $obj->localtax2,$obj->accountancy_code_sell, $obj->accountancy_code_buy);
-			}
+			return array($obj->localtax2_type, get_localtax($vatrate, $local, $buyer, $seller),$obj->accountancy_code_sell, $obj->accountancy_code_buy);
 		}
 		else
 		{
-			if(! isOnlyOneLocalTax(1))
-			{
-				if(! isOnlyOneLocalTax(2))
-				{
-					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
-				}
-				else
-				{
-					return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, $obj->localtax2, $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-				}
-			}
-			else
-			{
-				if(! isOnlyOneLocalTax(2))
-				{
-					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-				}
-				else
-				{
-					return array($obj->localtax1_type, $obj->localtax1, $obj->localtax2_type, $obj->localtax2, $obj->accountancy_code_sell, $obj->accountancy_code_buy);
-				}
-			}
+			return array($obj->localtax1_type, get_localtax($vatrate, 1, $buyer, $seller), $obj->localtax2_type, get_localtax($vatrate, 2, $buyer, $seller), $obj->accountancy_code_sell,$obj->accountancy_code_buy);
+
 		}
 	}
 
@@ -6276,6 +6248,8 @@ function natural_search($fields, $value, $mode=0, $nofirstand=0)
 				$i3 = 0;
 				foreach($tmpcrits as $tmpcrit)
 				{
+					if(empty($tmpcrit)) continue;
+
 					$newres .= (($i2 > 0 || $i3 > 0) ? ' OR ' : '');
 
 					if (preg_match('/\.(id|rowid)$/', $field))	// Special cas for rowid that is sometimes a ref so used as a search field

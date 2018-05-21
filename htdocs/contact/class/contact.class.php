@@ -311,6 +311,7 @@ class Contact extends CommonObject
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
+		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql .= ", note_public = ".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
@@ -500,8 +501,8 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-            $error++;
-		    $this->error=$this->db->lasterror();
+			$error++;
+			$this->error=$this->db->lasterror();
 		}
 
 		// Mis a jour alerte birthday
@@ -991,9 +992,10 @@ class Contact extends CommonObject
 	 *	@param		string		$option			Where the link point to
 	 *	@param		int			$maxlen			Max length of
 	 *  @param		string		$moreparam		Add more param into URL
+	 *	@param		int			$notooltip		1=Disable tooltip
 	 *	@return		string						String with URL
 	 */
-	function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='')
+	function getNomUrl($withpicto=0,$option='',$maxlen=0,$moreparam='',$notooltip=0)
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -1012,13 +1014,15 @@ class Contact extends CommonObject
 
 	        $link = '<a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$this->id.$moreparam.'"';
 	        $linkclose="";
-	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
-	        {
-	            $label=$langs->trans("ShowContact");
-	            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
-	        }
-	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
-	       	$linkclose.= ' class="classfortooltip">';
+			if (empty($notooltip)) {
+		    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+		        {
+		            $label=$langs->trans("ShowContact");
+		            $linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+		        }
+		       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
+		       	$linkclose.= ' class="classfortooltip"';
+	       	}
 
 		if (! is_object($hookmanager))
 		{
@@ -1030,7 +1034,7 @@ class Contact extends CommonObject
 		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 
-		$link.=$linkclose;
+		$link.=$linkclose.'>';
 
 		$linkend='</a>';
 

@@ -60,7 +60,7 @@ if (! empty($conf->global->MAIN_CAN_HIDE_EXTRAFIELDS)) print '<td align="center"
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-if (count($extrafields->attribute_type))
+if (is_array($extrafields->attribute_type) && count($extrafields->attribute_type))
 {
     foreach($extrafields->attribute_type as $key => $value)
     {

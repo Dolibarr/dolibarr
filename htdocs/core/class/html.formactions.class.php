@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2008-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
+ * Copyright (C) 2010-2018 Juanjo Menent        <jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,10 +187,12 @@ class FormActions
 
             $urlbacktopage=$_SERVER['PHP_SELF'].'?id='.$object->id.($moreparambacktopage?'&'.$moreparambacktopage:'');
 
-        	$buttontoaddnewevent = '<a href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.dol_print_date(dol_now(),'dayhourlog').'&origin='.$typeelement.'&originid='.$object->id.'&socid='.$object->socid.'&projectid='.$object->fk_project.'&backtopage='.urlencode($urlbacktopage).'">';
-        	$buttontoaddnewevent.= $langs->trans("AddEvent");
-        	$buttontoaddnewevent.= '</a>';
-        	print load_fiche_titre($title, $buttontoaddnewevent, '');
+			if ($conf->agenda->enabled) {
+				$buttontoaddnewevent = '<a href="' . DOL_URL_ROOT . '/comm/action/card.php?action=create&datep=' . dol_print_date(dol_now(), 'dayhourlog') . '&origin=' . $typeelement . '&originid=' . $object->id . '&socid=' . $object->socid . '&projectid=' . $object->fk_project . '&backtopage=' . urlencode($urlbacktopage) . '">';
+				$buttontoaddnewevent.= $langs->trans("AddEvent");
+				$buttontoaddnewevent.= '</a>';
+			}
+			print load_fiche_titre($title, $buttontoaddnewevent, '');
 
         	$page=0; $param=''; $sortfield='a.datep';
 

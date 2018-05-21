@@ -3126,7 +3126,13 @@ class Commande extends CommonOrder
             if ($result < 0) $error++;
             // End call triggers
         }
-
+        
+        if ($this->nb_expedition() != 0) 
+	{
+		$this->errors[] = $langs->trans('SomeShipmentExists');
+		$error++;
+	}
+	    
         //TODO: Check for error after each action. If one failed we rollback, don't waste time to do action if previous fail
         if (! $error)
         {
@@ -4034,7 +4040,7 @@ class OrderLine extends CommonOrderLine
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").',';
 	    $sql.= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql.= ", ".$this->fk_multicurrency;
+		$sql.= ", ".(! empty($this->fk_multicurrency) ? $this->fk_multicurrency : 'NULL');
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".$this->multicurrency_subprice;
 		$sql.= ", ".$this->multicurrency_total_ht;

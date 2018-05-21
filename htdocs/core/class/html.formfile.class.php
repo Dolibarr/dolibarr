@@ -517,7 +517,7 @@ class FormFile
                     $modellist=ModelePDFCards::liste_modeles($this->db);
                 }
             }
-            elseif ($modulepart == 'agenda')
+            elseif ($modulepart == 'agenda' || $modulepart == 'actions')
             {
                 if (is_array($genallowed)) $modellist=$genallowed;
                 else
@@ -1018,7 +1018,17 @@ class FormFile
 			// Get list of files stored into database for same relative directory
 			if ($relativedir)
 			{
-                $filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+				$filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+
+				if($modulepart == 'produit' && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO) && ! empty($object->id)) {
+					if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+					else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+
+					$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dirold);
+					$relativedirold = preg_replace('/^[\\/]/','',$relativedirold);
+
+					$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
+				}
 
                 //var_dump($filearray);
                 //var_dump($filearrayindatabase);

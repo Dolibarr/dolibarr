@@ -152,7 +152,7 @@ print '<script type="text/javascript">
 /*
  * Customer Invoice lines
  */
-$sql = "SELECT f.rowid, f.facnumber, f.type, f.datef, f.ref_client,";
+$sql = "SELECT f.rowid as factid, f.facnumber, f.type, f.datef, f.ref_client,";
 $sql .= " fd.rowid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
 $sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
@@ -302,7 +302,7 @@ if ($result) {
 		$codecompta = length_accountg($objp->account_number) . ' - ' . $objp->label_compte;
 
 		$facture_static->ref = $objp->facnumber;
-		$facture_static->id = $objp->rowid;
+		$facture_static->id = $objp->factid;
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
