@@ -660,6 +660,8 @@ else if ($id > 0 || ! empty($ref))
 	print '<input class="flat" type="text" size="4" name="search_progressdeclare" value="'.$search_progressdeclare.'">';
 	print '</td>';
 
+	print '<td></td>';
+
 	// Action column
 	print '<td class="liste_titre" align="right">';
 	$searchpicto=$form->showFilterButtons();
@@ -677,7 +679,7 @@ else if ($id > 0 || ! empty($ref))
 	print_liste_field_titre("TimeSpent", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
 	print_liste_field_titre("ProgressCalculated", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
 	print_liste_field_titre("ProgressDeclared", $_SERVER["PHP_SELF"],"",'','','align="right"',$sortfield,$sortorder,'');
-	//print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center" width="80"',$sortfield,$sortorder,'maxwidthsearch ');
+	print_liste_field_titre("TaskRessourceLinks",$_SERVER["PHP_SELF"],'','','',$sortfield,$sortorder,'');
 	print_liste_field_titre('', $_SERVER["PHP_SELF"],"",'','','align="center" width="80"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
@@ -689,7 +691,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 	else
 	{
-		print '<tr class="oddeven"><td colspan="9" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
+		print '<tr class="oddeven"><td colspan="10" class="opacitymedium">'.$langs->trans("NoTasks").'</td></tr>';
 	}
 
 	print "</table>";

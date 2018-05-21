@@ -332,7 +332,7 @@ function project_admin_prepare_head()
  */
 function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0, $filterprogresscalc='')
 {
-	global $user, $bc, $langs, $conf;
+	global $user, $bc, $langs, $conf, $db;
 	global $projectstatic, $taskstatic;
 
 	$lastprojectid=0;
@@ -531,6 +531,24 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 				print '</td>';
 
+				// Ressources
+				print '<td>';
+				foreach(array('internal','external') as $source)
+				{
+					$tab = $lines[$i]->liste_contact(-1,$source);
+					$num=count($tab);
+					if (!empty($num)){
+						foreach ($tab as $contacttask){
+							//var_dump($contacttask);
+							if ($source == 'internal') $c = new User($db);
+							else $c = new Contact($db);
+							$c->fetch($contacttask['id']);
+							print $c->getNomUrl(1) . ' (' . $contacttask['libelle'] . ')' . '<br>';
+						}
+					}
+				}
+				print '</td>';
+
 				// Tick to drag and drop
 				if ($addordertick)
 				{
@@ -578,6 +596,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		print '<td align="right" class="nowrap liste_total">';
 		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned,2).' %';
 		print '</td>';
+		print '<td></td>';
 		print '<td></td>';
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '</tr>';
