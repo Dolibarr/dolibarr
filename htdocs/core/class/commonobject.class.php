@@ -451,10 +451,11 @@ abstract class CommonObject
 	 *  @param		int		    $withregion			1=Add region into address string
 	 *	@return		string							Full address string
 	 */
-	function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
+	function getFullAddress($withcountry=0, $sep="\n", $withregion=0)
 	{
 		if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
 		{
+			$langs->load("dict");
 			require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
 			$tmparray=getCountry($this->country_id,'all');
 			$this->country_code=$tmparray['code'];
