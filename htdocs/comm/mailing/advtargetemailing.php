@@ -237,6 +237,7 @@ if ($action == 'add') {
 		if (! empty($template_id)) {
 			$query_temlate_id = '&template_id=' . $template_id;
 		}
+		setEventMessages($langs->trans("XTargetsAdded",$result), null, 'mesgs');
 		header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $id . $query_temlate_id);
 		exit();
 	}
