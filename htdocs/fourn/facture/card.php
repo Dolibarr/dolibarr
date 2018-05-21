@@ -508,7 +508,6 @@ if (empty($reshook))
 				$sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
 				$sql.= ' AND pf.fk_paiementfourn = p.rowid';
 				$sql.= ' AND p.entity IN (' . getEntity('facture').')';
-				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);

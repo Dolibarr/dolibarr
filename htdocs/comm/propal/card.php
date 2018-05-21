@@ -2278,7 +2278,7 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == Propal::STATUS_DRAFT && $user->rights->propal->creer)
+	if ($object->statut == Propal::STATUS_DRAFT && $user->rights->propal->creer && $action != 'selectlines')
 	{
 		if ($action != 'editline')
 		{

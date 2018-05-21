@@ -600,6 +600,7 @@ if ($id)
 
 					if (empty($reshook))
 					{
+                        $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
 
@@ -610,10 +611,12 @@ if ($id)
 								$valuetoshow=$langs->trans('All');
 							}
 							else if ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
-								$langs->loadLangs(array("accountancy"));
 								$key=$langs->trans("AccountingJournalType".strtoupper($obj->nature));
-								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($obj->nature)?$key:$obj->{$fieldlist[$field]});
+								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature))?$key:$obj->{$fieldlist[$field]});
 							}
+							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
+								$valuetoshow=$langs->trans($obj->label);
+                            }
 
 							$class='tddict';
 							// Show value for field
