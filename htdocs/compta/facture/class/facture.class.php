@@ -16,6 +16,7 @@
  * Copyright (C) 2013      Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2016      Ferran Marcet         <fmarcet@2byte.es>
  * Copyright (C) 2018      Alexandre Spangaro    <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Nicolas ZABOURI        <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1348,7 +1349,7 @@ class Facture extends CommonInvoice
 				$this->multicurrency_total_ht 	= $obj->multicurrency_total_ht;
 				$this->multicurrency_total_tva 	= $obj->multicurrency_total_tva;
 				$this->multicurrency_total_ttc 	= $obj->multicurrency_total_ttc;
-				
+
 				if (($this->type == self::TYPE_SITUATION || ($this->type == self::TYPE_CREDIT_NOTE && $this->situation_cycle_ref > 0))  && $fetch_situation)
 				{
 					$this->fetchPreviousNextSituationInvoice();
@@ -1521,9 +1522,9 @@ class Facture extends CommonInvoice
 				$invoice = new Facture($this->db);
 				if ($invoice->fetch($objp->rowid) > 0)
 				{
-				    if ($objp->situation_counter < $this->situation_counter 
+				    if ($objp->situation_counter < $this->situation_counter
 				        || ($objp->situation_counter == $this->situation_counter && $objp->rowid < $this->id) // This case appear when there are credit notes
-				       ) 
+				       )
 					{
 					    $this->tab_previous_situation_invoice[] = $invoice;
 					}
@@ -3501,7 +3502,7 @@ class Facture extends CommonInvoice
 
 		$return = array();
 
-		
+
 		$sql = "SELECT f.rowid as rowid, f.facnumber, f.fk_statut, f.type, f.paye, pf.fk_paiement";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
@@ -3513,7 +3514,7 @@ class Facture extends CommonInvoice
 		//	$sql.= " OR f.close_code IS NOT NULL)";	// Classee payee partiellement
 		$sql.= " AND ff.type IS NULL";			// Renvoi vrai si pas facture de remplacement
 		$sql.= " AND f.type != ".self::TYPE_CREDIT_NOTE;				// Type non 2 si facture non avoir
-		
+
 		if($conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE){
 		    // Select the last situation invoice
 		    $sqlSit = 'SELECT MAX(fs.rowid)';
@@ -3529,7 +3530,7 @@ class Facture extends CommonInvoice
 		{
 		    $sql.= " AND f.type != ".self::TYPE_SITUATION ; // Type non 5 si facture non avoir
 		}
-		
+
 		if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
 		$sql.= " ORDER BY f.facnumber";
 
@@ -3999,9 +4000,10 @@ class Facture extends CommonInvoice
 	 *  @param  int			$hidedetails    Hide details of lines
 	 *  @param  int			$hidedesc       Hide description
 	 *  @param  int			$hideref        Hide ref
+	 * @param   null|array  $moreparams     Array to provide more information
 	 *	@return int        					<0 if KO, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -4020,7 +4022,7 @@ class Facture extends CommonInvoice
 
 		$modelpath = "core/modules/facture/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**
