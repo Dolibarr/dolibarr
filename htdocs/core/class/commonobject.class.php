@@ -455,7 +455,6 @@ abstract class CommonObject
 	{
 		if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
 		{
-			$langs->load("dict");
 			require_once DOL_DOCUMENT_ROOT .'/core/lib/company.lib.php';
 			$tmparray=getCountry($this->country_id,'all');
 			$this->country_code=$tmparray['code'];
@@ -2705,7 +2704,7 @@ abstract class CommonObject
 						$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
 				$sql .= ' WHERE rowid = '.$this->id;
 
-				
+
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)

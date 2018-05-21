@@ -1654,9 +1654,9 @@ function dol_format_address($object, $withcountry=0, $sep="\n", $outputlangs='',
 	}
 	else if (in_array($object->country_code,array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 	{
-                $ret .= ($ret ? $sep : '' ).$object->zip;
-                $ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
-                $ret .= ($object->departement_id?(' ('.($object->departement_id).')'):'');
+		$ret .= ($ret ? $sep : '' ).$object->zip;
+		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
+		$ret .= ($object->departement_id?(' ('.($object->departement_id).')'):'');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
@@ -1668,7 +1668,11 @@ function dol_format_address($object, $withcountry=0, $sep="\n", $outputlangs='',
 		}
 	}
 	if (! is_object($outputlangs)) $outputlangs=$langs;
-	if ($withcountry) $ret.=($object->country_code?($ret?$sep:'').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)):'');
+	if ($withcountry)
+	{
+		$langs->load("dict");
+		$ret.=($object->country_code?($ret?$sep:'').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)):'');
+	}
 
 	return $ret;
 }
