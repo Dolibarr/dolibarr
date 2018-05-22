@@ -714,7 +714,7 @@ while ($i < min($num,$limit))
 			$showlineingray=0;$showproject=1;
 			print '<td class="center">';
 			if ($showlineingray) print '<i>';
-			else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$lines[$i]->id.($showproject?'':'&withproject=1').'">';
+			else print '<a href="'.DOL_URL_ROOT.'/projet/tasks/time.php?id='.$object->id.($showproject?'':'&withproject=1').'">';
 			if ($obj->duration_effective) print convertSecondToTime($obj->duration_effective,$timespentoutputformat);
 			else print '--:--';
 			if ($showlineingray) print '</i>';

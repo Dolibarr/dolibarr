@@ -430,24 +430,9 @@ if ($search_type_template != '' && $search_type_template != '-1') $sql.=natural_
 if ($search_lang) $sql.=natural_search('lang', $search_lang);
 if ($search_fk_user != '' && $search_fk_user != '-1') $sql.=natural_search('fk_user', $search_fk_user, 2);
 if ($search_topic) $sql.=natural_search('topic', $search_topic);
-if ($sortfield)
-{
-    // If sort order is "country", we use country_code instead
-	if ($sortfield == 'country') $sortfield='country_code';
-    $sql.= " ORDER BY ".$sortfield;
-    if ($sortorder)
-    {
-        $sql.=" ".strtoupper($sortorder);
-    }
-    $sql.=", ";
-    // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
-    $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
-    $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
-}
-else {
-    $sql.=" ORDER BY ";
-}
-$sql.=$tabsqlsort[$id];
+// If sort order is "country", we use country_code instead
+if ($sortfield == 'country') $sortfield='country_code';
+$sql.=$db->order($sortfield,$sortorder);
 $sql.=$db->plimit($listlimit+1,$offset);
 //print $sql;
 

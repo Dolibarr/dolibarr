@@ -779,25 +779,27 @@ class Holiday extends CommonObject
 
 
 	/**
-	 *	Check a user is not on holiday for a particular timestamp
+	 *	Check that a user is not on holiday for a particular timestamp
 	 *
 	 * 	@param 	int			$fk_user				Id user
 	 *  @param	timestamp	$timestamp				Time stamp date for a day (YYYY-MM-DD) without hours  (= 12:00AM in english and not 12:00PM that is 12:00)
+	 *  @param	string		$status					Filter on holiday status. '-1' = no filter.
 	 * 	@return array								array('morning'=> ,'afternoon'=> ), Boolean is true if user is available for day timestamp.
 	 *  @see verifDateHolidayCP
 	 */
-	function verifDateHolidayForTimestamp($fk_user, $timestamp)
+	function verifDateHolidayForTimestamp($fk_user, $timestamp, $status='-1')
 	{
 		global $langs, $conf;
 
 		$isavailablemorning=true;
 		$isavailableafternoon=true;
 
-		$sql = "SELECT cp.rowid, cp.date_debut as date_start, cp.date_fin as date_end, cp.halfday";
+		$sql = "SELECT cp.rowid, cp.date_debut as date_start, cp.date_fin as date_end, cp.halfday, cp.statut";
 		$sql.= " FROM ".MAIN_DB_PREFIX."holiday as cp";
 		$sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = ".(int) $fk_user;
-		$sql.= " AND date_debut <= '".$this->db->idate($timestamp)."' AND date_fin >= '".$this->db->idate($timestamp)."'";
+		$sql.= " AND cp.date_debut <= '".$this->db->idate($timestamp)."' AND cp.date_fin >= '".$this->db->idate($timestamp)."'";
+		if ($status != '-1') $sql.=" AND cp.statut IN (".$this->db->escape($status).")";
 
 		$resql = $this->db->query($sql);
 		if ($resql)

@@ -42,7 +42,7 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 else
 {
-	$result = restrictedArea($user, 'stock', $id, '', 'advance_inventory');
+	$result = restrictedArea($user, 'stock', $id, '', 'inventory_advance');
 }
 
 // Initialize technical objects
@@ -82,8 +82,8 @@ if (empty($conf->global->MAIN_USE_ADVANCED_PERMS))
 }
 else
 {
-	$permissiontoadd = $user->rights->stock->advance_inventory->create;
-	$permissiontodelete = $user->rights->stock->advance_inventory->write;
+	$permissiontoadd = $user->rights->stock->inventory_advance->create;
+	$permissiontodelete = $user->rights->stock->inventory_advance->write;
 }
 
 

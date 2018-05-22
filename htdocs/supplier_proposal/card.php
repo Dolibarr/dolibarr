@@ -67,6 +67,7 @@ $action = GETPOST('action', 'alpha');
 $origin = GETPOST('origin', 'alpha');
 $originid = GETPOST('originid', 'int');
 $confirm = GETPOST('confirm', 'alpha');
+$projectid = GETPOST('projectid', 'int');
 $lineid = GETPOST('lineid', 'int');
 $contactid = GETPOST('contactid','int');
 
@@ -265,7 +266,7 @@ if (empty($reshook))
 					$object->remise_percent = GETPOST('remise_percent');
 					$object->remise_absolue = GETPOST('remise_absolue');
 					$object->socid = GETPOST('socid');
-					$object->fk_project = GETPOST('projectid');
+					$object->fk_project = GETPOST('projectid','int');
 					$object->modelpdf = GETPOST('model');
 					$object->author = $user->id; // deprecated
 					$object->note = GETPOST('note','none');
@@ -283,7 +284,7 @@ if (empty($reshook))
 				$object->cond_reglement_id = GETPOST('cond_reglement_id');
 				$object->mode_reglement_id = GETPOST('mode_reglement_id');
 				$object->fk_account = GETPOST('fk_account', 'int');
-				$object->fk_project = GETPOST('projectid');
+				$object->fk_project = GETPOST('projectid','int');
 				$object->modelpdf = GETPOST('model');
 				$object->author = $user->id; // deprecated
 				$object->note = GETPOST('note','none');
@@ -890,7 +891,7 @@ if (empty($reshook))
 
 	// Set project
 	else if ($action == 'classin' && $user->rights->supplier_proposal->creer) {
-		$object->setProject($_POST['projectid']);
+		$object->setProject(GETPOST('projectid'),'int');
 	}
 
 	// Delai de livraison
@@ -1103,9 +1104,7 @@ if ($action == 'create')
 
 		$formproject = new FormProjets($db);
 
-		$projectid = 0;
-		if ($origin == 'project')
-			$projectid = ($originid ? $originid : 0);
+		if ($origin == 'project') $projectid = ($originid ? $originid : 0);
 
 		print '<tr>';
 		print '<td>' . $langs->trans("Project") . '</td><td colspan="2">';

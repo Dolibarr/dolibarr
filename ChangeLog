@@ -3,6 +3,96 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
+***** ChangeLog for 7.0.2 compared to 7.0.1 *****
+FIX: #8023
+FIX: #8259 can't update contact birthday with REST API
+FIX: #8359
+FIX: #8389
+FIX: #8478 !empty instead of count to avoid warning
+FIX: #8488
+FIX: #8559 Bug to generate cheque receipt
+FIX: #8571
+FIX: #8574
+FIX: #8580
+FIX: #8650
+FIX: actioncomm export: type filtering not working
+FIX: Add a test to avoid to reset binding by error.
+FIX: addline on invoice supplier manage rank on its own if not provided
+FIX: Add warning when expense report line not into range
+FIX: avoid Error: Call to undefined method mysqli::get_charset()
+FIX: avoid focus problem when select2 is in a modal dialog window
+FIX: Binding pages must start on fiscal month not calendar month
+FIX: button "Classify bill" on supplier order was not visible
+FIX: Button receive products not visible
+FIX: can bypass the CSRF protection with url with domain inside
+FIX: Can't edit option PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY
+FIX: commonobject: don't require notnull field if default set
+FIX: CommonObject: don't require 'notnull' field if 'default' set
+FIX: cron script disabled if module disabled
+FIX: CVE-2018-10092
+FIX: CVE-2018-10094
+FIX: CVE-2018-10095
+FIX: CVE-2018-9019
+FIX: CWE-89
+FIX: Data on income/expense report was always 0
+FIX: default addupdatedelete actions: uniformize add/update value checks
+FIX: default currency not set on supplier order creation from commercial menu #8459
+FIX: delete all product variants of a parent product
+FIX: Detail per account not visible when total < 0
+FIX: DOL_AUTOSET_COOKIE was not correctly setting value of cookie
+FIX: don't print empty date in CommonObject::showOutputField
+FIX: dont print empty date in CommonObject::showOutputField
+FIX: Draft invoice must be excluded from report
+FIX: environment shown on cron card
+FIX: Error in ContractLigne not return to Contract
+FIX: extrafields price and double were lost during a failed post.
+FIX: File name not visible in email preview
+FIX: filter/sorting on extrafield on contact list from contact tab
+FIX: Initial month on report income/expense per predefined group
+FIX: issue #8037
+FIX: Issue #8455
+FIX: issue #8470
+FIX: label in getnomurl projectlist
+FIX: limit access of email template page to internal users
+FIX: look and feel v7 "back to" for bookkeeping record
+FIX: Max nb of generation of recurring invoice should not show warning
+FIX: missing english name for object
+FIX: Missing include
+FIX: missing User object with API REST
+FIX: modulebuilder: could not create html fields
+FIX: modulebuilder: handle 'price' fieldtype
+FIX: multiple creation of same event
+FIX: Name of user not visible on journalizing expense report payments
+FIX: Not approved holidays must not be visible into timesheet
+FIX: Only approved expense report must be journalized
+FIX: payment term doc-specific label was not used
+FIX: payment term doc-specific label was not used (issue #8414)
+FIX: project category is type 6 not 5
+FIX: Projet is not prefilled when created from overwiew page
+FIX: Related contact printed in societe agenda
+FIX: Removed error when no error on accounting setup page
+FIX: remove var_dump
+FIX: sanitize setup params
+FIX: selectForFormsList: entity checked even is object not multi-entity managed
+FIX: service creation, right is tested regarding the product type
+FIX: some localtaxes errors
+FIX: Some report have data when several chart of accounts exists
+FIX: sql error using no category
+FIX: SQL Injection CWE-89
+FIX: Support or multicompany for sheduled jobs
+FIX: Test on mandatory status when closing proposal failed
+FIX: to allow IRPF not null even if main VAT is null.
+FIX: update wrong datetime extrafield
+FIX: Use priority to define order of sheduled jobs
+FIX: various modulebuilder-related issues
+FIX: view of balance before field
+FIX: weird password autocompletion in Goocle Chrome (issue #8479)
+FIX: weird password autocompletion in Google Chrome (issue #8479)
+FIX: When clearing filter, we must not save tmp criterias in session
+FIX: With x extrafields, request for multicompany label was done x times
+FIX: several XSS
+FIX: zip not filtered
+
 ***** ChangeLog for 7.0.1 compared to 7.0.0 *****
 FIX: #8139 User search does not work if MAIN_USE_OLD_SEARCH_FORM, missing list.php
 FIX: #8200
@@ -358,7 +448,22 @@ Following changes may create regressions for some external modules, but were nec
 
 
 
-***** ChangeLog for 6.0.6 compared to 6.0.6 *****
+***** ChangeLog for 6.0.7 compared to 6.0.6 *****
+FIX: #8023
+FIX: #8259 can't update contact birthday with REST API
+FIX: #8478 !empty instead of count to avoid warning
+FIX: #8488
+FIX: actioncomm export: type filtering not working
+FIX: addline on invoice supplier manage rank on its own if not provided
+FIX: issue #8037
+FIX: label in getnomurl projectlist
+FIX: payment term doc-specific label was not used
+FIX: payment term doc-specific label was not used (issue #8414)
+FIX: project category is type 6 not 5 !!
+FIX: some localtaxes errors
+FIX: weird password autocompletion in Google Chrome (issue #8479)
+
+***** ChangeLog for 6.0.6 compared to 6.0.5 *****
 FIX: #7974 Contract - Invalid reference on the document
 FIX: #8139
 FIX: #8139 User search does not work if MAIN_USE_OLD_SEARCH_FORM, missing list.php

@@ -60,7 +60,7 @@ $mesg=''; $error=0; $errors=array();
 $action		= (GETPOST('action','aZ09') ? GETPOST('action','aZ09') : 'view');
 $cancel		= GETPOST('cancel','alpha');
 $backtopage	= GETPOST('backtopage','alpha');
-$confirm		= GETPOST('confirm');
+$confirm	= GETPOST('confirm','alpha');
 
 $socid		= GETPOST('socid','int')?GETPOST('socid','int'):GETPOST('id','int');
 if ($user->societe_id) $socid=$user->societe_id;
@@ -181,12 +181,12 @@ if (empty($reshook))
 
 				// Merge categories
 				$static_cat = new Categorie($db);
-				
+
 				$custcats_ori = $static_cat->containing($soc_origin->id, 'customer', 'id');
 				$custcats = $static_cat->containing($object->id, 'customer', 'id');
 				$custcats = array_merge($custcats,$custcats_ori);
 				$object->setCategories($custcats, 'customer');
-				
+
 				$suppcats_ori = $static_cat->containing($soc_origin->id, 'supplier', 'id');
 				$suppcats = $static_cat->containing($object->id, 'supplier', 'id');
 				$suppcats = array_merge($suppcats,$suppcats_ori);
@@ -1885,7 +1885,9 @@ else
 
             // Capital
             print '<tr><td>'.fieldLabel('Capital','capital').'</td>';
-	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="'.$object->capital.'"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
+	        print '<td colspan="3"><input type="text" name="capital" id="capital" size="10" value="';
+	        print dol_escape_htmltag(price($object->capital));
+	        print '"> <font class="hideonsmartphone">'.$langs->trans("Currency".$conf->currency).'</font></td></tr>';
 
             // Default language
             if (! empty($conf->global->MAIN_MULTILANGS))

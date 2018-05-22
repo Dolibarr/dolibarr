@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/CommandeTest.php
+ *      \file       test/phpunit/AccountingAccount.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/commande/class/commande.class.php';
+require_once dirname(__FILE__).'/../../htdocs/accountancy/class/accountingaccount.class.php';
 
 if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class CommandeTest extends PHPUnit_Framework_TestCase
+class AccountingAccountTest extends PHPUnit_Framework_TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -55,7 +55,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
      * Constructor
      * We save global variables into local variables
      *
-     * @return CommandeTest
+     * @return AccountingAccountTest
      */
     function __construct()
     {
@@ -77,7 +77,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
         global $conf,$user,$langs,$db;
         $db->begin(); // This is to have all actions inside a transaction even if test launched without suite.
 
-        if (empty($conf->commande->enabled)) { print __METHOD__." module customer order must be enabled.\n"; die(); }
+        if (empty($conf->accounting->enabled)) { print __METHOD__." module accouting must be enabled.\n"; die(); }
 
         print __METHOD__."\n";
     }
@@ -119,11 +119,11 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeCreate
+     * testAccountingAccountCreate
      *
      * @return  void
      */
-    public function testCommandeCreate()
+    public function testAccountingAccountCreate()
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -131,8 +131,14 @@ class CommandeTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new Commande($this->savdb);
-        $localobject->initAsSpecimen();
+        $localobject=new AccountingAccount($this->savdb);
+        $localobject->fk_pcg_version = 'PCG99-ABREGE';
+        $localobject->account_category = 0;
+        $localobject->pcg_type = 'XXXXX';
+        $localobject->pcg_subtype = 'XXXXX';
+        $localobject->account_parent = 0;
+        $localobject->label = 'Account specimen';
+        $localobject->active = 0;
         $result=$localobject->create($user);
 
         $this->assertLessThan($result, 0);
@@ -141,15 +147,15 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeFetch
+     * testAccountingAccountFetch
      *
      * @param   int $id     Id order
-     * @return  Commande
+     * @return  AccountingAccount
      *
-     * @depends	testCommandeCreate
+     * @depends	testAccountingAccountCreate
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeFetch($id)
+    public function testAccountingAccountFetch($id)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -157,7 +163,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new Commande($this->savdb);
+        $localobject=new AccountingAccount($this->savdb);
         $result=$localobject->fetch($id);
 
         $this->assertLessThan($result, 0);
@@ -166,15 +172,15 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testCommandeUpdate
+     * testAccountingAccountUpdate
      *
-     * @param	Object		$localobject	Commande
-     * @return	Commande
+     * @param	Object		$localobject	AccountingAccount
+     * @return	AccountingAccount
      *
-     * @depends	testCommandeFetch
+     * @depends	testAccountingAccountFetch
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeUpdate($localobject)
+    public function testAccountingAccountUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;
@@ -182,101 +188,24 @@ class CommandeTest extends PHPUnit_Framework_TestCase
     	$langs=$this->savlangs;
     	$db=$this->savdb;
 
-    	$localobject->note_private='New note private after update';
+    	$localobject->label='New label';
     	$result=$localobject->update($user);
 
     	$this->assertLessThan($result, 0);
     	print __METHOD__." id=".$id." result=".$result."\n";
-    	return $localobject;
+    	return $localobject->id;
     }
 
     /**
-     * testCommandeValid
-     *
-     * @param   Object  $localobject    Order
-     * @return  Commande
-     *
-     * @depends	testCommandeUpdate
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeValid($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $result=$localobject->valid($user);
-
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
-
-    /**
-     * testCommandeCancel
-     *
-     * @param   Object  $localobject    Order
-     * @return  Commande
-     *
-     * @depends testCommandeValid
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeCancel($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        $result=$localobject->cancel();
-
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        return $localobject;
-    }
-
-    /**
-     * testCommandeOther
-     *
-     * @param   Object  $localobject    Order
-     * @return  int						Order id
-     *
-     * @depends testCommandeCancel
-     * The depends says test is run only if previous is ok
-     */
-    public function testCommandeOther($localobject)
-    {
-        global $conf,$user,$langs,$db;
-        $conf=$this->savconf;
-        $user=$this->savuser;
-        $langs=$this->savlangs;
-        $db=$this->savdb;
-
-        /*$result=$localobject->setstatus(0);
-        print __METHOD__." id=".$localobject->id." result=".$result."\n";
-        $this->assertLessThan($result, 0);
-        */
-
-        $localobject->info($localobject->id);
-        print __METHOD__." localobject->date_creation=".$localobject->date_creation."\n";
-        $this->assertNotEquals($localobject->date_creation, '');
-
-        return $localobject->id;
-    }
-
-    /**
-     * testCommandeDelete
+     * testAccountingAccountDelete
      *
      * @param   int $id         Id of order
      * @return  void
      *
-     * @depends testCommandeOther
+     * @depends testAccountingAccountUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testCommandeDelete($id)
+    public function testAccountingAccountDelete($id)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -284,7 +213,7 @@ class CommandeTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new Commande($this->savdb);
+        $localobject=new AccountingAccount($this->savdb);
         $result=$localobject->fetch($id);
         $result=$localobject->delete($user);
 

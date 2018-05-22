@@ -88,7 +88,7 @@ $formaccounting = new FormAccounting($db);
 
 llxheader('', $langs->trans('AccountingCategory'));
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 print load_fiche_titre($langs->trans('AccountingCategory'), $linkback);
 
