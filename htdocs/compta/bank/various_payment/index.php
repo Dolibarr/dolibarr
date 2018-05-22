@@ -38,7 +38,7 @@ $result = restrictedArea($user, 'banque', '', '', '');
 
 $optioncss = GETPOST('optioncss','alpha');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $search_ref = GETPOST('search_ref','int');
 $search_user = GETPOST('search_user','alpha');
 $search_label = GETPOST('search_label','alpha');
@@ -153,6 +153,14 @@ if ($result)
 
 	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
+	$newcardbutton='';
+	if ($user->rights->banque->modifier)
+	{
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create">'.$langs->trans('MenuNewVariousPayment');
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
+	}
+
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 
 	if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -163,7 +171,7 @@ if ($result)
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	print_barre_liste($langs->trans("VariousPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($langs->trans("VariousPayments"),$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num, $totalnboflines, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
 	print '<div class="div-table-responsive">';
 	print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";

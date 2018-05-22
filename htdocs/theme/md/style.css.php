@@ -45,8 +45,8 @@ $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
 $colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='250,250,250';    // line pair
-$colorbacklinepair2='248,248,248';    // line pair
+$colorbacklinepair1='248,248,248';    // line pair
+$colorbacklinepair2='246,246,246';    // line pair
 $colorbacklinepairhover='244,244,244';    // line pair
 $colorbacklinebreak='214,218,220';
 $colorbackbody='248,248,248';
@@ -59,7 +59,7 @@ $fontsizesmaller='11';
 
 if (defined('THEME_ONLY_CONSTANT')) return;
 
-session_cache_limiter(FALSE);
+session_cache_limiter(false);
 
 require_once '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -73,9 +73,6 @@ top_httphead('text/css');
 // Important: Following code is to avoid page request by browser and PHP CPU at each Dolibarr page access.
 if (empty($dolibarr_nocache)) header('Cache-Control: max-age=3600, public, must-revalidate');
 else header('Cache-Control: no-cache');
-
-// On the fly GZIP compression for all pages (if browser support it). Must set the bit 3 of constant to 1.
-if (isset($conf->global->MAIN_OPTIMIZE_SPEED) && ($conf->global->MAIN_OPTIMIZE_SPEED & 0x04)) { ob_start("ob_gzhandler"); }
 
 if (GETPOST('theme','alpha')) $conf->theme=GETPOST('theme','alpha');  // If theme was forced on URL
 if (GETPOST('lang', 'aZ09')) $langs->setDefaultLang(GETPOST('lang', 'aZ09'));	// If language was forced on URL
@@ -254,7 +251,7 @@ body {
     <?php print 'direction: '.$langs->trans("DIRECTION").";\n"; ?>
 }
 
-th a, .thumbstat, a.tab { color: rgb(<?php print $colortexttitle; ?>) !important; font-weight: bold !important; }
+th a, .thumbstat, a.tab { font-weight: bold !important; }
 a.tab { font-weight: bold !important; }
 
 a:link, a:visited, a:hover, a:active { font-family: <?php print $fontlist ?>; font-weight: normal; color: rgb(<?php print $colortextlink; ?>); text-decoration: none;  }
@@ -291,7 +288,10 @@ textarea.cke_source:focus
 .liste_titre input[name=month_date_when], .liste_titre input[name=monthvalid], .liste_titre input[name=search_ordermonth], .liste_titre input[name=search_deliverymonth],
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
-.liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when] {
+.liste_titre input[name=search_month_lim], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end], .liste_titre input[name=search_month_create],
+.liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
+.liste_titre input[name=search_month_create], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end]
+{
 	margin-right: 4px;
 }
 input, input.flat, textarea, textarea.flat, form.flat select, select, select.flat, .dataTables_length label select {
@@ -413,6 +413,9 @@ td.leftborder, td.hide0 {
 	border-left: 1px solid #ccc;
 }
 td.leftborder, td.hide6 {
+	border-right: 1px solid #ccc;
+}
+td.rightborder {
 	border-right: 1px solid #ccc;
 }
 
@@ -626,6 +629,9 @@ textarea.centpercent {
 .paddingright2 {
 	padding-<?php print $right; ?>: 2px;
 }
+.cursordefault {
+	cursor: default;
+}
 .cursorpointer {
 	cursor: pointer;
 }
@@ -709,6 +715,9 @@ select.flat.selectlimit {
 }
 .marginleftonly {
 	margin-left: 10px !important;
+}
+.nomarginleft {
+	margin-left: 0px !important;
 }
 .selectlimit, .selectlimit:focus {
     border-left: none !important;
@@ -800,6 +809,9 @@ select.flat.selectlimit {
 }
 .fa-file-text-o, .fa-file-code-o, .fa-file-powerpoint-o, .fa-file-excel-o, .fa-file-word-o, .fa-file-o, .fa-file-image-o, .fa-file-video-o, .fa-file-audio-o, .fa-file-archive-o, .fa-file-pdf-o {
 	color: #505;
+}
+.fa-trash, .fa-crop, .fa-pencil {
+	font-size: 1.4em;
 }
 
 /* DOL_XXX for future usage (when left menu has been removed). If we do not use datatable */
@@ -980,10 +992,15 @@ select.selectarrowonleft option {
     	width: 95%;
     }
 
+	select {
+		padding-top: 4px;
+		padding-bottom: 5px;
+	}
 	input, input[type=text], input[type=password], select, textarea     {
 		min-width: 20px;
     	min-height: 1.4em;
     	line-height: 1.4em;
+		font-size: <?php print $fontsize+3; ?>px;
     	/* padding: .4em .1em; */
     	/* border-bottom: 1px solid #BBB; */
     	/* max-width: inherit; why this */
@@ -1188,6 +1205,16 @@ div.login_block {
 	/* position: initial !important;*/
 	display: none;
 }
+.login_block_getinfo {
+	text-align: center;
+}
+.login_block_getinfo div.login_block_user {
+	display: block;
+}
+.login_block_getinfo .atoplogin, .login_block_getinfo .atoplogin:hover {
+	color: #333 !important;
+	font-weight: normal !important;
+}
 #id-right {
 	padding-left: 0 ! important;
 }
@@ -1210,7 +1237,7 @@ div.fiche {
 div.fiche {
 	margin-<?php print $left; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'24':'6')); ?>px;
 	margin-<?php print $right; ?>: <?php print (GETPOST('optioncss','aZ09') == 'print'?6:(empty($conf->dol_optimize_smallscreen)?'22':'6')); ?>px;
-	<?php if (! empty($conf->dol_hide_leftmenu) && ! empty($conf->dol_hide_topmenu)) print 'margin-top: 4px;'; ?>
+	<?php if (! empty($dol_hide_leftmenu) && ! empty($dol_hide_topmenu)) print 'margin-top: 12px;'; ?>
 	margin-bottom: 15px;
 }
 body.onlinepaymentbody div.fiche {	/* For online payment page */
@@ -1333,8 +1360,13 @@ table.noborder tr.liste_titre td {
 .pictowarning, .pictopreview {
     padding-<?php echo $left; ?>: 3px;
 }
-.pictoedit, .pictowarning, .pictodelete {
+.pictowarning {
     vertical-align: text-bottom;
+}
+.fiche .arearef img.pictoedit, .fiche .arearef span.pictoedit,
+.fiche .fichecenter img.pictoedit, .fiche .fichecenter span.pictoedit,
+.tagtdnote span.pictoedit {
+    opacity: 0.6;
 }
 img.hideonsmartphone.pictoactionview {
     vertical-align: bottom;
@@ -1384,6 +1416,7 @@ div.statusref img {
     padding-left: 8px;
     padding-right: 9px;
     vertical-align: text-bottom;
+    width: 18px;
 }
 div.statusrefbis {
     padding-left: 8px;
@@ -1551,19 +1584,11 @@ li.tmenu, li.tmenusel {
 	margin: 0px 0px 0px 0px;
 	font-weight: normal;
 }
-li.tmenusel, li.tmenu:hover {
-/*
-    background-image: -o-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
-    background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.5) 0%, rgba(250,250,250,0) 100%) !important;
-    background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.3) 0%, rgba(250,250,250,0) 100%) !important;
-    background-image: -ms-linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
-    background-image: linear-gradient(bottom, rgba(250,250,250,0.3) 0%, rgba(0,0,0,0.3) 100%) !important;
-	background: rgb(<?php echo $colorbackhmenu1 ?>);
-*/
-	/* background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/nav-overlay3.png',1); ?>) 50% 0 repeat-x !important; Nicer but problem when menu wrap on 2 lines */
-}
-li.tmenusel, li.tmenu:hover {
+li.tmenu:hover {
 	opacity: .50; /* show only a slight shadow */
+}
+li.tmenusel {
+	text-decoration: underline;
 }
 .tmenuend .tmenuleft { width: 0px; }
 .tmenuend { display: none; }
@@ -1577,7 +1602,6 @@ div.tmenuleft
 	<?php if (! $disableimages) { ?>
 	height: <?php print $heightmenu+4; ?>px;
 	<?php } ?>
-	/* background: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menutab-r.png',1); ?>) 0 -6px no-repeat; */
 	<?php } ?>
 }
 div.tmenucenter
@@ -1682,6 +1706,10 @@ div.mainmenu.project {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1) ?>);
 }
 
+div.mainmenu.ticketsup {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticketsup.png',1) ?>);
+}
+
 div.mainmenu.tools {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/tools.png',1) ?>);
 }
@@ -1696,7 +1724,7 @@ div.mainmenu.website {
 $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
 	'produit'=>'products','service'=>'products','stock'=>'products',
 	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-	'contrat'=>'commercial','ficheinter'=>'commercial','deplacement'=>'commercial',
+	'contrat'=>'commercial','ficheinter'=>'commercial','ticketsup'=>'ticketsup','deplacement'=>'commercial',
 	'fournisseur'=>'companies',
 	'barcode'=>'','fckeditor'=>'','categorie'=>'',
 );
@@ -1712,7 +1740,7 @@ $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
 $divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
 // Put here list of menu entries we are sure we don't want
-$divnotrequired=array('multicurrency','salaries','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
+$divnotrequired=array('multicurrency','salaries','ticketsup','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -2005,7 +2033,7 @@ div.vmenu, td.vmenu {
 .companylogo { padding-top: 4px; }
 .searchform { padding-top: 10px; }
 
-a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
+a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-size:<?php print $fontsize ?>px; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
 a.vmenu:link, a.vmenu:visited { color: #<?php echo $colortextbackvmenu; ?>; }
 
@@ -2323,8 +2351,7 @@ span.butAction, span.butActionDelete {
 }
 
 
-.button, .butAction, .butActionDelete, .butActionRefused {
-	border-color: #c5c5c5;
+.button, .butAction, .butActionDelete, .butActionRefused, .butActionNewRefused {
 	border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 	display: inline-block;
     padding: 0.4em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
@@ -2352,6 +2379,32 @@ span.butAction, span.butActionDelete {
 	-webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
+.butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
+	text-decoration: none;
+	/* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
+	display: inline-block;
+    padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+    margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
+	line-height: 20px;
+	text-align: center;
+	vertical-align: middle;
+	cursor: pointer;
+	/* color: #ffffff !important; */
+	/* text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25); */
+	-webkit-border-radius: 2px;
+	border-radius: 2px;
+	/* -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05); */
+	/* background-color: #006dcc;
+	background-image: -moz-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#0088cc), to(#0044cc));
+	background-image: -webkit-linear-gradient(top, #0088cc, #0044cc);
+	background-image: -o-linear-gradient(top, #0088cc, #0044cc);
+	background-image: linear-gradient(to bottom, #0088cc, #0044cc);
+	background-repeat: repeat-x; */
+}
+a.butActionNew>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
+a.butActionNewRefused>span.fa-plus-circle { padding-left: 6px; font-size: 1.5em; }
 
 .button, .butAction {
 	color: #ffffff !important;
@@ -2398,7 +2451,7 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 	color: #FFFFFF;
 }
 
-.butActionRefused {
+.butActionRefused, .butActionNewRefused {
 	color: #AAAAAA !important;
 	cursor: not-allowed !important;
 }
@@ -2406,7 +2459,11 @@ a.butAction:link, a.butAction:visited, a.butAction:hover, a.butAction:active {
 a.butAction:hover, a.butActionDelete:hover, a.butActionRefused:hover {
     text-decoration: none;
 }
-a.butAction:hover, a.butActionDelete:hover {
+a.butActionNewRefused:hover {
+	border-color: unset !important;
+	border: 1px solid #bbbbbb;
+}
+a.butAction:hover, a.butActionNew:hover, a.butActionDelete:hover {
 	opacity: 0.9;
 }
 
@@ -2416,7 +2473,7 @@ a.butAction:hover, a.butActionDelete:hover {
 }
 
 <?php if (! empty($conf->global->MAIN_BUTTON_HIDE_UNAUTHORIZED)) { ?>
-.butActionRefused {
+.butActionRefused, .butActionNewRefused {
 	display: none;
 }
 <?php } ?>
@@ -2482,15 +2539,16 @@ table.border, table.bordernooddeven, table.dataTable, .table-border, .table-bord
 table.borderplus {
 	border: 1px solid #BBB;
 }
+
 .border tbody tr, .border tbody tr td, div.tabBar table.border tr, div.tabBar table.border tr td, div.tabBar div.border .table-border-row, div.tabBar div.border .table-key-border-col, div.tabBar div.border .table-val-border-col {
-	height: 22px;
+	height: 26px;
 }
 tr.liste_titre.box_titre td table td, .bordernooddeven tr td {
-    height: 22px;
+    height: 26px;
 }
 
-table.border td, div.border div div.tagtd {
-	padding: 2px 2px 2px 2px;
+table.border td, table.bordernooddeven td, div.border div div.tagtd {
+	padding: 2px 4px 2px 4px;
 	border: 1px solid #f0f0f0;
 	border-collapse: collapse;
 }
@@ -2717,10 +2775,6 @@ border: none;
 div.pagination li.noborder a:hover {
   border: none;
   background-color: transparent;
-}
-div.pagination li a,
-div.pagination li span {
-  background-color: #fff;
 }
 div.pagination li:first-child a,
 div.pagination li:first-child span {
@@ -3039,6 +3093,9 @@ div .tdtop {
 #tablelines tr.liste_titre td, .paymenttable tr.liste_titre td, .margintable tr.liste_titre td, .tableforservicepart1 tr.liste_titre td {
 	border-bottom: 1px solid #AAA !important;
 }
+#tablelines tr td {
+    height: unset;
+}
 
 
 /* Prepare to remove class pair - impair */
@@ -3133,7 +3190,11 @@ div .tdtop {
 }
 span.boxstatstext {
     line-height: 18px;
+    color: #000;
     /* opacity: 0.7; */		/* a bug if browser make z-index infintie when opacity is set so we disable it */
+}
+.boxstatsindicator.thumbstat150 {	/* If we remove this, box position is ko on ipad */
+	display: inline-flex;
 }
 span.boxstatsindicator {
 	font-size: 110%;
@@ -3401,7 +3462,7 @@ div.titre {
 	<?php print (empty($conf->dol_optimize_smallscreen)?'':'margin-top: 4px;'); ?>
 }
 
-#dolpaymenttable { min-width: 300px; font-size: 16px; }	/* Width must have min to make stripe input area visible */
+#dolpaymenttable { min-width: 320px; font-size: 16px; }	/* Width must have min to make stripe input area visible. Lower than 320 makes input area crazy for credit card that need zip code */
 #tablepublicpayment { border: 1px solid #CCCCCC !important; width: 100%; padding: 20px; }
 #tablepublicpayment .CTableRow1  { background-color: #F0F0F0 !important; }
 #tablepublicpayment tr.liste_total { border-bottom: 1px solid #CCCCCC !important; }
@@ -3604,7 +3665,7 @@ table.dp {
     border-style:none;
     background-color:transparent;
     padding:0px;
-    font-size:9px;
+    font-size: 0.85em;
     border-width:0px;
     color: #eee;
     vertical-align:middle;
@@ -4212,7 +4273,6 @@ ul.ecmjqft li {
 	padding: 0px;
 	padding-left: 20px;
 	margin: 0px;
-	white-space: nowrap;
 	display: block;
 }
 
@@ -4688,6 +4748,9 @@ dl.dropdown {
     display:inline-block;
     padding: 0 3px 2px 0;
 }
+.dropdown span.value {
+    display:none;
+}
 .dropdown dd ul {
     background-color: #FFF;
     border: 1px solid #888;
@@ -4700,13 +4763,11 @@ dl.dropdown {
     max-height: 264px;
     overflow: auto;
 }
-.dropdown span.value {
-    display:none;
-}
 .dropdown dd ul li {
 	white-space: nowrap;
 	font-weight: normal;
 	padding: 2px;
+	color: #000;
 }
 .dropdown dd ul li input[type="checkbox"] {
     margin-right: 3px;
@@ -5059,6 +5120,275 @@ border-top-right-radius: 6px;
     background: #ddd
 }​
 
+
+
+/* ============================================================================== */
+/* Ticket module                                                                  */
+/* ============================================================================== */
+
+#cd-timeline {
+  position: relative;
+  padding: 2em 0;
+  margin-bottom: 2em;
+}
+#cd-timeline::before {
+  /* this is the vertical line */
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 18px;
+  height: 100%;
+  width: 4px;
+  background: #d7e4ed;
+}
+@media only screen and (min-width: 1170px) {
+  #cd-timeline {
+    margin-bottom: 3em;
+  }
+  #cd-timeline::before {
+    left: 50%;
+    margin-left: -2px;
+  }
+}
+
+.cd-timeline-block {
+  position: relative;
+  margin: 2em 0;
+}
+.cd-timeline-block:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.cd-timeline-block:first-child {
+  margin-top: 0;
+}
+.cd-timeline-block:last-child {
+  margin-bottom: 0;
+}
+@media only screen and (min-width: 1170px) {
+  .cd-timeline-block {
+    margin: 4em 0;
+  }
+  .cd-timeline-block:first-child {
+    margin-top: 0;
+  }
+  .cd-timeline-block:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.cd-timeline-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px white, inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 3px 0 4px rgba(0, 0, 0, 0.05);
+  background: #d7e4ed;
+}
+.cd-timeline-img img {
+  display: block;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  margin-left: -12px;
+  margin-top: -12px;
+}
+.cd-timeline-img.cd-picture {
+  background: #75ce66;
+}
+.cd-timeline-img.cd-movie {
+  background: #c03b44;
+}
+.cd-timeline-img.cd-location {
+  background: #f0ca45;
+}
+@media only screen and (min-width: 1170px) {
+  .cd-timeline-img {
+    width: 60px;
+    height: 60px;
+    left: 50%;
+    margin-left: -30px;
+    /* Force Hardware Acceleration in WebKit */
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+  }
+  .cssanimations .cd-timeline-img.is-hidden {
+    visibility: hidden;
+  }
+  .cssanimations .cd-timeline-img.bounce-in {
+    visibility: visible;
+    -webkit-animation: cd-bounce-1 0.6s;
+    -moz-animation: cd-bounce-1 0.6s;
+    animation: cd-bounce-1 0.6s;
+  }
+}
+
+@-webkit-keyframes cd-bounce-1 {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: scale(1.2);
+  }
+
+  100% {
+    -webkit-transform: scale(1);
+  }
+}
+@-moz-keyframes cd-bounce-1 {
+  0% {
+    opacity: 0;
+    -moz-transform: scale(0.5);
+  }
+
+  60% {
+    opacity: 1;
+    -moz-transform: scale(1.2);
+  }
+
+  100% {
+    -moz-transform: scale(1);
+  }
+}
+@keyframes cd-bounce-1 {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0.5);
+    -moz-transform: scale(0.5);
+    -ms-transform: scale(0.5);
+    -o-transform: scale(0.5);
+    transform: scale(0.5);
+  }
+
+  60% {
+    opacity: 1;
+    -webkit-transform: scale(1.2);
+    -moz-transform: scale(1.2);
+    -ms-transform: scale(1.2);
+    -o-transform: scale(1.2);
+    transform: scale(1.2);
+  }
+
+  100% {
+    -webkit-transform: scale(1);
+    -moz-transform: scale(1);
+    -ms-transform: scale(1);
+    -o-transform: scale(1);
+    transform: scale(1);
+  }
+}
+.cd-timeline-content {
+  position: relative;
+  margin-left: 60px;
+  background: white;
+  border-radius: 0.25em;
+  padding: 1em;
+  background-image: -o-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -moz-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: -ms-linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+  background-image: linear-gradient(bottom, rgba(0,0,0,0.1) 0%, rgba(230,230,230,0.4) 100%);
+}
+.cd-timeline-content:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.cd-timeline-content h2 {
+  color: #303e49;
+}
+.cd-timeline-content .cd-date {
+  font-size: 13px;
+  font-size: 0.8125rem;
+}
+.cd-timeline-content .cd-date {
+  display: inline-block;
+}
+.cd-timeline-content p {
+  margin: 1em 0;
+  line-height: 1.6;
+}
+
+.cd-timeline-content .cd-date {
+  float: left;
+  padding: .2em 0;
+  opacity: .7;
+}
+.cd-timeline-content::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: 100%;
+  height: 0;
+  width: 0;
+  border: 7px solid transparent;
+  border-right: 7px solid white;
+}
+@media only screen and (min-width: 768px) {
+  .cd-timeline-content h2 {
+    font-size: 20px;
+    font-size: 1.25rem;
+  }
+  .cd-timeline-content {
+    font-size: 16px;
+    font-size: 1rem;
+  }
+  .cd-timeline-content .cd-read-more, .cd-timeline-content .cd-date {
+    font-size: 14px;
+    font-size: 0.875rem;
+  }
+}
+@media only screen and (min-width: 1170px) {
+  .cd-timeline-content {
+    margin-left: 0;
+    padding: 1.6em;
+    width: 43%;
+  }
+  .cd-timeline-content::before {
+    top: 24px;
+    left: 100%;
+    border-color: transparent;
+    border-left-color: white;
+  }
+  .cd-timeline-content .cd-read-more {
+    float: left;
+  }
+  .cd-timeline-content .cd-date {
+    position: absolute;
+    width: 55%;
+    left: 115%;
+    top: 6px;
+    font-size: 16px;
+    font-size: 1rem;
+  }
+  .cd-timeline-block:nth-child(even) .cd-timeline-content {
+    float: right;
+  }
+  .cd-timeline-block:nth-child(even) .cd-timeline-content::before {
+    top: 24px;
+    left: auto;
+    right: 100%;
+    border-color: transparent;
+    border-right-color: white;
+  }
+  .cd-timeline-block:nth-child(even) .cd-timeline-content .cd-read-more {
+    float: right;
+  }
+  .cd-timeline-block:nth-child(even) .cd-timeline-content .cd-date {
+    left: auto;
+    right: 115%;
+    text-align: right;
+  }
+
+}
 
 
 

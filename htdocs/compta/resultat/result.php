@@ -254,9 +254,33 @@ else if ($modecompta=="RECETTES-DEPENSES")
 else if ($modecompta=="BOOKKEEPING")
 {
 
-	//All categories
-	$cats = $AccCat->getCats();
-	if ($catsCalcule < 0) dol_print_error($db, $AccCat->error, $AccCat->errors);
+	// Get array of all report groups that are active
+	$cats = $AccCat->getCats();		// WARNING: Computed groups must be after group they include
+
+	/*
+	$sql = 'SELECT DISTINCT t.numero_compte as nb FROM '.MAIN_DB_PREFIX.'accounting_bookkeeping as t, '.MAIN_DB_PREFIX.'accounting_account as aa';
+	$sql.= " WHERE t.numero_compte = aa.account_number AND aa.fk_accounting_category = 0";
+	if (! empty($date_start) && ! empty($date_end))
+		$sql.= " AND t.doc_date >= '".$db->idate($date_start)."' AND t.doc_date <= '".$db->idate($date_end)."'";
+	if (! empty($month)) {
+		$sql .= " AND MONTH(t.doc_date) = " . $month;
+	}
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num_rows = $db->num_rows($resql);
+		if ($num_rows) {
+
+			print '<div class="warning">Warning: There is '.$num_rows.' accounts in your ledger table that are not set into a reporting group</div>';
+			$i = 0;
+			//while ($i < $num) {
+			//	$obj = $db->fetch_object($resql);
+			//	$i++;
+			//}
+		}
+	}
+	else dol_print_error($db);
+	*/
 
 	$j=1;
 	$sommes = array();
@@ -365,7 +389,7 @@ else if ($modecompta=="BOOKKEEPING")
 				$totCat['M'][$k] = 0;
 			}
 
-			// Get cpts of category/group
+			// Set $cpts of with array of accounts in the category/group
 			$cpts = $AccCat->getCptsCat($cat['rowid']);
 
 			print "<tr>";
@@ -373,7 +397,10 @@ else if ($modecompta=="BOOKKEEPING")
 			// Column group
 			print '<td class="width200">';
 			print $cat['code'];
-			print '</td><td>';
+			print '</td>';
+
+			// Label of group
+			print '<td>';
 			print $cat['label'];
 			if (count($cpts) > 0)	// Show example of 5 first accounting accounts
 			{

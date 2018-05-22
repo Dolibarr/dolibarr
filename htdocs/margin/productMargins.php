@@ -258,8 +258,6 @@ if ($result)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num /*&& $i < $conf->liste_limit*/)
 		{
 			$objp = $db->fetch_object($result);
@@ -277,8 +275,6 @@ if ($result)
 				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
-
-
 
 			print '<tr class="oddeven">';
 			if ($id > 0) {

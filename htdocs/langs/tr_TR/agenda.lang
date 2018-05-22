@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Doğrulanan üye %s
 MemberModifiedInDolibarr=Üye %sdeğiştirildi 
 MemberResiliatedInDolibarr=%s üyeliği bitirilmiştir
 MemberDeletedInDolibarr=Silinen üyelik %s
-MemberSubscriptionAddedInDolibarr=Abonelik eklenen üye %s
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Sevkiyat %s doğrulandı
 ShipmentClassifyClosedInDolibarr=%s sevkiyatı faturalandı olarak sınıflandırıldı
 ShipmentUnClassifyCloseddInDolibarr=%s sevkiyatı yeniden açıldı olarak sınıflandırıldı
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekle
 AgendaUrlOptions3=<b>kullanıcı girişi=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
 AgendaUrlOptionsNotAdmin=Çıktıyı <b>%s</b> kullanıcısına ait olmayan etkinliklere sınırlamak için <b>logina=!%s</b>.
 AgendaUrlOptions4=Çıktıyı <b>%s</b> kullanıcısına (sahip ve diğerleri) atanmış etkinliklere sınırlamak için <b>logint=%s</b>.
-AgendaUrlOptionsProject=<b>proje=PROJECT_ID</b>, bu <b>PROJECT_ID</b> projesi ile ilişkilendirilmiş eylemlerin çıkışını çıkışını sınırlamak içindir.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
 Busy=Meşgul
@@ -109,7 +112,7 @@ ExportCal=Takvim dışaaktar
 ExtSites=Dış takvimleri içeaktar
 ExtSitesEnableThisTool=Gündemde dış takvimleri (genel ayarlarda tanımlanan) göster. Kullanıcılar tarafından tanımlanan dış takvimleri etkilemez.
 ExtSitesNbOfAgenda=Takvimlerin sayısı
-AgendaExtNb=Takvim sayısı %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
 VisibleTimeRange=Görünür zaman aralığı

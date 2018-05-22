@@ -58,6 +58,37 @@ if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 $colspan = 3;	// Col total ht + col edit + col delete
 if (in_array($object->element,array('propal','commande','order','facture','facturerec','invoice','supplier_proposal','order_supplier','invoice_supplier'))) $colspan++;	// With this, there is a column move button
 //print $object->element;
+
+// Lines for extrafield
+$objectline = null;
+if (!empty($extrafieldsline))
+{
+	if ($this->table_element_line=='commandedet') {
+		$objectline = new OrderLine($this->db);
+	}
+	elseif ($this->table_element_line=='propaldet') {
+		$objectline = new PropaleLigne($this->db);
+	}
+	elseif ($this->table_element_line=='supplier_proposaldet') {
+		$objectline = new SupplierProposalLine($this->db);
+	}
+	elseif ($this->table_element_line=='facturedet') {
+		$objectline = new FactureLigne($this->db);
+	}
+	elseif ($this->table_element_line=='contratdet') {
+		$objectline = new ContratLigne($this->db);
+	}
+	elseif ($this->table_element_line=='commande_fournisseurdet') {
+		$objectline = new CommandeFournisseurLigne($this->db);
+	}
+	elseif ($this->table_element_line=='facture_fourn_det') {
+		$objectline = new SupplierInvoiceLine($this->db);
+	}
+	elseif ($this->table_element_line=='facturedet_rec') {
+		$objectline = new FactureLigneRec($this->db);
+	}
+}
+
 ?>
 
 <!-- BEGIN PHP TEMPLATE objectline_create.tpl.php -->
@@ -80,7 +111,7 @@ if ($nolinesbefore) {
 	<?php } ?>
 	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht" align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>
-	<?php if (!empty($conf->multicurrency->enabled)) { $colspan++;?>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { $colspan++;?>
 	<td class="linecoluht_currency" align="right"><span id="title_up_ht_currency"><?php echo $langs->trans('PriceUHTCurrency'); ?></span></td>
 	<?php } ?>
 	<?php if (! empty($inputalsopricewithtax)) { ?>
@@ -283,6 +314,18 @@ else {
 	if (! empty($conf->global->FCKEDITOR_ENABLE_DETAILS_FULL)) $toolbarname='dolibarr_notes';
 	$doleditor=new DolEditor('dp_desc',GETPOST('dp_desc'),'',100,$toolbarname,'',false,true,$enabled,$nbrows,'98%');
 	$doleditor->Create();
+
+	// Show autofill date for recuring invoices
+	if (! empty($conf->service->enabled) && $object->element == 'facturerec')
+	{
+		echo '<div class="divlinefordates"><br>';
+		echo $langs->trans('AutoFillDateFrom').' ';
+		echo $form->selectyesno('date_start_fill', $line->date_start_fill, 1);
+		echo ' - ';
+		echo $langs->trans('AutoFillDateTo').' ';
+		echo $form->selectyesno('date_end_fill', $line->date_end_fill, 1);
+		echo '</div>';
+	}
 	?>
 	</td>
 
@@ -302,7 +345,7 @@ else {
 	<input type="text" size="5" name="price_ht" id="price_ht" class="flat right" value="<?php echo (isset($_POST["price_ht"])?GETPOST("price_ht",'alpha',2):''); ?>">
 	</td>
 
-	<?php if (!empty($conf->multicurrency->enabled)) { $colspan++;?>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { $colspan++;?>
 	<td class="nobottom linecoluht_currency" align="right">
 	<input type="text" size="5" name="multicurrency_price_ht" id="multicurrency_price_ht" class="flat right" value="<?php echo (isset($_POST["multicurrency_price_ht"])?GETPOST("multicurrency_price_ht",'alpha',2):''); ?>">
 	</td>
@@ -372,40 +415,13 @@ else {
 	<td class="nobottom linecoledit" align="center" valign="middle" colspan="<?php echo $colspan; ?>">
 		<input type="submit" class="button" value="<?php echo $langs->trans('Add'); ?>" name="addline" id="addline">
 	</td>
-	<?php
-	// Lines for extrafield
-	if (!empty($extrafieldsline))
-	{
-		if ($this->table_element_line=='commandedet') {
-			$newline = new OrderLine($this->db);
-		}
-		elseif ($this->table_element_line=='propaldet') {
-			$newline = new PropaleLigne($this->db);
-		}
-		elseif ($this->table_element_line=='supplier_proposaldet') {
-			$newline = new SupplierProposalLine($this->db);
-		}
-		elseif ($this->table_element_line=='facturedet') {
-			$newline = new FactureLigne($this->db);
-		}
-		elseif ($this->table_element_line=='contratdet') {
-			$newline = new ContratLigne($this->db);
-		}
-		elseif ($this->table_element_line=='commande_fournisseurdet') {
-			$newline = new CommandeFournisseurLigne($this->db);
-		}
-		elseif ($this->table_element_line=='facture_fourn_det') {
-			$newline = new SupplierInvoiceLine($this->db);
-		}
-		elseif ($this->table_element_line=='facturedet_rec') {
-			$newline = new FactureLigneRec($this->db);
-		}
-		if (is_object($newline)) {
-			print $newline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8));
-		}
-	}
-	?>
 </tr>
+
+<?php
+if (is_object($objectline)) {
+	print $objectline->showOptionals($extrafieldsline, 'edit', array('style'=>$bcnd[$var], 'colspan'=>$coldisplay+8), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+}
+?>
 
 <?php
 if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $dateSelector && GETPOST('type') != '0')	// We show date field if required
@@ -446,7 +462,7 @@ if ((! empty($conf->service->enabled) || ($object->element == 'contrat')) && $da
 		}
 	}
 
-	if (!empty($conf->multicurrency->enabled)) $colspan+=2;
+	if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) $colspan+=2;
 
 	if (! empty($usemargins))
 	{
@@ -594,8 +610,17 @@ jQuery(document).ready(function() {
    				if (editor) { editor.focus(); }
 			}
 		}
-		if (jQuery('#select_type').val() == '0') jQuery('#trlinefordates').hide();
-		else jQuery('#trlinefordates').show();
+		console.log("Hide/show date according to product type");
+		if (jQuery('#select_type').val() == '0')
+		{
+			jQuery('#trlinefordates').hide();
+			jQuery('.divlinefordates').hide();
+		}
+		else
+		{
+			jQuery('#trlinefordates').show();
+			jQuery('.divlinefordates').show();
+		}
 	});
 
 	$("#prod_entry_mode_predef").on( "click", function() {
@@ -799,7 +824,7 @@ function setforfree() {
 	jQuery("#units, #title_units").show();
 }
 function setforpredef() {
-	console.log("Call setforpredef. We hide some fields");
+	console.log("Call setforpredef. We hide some fields and show dates");
 	jQuery("#select_type").val(-1);
 
 	jQuery("#prod_entry_mode_free").prop('checked',false).change();
@@ -820,6 +845,9 @@ function setforpredef() {
 	jQuery(".np_marginRate").hide();	// May no exists
 	jQuery(".np_markRate").hide();	// May no exists
 	jQuery("#units, #title_units").hide();
+
+	jQuery('#trlinefordates').show();
+	jQuery('.divlinefordates').show();
 }
 
 </script>

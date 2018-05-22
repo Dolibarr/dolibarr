@@ -1,7 +1,8 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2003		Rodolphe Quiedeville		<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2012	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
+ * Copyright (C) 2018		Regis Houssin			<regis.houssin@inodbox.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,11 +61,12 @@ class modApi extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
+		// Can be enabled / disabled only in the main company with superadmin account
+		$this->core_enabled = 1;
 		// Name of image file used for this module.
 		// If file is in theme/yourtheme/img directory under name object_pictovalue.png, use this->picto='pictovalue'
 		// If file is in module/img directory under name object_pictovalue.png, use this->picto='pictovalue@module'
 		$this->picto='technic';
-
 
 		$this->module_parts = array();
 
@@ -123,21 +125,6 @@ class modApi extends DolibarrModules
         	$conf->api->enabled=0;
         }
 		$this->dictionaries=array();
-        /* Example:
-        if (! isset($conf->api->enabled)) $conf->api->enabled=0;	// This is to avoid warnings
-        $this->dictionaries=array(
-            'langs'=>'mylangfile@api',
-            'tabname'=>array(MAIN_DB_PREFIX."table1",MAIN_DB_PREFIX."table2",MAIN_DB_PREFIX."table3"),		// List of tables we want to see into dictonnary editor
-            'tablib'=>array("Table1","Table2","Table3"),													// Label of tables
-            'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table1 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table2 as f','SELECT f.rowid as rowid, f.code, f.label, f.active FROM '.MAIN_DB_PREFIX.'table3 as f'),	// Request to select fields
-            'tabsqlsort'=>array("label ASC","label ASC","label ASC"),																					// Sort order
-            'tabfield'=>array("code,label","code,label","code,label"),																					// List of fields (result of select to show dictionary)
-            'tabfieldvalue'=>array("code,label","code,label","code,label"),																				// List of fields (list of fields to edit a record)
-            'tabfieldinsert'=>array("code,label","code,label","code,label"),																			// List of fields (list of fields for insert)
-            'tabrowid'=>array("rowid","rowid","rowid"),																									// Name of columns with primary key (try to always name it 'rowid')
-            'tabcond'=>array($conf->api->enabled,$conf->api->enabled,$conf->api->enabled)												// Condition to show each dictionary
-        );
-        */
 
         // Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
@@ -229,6 +216,25 @@ class modApi extends DolibarrModules
 		$result=$this->_load_tables('/api/sql/');
 
 		return $this->_init($sql, $options);
+	}
+
+	/**
+	 *		Function called when module is disabled.
+	 *      Remove from database constants, boxes and permissions from Dolibarr database.
+	 *		Data directories are not deleted.
+	 *
+	 *      @param string $options Options when enabling module ('', 'noboxes')
+	 *      @return int 1 if OK, 0 if KO
+	 */
+	function remove($options = '')
+	{
+		// Remove old constants with entity fields different of 0
+		$sql = array(
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('MAIN_MODULE_API', 1),
+			"DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = ".$this->db->encrypt('API_PRODUCTION_MODE', 1)
+		);
+
+		return $this->_remove($sql, $options);
 	}
 }
 

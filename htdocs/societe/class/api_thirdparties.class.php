@@ -199,7 +199,7 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data   Request datas
 	 * @return int  ID of thirdparty
 	 */
-	function post($request_data = NULL)
+	function post($request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -223,7 +223,7 @@ class Thirdparties extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = NULL)
+	function put($id, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);

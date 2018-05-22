@@ -4,6 +4,7 @@
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2010-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2014-2016 Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2018      Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,14 +99,6 @@ class BonPrelevement extends CommonObject
 		$this->methodes_trans[0] = "Internet";
 
 		$this->_fetched = 0;
-
-
-		$langs->load("withdrawals");
-		$this->labelstatut[0]=$langs->trans("StatusWaiting");
-		$this->labelstatut[1]=$langs->trans("StatusTrans");
-		$this->labelstatut[2]=$langs->trans("StatusCredited");
-
-		return 1;
 	}
 
 	/**
@@ -760,9 +753,10 @@ class BonPrelevement extends CommonObject
 	 *	@param	int		$agence		dolibarr mysoc bank office (guichet)
 	 *	@param	string	$mode		real=do action, simu=test only
 	 *  @param	string	$format		FRST, RCUR or ALL
+         * @param       string  $executiondate	Date to execute the transfer
 	 *	@return	int					<0 if KO, nbre of invoice withdrawed if OK
 	 */
-	function Create($banque=0, $agence=0, $mode='real', $format='ALL')
+	function Create($banque=0, $agence=0, $mode='real', $format='ALL',$executiondate='')
 	{
 		global $conf,$langs;
 
@@ -776,6 +770,8 @@ class BonPrelevement extends CommonObject
 		$error = 0;
 
 		$datetimeprev = time();
+                //Choice the date of the execution direct debit
+                if(!empty($executiondate)) $datetimeprev = $executiondate;
 
 		$month = strftime("%m", $datetimeprev);
 		$year = strftime("%Y", $datetimeprev);
@@ -1077,7 +1073,7 @@ class BonPrelevement extends CommonObject
 					$this->factures = $factures_prev_id;
 
 					// Generation of SEPA file $this->filename
-					$this->generate($format);
+					$this->generate($format,$executiondate);
 				}
 				dol_syslog(__METHOD__."::End withdraw receipt, file ".$this->filename, LOG_DEBUG);
 			}
@@ -1274,9 +1270,10 @@ class BonPrelevement extends CommonObject
 	 * File is generated with name this->filename
 	 *
 	 *  @param		string	$format		FRST, RCUR or ALL
+         * @param string $executiondate		Date to execute transfer
 	 *	@return		int					0 if OK, <0 if KO
 	 */
-	function generate($format='ALL')
+	function generate($format='ALL',$executiondate='')
 	{
 		global $conf,$langs,$mysoc;
 
@@ -1305,10 +1302,16 @@ class BonPrelevement extends CommonObject
 			 */
 			// SEPA Initialisation
 			$CrLf = "\n";
-			$date_actu = dol_now();
+
+			$now = dol_now();
+
+			$dateTime_ECMA = dol_print_date($now, '%Y-%m-%dT%H:%M:%S');
+
+			$date_actu = $now;
+                        if (!empty($executiondate)) $date_actu=$executiondate;
+
 			$dateTime_YMD  = dol_print_date($date_actu, '%Y%m%d');
 			$dateTime_YMDHMS = dol_print_date($date_actu, '%Y%m%d%H%M%S');
-			$dateTime_ECMA = dol_print_date($date_actu, '%Y-%m-%dT%H:%M:%S');
 			$fileDebiteurSection = '';
 			$fileEmetteurSection = '';
 			$i = 0;
@@ -1879,48 +1882,52 @@ class BonPrelevement extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
-		global $langs;
+		if (empty($this->labelstatut))
+		{
+			global $langs;
+			$langs->load("withdrawals");
+			$this->labelstatut[0]=$langs->trans("StatusWaiting");
+			$this->labelstatut[1]=$langs->trans("StatusTrans");
+			$this->labelstatut[2]=$langs->trans("StatusCredited");
+		}
 
 		if ($mode == 0)
 		{
-			return $langs->trans($this->labelstatut[$statut]);
+			return $this->labelstatut[$statut];
 		}
-
 		if ($mode == 1)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1').' '.$langs->trans($this->labelstatut[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3').' '.$langs->trans($this->labelstatut[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6').' '.$langs->trans($this->labelstatut[$statut]);
+			return $this->labelstatut[$statut];
 		}
 		if ($mode == 2)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
-			if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
-			if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
+			if ($statut==0) return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
+			if ($statut==1) return img_picto($this->labelstatut[$statut],'statut3').' '.$this->labelstatut[$statut];
+			if ($statut==2) return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
 		}
 		if ($mode == 3)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
-			if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
-			if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
+			if ($statut==0) return img_picto($this->labelstatut[$statut],'statut1');
+			if ($statut==1) return img_picto($this->labelstatut[$statut],'statut3');
+			if ($statut==2) return img_picto($this->labelstatut[$statut],'statut6');
 		}
 		if ($mode == 4)
 		{
-			if ($statut==0) return img_picto($langs->trans($this->labelstatut[$statut]),'statut1').' '.$langs->trans($this->labelstatut[$statut]);
-			if ($statut==1) return img_picto($langs->trans($this->labelstatut[$statut]),'statut3').' '.$langs->trans($this->labelstatut[$statut]);
-			if ($statut==2) return img_picto($langs->trans($this->labelstatut[$statut]),'statut6').' '.$langs->trans($this->labelstatut[$statut]);
+			if ($statut==0) return img_picto($this->labelstatut[$statut],'statut1').' '.$this->labelstatut[$statut];
+			if ($statut==1) return img_picto($this->labelstatut[$statut],'statut3').' '.$this->labelstatut[$statut];
+			if ($statut==2) return img_picto($this->labelstatut[$statut],'statut6').' '.$this->labelstatut[$statut];
 		}
 		if ($mode == 5)
 		{
-			if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
-			if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
-			if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
+			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
+			if ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut3');
+			if ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
 		}
 		if ($mode == 6)
 		{
-			if ($statut==0) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut1');
-			if ($statut==1) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut3');
-			if ($statut==2) return $langs->trans($this->labelstatut[$statut]).' '.img_picto($langs->trans($this->labelstatut[$statut]),'statut6');
+			if ($statut==0) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut1');
+			if ($statut==1) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut3');
+			if ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
 		}
 	}
 

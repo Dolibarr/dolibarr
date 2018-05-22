@@ -35,21 +35,27 @@ if (! defined('NOTOKENRENEWAL'))	define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))		define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))		define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))		define('NOREQUIREAJAX','1');
-if (! defined('NOREQUIREHOOK'))		define('NOREQUIREHOOK','1');	// Disable "main.inc.php" hooks
+
 // Some value of modulepart can be used to get resources that are public so no login are required.
-if ((isset($_GET["modulepart"]) && ($_GET["modulepart"] == 'mycompany' || $_GET["modulepart"] == 'companylogo')) && ! defined("NOLOGIN"))
+if ((isset($_GET["modulepart"]) && ($_GET["modulepart"] == 'mycompany' || $_GET["modulepart"] == 'companylogo')))
 {
-	define("NOLOGIN",'1');
+	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 // For direct external download link, we don't need to load/check we are into a login session
 if (isset($_GET["hashp"]) && ! defined("NOLOGIN"))
 {
-	define("NOLOGIN",1);
+	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
 }
 // Some value of modulepart can be used to get resources that are public so no login are required.
-if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias') && ! defined("NOLOGIN"))
+if ((isset($_GET["modulepart"]) && $_GET["modulepart"] == 'medias'))
 {
-	define("NOLOGIN",'1');
+	if (! defined("NOLOGIN"))		define("NOLOGIN",1);
+	if (! defined("NOCSRFCHECK"))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+	if (! defined("NOIPCHECK"))		define("NOIPCHECK",1);		// Do not check IP defined into conf $dolibarr_main_restrict_ip
 	// For multicompany
 	$entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 	if (is_numeric($entity)) define("DOLENTITY", $entity);
@@ -81,7 +87,7 @@ $entity=GETPOST('entity','int')?GETPOST('entity','int'):$conf->entity;
 
 // Security check
 if (empty($modulepart) && empty($hashp)) accessforbidden('Bad link. Bad value for parameter modulepart',0,0,1);
-if (empty($original_file) && empty($hashp)) accessforbidden('Bad link. Missing identification to find file (original_file or hashp)',0,0,1);
+if (empty($original_file) && empty($hashp) && $modulepart != 'barcode') accessforbidden('Bad link. Missing identification to find file (original_file or hashp)',0,0,1);
 if ($modulepart == 'fckeditor') $modulepart='medias';   // For backward compatibility
 
 

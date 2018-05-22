@@ -64,17 +64,17 @@ class modCron extends DolibarrModules
         //-------------
         $this->config_page_url = array("cron.php@cron");
 
-        // Dependancies
-        //-------------
+		// Dependancies
+		//-------------
 		$this->hidden = !empty($conf->global->MODULE_CRON_DISABLED); // A condition to disable module
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-        $this->langfiles = array("cron");
+		$this->langfiles = array("cron");
 
-        // Constants
-        //-----------
-        	$this->const = array(
+		// Constants
+		//-----------
+		$this->const = array(
 				0=>array(
 					'CRON_KEY',
 					'chaine',
@@ -95,9 +95,9 @@ class modCron extends DolibarrModules
 
 		// Cronjobs
 		$this->cronjobs = array(
-			0=>array('label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>50, 'status'=>1, 'test'=>true),
-			1=>array('label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>90, 'status'=>0, 'test'=>in_array($db->type, array('mysql', 'mysqli'))),
-		    // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
+			0=>array('entity'=>0, 'label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>50, 'status'=>1, 'test'=>true),
+			1=>array('entity'=>0, 'label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>90, 'status'=>0, 'test'=>in_array($db->type, array('mysql', 'mysqli'))),
+			// 1=>array('entity'=>0, 'label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
 		);
 
         // Permissions

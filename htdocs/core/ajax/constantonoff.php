@@ -26,7 +26,6 @@ if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
 if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
-if (! defined('NOREQUIREHOOK'))  define('NOREQUIREHOOK','1');
 
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';

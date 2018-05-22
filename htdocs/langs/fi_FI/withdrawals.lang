@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Direct debit payment orders area
 SuppliersStandingOrdersArea=Direct credit payment orders area
-StandingOrders=Direct debit payment orders
-StandingOrder=Direct debit payment order
+StandingOrdersPayment=Direct debit payment orders
+StandingOrderPayment=Direct debit payment order
 NewStandingOrder=New direct debit order
 StandingOrderToProcess=Jotta prosessi
 WithdrawalsReceipts=Direct debit orders
@@ -26,7 +26,7 @@ LastWithdrawalReceipt=Latest %s direct debit receipts
 MakeWithdrawRequest=Make a direct debit payment request
 WithdrawRequestsDone=%s direct debit payment requests recorded
 ThirdPartyBankCode=Kolmannen osapuolen pankin koodi
-NoInvoiceCouldBeWithdrawed=N: o laskun withdrawed menestyksekkäästi. Tarkista, että laskussa yrityksiin, joilla on voimassa oleva kielto.
+NoInvoiceCouldBeWithdrawed=No invoice withdrawed with success. Check that invoices are on companies with a valid default BAN and that BAN has a RUM with mode <strong>%s</strong>.
 ClassCredited=Luokittele hyvitetään
 ClassCreditedConfirm=Oletko varma, että haluat luokitella tämän vetäytymisen vastaanottamisesta kuin hyvitetty pankkitilisi?
 TransData=Päivämäärä Lähetetty
@@ -78,7 +78,7 @@ ThisWillAlsoAddPaymentOnInvoice=This will also record payments to invoices and w
 StatisticsByLineStatus=Statistics by status of lines
 RUM=UMR
 RUMLong=Unique Mandate Reference
-RUMWillBeGenerated=UMR number will be generated once bank account information are saved
+RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved
 WithdrawMode=Direct debit mode (FRST or RECUR)
 WithdrawRequestAmount=Amount of Direct debit request:
 WithdrawRequestErrorNilAmount=Unable to create direct debit request for empty amount.
@@ -98,6 +98,10 @@ ModeFRST=One-off payment
 PleaseCheckOne=Please check one only
 DirectDebitOrderCreated=Direct debit order %s created
 AmountRequested=Amount requested
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Execution date
+CreateForSepa=Create direct debit file
 
 ### Notifications
 InfoCreditSubject=Payment of direct debit payment order %s by the bank

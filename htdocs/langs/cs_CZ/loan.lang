@@ -50,4 +50,6 @@ ConfigLoan=Konfigurace modulu úvěru
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Accounting account capital by default
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Accounting account interest by default
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Accounting account insurance by default
-CreateCalcSchedule=Créer / Modifier échéancier de pret
+FinancialCommitment=Financial commitment
+CreateCalcSchedule=Edit financial commitment
+InterestAmount=Interest amount

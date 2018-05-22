@@ -31,13 +31,13 @@ if ($action == 'update' && is_array($arrayofparameters))
 {
 	$db->begin();
 
-	$ok=True;
+	$ok=true;
 	foreach($arrayofparameters as $key => $val)
 	{
 		$result=dolibarr_set_const($db,$key,GETPOST($key, 'alpha'),'chaine',0,'',$conf->entity);
 		if ($result < 0)
 		{
-			$ok=False;
+			$ok=false;
 			break;
 		}
 	}

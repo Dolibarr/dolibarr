@@ -41,4 +41,4 @@ rateMustBeNumeric=Sats må ha en numerisk verdi
 markRateShouldBeLesserThan100=Dekningsbidrag skal være lavere enn 100
 ShowMarginInfos=Vis info om marginer
 CheckMargins=Margindetaljer
-MarginPerSaleRepresentativeWarning=Rapporten for margin per bruker benytter koblingen mellom tredjeparter og salgsrepresentanter for å beregne marginen til hver salgsrepresentant. Fordi noen tredjeparter kanskje ikke har noen dedikert salgsrepresentant og noen tredjeparter kan være knyttet til flere, kan noen beløp bli ekskludert i denne rapporten (hvis det ikke er salgsrepresentant), og noen kan vises på forskjellige linjer (for hver salgsrepresentant).
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

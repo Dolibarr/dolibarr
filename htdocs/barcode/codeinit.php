@@ -212,7 +212,8 @@ if ($conf->societe->enabled)
 {
 	$nbno=$nbtotal=0;
 
-	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','object_company');
+	print load_fiche_titre($langs->trans("BarcodeInitForThirdparties"),'','title_companies');
+
 	print '<br>'."\n";
 	$sql="SELECT count(rowid) as nb FROM ".MAIN_DB_PREFIX."societe where barcode IS NULL or barcode = ''";
 	$resql=$db->query($sql);
@@ -253,7 +254,7 @@ if ($conf->product->enabled || $conf->product->service)
 
 	$nbno=$nbtotal=0;
 
-	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','object_product');
+	print load_fiche_titre($langs->trans("BarcodeInitForProductsOrServices"),'','title_products');
 	print '<br>'."\n";
 
 	$sql ="SELECT count(rowid) as nb, fk_product_type, datec";

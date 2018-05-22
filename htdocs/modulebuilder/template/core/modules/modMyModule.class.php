@@ -100,7 +100,7 @@ class modMyModule extends DolibarrModules
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp","/mymodule/subdir");
-		$this->dirs = array();
+		$this->dirs = array("/mymodule/temp");
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
 		$this->config_page_url = array("setup.php@mymodule");
@@ -127,6 +127,11 @@ class modMyModule extends DolibarrModules
 			1=>array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
+		// Some keys to add into the overwriting translation tables
+		/*$this->overwrite_translation = array(
+			'en_US:ParentCompany'=>'Parent company or reseller',
+			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
+		)*/
 
 		if (! isset($conf->mymodule) || ! isset($conf->mymodule->enabled))
 		{

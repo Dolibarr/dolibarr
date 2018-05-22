@@ -81,7 +81,15 @@ $userstatic=new User($db);
 
 llxHeader('', $langs->trans("ListOfBookmarks"));
 
-print load_fiche_titre($langs->trans("ListOfBookmarks"));
+$newcardbutton='';
+if ($user->rights->bookmark->creer)
+{
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create">'.$langs->trans('NewBookmark');
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
+
+print_barre_liste($langs->trans("ListOfBookmarks"), $page, $_SERVER['PHP_SELF'], $param, $sortfield, $sortorder, '', -1, '', 'title_generic.png', 0, $newcardbutton);
 
 $sql = "SELECT b.rowid, b.dateb, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";
@@ -117,11 +125,9 @@ if ($resql)
 	print_liste_field_titre('');
 	print "</tr>\n";
 
-	$var=True;
 	while ($i < $num)
 	{
 		$obj = $db->fetch_object($resql);
-
 
 		print '<tr class="oddeven">';
 
@@ -203,16 +209,6 @@ else
 	dol_print_error($db);
 }
 
-
-
-print "<div class=\"tabsAction\">\n";
-
-if ($user->rights->bookmark->creer)
-{
-	print '<a class="butAction" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create">'.$langs->trans("NewBookmark").'</a>';
-}
-
-print '</div>';
 
 llxFooter();
 $db->close();

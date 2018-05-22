@@ -54,7 +54,6 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
 		$handle=opendir($dir);
 
 		// Recherche des fichiers drivers exports disponibles
-		$var=True;
 		$i=0;
         if (is_resource($handle))
         {
@@ -72,7 +71,7 @@ class ModeleExports extends CommonDocGenerator    // This class can't be abstrac
     				if (class_exists($classname))
     				{
         				$module = new $classname($db);
-    
+
         				// Picto
         				$this->picto[$module->id]=$module->picto;
         				// Driver properties

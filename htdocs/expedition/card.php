@@ -123,6 +123,11 @@ if (empty($reshook))
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
 
+	// Actions to build doc
+	$upload_dir = $conf->expedition->dir_output.'/sending';
+	$permissioncreate = $user->rights->expedition->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
 	// Reopen
 	if ($action == 'reopen' && $user->rights->expedition->creer)
 	{
@@ -164,20 +169,13 @@ if (empty($reshook))
 
 	    if (! $error)
 	    {
-	        // Actions on extra fields (by external module or standard code)
-	        // TODO le hook fait double emploi avec le trigger !!
-	        $hookmanager->initHooks(array('expeditiondao'));
-	        $parameters = array('id' => $object->id);
-	        $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
-	        if (empty($reshook)) {
-	            $result = $object->insertExtraFields('SHIPMENT_MODIFY');
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-	        } else if ($reshook < 0)
-	            $error++;
+	        // Actions on extra fields
+            $result = $object->insertExtraFields('SHIPMENT_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
 	    }
 
 	    if ($error)
@@ -538,42 +536,6 @@ if (empty($reshook))
 	    }
 
 	    $action="";
-	}
-
-	// Build document
-	else if ($action == 'builddoc')	// En get ou en post
-	{
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	    // Define output language
-	    $outputlangs = $langs;
-	    $newlang='';
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->thirdparty->default_lang;
-	    if (! empty($newlang))
-	    {
-	        $outputlangs = new Translate("",$conf);
-	        $outputlangs->setDefaultLang($newlang);
-	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    if ($result <= 0)
-	    {
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-	    }
-	}
-
-	// Delete file in doc form
-	elseif ($action == 'remove_file')
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		$upload_dir =	$conf->expedition->dir_output . "/sending";
-		$file =	$upload_dir	. '/' .	GETPOST('file');
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	elseif ($action == 'classifybilled')
@@ -1066,7 +1028,7 @@ if ($action == 'create')
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$expe,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
 
-			if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+			if (empty($reshook)) {
 				// copy from order
 				$orderExtrafields = new Extrafields($db);
 				$orderExtrafieldLabels = $orderExtrafields->fetch_name_optionals_label($object->table_element);
@@ -2526,9 +2488,9 @@ else if ($id || $ref)
 			{
 				if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->expedition->shipping_advance->send)
 				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendByMail').'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>';
 				}
-				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendByMail').'</a>';
+				else print '<a class="butActionRefused" href="#">'.$langs->trans('SendMail').'</a>';
 			}
 
 			// Create bill

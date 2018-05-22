@@ -99,6 +99,12 @@ else
 {
 	// TODO We define q
 }
+// $date_start and $date_end are defined. We force $year_start and $nbofyear
+$tmps=dol_getdate($date_start);
+$year_start = $tmps['year'];
+$tmpe=dol_getdate($date_end);
+$year_end = $tmpe['year'];
+$nbofyear = ($year_end - $year_start) + 1;
 
 $commonparams=array();
 $commonparams['modecompta']=$modecompta;
@@ -139,9 +145,7 @@ $form=new Form($db);
 if ($modecompta=="CREANCES-DETTES") {
     $name=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
     $calcmode=$langs->trans("CalcModeDebt");
-    $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-    //$periodlink="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
+    $calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
@@ -150,14 +154,16 @@ if ($modecompta=="CREANCES-DETTES") {
 } else {
     $name=$langs->trans("SalesTurnover").', '.$langs->trans("ByUserAuthorOfInvoice");
 	$calcmode=$langs->trans("CalcModeEngagement");
-    $calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-    //$periodlink="<a href='".$_SERVER["PHP_SELF"]."?year=".($year-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year+1)."&modecompta=".$modecompta."'>".img_next()."</a>";
+	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
     $description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
     $builddate=dol_now();
     //$exportlink=$langs->trans("NotYetAvailable");
 }
+$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+else $periodlink = '';
+
 $moreparam=array();
 if (! empty($modecompta)) $moreparam['modecompta']=$modecompta;
 

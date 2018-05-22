@@ -357,15 +357,16 @@ class AccountancyCategory 	// extends CommonObject
 	 * Function to select all accounting accounts from an accounting category
 	 *
 	 * @param int $id Id
-	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function display($id) {
+		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 		$sql .= " WHERE t.fk_accounting_category = " . $id;
+		$sql .= " AND t.entity = " . $conf->entity;
 
-		$this->lines_display = array ();
+		$this->lines_display = array();
 
 		dol_syslog(__METHOD__ . " sql=" . $sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -401,13 +402,14 @@ class AccountancyCategory 	// extends CommonObject
 		$sql .= " WHERE t.numero_compte NOT IN (";
 		$sql .= " SELECT t.account_number";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
-		$sql .= " WHERE t.fk_accounting_category = " . $id . ")";
+		$sql .= " WHERE t.fk_accounting_category = " . $id . " AND t.entity = " . $conf->entity.")";
 		$sql .= " AND t.numero_compte IN (";
 		$sql .= " SELECT DISTINCT aa.account_number";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
-		$sql .= " AND aa.active = 1)";
+		$sql .= " AND aa.active = 1";
+		$sql .= " AND aa.entity = = " . $conf->entity . ")";
 		$sql .= " GROUP BY t.numero_compte, t.label_operation, t.doc_ref";
 		$sql .= " ORDER BY t.numero_compte";
 
@@ -449,6 +451,7 @@ class AccountancyCategory 	// extends CommonObject
 	    $sql .= " WHERE (aa.fk_accounting_category != ".$id." OR aa.fk_accounting_category IS NULL)";
 	    $sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 	    $sql .= " AND aa.active = 1";
+	    $sql .= " AND aa.entity = " . $conf->entity;
 	    $sql .= " GROUP BY aa.account_number, aa.label";
 	    $sql .= " ORDER BY aa.account_number, aa.label";
 
@@ -493,6 +496,7 @@ class AccountancyCategory 	// extends CommonObject
 		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
 		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
 		$sql .= " AND aa.active = 1";
+		$sql .= " AND aa.entity = " . $conf->entity;
 
 		$this->db->begin();
 
@@ -580,31 +584,27 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return array       Result in table
 	 */
-	public function getCatsCpts() {
-		global $mysoc;
+	public function getCatsCpts()
+	{
+		global $mysoc,$conf;
+
 		$sql = "";
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
-			$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id . ")";
-			$sql .= " AND cat.rowid = t.fk_accounting_category";
-			$sql .= " ORDER BY cat.position ASC";
-		} else {
-			$sql = "SELECT c.rowid, c.code, c.label, c.category_type ";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
+		$sql = "SELECT t.rowid, t.account_number, t.label as account_label, cat.code, cat.position, cat.label as name_cat, cat.sens ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t, " . MAIN_DB_PREFIX . "c_accounting_category as cat";
+		$sql .= " WHERE t.fk_accounting_category IN ( SELECT c.rowid ";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+		$sql .= " WHERE c.active = 1";
+		$sql .= " AND c.entity = " . $conf->entity;
+		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " AND cat.rowid = t.fk_accounting_category";
+		$sql .= " AND t.entity = " . $conf->entity;
+		$sql .= " ORDER BY cat.position ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -685,35 +685,27 @@ class AccountancyCategory 	// extends CommonObject
 	}
 
 	/**
-	 * Return list of personalized groups
+	 * Return list of personalized groups that are active
 	 *
 	 * @param	int			$categorytype		-1=All, 0=Only non computed groups, 1=Only computed groups
 	 * @return	array							Array of groups
 	 */
 	public function getCats($categorytype=-1)
 	{
-		global $db, $langs, $user, $mysoc;
+		global $db, $langs, $user, $mysoc, $conf;
 
-		if (empty($mysoc->country_id) && empty($mysoc->country_code)) {
+		if (empty($mysoc->country_id)) {
 			dol_print_error('', 'Call to select_accounting_account with mysoc country not yet defined');
 			exit();
 		}
 
-		if (! empty($mysoc->country_id)) {
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
-			$sql .= " WHERE c.active = 1 ";
-			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
-			$sql .= " AND c.fk_country = " . $mysoc->country_id;
-			$sql .= " ORDER BY c.position ASC";
-		} else {	// Note: this should not happen
-			$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
-			$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c, " . MAIN_DB_PREFIX . "c_country as co";
-			$sql .= " WHERE c.active = 1 AND c.fk_country = co.rowid";
-			if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
-			$sql .= " AND co.code = '" . $mysoc->country_code . "'";
-			$sql .= " ORDER BY c.position ASC";
-		}
+		$sql = "SELECT c.rowid, c.code, c.label, c.formula, c.position, c.category_type";
+		$sql .= " FROM " . MAIN_DB_PREFIX . "c_accounting_category as c";
+		$sql .= " WHERE c.active = 1 ";
+		$sql .= " AND c.entity = " . $conf->entity;
+		if ($categorytype >= 0) $sql.=" AND c.category_type = 1";
+		$sql .= " AND (c.fk_country = ".$mysoc->country_id." OR c.fk_country = 0)";
+		$sql .= " ORDER BY c.position ASC";
 
 		$resql = $this->db->query($sql);
 		if ($resql) {
@@ -770,14 +762,14 @@ class AccountancyCategory 	// extends CommonObject
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE t.fk_accounting_category = ".$cat_id;
-			$sql .= " ORDER BY t.account_number ";
+			$sql .= " ORDER BY t.account_number";
 		}
 		else
 		{
 			$sql = "SELECT t.rowid, t.account_number, t.label as account_label";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
 			$sql .= " WHERE ".$predefinedgroupwhere;
-			$sql .= " ORDER BY t.account_number ";
+			$sql .= " ORDER BY t.account_number";
 		}
 		//echo $sql;
 

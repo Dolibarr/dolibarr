@@ -616,7 +616,7 @@ if (empty($reshook))
 	// Close proposal
 	else if ($action == 'setstatut' && $user->rights->propal->cloturer && ! GETPOST('cancel','alpha'))
 	{
-		if (! GETPOST('statut','int')) {
+		if (! (GETPOST('statut','int') > 0)) {
 			setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("CloseAs")), null, 'errors');
 			$action = 'statut';
 		} else {
@@ -1371,7 +1371,7 @@ if ($action == 'create')
 
 			$soc = $objectsrc->thirdparty;
 
-			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+			$cond_reglement_id 	= (! empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(! empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0)); // TODO maybe add default value option
 			$mode_reglement_id 	= (! empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(! empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$remise_percent 	= (! empty($objectsrc->remise_percent)?$objectsrc->remise_percent:(! empty($soc->remise_percent)?$soc->remise_percent:0));
 			$remise_absolue 	= (! empty($objectsrc->remise_absolue)?$objectsrc->remise_absolue:(! empty($soc->remise_absolue)?$soc->remise_absolue:0));
@@ -1745,11 +1745,12 @@ if ($action == 'create')
 	{
 		//Form to close proposal (signed or not)
 		$formquestion = array(
-				array('type' => 'select','name' => 'statut','label' => $langs->trans("CloseAs"),'values' => array(2=>$object->labelstatut [2],3=>$object->labelstatut [3])),
-				array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"),'value' => '')				// Field to complete private note (not replace)
+			array('type' => 'select','name' => 'statut','label' => $langs->trans("CloseAs"),'values' => array(2=>$object->LibStatut(Propal::STATUS_SIGNED), 3=>$object->LibStatut(Propal::STATUS_NOTSIGNED))),
+			array('type' => 'text', 'name' => 'note_private', 'label' => $langs->trans("Note"),'value' => '')				// Field to complete private note (not replace)
 		);
 
-		if (! empty($conf->notification->enabled)) {
+		if (! empty($conf->notification->enabled))
+		{
 			require_once DOL_DOCUMENT_ROOT . '/core/class/notify.class.php';
 			$notify = new Notify($db);
 			$formquestion = array_merge($formquestion, array(
@@ -1824,7 +1825,7 @@ if ($action == 'create')
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, $user->rights->propal->creer, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
 	if (empty($conf->global->MAIN_DISABLE_OTHER_LINK) && $object->thirdparty->id > 0) $morehtmlref.=' (<a href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->thirdparty->id.'">'.$langs->trans("OtherProposals").'</a>)';
 	// Project
 	if (! empty($conf->projet->enabled))
@@ -2277,7 +2278,7 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == Propal::STATUS_DRAFT && $user->rights->propal->creer)
+	if ($object->statut == Propal::STATUS_DRAFT && $user->rights->propal->creer && $action != 'selectlines')
 	{
 		if ($action != 'editline')
 		{
@@ -2339,9 +2340,9 @@ if ($action == 'create')
 				// Send
 				if ($object->statut == Propal::STATUS_VALIDATED || $object->statut == Propal::STATUS_SIGNED) {
 					if (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->propal->propal_advance->send) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Create an order

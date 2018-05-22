@@ -542,10 +542,10 @@ if ($action == 'addcontainer')
 	}
 	else
 	{
+		$objectpage->title = GETPOST('WEBSITE_TITLE','alpha');
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER','alpha');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME','alpha');
 		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT','alpha');
-		$objectpage->title = GETPOST('WEBSITE_TITLE','alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS','alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG','aZ09');
@@ -958,10 +958,10 @@ if ($action == 'updatemeta')
 	{
 		$objectpage->old_object = clone $objectpage;
 
+		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alpha');
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
 		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
-		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
@@ -2026,14 +2026,22 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagelang=$objectpage->lang;
 		$pagehtmlheader=$objectpage->htmlheader;
 	}
+	if (GETPOST('WEBSITE_TITLE','alpha'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
 	if (GETPOST('WEBSITE_PAGENAME','alpha'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
 	if (GETPOST('WEBSITE_ALIASALT','alpha'))    $pagealiasalt=GETPOST('WEBSITE_ALIASALT','alpha');
-	if (GETPOST('WEBSITE_TITLE','alpha'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
 	if (GETPOST('WEBSITE_DESCRIPTION','alpha')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION','alpha');
 	if (GETPOST('WEBSITE_KEYWORDS','alpha'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
 	if (GETPOST('WEBSITE_LANG','aZ09'))         $pagelang=GETPOST('WEBSITE_LANG','aZ09');
 	if (GETPOST('htmlheader','none'))			$pagehtmlheader=GETPOST('htmlheader','none');
 
+	// Title
+	print '<tr><td class="fieldrequired">';
+	print $langs->trans('WEBSITE_TITLE');
+	print '</td><td>';
+	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
+	print '</td></tr>';
+
+	// Alias
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
@@ -2054,12 +2062,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample')?GETPOST('sample'):'corporatehomepage'));
 		print '</td></tr>';
 	}
-
-	print '<tr><td class="fieldrequired">';
-	print $langs->trans('WEBSITE_TITLE');
-	print '</td><td>';
-	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
-	print '</td></tr>';
 
 	print '<tr><td>';
 	print $langs->trans('WEBSITE_DESCRIPTION');

@@ -199,7 +199,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td class="nowrap">';
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
 				print '</tr>';

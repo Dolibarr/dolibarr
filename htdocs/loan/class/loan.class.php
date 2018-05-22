@@ -292,11 +292,18 @@ class Loan extends CommonObject
 	{
 		$this->db->begin();
 
+		if (! is_numeric($this->nbterm))
+		{
+			$this->error='BadValueForParameterForNbTerm';
+			return -1;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan";
 		$sql.= " SET label='".$this->db->escape($this->label)."',";
 		$sql.= " capital='".price2num($this->db->escape($this->capital))."',";
 		$sql.= " datestart='".$this->db->idate($this->datestart)."',";
 		$sql.= " dateend='".$this->db->idate($this->dateend)."',";
+		$sql.= " nbterm=".$this->nbterm.",";
 		$sql.= " accountancy_account_capital = '".$this->db->escape($this->account_capital)."',";
 		$sql.= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
 		$sql.= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
@@ -431,12 +438,12 @@ class Loan extends CommonObject
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
 		$linkend = '</a>';
-			
+
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
 		$result .= $linkend;
-			
+
 		return $result;
 	}
 

@@ -56,10 +56,17 @@ if (empty($senderissupplier)) $senderissupplier=0;
 if (empty($inputalsopricewithtax)) $inputalsopricewithtax=0;
 if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 
+// add html5 elements
+$domData  = ' data-element="'.$line->element.'"';
+$domData .= ' data-id="'.$line->id.'"';
+$domData .= ' data-qty="'.$line->qty.'"';
+$domData .= ' data-product_type="'.$line->product_type.'"';
+
+
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
-<tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; ?>>
+<tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; echo $domData; ?> >
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
@@ -121,20 +128,9 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	    if ($line->fk_product > 0)
 		{
 			echo $form->textwithtooltip($text,$description,3,'','',$i,0,(!empty($line->fk_parent_line)?img_picto('', 'rightarrow'):''));
-
-			// Show range
-			echo get_date_range($line->date_start, $line->date_end, $format);
-
-			// Add description in form
-			if (! empty($conf->global->PRODUIT_DESC_IN_FORM))
-			{
-				print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
-			}
-
 		}
 		else
 		{
-
 			if ($type==1) $text = img_object($langs->trans('Service'),'service');
 			else $text = img_object($langs->trans('Product'),'product');
 
@@ -145,11 +141,35 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 				if (! empty($line->fk_parent_line)) echo img_picto('', 'rightarrow');
 				echo $text.' '.dol_htmlentitiesbr($line->description);
 			}
+		}
 
-			// Show range
-			echo get_date_range($line->date_start,$line->date_end, $format);
+		// Show date range
+		if ($line->element == 'facturedetrec') {
+			if ($line->date_start_fill || $line->date_end_fill) echo '<br><div class="clearboth nowraponall">';
+			if ($line->date_start_fill) echo $langs->trans('AutoFillDateFromShort').': '.yn($line->date_start_fill);
+			if ($line->date_start_fill && $line->date_end_fill) echo ' - ';
+			if ($line->date_end_fill) echo $langs->trans('AutoFillDateToShort').': '.yn($line->date_end_fill);
+			if ($line->date_start_fill || $line->date_end_fill) echo '</div>';
+		}
+		else {
+			if ($line->date_start || $line->date_end) echo '<br><div class="clearboth nowraponall">'.get_date_range($line->date_start, $line->date_end, $format).'</div>';
+			//echo get_date_range($line->date_start, $line->date_end, $format);
+		}
+
+		// Add description in form
+		if ($line->fk_product > 0 && ! empty($conf->global->PRODUIT_DESC_IN_FORM))
+		{
+			print (! empty($line->description) && $line->description!=$line->product_label)?'<br>'.dol_htmlentitiesbr($line->description):'';
 		}
 	}
+
+	if (! empty($conf->accounting->enabled) && $line->fk_accounting_account > 0)
+	{
+		$accountingaccount=new AccountingAccount($this->db);
+		$accountingaccount->fetch($line->fk_accounting_account);
+		echo '<div class="clearboth"></div><br><span class="opacitymedium">' . $langs->trans('AccountingAffectation') . ' : </span>' . $accountingaccount->getNomUrl(0,1,1);
+	}
+
 	?>
 	</td>
 	<?php
@@ -175,7 +195,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 
 	<td align="right" class="linecoluht nowrap"><?php $coldisplay++; ?><?php echo price($line->subprice); ?></td>
 
-	<?php if (!empty($conf->multicurrency->enabled)) { ?>
+	<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
 	<td align="right" class="linecoluht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_subprice); ?></td>
 	<?php } ?>
 
@@ -241,7 +261,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 	<td align="right" class="linecoloption nowrap"><?php $coldisplay++; ?><?php echo $langs->trans('Option'); ?></td>
 	<?php } else { ?>
 	<td align="right" class="liencolht nowrap"><?php $coldisplay++; ?><?php echo price($line->total_ht); ?></td>
-		<?php if (!empty($conf->multicurrency->enabled)) { ?>
+		<?php if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf->currency) { ?>
 		<td align="right" class="linecolutotalht_currency nowrap"><?php $coldisplay++; ?><?php echo price($line->multicurrency_total_ht); ?></td>
 		<?php } ?>
 	<?php } ?>
@@ -251,7 +271,7 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 
 
 	<?php
-	if ($this->statut == 0  && ($object_rights->creer)) { ?>
+	if ($this->statut == 0  && ($object_rights->creer) && $action != 'selectlines' ) { ?>
 	<td class="linecoledit" align="center"><?php $coldisplay++; ?>
 		<?php if (($line->info_bits & 2) == 2 || ! empty($disableedit)) { ?>
 		<?php } else { ?>
@@ -291,14 +311,18 @@ if (empty($outputalsopricetotalwithtax)) $outputalsopricetotalwithtax=0;
 <?php } else { ?>
 	<td colspan="3"><?php $coldisplay=$coldisplay+3; ?></td>
 <?php } ?>
+	<?php  if($action == 'selectlines'){ ?>
+	<td class="linecolcheck" align="center"><input type="checkbox" class="linecheckbox" name="line_checkbox[<?php echo $i+1; ?>]" value="<?php echo $line->id; ?>" ></td>
+	<?php } ?>
+
+</tr>
 
 <?php
 //Line extrafield
 if (!empty($extrafieldsline))
 {
-	print $line->showOptionals($extrafieldsline,'view',array('style'=>$bcdd[$var],'colspan'=>$coldisplay));
+	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcdd[$var],'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 
-</tr>
 <!-- END PHP TEMPLATE objectline_view.tpl.php -->

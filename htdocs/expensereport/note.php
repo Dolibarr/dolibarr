@@ -19,9 +19,9 @@
  */
 
 /**
- *  \file       htdocs/commande/note.php
- *  \ingroup    commande
- *  \brief      Fiche de notes sur une commande
+ *  \file       htdocs/expensereport/note.php
+ *  \ingroup    expensereport
+ *  \brief      Tab for notes on expense reports
  */
 
 require '../main.inc.php';

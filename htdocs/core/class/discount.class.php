@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,7 @@
 
 
 /**
- *		\class      DiscountAbsolute
- *		\brief      Class to manage absolute discounts
+ *		Class to manage absolute discounts
  */
 class DiscountAbsolute
 {
@@ -231,7 +230,7 @@ class DiscountAbsolute
                 return -1;
             }
         }
-        
+
         // Check if we can remove the discount
         if ($this->fk_invoice_supplier_source)
         {
@@ -241,7 +240,7 @@ class DiscountAbsolute
         	$sql.=" OR fk_invoice_supplier IS NOT NULL)"; 			// Not used as credit note and not used as deposit
         	$sql.=" AND fk_invoice_supplier_source = ".$this->fk_invoice_supplier_source;
         	//$sql.=" AND rowid != ".$this->id;
-        	
+
         	dol_syslog(get_class($this)."::delete Check if we can remove discount", LOG_DEBUG);
         	$resql=$this->db->query($sql);
         	if ($resql)
@@ -298,7 +297,7 @@ class DiscountAbsolute
                 }
             }
             elseif($this->fk_invoice_supplier_source) {
-            	
+
             	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn";
             	$sql.=" set paye=0, fk_statut=1";
             	$sql.=" WHERE (type = 2 or type = 3) AND rowid=".$this->fk_invoice_supplier_source;

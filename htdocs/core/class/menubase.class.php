@@ -124,6 +124,9 @@ class Menubase
           else dol_print_error($this->db);
         }
 
+        // TODO
+        // Check that entry does not exists yet on key menu_handler-fk_menu-position-url-entity, to avoid errors with postgresql
+
         // Insert request
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(";
         $sql.= "menu_handler,";

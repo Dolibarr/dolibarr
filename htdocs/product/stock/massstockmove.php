@@ -55,6 +55,7 @@ $idline = GETPOST('idline');
 $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 
 if (!$sortfield) {
     $sortfield = 'p.ref';
@@ -63,7 +64,7 @@ if (!$sortfield) {
 if (!$sortorder) {
     $sortorder = 'ASC';
 }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $listofdata=array();

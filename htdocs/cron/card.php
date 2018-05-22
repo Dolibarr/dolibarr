@@ -614,6 +614,22 @@ else
 	print $langs->trans($object->note);
 	print "</td></tr>";
 
+	if (! empty($conf->multicompany->enabled))
+	{
+		print '<tr><td>';
+		print $langs->trans('Entity')."</td><td>";
+		if (! $object->entity)
+		{
+			print $langs->trans("AllEntities");
+		}
+		else
+		{
+			$mc->getInfo($object->entity);
+			print $mc->label;
+		}
+		print "</td></tr>";
+	}
+
 	print '</table>';
     print '</div>';
 
@@ -694,7 +710,9 @@ else
 
 	print '<tr><td>';
 	print $langs->trans('CronLastResult')."</td><td>";
+	if ($object->lastresult) print '<span class="error">';
 	print $object->lastresult;
+	if ($object->lastresult) print '</span>';
 	print "</td></tr>";
 
 	print '<tr><td>';

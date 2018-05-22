@@ -107,13 +107,13 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
     if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
 }
 
-// $date_start and $date_end are defined. We force $start_year and $nbofyear
+// $date_start and $date_end are defined. We force $year_start and $nbofyear
 $tmps=dol_getdate($date_start);
-$start_year = $tmps['year'];
+$year_start = $tmps['year'];
 $tmpe=dol_getdate($date_end);
 $year_end = $tmpe['year'];
 $nbofyear = ($year_end - $start_year) + 1;
-//var_dump($start_year." ".$end_year." ".$nbofyear);
+//var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES' or 'BOOKKEEPING')
 $modecompta = $conf->global->ACCOUNTING_MODE;
@@ -218,7 +218,7 @@ if ($date_endyear) $param.='&date_endyear='.$date_startyear;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 's.nom, s.rowid','',$param,'',$sortfield,$sortorder,'width200 ');
+print_liste_field_titre("PredefinedGroups", $_SERVER["PHP_SELF"], 'f.thirdparty_code,f.rowid','',$param,'',$sortfield,$sortorder,'width200 ');
 print_liste_field_titre('');
 if ($modecompta == 'BOOKKEEPING')
 {
@@ -253,8 +253,8 @@ if ($modecompta == 'BOOKKEEPING')
 	$sql.= " FROM ".MAIN_DB_PREFIX."accounting_bookkeeping as f";
 	$sql.= ", ".MAIN_DB_PREFIX."accounting_account as aa";
 	$sql.= " WHERE f.numero_compte = aa.account_number";
-	//$sql.= " AND fk_statut in (1,2)";
 	$sql.= " AND ".$predefinedgroupwhere;
+	$sql.= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 	$sql.= " AND f.entity = ".$conf->entity;
 	if (! empty($date_start) && ! empty($date_end))
 		$sql.= " AND f.doc_date >= '".$db->idate($date_start)."' AND f.doc_date <= '".$db->idate($date_end)."'";
@@ -295,7 +295,7 @@ if ($modecompta == 'BOOKKEEPING')
 				if ($showaccountdetail != 'no')
 				{
 					$tmppredefinedgroupwhere="pcg_type = '".$db->escape($objp->pcg_type)."' AND pcg_subtype = '".$db->escape($objp->pcg_subtype)."'";
-					$tmppredefinedgroupwhere.= " AND fk_pcg_version = '".$charofaccountstring."'";
+					$tmppredefinedgroupwhere.= " AND fk_pcg_version = '".$db->escape($charofaccountstring)."'";
 					//$tmppredefinedgroupwhere.= " AND thirdparty_code = '".$db->escape($objp->name)."'";
 
 					// Get cpts of category/group
@@ -312,7 +312,7 @@ if ($modecompta == 'BOOKKEEPING')
 						}
 
 
-						if ($showaccountdetail == 'all' || $resultN > 0)
+						if ($showaccountdetail == 'all' || $resultN <> 0)
 						{
 							print '<tr>';
 							print '<td></td>';

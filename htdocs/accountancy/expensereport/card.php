@@ -28,14 +28,10 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
-$langs->load("trips");
+$langs->loadLangs(array("bills","accountancy","trips"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');

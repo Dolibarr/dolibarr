@@ -99,6 +99,8 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SUBSCRIPTION_MODIFY','Member subscribtion modified','Executed when a member subscribtion is modified','member',24);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('MEMBER_SUBSCRIPTION_DELETE','Member subscribtion deleted','Executed when a member subscribtion is deleted','member',24);
 
+-- VPGSQL8.4 ALTER TABLE llx_product_attribute DROP CONSTRAINT unique_ref;
+
 ALTER TABLE llx_product_attribute_value DROP INDEX unique_ref;
 ALTER TABLE llx_product_attribute_value ADD UNIQUE INDEX uk_product_attribute_value (fk_product_attribute, ref);
 
@@ -197,7 +199,7 @@ ALTER TABLE llx_c_email_templates ADD COLUMN enabled varchar(255) DEFAULT '1';
 ALTER TABLE llx_c_email_templates ADD COLUMN joinfiles varchar(255) DEFAULT '1';
 ALTER TABLE llx_c_email_templates MODIFY COLUMN content mediumtext;
 
-INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'adherent','member','',0,null,null,'(SendAnEMailToMember)',1,1,1,'__(CardContent)__','__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br>\n__(Lastname)__ : __MEMBER_LASTNAME__<br>\n__(Fullname)__ : __MEMBER_FULLNAME__<br>\n__(Company)__ : __MEMBER_COMPANY__<br>\n__(Address)__ : __MEMBER_ADDRESS__<br>\n__(Zip)__ : __MEMBER_ZIP__<br>\n__(Town)__ : __MEMBER_TOWN__<br>\n__(Country)__ : __MEMBER_COUNTRY__<br>\n__(Email)__ : __MEMBER_EMAIL__<br>\n__(Birthday)__ : __MEMBER_BIRTH__<br>\n__(Photo)__ : __MEMBER_PHOTO__<br>\n__(Login)__ : __MEMBER_LOGIN__<br>\n__(Password)__ : __MEMBER_PASSWORD__<br>\n__(Phone)__ : __MEMBER_PHONE__<br>\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br>\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null);
+INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'adherent','member','',0,null,null,'(SendingAnEMailToMember)',1,1,1,'__(CardContent)__','__(Hello)__,<br><br>\n\n__(ThisIsContentOfYourCard)__<br>\n__(ID)__ : __ID__<br>\n__(Civiliyty)__ : __MEMBER_CIVILITY__<br>\n__(Firstname)__ : __MEMBER_FIRSTNAME__<br>\n__(Lastname)__ : __MEMBER_LASTNAME__<br>\n__(Fullname)__ : __MEMBER_FULLNAME__<br>\n__(Company)__ : __MEMBER_COMPANY__<br>\n__(Address)__ : __MEMBER_ADDRESS__<br>\n__(Zip)__ : __MEMBER_ZIP__<br>\n__(Town)__ : __MEMBER_TOWN__<br>\n__(Country)__ : __MEMBER_COUNTRY__<br>\n__(Email)__ : __MEMBER_EMAIL__<br>\n__(Birthday)__ : __MEMBER_BIRTH__<br>\n__(Photo)__ : __MEMBER_PHOTO__<br>\n__(Login)__ : __MEMBER_LOGIN__<br>\n__(Password)__ : __MEMBER_PASSWORD__<br>\n__(Phone)__ : __MEMBER_PHONE__<br>\n__(PhonePerso)__ : __MEMBER_PHONEPRO__<br>\n__(PhoneMobile)__ : __MEMBER_PHONEMOBILE__<br><br>\n__(Sincerely)__<br>__USER_SIGNATURE__',null);
 INSERT INTO llx_c_email_templates (entity,module,type_template,lang,private,fk_user,datec,label,position,enabled,active,topic,content,content_lines) VALUES (0,'banque','thirdparty','',0,null,null,'(YourSEPAMandate)',1,1,0,'__(YourSEPAMandate)__','__(Hello)__,<br><br>\n\n__(FindYourSEPAMandate)__ :<br>\n__MYCOMPANY_NAME__<br>\n__MYCOMPANY_FULLADDRESS__<br><br>\n__(Sincerely)__<br>\n__USER_SIGNATURE__',null);
 
 INSERT INTO llx_c_accounting_category (rowid, code, label, range_account, sens, category_type, formula, position, fk_country, active) VALUES (  1, 'VENTES',    'Income of products/services',               'Exemple: 7xxxxx', 0, 0, '',                '10', 1, 1);
@@ -528,6 +530,9 @@ CREATE TABLE llx_comment (
 
 DELETE FROM llx_const where name = __ENCRYPT('MAIN_SHOW_WORKBOARD')__;
 
+-- Adherent - Update old constants
+UPDATE llx_const SET value = REPLACE(value, '%', '__') WHERE name LIKE 'ADHERENT%'; 
+
 -- Accountancy - Remove old constants
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_SELL_JOURNAL')__;
 DELETE FROM llx_const WHERE name = __ENCRYPT('ACCOUNTING_PURCHASE_JOURNAL')__;
@@ -572,21 +577,21 @@ ALTER TABLE llx_c_email_senderprofile ADD UNIQUE INDEX uk_c_email_senderprofile(
 -- Add new chart of account entries
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 67,'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  7,'ENG-BASE',  'England plan', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 49,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 60,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 24,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 65,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 71,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 72,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 21,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 16,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 87,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (147,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (168,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 73,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 22,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 66,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 15,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 49,'SYSCOHADA-BJ', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 60,'SYSCOHADA-BF', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 24,'SYSCOHADA-CM', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 65,'SYSCOHADA-CF', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 71,'SYSCOHADA-KM', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 72,'SYSCOHADA-CG', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 21,'SYSCOHADA-CI', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 16,'SYSCOHADA-GA', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 87,'SYSCOHADA-GQ', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (147,'SYSCOHADA-ML', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (168,'SYSCOHADA-NE', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 73,'SYSCOHADA-CD', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 22,'SYSCOHADA-SN', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 66,'SYSCOHADA-TD', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 15,'SYSCOHADA-TG', 'Plan comptable Ouest-Africain', 1);
 
 
 -- Update old chart of account entries
@@ -704,4 +709,11 @@ create table llx_facture_rec_extrafields
 ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (fk_object);
 
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
+
+-- drop very old table (bad name)
+DROP TABLE llx_c_accountancy_category;
+
+
+UPDATE llx_cronjob set entity = 1 where entity = 0 and label in ('RecurringInvoices', 'SendEmailsReminders');
+UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTemporaryFilesShort', 'MakeLocalDatabaseDumpShort');
 

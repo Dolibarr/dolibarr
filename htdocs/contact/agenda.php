@@ -101,7 +101,7 @@ if (! $sortfield) $sortfield='a.datep, a.id';
 if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contactcard','globalcard'));
+$hookmanager->initHooks(array('contactagenda','globalcard'));
 
 
 /*

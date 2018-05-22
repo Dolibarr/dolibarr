@@ -262,7 +262,7 @@ if (empty($user->societe_id))
 	    );
 	    // Dashboard Link lines
 	    $links=array(
-	        DOL_URL_ROOT.'/user/index.php',
+	        DOL_URL_ROOT.'/user/list.php',
     	    DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=p&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',

@@ -37,7 +37,7 @@ $socid = GETPOST('socid', 'int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'loan', '', '', '');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -91,6 +91,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -111,6 +116,14 @@ if ($resql)
     if ($search_amount) $param.="&amp;search_amount=".urlencode($search_amount_ht);
     if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
 
+    $newcardbutton='';
+    if ($user->rights->loan->write)
+    {
+    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create">'.$langs->trans('NewLoan');
+    	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+    	$newcardbutton.= '</a>';
+    }
+
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">'."\n";
     if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -120,7 +133,7 @@ if ($resql)
     print '<input type="hidden" name="page" value="'.$page.'">';
 	print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 
-    print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, '', '', $limit);
+	print_barre_liste($langs->trans("Loans"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy.png', 0, $newcardbutton, '', $limit);
 
     print '<div class="div-table-responsive">';
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";

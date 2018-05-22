@@ -37,13 +37,13 @@ CronDtLastLaunch=Start date of latest execution
 CronDtLastResult=End date of latest execution
 CronFrequency=Frequentie
 CronClass=Class
-CronMethod=Methode
+CronMethod=Wijze
 CronModule=Module
 CronNoJobs=Geen taken opgenomen
 CronPriority=Prioriteit
 CronLabel=Naam
 CronNbRun=Nb. launch
-CronMaxRun=Max nb. launch
+CronMaxRun=Max number launch
 CronEach=Elke
 JobFinished=Taak gestart en be-eindigd
 #Page card
@@ -67,16 +67,17 @@ CronObjectHelp=The object name to load. <BR> For exemple to call the fetch metho
 CronMethodHelp=The object method to launch. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for method is<br><i>fetch</i>
 CronArgsHelp=The method arguments. <BR> For exemple to call the fetch method of Dolibarr Product object /htdocs/product/class/product.class.php, the value for paramters can be<br><i>0, ProductRef</i>
 CronCommandHelp=The system command line to execute.
-CronCreateJob=Create new Scheduled Job
+CronCreateJob=Aanmaken nieuwe geplande taak
 CronFrom=Van
 # Info
 # Common
 CronType=Job type
 CronType_method=Call method of a PHP Class
 CronType_command=Shell commando
-CronCannotLoadClass=Kan klasse %s of object %s niet laden
+CronCannotLoadClass=Cannot load class file %s (to use class %s)
+CronCannotLoadObject=Class file %s was loaded, but object %s was not found into it
 UseMenuModuleToolsToAddCronJobs=Go into menu "Home - Admin tools - Scheduled jobs" to see and edit scheduled jobs.
 JobDisabled=Job disabled
 MakeLocalDatabaseDumpShort=Local database backup
-MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, nb of backup files to keep
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep
 WarningCronDelayed=Attention, for performance purpose, whatever is next date of execution of enabled jobs, your jobs may be delayed to a maximum of %s hours, before being run.

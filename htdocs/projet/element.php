@@ -146,7 +146,7 @@ $morehtmlref.='</div>';
 if (! $user->rights->projet->all->lire)
 {
     $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+    $object->next_prev_filter=" te.rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -1137,9 +1137,12 @@ foreach ($listofreferent as $key => $value)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else // error
+		else
 		{
-			print $elementarray;
+			if (! is_array($elementarray))	// error
+			{
+				print $elementarray;
+			}
 		}
 		print "</table>";
 		print "<br>\n";

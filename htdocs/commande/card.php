@@ -28,9 +28,9 @@
  */
 
 /**
- * \file htdocs/commande/card.php
+ * \file 	htdocs/commande/card.php
  * \ingroup commande
- * \brief Page to show customer order
+ * \brief 	Page to show customer order
  */
 
 require '../main.inc.php';
@@ -56,15 +56,7 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
-$langs->load('orders');
-$langs->load('sendings');
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('propal');
-$langs->load('deliveries');
-$langs->load('sendings');
-$langs->load('products');
-$langs->load('other');
+$langs->loadLangs(array('orders','sendings','companies','bills','propal','deliveries','products','other'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
@@ -76,6 +68,7 @@ $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');
 $confirm = GETPOST('confirm', 'alpha');
 $lineid = GETPOST('lineid', 'int');
+$projectid = GETPOST('projectid', 'int');
 $origin = GETPOST('origin', 'alpha');
 $originid = (GETPOST('originid', 'int') ? GETPOST('originid', 'int') : GETPOST('origin_id', 'int')); // For backward compatibility
 
@@ -228,7 +221,7 @@ if (empty($reshook))
 	// Link to a project
 	else if ($action == 'classin' && $user->rights->commande->creer)
 	{
-		$object->setProject(GETPOST('projectid'));
+		$object->setProject(GETPOST('projectid','int'));
 	}
 
 	// Add order
@@ -259,8 +252,8 @@ if (empty($reshook))
 			$object->note_private = GETPOST('note_private','none');
 			$object->note_public = GETPOST('note_public','none');
 			$object->source = GETPOST('source_id');
-			$object->fk_project = GETPOST('projectid');
-			$object->ref_client = GETPOST('ref_client');
+			$object->fk_project = GETPOST('projectid','int');
+			$object->ref_client = GETPOST('ref_client','alpha');
 			$object->modelpdf = GETPOST('model');
 			$object->cond_reglement_id = GETPOST('cond_reglement_id');
 			$object->mode_reglement_id = GETPOST('mode_reglement_id');
@@ -1277,24 +1270,16 @@ if (empty($reshook))
 
 		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			$hookmanager->initHooks(array('orderdao'));
-			$parameters = array('id' => $object->id);
-			$reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-																								  // some hooks
-			if (empty($reshook)) {
-				$result = $object->insertExtraFields('ORDER_MODIFY');
-				if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-			} else if ($reshook < 0)
+			// Actions on extra fields
+			$result = $object->insertExtraFields('ORDER_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
 				$error++;
+			}
 		}
 
-		if ($error)
-			$action = 'edit_extras';
+		if ($error) $action = 'edit_extras';
 	}
 
 	if ($action == 'set_thirdparty' && $user->rights->commande->creer)
@@ -1391,7 +1376,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 	if ($socid > 0)
 		$res = $soc->fetch($socid);
 
-	$projectid = 0;
 	$remise_absolue = 0;
 
 	$currency_code = $conf->currency;
@@ -1450,7 +1434,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$ref_client = (! empty($objectsrc->ref_client) ? $objectsrc->ref_client : '');
 
 			$soc = $objectsrc->thirdparty;
-			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:1));
+			$cond_reglement_id	= (!empty($objectsrc->cond_reglement_id)?$objectsrc->cond_reglement_id:(!empty($soc->cond_reglement_id)?$soc->cond_reglement_id:0)); // TODO maybe add default value option
 			$mode_reglement_id	= (!empty($objectsrc->mode_reglement_id)?$objectsrc->mode_reglement_id:(!empty($soc->mode_reglement_id)?$soc->mode_reglement_id:0));
 			$fk_account         = (! empty($objectsrc->fk_account)?$objectsrc->fk_account:(! empty($soc->fk_account)?$soc->fk_account:0));
 			$availability_id	= (!empty($objectsrc->availability_id)?$objectsrc->availability_id:(!empty($soc->availability_id)?$soc->availability_id:0));
@@ -1488,14 +1472,12 @@ if ($action == 'create' && $user->rights->commande->creer)
 		$remise_percent     = $soc->remise_percent;
 		$remise_absolue     = 0;
 		$dateorder          = empty($conf->global->MAIN_AUTOFILL_DATE_ORDER)?-1:'';
-		$projectid          = 0;
 
 		if (!empty($conf->multicurrency->enabled) && !empty($soc->multicurrency_code)) $currency_code = $soc->multicurrency_code;
 
 		$note_private = $object->getDefaultCreateValueFor('note_private');
 		$note_public = $object->getDefaultCreateValueFor('note_public');
 	}
-
 
 	print '<form name="crea_commande" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
 	print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
@@ -1662,7 +1644,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 	$parameters = array('objectsrc' => $objectsrc, 'socid'=>$socid);
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
 	print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 		print $object->showOptionals($extrafields, 'edit');
 	}
 
@@ -1988,17 +1970,17 @@ if ($action == 'create' && $user->rights->commande->creer)
 			{
 				if ($action != 'classify')
 					$morehtmlref.='<a href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
-					if ($action == 'classify') {
-						//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
-						$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
-						$morehtmlref.='<input type="hidden" name="action" value="classin">';
-						$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-						$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
-						$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
-						$morehtmlref.='</form>';
-					} else {
-						$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
-					}
+				if ($action == 'classify') {
+					//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+					$morehtmlref.='<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+					$morehtmlref.='<input type="hidden" name="action" value="classin">';
+					$morehtmlref.='<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+					$morehtmlref.=$formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+					$morehtmlref.='<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+					$morehtmlref.='</form>';
+				} else {
+					$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+				}
 			} else {
 				if (! empty($object->fk_project)) {
 					$proj = new Project($db);
@@ -2459,7 +2441,7 @@ if ($action == 'create' && $user->rights->commande->creer)
 		/*
 		 * Form to add new line
 		 */
-		if ($object->statut == Commande::STATUS_DRAFT && $user->rights->commande->creer)
+		if ($object->statut == Commande::STATUS_DRAFT && $user->rights->commande->creer && $action != 'selectlines')
 		{
 			if ($action != 'editline')
 			{
@@ -2490,9 +2472,9 @@ if ($action == 'create' && $user->rights->commande->creer)
 				// Send
 				if ($object->statut > Commande::STATUS_DRAFT) {
 					if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) || $user->rights->commande->order_advance->send)) {
-						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a></div>';
 					} else
-						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendByMail') . '</a></div>';
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">' . $langs->trans('SendMail') . '</a></div>';
 				}
 
 				// Valid
@@ -2631,9 +2613,8 @@ if ($action == 'create' && $user->rights->commande->creer)
 			$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem);
 
 			// Show online payment link
-			//$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
-			$useonlinepayment = $conf->global->ORDER_SHOW_ONLINE_PAYMENT_ON_ORDER;
-
+			$useonlinepayment = (! empty($conf->paypal->enabled) || ! empty($conf->stripe->enabled) || ! empty($conf->paybox->enabled));
+			if (! empty($conf->global->ORDER_HIDE_ONLINE_PAYMENT_ON_ORDER)) $useonlinepayment = 0;
 			if ($object->statut != Commande::STATUS_DRAFT && $useonlinepayment)
 			{
 				print '<br><!-- Link to pay -->';

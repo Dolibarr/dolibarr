@@ -228,7 +228,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
     if (! $user->rights->societe->client->voir && ! $socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE p.fk_statut = 0";
     $sql.= " AND p.fk_soc = s.rowid";
-    $sql.= " AND p.entity IN (".getEntity('propal').")";
+    $sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
     if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid)	$sql.= " AND s.rowid = ".$socid;
 
@@ -266,7 +266,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
                 $companystatic->code_client = $obj->code_client;
                 $companystatic->code_fournisseur = $obj->code_fournisseur;
                 $companystatic->canvas=$obj->canvas;
-                print $companystatic->getNomUrl(1,'customer',16);
+                print $companystatic->getNomUrl(1,'supplier',16);
                 print '</td>';
                 print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
                 $i++;
@@ -349,7 +349,12 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 $companystatic->canvas=$obj->canvas;
 				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
-				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
+					print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
+				}
+				else {
+					print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				}
 				$i++;
 				$total += $obj->total_ttc;
 			}
@@ -432,7 +437,12 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
                 $companystatic->canvas=$obj->canvas;
                 print $companystatic->getNomUrl(1,'supplier',16);
                 print '</td>';
-                print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
+					print '<td align="right" class="nowrap">'.price($obj->total_ht).'</td></tr>';
+				}
+				else {
+					print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td></tr>';
+				}
                 $i++;
                 $total += $obj->total_ttc;
             }
@@ -744,7 +754,12 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
                 print '</td>';
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
+					print '<td align="right">'.price($obj->total_ht).'</td>';
+				}
+				else {
+					print '<td align="right">'.price($obj->total_ttc).'</td>';
+				}
 				print '<td align="center" width="14">'.$propalstatic->LibStatut($obj->fk_statut,3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;
@@ -843,7 +858,12 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
                 print '</td>';
 				print '<td align="right">';
 				print dol_print_date($db->jdate($obj->dp),'day').'</td>'."\n";
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				if(! empty($conf->global->MAIN_DASHBOARD_USE_TOTAL_HT)) {
+					print '<td align="right">'.price($obj->total_ht).'</td>';
+				}
+				else {
+					print '<td align="right">'.price($obj->total_ttc).'</td>';
+				}
 				print '<td align="center" width="14">'.$orderstatic->LibStatut($obj->fk_statut,$obj->billed,3).'</td>'."\n";
 				print '</tr>'."\n";
 				$i++;

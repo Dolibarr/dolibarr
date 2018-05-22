@@ -29,8 +29,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
-$langs->load("bills");
-$langs->load("accountancy");
+$langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';
 $id = GETPOST('id', 'int');
@@ -53,6 +52,11 @@ if (empty($user->rights->accounting->chartofaccount))
 
 $accountingcategory = new AccountancyCategory($db);
 
+
+/*
+ * Actions
+ */
+
 // si ajout de comptes
 if (! empty($selectcpt)) {
 	$cpts = array ();
@@ -66,7 +70,7 @@ if (! empty($selectcpt)) {
 	if ($return<0) {
 		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
 	}
 }
 if ($action == 'delete') {
@@ -83,12 +87,13 @@ if ($action == 'delete') {
 /*
  * View
  */
+
 $form = new Form($db);
 $formaccounting = new FormAccounting($db);
 
 llxheader('', $langs->trans('AccountingCategory'));
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 print load_fiche_titre($langs->trans('AccountingCategory'), $linkback);
 
@@ -99,13 +104,15 @@ print '<input type="hidden" name="action" value="display">';
 dol_fiche_head();
 
 print '<table class="border" width="100%">';
-// Category
+
+// Select the category
 print '<tr><td class="titlefield">' . $langs->trans("AccountingCategory") . '</td>';
 print '<td>';
 $formaccounting->select_accounting_category($cat_id, 'account_category', 1, 0, 0, 1);
 print '<input class="button" type="submit" value="' . $langs->trans("Select") . '">';
 print '</td></tr>';
 
+// Select the accounts
 if (! empty($cat_id))
 {
 	$return = $accountingcategory->getAccountsWithNoCategory($cat_id);
@@ -153,7 +160,7 @@ if ($action == 'display' || $action == 'delete') {
 	print "</tr>\n";
 
 	if (! empty($cat_id)) {
-		$return = $accountingcategory->display($cat_id);
+		$return = $accountingcategory->display($cat_id);	// This load ->lines_display
 		if ($return < 0) {
 			setEventMessages(null, $accountingcategory->errors, 'errors');
 		}

@@ -35,7 +35,7 @@ if (! $user->rights->bookmark->lire) {
     restrictedArea($user, 'bookmarks');
 }
 
-$id=GETPOST("id");
+$id=GETPOST("id",'int');
 $action=GETPOST("action","alpha");
 $title=GETPOST("title","alpha");
 $url=GETPOST("url","alpha");

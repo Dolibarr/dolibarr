@@ -42,24 +42,52 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
  */
 class pdf_crabe extends ModelePDFFactures
 {
-    var $db;
-    var $name;
-    var $description;
-	var $update_main_doc_field;	// Save the name of generated file as the main doc when generating a doc with this template
-    var $type;
+     /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
-    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-    var $version = 'dolibarr';
+	/**
+     * @var string model name
+     */
+    public $name;
 
-    var $page_largeur;
-    var $page_hauteur;
-    var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
 
-	var $emetteur;	// Objet societe qui emet
+    /**
+     * @var int 	Save the name of generated file as the main doc when generating a doc with this template
+     */
+    public $update_main_doc_field;
+
+	/**
+     * @var string document type
+     */
+    public $type;
+
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+     */
+	public $phpmin = array(5, 2);
+
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+    public $page_largeur;
+    public $page_hauteur;
+    public $format;
+	public $marge_gauche;
+	public $marge_droite;
+	public $marge_haute;
+	public $marge_basse;
+
+	public $emetteur;	// Objet societe qui emet
 
 	/**
 	 * @var bool Situation invoice type
@@ -81,8 +109,8 @@ class pdf_crabe extends ModelePDFFactures
 	{
 		global $conf,$langs,$mysoc;
 
-		$langs->load("main");
-		$langs->load("bills");
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "crabe";
@@ -154,7 +182,7 @@ class pdf_crabe extends ModelePDFFactures
 		$this->localtax2=array();
 		$this->atleastoneratenotnull=0;
 		$this->atleastonediscount=0;
-		$this->situationinvoice=False;
+		$this->situationinvoice=false;
 	}
 
 
@@ -177,11 +205,8 @@ class pdf_crabe extends ModelePDFFactures
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
 
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
+		// Translations
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies"));
 
 		$nblignes = count($object->lines);
 
@@ -276,7 +301,7 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
 
                 // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
 				    $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
 				    $tplidx = $pdf->importPage(1);
@@ -317,7 +342,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Situation invoice handling
 				if ($object->situation_cycle_ref)
 				{
-					$this->situationinvoice = True;
+					$this->situationinvoice = true;
 					$progress_width = 18;
 					$this->posxtva -= $progress_width;
 					$this->posxup -= $progress_width;
@@ -1517,12 +1542,10 @@ class pdf_crabe extends ModelePDFFactures
 	 */
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
 
-		$outputlangs->load("main");
-		$outputlangs->load("bills");
-		$outputlangs->load("propal");
-		$outputlangs->load("companies");
+		// Translations
+		$outputlangs->loadLangs(array("main", "bills", "propal", "companies"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
@@ -1692,7 +1715,7 @@ class pdf_crabe extends ModelePDFFactures
 		if ($showaddress)
 		{
 			// Sender properties
-			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+			$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 			// Show sender
 			$posy=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 40 : 42;

@@ -8,7 +8,17 @@ WarehouseEdit=Edició magatzem
 MenuNewWarehouse=Nou magatzem
 WarehouseSource=Magatzem origen
 WarehouseSourceNotDefined=Sense magatzems definits,
+<<<<<<< HEAD
+AddWarehouse=Create warehouse
+=======
+AddWarehouse=Crea un magatzem
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 AddOne=Afegir un
+<<<<<<< HEAD
+DefaultWarehouse=Default warehouse
+=======
+DefaultWarehouse=Magatzem predeterminat
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 WarehouseTarget=Magatzem destinació
 ValidateSending=Elimina l'enviament
 CancelSending=Cancel·la l'enviament
@@ -22,6 +32,11 @@ Movements=Moviments
 ErrorWarehouseRefRequired=El nom de referència del magatzem és obligatori
 ListOfWarehouses=Llistat de magatzems
 ListOfStockMovements=Llistat de moviments de estoc
+<<<<<<< HEAD
+ListOfInventories=List of inventories
+=======
+ListOfInventories=Llista d'inventaris
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 MovementId=ID del moviment
 StockMovementForId=ID de moviment %d
 ListMouvementStockProject=Llista de moviments d'estoc associats al projecte

@@ -6,6 +6,7 @@
  * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,15 +60,12 @@ $object=new Societe($db);
 $objectwebsiteaccount=new WebsiteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
-$hookmanager->initHooks(array('websiteaccountlist'));     // Note that conf->hooks_modules contains array
+$hookmanager->initHooks(array('websitethirdpartylist'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
 $extralabels = $extrafields->fetch_name_optionals_label('websiteaccount');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 unset($objectwebsiteaccount->fields['fk_soc']);		// Remove this field, we are already on the thirdparty
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('websitethirdparty'));
 
 // Initialize array of search criterias
 $search_all=trim(GETPOST("search_all",'alpha'));
@@ -223,12 +221,16 @@ print '</div>';
 
 dol_fiche_end();
 
-$morehtmlcenter = '';
+$newcardbutton = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$morehtmlcenter .= '<a class="butAction" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount") . '</a>';
+		$newcardbutton .= '<a class="butActionNew" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount");
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	} else {
-		$morehtmlcenter .= '<a class="butActionRefused" href="#">' . $langs->trans("AddAction") . '</a>';
+		$newcardbutton .= '<a class="butActionNewRefused" href="#">' . $langs->trans("AddAction");
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 }
 
@@ -290,6 +292,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -325,7 +332,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="id" value="'.$id.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $morehtmlcenter, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, '', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="websiteaccount";
@@ -404,7 +411,7 @@ foreach($objectwebsiteaccount->fields as $key => $val)
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $objectwebsiteaccount);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";

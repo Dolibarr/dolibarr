@@ -259,6 +259,10 @@ INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (20
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2022, 202,'9.5', '0', 'VAT reduced rate', 1);
 INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2023, 202,  '0', '0', 'VAT Rate 0', 1);
 
+-- SOUTH AFRICA (id country=205)
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2051, 205, '15', '0', 'VAT standard rate', 1);
+INSERT INTO llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) VALUES (2053, 205,  '0', '0', 'VAT Rate 0', 1);
+
 -- SPAIN (id country=4)
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values ( 41, 4,'21','0','5.2','3','-19:-15:-9','5','VAT standard rate',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,localtax1,localtax1_type,localtax2,localtax2_type,note,active) values ( 42, 4,'10','0','1.4','3','-19:-15:-9','5','VAT reduced rate',1);
