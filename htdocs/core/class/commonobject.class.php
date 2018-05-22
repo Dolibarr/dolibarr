@@ -4981,7 +4981,9 @@ abstract class CommonObject
 		$out='';
                 $type='';
                 $param['options']=array();
-		$keyprefix = $keyprefix.'options_';		// Because we work on extrafields
+                $size =$this->fields[$key]['size'];
+		$keyprefix = $keyprefix.'options_';
+                // Because we work on extrafields
                 if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
                     $param['options']=array($reg[1].':'.$reg[2]=>'N');
                     $type ='link';
@@ -4992,6 +4994,19 @@ abstract class CommonObject
                    
                     $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
                     $type ='sellist';
+                }else if(preg_match('/varchar\((\d+)\)/', $val['type'],reg)){
+                   
+                    $param['options']=array();
+                    $type ='varchar';
+                    $size=$reg[1];
+                }else if(preg_match('/varchar/', $val['type'])){
+                   
+                    $param['options']=array();
+                    $type ='varchar';
+                }else if(is_array($this->fields[$key]['arrayofkeyval'])){
+                   
+                    $param['options']=$this->fields[$key]['arrayofkeyval'];
+                    $type ='select';
                 }else {
                     $param['options']=array();
                     $type =$this->fields[$key]['type'];
@@ -5002,12 +5017,12 @@ abstract class CommonObject
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
 		$default=$this->fields[$key]['default'];
 		$computed=$this->fields[$key]['computed'];
-		//$unique=$this->fields[$key]['unique'];
+		$unique=$this->fields[$key]['unique'];
 		$required=$this->fields[$key]['required'];
 		
-		//$langfile=$this->fields[$key]['label'];
-		//$list=$this->fields[$key]['arrayofkeyval'];
-		$hidden=!$this->fields[$key]['visible'];
+		$langfile=$this->fields[$key]['langfile'];
+		$list=$this->fields[$key]['list'];
+		$hidden=abs($this->fields[$key]['visible'])!=1?1:0;
 
 		if ($computed)
 		{
@@ -5141,7 +5156,7 @@ abstract class CommonObject
 			}
 
 			$out.='<select class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" '.($moreparam?$moreparam:'').'>';
-			$out.='<option value="0">&nbsp;</option>';
+                if((! isset($this->fields[$key]['default'])) ||($this->fields[$key]['notnull']!=1))$out.='<option value="0">&nbsp;</option>';
 			foreach ($param['options'] as $key => $val)
 			{
 				if ((string) $key == '') continue;
