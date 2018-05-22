@@ -478,6 +478,24 @@ class FormFile
 					$modellist=ModelePDFProductBatch::liste_modeles($this->db);
 				}
 			}
+			elseif ($modulepart == 'stock')
+			{
+				if (is_array($genallowed)) $modellist=$genallowed;
+				else
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_stock.class.php';
+					$modellist=ModelePDFStock::liste_modeles($this->db);
+				}
+			}
+			elseif ($modulepart == 'mouvement')
+			{
+				if (is_array($genallowed)) $modellist=$genallowed;
+				else
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_stock.class.php';
+					$modellist=ModelePDFMouvement::liste_modeles($this->db);
+				}
+			}
 			elseif ($modulepart == 'export')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
