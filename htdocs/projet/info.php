@@ -97,6 +97,7 @@ if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
+	if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
     $object->info($object->id);
 }
 
