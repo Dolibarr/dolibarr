@@ -76,6 +76,8 @@ class Orders extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+	// Add billing contacts ids
+        $this->commande->billing_contacts_ids = $this->commande->liste_contact(-1,'external',1,'BILLING');
         $this->commande->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->commande);
     }
@@ -159,6 +161,8 @@ class Orders extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $commande_static = new Commande($db);
                 if($commande_static->fetch($obj->rowid)) {
+ 		    // Add billing contacts ids
+                    $commande_static->billing_contacts_ids = $commande_static->liste_contact(-1,'external',1,'BILLING');
                     $obj_ret[] = $this->_cleanObjectDatas($commande_static);
                 }
                 $i++;
