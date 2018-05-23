@@ -1459,7 +1459,7 @@ if (empty($reshook))
 						        // Check if discount not already affected to another invoice
 						        if ($discount->fk_facture_line > 0)
 						        {
-						            unset($object->lines[$i]);
+						            $line->fk_remise_except = 0;
 						        }
 						    }
 						}

@@ -599,7 +599,8 @@ class FormCompany
 						var method = obj.method;
 						var url = obj.url;
 						var htmlname = obj.htmlname;
-			    		console.log("Run runJsCodeForEvent-'.$htmlname.' from selectCompaniesForNewContact id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
+						var showempty = obj.showempty;
+						console.log("Run runJsCodeForEvent-'.$htmlname.' from selectCompaniesForNewContact id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 						$.getJSON(url,
 							{
 								action: method,
