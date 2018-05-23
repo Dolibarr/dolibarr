@@ -451,7 +451,7 @@ abstract class CommonObject
 	 *  @param		int		    $withregion			1=Add region into address string
 	 *	@return		string							Full address string
 	 */
-	function getFullAddress($withcountry=0,$sep="\n",$withregion=0)
+	function getFullAddress($withcountry=0, $sep="\n", $withregion=0)
 	{
 		if ($withcountry && $this->country_id && (empty($this->country_code) || empty($this->country)))
 		{
@@ -2660,7 +2660,7 @@ abstract class CommonObject
 			$this->multicurrency_total_ttc  += isset($this->revenuestamp)?($this->revenuestamp * $multicurrency_tx):0;
 
 			// Situations totals
-			if ($this->situation_cycle_ref && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits'))
+			if ($this->situation_cycle_ref && $this->situation_counter > 1 && method_exists($this, 'get_prev_sits') && $this->type != $this::TYPE_CREDIT_NOTE )
 			{
 				$prev_sits = $this->get_prev_sits();
 
@@ -2704,7 +2704,7 @@ abstract class CommonObject
 						$sql .= ", multicurrency_total_ttc='".price2num($this->multicurrency_total_ttc, 'MT', 1)."'";
 				$sql .= ' WHERE rowid = '.$this->id;
 
-				//print "xx".$sql;
+
 				dol_syslog(get_class($this)."::update_price", LOG_DEBUG);
 				$resql=$this->db->query($sql);
 				if (! $resql)

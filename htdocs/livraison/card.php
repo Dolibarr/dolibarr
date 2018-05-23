@@ -45,11 +45,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+$langs->loadLangs(array("sendings","bills",'deliveries','orders'));
 
-$langs->load("sendings");
-$langs->load("bills");
-$langs->load('deliveries');
-$langs->load('orders');
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 
 $action=GETPOST('action', 'alpha');
@@ -77,9 +74,11 @@ include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be inclu
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('deliverycard','globalcard'));
 
+
 /*
  * Actions
  */
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 
@@ -245,9 +244,16 @@ if ($action == 'update_extras_line')
 }
 
 
+// Actions to build doc
+$upload_dir = $conf->expedition->dir_output.'/receipt';
+$permissioncreate = $user->rights->expedition->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+
 /*
  * Build document
  */
+/*
 if ($action == 'builddoc')	// En get ou en post
 {
 	// Save last template used to generate document
@@ -283,6 +289,7 @@ elseif ($action == 'remove_file')
 	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
+*/
 
 
 /*

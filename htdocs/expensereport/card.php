@@ -1346,6 +1346,7 @@ if ($action == 'create')
 	print '</td>';
 	print '</tr>';
 
+	// User for expense report
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
 	print '<td>';
@@ -1358,6 +1359,7 @@ if ($action == 'create')
 	print '</td>';
 	print '</tr>';
 
+	// Approver
 	print '<tr>';
 	print '<td>'.$langs->trans("VALIDATOR").'</td>';
 	print '<td>';

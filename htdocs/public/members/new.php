@@ -35,8 +35,9 @@
  *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOLOGIN'))		define("NOLOGIN",1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))		define('NOIPCHECK','1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -356,7 +357,7 @@ if ($action == 'add')
                 if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                     if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
@@ -373,51 +374,51 @@ if ($action == 'add')
             	else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($conf->global->PAYBOX_SECURITY_TOKEN))
+                    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                    	if (! empty($conf->global->PAYBOX_SECURITY_TOKEN_UNIQUE))
+                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                     	{
-                    		$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYBOX_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    		$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                     	}
                     	else
                     	{
-                    		$urlback.='&securekey='.urlencode($conf->global->PAYBOX_SECURITY_TOKEN);
+                    		$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                     	}
                     }
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+                    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        	$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
-                            $urlback.='&securekey='.urlencode($conf->global->PAYPAL_SECURITY_TOKEN);
+                        	$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
                 }
 				else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
-                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($conf->global->STRIPE_SECURITY_TOKEN))
+                    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                        if (! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
+                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->STRIPE_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        	$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
-                            $urlback.='&securekey='.urlencode($conf->global->STRIPE_SECURITY_TOKEN);
+                        	$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
                 }

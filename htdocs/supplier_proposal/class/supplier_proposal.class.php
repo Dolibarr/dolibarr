@@ -72,7 +72,8 @@ class SupplierProposal extends CommonObject
 	 * @see user_author_id
 	 */
     var $author;
-	var $ref_fourn;  //Reference saisie lors de l'ajout d'une ligne à la demande
+    var $ref_fourn;					//Reference saisie lors de l'ajout d'une ligne à la demande
+    var $ref_supplier;				//Reference saisie lors de l'ajout d'une ligne à la demande
     var $statut;					// 0 (draft), 1 (validated), 2 (signed), 3 (not signed), 4 (processed/billed)
     var $date;						// Date of proposal
     var $date_livraison;
@@ -350,7 +351,7 @@ class SupplierProposal extends CommonObject
      *      @param		int			$pa_ht				Buying price without tax
      *      @param		string		$label				???
      *      @param		array		$array_option		extrafields array
-	 * 		@param		string		$ref_fourn			Supplier price reference
+	 * 		@param		string		$ref_supplier			Supplier price reference
 	 * 		@param		int			$fk_unit			Id of the unit to use.
 	 * 		@param		string		$origin				'order', 'supplier_proposal', ...
 	 * 		@param		int			$origin_id			Id of origin line
@@ -359,7 +360,7 @@ class SupplierProposal extends CommonObject
      *
      *    	@see       	add_product
      */
-    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$array_option=0, $ref_fourn='', $fk_unit='', $origin='', $origin_id=0, $pu_ht_devise=0)
+    function addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1=0, $txlocaltax2=0, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc=0, $info_bits=0, $type=0, $rang=-1, $special_code=0, $fk_parent_line=0, $fk_fournprice=0, $pa_ht=0, $label='',$array_option=0, $ref_supplier='', $fk_unit='', $origin='', $origin_id=0, $pu_ht_devise=0)
     {
     	global $mysoc, $conf;
 
@@ -403,12 +404,13 @@ class SupplierProposal extends CommonObject
             	if (! empty($conf->global->SUPPLIER_PROPOSAL_WITH_PREDEFINED_PRICES_ONLY))
             	{
             		// Check quantity is enough
-            		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_prod_fourn_price=".$fk_prod_fourn_price." qty=".$qty." ref_supplier=".$ref_supplier);
+            		dol_syslog(get_class($this)."::addline we check supplier prices fk_product=".$fk_product." fk_fournprice=".$fk_fournprice." qty=".$qty." ref_supplier=".$ref_supplier);
             		$prod = new Product($this->db, $fk_product);
             		if ($prod->fetch($fk_product) > 0)
             		{
             			$product_type = $prod->type;
             			$label = $prod->label;
+            			$fk_prod_fourn_price = $fk_fournprice;
 
             			// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
             			// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
@@ -532,7 +534,7 @@ class SupplierProposal extends CommonObject
             $this->line->fk_unit=$fk_unit;
             $this->line->origin=$origin;
             $this->line->origin_id=$origin_id;
-			$this->line->ref_fourn = $this->db->escape($ref_fourn);
+			$this->line->ref_fourn = $this->db->escape($ref_supplier);
 
 			// infos marge
 			if (!empty($fk_product) && empty($fk_fournprice) && empty($pa_ht)) {
@@ -616,11 +618,11 @@ class SupplierProposal extends CommonObject
      *  @param		string		$label				???
      *  @param		int			$type				0/1=Product/service
 	 *  @param		array		$array_option		extrafields array
-	 * 	@param		string		$ref_fourn			Supplier price reference
+	 * 	@param		string		$ref_supplier			Supplier price reference
 	 *	@param		int			$fk_unit			Id of the unit to use.
      *  @return     int     		        		0 if OK, <0 if KO
      */
-	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $array_option=0, $ref_fourn='', $fk_unit='')
+	function updateline($rowid, $pu, $qty, $remise_percent, $txtva, $txlocaltax1=0, $txlocaltax2=0, $desc='', $price_base_type='HT', $info_bits=0, $special_code=0, $fk_parent_line=0, $skip_update_total=0, $fk_fournprice=0, $pa_ht=0, $label='', $type=0, $array_option=0, $ref_supplier='', $fk_unit='')
     {
         global $conf,$user,$langs, $mysoc;
 
@@ -706,7 +708,7 @@ class SupplierProposal extends CommonObject
             $this->line->special_code		= $special_code;
             $this->line->fk_parent_line		= $fk_parent_line;
             $this->line->skip_update_total	= $skip_update_total;
-            $this->line->ref_fourn			= $ref_fourn;
+            $this->line->ref_fourn			= $ref_supplier;
 			$this->line->fk_unit			= $fk_unit;
 
             // infos marge
@@ -2730,7 +2732,8 @@ class SupplierProposalLine extends CommonObjectLine
 
     var $skip_update_total; // Skip update price total for special lines
 
-	var $ref_fourn;
+    var $ref_fourn;
+    var $ref_supplier;
 
 	// Multicurrency
 	var $fk_multicurrency;

@@ -82,7 +82,7 @@ print '<table class="noborder nohover" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
 print '</tr>';
-print '<tr '.$bc[0].'><td>';
+print '<tr class="oddeven"><td>';
 print $langs->trans("Name").':</td><td><input class="flat inputsearch" type="text" name="catname" value="' . $catname . '"/></td><td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
 /*
 // faire une rech dans une sous categorie uniquement
@@ -111,7 +111,6 @@ if ($catname || $id > 0)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
 
-	$var=true;
 	foreach ($cats as $cat)
 	{
 		print "\t".'<tr class="oddeven">'."\n";

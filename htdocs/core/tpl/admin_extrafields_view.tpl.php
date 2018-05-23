@@ -91,7 +91,7 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 		if (! empty($conf->multicompany->enabled))  {
 			print '<td align="center">'.($extrafields->attributes[$elementtype]['entityid'][$key]==0?$langs->trans("All"):$extrafields->attributes[$elementtype]['entitylabel'][$key]).'</td>';
 		}
-		print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
+		print '<td class="right nowraponall""><a href="'.$_SERVER["PHP_SELF"].'?action=edit&attrname='.$key.'#formeditextrafield">'.img_edit().'</a>';
 		print "&nbsp; <a href=\"".$_SERVER["PHP_SELF"]."?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
 		print "</tr>";
 	}

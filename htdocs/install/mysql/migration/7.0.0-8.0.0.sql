@@ -389,9 +389,9 @@ CREATE TABLE llx_asset(
 	ref varchar(128) NOT NULL,
 	entity integer DEFAULT 1 NOT NULL,
 	label varchar(255),
-	amount double(24,8) DEFAULT NULL,
+	amount_ht double(24,8) DEFAULT NULL,
+	amount_vat double(24,8) DEFAULT NULL,
 	fk_asset_type integer NOT NULL,
-	fk_soc integer,
 	description text,
 	note_public text,
 	note_private text,
@@ -406,7 +406,6 @@ CREATE TABLE llx_asset(
 ALTER TABLE llx_asset ADD INDEX idx_asset_rowid (rowid);
 ALTER TABLE llx_asset ADD INDEX idx_asset_ref (ref);
 ALTER TABLE llx_asset ADD INDEX idx_asset_entity (entity);
-ALTER TABLE llx_asset ADD INDEX idx_asset_fk_soc (fk_soc);
 
 ALTER TABLE llx_asset ADD INDEX idx_asset_fk_asset_type (fk_asset_type);
 
@@ -468,4 +467,8 @@ ALTER TABLE llx_c_accounting_category ADD UNIQUE INDEX uk_c_accounting_category(
 ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (code,entity);
 
 UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
+
+-- Warehouse
+ALTER TABLE llx_entrepot ADD COLUMN model_pdf VARCHAR(255) AFTER fk_user_author;
+ALTER TABLE llx_stock_mouvement ADD COLUMN model_pdf VARCHAR(255) AFTER origintype;
 

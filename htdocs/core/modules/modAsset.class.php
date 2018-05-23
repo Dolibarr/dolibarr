@@ -219,23 +219,65 @@ class modAsset extends DolibarrModules
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
 
 		// Exports
+		//--------
 		$r=1;
 
+		// $this->export_code[$r]          Code unique identifiant l'export (tous modules confondus)
+		// $this->export_label[$r]         Libelle par defaut si traduction de cle "ExportXXX" non trouvee (XXX = Code)
+		// $this->export_permission[$r]    Liste des codes permissions requis pour faire l'export
+		// $this->export_fields_sql[$r]    Liste des champs exportables en codif sql
+		// $this->export_fields_name[$r]   Liste des champs exportables en codif traduction
+		// $this->export_sql[$r]           Requete sql qui offre les donnees a l'export
+
 		/*
-		$langs->load("fixedassets@fixedassets");
+		$r++;
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
-		$this->export_label[$r]='FixedAssetsLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-		$this->export_icon[$r]='fixedassets@fixedassets';
-		$keyforclass = 'FixedAssets'; $keyforclassfile='/mymobule/class/fixedassets.class.php'; $keyforelement='fixedassets';
-		include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-		$keyforselect='fixedassets'; $keyforaliasextra='extra'; $keyforelement='fixedassets';
+		$this->export_label[$r]='AssetsLines';
+		$this->export_permission[$r]=array(array("asset","export"));
+		$this->export_fields_array[$r]=array('a.rowid'=>'Id','a.civility'=>"UserTitle",'a.lastname'=>"Lastname",'a.firstname'=>"Firstname",'a.login'=>"Login",'a.morphy'=>'Nature','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'d.nom'=>"State",'co.code'=>"CountryCode",'co.label'=>"Country",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datevalid'=>'DateValidation','a.tms'=>'DateLastModification','a.datefin'=>'DateEndSubscription','ta.rowid'=>'AssetTypeId','ta.label'=>'AssetTypeLabel','ta.accountancy_code_asset'=>'AccountancyCodeAsset','ta.accountancy_code_depreciation_asset'=>'AccountancyCodeDepreciationAsset','ta.accountancy_code_depreciation_expense'=>'AccountancyCodeDepreciationExpense');
+		$this->export_TypeFields_array[$r]=array('a.civility'=>"Text",'a.lastname'=>"Text",'a.firstname'=>"Text",'a.login'=>"Text",'a.morphy'=>'Text','a.societe'=>'Text','a.address'=>"Text",'a.zip'=>"Text",'a.town'=>"Text",'d.nom'=>"Text",'co.code'=>'Text','co.label'=>"Text",'a.phone'=>"Text",'a.phone_perso'=>"Text",'a.phone_mobile'=>"Text",'a.email'=>"Text",'a.birth'=>"Date",'a.statut'=>"Status",'a.note_public'=>"Text",'a.note_private'=>"Text",'a.datec'=>'Date','a.datevalid'=>'Date','a.tms'=>'Date','a.datefin'=>'Date','ta.rowid'=>'List:asset_type:label','ta.label'=>'Text','ta.accountancy_code_asset'=>'Text','ta.accountancy_code_depreciation_asset'=>'Text','ta.accountancy_code_depreciation_expense'=>'Text');
+		$this->export_entities_array[$r]=array('a.rowid'=>'member','a.civility'=>"member",'a.lastname'=>"member",'a.firstname'=>"member",'a.login'=>"member",'a.morphy'=>'member','a.societe'=>'member','a.address'=>"member",'a.zip'=>"member",'a.town'=>"member",'d.nom'=>"member",'co.code'=>"member",'co.label'=>"member",'a.phone'=>"member",'a.phone_perso'=>"member",'a.phone_mobile'=>"member",'a.email'=>"member",'a.birth'=>"member",'a.statut'=>"member",'a.photo'=>"member",'a.note_public'=>"member",'a.note_private'=>"member",'a.datec'=>'member','a.datevalid'=>'member','a.tms'=>'member','a.datefin'=>'member','ta.rowid'=>'asset_type','ta.label'=>'asset_type''ta.accountancy_code_asset'=>'asset_type''ta.accountancy_code_depreciation_asset'=>'asset_type''ta.accountancy_code_depreciation_expense'=>'asset_type');
+		// Add extra fields
+		$keyforselect='asset'; $keyforelement='asset'; $keyforaliasextra='extra';
 		include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-		//$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+		// End add axtra fields
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'fixedassets as t';
-		$this->export_sql_end[$r] .=' WHERE 1 = 1';
-		$this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('fixedassets').')';
-		$r++; */
+		$this->export_sql_end[$r]  =' FROM ('.MAIN_DB_PREFIX.'asset_type as ta, '.MAIN_DB_PREFIX.'asset as a)';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'asset_extrafields as extra ON a.rowid = extra.fk_object';
+		$this->export_sql_end[$r] .=' WHERE a.fk_asset_type = ta.rowid AND ta.entity IN ('.getEntity('asset_type').') ';
+
+		// Imports
+		//--------
+		$r=0;
+
+		$now=dol_now();
+		require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+
+		$r++;
+		$this->import_code[$r]=$this->rights_class.'_'.$r;
+		$this->import_label[$r]="Assets"; // Translation key
+		$this->import_icon[$r]=$this->picto;
+		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+		$this->import_tables_array[$r]=array('a'=>MAIN_DB_PREFIX.'asset','extra'=>MAIN_DB_PREFIX.'asset_extrafields');
+		$this->import_tables_creator_array[$r]=array('a'=>'fk_user_author');    // Fields to store import user id
+		$this->import_fields_array[$r]=array('a.civility'=>"UserTitle",'a.lastname'=>"Lastname*",'a.firstname'=>"Firstname",'a.login'=>"Login*","a.pass"=>"Password","a.fk_adherent_type"=>"MemberType*",'a.morphy'=>'Nature*','a.societe'=>'Company','a.address'=>"Address",'a.zip'=>"Zip",'a.town'=>"Town",'a.state_id'=>'StateId','a.country'=>"CountryId",'a.phone'=>"PhonePro",'a.phone_perso'=>"PhonePerso",'a.phone_mobile'=>"PhoneMobile",'a.email'=>"Email",'a.birth'=>"Birthday",'a.statut'=>"Status*",'a.photo'=>"Photo",'a.note_public'=>"NotePublic",'a.note_private'=>"NotePrivate",'a.datec'=>'DateCreation','a.datefin'=>'DateEndSubscription');
+		// Add extra fields
+		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'asset' AND entity = ".$conf->entity;
+		$resql=$this->db->query($sql);
+		if ($resql)    // This can fail when class is used on old database (during migration for example)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$fieldname='extra.'.$obj->name;
+				$fieldlabel=ucfirst($obj->label);
+				$this->import_fields_array[$r][$fieldname]=$fieldlabel.($obj->fieldrequired?'*':'');
+			}
+		}
+		// End add extra fields
+		$this->import_fieldshidden_array[$r]=array('extra.fk_object'=>'lastrowid-'.MAIN_DB_PREFIX.'asset');    // aliastable.field => ('user->id' or 'lastrowid-'.tableparent)
+		$this->import_regex_array[$r]=array('a.civility'=>'code@'.MAIN_DB_PREFIX.'c_civility','a.fk_adherent_type'=>'rowid@'.MAIN_DB_PREFIX.'adherent_type','a.morphy'=>'(phy|mor)','a.statut'=>'^[0|1]','a.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$','a.datefin'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
+		$this->import_examplevalues_array[$r]=array('a.civility'=>"MR",'a.lastname'=>'Smith','a.firstname'=>'John','a.login'=>'jsmith','a.pass'=>'passofjsmith','a.fk_adherent_type'=>'1','a.morphy'=>'"mor" or "phy"','a.societe'=>'JS company','a.address'=>'21 jump street','a.zip'=>'55000','a.town'=>'New York','a.country'=>'1','a.email'=>'jsmith@example.com','a.birth'=>'1972-10-10','a.statut'=>"0 or 1",'a.note_public'=>"This is a public comment on member",'a.note_private'=>"This is private comment on member",'a.datec'=>dol_print_date($now,'%Y-%m__%d'),'a.datefin'=>dol_print_date(dol_time_plus_duree($now, 1, 'y'),'%Y-%m-%d'));
+		*/
 	}
 
 	/**

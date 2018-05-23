@@ -73,14 +73,23 @@ class AssetType extends CommonObject
 		$error=0;
 
 		$this->label=trim($this->label);
+		$this->accountancy_code_asset = trim($this->accountancy_code_asset);
+		$this->accountancy_code_depreciation_asset = trim($this->accountancy_code_depreciation_asset);
+		$this->accountancy_code_depreciation_expense = trim($this->accountancy_code_depreciation_expense);
 
 		$this->db->begin();
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."asset_type (";
 		$sql.= "label";
+		$sql.= ", accountancy_code_asset";
+		$sql.= ", accountancy_code_depreciation_asset";
+		$sql.= ", accountancy_code_depreciation_expense";
 		$sql.= ", entity";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->escape($this->label)."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_code_asset)."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_code_depreciation_asset)."'";
+		$sql.= ", '".$this->db->escape($this->accountancy_code_depreciation_expense)."'";
 		$sql.= ", ".$conf->entity;
 		$sql.= ")";
 
@@ -409,6 +418,16 @@ class AssetType extends CommonObject
 		$this->asset=array(
 			$user->id => $user
 		);
+	}
+
+	/**
+	 *     getLibStatut
+	 *
+	 *     @return string     Return status of a type of asset
+	 */
+	function getLibStatut()
+	{
+		return '';
 	}
 
 }

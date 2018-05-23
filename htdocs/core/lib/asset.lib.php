@@ -118,3 +118,32 @@ function AssetsPrepareHead()
 
 	return $head;
 }
+
+/**
+ *  Return array head with list of tabs to view object informations
+ *
+ *  @param	AssetType	$object		Asset
+ *  @return array					head
+ */
+function asset_type_prepare_head(AssetType $object)
+{
+	global $langs, $conf, $user;
+
+	$h=0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/asset/type.php?rowid='.$object->id;
+	$head[$h][1] = $langs->trans("Card");
+	$head[$h][2] = 'card';
+	$h++;
+
+	// Show more tabs from modules
+	// Entries must be declared in modules descriptor with line
+	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
+	// $this->tabs = array('entity:-tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to remove a tab
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'assettype');
+
+	complete_head_from_modules($conf,$langs,$object,$head,$h,'assettype','remove');
+
+	return $head;
+}

@@ -38,6 +38,7 @@ function dol_encode($chain, $key='1')
 {
 	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
+		$output_tab=array();
 	    $strlength=dol_strlen($chain);
 		for ($i=0; $i < $strlength; $i++)
 		{
@@ -75,6 +76,7 @@ function dol_decode($chain, $key='1')
 
 	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
+		$output_tab=array();
 		$strlength=dol_strlen($chain);
 		for ($i=0; $i < $strlength;$i++)
 		{
@@ -178,22 +180,23 @@ function dol_verifyHash($chain, $hash, $type='0')
  */
 function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
-    global $db, $conf;
+	global $db, $conf;
+	global $hookmanager;
 
     //dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
     //print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
     //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
     //print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
-    // If we use canvas, we try to use function that overlod restrictarea if provided with canvas
-    if (is_object($objcanvas))
-    {
-        if (method_exists($objcanvas->control,'restrictedArea')) return $objcanvas->control->restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
-    }
+	// Get more permissions checks from hooks
+	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
+	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
+	if (! empty($hookmanager->resArray['result'])) return true;
+	if ($reshook > 0) return false;
 
-    if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
+	if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 
-    // Features/modules to check
+	// Features/modules to check
     $featuresarray = array($features);
     if (preg_match('/&/', $features)) $featuresarray = explode("&", $features);
     else if (preg_match('/\|/', $features)) $featuresarray = explode("|", $features);
@@ -331,7 +334,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check create user permission
     $createuserok=1;
-    if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm") == 'yes')
+    if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm",'aZ09') == 'yes')
     {
         if (! $user->rights->user->user->creer) $createuserok=0;
 
@@ -341,7 +344,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check delete permission from module
     $deleteok=1; $nbko=0;
-    if ((GETPOST('action','aZ09')  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST('action','aZ09')  == 'delete')
+    if ((GETPOST("action","aZ09")  == 'confirm_delete' && GETPOST("confirm","aZ09") == 'yes') || GETPOST("action","aZ09")  == 'delete')
     {
         foreach ($featuresarray as $feature)
         {
@@ -408,8 +411,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     // is linked to a company allowed to $user.
     if (! empty($objectid) && $objectid > 0)
     {
-    	$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
-		return $ok ? 1 : accessforbidden();
+        $ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
+        return $ok ? 1 : accessforbidden();
     }
 
     return 1;

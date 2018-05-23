@@ -84,7 +84,7 @@ $tablib[35]= "DictionaryAccountancyJournal";
 
 // Requests to extract data
 $tabsql=array();
-$tabsql[35]= "SELECT a.rowid as rowid, a.code as code, a.label, a.nature, a.active FROM ".MAIN_DB_PREFIX."accounting_journal as a WHERE a.entity=".$conf->entity;
+$tabsql[35]= "SELECT a.rowid as rowid, a.code as code, a.label, a.nature, a.active FROM ".MAIN_DB_PREFIX."accounting_journal as a";
 
 // Criteria to sort dictionaries
 $tabsqlsort=array();
@@ -100,7 +100,7 @@ $tabfieldvalue[35]= "code,label,nature";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert=array();
-$tabfieldinsert[35]= "code,label,nature,entity";
+$tabfieldinsert[35]= "code,label,nature";
 
 // Nom du rowid si le champ n'est pas de type autoincrement
 // Example: "" if id field is "rowid" and has autoincrement on
@@ -600,6 +600,7 @@ if ($id)
 
 					if (empty($reshook))
 					{
+                        $langs->load("accountancy");
 						foreach ($fieldlist as $field => $value)
 						{
 
@@ -610,10 +611,12 @@ if ($id)
 								$valuetoshow=$langs->trans('All');
 							}
 							else if ($fieldlist[$field]=='nature' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
-								$langs->loadLangs(array("accountancy"));
 								$key=$langs->trans("AccountingJournalType".strtoupper($obj->nature));
-								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($obj->nature)?$key:$obj->{$fieldlist[$field]});
+								$valuetoshow=($obj->nature && $key != "AccountingJournalType".strtoupper($langs->trans($obj->nature))?$key:$obj->{$fieldlist[$field]});
 							}
+							else if ($fieldlist[$field]=='label' && $tabname[$id]==MAIN_DB_PREFIX.'accounting_journal') {
+								$valuetoshow=$langs->trans($obj->label);
+                            }
 
 							$class='tddict';
 							// Show value for field
