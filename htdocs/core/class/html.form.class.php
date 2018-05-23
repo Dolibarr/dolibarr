@@ -1942,7 +1942,7 @@ class Form
 			$selectFields.= ", label_translated";
 		}
 		// Price by quantity
-		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 		{
 			$sql.= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
@@ -2063,7 +2063,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
+				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -2212,7 +2212,8 @@ class Form
 		$found=0;
 
 		// Multiprice
-		if (empty($hidepriceinlabel) && $price_level >= 1 && $conf->global->PRODUIT_MULTIPRICES)		// If we need a particular price level (from 1 to 6)
+		// If we need a particular price level (from 1 to 6)
+		if (empty($hidepriceinlabel) && $price_level >= 1 && (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)))
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
@@ -2253,7 +2254,7 @@ class Form
 		}
 
 		// Price by quantity
-		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)))
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
