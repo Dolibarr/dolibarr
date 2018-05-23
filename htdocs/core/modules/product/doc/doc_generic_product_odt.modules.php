@@ -381,7 +381,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 				$array_other=$this->get_substitutionarray_other($outputlangs);
 				// retrieve contact information for use in product as contact_xxx tags
 				$array_thirdparty_contact = array();
-				if ($usecontact) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
 				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);
