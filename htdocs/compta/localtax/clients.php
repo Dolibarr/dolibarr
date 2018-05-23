@@ -164,7 +164,7 @@ if($calc ==0 || $calc == 2)
 	print "<td align=\"right\">".$vatcust."</td>";
 	print "</tr>\n";
 
-	$coll_list = tax_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
+	$coll_list = tax_by_thirdparty('localtax'.$local, $db, 0, $date_start, $date_end, $modetax, 'sell');
 
 	$action = "tvaclient";
 	$object = &$coll_list;
@@ -248,7 +248,7 @@ if($calc ==0 || $calc == 1){
 
 	$company_static=new Societe($db);
 
-	$coll_list = tax_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
+	$coll_list = tax_by_thirdparty('localtax'.$local, $db, 0, $date_start, $date_end,$modetax, 'buy');
 	$parameters["direction"] = 'buy';
 	$parameters["type"] = 'localtax'.$local;
 

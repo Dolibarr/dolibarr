@@ -146,9 +146,8 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 		$sendtocc='';
 		$sendtobcc='';
 		$sendtoid = array();
-		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
-			$sendtouserid=array();
-		}
+		$sendtouserid=array();
+		$sendtoccuserid=array();
 
 		// Define $sendto
 		$receiver=$_POST['receiver'];
@@ -179,18 +178,20 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 				}
 			}
 		}
-		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
+		{
 			$receiveruser=$_POST['receiveruser'];
 			if (is_array($receiveruser) && count($receiveruser)>0)
 			{
 				$fuserdest = new User($db);
 				foreach($receiveruser as $key=>$val)
 				{
-					$tmparray[] = $fuserdest->user_get_property($key,'email');
-					$sendtouserid[] = $key;
+					$tmparray[] = $fuserdest->user_get_property($val,'email');
+					$sendtouserid[] = $val;
 				}
 			}
 		}
+
 		$sendto=implode(',',$tmparray);
 
 		// Define $sendtocc
@@ -222,15 +223,15 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 			}
 		}
 		if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
-			$receiveruser=$_POST['receiveccruser'];
+			$receiverccuser=$_POST['receiverccuser'];
 
-			if (is_array($receiveruser) && count($receiveruser)>0)
+			if (is_array($receiverccuser) && count($receiverccuser)>0)
 			{
 				$fuserdest = new User($db);
-				foreach($receiveruser as $key=>$val)
+				foreach($receiverccuser as $key=>$val)
 				{
-					$tmparray[] = $fuserdest->user_get_property($key,'email');
-					$sendtouserid[] = $key;
+					$tmparray[] = $fuserdest->user_get_property($val,'email');
+					$sendtoccuserid[] = $val;
 				}
 			}
 		}
@@ -418,7 +419,7 @@ if (($action == 'send' || $action == 'relance') && ! $_POST['addfile'] && ! $_PO
 						}
 					}*/
 
-					// Initialisation of datas
+					// Initialisation of datas of object to call trigger
 					if (is_object($object))
 					{
 					    if (empty($actiontypecode)) $actiontypecode='AC_OTH_AUTO'; // Event insert into agenda automatically

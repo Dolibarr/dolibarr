@@ -242,8 +242,15 @@ else if ($action == 'classin' && $user->rights->don->creer)
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
+
+// Actions to build doc
+$upload_dir = $conf->don->dir_output;
+$permissioncreate = $user->rights->don->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+
 // Remove file in doc form
-if ($action == 'remove_file')
+/*if ($action == 'remove_file')
 {
 	$object = new Don($db, 0, $_GET['id']);
 	if ($object->fetch($id))
@@ -261,11 +268,12 @@ if ($action == 'remove_file')
 		$action='';
 	}
 }
+*/
 
 /*
  * Build doc
  */
-
+/*
 if ($action == 'builddoc')
 {
 	$object = new Don($db);
@@ -291,6 +299,7 @@ if ($action == 'builddoc')
 		exit;
 	}
 }
+*/
 
 
 /*

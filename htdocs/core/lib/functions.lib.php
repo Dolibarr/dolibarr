@@ -1654,9 +1654,9 @@ function dol_format_address($object, $withcountry=0, $sep="\n", $outputlangs='',
 	}
 	else if (in_array($object->country_code,array('IT'))) // IT: tile firstname name\n address lines \n zip (Code Departement) \n country
 	{
-                $ret .= ($ret ? $sep : '' ).$object->zip;
-                $ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
-                $ret .= ($object->departement_id?(' ('.($object->departement_id).')'):'');
+		$ret .= ($ret ? $sep : '' ).$object->zip;
+		$ret .= ($object->town?(($object->zip?' ':'').$object->town):'');
+		$ret .= ($object->departement_id?(' ('.($object->departement_id).')'):'');
 	}
 	else                                        		// Other: title firstname name \n address lines \n zip town \n country
 	{
@@ -1668,7 +1668,11 @@ function dol_format_address($object, $withcountry=0, $sep="\n", $outputlangs='',
 		}
 	}
 	if (! is_object($outputlangs)) $outputlangs=$langs;
-	if ($withcountry) $ret.=($object->country_code?($ret?$sep:'').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)):'');
+	if ($withcountry)
+	{
+		$langs->load("dict");
+		$ret.=($object->country_code?($ret?$sep:'').$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$object->country_code)):'');
+	}
 
 	return $ret;
 }
@@ -4672,7 +4676,8 @@ function get_localtax($vatrate, $local, $thirdparty_buyer="", $thirdparty_seller
 
 		if ($local == 2)
 		{
-			if (! $mysoc->localtax2_assuj || (string) $vatratecleaned == "0") return 0;
+			//if (! $mysoc->localtax2_assuj || (string) $vatratecleaned == "0") return 0;
+			if (! $mysoc->localtax2_assuj) return 0;		// If main vat is 0, IRPF may be different than 0.
 			if ($thirdparty_seller->id == $mysoc->id)
 			{
 				if (! $thirdparty_buyer->localtax2_assuj) return 0;
@@ -6181,7 +6186,7 @@ function complete_substitutions_array(&$substitutionarray, $outputlangs, $object
 			{
 				$module=$reg[1];
 
-				dol_syslog("Library functions_".$substitfile['name']." found into ".$dir);
+				dol_syslog("Library ".$substitfile['name']." found into ".$dir);
 				// Include the user's functions file
 				require_once $dir.$substitfile['name'];
 				// Call the user's function, and only if it is defined

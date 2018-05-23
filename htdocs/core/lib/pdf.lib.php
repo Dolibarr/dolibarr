@@ -169,6 +169,25 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	return $pdf;
 }
 
+/**
+ * Return if pdf file is protected/encrypted
+ *
+ * @param	TCPDF		$pdf			PDF initialized object
+ * @param   string		$pathoffile		Path of file
+ * @return  boolean     			    True or false
+ */
+function pdf_getEncryption(&$pdf, $pathoffile)
+{
+	$isencrypted = false;
+
+	$pdfparser = $pdf->_getPdfParser($pathoffile);
+	$data = $pdfparser->getParsedData();
+	if (isset($data[0]['trailer'][1]['/Encrypt'])) {
+		$isencrypted = true;
+	}
+
+	return $isencrypted;
+}
 
 /**
  *      Return font name to use for PDF generation

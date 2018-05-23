@@ -617,25 +617,13 @@ if ($id)
 		$reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 		$error=$hookmanager->error; $errors=$hookmanager->errors;
 
-		if ($id == 3) unset($fieldlist[2]);
-
 		if (empty($reshook))
 		{
-			if ($tabname[$id] == MAIN_DB_PREFIX.'c_email_templates' && $action == 'edit')
-			{
-				fieldListAccountModel($fieldlist,$obj,$tabname[$id],'hide');
-			}
-			else
-			{
-				fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
-			}
+			fieldListAccountModel($fieldlist,$obj,$tabname[$id],'add');
 		}
 
 		print '<td colspan="3" align="right">';
-		if ($tabname[$id] != MAIN_DB_PREFIX.'c_email_templates' || $action != 'edit')
-		{
-			print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
-		}
+		print '<input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'">';
 		print '</td>';
 		print "</tr>";
 
@@ -1134,16 +1122,11 @@ function fieldListAccountModel($fieldlist, $obj='', $tabname='', $context='')
 		}
 		elseif (in_array($fieldlist[$field], array('content')))
 		{
-			if ($tabname == MAIN_DB_PREFIX.'c_email_templates')
-			{
-				print '<td colspan="4"></td></tr><tr class="pair nohover"><td colspan="5">';		// To create an artificial CR for the current tr we are on
-			}
-			else print '<td>';
+			print '<td>';
 			if ($context != 'hide')
 			{
 				//print '<textarea cols="3" rows="'.ROWS_2.'" class="flat" name="'.$fieldlist[$field].'">'.(! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:'').'</textarea>';
 				$okforextended=true;
-				if ($tabname == MAIN_DB_PREFIX.'c_email_templates' && empty($conf->global->FCKEDITOR_ENABLE_MAIL)) $okforextended=false;
 				$doleditor = new DolEditor($fieldlist[$field], (! empty($obj->{$fieldlist[$field]})?$obj->{$fieldlist[$field]}:''), '', 140, 'dolibarr_mailings', 'In', 0, false, $okforextended, ROWS_5, '90%');
 				print $doleditor->Create(1);
 			}

@@ -580,7 +580,7 @@ function tax_by_rate($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         $paymentfacturetable='paiement_facture';
         $invoicefieldref='facnumber';
     }
-    if ($direction == 'buy')
+    else
     {
         $invoicetable='facture_fourn';
         $invoicedettable='facture_fourn_det';
