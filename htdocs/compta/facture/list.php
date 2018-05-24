@@ -563,6 +563,9 @@ if ($resql)
     if ($show_files)         $param.='&show_files=' .$show_files;
 	if ($option)             $param.="&option=".$option;
 	if ($optioncss != '')    $param.='&optioncss='.$optioncss;
+	if ($search_town)$param .= '&search_town='.urlencode($search_town);
+	if ($search_zip)$param .= '&search_zip='.urlencode($search_zip);
+
 	// Add $param from extra fields
 	foreach ($search_array_options as $key => $val)
 	{
