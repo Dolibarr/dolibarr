@@ -61,6 +61,7 @@ $hookmanager->initHooks(array('warehousecard','globalcard'));
 
 $object = new Entrepot($db);
 
+
 /*
  * Actions
  */
@@ -175,58 +176,6 @@ $upload_dir = $conf->stock->dir_output;
 $permissioncreate = $user->rights->stock->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
-
-/*
- * Build document
- */
-/*
-if ($action == 'builddoc')	// En get ou en post
-{
-	if ($id > 0 || $ref)
-	{
-		$object = new Entrepot($db);
-		$result = $object->fetch($id, $ref);
-		if ($result <= 0)
-		{
-			print 'No record found';
-			exit;
-		}
-	}
-
-	// Save last template used to generate document
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-	if (! empty($newlang))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
-	}
-    $ret=$object->fetch($id);    // Reload to get new records
-	$result= $object->generateDocument($object->modelpdf, $outputlangs);
-	if ($result < 0)
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-        $action='';
-	}
-}
-
-// Delete file in doc form
-elseif ($action == 'remove_file')
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$upload_dir =	$conf->stock->dir_output ;
-	$file =	$upload_dir	. '/' .	GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-}
-*/
 
 /*
  * View
@@ -721,40 +670,43 @@ else
  * Documents generes
  */
 
-$modulepart='stock';
-
-if ($action != 'create' && $action != 'edit' && $action != 'delete')
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	print '<br/>';
-    print '<div class="fichecenter"><div class="fichehalfleft">';
-    print '<a name="builddoc"></a>'; // ancre
+	$modulepart='stock';
 
-    // Documents
-    $objectref = dol_sanitizeFileName($object->ref);
-    $relativepath = $comref . '/' . $objectref . '.pdf';
-    $filedir = $conf->stock->dir_output . '/' . $objectref;
-    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
-    $genallowed=$usercanread;
-    $delallowed=$usercancreate;
-    $modulepart = 'stock';
+	if ($action != 'create' && $action != 'edit' && $action != 'delete')
+	{
+		print '<br/>';
+	    print '<div class="fichecenter"><div class="fichehalfleft">';
+	    print '<a name="builddoc"></a>'; // ancre
 
-    print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
-    $somethingshown=$formfile->numoffiles;
+	    // Documents
+	    $objectref = dol_sanitizeFileName($object->ref);
+	    $relativepath = $comref . '/' . $objectref . '.pdf';
+	    $filedir = $conf->stock->dir_output . '/' . $objectref;
+	    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
+	    $genallowed=$usercanread;
+	    $delallowed=$usercancreate;
+	    $modulepart = 'stock';
 
-    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+	    print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+	    $somethingshown=$formfile->numoffiles;
 
-    $MAXEVENT = 10;
+	    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
-    $morehtmlright.= $langs->trans("SeeAll");
-    $morehtmlright.= '</a>';
+	    $MAXEVENT = 10;
 
-    // List of actions on element
-    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-    $formactions = new FormActions($db);
-    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+	    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
+	    $morehtmlright.= $langs->trans("SeeAll");
+	    $morehtmlright.= '</a>';
 
-    print '</div></div></div>';
+	    // List of actions on element
+	    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+	    $formactions = new FormActions($db);
+	    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+
+	    print '</div></div></div>';
+	}
 }
 
 
