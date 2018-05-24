@@ -37,8 +37,8 @@ if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn
 
 if (! $user->rights->societe->lire) accessforbidden();
 
-$langs->load("commercial");
-$langs->load("propal");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("commercial", "propal"));
 
 $action=GETPOST('action', 'alpha');
 $bid=GETPOST('bid', 'int');
@@ -161,7 +161,6 @@ if (! empty($conf->propal->enabled) && $user->rights->propal->lire)
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("ProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
-		$var=true;
 		if ($num > 0)
 		{
 			$i = 0;
@@ -243,7 +242,6 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("SupplierProposalsDraft").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
-        $var=true;
         if ($num > 0)
         {
             $i = 0;
@@ -274,13 +272,11 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
             }
             if ($total>0)
             {
-
                 print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
             }
         }
         else
         {
-
             print '<tr class="oddeven"><td colspan="3" class="opacitymedium">'.$langs->trans("NoProposal").'</td></tr>';
         }
         print "</table></div><br>";
@@ -323,7 +319,6 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 		print '<tr class="liste_titre">';
 		print '<th colspan="3">'.$langs->trans("DraftOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
-		$var = true;
 		if ($num > 0)
 		{
 			$i = 0;
@@ -411,7 +406,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->commande
         print '<tr class="liste_titre">';
         print '<th colspan="3">'.$langs->trans("DraftSuppliersOrders").($num?' <span class="badge">'.$num.'</span>':'').'</th></tr>';
 
-        $var = true;
         if ($num > 0)
         {
             $i = 0;
@@ -527,7 +521,6 @@ if (! empty($conf->societe->enabled) && $user->rights->societe->lire)
 				print '<td align="right" nowrap>'.dol_print_date($db->jdate($objp->tms),'day')."</td>";
 				print '</tr>';
 				$i++;
-
 
 			}
 

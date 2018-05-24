@@ -39,9 +39,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load('orders');
-$langs->load('deliveries');
-$langs->load('companies');
+// Load traductions files requiredby by page
+$langs->loadLangs(array("orders", "deliveries", "companies"));
 
 if (! $user->rights->facture->creer)
 	accessforbidden();
@@ -655,7 +654,7 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 		print '</form>';
 
 		print '<form name="orders2invoice" action="orderstoinvoice.php" method="GET">';
-		$var=true;
+		
 		$generic_commande = new Commande($db);
 
 		while ($i < $num)
