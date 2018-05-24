@@ -117,7 +117,7 @@ if ($action == 'add' && $user->rights->stock->creer)
 // Delete warehouse
 if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->stock->supprimer)
 {
-	$object->fetch($_REQUEST["id"]);
+	$object->fetch(GETPOST('id','int'));
 	$result=$object->delete($user);
 	if ($result > 0)
 	{
@@ -169,9 +169,17 @@ if ($cancel == $langs->trans("Cancel"))
 	$action = '';
 }
 
+
+// Actions to build doc
+$upload_dir = $conf->stock->dir_output;
+$permissioncreate = $user->rights->stock->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+
 /*
  * Build document
  */
+/*
 if ($action == 'builddoc')	// En get ou en post
 {
 	if ($id > 0 || $ref)
@@ -185,7 +193,7 @@ if ($action == 'builddoc')	// En get ou en post
 		}
 	}
 
-	// Save last template used to generate document	
+	// Save last template used to generate document
 	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
 
 	// Define output language
@@ -218,7 +226,7 @@ elseif ($action == 'remove_file')
 	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
 	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 }
-
+*/
 
 /*
  * View
@@ -728,8 +736,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$usercanread;
     $delallowed=$usercancreate;
-
-    $var=true;
+    $modulepart = 'stock';
 
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;

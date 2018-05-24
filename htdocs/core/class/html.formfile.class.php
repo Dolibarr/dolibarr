@@ -601,7 +601,7 @@ class FormFile
 					$modellist=call_user_func($class.'::liste_modeles',$this->db);
 				}
 				else
-			  {
+				{
 					dol_print_error($this->db,'Bad value for modulepart');
 					return -1;
 				}
