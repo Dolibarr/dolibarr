@@ -5062,7 +5062,7 @@ $val=$this->fields[$key];
                    
                     $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
                     $type ='sellist';
-                }else if(preg_match('/varchar\((\d+)\)/', $val['type'],reg)){
+                }else if(preg_match('/varchar\((\d+)\)/', $val['type'],$reg)){
                    
                     $param['options']=array();
                     $type ='varchar';
