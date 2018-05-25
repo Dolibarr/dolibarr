@@ -420,7 +420,7 @@ if ($resql)
 	if ($search_project_ref >= 0) $param.="&search_project_ref=".urlencode($search_project_ref);
 	if ($search_town != '')       $param.='&search_town='.urlencode($search_town);
 	if ($search_zip != '')        $param.='&search_zip='.urlencode($search_zip);
-	if ($search_state != '')      $param.='&search_state='.urlencode$search_state);
+	if ($search_state != '')      $param.='&search_state='.urlencode($search_state);
 	if ($search_country != '')    $param.='&search_country='.urlencode($search_country);
 	if ($search_type_thirdparty != '')  $param.='&search_type_thirdparty='.urlencode($search_type_thirdparty);
 	if ($search_product_category != '') $param.='&search_product_category='.urlencode($search_product_category);
