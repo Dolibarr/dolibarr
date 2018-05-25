@@ -285,6 +285,7 @@ class doc_generic_order_odt extends ModelePDFCommandes
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact

@@ -526,6 +526,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
         			// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use

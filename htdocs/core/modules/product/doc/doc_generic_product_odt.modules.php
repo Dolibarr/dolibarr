@@ -302,6 +302,7 @@ class doc_generic_product_odt extends ModelePDFProduct
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact
