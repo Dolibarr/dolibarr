@@ -831,7 +831,7 @@ SCRIPT;
 
 						// Date
 						print '<td align="right">';
-						print dol_print_date($productfourn->date_modification, "%d/%m/%Y %H:%M");
+						print dol_print_date($productfourn->date_modification, "dayhour");
 						print '</td>';
 						
 						// Delivery delay
