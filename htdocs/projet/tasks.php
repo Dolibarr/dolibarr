@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2017 Regis Houssin        <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -625,22 +625,22 @@ else if ($id > 0 || ! empty($ref))
 	print '<tr class="liste_titre_filter">';
 
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_taskref" size="8" value="'.dol_escape_htmltag($search_taskref).'">';
+	print '<input class="flat searchstring maxwidth50" type="text" name="search_taskref" value="'.dol_escape_htmltag($search_taskref).'">';
 	print '</td>';
 
 	print '<td class="liste_titre">';
-	print '<input class="flat searchstring" type="text" name="search_tasklabel" size="8" value="'.dol_escape_htmltag($search_tasklabel).'">';
+	print '<input class="flat searchstring maxwidth100" type="text" name="search_tasklabel" value="'.dol_escape_htmltag($search_tasklabel).'">';
 	print '</td>';
 
 	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_dtstartmonth" value="'.$search_dtstartmonth.'">';
+	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartday" value="'.$search_dtstartday.'">';
+	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtstartmonth" value="'.$search_dtstartmonth.'">';
 	$formother->select_year($search_dtstartyear?$search_dtstartyear:-1,'search_dtstartyear',1, 20, 5);
 	print '</td>';
 
 	print '<td class="liste_titre" align="center">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="search_dtendmonth" value="'.$search_dtendmonth.'">';
+	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendday" value="'.$search_dtendday.'">';
+	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_dtendmonth" value="'.$search_dtendmonth.'">';
 	$formother->select_year($search_dtendyear?$search_dtendyear:-1,'search_dtendyear',1, 20, 5);
 	print '</td>';
 
