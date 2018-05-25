@@ -5033,10 +5033,11 @@ abstract class CommonObject
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string|int	$showsize      Value for css to define size. May also be a numeric.
+	 * @param  string|int		$morecss       Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
-	function showInputField($val, $key, $value, $moreparam='', $keysuffix='', $keyprefix='', $morecss=0){
+	function showInputField($val, $key, $value, $moreparam='', $keysuffix='', $keyprefix='', $morecss=0)
+	{
 		global $conf,$langs,$form;
 
 		if (! is_object($form))
