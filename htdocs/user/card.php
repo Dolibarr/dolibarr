@@ -2455,7 +2455,7 @@ else
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			/*
              * Documents generes
-            */
+             */
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;

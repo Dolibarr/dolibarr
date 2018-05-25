@@ -293,7 +293,7 @@ class mailing_advthirdparties extends MailingTargets
 		} elseif ($type=='contact') {
 			$contactstatic=new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0, '', 0, '', -1, 0);
+			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
 	}
 

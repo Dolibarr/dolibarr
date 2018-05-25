@@ -612,8 +612,6 @@ if ($id > 0 || ! empty($ref))
 			$genallowed=($user->rights->projet->lire);
 			$delallowed=($user->rights->projet->creer);
 
-			$var=true;
-
 			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 
 			print '</div><div class="fichehalfright"><div class="ficheaddleft">';

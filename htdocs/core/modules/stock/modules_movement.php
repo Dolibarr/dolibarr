@@ -16,33 +16,38 @@
  * or see http://www.gnu.org/
  */
 
+/**
+ *  \file       htdocs/core/modules/stock/modules_movement.php
+ *  \ingroup    stock
+ *  \brief      File with parent class for generating warehouse to PDF and File of class to manage warehouse movement
+ */
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
+
 /**
- *	Parent class for stock models of doc generators
+ *	Parent class to manage warehouse mouvement document templates
  */
-abstract class ModelePDFStock extends CommonDocGenerator
+abstract class ModelePDFMovement extends CommonDocGenerator
 {
-    var $error='';
+	var $error='';
 
 
-    /**
-     *  Return list of active generation modules
-     *
-	 * 	@param	DoliDB		$db					Database handler
-     *  @param	integer		$maxfilenamelength  Max length of value to show
-     * 	@return	array							List of templates
-     */
-    static function liste_modeles($db,$maxfilenamelength=0)
-    {
-        global $conf;
+	/**
+	 *	Return list of active generation modules
+	 *
+     *  @param	DoliDB	$db     			Database handler
+     *  @param  integer	$maxfilenamelength  Max length of value to show
+     *  @return	array						List of templates
+	 */
+	static function liste_modeles($db,$maxfilenamelength=0)
+	{
+		global $conf;
 
-        $type='stock';
-        $liste=array();
-
-        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-        $liste=getListOfModels($db,$type,$maxfilenamelength);
-
-        return $liste;
-    }
+		$type='mouvement';
+		$liste=array();
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$liste=getListOfModels($db,$type,$maxfilenamelength);
+		return $liste;
+	}
 }

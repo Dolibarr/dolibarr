@@ -1578,11 +1578,11 @@ abstract class CommonObject
 
 
 	/**
-	 *      Return list of id of contacts of project
+	 *      Return list of id of contacts of object
 	 *
 	 *      @param	string	$source     Source of contact: external (llx_socpeople) or internal (llx_user) or thirdparty (llx_societe)
 	 *      @return array				Array of id of contacts (if source=external or internal)
-	 * 									Array of id of third parties with at least one contact on project (if source=thirdparty)
+	 * 									Array of id of third parties with at least one contact on object (if source=thirdparty)
 	 */
 	function getListContactId($source='external')
 	{
@@ -3658,6 +3658,8 @@ abstract class CommonObject
 		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
+		    print "<thead>\n";
+
 			print '<tr class="liste_titre nodrag nodrop">';
 
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
@@ -3735,11 +3737,13 @@ abstract class CommonObject
 			}
 
 			print "</tr>\n";
+			print "</thead>\n";
 		}
 
 		$var = true;
 		$i	 = 0;
 
+		print "<tbody>\n";
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield
@@ -3767,6 +3771,7 @@ abstract class CommonObject
 
 			$i++;
 		}
+		print "</tbody>\n";
 	}
 
 	/**
@@ -6080,7 +6085,12 @@ abstract class CommonObject
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('date','datetime')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
+						$datenotinstring = $this->array_options['options_' . $key];
+						if (! is_numeric($this->array_options['options_' . $key]))	// For backward compatibility
+						{
+							$datenotinstring = $this->db->jdate($datenotinstring);
+						}
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$datenotinstring;
 					}
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('price','double')))

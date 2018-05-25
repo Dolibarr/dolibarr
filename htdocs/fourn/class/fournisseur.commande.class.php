@@ -573,9 +573,10 @@ class CommandeFournisseur extends CommonOrder
      */
     function LibStatut($statut,$mode=0,$billed=0)
     {
+    	global $conf, $langs;
+
     	if (empty($this->statuts) || empty($this->statutshort))
     	{
-	        global $conf, $langs;
 	        $langs->load('orders');
 
 	        $this->statuts[0] = 'StatusOrderDraft';

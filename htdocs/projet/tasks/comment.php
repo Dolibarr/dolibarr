@@ -53,7 +53,7 @@ $socid=0;
 if (! $user->rights->projet->lire) accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('projecttaskcard','globalcard'));
+$hookmanager->initHooks(array('projecttaskcommentcard','globalcard'));
 
 $object = new Task($db);
 $extrafields = new ExtraFields($db);
