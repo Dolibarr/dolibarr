@@ -417,6 +417,7 @@ if ($action == 'update')
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned",'array');
+		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
