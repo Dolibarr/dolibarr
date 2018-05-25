@@ -186,7 +186,7 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		if($object->is_erasable()) {
+		if ($object->is_erasable()) {
 		
 			$result = $object->delete($user, 0, $idwarehouse);
 			if ($result > 0) {
