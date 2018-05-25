@@ -24,7 +24,7 @@
 /**
  *     	\file       htdocs/public/payment/newpayment.php
  *		\ingroup    core
- *		\brief      File to offer a way to make a payment for a particular Dolibarr entity
+ *		\brief      File to offer a way to make a payment for a particular Dolibarr object
  */
 
 define("NOLOGIN",1);		// This means this output page does not require to be logged.
