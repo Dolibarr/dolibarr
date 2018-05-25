@@ -3658,6 +3658,8 @@ abstract class CommonObject
 		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
+		    print "<thead>\n";
+		    
 			print '<tr class="liste_titre nodrag nodrop">';
 
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
@@ -3735,11 +3737,13 @@ abstract class CommonObject
 			}
 
 			print "</tr>\n";
+			print "</thead>\n";
 		}
 
 		$var = true;
 		$i	 = 0;
-
+		
+		print "<tbody>\n";
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield
@@ -3767,6 +3771,7 @@ abstract class CommonObject
 
 			$i++;
 		}
+		print "</tbody>\n"; 
 	}
 
 	/**
