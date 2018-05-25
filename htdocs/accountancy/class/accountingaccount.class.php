@@ -202,9 +202,9 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (empty($this->pcg_type) ? 'NULL' : "'" . $this->db->escape($this->pcg_type) . "'");
 		$sql .= ", " . (empty($this->pcg_subtype) ? 'NULL' : "'" . $this->db->escape($this->pcg_subtype) . "'");
 		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->db->escape($this->account_number) . "'");
-		$sql .= ", " . (empty($this->account_parent) ? 'NULL' : "'" . $this->db->escape($this->account_parent) . "'");
+		$sql .= ", " . (empty($this->account_parent) ? '0' : "'" . $this->db->escape($this->account_parent) . "'");
 		$sql .= ", " . (empty($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
-		$sql .= ", " . (empty($this->account_category) ? '0' : $this->db->escape($this->account_category));
+		$sql .= ", " . (empty($this->account_category) ? 0 : $this->db->escape($this->account_category));
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (! isset($this->active) ? 'NULL' : $this->db->escape($this->active));
 		$sql .= ")";
