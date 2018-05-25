@@ -1516,7 +1516,7 @@ if (count($object->records) > 0)
 					$out.='<option value="'.$key.'"';
 					if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
 					$out.='>';
-					$out.='['.$valpage->type_container.'] ';
+					$out.='['.$valpage->type_container.' '.$valpage->id.'] ';
 					$out.=$valpage->pageurl.' - '.$valpage->title;
 					if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
 					$out.='</option>';
@@ -1534,6 +1534,37 @@ if (count($object->records) > 0)
 
 		//print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 		print '<input type="image" class="valignbottom" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+
+
+		// Print nav arrows
+		$pagepreviousid=0;
+		$pagenextid=0;
+		$sql = 'SELECT MAX(rowid) as pagepreviousid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid < '.$pageid.' AND fk_website = '.$object->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$pagepreviousid = $obj->pagepreviousid;
+			}
+		}
+		else dol_print_error($db);
+		$sql = 'SELECT MIN(rowid) as pagenextid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid > '.$pageid.' AND fk_website = '.$object->id;
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$pagenextid = $obj->pagenextid;
+			}
+		}
+		else dol_print_error($db);
+		if ($pagepreviousid) print '<a href="'.$_SERVER['PHP_SELF'].'?pageid='.$pagepreviousid.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
+		else print '<span class="opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
+		if ($pagenextid) print '<a href="'.$_SERVER['PHP_SELF'].'?pageid='.$pagenextid.'">'.img_next($langs->trans("NextContainer")).'</a>';
+		else print '<span class="opacitymedium">'.img_next($langs->trans("NextContainer")).'</span>';
 
 		$websitepage = new WebSitePage($db);
 		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
