@@ -5044,13 +5044,13 @@ abstract class CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form=new Form($this->db);
 		}
-$val=$this->fields[$key];
+		
+		$val=$this->fields[$key];
 
 		$out='';
                 $type='';
                 $param['options']=array();
                 $size =$this->fields[$key]['size'];
-		$keyprefix = $keyprefix.'options_';
                 // Because we work on extrafields
                 if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
                     $param['options']=array($reg[1].':'.$reg[2]=>'N');
