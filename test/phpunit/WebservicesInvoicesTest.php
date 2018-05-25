@@ -56,11 +56,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 	protected $savlangs;
 	protected $savdb;
 	protected $soapclient;
-	
+
 	private static $socid;
-	
+
 	protected $ns = 'http://www.dolibarr.org/ns/';
-	
+
 	/**
 	 * Constructor
 	 * We save global variables into local variables
@@ -75,7 +75,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$this->savuser=$user;
 		$this->savlangs=$langs;
 		$this->savdb=$db;
-		
+
 		// Set the WebService URL
 		$WS_DOL_URL = DOL_MAIN_URL_ROOT.'/webservices/server_invoice.php';
 		print __METHOD__." create nusoap_client for URL=".$WS_DOL_URL."\n";
@@ -85,7 +85,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			$this->soapclient->soap_defencoding='UTF-8';
 			$this->soapclient->decodeUTF8(false);
 		}
-		
+
 		print __METHOD__." db->type=".$db->type." user->id=".$user->id;
 		//print " - db ".$db->db;
 		print "\n";
@@ -114,11 +114,13 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 		$societe->ref_ext='ref-phpunit';
 		$societe->status=1;
 		$societe->client=1;
+		$societe->code_client='CU0901-1234';
+		$societe->code_fournisseur='SU0901-1234';
 		$societe->fournisseur=0;
 		$societe->date_creation=$now;
 		$societe->tva_assuj=0;
 		$societe->particulier=0;
-		
+
 		$societe->create($user);
 
 		self::$socid = $societe->id;
@@ -180,12 +182,12 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
     	$WS_METHOD  = 'createInvoice';
 
     	$body = array (
-    			"id" => NULL,
-				"ref" => NULL,
+    			"id" => null,
+				"ref" => null,
 				"ref_ext" => "ref-phpunit-2",
 				"thirdparty_id" => self::$socid,
-				"fk_user_author" => NULL,
-				"fk_user_valid" => NULL,
+				"fk_user_author" => null,
+				"fk_user_valid" => null,
 				"date" => "2015-04-19 20:16:53",
 				"date_due" => "",
 				"date_creation" => "",
@@ -199,11 +201,11 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 				"note_private" => "Synchronised from Prestashop",
 				"note_public" => "",
 				"status" => "1",
-				"close_code" => NULL ,
-				"close_note" => NULL,
-				"project_id" => NULL,
+				"close_code" => null ,
+				"close_note" => null,
+				"project_id" => null,
 				"lines" => array(
-					array("id" => NULL,
+					array("id" => null,
 					"type" => 0,
 					"desc" => "Horloge Vinyle Serge",
 					"vat_rate" => 20,
@@ -259,13 +261,13 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-    
+
     /**
      * testWSInvoicesGetInvoiceByRefExt
-     * 
+     *
      * Retrieve an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     * 
+     *
      * @param	array	$result		Invoice created by create method
      * @return	array				Invoice
      */
@@ -289,7 +291,7 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// Test URL
     	$result='';
-    	$parameters = array('authentication'=>$authentication,'id'=>NULL,'ref'=>NULL,'ref_ext'=>'ref-phpunit-2');
+    	$parameters = array('authentication'=>$authentication, 'id'=>null, 'ref'=>null, 'ref_ext'=>'ref-phpunit-2');
     	print __METHOD__." call method ".$WS_METHOD."\n";
     	try {
     		$result = $this->soapclient->call($WS_METHOD,$parameters,$this->ns,'');
@@ -315,13 +317,13 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	return $result;
     }
-    
+
     /**
      * testWSInvoicesUpdateInvoiceByRefExt
-     * 
+     *
      * Update an invoice using ref_ext
      * @depends testWSInvoicesCreateInvoice
-     * 
+     *
      * @param	array	$result		invoice created by create method
      * @return	array 				Invoice
      */
@@ -337,12 +339,12 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 
     	// update status to 2
     	$body = array (
-    		"id" => NULL,
-			"ref" => NULL,
+    		"id" => null,
+			"ref" => null,
 			"ref_ext" => "ref-phpunit-2",
 			"thirdparty_id" => self::$socid,
-			"fk_user_author" => NULL,
-			"fk_user_valid" => NULL,
+			"fk_user_author" => null,
+			"fk_user_valid" => null,
 			"date" => "2015-04-19 20:16:53",
 			"date_due" => "",
 			"date_creation" => "",
@@ -356,12 +358,12 @@ class WebservicesInvoicesTest extends PHPUnit_Framework_TestCase
 			"note_private" => "Synchronised from Prestashop",
 			"note_public" => "",
 			"status" => "2",
-			"close_code" => NULL ,
-			"close_note" => NULL,
-			"project_id" => NULL,
+			"close_code" => null ,
+			"close_note" => null,
+			"project_id" => null,
 			"lines"  => array(
 				array(
-				"id"  => NULL,
+				"id"  => null,
 				"type" => 0,
 				"desc" => "Horloge Vinyle Serge",
 				"vat_rate" => 20,

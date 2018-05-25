@@ -1,2 +1,14 @@
 # Dolibarr language file - Source file is en_US - boxes
 BoxProductsAlertStock=Alarm producten voorraad
+BoxLastProductsInContract=Laatste %s producten/diensten met contract.
+BoxLastCustomerBills=Laatste klantenfacturen
+BoxOldestUnpaidCustomerBills=Oudste onbetaalde klantenfacturen
+BoxOldestUnpaidSupplierBills=Oudste onbetaalde leveranciersfacturen
+BoxLastProposals=Laatste commerciële offerten/voorstellen
+BoxLastProspects=Laatste aangepaste propecten
+BoxLastCustomers=Laatste aangepaste klanten
+BoxLastSuppliers=Laatste aangapaste leveranciers
+BoxLastContacts=Laatste contacten/adressen
+BoxFicheInter=Laatste interventie
+BoxTitleLastRssInfos=Laatste %s nieuws van %s
+BoxTitleLastModifiedPropals=Laatste %s gewijzigde offertes

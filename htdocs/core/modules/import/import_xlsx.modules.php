@@ -136,17 +136,18 @@ class ImportXlsx extends ModeleImports
 	 */
 	function write_title_example($outputlangs,$headerlinefields)
 	{
-    global $conf;
-    $this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
-    $this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+		global $conf;
+		$this->workbook->getActiveSheet()->getStyle('1')->getFont()->setBold(true);
+		$this->workbook->getActiveSheet()->getStyle('1')->getAlignment()->setHorizontal(PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
 
-    $col = 0;
-    foreach($headerlinefields as $field) {
-      $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, 1, $outputlangs->transnoentities($field));
-      // set autowidth
-      //$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($col + 1))->setAutoSize(true);
-      $col++;
-    }
+		$col = 0;
+		foreach($headerlinefields as $field) {
+			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, 1, $outputlangs->transnoentities($field));
+			// set autowidth
+			//$this->workbook->getActiveSheet()->getColumnDimension($this->column2Letter($col + 1))->setAutoSize(true);
+			$col++;
+		}
+
 		return ''; // final output will be generated in footer
 	}
 
@@ -159,13 +160,14 @@ class ImportXlsx extends ModeleImports
 	 */
 	function write_record_example($outputlangs,$contentlinevalues)
 	{
-    $col = 0;
-    $row = 2;
-    foreach($contentlinevalues as $cell) {
-        $this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, $row, $cell);
-        $col++;
-    }
-    return ''; // final output will be generated in footer
+		$col = 0;
+		$row = 2;
+		foreach($contentlinevalues as $cell) {
+			$this->workbook->getActiveSheet()->SetCellValueByColumnAndRow($col, $row, $cell);
+			$col++;
+		}
+
+		return ''; // final output will be generated in footer
 	}
 
 	/**
@@ -177,15 +179,15 @@ class ImportXlsx extends ModeleImports
 	function write_footer_example($outputlangs)
 	{
 		// return te file content as a string
-    $tempfile = tempnam(sys_get_temp_dir(), 'dol');
-    $objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
-    $objWriter->save($tempfile);
-    $this->workbook->disconnectWorksheets();
-    unset($this->workbook);
+		$tempfile = tempnam(sys_get_temp_dir(), 'dol');
+		$objWriter = new PHPExcel_Writer_Excel2007($this->workbook);
+		$objWriter->save($tempfile);
+		$this->workbook->disconnectWorksheets();
+		unset($this->workbook);
 
-    $content = file_get_contents($tempfile);
-    unlink($tempfile);
-    return $content;
+		$content = file_get_contents($tempfile);
+		unlink($tempfile);
+		return $content;
 	}
 
 
@@ -223,13 +225,13 @@ class ImportXlsx extends ModeleImports
 		$reader = new PHPExcel_Reader_Excel2007();
 		$this->workbook = $reader->load($file);
 
-	    $rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
+		$rowcount = $this->workbook->getActiveSheet()->getHighestDataRow();
 
-	    $this->workbook->disconnectWorksheets();
-	    unset($this->workbook);
+		$this->workbook->disconnectWorksheets();
+		unset($this->workbook);
 
 		return $rowcount;
-    }
+	}
 
 
 	/**
@@ -292,7 +294,7 @@ class ImportXlsx extends ModeleImports
 	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
-	 * @param	array	$updatekeys						Array of keys to use to try to do update
+	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										<0 if KO, >0 if OK
 	 */
 	// What is this doing here ? it is common to all imports, is should be in the parent class
@@ -640,6 +642,34 @@ class ImportXlsx extends ModeleImports
 										$error++;
 									} else {
 										// No record found with filters, insert will be tried below
+									}
+								}
+								else
+								{
+									//print 'E';
+									$this->errors[$error]['lib']=$this->db->lasterror();
+									$this->errors[$error]['type']='SQL';
+									$error++;
+								}
+							} else {
+								// We have a last INSERT ID. Check if we have a row referencing this foreign key.
+								// This is required when updating table with some extrafields. When inserting a record in parent table, we can make 
+								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record 
+								// may already exists. So we rescan the extrafield table to be know if record exists or not for the rowid.
+								$sqlSelect = 'SELECT rowid FROM '.$tablename;
+
+								if(empty($keyfield)) $keyfield = 'rowid';
+								$sqlSelect .= ' WHERE '.$keyfield.' = '.$lastinsertid;
+
+								$resql=$this->db->query($sqlSelect);
+								if($resql) {
+									$res = $this->db->fetch_object($resql);
+									if($resql->num_rows == 1) {
+										// We have a row referencing this last foreign key, continue with UPDATE.
+									} else {
+										// No record found referencing this last foreign key,
+										// force $lastinsertid to 0 so we INSERT below.
+										$lastinsertid = 0;
 									}
 								}
 								else

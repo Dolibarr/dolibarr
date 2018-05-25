@@ -2,9 +2,9 @@
 
 ![Build status](https://img.shields.io/travis/Dolibarr/dolibarr/develop.svg) ![Downloads per day](https://img.shields.io/sourceforge/dm/dolibarr.svg)
 
-Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda, ...).
+Dolibarr ERP & CRM is a modern software package to manage your organization's activity (contacts, suppliers, invoices, orders, stocks, agenda…).
 
-It's an Open Source software (wrote in PHP language) designed for small, medium or large companies, foundations and freelances.
+It's an Open Source Software (written in PHP language) designed for small, medium or large companies, foundations and freelances.
 
 You can freely use, study, modify or distribute it according to its Free Software licence.
 
@@ -29,18 +29,25 @@ Other licenses apply for some included dependencies. See [COPYRIGHT](https://git
 Releases can be downloaded from [official website](https://www.dolibarr.org/).
 
 ### Install from composer
-If you do not already have Composer installed, you may do so by following the instructions at getcomposer.org. On Linux and Mac OS X, you'll run the following commands:
 
+If you do not already have Composer installed, you may do so by following the instructions at [getcomposer.org](https://getcomposer.org/). On Linux and macOS, you may run the following commands:
+
+```bash
 curl -sS https://getcomposer.org/installer | php
 mv composer.phar /usr/local/bin/composer
+```
 
-On Windows, you'll download and run https://getcomposer.org/Composer-Setup.exe
+On Windows, you can download and run https://getcomposer.org/Composer-Setup.exe
 
+You can then create a new project
+
+```bash
 composer create-project dolibarr/dolibarr erp
+```
 
 ### Simple setup
 
-If you have low technical skills and you're looking to install Dolibarr ERP/CRM in few clicks, you can use one of the packaged versions:
+If you have low technical skills and you're looking to install Dolibarr ERP/CRM in just a few clicks, you can use one of the packaged versions:
 
 - DoliWamp for Windows
 - DoliDeb for Debian or Ubuntu
@@ -48,11 +55,11 @@ If you have low technical skills and you're looking to install Dolibarr ERP/CRM 
 
 ### Advanced setup
 
-You can use a Web server and a supported database (MariaDb, MySql or Postgresql) to install the standard version.
+You can use a Web server and a supported database (MariaDB, MySQL or PostgreSQL) to install the standard version.
 
 - Uncompress the downloaded archive
-- Copy directory "dolibarr" and all its files inside your web server root, or copy directory anywhere and set up your web server to use "dolibarr/htdocs" as root for a new web server virtual host (second choice need to be server administrator)
-- Create an empty file "htdocs/conf/conf.php" and set permissions for your web server user (write permissions will be removed once install is finished)
+- Copy the "dolibarr" directory and all its files inside your web server root or anywhere you'd like and set up your web server to use "*dolibarr/htdocs*" as root for a new web server virtual host (second choice need to be server administrator)
+- Create an empty `htdocs/conf/conf.php` file and set permissions for your web server user (*write* permissions will be removed once install is finished)
 - From your browser, go to the dolibarr "install/" page
 
     The URL will depends on choices made in the first step:
@@ -73,10 +80,10 @@ You can use a Web server and a supported database (MariaDb, MySql or Postgresql)
 ## UPGRADING
 
 - Overwrite all old files from 'dolibarr' directory with files provided into the new version's package.
-- At first next access, Dolibarr will redirect your to the "install/" page to make the upgrade process.
-  If a file install.lock exists to lock any run of upgrade process, the application will ask you to remove the file manually (you should find the install.lock file into the directory used to store generated and uploaded documents, in most cases, it is the directory called "documents").
+- At first next access, Dolibarr will redirect your to the "install/" page to follow the upgrade process.
+  If an `install.lock` file exists to lock any other upgrade process, the application will ask you to remove the file manually (you should find the `install.lock` file into the directory used to store generated and uploaded documents, in most cases, it is the directory called "*documents*").
 
-*Note: migration process can safely be done multiple times by calling the page /install/index.php*
+*Note: migration process can be safely done multiple times by calling the `/install/index.php` page*
 
 
 ## WHAT'S NEW
@@ -155,7 +162,7 @@ See the [ChangeLog](https://github.com/Dolibarr/dolibarr/blob/develop/ChangeLog)
 Dolibarr can be extended with a lot of other external application or modules from third party developers available at the [DoliStore](https://www.dolistore.com).
 
 
-## FUTURE
+## WHAT DOLIBARR CAN'T DO YET
 
 These are features that Dolibarr does **not** yet fully support:
 
@@ -172,7 +179,8 @@ Administrator, user, developer and translator's documentations are available alo
 
 ## CONTRIBUTING
 
-See file [CONTRIBUTING](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)
+This project exists thanks to all the people who contribute. [[Contribute](https://github.com/Dolibarr/dolibarr/blob/develop/.github/CONTRIBUTING.md)].
+<a href="https://github.com/Dolibarr/dolibarr/graphs/contributors"><img src="https://opencollective.com/dolibarr/contributors.svg?width=890&button=false" /></a>
 
 
 ## CREDITS
@@ -192,3 +200,8 @@ Follow Dolibarr project on:
 - [LinkedIn](https://www.linkedin.com/company/association-dolibarr)
 - [YouTube](https://www.youtube.com/user/DolibarrERPCRM)
 - [GitHub](https://github.com/Dolibarr/dolibarr)
+
+
+### Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here. 🙏 [[Become a sponsor/backer](https://opencollective.com/dolibarr#backer)]

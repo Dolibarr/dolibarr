@@ -207,7 +207,7 @@ if (!empty($object->id))
     // List of actions on element
     /*include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
     $formactions=new FormActions($db);
-    $somethingshown=$formactions->showactions($object,'project',0);*/
+    $somethingshown = $formactions->showactions($object,'project',0);*/
 
     // List of todo actions
     //show_actions_todo($conf,$langs,$db,$object,null,0,$actioncode);

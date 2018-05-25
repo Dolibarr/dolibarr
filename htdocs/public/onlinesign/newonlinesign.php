@@ -62,14 +62,16 @@ $action=GETPOST('action','alpha');
 // currency (iso code)
 
 $suffix=GETPOST("suffix",'alpha');
-$SOURCE=GETPOST("source",'alpha');
+$source=GETPOST("source",'alpha');
 $ref=$REF=GETPOST("ref",'alpha');
+
+if (empty($source)) $source='proposal';
 
 if (! $action)
 {
     if ($source && ! $ref)
     {
-    	dol_print_error('',$langs->trans('ErrorBadParameters')." - ref");
+    	print $langs->trans('ErrorBadParameters')." - ref missing";
     	exit;
     }
 }
@@ -90,10 +92,10 @@ $urlwithroot=DOL_MAIN_URL_ROOT;						// This is to use same domain name than cur
 // Complete urls for post treatment
 $SECUREKEY=GETPOST("securekey");	        // Secure key
 
-if (! empty($SOURCE))
+if (! empty($source))
 {
-    $urlok.='source='.urlencode($SOURCE).'&';
-    $urlko.='source='.urlencode($SOURCE).'&';
+    $urlok.='source='.urlencode($source).'&';
+    $urlko.='source='.urlencode($source).'&';
 }
 if (! empty($REF))
 {
@@ -113,7 +115,7 @@ if (! empty($entity))
 $urlok=preg_replace('/&$/','',$urlok);  // Remove last &
 $urlko=preg_replace('/&$/','',$urlko);  // Remove last &
 
-
+$creditor = $mysoc->name;
 
 
 /*
@@ -141,10 +143,10 @@ $conf->dol_hide_leftmenu=1;
 llxHeader($head, $langs->trans("OnlineSignature"), '', '', 0, 0, '', '', '', 'onlinepaymentbody');
 
 // Check link validity
-if (! empty($SOURCE) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
+if (! empty($source) && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_ref', 'order_ref', '')))
 {
     $langs->load("errors");
-    dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $SOURCE, $ref));
+    dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
     llxFooter();
     $db->close();
     exit;
@@ -164,7 +166,7 @@ print '<!-- Form to sign -->'."\n";
 
 print '<table id="dolpaymenttable" summary="Payment form" class="center">'."\n";
 
-// Show logo (search order: logo defined by PAYBOX_LOGO_suffix, then PAYBOX_LOGO, then small company logo, large company logo, theme logo, common logo)
+// Show logo (search order: logo defined by ONLINE_SIGN_LOGO_suffix, then ONLINE_SIGN_LOGO_, then small company logo, large company logo, theme logo, common logo)
 $width=0;
 // Define logo and logosmall
 $logosmall=$mysoc->logo_small;
@@ -205,8 +207,8 @@ if (! empty($conf->global->ONLINE_SIGN_NEWFORM_TEXT))
 }
 if (empty($text))
 {
-    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage").'</strong><br></td></tr>'."\n";
-    $text.='<tr><td class="textpublicpayment"><br>'.$langs->trans("ThisScreenAllowsYouToSignDocFrom",$creditor).'<br><br></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment"><br><strong>'.$langs->trans("WelcomeOnOnlineSignaturePage", $mysoc->name).'</strong></td></tr>'."\n";
+    $text.='<tr><td class="textpublicpayment">'.$langs->trans("ThisScreenAllowsYouToSignDocFrom",$creditor).'<br><br></td></tr>'."\n";
 }
 print $text;
 
@@ -219,45 +221,24 @@ $found=false;
 $error=0;
 $var=false;
 
-// Free payment
-if (! GETPOST("source"))
-{
-	$found=true;
-	$tag=GETPOST("tag");
-	$fulltag=$tag;
-
-	// Creditor
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
-    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
-    print '</td></tr>'."\n";
-
-
-
-    // We do not add fields shipToName, shipToStreet, shipToCity, shipToState, shipToCountryCode, shipToZip, shipToStreet2, phoneNum
-    // as they don't exists (buyer is unknown, tag is free).
-}
-
-
 // Payment on customer order
-if (GETPOST("source") == 'order')
+if ($source == 'proposal')
 {
 	$found=true;
-	$langs->load("orders");
+	$langs->load("proposal");
 
-	require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 
-	$order=new Commande($db);
-	$result=$order->fetch('',$ref);
-	if ($result < 0)
+	$proposal=new Propal($db);
+	$result=$proposal->fetch('',$ref);
+	if ($result <= 0)
 	{
-		$mesg=$order->error;
+		$mesg=$proposal->error;
 		$error++;
 	}
 	else
 	{
-		$result=$order->fetch_thirdparty($order->socid);
+		$result=$proposal->fetch_thirdparty($proposal->socid);
 	}
 
 	// Creditor
@@ -270,334 +251,19 @@ if (GETPOST("source") == 'order')
 	// Debitor
 
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$order->thirdparty->name.'</b>';
+	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$proposal->thirdparty->name.'</b>';
 
 	// Object
 
-	$text='<b>'.$langs->trans("PaymentOrderRef",$order->ref).'</b>';
+	$text='<b>'.$langs->trans("SignatureProposalRef",$proposal->ref).'</b>';
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
 	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
 	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$order->ref.'">';
+	print '<input type="hidden" name="ref" value="'.$proposal->ref.'">';
 	print '</td></tr>'."\n";
 
 
 }
-
-
-// Payment on customer invoice
-if (GETPOST("source") == 'invoice')
-{
-	$found=true;
-	$langs->load("bills");
-
-	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
-
-	$invoice=new Facture($db);
-	$result=$invoice->fetch('',$ref);
-	if ($result < 0)
-	{
-		$mesg=$invoice->error;
-		$error++;
-	}
-	else
-	{
-		$result=$invoice->fetch_thirdparty($invoice->socid);
-	}
-
-    if ($action != 'dosign') // Do not change amount if we just click on first dosign
-    {
-    	$amount=price2num($invoice->total_ttc - $invoice->getSommePaiement());
-        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-        $amount=price2num($amount);
-    }
-
-	// Creditor
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
-    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
-    print '</td></tr>'."\n";
-
-	// Debitor
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$invoice->thirdparty->name.'</b>';
-
-	// Object
-
-	$text='<b>'.$langs->trans("PaymentInvoiceRef",$invoice->ref).'</b>';
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$invoice->ref.'">';
-	print '</td></tr>'."\n";
-
-}
-
-// Payment on contract line
-if (GETPOST("source") == 'contractline')
-{
-	$found=true;
-	$langs->load("contracts");
-
-	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
-
-	$contractline=new ContratLigne($db);
-	$result=$contractline->fetch('',$ref);
-	if ($result < 0)
-	{
-		$mesg=$contractline->error;
-		$error++;
-	}
-	else
-	{
-		if ($contractline->fk_contrat > 0)
-		{
-			$contract=new Contrat($db);
-			$result=$contract->fetch($contractline->fk_contrat);
-			if ($result > 0)
-			{
-				$result=$contract->fetch_thirdparty($contract->socid);
-			}
-			else
-			{
-				$mesg=$contract->error;
-				$error++;
-			}
-		}
-		else
-		{
-			$mesg='ErrorRecordNotFound';
-			$error++;
-		}
-	}
-
-    if ($action != 'dosign') // Do not change amount if we just click on first dosign
-    {
-    	$amount=$contractline->total_ttc;
-    	if ($contractline->fk_product)
-    	{
-    		$product=new Product($db);
-    		$result=$product->fetch($contractline->fk_product);
-
-    		// We define price for product (TODO Put this in a method in product class)
-    		if (! empty($conf->global->PRODUIT_MULTIPRICES))
-    		{
-    			$pu_ht = $product->multiprices[$contract->thirdparty->price_level];
-    			$pu_ttc = $product->multiprices_ttc[$contract->thirdparty->price_level];
-    			$price_base_type = $product->multiprices_base_type[$contract->thirdparty->price_level];
-    		}
-    		else
-    		{
-    			$pu_ht = $product->price;
-    			$pu_ttc = $product->price_ttc;
-    			$price_base_type = $product->price_base_type;
-    		}
-
-    		$amount=$pu_ttc;
-    		if (empty($amount))
-    		{
-    			dol_print_error('','ErrorNoPriceDefinedForThisProduct');
-    			exit;
-    		}
-    	}
-        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-        $amount=price2num($amount);
-    }
-
-	$qty=1;
-	if (GETPOST('qty')) $qty=GETPOST('qty');
-
-	// Creditor
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
-    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
-	print '</td></tr>'."\n";
-
-	// Debitor
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("ThirdParty");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$contract->thirdparty->name.'</b>';
-
-	// Object
-
-	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
-	if ($contractline->fk_product)
-	{
-		$text.='<br>'.$product->ref.($product->label?' - '.$product->label:'');
-	}
-	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
-	//if ($contractline->date_fin_validite) {
-	//	$text.='<br>'.$langs->trans("DateEndPlanned").': ';
-	//	$text.=dol_print_date($contractline->date_fin_validite);
-	//}
-	if ($contractline->date_fin_validite)
-	{
-		$text.='<br>'.$langs->trans("ExpiredSince").': '.dol_print_date($contractline->date_fin_validite);
-	}
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$contractline->ref.'">';
-	print '</td></tr>'."\n";
-
-	// Quantity
-
-	$label=$langs->trans("Quantity");
-	$qty=1;
-	$duration='';
-	if ($contractline->fk_product)
-	{
-		if ($product->isService() && $product->duration_value > 0)
-		{
-			$label=$langs->trans("Duration");
-
-			// TODO Put this in a global method
-			if ($product->duration_value > 1)
-			{
-				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("DurationDays"),"w"=>$langs->trans("DurationWeeks"),"m"=>$langs->trans("DurationMonths"),"y"=>$langs->trans("DurationYears"));
-			}
-			else
-			{
-				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("DurationDay"),"w"=>$langs->trans("DurationWeek"),"m"=>$langs->trans("DurationMonth"),"y"=>$langs->trans("DurationYear"));
-			}
-			$duration=$product->duration_value.' '.$dur[$product->duration_unit];
-		}
-	}
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$label.'</td>';
-	print '<td class="CTableRow'.($var?'1':'2').'"><b>'.($duration?$duration:$qty).'</b>';
-	print '<input type="hidden" name="newqty" value="'.dol_escape_htmltag($qty).'">';
-	print '</b></td></tr>'."\n";
-
-	// Amount
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount)) print ' ('.$langs->trans("ToComplete").')';
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
-	{
-        print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size=8 type="text" name="newamount" value="'.GETPOST("newamount","int").'">';
-	}
-	else {
-		print '<b>'.price($amount).'</b>';
-        print '<input type="hidden" name="amount" value="'.$amount.'">';
-		print '<input type="hidden" name="newamount" value="'.$amount.'">';
-	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
-	print '</td></tr>'."\n";
-
-}
-
-// Payment on member subscription
-if (GETPOST("source") == 'membersubscription')
-{
-	$found=true;
-	$langs->load("members");
-
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/adherents/class/subscription.class.php';
-
-	$member=new Adherent($db);
-	$result=$member->fetch('',$ref);
-	if ($result < 0)
-	{
-		$mesg=$member->error;
-		$error++;
-	}
-	else
-	{
-		$subscription=new Subscription($db);
-	}
-
-    if ($action != 'dosign') // Do not change amount if we just click on first dosign
-    {
-    	$amount=$subscription->total_ttc;
-        if (GETPOST("amount",'int')) $amount=GETPOST("amount",'int');
-        $amount=price2num($amount);
-    }
-
-	$fulltag='MEM='.$member->id.'.DAT='.dol_print_date(dol_now(),'%Y%m%d%H%M');
-	if (! empty($TAG)) { $tag=$TAG; $fulltag.='.TAG='.$TAG; }
-	$fulltag=dol_string_unaccent($fulltag);
-
-	// Creditor
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Creditor");
-    print '</td><td class="CTableRow'.($var?'1':'2').'"><b>'.$creditor.'</b>';
-    print '<input type="hidden" name="creditor" value="'.$creditor.'">';
-    print '</td></tr>'."\n";
-
-	// Debitor
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Member");
-	print '</td><td class="CTableRow'.($var?'1':'2').'"><b>';
-	if ($member->morphy == 'mor' && ! empty($member->societe)) print $member->societe;
-	else print $member->getFullName($langs);
-	print '</b>';
-
-	// Object
-
-	$text='<b>'.$langs->trans("PaymentSubscription").'</b>';
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Designation");
-	print '</td><td class="CTableRow'.($var?'1':'2').'">'.$text;
-	print '<input type="hidden" name="source" value="'.GETPOST("source",'alpha').'">';
-	print '<input type="hidden" name="ref" value="'.$member->ref.'">';
-	print '</td></tr>'."\n";
-
-	if ($member->last_subscription_date || $member->last_subscription_amount)
-	{
-		// Last subscription date
-
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionDate");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">'.dol_print_date($member->last_subscription_date,'day');
-		print '</td></tr>'."\n";
-
-		// Last subscription amount
-
-		print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("LastSubscriptionAmount");
-		print '</td><td class="CTableRow'.($var?'1':'2').'">'.price($member->last_subscription_amount);
-		print '</td></tr>'."\n";
-
-		if (empty($amount) && ! GETPOST('newamount')) $_GET['newamount']=$member->last_subscription_amount;
-	}
-
-	// Amount
-
-	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$langs->trans("Amount");
-	if (empty($amount))
-	{
-		print ' ('.$langs->trans("ToComplete");
-		if (! empty($conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO)) print ' - <a href="'.$conf->global->MEMBER_EXT_URL_SUBSCRIPTION_INFO.'" rel="external" target="_blank">'.$langs->trans("SeeHere").'</a>';
-		print ')';
-	}
-	print '</td><td class="CTableRow'.($var?'1':'2').'">';
-	if (empty($amount) || ! is_numeric($amount))
-	{
-	    $valtoshow=GETPOST("newamount",'int');
-	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
-        print '<input type="hidden" name="amount" value="'.GETPOST("amount",'int').'">';
-	    print '<input class="flat" size="8" type="text" name="newamount" value="'.$valtoshow.'">';
-	}
-	else {
-	    $valtoshow=$amount;
-	    if (! empty($conf->global->MEMBER_MIN_AMOUNT) && $valtoshow) $valtoshow=max($conf->global->MEMBER_MIN_AMOUNT,$valtoshow);
-	    print '<b>'.price($valtoshow).'</b>';
-        print '<input type="hidden" name="amount" value="'.$valtoshow.'">';
-		print '<input type="hidden" name="newamount" value="'.$valtoshow.'">';
-	}
-	// Currency
-	print ' <b>'.$langs->trans("Currency".$currency).'</b>';
-	print '<input type="hidden" name="currency" value="'.$currency.'">';
-	print '</td></tr>'."\n";
-
-}
-
 
 
 
@@ -617,7 +283,7 @@ if ($action != 'dosign')
     }
     else
     {
-    	dol_print_error_email('ERRORNEWONLINESIGNPAYPAL');
+    	dol_print_error_email('ERRORNEWONLINESIGN');
     }
 }
 else

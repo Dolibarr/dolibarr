@@ -40,8 +40,11 @@ if (! $user->admin) accessforbidden();
 $extrafields = new ExtraFields($db);
 
 $action = GETPOST('action','alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $value = GETPOST('value','alpha');
 $type='user';
+
 
 /*
  * Action
@@ -83,7 +86,7 @@ elseif ($action == 'setdoc')
 	}
 	$res = true;
 }
-elseif (preg_match('/set_(.*)/',$action,$reg))
+elseif (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -97,7 +100,7 @@ elseif (preg_match('/set_(.*)/',$action,$reg))
     }
 }
 
-elseif (preg_match('/del_(.*)/',$action,$reg))
+elseif (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -130,10 +133,12 @@ elseif ($action == 'sethideinactiveuser')
  * View
  */
 
+$form = new Form($db);
+
 $help_url='EN:Module_Users|FR:Module_Utilisateurs|ES:M&oacute;dulo_Usuarios';
 llxHeader('',$langs->trans("UsersSetup"),$help_url);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("UsersSetup"),$linkback,'title_setup');
 
 
@@ -148,8 +153,6 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
-$var=true;
-$form = new Form($db);
 
 // Mail required for members
 
@@ -218,7 +221,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -255,7 +257,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2015-2017  Alexandre Spangaro  <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Nicolas ZABOURI  <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +47,9 @@ class PaymentExpenseReport extends CommonObject
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
+        //Unknow field
+        var $chid;
+        var $total;
 
 	/**
 	 *	Constructor
@@ -88,6 +92,7 @@ class PaymentExpenseReport extends CommonObject
 		if (isset($this->fk_bank))			$this->fk_bank=trim($this->fk_bank);
 		if (isset($this->fk_user_creat))	$this->fk_user_creat=trim($this->fk_user_creat);
 		if (isset($this->fk_user_modif))	$this->fk_user_modif=trim($this->fk_user_modif);
+		if (! empty($this->fk_expensereport)) $this->chid = $this->fk_expensereport;
 
         $totalamount = 0;
         foreach ($this->amounts as $key => $value)  // How payment is dispatch
@@ -165,9 +170,10 @@ class PaymentExpenseReport extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."payment_expensereport as t)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."payment_expensereport as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepayment = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepayment = pt.id";
+		$sql.= " WHERE t.rowid = ".$id;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -447,7 +453,7 @@ class PaymentExpenseReport extends CommonObject
 	function LibStatut($statut,$mode=0)
 	{
 	    global $langs;
-	
+
 	    return '';
 	}
 
@@ -504,7 +510,10 @@ class PaymentExpenseReport extends CommonObject
             $acc = new Account($this->db);
             $acc->fetch($accountid);
 
-            $total=$this->total;
+            //Fix me field
+            $this->total = $this->amount;
+            $total = $this->total;
+
             if ($mode == 'payment_expensereport') $amount=$total;
 
             // Insert payment into llx_bank

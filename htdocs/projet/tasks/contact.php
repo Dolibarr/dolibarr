@@ -228,9 +228,12 @@ if ($id > 0 || ! empty($ref))
 
             // Date start - end
             print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-            print dol_print_date($projectstatic->date_start,'day');
-            $end=dol_print_date($projectstatic->date_end,'day');
-            if ($end) print ' - '.$end;
+            $start = dol_print_date($projectstatic->date_start,'day');
+            print ($start?$start:'?');
+            $end = dol_print_date($projectstatic->date_end,'day');
+            print ' - ';
+            print ($end?$end:'?');
+            if ($projectstatic->hasDelay()) print img_warning("Late");
             print '</td></tr>';
 
             // Budget
@@ -282,7 +285,7 @@ if ($id > 0 || ! empty($ref))
 		//$arrayofuseridoftask=$object->getListContactId('internal');
 
 		$head = task_prepare_head($object);
-		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask');
+		dol_fiche_head($head, 'task_contact', $langs->trans("Task"), -1, 'projecttask', 0, '', 'reposition');
 
 
 		$param=(GETPOST('withproject')?'&withproject=1':'');
@@ -300,6 +303,7 @@ if ($id > 0 || ! empty($ref))
 		// Project
 		if (empty($withproject))
 		{
+		    $result=$projectstatic->fetch($object->fk_project);
 		    $morehtmlref.='<div class="refidno">';
 		    $morehtmlref.=$langs->trans("Project").': ';
 		    $morehtmlref.=$projectstatic->getNomUrl(1);
@@ -307,7 +311,11 @@ if ($id > 0 || ! empty($ref))
 
 		    // Third party
 		    $morehtmlref.=$langs->trans("ThirdParty").': ';
-		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    if($projectstatic->socid>0) {
+		        $projectstatic->fetch_thirdparty();
+		        $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    }
+
 		    $morehtmlref.='</div>';
 		}
 
@@ -339,7 +347,7 @@ if ($id > 0 || ! empty($ref))
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
 			print '<td>'.$langs->trans("ThirdParty").'</td>';
-			print '<td>'.$langs->trans("ProjectContact").'</td>';
+			print '<td>'.$langs->trans("TaskContact").'</td>';
 			print '<td>'.$langs->trans("ContactType").'</td>';
 			print '<td colspan="3">&nbsp;</td>';
 			print "</tr>\n";
@@ -421,7 +429,7 @@ if ($id > 0 || ! empty($ref))
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Source").'</td>';
 		print '<td>'.$langs->trans("ThirdParty").'</td>';
-		print '<td>'.$langs->trans("ProjectContact").'</td>';
+		print '<td>'.$langs->trans("TaskContact").'</td>';
 		print '<td>'.$langs->trans("ContactType").'</td>';
 		print '<td align="center">'.$langs->trans("Status").'</td>';
 		print '<td colspan="2">&nbsp;</td>';

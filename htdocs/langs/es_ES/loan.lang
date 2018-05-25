@@ -50,4 +50,6 @@ ConfigLoan=Configuración del módulo préstamos
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Cuenta contable por defecto para el capital
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Cuenta contable por defecto para el interés
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Cuenta contable por defecto para el seguro
-CreateCalcSchedule=Crear/Modificar vencimientos de préstamos
+FinancialCommitment=Prestamo
+CreateCalcSchedule=Editar el prestamo
+InterestAmount=Cantidad de interés

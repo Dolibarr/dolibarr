@@ -74,8 +74,8 @@ if ($id > 0)
     $head = contact_prepare_head($object);
 
     dol_fiche_head($head, 'note', $title, -1, 'contact');
-    
-    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php">'.$langs->trans("BackToList").'</a>';
+
+    $linkback = '<a href="'.DOL_URL_ROOT.'/contact/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     $morehtmlref='<div class="refidno">';
     if (empty($conf->global->SOCIETE_DISABLE_CONTACTS))
@@ -88,13 +88,13 @@ if ($id > 0)
         else $morehtmlref.=$langs->trans("ContactNotLinkedToCompany");
     }
     $morehtmlref.='</div>';
-    
+
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-    
+
     $cssclass='titlefield';
     //if ($action == 'editnote_public') $cssclass='titlefieldcreate';
     //if ($action == 'editnote_private') $cssclass='titlefieldcreate';
-    
+
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
 
@@ -107,12 +107,12 @@ if ($id > 0)
 
     print "</table>";
 
-    
+
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
-	
+
     dol_fiche_end();
 }
 

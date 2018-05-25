@@ -52,10 +52,10 @@ $type = 'action';
 
 include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
 
-if (preg_match('/set_(.*)/',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
-	$value=(GETPOST($code) ? GETPOST($code) : 1);
+	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
 	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		Header("Location: ".$_SERVER["PHP_SELF"]);
@@ -67,7 +67,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	}
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -178,7 +178,7 @@ $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 $wikihelp='EN:Module_Agenda_En|FR:Module_Agenda|ES:Módulo_Agenda';
 llxHeader('', $langs->trans("AgendaSetup"),$wikihelp);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("AgendaSetup"),$linkback,'title_setup');
 
 
@@ -352,6 +352,15 @@ else
 }
 print '</td></tr>'."\n";
 
+// AGENDA_DEFAULT_VIEW
+print '<tr class="oddeven">'."\n";
+print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
+print '<td align="center">&nbsp;</td>'."\n";
+print '<td align="right">'."\n";
+$tmplist=array('show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
+print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
+print '</td></tr>'."\n";
+
 if (! empty($conf->global->AGENDA_USE_EVENT_TYPE))
 {
 
@@ -380,46 +389,6 @@ print '<td align="center">&nbsp;</td>'."\n";
 print '<td align="right">'."\n";
 $formactions->form_select_status_action('agenda', $conf->global->AGENDA_DEFAULT_FILTER_STATUS, 1, 'AGENDA_DEFAULT_FILTER_STATUS', 1, 2, 'minwidth100');
 print '</td></tr>'."\n";
-
-// AGENDA_DEFAULT_VIEW
-print '<tr class="oddeven">'."\n";
-print '<td>'.$langs->trans("AGENDA_DEFAULT_VIEW").'</td>'."\n";
-print '<td align="center">&nbsp;</td>'."\n";
-print '<td align="right">'."\n";
-$tmplist=array('show_list'=>$langs->trans("ViewList"), 'show_month'=>$langs->trans("ViewCal"), 'show_week'=>$langs->trans("ViewWeek"), 'show_day'=>$langs->trans("ViewDay"), 'show_peruser'=>$langs->trans("ViewPerUser"));
-print $form->selectarray('AGENDA_DEFAULT_VIEW', $tmplist, $conf->global->AGENDA_DEFAULT_VIEW);
-print '</td></tr>'."\n";
-
-// AGENDA NOTIFICATION
-if ($conf->global->MAIN_FEATURES_LEVEL > 0)
-{
-
-    print '<tr class="oddeven">'."\n";
-    print '<td>'.$langs->trans('AGENDA_NOTIFICATION').'</td>'."\n";
-    print '<td align="center">&nbsp;</td>'."\n";
-    print '<td align="right">'."\n";
-
-    if (empty($conf->global->AGENDA_NOTIFICATION)) {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
-        print '</td></tr>'."\n";
-    } else {
-        print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
-        print '</td></tr>'."\n";
-
-        print '<tr class="oddeven">'."\n";
-        print '<td>'.$langs->trans('AGENDA_NOTIFICATION_SOUND').'</td>'."\n";
-        print '<td align="center">&nbsp;</td>'."\n";
-        print '<td align="right">'."\n";
-
-        if (empty($conf->global->AGENDA_NOTIFICATION_SOUND)) {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=set_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Disabled'),'switch_off').'</a>';
-        } else {
-            print '<a href="'.$_SERVER['PHP_SELF'].'?action=del_AGENDA_NOTIFICATION_SOUND">'.img_picto($langs->trans('Enabled'),'switch_on').'</a>';
-        }
-
-        print '</td></tr>'."\n";
-    }
-}
 
 print '</table>';
 

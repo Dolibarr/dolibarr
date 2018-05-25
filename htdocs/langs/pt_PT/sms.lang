@@ -34,7 +34,7 @@ SmsStatusSent=Enviado
 SmsStatusSentPartialy=Enviado parcialmente
 SmsStatusSentCompletely=Enviado completamente
 SmsStatusError=Erro
-SmsStatusNotSent=Não enviou
+SmsStatusNotSent=Não enviado
 SmsSuccessfulySent=Sms enviada corretamente (de %s a %s)
 ErrorSmsRecipientIsEmpty=Número de destino está vazio
 WarningNoSmsAdded=Novo número de telefone para adicionar à lista de alvos
@@ -48,4 +48,4 @@ SmsInfoNumero= (Formato internacional exemplo: +33899701761)
 DelayBeforeSending=Atraso antes de enviar (minutos)
 SmsNoPossibleSenderFound=Nenhum operador disponível. Verifique a configuração do seu serviço SMS. 
 SmsNoPossibleRecipientFound=Nenhum alvo disponível. Verifique a configuração do seu provedor de SMS.
-
+DisableStopIfSupported=Desativar mensagem STOP (se suportado)

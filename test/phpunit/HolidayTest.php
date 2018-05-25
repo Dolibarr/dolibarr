@@ -201,11 +201,11 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 		$localobject->email='newemail@newemail.com';
 		$localobject->jabberid='New im id';
 		$localobject->default_lang='es_ES';
-		
+
 		$result=$localobject->update($localobject->id,$user);
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
     	$this->assertLessThan($result, 0, 'Holiday::update error');
-		
+
     	$result=$localobject->update_note($localobject->note_private,'_private');
     	print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Holiday::update_note (private) error');
@@ -213,7 +213,7 @@ class HolidayTest extends PHPUnit_Framework_TestCase
 		$result=$localobject->update_note($localobject->note_public, '_public');
 		print __METHOD__." id=".$localobject->id." result=".$result."\n";
 		$this->assertLessThan($result, 0, 'Holiday::update_note (public) error');
-		
+
 
 		$newobject=new Holiday($this->savdb);
     	$result=$newobject->fetch($localobject->id);
@@ -289,6 +289,65 @@ class HolidayTest extends PHPUnit_Framework_TestCase
     	$this->assertLessThan($result, 0);
 
     	return $result;
+    }
+
+    /**
+     * testVerifDateHolidayCP
+     *
+     * @return void
+     */
+    public function testVerifDateHolidayCP()
+    {
+    	global $conf,$user,$langs,$db;
+    	$conf=$this->savconf;
+    	$user=$this->savuser;
+    	$langs=$this->savlangs;
+    	$db=$this->savdb;
+
+    	// Create a leave request the 1st morning only
+    	$localobjecta=new Holiday($this->savdb);
+    	$localobjecta->initAsSpecimen();
+    	$localobjecta->date_debut = dol_mktime(0, 0, 0, 1, 1, 2020);
+    	$localobjecta->date_fin = dol_mktime(0, 0, 0, 1, 1, 2020);
+    	$localobjecta->halfday = 1;
+    	$result=$localobjecta->create($user);
+
+    	// Create a leave request the 2 afternoon only
+    	$localobjectb=new Holiday($this->savdb);
+    	$localobjectb->initAsSpecimen();
+    	$localobjectb->date_debut = dol_mktime(0, 0, 0, 1, 2, 2020);
+    	$localobjectb->date_fin = dol_mktime(0, 0, 0, 1, 2, 2020);
+    	$localobjectb->halfday = -1;
+    	$result=$localobjectb->create($user);
+
+    	$date_debut = dol_mktime(0, 0, 0, 1, 1, 2020);
+    	$date_fin = dol_mktime(0, 0, 0, 1, 2, 2020);
+
+    	$localobjectc=new Holiday($this->savdb);
+
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, 0);
+    	$this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 0);
+    	$this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, 0);
+    	$this->assertFalse($result, 'result should be false, there is overlapping, full day is not available.');
+
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, 1);
+    	$this->assertFalse($result, 'result should be false, there is overlapping, morning of first day is not available.');
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 1);
+    	$this->assertFalse($result, 'result should be false, there is overlapping, morning of first day is not available.');
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, 1);
+    	$this->assertTrue($result, 'result should be true, there is no overlapping');
+
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_debut, -1);
+    	$this->assertTrue($result, 'result should be true, there is no overlapping');
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, -1);
+    	$this->assertFalse($result, 'result should be false, there is overlapping, afternoon of second day is not available');
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_fin, $date_fin, -1);
+    	$this->assertFalse($result, 'result should be false, there is overlapping, afternoon of second day is not available');
+
+    	$result=$localobjectc->verifDateHolidayCP($user->id, $date_debut, $date_fin, 2);	// start afternoon and end morning
+    	$this->assertTrue($result, 'result should be true, there is no overlapping');
     }
 
 }

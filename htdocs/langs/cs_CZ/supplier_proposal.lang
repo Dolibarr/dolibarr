@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Komerční návrhy dodavatele
 supplier_proposalDESC=Správa žádostí o ceny k dodavatelům
-SupplierProposalNew=Nová žádost
+SupplierProposalNew=Nový cenový poožadavek
 CommRequest=Cenový požadavek
 CommRequests=Cenové požadavky
 SearchRequest=Najít požadavek

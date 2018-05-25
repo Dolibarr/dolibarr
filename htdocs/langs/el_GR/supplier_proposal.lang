@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - supplier_proposal
 SupplierProposal=Εμπορικές προτάσεις προμηθευτών
 supplier_proposalDESC=Διαχειριστείτε τα αιτήματα των τιμών προς τους προμηθευτές
-SupplierProposalNew=Νέο αίτημα
+SupplierProposalNew=Νέα αίτηση τιμής
 CommRequest=Αίτηση τιμής
 CommRequests=Αιτήματα τιμών
 SearchRequest=Αναζήτηση αιτήματος

@@ -35,7 +35,8 @@ require_once '../main.inc.php';
 // This can happen only with a bookmark or forged url call.
 if (!empty($_SESSION["dol_authmode"]) && ($_SESSION["dol_authmode"] == 'forceuser' || $_SESSION["dol_authmode"] == 'http'))
 {
-   die("Disconnection does not work when connection was made in mode ".$_SESSION["dol_authmode"]);
+    unset($_SESSION["dol_login"]);
+	die("Applicative disconnection should be useless when connection was made in mode ".$_SESSION["dol_authmode"]);
 }
 
 global $conf, $langs, $user;
@@ -47,15 +48,15 @@ $result=$interface->run_triggers('USER_LOGOUT',$user,$user,$langs,$conf);
 if ($result < 0) { $error++; }
 // Fin appel triggers
 
+// Hooks on logout
+$action='';
+$hookmanager->initHooks(array('logout'));
+$parameters=array();
+$reshook=$hookmanager->executeHooks('afterLogout',$parameters,$user,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) { $error++; }
+
 // Define url to go after disconnect
 $urlfrom=empty($_SESSION["urlfrom"])?'':$_SESSION["urlfrom"];
-
-// Destroy some cookies
-// TODO external module
-if (! empty($conf->phenix->enabled) && ! empty($conf->phenix->cookie))
-{
-	setcookie($conf->phenix->cookie, '', 1, "/");
-}
 
 // Define url to go
 $url=DOL_URL_ROOT."/index.php";		// By default go to login page
@@ -69,7 +70,7 @@ if (GETPOST('dol_no_mouse_hover'))       $url.=(preg_match('/\?/',$url)?'&':'?')
 if (GETPOST('dol_use_jmobile'))          $url.=(preg_match('/\?/',$url)?'&':'?').'dol_use_jmobile=1';
 
 // Destroy session
-$prefix=dol_getprefix();
+$prefix=dol_getprefix('');
 $sessionname='DOLSESSID_'.$prefix;
 $sessiontimeout='DOLSESSTIMEOUT_'.$prefix;
 if (! empty($_COOKIE[$sessiontimeout])) ini_set('session.gc_maxlifetime',$_COOKIE[$sessiontimeout]);

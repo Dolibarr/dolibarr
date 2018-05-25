@@ -19,9 +19,9 @@
  */
 
 /**
- *  \file       htdocs/commande/note.php
- *  \ingroup    commande
- *  \brief      Fiche de notes sur une commande
+ *  \file       htdocs/expensereport/note.php
+ *  \ingroup    expensereport
+ *  \brief      Tab for notes on expense reports
  */
 
 require '../main.inc.php';
@@ -80,22 +80,22 @@ if ($id > 0 || ! empty($ref))
 
 	dol_fiche_head($head, 'note', $langs->trans("ExpenseReport"), -1, 'trip');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
-	
+	$linkback = '<a href="'.DOL_URL_ROOT.'/expensereport/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+
 	$morehtmlref='<div class="refidno">';
     $morehtmlref.='</div>';
 
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	 
+
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-	 
+
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
 	print '</div>';
-	
+
 	dol_fiche_end();
 }
 

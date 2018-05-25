@@ -22,7 +22,7 @@
 create table llx_c_action_trigger
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
-  elementtype	varchar(16) 			NOT NULL,
+  elementtype	varchar(24) 			NOT NULL,
   code			varchar(32)				NOT NULL,
   label			varchar(128)			NOT NULL,
   description	varchar(255),

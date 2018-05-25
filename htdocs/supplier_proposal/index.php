@@ -84,7 +84,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
-$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
 if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
@@ -122,10 +122,10 @@ if ($resql)
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
-        $dataseries[]=array('label'=>$supplier_proposalstatic->LibStatut($status,1),'data'=>(isset($vals[$status])?(int) $vals[$status]:0));
+        $dataseries[]=array($supplier_proposalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-            
+
             print '<tr class="oddeven">';
             print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
@@ -134,9 +134,18 @@ if ($resql)
     }
     if ($conf->use_javascript_ajax)
     {
-        print '<tr '.$bc[false].'><td align="center" colspan="2">';
-        $data=array('series'=>$dataseries);
-        dol_print_graph('stats',300,180,$data,1,'pie',1,'',0);
+        print '<tr><td align="center" colspan="2">';
+
+        include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+        $dolgraph = new DolGraph();
+        $dolgraph->SetData($dataseries);
+        $dolgraph->setShowLegend(1);
+        $dolgraph->setShowPercent(1);
+        $dolgraph->SetType(array('pie'));
+        $dolgraph->setWidth('100%');
+        $dolgraph->draw('idgraphstatus');
+        print $dolgraph->show($total?0:1);
+
         print '</td></tr>';
     }
 
@@ -175,11 +184,10 @@ if (! empty($conf->supplier_proposal->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
 			while ($i < $num)
 			{
-				
 				$obj = $db->fetch_object($resql);
+
 				print '<tr class="oddeven">';
 
 				$supplier_proposalstatic->id=$obj->rowid;
@@ -233,10 +241,8 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
-			
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -294,7 +300,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 	$sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	$sql.= " AND p.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -317,7 +323,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 			while ($i < $nbofloop)
 			{
 				$obj = $db->fetch_object($result);
-				
+
 				print '<tr class="oddeven">';
 
 				// Ref

@@ -4,8 +4,6 @@ AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
 Module20Name=Quotations
 Module20Desc=Management of quotations
-Module2300Name=Cron
-Module2300Desc=Scheduled job management
 Permission21=Read quotations
 Permission22=Create/modify quotations
 Permission24=Validate quotations

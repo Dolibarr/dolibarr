@@ -12,6 +12,7 @@ Event=Hendelse
 Events=Hendelser
 EventsNb=Antall hendelser
 ListOfActions=Oversikt over hendelser
+EventReports=Hendelsesrapporter
 Location=Lokasjon
 ToUserOfGroup=Til tilfeldig bruker i gruppe
 EventOnFullDay=Hendelse over hele dagen(e)
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Her defineres hendelser som du vil at Dolibarr skal oppret
 AgendaSetupOtherDesc= Her kan du gjøre andre innstillinger i agendamodulen.
 AgendaExtSitesDesc=Denne siden lar deg sette opp eksterne kalendere for å visning i Dolibarr agenda.
 ActionsEvents=Handlinger som Dolibarr automatisk registrerer i agendaen
+EventRemindersByEmailNotEnabled=Hendelsespåminnelser via e-post ble ikke aktivert i oppsett av Agenda-modulen.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tredjepart %s opprettet
 ContractValidatedInDolibarr=Kontrakt %s validert
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Medlem %s validert
 MemberModifiedInDolibarr=Medlem %s endret
 MemberResiliatedInDolibarr=Medlem %s terminert
 MemberDeletedInDolibarr=Medlem %s slettet
-MemberSubscriptionAddedInDolibarr=Abonnement for medlem %s lagt til
+MemberSubscriptionAddedInDolibarr=Abonnement %s for medlem %s lagt til
+MemberSubscriptionModifiedInDolibarr=Abonnement %s for medlem %s endret
+MemberSubscriptionDeletedInDolibarr=Abonnement %s for medlem %s slettet
 ShipmentValidatedInDolibarr=Leveranse %s validert
 ShipmentClassifyClosedInDolibarr=Forsendelse %s klassifisert fakturert
 ShipmentUnClassifyCloseddInDolibarr=Forsendelse %s klassifisert gjenåpnet
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Ordre %s godkjent
 OrderRefusedInDolibarr=Ordre %s avvist
 OrderBackToDraftInDolibarr=Sett ordre %s tilbake til utkaststatus
 ProposalSentByEMail=Kommersielle tilbud %s sendt på epost
+ContractSentByEMail=Kontrakt %s sendt i e-post
 OrderSentByEMail=Kundeordrer %s sendt på epost
 InvoiceSentByEMail=Faktura %s sendt på epost
 SupplierOrderSentByEMail=Leverandørordre %s sendt på epost
@@ -78,6 +83,14 @@ InvoiceDeleted=Faktura slettet
 PRODUCT_CREATEInDolibarr=Vare%s opprettet
 PRODUCT_MODIFYInDolibarr=Vare %s endret
 PRODUCT_DELETEInDolibarr=Vare %s slettet
+EXPENSE_REPORT_CREATEInDolibarr=Utgiftsrapport %s opprettet
+EXPENSE_REPORT_VALIDATEInDolibarr=Utgiftsrapport %s validert
+EXPENSE_REPORT_APPROVEInDolibarr=Utgiftsrapport %s godkjent
+EXPENSE_REPORT_DELETEInDolibarr=Utgiftsrapport %s slettet
+EXPENSE_REPORT_REFUSEDInDolibarr=Utgiftsrapport %s avvist
+PROJECT_CREATEInDolibarr=Prosjekt %s opprettet
+PROJECT_MODIFYInDolibarr=Prosjekt %s er endret
+PROJECT_DELETEInDolibarr=Prosjekt %s slettet
 ##### End agenda events #####
 AgendaModelModule=Dokumentmaler for hendelse
 DateActionStart=Startdato
@@ -86,7 +99,8 @@ AgendaUrlOptions1=Du kan også bruke følgende parametere til å filtrere listen
 AgendaUrlOptions3=<b>logina=%s</b> for å begrense resultat til hendelser eiet av en bruker <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=%s</b> for å begrense utdata til handlinger som ikke eies av brukeren <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> for å begrense utdata til handlinger som er tildelt brukeren <b> %s </b>(eier og andre).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> for å begrense resultat til handlinger som er knyttet til prosjektet <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__ PROJECT_ID__</b> for å begrense resultat til handlinger knyttet til prosjektet <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b> notactiontype=systemauto </b> for å ekskludere automatisk hendelse.
 AgendaShowBirthdayEvents=Vis kontakters fødselsdager
 AgendaHideBirthdayEvents=Skjul kontakters fødselsdager
 Busy=Opptatt
@@ -98,7 +112,7 @@ ExportCal=Eksporter kalender
 ExtSites=Importer eksterne kalendere
 ExtSitesEnableThisTool=Vis eksterne kalendere (definert i global setup) i agenda. Påvirker ikke eksterne kalendere definert av brukere.
 ExtSitesNbOfAgenda=Antall kalendere
-AgendaExtNb=Kalender nummer %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL til. ical-fil
 ExtSiteNoLabel=Ingen beskrivelse
 VisibleTimeRange=Synlig tidsområde

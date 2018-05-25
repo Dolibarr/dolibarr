@@ -57,3 +57,4 @@ ErrorInsertingComment=Si è verificato un errore nel salvataggio del tuo comment
 MoreChoices=Aggiungi altre opzioni
 SurveyExpiredInfo=Il sondaggio è stato chiuso o è scaduto il tempo a disposizione.
 EmailSomeoneVoted=%s ha compilato una riga.\nTrovi l'indagine all'indirizzo: \n%s
+ShowSurvey=Mostra indagine

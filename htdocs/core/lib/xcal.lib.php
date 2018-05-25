@@ -68,7 +68,7 @@ function build_calfile($format,$title,$desc,$events_array,$outputfile)
 	        fwrite($calfileh,"X-PUBLISHED-TTL: P".$hh."H".$mm."M".$ss."S\n");
         }
 
-		foreach ($events_array as $date => $event)
+		foreach ($events_array as $key => $event)
 		{
 			$eventqualified=true;
 			if ($eventqualified)
@@ -335,7 +335,7 @@ function build_rssfile($format,$title,$desc,$events_array,$outputfile,$filter=''
 		fwrite($fichier, $form);
 
 
-		foreach ($events_array as $date => $event)
+		foreach ($events_array as $key => $event)
 		{
 			$eventqualified=true;
 			if ($filter)

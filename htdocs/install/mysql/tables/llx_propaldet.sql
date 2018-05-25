@@ -44,7 +44,7 @@ create table llx_propaldet
   total_localtax1					double(24,8) DEFAULT 0,          -- Total localtax1
   total_localtax2					double(24,8) DEFAULT 0,          -- Total localtax2
   total_ttc							double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantite et incluant remise ligne et globale
-  product_type						integer    DEFAULT 0,
+  product_type						integer    DEFAULT 0,            -- 0 or 1. Value 9 may be used by some modules (amount of line may not be included into generated discount if value is 9).
   date_start						datetime   DEFAULT NULL,         -- date debut si service
   date_end							datetime   DEFAULT NULL,         -- date fin si service
   info_bits							integer      DEFAULT 0,          -- TVA NPR ou non
@@ -52,8 +52,8 @@ create table llx_propaldet
   buy_price_ht						double(24,8) DEFAULT 0,          -- buying price
   fk_product_fournisseur_price		integer      DEFAULT NULL,       -- reference of supplier price when line was added (may be used to update buy_price_ht current price when future invoice will be created)
   
-  special_code						integer      DEFAULT 0,          -- code pour les lignes speciales
-  rang								integer      DEFAULT 0,           -- ordre affichage sur la propal
+  special_code						integer      DEFAULT 0,          -- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
+  rang								integer      DEFAULT 0,          -- ordre affichage sur la propal
   fk_unit           integer      DEFAULT NULL,           -- lien vers table des unités
   
   fk_multicurrency			integer,

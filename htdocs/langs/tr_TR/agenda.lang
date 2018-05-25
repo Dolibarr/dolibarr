@@ -12,6 +12,7 @@ Event=Etkinlik
 Events=Etkinlikler
 EventsNb=Etkinlik sayısı
 ListOfActions=Etkinlik listesi
+EventReports=Event reports
 Location=Konum
 ToUserOfGroup=Gruptaki herhangi bir kullanıcı için
 EventOnFullDay=Tam gün etkinliği
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Burada Dolibarr'ın gündemde bir etkinlik olarak otomatik
 AgendaSetupOtherDesc= Bu sayfa Dolibarr etkinliklerinin dış bir takvime aktarılması için seçenekler sağlar. (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Bu sayfa takvimlerin dış kaynaklarında Dolibarr gündemindeki etkinliklerinin görünmesini sağlar.
 ActionsEvents=Dolibarr'ın otomatik olarak gündemde bir etkinlik oluşturacağı eylemler
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Üçüncü parti %s oluşturuldu
 ContractValidatedInDolibarr=Doğrulanan firma %s
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Doğrulanan üye %s
 MemberModifiedInDolibarr=Üye %sdeğiştirildi 
 MemberResiliatedInDolibarr=%s üyeliği bitirilmiştir
 MemberDeletedInDolibarr=Silinen üyelik %s
-MemberSubscriptionAddedInDolibarr=Abonelik eklenen üye %s
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Sevkiyat %s doğrulandı
 ShipmentClassifyClosedInDolibarr=%s sevkiyatı faturalandı olarak sınıflandırıldı
 ShipmentUnClassifyCloseddInDolibarr=%s sevkiyatı yeniden açıldı olarak sınıflandırıldı
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=%s Siparişi onayladı
 OrderRefusedInDolibarr=Reddedilen teklif %s
 OrderBackToDraftInDolibarr=%s Siparişini taslak durumuna geri götür
 ProposalSentByEMail=%s Teklifi Eposta ile gönderildi
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=%s Müşteri siparişi Eposta ile gönderildi
 InvoiceSentByEMail=%s Müşteri faturası Eposta ile gönderildi
 SupplierOrderSentByEMail=%s Tedarikçi siparişi Eposta ile gönderildi
@@ -78,6 +83,14 @@ InvoiceDeleted=Fatura silindi
 PRODUCT_CREATEInDolibarr=Ürün %s oluşturuldu
 PRODUCT_MODIFYInDolibarr=Ürün %s değiştirildi
 PRODUCT_DELETEInDolibarr=Ürün %s silindi
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=%s projesi oluşturuldu
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Etkinlik için belge şablonları
 DateActionStart=Başlama tarihi
@@ -86,7 +99,8 @@ AgendaUrlOptions1=Süzgeç çıktısına ayrıca aşağıdaki parametreleri ekle
 AgendaUrlOptions3=<b>kullanıcı girişi=%s</b>,  bir <b>%s</b> kullanıcısına ait eylemlerin çıkışlarını sınırlamak içindir.
 AgendaUrlOptionsNotAdmin=Çıktıyı <b>%s</b> kullanıcısına ait olmayan etkinliklere sınırlamak için <b>logina=!%s</b>.
 AgendaUrlOptions4=Çıktıyı <b>%s</b> kullanıcısına (sahip ve diğerleri) atanmış etkinliklere sınırlamak için <b>logint=%s</b>.
-AgendaUrlOptionsProject=<b>proje=PROJECT_ID</b>, bu <b>PROJECT_ID</b> projesi ile ilişkilendirilmiş eylemlerin çıkışını çıkışını sınırlamak içindir.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Kişilerin doğum günlerini göster
 AgendaHideBirthdayEvents=Kişilerin doğum günlerini gizle
 Busy=Meşgul
@@ -98,7 +112,7 @@ ExportCal=Takvim dışaaktar
 ExtSites=Dış takvimleri içeaktar
 ExtSitesEnableThisTool=Gündemde dış takvimleri (genel ayarlarda tanımlanan) göster. Kullanıcılar tarafından tanımlanan dış takvimleri etkilemez.
 ExtSitesNbOfAgenda=Takvimlerin sayısı
-AgendaExtNb=Takvim sayısı %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=.ical dosyasına erişmek için URL
 ExtSiteNoLabel=Tanımlama yok
 VisibleTimeRange=Görünür zaman aralığı

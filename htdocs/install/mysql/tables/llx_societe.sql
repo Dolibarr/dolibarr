@@ -1,6 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
 -- Copyright (C) 2010      Juanjo Menent        <dolibarr@2byte.es>
 -- Copyright (C) 2014      Teddy Andreotti      <125155@supinfo.com>
@@ -25,16 +25,14 @@ create table llx_societe
 (
   rowid                    integer AUTO_INCREMENT PRIMARY KEY,
   nom                      varchar(128),                                -- company reference name (should be same length than adherent.societe)
-  name_alias          varchar(128) NULL,
-  entity                   integer DEFAULT 1 NOT NULL,               -- multi company id
+  name_alias               varchar(128) NULL,
+  entity                   integer DEFAULT 1 NOT NULL,                  -- multi company id
 
-  ref_ext                  varchar(128),                               -- reference into an external system (not used by dolibarr)
-  ref_int                  varchar(60),                                -- reference into an internal system (deprecated)
+  ref_ext                  varchar(255),                                -- reference into an external system (not used by dolibarr)
+  ref_int                  varchar(255),                                -- reference into an internal system (deprecated)
 
   statut                   tinyint        DEFAULT 0,            		-- statut
   parent                   integer,
-  tms                      timestamp,
-  datec	                   datetime,                            		-- creation date
 
   status            	   tinyint 		  DEFAULT 1,			        -- cessation d'activité ( 1 -- en activité, 0 -- cessation d'activité)						
 
@@ -57,15 +55,15 @@ create table llx_societe
   fk_typent                integer        DEFAULT 0,            		--
   fk_forme_juridique       integer        DEFAULT 0,            		-- juridical status
   fk_currency			   varchar(3),									-- default currency
-  siren	                   varchar(128),                         		-- IDProf1: siren or RCS for france
-  siret                    varchar(128),                         		-- IDProf2: siret for france
-  ape                      varchar(128),                         		-- IDProf3: code ape for france
+  siren	                   varchar(128),                         		-- IDProf1: siren or RCS for france, ...
+  siret                    varchar(128),                         		-- IDProf2: siret for france, ...
+  ape                      varchar(128),                         		-- IDProf3: code ape for france, ...
   idprof4                  varchar(128),                         		-- IDProf4: nu for france
   idprof5                  varchar(128),                         		-- IDProf5: nu for france
   idprof6                  varchar(128),                         		-- IDProf6: nu for france
   tva_intra                varchar(20),                         		-- tva
-  capital                  real,                                		-- capital de la societe
-  fk_stcomm                integer        DEFAULT 0 NOT NULL,      	-- commercial statut
+  capital                  double(24,8)   DEFAULT NULL,        			-- capital de la societe
+  fk_stcomm                integer        DEFAULT 0 NOT NULL,      		-- commercial statut
   note_private             text,                                		--
   note_public              text,                                        --
   model_pdf				   varchar(255),
@@ -79,9 +77,8 @@ create table llx_societe
   customer_bad             tinyint        DEFAULT 0,            		-- mauvais payeur 0/1
   customer_rate            real           DEFAULT 0,            		-- taux fiabilite client (0 a 1)
   supplier_rate            real           DEFAULT 0,            		-- taux fiabilite fournisseur (0 a 1)
-  fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info
-  fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info
   remise_client            real           DEFAULT 0,            		-- remise systematique pour le client
+  remise_supplier          real           DEFAULT 0,            		-- remise systematique auprès du fournisseur
   mode_reglement           tinyint,                             		-- mode de reglement
   cond_reglement           tinyint,                             		-- condition de reglement
   mode_reglement_supplier  tinyint,                             		-- mode de reglement fournisseur
@@ -92,17 +89,26 @@ create table llx_societe
   localtax1_value 		   double(6,3),
   localtax2_assuj          tinyint        DEFAULT 0,	        		-- assujeti ou non a local tax 2
   localtax2_value 		   double(6,3),
-  barcode                  varchar(255),                        		-- barcode
+  barcode                  varchar(180),                        		-- barcode
   fk_barcode_type          integer NULL   DEFAULT 0,                    -- barcode type
   price_level              integer NULL,                        		-- level of price for multiprices
   outstanding_limit	       double(24,8)   DEFAULT NULL,					-- allowed outstanding limit
+  order_min_amount	       double(24,8)   DEFAULT NULL,					-- min amount for orders
+  supplier_order_min_amount	       double(24,8)   DEFAULT NULL,			-- min amount for supplier orders
   default_lang             varchar(6),									-- default language
   logo                     varchar(255)   DEFAULT NULL,
   canvas				   varchar(32)    DEFAULT NULL,	                -- type of canvas if used (null by default)
-  import_key               varchar(14),                          		-- import key
+  fk_entrepot 			   integer DEFAULT 0,							-- if we need a link between third party and warehouse
   webservices_url          varchar(255),                            	-- supplier webservice url
   webservices_key          varchar(128),                            	-- supplier webservice key
   
-  fk_multicurrency			integer,
-  multicurrency_code		varchar(255)
+  tms                      timestamp,									-- last modification date
+  datec	                   datetime,                            		-- creation date
+  fk_user_creat            integer NULL,                        		-- utilisateur qui a cree l'info
+  fk_user_modif            integer,                             		-- utilisateur qui a modifie l'info
+
+  fk_multicurrency		   integer,
+  multicurrency_code	   varchar(255),
+
+  import_key               varchar(14)                          		-- import key
 )ENGINE=innodb;

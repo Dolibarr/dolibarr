@@ -34,8 +34,8 @@ CKEDITOR.editorConfig = function( config )
 	[
 	    ['Templates','NewPage'],
 	    ['Save'],
-	    ['Source','Maximize','Preview'],
-	    ['PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
+	    ['Maximize','Preview'],
+	    ['PasteText','PasteFromWord','-','Print', 'SpellChecker', 'Scayt'],	// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	    ['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
 	    ['CreateDiv','ShowBlocks'],
 	    ['Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField'],
@@ -46,51 +46,57 @@ CKEDITOR.editorConfig = function( config )
 	    ['Link','Unlink','Anchor'],
 	    ['Image','Table','HorizontalRule','Smiley','SpecialChar','PageBreak','Iframe'],
 	    ['Styles','Format','Font','FontSize'],
-	    ['TextColor','BGColor']
+	    ['TextColor','BGColor'],
+	 	['Source']
 	];
 
 	// Used for mailing fields
 	config.toolbar_dolibarr_mailings = 
 	[
-	 	['Source','Maximize','Preview'],
-	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
+	 	['Maximize','Preview'],
+	 	['SpellChecker', 'Scayt'],
 	 	['Undo','Redo','-','Find','Replace'],
+	 	['CreateDiv','ShowBlocks'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
-	 	['NumberedList','BulletedList','Outdent','Indent','CreateDiv'],
+	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar']
+	 	['Link','Unlink','Anchor','Image','Table','HorizontalRule','SpecialChar'],
+	 	['Source']
 	 ];
 	
 	// Used for notes fields
 	config.toolbar_dolibarr_notes =
 	[
-	 	['Source','Maximize'],
+	 	['Maximize'],
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
 	 	['Undo','Redo','-','Find','Replace'],
 	    ['Format','Font','FontSize'],
 	 	['Bold','Italic','Underline','Strike','Subscript','Superscript','-','TextColor','RemoveFormat'],
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar']
+	    ['Link','Unlink','Image','Table','HorizontalRule','SpecialChar'],
+	 	['Source']
 	];
 	
 	// Used for details lines
 	config.toolbar_dolibarr_details =
 	[
-	 	['Source','Maximize'],
+	 	['Maximize'],
 	 	['SpellChecker', 'Scayt'],		// 'Cut','Copy','Paste','-', are useless, can be done with right click, even on smarpthone
-	    ['Format','Font','FontSize'],
-	    ['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],		// ,'Subscript','Superscript' useless
+	    ['Format','FontSize'],
+	    ['Bold','Italic','Underline','Strike','-','TextColor','RemoveFormat'],	// ,'Subscript','Superscript' useless
 	 	['NumberedList','BulletedList','Outdent','Indent'],
 	 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-	    ['Link','Unlink','SpecialChar']
+	    ['Link','Unlink','SpecialChar'],
+	 	['Source']
 	];
 	
 	// Used for mailing fields
 	config.toolbar_dolibarr_readonly =
 	[
-	 	['Source','Maximize'],
-	 	['Find']
+	 	['Maximize'],
+	 	['Find'],
+	 	['Source']
 	];	
 };

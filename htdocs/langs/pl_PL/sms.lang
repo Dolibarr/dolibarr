@@ -38,7 +38,7 @@ SmsStatusNotSent=Nie wysłał
 SmsSuccessfulySent=SMS poprawnie wysłany (z %s do %s)
 ErrorSmsRecipientIsEmpty=Numer odbiorcy jest pusty
 WarningNoSmsAdded=Nie nowy numer telefonu, aby dodać do listy docelowej
-ConfirmValidSms=Do you confirm validation of this campain?
+ConfirmValidSms=Czy potwierdzasz walidację tej kampanii?
 NbOfUniqueSms=Nb dof unikatowe numery telefonów
 NbOfSms=Nbre numerów phon
 ThisIsATestMessage=To jest wiadomość testowa
@@ -46,6 +46,6 @@ SendSms=Wyślij SMS
 SmsInfoCharRemain=Nb z pozostałych znaków
 SmsInfoNumero= (W formacie międzynarodowym np.: +33899701761)
 DelayBeforeSending=Opóźnienie przed wysłaniem (w minutach)
-SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
+SmsNoPossibleSenderFound=Brak nadawcy. Sprawdź ustawienia dostawcy usług SMS.
 SmsNoPossibleRecipientFound=Odbiorca niedostępny. Sprawdź konfigurację dostawcy SMS.
-
+DisableStopIfSupported=Wyłącz komunikat STOP (jeśli jest obsługiwany)
