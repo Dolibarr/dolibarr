@@ -1995,7 +1995,16 @@ class Facture extends CommonInvoice
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
 			$sql.= ' fk_statut='.self::STATUS_CLOSED;
-			if (! $close_code) $sql.= ', paye=1';
+			if (! $close_code)
+			{
+				$sql.= ', paye=1';
+			}
+			elseif ( $close_code === 'discount_vat' )
+			{
+				// Set invoice paid to 1 if partially paid but closed in case of discount.
+				$sql.= ', paye=1';
+			}
+
 			if ($close_code) $sql.= ", close_code='".$this->db->escape($close_code)."'";
 			if ($close_note) $sql.= ", close_note='".$this->db->escape($close_note)."'";
 			$sql.= ' WHERE rowid = '.$this->id;
