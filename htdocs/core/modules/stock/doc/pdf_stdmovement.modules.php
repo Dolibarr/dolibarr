@@ -17,9 +17,9 @@
  */
 
 /**
- *	\file       htdocs/core/modules/stock/doc/pdf_standard.modules.php
+ *	\file       htdocs/core/modules/stock/doc/pdf_stdmovement.modules.php
  *	\ingroup    societe
- *	\brief      File of class to build PDF documents for stocks/services
+ *	\brief      File of class to build PDF documents for stocks movements
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_stock.class.php';
@@ -446,6 +446,7 @@ class pdf_stdmouvement extends ModelePDFMouvement
 
 				$totalunit=0;
 				$totalvalue=$totalvaluesell=0;
+				$arrayofuniqueproduct = array();
 
 				//dol_syslog('List products', LOG_DEBUG);
 				$resql = $db->query($sql);
