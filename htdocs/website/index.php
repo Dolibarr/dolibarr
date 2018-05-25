@@ -1562,9 +1562,9 @@ if (count($object->records) > 0)
 		}
 		else dol_print_error($db);
 
-		if ($pagepreviousid) print '<a href="'.$_SERVER['PHP_SELF'].'?pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
+		if ($pagepreviousid) print '<a href="'.$_SERVER['PHP_SELF'].'?website='.$object->id.'&pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
 		else print '<span class="opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
-		if ($pagenextid) print '<a href="'.$_SERVER['PHP_SELF'].'?pageid='.$pagenextid.'&action='.$action.'">'.img_next($langs->trans("NextContainer")).'</a>';
+		if ($pagenextid) print '<a href="'.$_SERVER['PHP_SELF'].'?website='.$object->id.'&pageid='.$pagenextid.'&action='.$action.'">'.img_next($langs->trans("NextContainer")).'</a>';
 		else print '<span class="opacitymedium">'.img_next($langs->trans("NextContainer")).'</span>';
 
 		$websitepage = new WebSitePage($db);
