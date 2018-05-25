@@ -570,7 +570,7 @@ if (! defined('NOLOGIN'))
 			exit;
 		}
 
-		$resultFetchUser=$user->fetch('', $login, '', 1, ($entitytotest > 0 ? $entitytotest : -1));
+		$resultFetchUser=$user->fetch('', $login, '', 1, (!empty($conf->entity) ? $conf->entity : ($entitytotest > 0 ? $entitytotest : -1)));
 		if ($resultFetchUser <= 0)
 		{
 			dol_syslog('User not found, connexion refused');
