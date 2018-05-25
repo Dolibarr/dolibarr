@@ -561,7 +561,7 @@ if ($object->fetch($id) >= 0)
                         include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
                         $objectstatic=new Adherent($db);
 						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
                     }
                     else if ($obj->source_type == 'user')
                     {
@@ -569,14 +569,21 @@ if ($object->fetch($id) >= 0)
                         $objectstatic=new User($db);
 						$objectstatic->fetch($obj->source_id);
                         $objectstatic->id=$obj->source_id;
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
                     }
                     else if ($obj->source_type == 'thirdparty')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                         $objectstatic=new Societe($db);
 						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
+                    }
+                    else if ($obj->source_type == 'contact')
+                    {
+                    	include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+                    	$objectstatic=new Contact($db);
+                    	$objectstatic->fetch($obj->source_id);
+                    	print $objectstatic->getNomUrl(1);
                     }
                     else
                     {
