@@ -5081,7 +5081,6 @@ abstract class CommonObject
                 }
 
 		$label=$this->fields[$key]['label'];
-		$size =$this->fields[$key]['size'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
 		$default=$this->fields[$key]['default'];
 		$computed=$this->fields[$key]['computed'];
@@ -5108,7 +5107,6 @@ abstract class CommonObject
 			$showsize = $val['css'];
 		}
 		if (empty($morecss))
-
 		{
 			if ($type == 'date')
 			{
