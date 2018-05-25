@@ -119,3 +119,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- Description of chart of account TG SYSCOHADA
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 15,'SYSCOHADA-TG', 'Plan comptable Ouest-Africain', 1);
 
+-- Description of chart of account RO RO-BASE
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  188, 'RO-BASE', 'Plan de conturi romanesc', 1);
+
