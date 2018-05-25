@@ -549,6 +549,8 @@ if ($resql)
 	if ($search_refcustomer) $param.='&search_refcustomer=' .urlencode($search_refcustomer);
 	if ($search_type != '')  $param.='&search_type='.urlencode($search_type);
 	if ($search_societe)     $param.='&search_societe=' .urlencode($search_societe);
+	if ($search_town)        $param.='&search_town='.urlencode($search_town);
+	if ($search_zip)         $param.='&search_zip='.urlencode($search_zip);
 	if ($search_sale > 0)    $param.='&search_sale=' .urlencode($search_sale);
 	if ($search_user > 0)    $param.='&search_user=' .urlencode($search_user);
 	if ($search_product_category > 0)   $param.='$search_product_category=' .urlencode($search_product_category);

@@ -653,8 +653,10 @@ if (empty($reshook))
                 if ($result <=  0)
                 {
                     setEventMessages($object->error, $object->errors, 'errors');
-                  	$error++;
+                    $errors = $object->errors;
+                    $error++;
                 }
+
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
 				if (!empty($user->rights->categorie->lire))
 				{
@@ -735,6 +737,7 @@ if (empty($reshook))
                 	{
                 		$error++;
                 		$object->error .= $object->db->lasterror();
+                		setEventMessages($object->error, $object->errors, 'errors');
                 	}
                 }
 

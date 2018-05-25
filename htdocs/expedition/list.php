@@ -253,13 +253,16 @@ if ($resql)
 
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall) $param.= "&amp;sall=".urlencode($sall);
-	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".urlencode($search_ref_exp);
-	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	if ($search_ref_exp)  $param.= "&amp;search_ref_exp=".urlencode($search_ref_exp);
+	if ($search_ref_liv)  $param.= "&amp;search_ref_liv=".urlencode($search_ref_liv);
 	if ($search_ref_customer) $param.= "&amp;search_ref_customer=".urlencode($search_ref_customer);
-	if ($search_company) $param.= "&amp;search_company=".urlencode($search_company);
-	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
+	if ($search_company)   $param.= "&amp;search_company=".urlencode($search_company);
+	if ($search_town)      $param.= '&search_town='.urlencode($search_town);
+	if ($search_zip)       $param.= '&search_zip='.urlencode($search_zip);
+	if ($viewstatut != '') $param.= '&viewstatut='.urlencode($viewstatut);
+	if ($optioncss != '')  $param.='&amp;optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
