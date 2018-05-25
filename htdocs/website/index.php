@@ -1905,6 +1905,7 @@ if ($action == 'editcss')
 	print '<br>';
 }
 
+
 if ($action == 'createsite')
 {
 	print '<div class="fiche">';
@@ -1976,6 +1977,7 @@ if ($action == 'createsite')
 
 	print '<br>';
 }
+
 
 if ($action == 'editmeta' || $action == 'createcontainer')
 {
@@ -2082,7 +2084,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
-	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER')?GETPOST('WEBSITE_TYPE_CONTAINER'):'page'));
+	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER','alpha')?GETPOST('WEBSITE_TYPE_CONTAINER','alpha'):$type_container));
 	print '</td></tr>';
 
 	if ($action == 'createcontainer')
@@ -2090,7 +2092,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample')?GETPOST('sample'):'corporatehomepage'));
+		print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample','alpha')?GETPOST('sample','alpha'):'corporatehomepage'));
 		print '</td></tr>';
 	}
 
