@@ -1160,6 +1160,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print "<head>\n";
 		if (GETPOST('dol_basehref','alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref','alpha')).'">'."\n";
 		// Displays meta
+		print '<meta charset="UTF-8">'."\n";
 		print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";	// Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";		// Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
