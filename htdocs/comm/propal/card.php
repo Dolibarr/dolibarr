@@ -56,14 +56,8 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
-$langs->load('companies');
-$langs->load('propal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('products');
-$langs->load("deliveries");
-$langs->load('sendings');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'sendings'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
