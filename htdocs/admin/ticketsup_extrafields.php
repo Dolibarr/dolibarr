@@ -26,8 +26,8 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 
-$langs->load("ticketsup");
-$langs->load("admin");
+// Load translation files required by the page
+$langs->loadLangs(array('ticketsup', 'admin'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
