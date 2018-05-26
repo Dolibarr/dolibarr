@@ -263,8 +263,8 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
 
             if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
-            if ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
-
+            else if ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
+            else if ($type == 'link' || $type == 'sellist') $type = 'integer'; 
             $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';

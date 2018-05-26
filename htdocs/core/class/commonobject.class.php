@@ -5118,11 +5118,10 @@ $val=$this->fields[$key];
 			{
 				$morecss = 'minwidth200imp';
 			}
-			elseif (in_array($type,array('int','integer','double','price')))
+			elseif (in_array($type,array('int','integer','price')) || preg_match('/^double(\([0-9],[0-9]\)){0,1}/',$type))
 			{
 				$morecss = 'maxwidth75';
-			}
-			elseif ($type == 'url')
+                        }elseif ($type == 'url')
 			{
 				$morecss='minwidth400';
 			}
@@ -5217,7 +5216,7 @@ $val=$this->fields[$key];
 			}
 			$out='<input type="text" class="flat '.$morecss.' maxwidthonsmartphone" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'> '.$langs->getCurrencySymbol($conf->currency);
 		}
-		elseif ($type == 'double')
+		elseif (preg_match('/^double(\([0-9],[0-9]\)){0,1}/',$type))
 		{
 			if (!empty($value)) {		// $value in memory is a php numeric, we format it into user number format.
 				$value=price($value);
