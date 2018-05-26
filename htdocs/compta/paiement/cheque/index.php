@@ -28,10 +28,8 @@ require('../../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("compta");
-$langs->load("bills");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("banks", "categories", "compta", "bills"));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -116,7 +114,6 @@ if ($resql)
 	print '<th align="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
-	$var=true;
 	while ( $objp = $db->fetch_object($resql) )
 	{
         $checkdepositstatic->id=$objp->rowid;

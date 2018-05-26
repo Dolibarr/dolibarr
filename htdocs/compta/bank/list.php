@@ -35,10 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("accountancy");
-$langs->load("compta");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("banks", "categories", "accountancy", "compta"));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -404,7 +402,7 @@ print "</tr>\n";
 
 
 $total = array(); $found = 0; $i=0; $lastcurrencycode='';
-$var=true;
+
 foreach ($accounts as $key=>$type)
 {
 	if ($i >= $limit) break;
@@ -414,7 +412,6 @@ foreach ($accounts as $key=>$type)
 	$obj = new Account($db);
 	$obj->fetch($key);
 
-	$var = !$var;
 	$solde = $obj->solde(1);
 
 	if (! empty($lastcurrencycode) && $lastcurrencycode != $obj->currency_code)

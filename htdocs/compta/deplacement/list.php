@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("trips");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("companies", "users", "trips"));
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -170,14 +169,12 @@ if ($resql)
     print '</td>';
     print "</tr>\n";
 
-    $var=true;
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
 
         $soc = new Societe($db);
         if ($obj->socid) $soc->fetch($obj->socid);
-
 
         print '<tr class="oddeven">';
         // Id
