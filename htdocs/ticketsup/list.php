@@ -32,7 +32,7 @@ include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("ticketsup","companies","other","projects"));
 
 

@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 
-// Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("ticketsup");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'ticketsup'));
 
 // Get parameters
 $socid = GETPOST("socid", 'int');
