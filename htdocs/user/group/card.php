@@ -42,8 +42,8 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
     $candisableperms=($user->admin || $user->rights->user->group_advance->delete);
 }
 
-$langs->load("users");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'other'));
 
 $id         = GETPOST('id', 'int');
 $action     = GETPOST('action', 'alpha');
