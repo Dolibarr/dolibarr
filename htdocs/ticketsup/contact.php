@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 
-// Load translation files required by page
+// Load translation files required by the page
 $langs->loadLangs(array('companies', 'ticketsup'));
 
 // Get parameters

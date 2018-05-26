@@ -25,7 +25,7 @@ require_once DOL_DOCUMENT_ROOT . '/ticketsup/class/actions_ticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT . '/ticketsup/class/ticketsupstats.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/dolgraph.class.php';
 
-// Load translation files required by page
+// Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticketsup'));
 
 $WIDTH = DolGraph::getDefaultGraphSizeForStats('width');

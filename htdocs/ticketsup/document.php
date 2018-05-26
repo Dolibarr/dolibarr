@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/company.lib.php";
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formfile.class.php';
 
-// Load translation files required by page
+// Load translation files required by the page
 $langs->loadLangs(array("companies","other","ticketsup","mails"));
 
 $id       = GETPOST('id', 'int');

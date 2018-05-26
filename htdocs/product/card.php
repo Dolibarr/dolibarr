@@ -55,8 +55,8 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/l
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
-$langs->load("products");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'other'));
 if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");

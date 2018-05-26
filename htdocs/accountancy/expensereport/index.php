@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 
-// Langs
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","other","main","accountancy"));
 
 // Security check

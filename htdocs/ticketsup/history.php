@@ -33,7 +33,7 @@ if (!class_exists('Contact')) {
     include DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
 }
 
-// Load translation files required by page
+// Load translation files required by the page
 $langs->loadLangs(array('companies', 'other', 'ticketsup'));
 
 // Get parameters

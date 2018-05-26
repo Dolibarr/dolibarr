@@ -45,9 +45,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 }
 
-$langs->load("products");
-$langs->load("bills");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'bills', 'companies'));
 
 $mesg=''; $error=0; $errors=array();
 
