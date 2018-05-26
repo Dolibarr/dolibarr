@@ -29,15 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ecm.lib.php';
 
 // Load traductions files
-$langs->load("ecm");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("users");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("contracts");
-$langs->load("categories");
+$langs->loadLangs(array('ecm', 'companies', 'other', 'users', 'orders', 'propal', 'bills', 'contracts', 'categories'));
 
 $action = GETPOST('action', 'aZ09');
 $cancel = GETPOST('cancel', 'alpha');

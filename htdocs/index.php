@@ -110,10 +110,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 $boxstat='';
 
-$langs->load("commercial");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("contracts");
+$langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 if (empty($user->societe_id))
 {

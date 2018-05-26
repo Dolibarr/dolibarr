@@ -35,10 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('multicurrency');
+$langs->loadLangs(array('companies', 'bills', 'banks', 'multicurrency'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
