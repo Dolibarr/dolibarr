@@ -20,8 +20,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-$langs->load("admin");
-$langs->load("products");
+$langs->loadLangs(array("admin", "products"));
 
 // Security check
 if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
@@ -59,9 +58,9 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
-print '<tr><td>'.$langs->trans('HideProductCombinations').'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td><td>';
 print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD",$conf->global->PRODUIT_ATTRIBUTES_HIDECHILD,1).'</td></tr>';
-print '<tr><td>'.$langs->trans('CombinationsSeparator').'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
 if(isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
        $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
 } else {
