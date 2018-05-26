@@ -64,7 +64,7 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     		return -2;
     	}
 
-    	if (! preg_match('/^(price|boolean|sellist|integer|date|timestamp|varchar|double)/', $addfieldentry['type']))
+    	if (! preg_match('/^(price|boolean|sellist|integer|date|timestamp|varchar|double|text|html)/', $addfieldentry['type']))
 
     	{
     		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');

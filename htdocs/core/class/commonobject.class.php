@@ -5033,10 +5033,11 @@ abstract class CommonObject
 	 * @param  string  		$moreparam     To add more parameters on html input tag
 	 * @param  string  		$keysuffix     Prefix string to add into name and id of field (can be used to avoid duplicate names)
 	 * @param  string  		$keyprefix     Suffix string to add into name and id of field (can be used to avoid duplicate names)
-	 * @param  string|int	$showsize      Value for css to define size. May also be a numeric.
+	 * @param  string|int		$morecss       Value for css to define style/length of field. May also be a numeric.
 	 * @return string
 	 */
-	function showInputField($val, $key, $value, $moreparam='', $keysuffix='', $keyprefix='', $morecss=0){
+	function showInputField($val, $key, $value, $moreparam='', $keysuffix='', $keyprefix='', $morecss=0)
+	{
 		global $conf,$langs,$form;
 
 		if (! is_object($form))
@@ -5044,13 +5045,13 @@ abstract class CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form=new Form($this->db);
 		}
-$val=$this->fields[$key];
+		
+		$val=$this->fields[$key];
 
 		$out='';
                 $type='';
                 $param['options']=array();
                 $size =$this->fields[$key]['size'];
-		$keyprefix = $keyprefix.'options_';
                 // Because we work on extrafields
                 if(preg_match('/^integer:(.*):(.*)/i', $val['type'], $reg)){
                     $param['options']=array($reg[1].':'.$reg[2]=>'N');
@@ -5081,7 +5082,6 @@ $val=$this->fields[$key];
                 }
 
 		$label=$this->fields[$key]['label'];
-		$size =$this->fields[$key]['size'];
 		//$elementtype=$this->fields[$key]['elementtype'];	// Seems not used
 		$default=$this->fields[$key]['default'];
 		$computed=$this->fields[$key]['computed'];
@@ -5108,7 +5108,6 @@ $val=$this->fields[$key];
 			$showsize = $val['css'];
 		}
 		if (empty($morecss))
-
 		{
 			if ($type == 'date')
 			{
