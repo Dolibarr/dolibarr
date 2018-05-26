@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("users", "projects"));
 
 $id = GETPOST('id', 'int');

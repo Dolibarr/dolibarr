@@ -36,6 +36,7 @@ if (! empty($conf->projet->enabled)) {
 
 $action = GETPOST('action','aZ09');
 
+// Load translation files required by the page
 $langs->loadLangs(array("loan"));
 
 // Security check

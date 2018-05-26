@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
-// Load translation files required by page
+// Load translation files required by the page
 $langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 // Security check

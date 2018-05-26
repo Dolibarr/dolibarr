@@ -35,9 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("holidays");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'holidays', 'companies'));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
