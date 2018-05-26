@@ -62,7 +62,7 @@ include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/myobject.lib.php');
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule","other"));
 
 // Get parameters
