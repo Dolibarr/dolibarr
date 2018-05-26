@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 if (!$user->admin)
     accessforbidden();
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","other","agenda"));
 
 $def = array();

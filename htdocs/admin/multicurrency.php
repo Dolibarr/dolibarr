@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
-// Translations
-$langs->load("admin");
-$langs->load("multicurrency");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
 if (! $user->admin) {
