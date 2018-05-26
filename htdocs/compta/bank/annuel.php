@@ -200,7 +200,6 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 print '</tr>';
 
-$var=true;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
 

@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("bills");
-$langs->load("companies");
+// Load traductions files requiredby by page
+$langs->loadLangs(array("banks", "categories", "bills", "companies"));
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
@@ -117,23 +115,17 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '</tr>';
 
-	$var=true;
-
 	// Current balance
-
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
 	print '<td align="right" class="nowrap">'.price($solde).'</td>';
 	print '</tr>';
 
-
+	// Remainder to pay in future
 	print '<tr class="liste_titre">';
 	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right" class="nowrap">&nbsp;</td>';
 	print '</tr>';
-
-
-	// Remainder to pay in future
 
 	// Customer invoices
 	$sql = "SELECT 'invoice' as family, f.rowid as objid, f.facnumber as ref, f.total_ttc, f.type, f.date_lim_reglement as dlr,";
@@ -295,8 +287,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			// We discard lines with a remainder to pay to 0
 			if (price2num($total_ttc) != 0)
 			{
-
-
     			// Show line
     			print '<tr class="oddeven">';
     			print '<td>';
@@ -320,7 +310,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 
 	// Solde actuel
-
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
 	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';
