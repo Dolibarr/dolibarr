@@ -474,6 +474,7 @@ if (! defined('NOLOGIN'))
 			if (! $ok)
 			{
 				dol_syslog('Bad value for code, connexion refused');
+				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
@@ -551,6 +552,7 @@ if (! defined('NOLOGIN'))
 			if (! $login)
 			{
 				dol_syslog('Bad password, connexion refused',LOG_DEBUG);
+				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
 				// Bad password. No authmode has found a good password.
@@ -600,6 +602,7 @@ if (! defined('NOLOGIN'))
 
 			if ($resultFetchUser == 0)
 			{
+				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
@@ -658,6 +661,7 @@ if (! defined('NOLOGIN'))
 
 			if ($resultFetchUser == 0)
 			{
+				// Load translation files required by page
 				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
@@ -931,6 +935,7 @@ dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action','
 // Load main languages files
 if (! defined('NOREQUIRETRAN'))
 {
+	// Load translation files required by page
 	$langs->loadLangs(array('main', 'dict'));
 }
 

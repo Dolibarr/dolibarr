@@ -45,6 +45,7 @@ if (! empty($conf->tax->enabled))
 //if (!$user->rights->compta->general->lire)
 //  accessforbidden();
 
+// Load translation files required by page
 $langs->loadLangs(array('compta', 'bills'));
 if (! empty($conf->commande->enabled))
 	$langs->load("orders");

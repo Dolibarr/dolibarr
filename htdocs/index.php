@@ -110,6 +110,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 $boxstat='';
 
+// Load translation files required by page
 $langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 if (empty($user->societe_id))

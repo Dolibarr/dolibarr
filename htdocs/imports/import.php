@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
+// Load translation files required by page
 $langs->loadLangs(array('exports', 'compta', 'errors'));
 
 // Security check
