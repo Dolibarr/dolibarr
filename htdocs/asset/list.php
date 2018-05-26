@@ -25,7 +25,7 @@
 
 // Load Dolibarr environment
 require '../main.inc.php';
-require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
@@ -507,7 +507,7 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 {
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
 	{
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 		$formfile = new FormFile($db);
 
 		// Show list of available documents
