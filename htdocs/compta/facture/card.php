@@ -4197,7 +4197,7 @@ else if ($id > 0 || ! empty($ref))
 	$sql .= ' WHERE pf.fk_facture = ' . $object->id . ' AND pf.fk_paiement = p.rowid';
 	$sql .= ' AND p.entity IN (' . getEntity('facture').')';
 	$sql .= ' ORDER BY p.datep, p.tms';
-print $sql;
+
 	$result = $db->query($sql);
 	if ($result) {
 		$num = $db->num_rows($result);
