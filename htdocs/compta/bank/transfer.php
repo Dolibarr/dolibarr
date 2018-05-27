@@ -30,6 +30,7 @@ require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks", "categories", "multicurrency"));
 
 if (! $user->rights->banque->transfer)

@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("bills");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies'));
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
