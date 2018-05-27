@@ -891,7 +891,13 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
     	foreach($extrafields->attributes[$contactstatic->table_element]['label'] as $key => $val)
     	{
-    		if (! empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$contactstatic->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key])!=3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+    		if (! empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
+				$arrayfields["ef.".$key]=array(
+					'label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key],
+					'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key]<0)?0:1),
+					'position'=>$extrafields->attributes[$contactstatic->table_element]['pos'][$key],
+					'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key])!=3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+			}
     	}
     }
 

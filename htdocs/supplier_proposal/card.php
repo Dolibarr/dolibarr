@@ -363,7 +363,15 @@ if (empty($reshook))
 										$array_options = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->ref_supplier, $lines[$i]->fk_unit);
+									$result = $object->addline(
+										$desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx,
+										$lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx,
+										$lines[$i]->fk_product, $lines[$i]->remise_percent,
+										'HT', 0, $lines[$i]->info_bits, $product_type,
+										$lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line,
+										$lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+										$lines[$i]->ref_supplier, $lines[$i]->fk_unit
+									);
 
 									if ($result > 0) {
 										$lineid = $result;
