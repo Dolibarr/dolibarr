@@ -28,9 +28,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
+$langs->loadLangs(array("compta","banks","bills"));
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
@@ -189,10 +187,10 @@ if ($resql)
 		print '<tr class="liste_titre_filter">';
 		// Ref
 		print '<td class="liste_titre" align="left">';
-		print '<input class="flat" type="text" size="3" name="search_ref" value="'.$search_ref.'">';
+		print '<input class="flat" type="text" size="3" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
 		print '</td>';
 		// Label
-		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.$search_label.'"></td>';
+		print '<td class="liste_titre"><input type="text" class="flat" size="8" name="search_label" value="'.dol_escape_htmltag($search_label).'"></td>';
 		// Type
 		print '<td class="liste_titre" align="left">';
 	    $formsocialcontrib->select_type_socialcontrib($typeid,'typeid',1,0,0,'maxwidth100onsmartphone');
@@ -201,7 +199,7 @@ if ($resql)
 		print '<td class="liste_titre">&nbsp;</td>';
 	    // Amount
 		print '<td class="liste_titre" align="right">';
-		print '<input class="flat" type="text" size="6" name="search_amount" value="'.$search_amount.'">';
+		print '<input class="flat" type="text" size="6" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 		print '</td>';
 		print '<td class="liste_titre">&nbsp;</td>';
 		// Status
@@ -233,13 +231,15 @@ if ($resql)
 		{
 			$obj = $db->fetch_object($resql);
 
+			$chargesociale_static->id=$obj->id;
+			$chargesociale_static->ref=$obj->id;
+			$chargesociale_static->lib=$obj->libelle;
+			$chargesociale_static->type_libelle=$obj->type_lib;
+
 			print '<tr class="oddeven">';
 
 			// Ref
 			print '<td width="60">';
-			$chargesociale_static->id=$obj->id;
-			$chargesociale_static->lib=$obj->id;
-			$chargesociale_static->ref=$obj->id;
 			print $chargesociale_static->getNomUrl(1,'20');
 			print '</td>';
 
