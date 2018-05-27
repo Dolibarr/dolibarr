@@ -32,11 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('compta');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
 
 $id =GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');

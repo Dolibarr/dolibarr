@@ -57,10 +57,8 @@ $endyear=$year;
 /*
  * View
  */
-
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'other'));
 
 $form=new Form($db);
 

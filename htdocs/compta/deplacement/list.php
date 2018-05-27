@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php'
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'trips'));
 
 // Security check
 $socid = GETPOST('socid','int');

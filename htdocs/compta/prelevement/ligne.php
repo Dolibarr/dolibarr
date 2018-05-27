@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("bills");
-$langs->load("withdrawals");
+// Load translation files required by the page
+$langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();

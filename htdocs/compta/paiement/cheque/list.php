@@ -31,9 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
