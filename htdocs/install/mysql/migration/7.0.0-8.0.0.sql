@@ -142,10 +142,17 @@ ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_exp
 
 ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 
--- Add missing keys and primary key
 DELETE FROM llx_c_paiement WHERE code = '' or code = '-' or id = 0;
+
+-- Remove duplicate record with same primary key in llx_c_paiement
+DROP TABLE llx_c_paiement_temp;
+CREATE TABLE llx_c_paiement_temp AS SELECT * FROM llx_c_paiement;
+DELETE FROM llx_c_paiement WHERE entity > 1 AND id IN (SELECT cp2.id FROM llx_c_paiement_temp as cp2 WHERE cp2.entity = 1);
+
+-- Add missing keys and primary key
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
+
 -- VMYSQL4.3 ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
 -- VPGSQL8.2 CREATE SEQUENCE llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;
 -- VPGSQL8.2 ALTER TABLE llx_c_paiement ADD PRIMARY KEY (id);
