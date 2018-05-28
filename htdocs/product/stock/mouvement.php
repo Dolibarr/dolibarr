@@ -403,23 +403,21 @@ if ($action == "transfert_stock" && ! $cancel)
 /*
  * Build document
  */
-/* The builddoc action for object of a movement must be on the movement card
+// The builddoc action for object of a movement must be on the movement card
 // Actions to build doc
-$upload_dir = $conf->stock->dir_output;
-$permissioncreate = $user->rights->stock->creer;
+$upload_dir = $conf->stock->dir_output . "/movement/";
+$permissioncreate = $user->rights->stock->mouvement->creer;
 include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
-*/
 
 if (empty($reshook) && $action != 'remove_file')
 {
     $objectclass='MouvementStock';
     $objectlabel='Movements';
-    $permtoread = $user->rights->stock->lire;
-    $permtodelete = $user->rights->stock->supprimer;
-    $uploaddir = $conf->stock->dir_output;
+    $permtoread = $user->rights->stock->mouvement->lire;
+    $permtodelete = $user->rights->stock->mouvement->supprimer;
+    $uploaddir = $conf->stock->dir_output . "/movement/";
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
 }
-
 
 
 /*
@@ -1027,7 +1025,22 @@ if ($resql)
         if (! empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.$objp->inventorycode.'</td>';
+			if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
+			{
+				print '<td>'.'<a href="'
+									.DOL_URL_ROOT.'/product/stock/mouvement.php'
+									.'?id='.$objp->entrepot_id
+									.'&amp;search_inventorycode='.$objp->inventorycode							   
+									.'&amp;search_type_mouvement='.$objp->type_mouvement
+							.'">'
+								.$objp->inventorycode
+							.'</a>'
+						.'</td>';
+			}
+			else
+			{
+				print '<td>'.$objp->inventorycode.'</td>';
+			}
         }
         if (! empty($arrayfields['m.label']['checked']))
         {
@@ -1121,49 +1134,51 @@ else
 /*
  * Documents generes
  */
-/* Area for doc and last events of warehouse are stored on the main card of warehouse
-$modulepart='mouvement';
-
-if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
+//Area for doc and last events of warehouse are stored on the main card of warehouse
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
-	print '<br/>';
-    print '<div class="fichecenter"><div class="fichehalfleft">';
-    print '<a name="builddoc"></a>'; // ancre
+	$modulepart='movement';
 
-    // Documents
-    $objectref = dol_sanitizeFileName($object->ref);
-	// Add inventorycode & type_mouvement to filename of the pdf
-	if(!empty($search_inventorycode)) $objectref.="_".$id."_".$search_inventorycode;
-	if($search_type_mouvement) $objectref.="_".$search_type_mouvement;
-    $relativepath = $comref . '/' . $objectref . '.pdf';
-    $filedir = $conf->stock->dir_output . '/movement/' . $objectref;
+	if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
+	{
+		print '<br/>';
+		print '<div class="fichecenter"><div class="fichehalfleft">';
+		print '<a name="builddoc"></a>'; // ancre
 
-    $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id."&search_inventorycode=".$search_inventorycode."&search_type_mouvement=$search_type_mouvement";
-    $genallowed=$usercanread;
-    $delallowed=$usercancreate;
+		// Documents
+		$objectref = dol_sanitizeFileName($object->ref);
+		// Add inventorycode & type_mouvement to filename of the pdf
+		if(!empty($search_inventorycode)) $objectref.="_".$id."_".$search_inventorycode;
+		if($search_type_mouvement) $objectref.="_".$search_type_mouvement;
+		$relativepath = $comref . '/' . $objectref . '.pdf';
+		$filedir = $conf->stock->dir_output . '/movement/' . $objectref;
 
-	$genallowed=$user->rights->stock->mouvement->lire;
-    $delallowed=$user->rights->stock->mouvement->creer;
+		$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id."&search_inventorycode=".$search_inventorycode."&search_type_mouvement=$search_type_mouvement";
+		$genallowed=$usercanread;
+		$delallowed=$usercancreate;
 
-    print $formfile->showdocuments($modulepart,$objectref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
-    $somethingshown=$formfile->numoffiles;
+		$genallowed=$user->rights->stock->mouvement->lire;
+		$delallowed=$user->rights->stock->mouvement->creer;
 
-    print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+		print $formfile->showdocuments($modulepart,$objectref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
+		$somethingshown=$formfile->numoffiles;
 
-    $MAXEVENT = 10;
+		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
-    $morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
-    $morehtmlright.= $langs->trans("SeeAll");
-    $morehtmlright.= '</a>';
+		$MAXEVENT = 10;
 
-    // List of actions on element
-    include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
-    $formactions = new FormActions($db);
-    $somethingshown = $formactions->showactions($object, 'stock', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+		$morehtmlright = '<a href="'.DOL_URL_ROOT.'/product/agenda.php?id='.$object->id.'">';
+		$morehtmlright.= $langs->trans("SeeAll");
+		$morehtmlright.= '</a>';
 
-    print '</div></div></div>';
+		// List of actions on element
+		include_once DOL_DOCUMENT_ROOT . '/core/class/html.formactions.class.php';
+		$formactions = new FormActions($db);
+		$somethingshown = $formactions->showactions($object, 'mouvement', 0, 1, '', $MAXEVENT, '', $morehtmlright);		// Show all action for product
+
+		print '</div></div></div>';
+	}
 }
-*/
 
 llxFooter();
 
