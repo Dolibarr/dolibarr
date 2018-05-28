@@ -632,7 +632,7 @@ class FormMail extends Form
 			if (! empty($this->withtouser) && is_array($this->withtouser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
 			{
 				$out.= '<tr><td>';
-				$out.= $langs->trans("MailToSalaries");
+				$out.= $langs->trans("MailToUsers");
 				$out.= '</td><td>';
 
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
@@ -698,7 +698,7 @@ class FormMail extends Form
 			if (! empty($this->withtoccuser) && is_array($this->withtoccuser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
 			{
 				$out.= '<tr><td>';
-				$out.= $langs->trans("MailToCCSalaries");
+				$out.= $langs->trans("MailToCCUsers");
 				$out.= '</td><td>';
 
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
@@ -1112,7 +1112,7 @@ class FormMail extends Form
 				elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
 				elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
 				elseif (!empty($type_template))				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template)); }
-				
+
 				$ret->label = 'default';
 				$ret->lang = $outputlangs->defaultlang;
 				$ret->topic = '';

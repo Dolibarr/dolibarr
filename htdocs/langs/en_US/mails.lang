@@ -11,9 +11,9 @@ MailFrom=Sender
 MailErrorsTo=Errors to
 MailReply=Reply to
 MailTo=Receiver(s)
-MailToSalaries=To salarie(s)
+MailToUsers=To user(s)
 MailCC=Copy to
-MailToCCSalaries=Copy to salarie(s)
+MailToCCUsers=Copy to users(s)
 MailCCC=Cached copy to
 MailTopic=EMail topic
 MailText=Message
@@ -166,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Information
-
+ContactsWithThirdpartyFilter=Contact avec filtre client

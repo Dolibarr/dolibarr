@@ -95,7 +95,7 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 $arrayfields=array(
     'm.rowid'=>array('label'=>$langs->trans("Ref"), 'checked'=>1),
     'm.datem'=>array('label'=>$langs->trans("Date"), 'checked'=>1),
-    'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1),
+    'p.ref'=>array('label'=>$langs->trans("ProductRef"), 'checked'=>1, 'css'=>'maxwidth100'),
     'p.label'=>array('label'=>$langs->trans("ProductLabel"), 'checked'=>1),
     'm.batch'=>array('label'=>$langs->trans("BatchNumberShort"), 'checked'=>1, 'enabled'=>(! empty($conf->productbatch->enabled))),
     'pl.eatby'=>array('label'=>$langs->trans("EatByDate"), 'checked'=>0, 'enabled'=>(! empty($conf->productbatch->enabled))),
@@ -403,52 +403,12 @@ if ($action == "transfert_stock" && ! $cancel)
 /*
  * Build document
  */
-if ($action == 'builddoc')	// En get ou en post
-{
-	if ($id > 0 || $ref)
-	{
-		$object = new MouvementStock($db);
-		$result = $object->fetch($id, $ref);
-		if ($result <= 0)
-		{
-			print 'No record found';
-			exit;
-		}
-	}
-
-	// Save last template used to generate document	
-	if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	// Define output language
-	$outputlangs = $langs;
-	$newlang='';
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-	if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$object->thirdparty->default_lang;
-	if (! empty($newlang))
-	{
-		$outputlangs = new Translate("",$conf);
-		$outputlangs->setDefaultLang($newlang);
-	}
-    $ret=$object->fetch($id);    // Reload to get new records
-	$result= $object->generateDocument($object->modelpdf, $outputlangs);
-	if ($result < 0)
-	{
-		setEventMessages($object->error, $object->errors, 'errors');
-        $action='';
-	}
-}
-
-// Delete file in doc form
-elseif ($action == 'remove_file')
-{
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-	$upload_dir =	$conf->stock->dir_output."/mouvement" ;
-	$file =	$upload_dir	. '/' .	GETPOST('file');
-	$ret=dol_delete_file($file,0,0,0,$object);
-	if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-	else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
-}
+/* The builddoc action for object of a movement must be on the movement card
+// Actions to build doc
+$upload_dir = $conf->stock->dir_output;
+$permissioncreate = $user->rights->stock->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+*/
 
 if (empty($reshook) && $action != 'remove_file')
 {
@@ -809,12 +769,12 @@ if ($resql)
     }
     if (! empty($arrayfields['m.datem']['checked']))
     {
-    	print '<td class="liste_titre" valign="right">';
+    	print '<td class="liste_titre nowraponall">';
 	    print '<input class="flat" type="text" size="2" maxlength="2" placeholder="'.dol_escape_htmltag($langs->trans("Month")).'" name="month" value="'.$month.'">';
     	if (empty($conf->productbatch->enabled)) print '&nbsp;';
 	    //else print '<br>';
 	    $syear = $year?$year:-1;
-	    print '<input class="flat" type="text" size="3" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
+	    print '<input class="flat maxwidth50" type="text" maxlength="4" placeholder="'.dol_escape_htmltag($langs->trans("Year")).'" name="year" value="'.($syear > 0 ? $syear : '').'">';
 	    //print $formother->selectyear($syear,'year',1, 20, 5);
 	    print '</td>';
     }
@@ -822,7 +782,7 @@ if ($resql)
     {
 	    // Product Ref
 	    print '<td class="liste_titre" align="left">';
-	    print '<input class="flat maxwidth100" type="text" name="search_product_ref" value="'.dol_escape_htmltag($idproduct?$product->ref:$search_product_ref).'">';
+	    print '<input class="flat maxwidth75" type="text" name="search_product_ref" value="'.dol_escape_htmltag($idproduct?$product->ref:$search_product_ref).'">';
 	    print '</td>';
     }
     if (! empty($arrayfields['p.label']['checked']))
@@ -835,7 +795,7 @@ if ($resql)
     // Batch
     if (! empty($arrayfields['m.batch']['checked']))
     {
-    	print '<td class="liste_titre" align="center"><input class="flat maxwidth100" type="text" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
+    	print '<td class="liste_titre" align="center"><input class="flat maxwidth75" type="text" name="search_batch" value="'.dol_escape_htmltag($search_batch).'"></td>';
 	}
     if (! empty($arrayfields['pl.eatby']['checked']))
     {
@@ -879,7 +839,7 @@ if ($resql)
 	if (! empty($arrayfields['m.type_mouvement']['checked']))
     {
 	    // Type of movement
-	    print '<td class="liste_titre" align="left">';
+	    print '<td class="liste_titre" align="center">';
 	    //print '<input class="flat" type="text" size="3" name="search_type_mouvement" value="'.dol_escape_htmltag($search_type_mouvement).'">';
 		print '<select name="search_type_mouvement">';
 		print '<option value="" '.(($search_type_mouvement=="")?'selected="selected"':'').'></option>';
@@ -914,10 +874,10 @@ if ($resql)
     	print '</td>';
     }
 
-	
+
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
-  
+
 	// Fields from hook
 	$parameters=array('arrayfields'=>$arrayfields);
 	$reshook=$hookmanager->executeHooks('printFieldListOption',$parameters);    // Note that $action and $object may have been modified by hook
@@ -953,11 +913,11 @@ if ($resql)
     if (! empty($arrayfields['m.fk_user_author']['checked']))   print_liste_field_titre($arrayfields['m.fk_user_author']['label'],$_SERVER["PHP_SELF"], "m.fk_user_author","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.inventorycode']['checked']))    print_liste_field_titre($arrayfields['m.inventorycode']['label'],$_SERVER["PHP_SELF"], "m.inventorycode","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.label']['checked']))            print_liste_field_titre($arrayfields['m.label']['label'],$_SERVER["PHP_SELF"], "m.label","",$param,"",$sortfield,$sortorder);
-    if (! empty($arrayfields['m.type_mouvement']['checked']))	print_liste_field_titre($arrayfields['m.type_mouvement']['label'],$_SERVER["PHP_SELF"], "m.type_mouvement","",$param,"",$sortfield,$sortorder);
+    if (! empty($arrayfields['m.type_mouvement']['checked']))	print_liste_field_titre($arrayfields['m.type_mouvement']['label'],$_SERVER["PHP_SELF"], "m.type_mouvement","",$param,'align="center"',$sortfield,$sortorder);
     if (! empty($arrayfields['origin']['checked']))             print_liste_field_titre($arrayfields['origin']['label'],$_SERVER["PHP_SELF"], "","",$param,"",$sortfield,$sortorder);
     if (! empty($arrayfields['m.value']['checked']))            print_liste_field_titre($arrayfields['m.value']['label'],$_SERVER["PHP_SELF"], "m.value","",$param,'align="right"',$sortfield,$sortorder);
     if (! empty($arrayfields['m.price']['checked']))            print_liste_field_titre($arrayfields['m.price']['label'],$_SERVER["PHP_SELF"], "m.price","",$param,'align="right"',$sortfield,$sortorder);
-    
+
     // Extra fields
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 
@@ -1096,7 +1056,7 @@ if ($resql)
         {
         	// Price
         	print '<td align="right">';
-        	print price($objp->price);
+        	if ($objp->price != 0) print price($objp->price);
         	print '</td>';
         }
         // Action column
@@ -1156,10 +1116,12 @@ else
     dol_print_error($db);
 }
 
+
+
 /*
  * Documents generes
  */
-
+/* Area for doc and last events of warehouse are stored on the main card of warehouse
 $modulepart='mouvement';
 
 if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
@@ -1174,16 +1136,14 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
 	if(!empty($search_inventorycode)) $objectref.="_".$id."_".$search_inventorycode;
 	if($search_type_mouvement) $objectref.="_".$search_type_mouvement;
     $relativepath = $comref . '/' . $objectref . '.pdf';
-    $filedir = $conf->stock->dir_output . '/mouvement/' . $objectref;
-	
+    $filedir = $conf->stock->dir_output . '/movement/' . $objectref;
+
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id."&search_inventorycode=".$search_inventorycode."&search_type_mouvement=$search_type_mouvement";
     $genallowed=$usercanread;
     $delallowed=$usercancreate;
-	
+
 	$genallowed=$user->rights->stock->mouvement->lire;
     $delallowed=$user->rights->stock->mouvement->creer;
-	
-    $var=true;
 
     print $formfile->showdocuments($modulepart,$objectref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
@@ -1203,6 +1163,7 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
 
     print '</div></div></div>';
 }
+*/
 
 llxFooter();
 

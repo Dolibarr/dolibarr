@@ -418,8 +418,6 @@ if (empty($action))
     $genallowed=$usercanread;
     $delallowed=$usercancreate;
 
-	$var=true;
-
     print $formfile->showdocuments('product_batch',dol_sanitizeFileName($object->ref),$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;
 

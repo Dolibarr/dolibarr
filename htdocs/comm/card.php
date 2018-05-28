@@ -436,7 +436,7 @@ if ($object->id > 0)
 
 
 	// Multiprice level
-	if (! empty($conf->global->PRODUIT_MULTIPRICES))
+	if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 	{
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';

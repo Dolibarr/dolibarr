@@ -526,6 +526,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
         			// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use
@@ -579,7 +580,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				$array_other=$this->get_substitutionarray_other($outputlangs);
 				// retrieve contact information for use in project as contact_xxx tags
 				$array_project_contact = array();
-				if ($usecontact) $array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				if ($usecontact && is_object($contactobject)) $array_project_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
 				$tmparray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_project_contact);
 				complete_substitutions_array($tmparray, $outputlangs, $object);

@@ -1521,8 +1521,9 @@ class FactureFournisseur extends CommonInvoice
         		{
         			$product_type = $prod->type;
         			$label = $prod->label;
+        			$fk_prod_fourn_price = 0;
 
-        			// We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
+        			// We use 'none' instead of $ref_supplier, because $ref_supplier may not exists anymore. So we will take the first supplier price ok.
         			// If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
         			$result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
         			if ($result > 0)

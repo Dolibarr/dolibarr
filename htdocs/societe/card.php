@@ -340,12 +340,12 @@ if (empty($reshook))
 
         if (! $error)
         {
-            $result = $object->insertExtraFields('COMPANY_MODIFY');
-   			if ($result < 0)
-			{
-				setEventMessages($object->error, $object->errors, 'errors');
-				$error++;
-			}
+        	$result = $object->insertExtraFields('COMPANY_MODIFY');
+        	if ($result < 0)
+        	{
+        		setEventMessages($object->error, $object->errors, 'errors');
+        		$error++;
+        	}
         }
 
         if ($error) $action = 'edit_extras';
@@ -674,7 +674,7 @@ if (empty($reshook))
                 if ($result <=  0)
                 {
                     setEventMessages($object->error, $object->errors, 'errors');
-                  	$error++;
+                    $error++;
                 }
 
 				// Links with users
@@ -781,6 +781,7 @@ if (empty($reshook))
                 	{
                 		$error++;
                 		$object->error .= $object->db->lasterror();
+                		setEventMessages($object->error, $object->errors, 'errors');
                 	}
                 }
 
