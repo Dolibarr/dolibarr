@@ -207,3 +207,4 @@ OppStatusPENDING=Pending
 OppStatusWON=Won
 OppStatusLOST=Lost
 Budget=Budget
+AllowToLinkFromOtherCompany=Allow to link project from other company<br /><br /><u>Supported values :</u><br />- "all" : Link all projects<br />- A list of thirdparty id separated with commas : Link all projects with these thirdparty defined<br />Example : 11524,4795,53<br /><br />N.B.: Leave empty to disable this configuration
