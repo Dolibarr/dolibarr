@@ -254,7 +254,7 @@ function project_timesheet_prepare_head($mode, $fuser=null)
 		$h++;
 	}
 	
-	if (empty($conf->global->PROJECT_DISABLE_TIMESHEET_PERWEEK))
+	if (!empty($conf->global->PROJECT_USE_TIMESHEET_PERWEEK_PERSONALIZED))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/projet/activity/perweek_personalized.php".($param?'?'.$param:'');
 		$head[$h][1] = $langs->trans("InputPerWeekPersonalized");
