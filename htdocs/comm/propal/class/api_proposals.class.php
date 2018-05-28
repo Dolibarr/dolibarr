@@ -77,8 +77,8 @@ class Proposals extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
-		// Add billing contacts ids
-                $this->propal->billing_contacts_ids = $this->propal->liste_contact(-1,'external',1,'BILLING');
+		// Add external contacts ids
+                $this->propal->contacts_ids = $this->propal->liste_contact(-1,'external',1);
 
 		$this->propal->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->propal);
@@ -159,8 +159,8 @@ class Proposals extends DolibarrApi
 				$obj = $db->fetch_object($result);
 				$proposal_static = new Propal($db);
 				if($proposal_static->fetch($obj->rowid)) {
-					// Add billing contacts ids
-                			$proposal_static->billing_contacts_ids = $proposal_static->liste_contact(-1,'external',1,'BILLING');
+					// Add external contacts ids
+                			$proposal_static->contacts_ids = $proposal_static->liste_contact(-1,'external',1);
 					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
 				}
 				$i++;
