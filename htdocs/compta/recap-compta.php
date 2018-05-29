@@ -54,8 +54,11 @@ if (! $sortorder) $sortorder="DESC";
 
 $arrayfields=array(
     'f.datef'=>array('label'=>"Date", 'checked'=>1),
-    //...    
+    //...
 );
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('supplierbalencelist','globalcard'));
 
 /*
  * Actions
@@ -87,13 +90,13 @@ if ($id > 0)
 	dol_fiche_head($head, 'customer', $langs->trans("ThirdParty"), 0, 'company');
 	dol_banner_tab($object, 'socid', '', ($user->societe_id?0:1), 'rowid', 'nom', '', '', 0, '', '', 1);
 	dol_fiche_end();
-	
+
 	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	{
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder tagtable liste" width="100%">';
 		print '<tr class="liste_titre">';
         if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'],$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 		print '<td>'.$langs->trans("Element").'</td>';
@@ -103,7 +106,7 @@ if ($id > 0)
 		print '<td align="right">'.$langs->trans("Balance").'</td>';
 		print '<td align="right">'.$langs->trans("Author").'</td>';
 		print '</tr>';
-		
+
 		$TData = array();
 		$TDataSort = array();
 
@@ -135,10 +138,10 @@ if ($id > 0)
 					continue;
 				}
 				$totalpaye = $fac->getSommePaiement();
-				
+
 				$userstatic->id=$objf->userid;
 				$userstatic->login=$objf->login;
-				
+
 				$TData[] = array(
 					'date' => $fac->date,
 					'link' => $fac->getNomUrl(1),
@@ -168,13 +171,13 @@ if ($id > 0)
 					while ($j < $nump)
 					{
 						$objp = $db->fetch_object($resqlp);
-						
+
 						$paymentstatic = new Paiement($db);
 						$paymentstatic->id = $objp->rowid;
-						
+
 						$userstatic->id=$objp->userid;
 						$userstatic->login=$objp->login;
-						
+
 						$TData[] = array(
 							'date' => $db->jdate($objp->dp),
 							'link' => $langs->trans("Payment") .' '. $paymentstatic->getNomUrl(1),
@@ -199,11 +202,11 @@ if ($id > 0)
 		{
 			dol_print_error($db);
 		}
-		
+
 		if(empty($TData)) {
 			print '<tr class="oddeven"><td colspan="7">'.$langs->trans("NoInvoice").'</td></tr>';
 		} else {
-			
+
 			// Sort array by date
 			asort($TDataSort);
 			array_multisort($TData,$TDataSort);
@@ -213,37 +216,37 @@ if ($id > 0)
 				$balance += $data1['amount'];
 				$data1['balance'] += $balance;
 			}
-			
+
 			// Reverse array to have last elements on top
 			$TData = dol_sort_array($TData, 'date', $sortorder);
-				
-			
+
+
 			$totalDebit = 0;
 			$totalCredit = 0;
-			
+
 			// Display array
 			foreach($TData as $data) {
-				
+
 				print '<tr class="oddeven">';
-	
+
 				print "<td align=\"center\">".dol_print_date($data['date'],'day')."</td>\n";
 				print '<td>'.$data['link']."</td>\n";
-	
+
 				print '<td aling="left">'.$data['status'].'</td>';
 				print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
 				$totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
 				print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
 				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
 				print '<td align="right">'.price($data['balance'])."</td>\n";
-	
+
 				// Author
 				print '<td class="nowrap" align="right">';
 				print $data['author'];
 				print '</td>';
-	
+
 				print "</tr>\n";
 			}
-			
+
 			print '<tr class="liste_total">';
 			print '<td colspan="3">&nbsp;</td>';
 			print '<td align="right">'.price($totalDebit).'</td>';
@@ -252,7 +255,7 @@ if ($id > 0)
 			print '<td></td>';
 			print "</tr>\n";
 		}
-		
+
 		print "</table>";
 	}
 }
