@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/import.lib.php';
 
-$langs->load("exports");
-$langs->load("compta");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('exports', 'compta', 'errors'));
 
 // Security check
 $result=restrictedArea($user, 'import');

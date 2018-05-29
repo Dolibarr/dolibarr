@@ -35,10 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("contracts");
-$langs->load("products");
-$langs->load("companies");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');

@@ -39,7 +39,7 @@ require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("companies","other","ticketsup"));
 
 // Get parameters

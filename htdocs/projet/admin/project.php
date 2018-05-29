@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load("other");
-$langs->load("projects");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors', 'other', 'projects'));
 
 if (!$user->admin) accessforbidden();
 

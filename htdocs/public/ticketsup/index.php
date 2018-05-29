@@ -31,11 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
-// Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
-$langs->load("ticketsup");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other', 'ticketsup', 'errors'));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');

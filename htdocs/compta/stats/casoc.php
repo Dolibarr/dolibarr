@@ -34,10 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("companies");
-$langs->load("categories");
-$langs->load("bills");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'categories', 'bills', 'compta'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;

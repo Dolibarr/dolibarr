@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","products"));
 
 // Security check

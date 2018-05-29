@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action','aZ09');

@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'companies'));
 
 // Security check
 $id=GETPOST("id",'int');

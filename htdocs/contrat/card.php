@@ -46,6 +46,7 @@ if (! empty($conf->projet->enabled)) {
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("contracts","orders","companies","bills","products",'compta'));
 
 $action=GETPOST('action','alpha');

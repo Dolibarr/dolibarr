@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 $sortfield=GETPOST('sortfield', 'alpha');

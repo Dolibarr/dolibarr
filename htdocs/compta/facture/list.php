@@ -49,10 +49,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 
-
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('products');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'products'));
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $projectid=(GETPOST('projectid')?GETPOST('projectid','int'):0);

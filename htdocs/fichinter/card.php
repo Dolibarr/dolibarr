@@ -51,9 +51,8 @@ if (! empty($conf->global->FICHEINTER_ADDON) && is_readable(DOL_DOCUMENT_ROOT ."
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("bills");
-$langs->load("companies");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'interventions'));
 
 $id			= GETPOST('id','int');
 $ref		= GETPOST('ref','alpha');

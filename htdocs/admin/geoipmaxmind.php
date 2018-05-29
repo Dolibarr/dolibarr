@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/dolgeoip.class.php';
 if (!$user->admin)
 accessforbidden();
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin","errors"));
 
 $action = GETPOST('action','aZ09');

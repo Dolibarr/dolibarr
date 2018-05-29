@@ -48,8 +48,8 @@ $socid=0;
 //if ($user->societe_id > 0) $socid = $user->societe_id;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
 $result = restrictedArea($user, 'projet', $id, 'projet&project');
 
-$langs->load("users");
-$langs->load("projects");
+// Load translation files required by the page
+$langs->loadlangs(array('users', 'projects'));
 
 
 /*

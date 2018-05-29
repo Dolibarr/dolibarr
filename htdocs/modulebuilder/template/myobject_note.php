@@ -40,7 +40,7 @@ if (! $res) die("Include of main fails");
 dol_include_once('/mymodule/class/myobject.class.php');
 dol_include_once('/mymodule/lib/myobject.lib.php');
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule","companies"));
 
 // Get parameters

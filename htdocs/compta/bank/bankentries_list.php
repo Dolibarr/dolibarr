@@ -48,6 +48,7 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.
 require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks","bills","categories","companies","margins","salaries","loan","donations","trips","members","compta","accountancy"));
 
 $id = GETPOST('id','int');

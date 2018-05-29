@@ -26,6 +26,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 
+// Load translation files required by the page
 $langs->load("stocks");
 
 // Security check
