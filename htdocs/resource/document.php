@@ -35,9 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("resource");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'resource', 'companies'));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');

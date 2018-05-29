@@ -33,6 +33,7 @@ if (! $user->rights->user->user->lire && ! $user->admin)
 	exit;
 }
 
+// Load translation files required by page
 $langs->load("users");
 
 $canreadperms=true;

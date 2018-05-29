@@ -26,6 +26,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("assets","admin","companies"));
 
 $extrafields = new ExtraFields($db);

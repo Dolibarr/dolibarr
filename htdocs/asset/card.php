@@ -28,7 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("asset"));
 
 // Get parameters

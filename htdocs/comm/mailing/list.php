@@ -25,6 +25,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/mailing/class/mailing.class.php';
 
+// Load translation files required by the page
 $langs->load("mails");
 
 // Security check

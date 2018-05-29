@@ -46,15 +46,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-$langs->load('companies');
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('propal');
-$langs->load('orders');
-$langs->load('products');
-$langs->load("deliveries");
-$langs->load('sendings');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'supplier_proposal', 'compta', 'bills', 'propal', 'orders', 'products', 'deliveries', 'sendings'));
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 

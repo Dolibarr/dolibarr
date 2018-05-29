@@ -27,8 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 
-$langs->load("orders");
-$langs->load("sendings");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings'));
 
 /*
  *	View

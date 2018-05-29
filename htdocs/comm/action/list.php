@@ -35,6 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("users","companies","agenda","commercial"));
 
 $action=GETPOST('action','alpha');

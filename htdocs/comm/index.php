@@ -37,7 +37,7 @@ if (! empty($conf->fournisseur->enabled)) require_once DOL_DOCUMENT_ROOT.'/fourn
 
 if (! $user->rights->societe->lire) accessforbidden();
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("commercial", "propal"));
 
 $action=GETPOST('action', 'alpha');

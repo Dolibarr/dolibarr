@@ -35,6 +35,7 @@ global $noMoreLinkedObjectBlockAfter;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
+// Load translation files required by the page
 $langs->load("contracts");
 
 $total=0; $ilink=0;

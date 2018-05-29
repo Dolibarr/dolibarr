@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
 require_once DOL_DOCUMENT_ROOT."/ticketsup/class/ticketsup.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/ticketsup.lib.php";
 
-// Translations
+// Load translation files required by the page
 $langs->load("ticketsup");
 
 // Access control

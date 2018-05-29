@@ -30,9 +30,8 @@ require_once (DOL_DOCUMENT_ROOT."/contrat/class/contrat.class.php");
 require_once (DOL_DOCUMENT_ROOT."/product/class/product.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
 
-$langs->load("products");
-$langs->load("contracts");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'contracts', 'companies'));
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');

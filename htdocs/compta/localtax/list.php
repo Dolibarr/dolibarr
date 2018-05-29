@@ -24,6 +24,7 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+// Load translation files required by the page
 $langs->load("compta");
 
 // Security check

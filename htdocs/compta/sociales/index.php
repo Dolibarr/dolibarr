@@ -28,7 +28,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formsocialcontrib.class.php';
 
-$langs->loadLangs(array("compta","banks","bills"));
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'banks', 'bills'));
 
 // Security check
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';

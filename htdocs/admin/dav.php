@@ -25,6 +25,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","other","agenda"));
 
 if (!$user->admin)

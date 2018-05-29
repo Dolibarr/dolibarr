@@ -36,11 +36,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
-// Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
-$langs->load("mails");
-$langs->load("ticketsup");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other', 'mails', 'ticketsup'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
