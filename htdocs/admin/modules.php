@@ -7,7 +7,8 @@
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
- *
+ * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -666,6 +667,12 @@ if ($mode == 'common')
         // Version
         print '<td class="center nowrap" width="120px">';
         print $versiontrans;
+        if (!empty($objMod->url_last_version)) {
+            $newversion = file_get_contents($objMod->url_last_version);
+            if (version_compare($newversion, $versiontrans) > 0) {
+                print "&nbsp;<span class='butAction' title='" . $langs->trans('LastStableVersion') . "'>$newversion</span>";
+            }
+        }
         print "</td>\n";
 
         // Activate/Disable and Setup (2 columns)
