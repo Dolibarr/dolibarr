@@ -78,7 +78,7 @@ class Proposals extends DolibarrApi
 		}
 
 		// Add external contacts ids
-                $this->propal->contacts_ids = $this->propal->liste_contact(-1,'external',1);
+		$this->propal->contacts_ids = $this->propal->liste_contact(-1,'external',1);
 
 		$this->propal->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->propal);
@@ -160,7 +160,7 @@ class Proposals extends DolibarrApi
 				$proposal_static = new Propal($db);
 				if($proposal_static->fetch($obj->rowid)) {
 					// Add external contacts ids
-                			$proposal_static->contacts_ids = $proposal_static->liste_contact(-1,'external',1);
+					$proposal_static->contacts_ids = $proposal_static->liste_contact(-1,'external',1);
 					$obj_ret[] = $this->_cleanObjectDatas($proposal_static);
 				}
 				$i++;
