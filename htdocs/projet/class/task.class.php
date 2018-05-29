@@ -1707,6 +1707,7 @@ class Task extends CommonObject
 	    $projectstatic = new Project($this->db);
 	    $projectsListId = $projectstatic->getProjectsAuthorizedForUser($user,0,1,$socid);
 	    
+	    
 	    // List of tasks (does not care about permissions. Filtering will be done later)
 	    $sql = "SELECT p.rowid as projectid, p.fk_statut as projectstatus,";
 	    $sql.= " t.rowid as taskid, t.progress as progress, t.fk_statut as status,";
@@ -1724,7 +1725,6 @@ class Task extends CommonObject
 	    if ($socid) $sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
 	    // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
 	    // if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-
 	    //print $sql;
 	    $resql=$this->db->query($sql);
 	    if ($resql)
