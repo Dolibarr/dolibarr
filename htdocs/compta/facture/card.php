@@ -64,6 +64,7 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array('bills','companies','compta','products','banks','main','withdrawals'));
 if (! empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');

@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","workflow","propal","workflow","orders","supplier_proposals"));
 
 if (! $user->admin) accessforbidden();

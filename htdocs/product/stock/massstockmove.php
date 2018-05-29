@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders', 'productbatch'));
 
 // Security check
 if ($user->societe_id) {

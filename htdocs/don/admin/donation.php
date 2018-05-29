@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT . '/don/class/don.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load("admin");
-$langs->load("donations");
-$langs->load("accountancy");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'donations', 'accountancy', 'other'));
 
 if (!$user->admin) accessforbidden();
 

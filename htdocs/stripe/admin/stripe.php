@@ -32,11 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 
 $servicename='Stripe';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("paypal");
-$langs->load("paybox");
-$langs->load("stripe");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'paypal', 'paybox', 'stripe'));
 
 if (! $user->admin) accessforbidden();
 

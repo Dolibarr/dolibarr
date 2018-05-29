@@ -45,8 +45,8 @@ if (! empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/c
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->ficheinter->enabled)) require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
-$langs->load("companies");
-$langs->load('banks');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'banks'));
 
 if (! empty($conf->contrat->enabled))  $langs->load("contracts");
 if (! empty($conf->commande->enabled)) $langs->load("orders");

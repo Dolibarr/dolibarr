@@ -56,6 +56,7 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array('orders','sendings','companies','bills','propal','deliveries','products','other'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');

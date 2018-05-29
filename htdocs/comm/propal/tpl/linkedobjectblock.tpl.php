@@ -41,6 +41,7 @@ global $user;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
+// Load translation files required by the page
 $langs->load("propal");
 
 $total=0; $ilink=0;

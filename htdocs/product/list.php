@@ -39,10 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("suppliers");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $action=GETPOST('action','alpha');

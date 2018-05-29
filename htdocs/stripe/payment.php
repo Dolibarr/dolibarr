@@ -39,11 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('multicurrency');
-$langs->load('stripe@stripe');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'banks', 'multicurrency', 'stripe'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');

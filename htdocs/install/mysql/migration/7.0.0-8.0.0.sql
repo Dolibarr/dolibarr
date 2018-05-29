@@ -3,16 +3,17 @@
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 8.0.0 or higher.
 --
+-- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
 -- To drop a column:        ALTER TABLE llx_table DROP COLUMN oldname;
 -- To change type of field: ALTER TABLE llx_table MODIFY COLUMN name varchar(60);
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
+-- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
 -- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table
 -- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex
--- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
--- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
 -- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres):
 -- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
@@ -80,6 +81,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- For 8.0
 
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
+
 -- delete old permission no more used
 DELETE FROM llx_rights_def WHERE perms = 'main' and module = 'commercial';
 
@@ -142,10 +145,17 @@ ALTER TABLE llx_expensereport_det ADD COLUMN docnumber varchar(128) after fk_exp
 
 ALTER TABLE llx_website_page ADD COLUMN aliasalt varchar(255) after pageurl;
 
--- Add missing keys and primary key
 DELETE FROM llx_c_paiement WHERE code = '' or code = '-' or id = 0;
+
+-- Remove duplicate record with same primary key in llx_c_paiement
+DROP TABLE llx_c_paiement_temp;
+CREATE TABLE llx_c_paiement_temp AS SELECT * FROM llx_c_paiement;
+DELETE FROM llx_c_paiement WHERE entity > 1 AND id IN (SELECT cp2.id FROM llx_c_paiement_temp as cp2 WHERE cp2.entity = 1);
+
+-- Add missing keys and primary key
 ALTER TABLE llx_c_paiement DROP INDEX uk_c_paiement;
 ALTER TABLE llx_c_paiement ADD UNIQUE INDEX uk_c_paiement_code(entity, code);
+
 -- VMYSQL4.3 ALTER TABLE llx_c_paiement CHANGE COLUMN id id INTEGER AUTO_INCREMENT PRIMARY KEY;
 -- VPGSQL8.2 CREATE SEQUENCE llx_c_paiement_id_seq OWNED BY llx_c_paiement.id;
 -- VPGSQL8.2 ALTER TABLE llx_c_paiement ADD PRIMARY KEY (id);
@@ -472,9 +482,6 @@ UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
 -- Warehouse
 ALTER TABLE llx_entrepot ADD COLUMN model_pdf VARCHAR(255) AFTER fk_user_author;
 ALTER TABLE llx_stock_mouvement ADD COLUMN model_pdf VARCHAR(255) AFTER origintype;
-
-
-
 
 
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  118, 11801, '', 0, 'Indonesia', 1);

@@ -26,6 +26,7 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salariesstats.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("salaries","companies"));
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');

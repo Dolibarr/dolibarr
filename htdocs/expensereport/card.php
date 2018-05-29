@@ -44,6 +44,7 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("trips","bills","mails"));
 
 $action=GETPOST('action','aZ09');

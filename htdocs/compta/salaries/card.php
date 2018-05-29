@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","banks","bills","users","salaries","hrm"));
 
 $id=GETPOST("id",'int');

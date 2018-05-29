@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $search_project_user = GETPOST('search_project_user','int');
 $mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;

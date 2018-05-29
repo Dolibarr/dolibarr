@@ -29,9 +29,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("admin");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'admin', 'products'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);

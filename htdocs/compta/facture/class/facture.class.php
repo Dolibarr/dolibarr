@@ -1152,7 +1152,7 @@ class Facture extends CommonInvoice
 	{
 		global $langs, $conf, $user, $form;
 
-        if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
 
