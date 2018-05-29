@@ -3,6 +3,8 @@
 -- This file must be loaded by calling /install/index.php page
 -- when current version is 8.0.0 or higher.
 --
+-- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
+-- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
 -- To rename a table:       ALTER TABLE llx_table RENAME TO llx_table_new;
 -- To add a column:         ALTER TABLE llx_table ADD COLUMN newcol varchar(60) NOT NULL DEFAULT '0' AFTER existingcol;
 -- To rename a column:      ALTER TABLE llx_table CHANGE COLUMN oldname newname varchar(60);
@@ -11,8 +13,7 @@
 -- To drop a foreign key:   ALTER TABLE llx_table DROP FOREIGN KEY fk_name;
 -- To drop an index:        -- VMYSQL4.1 DROP INDEX nomindex on llx_table
 -- To drop an index:        -- VPGSQL8.2 DROP INDEX nomindex
--- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
--- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
+-- To create a unique index ALTER TABLE llx_table ADD UNIQUE INDEX uk_table_field (field);
 -- To make pk to be auto increment (mysql):    -- VMYSQL4.3 ALTER TABLE llx_table CHANGE COLUMN rowid rowid INTEGER NOT NULL AUTO_INCREMENT;
 -- To make pk to be auto increment (postgres):
 -- -- VPGSQL8.2 CREATE SEQUENCE llx_table_rowid_seq OWNED BY llx_table.rowid;
@@ -451,4 +452,6 @@ ALTER TABLE llx_accounting_journal ADD UNIQUE INDEX uk_accounting_journal_code (
 
 UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
 
-ALTER TABLE llx_product_fournisseur_price DROP INDEX uk_product_fournisseur_price_ref, ADD UNIQUE uk_product_fournisseur_price_ref (ref_fourn, fk_soc, quantity, entity, fk_product) USING BTREE;
+ALTER TABLE llx_product_fournisseur_price DROP INDEX uk_product_fournisseur_price_ref;
+ALTER TABLE ADD UNIQUE INDEX uk_product_fournisseur_price_ref (ref_fourn, fk_soc, quantity, entity, fk_product);
+
