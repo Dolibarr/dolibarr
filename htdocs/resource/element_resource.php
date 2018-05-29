@@ -36,10 +36,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-// Load traductions files requiredby by page
-$langs->load("resource");
-$langs->load("other");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('resource', 'other', 'interventions'));
 
 /*
 $sortorder                      = GETPOST('sortorder','alpha');

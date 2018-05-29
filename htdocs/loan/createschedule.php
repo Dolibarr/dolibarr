@@ -34,6 +34,7 @@ $action = GETPOST('action','aZ09');
 $object = new Loan($db);
 $object->fetch($loanid);
 
+// Load translation files required by the page
 $langs->loadLangs(array("loan"));
 
 if ($action == 'createecheancier') {

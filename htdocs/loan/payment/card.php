@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT.'/loan/class/paymentloan.class.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("bills","banks","companies","loan"));
 
 // Security check

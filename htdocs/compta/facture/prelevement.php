@@ -37,10 +37,8 @@ if (! empty($conf->projet->enabled)) {
 
 if (!$user->rights->facture->lire) accessforbidden();
 
-$langs->load("bills");
-$langs->load("banks");
-$langs->load("withdrawals");
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'withdrawals', 'companies'));
 
 $id=(GETPOST('id','int')?GETPOST('id','int'):GETPOST('facid','int'));  // For backward compatibility
 $ref=GETPOST('ref','alpha');

@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/modules/mailings/advthirdparties.modules
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-// Translations
-$langs->load("mails");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('mails', 'companies'));
 if (! empty($conf->categorie->enabled)) {
 	$langs->load("categories");
 }

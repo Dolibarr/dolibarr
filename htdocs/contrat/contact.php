@@ -33,9 +33,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-
-$langs->load("contracts");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('contracts', 'companies'));
 
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');

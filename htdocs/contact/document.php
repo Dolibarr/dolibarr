@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/contact.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("companies");
-$langs->load("contact");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'companies', 'contact'));
 
 $id = GETPOST('id','int');
 $action = GETPOST('action','aZ09');

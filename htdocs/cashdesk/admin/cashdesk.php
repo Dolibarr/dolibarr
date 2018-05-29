@@ -38,7 +38,7 @@ if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 if (!$user->admin)
 accessforbidden();
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "cashdesk"));
 
 

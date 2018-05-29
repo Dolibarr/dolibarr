@@ -27,13 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("users");
-$langs->load("languages");
-$langs->load("projects");
-$langs->load("members");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'products', 'admin', 'users', 'languages', 'projects', 'members'));
 
 // Defini si peux lire/modifier permisssions
 $canreaduser=($user->admin || $user->rights->user->user->lire);

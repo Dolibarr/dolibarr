@@ -24,6 +24,7 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 
+// Load translation files required by the page
 $langs->load("exports");
 
 if (! $user->societe_id == 0)

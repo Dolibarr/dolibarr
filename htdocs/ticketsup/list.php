@@ -32,7 +32,7 @@ include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 include_once DOL_DOCUMENT_ROOT . '/core/lib/project.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("ticketsup","companies","other","projects"));
 
 
@@ -695,7 +695,7 @@ if (in_array('builddoc',$arrayofmassactions) && ($nbtotalofrecords === '' || $nb
 	$hidegeneratedfilelistifempty=1;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-	require_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 	$formfile = new FormFile($db);
 
 	// Show list of available documents

@@ -49,8 +49,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load('companies');
-$langs->load('projects');
+// Load translation files required by the page
+$langs->loadlangs(array('companies', 'projects'));
 
 
 /*

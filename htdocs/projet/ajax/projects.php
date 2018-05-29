@@ -48,6 +48,7 @@ dol_syslog(join(',',$_GET));
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+// Load translation files required by the page
 $langs->load("main");
 
 top_httphead();

@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
 
+// Load translation files required by the page
 $langs->loadLangs(array("companies","products","admin","users","other"));
 
 // Security check

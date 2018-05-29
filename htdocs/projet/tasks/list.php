@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('projects', 'users', 'companies'));
 
 $action=GETPOST('action','alpha');

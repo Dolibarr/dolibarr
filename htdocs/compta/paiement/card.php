@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('bills','banks','companies'));
 
 $id=GETPOST('id','int');

@@ -58,6 +58,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="p.date_fin";
 if (! $sortorder) $sortorder="DESC";
 
+// Load translation files required by the page
 $langs->load("opensurvey");
 
 

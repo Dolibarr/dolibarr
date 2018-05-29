@@ -32,11 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("exports");
-$langs->load("other");
-$langs->load("users");
-$langs->load("companies");
-$langs->load("projects");
+// Load translation files required by the page
+$langs->loadlangs(array('exports', 'other', 'users', 'companies', 'projects'));
 
 // Everybody should be able to go on this page
 //if (! $user->admin)

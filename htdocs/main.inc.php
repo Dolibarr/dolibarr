@@ -474,8 +474,8 @@ if (! defined('NOLOGIN'))
 			if (! $ok)
 			{
 				dol_syslog('Bad value for code, connexion refused');
-				$langs->load('main');
-				$langs->load('errors');
+				// Load translation files required by page
+				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
@@ -552,8 +552,8 @@ if (! defined('NOLOGIN'))
 			if (! $login)
 			{
 				dol_syslog('Bad password, connexion refused',LOG_DEBUG);
-				$langs->load('main');
-				$langs->load('errors');
+				// Load translation files required by page
+				$langs->loadLangs(array('main', 'errors'));
 
 				// Bad password. No authmode has found a good password.
 				// We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
@@ -602,8 +602,8 @@ if (! defined('NOLOGIN'))
 
 			if ($resultFetchUser == 0)
 			{
-				$langs->load('main');
-				$langs->load('errors');
+				// Load translation files required by page
+				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
 
@@ -661,8 +661,8 @@ if (! defined('NOLOGIN'))
 
 			if ($resultFetchUser == 0)
 			{
-				$langs->load('main');
-				$langs->load('errors');
+				// Load translation files required by page
+				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
 
@@ -935,8 +935,8 @@ dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action','
 // Load main languages files
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs->load("main");
-	$langs->load("dict");
+	// Load translation files required by page
+	$langs->loadLangs(array('main', 'dict'));
 }
 
 // Define some constants used for style of arrays

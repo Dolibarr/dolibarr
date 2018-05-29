@@ -42,13 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load('companies');
-$langs->load('propal');
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('products');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'bills', 'orders', 'products'));
 
 $socid=GETPOST('socid','int');
 

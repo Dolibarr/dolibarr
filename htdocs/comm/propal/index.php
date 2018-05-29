@@ -27,8 +27,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/propal/class/propal.class.php';
 
-$langs->load("propal");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('propal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid','int');

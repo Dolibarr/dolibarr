@@ -39,7 +39,7 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
 
-
+// Load translation files required by the page
 $langs->load("projects");
 
 

@@ -30,6 +30,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/l
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
+// Load translation files required by the page
 $langs->load("assets");
 
 $rowid  = GETPOST('rowid','int');

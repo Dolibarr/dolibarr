@@ -47,6 +47,7 @@ if ($user->societe_id > 0) accessforbidden();
 
 $now=dol_now();
 
+// Load translation files required by the page
 $langs->load("holiday");
 
 $childids = $user->getAllChildIds(1);

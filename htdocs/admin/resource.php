@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 if (! empty($conf->resouce->enabled)) require_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin","resource"));
 
 // Security check

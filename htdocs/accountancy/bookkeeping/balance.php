@@ -34,7 +34,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-// Langs
+// Load translation files required by the page
 $langs->loadLangs(array("accountancy"));
 
 $page = GETPOST("page");

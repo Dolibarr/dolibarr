@@ -32,6 +32,7 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accoun
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","loan"));
 
 $id=GETPOST('id','int');

@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
 if (! $user->rights->user->user->lire && ! $user->admin)
 	accessforbidden();
 
-$langs->load("users");
-$langs->load("companies");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'companies'));
 
 // Security check (for external users)
 $socid=0;

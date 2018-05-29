@@ -41,7 +41,7 @@ if (!empty($conf->contrat->enabled)) {
     include_once DOL_DOCUMENT_ROOT . '/core/class/html.formcontract.class.php';
 }
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("companies","other","ticketsup"));
 
 // Get parameters

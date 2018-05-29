@@ -31,7 +31,7 @@ global $conf;
 
 if (!$user->admin) accessforbidden();
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin","other"));
 
 $error=0;

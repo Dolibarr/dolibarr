@@ -89,11 +89,8 @@ if (!$canreaduser) {
 }
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
-$langs->load("users");
-$langs->load("companies");
-$langs->load("ldap");
-$langs->load("admin");
-$langs->load('hrm');
+// Load translation files required by page
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
