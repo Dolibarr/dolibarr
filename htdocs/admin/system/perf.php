@@ -180,7 +180,7 @@ jQuery(document).ready(function() {
   var compcssstring;
   getcssurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/includes/jquery/css/smoothness/jquery-ui.css\',
+    url: \''.DOL_URL_ROOT.'/includes/jquery/css/base/jquery-ui.css\',
     cache: false,
     /* async: false, */
     /*crossDomain: true, */
@@ -336,7 +336,7 @@ jQuery(document).ready(function() {
   var compjsphpstring;
   getjsphpurl = $.ajax({
     type: "GET",
-    url: \''.DOL_URL_ROOT.'/core/js/datepicker.js.php\',
+    url: \''.DOL_URL_ROOT.'/core/js/lib_head.js.php\',
     cache: false,
     /* async: false, */
     /* crossDomain: true,*/

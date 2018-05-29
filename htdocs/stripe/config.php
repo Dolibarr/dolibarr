@@ -33,19 +33,19 @@ global $conf;
 //use \includes\stripe as stripe;
 $stripe = array();
 
-if (empty($conf->global->STRIPE_LIVE))
+if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
 {
 	$stripe = array(
 		"secret_key"      => $conf->global->STRIPE_TEST_SECRET_KEY,
 		"publishable_key" => $conf->global->STRIPE_TEST_PUBLISHABLE_KEY
 	);
 }
-else 
+else
 {
 	$stripe = array(
 		"secret_key"      => $conf->global->STRIPE_LIVE_SECRET_KEY,
 		"publishable_key" => $conf->global->STRIPE_LIVE_PUBLISHABLE_KEY
-	);	
+	);
 }
 
 require_once DOL_DOCUMENT_ROOT."/includes/stripe/lib/Stripe.php";

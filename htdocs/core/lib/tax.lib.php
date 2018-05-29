@@ -32,7 +32,7 @@
  * Prepare array with list of tabs
  *
  * @param   ChargeSociales	$object		Object related to tabs
- * @return  array				Array of tabs to show
+ * @return  array						Array of tabs to show
  */
 function tax_prepare_head(ChargeSociales $object)
 {
@@ -184,7 +184,6 @@ function vat_by_thirdparty($db, $y, $date_start, $date_end, $modetax, $direction
  *  Gets Tax to collect for the given year (and given quarter or month)
  *  The function gets the Tax in split results, as the Tax declaration asks
  *  to report the amounts for different Tax rates as different lines.
- *  This function also accounts recurrent invoices.
  *
  *  @param	string	$type          	Tax type, either 'vat', 'localtax1' or 'localtax2'
  *  @param	DoliDB	$db          	Database handler object
@@ -236,7 +235,7 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
 	$total_localtax1='total_localtax1';
 	$total_localtax2='total_localtax2';
-    
+
     // CAS DES BIENS
 
     // Define sql request
@@ -318,7 +317,7 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
     if ($sql == 'TODO') return -2;
     if ($sql != 'TODO')
     {
-        dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
+        dol_syslog("Tax.lib.php::tax_by_date", LOG_DEBUG);
 
         $resql = $db->query($sql);
         if ($resql)
@@ -414,7 +413,7 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
         if ($date_start && $date_end) $sql.= " AND f.datef >= '".$db->idate($date_start)."' AND f.datef <= '".$db->idate($date_end)."'";
         $sql.= " AND (d.product_type = 1";                              // Limit to services
         $sql.= " OR d.date_start is NOT null OR d.date_end IS NOT NULL)";       // enhance detection of service
-        $sql.= " ORDER BY d.rowid, d.".$fk_facture; 
+        $sql.= " ORDER BY d.rowid, d.".$fk_facture;
     }
     else    // Option vat on delivery for goods (payments) and payments for services
     {
@@ -458,13 +457,13 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 
     if (! $sql)
     {
-        dol_syslog("Tax.lib.php::vat_by_date no accountancy module enabled".$sql,LOG_ERR);
+        dol_syslog("Tax.lib.php::tax_by_date no accountancy module enabled".$sql,LOG_ERR);
         return -1;  // -1 = Not accountancy module enabled
     }
     if ($sql == 'TODO') return -2; // -2 = Feature not yet available
     if ($sql != 'TODO')
     {
-        dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
+        dol_syslog("Tax.lib.php::tax_by_date", LOG_DEBUG);
         $resql = $db->query($sql);
         if ($resql)
         {
@@ -528,20 +527,16 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		$sql='';
 
 		// Count on payments date
-		$sql = "SELECT e.rowid, d.product_type as dtype, e.rowid as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
+		$sql = "SELECT d.rowid, d.product_type as dtype, e.rowid as facid, d.$f_rate as rate, d.total_ht as total_ht, d.total_ttc as total_ttc, d.total_tva as total_vat, e.note_private as descr,";
 		$sql .=" d.total_localtax1 as total_localtax1, d.total_localtax2 as total_localtax2, ";
 		$sql.= " e.date_debut as date_start, e.date_fin as date_end,";
-		$sql.= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, s.nom as company_name, s.rowid as company_id, d.fk_c_type_fees as type,";
+		$sql.= " e.ref as facnum, e.total_ttc as ftotal_ttc, e.date_create, d.fk_c_type_fees as type,";
 		$sql.= " p.fk_bank as payment_id, p.amount as payment_amount, p.rowid as pid, e.ref as pref";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
-		$sql.= " ".MAIN_DB_PREFIX."expensereport_det as d,";
-		$sql.= " ".MAIN_DB_PREFIX."expensereport as e,";
-		$sql.= " ".MAIN_DB_PREFIX."payment_expensereport as p";
+		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as e ";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."expensereport_det as d ON d.fk_expensereport = e.rowid ";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."payment_expensereport as p ON p.fk_expensereport = e.rowid ";
 		$sql.= " WHERE e.entity = " . $conf->entity;
-		$sql.= " AND e.fk_statut in (6)"; 
-		$sql.= " AND e.rowid = p.fk_expensereport";
-		$sql.= " AND s.rowid = e.entity";
-		$sql.= " AND d.fk_expensereport = e.rowid";
+		$sql.= " AND e.fk_statut in (6)";
 		if ($y && $m)
 		{
 			$sql.= " AND p.datep >= '".$db->idate(dol_get_first_day($y,$m,false))."'";
@@ -554,19 +549,19 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 		}
 		if ($q) $sql.= " AND (date_format(p.datep,'%m') > ".(($q-1)*3)." AND date_format(p.datep,'%m') <= ".($q*3).")";
 		if ($date_start && $date_end) $sql.= " AND p.datep >= '".$db->idate($date_start)."' AND p.datep <= '".$db->idate($date_end)."'";
-		$sql.= " AND (d.product_type = -1";                              
+		$sql.= " AND (d.product_type = -1";
 		$sql.= " OR e.date_debut is NOT null OR e.date_fin IS NOT NULL)";       // enhance detection of service
 		$sql.= " ORDER BY e.rowid";
 
 		if (! $sql)
 		{
-			dol_syslog("Tax.lib.php::vat_by_date no accountancy module enabled".$sql,LOG_ERR);
+			dol_syslog("Tax.lib.php::tax_by_date no accountancy module enabled".$sql,LOG_ERR);
 			return -1;  // -1 = Not accountancy module enabled
 		}
 		if ($sql == 'TODO') return -2; // -2 = Feature not yet available
 		if ($sql != 'TODO')
 		{
-			dol_syslog("Tax.lib.php::vat_by_date", LOG_DEBUG);
+			dol_syslog("Tax.lib.php::tax_by_date", LOG_DEBUG);
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -591,8 +586,8 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 					$list[$assoc['rate']]['dtotal_ttc'][] = $assoc['total_ttc'];
 					$list[$assoc['rate']]['dtype'][] = 'ExpenseReportPayment';
 					$list[$assoc['rate']]['datef'][] = $assoc['datef'];
-					$list[$assoc['rate']]['company_name'][] = $assoc['company_name'];
-					$list[$assoc['rate']]['company_id'][] = $assoc['company_id'];
+					$list[$assoc['rate']]['company_name'][] = '';
+					$list[$assoc['rate']]['company_id'][] = '';
 					$list[$assoc['rate']]['ddate_start'][] = $db->jdate($assoc['date_start']);
 					$list[$assoc['rate']]['ddate_end'][] = $db->jdate($assoc['date_end']);
 
@@ -626,26 +621,5 @@ function tax_by_date($type, $db, $y, $q, $date_start, $date_end, $modetax, $dire
 	}
 
 	return $list;
-}
-
-/**
- *  Gets VAT to collect for the given year (and given quarter or month)
- *  The function gets the VAT in split results, as the VAT declaration asks
- *  to report the amounts for different VAT rates as different lines.
- *  This function also accounts recurrent invoices.
- *
- *  @param	DoliDB	$db          	Database handler object
- *  @param  int		$y           	Year
- *  @param  int		$q           	Quarter
- *  @param  string	$date_start  	Start date
- *  @param  string	$date_end    	End date
- *  @param  int		$modetax     	0 or 1 (option vat on debit)
- *  @param  int		$direction   	'sell' (customer invoice) or 'buy' (supplier invoices)
- *  @param  int		$m           	Month
- *  @return array       			List of quarters with vat
- */
-function vat_by_date ($db, $y, $q, $date_start, $date_end, $modetax, $direction, $m=0)
-{
-	return tax_by_date('vat', $db, $y, $q, $date_start, $date_end, $modetax, $direction, $m);
 }
 

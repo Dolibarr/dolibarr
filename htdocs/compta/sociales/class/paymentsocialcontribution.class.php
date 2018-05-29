@@ -33,6 +33,7 @@ class PaymentSocialContribution extends CommonObject
 {
 	public $element='paiementcharge';			//!< Id that identify managed objects
 	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
+	public $picto = 'payment';
 
 	var $fk_charge;
 	var $datec='';
@@ -78,7 +79,7 @@ class PaymentSocialContribution extends CommonObject
         $now=dol_now();
 
 		dol_syslog(get_class($this)."::create", LOG_DEBUG);
-        
+
 		// Validate parametres
 		if (! $this->datepaye)
 		{
@@ -125,7 +126,7 @@ class PaymentSocialContribution extends CommonObject
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementcharge");
-				
+
 				// Insere tableau des montants / factures
 				foreach ($this->amounts as $key => $amount)
 				{
@@ -137,7 +138,7 @@ class PaymentSocialContribution extends CommonObject
 						// If we want to closed payed invoices
 						if ($closepaidcontrib)
 						{
-							
+
 							$contrib=new ChargeSociales($this->db);
 							$contrib->fetch($contribid);
 							$paiement = $contrib->getSommePaiement();
@@ -202,9 +203,10 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as pt, ".MAIN_DB_PREFIX."paiementcharge as t)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id AND pt.entity IN (" . getEntity('c_paiement') . ")";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
-		$sql.= " WHERE t.rowid = ".$id." AND t.fk_typepaiement = pt.id";
+		$sql.= " WHERE t.rowid = ".$id;
+		// TODO link on entity of tax;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -610,6 +612,68 @@ class PaymentSocialContribution extends CommonObject
 			$this->error=$this->db->error();
 			return 0;
 		}
+	}
+
+
+	/**
+	 * Retourne le libelle du statut d'une facture (brouillon, validee, abandonnee, payee)
+	 *
+	 * @param	int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return  string				Libelle
+	 */
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	 * Renvoi le libelle d'un statut donne
+	 *
+	 * @param   int		$status     Statut
+	 * @param   int		$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 * @return	string  		    Libelle du statut
+	 */
+	function LibStatut($status,$mode=0)
+	{
+		global $langs;	// TODO Renvoyer le libelle anglais et faire traduction a affichage
+
+		$langs->load('compta');
+		/*if ($mode == 0)
+			{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+			}
+			if ($mode == 1)
+			{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+			}
+			if ($mode == 2)
+			{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+			}
+			if ($mode == 3)
+			{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+			}
+			if ($mode == 4)
+			{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+			}
+			if ($mode == 5)
+			{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+			}
+			if ($mode == 6)
+			{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+			}*/
+		return '';
 	}
 
 	/**

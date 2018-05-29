@@ -199,7 +199,7 @@ llxHeader();
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ExpenseReportsSetup"),$linkback,'title_setup');
 
 
@@ -207,24 +207,26 @@ $head=expensereport_admin_prepare_head();
 
 dol_fiche_head($head, 'expensereport', $langs->trans("ExpenseReports"), -1, 'trip');
 
-// Interventions numbering model
 /*
-print load_fiche_titre($langs->trans("FicheinterNumberingModules"),'','');
+ * Expense report numbering model
+ */
+
+print load_fiche_titre($langs->trans("ExpenseReportNumberingModules"),'','');
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td width="100">'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
+print '<td class="nowrap">'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Status").'</td>';
-print '<td align="center" width="80">'.$langs->trans("ShortInfo").'</td>';
-print "</tr>\n";
+print '<td align="center" width="16">'.$langs->trans("ShortInfo").'</td>';
+print '</tr>'."\n";
 
 clearstatcache();
 
 foreach ($dirmodels as $reldir)
 {
-	$dir = dol_buildpath($reldir."core/modules/fichinter/");
+	$dir = dol_buildpath($reldir."core/modules/expensereport/");
 
 	if (is_dir($dir))
 	{
@@ -235,21 +237,20 @@ foreach ($dirmodels as $reldir)
 
 			while (($file = readdir($handle))!==false)
 			{
-				if (preg_match('/^(mod_.*)\.php$/i',$file,$reg))
+				if (substr($file, 0, 18) == 'mod_expensereport_' && substr($file, dol_strlen($file)-3, 3) == 'php')
 				{
-					$file = $reg[1];
-					$classname = substr($file,4);
+					$file = substr($file, 0, dol_strlen($file)-4);
 
 					require_once $dir.$file.'.php';
 
-					$module = new $file;
+					$module = new $file($db);
+
+					// Show modules according to features level
+					if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+					if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 
 					if ($module->isEnabled())
 					{
-						// Show modules according to features level
-						if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-						if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-
 
 						print '<tr class="oddeven"><td>'.$module->nom."</td><td>\n";
 						print $module->info();
@@ -264,24 +265,26 @@ foreach ($dirmodels as $reldir)
                         print '</td>'."\n";
 
 						print '<td align="center">';
-						if ($conf->global->FICHEINTER_ADDON == $classname)
+						if ($conf->global->EXPENSEREPORT_ADDON == $file)
 						{
 							print img_picto($langs->trans("Activated"),'switch_on');
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$classname.'" alt="'.$langs->trans("Default").'">'.img_picto($langs->trans("Disabled"),'switch_off').'</a>';
+							print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'">';
+							print img_picto($langs->trans("Disabled"),'switch_off');
+							print '</a>';
 						}
 						print '</td>';
 
-						$ficheinter=new Fichinter($db);
-						$ficheinter->initAsSpecimen();
+						$exp=new ExpenseReport($db);
+						$exp->initAsSpecimen();
 
 						// Info
 						$htmltooltip='';
 						$htmltooltip.=''.$langs->trans("Version").': <b>'.$module->getVersion().'</b><br>';
-						$nextval=$module->getNextValue($mysoc,$ficheinter);
-                        if ("$nextval" != $langs->trans("NotAvailable")) {   // Keep " on nextval
+						$nextval=$module->getNextValue($exp);
+                        if ("$nextval" != $langs->trans("NotAvailable")) {  // Keep " on nextval
                             $htmltooltip.=''.$langs->trans("NextValue").': ';
                             if ($nextval) {
                                 if (preg_match('/^Error/',$nextval) || $nextval=='NotConfigured')
@@ -291,11 +294,12 @@ foreach ($dirmodels as $reldir)
                                 $htmltooltip.=$langs->trans($module->error).'<br>';
                             }
                         }
+
 						print '<td align="center">';
 						print $form->textwithpicto('',$htmltooltip,1,0);
 						print '</td>';
 
-						print '</tr>';
+						print "</tr>\n";
 					}
 				}
 			}
@@ -303,9 +307,7 @@ foreach ($dirmodels as $reldir)
 		}
 	}
 }
-
-print '</table><br>';
-*/
+print "</table><br>\n";
 
 /*
  *  Documents models for Interventions
@@ -480,7 +482,7 @@ print '<td align="center" width="60"></td>';
 print "</tr>\n";
 $var=true;
 
-$substitutionarray=pdf_getSubstitutionArray($langs);
+$substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
 $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
@@ -488,7 +490,7 @@ $htmltext.='</i>';
 
 $var=! $var;
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("FreeLegalTextOnExpenseReports"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext).'<br>';
+print $form->textwithpicto($langs->trans("FreeLegalTextOnExpenseReports"), $langs->trans("AddCRIfTooLong").'<br><br>'.$htmltext, 1, 'help', '', 0, 2, 'freetexttooltip').'<br>';
 $variablename='EXPENSEREPORT_FREE_TEXT';
 if (empty($conf->global->PDF_ALLOW_HTML_FOR_FREE_TEXT))
 {
@@ -505,7 +507,7 @@ print '</td></tr>'."\n";
 //Use draft Watermark
 
 print '<tr class="oddeven"><td colspan="2">';
-print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext).'<br>';
+print $form->textwithpicto($langs->trans("WatermarkOnDraftExpenseReports"), $htmltext, 1, 'help', '', 0, 2, 'watermarktooltip').'<br>';
 print '<input size="50" class="flat" type="text" name="EXPENSEREPORT_DRAFT_WATERMARK" value="'.$conf->global->EXPENSEREPORT_DRAFT_WATERMARK.'">';
 print '</td></tr>'."\n";
 

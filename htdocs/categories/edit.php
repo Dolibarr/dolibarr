@@ -36,7 +36,7 @@ $ref=GETPOST('ref');
 $type=GETPOST('type');
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $socid=GETPOST('socid','int');
 $label=GETPOST('label');

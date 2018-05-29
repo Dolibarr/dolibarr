@@ -55,11 +55,14 @@ class box_produits_alerte_stock extends ModeleBoxes
 	 */
 	function __construct($db,$param='')
 	{
-	    global $user;
+	    global $conf,$user;
 
 	    $this->db = $db;
 
-		$this->hidden = ! (($user->rights->produit->lire || $user->rights->service->lire) && $user->rights->stock->lire);
+	    $listofmodulesforexternal=explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL);
+	    $tmpentry=array('enabled'=>((! empty($conf->product->enabled) || ! empty($conf->service->enabled)) && ! empty($conf->stock->enabled)), 'perms'=>($user->rights->stock->lire), 'module'=>'product|service|stock');
+	    $showmode=isVisibleToUserType(($user->societe_id > 0 ? 1 : 0), $tmpentry, $listofmodulesforexternal);
+	    $this->hidden=($showmode != 1);
 	}
 
 	/**
@@ -85,7 +88,7 @@ class box_produits_alerte_stock extends ModeleBoxes
 			$sql.= " SUM(".$db->ifsql("s.reel IS NULL","0","s.reel").") as total_stock";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_stock as s on p.rowid = s.fk_product";
-			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element, 1).')';
+			$sql.= ' WHERE p.entity IN ('.getEntity($productstatic->element).')';
 			$sql.= " AND p.tosell = 1 AND p.seuil_stock_alerte > 0";
 			if (empty($user->rights->produit->lire)) $sql.=' AND p.fk_product_type != 0';
 			if (empty($user->rights->service->lire)) $sql.=' AND p.fk_product_type != 1';
@@ -141,7 +144,7 @@ class box_produits_alerte_stock extends ModeleBoxes
                     );
 
                     $this->info_box_contents[$line][] = array(
-                        'td' => 'class="tdoverflowmax100 maxwidth100onsmartphone"',
+                        'td' => 'class="tdoverflowmax150 maxwidth150onsmartphone"',
                         'text' => $objp->label,
                     );
 

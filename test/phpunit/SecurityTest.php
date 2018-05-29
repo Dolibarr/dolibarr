@@ -148,7 +148,7 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         $_GET["param3"]='"a/b#e(pr)qq-rr\cc';    // Same than param2 + "
         $_GET["param4"]='../dir';
         $_GET["param5"]="a_1-b";
-        
+
         // Test int
         $result=GETPOST('id','int');              // Must return nothing
         print __METHOD__." result=".$result."\n";
@@ -179,19 +179,19 @@ class SecurityTest extends PHPUnit_Framework_TestCase
         $result=GETPOST("param1",'aZ09');  // Must return '' as there is a forbidden char ../
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,$_GET["param1"]);
-        
+
         $result=GETPOST("param2",'aZ09');  // Must return '' as there is a forbidden char ../
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
-        
+
         $result=GETPOST("param3",'aZ09');  // Must return '' as there is a forbidden char ../
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
-        
+
         $result=GETPOST("param4",'aZ09');  // Must return '' as there is a forbidden char ../
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,'');
-        
+
         $result=GETPOST("param5",'aZ09');
         print __METHOD__." result=".$result."\n";
         $this->assertEquals($result,$_GET["param5"]);
@@ -255,17 +255,17 @@ class SecurityTest extends PHPUnit_Framework_TestCase
 
         $genpass1=getRandomPassword(true);    // Should be a string return by dol_hash (if no option set, will be md5)
         print __METHOD__." genpass1=".$genpass1."\n";
-        $this->assertEquals(strlen($genpass1),32);
+        $this->assertEquals(strlen($genpass1), 32);
 
         $conf->global->USER_PASSWORD_GENERATED='None';
         $genpass2=getRandomPassword(false);  // Should be an empty string
         print __METHOD__." genpass2=".$genpass2."\n";
-        $this->assertEquals($genpass2,'');
+        $this->assertEquals($genpass2, '');
 
         $conf->global->USER_PASSWORD_GENERATED='Standard';
         $genpass3=getRandomPassword(false);
         print __METHOD__." genpass3=".$genpass3."\n";
-        $this->assertEquals(strlen($genpass3),8);
+        $this->assertEquals(strlen($genpass3), 8);
 
         return 0;
     }

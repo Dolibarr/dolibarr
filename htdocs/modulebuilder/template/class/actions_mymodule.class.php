@@ -78,15 +78,11 @@ class ActionsMyModule
 
 		$error = 0; // Error counter
 
-        /*
-		print_r($parameters);
-		print_r($object);
-		echo "action: " . $action;
-        */
-
-	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {    // do something only for the context 'somecontext1' or 'somecontext2'
-
-
+        /* print_r($parameters); print_r($object); echo "action: " . $action; */
+	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))	    // do something only for the context 'somecontext1' or 'somecontext2'
+	    {
+			// Do what you want here...
+			// You can for example call global vars like $fieldstosearchall to overwrite them, or update database depending on $action and $_POST values.
 		}
 
 		if (! $error) {
@@ -115,14 +111,9 @@ class ActionsMyModule
 
 	    $error = 0; // Error counter
 
-        /*
-	    print_r($parameters);
-	    print_r($object);
-	    echo "action: " . $action;
-        */
-
-	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2'))) {  // do something only for the context 'somecontext1' or 'somecontext2'
-
+        /* print_r($parameters); print_r($object); echo "action: " . $action; */
+	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
+	    {
 	        foreach($parameters['toselect'] as $objectid)
 	        {
 	            // Do action on each object id
@@ -156,7 +147,8 @@ class ActionsMyModule
 
 	    $error = 0; // Error counter
 
-	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))  // do something only for the context 'somecontext'
+        /* print_r($parameters); print_r($object); echo "action: " . $action; */
+	    if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
 	    {
 	        $this->resprints = '<option value="0"'.($disabled?' disabled="disabled"':'').'>'.$langs->trans("MyModuleMassAction").'</option>';
 	    }
@@ -170,5 +162,65 @@ class ActionsMyModule
 	}
 
 
+
+	/**
+	 * Execute action
+	 *
+	 * @param	array	$parameters		Array of parameters
+	 * @param   Object	$object		   	Object output on PDF
+	 * @param   string	$action     	'add', 'update', 'view'
+	 * @return  int 		        	<0 if KO,
+	 *                          		=0 if OK but we want to process standard actions too,
+	 *  	                            >0 if OK and we want to replace standard actions.
+	 */
+	function beforePDFCreation($parameters, &$object, &$action)
+	{
+		global $langs,$conf;
+		global $hookmanager;
+
+		$outputlangs=$langs;
+
+		$ret=0; $deltemp=array();
+		dol_syslog(get_class($this).'::executeHooks action='.$action);
+
+		/* print_r($parameters); print_r($object); echo "action: " . $action; */
+		if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
+		{
+
+		}
+
+		return $ret;
+	}
+
+	/**
+	 * Execute action
+	 *
+	 * @param	array	$parameters		Array of parameters
+	 * @param   Object	$pdfhandler   	PDF builder handler
+	 * @param   string	$action     	'add', 'update', 'view'
+	 * @return  int 		        	<0 if KO,
+	 *                          		=0 if OK but we want to process standard actions too,
+	 *  	                            >0 if OK and we want to replace standard actions.
+	 */
+	function afterPDFCreation($parameters, &$pdfhandler, &$action)
+	{
+		global $langs,$conf;
+		global $hookmanager;
+
+		$outputlangs=$langs;
+
+		$ret=0; $deltemp=array();
+		dol_syslog(get_class($this).'::executeHooks action='.$action);
+
+		/* print_r($parameters); print_r($object); echo "action: " . $action; */
+		if (in_array($parameters['currentcontext'], array('somecontext1','somecontext2')))		// do something only for the context 'somecontext1' or 'somecontext2'
+		{
+
+		}
+
+		return $ret;
+	}
+
+	/* Add here any other hooked methods... */
 
 }

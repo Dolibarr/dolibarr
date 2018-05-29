@@ -64,14 +64,13 @@ llxHeader();
 
 $sql = "SELECT p.rowid, p.datep as dp, p.amount, p.statut";
 $sql.=", c.libelle as paiement_type, p.num_paiement";
-$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
+$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 if ($socid)
 {
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
 }
-$sql.= " WHERE p.fk_paiement = c.id";
-$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " WHERE p.entity IN (" . getEntity('facture') . ')';
 if ($socid)
 {
     $sql.= " AND f.fk_soc = ".$socid;

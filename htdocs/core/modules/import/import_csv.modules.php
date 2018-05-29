@@ -54,7 +54,7 @@ class ImportCsv extends ModeleImports
 
 	var $cacheconvert=array();      // Array to cache list of value found after a convertion
 	var $cachefieldtable=array();   // Array to cache list of value found into fields@tables
-	
+
 	var $nbinsert = 0; // # of insert done during the import
 	var $nbupdate = 0; // # of update done during the import
 
@@ -170,7 +170,7 @@ class ImportCsv extends ModeleImports
 		return $ret;
 	}
 
-	
+
 	/**
 	 * 	Return nb of records. File must be closed.
 	 *
@@ -181,7 +181,7 @@ class ImportCsv extends ModeleImports
 	{
 	   return dol_count_nb_of_line($file);
     }
-    
+
 
 	/**
 	 * 	Input header line from file
@@ -269,7 +269,7 @@ class ImportCsv extends ModeleImports
 	 * @param 	Object	$objimport						Object import (contains objimport->array_import_tables, objimport->array_import_fields, objimport->array_import_convertvalue, ...)
 	 * @param	int		$maxfields						Max number of fields to use
 	 * @param	string	$importid						Import key
-	 * @param	array	$updatekeys						Array of keys to use to try to do update
+	 * @param	array	$updatekeys						Array of keys to use to try to do an update first before insert. This field are defined into the module descriptor.
 	 * @return	int										<0 if KO, >0 if OK
 	 */
 	function import_insert($arrayrecord,$array_match_file_to_database,$objimport,$maxfields,$importid,$updatekeys)
@@ -375,7 +375,7 @@ class ImportCsv extends ModeleImports
                                     if (! is_numeric($newval) && $newval != '' && ! preg_match('/^id:/i',$newval)) $isidorref='ref';
                                     $newval=preg_replace('/^(id|ref):/i','',$newval);    // Remove id: or ref: that was used to force if field is id or ref
                                     //print 'Val is now '.$newval.' and is type '.$isidorref."<br>\n";
-                                    
+
                                     if ($isidorref == 'ref')    // If value into input import file is a ref, we apply the function defined into descriptor
                                     {
                                         $file=(empty($objimport->array_import_convertvalue[0][$val]['classfile'])?$objimport->array_import_convertvalue[0][$val]['file']:$objimport->array_import_convertvalue[0][$val]['classfile']);
@@ -478,9 +478,9 @@ class ImportCsv extends ModeleImports
                                     }
                                     if (is_numeric($defaultref) && $defaultref <= 0) $defaultref='';
                                     $newval=$defaultref;
-                                }                                
-                                
-                                
+                                }
+
+
                                 elseif ($objimport->array_import_convertvalue[0][$val]['rule']=='numeric')
                                 {
                                     $newval = price2num($newval);
@@ -588,11 +588,12 @@ class ImportCsv extends ModeleImports
 					{
 						$updatedone = false;
 						$insertdone = false;
+
 						if (!empty($updatekeys)) {
 							// We do SELECT to get the rowid, if we already have the rowid, it's to be used below for related tables (extrafields)
 							if (empty($lastinsertid)) {
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
-								
+
 								$data = array_combine($listfields, $listvalues);
 								$where = array();
 								$filters = array();
@@ -603,7 +604,7 @@ class ImportCsv extends ModeleImports
 									$filters[] = $col.' = '.$data[$key];
 								}
 								$sqlSelect.= ' WHERE '.implode(' AND ', $where);
-								
+
 								$resql=$this->db->query($sqlSelect);
 								if($resql) {
 									$res = $this->db->fetch_object($resql);
@@ -626,23 +627,23 @@ class ImportCsv extends ModeleImports
 									$error++;
 								}
 							}
-							
+
 							if (!empty($lastinsertid)) {
 								// Build SQL UPDATE request
 								$sqlstart = 'UPDATE '.$tablename;
-								
+
 								$data = array_combine($listfields, $listvalues);
 								$set = array();
 								foreach ($data as $key => $val) {
 									$set[] = $key.' = '.$val;
 								}
 								$sqlstart.= ' SET '.implode(', ', $set);
-								
+
 								if(empty($keyfield)) $keyfield = 'rowid';
 								$sqlend = ' WHERE '.$keyfield.' = '.$lastinsertid;
-								
+
 								$sql = $sqlstart.$sqlend;
-								
+
 								// Run update request
 								$resql=$this->db->query($sql);
 								if($resql) {
@@ -667,14 +668,14 @@ class ImportCsv extends ModeleImports
 							if (! empty($tablewithentity_cache[$tablename])) {
 								$sqlstart.= ', entity';
 								$sqlend.= ', '.$conf->entity;
-							} 
+							}
 							if (! empty($objimport->array_import_tables_creator[0][$alias])) {
 								$sqlstart.= ', '.$objimport->array_import_tables_creator[0][$alias];
 								$sqlend.=', '.$user->id;
 							}
 							$sql = $sqlstart.$sqlend.')';
 							dol_syslog("import_csv.modules", LOG_DEBUG);
-							
+
 							// Run insert request
 							if ($sql)
 							{

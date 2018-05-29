@@ -87,12 +87,12 @@ class Localtax extends CommonObject
 		$sql.= " '".$this->db->idate($this->tms)."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
 		$sql.= " '".$this->db->idate($this->datev)."',";
-		$sql.= " '".$this->amount."',";
-		$sql.= " '".$this->label."',";
-		$sql.= " '".$this->note."',";
-		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->fk_bank."'").",";
-		$sql.= " '".$this->fk_user_creat."',";
-		$sql.= " '".$this->fk_user_modif."'";
+		$sql.= " '".$this->db->escape($this->amount)."',";
+		$sql.= " '".$this->db->escape($this->label)."',";
+		$sql.= " '".$this->db->escape($this->note)."',";
+		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
+		$sql.= " '".$this->db->escape($this->fk_user_creat)."',";
+		$sql.= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql.= ")";
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);

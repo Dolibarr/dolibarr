@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2013	  Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2013-2014 Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2016 Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2014	   Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2015	  Jean-François Ferry  <jfefe@aternatik.fr>
+/* Copyright (C) 2013       Olivier Geffroy		<jeff@jeffinfo.com>
+ * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2014       Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2015       Jean-François Ferry	<jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
  */
 
 /**
- * \file htdocs/accountancy/customer/index.php
+ * \file 	htdocs/accountancy/customer/index.php
  * \ingroup Advanced accountancy
- * \brief Home customer journalization page
+ * \brief 	Home customer journalization page
  */
 
 require '../../main.inc.php';
@@ -47,15 +47,24 @@ if ($user->societe_id > 0)
 if (! $user->rights->accounting->bind->write)
 	accessforbidden();
 
-// Filter
-$year = GETPOST("year",'int');
-if ($year == 0) {
-	$year_current = strftime("%Y", time());
-	$year_start = $year_current;
-} else {
-	$year_current = $year;
-	$year_start = $year;
+
+$month_start= ($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
+if (GETPOST("year",'int')) $year_start = GETPOST("year",'int');
+else
+{
+	$year_start = dol_print_date(dol_now(), '%Y');
+	if (dol_print_date(dol_now(), '%m') < $month_start) $year_start--;	// If current month is lower that starting fiscal month, we start last year
 }
+$year_end = $year_start + 1;
+$month_end = $month_start - 1;
+if ($month_end < 1)
+{
+	$month_end = 12;
+	$year_end--;
+}
+$search_date_start = dol_mktime(0, 0, 0, $month_start, 1, $year_start);
+$search_date_end = dol_get_last_day($year_end, $month_end);
+$year_current = $year_start;
 
 // Validate History
 $action = GETPOST('action','aZ09');
@@ -108,53 +117,6 @@ if ($action == 'validatehistory') {
 		$db->commit();
 		setEventMessages($langs->trans('AutomaticBindingDone'), null, 'mesgs');
 	}
-} elseif ($action == 'fixaccountancycode') {
-	$error = 0;
-	$db->begin();
-
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-	$sql1 .= " SET fk_code_ventilation = 0";
-	$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
-	$sql1 .= '	(SELECT accnt.rowid ';
-	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
-	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
-
-	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
-
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
-	} else {
-		$db->commit();
-		setEventMessage($langs->trans('Done'), 'mesgs');
-	}
-} elseif ($action == 'cleanaccountancycode') {
-	$error = 0;
-	$db->begin();
-
-	// Now clean
-	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
-	$sql1.= " SET fk_code_ventilation = 0";
-	$sql1.= " WHERE fd.fk_facture IN ( SELECT f.rowid FROM " . MAIN_DB_PREFIX . "facture as f";
-	$sql1.= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($year_current, 1, false)) . "'";
-	$sql1.= " AND f.datef <= '" . $db->idate(dol_get_last_day($year_current, 12, false)) . "'";
-	$sql1.= " AND f.entity IN (" . getEntity('accountancy') . ")";
-	$sql1.=")";
-
-	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
-
-	$resql1 = $db->query($sql1);
-	if (! $resql1) {
-		$error ++;
-		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
-	} else {
-		$db->commit();
-		setEventMessage($langs->trans('Done'), 'mesgs');
-	}
 }
 
 
@@ -169,61 +131,63 @@ $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_cur
 
 print load_fiche_titre($langs->trans("CustomersVentilation") . " " . $textprevyear . " " . $langs->trans("Year") . " " . $year_start . " " . $textnextyear, '', 'title_accountancy');
 
+// Clean database
+$db->begin();
+$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as fd";
+$sql1 .= " SET fk_code_ventilation = 0";
+$sql1 .= ' WHERE fd.fk_code_ventilation NOT IN ';
+$sql1 .= '	(SELECT accnt.rowid ';
+$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+$resql1 = $db->query($sql1);
+if (! $resql1) {
+	$error ++;
+	$db->rollback();
+	setEventMessage($db->lasterror(), 'errors');
+} else {
+	$db->commit();
+}
+// End clean database
+
 print $langs->trans("DescVentilCustomer") . '<br>';
 print $langs->trans("DescVentilMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';
 print '<br>';
-//print '<div class="inline-block divButAction">';
-// TODO Remove this. Should be done always or into the repair.php script.
-if ($conf->global->MAIN_FEATURES_LEVEL > 1) print '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=fixaccountancycode">' . $langs->trans("CleanFixHistory", $year_current) . '</a>';
-//print '</div>';
 
-$sql = "SELECT count(*) FROM " . MAIN_DB_PREFIX . "facturedet as fd";
-$sql .= " , " . MAIN_DB_PREFIX . "facture as f";
-$sql .= " WHERE fd.fk_code_ventilation = 0";
-$sql .= " AND f.rowid = fd.fk_facture";
-$sql .= " AND f.fk_statut > 0";
-if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
-	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
-} else {
-	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_DEPOSIT . "," . Facture::TYPE_SITUATION . ")";
-}
-$sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";	// We don't share object for accountancy
-
-dol_syslog('htdocs/accountancy/customer/index.php');
-$result = $db->query($sql);
-if ($result) {
-	$row = $db->fetch_row($result);
-	$nbfac = $row[0];
-	$db->free($result);
-}
 
 $y = $year_current;
 
 $buttonbind = '<a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=validatehistory">' . $langs->trans("ValidateHistory") . '</a>';
-$buttonreset = '<a class="butActionDelete" href="' . $_SERVER['PHP_SELF'] . '?year=' . $year_current . '&action=cleanaccountancycode">' . $langs->trans("CleanHistory", $year_current) . '</a>';
 
 
 print_fiche_titre($langs->trans("OverviewOfAmountOfLinesNotBound"), $buttonbind, '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
+	if ($j > 12) $j-=12;
+	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
 print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') . " AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
 for($i = 1; $i <= 12; $i ++) {
-	$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
+	if ($j > 12) $j-=12;
+	$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $j, 'fd.total_ht', '0') . ") AS month" . str_pad($j, 2, '0', STR_PAD_LEFT) . ",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
-$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " WHERE f.datef >= '" . $db->idate($search_date_start) . "'";
+$sql .= "  AND f.datef <= '" . $db->idate($search_date_end) . "'";
+$sql .= " AND f.fk_statut > 0";
 $sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";   // We don't share object for accountancy
 $sql .= " AND aa.account_number IS NULL";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -266,33 +230,40 @@ if ($resql) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
+print '</div>';
 
 
 print '<br>';
 
 
-print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), $buttonreset, '');
+print_fiche_titre($langs->trans("OverviewOfAmountOfLinesBound"), '', '');
 
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="200">' . $langs->trans("Account") . '</td>';
 print '<td width="200" align="left">' . $langs->trans("Label") . '</td>';
 for($i = 1; $i <= 12; $i ++) {
-	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
+	if ($j > 12) $j-=12;
+	print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 }
 print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 $sql = "SELECT " . $db->ifsql('aa.account_number IS NULL', "'tobind'", 'aa.account_number') . " AS codecomptable,";
 $sql .= "  " . $db->ifsql('aa.label IS NULL', "'tobind'", 'aa.label') . " AS intitule,";
 for($i = 1; $i <= 12; $i ++) {
-	$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+	$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
+	if ($j > 12) $j-=12;
+	$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $j, 'fd.total_ht', '0') . ") AS month" . str_pad($j, 2, '0', STR_PAD_LEFT) . ",";
 }
 $sql .= "  SUM(fd.total_ht) as total";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
-$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+$sql .= " WHERE f.datef >= '" . $db->idate($search_date_start) . "'";
+$sql .= "  AND f.datef <= '" . $db->idate($search_date_end) . "'";
 $sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";   // We don't share object for accountancy
+$sql .= " AND f.fk_statut > 0";
 if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 	$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
 } else {
@@ -315,6 +286,7 @@ if ($resql) {
 		}
 		else print length_accountg($row[0]);
 		print '</td>';
+
 		print '<td align="left">';
 		if ($row[0] == 'tobind')
 		{
@@ -322,7 +294,8 @@ if ($resql) {
 		}
 		else print $row[1];
 		print '</td>';
-		for($i = 2; $i <= 12; $i ++) {
+
+		for($i = 2; $i <= 12; $i++) {
 			print '<td align="right">' . price($row[$i]) . '</td>';
 		}
 		print '<td align="right">' . price($row[13]) . '</td>';
@@ -334,7 +307,7 @@ if ($resql) {
 	print $db->lasterror(); // Show last sql error
 }
 print "</table>\n";
-
+print '</div>';
 
 
 if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. Why showing a report that should rely on result of this step ?
@@ -344,24 +317,29 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 
 	print_fiche_titre($langs->trans("OtherInfo"), '', '');
 
-	print "<br>\n";
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td width="400" align="left">' . $langs->trans("TotalVente") . '</td>';
 	for($i = 1; $i <= 12; $i ++) {
-		print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
+		if ($j > 12) $j-=12;
+		print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 	}
 	print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 	$sql = "SELECT '" . $langs->trans("TotalVente") . "' AS total,";
 	for($i = 1; $i <= 12; $i ++) {
-		$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, 'fd.total_ht', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+		$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
+		if ($j > 12) $j-=12;
+		$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $j, 'fd.total_ht', '0') . ") AS month" . str_pad($j, 2, '0', STR_PAD_LEFT) . ",";
 	}
 	$sql .= "  SUM(fd.total_ht) as total";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 	$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
-	$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-	$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+	$sql .= " WHERE f.datef >= '" . $db->idate($search_date_start) . "'";
+	$sql .= "  AND f.datef <= '" . $db->idate($search_date_end) . "'";
 	$sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")"; // We don't share object for accountancy
+	$sql .= " AND f.fk_statut > 0";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
 	} else {
@@ -386,27 +364,34 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 		print $db->lasterror(); // Show last sql error
 	}
 	print "</table>\n";
+	print '</div>';
 
 
 	if (! empty($conf->margin->enabled)) {
 		print "<br>\n";
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td width="400">' . $langs->trans("TotalMarge") . '</td>';
 		for($i = 1; $i <= 12; $i ++) {
-			print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($i, 2, '0', STR_PAD_LEFT)) . '</td>';
+			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
+			if ($j > 12) $j-=12;
+			print '<td width="60" align="right">' . $langs->trans('MonthShort' . str_pad($j, 2, '0', STR_PAD_LEFT)) . '</td>';
 		}
 		print '<td width="60" align="right"><b>' . $langs->trans("Total") . '</b></td></tr>';
 
 		$sql = "SELECT '" . $langs->trans("Vide") . "' AS marge,";
 		for($i = 1; $i <= 12; $i ++) {
-			$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $i, '(fd.total_ht-(fd.qty * fd.buy_price_ht))', '0') . ") AS month" . str_pad($i, 2, '0', STR_PAD_LEFT) . ",";
+			$j = $i + ($conf->global->SOCIETE_FISCAL_MONTH_START?$conf->global->SOCIETE_FISCAL_MONTH_START:1) - 1;
+			if ($j > 12) $j-=12;
+			$sql .= "  SUM(" . $db->ifsql('MONTH(f.datef)=' . $j, '(fd.total_ht-(fd.qty * fd.buy_price_ht))', '0') . ") AS month" . str_pad($j, 2, '0', STR_PAD_LEFT) . ",";
 		}
 		$sql .= "  SUM((fd.total_ht-(fd.qty * fd.buy_price_ht))) as total";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 		$sql .= "  LEFT JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
-		$sql .= " WHERE f.datef >= '" . $db->idate(dol_get_first_day($y, 1, false)) . "'";
-		$sql .= "  AND f.datef <= '" . $db->idate(dol_get_last_day($y, 12, false)) . "'";
+		$sql .= " WHERE f.datef >= '" . $db->idate($search_date_start) . "'";
+		$sql .= "  AND f.datef <= '" . $db->idate($search_date_end) . "'";
 		$sql .= " AND f.entity IN (" . getEntity('facture', 0) . ")";   // We don't share object for accountancy
+		$sql .= " AND f.fk_statut > 0";
 		if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 			$sql .= " AND f.type IN (" . Facture::TYPE_STANDARD . "," . Facture::TYPE_REPLACEMENT . "," . Facture::TYPE_CREDIT_NOTE . "," . Facture::TYPE_SITUATION . ")";
 		} else {
@@ -432,6 +417,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 			print $db->lasterror(); // Show last sql error
 		}
 		print "</table>\n";
+		print '</div>';
 	}
 }
 

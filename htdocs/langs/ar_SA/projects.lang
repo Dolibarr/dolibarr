@@ -3,8 +3,6 @@ RefProject=المرجع. مشروع
 ProjectRef=المرجع المشروع.
 ProjectId=رقم المشروع
 ProjectLabel=تسمية المشروع
-Project=المشروع
-Projects=المشاريع
 ProjectsArea=Projects Area
 ProjectStatus=حالة المشروع
 SharedProject=مشاريع مشتركة
@@ -12,18 +10,18 @@ PrivateProject=مشروع اتصالات
 ProjectsImContactFor=Projects I'm explicitely a contact of
 AllAllowedProjects=All project I can read (mine + public)
 AllProjects=جميع المشاريع
-MyProjectsDesc=ويقتصر هذا الرأي على المشاريع التي تقوم على الاتصال (كل ما هو نوع).
+MyProjectsDesc=This view is limited to projects you are a contact for
 ProjectsPublicDesc=هذا الرأي يعرض جميع المشاريع ويسمح لك قراءة.
 TasksOnProjectsPublicDesc=This view presents all tasks on projects you are allowed to read.
 ProjectsPublicTaskDesc=يمثل هذا العرض جميع المشاريع والمهام يسمح لك للقراءة.
 ProjectsDesc=ويعرض هذا الرأي جميع المشاريع (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
 TasksOnProjectsDesc=This view presents all tasks on all projects (your user permissions grant you permission to view everything).
-MyTasksDesc=ويقتصر هذا الرأي على المشروعات أو المهام التي هي الاتصال للحصول على (ما هو نوع).
+MyTasksDesc=This view is limited to projects or tasks you are a contact for
 OnlyOpenedProject=المشاريع المفتوحة فقط مرئية (المشاريع في مشروع أو وضع مغلقة غير مرئية).
 ClosedProjectsAreHidden=Closed projects are not visible.
 TasksPublicDesc=هذا الرأي يعرض جميع المشاريع والمهام ويسمح لك قراءة.
 TasksDesc=هذا الرأي يعرض جميع المشاريع والمهام (أذونات المستخدم الخاص أعطى الصلاحية لعرض كل شيء).
-AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task assigned to you. Assign task to yourself if you need to enter time on it.
+AllTaskVisibleButEditIfYouAreAssigned=All tasks for qualified projects are visible, but you can enter time only for task assigned to selected user. Assign task if you need to enter time on it.
 OnlyYourTaskAreVisible=Only tasks assigned to you are visible. Assign task to yourself if it is not visible and you need to enter time on it.
 ImportDatasetTasks=Tasks of projects
 ProjectCategories=Project tags/categories
@@ -38,6 +36,7 @@ OpenedTasks=Open tasks
 OpportunitiesStatusForOpenedProjects=Opportunities amount of open projects by status
 OpportunitiesStatusForProjects=Opportunities amount of projects by status
 ShowProject=وتبين للمشروع
+ShowTask=وتظهر هذه المهمة
 SetProject=وضع المشروع
 NoProject=لا يعرف أو المملوكة للمشروع
 NbOfProjects=ملاحظة : للمشاريع
@@ -56,6 +55,7 @@ TasksOnOpenedProject=المهام على المشاريع المفتوحة
 WorkloadNotDefined=عبء العمل غير محددة
 NewTimeSpent=قضى وقتا
 MyTimeSpent=وقتي قضى
+BillTime=Bill the time spent
 Tasks=المهام
 Task=مهمة
 TaskDateStart=تاريخ بدء العمل
@@ -77,6 +77,7 @@ Time=وقت
 ListOfTasks=List of tasks
 GoToListOfTimeConsumed=Go to list of time consumed
 GoToListOfTasks=Go to list of tasks
+GanttView=Gantt View
 ListProposalsAssociatedProject=قائمة المقترحات التجارية المرتبطة بالمشروع.
 ListOrdersAssociatedProject=List of customer orders associated with the project
 ListInvoicesAssociatedProject=List of customer invoices associated with the project
@@ -88,14 +89,18 @@ ListShippingAssociatedProject=List of shippings associated with the project
 ListFichinterAssociatedProject=قائمة التدخلات المرتبطة بالمشروع
 ListExpenseReportsAssociatedProject=قائمة تقارير المصاريف المرتبطة بالمشروع
 ListDonationsAssociatedProject=قائمة التبرعات المرتبطة بالمشروع
+ListVariousPaymentsAssociatedProject=List of miscellaneous payments associated with the project
 ListActionsAssociatedProject=قائمة الإجراءات المرتبطة بالمشروع
 ListTaskTimeUserProject=قائمة الوقت المستهلك في مهام المشروع
+ListTaskTimeForTask=List of time consumed on task
 ActivityOnProjectToday=النشاط على المشروع اليوم
 ActivityOnProjectYesterday=النشاط على المشروع أمس
 ActivityOnProjectThisWeek=نشاط المشروع هذا الاسبوع
 ActivityOnProjectThisMonth=نشاط المشروع هذا الشهر
 ActivityOnProjectThisYear=نشاط المشروع هذا العام
-ChildOfTask=طفل من مشروع / مهمة
+ChildOfProjectTask=طفل من مشروع / مهمة
+ChildOfTask=Child of task
+TaskHasChild=Task has child
 NotOwnerOfProject=لا صاحب هذا المشروع من القطاع الخاص
 AffectedTo=إلى المتضررين
 CantRemoveProject=هذا المشروع لا يمكن إزالتها كما هي المرجعية بعض أشياء أخرى (الفاتورة ، أو غيرها من الأوامر). انظر referers تبويبة.
@@ -107,6 +112,7 @@ AlsoCloseAProject=Also close project (keep it open if you still need to follow p
 ReOpenAProject=فتح مشروع
 ConfirmReOpenAProject=Are you sure you want to re-open this project?
 ProjectContact=مشروع اتصالات
+TaskContact=Task contacts
 ActionsOnProject=الإجراءات على المشروع
 YouAreNotContactOfProject=كنت لا اتصال لهذا المشروع الخاص
 UserIsNotContactOfProject=User is not a contact of this private project
@@ -114,7 +120,7 @@ DeleteATimeSpent=قضى الوقت حذف
 ConfirmDeleteATimeSpent=Are you sure you want to delete this time spent?
 DoNotShowMyTasksOnly=انظر أيضا المهام  الغير موكلة الي
 ShowMyTasksOnly=عرض فقط المهام الموكلة الي
-TaskRessourceLinks=مصادر
+TaskRessourceLinks=Contacts task
 ProjectsDedicatedToThisThirdParty=مشاريع مخصصة لهذا الطرف الثالث
 NoTasks=أية مهام لهذا المشروع
 LinkedToAnotherCompany=ربط طرف ثالث آخر
@@ -134,7 +140,8 @@ ProjectReportDate=Change task dates according to new project start date
 ErrorShiftTaskDate=من المستحيل تحويل التاريخ المهمة وفقا لتاريخ بدء المشروع الجديد
 ProjectsAndTasksLines=المشاريع والمهام
 ProjectCreatedInDolibarr=مشروع٪ الصورة التي تم إنشاؤها
-ProjectModifiedInDolibarr=Project %s modified
+ProjectValidatedInDolibarr=Project %s validated
+ProjectModifiedInDolibarr=المشروع %s تم تعديلة
 TaskCreatedInDolibarr=مهمة٪ الصورة التي تم إنشاؤها
 TaskModifiedInDolibarr=مهمة٪ الصورة المعدلة
 TaskDeletedInDolibarr=مهمة٪ الصورة حذف
@@ -168,12 +175,13 @@ ProjectMustBeValidatedFirst=يجب التحقق من صحة المشروع أو�
 FirstAddRessourceToAllocateTime=Assign a user resource to task to allocate time
 InputPerDay=إدخال يوميا
 InputPerWeek=مساهمة في الأسبوع
-InputPerAction=مساهمة في عمل
+InputDetail=Input detail
 TimeAlreadyRecorded=This is time spent already recorded for this task/day and user %s
 ProjectsWithThisUserAsContact=مشاريع مع هذا العضو عن الاتصال
 TasksWithThisUserAsContact=المهام الموكلة إلى هذا المستخدم
 ResourceNotAssignedToProject=لم يتم تعيين إلى المشروع
 ResourceNotAssignedToTheTask=Not assigned to the task
+TimeSpentBy=Time spent by
 TasksAssignedTo=Tasks assigned to
 AssignTaskToMe=تعيين مهمة بالنسبة لي
 AssignTaskToUser=Assign task to %s
@@ -207,3 +215,15 @@ OppStatusPENDING=بانتظار
 OppStatusWON=فاز
 OppStatusLOST=ضائع
 Budget=Budget
+AllowToLinkFromOtherCompany=Allow to link project from other company<br><br><u>Supported values :</u><br>- Keep empty: Can link any project of the company (default)<br>- "all" : Can link any projects, even project of other companies<br>- A list of thirdparty id separated with commas : Can link all projects of these thirdparty defined (Example : 123,4795,53)<br>
+LatestProjects=Latest %s projects
+LatestModifiedProjects=Latest %s modified projects
+OtherFilteredTasks=Other filtered tasks
+NoAssignedTasks=No assigned tasks (assign project/tasks the current user from the top select box to enter time on it)
+# Comments trans
+AllowCommentOnTask=Allow user comments on tasks
+AllowCommentOnProject=Allow user comments on projects
+DontHavePermissionForCloseProject=You do not have permissions to close the project %s
+DontHaveTheValidateStatus=The project %s must be open to be closed
+RecordsClosed=%s project(s) closed
+SendProjectRef=About project %s

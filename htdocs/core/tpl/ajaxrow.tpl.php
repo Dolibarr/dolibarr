@@ -54,8 +54,8 @@ $(document).ready(function(){
 		onDrop: function(table, row) {
 			var reloadpage = "<?php echo $forcereloadpage; ?>";
 			console.log("tableDND onDrop");
-			console.log($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
-			var roworder = cleanSerialize($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize());
+			console.log(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
+			var roworder = cleanSerialize(decodeURI($("#<?php echo $tagidfortablednd; ?>").tableDnDSerialize()));
 			var table_element_line = "<?php echo $table_element_line; ?>";
 			var fk_element = "<?php echo $fk_element; ?>";
 			var element_id = "<?php echo $id; ?>";
@@ -71,7 +71,8 @@ $(document).ready(function(){
 					function() {
 						console.log("tableDND end of ajax call");
 						if (reloadpage == 1) {
-							location.href = '<?php echo dol_escape_htmltag($_SERVER['PHP_SELF']).'?'.dol_escape_htmltag($_SERVER['QUERY_STRING']); ?>';
+							//console.log('<?php echo dol_escape_js($_SERVER['QUERY_STRING']); ?>');
+							location.href = '<?php echo dol_escape_js($_SERVER['PHP_SELF']).'?'.dol_escape_js($_SERVER['QUERY_STRING']); ?>';
 						} else {
 							$("#<?php echo $tagidfortablednd; ?> .drag").each(
 									function( intIndex ) {
@@ -83,7 +84,7 @@ $(document).ready(function(){
 					});
 		},
 		onDragClass: "dragClass",
-		dragHandle: "tdlineupdown"
+		dragHandle: "td.tdlineupdown"
 	});
     $(".tdlineupdown").hover( function() { $(this).addClass('showDragHandle'); },
     	function() { $(this).removeClass('showDragHandle'); }

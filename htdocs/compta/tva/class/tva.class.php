@@ -59,7 +59,6 @@ class Tva extends CommonObject
         $this->db = $db;
         $this->element = 'tva';
         $this->table_element = 'tva';
-        return 1;
     }
 
 
@@ -100,19 +99,16 @@ class Tva extends CommonObject
 		$sql.= "fk_bank,";
 		$sql.= "fk_user_creat,";
 		$sql.= "fk_user_modif";
-
         $sql.= ") VALUES (";
-
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " '".$this->db->idate($this->datep)."',";
 		$sql.= " '".$this->db->idate($this->datev)."',";
-		$sql.= " '".$this->amount."',";
-		$sql.= " '".$this->label."',";
-		$sql.= " '".$this->note."',";
-		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->fk_bank."'").",";
-		$sql.= " '".$this->fk_user_creat."',";
-		$sql.= " '".$this->fk_user_modif."'";
-
+		$sql.= " '".$this->db->escape($this->amount)."',";
+		$sql.= " '".$this->db->escape($this->label)."',";
+		$sql.= " '".$this->db->escape($this->note)."',";
+		$sql.= " ".($this->fk_bank <= 0 ? "NULL" : "'".$this->db->escape($this->fk_bank)."'").",";
+		$sql.= " '".$this->db->escape($this->fk_user_creat)."',";
+		$sql.= " '".$this->db->escape($this->fk_user_modif)."'";
 		$sql.= ")";
 
 	   	dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -152,7 +148,7 @@ class Tva extends CommonObject
      * @param	int		$notrigger	    0=no, 1=yes (no update trigger)
      * @return  int         			<0 if KO, >0 if OK
      */
-    function update($user=null, $notrigger=0)
+    function update($user, $notrigger=0)
     {
     	global $conf, $langs;
 
@@ -496,6 +492,7 @@ class Tva extends CommonObject
 		$this->fk_bank=trim($this->fk_bank);
 		$this->fk_user_creat=trim($this->fk_user_creat);
 		$this->fk_user_modif=trim($this->fk_user_modif);
+		if (empty($this->datec)) $this->datec = dol_now();
 
         // Check parameters
 		if (! $this->label)
@@ -520,8 +517,10 @@ class Tva extends CommonObject
         }
 
         // Insert into llx_tva
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep";
-		$sql.= ", datev";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (";
+        $sql.= "datec";
+        $sql.= ", datep";
+        $sql.= ", datev";
 		$sql.= ", amount";
 		$sql.= ", fk_typepayment";
 		$sql.= ", num_payment";
@@ -532,14 +531,15 @@ class Tva extends CommonObject
 		$sql.= ", entity";
 		$sql.= ") ";
         $sql.= " VALUES (";
-		$sql.= "'".$this->db->idate($this->datep)."'";
+        $sql.= " '".$this->db->idate($this->datec)."'";
+        $sql.= ", '".$this->db->idate($this->datep)."'";
         $sql.= ", '".$this->db->idate($this->datev)."'";
 		$sql.= ", ".$this->amount;
-        $sql.= ", '".$this->type_payment."'";
-		$sql.= ", '".$this->num_payment."'";
+        $sql.= ", '".$this->db->escape($this->type_payment)."'";
+		$sql.= ", '".$this->db->escape($this->num_payment)."'";
 		if ($this->note)  $sql.=", '".$this->db->escape($this->note)."'";
         if ($this->label) $sql.=", '".$this->db->escape($this->label)."'";
-        $sql.= ", '".$user->id."'";
+        $sql.= ", '".$this->db->escape($user->id)."'";
 		$sql.= ", NULL";
 		$sql.= ", ".$conf->entity;
         $sql.= ")";
@@ -650,23 +650,48 @@ class Tva extends CommonObject
 	 *
 	 *	@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *	@param	string	$option			link option
+     *  @param	int  	$notooltip		1=Disable tooltip
+     *  @param	string	$morecss			More CSS
 	 *	@return	string					Chaine with URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='')
 	{
-		global $langs;
+		global $langs, $conf;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
 		$result='';
         $label=$langs->trans("ShowVatPayment").': '.$this->ref;
 
-        $link = '<a href="'.DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
-		$linkend='</a>';
+        $url = DOL_URL_ROOT.'/compta/tva/card.php?id='.$this->id;
+
+        $linkclose='';
+        if (empty($notooltip))
+        {
+
+
+
+        	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+        	{
+        		$label=$langs->trans("ShowMyObject");
+        		$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+        	}
+        	$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+        	$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+        }
+        else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+        $linkstart = '<a href="'.$url.'"';
+        $linkstart.=$linkclose.'>';
+        $linkend ='</a>';
 
 		$picto='payment';
 
-        if ($withpicto) $result.=($link.img_object($label, $picto, 'class="classfortooltip"').$linkend);
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$this->ref.$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+
 		return $result;
 	}
 
@@ -678,7 +703,7 @@ class Tva extends CommonObject
 	 */
 	function info($id)
 	{
-		$sql = "SELECT t.rowid, t.tms, t.datec, t.fk_user_creat";
+		$sql = "SELECT t.rowid, t.tms, t.fk_user_modif, t.datec, t.fk_user_creat";
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as t";
 		$sql.= " WHERE t.rowid = ".$id;
 

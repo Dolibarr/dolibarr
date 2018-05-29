@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2011	Regis Houssin        <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2017	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2006-2015	Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -92,8 +92,8 @@ class Ldap
 
 
 	/**
-	* The internal LDAP connection handle
-	*/
+	 * The internal LDAP connection handle
+	 */
 	var $connection;
 	/**
 	 * Result of any connections etc.
@@ -123,7 +123,7 @@ class Ldap
 
 		$this->filter              = $conf->global->LDAP_FILTER_CONNECTION;	// Filter on user
 		$this->filtermember        = $conf->global->LDAP_MEMBER_FILTER;		// Filter on member
-		
+
 		// Users
 		$this->attr_login      = $conf->global->LDAP_FIELD_LOGIN; //unix
 		$this->attr_sambalogin = $conf->global->LDAP_FIELD_LOGIN_SAMBA; //samba, activedirectory
@@ -176,34 +176,30 @@ class Ldap
 			{
 				if ($connected) break;
 				if (empty($host)) continue;
-	
-				if (preg_match('/^ldap/',$host))
-				{
-					$this->connection = ldap_connect($host);
+
+				if ($this->serverPing($host, $this->serverPort) === true) {
+					$this->connection = ldap_connect($host, $this->serverPort);
 				}
-				else
-				{
-					$this->connection = ldap_connect($host,$this->serverPort);
-				}
-	
+				else continue;
+
 				if (is_resource($this->connection))
 				{
 					// Begin TLS if requested by the configuration
-	    			if (! empty($conf->global->LDAP_SERVER_USE_TLS)) 
-	    			{
-	    			    if (! ldap_start_tls($this->connection)) 
-	    			    {
-	    			        dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
-	    			        $connected = 0;
-	    			        $this->close();
-	    				}
-	    			}
-			
+					if (! empty($conf->global->LDAP_SERVER_USE_TLS))
+					{
+						if (! ldap_start_tls($this->connection))
+						{
+							dol_syslog(get_class($this)."::connect_bind failed to start tls", LOG_WARNING);
+							$connected = 0;
+							$this->close();
+						}
+					}
+
 					// Execute the ldap_set_option here (after connect and before bind)
 					$this->setVersion();
 					ldap_set_option($this->connection, LDAP_OPT_SIZELIMIT, 0); // no limit here. should return true.
-	
-	
+
+
 					if ($this->serverType == "activedirectory")
 					{
 						$result=$this->setReferrals();
@@ -256,7 +252,7 @@ class Ldap
 						}
 					}
 				}
-	
+
 				if (! $connected) $this->close();
 			}
 		}
@@ -396,10 +392,10 @@ class Ldap
 	 * 	Add a LDAP entry
 	 *	Ldap object connect and bind must have been done
 	 *
-	 *	@param	string		$dn			DN entry key
-	 *	@param	array		$info		Attributes array
+	 *	@param	string	$dn			DN entry key
+	 *	@param	array	$info		Attributes array
 	 *	@param	User		$user		Objet user that create
-	 *	@return	int						<0 if KO, >0 if OK
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
 	function add($dn, $info, $user)
 	{
@@ -452,7 +448,7 @@ class Ldap
 	 *
 	 *	@param	string		$dn			DN entry key
 	 *	@param	array		$info		Attributes array
-	 *	@param	string		$user		Objet user that modify
+	 *	@param	User			$user		Objet user that modify
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
 	function modify($dn, $info, $user)
@@ -499,16 +495,68 @@ class Ldap
 	}
 
 	/**
+	 * 	Rename a LDAP entry
+	 *	Ldap object connect and bind must have been done
+	 *
+	 *	@param	string		$dn				Old DN entry key (uid=qqq,ou=xxx,dc=aaa,dc=bbb) (before update)
+	 *	@param	string		$newrdn			New RDN entry key (uid=qqq)
+	 *	@param	string		$newparent		New parent (ou=xxx,dc=aaa,dc=bbb)
+	 *	@param	User			$user			Objet user that modify
+	 *	@param	bool			$deleteoldrdn	If TRUE the old RDN value(s) is removed, else the old RDN value(s) is retained as non-distinguished values of the entry.
+	 *	@return	int							<0 if KO, >0 if OK
+	 */
+	function rename($dn, $newrdn, $newparent, $user, $deleteoldrdn = true)
+	{
+		global $conf;
+
+		dol_syslog(get_class($this)."::modify dn=".$dn." newrdn=".$newrdn." newparent=".$newparent." deleteoldrdn=".($deleteoldrdn?1:0));
+
+		// Check parameters
+		if (! $this->connection)
+		{
+			$this->error="NotConnected";
+			return -2;
+		}
+		if (! $this->bind)
+		{
+			$this->error="NotConnected";
+			return -3;
+		}
+
+		// Encode to LDAP page code
+		$dn=$this->convFromOutputCharset($dn,$this->ldapcharset);
+		$newrdn=$this->convFromOutputCharset($newrdn,$this->ldapcharset);
+		$newparent=$this->convFromOutputCharset($newparent,$this->ldapcharset);
+
+		//print_r($info);
+		$result=@ldap_rename($this->connection, $dn, $newrdn, $newparent, $deleteoldrdn);
+
+		if ($result)
+		{
+			dol_syslog(get_class($this)."::rename successfull", LOG_DEBUG);
+			return 1;
+		}
+		else
+		{
+			$this->error=@ldap_error($this->connection);
+			dol_syslog(get_class($this)."::rename failed: ".$this->error, LOG_ERR);
+			return -1;
+		}
+	}
+
+	/**
 	 *  Modify a LDAP entry (to use if dn != olddn)
 	 *	Ldap object connect and bind must have been done
 	 *
-	 *  @param	string		$dn			DN entry key
-	 *  @param  array		$info		Attributes array
-	 *  @param  User		$user		Objet user that update
-	 * 	@param	string		$olddn		Old DN entry key (before update)
-	 *	@return	int						<0 if KO, >0 if OK
+	 *  @param	string	$dn			DN entry key
+	 *  @param	array	$info		Attributes array
+	 *  @param	User		$user		Objet user that update
+	 * 	@param	string	$olddn		Old DN entry key (before update)
+	 * 	@param	string	$newrdn		New RDN entry key (uid=qqq) (for ldap_rename)
+	 *	@param	string	$newparent	New parent (ou=xxx,dc=aaa,dc=bbb) (for ldap_rename)
+	 *	@return	int					<0 if KO, >0 if OK
 	 */
-	function update($dn,$info,$user,$olddn)
+	function update($dn, $info, $user, $olddn, $newrdn=false, $newparent=false)
 	{
 		global $conf;
 
@@ -528,9 +576,17 @@ class Ldap
 
 		if (! $olddn || $olddn != $dn)
 		{
-			// If change we make is rename the key of LDAP record, we create new one and if ok, we delete old one.
-			$result = $this->add($dn, $info, $user);
-			if ($result > 0 && $olddn && $olddn != $dn) $result = $this->delete($olddn);	// If add fails, we do not try to delete old one
+			if (! empty($olddn) && ! empty($newrdn) && ! empty($newparent) && $conf->global->LDAP_SERVER_PROTOCOLVERSION === '3')
+			{
+				// This function currently only works with LDAPv3
+				$result = $this->rename($olddn, $newrdn, $newparent, $user, true);
+			}
+			else
+			{
+				// If change we make is rename the key of LDAP record, we create new one and if ok, we delete old one.
+				$result = $this->add($dn, $info, $user);
+				if ($result > 0 && $olddn && $olddn != $dn) $result = $this->delete($olddn);	// If add fails, we do not try to delete old one
+			}
 		}
 		else
 		{
@@ -662,10 +718,36 @@ class Ldap
 		}
 	}
 
+	/**
+	 * Ping a server before ldap_connect for avoid waiting
+	 *
+	 * @param string		$host		Server host or address
+	 * @param int		$port		Server port (default 389)
+	 * @param int		$timeout		Timeout in second (default 1s)
+	 * @return boolean				true or false
+	 */
+	function serverPing($host, $port=389, $timeout=1)
+	{
+		// Replace ldaps:// by ssl://
+		if (preg_match('/^ldaps:\/\/([^\/]+)\/?$/',$host, $regs)) {
+			$host = 'ssl://'.$regs[1];
+		}
+		// Remove ldap://
+		if (preg_match('/^ldap:\/\/([^\/]+)\/?$/',$host, $regs)) {
+			$host = $regs[1];
+		}
+		$op = @fsockopen($host, $port, $errno, $errstr, $timeout);
+		if (!$op) return false; //DC is N/A
+		else {
+			fclose($op); //explicitly close open socket connection
+			return true; //DC is up & running, we can safely connect with ldap_connect
+		}
+	}
+
 
 	// Attribute methods -----------------------------------------------------
 
-    /**
+	/**
 	 * 	Add a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
@@ -717,7 +799,7 @@ class Ldap
 		}
 	}
 
-    /**
+	/**
 	 * 	Update a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
@@ -769,7 +851,7 @@ class Ldap
 		}
 	}
 
-    /**
+	/**
 	 * 	Delete a LDAP attribute in entry
 	 *	Ldap object connect and bind must have been done
 	 *
@@ -821,7 +903,7 @@ class Ldap
 		}
 	}
 
-    /**
+	/**
 	 *  Returns an array containing attributes and values for first record
 	 *
 	 *	@param	string	$dn			DN entry key
@@ -1178,7 +1260,7 @@ class Ldap
 		$i=0;
 		while ($i <= 2)
 		{
-		    dol_syslog(get_class($this)."::fetch search with searchDN=".$searchDN." filter=".$filter);
+			dol_syslog(get_class($this)."::fetch search with searchDN=".$searchDN." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $searchDN, $filter);
 			if ($this->result)
 			{
@@ -1189,9 +1271,9 @@ class Ldap
 			}
 			else
 			{
-			    $this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-                dol_syslog(get_class($this)."::fetch search fails");
-			    return -1;
+				$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+				dol_syslog(get_class($this)."::fetch search fails");
+				return -1;
 			}
 
 			if (! $result)
@@ -1217,7 +1299,7 @@ class Ldap
 			$this->firstname  = $this->convToOutputCharset($result[0][$this->attr_firstname][0],$this->ldapcharset);
 			$this->login      = $this->convToOutputCharset($result[0][$this->attr_login][0],$this->ldapcharset);
 			$this->phone      = $this->convToOutputCharset($result[0][$this->attr_phone][0],$this->ldapcharset);
-      $this->skype      = $this->convToOutputCharset($result[0][$this->attr_skype][0],$this->ldapcharset);
+			$this->skype      = $this->convToOutputCharset($result[0][$this->attr_skype][0],$this->ldapcharset);
 			$this->fax        = $this->convToOutputCharset($result[0][$this->attr_fax][0],$this->ldapcharset);
 			$this->mail       = $this->convToOutputCharset($result[0][$this->attr_mail][0],$this->ldapcharset);
 			$this->mobile     = $this->convToOutputCharset($result[0][$this->attr_mobile][0],$this->ldapcharset);
@@ -1240,7 +1322,7 @@ class Ldap
 			$this->domainFQDN = $domain;
 
 			// Set ldapUserDn (each user can have a different dn)
-            //var_dump($result[0]);exit;
+			//var_dump($result[0]);exit;
 			$this->ldapUserDN=$result[0]['dn'];
 
 			ldap_free_result($this->result);
@@ -1266,35 +1348,37 @@ class Ldap
 	}
 
    /**
-	* 	UserAccountControl Flgs to more human understandable form...
-	*
-	*	@param	string		$uacf		UACF
-	*	@return	void
-	*/
+    * 	UserAccountControl Flgs to more human understandable form...
+    *
+    *	@param	string		$uacf		UACF
+    *	@return	void
+    */
 	function parseUACF($uacf)
 	{
 		//All flags array
-		$flags = array( "TRUSTED_TO_AUTH_FOR_DELEGATION"  =>    16777216,
-                    "PASSWORD_EXPIRED"                =>    8388608,
-                    "DONT_REQ_PREAUTH"                =>    4194304,
-                    "USE_DES_KEY_ONLY"                =>    2097152,
-                    "NOT_DELEGATED"                   =>    1048576,
-                    "TRUSTED_FOR_DELEGATION"          =>    524288,
-                    "SMARTCARD_REQUIRED"              =>    262144,
-                    "MNS_LOGON_ACCOUNT"               =>    131072,
-                    "DONT_EXPIRE_PASSWORD"            =>    65536,
-                    "SERVER_TRUST_ACCOUNT"            =>    8192,
-                    "WORKSTATION_TRUST_ACCOUNT"       =>    4096,
-                    "INTERDOMAIN_TRUST_ACCOUNT"       =>    2048,
-                    "NORMAL_ACCOUNT"                  =>    512,
-                    "TEMP_DUPLICATE_ACCOUNT"          =>    256,
-                    "ENCRYPTED_TEXT_PWD_ALLOWED"      =>    128,
-                    "PASSWD_CANT_CHANGE"              =>    64,
-                    "PASSWD_NOTREQD"                  =>    32,
-                    "LOCKOUT"                         =>    16,
-                    "HOMEDIR_REQUIRED"                =>    8,
-                    "ACCOUNTDISABLE"                  =>    2,
-                    "SCRIPT"                          =>    1);
+		$flags = array(
+			"TRUSTED_TO_AUTH_FOR_DELEGATION"  =>    16777216,
+			"PASSWORD_EXPIRED"                =>    8388608,
+			"DONT_REQ_PREAUTH"                =>    4194304,
+			"USE_DES_KEY_ONLY"                =>    2097152,
+			"NOT_DELEGATED"                   =>    1048576,
+			"TRUSTED_FOR_DELEGATION"          =>    524288,
+			"SMARTCARD_REQUIRED"              =>    262144,
+			"MNS_LOGON_ACCOUNT"               =>    131072,
+			"DONT_EXPIRE_PASSWORD"            =>    65536,
+			"SERVER_TRUST_ACCOUNT"            =>    8192,
+			"WORKSTATION_TRUST_ACCOUNT"       =>    4096,
+			"INTERDOMAIN_TRUST_ACCOUNT"       =>    2048,
+			"NORMAL_ACCOUNT"                  =>    512,
+			"TEMP_DUPLICATE_ACCOUNT"          =>    256,
+			"ENCRYPTED_TEXT_PWD_ALLOWED"      =>    128,
+			"PASSWD_CANT_CHANGE"              =>    64,
+			"PASSWD_NOTREQD"                  =>    32,
+			"LOCKOUT"                         =>    16,
+			"HOMEDIR_REQUIRED"                =>    8,
+			"ACCOUNTDISABLE"                  =>    2,
+			"SCRIPT"                          =>    1
+		);
 
 		//Parse flags to text
 		$retval = array();
@@ -1310,20 +1394,22 @@ class Ldap
 	}
 
    /**
-	* 	SamAccountType value to text
-	*
-	*	@param	string	$samtype	SamType
-	*	@return	string				Sam string
-	*/
+    * 	SamAccountType value to text
+    *
+    *	@param	string	$samtype	SamType
+    *	@return	string				Sam string
+    */
 	function parseSAT($samtype)
 	{
-		$stypes = array(    805306368    =>    "NORMAL_ACCOUNT",
-		805306369    =>    "WORKSTATION_TRUST",
-		805306370    =>    "INTERDOMAIN_TRUST",
-		268435456    =>    "SECURITY_GLOBAL_GROUP",
-		268435457    =>    "DISTRIBUTION_GROUP",
-		536870912    =>    "SECURITY_LOCAL_GROUP",
-		536870913    =>    "DISTRIBUTION_LOCAL_GROUP");
+		$stypes = array(
+			805306368    =>    "NORMAL_ACCOUNT",
+			805306369    =>    "WORKSTATION_TRUST",
+			805306370    =>    "INTERDOMAIN_TRUST",
+			268435456    =>    "SECURITY_GLOBAL_GROUP",
+			268435457    =>    "DISTRIBUTION_GROUP",
+			536870912    =>    "SECURITY_LOCAL_GROUP",
+			536870913    =>    "DISTRIBUTION_LOCAL_GROUP"
+		);
 
 		$retval = "";
 		while (list($sat, $val) = each($stypes)) {
@@ -1355,7 +1441,7 @@ class Ldap
 
 	/**
 	 *  Convert a string into output/memory charset
-     *
+	 *
 	 *  @param	string	$str            String to convert
 	 *  @param	string	$pagecodefrom	Page code of src string
 	 *  @return string         			Converted string
@@ -1370,7 +1456,7 @@ class Ldap
 
 	/**
 	 *  Convert a string from output/memory charset
-     *
+	 *
 	 *  @param	string	$str            String to convert
 	 *  @param	string	$pagecodeto		Page code for result string
 	 *  @return string         			Converted string
@@ -1387,15 +1473,18 @@ class Ldap
 	/**
 	 *	Return available value of group GID
 	 *
-	 *	@return     int         	gid number
+	 *	@param	string	$keygroup	Key of group
+	 *	@return	int					gid number
 	 */
-	function getNextGroupGid()
+	function getNextGroupGid($keygroup='LDAP_KEY_GROUPS')
 	{
 		global $conf;
 
-		$search='('.$conf->global->LDAP_KEY_GROUPS.'=*)';
+		if (empty($keygroup)) $keygroup='LDAP_KEY_GROUPS';
+
+		$search='('.$conf->global->$keygroup.'=*)';
 		$result = $this->search($this->groups,$search);
-		if($result)
+		if ($result)
 		{
 			$c = $result['count'];
 			$gids = array();
@@ -1411,5 +1500,3 @@ class Ldap
 		return 0;
 	}
 }
-
-

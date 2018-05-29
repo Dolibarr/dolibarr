@@ -150,9 +150,12 @@ if ($object->id > 0)
 
 		// Date start - end
 		print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-		print dol_print_date($projectstatic->date_start,'day');
-		$end=dol_print_date($projectstatic->date_end,'day');
-		if ($end) print ' - '.$end;
+		$start = dol_print_date($projectstatic->date_start,'day');
+		print ($start?$start:'?');
+		$end = dol_print_date($projectstatic->date_end,'day');
+		print ' - ';
+		print ($end?$end:'?');
+		if ($projectstatic->hasDelay()) print img_warning("Late");
 		print '</td></tr>';
 
 		// Budget
@@ -199,7 +202,7 @@ if ($object->id > 0)
 	}
 
 	$head = task_prepare_head($object);
-	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask');
+	dol_fiche_head($head, 'task_notes', $langs->trans('Task'), -1, 'projecttask', 0, '', 'reposition');
 
 
 	$param=(GETPOST('withproject')?'&withproject=1':'');

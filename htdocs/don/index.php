@@ -52,6 +52,7 @@ llxHeader('',$langs->trans("Donations"),$help_url);
 
 $nb=array();
 $somme=array();
+$total = 0;
 
 $sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."don as d WHERE d.entity IN (".getEntity('donation').")";
@@ -69,6 +70,8 @@ if ($result)
 
         $somme[$objp->fk_statut] = $objp->somme;
         $nb[$objp->fk_statut] = $objp->nb;
+        $total += $objp->somme;
+
         $i++;
     }
     $db->free($result);
@@ -87,7 +90,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     {
     	$listofsearchfields['search_donation']=array('text'=>'Donation');
     }
-    
+
     if (count($listofsearchfields))
     {
     	print '<form method="post" action="'.DOL_URL_ROOT.'/core/search.php">';
@@ -103,7 +106,7 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
     		print '</tr>';
     		$i++;
     	}
-    	print '</table>';	
+    	print '</table>';
     	print '</form>';
     	print '<br>';
     }
@@ -118,14 +121,23 @@ print "</tr>\n";
 $listofstatus=array(0,1,-1,2);
 foreach ($listofstatus as $status)
 {
-    $dataseries[]=array('label'=>$donstatic->LibStatut($status,1),'data'=>(isset($nb[$status])?(int) $nb[$status]:0));
+    $dataseries[]=array($donstatic->LibStatut($status,1), (isset($nb[$status])?(int) $nb[$status]:0));
 }
 
 if ($conf->use_javascript_ajax)
 {
-    print '<tr '.$bc[false].'><td align="center" colspan="4">';
-    $data=array('series'=>$dataseries);
-    dol_print_graph('stats',300,180,$data,1,'pie',1);
+    print '<tr><td align="center" colspan="4">';
+
+    include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+    $dolgraph = new DolGraph();
+    $dolgraph->SetData($dataseries);
+    $dolgraph->setShowLegend(1);
+    $dolgraph->setShowPercent(1);
+    $dolgraph->SetType(array('pie'));
+    $dolgraph->setWidth('100%');
+    $dolgraph->draw('idgraphstatus');
+    print $dolgraph->show($total?0:1);
+
     print '</td></tr>';
 }
 
@@ -141,7 +153,7 @@ $totalnb=0;
 $var=true;
 foreach ($listofstatus as $status)
 {
-    
+
     print '<tr class="oddeven">';
     print '<td><a href="list.php?statut='.$status.'">'.$donstatic->LibStatut($status,4).'</a></td>';
     print '<td align="right">'.(! empty($nb[$status])?$nb[$status]:'&nbsp;').'</td>';
@@ -191,7 +203,7 @@ if ($resql)
         $var = True;
         while ($i < $num)
         {
-            
+
             $obj = $db->fetch_object($resql);
 
             print '<tr class="oddeven">';

@@ -113,12 +113,12 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("PrintingSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ConfigOAuth'),$linkback,'title_setup');
 
 $head=oauthadmin_prepare_head($mode);
 
-dol_fiche_head($head, 'tokengeneration', '', 0, 'technic');
+dol_fiche_head($head, 'tokengeneration', '', -1, 'technic');
 
 
 if ($mode == 'setup' && $user->admin)
@@ -131,8 +131,8 @@ if ($mode == 'setup' && $user->admin)
         $supported=0;
         if (in_array($key[0], array_keys($supportedoauth2array))) $supported=1;
         if (! $supported) continue;     // show only supported
-        
-        
+
+
         $OAUTH_SERVICENAME='Unknown';
         if ($key[0] == 'OAUTH_GITHUB_NAME')
         {
@@ -148,7 +148,7 @@ if ($mode == 'setup' && $user->admin)
             $urltodelete=$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/admin/oauthlogintokens.php');
             $urltocheckperms='https://security.google.com/settings/security/permissions';
         }
-        
+
         // Show value of token
         $tokenobj=null;
         // Token
@@ -164,21 +164,21 @@ if ($mode == 'setup' && $user->admin)
         {
             // Return an error if token not found
         }
-        
+
         // Set other properties
         $refreshtoken=false;
         $expiredat='';
-        
+
         $expire = false;
         // Is token expired or will token expire in the next 30 seconds
         if (is_object($tokenobj)) {
             $expire = ($tokenobj->getEndOfLife() !== $tokenobj::EOL_NEVER_EXPIRES && $tokenobj->getEndOfLife() !== $tokenobj::EOL_UNKNOWN && time() > ($tokenobj->getEndOfLife() - 30));
         }
-        
+
         if ($key[1] != '' && $key[2] != '') {
             if (is_object($tokenobj)) {
                 $refreshtoken = $tokenobj->getRefreshToken();
-                
+
                 $endoflife = $tokenobj->getEndOfLife();
                 if ($endoflife == $tokenobj::EOL_NEVER_EXPIRES)
                 {
@@ -196,21 +196,21 @@ if ($mode == 'setup' && $user->admin)
         }
 
         $submit_enabled=0;
-        
+
         print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?mode=setup&amp;driver='.$driver.'" autocomplete="off">';
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         print '<input type="hidden" name="action" value="setconst">';
-    
-        
+
+
         print '<table class="noborder" width="100%">'."\n";
-        
+
         $var=false;
         print '<tr class="liste_titre">';
         print '<th class="titlefieldcreate">'.$langs->trans($key[0]).'</th>';
         print '<th></th>';
         print '<th></th>';
         print "</tr>\n";
-        
+
         print '<tr class="oddeven">';
         print '<td'.($key['required']?' class="required"':'').'>';
         //var_dump($key);
@@ -221,7 +221,7 @@ if ($mode == 'setup' && $user->admin)
         print '<td>';
         print '</td>';
         print '</tr>'."\n";
-        
+
         $var = ! $var;
         print '<tr class="oddeven">';
         print '<td'.($key['required']?' class="required"':'').'>';
@@ -248,7 +248,7 @@ if ($mode == 'setup' && $user->admin)
         }
         print '</td>';
         print '</tr>';
-        
+
         $var = ! $var;
         print '<tr class="oddeven">';
         print '<td'.($key['required']?' class="required"':'').'>';
@@ -265,7 +265,7 @@ if ($mode == 'setup' && $user->admin)
             /*print '<br>Extra: <br><textarea class="quatrevingtpercent">';
             print ''.join(',',$tokenobj->getExtraParams());
             print '</textarea>';*/
-        }        
+        }
         print '</td>';
         print '</tr>'."\n";
 
@@ -281,7 +281,7 @@ if ($mode == 'setup' && $user->admin)
             print yn($refreshtoken);
             print '</td>';
             print '</tr>';
-    
+
             // Token expired
             $var = ! $var;
             print '<tr class="oddeven">';
@@ -292,7 +292,7 @@ if ($mode == 'setup' && $user->admin)
             print yn($expire);
             print '</td>';
             print '</tr>';
-            
+
             // Token expired at
             $var = ! $var;
             print '<tr class="oddeven">';
@@ -302,9 +302,9 @@ if ($mode == 'setup' && $user->admin)
             print '<td colspan="2">';
             print $expiredat;
             print '</td>';
-            print '</tr>';        
+            print '</tr>';
         }
-        
+
         print '</table>';
 
         if (! empty($driver))
@@ -314,10 +314,10 @@ if ($mode == 'setup' && $user->admin)
             }
         }
 
-        
+
         print '</form>';
     }
-    
+
 }
 
 if ($mode == 'test' && $user->admin)
@@ -344,7 +344,7 @@ if ($mode == 'test' && $user->admin)
         }
 
     }
-    
+
     print '</table>';
 
 }
@@ -368,7 +368,7 @@ if ($mode == 'userconf' && $user->admin)
     $sql = 'SELECT p.rowid, p.printer_name, p.printer_location, p.printer_id, p.copy, p.module, p.driver, p.userid, u.login FROM '.MAIN_DB_PREFIX.'printing as p, '.MAIN_DB_PREFIX.'user as u WHERE p.userid=u.rowid';
     $resql = $db->query($sql);
     while ($row=$db->fetch_array($resql)) {
-        
+
         print '<tr class="oddeven">';
         print '<td>'.$row['login'].'</td>';
         print '<td>'.$row['module'].'</td>';

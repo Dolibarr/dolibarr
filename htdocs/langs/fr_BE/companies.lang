@@ -1,4 +1,11 @@
 # Dolibarr language file - Source file is en_US - companies
+ReportByCustomers=Report by customer
 OverAllProposals=Propales
+CustomerAbsoluteDiscountAllUsers=Absolute customer discounts (granted by all users)
+CustomerAbsoluteDiscountMy=Absolute customer discounts (granted by yourself)
 VATIntraCheck=Chèque
 PL_UNKNOWN=Inconnue
+ImportDataset_company_2=Contacts/Addresses (of third parties or not) and attributes
+ImportDataset_company_3=Bank accounts of third parties
+ThirdpartiesMergeSuccess=Third parties have been merged
+ErrorThirdpartiesMerge=There was an error when deleting the third parties. Please check the log. Changes have been reverted.

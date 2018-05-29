@@ -4,7 +4,6 @@ Proposal=Pressupost
 ProposalShort=Pressupost
 ProposalsDraft=Pressupostos esborrany
 ProposalsOpened=Pressupostos oberts
-Prop=Pressupostos
 CommercialProposal=Pressupost
 PdfCommercialProposalTitle=Pressupost
 ProposalCard=Fitxa pressupost
@@ -64,6 +63,7 @@ ProposalLine=Línia de pressupost
 AvailabilityPeriod=Temps de lliurament
 SetAvailability=Indica el temps de lliurament
 AfterOrder=després de la comanda
+OtherProposals=Altres pressupostos
 ##### Availability #####
 AvailabilityTypeAV_NOW=Immediata
 AvailabilityTypeAV_1W=1 setmana

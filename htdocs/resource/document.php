@@ -40,7 +40,7 @@ $langs->load("resource");
 $langs->load("companies");
 
 $id = GETPOST('id','int');
-$ref = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref','alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
@@ -100,20 +100,20 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-	
+
 	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	 
-	 
+
+
 	$morehtmlref='<div class="refidno">';
 	$morehtmlref.='</div>';
-	 
-	 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-	 
-	 
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	 
+
     print '<table class="border" width="100%">';
 
 	// Resource type
@@ -131,10 +131,10 @@ if ($object->id)
     print '</div>';
 
     dol_fiche_end();
-    
+
     $modulepart = 'dolresource';
     $permission = $user->rights->resource->write;
-    $param = '&id=' . $object->id;
+
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 }

@@ -71,16 +71,10 @@ $object->fetch($id, '', '', 1);
 $object->getrights();
 
 $entity=$conf->entity;
-if (! empty($conf->multicompany->enabled))
-{
-	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-		$entity=(GETPOST('entity','int') ? GETPOST('entity','int') : $conf->entity);
-	else
-		$entity=(! empty($object->entity) ? $object->entity : $conf->entity);
-}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','globalcard'));
+$contextpage=array('usercard','userperms','globalcard');
+$hookmanager->initHooks($contextpage);
 
 
 /**
@@ -288,7 +282,6 @@ if ($result)
 {
 	$num = $db->num_rows($result);
 	$i = 0;
-	$var = True;
 	$oldmod='';
 
 	while ($i < $num)
@@ -301,39 +294,37 @@ if ($result)
 			$i++;
 			continue;
 		}
-
 		if (isset($obj->module) && ($oldmod <> $obj->module))
 		{
 			$oldmod = $obj->module;
-			$var = !$var;
 
-			// Rupture detectee, on recupere objMod
+			// Break detected, we get objMod
 			$objMod=$modules[$obj->module];
 			$picto=($objMod->picto?$objMod->picto:'generic');
 
-        	if ($caneditperms && (empty($objMod->rights_admin_allowed) || empty($object->admin)))
-        	{
-        		// On affiche ligne pour modifier droits
-        		print '<tr '. $bc[$var].'>';
-        		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
-        		print '<a name="'.$objMod->getName().'"></a></td>';
-        		print '<td align="center" class="nowrap">';
-        		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
-        		print '/';
-        		print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
-        		print '</td>';
-        		print '<td colspan="2">&nbsp;</td>';
-        		print '</tr>'."\n";
-        	}
+    		// Show break line
+    		print '<tr class="oddeven trforbreak">';
+    		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName();
+    		print '<a name="'.$objMod->getName().'"></a></td>';
+    		print '<td align="center" class="nowrap">';
+    		if ($caneditperms && empty($objMod->rights_admin_allowed) || empty($object->admin))
+    		{
+    			print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("All")).'" alt="'.dol_escape_htmltag($langs->trans("All")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("All")."</a>";
+    			print '/';
+    			print '<a class="reposition" title="'.dol_escape_htmltag($langs->trans("None")).'" alt="'.dol_escape_htmltag($langs->trans("None")).'" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'">'.$langs->trans("None")."</a>";
+    		}
+    		print '</td>';
+    		print '<td colspan="2">&nbsp;</td>';
+    		print '</tr>'."\n";
         }
 
-		print '<tr '. $bc[$var].'>';
+		print '<tr class="oddeven">';
 
 		// Picto and label of permission
 		print '<td class="maxwidthonsmartphone tdoverflowonsmartphone">'.img_object('',$picto,'class="pictoobjectwidth"').' '.$objMod->getName().'</td>';
 
         // Permission and tick
-        if (! empty($object->admin) && ! empty($objMod->rights_admin_allowed))    // Permission own because admin
+        if (! empty($object->admin) && ! empty($objMod->rights_admin_allowed))    // Permission granted because admin
         {
         	if ($caneditperms)
         	{
@@ -343,7 +334,7 @@ if ($result)
         	print img_picto($langs->trans("Active"),'tick');
         	print '</td>';
         }
-        else if (in_array($obj->id, $permsuser))					// Permission own by user
+        else if (in_array($obj->id, $permsuser))					// Permission granted by user
         {
         	if ($caneditperms)
         	{
@@ -356,7 +347,7 @@ if ($result)
 
         else if (is_array($permsgroupbyentity[$entity]))
         {
-	        if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission own by group
+        	if (in_array($obj->id, $permsgroupbyentity[$entity]))	// Permission granted by group
 	        {
 	        	if ($caneditperms)
 	        	{

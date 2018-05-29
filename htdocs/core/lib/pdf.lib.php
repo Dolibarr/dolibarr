@@ -390,8 +390,10 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
 
 	if (! empty($sourcecompany->state_id) && empty($sourcecompany->departement)) $sourcecompany->departement=getState($sourcecompany->state_id); //TODO deprecated
 	if (! empty($sourcecompany->state_id) && empty($sourcecompany->state))       $sourcecompany->state=getState($sourcecompany->state_id);
+	if (! empty($sourcecompany->state_id) && !isset($sourcecompany->departement_id))   $sourcecompany->departement_id=getState($sourcecompany->state_id,'2');
 	if (! empty($targetcompany->state_id) && empty($targetcompany->departement)) $targetcompany->departement=getState($targetcompany->state_id); //TODO deprecated
 	if (! empty($targetcompany->state_id) && empty($targetcompany->state))       $targetcompany->state=getState($targetcompany->state_id);
+	if (! empty($targetcompany->state_id) && !isset($targetcompany->departement_id))   $targetcompany->departement_id=getState($targetcompany->state_id,'2');
 
 	$reshook=0;
 	$stringaddress = '';
@@ -431,16 +433,16 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($targetcontact->getFullName($outputlangs,1));
 
     			if (!empty($targetcontact->address)) {
-    				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact))."\n";
+    				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcontact));
     			}else {
-    				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
+    				$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
     			}
     			// Country
     			if (!empty($targetcontact->country_code) && $targetcontact->country_code != $sourcecompany->country_code) {
-    				$stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code))."\n";
+    				$stringaddress.= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcontact->country_code));
     			}
     			else if (empty($targetcontact->country_code) && !empty($targetcompany->country_code) && ($targetcompany->country_code != $sourcecompany->country_code)) {
-    				$stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
+    				$stringaddress.= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
     			}
 
     			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/',$mode))
@@ -472,9 +474,9 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     		}
     		else
     		{
-    			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany))."\n";
+    			$stringaddress .= ($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset(dol_format_address($targetcompany));
     			// Country
-    			if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress.=$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code))."\n";
+    			if (!empty($targetcompany->country_code) && $targetcompany->country_code != $sourcecompany->country_code) $stringaddress.=($stringaddress ? "\n" : '' ).$outputlangs->convToOutputCharset($outputlangs->transnoentitiesnoconv("Country".$targetcompany->country_code));
 
     			if (! empty($conf->global->MAIN_PDF_ADDALSOTARGETDETAILS) || preg_match('/targetwithdetails/',$mode))
     			{
@@ -507,7 +509,7 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     		// Intra VAT
     		if (empty($conf->global->MAIN_TVAINTRA_NOT_IN_ADDRESS))
     		{
-    			if ($targetcompany->tva_intra) $stringaddress.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
+    			if ($targetcompany->tva_intra) $stringaddress.=($stringaddress ? "\n" : '' ).$outputlangs->transnoentities("VATIntraShort").': '.$outputlangs->convToOutputCharset($targetcompany->tva_intra);
     		}
 
     		// Professionnal Ids
@@ -515,37 +517,37 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     		{
     			$tmp=$outputlangs->transcountrynoentities("ProfId1",$targetcompany->country_code);
     			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
-    			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof1);
     		}
     		if (! empty($conf->global->MAIN_PROFID2_IN_ADDRESS) && ! empty($targetcompany->idprof2))
     		{
     			$tmp=$outputlangs->transcountrynoentities("ProfId2",$targetcompany->country_code);
     			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
-    			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof2);
     		}
     		if (! empty($conf->global->MAIN_PROFID3_IN_ADDRESS) && ! empty($targetcompany->idprof3))
     		{
     			$tmp=$outputlangs->transcountrynoentities("ProfId3",$targetcompany->country_code);
     			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
-    			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof3);
     		}
     		if (! empty($conf->global->MAIN_PROFID4_IN_ADDRESS) && ! empty($targetcompany->idprof4))
     		{
     			$tmp=$outputlangs->transcountrynoentities("ProfId4",$targetcompany->country_code);
     			if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
-    			$stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
+    			$stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof4);
     		}
     		if (! empty($conf->global->MAIN_PROFID5_IN_ADDRESS) && ! empty($targetcompany->idprof5))
     		{
     		    $tmp=$outputlangs->transcountrynoentities("ProfId5",$targetcompany->country_code);
     		    if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
-    		    $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
+    		    $stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof5);
     		}
     		if (! empty($conf->global->MAIN_PROFID6_IN_ADDRESS) && ! empty($targetcompany->idprof6))
     		{
     		    $tmp=$outputlangs->transcountrynoentities("ProfId6",$targetcompany->country_code);
     		    if (preg_match('/\((.+)\)/',$tmp,$reg)) $tmp=$reg[1];
-    		    $stringaddress.="\n".$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
+    		    $stringaddress.=($stringaddress ? "\n" : '' ).$tmp.': '.$outputlangs->convToOutputCharset($targetcompany->idprof6);
     		}
 
     		// Public note
@@ -553,11 +555,11 @@ function pdf_build_address($outputlangs,$sourcecompany,$targetcompany='',$target
     		{
     		    if ($mode == 'source' && ! empty($sourcecompany->note_public))
         		{
-        		    $stringaddress.="\n".dol_string_nohtmltag($sourcecompany->note_public);
+        		    $stringaddress.=($stringaddress ? "\n" : '' ).dol_string_nohtmltag($sourcecompany->note_public);
         		}
         		if (($mode == 'target' || preg_match('/targetwithdetails/',$mode)) && ! empty($targetcompany->note_public))
         		{
-        		    $stringaddress.="\n".dol_string_nohtmltag($targetcompany->note_public);
+        		    $stringaddress.=($stringaddress ? "\n" : '' ).dol_string_nohtmltag($targetcompany->note_public);
         		}
     		}
     	}
@@ -590,16 +592,17 @@ function pdf_pagehead(&$pdf,$outputlangs,$page_height)
 
 
 /**
- *   	Return array of possible substitutions for PDF content (without external module substitutions).
+ *	Return array of possible substitutions for PDF content (without external module substitutions).
  *
- *		@param	Translate	$outputlangs	Output language
- *      @param  array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
- *      @param  Object      $object         Object
- *      @return	array						Array of substitutions
+ *	@param	Translate	$outputlangs	Output language
+ *	@param	array       $exclude        Array of family keys we want to exclude. For example array('mycompany', 'object', 'date', 'user', ...)
+ *	@param	Object      $object         Object
+ *	@param	int         $onlykey       1=Do not calculate some heavy values of keys (performance enhancement when we need only the keys), 2=Values are truncated and html sanitized (to use for help tooltip)
+ *	@return	array						Array of substitutions
  */
-function pdf_getSubstitutionArray($outputlangs, $exclude=null, $object=null)
+function pdf_getSubstitutionArray($outputlangs, $exclude=null, $object=null, $onlykey=0)
 {
-    $substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $exclude, $object);
+    $substitutionarray = getCommonSubstitutionArray($outputlangs, $onlykey, $exclude, $object);
     $substitutionarray['__FROM_NAME__']='__FROM_NAME__';
     $substitutionarray['__FROM_EMAIL__']='__FROM_EMAIL__';
     return $substitutionarray;
@@ -1262,46 +1265,44 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		}
 	}
 
-	// If line linked to a product
-	if ($idprod)
+	// We add ref of product (and supplier ref if defined)
+	$prefix_prodserv = "";
+	$ref_prodserv = "";
+	if (! empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
 	{
-		// We add ref
-		if ($prodser->ref)
+		if ($prodser->isService())
 		{
-			$prefix_prodserv = "";
-			$ref_prodserv = "";
-			if (! empty($conf->global->PRODUCT_ADD_TYPE_IN_DOCUMENTS))   // In standard mode, we do not show this
-			{
-				if ($prodser->isService())
-				{
-					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
-				}
-				else
-				{
-					$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
-				}
-			}
-
-			if (empty($hideref))
-			{
-				if ($issupplierline)
-				{
-					if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
-						$ref_prodserv = $ref_supplier;
-					elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
-						$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
-					else
-						$ref_prodserv = $prodser->ref.' ('.$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.')';
-				}
-				else
-					$ref_prodserv = $prodser->ref; // Show local ref only
-
-				if (! empty($libelleproduitservice)) $ref_prodserv .= " - ";
-			}
-
-			$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
+			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Service")." ";
+		}
+		else
+		{
+			$prefix_prodserv = $outputlangs->transnoentitiesnoconv("Product")." ";
 		}
 	}
+
+	if (empty($hideref))
+	{
+		if ($issupplierline)
+		{
+			if ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 1)
+				$ref_prodserv = $ref_supplier;
+			elseif ($conf->global->PDF_HIDE_PRODUCT_REF_IN_SUPPLIER_LINES == 2)
+				$ref_prodserv = $ref_supplier. ' ('.$outputlangs->transnoentitiesnoconv("InternalRef").' '.$prodser->ref.')';
+			else	// Common case
+			{
+				$ref_prodserv = $prodser->ref; // Show local ref
+				if ($ref_supplier) $ref_prodserv.= ($prodser->ref?' (':'').$outputlangs->transnoentitiesnoconv("SupplierRef").' '.$ref_supplier.($prodser->ref?')':'');
+			}
+		}
+		else
+		{
+			$ref_prodserv = $prodser->ref; // Show local ref only
+		}
+
+		if (! empty($libelleproduitservice) && ! empty($ref_prodserv)) $ref_prodserv .= " - ";
+	}
+
+	$libelleproduitservice=$prefix_prodserv.$ref_prodserv.$libelleproduitservice;
 
 	// Add an additional description for the category products
 	if (! empty($conf->global->CATEGORY_ADD_DESC_INTO_DOC) && $idprod && ! empty($conf->categorie->enabled))

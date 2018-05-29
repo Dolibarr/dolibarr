@@ -121,7 +121,7 @@ function limitChars(textarea, limit, infodiv)
 </script>';
 
         if ($showform) print "<form method=\"POST\" name=\"smsform\" enctype=\"multipart/form-data\" action=\"".$this->param["returnurl"]."\">\n";
-        
+
         print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
         foreach ($this->param as $key=>$value)
         {
@@ -130,7 +130,7 @@ function limitChars(textarea, limit, infodiv)
         print "<table class=\"border centpercent\">\n";
 
         // Substitution array
-        if ($this->withsubstit)
+        if (! empty($this->withsubstit))		// Unset or set ->withsubstit=0 to disable this.
         {
             print "<tr><td colspan=\"2\">";
             $help="";
@@ -259,7 +259,7 @@ function limitChars(textarea, limit, infodiv)
                 if (! empty($this->withtosocid) && $this->withtosocid > 0)
                 {
                     $liste=array();
-                    foreach ($soc->thirdparty_and_contact_phone_array() as $key=>$value)
+                    foreach ($soc->thirdparty_and_contact_phone_array() as $key => $value)
                     {
                         $liste[$key]=$value;
                     }
@@ -329,8 +329,8 @@ function limitChars(textarea, limit, infodiv)
 
         print "</table>\n";
 
-        
-        if ($showform) 
+
+        if ($showform)
         {
             print '<div class="center">';
             print '<input class="button" type="submit" name="sendmail" value="'.dol_escape_htmltag($langs->trans("SendSms")).'">';
@@ -340,10 +340,10 @@ function limitChars(textarea, limit, infodiv)
                 print '<input class="button" type="submit" name="cancel" value="'.dol_escape_htmltag($langs->trans("Cancel")).'">';
             }
             print '</div>';
-    
+
             print "</form>\n";
         }
-        
+
         print "<!-- End form SMS -->\n";
     }
 

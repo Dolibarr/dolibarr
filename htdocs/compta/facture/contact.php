@@ -143,13 +143,13 @@ if ($id > 0 || ! empty($ref))
 		$head = facture_prepare_head($object);
 
 		$totalpaye = $object->getSommePaiement();
-		
+
 		dol_fiche_head($head, 'contact', $langs->trans('InvoiceCustomer'), -1, 'bill');
 
 		// Invoice content
-		
-		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
+
+		$linkback = '<a href="' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1' . (! empty($socid) ? '&socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
+
 		$morehtmlref='<div class="refidno">';
 		// Ref customer
 		$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
@@ -190,11 +190,11 @@ if ($id > 0 || ! empty($ref))
 		    }
 		}
 		$morehtmlref.='</div>';
-	
+
 		$object->totalpaye = $totalpaye;   // To give a chance to dol_banner_tab to use already paid amount to show correct status
-	
+
 		dol_banner_tab($object, 'ref', $linkback, 1, 'facnumber', 'ref', $morehtmlref, '', 0, '', '', 1);
-		
+
 		dol_fiche_end();
 
 		print '<br>';

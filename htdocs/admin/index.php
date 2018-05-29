@@ -80,8 +80,8 @@ print img_picto('','puce').' '.$langs->trans("SetupDescription3", DOL_URL_ROOT.'
 if (! empty($setupcompanynotcomplete))
 {
 	$langs->load("errors");
-	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/company.php?mainmenu=home'.(empty($setupcompanynotcomplete)?'':'&action=edit').'">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 print '<br>';
 print '<br>';
@@ -92,8 +92,8 @@ print img_picto('','puce').' '.$langs->trans("SetupDescription4", DOL_URL_ROOT.'
 if (count($conf->modules) <= (empty($conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING)?1:$conf->global->MAIN_MIN_NB_ENABLED_MODULE_FOR_WARNING))	// If only user module enabled
 {
 	$langs->load("errors");
-	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"));
-	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.' '.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
+	$warnpicto=img_warning($langs->trans("WarningMandatorySetupNotComplete"), 'style="padding-right: 6px;"');
+	print '<br><div class="warning"><a href="'.DOL_URL_ROOT.'/admin/modules.php?mainmenu=home">'.$warnpicto.$langs->trans("WarningMandatorySetupNotComplete").'</a></div>';
 }
 print '<br>';
 print '<br>';

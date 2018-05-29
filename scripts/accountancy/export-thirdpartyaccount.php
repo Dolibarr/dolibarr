@@ -104,7 +104,7 @@ $exportlink = '';
 $nom = $langs->trans("ReportThirdParty");
 $period = $form->select_date($date_start, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end, 'date_end', 0, 0, 0, '', 1, 0, 1);
 $description = $langs->trans("DescThirdPartyReport");
-$builddate = time();
+$builddate=dol_now();
 
 $moreparam=array('action' => '');
 report_header($nom, $nomlink, $period, $periodlink, $description, $builddate, $exportlink, $moreparam);

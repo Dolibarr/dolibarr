@@ -102,11 +102,11 @@ class ProductAttributeValue
 		$return = array();
 
 		$sql = 'SELECT ';
-		
+
 		if ($only_used) {
 			$sql .= 'DISTINCT ';
 		}
-		
+
 		$sql .= 'v.fk_product_attribute, v.rowid, v.ref, v.value FROM '.MAIN_DB_PREFIX.'product_attribute_value v ';
 
 		if ($only_used) {
@@ -114,9 +114,9 @@ class ProductAttributeValue
 			$sql .= 'LEFT JOIN '.MAIN_DB_PREFIX.'product_attribute_combination c ON c.rowid = c2v.fk_prod_combination ';
 			$sql .= 'LEFT JOIN '.MAIN_DB_PREFIX.'product p ON p.rowid = c.fk_product_child ';
 		}
-		
+
 		$sql .= 'WHERE v.fk_product_attribute = '.(int) $prodattr_id;
-		
+
 		if ($only_used) {
 			$sql .= ' AND c2v.rowid IS NOT NULL AND p.tosell = 1';
 		}
@@ -168,12 +168,14 @@ class ProductAttributeValue
 	/**
 	 * Updates a product attribute value
 	 *
-	 * @return int
+	 * @param	User	$user	Object user
+	 * @return 	int				<0 if KO, >0 if OK
 	 */
-	public function update()
+	public function update(User $user)
 	{
 		//Ref must be uppercase
-		$this->ref = strtoupper($this->ref);
+		$this->ref = trim(strtoupper($this->ref));
+		$this->value = trim($this->value);
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."product_attribute_value
 		SET fk_product_attribute = '".(int) $this->fk_product_attribute."', ref = '".$this->db->escape($this->ref)."',

@@ -40,18 +40,49 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 if (! isset($argv[1]) || ! $argv[1]) {
-	print "Usage: ".$script_file." inputfile1\n";
+	print "Usage: ".$script_file." ModuleName\n";
 	exit(-1);
 }
-$inputfile1=$argv[1];
+$modulename=$argv[1];
 
 require_once ($path."../../htdocs/master.inc.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+
+$langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
 
 
 // Global variables
 $version=DOL_VERSION;
 $error=0;
 
+// Dir for custom dirs
+$tmp=explode(',', $dolibarr_main_document_root_alt);
+$dirins = $tmp[0];
+$dirread = $dirins;
+$forceddirread = 0;
+
+$tmpdir = explode('@', $module);
+if (! empty($tmpdir[1]))
+{
+	$module=$tmpdir[0];
+	$dirread=$tmpdir[1];
+	$forceddirread=1;
+}
+
+$FILEFLAG='modulebuilder.txt';
+
+$now=dol_now();
+$newmask = 0;
+if (empty($newmask) && ! empty($conf->global->MAIN_UMASK)) $newmask=$conf->global->MAIN_UMASK;
+if (empty($newmask))	// This should no happen
+{
+	$newmask='0664';
+}
 
 
 /*
@@ -60,8 +91,21 @@ $error=0;
 
 @set_time_limit(0);
 print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." *****\n";
-print $inputfile1."<br>";
+print "modulename=".$modulename."\n";
+print "dirins=".$dirins."\n";
 
+$FILENAMEDOC=strtolower($module).'.html';			// TODO Use/text PDF
+$dirofmodule = dol_buildpath(strtolower($module), 0).'/doc';
+$outputfiledoc = $dirofmodule.'/'.$FILENAMEDOC;
 
+$util = new Utils($db);
+$result = $util->generateDoc($module);
 
+if ($result <= 0)
+{
+	print $util->errors;
+	exit(1);
+}
 
+print $langs->trans("DocFileGeneratedInto", $outputfiledoc);
+exit(0);

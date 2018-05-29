@@ -45,10 +45,18 @@ $reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object,
 print $hookmanager->resPrint;
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
+//var_dump($extrafields->attributes);
 if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element]['label']))
 {
 	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $label)
 	{
+		// Discard if extrafield is a hidden field on form
+		if (empty($extrafields->attributes[$object->table_element]['list'][$key])) continue;	// 0 = Never visible field
+		if (abs($extrafields->attributes[$object->table_element]['list'][$key]) != 1 && abs($extrafields->attributes[$object->table_element]['list'][$key]) != 3) continue;  // <> -1 and <> 1 and <> 3 = not visible on forms, only on list
+
+		// Load language if required
+		if (! empty($extrafields->attributes[$object->table_element]['langfile'][$key])) $langs->load($extrafields->attributes[$object->table_element]['langfile'][$key]);
+
 		if ($action == 'edit_extras')
 		{
 			$value = (isset($_POST["options_" . $key]) ? $_POST["options_" . $key] : $object->array_options["options_" . $key]);
@@ -63,8 +71,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 		}
 		else
 		{
-			if (! empty($extrafields->attributes[$object->table_element]['ishidden'][$key])) print '<tr class="hideobject"><td>';
-			else print '<tr><td>';
+			print '<tr><td>';
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';
 			print '<td';
@@ -85,6 +92,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			if ($object->element=='shipping')         $permok=$user->rights->expedition->creer;
 			if ($object->element=='delivery')         $permok=$user->rights->expedition->livraison->creer;
 			if ($object->element=='productlot')       $permok=$user->rights->stock->creer;
+			if ($object->element=='facturerec') 	  $permok=$user->rights->facture->creer;
 
 			if (($object->statut == 0 || ! empty($extrafields->attributes[$object->table_element]['alwayseditable'][$key]))
 				&& $permok && ($action != 'edit_extras' || GETPOST('attribute') != $key)
@@ -99,8 +107,16 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$key.'" colspan="'.$cols.'">';
 
 			// Convert date into timestamp format
-			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('date','datetime'))) {
-				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $db->jdate($object->array_options['options_' . $key]);
+			if (in_array($extrafields->attributes[$object->table_element]['type'][$key], array('date','datetime')))
+			{
+				$datenotinstring = $object->array_options['options_' . $key];
+				// print 'X'.$object->array_options['options_' . $key].'-'.$datenotinstring.'x';
+				if (! is_numeric($object->array_options['options_' . $key]))	// For backward compatibility
+				{
+					$datenotinstring = $db->jdate($datenotinstring);
+				}
+				//print 'x'.$object->array_options['options_' . $key].'-'.$datenotinstring.' - '.dol_print_date($datenotinstring, 'dayhour');
+				$value = isset($_POST["options_" . $key]) ? dol_mktime($_POST["options_" . $key . "hour"], $_POST["options_" . $key . "min"], 0, $_POST["options_" . $key . "month"], $_POST["options_" . $key . "day"], $_POST["options_" . $key . "year"]) : $datenotinstring;
 			}
 
 			//TODO Improve element and rights detection
@@ -115,7 +131,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 				print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 				print '<input type="hidden" name="'.$fieldid.'" value="' . $object->id . '">';
 
-				print $extrafields->showInputField($key, $value,'','','',0,$object->id);
+				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
 
 				print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
 
@@ -123,7 +139,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 			}
 			else
 			{
-				print $extrafields->showOutputField($key, $value);
+				print $extrafields->showOutputField($key, $value, '', (empty($extrafieldsobjectkey)?'':$extrafieldsobjectkey));
 			}
 			print '</td></tr>' . "\n";
 
@@ -135,7 +151,7 @@ if (empty($reshook) && ! empty($extrafields->attributes[$object->table_element][
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
 				    	{
-				    		var val = $("select[name=\"options_"+parent_list+"\"]").val();
+				    		var val = $("select[name="+parent_list+"]").val();
 				    		var parentVal = parent_list + ":" + val;
 							if(val > 0) {
 					    		$("select[name=\""+child_list+"\"] option[parent]").hide();

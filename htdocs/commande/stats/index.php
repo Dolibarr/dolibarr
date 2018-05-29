@@ -280,7 +280,7 @@ if ($mode == 'customer')
     $liststatus=array(
         Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
         Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-        Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSent"),
+        Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSent"),
         Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
         Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
     );

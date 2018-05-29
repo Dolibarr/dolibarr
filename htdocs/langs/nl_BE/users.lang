@@ -12,6 +12,5 @@ CreateInternalUserDesc=Met dit formulier kan u een gebruiker intern in uw bedrij
 InternalExternalDesc=Een <b>interne</b> gebruiker is een gebruiker die deel uitmaakt van uw bedrijf/organisatie.<br>Een <b>externe</b> gebruiker is een afnemer, leverancier of andere.<br><br>In beide gevallen kunnen de rechten binnen Dolibarr ingesteld worden. Ook kan een externe gebruiker over een ander menuverwerker beschikken dan een interne gebruiker (Zie Home->Instellingen->Scherm)
 ConfirmCreateContact=Weet u zeker dat u een Dolibarr account wilt maken voor deze contactpersoon?
 ConfirmCreateThirdParty=Weet u zeker dat u een 'derde' wilt maken voor dit lid?
-UserAccountancyCode=Gebruiker accountancy code
 UserLogoff=Gebruiker logout
 DateEmployment=Datum van tewerkstelling

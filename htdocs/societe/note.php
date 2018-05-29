@@ -62,7 +62,7 @@ if (! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/thirdpartynameonly/'
 $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$title,$help_url);
 
-if ($id > 0)
+if ($object->id > 0)
 {
     /*
      * Affichage onglets
@@ -119,6 +119,11 @@ if ($id > 0)
     include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 
     dol_fiche_end();
+}
+else
+{
+	$langs->load("errors");
+	print $langs->trans("ErrorRecordNotFound");
 }
 
 llxFooter();

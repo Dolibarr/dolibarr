@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - paypal
 PaypalSetup=PayPal modülü kurulumu
 PaypalDesc=Bu modül  <a href="http://www.paypal.com" target="_blank">PayPal</a> üzerinden müşteriler tarafından ödeme yapılmasını sağlar. Bu bir ücretsiz ödeme veya belirli bir Dolibarr nesnesine (fatura, siparş,…) bir ödeme yapmak için kullanılabilir
-PaypalOrCBDoPayment=Kredi kartı veya PayPal ile ödeme
+PaypalOrCBDoPayment=PayPal ile öde (Kredi Kartı veya Paypal)
 PaypalDoPayment=Paypal ile ödeme
 PAYPAL_API_SANDBOX=Test/sandbox modu
 PAYPAL_API_USER=API kullanıcı adı
@@ -11,14 +11,14 @@ PAYPAL_SSLVERSION=Curl SSL Sürümü
 PAYPAL_API_INTEGRAL_OR_PAYPALONLY="Dahili" (kredi kartı+paypal) ya da sadece "Paypal" ödemesi sunar
 PaypalModeIntegral=Tümlev
 PaypalModeOnlyPaypal=Yalnızca PayPal
-PAYPAL_CSS_URL=Ödeme sayfasındaki CSS stil sayfasının isteğe bağlı URL'si
+ONLINE_PAYMENT_CSS_URL=Online ödeme sayfasındaki CSS stil sayfasının isteğe bağlı URL'si
 ThisIsTransactionId=Bu işlem kimliğidir: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Posta yoluyla bir belge gönderdiğinizde, Paypal ödeme url'sini ekleyin
 PredefinedMailContentLink=Ödemenizi via PayPal\n\n%s\n\n ile yapmak için aşağıdaki güvenli bağlantıya tıklayabilirsiniz
-YouAreCurrentlyInSandboxMode=Şu anda "Sandbox" modundasınız
+YouAreCurrentlyInSandboxMode=Şu anda %s "sandbox" modundasınız
 NewOnlinePaymentReceived=Yeni online ödeme alındı
 NewOnlinePaymentFailed=Yeni online ödeme denendi ancak başarısız oldu
-PAYPAL_PAYONLINE_SENDEMAIL=Bir ödemeden sonra uyarı Epostası (başarılı ya da değil)
+ONLINE_PAYMENT_SENDEMAIL=Bir ödemeden sonra uyarı Epostası (başarılı ya da değil)
 ReturnURLAfterPayment=Ödemen sonra URL ye dön
 ValidationOfOnlinePaymentFailed=Online ödemenin doğrulaması başarısız oldu
 PaymentSystemConfirmPaymentPageWasCalledButFailed=Ödeme sistemi tarafından çağrılan ödeme onay sayfası bir hata verdi

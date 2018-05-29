@@ -426,8 +426,8 @@ if ($id > 0 || ! empty($ref)) {
 		}
 	}
 
-	// Auteur
-	print '<tr><td>' . $langs->trans("AuthorRequest") . '</td>';
+	// Author
+	print '<tr><td class="titlefield">' . $langs->trans("AuthorRequest") . '</td>';
 	print '<td>' . $author->getNomUrl(1, '', 0, 0, 0) . '</td>';
 	print '</tr>';
 
@@ -443,11 +443,13 @@ if ($id > 0 || ! empty($ref)) {
 		$disabled = 0;
 
 	// Line of orders
-	if ($object->statut <= 2 || $object->statut >= 6) {
-		print $langs->trans("OrderStatusNotReadyToDispatch");
+	if ($object->statut <= CommandeFournisseur::STATUS_ACCEPTED || $object->statut >= CommandeFournisseur::STATUS_CANCELED) {
+		print '<span class="opacitymedium">'.$langs->trans("OrderStatusNotReadyToDispatch").'</span>';
 	}
 
-	if ($object->statut == 3 || $object->statut == 4 || $object->statut == 5) {
+	if ($object->statut == CommandeFournisseur::STATUS_ORDERSENT
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_PARTIALLY
+		|| $object->statut == CommandeFournisseur::STATUS_RECEIVED_COMPLETELY) {
 		$entrepot = new Entrepot($db);
 		$listwarehouses = $entrepot->list_array(1);
 
@@ -455,7 +457,7 @@ if ($id > 0 || ! empty($ref)) {
 		print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="dispatch">';
 
-		print '<div class="div-table-responsive">';
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
 		// Set $products_dispatched with qty dispatched for each product id
@@ -547,6 +549,9 @@ if ($id > 0 || ! empty($ref)) {
 
 						print "\n";
 						print '<!-- Line to dispatch ' . $suffix . ' -->' . "\n";
+						// hidden fields for js function
+						print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
+						print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 						print '<tr class="oddeven">';
 
 						$linktoprod = '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
@@ -607,9 +612,6 @@ if ($id > 0 || ! empty($ref)) {
 							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
 							}
 
-							// hidden fields for js function
-							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
-							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 							print '</td>';
 
 							print '<td>';
@@ -649,16 +651,13 @@ if ($id > 0 || ! empty($ref)) {
 							    print '<input class="maxwidth75" name="pu' . $suffix . '" type="hidden" value="' . price2num($up_ht_disc, 'MU') . '">';
 							}
 
-							// hidden fields for js function
-							print '<input id="qty_ordered' . $suffix . '" type="hidden" value="' . $objp->qty . '">';
-							print '<input id="qty_dispatched' . $suffix . '" type="hidden" value="' . ( float ) $products_dispatched[$objp->rowid] . '">';
 							print '</td>';
 						}
 
 						// Qty to dispatch
 						print '<td align="right">';
 						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" size="8" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
-                        print '</td>';
+						print '</td>';
 
                         print '<td>';
 						if (! empty($conf->productbatch->enabled) && $objp->tobatch == 1) {
@@ -736,7 +735,7 @@ if ($id > 0 || ! empty($ref)) {
 
 	// List of lines already dispatched
 	$sql = "SELECT p.ref, p.label,";
-	$sql .= " e.rowid as warehouse_id, e.label as entrepot,";
+	$sql .= " e.rowid as warehouse_id, e.ref as entrepot,";
 	$sql .= " cfd.rowid as dispatchlineid, cfd.fk_product, cfd.qty, cfd.eatby, cfd.sellby, cfd.batch, cfd.comment, cfd.status";
 	$sql .= " FROM " . MAIN_DB_PREFIX . "product as p,";
 	$sql .= " " . MAIN_DB_PREFIX . "commande_fournisseur_dispatch as cfd";

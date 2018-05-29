@@ -34,6 +34,7 @@ class Cronjob extends CommonObject
 	public $table_element='cronjob';		//!< Name of table without prefix where object is stored
     public $picto = 'cron';
 
+    public $entity;
     public $jobtype;
 	public $tms='';
 	public $datec='';
@@ -153,7 +154,7 @@ class Cronjob extends CommonObject
 
         // Insert request
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."cronjob(";
-
+		$sql.= "entity,";
 		$sql.= "datec,";
 		$sql.= "jobtype,";
 		$sql.= "label,";
@@ -183,6 +184,7 @@ class Cronjob extends CommonObject
 		$sql.= "libname,";
 		$sql.= "test";
 		$sql.= ") VALUES (";
+		$sql.= " ".(! isset($this->entity)?$conf->entity:$this->db->escape($this->entity)).",";
 		$sql.= " '".$this->db->idate($now)."',";
 		$sql.= " ".(! isset($this->jobtype)?'NULL':"'".$this->db->escape($this->jobtype)."'").",";
 		$sql.= " ".(! isset($this->label)?'NULL':"'".$this->db->escape($this->label)."'").",";
@@ -201,7 +203,7 @@ class Cronjob extends CommonObject
 		$sql.= " ".(! isset($this->lastresult)?'NULL':"'".$this->db->escape($this->lastresult)."'").",";
 		$sql.= " ".(! isset($this->datelastresult) || dol_strlen($this->datelastresult)==0?'NULL':"'".$this->db->idate($this->datelastresult)."'").",";
 		$sql.= " ".(! isset($this->lastoutput)?'NULL':"'".$this->db->escape($this->lastoutput)."'").",";
-		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->unitfrequency."'").",";
+		$sql.= " ".(! isset($this->unitfrequency)?'NULL':"'".$this->db->escape($this->unitfrequency)."'").",";
 		$sql.= " ".(! isset($this->frequency)?'0':$this->frequency).",";
 		$sql.= " ".(! isset($this->status)?'0':$this->status).",";
 		$sql.= " ".$user->id.",";
@@ -265,8 +267,8 @@ class Cronjob extends CommonObject
     function fetch($id)
     {
         $sql = "SELECT";
-		$sql.= " t.rowid,";
-
+        $sql.= " t.rowid,";
+        $sql.= " t.entity,";
 		$sql.= " t.tms,";
 		$sql.= " t.datec,";
 		$sql.= " t.jobtype,";
@@ -310,7 +312,7 @@ class Cronjob extends CommonObject
 
                 $this->id    = $obj->rowid;
                 $this->ref = $obj->rowid;
-
+				$this->entity = $obj->entity;
 				$this->tms = $this->db->jdate($obj->tms);
 				$this->datec = $this->db->jdate($obj->datec);
 				$this->label = $obj->label;
@@ -417,7 +419,7 @@ class Cronjob extends CommonObject
     		}
     	}
 
-    	$sql.= " ORDER BY $sortfield $sortorder ";
+    	$sql.= $this->db->order($sortfield,$sortorder);
     	if (!empty($limit) && !empty($offset)) {
     		$sql.= $this->db->plimit($limit + 1,$offset);
     	}
@@ -445,7 +447,6 @@ class Cronjob extends CommonObject
 
 	    			$line->id    = $obj->rowid;
 	    			$line->ref = $obj->rowid;
-
 	    			$line->entity = $obj->entity;
 	    			$line->tms = $this->db->jdate($obj->tms);
 	    			$line->datec = $this->db->jdate($obj->datec);
@@ -575,7 +576,7 @@ class Cronjob extends CommonObject
 
         // Update request
         $sql = "UPDATE ".MAIN_DB_PREFIX."cronjob SET";
-
+        $sql.= " entity=".(isset($this->entity)?$this->db->escape($this->entity):$conf->entity).",";
 		$sql.= " label=".(isset($this->label)?"'".$this->db->escape($this->label)."'":"null").",";
 		$sql.= " jobtype=".(isset($this->jobtype)?"'".$this->db->escape($this->jobtype)."'":"null").",";
 		$sql.= " command=".(isset($this->command)?"'".$this->db->escape($this->command)."'":"null").",";
@@ -773,7 +774,7 @@ class Cronjob extends CommonObject
 	{
 		$this->id=0;
 		$this->ref=0;
-
+		$this->entity=0;
 		$this->tms='';
 		$this->datec='';
 		$this->label='';
@@ -804,6 +805,69 @@ class Cronjob extends CommonObject
 		$this->maxrun=100;
         $this->libname = '';
 	}
+
+
+	/**
+	 *  Return a link to the object card (with optionaly the picto)
+	 *
+	 *	@param	int		$withpicto					Include picto in link (0=No picto, 1=Include picto into link, 2=Only picto)
+	 *	@param	string	$option						On what the link point to ('nolink', ...)
+	 *  @param	int  	$notooltip					1=Disable tooltip
+	 *  @param  string  $morecss            		Add more css on link
+	 *  @param  int     $save_lastsearch_value    	-1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+	 *	@return	string								String with URL
+	 */
+	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
+	{
+		global $db, $conf, $langs;
+		global $dolibarr_main_authentication, $dolibarr_main_demo;
+		global $menumanager;
+
+		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
+
+		$result = '';
+		$companylink = '';
+
+		$label = '<u>' . $langs->trans("CronJob") . '</u>';
+		$label.= '<br>';
+		$label.= '<b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
+
+		$url = DOL_URL_ROOT.'/cron/card.php?id='.$this->id;
+
+		if ($option != 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
+
+		$linkclose='';
+		if (empty($notooltip))
+		{
+			if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
+			{
+				$label=$langs->trans("ShowCronJob");
+				$linkclose.=' alt="'.dol_escape_htmltag($label, 1).'"';
+			}
+			$linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
+			$linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+		}
+		else $linkclose = ($morecss?' class="'.$morecss.'"':'');
+
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
+		$linkend='</a>';
+
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= $this->ref;
+		$result .= $linkend;
+		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
+
+		return $result;
+	}
+
 
 	/**
 	 *	Load object information
@@ -867,6 +931,16 @@ class Cronjob extends CommonObject
 			return -1;
 		}
 
+		// Force the environment of running to the environment declared for job, so jobs launched from command line will run into correct environment
+		// When job is ran from GUI, the environment should already be same, except if job has entity 0 (visible into all environments)
+		if ($conf->entity != $this->entity && $this->entity > 0)
+		{
+			dol_syslog("We try to run a job in entity ".$this->entity." when we are in entity ".$conf->entity, LOG_WARNING);
+		}
+		$savcurrententity = $conf->entity;
+		$conf->entity = $this->entity;
+		dol_syslog(get_class($this)."::run_jobs entity for running job is ".$conf->entity);
+
 		require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 		$user=new User($this->db);
 		$result=$user->fetch('',$userlogin);
@@ -874,6 +948,7 @@ class Cronjob extends CommonObject
 		{
 			$this->error="User Error:".$user->error;
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+			$conf->entity = $savcurrententity;
 			return -1;
 		}
 		else
@@ -882,6 +957,7 @@ class Cronjob extends CommonObject
 			{
 				$this->error=" User user login:".$userlogin." do not exists";
 				dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+				$conf->entity = $savcurrententity;
 				return -1;
 			}
 		}
@@ -913,6 +989,7 @@ class Cronjob extends CommonObject
 		$result = $this->update($user);       // This include begin/commit
 		if ($result<0) {
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+			$conf->entity = $savcurrententity;
 			return -1;
 		}
 
@@ -967,8 +1044,9 @@ class Cronjob extends CommonObject
 			{
 				dol_syslog(get_class($this)."::run_jobs START ".$this->objectname."->".$this->methodename."(".$this->params.");", LOG_DEBUG);
 
-				// Create Object for the call module
+				// Create Object for the called module
 				$object = new $this->objectname($this->db);
+				if ($this->entity > 0) $object->entity = $this->entity;		// We work on a dedicated entity
 
 				$params_arr = array_map('trim', explode(",",$this->params));
 
@@ -1010,6 +1088,7 @@ class Cronjob extends CommonObject
 			{
 				$this->error = $langs->trans('CronCannotLoadLib') . ': ' . $libpath;
 				dol_syslog(get_class($this) . "::run_jobs " . $this->error, LOG_ERR);
+				$conf->entity = $savcurrententity;
 				return -1;
 			}
 			// Load langs
@@ -1017,6 +1096,7 @@ class Cronjob extends CommonObject
 			if ($result<0)
 			{
 				dol_syslog(get_class($this) . "::run_jobs Cannot load module langs" . $langs->error, LOG_ERR);
+				$conf->entity = $savcurrententity;
 				return -1;
 			}
 			dol_syslog(get_class($this) . "::run_jobs " . $this->libname . "::" . $this->methodename."(" . $this->params . ");", LOG_DEBUG);
@@ -1051,61 +1131,24 @@ class Cronjob extends CommonObject
 		// Run a command line
 		if ($this->jobtype=='command')
 		{
-			$command=escapeshellcmd($this->command);
-			$command.=" 2>&1";
-			dol_mkdir($conf->cronjob->dir_temp);
-			$outputfile=$conf->cronjob->dir_temp.'/cronjob.'.$userlogin.'.out';
+			$outputdir = $conf->cron->dir_temp;
+			if (empty($outputdir)) $outputdir = $conf->cronjob->dir_temp;
 
-			dol_syslog(get_class($this)."::run_jobs system:".$command, LOG_DEBUG);
-			$output_arr=array();
-
-			$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
-			if ($execmethod == 1)
+			if (! empty($outputdir))
 			{
-				exec($command, $output_arr, $retval);
-				if ($retval != 0)
-				{
-				    $langs->load("errors");
-				    dol_syslog(get_class($this)."::run_jobs retval=".$retval, LOG_ERR);
-				    $this->error = 'Error '.$retval;
-				    $this->lastoutput = '';     // Will be filled later
-				    $this->lastresult = $retval;
-				    $retval = $this->lastresult;
-				    $error++;
-				}
+				dol_mkdir($outputdir);
+				$outputfile=$outputdir.'/cronjob.'.$userlogin.'.out';	// File used with popen method
+
+				// Execute a CLI
+				include_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
+				$utils = new Utils($this->db);
+				$arrayresult = $utils->executeCLI($this->command, $outputfile);
+
+				$retval = $arrayresult['result'];
+				$this->error      = $arrayresult['error'];
+				$this->lastoutput = $arrayresult['output'];
+				$this->lastresult = $arrayresult['result'];
 			}
-			if ($execmethod == 2)
-			{
-				$ok=0;
-				$handle = fopen($outputfile, 'w');
-				if ($handle)
-				{
-					dol_syslog("Run command ".$command);
-					$handlein = popen($command, 'r');
-					while (!feof($handlein))
-					{
-						$read = fgets($handlein);
-						fwrite($handle,$read);
-						$output_arr[]=$read;
-					}
-					pclose($handlein);
-					fclose($handle);
-				}
-				if (! empty($conf->global->MAIN_UMASK)) @chmod($outputfile, octdec($conf->global->MAIN_UMASK));
-			}
-
-			// Update with result
-    		if (is_array($output_arr) && count($output_arr)>0)
-    		{
-    			foreach($output_arr as $val)
-    			{
-    				$this->lastoutput.=$val."\n";
-    			}
-    		}
-
-    		$this->lastresult=$retval;
-
-    		dol_syslog(get_class($this)."::run_jobs output_arr:".var_export($output_arr,true)." lastoutput=".$this->lastoutput." lastresult=".$this->lastresult, LOG_DEBUG);
 		}
 
 		dol_syslog(get_class($this)."::run_jobs now we update job to track it is finished (with success or error)");
@@ -1116,14 +1159,14 @@ class Cronjob extends CommonObject
 		if ($result < 0)
 		{
 			dol_syslog(get_class($this)."::run_jobs ".$this->error, LOG_ERR);
+			$conf->entity = $savcurrententity;
 			return -1;
 		}
-		else
-		{
-			return $error?-1:1;
-		}
 
+		$conf->entity = $savcurrententity;
+		return $error?-1:1;
 	}
+
 
 	/**
 	 * Reprogram a job

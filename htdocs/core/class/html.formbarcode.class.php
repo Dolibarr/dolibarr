@@ -148,6 +148,7 @@ class FormBarCode
                 $i++;
             }
             print "</select>";
+            print ajax_combobox("select_".$htmlname);
         }
         else {
             dol_print_error($this->db);

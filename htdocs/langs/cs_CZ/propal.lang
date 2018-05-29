@@ -4,7 +4,6 @@ Proposal=Obchodní nabídka
 ProposalShort=Nabídka
 ProposalsDraft=Navrhnout obchodní nabídky
 ProposalsOpened=Otevřené obchodní návrhy
-Prop=Obchodní nabídky
 CommercialProposal=Obchodní nabídka
 PdfCommercialProposalTitle=Obchodní nabídka
 ProposalCard=Karta obchodních nabídek
@@ -64,6 +63,7 @@ ProposalLine=Řádky nabídky
 AvailabilityPeriod=Dostupné zpoždění
 SetAvailability=Nastavte si dostupné zpoždění
 AfterOrder=po objednání
+OtherProposals=Další nabídky
 ##### Availability #####
 AvailabilityTypeAV_NOW=Bezprostřední
 AvailabilityTypeAV_1W=1 týden

@@ -205,7 +205,8 @@ class Projects extends DolibarrApi
     }
 
     /**
-     * Get tasks of a project
+     * Get tasks of a project.
+     * See also API /tasks
      *
      * @param int   $id                     Id of project
      * @param int   $includetimespent       0=Return only list of tasks. 1=Include a summary of time spent, 2=Include details of time spent lines (2 is no implemented yet)
@@ -342,7 +343,7 @@ class Projects extends DolibarrApi
       );
 
       if ($updateRes > 0) {
-        return $this->get($id)->line->rowid;
+        return $updateRes;
 
       }
       return false;
@@ -435,7 +436,7 @@ class Projects extends DolibarrApi
             $this->project->$field = $value;
         }
 
-        if($this->project->update(DolibarrApiAccess::$user, 0) > 0)
+        if($this->project->update(DolibarrApiAccess::$user) >= 0)
         {
             return $this->get($id);
         }
@@ -513,7 +514,7 @@ class Projects extends DolibarrApi
 
 		$result = $this->project->setValid(DolibarrApiAccess::$user, $notrigger);
 		if ($result == 0) {
-		    throw new RestException(500, 'Error nothing done. May be object is already validated');
+		    throw new RestException(304, 'Error nothing done. May be object is already validated');
 		}
 		if ($result < 0) {
 		    throw new RestException(500, 'Error when validating Project: '.$this->project->error);

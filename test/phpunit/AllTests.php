@@ -85,12 +85,16 @@ class AllTests
         $suite->addTestSuite('CompanyLibTest');
         require_once dirname(__FILE__).'/DateLibTest.php';
         $suite->addTestSuite('DateLibTest');
+        require_once dirname(__FILE__).'/UtilsTest.php';
+        $suite->addTestSuite('UtilsTest');
         //require_once dirname(__FILE__).'/DateLibTzFranceTest.php';
         //$suite->addTestSuite('DateLibTzFranceTest');
         require_once dirname(__FILE__).'/MarginsLibTest.php';
         $suite->addTestSuite('MarginsLibTest');
         require_once dirname(__FILE__).'/FilesLibTest.php';
         $suite->addTestSuite('FilesLibTest');
+        require_once dirname(__FILE__).'/GetUrlLibTest.php';
+        $suite->addTestSuite('GetUrlLibTest');
         require_once dirname(__FILE__).'/JsonLibTest.php';
         $suite->addTestSuite('JsonLibTest');
         require_once dirname(__FILE__).'/ImagesLibTest.php';
@@ -112,6 +116,11 @@ class AllTests
 
         require_once dirname(__FILE__).'/SecurityTest.php';
         $suite->addTestSuite('SecurityTest');
+
+        require_once dirname(__FILE__).'/UserTest.php';
+        $suite->addTestSuite('UserTest');
+        require_once dirname(__FILE__).'/UserGroupTest.php';
+        $suite->addTestSuite('UserGroupTest');
 
         require_once dirname(__FILE__).'/NumberingModulesTest.php';
         $suite->addTestSuite('NumberingModulesTest');
@@ -151,6 +160,9 @@ class AllTests
         require_once dirname(__FILE__).'/PropalTest.php';
         $suite->addTestSuite('PropalTest');
 
+        require_once dirname(__FILE__).'/SupplierProposalTest.php';
+        $suite->addTestSuite('SupplierProposalTest');
+
         require_once dirname(__FILE__).'/CommandeTest.php';
         $suite->addTestSuite('CommandeTest');
 
@@ -166,10 +178,6 @@ class AllTests
         require_once dirname(__FILE__).'/FactureFournisseurTest.php';
         $suite->addTestSuite('FactureFournisseurTest');
 
-        require_once dirname(__FILE__).'/UserTest.php';
-        $suite->addTestSuite('UserTest');
-        require_once dirname(__FILE__).'/UserGroupTest.php';
-        $suite->addTestSuite('UserGroupTest');
         require_once dirname(__FILE__).'/BankAccountTest.php';
         $suite->addTestSuite('BankAccountTest');
         require_once dirname(__FILE__).'/CompanyBankAccountTest.php';
@@ -192,21 +200,28 @@ class AllTests
         require_once dirname(__FILE__).'/CategorieTest.php';
         $suite->addTestSuite('CategorieTest');
 
+        require_once dirname(__FILE__).'/AccountingAccountTest.php';
+        $suite->addTestSuite('AccountingAccountTest');
+
         require_once dirname(__FILE__).'/RestAPIUserTest.php';
         $suite->addTestSuite('RestAPIUserTest');
 
-        require_once dirname(__FILE__).'/WebservicesProductsTest.php';
-        $suite->addTestSuite('WebservicesProductsTest');
-        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
-        $suite->addTestSuite('WebservicesInvoicesTest');
-        require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
-        $suite->addTestSuite('WebservicesOrdersTest');
-        require_once dirname(__FILE__).'/WebservicesOtherTest.php';
-        $suite->addTestSuite('WebservicesOtherTest');
-        require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
-        $suite->addTestSuite('WebservicesThirdpartyTest');
-        require_once dirname(__FILE__).'/WebservicesUserTest.php';
-        $suite->addTestSuite('WebservicesUserTest');
+        // Test only with php7.2 or less
+        //if ((float) phpversion() < 7.3)
+        //{
+        	require_once dirname(__FILE__).'/WebservicesProductsTest.php';
+	        $suite->addTestSuite('WebservicesProductsTest');
+	        require_once dirname(__FILE__).'/WebservicesInvoicesTest.php';
+	        $suite->addTestSuite('WebservicesInvoicesTest');
+	        require_once dirname(__FILE__).'/WebservicesOrdersTest.php';
+	        $suite->addTestSuite('WebservicesOrdersTest');
+	        require_once dirname(__FILE__).'/WebservicesOtherTest.php';
+	        $suite->addTestSuite('WebservicesOtherTest');
+	        require_once dirname(__FILE__).'/WebservicesThirdpartyTest.php';
+	        $suite->addTestSuite('WebservicesThirdpartyTest');
+	        require_once dirname(__FILE__).'/WebservicesUserTest.php';
+	        $suite->addTestSuite('WebservicesUserTest');
+        //}
 
         require_once dirname(__FILE__).'/ExportTest.php';
         $suite->addTestSuite('ExportTest');

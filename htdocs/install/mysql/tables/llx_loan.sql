@@ -23,24 +23,24 @@ create table llx_loan
   entity						integer DEFAULT 1 NOT NULL,
   datec							datetime,
   tms							timestamp,
-  
+
   label							varchar(80) NOT NULL,
   fk_bank						integer,
-  
-  capital						real     default 0 NOT NULL,
+
+  capital						double(24,8) default 0 NOT NULL,
   datestart						date,
   dateend						date,
   nbterm						real,
   rate							double  NOT NULL,
-  
-  note_private                  text,
-  note_public                   text,
-  
-  capital_position				real     default 0,		-- If not a new loan, just have the position of capital
+
+  note_private					text,
+  note_public					text,
+
+  capital_position				double(24,8) default 0,		-- If not a new loan, just have the position of capital
   date_position					date,
-  
+
   paid							smallint default 0 NOT NULL,
-  
+
   accountancy_account_capital	varchar(32),
   accountancy_account_insurance	varchar(32),
   accountancy_account_interest	varchar(32),

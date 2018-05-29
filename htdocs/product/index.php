@@ -134,6 +134,8 @@ while ($objp = $db->fetch_object($result))
 	$prodser[$objp->fk_product_type][$status]=$objp->total;
 }
 
+
+print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").'</th></tr>';
 if (! empty($conf->product->enabled))
@@ -188,11 +190,13 @@ print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="rig
 print $total;
 print '</td></tr>';
 print '</table>';
+print '</div>';
 
 if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHSTATS_ON_PRODUCTS))
 {
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 	print '<br>';
+	print '<div class="div-table-responsive-no-min">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Categories").'</th></tr>';
 	print '<tr '.$bc[0].'><td align="center" colspan="2">';
@@ -217,25 +221,38 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 			{
 				$obj = $db->fetch_object($result);
 				if ($i < $nbmax)
-					$dataseries[]=array('label'=>$obj->label,'data'=>round($obj->nb));
+				{
+					$dataseries[]=array($obj->label, round($obj->nb));
+				}
 				else
+				{
 					$rest+=$obj->nb;
+				}
 				$total+=$obj->nb;
 				$i++;
 			}
 			if ($i > $nbmax)
-				$dataseries[]=array('label'=>$langs->trans("Other"),'data'=>round($rest));
-			$data=array('series'=>$dataseries);
-			dol_print_graph('statscategproduct',300,180,$data,1,'pie',0);
+			{
+				$dataseries[]=array($langs->trans("Other"), round($rest));
+			}
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
+			$dolgraph = new DolGraph();
+			$dolgraph->SetData($dataseries);
+			$dolgraph->setShowLegend(1);
+			$dolgraph->setShowPercent(1);
+			$dolgraph->SetType(array('pie'));
+			$dolgraph->setWidth('100%');
+			$dolgraph->draw('idstatscategproduct');
+			print $dolgraph->show($total?0:1);
 		}
 		else
 		{
-			$var=true;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
 
-				print '<tr $bc[$var]><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
+				print '<tr><td>'.$obj->label.'</td><td>'.$obj->nb.'</td></tr>';
 				$total+=$obj->nb;
 				$i++;
 			}
@@ -246,6 +263,7 @@ if (! empty($conf->categorie->enabled) && ! empty($conf->global->CATEGORY_GRAPHS
 	print $total;
 	print '</td></tr>';
 	print '</table>';
+	print '</div>';
 }
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
@@ -281,6 +299,7 @@ if ($result)
 		if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts",$max);
 		if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices",$max);
 
+		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
 		$colnb=5;
@@ -355,6 +374,7 @@ if ($result)
 		$db->free($result);
 
 		print "</table>";
+		print '</div>';
 		print '<br>';
 	}
 }

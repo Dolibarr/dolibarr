@@ -62,7 +62,7 @@ $savingdocmask='';
 if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
 {
 	//var_dump($modulepart);
-	if (in_array($modulepart,array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','project','project_task','expensereport')))
+	if (in_array($modulepart,array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','project','project_task','expensereport','tax')))
 	{
 		$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 	}
@@ -87,7 +87,7 @@ $formfile->form_attach_new_file(
 );
 
 $disablemove=1;
-if ($modulepart == 'produit') $disablemove=0;
+if (in_array($modulepart, array('product', 'produit', 'societe', 'user'))) $disablemove=0;		// Drag and drop for up and down allowed on product, thirdparty, ...
 
 // List of document
 $formfile->list_of_documents(

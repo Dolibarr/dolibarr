@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2016 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
- * Copyright (C) 2016      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2016-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ $langs->load("salaries");
 
 $mesg = '';
 $action = GETPOST('action','aZ09');
-$cancel = GETPOST('cancel');
+$cancel = GETPOST('cancel','alpha');
 $id = GETPOST('id', 'int');
 $rowid = GETPOST('rowid', 'int');
 
@@ -53,12 +53,10 @@ if (! $user->rights->accounting->chartofaccount) accessforbidden();
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'sortorder');
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -69,8 +67,8 @@ $arrayfields=array(
     'aa.account_number'=>array('label'=>$langs->trans("AccountNumber"), 'checked'=>1),
     'aa.label'=>array('label'=>$langs->trans("Label"), 'checked'=>1),
 	'aa.account_parent'=>array('label'=>$langs->trans("Accountparent"), 'checked'=>0),
-    'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>0),
-    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>0),
+    'aa.pcg_type'=>array('label'=>$langs->trans("Pcgtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
+    'aa.pcg_subtype'=>array('label'=>$langs->trans("Pcgsubtype"), 'checked'=>1, 'help'=>'PcgtypeDesc'),
 	'aa.active'=>array('label'=>$langs->trans("Activated"), 'checked'=>1)
 );
 
@@ -84,8 +82,8 @@ $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'accounting
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction')) { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha')) { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -107,14 +105,32 @@ if (empty($reshook))
 		$search_array_options=array();
     }
 
-    if (GETPOST('change_chart'))
+    if (GETPOST('change_chart','alpha'))
     {
         $chartofaccounts = GETPOST('chartofaccounts', 'int');
 
-        if (! empty($chartofaccounts)) {
+        if ($chartofaccounts > 0)
+        {
+			// Get language code for this $chartofaccounts
+			$sql ='SELECT code FROM '.MAIN_DB_PREFIX.'c_country as c, '.MAIN_DB_PREFIX.'accounting_system as a';
+			$sql.=' WHERE c.rowid = a.fk_country AND a.rowid = '.(int) $chartofaccounts;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+				$country_code = $obj->code;
+			}
+			else dol_print_error($db);
+
+			// Try to load sql file
+			if ($country_code)
+			{
+				$sqlfile = DOL_DOCUMENT_ROOT.'/install/mysql/data/llx_accounting_account_'.strtolower($country_code).'.sql';
+				$result = run_sql($sqlfile, 1, 0, 1);
+			}
 
             if (! dolibarr_set_const($db, 'CHARTOFACCOUNTS', $chartofaccounts, 'chaine', 0, '', $conf->entity)) {
-                $error ++;
+                $error++;
             }
         } else {
             $error ++;
@@ -190,13 +206,14 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 
-    $params='';
+    $param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-	if ($search_account) $params.= '&search_account='.urlencode($search_account);
-	if ($search_label) $params.= '&search_label='.urlencode($search_label);
-	if ($search_accountparent) $params.= '&search_accountparent='.urlencode($search_accountparent);
-	if ($search_pcgtype) $params.= '&search_pcgtype='.urlencode($search_pcgtype);
-	if ($search_pcgsubtype) $params.= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($search_account) $param.= '&search_account='.urlencode($search_account);
+	if ($search_label) $param.= '&search_label='.urlencode($search_label);
+	if ($search_accountparent) $param.= '&search_accountparent='.urlencode($search_accountparent);
+	if ($search_pcgtype) $param.= '&search_pcgtype='.urlencode($search_pcgtype);
+	if ($search_pcgsubtype) $param.= '&search_pcgsubtype='.urlencode($search_pcgsubtype);
     if ($optioncss != '') $param.='&optioncss='.$optioncss;
 
 
@@ -212,31 +229,36 @@ if ($resql)
 
 	$htmlbuttonadd = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("Addanaccount") . '</a>';
 
-    print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $params, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd);
+	print_barre_liste($langs->trans('ListAccounts'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_accountancy', 0, $htmlbuttonadd, '', $limit);
 
 	// Box to select active chart of account
     print $langs->trans("Selectchartofaccounts") . " : ";
     print '<select class="flat" name="chartofaccounts" id="chartofaccounts">';
-    $sql = "SELECT rowid, pcg_version, label, active";
-    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system";
-    $sql .= " WHERE active = 1";
-    dol_syslog('accountancy/admin/account.php:: $sql=' . $sql);
+    $sql = "SELECT a.rowid, a.pcg_version, a.label, a.active, c.code as country_code";
+    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_system as a";
+    $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as c ON a.fk_country = c.rowid";
+    $sql .= " WHERE a.active = 1";
+    dol_syslog('accountancy/admin/account.php $sql='.$sql);
+    print $sql;
     $resqlchart = $db->query($sql);
     if ($resqlchart) {
         $numbis = $db->num_rows($resqlchart);
         $i = 0;
-        while ( $i < $numbis ) {
-            $row = $db->fetch_row($resqlchart);
+        while ($i < $numbis) {
+            $obj = $db->fetch_object($resqlchart);
 
-            print '<option value="' . $row[0] . '"';
-            print $pcgver == $row[0] ? ' selected' : '';
-            print '>' . $row[1] . ' - ' . $row[2] . '</option>';
+            print '<option value="' . $obj->rowid . '"';
+            print ($pcgver == $obj->rowid) ? ' selected' : '';
+            print '>' . $obj->pcg_version . ' - ' . $obj->label . ' - (' . $obj->country_code . ')</option>';
 
-            $i ++;
+            $i++;
         }
     }
+    else dol_print_error($db);
     print "</select>";
+    print ajax_combobox("chartofaccounts");
     print '<input type="submit" class="button" name="change_chart" value="'.dol_escape_htmltag($langs->trans("ChangeAndLoad")).'">';
+
     print '<br>';
 	print '<br>';
 
@@ -264,8 +286,8 @@ if ($resql)
 	if (! empty($arrayfields['aa.account_number']['checked']))	print_liste_field_titre($arrayfields['aa.account_number']['label'], $_SERVER["PHP_SELF"],"aa.account_number","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['aa.label']['checked']))			print_liste_field_titre($arrayfields['aa.label']['label'], $_SERVER["PHP_SELF"],"aa.label","",$param,'',$sortfield,$sortorder);
 	if (! empty($arrayfields['aa.account_parent']['checked']))	print_liste_field_titre($arrayfields['aa.account_parent']['label'], $_SERVER["PHP_SELF"],"aa.account_parent", "", $param,'align="left"',$sortfield,$sortorder);
-	if (! empty($arrayfields['aa.pcg_type']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_type']['label'],$_SERVER["PHP_SELF"],'aa.pcg_type','',$param,'',$sortfield,$sortorder);
-	if (! empty($arrayfields['aa.pcg_subtype']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_subtype']['label'],$_SERVER["PHP_SELF"],'aa.pcg_subtype','',$param,'',$sortfield,$sortorder);
+	if (! empty($arrayfields['aa.pcg_type']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_type']['label'],$_SERVER["PHP_SELF"],'aa.pcg_type','',$param,'',$sortfield,$sortorder,'',$arrayfields['aa.pcg_type']['help']);
+	if (! empty($arrayfields['aa.pcg_subtype']['checked']))		print_liste_field_titre($arrayfields['aa.pcg_subtype']['label'],$_SERVER["PHP_SELF"],'aa.pcg_subtype','',$param,'',$sortfield,$sortorder,'',$arrayfields['aa.pcg_subtype']['help']);
 	if (! empty($arrayfields['aa.active']['checked']))			print_liste_field_titre($arrayfields['aa.active']['label'],$_SERVER["PHP_SELF"],'aa.active','',$param,'',$sortfield,$sortorder);
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";

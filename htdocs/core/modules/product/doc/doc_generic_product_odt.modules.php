@@ -483,6 +483,8 @@ class doc_generic_product_odt extends ModelePDFProduct
 
 				$odfHandler=null;	// Destroy object
 
+				$this->result = array('fullpath'=>$file);
+
 				return 1;   // Success
 			}
 			else

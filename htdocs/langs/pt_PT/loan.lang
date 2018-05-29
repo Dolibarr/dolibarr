@@ -15,7 +15,7 @@ LoanAccountancyInsuranceCode=Accounting account insurance
 LoanAccountancyInterestCode=Accounting account interest
 ConfirmDeleteLoan=Confirme a eliminação deste empréstimo
 LoanDeleted=Empréstimo Apagado Com Sucesso
-ConfirmPayLoan=Confirm classify paid this loan
+ConfirmPayLoan=Confirmar classificação deste empréstimo como pago
 LoanPaid=Empréstimo Liquidado
 # Calc
 LoanCalc=Bank Loans Calculator
@@ -27,7 +27,7 @@ AnnualInterestRate=Taxa de Juros Anual
 ExplainCalculations=Explain Calculations
 ShowMeCalculationsAndAmortization=Mostrar-me os cálculos e a amortização
 MortgagePaymentInformation=Informação do Pagamento da Hipoteca
-DownPayment=Down Payment
+DownPayment=Adiantamento
 DownPaymentDesc=The <b>down payment</b> = The price of the home multiplied by the percentage down divided by 100 (for 5% down becomes 5/100 or 0.05)
 InterestRateDesc=The <b>interest rate</b> = The annual interest percentage divided by 100
 MonthlyFactorDesc=The <b>monthly factor</b> = The result of the following formula

@@ -73,6 +73,10 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 		$showmode=dol_auguria_showmenu($type_user,$newTabMenu[$i],$listofmodulesforexternal);
 		if ($showmode == 1)
 		{
+			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$newTabMenu[$i]['url'] = make_substitutions($newTabMenu[$i]['url'], $substitarray);
+
 			$url = $shorturl = $newTabMenu[$i]['url'];
 
 			if (! preg_match("/^(http:\/\/|https:\/\/)/i",$newTabMenu[$i]['url']))
@@ -97,11 +101,6 @@ function print_auguria_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$m
 
 				if (DOL_URL_ROOT) $shorturl = preg_replace('/^'.preg_quote(DOL_URL_ROOT,'/').'/','',$shorturl);
 			}
-
-			$url=preg_replace('/__LOGIN__/',$user->login,$url);
-			$shorturl=preg_replace('/__LOGIN__/',$user->login,$shorturl);
-			$url=preg_replace('/__USERID__/',$user->id,$url);
-			$shorturl=preg_replace('/__USERID__/',$user->id,$shorturl);
 
 			// TODO Find a generic solution
 			if (preg_match('/search_project_user=__search_project_user__/', $shorturl))
@@ -291,7 +290,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 		print '</div>'."\n";
 	}
 
-	if (is_array($moredata) && ! empty($moredata['searchform']))
+	if (is_array($moredata) && ! empty($moredata['searchform']))	// searchform can contains select2 code or link to show old search form or link to switch on search page
 	{
         print "\n";
         print "<!-- Begin SearchForm -->\n";
@@ -332,7 +331,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 			$numr = $db->num_rows($resql);
 			$i = 0;
 
-			if ($numr > 0) 	$newmenu->add('/compta/bank/index.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
+			if ($numr > 0) 	$newmenu->add('/compta/bank/list.php',$langs->trans("BankAccounts"),0,$user->rights->banque->lire);
 
 			while ($i < $numr)
 			{
@@ -340,7 +339,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				$newmenu->add('/compta/bank/card.php?id='.$objp->rowid,$objp->label,1,$user->rights->banque->lire);
 				if ($objp->rappro && $objp->courant != Account::TYPE_CASH && empty($objp->clos))  // If not cash account and not closed and can be reconciliate
 				{
-					$newmenu->add('/compta/bank/bankentries.php?id='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
+					$newmenu->add('/compta/bank/bankentries_list.php?id='.$objp->rowid,$langs->trans("Conciliate"),2,$user->rights->banque->consolidate);
 				}
 				$i++;
 			}
@@ -351,7 +350,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 
 	if (! empty($conf->accounting->enabled) && !empty($user->rights->accounting->mouvements->lire) && $mainmenu == 'accountancy') 	// Entry in accountancy journal for each bank account
 	{
-		if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy/',$leftmenu)) $newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
+		$newmenu->add('',$langs->trans("Journalization"),0,$user->rights->accounting->comptarapport->lire,'','accountancy','accountancy');
 
 		// Multi journal
 		$sql = "SELECT rowid, code, label, nature";
@@ -373,6 +372,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					$objp = $db->fetch_object($resql);
 
 					$nature='';
+
 					// Must match array $sourceList defined into journals_list.php
 					if ($objp->nature == 2 && ! empty($conf->facture->enabled)) $nature="sells";
 					if ($objp->nature == 3 && ! empty($conf->fournisseur->enabled)) $nature="purchases";
@@ -382,7 +382,7 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 					if ($objp->nature == 9) $nature="hasnew";
 
 					// To enable when page exists
-					if (empty($conf->global->MAIN_FEATURES_LEVEL))
+					if ($conf->global->MAIN_FEATURES_LEVEL < 2)
 					{
 						if ($nature == 'various' || $nature == 'hasnew') $nature='';
 					}
@@ -503,10 +503,13 @@ function print_left_auguria_menu($db,$menu_array_before,$menu_array_after,&$tabM
 				}
 			}
 
+			// $menu_array[$i]['url'] can be a relative url, a full external url. We try substitution
+			$substitarray = array('__LOGIN__' => $user->login, '__USER_ID__' => $user->id, '__USER_SUPERVISOR_ID__' => $user->fk_user);
+			$substitarray['__USERID__'] = $user->id;	// For backward compatibility
+			$menu_array[$i]['url'] = make_substitutions($menu_array[$i]['url'], $substitarray);
+
 			// Add mainmenu in GET url. This make to go back on correct menu even when using Back on browser.
 			$url=dol_buildpath($menu_array[$i]['url'],1);
-			$url=preg_replace('/__LOGIN__/',$user->login,$url);
-			$url=preg_replace('/__USERID__/',$user->id,$url);
 
 			if (! preg_match('/mainmenu=/i',$menu_array[$i]['url']))
 			{

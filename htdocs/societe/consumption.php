@@ -333,9 +333,16 @@ if (empty($elementTypeArray) && ! $object->client && ! $object->fournisseur)
 }
 
 // Define type of elements
-$typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled);
+$typeElementString = $form->selectarray("type_element", $elementTypeArray, GETPOST('type_element'), $showempty, 0, 0, '', 0, 0, $disabled, '', 'maxwidth150onsmartphone');
 $button = '<input type="submit" class="button" name="button_third" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'">';
-$param="&amp;sref=".$sref."&amp;month=".$month."&amp;year=".$year."&amp;sprod_fulldescr=".$sprod_fulldescr."&amp;socid=".$socid."&amp;type_element=".$type_element;
+
+$param='';
+$param.="&sref=".urlencode($sref);
+$param.="&month=".urlencode($month);
+$param.="&year=".urlencode($year);
+$param.="&sprod_fulldescr=".urlencode($sprod_fulldescr);
+$param.="&socid=".urlencode($socid);
+$param.="&type_element=".urlencode($type_element);
 
 $total_qty=0;
 
@@ -358,6 +365,7 @@ if ($sql_select)
 
     print_barre_liste($langs->trans('ProductsIntoElements').' '.$typeElementString.' '.$button, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num, $totalnboflines, '', 0, '', '', $limit);
 
+    print '<div class="div-table-responsive-no-min">';
     print '<table class="liste" width="100%">'."\n";
 
     // Filters
@@ -592,6 +600,7 @@ if ($sql_select)
 	print '<td align="right">' . price($total_ht) . '</td>';
 	print '<td align="right">' . price($total_ht/(empty($total_qty)?1:$total_qty)) . '</td>';
 	print "</table>";
+	print '</div>';
 
 	if ($num > $limit) {
 		print_barre_liste('', $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);

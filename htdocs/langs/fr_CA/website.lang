@@ -4,20 +4,15 @@ DeleteWebsite=Supprimer site internet
 ConfirmDeleteWebsite=Etes-vous sûr de vouloir supprimer ce site Web. Toutes ses pages et le contenu seront également supprimés.
 WEBSITE_PAGENAME=Nom / alias de la page
 WEBSITE_CSS_URL=URL du fichier CSS externe
-WEBSITE_CSS_INLINE=Contenu CSS
 MediaFiles=Médiathèque
-EditCss=Edit Style/CSS or HTML header
 EditMenu=Menu Edition
 EditPageMeta=Modifier Meta
-EditPageContent=Modifier le contenu
-Website=Site Internet
-Webpage=Web page/container
-AddPage=Add page/container
 PreviewOfSiteNotYetAvailable=Aperçu de votre site web <strong>%s</strong> n'est pas encore disponible. Vous devez d'abord ajouter une page.
-PageDeleted=Page/Contenair '%s' of website %s deleted
-PageAdded=Page/Contenair '%s' added
 ViewSiteInNewTab=Afficher le site dans un nouvel onglet
 ViewPageInNewTab=Afficher la page dans un nouvel onglet
 ViewWebsiteInProduction=Afficher le site Web à l'aide d'URL d'accueil
-PreviewSiteServedByWebServer=Aperçu %s dans un nouvel onglet. <br> <br> Le %s sera desservi par un serveur web externe (comme Apache, Nginx, IIS). Vous devez installer et configurer ce serveur avant de pointer vers le répertoire: <br> <strong>%s</strong> <br> URL desservie par un serveur externe: <br> <strong> %s</strong>
-YouCanEditHtmlSource=You can edit HTML source code using the "Source" button in editor. You can also include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $langs, $db, $mysoc, $user, $website.<br><br>You can also include content of another Page/Container with the following syntax: <strong>&lt;?php dolIncludeHtmlContent($websitekey.'/contentaliastoinclude.php'); ?&gt;</strong><br><br>To include a link to download a file stored into the documents/medias directory, use syntax:<br><strong>&lt;a href="/document.php?modulepart=medias&file=filename.ext"&gt;</strong>.
+SetHereVirtualHost=If you can create, on your web server (Apache, Nginx, ...), a dedicated Virtual Host with PHP enabled and a Root directory on<br><strong>%s</strong><br>then enter here the virtual hostname you have created, so the preview can be done also using this dedicated web server access instead of only using Dolibarr server.
+PreviewSiteServedByWebServer=<u>Preview %s in a new tab.</u><br><br>The %s will be served by an external web server (like Apache, Nginx, IIS). You must install and setup this server before to point to directory:<br><strong>%s</strong><br>URL served by external server:<br><strong>%s</strong>
+PreviewSiteServedByDolibarr=<u>Preview %s in a new tab.</u><br><br>The %s will be served by Dolibarr server so it does not need any extra web server (like Apache, Nginx, IIS) to be installed.<br>The inconvenient is that URL of pages are not user friendly and start with path of your Dolibarr.<br>URL served by Dolibarr:<br><strong>%s</strong><br><br>To use your own external web server to serve this web site, create a virtual host on your web server that point on directory<br><strong>%s</strong><br>then enter the name of this virtual server and click on the other preview button.
+YouCanEditHtmlSource=<br><span class="fa fa-bug"></span> You can include PHP code into this source using tags <strong>&lt;?php ?&gt;</strong>. The following global variables are available: $conf, $langs, $db, $mysoc, $user, $website.<br><br><span class="fa fa-bug"></span> You can also include content of another Page/Container with the following syntax:<br><strong>&lt;?php includeContainer('alias_of_container_to_include'); ?&gt;</strong><br><br><span class="fa fa-bug"></span> You can make a redirect to another Page/Container with the following syntax:<br><strong>&lt;?php redirectToContainer('alias_of_container_to_redirect_to'); ?&gt;</strong><br><br><span class="fa fa-download"></span> To include a <strong>link to download</strong> a file stored into the <strong>documents</strong> directory, use the <strong>document.php</strong> wrapper:<br>Example, for a file into documents/ecm (need to be logged), syntax is:<br><strong>&lt;a href="/document.php?modulepart=ecm&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file into documents/medias (open directory for public access), syntax is:<br><strong>&lt;a href="/document.php?modulepart=medias&file=[relative_dir/]filename.ext"&gt;</strong><br>For a file shared with a share link (open access using the sharing hash key of file), syntax is:<br><strong>&lt;a href="/document.php?hashp=publicsharekeyoffile"&gt;</strong><br><br><span class="fa fa-picture-o"></span> To include an <strong>image</strong> stored into the <strong>documents</strong> directory, use the <strong>viewimage.php</strong> wrapper:<br>Example, for an image into documents/medias (open access), syntax is:<br><strong>&lt;a href="/viewimage.php?modulepart=medias&amp;file=[relative_dir/]filename.ext"&gt;</strong><br>
+OnlyEditionOfSourceForGrabbedContent=Only edition of HTML source is possible when content was grabbed from an external site

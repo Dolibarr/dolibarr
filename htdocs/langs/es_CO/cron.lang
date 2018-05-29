@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - cron
-FileToLaunchCronJobs=Command line to launch cron jobs
 CronMethod=Método
 CronModule=Módulo
+CronMaxRun=Max number launch
 CronArgs=Parámetros
 CronStatusInactiveBtn=Desactivar
+CronCannotLoadClass=Cannot load class file %s (to use class %s)
+MakeLocalDatabaseDump=Create a local database dump. Parameters are: compression ('gz' or 'bz' or 'none'), backup type ('mysql' or 'pgsql'), 1, 'auto' or filename to build, number of backup files to keep

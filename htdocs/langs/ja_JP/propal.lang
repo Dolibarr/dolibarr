@@ -4,7 +4,6 @@ Proposal=商業的提案
 ProposalShort=提案
 ProposalsDraft=ドラフト商業の提案
 ProposalsOpened=Open commercial proposals
-Prop=商用の提案
 CommercialProposal=商業的提案
 PdfCommercialProposalTitle=商業的提案
 ProposalCard=提案カード
@@ -64,6 +63,7 @@ ProposalLine=提案ライン
 AvailabilityPeriod=可用性の遅延
 SetAvailability=可用性の遅延を設定
 AfterOrder=ご注文後
+OtherProposals=他の提案
 ##### Availability #####
 AvailabilityTypeAV_NOW=即時の
 AvailabilityTypeAV_1W=1週間

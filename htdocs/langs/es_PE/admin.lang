@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - admin
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
+MAIN_MAIL_ERRORS_TO=Email used as 'Errors-To' field in emails sent
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-Module2300Name=Cron
-Module2300Desc=Scheduled job management
+WarningPHPMail=WARNING: It is often better to setup outgoing emails to use the email server of your provider instead of the default setup. Some email providers (like Yahoo) does not allow you to send an email from another server than their own server. Your current setup use the server of the application to send email and not the server of your email provider, so some recipients (the one compatible with the restrictive DMARC protocol), will ask your email provider if they can accept your email and some email providers (like Yahoo) may respond "no" because the server is not a server of them, so few of your sent Emails may not be accepted (be carefull also to your email provider sending quota).<br>If your Email provider (like Yahoo) has this restriction, you must change Email setup to choose the other method "SMTP server" and enter the SMTP server and credentials provided by your Email provider (ask your EMail provider to get SMTP credentials for your account).
 Permission91=Consultar impuestos e IGV
 Permission92=Crear/modificar impuestos e IGV
 Permission93=Eliminar impuestos e IGV
@@ -12,5 +12,6 @@ VATManagement=Gestión IGV
 VATIsNotUsedDesc=El tipo de IGV propuesto por defecto es 0. Este es el caso de asociaciones, particulares o algunas pequeñas sociedades.
 UnitPriceOfProduct=Precio unitario sin IGV de un producto
 OptionVatMode=Opción de carga de IGV
+OptionVATDefault=Standard basis
 OptionVatDefaultDesc=La carga del IGV es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre el pago por los servicios
 OptionVatDebitOptionDesc=La carga del IGV es: <br>-en el envío de los bienes (en la práctica se usa la fecha de la factura)<br>-sobre la facturación de los servicios

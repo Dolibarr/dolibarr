@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017 ATM Consulting <contact@atm-consulting.fr>
+/* Copyright (C) 2017       ATM Consulting      <contact@atm-consulting.fr>
+ * Copyright (C) 2017-2018  Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,13 +17,14 @@
  */
 
 /**
- *	\file       htdocs/core/triggers/interface_50_modAgenda_ActionsBlockedLog.class.php
+ *	\file       htdocs/core/triggers/interface_50_modBlockedlog_ActionsBlockedLog.class.php
  *  \ingroup    system
  *  \brief      Trigger file for blockedlog module
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/blockedlog.class.php';
+
 
 /**
  *  Class of triggered functions for agenda module
@@ -48,46 +50,88 @@ class InterfaceActionsBlockedLog extends DolibarrTriggers
 	{
         if (empty($conf->blockedlog->enabled)) return 0;     // Module not active, we do nothing
 
-		if($action==='BILL_VALIDATE' || $action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
-				|| $action === 'BILL_SENTBYMAIL' || $action === 'DOC_DOWNLOAD' || $action === 'DOC_PREVIEW'
-				|| $action === 'BILL_SUPPLIER_PAYED') {
-			$amounts=  (double) $object->total_ttc;
+		// Test if event/record is qualified
+		$listofqualifiedelement = array('facture', 'don', 'payment', 'payment_donation', 'subscription','payment_various');
+		if (! in_array($object->element, $listofqualifiedelement)) return 1;
+
+		dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+
+		$b=new BlockedLog($this->db);
+
+		// Tracked events
+		if (! in_array($action, array_keys($b->trackedevents)))
+		{
+			return 0;
 		}
-		else if($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_ADD_TO_BANK' || $action === 'PAYMENT_SUPPLIER_CREATE') {
+
+		// Event/record is qualified
+		$qualified = 0;
+		$amounts = 0;
+		if ($action==='BILL_VALIDATE' || $action==='BILL_DELETE' || $action === 'BILL_SENTBYMAIL'
+			|| $action==='BILL_SUPPLIER_VALIDATE' || $action==='BILL_SUPPLIER_DELETE' || $action === 'BILL_SUPPLIER_SENTBYMAIL'
+			|| $action==='MEMBER_SUBSCRIPTION_CREATE' || $action==='MEMBER_SUBSCRIPTION_MODIFY' || $action==='MEMBER_SUBSCRIPTION_DELETE'
+			|| $action==='DON_VALIDATE' || $action==='DON_MODIFY' || $action==='DON_DELETE'
+			|| (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_DOWNLOAD') || (in_array($object->element, array('facture','suplier_invoice')) && $action === 'DOC_PREVIEW')
+		)
+		{
+			$qualified++;
+
+			if (in_array($action, array(
+				'MEMBER_SUBSCRIPTION_CREATE','MEMBER_SUBSCRIPTION_MODIFY','MEMBER_SUBSCRIPTION_DELETE',
+				'DON_VALIDATE','DON_MODIFY','DON_DELETE'))) $amounts = (double) $object->amount;
+			else $amounts = (double) $object->total_ttc;
+		}
+		/*if ($action === 'BILL_PAYED' || $action==='BILL_UNPAYED'
+		 || $action === 'BILL_SUPPLIER_PAYED' || $action === 'BILL_SUPPLIER_UNPAYED')
+		{
+			$qualified++;
+			$amounts=  (double) $object->total_ttc;
+		}*/
+		if ($action === 'PAYMENT_CUSTOMER_CREATE' || $action === 'PAYMENT_SUPPLIER_CREATE' || $action === 'DONATION_PAYMENT_CREATE'
+			|| $action === 'PAYMENT_CUSTOMER_DELETE' || $action === 'PAYMENT_SUPPLIER_DELETE' || $action === 'DONATION_PAYMENT_DELETE')
+		{
+			$qualified++;
 			$amounts = 0;
 			if(!empty($object->amounts)) {
 				foreach($object->amounts as $amount) {
 					$amounts+= price2num($amount);
 				}
 			}
-
-
 		}
-		else if(strpos($action,'PAYMENT')!==false) {
-			$amounts= (double) $object->amount;
+		elseif (strpos($action,'PAYMENT')!==false && ! in_array($action, array('PAYMENT_ADD_TO_BANK')))
+		{
+			$qualified++;
+			$amounts = (double) $object->amount;
 		}
-		else {
+
+		// Another protection.
+		// May be used when event is DOC_DOWNLOAD or DOC_PREVIEW and element is not an invoice
+		if (! $qualified)
+		{
 			return 0; // not implemented action log
 		}
 
-		$b=new BlockedLog($this->db);
-		$b->action = $action;
-		$b->amounts= $amounts;
-		$b->setObjectData($object);
+		$result = $b->setObjectData($object, $action, $amounts, $user);		// Set field date_object, ref_object, fk_object, element, object_data
+
+		if ($result < 0)
+		{
+			$this->error = $b->error;
+			$this->errors = $b->errors;
+			return -1;
+		}
 
 		$res = $b->create($user);
 
-		if($res<0) {
-			setEventMessage($b->error,'errors');
-
+		if ($res < 0)
+		{
+			$this->error = $b->error;
+			$this->errors = $b->errors;
 			return -1;
 		}
-		else {
-
+		else
+		{
 			return 1;
 		}
-
-
     }
 
 }

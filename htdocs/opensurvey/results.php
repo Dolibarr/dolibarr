@@ -389,12 +389,12 @@ for ($i = 0; $i < $nbcolonnes; $i++)
  * View
  */
 
+$form=new Form($db);
+
 if ($object->fk_user_creat) {
 	$userstatic = new User($db);
 	$userstatic->fetch($object->fk_user_creat);
 }
-
-$form=new Form($db);
 
 $result=$object->fetch(0,$numsondage);
 if ($result <= 0)
@@ -430,7 +430,7 @@ dol_fiche_head($head,'preview',$langs->trans("Survey"), -1, DOL_URL_ROOT.'/opens
 
 $morehtmlref = '';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/opensurvey/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/opensurvey/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtmlref);
 
@@ -520,7 +520,7 @@ if (GETPOST('ajoutsujet'))
 	if (!$user->rights->opensurvey->write) accessforbidden();
 
 	print '<form name="formulaire" action="" method="POST">'."\n";
-	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage').'">';
+	print '<input type="hidden" name="backtopage" value="'.GETPOST('backtopage','alpha').'">';
 
 	print '<div class="center">'."\n";
 	print "<br><br>"."\n";
@@ -600,7 +600,7 @@ if (GETPOST('ajoutsujet'))
 }
 
 if ($user->rights->opensurvey->write) {
-	print '<br />'.$langs->trans("PollAdminDesc", img_picto('','delete'), $langs->trans("Add")).'<br>';
+	print '<br>'.$langs->trans("PollAdminDesc", img_picto('','delete'), $langs->trans("Add")).'<br>';
 }
 
 $nbcolonnes=substr_count($object->sujet,',')+1;

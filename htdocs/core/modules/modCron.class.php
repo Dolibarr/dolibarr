@@ -23,7 +23,7 @@
  *  \ingroup    cron
  *  \brief      Description and activation file for module Jobs
  */
-include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
+include_once DOL_DOCUMENT_ROOT.'/core/modules/DolibarrModules.class.php';
 
 
 /**
@@ -39,7 +39,7 @@ class modCron extends DolibarrModules
      */
     function __construct($db)
     {
-    	global $langs,$conf;
+    	global $langs, $conf;
 
         $this->db = $db;
         $this->numero = 2300;
@@ -48,15 +48,16 @@ class modCron extends DolibarrModules
 		// It is used to group modules in module setup page
         $this->family = "base";
         // Module label (no space allowed), used if translation string 'ModuleXXXName' not found (where XXX is value of numeric property 'numero' of module)
-        $this->name = preg_replace('/^mod/i','',get_class($this));
+        $this->name = preg_replace('/^mod/i', '', get_class($this));
         $this->description = "Enable the Dolibarr cron service";
-        $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
+		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
+        $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
         $this->special = 2;
         // Name of image file used for this module.
-        $this->picto='technic';
+        $this->picto = 'technic';
 
         // Data directories to create when module is enabled
         $this->dirs = array();
@@ -67,10 +68,10 @@ class modCron extends DolibarrModules
 
         // Dependancies
         //-------------
-		$this->hidden = ! empty($conf->global->MODULE_CRON_DISABLED);	// A condition to disable module
-		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->conflictwith = array();	// List of modules id this module is in conflict with
+		$this->hidden = !empty($conf->global->MODULE_CRON_DISABLED); // A condition to disable module
+		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
+        $this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->conflictwith = array(); // List of modules id this module is in conflict with
         $this->langfiles = array("cron");
 
         // Constants
@@ -94,17 +95,17 @@ class modCron extends DolibarrModules
         //------
         $this->boxes = array();
 
-		// Permissions
-		$this->rights = array();		// Permission array used by this module
-		$this->rights_class = 'cron';
-		$r=0;
-
 		// Cronjobs
 		$this->cronjobs = array(
-			0=>array('label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>10, 'status'=>1, 'test'=>true),
-			1=>array('label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>20, 'status'=>0, 'test'=>in_array($db->type, array('mysql','mysqli'))),
-		    // 1=>array('label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
+			0=>array('entity'=>0, 'label'=>'PurgeDeleteTemporaryFilesShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'purgeFiles', 'parameters'=>'', 'comment'=>'PurgeDeleteTemporaryFiles', 'frequency'=>2, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>50, 'status'=>1, 'test'=>true),
+			1=>array('entity'=>0, 'label'=>'MakeLocalDatabaseDumpShort', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'dumpDatabase', 'parameters'=>'none,auto,1,auto,10', 'comment'=>'MakeLocalDatabaseDump', 'frequency'=>1, 'unitfrequency'=>3600 * 24 * 7, 'priority'=>90, 'status'=>0, 'test'=>in_array($db->type, array('mysql', 'mysqli'))),
+			// 1=>array('entity'=>0, 'label'=>'My label', 'jobtype'=>'command', 'command'=>'', 'parameters'=>'', 'comment'=>'Comment', 'frequency'=>1, 'unitfrequency'=>3600*24)
 		);
+
+        // Permissions
+		$this->rights = array(); // Permission array used by this module
+		$this->rights_class = 'cron';
+		$r = 0;
 
 		$this->rights[$r][0] = 23001;
 		$this->rights[$r][1] = 'Read cron jobs';
@@ -131,17 +132,17 @@ class modCron extends DolibarrModules
 		$r++;
 
         // Main menu entries
-        $r=0;
-        $this->menu[$r]=array(	'fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools',		    // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-						        'type'=>'left',			                // This is a Left menu entry
+        $r = 0;
+        $this->menu[$r] = array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=admintools', // Use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+						        'type'=>'left', // This is a Left menu entry
 						        'titre'=>'CronList',
 						        'url'=>'/cron/list.php?status=-2&leftmenu=admintools',
-						        'langs'=>'cron',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+						        'langs'=>'cron', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 						        'position'=>200,
-						        'enabled'=>'$conf->cron->enabled && preg_match(\'/^admintools/\', $leftmenu)',  // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-						        'perms'=>'$user->rights->cron->read',			    // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
+						        'enabled'=>'$conf->cron->enabled && preg_match(\'/^admintools/\', $leftmenu)', // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+						        'perms'=>'$user->rights->cron->read', // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 						        'target'=>'',
-						        'user'=>2);				                // 0=Menu for internal users, 1=external users, 2=both
+						        'user'=>2); // 0=Menu for internal users, 1=external users, 2=both
         $r++;
     }
 }

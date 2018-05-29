@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/cron/cron/list.php
+ *  \file       htdocs/cron/list.php
  *  \ingroup    cron
  *  \brief      Lists Jobs
  */
@@ -38,6 +38,7 @@ if (!$user->rights->cron->read) accessforbidden();
 $action=GETPOST('action','alpha');
 $confirm=GETPOST('confirm','alpha');
 $id=GETPOST('id','int');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'cronjoblist';   // To manage different context of search
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -49,9 +50,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield='t.status';
 if (! $sortorder) $sortorder='ASC';
-
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage='cronjoblist';
 
 $status=GETPOST('status','int');
 if ($status == '') $status=-2;
@@ -127,7 +125,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     	$res = $object->reprogram_jobs($user->login, $now);
     	if ($res > 0)
     	{
-    		if ($resrunjob >= 0)	// We add result of reprogram ony if no error message already reported
+    		if ($resrunjob >= 0)	// We show the result of reprogram only if no error message already reported
     		{
     		    if ($object->lastresult >= 0) setEventMessages($langs->trans("JobFinished"), null, 'mesgs');
     		    else setEventMessages($langs->trans("JobFinished"), null, 'errors');
@@ -140,7 +138,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
     		$action='';
     	}
 
-    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a call to avoid to run twice job when using back
+    	header("Location: ".DOL_URL_ROOT.'/cron/list.php?status=-2');		// Make a redirect to avoid to run twice the job when using back
     	exit;
     }
 }
@@ -151,6 +149,7 @@ if ($action == 'confirm_execute' && $confirm == "yes" && $user->rights->cron->ex
  */
 
 $form = new Form($db);
+$cronjob = new Cronjob($db);
 
 $pagetitle=$langs->trans("CronList");
 
@@ -188,7 +187,7 @@ $sql.= " t.nbrun,";
 $sql.= " t.libname,";
 $sql.= " t.test";
 $sql.= " FROM ".MAIN_DB_PREFIX."cronjob as t";
-$sql.= " WHERE 1 = 1";
+$sql.= " WHERE entity IN (0,".$conf->entity.")";
 if ($status >= 0 && $status < 2) $sql.= " AND t.status = ".(empty($status)?'0':'1');
 if ($status == 2) $sql.= " AND t.status = 2";
 //Manage filter
@@ -205,19 +204,7 @@ if (count($sqlwhere)>0) {
 	$sql.= " WHERE ".implode(' AND ',$sqlwhere);
 }
 // Add where from extra fields
-foreach ($search_array_options as $key => $val)
-{
-    $crit=$val;
-    $tmpkey=preg_replace('/search_options_/','',$key);
-    $typ=$extrafields->attribute_type[$tmpkey];
-    $mode=0;
-    if (in_array($typ, array('int','double','real'))) $mode=1;    							// Search on a numeric
-    if (in_array($typ, array('sellist')) && $crit != '0' && $crit != '-1') $mode=2;    		// Search on a foreign key int
-    if ($crit != '' && (! in_array($typ, array('select','sellist')) || $crit != '0'))
-    {
-        $sql .= natural_search('ef.'.$tmpkey, $crit, $mode);
-    }
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
@@ -246,12 +233,7 @@ if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($search_label)	  $param.='&search_label='.$search_label;
 if ($optioncss != '') $param.='&optioncss='.$optioncss;
 // Add $param from extra fields
-foreach ($search_array_options as $key => $val)
-{
-	$crit=$val;
-	$tmpkey=preg_replace('/search_options_/','',$key);
-	if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-}
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
 //$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
@@ -287,7 +269,7 @@ else
     $buttontoshow.='<a class="butAction" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob").'</a>';
 }
 
-print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $buttontoshow, $num, $nbtotalofrecords, 'title_setup', 0, '', '', $limit);
+print_barre_liste($pagetitle, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_setup', 0, $buttontoshow, '', $limit);
 
 
 print $langs->trans('CronInfo').'<br>';
@@ -297,6 +279,9 @@ if (! empty($conf->global->CRON_WARNING_DELAY_HOURS)) $text.=$langs->trans("Warn
 print info_admin($text);
 print '<br>';
 
+$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
+//$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
+//$selectedfields.=(count($arrayofmassactions) ? $form->showCheckAddButtons('checkforselect', 1) : '');
 
 print '<div class="div-table-responsive">';
 print '<table class="noborder">';
@@ -357,23 +342,22 @@ if ($num > 0)
 		if (empty($obj)) break;
 		if (! verifCond($obj->test)) continue;        // Discard line with test = false
 
-		// title profil
-		if ($style=='pair') {$style='impair';}
-		else {$style='pair';}
+		$object->id = $obj->rowid;
+		$object->ref = $obj->rowid;
+		$object->label = $obj->label;
 
-		print '<tr class="'.$style.'">';
+		print '<tr class="oddeven">';
 
 		print '<td class="nowrap">';
-		print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$obj->rowid.'">';
-		print img_picto('', 'object_cron').' ';
-		print $obj->rowid;
-		print '</a>';
+		print $object->getNomUrl(1);
 		print '</td>';
 
 		print '<td>';
 		if (! empty($obj->label))
 		{
-			print '<a href="'.DOL_URL_ROOT.'/cron/card.php?id='.$obj->rowid.'">'.$langs->trans($obj->label).'</a>';
+			$object->ref = $langs->trans($obj->label);
+			print $object->getNomUrl(0, '', 1);
+			$object->ref = $obj->rowid;
 		}
 		else
 		{
@@ -451,7 +435,7 @@ if ($num > 0)
 		print '<td align="right" class="nowrap">';
 		if ($user->rights->cron->create)
 		{
-			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."&backtourl=".urlencode($_SERVER["PHP_SELF"])."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
+			print "<a href=\"".DOL_URL_ROOT."/cron/card.php?id=".$obj->rowid."&action=edit".($sortfield?'&sortfield='.$sortfield:'').($sortorder?'&sortorder='.$sortorder:'').$param."&backtourl=".urlencode($_SERVER["PHP_SELF"].($param?'?'.$param:''))."\" title=\"".dol_escape_htmltag($langs->trans('Edit'))."\">".img_picto($langs->trans('Edit'),'edit')."</a> &nbsp;";
 		}
 		if ($user->rights->cron->delete)
 		{

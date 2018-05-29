@@ -35,8 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/client.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 if (! empty($conf->facture->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+if (! empty($conf->facture->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 if (! empty($conf->expedition->enabled)) require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
@@ -72,7 +73,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="nom";
-$cancelbutton = GETPOST('cancel');
+$cancelbutton = GETPOST('cancel','alpha');
 
 $object = new Client($db);
 $extrafields = new ExtraFields($db);
@@ -185,8 +186,12 @@ if (empty($reshook))
         if ($ret < 0) $error++;
         if (! $error)
         {
-            $result = $object->insertExtraFields();
-            if ($result < 0) $error++;
+			$result = $object->insertExtraFields();
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
         }
         if ($error) $action = 'edit_extras';
     }
@@ -206,7 +211,7 @@ if ($id > 0 && empty($object->id))
 {
 	// Load data of third party
 	$res=$object->fetch($id);
-	if ($object->id <= 0) dol_print_error($db,$object->error);
+	if ($object->id <= 0) dol_print_error($db,$object->error,$object->errors);
 }
 
 $title=$langs->trans("CustomerCard");
@@ -544,7 +549,7 @@ if ($id > 0)
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllProposals");
-		$link='';
+		$link=DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
@@ -556,13 +561,13 @@ if ($id > 0)
 
 	if (! empty($conf->commande->enabled))
 	{
-		// Box proposals
+		// Box commandes
 		$tmp = $object->getOutstandingOrders();
 		$outstandingOpened=$tmp['opened'];
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllOrders");
-		$link='';
+		$link=DOL_URL_ROOT.'/commande/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
@@ -574,12 +579,13 @@ if ($id > 0)
 
 	if (! empty($conf->facture->enabled))
 	{
+		// Box factures
 		$tmp = $object->getOutstandingBills();
 		$outstandingOpened=$tmp['opened'];
 		$outstandingTotal=$tmp['total_ht'];
 		$outstandingTotalIncTax=$tmp['total_ttc'];
 		$text=$langs->trans("OverAllInvoices");
-		$link='';
+		$link=DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id;
 		$icon='bill';
 		if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 		$boxstat.='<div class="boxstats">';
@@ -605,11 +611,17 @@ if ($id > 0)
 		if ($link) $boxstat.='</a>';
 	}
 
+	$parameters = array();
+	$reshook = $hookmanager->executeHooks('addMoreBoxStatsCustomer', $parameters, $object, $action);
+	if(empty($reshook)){
+		$boxstat.= $hookmanager->resPrint;
+	}
+
 	$boxstat.='</td></tr>';
 	$boxstat.='</table>';
 	$boxstat.='</div>';
 
-    print $boxstat;
+	print $boxstat;
 
 	$now=dol_now();
 
@@ -762,7 +774,7 @@ if ($id > 0)
 	}
 
     /*
-     *   Last sendings
+     *   Last shipments
      */
     if (! empty($conf->expedition->enabled) && $user->rights->expedition->lire) {
         $sendingstatic = new Expedition($db);
@@ -935,6 +947,107 @@ if ($id > 0)
 				print '<td align="right" class="nowrap" style="min-width: 60px">'.$fichinter_static->getLibStatut(5).'</td>'."\n";
 				print '</tr>';
 
+				$i++;
+			}
+			$db->free($resql);
+
+			if ($num > 0) print "</table>";
+		}
+		else
+		{
+			dol_print_error($db);
+		}
+	}
+
+	/*
+	 *   Last invoices templates
+	 */
+	if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
+	{
+		$invoicetemplate = new FactureRec($db);
+
+		$sql = 'SELECT f.rowid as id, f.titre as ref, f.amount';
+		$sql.= ', f.total as total_ht';
+		$sql.= ', f.tva as total_tva';
+		$sql.= ', f.total_ttc';
+		$sql.= ', f.datec as dc';
+		$sql.= ', f.date_last_gen';
+		$sql.= ', f.frequency';
+		$sql.= ', f.unit_frequency';
+		$sql.= ', f.suspended as suspended';
+		$sql.= ', s.nom, s.rowid as socid';
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
+		$sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$object->id;
+		$sql.= " AND f.entity = ".$conf->entity;
+		$sql.= ' GROUP BY f.rowid, f.titre, f.amount, f.total, f.tva, f.total_ttc,';
+		$sql.= ' f.date_last_gen, f.datec, f.frequency, f.unit_frequency,';
+		$sql.= ' f.suspended,';
+		$sql.= ' s.nom, s.rowid';
+		$sql.= " ORDER BY f.date_last_gen, f.datec DESC";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			$var=true;
+			$num = $db->num_rows($resql);
+			$i = 0;
+			if ($num > 0)
+			{
+				print '<table class="noborder" width="100%">';
+
+				print '<tr class="liste_titre">';
+				print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LatestCustomerTemplateInvoices",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllCustomerTemplateInvoices").' <span class="badge">'.$num.'</span></a></td>';
+				print '</tr></table></td>';
+				print '</tr>';
+			}
+
+			while ($i < $num && $i < $MAXLIST)
+			{
+				$objp = $db->fetch_object($resql);
+
+				print '<tr class="oddeven">';
+				print '<td class="nowrap">';
+				$invoicetemplate->id = $objp->id;
+				$invoicetemplate->ref = $objp->ref;
+				$invoicetemplate->suspended = $objp->suspended;
+				$invoicetemplate->frequency = $objp->frequency;
+				$invoicetemplate->unit_frequency = $objp->unit_frequency;
+				$invoicetemplate->total_ht = $objp->total_ht;
+				$invoicetemplate->total_tva = $objp->total_tva;
+				$invoicetemplate->total_ttc = $objp->total_ttc;
+				print $invoicetemplate->getNomUrl(1);
+				print '</td>';
+				if ($objp->frequency && $objp->date_last_gen > 0)
+				{
+					print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->date_last_gen),'day').'</td>';
+				}
+				else
+				{
+					if ($objp->dc > 0)
+					{
+						print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day').'</td>';
+					}
+					else
+					{
+						print '<td align="right"><b>!!!</b></td>';
+					}
+				}
+				print '<td align="right" style="min-width: 60px">';
+				print price($objp->total_ht);
+				print '</td>';
+
+				if (! empty($conf->global->MAIN_SHOW_PRICE_WITH_TAX_IN_SUMMARIES))
+				{
+					print '<td align="right" style="min-width: 60px">';
+					print price($objp->total_ttc);
+					print '</td>';
+				}
+
+				print '<td align="right" class="nowrap" style="min-width: 60px">';
+				print $langs->trans('FrequencyPer_'.$invoicetemplate->unit_frequency, $invoicetemplate->frequency).' - ';
+				print ($invoicetemplate->LibStatut($invoicetemplate->frequency,$invoicetemplate->suspended,5,0));
+				print '</td>';
+				print "</tr>\n";
 				$i++;
 			}
 			$db->free($resql);
@@ -1133,7 +1246,7 @@ if ($id > 0)
 
 	print '</div>';
 
-	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+	if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_CUSTOMER_CARD))
 	{
 		// List of contacts
 		show_contacts($conf,$langs,$db,$object,$_SERVER["PHP_SELF"].'?socid='.$object->id);

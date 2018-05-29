@@ -1,8 +1,5 @@
 # Dolibarr language file - Source file is en_US - other
 Notify_COMPANY_CREATE=Third party aangemaakt
-PredefinedMailContentSendInvoice=__CONTACTCIVNAME__\n\nHierbij vindt U de factuur __REF__\n\n__PERSONALIZED__Met oprechte groeten\n\n__SIGNATURE__
-PredefinedMailContentSendInvoiceReminder=__CONTACTCIVNAME__\n\nWe willen U waarschuwen dat deze factuur  __REF__ nog nog niet werd betaald. Hierbij kunt U, als herinnering, de factuur opnieuw terug vinden in bijlage .\n\n__PERSONALIZED__ met oprechte groeten\n\n__SIGNATURE__
-PredefinedMailContentSendSupplierInvoice=__CONTACTCIVNAME__\n\nHierbij vindt U de factuur __REF__\n\n__PERSONALIZED__Met oprechte groeten\n\n__SIGNATURE__
 FileIsTooBig=Bestanden zijn te groot
 WebsiteSetup=Setup van de module website
 WEBSITE_PAGEURL=URL van de pagina

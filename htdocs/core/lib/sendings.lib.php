@@ -53,9 +53,9 @@ function shipping_prepare_head($object)
 		$object->fetchObjectLinked($object->id,$object->element);
 		if (count($object->linkedObjectsIds['delivery']) >  0)		// If there is a delivery
 		{
-		    // Take first one element of array 
+		    // Take first one element of array
 		    $tmp = reset($object->linkedObjectsIds['delivery']);
-		    
+
 			$head[$h][0] = DOL_URL_ROOT."/livraison/card.php?id=".$tmp;
 			$head[$h][1] = $langs->trans("DeliveryCard");
 			$head[$h][2] = 'delivery';
@@ -78,7 +78,7 @@ function shipping_prepare_head($object)
     	$head[$h][2] = 'contact';
     	$h++;
 	}
-	
+
     $nbNote = 0;
     if (!empty($object->note_private)) $nbNote++;
     if (!empty($object->note_public)) $nbNote++;
@@ -171,7 +171,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 	$product_static=new Product($db);
 	$expedition=new Expedition($db);
 	$warehousestatic=new Entrepot($db);
-	
+
 	$sql = "SELECT obj.rowid, obj.fk_product, obj.label, obj.description, obj.product_type as fk_product_type, obj.qty as qty_asked, obj.date_start, obj.date_end,";
 	$sql.= " ed.rowid as edrowid, ed.qty as qty_shipped, ed.fk_expedition as expedition_id, ed.fk_origin_line, ed.fk_entrepot as warehouse_id,";
 	$sql.= " e.rowid as sendingid, e.ref as exp_ref, e.date_creation, e.date_delivery, e.date_expedition,";
@@ -233,7 +233,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 			$var=True;
 			while ($i < $num)
 			{
-				
+
 				$objp = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 
@@ -336,7 +336,7 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
     				}
     				print '</td>';
 				}
-				
+
 				// Batch number managment
 				/*TODO Add link to expeditiondet_batch
 				if (! empty($conf->productbatch->enabled))
@@ -351,7 +351,11 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				            $detail = '';
 				            foreach ($lines[$i]->detail_batch as $dbatch)
 				            {
-				                $detail.= $langs->trans("DetailBatchFormat",$dbatch->batch,dol_print_date($dbatch->eatby,"day"),dol_print_date($dbatch->sellby,"day"),$dbatch->dluo_qty).'<br/>';
+								$detail.= $langs->trans("Batch").': '.$dbatch->batch;
+								$detail.= ' - '.$langs->trans("SellByDate").': '.dol_print_date($dbatch->sellby,"day");
+								$detail.= ' - '.$langs->trans("EatByDate").': '.dol_print_date($dbatch->eatby,"day");
+								$detail.= ' - '.$langs->trans("Qty").': '.$dbatch->dluo_qty;
+								$detail.= '<br>';
 				            }
 				            print $form->textwithtooltip(img_picto('', 'object_barcode').' '.$langs->trans("DetailBatchNumber"),$detail);
 				        }
@@ -363,8 +367,8 @@ function show_list_sending_receive($origin,$origin_id,$filter='')
 				    } else {
 				        print '<td></td>';
 				    }
-				}*/			
-				
+				}*/
+
 				// Informations on receipt
 				if (! empty($conf->livraison_bon->enabled))
 				{

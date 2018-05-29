@@ -24,8 +24,8 @@ create table llx_payment_salary
   fk_user         integer NOT NULL,
   datep           date,                       -- date de paiement
   datev           date,                       -- date de valeur (this field should not be here, only into bank tables)
-  salary          real,						  -- salary of user when payment was done
-  amount          real NOT NULL DEFAULT 0,
+  salary          double(24,8),			  -- salary of user when payment was done
+  amount          double(24,8) NOT NULL DEFAULT 0,
   fk_typepayment  integer NOT NULL,
   num_payment     varchar(50),				  -- ref
   label           varchar(255),

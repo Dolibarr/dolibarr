@@ -88,6 +88,7 @@ if ($action == 'setlib' && $user->rights->tax->charges->creer)
         setEventMessages($object->error, $object->errors, 'errors');
 }
 
+
 /*
  * View
  */
@@ -125,7 +126,7 @@ if ($object->id)
         } else {
             $morehtmlref.='';
         }
-	}		
+	}
 	$morehtmlref.='</div>';
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/index.php?restore_lastsearch_values=1">' . $langs->trans("BackToList") . '</a>';
@@ -153,13 +154,14 @@ if ($object->id)
     print '</table>';
 
     print '</div>';
-    
+
     print '<div class="clearboth"></div>';
-    
+
     dol_fiche_end();
 
     $modulepart = 'tax';
     $permission = $user->rights->tax->charges->creer;
+    $permtoedit = $user->rights->fournisseur->facture->creer;
     $param = '&id=' . $object->id;
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 }

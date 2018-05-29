@@ -18,23 +18,28 @@
 #
 
 # Module label 'ModuleMyModuleName'
-ModuleMyModuleName = My module
+ModuleMyModuleName = MyModule
 # Module description 'ModuleMyModuleDesc'
-ModuleMyModuleDesc = My module description
+ModuleMyModuleDesc = MyModule description
 
 #
 # Admin page
 #
-MyModuleSetup = My module setup
+MyModuleSetup = MyModule setup
 Settings = Settings
-MyModuleSetupPage = My module setup page
+MyModuleSetupPage = MyModule setup page
+MYMODULE_MYPARAM1 = My param 1
+MYMODULE_MYPARAM1Tooltip = My param 1 tooltip
+MYMODULE_MYPARAM2=My param 2
+MYMODULE_MYPARAM2Tooltip=My param 2 tooltip
+
 
 #
 # About page
 #
 About = About
-MyModuleAbout = About my module
-MyModuleAboutPage = My module about page
+MyModuleAbout = About MyModule
+MyModuleAboutPage = MyModule about page
 
 #
 # Sample page
@@ -42,7 +47,7 @@ MyModuleAboutPage = My module about page
 MyPageName = My page name
 
 #
-# Sample box
+# Sample widget
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description

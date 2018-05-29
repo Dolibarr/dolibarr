@@ -8,7 +8,6 @@ DirectPrint=Impression directe
 PrintingDriverDesc=Variables de configuration pour l'impression du pilote.
 ListDrivers=Liste des conducteurs
 PrintTestDesc=Liste des imprimantes.
-NoActivePrintingModuleFound=Aucun module actif pour imprimer un document
 PleaseSelectaDriverfromList=Sélectionnez un pilote de la liste.
 PleaseConfigureDriverfromList=Configurez le pilote sélectionné dans la liste.
 SetupDriver=Configuration du pilote

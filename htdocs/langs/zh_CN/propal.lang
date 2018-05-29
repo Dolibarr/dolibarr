@@ -4,7 +4,6 @@ Proposal=报价单
 ProposalShort=报价
 ProposalsDraft=起草报价单
 ProposalsOpened=开启商业报价
-Prop=报价单
 CommercialProposal=报价单
 PdfCommercialProposalTitle=报价单
 ProposalCard=报价 信息卡
@@ -64,6 +63,7 @@ ProposalLine=报价项目
 AvailabilityPeriod=交货延迟期
 SetAvailability=设置交货延迟期
 AfterOrder=下单后
+OtherProposals=其他报价单
 ##### Availability #####
 AvailabilityTypeAV_NOW=即时
 AvailabilityTypeAV_1W=1 周

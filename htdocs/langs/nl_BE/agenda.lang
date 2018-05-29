@@ -1,7 +1,9 @@
 # Dolibarr language file - Source file is en_US - agenda
+EventReports=Gebeurtenisrapporten
 ToUserOfGroup=Aan elke gebruiker in groep
 ViewPerType=Overzicht per type
 AgendaAutoActionDesc=Stel hier de gebeurtenissen in waarvoor u wilt dat Dolibarr automatische een afspraak in de agenda creëert. Als er niets is aangevinkt (standaard), zullen alleen handmatige acties worden opgenomen in de agenda. Automatische tracking van acties zullen niet bewaard worden.
+EventRemindersByEmailNotEnabled=Herinneringen via email voor gebeurtenissen is niet ingeschakeld in de module setup van de Agenda
 NewCompanyToDolibarr=Derde %s aangemaakt
 ContractValidatedInDolibarr=Contract %s goedgekeurd
 MemberModifiedInDolibarr=Lid %s werd aangepast
@@ -10,8 +12,19 @@ ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
 ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opnieuw geopend
 ShipmentDeletedInDolibarr=Shipment %s gewist
+ContractSentByEMail=Contract %s verstuurd via Email
 ProposalDeleted=Offerte verwijderd
+EXPENSE_REPORT_CREATEInDolibarr=Onkostenrapport %s aangemaakt
+EXPENSE_REPORT_VALIDATEInDolibarr=Onkostenrapport %s gevalideerd
+EXPENSE_REPORT_APPROVEInDolibarr=Onkostenrapport %s goedgekeurd
+EXPENSE_REPORT_DELETEInDolibarr=Onkostenrapport %s verwijderd
+EXPENSE_REPORT_REFUSEDInDolibarr=Onkostenrapport %s geweigerd
+PROJECT_MODIFYInDolibarr=Project %s gewijzigd
 AgendaModelModule=Document sjablonen voor een gebeurtenis
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> om de uitvoer van acties te beperken die niet werden toegewezen aan de gebruiker <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> om de uitvoer van acties te beperken die aan de gebruiker <b>%s</b> is toegewezen. (eigenaar en anderen).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
+AgendaExtNb=Calendar no. %s
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?

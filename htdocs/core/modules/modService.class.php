@@ -133,8 +133,8 @@ class modService extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-        
-        
+
+
         // Exports
 		//--------
 		$r=0;
@@ -272,12 +272,18 @@ class modService extends DolibarrModules
 				$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 				$this->import_tables_array[$r]=array('sp'=>MAIN_DB_PREFIX.'product_fournisseur_price');
 				$this->import_tables_creator_array[$r]=array('sp'=>'fk_user');
-				$this->import_fields_array[$r]=array('sp.fk_product'=>"ProductOrService*",
-						'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'SupplierRef', 'sp.quantity'=>"QtyMin*", 'sp.tva_tx'=>'VATRate',
-						'sp.price'=>"PriceQtyMinHT*",
-						'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this file not required and calculate it from price and qty
-						'sp.remise_percent'=>'DiscountQtyMin'
+				$this->import_fields_array[$r]=array(
+					'sp.fk_product'=>"ProductOrService*",
+					'sp.fk_soc'=>"Supplier*", 'sp.ref_fourn'=>'SupplierRef', 'sp.quantity'=>"QtyMin*", 'sp.tva_tx'=>'VATRate', 'sp.default_vat_code'=>'VATCode'
 				);
+				if (is_object($mysoc) && $mysoc->useNPR())       $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.recuperableonly'=>'VATNPR'));
+				if (is_object($mysoc) && $mysoc->useLocalTax(1)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax1_tx'=>'LT1', 'sp.localtax1_type'=>'LT1Type'));
+				if (is_object($mysoc) && $mysoc->useLocalTax(2)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('sp.localtax2_tx'=>'LT2', 'sp.localtax2_type'=>'LT2Type'));
+				$this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array(
+					'sp.price'=>"PriceQtyMinHT*",
+					'sp.unitprice'=>'UnitPriceHT*',	// TODO Make this field not required and calculate it from price and qty
+					'sp.remise_percent'=>'DiscountQtyMin'
+				));
 
 				$this->import_convertvalue_array[$r]=array(
 						'sp.fk_soc'=>array('rule'=>'fetchidfromref','classfile'=>'/societe/class/societe.class.php','class'=>'Societe','method'=>'fetch','element'=>'ThirdParty'),
@@ -314,6 +320,24 @@ class modService extends DolibarrModules
 					'pr.price_min'=>"100",'pr.price_min_ttc'=>"110",
 					'pr.tva_tx'=>'19.6',
 					'pr.date_price'=>'2013-04-10');
+			}
+
+			if (! empty($conf->global->MAIN_MULTILANGS))
+			{
+				$r++;
+				$this->import_code[$r]=$this->rights_class.'_languages';
+				$this->import_label[$r]="ProductsOrServicesTranslations";
+				$this->import_icon[$r]=$this->picto;
+				$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
+				$this->import_tables_array[$r]=array('l'=>MAIN_DB_PREFIX.'product_lang');
+				// multiline translation, one line per translation
+				$this->import_fields_array[$r]=array('l.fk_product'=>'Ref', 'l.lang'=>'Language', 'l.label'=>'TranslatedLabel', 'l.description'=>'TranslatedDescription');
+				//$this->import_fields_array[$r]['l.note']='TranslatedNote';
+				$this->import_convertvalue_array[$r]=array(
+				'l.fk_product'=>array('rule'=>'fetchidfromref','classfile'=>'/product/class/product.class.php','class'=>'Product','method'=>'fetch','element'=>'Product')
+				);
+				$this->import_examplevalues_array[$r]=array('l.fk_product'=>'MyProductRef','l.lang'=>'en_US','l.label'=>'Label in en_US','l.description'=>'Desc in en_US');
+				$this->import_updatekeys_array[$r]=array('l.fk_product'=>'Ref','l.lang'=>'Language');
 			}
 		}
 	}

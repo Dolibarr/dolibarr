@@ -68,7 +68,8 @@ if (($object->id != $user->id) && (! $user->rights->user->user->lire))
   accessforbidden();
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('usercard','globalcard'));
+$contextpage=array('usercard','useragenda','globalcard');
+$hookmanager->initHooks($contextpage);
 
 /*
  * Actions

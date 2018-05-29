@@ -4,7 +4,6 @@ Proposal=Poslovni prijedlog
 ProposalShort=Prijedlog
 ProposalsDraft=Nacrti poslovnih prijedloga
 ProposalsOpened=Open commercial proposals
-Prop=Poslovni prijedlozi
 CommercialProposal=Poslovni prijedlog
 PdfCommercialProposalTitle=Poslovni prijedlog
 ProposalCard=Kartica prijedloga
@@ -64,6 +63,7 @@ ProposalLine=Proposal line
 AvailabilityPeriod=Availability delay
 SetAvailability=Set availability delay
 AfterOrder=after order
+OtherProposals=Other proposals
 ##### Availability #####
 AvailabilityTypeAV_NOW=Odmah
 AvailabilityTypeAV_1W=1 week

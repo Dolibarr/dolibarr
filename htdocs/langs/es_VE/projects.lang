@@ -1,3 +1,4 @@
 # Dolibarr language file - Source file is en_US - projects
-AllTaskVisibleButEditIfYouAreAssigned=All tasks for such project are visible, but you can enter time only for task assigned to you. Assign task to yourself if you need to enter time on it.
+MyProjectsDesc=This view is limited to projects you are a contact for
+MyTasksDesc=This view is limited to projects or tasks you are a contact for
 DocumentModelBaleine=Plantilla de informe tareas del Proyecto

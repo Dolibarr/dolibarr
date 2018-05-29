@@ -74,7 +74,7 @@ if ($mode == 'customer')
 if ($mode == 'supplier')
 {
 	$title=$langs->trans("BillsStatisticsSuppliers");
-	$dir=$conf->fournisseur->dir_output.'/facture/temp';
+	$dir=$conf->fournisseur->facture->dir_temp;
 }
 
 print load_fiche_titre($title, $mesg, 'title_accountancy.png');

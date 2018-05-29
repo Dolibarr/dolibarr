@@ -1,12 +1,8 @@
 # Dolibarr language file - Source file is en_US - suppliers
-SuppliersInvoice=Faturas do Fornecedor
 ShowSupplierInvoice=Mostrar Fatura de Suprimentos
-BuyingPriceMin=Melhor preço de compra
-BuyingPriceMinShort=Melhor preço de compra
 TotalBuyingPriceMinShort=Total de precos de compra dos subprodutos
 TotalSellingPriceMinShort=Total de preços de venda de sub-produtos
 SomeSubProductHaveNoPrices=Algums dos sub-produtos nao tem um preco definido
-AddSupplierPrice=Adicionar preço de compra
 ChangeSupplierPrice=Modificar preço de compra
 SupplierPrices=Fornecedor preços
 ReferenceSupplierIsAlreadyAssociatedWithAProduct=Esta referencia de fornecedor ja esta asociada com a referenca: %s
@@ -24,9 +20,6 @@ ListOfSupplierOrders=Lista de pedidos do fornecedor
 MenuOrdersSupplierToBill=Pedidos a se faturar do foprnecedor
 NbDaysToDelivery=Atraso de entrega em dias
 DescNbDaysToDelivery=O maior atraso de entregar os produtos a partir deste fim
-SupplierReputation=Reputação do fornecedor
 DoNotOrderThisProductToThisSupplier=Não pedir
 NotTheGoodQualitySupplier=Qualidade inadequada
-ReputationForThisProduct=Reputação
-BuyerName=Nome do comprador
 BuyingPriceNumShort=Fornecedor preços

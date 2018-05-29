@@ -21,7 +21,7 @@ create table llx_projet
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc           integer,
-  datec            date,						-- date creation project
+  datec            datetime,					-- date creation project
   tms              timestamp,
   dateo            date,						-- date start project
   datee            date,						-- date end project

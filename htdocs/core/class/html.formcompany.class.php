@@ -2,6 +2,7 @@
 /* Copyright (C) 2008-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2008-2012	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2017		Rui Strecht			<rui.strecht@aliartalentos.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,7 +218,7 @@ class FormCompany
 		$out='';
 
 		// On recherche les departements/cantons/province active d'une region et pays actif
-		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code FROM";
+		$sql = "SELECT d.rowid, d.code_departement as code, d.nom as name, d.active, c.label as country, c.code as country_code, r.nom as region_name FROM";
 		$sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_country as c";
 		$sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=c.rowid";
 		$sql .= " AND d.active = 1 AND r.active = 1 AND c.active = 1";
@@ -265,7 +266,15 @@ class FormCompany
 							$out.= '<option value="'.$obj->rowid.'">';
 						}
 						// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
-						$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 2) {
+							$out.= $obj->region_name . ' - ' . $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						}
+						else if(!empty($conf->global->MAIN_SHOW_REGION_IN_STATE) && $conf->global->MAIN_SHOW_REGION_IN_STATE == 1) {
+							$out.= $obj->region_name . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						}
+						else {
+							$out.= $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->name!='-'?$obj->name:''));
+						}
 						$out.= '</option>';
 					}
 					$i++;
@@ -536,9 +545,10 @@ class FormCompany
 	 * 	@param	array		$limitto		Disable answers that are not id in this array list
 	 *  @param	int			$forceid		This is to force another object id than object->id
      *  @param	string		$moreparam		String with more param to add into url when noajax search is used.
+     *  @param	string		$morecss		More CSS on select component
 	 * 	@return int 						The selected third party ID
 	 */
-	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0, $moreparam='')
+	function selectCompaniesForNewContact($object, $var_id, $selected='', $htmlname='newcompany', $limitto='', $forceid=0, $moreparam='', $morecss='')
 	{
 		global $conf, $langs;
 
@@ -573,7 +583,6 @@ class FormCompany
 				print '<script type="text/javascript">
 				jQuery(document).ready(function() {
 					$("#search_'.$htmlname.'").change(function() {
-					    console.log("Call runJsCodeForEvent'.$htmlname.'");
 						var obj = '.json_encode($events).';
 						$.each(obj, function(key,values) {
 							if (values.method.length) {
@@ -590,6 +599,8 @@ class FormCompany
 						var method = obj.method;
 						var url = obj.url;
 						var htmlname = obj.htmlname;
+						var showempty = obj.showempty;
+						console.log("Run runJsCodeForEvent-'.$htmlname.' from selectCompaniesForNewContact id="+id+" method="+method+" showempty="+showempty+" url="+url+" htmlname="+htmlname);
 						$.getJSON(url,
 							{
 								action: method,
@@ -599,6 +610,7 @@ class FormCompany
 							function(response) {
 								if (response != null)
 								{
+									console.log("Change select#"+htmlname+" with content "+response.value)
 									$.each(obj.params, function(key,action) {
 										if (key.length) {
 											var num = response.num;
@@ -609,7 +621,6 @@ class FormCompany
 											}
 										}
 									});
-						            /* console.log("Change select#"+htmlname+" with content "+response.value) */
 									$("select#" + htmlname).html(response.value);
 								}
 							}
@@ -640,7 +651,7 @@ class FormCompany
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
-				print '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"';
+				print '<select class="flat'.($morecss?' '.$morecss:'').'" id="'.$htmlname.'" name="'.$htmlname.'"';
 				if ($conf->use_javascript_ajax)
 				{
 					$javaScript = "window.location='".$_SERVER['PHP_SELF']."?".$var_id."=".($forceid>0?$forceid:$object->id).$moreparam."&".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";

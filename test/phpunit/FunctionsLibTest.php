@@ -812,15 +812,11 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
         $s=img_picto('title','/fullpath/img.png','',1);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto3');
+        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto3');
 
         $s=img_picto('title','/fullpath/img.png','',true);
         print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto4');
-
-        $s=img_picto('title:alt','/fullpath/img.png','',true);
-        print __METHOD__." s=".$s."\n";
-        $this->assertEquals('<img src="/fullpath/img.png" alt="alt" title="title" class="inline-block valigntextbottom">',$s,'testImgPicto5');
+        $this->assertEquals('<img src="/fullpath/img.png" alt="" title="title" class="inline-block">',$s,'testImgPicto4');
     }
 
     /**
@@ -1140,6 +1136,25 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 		$tmp=dol_getdate(24*60*60+1);		// 2/1/1970 and 1 second = friday
 		$this->assertEquals(5, $tmp['wday']);
+
+		return true;
+	}
+
+
+	/**
+	 * testDolGetDate
+	 *
+	 * @return boolean
+	 */
+	public function testMakeSubstitutions()
+	{
+		global $conf, $langs;
+		$langs->load("main");
+
+		$substit=array("AAA"=>'Not used', "BBB"=>'Not used', "CCC"=>"C replaced");
+		$chaine='This is a string with __[MAIN_THEME]__ and __(DIRECTION)__ and __CCC__';
+		$newstring = make_substitutions($chaine, $substit);
+		$this->assertEquals($newstring, 'This is a string with eldy and ltr and __C replaced__');
 
 		return true;
 	}

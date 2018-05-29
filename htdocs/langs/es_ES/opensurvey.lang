@@ -57,3 +57,4 @@ ErrorInsertingComment=Se ha producido un error al insertar su comentario
 MoreChoices=Introduzca más opciones para los votantes
 SurveyExpiredInfo=La encuesta se ha cerrado o el periodo para la votación de ha terminado.
 EmailSomeoneVoted=%s  ha rellenado una línea.\nPuede encontrar su encuesta en el enlace:\n%s 
+ShowSurvey=Mostrar encuesta

@@ -226,8 +226,8 @@ class modResource extends DolibarrModules
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'MenuResourceAdd',
 			'mainmenu'=> 'tools',
-			'leftmenu'=> '', // On n'indique rien ici car on ne souhaite pas intégrer de sous-menus à ce menu
-			'url'=> '/resource/add.php',
+			'leftmenu'=> 'resource_add',
+			'url'=> '/resource/card.php?action=create',
 			'langs'=> 'resource',
 			'position'=> 101,
 			'enabled'=> '1',
@@ -241,7 +241,7 @@ class modResource extends DolibarrModules
 			'type'=> 'left', // Toujours un menu gauche
 			'titre'=> 'List',
 			'mainmenu'=> 'tools',
-			'leftmenu'=> '', // On n'indique rien ici car on ne souhaite pas intégrer de sous-menus à ce menu
+			'leftmenu'=> 'resource_list',
 			'url'=> '/resource/list.php',
 			'langs'=> 'resource',
 			'position'=> 102,

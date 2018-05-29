@@ -3,3 +3,4 @@ ShowLoanPayment=Zeige Kreidtauszahlung
 PurchaseFinanceInfo=Kauf und Finanzierungs Inforamtionen
 ShowMeCalculationsAndAmortization=Zeigen Sie mir die Berechnungen und Amortization
 AmortizationPaymentDesc=Die <a href="#amortization">Amortisation</a> reisst ab wie viel von Ihrer monatlichen Zahlung geht für die Bankzinsen, und wie viel für die Tilgung des Haupt-Darlehen geht.
+CreateCalcSchedule=Edit financial commitment

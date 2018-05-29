@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Estàs utilitzant l'assistent d'instal·lació Dolibarr d'u
 KeepDefaultValuesMamp=Estàs utilitzant l'assistent d'instal·lació de DoliMamp amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 KeepDefaultValuesProxmox=Estàs utilitzant l'assistent d'instal·lació de Dolibarr des d'una màquina virtual Proxmox amb els valors proposats més òptims. Canvia'ls només si estàs segur del que estàs fent.
 UpgradeExternalModule=Executa el procés d'actualització dedicat de mòduls externs
-
+SetAtLeastOneOptionAsUrlParameter=Estableix com a mínim una opció com a paràmetre a l'URL. Per exemple: '... repair.php?standard=confirmed'
+NothingToDelete=Res per netejar / esborrar
+NothingToDo=No hi ha res a fer
 #########
 # upgrade
 MigrationFixData=Correcció de dades desnormalitzades
@@ -191,9 +193,11 @@ MigrationActioncommElement=Actualització de les dades de accions sobre elements
 MigrationPaymentMode=Actualització de les formes de pagament
 MigrationCategorieAssociation=Actualització de les categories
 MigrationEvents=Migració d'esdeveniments per afegir propietari a la taula d'asignació
+MigrationEventsContact=Migració d'esdeveniments per afegir contacte d'esdeveniments a la taula d'assignacions
 MigrationRemiseEntity=Actualitza el valor del camp entity de llx_societe_remise
 MigrationRemiseExceptEntity=Actualitza el valor del camp entity de llx_societe_remise_except
 MigrationReloadModule=Recarrega el mòdul %s
+MigrationResetBlockedLog=Restablir el mòdul BlockedLog per l'algoritme v7
 ShowNotAvailableOptions=Mostra opcions no disponibles
 HideNotAvailableOptions=Amaga opcions no disponibles
 ErrorFoundDuringMigration=S'ha reportat un error durant el procés de migració, de manera que el proper pas no està disponible. Per ignorar els errors, pots fer <a href="%s">clic aqui</a>, però l'aplicació o algunes funcionalitats podrien no funcionar correctament fins que no es corregeixi.

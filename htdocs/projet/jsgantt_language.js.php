@@ -38,6 +38,7 @@ require_once __DIR__.'/../main.inc.php';
 top_httphead('text/javascript');
 
 global $langs;
+$langs->load("projects");
 ?>
 
 var vLangs={'<?php print $langs->getDefaultLang(1);?>':
@@ -46,8 +47,8 @@ var vLangs={'<?php print $langs->getDefaultLang(1);?>':
     'week':'<?php print $langs->transnoentities('Week'); ?>','month':'<?php print $langs->transnoentities('Month'); ?>','quarter':'<?php print $langs->transnoentities('Quadri'); ?>',
     'hours':'<?php print $langs->transnoentities('Hours'); ?>','days':'<?php print $langs->transnoentities('Days'); ?>','weeks':'<?php print $langs->transnoentities('Weeks');?>',
     'months':'<?php print $langs->transnoentities('Months'); ?>','quarters':'<?php print $langs->transnoentities('Quadri'); ?>','hr':'Hr','dy':'<?php print $langs->transnoentities('Day'); ?>','wk':'<?php print $langs->transnoentities('Week'); ?>','mth':'<?php print $langs->transnoentities('Month'); ?>','qtr':'<?php print $langs->transnoentities('Quadri'); ?>','hrs':'<?php print $langs->transnoentities('Hours'); ?>',
-    'dys':'<?php print $langs->transnoentities('Days'); ?>','wks':'<?php print $langs->transnoentities('Weeks'); ?>','mths':'<?php print $langs->transnoentities('Months'); ?>','qtrs':'<?php print $langs->transnoentities('Quadri'); ?>','resource':'<?php print dol_escape_js($langs->transnoentities('Resources')); ?>','duration':'<?php print dol_escape_js($langs->transnoentities('Duration')); ?>','comp':'% <?php print dol_escape_js($langs->transnoentities('Total')); ?>',
-    'completion':'<?php print $langs->transnoentities('Total'); ?>','startdate':'<?php print $langs->transnoentities('DateStart'); ?>','enddate':'<?php print $langs->transnoentities('DateEnd'); ?>','moreinfo':'<?php print dol_escape_js($langs->transnoentities('MoreInformation')); ?>',
+    'dys':'<?php print $langs->transnoentities('Days'); ?>','wks':'<?php print $langs->transnoentities('Weeks'); ?>','mths':'<?php print $langs->transnoentities('Months'); ?>','qtrs':'<?php print $langs->transnoentities('Quadri'); ?>','resource':'<?php print dol_escape_js($langs->transnoentities('Resource')); ?>','duration':'<?php print dol_escape_js($langs->transnoentities('Duration')); ?>','comp':'%',
+    'completion':'<?php print $langs->transnoentities('Total'); ?>','startdate':'<?php print $langs->transnoentities('DateStart'); ?>','enddate':'<?php print $langs->transnoentities('DateEnd'); ?>','moreinfo':'<?php print dol_escape_js($langs->transnoentities('ShowTask')); ?>',
     'notes':'<?php print $langs->transnoentities('NotePublic'); ?>',
     'january':'<?php print $langs->transnoentities('January'); ?>','february':'<?php print $langs->transnoentities('February'); ?>','march':'<?php print $langs->transnoentities('March'); ?>','april':'<?php print $langs->transnoentities('April'); ?>','maylong':'<?php print $langs->transnoentities('May'); ?>','june':'<?php print $langs->transnoentities('June'); ?>','july':'<?php print $langs->transnoentities('July'); ?>',
     'august':'<?php print $langs->transnoentities('August'); ?>','september':'<?php print $langs->transnoentities('September'); ?>','october':'<?php print $langs->transnoentities('October'); ?>','november':'<?php print $langs->transnoentities('November'); ?>','december':'<?php print $langs->transnoentities('December'); ?>',

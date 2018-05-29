@@ -74,7 +74,7 @@ class PriceGlobalVariable
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::create", LOG_DEBUG);
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -125,7 +125,7 @@ class PriceGlobalVariable
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " WHERE rowid = ".$id;
 
-        dol_syslog(get_class($this)."::fetch");
+        dol_syslog(__METHOD__);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -173,7 +173,7 @@ class PriceGlobalVariable
 
         $this->db->begin();
 
-        dol_syslog(get_class($this)."::update");
+        dol_syslog(__METHOD__);
         $resql = $this->db->query($sql);
         if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
@@ -196,7 +196,7 @@ class PriceGlobalVariable
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -243,7 +243,7 @@ class PriceGlobalVariable
             $sql = "DELETE FROM ".MAIN_DB_PREFIX.$this->table_element;
             $sql.= " WHERE rowid = ".$rowid;
 
-            dol_syslog(get_class($this)."::delete");
+            dol_syslog(__METHOD__);
             $resql = $this->db->query($sql);
             if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
         }
@@ -253,7 +253,7 @@ class PriceGlobalVariable
         {
             foreach($this->errors as $errmsg)
             {
-                dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
+                dol_syslog(__METHOD__." ".$errmsg, LOG_ERR);
                 $this->error.=($this->error?', '.$errmsg:$errmsg);
             }
             $this->db->rollback();
@@ -306,7 +306,7 @@ class PriceGlobalVariable
         $sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
         $sql.= " ORDER BY code";
 
-        dol_syslog(get_class($this)."::listGlobalVariables");
+        dol_syslog(__METHOD__, LOG_DEBUG);
         $resql=$this->db->query($sql);
         if ($resql)
         {

@@ -4,7 +4,6 @@ Proposal=Tilbud
 ProposalShort=Tilbud
 ProposalsDraft=Tilbudskladder
 ProposalsOpened=Åpne tilbud
-Prop=Tilbud
 CommercialProposal=Tilbud
 PdfCommercialProposalTitle=Tilbud
 ProposalCard=Tilbudskort
@@ -64,6 +63,7 @@ ProposalLine=Tilbudslinje
 AvailabilityPeriod=Tilgjengelighet forsinkelse
 SetAvailability=Sett tilgjengelighet forsinkelse
 AfterOrder=etter bestilling
+OtherProposals=Andre tilbud
 ##### Availability #####
 AvailabilityTypeAV_NOW=Umiddelbar
 AvailabilityTypeAV_1W=1 uke

@@ -12,6 +12,7 @@ Event=Acontecimiento
 Events=Eventos
 EventsNb=Número de eventos
 ListOfActions=Listado de eventos
+EventReports=Informes de eventos
 Location=Localización
 ToUserOfGroup=A todos los usuarios del grupo
 EventOnFullDay=Evento para todo el día
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Defina aquí los eventos que desea que Dolibarr cree autom
 AgendaSetupOtherDesc= Esta página le permite configurar algunas opciones que permiten exportar una vista de su agenda Dolibar a un calendario externo (thunderbird, google calendar, ...)
 AgendaExtSitesDesc=Esta página le permite configurar calendarios externos para su visualización en la agenda de Dolibarr.
 ActionsEvents=Eventos para que Dolibarr cree un evento en la agenda de forma automática
+EventRemindersByEmailNotEnabled=Los recordatorios de eventos por e.mail no se habilitaron en la configuración del módulo Agenda.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Tercero %s creado
 ContractValidatedInDolibarr=Contrato %s validado
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Miembro %s validado
 MemberModifiedInDolibarr=Miembro %s modificado
 MemberResiliatedInDolibarr=Miembro %s terminado
 MemberDeletedInDolibarr=Miembro %s eliminado
-MemberSubscriptionAddedInDolibarr=Subscripción del miembro %s añadida
+MemberSubscriptionAddedInDolibarr=Subscripción %s del miembro %s añadida
+MemberSubscriptionModifiedInDolibarr=Suscripción %s del miembro %s modificada
+MemberSubscriptionDeletedInDolibarr=Suscripción %s del miembro %s eliminada
 ShipmentValidatedInDolibarr=Expedición %s validada
 ShipmentClassifyClosedInDolibarr=Expedición %s clasificada como pagada
 ShipmentUnClassifyCloseddInDolibarr=Expedición %s clasificada como reabierta
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Pedido %s aprobado
 OrderRefusedInDolibarr=Pedido %s rechazado
 OrderBackToDraftInDolibarr=Pedido %s devuelto a borrador
 ProposalSentByEMail=Presupuesto %s enviado por e-mail
+ContractSentByEMail=Contrato %s enviado por E-Mail
 OrderSentByEMail=Pedido de cliente %s enviado por e-mail
 InvoiceSentByEMail=Factura a cliente %s enviada por e-mail
 SupplierOrderSentByEMail=Pedido a proveedor %s enviada por e-mail
@@ -75,18 +80,27 @@ InterventionSentByEMail=Intervención %s enviada por e-mail
 ProposalDeleted=Presupuesto eliminado
 OrderDeleted=Pedido eliminado
 InvoiceDeleted=Factura eliminada
-PRODUCT_CREATEInDolibarr=Product %s created
-PRODUCT_MODIFYInDolibarr=Product %s modified
-PRODUCT_DELETEInDolibarr=Product %s deleted
+PRODUCT_CREATEInDolibarr=Producto %s creado
+PRODUCT_MODIFYInDolibarr=Producto %s modificado
+PRODUCT_DELETEInDolibarr=Producto %s eliminado
+EXPENSE_REPORT_CREATEInDolibarr=Informe de gastos %s creado
+EXPENSE_REPORT_VALIDATEInDolibarr=Informe de gastos %s validado
+EXPENSE_REPORT_APPROVEInDolibarr=Informe de gastos %s aprobado
+EXPENSE_REPORT_DELETEInDolibarr=Informe de gastos %s eliminado
+EXPENSE_REPORT_REFUSEDInDolibarr=Informe de gastos %s rechazado
+PROJECT_CREATEInDolibarr=Proyecto %s creado
+PROJECT_MODIFYInDolibarr=Proyecto %s modificado
+PROJECT_DELETEInDolibarr=Proyecto %s eliminado
 ##### End agenda events #####
 AgendaModelModule=Plantillas de documentos para eventos
 DateActionStart=Fecha de inicio
 DateActionEnd=Fecha finalización
 AgendaUrlOptions1=Puede también añadir estos parámetros al filtro de salida:
 AgendaUrlOptions3=<b>logina=%s</b> para restringir inserciones a acciones creadas por el usuario <b>%s</b>.
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> para restringir inserciones a acciones asociadas al proyecto <b>PROJECT_ID</b>.
+AgendaUrlOptionsNotAdmin=<b> logina =!%s</b> para restringir la salida a acciones que no pertenecen al usuario <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b>para restringir notificaciones en acciones asignadas al usuario <b>%s</b>(propietario y otros).
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> para restringir exportación de acciones asociadas al proyecto <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype = systemauto</b> para excluir el evento automático.
 AgendaShowBirthdayEvents=Mostrar cumpleaños de los contactos
 AgendaHideBirthdayEvents=Ocultar cumpleaños de los contactos
 Busy=Ocupado

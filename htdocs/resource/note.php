@@ -33,7 +33,7 @@ $langs->load('companies');
 $langs->load("interventions");
 
 $id = GETPOST('id','int');
-$ref = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref','alpha');
 $action=GETPOST('action','alpha');
 
 // Security check
@@ -67,18 +67,18 @@ if ($id > 0 || ! empty($ref))
 	dol_fiche_head($head, 'note', $langs->trans('ResourceSingular'), -1, 'resource');
 
 	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	 
-	 
+
+
 	$morehtmlref='<div class="refidno">';
 	$morehtmlref.='</div>';
-	 
-	 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-	 
-	 
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	 
+
 	print '<table class="border" width="100%">';
 
 	// Resource type
@@ -88,11 +88,11 @@ if ($id > 0 || ! empty($ref))
 	print $object->type_label;
 	print '</td>';
 	print '</tr>';
-	
+
 	print "</table>";
 
 	print '</div>';
-	
+
 	$permission=$user->rights->resource->write;
 	$cssclass='titlefield';
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';

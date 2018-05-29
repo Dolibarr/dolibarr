@@ -67,7 +67,8 @@ class modSalaries extends DolibarrModules
 		$this->dirs = array("/salaries/temp");
 
 		// Config pages
-		$this->config_page_url = array('salaries.php');
+		//$this->config_page_url = array('salaries.php');
+		$this->config_page_url = array();
 
 		// Dependencies
 		$this->depends = array();
@@ -165,7 +166,7 @@ class modSalaries extends DolibarrModules
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
 		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'user as u';
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'payment_salary as p ON p.fk_user = u.rowid';
-		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id';
+		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_typepayment = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
 		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('user').')';
 	}
 

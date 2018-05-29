@@ -46,27 +46,41 @@ if ($_POST) {
 
 	if ($action == 'edit') {
 
-		$object->label = $label;
 		$object->ref = $ref;
+		$object->label = $label;
 
-		if ($object->update() < 1) {
+		if ($object->update($user) < 1) {
 			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 		} else {
 			setEventMessage($langs->trans('RecordSaved'));
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			exit();
 		}
-	} elseif ($action == 'edit_value') {
+	} elseif ($action == 'update') {
 
 		if ($objectval->fetch($valueid) > 0) {
 
 			$objectval->ref = $ref;
-			$objectval->value = GETPOST('value');
+			$objectval->value = GETPOST('value','alpha');
 
-			if ($objectval->update() > 0) {
-				setEventMessage($langs->trans('RecordSaved'));
-			} else {
-				setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+			if (empty($objectval->ref))
+			{
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Ref")), null, 'errors');
+			}
+			if (empty($objectval->value))
+			{
+				$error++;
+				setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Label")), null, 'errors');
+			}
+
+			if (! $error)
+			{
+				if ($objectval->update($user) > 0) {
+					setEventMessage($langs->trans('RecordSaved'));
+				} else {
+					setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+				}
 			}
 		}
 
@@ -94,7 +108,7 @@ if ($confirm == 'yes') {
 		}
 		exit();
 	}
-	elseif ($action == 'confirm_deletevalue') 
+	elseif ($action == 'confirm_deletevalue')
 	{
 		if ($objectval->fetch($valueid) > 0) {
 
@@ -225,25 +239,37 @@ if ($action == 'edit') { ?>
 		</div>
 	</div>
 
-	<?php if ($action == 'edit_value'): ?>
-	<form method="post">
-	<?php endif ?>
+
+	<?php
+
+	print_fiche_titre($langs->trans("PossibleValues"));
+
+	if ($action == 'edit_value') {
+		print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+		print '<input type="hidden" name="action" value="update">';
+		print '<input type="hidden" name="id" value="'.$id.'">';
+		print '<input type="hidden" name="valueid" value="'.$valueid.'">';
+		print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+	} ?>
 
 	<table class="liste">
 		<tr class="liste_titre">
-			<th class="liste_titre"><?php echo $langs->trans('Ref') ?></th>
+			<th class="liste_titre titlefield"><?php echo $langs->trans('Ref') ?></th>
 			<th class="liste_titre"><?php echo $langs->trans('Value') ?></th>
 			<th class="liste_titre"></th>
 		</tr>
 
-		<?php foreach ($objectval->fetchAllByProductAttribute($object->id) as $attrval): ?>
-		<tr <?php echo $bc[!$var] ?>>
+		<?php
+		foreach ($objectval->fetchAllByProductAttribute($object->id) as $attrval) {
+		?>
+		<tr class="oddeven">
 			<?php if ($action == 'edit_value' && ($valueid == $attrval->id)): ?>
 				<td><input type="text" name="ref" value="<?php echo $attrval->ref ?>"></td>
 				<td><input type="text" name="value" value="<?php echo $attrval->value ?>"></td>
 				<td style="text-align: right">
 					<input type="submit" value="<?php echo $langs->trans('Save') ?>" class="button">
-					&nbsp; &nbsp; 
+					&nbsp; &nbsp;
 					<input type="submit" name="cancel" value="<?php echo $langs->trans('Cancel') ?>" class="button">
 				</td>
 			<?php else: ?>
@@ -256,8 +282,7 @@ if ($action == 'edit') { ?>
 			<?php endif; ?>
 		</tr>
 		<?php
-			$var = !$var;
-			endforeach
+		}
 		?>
 	</table>
 

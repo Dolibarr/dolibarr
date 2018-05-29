@@ -139,7 +139,9 @@ KeepDefaultValuesDeb=Bir Linux paketi (Ubuntu, Debian, Fedora ...) üzerinden Do
 KeepDefaultValuesMamp=DoliMamp üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
 KeepDefaultValuesProxmox=Proxmox sanal aygıt  üzerinden Dolibarr kurulum sihirbazını kullanın, burada sunulan değerler hali hazırda optimize edilmiştir. Yalnızca ne yapacağınızı biliyorsanız bunları değiştirin.
 UpgradeExternalModule=Harici modüllerin özel yükseltme işlemini çalıştırın
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=Standart dışı veri onarımı
@@ -191,9 +193,11 @@ MigrationActioncommElement=Eylemlere ilişkin veri güncellemesi
 MigrationPaymentMode=Ödeme biçimi için veri taşıma
 MigrationCategorieAssociation=Kategorilerin taşınması
 MigrationEvents=Atama tablosuna etkinlik sahibi eklemek için gerekli taşıma eylemleri
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=value of llx_societe_remise varlık alanını güncelle
 MigrationRemiseExceptEntity=llx_societe_remise_except varlık alanını güncelle
 MigrationReloadModule=Modülü yeniden yükle %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Kullanılamayacak seçenekler görüntülensin
 HideNotAvailableOptions=Kullanılamayacak seçenekler gizlensin
 ErrorFoundDuringMigration=Taşıma işlemi sırasında hata bildirildiğinden sonraki adıma geçilemeyecektir. Hataları gözardı etmek için, <a href="%s">buraya tıklayabilirsiniz</a>, ancak onarılana kadar uygulama ya da bazı özellikleri çalışmayabilecektir.

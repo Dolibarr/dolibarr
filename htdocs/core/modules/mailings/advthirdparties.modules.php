@@ -289,11 +289,11 @@ class mailing_advthirdparties extends MailingTargets
 		if ($type=='thirdparty') {
 			$companystatic=new Societe($this->db);
 			$companystatic->fetch($id);
-			return $companystatic->getNomUrl(0,'',0,1);
+			return $companystatic->getNomUrl(0, '', 0, 1);
 		} elseif ($type=='contact') {
 			$contactstatic=new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0,'',0,'',1);
+			return $contactstatic->getNomUrl(0, '', 0, '', -1, 0);
 		}
 	}
 

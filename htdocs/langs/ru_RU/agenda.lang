@@ -12,8 +12,9 @@ Event=Событие
 Events=События
 EventsNb=Количество событий
 ListOfActions=Список событий
+EventReports=Event reports
 Location=Местонахождение
-ToUserOfGroup=To any user in group
+ToUserOfGroup= пользователем из группы
 EventOnFullDay=Событие на весь день (все дни)
 MenuToDoActions=Все незавершенные события
 MenuDoneActions=Все прекращенные события
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= Define here events for which you want Dolibarr to create a
 AgendaSetupOtherDesc= Эта страница позволяет настроить и другие параметры модуля дня.
 AgendaExtSitesDesc=Эта страница позволяет настроить внешний календарей.
 ActionsEvents=События, за которые Dolibarr создадут действий в повестку дня автоматически
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Third party %s created
 ContractValidatedInDolibarr=Контакт %s подтверждён
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=Участник %s  подтверждён
 MemberModifiedInDolibarr=Участник %sизменён
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=Участник  %s удалён
-MemberSubscriptionAddedInDolibarr=Подписка участника %s  добавлена
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Отправка %s  подтверждена
 ShipmentClassifyClosedInDolibarr=Отправка %sотмечена "оплачено"
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=Заказ %s утвержден
 OrderRefusedInDolibarr=Заказ %s  отклонён
 OrderBackToDraftInDolibarr=Заказ %s возращен в статус черновик
 ProposalSentByEMail=Коммерческое предложение %s отправлены по электронной почте
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=Заказ покупателя %s отправлен по электронной почте
 InvoiceSentByEMail=Счёт клиента %s отправлен по электронной почте
 SupplierOrderSentByEMail=Поставщик порядке %s отправлены по электронной почте
@@ -78,6 +83,14 @@ InvoiceDeleted=Счёт удалён
 PRODUCT_CREATEInDolibarr=Товар %sсоздан
 PRODUCT_MODIFYInDolibarr=Товар %sизменён
 PRODUCT_DELETEInDolibarr=Товар %sудалён
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=Проект %s создан
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=Начальная дата
@@ -86,7 +99,8 @@ AgendaUrlOptions1=Можно также добавить следующие па
 AgendaUrlOptions3=<b>logina=%s</b> to restrict output to actions owned by a user <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> to restrict output to actions associated to project <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Показывать дни рождения контактов 
 AgendaHideBirthdayEvents=Скрыть дни рождения контактов
 Busy=Занят
@@ -98,7 +112,7 @@ ExportCal=Экспорт календаря
 ExtSites=Импортировать календари
 ExtSitesEnableThisTool=Показывать внешние календари (заданные в глобальных настройках) в повестке дня. Не окажет влияния на внешние календари, заданные пользователями.
 ExtSitesNbOfAgenda=Количество календарей
-AgendaExtNb=Календарь № %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL для файла календаря .ical
 ExtSiteNoLabel=Нет описания
 VisibleTimeRange=Visible time range

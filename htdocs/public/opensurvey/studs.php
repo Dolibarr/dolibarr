@@ -60,18 +60,18 @@ $nbcolonnes = substr_count($object->sujet, ',') + 1;
 $listofvoters=explode(',',$_SESSION["savevoter"]);
 
 // Add comment
-if (GETPOST('ajoutcomment'))
+if (GETPOST('ajoutcomment','alpha'))
 {
 	if (!$canbemodified) accessforbidden();
 
 	$error=0;
 
-	if (! GETPOST('comment'))
+	if (! GETPOST('comment','none'))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Comment")), null, 'errors');
 	}
-	if (! GETPOST('commentuser'))
+	if (! GETPOST('commentuser','nohtml'))
 	{
 		$error++;
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("User")), null, 'errors');
@@ -79,8 +79,8 @@ if (GETPOST('ajoutcomment'))
 
 	if (! $error)
 	{
-		$comment = GETPOST("comment");
-		$comment_user = GETPOST('commentuser');
+		$comment = GETPOST("comment",'none');
+		$comment_user = GETPOST('commentuser','nohtml');
 
 		$resql = $object->addComment($comment, $comment_user);
 
@@ -94,7 +94,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 	if (!$canbemodified) accessforbidden();
 
 	//Si le nom est bien entré
-	if (GETPOST('nom'))
+	if (GETPOST('nom','nohtml'))
 	{
 		$nouveauchoix = '';
 		for ($i=0;$i<$nbcolonnes;$i++)
@@ -112,7 +112,7 @@ if (GETPOST("boutonp") || GETPOST("boutonp.x") || GETPOST("boutonp_x"))		// bout
 			}
 		}
 
-		$nom=substr(GETPOST("nom"),0,64);
+		$nom=substr(GETPOST("nom",'nohtml'),0,64);
 
 		// Check if vote already exists
 		$sql = 'SELECT id_users, nom as name';
@@ -739,9 +739,9 @@ if ($comments)
 if ($object->allow_comments) {
 	print '<div class="addcomment">' .$langs->trans("AddACommentForPoll") . "<br>\n";
 
-	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent"></textarea><br>'."\n";
+	print '<textarea name="comment" rows="'.ROWS_2.'" class="quatrevingtpercent">'.dol_escape_htmltag(GETPOST('comment','none')).'</textarea><br>'."\n";
 	print $langs->trans("Name") .': ';
-	print '<input type="text" name="commentuser" maxlength="64" /> &nbsp; '."\n";
+	print '<input type="text" name="commentuser" maxlength="64" value="'.GETPOST('commentuser','nohtml').'"> &nbsp; '."\n";
 	print '<input type="submit" class="button" name="ajoutcomment" value="'.dol_escape_htmltag($langs->trans("AddComment")).'"><br>'."\n";
 	print '</form>'."\n";
 

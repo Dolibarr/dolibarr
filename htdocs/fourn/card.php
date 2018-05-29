@@ -45,7 +45,7 @@ $langs->load('orders');
 $langs->load('commercial');
 
 $action	= GETPOST('action','aZ09');
-$cancelbutton = GETPOST('cancel');
+$cancelbutton = GETPOST('cancel','alpha');
 
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
@@ -147,7 +147,7 @@ if ($object->id > 0)
 
 	dol_fiche_head($head, 'supplier', $langs->trans("ThirdParty"), -1, 'company');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -305,7 +305,7 @@ if ($object->id > 0)
 	    $outstandingTotal=$tmp['total_ht'];
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 	    $text=$langs->trans("OverAllSupplierProposals");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/supplier_proposal/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
@@ -323,7 +323,7 @@ if ($object->id > 0)
 	    $outstandingTotal=$tmp['total_ht'];
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 	    $text=$langs->trans("OverAllOrders");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
@@ -341,7 +341,7 @@ if ($object->id > 0)
 	    $outstandingTotalIncTax=$tmp['total_ttc'];
 
 	    $text=$langs->trans("OverAllInvoices");
-	    $link='';
+	    $link=DOL_URL_ROOT.'/fourn/facture/list.php?socid='.$object->id;
 	    $icon='bill';
 	    if ($link) $boxstat.='<a href="'.$link.'" class="boxstatsindicator thumbstat nobold nounderline">';
 	    $boxstat.='<div class="boxstats">';
@@ -408,7 +408,7 @@ if ($object->id > 0)
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre'.(($num == 0) ? ' nobottom':'').'">';
         print '<td colspan="3">'.$langs->trans("ProductsAndServices").'</td><td align="right">';
-        print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductServicePrices").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
+        print '<a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/product/list.php?fourn_id='.$object->id.'">'.$langs->trans("AllProductReferencesOfSupplier").' <span class="badge">'.$object->nbOfProductRefs().'</span>';
         print '</a></td></tr>';
 
 		$return = array();
@@ -456,7 +456,7 @@ if ($object->id > 0)
 
 
 	/*
-	 * Last supplier proposal
+	 * Latest supplier proposal
 	 */
 	$proposalstatic = new SupplierProposal($db);
 
@@ -465,7 +465,7 @@ if ($object->id > 0)
 	    $sql  = "SELECT p.rowid, p.ref, p.date_valid as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total as total_ttc";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."supplier_proposal as p ";
 	    $sql.= " WHERE p.fk_soc =".$object->id;
-	    $sql.= " AND p.entity =".$conf->entity;
+	    $sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	    $sql.= " ORDER BY p.date_valid DESC";
 	    $sql.= " ".$db->plimit($MAXLIST);
 
@@ -528,7 +528,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 * Last supplier orders
+	 * Latest supplier orders
 	 */
 	$orderstatic = new CommandeFournisseur($db);
 
@@ -541,6 +541,7 @@ if ($object->id > 0)
 		$sql2.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql2.= ', '.MAIN_DB_PREFIX.'commande_fournisseur as c';
 		$sql2.= ' WHERE c.fk_soc = s.rowid';
+		$sql2.= " AND c.entity IN (".getEntity('commande_fournisseur').")";
 		$sql2.= ' AND s.rowid = '.$object->id;
 		// Show orders with status validated, shipping started and delivered (well any order we can bill)
 		$sql2.= " AND c.fk_statut IN (5)";
@@ -558,9 +559,9 @@ if ($object->id > 0)
 
 		// TODO move to DAO class
 		$sql  = "SELECT count(p.rowid) as total";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p";
 		$sql.= " WHERE p.fk_soc =".$object->id;
-		$sql.= " AND p.entity =".$conf->entity;
+		$sql.= " AND p.entity IN (".getEntity('commande_fournisseur').")";
 		$resql=$db->query($sql);
 		if ($resql)
 		{
@@ -569,9 +570,9 @@ if ($object->id > 0)
 		}
 
 		$sql  = "SELECT p.rowid,p.ref, p.date_commande as dc, p.fk_statut, p.total_ht, p.tva as total_tva, p.total_ttc";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p";
 		$sql.= " WHERE p.fk_soc =".$object->id;
-		$sql.= " AND p.entity =".$conf->entity;
+		$sql.= " AND p.entity IN (".getEntity('commande_fournisseur').")";
 		$sql.= " ORDER BY p.date_commande DESC";
 		$sql.= " ".$db->plimit($MAXLIST);
 		$resql=$db->query($sql);
@@ -586,7 +587,7 @@ if ($object->id > 0)
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
-    			print '<td align="right"><a class="notasortlink" href="commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
+    			print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
@@ -632,7 +633,7 @@ if ($object->id > 0)
 	}
 
 	/*
-	 * Last supplier invoices
+	 * Latest supplier invoices
 	 */
 
 	$langs->load('bills');
@@ -646,7 +647,7 @@ if ($object->id > 0)
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn';
 		$sql.= ' WHERE f.fk_soc = '.$object->id;
-		$sql.= " AND f.entity =".$conf->entity;
+		$sql.= " AND f.entity IN (".getEntity('facture_fourn').")";
 		$sql.= ' GROUP BY f.rowid,f.libelle,f.ref,f.ref_supplier,f.fk_statut,f.datef,f.total_ht,f.total_tva,f.total_ttc,f.paye';
 		$sql.= ' ORDER BY f.datef DESC';
 		$resql=$db->query($sql);
@@ -674,15 +675,15 @@ if ($object->id > 0)
 				print '<td>';
 				print '<a href="facture/card.php?facid='.$obj->rowid.'">';
 				$facturestatic->id=$obj->rowid;
-				$facturestatic->ref=($obj->ref?$obj->ref:$obj->rowid).($obj->ref_supplier?' - '.$obj->ref_supplier:'');
-                $facturestatic->ref_supplier = $obj->ref_supplier;
-                $facturestatic->total_ht = $obj->total_ht;
+				$facturestatic->ref=($obj->ref?$obj->ref:$obj->rowid);
+				$facturestatic->ref_supplier = $obj->ref_supplier;
+				$facturestatic->libelle = $obj->libelle;
+				$facturestatic->total_ht = $obj->total_ht;
                 $facturestatic->total_tva = $obj->total_tva;
                 $facturestatic->total_ttc = $obj->total_ttc;
-				//$facturestatic->ref_supplier=$obj->ref_supplier;
 				print $facturestatic->getNomUrl(1);
-				//print img_object($langs->trans('ShowBill'),'bill').' '.($obj->ref?$obj->ref:$obj->rowid).' - '.$obj->ref_supplier.'</a>';
-				print ' '.dol_trunc($obj->libelle,14);
+				print $obj->ref_supplier?' - '.$obj->ref_supplier:'';
+				print ($obj->libelle?' - ':'').dol_trunc($obj->libelle,14);
 				print '</td>';
 				print '<td align="center" class="nowrap">'.dol_print_date($db->jdate($obj->df),'day').'</td>';
 				print '<td align="right" class="nowrap">'.price($obj->amount).'</td>';
@@ -794,7 +795,7 @@ if ($object->id > 0)
 	print '</div>';
 
 
-	if (! empty($conf->global->MAIN_REPEATCONTACTONEACHTAB))
+	if (! empty($conf->global->MAIN_DUPLICATE_CONTACTS_TAB_ON_MAIN_CARD))
 	{
     	print '<br>';
     	// List of contacts

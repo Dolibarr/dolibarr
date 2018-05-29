@@ -124,7 +124,8 @@ $thirdparty_fields= array(
 // fetch optionals attributes and labels
 $extrafields=new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label('societe',true);
-if (count($extrafields)>0) {
+$extrafield_array=null;
+if (is_array($extrafields) && count($extrafields)>0) {
 	$extrafield_array = array();
 }
 foreach($extrafields->attribute_label as $key=>$label)
@@ -137,7 +138,7 @@ foreach($extrafields->attribute_label as $key=>$label)
 	$extrafield_array['options_'.$key]=array('name'=>'options_'.$key,'type'=>$type);
 }
 
-$thirdparty_fields=array_merge($thirdparty_fields,$extrafield_array);
+if (is_array($extrafield_array)) $thirdparty_fields=array_merge($thirdparty_fields,$extrafield_array);
 
 // Define other specific objects
 $server->wsdl->addComplexType(
@@ -780,7 +781,7 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 		$errorcode='BAD_PARAMETERS'; $errorlabel="Parameter id, ref and ref_ext can't be both provided. You must choose one or other but not both.";
 	}
 	dol_syslog("Function: deleteThirdParty 1");
-	
+
 	if (! $error)
 	{
 		$fuser->getrights();
@@ -789,21 +790,21 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 		{
 			$thirdparty=new Societe($db);
 			$result=$thirdparty->fetch($id,$ref,$ref_ext);
-				
+
 			if ($result > 0)
 			{
 				$db->begin();
-				
+
 				$result=$thirdparty->delete($thirdparty->id, $fuser);
-				
+
 				if ($result > 0)
 				{
 					$db->commit();
-						
+
 					$objectresp = array('result'=>array('result_code'=>'OK', 'result_label'=>''));
 				}
 				else
-				{						
+				{
 					$db->rollback();
 					$error++;
 					$errorcode='KO';
@@ -815,7 +816,7 @@ function deleteThirdParty($authentication,$id='',$ref='',$ref_ext='')
 			{
 				$error++;
 				$errorcode='NOT_FOUND'; $errorlabel='Object not found for id='.$id.' nor ref='.$ref.' nor ref_ext='.$ref_ext;
-				
+
 			}
 		}
 		else

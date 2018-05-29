@@ -4,7 +4,6 @@ Proposal=اقتراح التجارية
 ProposalShort=اقتراح
 ProposalsDraft=مقترحات مشاريع تجارية
 ProposalsOpened=مقترحات التجارية المفتوحة
-Prop=مقترحات تجارية
 CommercialProposal=اقتراح التجارية
 PdfCommercialProposalTitle=اقتراح التجارية
 ProposalCard=اقتراح بطاقة
@@ -64,6 +63,7 @@ ProposalLine=اقتراح خط
 AvailabilityPeriod=توفر تأخير
 SetAvailability=ضبط تأخير توافر
 AfterOrder=بعد ذلك
+OtherProposals=مقترحات أخرى
 ##### Availability #####
 AvailabilityTypeAV_NOW=فوري
 AvailabilityTypeAV_1W=1 أسبوع

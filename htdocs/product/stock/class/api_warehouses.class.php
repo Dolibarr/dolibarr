@@ -23,13 +23,13 @@
 /**
  * API class for warehouses
  *
- * @access protected 
+ * @access protected
  * @class  DolibarrApiAccess {@requires user,external}
  */
 class Warehouses extends DolibarrApi
 {
     /**
-     * @var array   $FIELDS     Mandatory fields, checked when create and update object 
+     * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
         'label',
@@ -57,20 +57,20 @@ class Warehouses extends DolibarrApi
      *
      * @param 	int 	$id ID of warehouse
      * @return 	array|mixed data without useless information
-	 * 
+	 *
      * @throws 	RestException
      */
     function get($id)
-    {		
+    {
 		if(! DolibarrApiAccess::$user->rights->stock->lire) {
 			throw new RestException(401);
 		}
-			
+
         $result = $this->warehouse->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'warehouse not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('warehouse',$this->warehouse->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -80,7 +80,7 @@ class Warehouses extends DolibarrApi
 
     /**
      * List warehouses
-     * 
+     *
      * Get a list of warehouses
      *
      * @param string	$sortfield	Sort field
@@ -92,20 +92,20 @@ class Warehouses extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
         global $db, $conf;
-        
+
         $obj_ret = array();
-        
+
          if(! DolibarrApiAccess::$user->rights->stock->lire) {
 			throw new RestException(401);
 		}
-        
+
         $sql = "SELECT t.rowid";
         $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as t";
         $sql.= ' WHERE t.entity IN ('.getEntity('stock').')';
         // Add sql filters
-        if ($sqlfilters) 
+        if ($sqlfilters)
         {
             if (! DolibarrApi::_checkFilters($sqlfilters))
             {
@@ -114,7 +114,7 @@ class Warehouses extends DolibarrApi
 	        $regexstring='\(([^:\'\(\)]+:[^:\'\(\)]+:[^:\(\)]+)\)';
             $sql.=" AND (".preg_replace_callback('/'.$regexstring.'/', 'DolibarrApi::_forge_criteria_callback', $sqlfilters).")";
         }
-        
+
         $sql.= $db->order($sortfield, $sortorder);
         if ($limit)	{
             if ($page < 0)
@@ -154,7 +154,7 @@ class Warehouses extends DolibarrApi
 
     /**
      * Create warehouse object
-     * 
+     *
      * @param array $request_data   Request data
      * @return int  ID of warehouse
      */
@@ -166,7 +166,7 @@ class Warehouses extends DolibarrApi
 
         // Check mandatory fields
         $result = $this->_validate($request_data);
-        
+
         foreach($request_data as $field => $value) {
             $this->warehouse->$field = $value;
         }
@@ -178,22 +178,22 @@ class Warehouses extends DolibarrApi
 
     /**
      * Update warehouse
-     * 
+     *
      * @param int   $id             Id of warehouse to update
-     * @param array $request_data   Datas   
-     * @return int 
+     * @param array $request_data   Datas
+     * @return int
      */
     function put($id, $request_data = NULL)
     {
         if(! DolibarrApiAccess::$user->rights->stock->creer) {
 			throw new RestException(401);
 		}
-        
+
         $result = $this->warehouse->fetch($id);
         if( ! $result ) {
             throw new RestException(404, 'warehouse not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('stock',$this->warehouse->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
@@ -202,13 +202,13 @@ class Warehouses extends DolibarrApi
             if ($field == 'id') continue;
             $this->warehouse->$field = $value;
         }
-        
+
         if($this->warehouse->update($id, DolibarrApiAccess::$user))
             return $this->get ($id);
-        
+
         return false;
     }
-    
+
     /**
      * Delete warehouse
      *
@@ -224,15 +224,15 @@ class Warehouses extends DolibarrApi
         if( ! $result ) {
             throw new RestException(404, 'warehouse not found');
         }
-		
+
 		if( ! DolibarrApi::_checkAccessToResource('stock',$this->warehouse->id)) {
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
-        
+
         if (! $this->warehouse->delete(DolibarrApiAccess::$user)) {
             throw new RestException(401,'error when delete warehouse');
         }
-        
+
         return array(
             'success' => array(
                 'code' => 200,
@@ -240,8 +240,8 @@ class Warehouses extends DolibarrApi
             )
         );
     }
-    
-    
+
+
     /**
      * Clean sensible object datas
      *
@@ -249,22 +249,22 @@ class Warehouses extends DolibarrApi
      * @return    array    Array of cleaned object properties
      */
     function _cleanObjectDatas($object) {
-    
+
         $object = parent::_cleanObjectDatas($object);
-    
+
         // Remove the subscriptions because they are handled as a subresource.
         //unset($object->subscriptions);
-    
+
         return $object;
     }
-    
-    
+
+
     /**
      * Validate fields before create or update object
-     * 
+     *
      * @param array|null    $data    Data to validate
      * @return array
-     * 
+     *
      * @throws RestException
      */
     function _validate($data)

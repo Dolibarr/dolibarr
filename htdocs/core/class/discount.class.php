@@ -165,7 +165,7 @@ class DiscountAbsolute
         $sql.= ")";
         $sql.= " VALUES (".$conf->entity.", '".$this->db->idate($this->datec!=''?$this->datec:dol_now())."', ".$this->fk_soc.", ".$user->id.", '".$this->db->escape($this->description)."',";
         $sql.= " ".$this->amount_ht.", ".$this->amount_tva.", ".$this->amount_ttc.", ".$this->tva_tx.",";
-        $sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
+        $sql.= " ".($this->fk_facture_source ? "'".$this->db->escape($this->fk_facture_source)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::create", LOG_DEBUG);
@@ -323,6 +323,8 @@ class DiscountAbsolute
      */
     function unlink_invoice()
     {
+        global $user, $langs, $conf;
+
         $sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
         $sql.=" SET fk_facture_line = NULL, fk_facture = NULL";
         $sql.=" WHERE rowid = ".$this->id;
@@ -331,6 +333,15 @@ class DiscountAbsolute
         $resql = $this->db->query($sql);
         if ($resql)
         {
+            require_once DOL_DOCUMENT_ROOT.'/core/class/interfaces.class.php';
+            $interface = new Interfaces($this->db);
+            $result = $interface->run_triggers('DISCOUNT_UNLINK_INVOICE', $this, $user, $langs, $conf);
+            if ($result < 0)
+            {
+                $this->errors=$interface->errors;
+                return -1;
+            }
+            
             return 1;
         }
         else

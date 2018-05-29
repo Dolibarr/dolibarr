@@ -111,7 +111,7 @@ if ($object->id)
 
 	// Contract card
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
 	$morehtmlref='';
@@ -174,7 +174,7 @@ if ($object->id)
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
 
-	    
+
     print '<table class="border" width="100%">';
     print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
     print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
@@ -183,7 +183,7 @@ if ($object->id)
     print '</div>';
 
     dol_fiche_end();
-    
+
     $modulepart = 'contract';
     $permission = $user->rights->contrat->creer;
     $permtoedit = $user->rights->contrat->creer;

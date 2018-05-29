@@ -79,6 +79,8 @@ HolidaysCancelation=Urlaubsantrag stornieren
 EmployeeLastname=Mitarbeiter Nachname
 EmployeeFirstname=Vorname des Mitarbeiters
 TypeWasDisabledOrRemoved=Abreise-Art (Nr %s) war deaktiviert oder entfernt
+LastHolidays=%sneuste Ferienanträge
+AllHolidays=Allen Ferienanträge
 
 ## Configuration du Module ##
 LastUpdateCP=Letzte automatische Aktualisierung der Urlaubstage

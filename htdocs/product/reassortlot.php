@@ -28,6 +28,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/product/stock/class/productlot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
@@ -44,9 +45,9 @@ $result=restrictedArea($user,'produit|service');
 $action=GETPOST('action','alpha');
 $sref=GETPOST("sref");
 $snom=GETPOST("snom");
-$sall=GETPOST('sall', 'alphanohtml');
+$sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 $type=GETPOST("type","int");
-$sbarcode=GETPOST("sbarcode",'alpha');
+$search_barcode=GETPOST("search_barcode",'alpha');
 $search_warehouse=GETPOST('search_warehouse','alpha');
 $search_batch=GETPOST('search_batch','alpha');
 $catid=GETPOST('catid','int');
@@ -113,9 +114,9 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price
 $sql.= ' p.fk_product_type, p.tms as datem,';
 $sql.= ' p.duration, p.tosell as statut, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,';
 $sql.= ' ps.fk_entrepot,';
-$sql.= ' e.label as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
+$sql.= ' e.ref as warehouse_ref, e.lieu as warehouse_lieu, e.fk_parent as warehouse_parent,';
 $sql.= ' pb.batch, pb.eatby as oldeatby, pb.sellby as oldsellby,';
-$sql.= ' pl.eatby, pl.sellby,';
+$sql.= ' pl.rowid as lotid, pl.eatby, pl.sellby,';
 $sql.= ' SUM(pb.qty) as stock_physique, COUNT(pb.rowid) as nbinbatchtable';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as ps on p.rowid = ps.fk_product';                       // Detail for each warehouse
@@ -140,7 +141,7 @@ if (dol_strlen($type))
     }
 }
 if ($sref)     $sql.= natural_search("p.ref", $sref);
-if ($sbarcode) $sql.= natural_search("p.barcode", $sbarcode);
+if ($search_barcode) $sql.= natural_search("p.barcode", $search_barcode);
 if ($snom)     $sql.= natural_search("p.label", $snom);
 if (! empty($tosell)) $sql.= " AND p.tosell = ".$tosell;
 if (! empty($tobuy))  $sql.= " AND p.tobuy = ".$tobuy;
@@ -149,15 +150,15 @@ if($catid) $sql.= " AND cp.fk_categorie = ".$catid;
 if ($fourn_id > 0) $sql.= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 // Insert categ filter
 if ($search_categ) $sql .= " AND cp.fk_categorie = ".$db->escape($search_categ);
-if ($search_warehouse) $sql .= natural_search("e.label", $search_warehouse);
+if ($search_warehouse) $sql .= natural_search("e.ref", $search_warehouse);
 if ($search_batch) $sql .= natural_search("pb.batch", $search_batch);
 $sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,";
 $sql.= " p.fk_product_type, p.tms,";
 $sql.= " p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock, p.stock, p.tobatch,";
 $sql.= " ps.fk_entrepot,";
-$sql.= " e.label, e.lieu, e.fk_parent,";
+$sql.= " e.ref, e.lieu, e.fk_parent,";
 $sql.= " pb.batch, pb.eatby, pb.sellby,";
-$sql.= " pl.eatby, pl.sellby";
+$sql.= " pl.rowid, pl.eatby, pl.sellby";
 if ($toolowstock) $sql.= " HAVING SUM(".$db->ifsql('ps.reel IS NULL', '0', 'ps.reel').") < p.seuil_stock_alerte";    // Not used yet
 $sql.= $db->order($sortfield,$sortorder);
 
@@ -291,7 +292,7 @@ if ($resql)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref",$param,"","",$sortfield,$sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label",$param,"","",$sortfield,$sortorder);
 	if (! empty($conf->service->enabled) && $type == 1) print_liste_field_titre("Duration", $_SERVER["PHP_SELF"], "p.duration",$param,"",'align="center"',$sortfield,$sortorder);
-	print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.label",$param,"",'',$sortfield,$sortorder);
+	print_liste_field_titre("Warehouse", $_SERVER["PHP_SELF"], "e.ref",$param,"",'',$sortfield,$sortorder);
 	//print_liste_field_titre("DesiredStock", $_SERVER["PHP_SELF"], "p.desiredstock",$param,"",'align="right"',$sortfield,$sortorder);
 	print_liste_field_titre("Batch", $_SERVER["PHP_SELF"], "pb.batch",$param,"",'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre("EatByDate", $_SERVER["PHP_SELF"], "pb.eatby",$param,"",'align="center"',$sortfield,$sortorder);
@@ -306,6 +307,7 @@ if ($resql)
 	print "</tr>\n";
 
 	$product_static=new Product($db);
+	$product_lot_static=new Productlot($db);
 	$warehousetmp=new Entrepot($db);
 
 	while ($i < min($num,$limit))
@@ -335,6 +337,13 @@ if ($resql)
         $product_static->label = $objp->label;
 		$product_static->type=$objp->fk_product_type;
 		$product_static->entity=$objp->entity;
+
+		$product_lot_static->batch=$objp->batch;
+		$product_lot_static->product_id=$objp->rowid;
+		$product_lot_static->id=$objp->lotid;
+		$product_lot_static->eatby=$objp->eatby;
+		$product_lot_static->sellby=$objp->sellby;
+
 
 		$warehousetmp->id=$objp->fk_entrepot;
 		$warehousetmp->ref=$objp->warehouse_ref;
@@ -372,7 +381,15 @@ if ($resql)
     		print $warehousetmp->getNomUrl(1);
 		}
 		print '</td>';
-		print '<td align="center">'.$objp->batch.'</td>';
+
+		// Lot
+		print '<td align="center">';
+		if ($product_lot_static->batch)
+		{
+			print $product_lot_static->getNomUrl(1);
+		}
+		print '</td>';
+
 		print '<td align="center">'.dol_print_date($db->jdate($objp->eatby), 'day').'</td>';
 		print '<td align="center">'.dol_print_date($db->jdate($objp->sellby), 'day').'</td>';
 		print '<td align="right">';

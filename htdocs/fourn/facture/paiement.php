@@ -8,6 +8,7 @@
  * Copyright (C) 2014		Teddy Andreotti			<125155@supinfo.com>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2017       Alexandre Spangaro      <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,18 +34,23 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 $langs->load('companies');
 $langs->load('bills');
 $langs->load('banks');
 $langs->load('compta');
 
-$action     = GETPOST('action','alpha');
+// Security check
+$action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
-
-$facid=GETPOST('facid','int');
-$socid=GETPOST('socid','int');
+$facid		= GETPOST('facid','int');
+$socid		= GETPOST('socid','int');
 $accountid	= GETPOST('accountid');
+$day		= GETPOST('day','int');
+$month		= GETPOST('month','int');
+$year		= GETPOST('year','int');
 
 $search_ref=GETPOST("search_ref","int");
 $search_account=GETPOST("search_account","int");
@@ -316,6 +322,7 @@ $invoicesupplierstatic = new FactureFournisseur($db);
 llxHeader('',$langs->trans('ListPayment'));
 
 $form=new Form($db);
+$formother=new FormOther($db);
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
 {
@@ -738,7 +745,7 @@ if (empty($action))
     $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementfourn AS p';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn';
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id AND c.entity IN ('.getEntity('c_paiement').')';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
@@ -747,14 +754,30 @@ if (empty($action))
     if (!$user->rights->societe->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid > 0) $sql .= ' AND f.fk_soc = '.$socid;
     // Search criteria
+    if ($month > 0)
+    {
+        if ($year > 0 && empty($day))
+        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,$month,false))."' AND '".$db->idate(dol_get_last_day($year,$month,false))."'";
+        else if ($year > 0 && ! empty($day))
+        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $month, $day, $year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $month, $day, $year))."'";
+        else
+        $sql.= " AND date_format(p.datep, '%m') = '".$month."'";
+    }
+    else if ($year > 0)
+    {
+        $sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($year,1,false))."' AND '".$db->idate(dol_get_last_day($year,12,false))."'";
+    }
     if ($search_ref)       		    $sql .= natural_search('p.rowid', $search_ref);
     if ($search_account > 0)      	$sql .=" AND b.fk_account=".$search_account;
     if ($search_paymenttype != "")  $sql .=" AND c.code='".$db->escape($search_paymenttype)."'";
     if ($search_payment_num != '')  $sql .= natural_search('p.num_paiement', $search_payment_num);
     if ($search_amount)      		$sql .= natural_search('p.amount', $search_amount, 1);
     if ($search_company)     		$sql .= natural_search('s.nom', $search_company);
+    include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
     $sql.= " GROUP BY p.rowid, p.datep, p.amount, p.num_paiement, s.rowid, s.nom, c.code, c.libelle, ba.rowid, ba.label";
     if (!$user->rights->societe->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
+    // Add where from extra fields
+
     $sql.= $db->order($sortfield,$sortorder);
 
     $nbtotalofrecords = '';
@@ -776,18 +799,16 @@ if (empty($action))
         $param='';
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+        if ($day)                   $param.=($day?"&day=".urlencode($day):"");
+        if ($month)                 $param.=($month?"&month=".urlencode($month):"");
+        if ($year)                  $param.=($year?"&year=".urlencode($year):"");
         if ($search_ref)            $param.=($search_ref?"&search_ref=".urlencode($search_ref):"");
         if ($search_company)        $param.=($search_company?"&search_company=".urlencode($search_company):"");
         if ($search_amount != '')   $param.=($search_amount?"&search_amount=".urlencode($search_amount):"");
         if ($search_payment_num)    $param.=($search_payment_num?"&search_payment_num=".urlencode($search_payment_num):"");
     	if ($optioncss != '')       $param.='&optioncss='.$optioncss;
     	// Add $param from extra fields
-    	foreach ($search_array_options as $key => $val)
-    	{
-    	    $crit=$val;
-    	    $tmpkey=preg_replace('/search_options_/','',$key);
-    	    if ($val != '') $param.='&search_options_'.$tmpkey.'='.urlencode($val);
-    	}
+    	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
     	$massactionbutton=$form->selectMassAction('', $massaction == 'presend' ? array() : array('presend'=>$langs->trans("SendByMail"), 'builddoc'=>$langs->trans("PDFMerge")));
 
@@ -826,7 +847,11 @@ if (empty($action))
         print '<td  class="liste_titre" align="left">';
         print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
         print '</td>';
-        print '<td class="liste_titre">&nbsp;</td>';
+        print '<td class="liste_titre" align="center">';
+        if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
+        print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+        $formother->select_year($year?$year:-1,'year',1, 20, 5);
+        print '</td>';
         print '<td class="liste_titre" align="left">';
         print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
         print '</td>';
@@ -849,14 +874,14 @@ if (empty($action))
         print "</tr>\n";
 
         print '<tr class="liste_titre">';
-        print_liste_field_titre('RefPayment',$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre('Date',$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
-        print_liste_field_titre('ThirdParty',$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre('Type',$_SERVER["PHP_SELF"],'c.libelle','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre("RefPayment",$_SERVER["PHP_SELF"],'p.rowid','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre("Date",$_SERVER["PHP_SELF"],'dp','',$param,'align="center"',$sortfield,$sortorder);
+        print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],'s.nom','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre("Type",$_SERVER["PHP_SELF"],'c.libelle','',$param,'',$sortfield,$sortorder);
         print_liste_field_titre("Numero",$_SERVER["PHP_SELF"],"p.num_paiement","",$param,"",$sortfield,$sortorder);
-        print_liste_field_titre('Account',$_SERVER["PHP_SELF"],'ba.label','',$param,'',$sortfield,$sortorder);
-        print_liste_field_titre('Amount',$_SERVER["PHP_SELF"],'p.amount','',$param,'align="right"',$sortfield,$sortorder);
-        //print_liste_field_titre('Invoice',$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre("Account",$_SERVER["PHP_SELF"],'ba.label','',$param,'',$sortfield,$sortorder);
+        print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],'p.amount','',$param,'align="right"',$sortfield,$sortorder);
+        //print_liste_field_titre("Invoice",$_SERVER["PHP_SELF"],'ref_supplier','',$param,'',$sortfield,$sortorder);
         print_liste_field_titre('');
         print "</tr>\n";
 
@@ -886,7 +911,7 @@ if (empty($action))
             print '<td>'.$objp->num_paiement.'</td>';
 
             print '<td>';
-            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
+            if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dol_trunc($objp->label,24).'</a>';
             else print '&nbsp;';
             print '</td>';
 
