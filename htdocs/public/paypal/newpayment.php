@@ -195,7 +195,8 @@ if (GETPOST('action','aZ09') == 'dopayment')
 	$PAYPAL_API_PRICE=price2num(GETPOST("newamount",'alpha'),'MT');
     $PAYPAL_PAYMENT_TYPE='Sale';
 
-	$origfulltag=GETPOST("fulltag",'alpha');
+    // Vars that are used as global var later in print_paypal_redirect()
+    $origfulltag=GETPOST("fulltag",'alpha');
     $shipToName=GETPOST("shipToName");
     $shipToStreet=GETPOST("shipToStreet");
     $shipToCity=GETPOST("shipToCity");
@@ -207,7 +208,13 @@ if (GETPOST('action','aZ09') == 'dopayment')
     $email=GETPOST("email");
     $desc=GETPOST("desc");
 
-	$mesg='';
+    // Special case for Paypal-Indonesia
+    if ($shipToCountryCode == 'ID' && ! preg_match('/\-/', $shipToState))
+    {
+    	$shipToState = 'ID-'.$shipToState;
+    }
+
+    $mesg='';
 	if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))   $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
 	//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 	//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);

@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2012 Regis Houssin          	<regis.houssin@capnetworks.com>
  * Copyright (C) 2012	   Andreu Bisquerra Gaya  	<jove@bisquerra.com>
  * Copyright (C) 2012	   David Rodriguez Martinez <davidrm146@gmail.com>
- * Copyright (C) 2012-2017 Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2012-2018 Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2015	   Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -285,6 +285,13 @@ if (($action == 'create' || $action == 'add') && !$error)
 										{
 											$fk_parent_line = 0;
 										}
+
+										// Extrafields
+										if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) {
+											$lines[$i]->fetch_optionals($lines[$i]->rowid);
+											$array_options = $lines[$i]->array_options;
+										}
+
 										$result = $object->addline(
 												$desc,
 												$lines[$i]->subprice,
@@ -309,7 +316,8 @@ if (($action == 'create' || $action == 'add') && !$error)
 												$fk_parent_line,
 												$lines[$i]->fk_fournprice,
 												$lines[$i]->pa_ht,
-												$lines[$i]->label
+												$lines[$i]->label,
+                                                $array_options
 										);
 										if ($result > 0)
 										{

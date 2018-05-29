@@ -189,13 +189,16 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		$result = $object->delete($user, 0, $idwarehouse);
-		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1');
-			exit();
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action='';
+		if ($object->is_erasable())
+		{
+			$result = $object->delete($user, 0, $idwarehouse);
+			if ($result > 0) {
+				header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1');
+				exit();
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action='';
+			}
 		}
 	}
 
@@ -720,7 +723,6 @@ if (empty($reshook))
 				$sql.= ' WHERE pf.fk_facture = '.$object->id;
 				$sql.= ' AND pf.fk_paiement = p.rowid';
 				$sql.= ' AND p.entity IN (' . getEntity('facture').')';
-				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
@@ -1449,7 +1451,7 @@ if (empty($reshook))
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
 						$line->fetch_optionals($line->id);
-						
+
 						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
 						if ($line->fk_remise_except)
 						{
@@ -1460,7 +1462,7 @@ if (empty($reshook))
 						        // Check if discount not already affected to another invoice
 						        if ($discount->fk_facture_line > 0)
 						        {
-							    $line->fk_remise_except = 0;
+						            $line->fk_remise_except = 0;
 						        }
 						    }
 						}

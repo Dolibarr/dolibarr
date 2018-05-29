@@ -379,6 +379,7 @@ if ($resql)
 	if ($search_zip)		 $param.='&search_zip='.urlencode($search_zip);
 	if ($socid > 0)          $param.='&socid='.urlencode($socid);
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
+	if ($search_product_category != '')                     $param.='&search_product_category='.$search_product_category;
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';

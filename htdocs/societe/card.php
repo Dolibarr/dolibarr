@@ -653,8 +653,10 @@ if (empty($reshook))
                 if ($result <=  0)
                 {
                     setEventMessages($object->error, $object->errors, 'errors');
-                  	$error++;
+                    $errors = $object->errors;
+                    $error++;
                 }
+
 				// Prevent thirdparty's emptying if a user hasn't rights $user->rights->categorie->lire (in such a case, post of 'custcats' is not defined)
 				if (!empty($user->rights->categorie->lire))
 				{
@@ -735,6 +737,7 @@ if (empty($reshook))
                 	{
                 		$error++;
                 		$object->error .= $object->db->lasterror();
+                		setEventMessages($object->error, $object->errors, 'errors');
                 	}
                 }
 
@@ -1344,7 +1347,7 @@ else
 			$langs->load('categories');
 
 			// Customer
-			if ($object->prospect || $object->client) {
+			if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 				print '<tr><td class="toptd">' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td><td colspan="3">';
 				$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, 'parent', null, null, 1);
 				print $form->multiselectarray('custcats', $cate_arbo, GETPOST('custcats', 'array'), null, null, null,
@@ -1902,7 +1905,7 @@ else
 			if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 			{
 				// Customer
-				if ($object->prospect || $object->client) {
+				if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 					print '<tr><td>' . fieldLabel('CustomersCategoriesShort', 'custcats') . '</td>';
 					print '<td colspan="3">';
 					$cate_arbo = $form->select_all_categories(Categorie::TYPE_CUSTOMER, null, null, null, null, 1);
@@ -2294,7 +2297,7 @@ else
 		if (! empty($conf->categorie->enabled)  && ! empty($user->rights->categorie->lire))
 		{
 			// Customer
-			if ($object->prospect || $object->client) {
+			if ($object->prospect || $object->client || (! $object->fournisseur && ! empty($conf->global->THIRDPARTY_CAN_HAVE_CATEGORY_EVEN_IF_NOT_CUSTOMER_PROSPECT_SUPPLIER))) {
 				print '<tr><td>' . $langs->trans("CustomersCategoriesShort") . '</td>';
 				print '<td>';
 				print $form->showCategories($object->id, 'customer', 1);

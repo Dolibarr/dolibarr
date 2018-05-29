@@ -467,14 +467,14 @@ class Expedition extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.billed";
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet, e.billed";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
-		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
 		$sql.= ', e.fk_incoterms, e.location_incoterms';
 		$sql.= ', i.libelle as libelle_incoterms';
+		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
@@ -512,6 +512,7 @@ class Expedition extends CommonObject
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
+				$this->fk_project			= $obj->fk_projet;
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -1034,6 +1035,7 @@ class Expedition extends CommonObject
 		$sql.= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0)?$this->shipping_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " height=".(($this->trueHeight != '')?$this->trueHeight:"null").",";
 		$sql.= " width=".(($this->trueWidth != '')?$this->trueWidth:"null").",";
 		$sql.= " size_units=".(isset($this->size_units)?$this->size_units:"null").",";
@@ -2443,7 +2445,7 @@ class ExpeditionLigne extends CommonObjectLine
 				dol_syslog(get_class($this)."::delete ".$errmsg, LOG_ERR);
 				$this->error.=($this->error?', '.$errmsg:$errmsg);
 			}
-			
+
 			$this->db->rollback();
 			return -1*$error;
 		}
