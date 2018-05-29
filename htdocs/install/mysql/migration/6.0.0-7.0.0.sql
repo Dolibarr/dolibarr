@@ -139,6 +139,7 @@ ALTER table llx_entrepot CHANGE COLUMN label ref varchar(255);
 
 UPDATE llx_paiementfourn SET ref = rowid WHERE ref IS NULL;
 UPDATE llx_paiementfourn SET entity = 1 WHERE entity IS NULL;
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
 UPDATE llx_website SET entity = 1 WHERE entity IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_website MODIFY COLUMN entity integer NOT NULL DEFAULT 1;
