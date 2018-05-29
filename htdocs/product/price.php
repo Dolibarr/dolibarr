@@ -944,7 +944,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 					}
 
 					print '</table>';
-					print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable_price_by_qty&level='.$i.'">(' . $langs->trans("DisablePriceByQty").')';
+					print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable_price_by_qty&level='.$i.'">(' . $langs->trans("DisablePriceByQty").')</a>';
 				} else {
 					print $langs->trans("No");
 					print '&nbsp; <a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=' . $i . '">(' . $langs->trans("Activate") . ')</a>';
