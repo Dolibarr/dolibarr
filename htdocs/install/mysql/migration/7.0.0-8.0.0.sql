@@ -484,9 +484,6 @@ ALTER TABLE llx_entrepot ADD COLUMN model_pdf VARCHAR(255) AFTER fk_user_author;
 ALTER TABLE llx_stock_mouvement ADD COLUMN model_pdf VARCHAR(255) AFTER origintype;
 
 
-
-
-
 insert into llx_c_regions (fk_pays, code_region, cheflieu, tncc, nom, active) values (  118, 11801, '', 0, 'Indonesia', 1);
 
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('BA', 11801, NULL, 0, 'BA', 'Bali', 1);    
