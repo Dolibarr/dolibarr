@@ -81,6 +81,8 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- For 8.0
 
+ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
+
 -- delete old permission no more used
 DELETE FROM llx_rights_def WHERE perms = 'main' and module = 'commercial';
 
