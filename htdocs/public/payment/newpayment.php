@@ -269,6 +269,7 @@ if ($action == 'dopayment')
 		$PAYPAL_API_PRICE=price2num(GETPOST("newamount",'alpha'),'MT');
 		$PAYPAL_PAYMENT_TYPE='Sale';
 
+		// Vars that are used as global var later in print_paypal_redirect()
 		$origfulltag=GETPOST("fulltag",'alpha');
 		$shipToName=GETPOST("shipToName",'alpha');
 		$shipToStreet=GETPOST("shipToStreet",'alpha');
@@ -282,18 +283,24 @@ if ($action == 'dopayment')
 		$desc=GETPOST("desc",'alpha');
 		$thirdparty_id=GETPOST('thirdparty_id', 'int');
 
+		// Special case for Paypal-Indonesia
+		if ($shipToCountryCode == 'ID' && ! preg_match('/\-/', $shipToState))
+		{
+			$shipToState = 'ID-'.$shipToState;
+		}
+
 		$mesg='';
 		if (empty($PAYPAL_API_PRICE) || ! is_numeric($PAYPAL_API_PRICE))
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Amount"));
-			$action='';
+			$action = '';
 		}
 		//elseif (empty($EMAIL))          $mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("YourEMail"));
 		//elseif (! isValidEMail($EMAIL)) $mesg=$langs->trans("ErrorBadEMail",$EMAIL);
 		elseif (! $origfulltag)
 		{
 			$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("PaymentCode"));
-			$action='';
+			$action = '';
 		}
 
 		//var_dump($_POST);
@@ -1363,6 +1370,7 @@ if ($source == 'membersubscription')
 	$phoneNum=$member->phone;
 	if ($shipToName && $shipToStreet && $shipToCity && $shipToCountryCode && $shipToZip)
 	{
+		print '<!-- Shipping address information -->';
 		print '<input type="hidden" name="shipToName" value="'.$shipToName.'">'."\n";
 		print '<input type="hidden" name="shipToStreet" value="'.$shipToStreet.'">'."\n";
 		print '<input type="hidden" name="shipToCity" value="'.$shipToCity.'">'."\n";
