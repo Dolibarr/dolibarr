@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2016      Jean-François Ferry  <hello@librethic.io>
- * 
+ *
  * A class containing a diff implementation
  *
  * Created by Stephen Morley - http://stephenmorley.org/ - and released under the
  * terms of the CC0 1.0 Universal legal code:
- * 
+ *
  * http://creativecommons.org/publicdomain/zero/1.0/legalcode
  */
 
@@ -80,9 +80,9 @@ class Diff
             $diff[] = array_pop($partialDiff);
         }
 
-        for ($index = $end1 + 1;
-            $index < ($compareCharacters ? strlen($sequence1) : count($sequence1));
-            $index++) {
+        $end2 = ($compareCharacters ? strlen($sequence1) : count($sequence1));
+        for ($index = $end1 + 1; $index < $end2; $index++)
+        {
             $diff[] = array($sequence1[$index], self::UNMODIFIED);
         }
 
@@ -382,7 +382,7 @@ class Diff
      * $index       - the current index, passes by reference
      * $type        - the type of line
      */
-    private static function getCellContent($diff, $indentation, $separator, &$index, $type) 
+    private static function getCellContent($diff, $indentation, $separator, &$index, $type)
     {
         // initialise the HTML
         $html = '';
