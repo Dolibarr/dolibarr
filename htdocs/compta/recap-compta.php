@@ -61,6 +61,9 @@ $arrayfields=array(
     //...
 );
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('supplierbalencelist','globalcard'));
+
 /*
  * Actions
  */
@@ -100,7 +103,7 @@ if ($id > 0)
 		// Invoice list
 		print load_fiche_titre($langs->trans("CustomerPreview"));
 
-		print '<table class="noborder" width="100%">';
+		print '<table class="noborder tagtable liste" width="100%">';
 		print '<tr class="liste_titre">';
         if (! empty($arrayfields['f.datef']['checked']))  print_liste_field_titre($arrayfields['f.datef']['label'],$_SERVER["PHP_SELF"],"f.datef","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
 		print '<td>'.$langs->trans("Element").'</td>';
@@ -253,13 +256,18 @@ if ($id > 0)
 				if (!empty($data['fk_facture'])) print dol_print_date($data['date'],'day');
 				elseif (!empty($data['fk_paiement'])) print dol_print_date($data['date'],'dayhour');
 				print "</td>\n";
+
 				print '<td>'.$data['link']."</td>\n";
 
 				print '<td aling="left">'.$data['status'].'</td>';
+
 				print '<td align="right">'.(($data['amount'] > 0) ? price(abs($data['amount'])) : '')."</td>\n";
+				
 				$totalDebit += ($data['amount'] > 0) ? abs($data['amount']) : 0;
+				
 				print '<td align="right">'.(($data['amount'] > 0) ? '' : price(abs($data['amount'])))."</td>\n";
 				$totalCredit += ($data['amount'] > 0) ? 0 : abs($data['amount']);
+				
 				// Balance
 				print '<td align="right">'.price($data['balance'])."</td>\n";
 

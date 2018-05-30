@@ -1478,15 +1478,12 @@ class CommandeFournisseur extends CommonOrder
                         // We use 'none' instead of $ref_supplier, because fourn_ref may not exists anymore. So we will take the first supplier price ok.
                         // If we want a dedicated supplier price, we must provide $fk_prod_fourn_price.
                         $result=$prod->get_buyprice($fk_prod_fourn_price, $qty, $fk_product, 'none', ($this->fk_soc?$this->fk_soc:$this->socid));   // Search on couple $fk_prod_fourn_price/$qty first, then on triplet $qty/$fk_product/$ref_supplier/$this->fk_soc
-                        if ($result > 0)
+                        if ($result > 0 && $origin == 'commande')	// If supplier order created from customer order, we take best supplier price
                         {
-			    $pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
-                            $ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
-			    // is remise percent not keyed but present for the product we add it
-                            if ($remise_percent == 0 && $prod->remise_percent !=0)
-                            	$remise_percent =$prod->remise_percent;
-
-
+                        	$pu           = $prod->fourn_pu;       // Unit price supplier price set by get_buyprice
+                        	$ref_supplier = $prod->ref_supplier;   // Ref supplier price set by get_buyprice
+                        	// is remise percent not keyed but present for the product we add it
+                        	if ($remise_percent == 0 && $prod->remise_percent !=0) $remise_percent =$prod->remise_percent;
                         }
                         if ($result == 0)                   // If result == 0, we failed to found the supplier reference price
                         {
