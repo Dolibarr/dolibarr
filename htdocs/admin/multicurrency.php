@@ -142,17 +142,7 @@ elseif ($action == 'update_currency')
 }
 elseif ($action == 'synchronize')
 {
-	$response = GETPOST('response');
-	$response = json_decode($response);
-
-	if ($response->success)
-	{
-		MultiCurrency::syncRates($response);
-	}
-	else
-	{
-		setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
-	}
+	MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
 }
 
 
