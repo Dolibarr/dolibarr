@@ -25,7 +25,12 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 				$tmpkey='options_'.$key;
 				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')))
 				{
-					$value = $db->jdate($obj->$tmpkey);
+					$datenotinstring = $obj->$tmpkey;
+					if (! is_numeric($obj->$tmpkey))	// For backward compatibility
+					{
+						$datenotinstring = $db->jdate($datenotinstring);
+					}
+					$value = $datenotinstring;
 				}
 				else
 				{
