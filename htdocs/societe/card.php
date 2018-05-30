@@ -711,7 +711,7 @@ if (empty($reshook))
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-                if (GETPOST('deletephoto') && $object->photo)
+                if (GETPOST('deletephoto') && $object->logo)
                 {
                     $fileimg=$dir.'/'.$object->logo;
                     $dirthumbs=$dir.'/thumbs';
