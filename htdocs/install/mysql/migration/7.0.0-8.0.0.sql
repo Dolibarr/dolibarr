@@ -101,6 +101,7 @@ ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;
 ALTER TABLE llx_projet ADD COLUMN bill_time integer DEFAULT 0;
 
+
 ALTER TABLE llx_societe ADD COLUMN order_min_amount double(24,8) DEFAULT NULL AFTER outstanding_limit;
 ALTER TABLE llx_societe ADD COLUMN supplier_order_min_amount double(24,8) DEFAULT NULL AFTER order_min_amount;
 
@@ -481,6 +482,8 @@ UPDATE llx_c_email_templates SET lang = '' WHERE lang IS NULL;
 
 -- Warehouse
 ALTER TABLE llx_entrepot ADD COLUMN model_pdf VARCHAR(255) AFTER fk_user_author;
+ALTER TABLE llx_entrepot DROP INDEX uk_entrepot_label;
+ALTER TABLE llx_entrepot ADD UNIQUE INDEX uk_entrepot_ref_fk_parent (ref, entity, fk_parent);
 ALTER TABLE llx_stock_mouvement ADD COLUMN model_pdf VARCHAR(255) AFTER origintype;
 
 
