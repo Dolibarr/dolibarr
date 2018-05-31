@@ -1784,11 +1784,14 @@ class FactureLigneRec extends CommonInvoiceLine
     	$sql.= ", info_bits='".price2num($this->info_bits)."'";
     	$sql.= ", date_start_fill=".(int) $this->date_start_fill;
     	$sql.= ", date_end_fill=".(int) $this->date_end_fill;
-    	$sql.= ", total_ht='".price2num($this->total_ht)."'";
-    	$sql.= ", total_tva='".price2num($this->total_tva)."'";
-    	$sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";
-    	$sql.= ", total_localtax2='".price2num($this->total_localtax2)."'";
-    	$sql.= ", total_ttc='".price2num($this->total_ttc)."'";
+    	if (empty($this->skip_update_total))
+    	{
+    		$sql.= ", total_ht=".price2num($this->total_ht);
+	    	$sql.= ", total_tva=".price2num($this->total_tva);
+	    	$sql.= ", total_localtax1=".price2num($this->total_localtax1);
+	    	$sql.= ", total_localtax2=".price2num($this->total_localtax2);
+	    	$sql.= ", total_ttc=".price2num($this->total_ttc);
+    	}
     	$sql.= ", rang=".$this->rang;
     	$sql.= ", special_code=".$this->special_code;
     	$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit )."'":"null");

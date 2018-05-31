@@ -4676,11 +4676,11 @@ class FactureLigne extends CommonInvoiceLine
         $sql.= ", special_code='".$this->db->escape($this->special_code)."'";
         if (empty($this->skip_update_total))
         {
-        	$sql.= ", total_ht=".price2num($this->total_ht)."";
-        	$sql.= ", total_tva=".price2num($this->total_tva)."";
-        	$sql.= ", total_ttc=".price2num($this->total_ttc)."";
-        	$sql.= ", total_localtax1=".price2num($this->total_localtax1)."";
-        	$sql.= ", total_localtax2=".price2num($this->total_localtax2)."";
+        	$sql.= ", total_ht=".price2num($this->total_ht);
+        	$sql.= ", total_tva=".price2num($this->total_tva);
+        	$sql.= ", total_ttc=".price2num($this->total_ttc);
+        	$sql.= ", total_localtax1=".price2num($this->total_localtax1);
+        	$sql.= ", total_localtax2=".price2num($this->total_localtax2);
         }
 		$sql.= ", fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
 		$sql.= ", buy_price_ht='".price2num($this->pa_ht)."'";
@@ -4773,6 +4773,7 @@ class FactureLigne extends CommonInvoiceLine
 
 	/**
 	 *  Mise a jour en base des champs total_xxx de ligne de facture
+	 *  TODO What is goal of this method ?
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
