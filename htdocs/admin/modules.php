@@ -667,10 +667,15 @@ if ($mode == 'common')
         // Version
         print '<td class="center nowrap" width="120px">';
         print $versiontrans;
-        if (!empty($objMod->url_last_version)) {
-            $newversion = file_get_contents($objMod->url_last_version);
-            if (version_compare($newversion, $versiontrans) > 0) {
-                print "&nbsp;<span class='butAction' title='" . $langs->trans('LastStableVersion') . "'>$newversion</span>";
+        if(!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)){
+            require_once(DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php');            
+            if (!empty($objMod->url_last_version)) {
+                $newversion = getURLContent($objMod->url_last_version);
+                if(isset($newversion['content'])){
+                    if (version_compare($newversion['content'], $versiontrans) > 0) {
+                        print "&nbsp;<span class='butAction' title='" . $langs->trans('LastStableVersion') . "'>".$newversion['content']."</span>";
+                    }
+                }
             }
         }
         print "</td>\n";
