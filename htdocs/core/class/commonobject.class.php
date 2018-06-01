@@ -735,7 +735,7 @@ abstract class CommonObject
 		if ($id_type_contact == 0)
 		{
 			$this->error='CODE_NOT_VALID_FOR_THIS_ELEMENT';
-			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT");
+			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
 			return -3;
 		}
 

@@ -213,12 +213,15 @@ class CMailFile
 		}
 
 		// Define if there is at least one file
-		foreach ($filename_list as $i => $val)
+		if (is_array($filename_list))
 		{
-			if ($filename_list[$i])
+			foreach ($filename_list as $i => $val)
 			{
-				$this->atleastonefile=1;
-				dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i], LOG_DEBUG);
+				if ($filename_list[$i])
+				{
+					$this->atleastonefile=1;
+					dol_syslog("CMailFile::CMailfile: filename_list[$i]=".$filename_list[$i].", mimetype_list[$i]=".$mimetype_list[$i]." mimefilename_list[$i]=".$mimefilename_list[$i], LOG_DEBUG);
+				}
 			}
 		}
 
