@@ -546,13 +546,13 @@ if (! empty($arrayfields['c.tms']['checked']))
 // First end date
 if (! empty($arrayfields['lower_planned_end_date']['checked']))
 {
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		$arrayofoperators=array('0'=>'','='=>'=','<='=>'<=','>='=>'>=');
 		print $form->selectarray('search_op2df',$arrayofoperators,$search_op2df,0);
 		print '</br>';
-		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1);
+		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0, 'valignmiddle');
 		print ' ';
-		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5);
+		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '', 'valignmiddle');
 		print '</td>';
 }
 // Status
@@ -769,7 +769,7 @@ while ($i < min($num,$limit))
 	// Date lower end date
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td align="center" class="nowrapforall">';
 		print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
