@@ -603,6 +603,9 @@ textarea.centpercent {
 .nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
 }
+.wrapimp {
+	white-space: normal !important;
+}
 .wordwrap {
 	word-wrap: break-word;
 }
