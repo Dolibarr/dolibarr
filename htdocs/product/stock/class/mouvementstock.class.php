@@ -119,9 +119,15 @@ class MouvementStock extends CommonObject
 
 		// Set properties of movement
 		$this->product_id = $fk_product;
-		$this->entrepot_id = $entrepot_id;
+		$this->entrepot_id = $entrepot_id; // deprecated
+		$this->warehouse_id = $entrepot_id;
 		$this->qty = $qty;
 		$this->type = $type;
+		$this->price = $price;
+		$this->label = $label;
+		$this->inventorycode = $inventorycode;
+		$this->datem = $now;
+		$this->batch = $batch;
 
 		$mvid = 0;
 
