@@ -296,7 +296,9 @@ print '<td class="liste_titre"><input type="text" size="7" class="flat" name="se
 print '<td class="liste_titre"><input type="text" size="7" class="flat" name="search_label_operation" value="' . dol_escape_htmltag($search_label_operation) . '"/></td>';
 print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_debit" size="4" value="'.dol_escape_htmltag($search_debit).'"></td>';
 print '<td class="liste_titre" align="right"><input type="text" class="flat" name="search_credit" size="4" value="'.dol_escape_htmltag($search_credit).'"></td>';
-print '<td class="liste_titre" align="center"><input type="text" name="search_ledger_code" size="3" value="' . dol_escape_htmltag($search_ledger_code) . '"></td>';
+print '<td class="liste_titre">';
+print $formaccounting->select_journal($search_ledger_code, 'search_ledger_code', 0, 1, 1, 1);
+print '</td>';
 print '<td class="liste_titre" align="right" colspan="2">';
 $searchpicto=$form->showFilterAndCheckAddButtons(0);
 print $searchpicto;
