@@ -269,7 +269,7 @@ class modAccounting extends DolibarrModules
 				't.ref'=>array('rule'=>'getrefifauto')
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-		$this->import_regex_array[$r]=array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]$');
+		$this->import_regex_array[$r]=array('b.doc_date'=>'^[0-9][0-9][0-9][0-9]/[0-9][0-9]/[0-9][0-9]$');
 		//$this->import_examplevalues_array[$r]=array('t.fk_projet'=>'MyProjectRef','t.ref'=>"auto or TK2010-1234",'t.label'=>"My task",'t.progress'=>"0 (not started) to 100 (finished)",'t.datec'=>'1972-10-10','t.note_private'=>"My private note",'t.note_public'=>"My public note");
 
 		// Chart of accounts
