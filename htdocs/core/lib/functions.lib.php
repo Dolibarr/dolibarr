@@ -1357,13 +1357,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			//}
 		}
 	}
-	elseif ($object->element == 'ticketsup')
+	elseif ($object->element == 'ticket')
 	{
 		$width=80; $cssclass='photoref';
-		$showimage=$object->is_photo_available($conf->ticketsup->multidir_output[$entity].'/'.$object->track_id);
+		$showimage=$object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->track_id);
 		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
 		if ($conf->browser->phone) $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticketsup', $conf->ticketsup->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticket', $conf->ticket->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
 		else
 		{
 			if (!empty($conf->global->TICKETSUP_NODISPLAYIFNOPHOTO)) {

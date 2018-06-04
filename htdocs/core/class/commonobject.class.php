@@ -6320,7 +6320,7 @@ abstract class CommonObject
 	/**
 	 *  Show photos of an object (nbmax maximum), into several columns
 	 *
-	 *  @param		string	$modulepart		'product', 'ticketsup', ...
+	 *  @param		string	$modulepart		'product', 'ticket', ...
 	 *  @param      string	$sdir        	Directory to scan (full absolute path)
 	 *  @param      int		$size        	0=original size, 1='small' use thumbnail if possible
 	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
@@ -6346,7 +6346,7 @@ abstract class CommonObject
 
 		$dir = $sdir . '/';
 		$pdir = '/';
-		if ($modulepart == 'ticketsup')
+		if ($modulepart == 'ticket')
 		{
 			$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';
 			$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';

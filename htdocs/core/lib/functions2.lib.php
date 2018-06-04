@@ -2282,7 +2282,7 @@ function getModuleDirForApiClass($module)
     	$moduledirforclass = 'fichinter';
     }
     elseif ($module == 'tickets') {
-    	$moduledirforclass = 'ticketsup';
+    	$moduledirforclass = 'ticket';
     }
 
     return $moduledirforclass;

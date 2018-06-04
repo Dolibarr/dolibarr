@@ -17,7 +17,7 @@
 */
 
 /**
- *      \file       test/unit/TicketsupTest.php
+ *      \file       test/unit/TicketTest.php
  *		\ingroup    test
  *      \brief      PHPUnit test
  *		\remarks	To run this script as CLI:  phpunit filename.php
@@ -28,7 +28,7 @@ global $conf,$user,$langs,$db;
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
 require_once dirname(__FILE__).'/../../htdocs/user/class/usergroup.class.php';
-require_once dirname(__FILE__).'/../../htdocs/ticketsup/class/ticketsup.class.php';
+require_once dirname(__FILE__).'/../../htdocs/ticket/class/ticket.class.php';
 
 if (empty($user->id)) {
 	print "Load permissions for admin user nb 1\n";
@@ -45,7 +45,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class TicketsupTest extends PHPUnit_Framework_TestCase
+class TicketTest extends PHPUnit_Framework_TestCase
 {
 	protected $savconf;
 	protected $savuser;
@@ -116,11 +116,11 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupCreate
+	 * testTicketCreate
 	 *
 	 * @return	int
 	 */
-	public function testTicketsupCreate()
+	public function testTicketCreate()
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -129,7 +129,7 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 		$db=$this->savdb;
 
 		// Try to create one with bad values
-		$localobject=new Ticketsup($this->savdb);
+		$localobject=new Ticket($this->savdb);
 		$localobject->initAsSpecimen();
 		$localobject->ref = '';
 		$result=$localobject->create($user);
@@ -138,7 +138,7 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(-3, $result, $localobject->error.join(',', $localobject->errors));
 
 		// Try to create one with correct values
-		$localobject=new Ticketsup($this->savdb);
+		$localobject=new Ticket($this->savdb);
 		$localobject->initAsSpecimen();
 		$result=$localobject->create($user);
 
@@ -149,15 +149,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupFetch
+	 * testTicketFetch
 	 *
 	 * @param	int		$id		Id of ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupCreate
+	 * @depends	testTicketCreate
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupFetch($id)
+	public function testTicketFetch($id)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -165,7 +165,7 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Ticketsup($this->savdb);
+		$localobject=new Ticket($this->savdb);
 		$result=$localobject->fetch($id);
 
 		print __METHOD__." id=".$id." result=".$result."\n";
@@ -175,15 +175,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupmarkAsRead
+	 * testTicketmarkAsRead
 	 *
-	 * @param	Ticketsup		$localobject		Ticket
+	 * @param	Ticket		$localobject		Ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupFetch
+	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupmarkAsRead($localobject)
+	public function testTicketmarkAsRead($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -199,15 +199,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupsetProject
+	 * testTicketsetProject
 	 *
-	 * @param	Ticketsup		$localobject		Ticket
+	 * @param	Ticket		$localobject		Ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupFetch
+	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupsetProject($localobject)
+	public function testTicketsetProject($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -225,15 +225,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupsetContract
+	 * testTicketsetContract
 	 *
-	 * @param	Ticketsup		$localobject		Ticket
+	 * @param	Ticket		$localobject		Ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupFetch
+	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupsetContract($localobject)
+	public function testTicketsetContract($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -251,15 +251,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupsetProgression
+	 * testTicketsetProgression
 	 *
-	 * @param	Ticketsup		$localobject		Ticket
+	 * @param	Ticket		$localobject		Ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupFetch
+	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupsetProgression($localobject)
+	public function testTicketsetProgression($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -277,15 +277,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupassignUser
+	 * testTicketassignUser
 	 *
-	 * @param	Ticketsup		$localobject		Ticket
+	 * @param	Ticket		$localobject		Ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupFetch
+	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupassignUser($localobject)
+	public function testTicketassignUser($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -304,15 +304,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupassignUserOther
+	 * testTicketassignUserOther
 	 *
-	 * @param	Ticketsup		$localobject		Ticket
+	 * @param	Ticket		$localobject		Ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupFetch
+	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupassignUserOther($localobject)
+	public function testTicketassignUserOther($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -331,15 +331,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupcreateTicketLog
+	 * testTicketcreateTicketLog
 	 *
-	 * @param	Ticketsup		$localobject		Ticket
+	 * @param	Ticket		$localobject		Ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupFetch
+	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupcreateTicketLog($localobject)
+	public function testTicketcreateTicketLog($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -358,15 +358,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * testTicketsupclose
+	 * testTicketclose
 	 *
-	 * @param	Ticketsup		$localobject		Ticket
+	 * @param	Ticket		$localobject		Ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupFetch
+	 * @depends	testTicketFetch
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupclose($localobject)
+	public function testTicketclose($localobject)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -383,15 +383,15 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 
 
 	/**
-	 * testTicketsupDelete
+	 * testTicketDelete
 	 *
 	 * @param	int		$id		Id of ticket
 	 * @return	int
 	 *
-	 * @depends	testTicketsupclose
+	 * @depends	testTicketclose
 	 * The depends says test is run only if previous is ok
 	 */
-	public function testTicketsupDelete($id)
+	public function testTicketDelete($id)
 	{
 		global $conf,$user,$langs,$db;
 		$conf=$this->savconf;
@@ -399,7 +399,7 @@ class TicketsupTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
-		$localobject=new Ticketsup($this->savdb);
+		$localobject=new Ticket($this->savdb);
 		$result=$localobject->fetch($id);
 		$result=$localobject->delete($user);
 

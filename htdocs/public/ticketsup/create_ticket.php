@@ -17,8 +17,8 @@
  */
 
 /**
- *       \file       htdocs/public/ticketsup/index.php
- *       \ingroup    ticketsup
+ *       \file       htdocs/public/ticket/index.php
+ *       \ingroup    ticket
  *       \brief      Display public form to add new ticket
  */
 
@@ -30,14 +30,14 @@ if (!defined('NOLOGIN'))        define("NOLOGIN", 1);     // This means this out
 if (!defined('NOCSRFCHECK'))    define("NOCSRFCHECK", 1); // We accept to go on this page from external web site.
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('companies', 'other', 'mails', 'ticketsup'));
+$langs->loadLangs(array('companies', 'other', 'mails', 'ticket'));
 
 // Get parameters
 $id = GETPOST('id', 'int');
@@ -45,7 +45,7 @@ $msg_id = GETPOST('msg_id', 'int');
 
 $action = GETPOST('action', 'alpha');
 
-$object = new Ticketsup($db);
+$object = new Ticket($db);
 
 $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
@@ -63,7 +63,7 @@ if (GETPOST('addfile') && !GETPOST('add_ticket')) {
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
     // Set tmp directory TODO Use a dedicated directory for temp mails files
-    $vardir = $conf->ticketsup->dir_output;
+    $vardir = $conf->ticket->dir_output;
     $upload_dir_tmp = $vardir . '/temp';
     if (!dol_is_dir($upload_dir_tmp)) {
         dol_mkdir($upload_dir_tmp);
@@ -79,7 +79,7 @@ if (GETPOST('removedfile') && !GETPOST('add_ticket')) {
     include_once DOL_DOCUMENT_ROOT . '/core/lib/files.lib.php';
 
     // Set tmp directory
-    $vardir = $conf->ticketsup->dir_output . '/';
+    $vardir = $conf->ticket->dir_output . '/';
     $upload_dir_tmp = $vardir . '/temp';
 
     // TODO Delete only files that was uploaded from email form
@@ -155,7 +155,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
             $user = new User($db);
         }
 
-        $object->context['disableticketsupemail']=1;		// Disable emails sent by ticketsup trigger when creation is done from this page, emails are already sent later
+        $object->context['disableticketemail']=1;		// Disable emails sent by ticket trigger when creation is done from this page, emails are already sent later
 
         $id = $object->create($user);
         if ($id <= 0) {
@@ -206,7 +206,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 $message .= ($conf->global->TICKETS_MESSAGE_MAIL_NEW ? $conf->global->TICKETS_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')) . "\n\n";
                 $message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket') . "\n";
 
-                $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticketsup/view.php', 2)) . '?track_id=' . $object->track_id;
+                $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $object->track_id;
                 $infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="' . $url_public_ticket . '">' . $object->track_id . '</a>') . "\n";
                 $infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl') . "\n\n";
 
@@ -274,7 +274,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 
 	                $message_admin .= '</ul>';
 	                $message_admin .= '<p>' . $langs->trans('Message') . ' : <br>' . $object->message . '</p>';
-	                $message_admin .= '<p><a href="' . dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
+	                $message_admin .= '<p><a href="' . dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
 
 	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '>';
 	                $replyto = $from;
@@ -299,7 +299,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
             }
 
             // Copy files into ticket directory
-            $destdir = $conf->ticketsup->dir_output . '/' . $object->track_id;
+            $destdir = $conf->ticket->dir_output . '/' . $object->track_id;
             if (! dol_is_dir($destdir)) {
             	dol_mkdir($destdir);
             }
@@ -322,12 +322,12 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
  */
 
 $arrayofjs = array();
-$arrayofcss = array('/opensurvey/css/style.css', '/ticketsup/css/styles.css.php');
+$arrayofcss = array('/opensurvey/css/style.css', '/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 $form = new Form($db);
-$formticket = new FormTicketsup($db);
+$formticket = new FormTicket($db);
 
 if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
     print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';

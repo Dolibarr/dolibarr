@@ -18,7 +18,7 @@
  */
 
 /**
- *  \file       htdocs/core/triggers/interface_50_modTicketsup_TicketEmail.class.php
+ *  \file       htdocs/core/triggers/interface_50_modTicket_TicketEmail.class.php
  *  \ingroup    core
  *  \brief      File of trigger for ticket module
  */
@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
 
 
 /**
- *  Class of triggers for ticketsup module
+ *  Class of triggers for ticket module
  */
 class InterfaceTicketEmail extends DolibarrTriggers
 {
@@ -42,10 +42,10 @@ class InterfaceTicketEmail extends DolibarrTriggers
         $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i', '', get_class($this));
-        $this->family = "ticketsup";
-        $this->description = "Triggers of the module ticketsup";
+        $this->family = "ticket";
+        $this->description = "Triggers of the module ticket";
         $this->version = 'dolibarr'; // 'development', 'experimental', 'dolibarr' or version
-        $this->picto = 'ticketsup';
+        $this->picto = 'ticket';
     }
 
     /**
@@ -139,7 +139,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 		                    $message .= '</ul>';
 		                    $message .= '<p>' . $langs->trans('Message') . ' : <br>' . $object->message . '</p>';
-		                    $message .= '<p><a href="' . dol_buildpath('/ticketsup/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
+		                    $message .= '<p><a href="' . dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
 
 		                    $sendto = $userstat->email;
 		                    $from = dolGetFirstLastname($user->firstname, $user->lastname) . '<' . $user->email . '>';
@@ -175,14 +175,14 @@ class InterfaceTicketEmail extends DolibarrTriggers
     		case 'TICKET_CREATE':
 	            dol_syslog("Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id);
 
-	            $langs->load('ticketsup');
+	            $langs->load('ticket');
 
 	            $object->fetch('', $object->track_id);	// Should be useless
 
 
 	            // Send email to notification email
 
-	            if (empty($conf->global->TICKETS_DISABLE_ALL_MAILS) && empty($object->context['disableticketsupemail']))
+	            if (empty($conf->global->TICKETS_DISABLE_ALL_MAILS) && empty($object->context['disableticketemail']))
 	            {
 		            $sendto = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO;
 
@@ -215,7 +215,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			            }
 
 			            $message_admin.='<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
-			            $message_admin.='<p><a href="'.dol_buildpath('/ticketsup/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
+			            $message_admin.='<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
 			            $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKETS_NOTIFICATION_EMAIL_FROM.'>';
 			            $replyto = $from;
@@ -241,7 +241,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				// Send email to customer
 
-				if (empty($conf->global->TICKETS_DISABLE_ALL_MAILS) && empty($object->context['disableticketsupemail']) && $object->notify_tiers_at_create)
+				if (empty($conf->global->TICKETS_DISABLE_ALL_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create)
 	            {
 		            $sendto = '';
 		            if (empty($user->socid) && empty($user->email)) {
@@ -287,7 +287,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 			            $message_customer.='</ul>';
 			            $message_customer.='<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
-			            $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE?$conf->global->TICKETS_URL_PUBLIC_INTERFACE.'/':dol_buildpath('/public/ticketsup/view.php', 2)).'?track_id='.$object->track_id;
+			            $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE?$conf->global->TICKETS_URL_PUBLIC_INTERFACE.'/':dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
 			            $message_customer.='<p>' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 			            $message_customer.='<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 

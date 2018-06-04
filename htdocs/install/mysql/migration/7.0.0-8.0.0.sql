@@ -195,7 +195,9 @@ UPDATE llx_societe_rib set type = 'ban' where type = '' OR type IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_societe_rib MODIFY COLUMN type varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_societe_rib ALTER COLUMN type SET NOT NULL;
    
-CREATE TABLE llx_ticketsup
+   
+-- Module ticket
+CREATE TABLE llx_ticket
 (
 	rowid       integer AUTO_INCREMENT PRIMARY KEY,
 	entity		integer DEFAULT 1,
@@ -222,11 +224,11 @@ CREATE TABLE llx_ticketsup
 	tms timestamp
 )ENGINE=innodb;
 
-ALTER TABLE llx_ticketsup ADD COLUMN notify_tiers_at_create integer;
-ALTER TABLE llx_ticketsup DROP INDEX uk_ticketsup_rowid_track_id;
-ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_track_id (track_id);
+ALTER TABLE llx_ticket ADD COLUMN notify_tiers_at_create integer;
+ALTER TABLE llx_ticket DROP INDEX uk_ticket_rowid_track_id;
+ALTER TABLE llx_ticket ADD UNIQUE uk_ticket_track_id (track_id);
 
-CREATE TABLE llx_ticketsup_msg
+CREATE TABLE llx_ticket_msg
 (
 	rowid       integer AUTO_INCREMENT PRIMARY KEY,
 	entity		integer DEFAULT 1,
@@ -238,9 +240,9 @@ CREATE TABLE llx_ticketsup_msg
 )ENGINE=innodb;
 
 
-ALTER TABLE llx_ticketsup_msg ADD CONSTRAINT fk_ticketsup_msg_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticketsup (track_id);
+ALTER TABLE llx_ticket_msg ADD CONSTRAINT fk_ticket_msg_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
-CREATE TABLE llx_ticketsup_logs
+CREATE TABLE llx_ticket_logs
 (
 	rowid       integer AUTO_INCREMENT PRIMARY KEY,
 	entity		integer DEFAULT 1,
@@ -250,9 +252,9 @@ CREATE TABLE llx_ticketsup_logs
 	message	text
 )ENGINE=innodb;
 
-ALTER TABLE llx_ticketsup_logs ADD CONSTRAINT fk_ticketsup_logs_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticketsup (track_id);
+ALTER TABLE llx_ticket_logs ADD CONSTRAINT fk_ticket_logs_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
-CREATE TABLE llx_ticketsup_extrafields
+CREATE TABLE llx_ticket_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
@@ -263,7 +265,7 @@ CREATE TABLE llx_ticketsup_extrafields
 
 
 -- Create dictionaries tables for ticket
-create table llx_c_ticketsup_severity
+create table llx_c_ticket_severity
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,
@@ -276,7 +278,7 @@ create table llx_c_ticketsup_severity
   description	varchar(255)
 )ENGINE=innodb;
 
-create table llx_c_ticketsup_type
+create table llx_c_ticket_type
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,
@@ -288,7 +290,7 @@ create table llx_c_ticketsup_type
   description	varchar(255)
 )ENGINE=innodb;
 
-create table llx_c_ticketsup_category
+create table llx_c_ticket_category
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,
@@ -300,27 +302,30 @@ create table llx_c_ticketsup_category
   description	varchar(255)
 )ENGINE=innodb;
 
-ALTER TABLE llx_c_ticketsup_category ADD UNIQUE INDEX uk_code (code, entity);
-ALTER TABLE llx_c_ticketsup_severity ADD UNIQUE INDEX uk_code (code, entity);
-ALTER TABLE llx_c_ticketsup_type     ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticket_category ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticket_severity ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticket_type     ADD UNIQUE INDEX uk_code (code, entity);
 
 
 
 -- Load data
-INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('LOW',      '10', 'Low',                 '', 1, 0, NULL);
-INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('NORMAL',   '20', 'Normal',              '', 1, 1, NULL);
-INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('HIGH',     '30', 'High',                '', 1, 0, NULL);
-INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('BLOCKING', '40', 'Critical / blocking', '', 1, 0, NULL);
+INSERT INTO llx_c_ticket_severity (code, pos, label, color, active, use_default, description) VALUES('LOW',      '10', 'Low',                 '', 1, 0, NULL);
+INSERT INTO llx_c_ticket_severity (code, pos, label, color, active, use_default, description) VALUES('NORMAL',   '20', 'Normal',              '', 1, 1, NULL);
+INSERT INTO llx_c_ticket_severity (code, pos, label, color, active, use_default, description) VALUES('HIGH',     '30', 'High',                '', 1, 0, NULL);
+INSERT INTO llx_c_ticket_severity (code, pos, label, color, active, use_default, description) VALUES('BLOCKING', '40', 'Critical / blocking', '', 1, 0, NULL);
 
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('COM',     '10', 'Commercial question',           1, 1, NULL);
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('ISSUE',   '20', 'Issue or problem'  ,            1, 0, NULL);
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('REQUEST', '25', 'Change or enhancement request', 1, 0, NULL);
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('PROJECT', '30', 'Project', 0, 0, NULL);
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('OTHER',   '40', 'Other',   1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('COM',     '10', 'Commercial question',           1, 1, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('ISSUE',   '20', 'Issue or problem'  ,            1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('REQUEST', '25', 'Change or enhancement request', 1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROJECT', '30', 'Project', 0, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('OTHER',   '40', 'Other',   1, 0, NULL);
 
-INSERT INTO llx_c_ticketsup_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);
+INSERT INTO llx_c_ticket_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);
 
-
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(155, 'ticket', 'internal', 'SUPPORTTEC', 'Utilisateur contact support', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(156, 'ticket', 'internal', 'CONTRIBUTOR', 'Intervenant', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(157, 'ticket', 'external', 'SUPPORTCLI', 'Contact client suivi incident', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(158, 'ticket', 'external', 'CONTRIBUTOR', 'Intervenant', 1, NULL);
 
 
 
