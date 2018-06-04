@@ -419,7 +419,6 @@ if ($num > 0)
 	$style='pair';
 	$now = dol_now();
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num,$limit))
 	{
