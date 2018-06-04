@@ -265,7 +265,7 @@ if ($ret)
 	        if (! $i) $totalarray['nbfield']++;
         }
         // Extra fields
-        $obj = (object) $resource->array_options;
+        $obj = (Object) $resource->array_options;
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td align="center">';
