@@ -2200,17 +2200,14 @@ class User extends CommonObject
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+			/*
+			 $hookmanager->initHooks(array('userdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
 		}
-		/*if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
-		$hookmanager->initHooks(array('userdao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-		*/
 
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
@@ -2240,11 +2237,6 @@ class User extends CommonObject
 		$result.=$companylink;
 
 		global $action;
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('userdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

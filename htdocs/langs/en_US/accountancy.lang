@@ -40,7 +40,7 @@ AccountWithNonZeroValues=Accounts with non zero values
 ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main accounting account for veo not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 

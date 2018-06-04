@@ -1008,6 +1008,14 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
 
+	if ($ident < 0)
+	{
+		foreach ($conf->loghandlers as $loghandlerinstance)
+		{
+			$loghandlerinstance->setIdent($ident);
+		}
+	}
+
 	if (! empty($message))
 	{
 		// Test log level
@@ -1060,7 +1068,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		unset($data);
 	}
 
-	if (! empty($ident))
+	if ($ident > 0)
 	{
 		foreach ($conf->loghandlers as $loghandlerinstance)
 		{
@@ -4296,7 +4304,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	print '<div class="pagination"><ul>';
 	if ((int) $limit >= 0 && empty($hideselectlimit))
 	{
-		$pagesizechoices='10:10,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
+		$pagesizechoices='10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
 		//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 		//$pagesizechoices.=',2:2';
 		if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;

@@ -44,8 +44,8 @@ $colorbacktabcard1='255,255,255';  // card
 $colorbacktabactive='234,234,234';
 $colorbacklineimpair1='255,255,255';    // line impair
 $colorbacklineimpair2='255,255,255';    // line impair
-$colorbacklinepair1='246,246,246';    // line pair
-$colorbacklinepair2='246,246,246';    // line pair
+$colorbacklinepair1='250,250,250';    // line pair
+$colorbacklinepair2='250,250,250';    // line pair
 $colorbacklinepairhover='238,246,252';    // line pair
 $colorbacklinebreak='214,218,220';		// line break
 $colorbackbody='255,255,255';
@@ -3103,7 +3103,7 @@ div.tabBar .noborder {
 /* Prepare to remove class pair - impair */
 
 .noborder > tbody > tr:nth-child(even):not(.liste_titre), .liste > tbody > tr:nth-child(even):not(.liste_titre),
-.border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre) {
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(even):not(.liste_titre), .liste > tbody > tr:nth-of-type(even):not(.liste_titre) {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
 	background: -moz-linear-gradient(bottom, rgb(<?php echo $colorbacklineimpair1; ?>) 85%, rgb(<?php echo $colorbacklineimpair2; ?>) 100%);
@@ -3115,7 +3115,7 @@ div.tabBar .noborder {
 }
 
 .noborder > tbody > tr:nth-child(odd):not(.liste_titre), .liste > tbody > tr:nth-child(odd):not(.liste_titre),
-.border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre)
+div:not(.fichecenter):not(.fichehalfleft):not(.ficheaddleft) > .border > tbody > tr:nth-of-type(odd):not(.liste_titre), .liste > tbody > tr:nth-of-type(odd):not(.liste_titre)
 {
 	background: linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
 	background: -o-linear-gradient(bottom, rgb(<?php echo $colorbacklinepair1; ?>) 85%, rgb(<?php echo $colorbacklinepair2; ?>) 100%);
