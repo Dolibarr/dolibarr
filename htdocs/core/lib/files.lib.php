@@ -1238,7 +1238,7 @@ function dol_delete_dir($dir,$nophperrors=0)
 	if (preg_match('/\.\./',$dir) || preg_match('/[<>|]/',$dir))
 	{
 		dol_syslog("Refused to delete dir ".$dir, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	$dir_osencoded=dol_osencode($dir);
@@ -1857,7 +1857,7 @@ function dol_uncompress($inputfile,$outputdir)
 		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
 		$zip = new ZipArchive;
 		$res = $zip->open($inputfile);
-		if ($res === TRUE)
+		if ($res === true)
 		{
 			$zip->extractTo($outputdir.'/');
 			$zip->close();
