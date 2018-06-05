@@ -22,6 +22,8 @@
  * 		\brief      This script create a xml checksum file
  */
 
+if (! defined('NOREQUIREDB')) define('NOREQUIREDB','1');	// Do not create database handler $db
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path=dirname(__FILE__).'/';
