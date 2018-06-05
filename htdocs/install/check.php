@@ -254,7 +254,7 @@ else
 {
 	if (dol_is_dir($conffile))
 	{
-		print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileMustBeAFileNotADir",$conffiletoshow);
+		print '<img src="../theme/eldy/img/error.png" alt="Warning"> '.$langs->trans("ConfFileMustBeAFileNotADir",$conffiletoshow);
 
 		$allowinstall=0;
 	}
