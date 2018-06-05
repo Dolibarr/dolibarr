@@ -919,6 +919,10 @@ class ExtraFields
 			{
 				$morecss = 'maxwidth75';
 			}
+			elseif ($type == 'password')
+			{
+				$morecss='maxwidth100';
+			}
 			elseif ($type == 'url')
 			{
 				$morecss='minwidth400';
