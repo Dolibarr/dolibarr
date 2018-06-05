@@ -79,10 +79,13 @@ $familyinfo=array(
 );
 
 $param='';
-if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
-if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
-if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+if (! GETPOST('buttonreset','alpha'))
+{
+	if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
+	if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
+	if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
+	if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+}
 
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';
