@@ -1526,7 +1526,7 @@ class FichinterLigne extends CommonObjectLine
 
 		$sql = "SELECT SUM(duree) as total_duration, min(date) as dateo, max(date) as datee ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet";
-		$sql.= " WHERE fk_fichinter=".$this->fk_fichinter;
+		$sql.= " WHERE fk_fichinter=".$this->id;
 
 		dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -1540,7 +1540,7 @@ class FichinterLigne extends CommonObjectLine
 			$sql.= " SET duree = ".$total_duration;
 			$sql.= " , dateo = ".(! empty($obj->dateo)?"'".$this->db->idate($obj->dateo)."'":"null");
 			$sql.= " , datee = ".(! empty($obj->datee)?"'".$this->db->idate($obj->datee)."'":"null");
-			$sql.= " WHERE rowid = ".$this->fk_fichinter;
+			$sql.= " WHERE rowid = ".$this->id;
 
 			dol_syslog("FichinterLigne::update_total", LOG_DEBUG);
 			$resql=$this->db->query($sql);
