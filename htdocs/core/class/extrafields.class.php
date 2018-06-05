@@ -1391,7 +1391,7 @@ class ExtraFields
 		{
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
 			$out='<input style="display:none" type="text" name="fakeusernameremembered">';	// Hidden field to reduce impact of evil Google Chrome autopopulate bug.
-			$out.='<input type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out.='<input autocomplete="new-password" type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';

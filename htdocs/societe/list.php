@@ -604,7 +604,7 @@ if ($user->rights->societe->creer)
 	$newcardbutton.= '</a>';
 }
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
