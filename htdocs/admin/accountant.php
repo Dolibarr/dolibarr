@@ -90,7 +90,7 @@ $formcompany=new FormCompany($db);
 
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-print $langs->trans("AccountantDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("AccountantDesc")."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit' || $action == 'updateedit')
