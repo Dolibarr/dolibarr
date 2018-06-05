@@ -116,7 +116,7 @@ if ($socid > 0)
                 }
                 $totalpaye = $fac->getSommePaiement();
 
-                
+
                 print '<tr class="oddeven">';
 
                 print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
@@ -184,7 +184,7 @@ if ($socid > 0)
         {
             dol_print_error($db);
         }
-        
+
         print "</table>";
     }
 }
