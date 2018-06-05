@@ -252,8 +252,14 @@ if (! file_exists($conffile))
 }
 else
 {
+	if (dol_is_dir($conffile))
+	{
+		print '<img src="../theme/eldy/img/tick.png" alt="Warning"> '.$langs->trans("ConfFileMustBeAFileNotADir",$conffiletoshow);
+
+		$allowinstall=0;
+	}
 	// File exists but can't be modified
-	if (!is_writable($conffile))
+	elseif (!is_writable($conffile))
 	{
 		if ($confexists)
 		{
