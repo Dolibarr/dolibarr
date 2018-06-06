@@ -137,7 +137,7 @@ function pt($db, $sql, $date)
             if ($obj->mode == 'paid')
             {
             	$amountpaid = $obj->mm;
-            	$totalpaid = $totalpaid + $amountpaied;
+            	$totalpaid = $totalpaid + $amountpaid;
             }
 
             if ($obj->mode == 'paid')
