@@ -1750,22 +1750,17 @@ class FactureLigneRec extends CommonInvoiceLine
     /**
      * 	Update a line to invoice_rec.
      *
+     *  @param		User	$user					User
+     *  @param		int		$notrigger				No trigger
      *	@return    	int             				<0 if KO, Id of line if OK
      */
-    function update()
+    function update(User $user, $notrigger=0)
     {
-    	global $user;
+    	global $conf;
 
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-    	if ($fk_product)
-    	{
-    		$product=new Product($this->db);
-    		$result=$product->fetch($fk_product);
-    		$product_type=$product->type;
-    	}
-
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET";
     	$sql.= " fk_facture = ".$this->fk_facture;
     	$sql.= ", label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
     	$sql.= ", description='".$this->db->escape($this->desc)."'";
@@ -1796,7 +1791,6 @@ class FactureLigneRec extends CommonInvoiceLine
     	$sql.= ", special_code=".$this->special_code;
     	$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit )."'":"null");
     	$sql.= ", fk_contract_line=".($this->fk_contract_line?$this->fk_contract_line:"null");
-
     	$sql.= " WHERE rowid = ".$this->id;
 
     	dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
@@ -1815,7 +1809,7 @@ class FactureLigneRec extends CommonInvoiceLine
     		if (! $error && ! $notrigger)
     		{
     			// Call trigger
-    			$result=$this->call_trigger('LINEBILL_REC_UPDATE',$user);
+    			$result=$this->call_trigger('LINEBILL_REC_UPDATE', $user);
     			if ($result < 0)
     			{
     				$this->db->rollback();
@@ -1828,7 +1822,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	}
     	else
     	{
-    		$this->error=$this->db->error();
+    		$this->error=$this->db->lasterror();
     		$this->db->rollback();
     		return -2;
     	}
