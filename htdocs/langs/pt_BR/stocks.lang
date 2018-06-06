@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - stocks
-Warehouse=Armazém
 NewWarehouse=Novo armazém / setor de armazenagem
 MenuNewWarehouse=Novo armazém
 WarehouseSource=Armazém de origem
@@ -18,7 +17,6 @@ ErrorWarehouseRefRequired=A referência do armazém é necessária
 ListOfWarehouses=Lista de armazéns
 ListOfStockMovements=Lista de movimentações de estoque
 StocksArea=Setor de armazenagem
-NumberOfDifferentProducts=Número de produtos diferentes
 NumberOfProducts=Número total de produtos
 CorrectStock=Corrigir estoque
 StockTransfer=Banco de transferência

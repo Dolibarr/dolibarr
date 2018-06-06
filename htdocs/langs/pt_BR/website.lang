@@ -2,7 +2,6 @@
 WebsiteSetupDesc=Crie aqui o numero de entradas ao website que você precisa. Depois entre no menu websites para editá-las.
 DeleteWebsite=Apagar website
 ConfirmDeleteWebsite=Você tem certeza que deseja apagar este web site. Todas as páginas e conteúdos serão removidos.
-WEBSITE_TYPE_CONTAINER=Tipo de página / recipiente
 WEBSITE_PAGE_EXAMPLE=Página da Web para usar como exemplo
 WEBSITE_PAGENAME=Nome da Página/Apelido
 WEBSITE_ALIASALT=Nomes / alias alternativos de página
@@ -68,7 +67,6 @@ AnotherContainer=Outro recipiente
 WEBSITE_USE_WEBSITE_ACCOUNTS=Habilitar a tabela da conta do site
 WEBSITE_USE_WEBSITE_ACCOUNTSTooltip=Ative a tabela para armazenar contas do site (login / pass) para cada site / terceira parte
 YouMustDefineTheHomePage=Você deve primeiro definir a Home page padrão
-OnlyEditionOfSourceForGrabbedContentFuture=Nota: somente uma edição da fonte HTML será possível quando um conteúdo da página for inculgado agarrando-o de uma página externa (o editor WYSIWYG não estará disponível)
 OnlyEditionOfSourceForGrabbedContent=Apenas uma edição de fonte HTML é possível quando o conteúdo foi extraído de um site externo
 GrabImagesInto=Pegue também imagens encontradas no css e na página.
 ImagesShouldBeSavedInto=As imagens devem ser salvas no diretório

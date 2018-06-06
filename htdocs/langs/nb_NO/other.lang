@@ -82,7 +82,7 @@ PredefinedMailTest=__(Hei)__\nDette er en testmelding sendt til __EMAIL__.\nDe t
 PredefinedMailTestHtml=__(Hei)__\nDette er en <b> test </b> e-post (ordtesten må være i fet skrift). De to linjene skilles med et linjeskift.<br><br>__USER_SIGNATURE__
 PredefinedMailContentSendInvoice=__(Hei)__\n\nHer finner du faktura __REF__\n\nDette er koblingen for å kunne betale online hvis fakturaen ikke allerede er betalt:\n__ONLINE_PAYMENT_URL__\n\n__(Vennlig hilsen)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__(Hei)__\n\nVi kan ikke se at faktura __REF__ er betalt. Vedlagt kopi av faktura.\n\nDette er koblingen for å foreta online betaling:\n__ONLINE_PAYMENT_URL__\n\n__(Vennlig hilsen)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendProposal=__(Hei)__\n\nVedlagt tilbud som avtalt __PREF__\n\n\n__(Vennlig hilsen)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendProposal=__(Hello)__\n\nYou will find here the commercial proposal __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierProposal=__(Hei)__\n\nVedlagt tilbud som avtalt __REF__\n\n\n__(Vennlig hilsen)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendOrder=__(Hei)__\n\nVedlagt ordre __REF__\n\n\n__(Vennlig hilsen)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierOrder=__(Hei)__\n\nVedlagt vår bestilling __REF__\n\n\n__(Vennlig hilsen)__\n\n__USER_SIGNATURE__
@@ -218,7 +218,7 @@ FileIsTooBig=Filene er for store
 PleaseBePatient=Vent et øyeblikk eller to...
 NewPassword=Nytt passord
 ResetPassword=Tilbakestill passord
-RequestToResetPasswordReceived=Forespørsel om å endre Dolibarr-passordet ditt er blitt mottatt
+RequestToResetPasswordReceived=A request to change your password has been received
 NewKeyIs=Dette er din nye innloggingsnøkkel
 NewKeyWillBe=Ny nøkkel for innlogging er
 ClickHereToGoTo=Klikk her for å gå til %s
@@ -233,6 +233,8 @@ PermissionsDelete=Tillatelser fjernet
 YourPasswordMustHaveAtLeastXChars=Passordet ditt må ha minst <strong> %s </strong> tegn
 YourPasswordHasBeenReset=Ditt passord er tilbakestilt
 ApplicantIpAddress=IP-adresse til søkeren
+SMSSentTo=SMS sent to %s
+
 ##### Export #####
 ExportsArea=Eksportområde
 AvailableFormats=Tilgjengelige formater

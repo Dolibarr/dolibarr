@@ -111,7 +111,7 @@ SendingAnEMailToMember=Sending information email to member
 SendingEmailOnAutoSubscription=Sending email on auto registration
 SendingEmailOnMemberValidation=Sending email on new member validation
 SendingEmailOnNewSubscription=Sending email on new subscription
-SendingReminderForExpiredSubscription=Sending reminder for expired subscription
+SendingReminderForExpiredSubscription=Sending reminder for expired subscriptions
 SendingEmailOnCancelation=Sending email on cancelation
 # Topic of email templates
 YourMembershipRequestWasReceived=Your membership was received.

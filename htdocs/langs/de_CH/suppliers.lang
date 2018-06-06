@@ -1,9 +1,5 @@
 # Dolibarr language file - Source file is en_US - suppliers
 TotalBuyingPriceMinShort=Summe der Einkaufspreise der Unterprodukte
-SupplierPrices=Lieferanten Preise
-RefSupplierShort=Ref . Lieferant
-SupplierReputation=Lieferantenbewertung
 DoNotOrderThisProductToThisSupplier=Nicht bestellen
 NotTheGoodQualitySupplier=Falsche Menge
 ReputationForThisProduct=Bewertung
-BuyingPriceNumShort=Lieferanten Preise

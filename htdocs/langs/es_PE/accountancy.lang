@@ -15,7 +15,6 @@ Selectchartofaccounts=Seleccione el plan de cuentas activo
 Addanaccount=Agregar una cuenta contable
 Ventilation=Vinculación a cuentas
 CustomersVentilation=Fijación de la factura del cliente
-SuppliersVentilation=Factura de proveedores vinculados
 CreateMvts=Crear nueva transacción
 UpdateMvts=Modificación de una transacción
 WriteBookKeeping=Periodizar transacción en Libro Mayor
