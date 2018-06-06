@@ -1117,7 +1117,8 @@ if ($source == 'contractline')
 	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
 	if ($contractline->fk_product)
 	{
-		$text.='<br>'.$product->ref.($product->label?' - '.$product->label:'');
+		$contractline->fetch_product();
+		$text.='<br>'.$contractline->product->ref.($contractline->product->label?' - '.$contractline->product->label:'');
 	}
 	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
 	//if ($contractline->date_fin_validite) {
@@ -1148,12 +1149,12 @@ if ($source == 'contractline')
 	$duration='';
 	if ($contractline->fk_product)
 	{
-		if ($product->isService() && $product->duration_value > 0)
+		if ($contractline->product->isService() && $contractline->product->duration_value > 0)
 		{
 			$label=$langs->trans("Duration");
 
 			// TODO Put this in a global method
-			if ($product->duration_value > 1)
+			if ($contractline->product->duration_value > 1)
 			{
 				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("DurationDays"),"w"=>$langs->trans("DurationWeeks"),"m"=>$langs->trans("DurationMonths"),"y"=>$langs->trans("DurationYears"));
 			}
@@ -1161,7 +1162,7 @@ if ($source == 'contractline')
 			{
 				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("DurationDay"),"w"=>$langs->trans("DurationWeek"),"m"=>$langs->trans("DurationMonth"),"y"=>$langs->trans("DurationYear"));
 			}
-			$duration=$product->duration_value.' '.$dur[$product->duration_unit];
+			$duration=$contractline->product->duration_value.' '.$dur[$contractline->product->duration_unit];
 		}
 	}
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$label.'</td>';
