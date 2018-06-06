@@ -387,8 +387,8 @@ class Conf
 		$this->productbatch->multidir_temp  =array($this->entity => $rootfordata."/produitlot/temp");
 
 		// Module contrat
-		$this->contrat->dir_output=$rootfordata."/contracts";
-		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
+		$this->contrat->dir_output=$rootfordata."/contract";
+		$this->contrat->dir_temp  =$rootfordata."/contract/temp";
 		// Module bank
 		$this->bank->dir_output=$rootfordata."/bank";
 		$this->bank->dir_temp  =$rootfordata."/bank/temp";

@@ -254,7 +254,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_rename_directories($db,$langs,$conf,'/societe','/mycompany');
         }
 
-        // Script for VX (X<2.8) -> V2.8
+        // Script for 2.8
         $afterversionarray=explode('.','2.7.9');
         $beforeversionarray=explode('.','2.8.9');
         //print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
@@ -281,7 +281,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_project_task_actors($db,$langs,$conf);
         }
 
-        // Script for VX (X<2.9) -> V2.9
+        // Script for 2.9
         $afterversionarray=explode('.','2.8.9');
         $beforeversionarray=explode('.','2.9.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -295,7 +295,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_shipping_delivery2($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.0) -> V3.0
+        // Script for 3.0
         $afterversionarray=explode('.','2.9.9');
         $beforeversionarray=explode('.','3.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -303,7 +303,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             // No particular code
         }
 
-        // Script for VX (X<3.1) -> V3.1
+        // Script for 3.1
         $afterversionarray=explode('.','3.0.9');
         $beforeversionarray=explode('.','3.1.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -313,7 +313,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_actioncomm_element($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.2) -> V3.2
+        // Script for 3.2
         $afterversionarray=explode('.','3.1.9');
         $beforeversionarray=explode('.','3.2.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -325,7 +325,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_clean_association($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.3) -> V3.3
+        // Script for 3.3
         $afterversionarray=explode('.','3.2.9');
         $beforeversionarray=explode('.','3.3.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -333,7 +333,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_categorie_association($db,$langs,$conf);
         }
 
-		// Script for VX (X<3.4) -> V3.4
+		// Script for 3.4
 		// No specific scripts
 
         // Tasks to do always and only into last targeted version
@@ -344,7 +344,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
        	    migrate_event_assignement($db,$langs,$conf);
         }
 
-        // Scripts for last version
+        // Scripts for 3.9
         $afterversionarray=explode('.','3.7.9');
         $beforeversionarray=explode('.','3.8.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -352,7 +352,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	// No particular code
         }
 
-        // Scripts for last version
+        // Scripts for 4.0
         $afterversionarray=explode('.','3.9.9');
         $beforeversionarray=explode('.','4.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -360,7 +360,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_rename_directories($db,$langs,$conf,'/fckeditor','/medias');
         }
 
-        // Scripts for last version
+        // Scripts for 5.0
         $afterversionarray=explode('.','4.0.9');
         $beforeversionarray=explode('.','5.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -372,7 +372,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_remise_except_entity($db,$langs,$conf);
         }
 
-        // Scripts for last version
+        // Scripts for 6.0
         $afterversionarray=explode('.','5.0.9');
         $beforeversionarray=explode('.','6.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -393,7 +393,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	}
         }
 
-        // Scripts for last version
+        // Scripts for 7.0
         $afterversionarray=explode('.','6.0.9');
         $beforeversionarray=explode('.','7.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -403,6 +403,15 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
         	migrate_reset_blocked_log($db,$langs,$conf);
         }
+
+        // Scripts for 8.0
+        $afterversionarray=explode('.','7.0.9');
+        $beforeversionarray=explode('.','8.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
+        }
+
     }
 
 	// Code executed only if migration is LAST ONE. Must always be done.

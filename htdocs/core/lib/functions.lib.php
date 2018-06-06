@@ -1390,11 +1390,11 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 					$dir_output = $conf->$modulepart->multidir_output[$entity] . "/";
 					if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
 					{
-						$subdir = get_exdir($object->id, 2, 0, 0, $object, $modulepart).$objectref;		// the objectref dir is not include into get_exdir when used with level=2, so we add it here
+						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart).$objectref;		// the objectref dir is not included into get_exdir when used with level=2, so we add it here
 					}
 					else
 					{
-						$subdir = get_exdir($object->id, 0, 0, 0, $object, $modulepart);
+						$subdir = get_exdir($object->id, 0, 0, 1, $object, $modulepart);
 					}
 
 					$filepath = $dir_output . $subdir . "/";
@@ -5331,7 +5331,7 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
-		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment','expensereport')))
+		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment','contract','expensereport')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
