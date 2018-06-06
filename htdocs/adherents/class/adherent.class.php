@@ -2568,7 +2568,7 @@ class Adherent extends CommonObject
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$adherent = new Adherent($this->db);
-			$formmail=new FormMail($db);
+			$formmail = new FormMail($this->db);
 
 			$i=0;
 			$nbok = 0;
