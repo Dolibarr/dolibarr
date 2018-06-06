@@ -151,7 +151,21 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     print '<body id="mainbody" class="publicnewticketform" style="margin-top: 10px;">';
 
     if (! empty($conf->global->TICKETS_SHOW_COMPANY_LOGO)) {
-    	showlogo();
+    	// Print logo
+    	$urllogo = DOL_URL_ROOT . '/theme/login_logo.png';
+
+    	if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
+    		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=' . urlencode('thumbs/' . $mysoc->logo_small);
+    	} elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
+    		$urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=' . urlencode($mysoc->logo);
+    		$width = 128;
+    	} elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.png')) {
+    		$urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
+    	}
+    	print '<center>';
+    	print '<a href="' . ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
+    	print '<strong>' . ($conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
+    	print '</center><br>';
     }
 
     print '<div style="margin-left: 50px; margin-right: 50px;">';
@@ -172,30 +186,4 @@ function llxFooterTicket()
 
     print "</body>\n";
     print "</html>\n";
-}
-
-/**
- * Show logo
- *
- * @return void
- */
-function showlogo()
-{
-    global $conf, $langs, $mysoc;
-
-    // Print logo
-    $urllogo = DOL_URL_ROOT . '/theme/login_logo.png';
-
-    if (!empty($mysoc->logo_small) && is_readable($conf->mycompany->dir_output . '/logos/thumbs/' . $mysoc->logo_small)) {
-        $urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=' . urlencode('thumbs/' . $mysoc->logo_small);
-    } elseif (!empty($mysoc->logo) && is_readable($conf->mycompany->dir_output . '/logos/' . $mysoc->logo)) {
-        $urllogo = DOL_URL_ROOT . '/viewimage.php?cache=1&amp;modulepart=companylogo&amp;file=' . urlencode($mysoc->logo);
-        $width = 128;
-    } elseif (is_readable(DOL_DOCUMENT_ROOT . '/theme/dolibarr_logo.png')) {
-        $urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
-    }
-    print '<center>';
-    print '<a href="' . ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
-    print '<strong>' . ($conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
-    print '</center><br>';
 }
