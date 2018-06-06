@@ -1457,7 +1457,16 @@ abstract class CommonObject
 		{
 			if ($trigkey)
 			{
-				$result=$this->call_trigger($trigkey, (! empty($fuser) && is_object($fuser)) ? $fuser : $user);   // This may set this->errors
+				// call trigger with updated object values
+				if (empty($this->get_field_list()) && method_exists($this, 'fetch')) 
+				{
+					$result = $this->fetch($id); 
+				} 
+				else 
+				{
+					$result = $this->fetchCommon($id);
+				}
+				if ($result >= 0) $result=$this->call_trigger($trigkey, (! empty($fuser) && is_object($fuser)) ? $fuser : $user);   // This may set this->errors
 				if ($result < 0) $error++;
 			}
 
