@@ -310,7 +310,6 @@ class InterfaceMyModuleTriggers extends DolibarrTriggers
 			default:
 		        dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 		        break;
-
 		    }
 
 		return 0;

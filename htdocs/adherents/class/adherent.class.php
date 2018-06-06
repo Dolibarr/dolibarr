@@ -2418,6 +2418,34 @@ class Adherent extends CommonObject
 	}
 
 	/**
+	 *  Return number of mass Emailing received by this member with its email
+	 *
+	 *  @return       int     Number of EMailings
+	 */
+	function getNbOfEMailings()
+	{
+		$sql = "SELECT count(mc.email) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
+		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb=$obj->nb;
+
+			$this->db->free($resql);
+			return $nb;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
 	 * Sets object to supplied categories.
 	 *
 	 * Deletes object from existing categories not supplied.

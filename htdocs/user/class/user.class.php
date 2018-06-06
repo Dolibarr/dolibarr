@@ -2560,7 +2560,8 @@ class User extends CommonObject
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
-		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

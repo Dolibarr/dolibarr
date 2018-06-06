@@ -1050,10 +1050,7 @@ class Contact extends CommonObject
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
 
-		dol_syslog(get_class($this)."::getNbOfEMailings", LOG_DEBUG);
-
 		$resql=$this->db->query($sql);
-
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
