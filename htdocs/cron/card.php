@@ -250,7 +250,7 @@ if ($action=='inactive')
 $form = new Form($db);
 $formCron = new FormCron($db);
 
-llxHeader('',$langs->trans("CronAdd"));
+llxHeader('',$langs->trans("CronTask"));
 
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
