@@ -136,6 +136,8 @@ class AllTests
         require_once dirname(__FILE__).'/CommonObjectTest.php';
         $suite->addTestSuite('CommonObjectTest');
 
+        require_once dirname(__FILE__).'/ActionCommTest.php';
+        $suite->addTestSuite('SocieteTest');
         require_once dirname(__FILE__).'/SocieteTest.php';
         $suite->addTestSuite('SocieteTest');
         require_once dirname(__FILE__).'/ContactTest.php';

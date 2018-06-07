@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/AccountingAccountTest.php
+ *      \file       test/phpunit/ActionCommTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -27,7 +27,7 @@ global $conf,$user,$langs,$db;
 //define('TEST_DB_FORCE_TYPE','mysql');	// This is to force using mysql driver
 //require_once 'PHPUnit/Autoload.php';
 require_once dirname(__FILE__).'/../../htdocs/master.inc.php';
-require_once dirname(__FILE__).'/../../htdocs/accountancy/class/accountingaccount.class.php';
+require_once dirname(__FILE__).'/../../htdocs/comm/action/class/actioncomm.class.php';
 
 if (empty($user->id)) {
     print "Load permissions for admin user nb 1\n";
@@ -44,7 +44,7 @@ $conf->global->MAIN_DISABLE_ALL_MAILS=1;
  * @backupStaticAttributes enabled
  * @remarks	backupGlobals must be disabled to have db,conf,user and lang not erased.
  */
-class AccountingAccountTest extends PHPUnit_Framework_TestCase
+class ActionCommTest extends PHPUnit_Framework_TestCase
 {
     protected $savconf;
     protected $savuser;
@@ -55,7 +55,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
      * Constructor
      * We save global variables into local variables
      *
-     * @return AccountingAccountTest
+     * @return ActionCommTest
      */
     function __construct()
     {
@@ -119,11 +119,11 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testAccountingAccountCreate
+     * testActionCommCreate
      *
      * @return  int		Id of created object
      */
-    public function testAccountingAccountCreate()
+    public function testActionCommCreate()
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -131,15 +131,36 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new AccountingAccount($this->savdb);
-        $localobject->fk_pcg_version = 'PCG99-ABREGE';
-        $localobject->account_category = 0;
-        $localobject->pcg_type = 'XXXXX';
-        $localobject->pcg_subtype = 'XXXXX';
-        $localobject->account_parent = 0;
-        $localobject->label = 'Account specimen';
-        $localobject->active = 0;
-        $result=$localobject->create($user);
+        $now = dol_now();
+
+        $localobject=new ActionComm($this->savdb);
+
+        $localobject->type_code   = 'AC_OTH_AUTO';		// Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
+        $localobject->code        = 'AC_PHPUNITTEST';
+        $localobject->label       = 'This is a description';
+        $localobject->note        = 'This is note';
+        $localobject->fk_project  = 0;
+        $localobject->datep       = $now;
+        $localobject->datef       = $now;
+        $localobject->percentage  = -1;   // Not applicable
+        $localobject->socid       = 0;
+        $localobject->contactid   = 0;
+        $localobject->authorid    = $user->id;   // User saving action
+        $localobject->userownerid = $user->id;	// Owner of action
+        // Fields when action is en email (content should be added into note)
+        /*$localobject->email_msgid = $object->email_msgid;
+         $localobject->email_from  = $object->email_from;
+         $localobject->email_sender= $object->email_sender;
+         $localobject->email_to    = $object->email_to;
+         $localobject->email_tocc  = $object->email_tocc;
+         $localobject->email_tobcc = $object->email_tobcc;
+         $localobject->email_subject = $object->email_subject;
+         $localobject->errors_to   = $object->errors_to;*/
+        //$localobject->fk_element  = $invoice->id;
+        //$localobject->elementtype = $invoice->element;
+        $localobject->extraparams = 'Extra params';
+
+        $result = $localobject->create($user);
 
         $this->assertLessThan($result, 0);
         print __METHOD__." result=".$result."\n";
@@ -147,15 +168,15 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testAccountingAccountFetch
+     * testActionCommFetch
      *
-     * @param   int $id     Id accounting account
-     * @return  AccountingAccount
+     * @param   int $id     Id action comm
+     * @return  ActionComm
      *
-     * @depends	testAccountingAccountCreate
+     * @depends	testActionCommCreate
      * The depends says test is run only if previous is ok
      */
-    public function testAccountingAccountFetch($id)
+    public function testActionCommFetch($id)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -163,7 +184,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new AccountingAccount($this->savdb);
+        $localobject=new ActionComm($this->savdb);
         $result=$localobject->fetch($id);
 
         $this->assertLessThan($result, 0);
@@ -172,15 +193,15 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testAccountingAccountUpdate
+     * testActionCommUpdate
      *
-     * @param	Object		$localobject	AccountingAccount
-     * @return	int							ID accounting account
+     * @param	Object		$localobject	ActionComm
+     * @return	int							Id action comm updated
      *
-     * @depends	testAccountingAccountFetch
+     * @depends	testActionCommFetch
      * The depends says test is run only if previous is ok
      */
-    public function testAccountingAccountUpdate($localobject)
+    public function testActionCommUpdate($localobject)
     {
     	global $conf,$user,$langs,$db;
     	$conf=$this->savconf;
@@ -197,15 +218,15 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * testAccountingAccountDelete
+     * testActionCommDelete
      *
-     * @param   int $id         Id of accounting account
+     * @param   int $id         Id of action comm
      * @return  int				Result of delete
      *
-     * @depends testAccountingAccountUpdate
+     * @depends testActionCommUpdate
      * The depends says test is run only if previous is ok
      */
-    public function testAccountingAccountDelete($id)
+    public function testActionCommDelete($id)
     {
         global $conf,$user,$langs,$db;
         $conf=$this->savconf;
@@ -213,7 +234,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
-        $localobject=new AccountingAccount($this->savdb);
+        $localobject=new ActionComm($this->savdb);
         $result=$localobject->fetch($id);
         $result=$localobject->delete($user);
 
