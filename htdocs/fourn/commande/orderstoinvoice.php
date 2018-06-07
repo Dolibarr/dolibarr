@@ -180,6 +180,7 @@ if (($action == 'create' || $action == 'add') && ! $error) {
 				$id = $object->create($user);
 
 				if ($id > 0) {
+
 					while ( $ii < $nn ) {
 						$objectsrc = new CommandeFournisseur($db);
 						dol_syslog("Try to find source object origin=" . $object->origin . " originid=" . $object->origin_id . " to add lines");
