@@ -310,7 +310,8 @@ class ActionComm extends CommonObject
         $sql.= "transparency,";
         $sql.= "fk_element,";
         $sql.= "elementtype,";
-        $sql.= "entity";
+        $sql.= "entity,";
+        $sql.= "extraparams";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."', ";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
@@ -329,7 +330,8 @@ class ActionComm extends CommonObject
         $sql.= "'".$this->db->escape($this->transparency)."', ";
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
         $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
-        $sql.= $conf->entity;
+        $sql.= $conf->entity.",";
+        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add", LOG_DEBUG);
