@@ -205,7 +205,7 @@ if ($result > 0)
     print_liste_field_titre('');
 	print "</tr>\n";
 
-    $var=false;
+
 //    $listofemails=$object->thirdparty_and_contact_email_array();
     if ($object->email)
     {
@@ -277,7 +277,6 @@ if ($result > 0)
 
     // List of active notifications
     print_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
-    $var=true;
 
     // Line with titles
     print '<table width="100%" class="noborder">';
@@ -299,7 +298,6 @@ if ($result > 0)
 
         while ($i < $num)
         {
-            $var = !$var;
 
             $obj = $db->fetch_object($resql);
 
