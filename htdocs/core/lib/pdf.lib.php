@@ -1228,7 +1228,17 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc)) $libelleproduitservice.=$desc;
+				if (empty($hidedesc))
+				{
+					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST))
+					{
+						$libelleproduitservice=$desc."\n".$libelleproduitservice;
+					}
+					else
+					{
+						$libelleproduitservice.=$desc;
+					}
+				}
 			}
 			else
 			{
