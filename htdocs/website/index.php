@@ -2076,14 +2076,14 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '<tr><td class="fieldrequired">';
 	print $langs->trans('WEBSITE_TITLE');
 	print '</td><td>';
-	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
+	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
 	print '</td></tr>';
 
 	// Alias
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="titlefield fieldrequired">';
@@ -2138,7 +2138,6 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</td></tr>';
 
 	print '</table>';
-
 	if ($action == 'createcontainer')
 	{
 		print '<div class="center">';
@@ -2149,7 +2148,26 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '</div>';
 	}
 
-
+	if ($action == 'createcontainer')
+	{
+		print '<script type="text/javascript" language="javascript">
+			jQuery(document).ready(function() {
+				var disableautofillofalias = 0;
+				jQuery("#WEBSITE_TITLE").keyup(function() {
+					if (disableautofillofalias == 0)
+					{
+						var valnospecial = jQuery("#WEBSITE_TITLE").val().replace(/[^\w]/gi, \'-\').toLowerCase();
+						valnospecial = valnospecial.replace(/\-+/g, \'-\').replace(/\-$/, \'\');
+						console.log("disableautofillofalias=0 so we replace WEBSITE_TITLE with "+valnospecial);
+						jQuery("#WEBSITE_PAGENAME").val(valnospecial);
+					}
+				});
+				jQuery("#WEBSITE_PAGENAME").keyup(function() {
+					disableautofillofalias = 1;
+				});
+			});
+			</script>';
+	}
 	//print '</div>';
 
 	//dol_fiche_end();
