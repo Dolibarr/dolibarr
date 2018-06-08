@@ -3012,20 +3012,21 @@ class Societe extends CommonObject
 			}
 
 			// TODO Move links to validate professional ID into a dictionary table "country" + "link"
+            $strippedIdProf1 = str_replace(' ', '', $thirdparty->idprof1);
 			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
-				$url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
+				$url='http://www.societe.com/cgi-bin/search?champs='.$strippedIdProf1;    // See also http://avis-situation-sirene.insee.fr/
 			}
 			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
-				$url='https://beta.companieshouse.gov.uk/company/'.$thirdparty->idprof1;
+				$url='https://beta.companieshouse.gov.uk/company/'.$strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'ES') {
-				$url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
+				$url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'IN') {
-				$url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+				$url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$strippedIdProf1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
-				$url='http://www.nif.pt/'.$thirdparty->idprof1;
+				$url='http://www.nif.pt/'.$strippedIdProf1;
 			}
 
 			if ($url) {
