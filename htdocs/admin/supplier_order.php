@@ -179,24 +179,30 @@ else if ($action == 'set_SUPPLIER_ORDER_OTHER')
     // TODO We add/delete permission here until permission can have a condition on a global var
     include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
     $newmodule=new modFournisseur($db);
-	// clear default rights array
-    $newmodule->rights=array();
-    // add new right
-    $r=0;
-    $newmodule->rights[$r][0] = 1190;
-	$newmodule->rights[$r][1] = $langs->trans("Permission1190");
-	$newmodule->rights[$r][2] = 'w';
-	$newmodule->rights[$r][3] = 0;
-	$newmodule->rights[$r][4] = 'commande';
-	$newmodule->rights[$r][5] = 'approve2';
-
+    
     if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     {
+    	// clear default rights array
+    	$newmodule->rights=array();
+    	// add new right
+    	$r=0;
+    	$newmodule->rights[$r][0] = 1190;
+    	$newmodule->rights[$r][1] = $langs->trans("Permission1190");
+    	$newmodule->rights[$r][2] = 'w';
+    	$newmodule->rights[$r][3] = 0;
+    	$newmodule->rights[$r][4] = 'commande';
+    	$newmodule->rights[$r][5] = 'approve2';
+    	
+    	// Insert
     	$newmodule->insert_permissions(1);
     }
     else
     {
+    	// Remove all rights with Permission1190
     	$newmodule->delete_permissions();
+    	
+    	// Add all right without Permission1190
+    	$newmodule->insert_permissions(1);
     }
 }
 
