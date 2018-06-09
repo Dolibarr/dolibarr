@@ -305,6 +305,7 @@ class FormMail extends Form
 				$out.= '<input style="display:none" type="submit" id="sendmail" name="sendmail">';
         		$out.= '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'" />';
         		$out.= '<input type="hidden" name="trackid" value="'.$this->trackid.'" />';
+				$out.= '<input type="hidden" id="model_id_selected" name="model_id_selected" value="'.$model_id.'" />'."\n";
         		$out.= '<a id="formmail" name="formmail"></a>';
         	}
         	foreach ($this->param as $key=>$value)
