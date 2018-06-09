@@ -124,5 +124,5 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account DE SKR03
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR03', 'Standardkontenrahmen SKR 03', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR04', 'Standardkontenrahmen SKR 04', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'SKR04', 'Standardkontenrahmen SKR 04', 1);
 
