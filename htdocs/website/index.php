@@ -1696,13 +1696,23 @@ if (count($object->records) > 0)
                     jQuery(document).ready(function() {
                 		jQuery("#websiteinputurl").keyup(function() {
                             console.log("Website external url modified "+jQuery("#previewsiteurl").val());
-                			if (jQuery("#previewsiteurl").val() != "") jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
+                			if (jQuery("#previewsiteurl").val() != "" && jQuery("#previewsiteurl").val().startsWith("http"))
+							{
+								jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
+							}
                 			else jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 0.2 });
 						';
 				print '
                 		});
                     	jQuery("#previewsiteext,#previewpageext").click(function() {
+
                             newurl=jQuery("#previewsiteurl").val();
+							if (! newurl.startsWith("http"))
+							{
+								alert('.dol_escape_js($langs->trans("ExternalURLMustStartWithHttp")).');
+								return false;
+							}
+
                             newpage=jQuery("#previewsiteurl").val() + "/" + jQuery("#previewpageurl").val() + ".php";
                             console.log("Open url "+newurl);
                             /* Save url */
