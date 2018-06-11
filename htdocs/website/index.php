@@ -1710,7 +1710,6 @@ if (count($object->records) > 0)
 							if (! newurl.startsWith("http"))
 							{
 								alert('.dol_escape_js($langs->trans("ExternalURLMustStartWithHttp")).');
-								return false;
 							}
 
                             newpage=jQuery("#previewsiteurl").val() + "/" + jQuery("#previewpageurl").val() + ".php";
@@ -1731,6 +1730,11 @@ if (count($object->records) > 0)
 
                             jQuery("#previewsiteext").attr("href",newurl);
                             jQuery("#previewpageext").attr("href",newpage);
+
+							if (! newurl.startsWith("http"))
+							{
+								return false;
+							}
                         });
                     });
                     </script>';
