@@ -1709,7 +1709,8 @@ if (count($object->records) > 0)
                             newurl=jQuery("#previewsiteurl").val();
 							if (! newurl.startsWith("http"))
 							{
-								alert('.dol_escape_js($langs->trans("ExternalURLMustStartWithHttp")).');
+								alert(\''.dol_escape_js($langs->trans("ExternalURLMustStartWithHttp")).'\');
+								return false;
 							}
 
                             newpage=jQuery("#previewsiteurl").val() + "/" + jQuery("#previewpageurl").val() + ".php";
