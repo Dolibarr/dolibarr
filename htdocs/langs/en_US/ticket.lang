@@ -125,13 +125,6 @@ TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify thirdparty at creation
 
 #
-# About page
-#
-About=About
-TicketAbout=About ticket module
-TicketAboutModule=The development of this module has been initiated by the company Libr&thic.
-
-#
 # Index & list page
 #
 TicketsIndex=Ticket - home
