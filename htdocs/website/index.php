@@ -1539,28 +1539,31 @@ if (count($object->records) > 0)
 		// Print nav arrows
 		$pagepreviousid=0;
 		$pagenextid=0;
-		$sql = 'SELECT MAX(rowid) as pagepreviousid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid < '.$pageid.' AND fk_website = '.$object->id;
-		$resql = $db->query($sql);
-		if ($resql)
+		if ($pageid)
 		{
-			$obj = $db->fetch_object($resql);
-			if ($obj)
+			$sql = 'SELECT MAX(rowid) as pagepreviousid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid < '.$pageid.' AND fk_website = '.$object->id;
+			$resql = $db->query($sql);
+			if ($resql)
 			{
-				$pagepreviousid = $obj->pagepreviousid;
+				$obj = $db->fetch_object($resql);
+				if ($obj)
+				{
+					$pagepreviousid = $obj->pagepreviousid;
+				}
 			}
-		}
-		else dol_print_error($db);
-		$sql = 'SELECT MIN(rowid) as pagenextid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid > '.$pageid.' AND fk_website = '.$object->id;
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj)
+			else dol_print_error($db);
+			$sql = 'SELECT MIN(rowid) as pagenextid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid > '.$pageid.' AND fk_website = '.$object->id;
+			$resql = $db->query($sql);
+			if ($resql)
 			{
-				$pagenextid = $obj->pagenextid;
+				$obj = $db->fetch_object($resql);
+				if ($obj)
+				{
+					$pagenextid = $obj->pagenextid;
+				}
 			}
+			else dol_print_error($db);
 		}
-		else dol_print_error($db);
 
 		if ($pagepreviousid) print '<a href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
 		else print '<span class="opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
