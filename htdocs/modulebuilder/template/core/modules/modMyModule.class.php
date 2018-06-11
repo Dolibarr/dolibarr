@@ -314,7 +314,8 @@ class modMyModule extends DolibarrModules
 	 */
 	public function init($options='')
 	{
-		$this->_load_tables('/mymodule/sql/');
+		$result=$this->_load_tables('/mymodule/sql/');
+        if(!$result) return -1;// Fix: Do not activate module if errors on module SQL queries execution
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
