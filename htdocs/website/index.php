@@ -1731,11 +1731,6 @@ if (count($object->records) > 0)
 
                             jQuery("#previewsiteext").attr("href",newurl);
                             jQuery("#previewpageext").attr("href",newpage);
-
-							if (! newurl.startsWith("http"))
-							{
-								return false;
-							}
                         });
                     });
                     </script>';
