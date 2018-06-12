@@ -103,11 +103,21 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 		// Define position of columns
 		$this->posxdesc=$this->marge_gauche+1;
-		$this->posxtva=102;
-		$this->posxup=126;
-		$this->posxqty=145;
 		$this->posxdiscount=162;
 		$this->postotalht=174;
+		
+		if ($conf->global->PRODUCT_USE_UNITS)
+		{
+		    $this->posxtva=101;
+		    $this->posxup=118;
+		    $this->posxqty=135;
+		    $this->posxunit=151;
+		} else {
+		    $this->posxtva=102;
+		    $this->posxup=126;
+		    $this->posxqty=145;
+		}
+		
 		if (! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || ! empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxup=$this->posxtva;
 		$this->posxpicture=$this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH)?20:$conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH);	// width of images
 		if ($this->page_largeur < 210) // To work with US executive format
@@ -275,7 +285,7 @@ class pdf_aurore extends ModelePDFSupplierProposal
 						$this->atleastonediscount++;
 					}
 				}
-				if (empty($this->atleastonediscount))
+				if (empty($this->atleastonediscount) && empty($conf->global->PRODUCT_USE_UNITS))
 				{
 					$this->posxpicture+=($this->postotalht - $this->posxdiscount);
 					$this->posxtva+=($this->postotalht - $this->posxdiscount);
@@ -461,7 +471,23 @@ class pdf_aurore extends ModelePDFSupplierProposal
 					// Quantity
 					$qty = pdf_getlineqty($object, $i, $outputlangs, $hidedetails);
 					$pdf->SetXY($this->posxqty, $curY);
-					$pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');	// Enough for 6 chars
+					// Enough for 6 chars
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+					    $pdf->MultiCell($this->posxunit-$this->posxqty-0.8, 3, $qty, 0, 'R');
+					}
+					else
+					{
+					    $pdf->MultiCell($this->posxdiscount-$this->posxqty-0.8, 3, $qty, 0, 'R');
+					}
+					
+					// Unit
+					if($conf->global->PRODUCT_USE_UNITS)
+					{
+					    $unit = pdf_getlineunit($object, $i, $outputlangs, $hidedetails, $hookmanager);
+					    $pdf->SetXY($this->posxunit, $curY);
+					    $pdf->MultiCell($this->posxdiscount-$this->posxunit-0.8, 4, $unit, 0, 'L');
+					}
 
 					// Discount on line
 					/*
@@ -1152,8 +1178,24 @@ class pdf_aurore extends ModelePDFSupplierProposal
 		$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxqty-1, $tab_top+1);
-			$pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		    $pdf->SetXY($this->posxqty-1, $tab_top+1);
+		    if($conf->global->PRODUCT_USE_UNITS)
+		    {
+		        $pdf->MultiCell($this->posxunit-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		    }
+		    else
+		    {
+		        $pdf->MultiCell($this->posxdiscount-$this->posxqty-1,2, $outputlangs->transnoentities("Qty"),'','C');
+		    }
+		}
+		
+		if($conf->global->PRODUCT_USE_UNITS) {
+		    $pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
+		    if (empty($hidetop)) {
+		        $pdf->SetXY($this->posxunit - 1, $tab_top + 1);
+		        $pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("Unit"), '',
+		            'C');
+		    }
 		}
 
 		$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
