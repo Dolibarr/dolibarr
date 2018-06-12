@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Esta ferramenta deve ser utilizada por utilizadores mais experientes ou desenvolvedores. Esta oferece os utilitários necessários para criar ou editar o seu próprio módulo (A documentação para criar manualmente um novo módulo encontra-se <a href="%s" target="_blank">aqui</a>).
+ModuleBuilderDesc=Esta ferramenta deve ser utilizada por utilizadores mais experientes ou programadores. Esta oferece utilitários para criar ou editar o seu próprio módulo (A documentação para o desenvolvimento manual alternativo encontra-se <a href="%s" target="_blank">aqui</a>).
 EnterNameOfModuleDesc=Introduza o nome do módulo/aplicação a criar, sem espaços. Use maiúsculas para separar palavras (Por exemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Caminho onde são gerados/editados os módulos (primeira diretoria alternativa definida em %s): <strong>%s</strong>
-ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
+ModuleBuilderDesc3=Módulos gerados / editáveis ​​encontrados: <strong>%s</strong>
 ModuleBuilderDesc4=A module is detected as 'editable' when the file <strong>%s</strong> exists in root of module directory
 NewModule=Novo módulo
 NewObject=Novo objeto

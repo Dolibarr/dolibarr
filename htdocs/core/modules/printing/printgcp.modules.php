@@ -70,7 +70,11 @@ class printing_printgcp extends PrintingDriver
         $this->db = $db;
 
         if (!$conf->oauth->enabled) {
-            $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"), 'type'=>'info');
+            $this->conf[] = array(
+                'varname'=>'PRINTGCP_INFO',
+                'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"),
+                'type'=>'info'
+            );
         } else {
 
         	$this->google_id = $conf->global->OAUTH_GOOGLE_ID;
@@ -116,7 +120,13 @@ class printing_printgcp extends PrintingDriver
         	}
             if ($this->google_id != '' && $this->google_secret != '') {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
-                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
+                $this->conf[] = array(
+                    'varname'=>'PRINTGCP_TOKEN_ACCESS',
+                    'info'=>$access,
+                    'type'=>'info',
+                    'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'),
+                    'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):'')
+                );
                 if ($token_ok) {
                     $expiredat='';
 

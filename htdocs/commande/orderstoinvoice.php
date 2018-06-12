@@ -39,7 +39,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("orders", "deliveries", "companies"));
 
 if (! $user->rights->facture->creer)

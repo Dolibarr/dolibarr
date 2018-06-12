@@ -141,17 +141,26 @@ class InterfaceStripe
 			$stripeacc = $stripe->getStripeAccount($service);	// No need of network access for this
 
 			if ($object->client != 0) {
-				$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);
-				if ($customer) {
-					if (! empty($object->email))
-					{
-						$customer->email = $object->email;
-					}
-					$customer->description = $object->name;
-					// TODO More data
-					//$customer->vat = $object->tva_intra
+				$customer = $stripe->customerStripe($object, $stripeacc, $servicestatus);	// This make a network request
+				if ($customer)
+				{
+					$namecleaned = $object->name ? $object->name : null;
+					$vatcleaned = $object->tva_intra ? $object->tva_intra : null;	// We force data to "null" if empty as expected by Stripe
 
-					$customer->save();
+					// Detect if we change a Stripe info (email, description, vat id)
+					$changerequested = 0;
+					if (! empty($object->email) && $object->email != $customer->email) $changerequested++;
+					if ($namecleaned != $customer->description) $changerequested++;
+					if ($vatcleaned != $customer->business_vat_id) $changerequested++;
+
+					if ($changerequested)
+					{
+						if (! empty($object->email)) $customer->email = $object->email;
+						$customer->description = $namecleaned;
+						$customer->business_vat_id = $vatcleaned;
+
+						$customer->save();
+					}
 				}
 			}
 		}

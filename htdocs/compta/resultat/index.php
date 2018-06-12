@@ -30,6 +30,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('compta','bills','donation','salaries'));
 
 $date_startmonth=GETPOST('date_startmonth','int');
@@ -840,9 +841,13 @@ if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 				$obj = $db->fetch_object($result);
 
 				if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-				$encaiss[$obj->dm] += $obj->debit;
+				if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+				$encaiss[$obj->dm] += $obj->credit;
+				$decaiss[$obj->dm] += $obj->debit;
 				if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
+				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 				$encaiss_ttc[$obj->dm] += 0;
+				$decaiss_ttc[$obj->dm] += 0;
 
 				$i++;
 			}

@@ -45,9 +45,8 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 	$prodcustprice = new Productcustomerprice($db);
 }
 
-$langs->load("products");
-$langs->load("bills");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'bills', 'companies'));
 
 $mesg=''; $error=0; $errors=array();
 
@@ -945,6 +944,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUI
 					}
 
 					print '</table>';
+					print '<a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=disable_price_by_qty&level='.$i.'">(' . $langs->trans("DisablePriceByQty").')</a>';
 				} else {
 					print $langs->trans("No");
 					print '&nbsp; <a href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&action=activate_price_by_qty&level=' . $i . '">(' . $langs->trans("Activate") . ')</a>';

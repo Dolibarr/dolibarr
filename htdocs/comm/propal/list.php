@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('companies','propal','compta','bills','orders','products','deliveries'));
 
 $socid=GETPOST('socid','int');
@@ -441,8 +442,8 @@ if ($resql)
 	if ($search_zip)		 $param.='&search_zip='.urlencode($search_zip);
 	if ($socid > 0)          $param.='&socid='.urlencode($socid);
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
-	if ($search_categ_cus > 0) $param.='&search_categ_cus='.urlencode($search_categ_cus);
-
+	if ($search_categ_cus > 0)          $param.='&search_categ_cus='.urlencode($search_categ_cus);
+	if ($search_product_category != '') $param.='&search_product_category='.$search_product_category;
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';

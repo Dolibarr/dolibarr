@@ -92,6 +92,7 @@ DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is se
 Administrator=Administrator
 Undefined=Undefined
 PasswordForgotten=Password forgotten?
+NoAccount=No account?
 SeeAbove=See above
 HomeArea=Home area
 LastConnexion=Latest connection

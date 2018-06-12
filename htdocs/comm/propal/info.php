@@ -32,8 +32,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('propal');
-$langs->load('compta');
+// Load translation files required by the page
+$langs->loadLangs(array('propal', 'compta'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');

@@ -11,7 +11,9 @@ MailFrom=Nosūtītājs
 MailErrorsTo=Kļūdas līdz
 MailReply=Atbildēt uz
 MailTo=Saņēmējs (-i)
+MailToUsers=To user(s)
 MailCC=Kopēt
+MailToCCUsers=Copy to users(s)
 MailCCC=Kešatmiņā kopiju
 MailTopic=E-pasta tēma
 MailText=Ziņa
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Informācija
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

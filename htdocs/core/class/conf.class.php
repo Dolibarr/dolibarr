@@ -387,8 +387,12 @@ class Conf
 		$this->productbatch->multidir_temp  =array($this->entity => $rootfordata."/produitlot/temp");
 
 		// Module contrat
-		$this->contrat->dir_output=$rootfordata."/contracts";
-		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
+		$this->contrat->multidir_output	= array($this->entity => $rootfordata."/contract");
+		$this->contrat->multidir_temp	= array($this->entity => $rootfordata."/contract/temp");
+		// For backward compatibility
+		$this->contrat->dir_output=$rootfordata."/contract";
+		$this->contrat->dir_temp  =$rootfordata."/contract/temp";
+
 		// Module bank
 		$this->bank->dir_output=$rootfordata."/bank";
 		$this->bank->dir_temp  =$rootfordata."/bank/temp";
@@ -515,10 +519,10 @@ class Conf
 
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
-
-		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
-		if (! empty($this->modules_parts['moduleforexternal']))
-			foreach($this->modules_parts['moduleforexternal'] as $key=>$value) $this->global->MAIN_MODULES_FOR_EXTERNAL.=",$key";
+		if (! empty($this->modules_parts['moduleforexternal']))		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
+		{
+			foreach($this->modules_parts['moduleforexternal'] as $key=>$value) $this->global->MAIN_MODULES_FOR_EXTERNAL.=",".$key;
+		}
 
 		// Enable select2
 		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') $this->global->MAIN_USE_JQUERY_MULTISELECT='select2';

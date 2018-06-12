@@ -41,7 +41,7 @@ include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/website/class/websiteaccount.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php');
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("website","other"));
 
 // Get parameters

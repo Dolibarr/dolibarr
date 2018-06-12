@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","other","accountancy","trips","productbatch"));
 
 $account_parent = GETPOST('account_parent','int');

@@ -30,8 +30,8 @@ require('../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 
-$langs->load('users');
-$langs->load('hrm');
+// Load translation files required by the page
+$langs->loadlangs(array('users', 'hrm'));
 
 $action=GETPOST('action','aZ09');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'defineholidaylist';

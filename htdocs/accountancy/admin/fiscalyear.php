@@ -39,6 +39,7 @@ $pagenext = $page + 1;
 if (! $sortfield) $sortfield="f.rowid"; // Set here default search field
 if (! $sortorder) $sortorder="ASC";
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","compta"));
 
 // Security check

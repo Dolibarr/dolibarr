@@ -37,12 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->load('companies');
-$langs->load('suppliers');
-$langs->load('products');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('commercial');
+// Load translation files required by page
+$langs->loadLangs(array(
+	'companies',
+	'suppliers',
+	'products',
+	'bills',
+	'orders',
+	'commercial',
+));
 
 $action	= GETPOST('action','aZ09');
 $cancelbutton = GETPOST('cancel','alpha');

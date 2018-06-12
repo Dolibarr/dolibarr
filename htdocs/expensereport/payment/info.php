@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 
-$langs->load("bills");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'trips'));
 
 $id=GETPOST('id');
 $ref=GETPOST('ref', 'alpha');

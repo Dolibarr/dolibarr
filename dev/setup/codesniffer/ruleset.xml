@@ -10,6 +10,7 @@
 	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
+	<exclude-pattern type="relative">*.min.css</exclude-pattern>
 
 		<!-- List of all tests -->
 
@@ -82,7 +83,7 @@
 	<!-- Lines can be 85 chars long, but never show errors -->
 	<rule ref="Generic.Files.LineLength">
 		<properties>
-			<property name="lineLimit" value="1000" />
+			<property name="lineLimit" value="500" />
 			<property name="absoluteLineLimit" value="0" />
 		</properties>
 	</rule>

@@ -6,6 +6,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=Configuration file <b>%s</b> does not 
 ConfFileCouldBeCreated=Configuration file <b>%s</b> could be created.
 ConfFileIsNotWritable=Configuration file <b>%s</b> is not writable. Check permissions. For first install, your web server must be granted to be able to write into this file during configuration process ("chmod 666" for example on a Unix like OS).
 ConfFileIsWritable=Configuration file <b>%s</b> is writable.
+ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
 ConfFileReload=Reload all information from configuration file.
 PHPSupportSessions=This PHP supports sessions.
 PHPSupportPOSTGETOk=This PHP supports variables POST and GET.

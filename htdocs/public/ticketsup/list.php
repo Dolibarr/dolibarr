@@ -16,8 +16,8 @@
  */
 
 /**
- *       \file       htdocs/public/ticketsup/list.php
- *       \ingroup    ticketsup
+ *       \file       htdocs/public/ticket/list.php
+ *       \ingroup    ticket
  *       \brief      Public file to add and manage ticket
  */
 
@@ -35,12 +35,12 @@ if (!defined("NOLOGIN")) {
 // If this page is public (can be called outside logged session)
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 
-// Load traductions files requiredby by page
-$langs->loadLangs(array("companies","other","ticketsup"));
+// Load translation files required by the page
+$langs->loadLangs(array("companies","other","ticket"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
@@ -58,7 +58,7 @@ if (isset($_SESSION['email_customer'])) {
     $email = $_SESSION['email_customer'];
 }
 
-$object = new ActionsTicketsup($db);
+$object = new ActionsTicket($db);
 
 
 
@@ -138,10 +138,10 @@ $object->doActions($action);
 $form = new Form($db);
 $user_assign = new User($db);
 $user_create = new User($db);
-$formticket = new FormTicketsup($db);
+$formticket = new FormTicket($db);
 
 $arrayofjs = array();
-$arrayofcss = array('/ticketsup/css/styles.css.php');
+$arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
@@ -166,7 +166,7 @@ if ($action == "view_ticketlist")
         $search_fk_user_assign = GETPOST("search_fk_user_assign", 'int');
 
         // Store current page url
-        $url_page_current = dol_buildpath('/public/ticketsup/list.php', 1);
+        $url_page_current = dol_buildpath('/public/ticket/list.php', 1);
 
         // Do we click on purge search criteria ?
         if (GETPOST("button_removefilter_x")) {
@@ -181,7 +181,7 @@ if ($action == "view_ticketlist")
 
         // fetch optionals attributes and labels
         $extrafields = new ExtraFields($db);
-        $extralabels = $extrafields->fetch_name_optionals_label('ticketsup');
+        $extralabels = $extrafields->fetch_name_optionals_label('ticket');
         $search_array_options = $extrafields->getOptionalsFromPost($extralabels, '', 'search_');
 
         $filter = array();
@@ -308,10 +308,10 @@ if ($action == "view_ticketlist")
         	foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val)
         		$sql .= ($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef." . $key . ' as options_' . $key : '');
         }
-        $sql .= " FROM " . MAIN_DB_PREFIX . "ticketsup as t";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_type as type ON type.code=t.type_code";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_category as category ON category.code=t.category_code";
-        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticketsup_severity as severity ON severity.code=t.severity_code";
+        $sql .= " FROM " . MAIN_DB_PREFIX . "ticket as t";
+        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_type as type ON type.code=t.type_code";
+        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_category as category ON category.code=t.category_code";
+        $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_ticket_severity as severity ON severity.code=t.severity_code";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid=t.fk_soc";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as uc ON uc.rowid=t.fk_user_create";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "user as ua ON ua.rowid=t.fk_user_assign";
@@ -319,9 +319,9 @@ if ($action == "view_ticketlist")
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_type_contact as tc ON ec.fk_c_type_contact=tc.rowid";
         $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "socpeople sp ON ec.fk_socpeople=sp.rowid";
         if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) {
-            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "ticketsup_extrafields as ef on (t.rowid = ef.fk_object)";
+            $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "ticket_extrafields as ef on (t.rowid = ef.fk_object)";
         }
-        $sql .= " WHERE t.entity IN (" . getEntity('ticketsup') . ")";
+        $sql .= " WHERE t.entity IN (" . getEntity('ticket') . ")";
         $sql .= " AND ((tc.source = 'external'";
         $sql .= " AND tc.element='" . $db->escape($object->dao->element) . "'";
         $sql .= " AND tc.active=1)";
@@ -359,7 +359,7 @@ if ($action == "view_ticketlist")
             $resql = $db->query($sql);
             if ($resql) {
                 $num = $db->num_rows($resql);
-                print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticketsup');
+                print_barre_liste($langs->trans('TicketList'), $page, 'public/list.php', $param, $sortfield, $sortorder, '', $num, $num_total, 'ticket');
 
                 /*
                 * Search bar
@@ -430,7 +430,7 @@ if ($action == "view_ticketlist")
                 /*
                  * Filter bar
                  */
-                $formTicket = new FormTicketsup($db);
+                $formTicket = new FormTicket($db);
 
                 print '<tr class="liste_titre">';
 
@@ -643,7 +643,7 @@ if ($action == "view_ticketlist")
                 print '</table>';
                 print '</form>';
 
-                print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticketsup/view.php', 1) . '" style="display:none;">';
+                print '<form method="post" id="form_view_ticket" name="form_view_ticket" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticket/view.php', 1) . '" style="display:none;">';
                 print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
                 print '<input type="hidden" name="action" value="view_ticket">';
                 print '<input type="hidden" name="btn_view_ticket_list" value="1">';

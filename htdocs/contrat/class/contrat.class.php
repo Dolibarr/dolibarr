@@ -1287,35 +1287,35 @@ class Contrat extends CommonObject
 				$result=$this->call_trigger('CONTRACT_MODIFY',$user);
 				if ($result < 0) { $error++; }
 				// End call triggers
-				}
-			}
-
-			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-
-			// Commit or rollback
-			if ($error)
-			{
-				foreach($this->errors as $errmsg)
-				{
-					dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-					$this->error.=($this->error?', '.$errmsg:$errmsg);
-				}
-				$this->db->rollback();
-				return -1*$error;
-			}
-			else
-			{
-				$this->db->commit();
-				return 1;
 			}
 		}
+
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+		{
+			$result=$this->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
 
 
 	/**

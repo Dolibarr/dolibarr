@@ -39,6 +39,7 @@ if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global-
 	accessforbidden();
 }
 
+// Load translation files required by page
 $langs->load("users");
 
 $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));

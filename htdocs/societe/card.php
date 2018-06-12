@@ -340,12 +340,12 @@ if (empty($reshook))
 
         if (! $error)
         {
-            $result = $object->insertExtraFields('COMPANY_MODIFY');
-      			if ($result < 0)
-			      {
-				         setEventMessages($object->error, $object->errors, 'errors');
-				         $error++;
-			      }
+        	$result = $object->insertExtraFields('COMPANY_MODIFY');
+        	if ($result < 0)
+        	{
+        		setEventMessages($object->error, $object->errors, 'errors');
+        		$error++;
+        	}
         }
 
         if ($error) $action = 'edit_extras';
@@ -674,7 +674,7 @@ if (empty($reshook))
                 if ($result <=  0)
                 {
                     setEventMessages($object->error, $object->errors, 'errors');
-                  	$error++;
+                    $error++;
                 }
 
 				// Links with users
@@ -711,7 +711,7 @@ if (empty($reshook))
                 // Logo/Photo save
                 $dir     = $conf->societe->multidir_output[$object->entity]."/".$object->id."/logos";
                 $file_OK = is_uploaded_file($_FILES['photo']['tmp_name']);
-                if (GETPOST('deletephoto') && $object->photo)
+                if (GETPOST('deletephoto') && $object->logo)
                 {
                     $fileimg=$dir.'/'.$object->logo;
                     $dirthumbs=$dir.'/thumbs';

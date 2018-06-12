@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 $local=GETPOST('localTaxType', 'int');
@@ -185,7 +186,7 @@ if($calc ==0 || $calc == 2)
 		$i = 1;
 		foreach($coll_list as $coll)
 		{
-			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
+			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
 
 				$intra = str_replace($find,$replace,$coll->tva_intra);
@@ -260,7 +261,7 @@ if($calc ==0 || $calc == 1){
 		$i = 1;
 		foreach($coll_list as $coll)
 		{
-			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
+			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
 
 				$intra = str_replace($find,$replace,$coll->tva_intra);

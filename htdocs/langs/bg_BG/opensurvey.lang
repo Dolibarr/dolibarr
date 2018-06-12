@@ -58,3 +58,4 @@ MoreChoices=Въведете повече възможности за избор
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=%s е попълнил ред.\nМожете да намерите вашата анкета на линка:\n%s
 ShowSurvey=Show survey
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

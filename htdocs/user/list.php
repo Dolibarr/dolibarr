@@ -30,9 +30,8 @@ require '../main.inc.php';
 if (! $user->rights->user->user->lire && ! $user->admin)
 	accessforbidden();
 
-$langs->load("users");
-$langs->load("companies");
-$langs->load('hrm');
+	// Load translation files required by page
+$langs->loadLangs(array('users', 'companies', 'hrm'));
 
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userlist';   // To manage different context of search
 

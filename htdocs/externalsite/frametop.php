@@ -24,6 +24,7 @@
 
 require ("../main.inc.php");
 
+// Load translation files required by the page
 $langs->load("externalsite");
 
 top_htmlhead("","");

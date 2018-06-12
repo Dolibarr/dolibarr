@@ -6,7 +6,6 @@ ECMSectionsManual=Manuelle Hierarchie
 ECMSectionsAuto=Automatische Hierarchie
 ECMNbOfFilesInDir=Anzahl der Dateien in Ordner
 ECMNbOfSubDir=Anzahl der Unterordner
-ECMAreaDesc=Das EDM (Elektronisches Dokumenten Management)-System erlaubt Ihnen Speichern, Teilen und rasches Auffinden von allen Dokumenten im Dolibarr.
 ECMAreaDesc2=* In den automatischen Verzeichnissen werden die vom System erzeugeten Dokumente abgelegt. <br> * Die manuellen Verzeichnisse können Sie selbst verwalten und zusätzliche nicht direkt zuordenbare Dokument hinterlegen.
 ECMSectionWasRemoved=Der Ordner <b>%s</b> wurde gelöscht.
 ECMSearchByKeywords=Suche nach Stichwörter

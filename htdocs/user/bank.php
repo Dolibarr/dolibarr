@@ -36,13 +36,8 @@ if (! empty($conf->holiday->enabled)) require_once DOL_DOCUMENT_ROOT.'/holiday/c
 if (! empty($conf->expensereport->enabled)) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->salaries->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("banks");
-$langs->load("bills");
-$langs->load("trips");
-$langs->load("holiday");
-$langs->load("salaries");
+// Load translation files required by page
+$langs->loadLangs(array('companies', 'commercial', 'banks', 'bills', 'trips', 'holiday', 'salaries'));
 
 $id = GETPOST('id','int');
 $bankid = GETPOST('bankid','int');

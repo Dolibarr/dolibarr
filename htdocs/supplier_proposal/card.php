@@ -46,15 +46,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-$langs->load('companies');
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('propal');
-$langs->load('orders');
-$langs->load('products');
-$langs->load("deliveries");
-$langs->load('sendings');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'supplier_proposal', 'compta', 'bills', 'propal', 'orders', 'products', 'deliveries', 'sendings'));
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
 
@@ -363,7 +356,15 @@ if (empty($reshook))
 										$array_options = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->ref_supplier, $lines[$i]->fk_unit);
+									$result = $object->addline(
+										$desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx,
+										$lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx,
+										$lines[$i]->fk_product, $lines[$i]->remise_percent,
+										'HT', 0, $lines[$i]->info_bits, $product_type,
+										$lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line,
+										$lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+										$lines[$i]->ref_supplier, $lines[$i]->fk_unit
+									);
 
 									if ($result > 0) {
 										$lineid = $result;
