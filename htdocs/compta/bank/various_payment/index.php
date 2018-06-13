@@ -138,7 +138,6 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 	$total = 0 ;
-	$var=true;
 
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);

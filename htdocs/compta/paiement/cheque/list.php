@@ -195,7 +195,6 @@ if ($resql)
 
     if ($num > 0)
     {
-    	$var=true;
     	while ($i < min($num,$limit))
     	{
     		$objp = $db->fetch_object($resql);
