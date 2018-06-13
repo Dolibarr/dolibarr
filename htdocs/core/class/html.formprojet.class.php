@@ -143,7 +143,7 @@ class FormProjets
 		$outarray=array();
 
 		$hideunselectables = false;
-		if (! empty($conf->global->SELECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		$projectsListId = false;
 		if (empty($user->rights->projet->all->lire))
@@ -318,7 +318,7 @@ class FormProjets
 		$out='';
 
 		$hideunselectables = false;
-		if (! empty($conf->global->SELECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		if (empty($projectsListId))
 		{
