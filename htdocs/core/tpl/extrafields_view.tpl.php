@@ -31,6 +31,7 @@ if (empty($object) || ! is_object($object))
 	print "Error, template page can't be called as URL";
 	exit;
 }
+if (! is_object($form)) $form=new Form($db);
 
 ?>
 <!-- BEGIN PHP TEMPLATE extrafields_view.tpl.php -->
@@ -93,9 +94,13 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';
 			print '<td';
+			print ' class="titlefield';
 			//var_dump($action);exit;
-			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' class="fieldrequired"';
-			print '>' . $langs->trans($label) . '</td>';
+			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' fieldrequired';
+			print '">';
+			if (! empty($extrafields->attributes[$object->table_element]['help'][$key])) print $form->textwithpicto($langs->trans($label), $extrafields->attributes[$object->table_element]['help'][$key]);
+			else print $langs->trans($label);
+			print '</td>';
 
 			//TODO Improve element and rights detection
 			//var_dump($user->rights);
