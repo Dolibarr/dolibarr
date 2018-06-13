@@ -57,7 +57,7 @@ class FormContract
 		global $db,$user,$conf,$langs;
 
 		$hideunselectables = false;
-		if (! empty($conf->global->SELECT_HIDE_UNSELECTABLES)) $hideunselectables = true;
+		if (! empty($conf->global->CONTRACT_HIDE_UNSELECTABLES)) $hideunselectables = true;
 
 		// Search all contacts
 		$sql = 'SELECT c.rowid, c.ref, c.fk_soc, c.statut';
