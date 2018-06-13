@@ -605,7 +605,7 @@ if ($user->rights->societe->creer)
 		if($type == 'f') $label='NewSupplier';
 	}
 
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'">'.$langs->trans($label);
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'"><span class="valignmiddle">'.$langs->trans($label).'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }

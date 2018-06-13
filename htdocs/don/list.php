@@ -141,7 +141,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->don->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create">'.$langs->trans('NewDonation');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewDonation').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

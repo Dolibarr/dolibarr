@@ -448,7 +448,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->projet->creer)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create">'.$langs->trans('NewProject');
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewProject').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }

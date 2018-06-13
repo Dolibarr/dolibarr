@@ -142,7 +142,7 @@ if ($resql)
     $newcardbutton='';
     if ($caneditperms)
     {
-    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu=">'.$langs->trans('NewGroup');
+    	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/group/card.php?action=create&leftmenu="><span class="valignmiddle">'.$langs->trans('NewGroup').'</span>';
     	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
     	$newcardbutton.= '</a>';
     }

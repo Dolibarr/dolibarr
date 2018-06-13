@@ -341,13 +341,13 @@ print '<input type="hidden" name="viewstatut" value="'.$viewstatut.'">';
 $newcardbutton='';
 if ($user->rights->cron->create)
 {
-	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create">'.$langs->trans("CronCreateJob");
+	$newcardbutton.='<a class="butActionNew" style="margin-right: 0px;margin-left: 0px;" href="'.DOL_URL_ROOT.'/cron/card.php?action=create"><span class="valignmiddle">'.$langs->trans("CronCreateJob").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
 else
 {
-	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'">'.$langs->trans("CronCreateJob");
+	$newcardbutton.='<a class="butActionNewRefused" href="#" title="'.dol_escape_htmltag($langs->transnoentitiesnoconv("NotEnoughPermissions")).'"><span class="valignmiddle">'.$langs->trans("CronCreateJob").'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }

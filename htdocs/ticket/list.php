@@ -451,7 +451,7 @@ if ($projectid) print '<input type="hidden" name="projectid" value="' . $project
 $newcardbutton='';
 if ($user->rights->ticket->write)
 {
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '">' . $langs->trans('NewTicket');
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/ticket/new.php?action=create_ticket' . ($socid ? '&socid=' . $socid : '') . ($projectid ? '&origin=projet_project&originid=' . $projectid : '') . '"><span class="valignmiddle">' . $langs->trans('NewTicket').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -474,14 +474,15 @@ if ($sall)
 	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
 }
 
+print '<div class="liste_titre liste_titre_bydiv centpercent">';
 if ($search_fk_status == 'non_closed') {
-    print '<div><a href="' . $url_page_current . '?search_fk_status=-1' . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewAllTickets') . '</a></div>';
+    print '<div class="divsearchfield"><a href="' . $url_page_current . '?search_fk_status=-1' . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewAllTickets') . '</a></div>';
     $param .= '&search_fk_status=non_closed';
 } else {
-    print '<div><a href="' . $url_page_current . '?search_fk_status=non_closed' . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewNonClosedOnly') . '</a></div>';
+    print '<div class="divsearchfield"><a href="' . $url_page_current . '?search_fk_status=non_closed' . ($socid ? '&socid=' . $socid : '') . '">' . $langs->trans('TicketViewNonClosedOnly') . '</a></div>';
     $param .= '&search_fk_status=-1';
 }
-
+print '</div>';
 
 
 $moreforfilter = '';

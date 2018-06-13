@@ -105,6 +105,7 @@ VATPayment=Sales tax payment
 VATPayments=Sales tax payments
 VATRefund=Sales tax refund
 NewVATPayment=New sales tax payment
+NewLocalTaxPayment=New tax %s payment
 Refund=Refund
 SocialContributionsPayments=Social/fiscal taxes payments
 ShowVatPayment=Show VAT payment
