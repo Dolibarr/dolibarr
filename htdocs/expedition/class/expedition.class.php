@@ -573,6 +573,56 @@ class Expedition extends CommonObject
 	}
 
 	/**
+	 *	Classify the shipping as shipped
+	 *
+	 *	@return     int     <0 if ko, >0 if ok
+	 */
+	function ship()
+	{
+		global $conf,$langs,$user;
+
+		$error=0;
+
+		$this->db->begin();
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=3';
+		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 2';
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->statut=3;
+			
+			if (! $error)
+			{
+    				// Call trigger
+    				$result=$this->call_trigger('SHIPPING_SHIPPED',$user);
+    				if ($result < 0)
+				{
+    					$error++;
+    				}
+   			}
+
+		} 
+		else
+		{
+			$error++;
+			$this->errors[]=$this->db->lasterror();
+		}
+
+		if (! $error)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			return -1;
+		}
+	}
+	
+	/**
 	 *  Validate object and update stock if option enabled
 	 *
 	 *  @param      User		$user       Object user that validate
