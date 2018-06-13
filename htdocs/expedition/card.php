@@ -135,7 +135,14 @@ if (empty($reshook))
 	    $object->fetch($id);
 	    $result = $object->reOpen();
 	}
-
+	
+	// Set status ship
+	if ($action == 'ship' && $user->rights->expedition->creer)
+	{
+	    $object->fetch($id);
+	    $result = $object->ship();
+	}
+	
 	// Set incoterm
 	if ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
 	{
@@ -2480,7 +2487,8 @@ else if ($id || $ref)
 				}
 				else
 				{
-			    	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
+					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=ship">'.$langs->trans("Shipped").'</a>';
+			    		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=reopen">'.$langs->trans("ReOpen").'</a>';
 				}
 			}
 
