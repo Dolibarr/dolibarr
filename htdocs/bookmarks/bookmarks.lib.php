@@ -113,25 +113,40 @@ function printBookmarksList($aDb, $aLangs)
 
 	$ret.='<script type="text/javascript">
         	$(document).ready(function () {';
-	$ret.='    jQuery("#boxbookmark").change(function() {
-	            var urlselected = jQuery("#boxbookmark option:selected").attr("rel");
-	            var urltarget = jQuery("#boxbookmark option:selected").attr("target");
-	            if (! urltarget) { urltarget=""; }
-                jQuery("form#actionbookmark").attr("target",urltarget);
-	            jQuery("form#actionbookmark").attr("action",urlselected);
+	$ret.='    function bookmark_getParams(url) {
+					var vars = {};
+					url.replace( 
+						/[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+						function( m, key, value ) { // callback
+							vars[key] = value !== undefined ? value : "";
+						}
+					);
+					return vars;
+				}
+			jQuery("#boxbookmark").change(function() {
+				var urlselected = jQuery("#boxbookmark option:selected").attr("rel");
+				var urltarget = jQuery("#boxbookmark option:selected").attr("target");
+				if (! urltarget) { urltarget=""; }
+				jQuery("form#actionbookmark").attr("target",urltarget);
+				jQuery("form#actionbookmark").attr("action",urlselected);
 
-	            console.log("We change select bookmark. We choose urlselected="+urlselected+" with target="+urltarget);
+				console.log("We change select bookmark. We choose urlselected="+urlselected+" with target="+urltarget);
 
-	            // Method is POST for internal link, GET for external
-	            if (urlselected.startsWith(\'http\'))
-	            {
-	                var newmethod=\'GET\';
+				var params = bookmark_getParams(urlselected);
+				for(let index in params) {
+					jQuery("form#actionbookmark").append( $(\'<input type="hidden" name="\'+index+\'" value="\'+params[index]+\'" />\') );
+				}
+
+				// Method is POST for internal link, GET for external
+				if (urlselected.startsWith(\'http\'))
+				{
+					var newmethod=\'GET\';
 	                jQuery("form#actionbookmark").attr("method",newmethod);
-	                console.log("We change method to newmethod="+newmethod);
-	            }
-
+					console.log("We change method to newmethod="+newmethod);
+				}
+				
 	            jQuery("#actionbookmark").submit();
-	       });';
+		   });';
 	$ret.='})</script>';
 	$ret .= '<div class="menu_end"></div>';
 

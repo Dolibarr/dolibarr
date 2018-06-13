@@ -83,7 +83,7 @@ llxHeader('', $langs->trans("ListOfBookmarks"));
 
 print load_fiche_titre($langs->trans("ListOfBookmarks"));
 
-$sql = "SELECT b.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
+$sql = "SELECT u.fk_soc as rowid, b.dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon, b.position,";
 $sql.= " u.login, u.lastname, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b LEFT JOIN ".MAIN_DB_PREFIX."user as u ON b.fk_user=u.rowid";
 $sql.= " WHERE 1=1";
