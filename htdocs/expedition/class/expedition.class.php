@@ -1643,30 +1643,35 @@ class Expedition extends CommonObject
 			if ($statut==0) return $langs->trans($this->statuts[$statut]);
 			if ($statut==1) return $langs->trans($this->statuts[$statut]);
 			if ($statut==2) return $langs->trans($this->statuts[$statut]);
+			if ($statut==3) return $langs->trans($this->statuts[$statut]);
 		}
 		if ($mode==1)
 		{
 			if ($statut==0) return $langs->trans($this->statutshorts[$statut]);
 			if ($statut==1) return $langs->trans($this->statutshorts[$statut]);
 			if ($statut==2) return $langs->trans($this->statutshorts[$statut]);
+			if ($statut==23) return $langs->trans($this->statutshorts[$statut]);
 		}
 		if ($mode == 3)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4');
 			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut9');
 		}
 		if ($mode == 4)
 		{
 			if ($statut==0) return img_picto($langs->trans($this->statuts[$statut]),'statut0').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==1) return img_picto($langs->trans($this->statuts[$statut]),'statut4').' '.$langs->trans($this->statuts[$statut]);
 			if ($statut==2) return img_picto($langs->trans($this->statuts[$statut]),'statut6').' '.$langs->trans($this->statuts[$statut]);
+			if ($statut==3) return img_picto($langs->trans($this->statuts[$statut]),'statut9').' '.$langs->trans($this->statuts[$statut]);
 		}
 		if ($mode == 5)
 		{
 			if ($statut==0) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut0');
 			if ($statut==1) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut4');
 			if ($statut==2) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut6');
+			if ($statut==3) return $langs->trans($this->statutshorts[$statut]).' '.img_picto($langs->trans($this->statuts[$statut]),'statut9');
 		}
 	}
 
