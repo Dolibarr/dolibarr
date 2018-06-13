@@ -240,7 +240,6 @@ if ($action == 'edit')
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
 
     // Landing page
-
     print '<tr class="oddeven"><td>'.$langs->trans("LandingPage").'</td>';
     print '<td>';
     print (empty($conf->global->MAIN_LANDING_PAGE)?'':$conf->global->MAIN_LANDING_PAGE);
@@ -254,7 +253,6 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Langue par defaut
-
     print '<tr class="oddeven"><td>'.$langs->trans("Language").'</td>';
     print '<td>';
     $s=picto_from_langcode($conf->global->MAIN_LANG_DEFAULT);
@@ -269,7 +267,6 @@ if ($action == 'edit')
     print '</td></tr>';
 
     // Taille max des listes
-
     print '<tr class="oddeven"><td>'.$langs->trans("MaxSizeList").'</td>';
     print '<td>'.$conf->global->MAIN_SIZE_LISTE_LIMIT.'</td>';
     print '<td align="left" class="nowrap" width="20%"><input '.$bc[$var].' name="check_SIZE_LISTE_LIMIT" id="check_SIZE_LISTE_LIMIT" type="checkbox" '.(! empty($object->conf->MAIN_SIZE_LISTE_LIMIT)?" checked":"");
