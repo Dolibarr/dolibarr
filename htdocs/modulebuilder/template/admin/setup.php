@@ -59,8 +59,10 @@ $arrayofparameters=array('MYMODULE_MYPARAM1'=>array('css'=>'minwidth200'), 'MYMO
 /*
  * Actions
  */
-
-include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+if ((float) DOL_VERSION >= 6)
+{
+	include DOL_DOCUMENT_ROOT.'/core/actions_setmoduleoptions.inc.php';
+}
 
 
 /*
