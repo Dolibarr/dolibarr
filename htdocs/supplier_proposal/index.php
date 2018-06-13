@@ -63,7 +63,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    $var=false;
     print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -118,14 +117,12 @@ if ($resql)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
-    $var=true;
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
         $dataseries[]=array($supplier_proposalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-
             print '<tr class="oddeven">';
             print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
@@ -189,7 +186,6 @@ if (! empty($conf->supplier_proposal->enabled))
 				$obj = $db->fetch_object($resql);
 
 				print '<tr class="oddeven">';
-
 				$supplier_proposalstatic->id=$obj->rowid;
 				$supplier_proposalstatic->ref=$obj->ref;
 				print '<td class="nowrap">'.$supplier_proposalstatic->getNomUrl(1).'</td>';
@@ -314,8 +310,6 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 		$i = 0;
 		if ($num > 0)
 		{
-			$var=true;
-
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 
