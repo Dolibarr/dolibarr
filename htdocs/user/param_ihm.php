@@ -235,7 +235,6 @@ if ($action == 'edit')
 
 
     clearstatcache();
-    $var=true;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
@@ -300,8 +299,6 @@ else
     $linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
-
-    $var=true;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Parameter").'</td><td width="25%">'.$langs->trans("DefaultValue").'</td><td>&nbsp;</td><td>'.$langs->trans("PersonalValue").'</td></tr>';
