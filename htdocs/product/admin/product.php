@@ -67,6 +67,13 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES) && empty($conf->global->PRODUIT_
 
 $error = 0;
 
+if ($action == 'showproductactivitytrim')
+{
+	dolibarr_set_const($db, "MAIN_SHOW_PRODUCT_ACTIVITY_TRIM", $value, 'chaine',0,'',$conf->entity);
+	$action="";
+}
+$showproductactivitytrim = $conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM;
+
 
 /*
  * Actions
@@ -729,8 +736,27 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 }
 
 print '</table>';
-
 print '</form>';
+
+print "<br>";
+print load_fiche_titre($langs->trans("OtherOptions"), '', '');
+print '<table class="noborder" >';
+print '<tr class="liste_titre">';
+print '<td colspan=3></td>';
+print '</tr >';
+print '<tr>';
+print '<td>'.$langs->trans("ShowProductActivityTrim").'</td>';
+print '<td>'.$langs->trans("InfoShowProductActivityTrim").'</td>';
+print '<td>';
+
+if ( $showproductactivitytrim == 1)
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=showproductactivitytrim&value=0">'.img_picto($langs->trans("Enabled"), 'switch_on').'</a>';
+else
+	print '<a href="'.$_SERVER["PHP_SELF"].'?action=showproductactivitytrim&value=1">'.img_picto($langs->trans("Disabled"), 'switch_off').'</a>';
+
+print '</td></tr>';
+print '</table>';
+
 
 llxFooter();
 
