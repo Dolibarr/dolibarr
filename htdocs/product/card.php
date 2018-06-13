@@ -167,7 +167,7 @@ if (empty($reshook))
 
 		if ($result >= 0)
 		{
-	    	$result = $object->setValueFrom('barcode', GETPOST('barcode'));
+	    	$result = $object->setValueFrom('barcode', GETPOST('barcode'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
 	    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 	    	exit;
 		}
