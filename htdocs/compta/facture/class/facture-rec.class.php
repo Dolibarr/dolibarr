@@ -1068,6 +1068,9 @@ class FactureRec extends CommonInvoice
 							$error++;
 						}
 					}
+					if (! $error) {
+						$facture->call_trigger('BILL_VALIDATE', $user);
+					}
 				}
 				else
 				{
