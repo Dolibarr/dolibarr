@@ -1128,7 +1128,6 @@ if ($action == 'create')
                 print "</tr>\n";
             }
 
-            $var=true;
             $indiceAsked = 0;
             while ($indiceAsked < $numAsked)
             {
