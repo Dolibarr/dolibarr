@@ -98,6 +98,7 @@ class Expedition extends CommonObject
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CLOSED = 2;
+	const STATUS_SENDED = 3;
 
 
 
@@ -120,6 +121,7 @@ class Expedition extends CommonObject
 		$this->statuts[0]  = 'StatusSendingDraft';
 		$this->statuts[1]  = 'StatusSendingValidated';
 		$this->statuts[2]  = 'StatusSendingProcessed';
+		$this->statuts[3]  = 'StatusSendingSended';
 
 		// List of short language codes for status
 		$this->statutshorts = array();
@@ -127,6 +129,7 @@ class Expedition extends CommonObject
 		$this->statutshorts[0]  = 'StatusSendingDraftShort';
 		$this->statutshorts[1]  = 'StatusSendingValidatedShort';
 		$this->statutshorts[2]  = 'StatusSendingProcessedShort';
+		$this->statutshorts[3]  = 'StatusSendingSendedShort';
 
 		/* Status "billed" or not is managed by another field than status
 		if (! empty($conf->global->WORKFLOW_BILL_ON_SHIPMENT))
