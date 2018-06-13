@@ -88,7 +88,8 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		}
 		else
 		{
-			print '<tr><td>';
+			print '<tr>';
+			print '<td>';
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';
 			print '<td';
@@ -120,6 +121,8 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				print '<td align="right"><a class="reposition" href="' . $_SERVER['PHP_SELF'] . '?'.$fieldid.'=' . $object->id . '&action=edit_extras&attribute=' . $key . '">' . img_edit().'</a></td>';
 			}
 			print '</tr></table>';
+			print '</td>';
+
 			$html_id = !empty($object->id) ? $object->element.'_extras_'.$key.'_'.$object->id : '';
 			print '<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$key.'" colspan="'.$cols.'">';
 
@@ -137,7 +140,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			}
 
 			//TODO Improve element and rights detection
-			if ($action == 'edit_extras' && $permok && GETPOST('attribute') == $key)
+			if ($action == 'edit_extras' && $permok && GETPOST('attribute','none') == $key)
 			{
 			    $fieldid='id';
 			    if ($object->table_element == 'societe') $fieldid='socid';
@@ -150,7 +153,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 
 				print $extrafields->showInputField($key, $value, '', '', '', 0, $object->id);
 
-				print '<input type="submit" class="button" value="' . $langs->trans('Modify') . '">';
+				print '<input type="submit" class="button" value="' . dol_escape_htmltag($langs->trans('Modify')) . '">';
 
 				print '</form>';
 			}
@@ -159,12 +162,18 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 				//print $key.'-'.$value.'-'.$object->table_element;
 				print $extrafields->showOutputField($key, $value, '', $object->table_element);
 			}
-			print '</td></tr>' . "\n";
+			print '</td>';
+			print '</tr>' . "\n";
+		}
+	}
 
-			print "\n";
-			// Add code to manage list depending on others
-			if (! empty($conf->use_javascript_ajax))
-			    print '
+
+	// Add code to manage list depending on others
+	// TODO Test/enhance this with a more generic solution
+	if (! empty($conf->use_javascript_ajax))
+	{
+		print "\n";
+		print '
 				<script type="text/javascript">
 				    jQuery(document).ready(function() {
 				    	function showOptions(child_list, parent_list)
@@ -193,7 +202,6 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 						setListDependencies();
 				    });
 				</script>'."\n";
-		}
 	}
 }
 ?>
