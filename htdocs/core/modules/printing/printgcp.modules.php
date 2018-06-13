@@ -176,7 +176,6 @@ class printing_printgcp extends PrintingDriver
         global $bc, $conf, $langs;
         $error = 0;
         $langs->load('printing');
-        $var=true;
 
         $html = '<tr class="liste_titre">';
         $html.= '<td>'.$langs->trans('GCP_Name').'</td>';
@@ -190,11 +189,9 @@ class printing_printgcp extends PrintingDriver
         $html.= '</tr>'."\n";
         $list = $this->getlist_available_printers();
         //$html.= '<td><pre>'.print_r($list,true).'</pre></td>';
-        $var = true;
         foreach ($list['available'] as $printer_det)
         {
-            $var = !$var;
-            $html.= "<tr ".$bc[$var].">";
+            $html.= '<tr class="oddeven">';
             $html.= '<td>'.$printer_det['name'].'</td>';
             $html.= '<td>'.$printer_det['displayName'].'</td>';
             $html.= '<td>'.$printer_det['id'].'</td>';  // id to identify printer to use
