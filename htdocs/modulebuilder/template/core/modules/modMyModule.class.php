@@ -315,7 +315,7 @@ class modMyModule extends DolibarrModules
 	public function init($options='')
 	{
 		$result=$this->_load_tables('/mymodule/sql/');
-        if(!$result) return -1;// Fix: Do not activate module if errors on module SQL queries execution
+		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
