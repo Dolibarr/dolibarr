@@ -402,7 +402,7 @@ print "</tr>\n";
 
 
 $total = array(); $found = 0; $i=0; $lastcurrencycode='';
-$var=true;
+
 foreach ($accounts as $key=>$type)
 {
 	if ($i >= $limit) break;
@@ -412,7 +412,6 @@ foreach ($accounts as $key=>$type)
 	$obj = new Account($db);
 	$obj->fetch($key);
 
-	$var = !$var;
 	$solde = $obj->solde(1);
 
 	if (! empty($lastcurrencycode) && $lastcurrencycode != $obj->currency_code)

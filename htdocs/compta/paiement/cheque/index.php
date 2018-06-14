@@ -68,7 +68,6 @@ print "</tr>\n";
 
 if ($resql)
 {
-  $var=false;
   if ($row = $db->fetch_row($resql) )
     {
       $num = $row[0];
@@ -114,7 +113,6 @@ if ($resql)
 	print '<th align="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
-	$var=true;
 	while ( $objp = $db->fetch_object($resql) )
 	{
         $checkdepositstatic->id=$objp->rowid;
