@@ -435,6 +435,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
 			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
 			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
+			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
 			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
 			'MAIN_MODULE_USER'=>'newboxdefonly',		//This one must be always done and only into last targeted version)
