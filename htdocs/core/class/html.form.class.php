@@ -5342,7 +5342,7 @@ class Form
 					foreach($tmparray as $key => $val)
 					{
 						$val = preg_replace('/t\./','',$val);
-						$label .= (($label && $obj->$val)?' - ':'').$obj->$val;
+						$label .= (($label && $obj->$val)?' - ':'').($obj->$val != $langs->trans($obj->$val)? $langs->trans($obj->$val) : $obj->$val);
 					}
 					if (empty($outputmode))
 					{
