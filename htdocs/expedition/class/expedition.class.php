@@ -585,8 +585,12 @@ class Expedition extends CommonObject
 
 		$this->db->begin();
 
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'expedition SET fk_statut=3';
-		$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 2';
+		//$now=dol_now();
+		
+		$sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET fk_statut=3";
+		//$sql.= ", date_shipped = '".$this->db->idate($now)."'";
+		//$sql.= ", fk_user_shipped = ".$user->id;
+		$sql .= " WHERE rowid = ".$this->id." AND fk_statut = 2";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
