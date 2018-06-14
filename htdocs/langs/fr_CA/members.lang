@@ -88,7 +88,6 @@ SubscriptionNotRecorded=L'abonnement n'est pas enregistré
 AddSubscription=Créer un abonnement
 ShowSubscription=Afficher l'abonnement
 CardContent=Contenu de votre carte membre
-ThisIsContentOfYourCard=This is a remind of the information we get about you. Feel free to contact us if something looks wrong.<br><br>
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL_SUBJECT=Objet de l'e-mail reçu en cas d'auto-inscription d'un invité
 DescADHERENT_AUTOREGISTER_NOTIF_MAIL=E-mail reçu en cas d'auto-inscription d'un invité
 DescADHERENT_MAIL_FROM=Expéditeur EMail pour les courriels automatiques

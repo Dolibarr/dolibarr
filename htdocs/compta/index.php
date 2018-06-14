@@ -45,8 +45,8 @@ if (! empty($conf->tax->enabled))
 //if (!$user->rights->compta->general->lire)
 //  accessforbidden();
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills'));
 if (! empty($conf->commande->enabled))
 	$langs->load("orders");
 
@@ -199,7 +199,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td class="nowrap">';
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
 				print '</tr>';

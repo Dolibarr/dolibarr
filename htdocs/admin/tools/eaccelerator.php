@@ -116,8 +116,7 @@ function revcompare($x, $y)
  */
 function create_script_table($list)
 {
-    global $sortby,$bc,$langs;
-    $var=true;
+    global $sortby,$langs;
 
     if (GETPOT('order') == "asc" || GETPOST('order') =="desc") {
         $order = GETPOST('order');
@@ -173,7 +172,6 @@ function create_script_table($list)
     }
 
     foreach($list as $script) {
-        $var = ! $var;
         print '<tr class="oddeven">';
         print '<td>'.dol_trunc($script['file'],80,'left').'</td>';
         print '<td align="center" class="nowrap">'.dol_print_date($script['mtime'],'dayhour').'</td>';
@@ -194,8 +192,7 @@ function create_script_table($list)
  */
 function create_key_table($list)
 {
-    global $bc,$langs;
-    $var=true;
+    global $langs;
 
     print '<table class="noborder">';
     print '<tr class="liste_titre">';
@@ -206,7 +203,6 @@ function create_key_table($list)
     print '</tr>';
 
     foreach($list as $key) {
-        $var = !$var;
         print '<tr class="oddeven">';
         print '<td>'.dol_trunc($key['name'],80,'left').'</td>';
         print '<td align="center" class="nowrap">'.dol_print_date($key['created'],'dayhour').'</td>';
@@ -229,53 +225,48 @@ function create_key_table($list)
 $form=new Form($db);
 print load_fiche_titre('Dolibarr eAccelerator '.$info['version'].' control panel','','title_setup');
 
-$var=true;
-
 print '<br>';
-
 
 print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">Information</td>';
 print '</tr>';
-$var = !$var;
+
 print '<tr class="oddeven">';
 print '<td>Caching enabled</td>';
 print '<td align="right">'.($info['cache']?'yes':'no').'</td>';
 print '</tr>';
-$var = !$var;
+
 print '<tr class="oddeven">';
 print '<td>Optimizer enabled</td>';
 print '<td align="right">'.$info['optimizer']?'yes':'no'.'</td>';
 print '</tr>';
-$var = !$var;
+
 print '<tr class="oddeven">';
 print '<td>Memory usage</td>';
 print '<td align="right">'.number_format(100 * $info['memoryAllocated']/$info['memorySize'], 2).'%('.number_format($info['memoryAllocated'] / (1024*1024), 2).'MB / '.number_format($info['memorySize']/(1024*1024), 2).'MB)</td>';
 print '</tr>';
-$var = ! $var;
+
 print '<tr class="oddeven">';
 print '<td>Free memory in reserved cache</td>';
 print '<td align="right">'.number_format($info['memoryAvailable']/(1024*1024), 2).'MB</td>';
 print '</tr>';
-$var = ! $var;
+
 print '<tr class="oddeven">';
 print '<td>Cached scripts</td>';
 print '<td align="right">'.$info['cachedScripts'].'</td>';
 print '</tr>';
-$var = ! $var;
+
 print '<tr class="oddeven">';
 print '<td>Removed scripts</td>';
 print '<td align="right">'.$info['removedScripts'].'</td>';
 print '</tr>';
-$var = ! $var;
+
 print '<tr class="oddeven">';
 print '<td>Cached keys</td>';
 print '<td align="right">'.(isset($info['cachedKeys'])?$info['cachedKeys']:'').'</td>';
 print '</tr>';
 print '</table>';
-
-$var=true;
 
 $resCached = @eaccelerator_cached_scripts(); // If success return an array
 $resRemoved = @eaccelerator_removed_scripts();
@@ -288,12 +279,11 @@ if (is_array($resCached) || is_array($resRemoved)) {
     print '<tr class="liste_titre"><td colspan="2">Actions</td></tr>';
 
     if (is_array($resCached)) {
-        $var = ! $var;
         print '<tr class="oddeven">';
         print "<td>Caching</td>";
         print '<td align="right"><input type="submit" class="butAction" name="caching" value="'. ($info['cache']?'disable':'enable') .'" /></td>';
         print "</tr>";
-        $var = ! $var;
+
         print '<tr class="oddeven">';
         print "<td>Optimizer</td>";
         print '<td align="right"><input type="submit" class="butAction" name="optimizer" value="'. ($info['optimizer']?'disable':'enable') .'" /></td>';
@@ -301,17 +291,16 @@ if (is_array($resCached) || is_array($resRemoved)) {
     }
 
     if (is_array($resRemoved)) {
-        $var = ! $var;
         print '<tr class="oddeven">';
         print "<td>Clear cache</td>";
         print '<td align="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>';
         print "</tr>";
-        $var = ! $var;
+
         print '<tr class="oddeven">';
         print "<td>Clean cache</td>";
         print '<td align="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>';
         print "</tr>";
-        $var = ! $var;
+
         print '<tr class="oddeven">';
         print "<td>Purge cache</td>";
         print '<td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all \'removed\' scripts from shared memory" /></td>';

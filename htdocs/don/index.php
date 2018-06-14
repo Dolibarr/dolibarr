@@ -150,7 +150,6 @@ print '</tr>';
 
 $total=0;
 $totalnb=0;
-$var=true;
 foreach ($listofstatus as $status)
 {
 
@@ -200,10 +199,8 @@ if ($resql)
     if ($num)
     {
         $i = 0;
-        $var = True;
         while ($i < $num)
         {
-
             $obj = $db->fetch_object($resql);
 
             print '<tr class="oddeven">';

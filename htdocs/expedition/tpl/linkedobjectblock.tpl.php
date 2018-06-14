@@ -34,6 +34,7 @@ global $user;
 $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 
+// Load translation files required by the page
 $langs->load("sendings");
 
 $total=0; $ilink=0;
@@ -61,7 +62,7 @@ foreach($linkedObjectBlock as $key => $objectlink)
     		// For now, shipments must stay linked to order, so link is not deletable
     		if($object->element != 'commande') {
     			?>
-    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_delete($langs->transnoentitiesnoconv("RemoveLink")); ?></a></td>
+    			<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&action=dellink&dellinkid='.$key; ?>"><?php echo img_picto($langs->transnoentitiesnoconv("RemoveLink"), 'unlink'); ?></a></td>
     			<?php
     		}
     		?>

@@ -7,8 +7,10 @@ if (empty($conf) || ! is_object($conf))
 	exit;
 }
 
+if (empty($extrafieldsobjectkey) && is_object($object)) $extrafieldsobjectkey=$object->table_element;
+
 // Loop to show all columns of extrafields from $obj, $extrafields and $db
-if (! empty($extrafieldsobjectkey))	// New method: $extrafieldsobject can be 'societe', 'socpeople', ...
+if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_element like 'societe', 'socpeople', ...
 {
 	if (is_array($extrafields->attributes[$extrafieldsobjectkey]['label']) && count($extrafields->attributes[$extrafieldsobjectkey]['label']))
 	{
@@ -23,7 +25,12 @@ if (! empty($extrafieldsobjectkey))	// New method: $extrafieldsobject can be 'so
 				$tmpkey='options_'.$key;
 				if (in_array($extrafields->attributes[$extrafieldsobjectkey]['type'][$key], array('date', 'datetime', 'timestamp')))
 				{
-					$value = $db->jdate($obj->$tmpkey);
+					$datenotinstring = $obj->$tmpkey;
+					if (! is_numeric($obj->$tmpkey))	// For backward compatibility
+					{
+						$datenotinstring = $db->jdate($datenotinstring);
+					}
+					$value = $datenotinstring;
 				}
 				else
 				{
@@ -31,39 +38,6 @@ if (! empty($extrafieldsobjectkey))	// New method: $extrafieldsobject can be 'so
 				}
 
 				print $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
-				print '</td>';
-				if (! $i) $totalarray['nbfield']++;
-				if (! empty($val['isameasure']))
-				{
-					if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;
-					$totalarray['val']['ef.'.$tmpkey] += $obj->$tmpkey;
-				}
-			}
-		}
-	}
-}
-else								// Old method
-{
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
-	{
-		foreach($extrafields->attribute_label as $key => $val)
-		{
-			if (! empty($arrayfields["ef.".$key]['checked']))
-			{
-				$align=$extrafields->getAlignFlag($key);
-				print '<td';
-				if ($align) print ' align="'.$align.'"';
-				print '>';
-				$tmpkey='options_'.$key;
-				if (in_array($extrafields->attribute_type[$key], array('date', 'datetime', 'timestamp')))
-				{
-					$value = $db->jdate($obj->$tmpkey);
-				}
-				else
-				{
-					$value = $obj->$tmpkey;
-				}
-				print $extrafields->showOutputField($key, $value, '');
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
 				if (! empty($val['isameasure']))

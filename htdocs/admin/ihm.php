@@ -32,26 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("admin");
-$langs->load("languages");
-$langs->load("other");
-
-$langs->load("companies");
-$langs->load("products");
-$langs->load("members");
-$langs->load("projects");
-$langs->load("hrm");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'projects', 'hrm', 'agenda'));
 
 if (! $user->admin) accessforbidden();
 
 $action = GETPOST('action','aZ09');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'adminihm';   // To manage different context of search
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
-// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$contextpage=array('adminihm','globaladmin');
-$hookmanager->initHooks($contextpage);
 
 
 /*
@@ -110,9 +100,17 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_VERMENU_BACK1', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_VERMENU_BACK1', $val,'chaine',0,'',$conf->entity);
 
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val,'chaine',0,'',$conf->entity);
+
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_BACKTITLE1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_BACKTITLE1', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_BACKTITLE1', $val,'chaine',0,'',$conf->entity);
+
+	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLE'),array()))));
+	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLE', $conf->entity);
+	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLE', $val,'chaine',0,'',$conf->entity);
 
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_LINEIMPAIR1'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEIMPAIR1', $conf->entity);
@@ -128,16 +126,12 @@ if ($action == 'update')
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_LINEPAIR2', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_LINEPAIR2', $val,'chaine',0,'',$conf->entity);
 
-	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTTITLENOTAB'),array()))));
-	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $conf->entity);
-	else dolibarr_set_const($db, 'THEME_ELDY_TEXTTITLENOTAB', $val,'chaine',0,'',$conf->entity);
-
-	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
-	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
-
 	$val=(implode(',',(colorStringToArray(GETPOST('THEME_ELDY_TEXTLINK'),array()))));
 	if ($val == '') dolibarr_del_const($db, 'THEME_ELDY_TEXTLINK', $conf->entity);
 	else dolibarr_set_const($db, 'THEME_ELDY_TEXTLINK', $val,'chaine',0,'',$conf->entity);
+
+	if (GETPOST('THEME_ELDY_USE_HOVER') == '') dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", '0', 'chaine', 0, '', $conf->entity);    // If empty, we set to '0' ('000000' is for black)
+	else dolibarr_set_const($db, "THEME_ELDY_USE_HOVER", $_POST["THEME_ELDY_USE_HOVER"], 'chaine', 0, '', $conf->entity);
 
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",			$_POST["main_size_liste_limit"],'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_SIZE_SHORTLIST_LIMIT",		$_POST["main_size_shortliste_limit"],'chaine',0,'',$conf->entity);
@@ -545,6 +539,8 @@ else	// Show
 	print '<br>';
 
 	// Login page
+	print '<div class="div-table-responsive">';
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("LoginPage").'</td><td></td></tr>';
 
@@ -575,6 +571,7 @@ else	// Show
 	print '</td></tr>';
 
 	print '</table>'."\n";
+	print '</div>';
 
 	print '<div class="tabsAction tabsActionNoBottom">';
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';

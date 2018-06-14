@@ -266,8 +266,9 @@ class Task extends CommonObject
 					$this->task_parent_position = $obj->task_parent_position;
 				}
 
-				// Retreive all extrafield data
-			   	$this->fetch_optionals();
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
 			}
 
 			$this->db->free($resql);
@@ -332,6 +333,18 @@ class Task extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
+		// Update extrafield
+		if (! $error) {
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
+		}
+
 		if (! $error)
 		{
 			if (! $notrigger)
@@ -340,18 +353,6 @@ class Task extends CommonObject
 				$result=$this->call_trigger('TASK_MODIFY',$user);
 				if ($result < 0) { $error++; }
 				// End call triggers
-			}
-		}
-
-		//Update extrafield
-		if (!$error) {
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
 			}
 		}
 

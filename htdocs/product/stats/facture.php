@@ -31,9 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -234,7 +233,6 @@ if ($id > 0 || ! empty($ref))
 
                 if ($num > 0)
 				{
-                    $var=True;
                     while ($i < min($num,$conf->liste_limit))
 					{
                         $objp = $db->fetch_object($result);

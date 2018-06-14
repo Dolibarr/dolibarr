@@ -2,12 +2,6 @@
 VATCollected=IGV recuperado
 PaymentVat=Pago IGV
 ShowVatPayment=Ver pagos IGV
-VATReport=Sale tax report
 VATReportByCustomersInInputOutputMode=Informe por cliente del IGV repercutido y pagado (IGV pagado)
-VATReportByQuartersInInputOutputMode=Report by Sale tax rate of the tax collected and paid
 SeeVATReportInInputOutputMode=Ver el informe <b>%sIGV pagado%s</b> para un modo de cálculo estandard
 SeeVATReportInDueDebtMode=Ver el informe <b>%sIGV debido%s</b> para un modo de cálculo con la opción sobre lo debido
-RulesVATInProducts=- For material assets, the report includes the VAT received or issued on the basis of the date of payment.
-RulesVATDueProducts=- For material assets, the report includes the VAT invoices, based on the invoice date.
-ACCOUNTING_VAT_SOLD_ACCOUNT=Accounting account by default for VAT on sales (used if not defined on VAT dictionary setup)
-ACCOUNTING_VAT_BUY_ACCOUNT=Accounting account by default for VAT on purchases (used if not defined on VAT dictionary setup)

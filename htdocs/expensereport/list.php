@@ -4,6 +4,7 @@
  * Copyright (C) 2004     	Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2009	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Ferran Marcet		 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,15 +35,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'trips'));
 
 $action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'expensereportlist';
 
 // Security check
 $socid = GETPOST('socid','int');
@@ -82,10 +83,8 @@ $optioncss    = GETPOST('optioncss','alpha');
 if ($search_status == '') $search_status=-1;
 if ($search_user == '') $search_user=-1;
 
-// Initialize technical object to manage context to save list fields
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'expensereportlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new ExpenseReport($db);
 $hookmanager->initHooks(array('expensereportlist'));
 $extrafields = new ExtraFields($db);
 
@@ -329,7 +328,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
+
 $sql.= $db->plimit($limit+1, $offset);
 
 //print $sql;
@@ -377,7 +382,7 @@ if ($resql)
 	if ($id > 0)		// For user tab
 	{
 		$title = $langs->trans("User");
-		$linkback = '<a href="'.DOL_URL_ROOT.'/user/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/user/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 		$head = user_prepare_head($fuser);
 
 		dol_fiche_head($head, 'expensereport', $title, -1, 'user');
@@ -462,7 +467,16 @@ if ($resql)
 	else
 	{
 		$title = $langs->trans("ListTripsAndExpenses");
-		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+
+		$newcardbutton='';
+		if ($user->rights->expensereport->creer)
+		{
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewTrip').'</span>';
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
+		}
+
+		print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 	}
 
 	$topicmail="SendExpenseReport";
@@ -611,7 +625,7 @@ if ($resql)
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['d.date_create']['checked'])) print_liste_field_titre($arrayfields['d.date_create']['label'],$_SERVER["PHP_SELF"],"d.date_create","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -827,22 +841,18 @@ if ($resql)
 
 	if (empty($id))
 	{
-		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files)
-		{
-		    // Show list of available documents
-		    $urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
-		    $urlsource.=str_replace('&amp;','&',$param);
+		$hidegeneratedfilelistifempty=1;
+		if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty=0;
 
-		    $filedir=$diroutputmassaction;
-		    $genallowed=$user->rights->expensereport->lire;
-		    $delallowed=$user->rights->expensereport->creer;
+		// Show list of available documents
+		$urlsource=$_SERVER['PHP_SELF'].'?sortfield='.$sortfield.'&sortorder='.$sortorder;
+		$urlsource.=str_replace('&amp;','&',$param);
 
-		    print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'');
-		}
-		else
-		{
-		    print '<br><a name="show_files"></a><a href="'.$_SERVER["PHP_SELF"].'?show_files=1'.$param.'#show_files">'.$langs->trans("ShowTempMassFilesArea").'</a>';
-		}
+		$filedir=$diroutputmassaction;
+		$genallowed=$user->rights->expensereport->lire;
+		$delallowed=$user->rights->expensereport->creer;
+
+		print $formfile->showdocuments('massfilesarea_expensereport','',$filedir,$urlsource,0,$delallowed,'',1,1,0,48,1,$param,$title,'','','',null,$hidegeneratedfilelistifempty);
 	}
 }
 else

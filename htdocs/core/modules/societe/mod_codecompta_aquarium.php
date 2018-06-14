@@ -74,7 +74,13 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 		$texte.= '<table class="nobordernopadding" width="100%">';
 		$s1= $form->textwithpicto('<input type="text" class="flat" size="4" name="value1" value="'.$conf->global->COMPANY_AQUARIUM_MASK_SUPPLIER.'">',$tooltip,1,1);
 		$s2= $form->textwithpicto('<input type="text" class="flat" size="4" name="value2" value="'.$conf->global->COMPANY_AQUARIUM_MASK_CUSTOMER.'">',$tooltip,1,1);
-		$texte.= '<tr><td>'.$langs->trans("ModuleCompanyCode".$this->name,$s1,$s2)."<br>\n";
+		$texte.= '<tr><td>';
+		$texte.=$langs->trans("ModuleCompanyCodeCustomer".$this->name,$s2)."<br>\n";
+		$texte.=$langs->trans("ModuleCompanyCodeSupplier".$this->name,$s1)."<br>\n";
+		$texte.="<br>\n";
+		if (! isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || ! empty($conf->global->$conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_SPECIAL').' = '.yn(1)."<br>\n";
+		//if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)) $texte.=$langs->trans('COMPANY_AQUARIUM_REMOVE_ALPHA').' = '.yn($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA)."<br>\n";
+		if (! empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))  $texte.=$langs->trans('COMPANY_AQUARIUM_CLEAN_REGEX').' = '.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX."<br>\n";
 		$texte.= '</td>';
 		$texte.= '<td align="left">&nbsp; <input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
         $texte.= '</tr></table>';
@@ -93,7 +99,11 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function getExample($langs,$objsoc=0,$type=-1)
 	{
-	    return $this->prefixsupplieraccountancycode.'SUPPCODE'."<br>\n".$this->prefixcustomeraccountancycode.'CUSTCODE';
+		$s='';
+		$s.=$this->prefixcustomeraccountancycode.'CUSTCODE';
+	    $s.="<br>\n";
+	    $s.=$this->prefixsupplieraccountancycode.'SUPPCODE';
+	    return $s;
 	}
 
 
@@ -107,24 +117,43 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
 	 */
 	function get_code($db, $societe, $type='')
 	{
+		global $conf;
+
 		$i = 0;
 		$this->db = $db;
 
 		dol_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".(! empty($societe->name)?$societe->name:''));
 
 		// Regle gestion compte compta
-		$codetouse='';
 		if ($type == 'customer')
 		{
-			$codetouse = $this->prefixcustomeraccountancycode;
-			$codetouse.= (! empty($societe->code_client)?$societe->code_client:'CUSTCODE');
+			$codetouse=(! empty($societe->code_client)?$societe->code_client:'CUSTCODE');
+			$prefix = $this->prefixcustomeraccountancycode;
 		}
 		else if ($type == 'supplier')
 		{
-			$codetouse = $this->prefixsupplieraccountancycode;
-			$codetouse.= (! empty($societe->code_fournisseur)?$societe->code_fournisseur:'SUPPCODE');
+			$codetouse=(! empty($societe->code_fournisseur)?$societe->code_fournisseur:'SUPPCODE');
+			$prefix = $this->prefixsupplieraccountancycode;
 		}
-		$codetouse=strtoupper(preg_replace('/([^a-z0-9])/i','',$codetouse));
+		else
+		{
+			$this->error = 'Bad value for parameter type';
+			return -1;
+		}
+
+		//$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
+
+		// Remove special char if COMPANY_AQUARIUM_REMOVE_SPECIAL is set to 1 or not set (default)
+		if (! isset($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL) || ! empty($conf->global->COMPANY_AQUARIUM_REMOVE_SPECIAL)) $codetouse=preg_replace('/([^a-z0-9])/i','',$codetouse);
+		// Remove special alpha if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
+		if (! empty($conf->global->COMPANY_AQUARIUM_REMOVE_ALPHA))   $codetouse=preg_replace('/([a-z])/i','',$codetouse);
+		// Apply a regex replacement pattern if COMPANY_AQUARIUM_REMOVE_ALPHA is set to 1
+		if (! empty($conf->global->COMPANY_AQUARIUM_CLEAN_REGEX))	// Example: $conf->global->COMPANY_AQUARIUM_CLEAN_REGEX='^..(..)..';
+		{
+			$codetouse=preg_replace('/'.$conf->global->COMPANY_AQUARIUM_CLEAN_REGEX.'/','\1\2\3',$codetouse);
+		}
+
+		$codetouse=$prefix.strtoupper($codetouse);
 
 		$is_dispo = $this->verif($db, $codetouse, $societe, $type);
 		if (! $is_dispo)

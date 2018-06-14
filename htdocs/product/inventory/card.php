@@ -26,8 +26,8 @@ include_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/class/inventory.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/inventory/lib/inventory.lib.php';
 
-// Load traductions files requiredby by page
-$langs->loadLangs(array("inventory","other"));
+// Load translation files required by the page
+$langs->loadLangs(array("stocks","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
@@ -211,7 +211,7 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals($object->id, $extralabels);
+    $res = $object->fetch_optionals();
 
     $head = inventoryPrepareHead($object);
 	dol_fiche_head($head, 'inventory', $langs->trans("Inventory"), -1, 'inventory');

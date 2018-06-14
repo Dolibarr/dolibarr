@@ -20,9 +20,9 @@
  */
 
 /**
- * \file htdocs/product/stats/facture_fournisseur.php
- * \ingroup product service facture
- * \brief Page des stats des factures fournisseurs pour un produit
+ * \file 		htdocs/product/stats/facture_fournisseur.php
+ * \ingroup 	product service facture
+ * \brief 		Page of supplier invoice statistics for a product
  */
 
 require '../../main.inc.php';
@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -126,8 +124,8 @@ if ($id > 0 || ! empty($ref))
 
 		if ($user->rights->fournisseur->facture->lire)
 		{
-			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, f.ref, d.rowid, d.total_ht as total_ht,";
-			$sql .= " f.datef, f.paye, f.fk_statut as statut, f.rowid as facid, d.qty";
+			$sql = "SELECT DISTINCT s.nom as name, s.rowid as socid, s.code_client, d.rowid, d.total_ht as total_ht,";
+			$sql .= " f.rowid as facid, f.ref, f.ref_supplier, f.datef, f.libelle, f.total_ht, f.total_ttc, f.total_tva, f.paye, f.fk_statut as statut, d.qty";
 			if (! $user->rights->societe->client->voir && ! $socid)
 				$sql .= ", sc.fk_soc, sc.fk_user ";
 			$sql .= " FROM " . MAIN_DB_PREFIX . "societe as s";
@@ -213,16 +211,20 @@ if ($id > 0 || ! empty($ref))
 
 				if ($num > 0)
 				{
-					$var = True;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($result);
-						$var = ! $var;
 
-						print '<tr ' . $bc[$var] . '>';
-						print '<td>';
 						$supplierinvoicestatic->id = $objp->facid;
-						$supplierinvoicestatic->ref = $objp->facnumber;
+						$supplierinvoicestatic->ref = $objp->ref;
+						$supplierinvoicestatic->ref_supplier = $objp->ref_supplier;
+						$supplierinvoicestatic->libelle = $objp->libelle;
+						$supplierinvoicestatic->total_ht = $objp->total_ht;
+						$supplierinvoicestatic->total_ttc = $objp->total_ttc;
+						$supplierinvoicestatic->total_tva = $objp->total_tva;
+
+						print '<tr class="oddeven">';
+						print '<td>';
 						print $supplierinvoicestatic->getNomUrl(1);
 						print "</td>\n";
 						$societestatic->fetch($objp->socid);

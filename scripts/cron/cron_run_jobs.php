@@ -73,7 +73,14 @@ $error=0;
 $now=dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . $now . " *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . dol_print_date($now, 'dayrfc') . " *****\n";
+
+// Check module cron is activated
+if (empty($conf->cron->enabled))
+{
+	print "Error: module Scheduled jobs (cron) not activated\n";
+	exit(-1);
+}
 
 // Check module cron is activated
 if (empty($conf->cron->enabled))
@@ -161,18 +168,21 @@ $nbofjobs=count($qualifiedjobs);
 $nbofjobslaunchedok=0;
 $nbofjobslaunchedko=0;
 
-if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
+if (is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 {
 	// Loop over job
 	foreach($qualifiedjobs as $line)
 	{
 		dol_syslog("cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label, LOG_DEBUG);
-		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label."\n";
+
+		echo "cron_run_jobs.php cronjobid: ".$line->id." priority=".$line->priority." entity=".$line->entity." label=".$line->label;
 
 		//If date_next_jobs is less of current date, execute the program, and store the execution time of the next execution in database
 		if (($line->datenextrun < $now) && (empty($line->datestart) || $line->datestart <= $now) && (empty($line->dateend) || $line->dateend >= $now))
 		{
-			dol_syslog("cron_run_jobs.php:: to run line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+			echo " - qualified\n";
+
+			dol_syslog("cron_run_jobs.php line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 
 			$cronjob=new Cronjob($db);
 			$result=$cronjob->fetch($line->id);
@@ -211,9 +221,15 @@ if(is_array($qualifiedjobs) && (count($qualifiedjobs)>0))
 		}
 		else
 		{
-			dol_syslog("cron_run_jobs.php:: job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
+			echo " - not qualified\n";
+
+			dol_syslog("cron_run_jobs.php job not qualified line->datenextrun:".dol_print_date($line->datenextrun,'dayhourrfc')." line->datestart:".dol_print_date($line->datestart,'dayhourrfc')." line->dateend:".dol_print_date($line->dateend,'dayhourrfc')." now:".dol_print_date($now,'dayhourrfc'));
 		}
 	}
+}
+else
+{
+	echo "cron_run_jobs.php no qualified job found\n";
 }
 
 $db->close();

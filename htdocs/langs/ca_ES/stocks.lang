@@ -203,3 +203,4 @@ RegulateStock=Regula l'estoc
 ListInventory=Llistat
 StockSupportServices=Serveis de suport a la gestió d'estoc
 StockSupportServicesDesc=De manera predeterminada, només es pot assignar estoc als productes del tipus "producte". Si està activat i si el mòdul Serveis està activat, també podeu assignar estoc als productes del tipus "servei"
+ReceiveProducts=Receive products

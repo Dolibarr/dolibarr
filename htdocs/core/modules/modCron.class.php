@@ -54,8 +54,6 @@ class modCron extends DolibarrModules
         $this->version = 'dolibarr';
         // Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-        // Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-        $this->special = 2;
         // Name of image file used for this module.
         $this->picto = 'technic';
 
@@ -66,17 +64,17 @@ class modCron extends DolibarrModules
         //-------------
         $this->config_page_url = array("cron.php@cron");
 
-        // Dependancies
-        //-------------
+		// Dependancies
+		//-------------
 		$this->hidden = !empty($conf->global->MODULE_CRON_DISABLED); // A condition to disable module
 		$this->depends = array(); // List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array(); // List of modules id to disable if this one is disabled
+		$this->requiredby = array(); // List of modules id to disable if this one is disabled
 		$this->conflictwith = array(); // List of modules id this module is in conflict with
-        $this->langfiles = array("cron");
+		$this->langfiles = array("cron");
 
-        // Constants
-        //-----------
-        	$this->const = array(
+		// Constants
+		//-----------
+		$this->const = array(
 				0=>array(
 					'CRON_KEY',
 					'chaine',

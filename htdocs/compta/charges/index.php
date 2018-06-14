@@ -34,8 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -48,7 +48,7 @@ if (! $year && $mode != 'sconly') { $year=date("Y", time()); }
 
 $search_account = GETPOST('search_account','int');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -139,7 +139,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementcharge as pc ON pc.fk_charge = cs.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pc.fk_bank = b.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
 	$sql.= " WHERE cs.fk_type = c.id";
@@ -260,7 +260,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$sql.= " FROM ".MAIN_DB_PREFIX."tva as pv";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON pv.fk_bank = b.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pv.fk_typepayment = pct.id";
 		$sql.= " WHERE pv.entity IN (".getEntity("tax").")";
 		if ($year > 0)
 		{
@@ -474,7 +474,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
         $sql.= " FROM ".MAIN_DB_PREFIX."payment_salary as s";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON s.fk_bank = b.rowid";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON s.fk_typepayment = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON s.fk_typepayment = pct.id";
 		$sql.= " , ".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE s.entity IN (".getEntity('user').")";
         $sql.= " AND u.rowid = s.fk_user";

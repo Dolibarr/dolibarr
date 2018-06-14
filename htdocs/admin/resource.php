@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/ajax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 if (! empty($conf->resouce->enabled)) require_once DOL_DOCUMENT_ROOT . '/resource/class/html.formresource.class.php';
 
-$langs->load("admin");
-$langs->load("resource");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","resource"));
 
 // Security check
 if (!$user->admin)
@@ -76,7 +76,6 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="updateoptions">';
 
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -85,7 +84,6 @@ print '<td></td>';
 
 
 // Utilisation formulaire Ajax sur choix produit
-
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectResource").'</td>';
 if (empty($conf->use_javascript_ajax))

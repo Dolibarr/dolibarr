@@ -143,6 +143,7 @@ class ProjectStats extends Stats
 
 		if (! empty($this->userid))
 			$sqlwhere[] = ' t.fk_user_resp=' . $this->userid;
+		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
 		if (! empty($this->socid))
 			$sqlwhere[] = ' t.fk_soc=' . $this->socid;
 		if (! empty($this->year) && empty($this->yearmonth))

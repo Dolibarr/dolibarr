@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/paymentsocialcontribution
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -45,7 +45,7 @@ $year=GETPOST("year",'int');
 $filtre=GETPOST("filtre",'alpha');
 if (! $year && $mode != 'sconly') { $year=date("Y", time()); }
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -133,7 +133,7 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c,";
 	$sql.= " ".MAIN_DB_PREFIX."chargesociales as cs,";
 	$sql.= " ".MAIN_DB_PREFIX."paiementcharge as pc";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id AND pct.entity IN (".getEntity('c_paiement').")";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pct ON pc.fk_typepaiement = pct.id";
 	$sql.= " WHERE cs.fk_type = c.id AND pc.fk_charge = cs.rowid";
 	$sql.= " AND cs.entity = ".$conf->entity;
 	if ($year > 0)

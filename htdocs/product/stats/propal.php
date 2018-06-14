@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -216,13 +216,11 @@ if ($id > 0 || ! empty($ref))
 
 				if ($num > 0)
 				{
-					$var = True;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
 						$objp = $db->fetch_object($result);
-						$var = ! $var;
 
-						print '<tr ' . $bc[$var] . '>';
+						print '<tr class="oddeven">';
 						print '<td>';
 						$propalstatic->id=$objp->propalid;
 						$propalstatic->ref=$objp->ref;

@@ -7,6 +7,7 @@
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015       Jean-François Ferry     <jfefe@aternatik.fr>
+ * Copyright (C) 2018       Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2018       Juanjo Menent			<jmenent@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +34,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "suppliers"));
 
 $action=GETPOST('action','alpha');
@@ -121,7 +123,8 @@ else if ($type == "o")
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Contact($db);
+$hookmanager->initHooks(array('contactlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -134,6 +137,7 @@ $fieldstosearchall = array(
 	'p.firstname'=>'Firstname',
 	'p.email'=>'EMail',
 	's.nom'=>"ThirdParty",
+	'p.phone'=>"Phone",
 );
 
 // Definition of fields for list
@@ -257,7 +261,7 @@ if (! empty($search_categ)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_conta
 if (! empty($search_categ_thirdparty)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_societe as cs ON s.rowid = cs.fk_soc";       // We need this table joined to the select in order to filter by categ
 if (! empty($search_categ_supplier)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_fournisseur as cs2 ON s.rowid = cs2.fk_soc";       // We need this table joined to the select in order to filter by categ
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
-$sql.= ' WHERE p.entity IN ('.getEntity('societe').')';
+$sql.= ' WHERE p.entity IN ('.getEntity('socpeople').')';
 if (!$user->rights->societe->client->voir && !$socid) //restriction
 {
 	$sql .= " AND (sc.fk_user = " .$user->id." OR p.fk_soc IS NULL)";
@@ -346,6 +350,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -411,6 +420,14 @@ if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->societe->contact->creer)
+{
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewContactAddress').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
+
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -420,7 +437,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies.png', 0, '', '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies.png', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="contact";

@@ -33,6 +33,7 @@ PropalStatusSigned=İmzalı(faturalanacak)
 PropalStatusNotSigned=İmzalanmamış (kapalı)
 PropalStatusBilled=Faturalanmış
 PropalStatusDraftShort=Taslak
+PropalStatusValidatedShort=Doğrulandı
 PropalStatusClosedShort=Kapalı
 PropalStatusSignedShort=İmzalı
 PropalStatusNotSignedShort=İmzalanmamış

@@ -20,16 +20,11 @@
  *       \brief      File to return Ajax response on payment breakdown process
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
 if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOCSRFCHECK'))    define('NOCSRFCHECK','1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined("NOLOGIN"))        define("NOLOGIN",'1');       // If this page is public (can be called outside logged session)
 
 require '../main.inc.php';
 
@@ -66,7 +61,7 @@ foreach ($remains as $key => $value)
 }
 
 // Treatment
-$result = $amountPayment != '' ? ($amountPayment - array_sum($amounts)) : ($amountPayment + array_sum($amounts));					// Remaining amountPayment
+$result = ($amountPayment != '') ? ($amountPayment - array_sum($amounts)) : array_sum($amounts);					// Remaining amountPayment
 $toJsonArray = 	array();
 $totalRemaining = price2num(array_sum($remains));
 $toJsonArray['label'] = $amountPayment == '' ? '' : $langs->transnoentities('RemainingAmountPayment');

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2017	Franck Moreau   <franck.moreau@theobald.com>
+/* Copyright (C) 2017      Franck Moreau        <franck.moreau@theobald.com>
+ * Copyright (C) 2018      Alexandre Spangaro   <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +17,9 @@
  */
 
 /**
- *      \file       htdocs/loan/createecheancier.php
- *		\ingroup    loan
- *		\brief      Schedule card
+ *  \file       htdocs/loan/createschedule.php
+ *  \ingroup    loan
+ *  \brief      Schedule card
  */
 
 require '../main.inc.php';
@@ -33,7 +34,8 @@ $action = GETPOST('action','aZ09');
 $object = new Loan($db);
 $object->fetch($loanid);
 
-$langs->load('loan');
+// Load translation files required by the page
+$langs->loadLangs(array("loan"));
 
 if ($action == 'createecheancier') {
 
@@ -89,7 +91,7 @@ if ($action == 'updateecheancier') {
 }
 
 $echeance = new LoanSchedule($db);
-$echeance->fetchall($object->id);
+$echeance->fetchAll($object->id);
 
 top_htmlhead('', '');
 $var = ! $var;
@@ -147,11 +149,11 @@ print '</th>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-Print '<th width="10%" align="center">'.$langs->trans("DueDate").'</th>';
+Print '<th width="10%" align="center">'.$langs->trans("Term").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Date").'</th>';
 Print '<th width="10%" align="center">'.$langs->trans("Amount").'</th>';
 Print '<th width="20%" align="center">'.$langs->trans("InterestAmount").'</th>';
-Print '<th width="40%" align="center">'.$langs->trans("Remain");
+Print '<th width="40%" align="center">'.$langs->trans("CapitalRemain");
 print ' ('.price2num($object->capital).')';
 print '<input type="hidden" name="hi_capital0" id ="hi_capital0" value="'.$object->capital.'">';
 print '</th>';

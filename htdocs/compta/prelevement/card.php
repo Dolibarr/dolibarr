@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 if (!$user->rights->prelevement->bons->lire)
 accessforbidden();
@@ -322,6 +322,11 @@ if ($id > 0 || $ref)
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
+		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		{
+			$page = 0;
+			$offset = 0;
+		}
 	}
 
 	$sql.= $db->plimit($limit+1, $offset);

@@ -1,4 +1,2 @@
 # Dolibarr language file - Source file is en_US - margins
-MargeType1=Margen de proveedor con mejor precio
 MargeType2=Margen de Precio Promedio Ponderado (WAP)
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

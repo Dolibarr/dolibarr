@@ -39,7 +39,7 @@ $object = new Societe($db);
 if ($socid > 0) $object->fetch($socid);
 
 // Sort & Order fields
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -68,15 +68,8 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 $thirdTypeSelect = GETPOST("third_select_id");
 $type_element = GETPOST('type_element')?GETPOST('type_element'):'';
 
-
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("suppliers");
-$langs->load("propal");
-$langs->load("interventions");
-$langs->load("contracts");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "bills", "orders", "suppliers", "propal", "interventions", "contracts", "products"));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('consumptionthirdparty'));
@@ -282,7 +275,7 @@ if ($type_element == 'supplier_order')
 	$thirdTypeSelect='supplier';
 }
 if ($type_element == 'contract')
-{ 	// Supplier : Show products from orders.
+{ 	// Order
 	require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 	$documentstatic=new Contrat($db);
 	$documentstaticline=new ContratLigne($db);
@@ -365,8 +358,7 @@ if ($sql_select)
 {
 	$resql=$db->query($sql);
 	if (!$resql) dol_print_error($db);
-
-	$var=true;
+	
 	$num = $db->num_rows($resql);
 
 	$param="&socid=".$socid."&type_element=".$type_element;
@@ -432,7 +424,6 @@ if ($sql_select)
 		$documentstatic->paye=$objp->paid;
 
 		if (is_object($documentstaticline)) $documentstaticline->statut=$objp->status;
-
 
 		print '<tr class="oddeven">';
 		print '<td class="nobordernopadding nowrap" width="100">';
@@ -506,6 +497,7 @@ if ($sql_select)
 			print img_object($langs->trans("ShowReduc"),'reduc').' ';
 			if ($objp->description == '(DEPOSIT)') $txt=$langs->trans("Deposit");
 			elseif ($objp->description == '(EXCESS RECEIVED)') $txt=$langs->trans("ExcessReceived");
+			elseif ($objp->description == '(EXCESS PAID)') $txt=$langs->trans("ExcessPaid");
 			//else $txt=$langs->trans("Discount");
 			print $txt;
 			?>
@@ -524,6 +516,12 @@ if ($sql_select)
 					$discount=new DiscountAbsolute($db);
 					$discount->fetch($objp->fk_remise_except);
 					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessReceived",$discount->getNomUrl(0));
+				}
+				elseif ($objp->description == '(EXCESS PAID)' && $objp->fk_remise_except > 0)
+				{
+					$discount=new DiscountAbsolute($db);
+					$discount->fetch($objp->fk_remise_except);
+					echo ($txt?' - ':'').$langs->transnoentities("DiscountFromExcessPaid",$discount->getNomUrl(0));
 				}
 				elseif ($objp->description == '(DEPOSIT)' && $objp->fk_remise_except > 0)
 				{
@@ -636,7 +634,7 @@ else if (empty($type_element) || $type_element == -1)
     print_liste_field_titre('Quantity',$_SERVER['PHP_SELF'],'prod_qty','',$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
-	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
+	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("SelectElementAndClick", $langs->transnoentitiesnoconv("Search")).'</td></tr>';
 
 	print "</table>";
 }
@@ -645,7 +643,7 @@ else {
 
     print '<table class="liste" width="100%">'."\n";
 
-	print '<tr '.$bc[0].'><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
+	print '<tr class="oddeven"><td class="opacitymedium" colspan="5">'.$langs->trans("FeatureNotYetAvailable").'</td></tr>';
 
 	print "</table>";
 }

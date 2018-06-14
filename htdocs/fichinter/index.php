@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/fichinter/class/fichinter.class.php';
 
 if (!$user->rights->ficheinter->lire) accessforbidden();
 
+// Load translation files required by the page
 $langs->load("interventions");
 
 // Security check

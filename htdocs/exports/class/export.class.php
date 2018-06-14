@@ -697,11 +697,13 @@ class Export
 		$sql.= 'label,';
 		$sql.= 'type,';
 		$sql.= 'field,';
+		$sql.= 'fk_user,';
 		$sql.= 'filter';
 		$sql.= ') VALUES (';
 		$sql.= "'".$this->db->escape($this->model_name)."',";
 		$sql.= "'".$this->db->escape($this->datatoexport)."',";
 		$sql.= "'".$this->db->escape($this->hexa)."',";
+		$sql.= "'".$user->id."',";
 		$sql.= "'".$this->db->escape($this->hexafiltervalue)."'";
 		$sql.= ")";
 

@@ -391,8 +391,9 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
     print '<!DOCTYPE HTML>'."\n";
     print '<html>'."\n";
     print '<head>'."\n";
-    print '<meta charset='.$conf->file->character_set_client.'">'."\n";
+    print '<meta charset="'.$conf->file->character_set_client.'">'."\n";
     print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";
+    print '<meta name="generator" content="Dolibarr installer">'."\n";
     print '<link rel="stylesheet" type="text/css" href="default.css">'."\n";
 
     print '<!-- Includes CSS for JQuery -->'."\n";

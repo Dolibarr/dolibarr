@@ -1,12 +1,11 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Password for domæne
 YouMustChangePassNextLogon=Adgangskode for <b>bruger %s</b> på det <b>domæne %s</b> skal ændres.
 UserMustChangePassNextLogon=Brugeren skal skifte adgangskode på domænet %s
 LDAPInformationsForThisContact=Oplysninger i LDAP database for denne kontakt
 LDAPInformationsForThisUser=Oplysninger i LDAP database for denne bruger
 LDAPInformationsForThisGroup=Oplysninger i LDAP database for denne gruppe
 LDAPInformationsForThisMember=Oplysninger i LDAP database for dette medlem
-LDAPInformationsForThisMemberType=Information in LDAP database for this member type
+LDAPInformationsForThisMemberType=Oplysninger i LDAP-database for denne medlems type
 LDAPAttributes=LDAP attributter
 LDAPCard=LDAP-kort
 LDAPRecordNotFound=Optag ikke findes i LDAP database
@@ -21,7 +20,8 @@ LDAPFieldSkypeExample=Example : skypeName
 UserSynchronized=Bruger synkroniseres
 GroupSynchronized=Gruppen synkroniseres
 MemberSynchronized=Medlem synkroniseres
-MemberTypeSynchronized=Member type synchronized
+MemberTypeSynchronized=Medlems type synkroniseret
 ContactSynchronized=Kontakt synkroniseres
 ForceSynchronize=Force synkronisering Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Kunne ikke læse LDAP database. Check LDAP modul opsætning og database tilgængelighed.
+PasswordOfUserInLDAP=Password of user in LDAP

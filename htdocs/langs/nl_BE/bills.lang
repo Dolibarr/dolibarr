@@ -14,6 +14,7 @@ DoPaymentBack=Doe een terugbetaling
 StatusOfGeneratedInvoices=Lijst van genereerde facturen
 BillStatusDraft=Conceptfactuur (moet worden gevalideerd)
 BillShortStatusClosedUnpaid=Afgesloten
+LastCustomersBills=Laatste %s klantfacturen
 AmountOfBillsByMonthHT=Factuurbedrag per maand (ex BTW)
 ShowInvoiceSituation=Toon situatie factuur
 RemainderToBill=Nog te factureren

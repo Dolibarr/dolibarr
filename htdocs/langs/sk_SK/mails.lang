@@ -11,7 +11,9 @@ MailFrom=Odosielateľ
 MailErrorsTo=Chyby
 MailReply=Odpovedať
 MailTo=Prijímač (s)
+MailToUsers=To user(s)
 MailCC=Kopírovať do
+MailToCCUsers=Copy to users(s)
 MailCCC=Cached kópiu
 MailTopic=EMail téma
 MailText=Správa
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Informácie
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client
