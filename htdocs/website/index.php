@@ -2165,17 +2165,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</td></tr>';
 
 	print '<tr><td class="titlefieldcreate">';
-	print $langs->trans('WEBSITE_ALIASALT');
+	$htmlhelp=$langs->trans("WEBSITE_ALIASALTDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_ALIASALT" value="'.dol_escape_htmltag($pagealiasalt).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp=$langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
-
 	$htmlhelp=$langs->trans("Example").' :<br>';
 	$htmlhelp.=dol_htmlentitiesbr($htmlheadercontentdefault);
-
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '180', 'ace', 'In', true, false, 'ace', 0, '100%', '');
