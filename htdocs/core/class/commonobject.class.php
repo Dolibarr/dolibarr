@@ -6005,7 +6005,18 @@ abstract class CommonObject
 		}
 		elseif ($type == 'array')
 		{
-			$value = implode('<br>', $value);
+			// Handle case of static use (e.g. in lists), where $object not loaded and setVarsFromFetchObj() not called
+			$v = $value;
+			if(! is_array($value)) {
+				$v = @unserialize($value);
+
+				// Hack for data not in UTF8
+				if($v === false) $v = @unserialize(utf8_decode($value));
+			}
+
+			if(! empty($v)) {
+				$value = implode('<br>', $v);
+			}
 		}
 
 		//print $type.'-'.$size;
