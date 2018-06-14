@@ -1650,7 +1650,7 @@ class Expedition extends CommonObject
 			if ($statut==0) return $langs->trans($this->statutshorts[$statut]);
 			if ($statut==1) return $langs->trans($this->statutshorts[$statut]);
 			if ($statut==2) return $langs->trans($this->statutshorts[$statut]);
-			if ($statut==23) return $langs->trans($this->statutshorts[$statut]);
+			if ($statut==3) return $langs->trans($this->statutshorts[$statut]);
 		}
 		if ($mode == 3)
 		{
