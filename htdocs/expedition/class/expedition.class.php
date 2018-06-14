@@ -596,7 +596,7 @@ class Expedition extends CommonObject
 			if (! $error)
 			{
     				// Call trigger
-    				$result=$this->call_trigger('SHIPPING_SHIPPED',$user);
+    				$result=$this->call_trigger('SHIPPING_MODIFY',$user);
     				if ($result < 0)
 				{
     					$error++;
