@@ -169,14 +169,12 @@ if ($resql)
     print '</td>';
     print "</tr>\n";
 
-    $var=true;
     while ($i < min($num,$limit))
     {
         $obj = $db->fetch_object($resql);
 
         $soc = new Societe($db);
         if ($obj->socid) $soc->fetch($obj->socid);
-
 
         print '<tr class="oddeven">';
         // Id
