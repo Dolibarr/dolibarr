@@ -526,3 +526,6 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SS', 11801, NULL, 0, 'SS', 'Sumatera Selatan', 1);    
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SU', 11801, NULL, 0, 'SU', 'Sumatera Utara	', 1);
 
+-- Expedition
+ALTER TABLE llx_expedition ADD fk_user_shipped INT(11) DEFAULT NULL;
+ALTER TABLE llx_expedition ADD date_shipped datetime DEFAULT NULL;
