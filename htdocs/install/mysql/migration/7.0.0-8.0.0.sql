@@ -529,3 +529,4 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 -- Expedition
 ALTER TABLE llx_expedition ADD fk_user_shipped INT(11) DEFAULT NULL;
 ALTER TABLE llx_expedition ADD date_shipped datetime DEFAULT NULL;
+
