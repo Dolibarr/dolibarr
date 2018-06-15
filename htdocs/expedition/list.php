@@ -406,7 +406,7 @@ if ($resql)
 	if (! empty($arrayfields['e.fk_statut']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-		print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort')),$viewstatut,1);
+		print $form->selectarray('viewstatut', array('0'=>$langs->trans('StatusSendingDraftShort'),'1'=>$langs->trans('StatusSendingValidatedShort'),'2'=>$langs->trans('StatusSendingProcessedShort'),'3'=>$langs->trans('StatusSendingShippedShort')),$viewstatut,1);
 		print '</td>';
 	}
 	// Status billed
