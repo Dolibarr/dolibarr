@@ -444,10 +444,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			$thirdparty = new Societe($db);
 			$thirdparty->fetch($thirdparty_id);
 
+			// Create Stripe customer
 			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 			$stripe = new Stripe($db);
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
+			// Create Stripe card from Token
 			$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
 
 			if (empty($card))
@@ -1559,7 +1561,7 @@ if (preg_match('/^dopayment/',$action))
 
 		?>
 
-	    // Create a Stripe client
+	    // Create a Stripe client.
 	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
 
 	    // Create an instance of Elements
