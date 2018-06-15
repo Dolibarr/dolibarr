@@ -423,7 +423,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->societe->contact->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?action=create">'.$langs->trans('NewContactAddress');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewContactAddress').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }

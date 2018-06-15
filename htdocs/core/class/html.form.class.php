@@ -2651,7 +2651,7 @@ class Form
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
-		$sql.= " WHERE p.entity IN (".getEntity('productprice').")";
+		$sql.= " WHERE pfp.entity IN (".getEntity('productprice').")";
 		$sql.= " AND p.tobuy = 1";
 		$sql.= " AND s.fournisseur = 1";
 		$sql.= " AND p.rowid = ".$productid;
@@ -3795,7 +3795,7 @@ class Form
                          		    if ($("#" + inputname).attr("type") == "radio") { more = ":checked"; }
                          			var inputvalue = $("#" + inputname + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + inputvalue;
+                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
@@ -3813,7 +3813,7 @@ class Form
                          			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
                          			var inputvalue = $("#" + inputname + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + inputvalue;
+                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
                          	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;

@@ -526,7 +526,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
-	$nom = $langs->trans("ExpenseReportsJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
+	$nom = $langs->trans("ExpenseReportsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';

@@ -83,9 +83,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 	function info($langs)
 	{
 		global $conf,$langs;
-
-		$langs->load("companies");
-		$langs->load("errors");
+        
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("companies", "errors"));
 
 		$form = new Form($this->db);
 
@@ -362,7 +362,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 					catch(OdfException $e)
 					{
-                        // setVars failed, probably because key not found
+						// setVars failed, probably because key not found
 					}
 				}
 
@@ -378,8 +378,8 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 					}
 				}
 
-                // Call the beforeODTSave hook
-                		$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
+				// Call the beforeODTSave hook
+				$parameters=array('odfHandler'=>&$odfHandler,'file'=>$file,'object'=>$object,'outputlangs'=>$outputlangs,'substitutionarray'=>&$tmparray);
 				$reshook=$hookmanager->executeHooks('beforeODTSave',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 
 				// Write new file
@@ -418,7 +418,7 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else

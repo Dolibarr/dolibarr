@@ -84,7 +84,7 @@ llxHeader('', $langs->trans("ListOfBookmarks"));
 $newcardbutton='';
 if ($user->rights->bookmark->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create">'.$langs->trans('NewBookmark');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/bookmarks/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewBookmark').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }

@@ -67,9 +67,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("companies");
+        
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("companies", "main"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -951,7 +951,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$elementarray = $object->get_element_list($keyref, $tablename);
 							if (count($elementarray)>0 && is_array($elementarray))
 							{
-								$var=true;
+							    $var=true;
 								$total_ht = 0;
 								$total_ttc = 0;
 								$num=count($elementarray);

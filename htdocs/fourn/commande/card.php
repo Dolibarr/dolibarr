@@ -964,6 +964,7 @@ if (empty($reshook))
 				if ($result < 0)
 				{
 					$error++;
+					setEventMessages($object->error,$object->errors,'errors');
 				}
 			}
 		}

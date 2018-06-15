@@ -109,6 +109,12 @@ if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
+	//var_dump($res);exit;
+	//if ($res == 0)		// Page ref not found, we check in alias
+	//{
+	//	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
+	//}
+
 	// Check if pageid is inside the new website, if not we reset param pageid
 	if ($object->id > 0 && ($objectpage->fk_website != $object->id))
 	{
@@ -1009,17 +1015,43 @@ if ($action == 'updatemeta')
 
 		if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
 
-
-		// Now generate the alias.php page
+		// Now delete the alias.php page
 		if (! empty($fileoldalias))
 		{
-			dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+			dol_syslog("We delete old alias page name=".$fileoldalias." to build a new alias page=".$filealias);
 			dol_delete_file($fileoldalias);
+		}
+		// Now delete the alternative alias.php pages
+		if (! empty($objectpage->old_object->aliasalt))
+		{
+			$tmpaltaliases=explode(',', $objectpage->old_object->aliasalt);
+			if (is_array($tmpaltaliases))
+			{
+				foreach($tmpaltaliases as $tmpaliasalt)
+				{
+					dol_syslog("We delete old alt alias pages name=".trim($tmpaliasalt));
+					dol_delete_file($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+				}
+			}
 		}
 
 		// Save page alias
 		$result=dolSavePageAlias($filealias, $object, $objectpage);
 		if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+		// Save alt aliases
+		if (! empty($objectpage->aliasalt))
+		{
+			$tmpaltaliases=explode(',', $objectpage->aliasalt);
+			if (is_array($tmpaltaliases))
+			{
+				foreach($tmpaltaliases as $tmpaliasalt)
+				{
+					$result=dolSavePageAlias($pathofwebsite.'/'.trim($tmpaliasalt).'.php', $object, $objectpage);
+					if (! $result) setEventMessages('Failed to write file '.$pathofwebsite.'/'.trim($tmpaliasalt).'.php', null, 'errors');
+				}
+			}
+		}
+
 
 		// Save page of content
 		$result=dolSavePageContent($filetpl, $object, $objectpage);
@@ -1539,28 +1571,31 @@ if (count($object->records) > 0)
 		// Print nav arrows
 		$pagepreviousid=0;
 		$pagenextid=0;
-		$sql = 'SELECT MAX(rowid) as pagepreviousid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid < '.$pageid.' AND fk_website = '.$object->id;
-		$resql = $db->query($sql);
-		if ($resql)
+		if ($pageid)
 		{
-			$obj = $db->fetch_object($resql);
-			if ($obj)
+			$sql = 'SELECT MAX(rowid) as pagepreviousid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid < '.$pageid.' AND fk_website = '.$object->id;
+			$resql = $db->query($sql);
+			if ($resql)
 			{
-				$pagepreviousid = $obj->pagepreviousid;
+				$obj = $db->fetch_object($resql);
+				if ($obj)
+				{
+					$pagepreviousid = $obj->pagepreviousid;
+				}
 			}
-		}
-		else dol_print_error($db);
-		$sql = 'SELECT MIN(rowid) as pagenextid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid > '.$pageid.' AND fk_website = '.$object->id;
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$obj = $db->fetch_object($resql);
-			if ($obj)
+			else dol_print_error($db);
+			$sql = 'SELECT MIN(rowid) as pagenextid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid > '.$pageid.' AND fk_website = '.$object->id;
+			$resql = $db->query($sql);
+			if ($resql)
 			{
-				$pagenextid = $obj->pagenextid;
+				$obj = $db->fetch_object($resql);
+				if ($obj)
+				{
+					$pagenextid = $obj->pagenextid;
+				}
 			}
+			else dol_print_error($db);
 		}
-		else dol_print_error($db);
 
 		if ($pagepreviousid) print '<a href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
 		else print '<span class="opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
@@ -1693,13 +1728,23 @@ if (count($object->records) > 0)
                     jQuery(document).ready(function() {
                 		jQuery("#websiteinputurl").keyup(function() {
                             console.log("Website external url modified "+jQuery("#previewsiteurl").val());
-                			if (jQuery("#previewsiteurl").val() != "") jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
+                			if (jQuery("#previewsiteurl").val() != "" && jQuery("#previewsiteurl").val().startsWith("http"))
+							{
+								jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
+							}
                 			else jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 0.2 });
 						';
 				print '
                 		});
                     	jQuery("#previewsiteext,#previewpageext").click(function() {
+
                             newurl=jQuery("#previewsiteurl").val();
+							if (! newurl.startsWith("http"))
+							{
+								alert(\''.dol_escape_js($langs->trans("ExternalURLMustStartWithHttp")).'\');
+								return false;
+							}
+
                             newpage=jQuery("#previewsiteurl").val() + "/" + jQuery("#previewpageurl").val() + ".php";
                             console.log("Open url "+newurl);
                             /* Save url */
@@ -2120,17 +2165,16 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</td></tr>';
 
 	print '<tr><td class="titlefieldcreate">';
-	print $langs->trans('WEBSITE_ALIASALT');
+	$htmlhelp=$langs->trans("WEBSITE_ALIASALTDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_ALIASALT" value="'.dol_escape_htmltag($pagealiasalt).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp=$langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
-
 	$htmlhelp=$langs->trans("Example").' :<br>';
 	$htmlhelp.=dol_htmlentitiesbr($htmlheadercontentdefault);
-
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '180', 'ace', 'In', true, false, 'ace', 0, '100%', '');

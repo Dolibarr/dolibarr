@@ -117,7 +117,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->loan->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create">'.$langs->trans('NewLoan');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/loan/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewLoan').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

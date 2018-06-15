@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
-$langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox","paypal"));     // File with generic data
+$langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox","paypal","stripe"));     // File with generic data
 
 $action=GETPOST('action','aZ09');
 
@@ -1556,6 +1556,7 @@ if (preg_match('/^dopayment/',$action))
 	    <script src="https://js.stripe.com/v3/"></script>
 
 	    <script type="text/javascript" language="javascript">';
+
 		?>
 
 	    // Create a Stripe client
@@ -1605,6 +1606,12 @@ if (preg_match('/^dopayment/',$action))
 	    form.addEventListener('submit', function(event) {
 	      event.preventDefault();
 
+
+			<?php
+			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
+			{
+			?>
+			/* Use token */
 	      stripe.createToken(card).then(function(result) {
 	        if (result.error) {
 	          // Inform the user if there was an error
@@ -1615,8 +1622,30 @@ if (preg_match('/^dopayment/',$action))
 	          stripeTokenHandler(result.token);
 	        }
 	      });
+			<?php
+			}
+			else											// Ask credit card with 3DS test
+			{
+			?>
+			/* Use 3DS source */
+		  stripe.createSource(card).then(function(result) {
+		    if (result.error) {
+		      // Inform the user if there was an error
+		      var errorElement = document.getElementById('card-errors');
+		      errorElement.textContent = result.error.message;
+		    } else {
+		      // Send the source to your server
+		      stripeSourceHandler(result.source);
+		    }
+		  });
+			<?php
+			}
+			?>
+
 	    });
 
+
+		/* Insert the Token into the form so it gets submitted to the server */
 	    function stripeTokenHandler(token) {
 	      // Insert the token ID into the form so it gets submitted to the server
 	      var form = document.getElementById('payment-form');
@@ -1629,9 +1658,27 @@ if (preg_match('/^dopayment/',$action))
 	      // Submit the form
 	      jQuery('#buttontopay').hide();
 	      jQuery('#hourglasstopay').show();
-	      console.log("submit");
+	      console.log("submit token");
 	      form.submit();
 	    }
+
+		/* Insert the Source into the form so it gets submitted to the server */
+		function stripeSourceHandler(source) {
+		  // Insert the source ID into the form so it gets submitted to the server
+		  var form = document.getElementById('payment-form');
+		  var hiddenInput = document.createElement('input');
+		  hiddenInput.setAttribute('type', 'hidden');
+		  hiddenInput.setAttribute('name', 'stripeSource');
+		  hiddenInput.setAttribute('value', source.id);
+		  form.appendChild(hiddenInput);
+
+		  // Submit the form
+	      jQuery('#buttontopay').hide();
+	      jQuery('#hourglasstopay').show();
+	      console.log("submit source");
+		  form.submit();
+		}
+
 
 	    <?php
 		print '</script>';

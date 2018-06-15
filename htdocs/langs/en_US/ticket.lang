@@ -125,15 +125,6 @@ TicketNumberingModules=Tickets numbering module
 TicketNotifyTiersAtCreation=Notify thirdparty at creation
 
 #
-# About page
-#
-About=About
-TicketAbout=About ticket module
-TicketAboutModule=The development of this module has been initiated by the company Libr&thic.
-TicketAboutModuleHelp=You can get help by using the contact form on the website <a href="http://librethic.io">librethic.io</a>
-TicketAboutModuleImprove=Feel free to suggest improvements! Please visit <a href="https://code.librethic.io/Dolibarr/modules/ticket">the project page</a> on Doliforge website to report bugs and add tasks.
-
-#
 # Index & list page
 #
 TicketsIndex=Ticket - home

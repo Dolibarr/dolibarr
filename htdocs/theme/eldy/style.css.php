@@ -117,7 +117,7 @@ if (empty($conf->global->THEME_ELDY_ENABLE_PERSONALIZED))
 	$conf->global->THEME_ELDY_BACKTABCARD1='255,255,255';     // card
 	$conf->global->THEME_ELDY_BACKTABACTIVE='234,234,234';
 	$conf->global->THEME_ELDY_TEXT='0,0,0';
-	$conf->global->THEME_ELDY_FONT_SIZE1='0.85em';
+	$conf->global->THEME_ELDY_FONT_SIZE1='0.86em';
 	$conf->global->THEME_ELDY_FONT_SIZE2='0.75em';
 }
 
@@ -2387,10 +2387,12 @@ span.butAction, span.butActionDelete {
 
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
+	text-transform: uppercase;
+    font-weight: bold;
+
 	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em !important;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
-    font-weight: normal;
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
     text-align: center;
@@ -2398,7 +2400,6 @@ span.butAction, span.butActionDelete {
     /* color: #fff; */
     /* background: rgb(<?php echo $colorbackhmenu1 ?>); */
     color: #000;
-    /* text-transform: uppercase; */
     border: 1px solid #aaa;
 
     border-top-right-radius: 0 !important;
@@ -2408,10 +2409,12 @@ span.butAction, span.butActionDelete {
 }
 .butActionNew, .butActionNewRefused, .butActionNew:link, .butActionNew:visited, .butActionNew:hover, .butActionNew:active {
 	text-decoration: none;
+	text-transform: uppercase;
+    font-weight: normal;
+
 	margin: 0em 0.3em 0 0.3em !important;
 	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
-    font-weight: normal;
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
     text-align: center;
@@ -2445,13 +2448,15 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 }
 
 .butActionRefused {
-    text-decoration: none !important;
+	text-decoration: none !important;
+	text-transform: uppercase;
+    font-weight: bold !important;
+
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
 	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
-    font-weight: normal !important;
     display: inline-block;
     text-align: center;
     cursor: pointer;
@@ -2459,13 +2464,15 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
     border: 1px solid #bbb;
 }
 .butActionNewRefused, .butActionNewRefused:link, .butActionNewRefused:visited, .butActionNewRefused:hover, .butActionNewRefused:active {
-    text-decoration: none !important;
+	text-decoration: none !important;
+	text-transform: uppercase;
+    font-weight: normal !important;
+
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
 	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
 	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
-    font-weight: normal !important;
     display: inline-block;
     text-align: center;
     cursor: pointer;
@@ -2827,9 +2834,9 @@ div.pagination li:last-child span {
   border-bottom-right-radius: 4px;*/
 }
 div.pagination li a:hover,
-div.pagination li span:hover,
+div.pagination li:not(.paginationafterarrows) span:hover,
 div.pagination li a:focus,
-div.pagination li span:focus {
+div.pagination li:not(.paginationafterarrows) span:focus {
   -webkit-box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
   box-shadow: 0px 0px 6px 1px rgba(50, 50, 50, 0.4), 0px 0px 0px rgba(60,60,60,0.1);
 }
