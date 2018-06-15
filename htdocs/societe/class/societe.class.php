@@ -2010,7 +2010,7 @@ class Societe extends CommonObject
 				$hookmanager=new HookManager($this->db);
 			}
 			$hookmanager->initHooks(array('societedao'));
-			$parameters=array('id'=>$this->id);
+			$parameters=array('id'=>$this->id, 'linkclose'=>$linkclose);
 			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
 			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
 		}
