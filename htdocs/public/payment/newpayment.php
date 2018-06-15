@@ -1607,43 +1607,40 @@ if (preg_match('/^dopayment/',$action))
 	    console.log(form);
 	    form.addEventListener('submit', function(event) {
 	      event.preventDefault();
-
-
 			<?php
 			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
 			{
 			?>
-			/* Use token */
-	      stripe.createToken(card).then(function(result) {
-	        if (result.error) {
-	          // Inform the user if there was an error
-	          var errorElement = document.getElementById('card-errors');
-	          errorElement.textContent = result.error.message;
-	        } else {
-	          // Send the token to your server
-	          stripeTokenHandler(result.token);
-	        }
-	      });
+				/* Use token */
+				stripe.createToken(card).then(function(result) {
+			        if (result.error) {
+			          // Inform the user if there was an error
+			          var errorElement = document.getElementById('card-errors');
+			          errorElement.textContent = result.error.message;
+			        } else {
+			          // Send the token to your server
+			          stripeTokenHandler(result.token);
+			        }
+				});
 			<?php
 			}
 			else											// Ask credit card with 3DS test
 			{
 			?>
-			/* Use 3DS source */
-		  stripe.createSource(card).then(function(result) {
-		    if (result.error) {
-		      // Inform the user if there was an error
-		      var errorElement = document.getElementById('card-errors');
-		      errorElement.textContent = result.error.message;
-		    } else {
-		      // Send the source to your server
-		      stripeSourceHandler(result.source);
-		    }
-		  });
+				/* Use 3DS source */
+				stripe.createSource(card).then(function(result) {
+				    if (result.error) {
+				      // Inform the user if there was an error
+				      var errorElement = document.getElementById('card-errors');
+				      errorElement.textContent = result.error.message;
+				    } else {
+				      // Send the source to your server
+				      stripeSourceHandler(result.source);
+				    }
+				});
 			<?php
 			}
 			?>
-
 	    });
 
 
