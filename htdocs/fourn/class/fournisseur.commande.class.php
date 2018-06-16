@@ -1568,6 +1568,7 @@ class CommandeFournisseur extends CommonOrder
             }
 
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
+
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -3280,10 +3281,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'":"null");
         $sql.= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
         $sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
-        $sql.= ", ".price2num($this->multicurrency_subprice);
-        $sql.= ", ".price2num($this->multicurrency_total_ht);
-        $sql.= ", ".price2num($this->multicurrency_total_tva);
-        $sql.= ", ".price2num($this->multicurrency_total_ttc);
+        $sql.= ", ".($this->multicurrency_subprice ? price2num($this->multicurrency_subprice) : '0');
+        $sql.= ", ".($this->multicurrency_total_ht ? price2num($this->multicurrency_total_ht) : '0');
+        $sql.= ", ".($this->multicurrency_total_tva ? price2num($this->multicurrency_total_tva) : '0');
+        $sql.= ", ".($this->multicurrency_total_ttc ? price2num($this->multicurrency_total_ttc) : '0');
         $sql.= ")";
 
         dol_syslog(get_class($this)."::insert", LOG_DEBUG);

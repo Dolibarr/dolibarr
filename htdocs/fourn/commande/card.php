@@ -400,9 +400,12 @@ if (empty($reshook))
 				$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
+				$pu = $productsupplier->fourn_pu;
+				if (empty($pu)) $pu = 0;	// If pu is '' or null, we force to have a numeric value
+
 				$result=$object->addline(
 					$desc,
-					$productsupplier->fourn_pu,
+					$pu,
 					$qty,
 					$tva_tx,
 					$localtax1_tx,
