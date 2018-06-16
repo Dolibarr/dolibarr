@@ -218,9 +218,22 @@ class modUser extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Liste des utilisateurs Dolibarr et attributs';
 		$this->export_permission[$r]=array(array("user","user","export"));
-		$this->export_fields_array[$r]=array('u.rowid'=>"Id",'u.login'=>"Login",'u.lastname'=>"Lastname",'u.firstname'=>"Firstname",'u.accountancy_code'=>"UserAccountancyCode",'u.office_phone'=>'Phone','u.office_fax'=>'Fax','u.email'=>'EMail','u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",'u.admin'=>"Administrator",'u.statut'=>'Status','u.note'=>"Note",'u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion','u.fk_socpeople'=>"IdContact",'u.fk_soc'=>"IdCompany",'u.fk_member'=>"MemberId");
-		$this->export_TypeFields_array[$r]=array('u.login'=>"Text",'u.lastname'=>"Text",'u.firstname'=>"Text",'u.accountancy_code'=>'Text','u.office_phone'=>'Text','u.office_fax'=>'Text','u.email'=>'Text','u.datec'=>"Date",'u.tms'=>"Date",'u.admin'=>"Boolean",'u.statut'=>'Status','u.note'=>"Text",'u.datelastlogin'=>'Date','u.datepreviouslogin'=>'Date','u.fk_soc'=>"List:societe:nom:rowid",'u.fk_member'=>"List:adherent:firstname");
-		$this->export_entities_array[$r]=array('u.rowid'=>"user",'u.login'=>"user",'u.lastname'=>"user",'u.firstname'=>"user",'u.accountancy_code'=>'user','u.office_phone'=>'user','u.office_fax'=>'user','u.email'=>'user','u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.statut'=>'user','u.note'=>"user",'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user','u.fk_socpeople'=>"contact",'u.fk_soc'=>"company",'u.fk_member'=>"member");
+		$this->export_fields_array[$r]=array(
+			'u.rowid'=>"Id",'u.login'=>"Login",'u.lastname'=>"Lastname",'u.firstname'=>"Firstname",'u.accountancy_code'=>"UserAccountancyCode",
+			'u.office_phone'=>'Phone','u.office_fax'=>'Fax','u.email'=>'EMail','u.datec'=>"DateCreation",'u.tms'=>"DateLastModification",
+			'u.admin'=>"Administrator",'u.statut'=>'Status','u.note'=>"Note",'u.datelastlogin'=>'LastConnexion','u.datepreviouslogin'=>'PreviousConnexion',
+			'u.fk_socpeople'=>"IdContact",'u.fk_soc'=>"IdCompany",'u.fk_member'=>"MemberId"
+		);
+		$this->export_TypeFields_array[$r]=array(
+			'u.login'=>"Text",'u.lastname'=>"Text",'u.firstname'=>"Text",'u.accountancy_code'=>'Text','u.office_phone'=>'Text','u.office_fax'=>'Text',
+			'u.email'=>'Text','u.datec'=>"Date",'u.tms'=>"Date",'u.admin'=>"Boolean",'u.statut'=>'Status','u.note'=>"Text",'u.datelastlogin'=>'Date',
+			'u.datepreviouslogin'=>'Date','u.fk_soc'=>"List:societe:nom:rowid",'u.fk_member'=>"List:adherent:firstname"
+		);
+		$this->export_entities_array[$r]=array(
+			'u.rowid'=>"user",'u.login'=>"user",'u.lastname'=>"user",'u.firstname'=>"user",'u.accountancy_code'=>'user','u.office_phone'=>'user',
+			'u.office_fax'=>'user','u.email'=>'user','u.datec'=>"user",'u.tms'=>"user",'u.admin'=>"user",'u.statut'=>'user','u.note'=>"user",
+			'u.datelastlogin'=>'user','u.datepreviouslogin'=>'user','u.fk_socpeople'=>"contact",'u.fk_soc'=>"company",'u.fk_member'=>"member"
+		);
         if (empty($conf->adherent->enabled))
         {
             unset($this->export_fields_array[$r]['u.fk_member']);
@@ -241,7 +254,13 @@ class modUser extends DolibarrModules
 		$this->import_icon[$r]='user';
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('u'=>MAIN_DB_PREFIX.'user','extra'=>MAIN_DB_PREFIX.'user_extrafields');	// List of tables to insert into (insert done in same order)
-		$this->import_fields_array[$r]=array('u.lastname'=>"Name*",'u.firstname'=>"Firstname",'u.employee'=>"Employee*",'u.job'=>"Job",'u.gender'=>"Gender",'u.login'=>"Login*",'u.pass_crypted'=>"Password",'u.admin'=>"Administrator",'u.fk_soc'=>"Company*",'u.address'=>"Address",'u.zip'=>"Zip",'u.town'=>"Town",'u.fk_state'=>"StateId",'u.fk_country'=>"CountryCode",'u.office_phone'=>"Phone",'u.user_mobile'=>"Mobile",'u.office_fax'=>"Fax",'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature','u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM','u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey','u.datec'=>"DateCreation");
+		$this->import_fields_array[$r]=array(
+			'u.lastname'=>"Name*",'u.firstname'=>"Firstname",'u.employee'=>"Employee*",'u.job'=>"Job",'u.gender'=>"Gender",'u.login'=>"Login*",
+			'u.pass_crypted'=>"Password",'u.admin'=>"Administrator",'u.fk_soc'=>"Company*",'u.address'=>"Address",'u.zip'=>"Zip",'u.town'=>"Town",
+			'u.fk_state'=>"StateId",'u.fk_country'=>"CountryCode",'u.office_phone'=>"Phone",'u.user_mobile'=>"Mobile",'u.office_fax'=>"Fax",
+			'u.email'=>"Email",'u.note'=>"Note",'u.signature'=>'Signature','u.fk_user'=>'Supervisor','u.thm'=>'THM','u.tjm'=>'TJM',
+			'u.dateemployment'=>'DateEmployment','u.salary'=>'Salary','u.color'=>'Color','u.api_key'=>'ApiKey','u.datec'=>"DateCreation"
+		);
 		// Add extra fields
 		$sql="SELECT name, label, fieldrequired FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'user' AND entity = ".$conf->entity;
 		$resql=$this->db->query($sql);
@@ -262,8 +281,16 @@ class modUser extends DolibarrModules
 		    'u.salary'=>array('rule'=>'numeric')
 		);
 		//$this->import_convertvalue_array[$r]=array('s.fk_soc'=>array('rule'=>'lastrowid',table='t');
-		$this->import_regex_array[$r]=array('u.employee'=>'^[0|1]','u.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$');
-		$this->import_examplevalues_array[$r]=array('u.lastname'=>"Doe",'u.firstname'=>'John','u.login'=>'jdoe','u.employee'=>'0 or 1','u.status'=>"0 (closed) or 1 (active)",'u.fk_soc'=>'0 (internal user) or company name (external user)','u.datec'=>dol_print_date(dol_now(),'%Y-%m-%d'),'u.address'=>"61 jump street",'u.zip'=>"123456",'u.town'=>"Big town",'u.fk_country'=>'US, FR, DE...','u.office_phone'=>"0101010101",'u.office_fax'=>"0101010102",'u.email'=>"test@mycompany.com",'u.salary'=>"10000",'u.note'=>"This is an example of note for record",'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00");
+		$this->import_regex_array[$r]=array(
+			'u.employee'=>'^[0|1]',
+			'u.datec'=>'^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]( [0-9][0-9]:[0-9][0-9]:[0-9][0-9])?$'
+		);
+		$this->import_examplevalues_array[$r]=array(
+			'u.lastname'=>"Doe",'u.firstname'=>'John','u.login'=>'jdoe','u.employee'=>'0 or 1','u.status'=>"0 (closed) or 1 (active)",
+			'u.fk_soc'=>'0 (internal user) or company name (external user)','u.datec'=>dol_print_date(dol_now(),'%Y-%m-%d'),'u.address'=>"61 jump street",
+			'u.zip'=>"123456",'u.town'=>"Big town",'u.fk_country'=>'US, FR, DE...','u.office_phone'=>"0101010101",'u.office_fax'=>"0101010102",
+			'u.email'=>"test@mycompany.com",'u.salary'=>"10000",'u.note'=>"This is an example of note for record",'u.datec'=>"2015-01-01 or 2015-01-01 12:30:00"
+		);
 		$this->import_updatekeys_array[$r]=array('u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>'Login');
 
 	}

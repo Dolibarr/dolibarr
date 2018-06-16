@@ -35,10 +35,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $module = $object->element;
 
 // Special cases
-if ($module == 'propal')		{ $permission=$user->rights->propale->creer; }
-elseif ($module == 'fichinter')		{ $permission=$user->rights->ficheinter->creer; }
-elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
+if ($module == 'propal')				{ $permission=$user->rights->propale->creer; }
+elseif ($module == 'fichinter')			{ $permission=$user->rights->ficheinter->creer; }
 elseif ($module == 'order_supplier')	{ $permission=$user->rights->fournisseur->commande->creer; }
+elseif ($module == 'invoice_supplier')	{ $permission=$user->rights->fournisseur->facture->creer; }
 elseif ($module == 'project')		{ $permission=$user->rights->projet->creer; }
 elseif ($module == 'action')		{ $permission=$user->rights->agenda->myactions->create; }
 elseif ($module == 'shipping')		{ $permission=$user->rights->expedition->creer; }
@@ -229,7 +229,7 @@ if ($permission) {
 		</div>
 		<div class="tagtd nowrap right">
 			<?php if ($permission) { ?>
-				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_delete(); ?></a>
+				&nbsp;<a href="<?php echo $_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=deletecontact&amp;lineid='.$tab[$i]['rowid']; ?>"><?php echo img_picto($langs->trans('Unlink'), 'unlink'); ?></a>
 			<?php } ?>
 		</div>
 	</form>

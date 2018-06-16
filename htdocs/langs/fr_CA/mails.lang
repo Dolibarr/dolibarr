@@ -105,7 +105,6 @@ NbOfTargetedContacts=Nombre actuel d'emails de contact ciblés
 UseFormatFileEmailToTarget=Le fichier importé doit avoir un format <strong> email; nom; prénom; autre </ strong>
 UseFormatInputEmailToTarget=Entrez une chaîne avec le format <strong> email; nom; prénom; autre </ strong>
 MailAdvTargetRecipients=Récipiendaires (sélection avancée)
-AdvTgtTitle=Remplissez les champs de saisie pour présélectionner les tierces parties ou les contacts / adresses à cibler
 AdvTgtSearchTextHelp=Utilisez %% comme caractères magiques. Par exemple, pour trouver tous les éléments comme <b> jean, joe, jim</b>, vous pouvez entrer <b> j%%</b>, vous pouvez également utiliser; Comme séparateur pour la valeur et l'utilisation! Sauf pour cette valeur. Par exemple <b> jean; joe; jim%%;! jimo;! Jima% </b> ciblera tous jean, joe, commence par jim mais pas jimo et pas tout le monde commence par jima
 AdvTgtSearchIntHelp=Intervalle d'utilisation pour sélectionner la valeur int ou flottante
 AdvTgtMinVal=Valeur minimale

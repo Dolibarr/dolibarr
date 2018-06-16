@@ -35,10 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('multicurrency');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'banks', 'multicurrency'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
@@ -504,18 +502,18 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
         print '<tr><td class="'.(GETPOST('paiementcode')=='CHQ'?'fieldrequired ':'').'fieldrequireddyn">'.$langs->trans('CheckTransmitter');
         print ' <em>('.$langs->trans("ChequeMaker").')</em>';
         print '</td>';
-        print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur').'"></td></tr>';
+        print '<td><input id="fieldchqemetteur" name="chqemetteur" size="30" type="text" value="'.GETPOST('chqemetteur','alphanohtml').'"></td></tr>';
 
         // Bank name
         print '<tr><td>'.$langs->trans('Bank');
         print ' <em>('.$langs->trans("ChequeBank").')</em>';
         print '</td>';
-        print '<td><input name="chqbank" size="30" type="text" value="'.GETPOST('chqbank').'"></td></tr>';
+        print '<td><input name="chqbank" size="30" type="text" value="'.GETPOST('chqbank','alphanohtml').'"></td></tr>';
 
 		// Comments
 		print '<tr><td>'.$langs->trans('Comments').'</td>';
 		print '<td class="tdtop">';
-		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment').'</textarea></td></tr>';
+		print '<textarea name="comment" wrap="soft" class="quatrevingtpercent" rows="'.ROWS_3.'">'.GETPOST('comment','none').'</textarea></td></tr>';
 
         print '</table>';
 
@@ -819,7 +817,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 if (! GETPOST('action','aZ09'))
 {
     if ($page == -1) $page = 0 ;
-    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+    $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
     $offset = $limit * $page ;
 
     if (! $sortorder) $sortorder='DESC';
@@ -827,7 +825,7 @@ if (! GETPOST('action','aZ09'))
 
     $sql = 'SELECT p.datep as dp, p.amount, f.amount as fa_amount, f.facnumber';
     $sql.=', f.rowid as facid, c.libelle as paiement_type, p.num_paiement';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (' . getEntity('c_paiement').')';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
     $sql.= ', '.MAIN_DB_PREFIX.'facture as f';
     $sql.= ' WHERE p.fk_facture = f.rowid';
     $sql.= ' AND f.entity IN (' . getEntity('facture').')';

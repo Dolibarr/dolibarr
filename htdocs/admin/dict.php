@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004		Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2015	Laurent Destailleur		<eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2004		Benoit Mortier			<benoit.mortier@opensides.be>
  * Copyright (C) 2005-2017	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2016	Juanjo Menent			<jmenent@2byte.es>
@@ -41,14 +41,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("main");
-$langs->load("companies");
-$langs->load("resource");
-$langs->load("holiday");
-$langs->load("accountancy");
-$langs->load("hrm");
+// Load translation files required by the page
+$langs->loadLangs(array("errors","admin","main","companies","resource","holiday","accountancy","hrm","orders","contracts","projects","propal","bills","interventions"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -60,6 +54,7 @@ $code=GETPOST('code','alpha');
 $allowed=$user->admin;
 if ($id == 7 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;     // Tax page allowed to manager of chart account
 if ($id == 10 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Vat page allowed to manager of chart account
+if ($id == 17 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with type of expense report and accounting account allowed to manager of chart account
 if (! $allowed) accessforbidden();
 
 $acts[0] = "activate";
@@ -383,8 +378,8 @@ $tabrowid[8] = "id";
 $tabrowid[9] = "code_iso";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
-$tabrowid[12]= "rowid";
-$tabrowid[13]= "id";
+$tabrowid[12]= "";
+$tabrowid[13]= "";
 $tabrowid[14]= "";
 $tabrowid[15]= "";
 $tabrowid[16]= "code";
@@ -543,33 +538,27 @@ $elementList = array();
 $sourceList=array();
 if ($id == 11)
 {
-	$langs->load("orders");
-	$langs->load("contracts");
-	$langs->load("projects");
-	$langs->load("propal");
-	$langs->load("bills");
-	$langs->load("interventions");
 	$elementList = array(
 			''				    => '',
             'societe'           => $langs->trans('ThirdParty'),
 //			'proposal'          => $langs->trans('Proposal'),
 //			'order'             => $langs->trans('Order'),
 //			'invoice'           => $langs->trans('Bill'),
-			'invoice_supplier'  => $langs->trans('SupplierBill'),
+			'supplier_proposal' => $langs->trans('SupplierProposal'),
 			'order_supplier'    => $langs->trans('SupplierOrder'),
+			'invoice_supplier'  => $langs->trans('SupplierBill'),
 //			'intervention'      => $langs->trans('InterventionCard'),
 //			'contract'          => $langs->trans('Contract'),
 			'project'           => $langs->trans('Project'),
 			'project_task'      => $langs->trans('Task'),
 			'agenda'			=> $langs->trans('Agenda'),
+			'resource'           => $langs->trans('Resource'),
 			// old deprecated
-			'contrat'           => $langs->trans('Contract'),
 			'propal'            => $langs->trans('Proposal'),
 			'commande'          => $langs->trans('Order'),
 			'facture'           => $langs->trans('Bill'),
-			'resource'           => $langs->trans('Resource'),
-//			'facture_fourn'     => $langs->trans('SupplierBill'),
-			'fichinter'         => $langs->trans('InterventionCard')
+			'fichinter'         => $langs->trans('InterventionCard'),
+			'contrat'           => $langs->trans('Contract')
 	);
 	if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES)) $elementList["societe"] = $langs->trans('ThirdParty');
 
@@ -965,14 +954,14 @@ if (empty($id))
 print "<br>\n";
 
 
-$param = '&id='.$id;
-if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
+$param = '&id='.urlencode($id);
+if ($search_country_id > 0) $param.= '&search_country_id='.urlencode($search_country_id);
 if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
 if ($entity != '') $param.= '&entity=' . (int) $entity;
 $paramwithsearch = $param;
-if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
-if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+if ($sortorder) $paramwithsearch.= '&sortorder='.urlencode($sortorder);
+if ($sortfield) $paramwithsearch.= '&sortfield='.urlencode($sortfield);
+if (GETPOST('from')) $paramwithsearch.= '&from='.urlencode(GETPOST('from','alpha'));
 
 
 // Confirmation de la suppression de la ligne
@@ -999,10 +988,10 @@ if ($id)
     {
         // If sort order is "country", we use country_code instead
     	if ($sortfield == 'country') $sortfield='country_code';
-        $sql.= " ORDER BY ".$sortfield;
+        $sql.= " ORDER BY ".$db->escape($sortfield);
         if ($sortorder)
         {
-            $sql.=" ".strtoupper($sortorder);
+        	$sql.=" ".strtoupper($db->escape($sortorder));
         }
         $sql.=", ";
         // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value

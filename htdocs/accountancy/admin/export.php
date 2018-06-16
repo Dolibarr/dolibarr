@@ -28,15 +28,12 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("admin");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","admin","accountancy"));
 
 // Security access
 if (empty($user->rights->accounting->chartofaccount))

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2016	Juanjo Menent           <jmenent@2byte.es>
@@ -39,10 +39,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->categorie->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("suppliers");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'suppliers', 'companies'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $action=GETPOST('action','alpha');
@@ -94,7 +92,8 @@ if ((string) $type == '1') { $contextpage='servicelist'; if ($search_type=='') $
 if ((string) $type == '0') { $contextpage='productlist'; if ($search_type=='') $search_type='0'; }
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
-$hookmanager->initHooks(array($contextpage));
+$object=new Product($db);
+$hookmanager->initHooks(array('productservicelist'));
 $extrafields = new ExtraFields($db);
 $form=new Form($db);
 
@@ -179,13 +178,16 @@ $arrayfields=array(
 	'p.tobuy'=>array('label'=>$langs->trans("Status").' ('.$langs->trans("Buy").')', 'checked'=>1, 'position'=>1000)
 );
 // Extra fields
-if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
 {
-   foreach($extrafields->attribute_label as $key => $val)
-   {
-		if (! empty($extrafields->attribute_list[$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attribute_label[$key], 'checked'=>(($extrafields->attribute_list[$key]<0)?0:1), 'position'=>$extrafields->attribute_pos[$key], 'enabled'=>(abs($extrafields->attribute_list[$key])!=3 && $extrafields->attribute_perms[$key]));
-   }
+	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
+	{
+		if (! empty($extrafields->attributes[$object->table_element]['list'][$key]))
+			$arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$object->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$object->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$object->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$object->table_element]['list'][$key])!=3 && $extrafields->attributes[$object->table_element]['perms'][$key]));
+	}
 }
+$object->fields = dol_sort_array($object->fields, 'position');
+$arrayfields = dol_sort_array($arrayfields, 'position');
 
 
 
@@ -216,7 +218,7 @@ if (empty($reshook))
 		$search_tosell="";
 		$search_tobuy="";
 		$search_tobatch='';
-		$search_type='';
+		//$search_type='';						// There is 2 types of list: a list of product and a list of services. No list with both. So when we clear search criteria, we must keep the filter on type.
 		$search_accountancy_code_sell='';
 		$search_accountancy_code_buy='';
 		$search_array_options=array();
@@ -267,20 +269,22 @@ else
 
 	$sql = 'SELECT DISTINCT p.rowid, p.ref, p.label, p.fk_product_type, p.barcode, p.price, p.price_ttc, p.price_base_type, p.entity,';
 	$sql.= ' p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,';
-	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy,';
+	$sql.= ' p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy,';
 	$sql.= ' p.datec as date_creation, p.tms as date_update, p.pmp,';
 	$sql.= ' MIN(pfp.unitprice) as minsellprice';
 	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
 		$sql .= ', pac.rowid prod_comb_id';
 	}
 	// Add fields from extrafields
-	foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
+	if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key.' as options_'.$key : '');
+	}
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
-	if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
+	if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_extrafields as ef on (p.rowid = ef.fk_object)";
 	if (! empty($search_categ) || ! empty($catid)) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product"; // We'll need this table joined to the select in order to filter by categ
    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 	// multilang
@@ -311,39 +315,40 @@ else
 	if ($search_tobatch != '' && $search_tobatch >= 0)   $sql.= " AND p.tobatch = ".$db->escape($search_tobatch);
 	if ($search_accountancy_code_sell) $sql.= natural_search('p.accountancy_code_sell', $search_accountancy_code_sell);
 	if ($search_accountancy_code_buy)  $sql.= natural_search('p.accountancy_code_buy', $search_accountancy_code_buy);
-	// Add where from extra fields
-
-	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
-		$sql .= " AND pac.rowid IS NULL";
-	}
-
+	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) $sql .= " AND pac.rowid IS NULL";
 	// Add where from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
-
 	// Add where from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
 	$sql.= " GROUP BY p.rowid, p.ref, p.label, p.barcode, p.price, p.price_ttc, p.price_base_type,";
 	$sql.= " p.fk_product_type, p.duration, p.tosell, p.tobuy, p.seuil_stock_alerte, p.desiredstock,";
-	$sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_buy, p.pmp';
-	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) {
-		$sql .= ', pac.rowid';
-	}
+	$sql.= ' p.datec, p.tms, p.entity, p.tobatch, p.accountancy_code_sell, p.accountancy_code_sell_intra, p.accountancy_code_sell_export, p.accountancy_code_buy, p.pmp';
+	if (!empty($conf->variants->enabled) && $search_hidechildproducts && ($search_type === 0)) $sql .= ', pac.rowid';
 	// Add fields from extrafields
-	foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key : '');
+	if (! empty($extrafields->attributes[$object->table_element]['label'])) {
+		foreach ($extrafields->attributes[$object->table_element]['label'] as $key => $val) $sql.=($extrafields->attributes[$object->table_element]['type'][$key] != 'separate' ? ", ef.".$key : '');
+	}
 	// Add fields from hooks
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
 	//if (GETPOST("toolowstock")) $sql.= " HAVING SUM(s.reel) < p.seuil_stock_alerte";    // Not used yet
 	$sql.= $db->order($sortfield,$sortorder);
+
 	$nbtotalofrecords = '';
 	if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	{
 		$result = $db->query($sql);
 		$nbtotalofrecords = $db->num_rows($result);
+		if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+		{
+			$page = 0;
+			$offset = 0;
+		}
 	}
+
 	$sql.= $db->plimit($limit + 1, $offset);
 
 	$resql = $db->query($sql);
@@ -412,6 +417,18 @@ else
 		if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 		$massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+		$newcardbutton='';
+		$rightskey='produit';
+		if($type == Product::TYPE_SERVICE) $rightskey='service';
+		if($user->rights->{$rightskey}->creer)
+		{
+			$label='NewProduct';
+			if($type == Product::TYPE_SERVICE) $label='NewService';
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/card.php?action=create&amp;type='.$type.'"><span class="valignmiddle">'.$langs->trans($label).'</span>';
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
+		}
+
 		print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 		if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 		print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -423,7 +440,7 @@ else
 		print '<input type="hidden" name="type" value="'.$type.'">';
 		if (empty($arrayfields['p.fk_product_type']['checked'])) print '<input type="hidden" name="search_type" value="'.dol_escape_htmltag($search_type).'">';
 
-		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, '', '', $limit);
+		print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_products.png', 0, $newcardbutton, '', $limit);
 
 		$topicmail="Information";
 		$modelmail="product";
@@ -680,7 +697,7 @@ else
 					$sql = "SELECT label";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_lang";
 					$sql.= " WHERE fk_product=".$obj->rowid;
-					$sql.= " AND lang='". $langs->getDefaultLang() ."'";
+					$sql.= " AND lang='". $db->escape($langs->getDefaultLang()) ."'";
 					$sql.= " LIMIT 1";
 
 					$result = $db->query($sql);
@@ -698,8 +715,13 @@ else
 				$product_static->type = $obj->fk_product_type;
 				$product_static->status_buy = $obj->tobuy;
 				$product_static->status     = $obj->tosell;
+				$product_static->status_batch = $obj->tobatch;
 				$product_static->entity = $obj->entity;
 				$product_static->pmp = $obj->pmp;
+				$product_static->accountancy_code_sell = $obj->accountancy_code_sell;
+				$product_static->accountancy_code_sell_export = $obj->accountancy_code_sell_export;
+				$product_static->accountancy_code_sell_intra = $obj->accountancy_code_sell_intra;
+				$product_static->accountancy_code_buy = $obj->accountancy_code_buy;
 
 				if ((! empty($conf->stock->enabled) && $user->rights->stock->lire && $search_type != 1) || ! empty($conf->global->STOCK_DISABLE_OPTIM_LOAD))	// To optimize call of load_stock
 				{

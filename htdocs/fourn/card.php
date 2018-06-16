@@ -37,12 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->load('companies');
-$langs->load('suppliers');
-$langs->load('products');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('commercial');
+// Load translation files required by page
+$langs->loadLangs(array(
+	'companies',
+	'suppliers',
+	'products',
+	'bills',
+	'orders',
+	'commercial',
+));
 
 $action	= GETPOST('action','aZ09');
 $cancelbutton = GETPOST('cancel','alpha');
@@ -50,7 +53,7 @@ $cancelbutton = GETPOST('cancel','alpha');
 // Security check
 $id = (GETPOST('socid','int') ? GETPOST('socid','int') : GETPOST('id','int'));
 if ($user->societe_id) $id=$user->societe_id;
-$result = restrictedArea($user, 'societe&fournisseur', $id, '&societe');
+$result = restrictedArea($user, 'societe&fournisseur', $id, '&societe', '', 'rowid');
 
 $object = new Fournisseur($db);
 $extrafields = new ExtraFields($db);
@@ -121,11 +124,13 @@ if (empty($reshook))
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 
         if ($ret < 0) $error++;
+
         if (! $error)
         {
             $result = $object->insertExtraFields('COMPANY_MODIFY');
             if ($result < 0) $error++;
         }
+
         if ($error) $action = 'edit_extras';
     }
 }
@@ -194,7 +199,9 @@ if ($object->id > 0)
 
 	// Assujetti a TVA ou pas
 	print '<tr>';
-	print '<td class="titlefield">'.$langs->trans('VATIsUsed').'</td><td>';
+	print '<td class="titlefield">';
+	print $form->textwithpicto($langs->trans('VATIsUsed'),$langs->trans('VATIsUsedWhenSelling'));
+	print '</td><td>';
 	print yn($object->tva_assuj);
 	print '</td>';
 	print '</tr>';
@@ -256,6 +263,39 @@ if ($object->id > 0)
 		$form->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$object->id,$object->mode_reglement_supplier_id,'none');
 	}
 	print "</td>";
+	print '</tr>';
+
+	// Relative discounts (Discounts-Drawbacks-Rebates)
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
+	print $langs->trans("CustomerRelativeDiscountShort");
+	print '<td><td align="right">';
+	if ($user->rights->societe->creer && !$user->societe_id > 0)
+	{
+		print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.img_edit($langs->trans("Modify")).'</a>';
+	}
+	print '</td></tr></table>';
+	print '</td><td>'.($object->remise_supplier_percent?'<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$object->id.'">'.$object->remise_supplier_percent.'%</a>':'').'</td>';
+	print '</tr>';
+
+	// Absolute discounts (Discounts-Drawbacks-Rebates)
+	print '<tr><td class="nowrap">';
+	print '<table width="100%" class="nobordernopadding">';
+	print '<tr><td class="nowrap">';
+	print $langs->trans("CustomerAbsoluteDiscountShort");
+	print '<td><td align="right">';
+	if ($user->rights->societe->creer && !$user->societe_id > 0)
+	{
+		print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.img_edit($langs->trans("Modify")).'</a>';
+	}
+	print '</td></tr></table>';
+	print '</td>';
+	print '<td>';
+	$amount_discount=$object->getAvailableDiscounts('', '', 0, 1);
+	if ($amount_discount < 0) dol_print_error($db,$object->error);
+	if ($amount_discount > 0) print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?socid='.$object->id).'">'.price($amount_discount,1,$langs,1,-1,-1,$conf->currency).'</a>';
+	//else print $langs->trans("DiscountNone");
+	print '</td>';
 	print '</tr>';
 
 	print '<tr class="nowrap">';
@@ -393,8 +433,6 @@ if ($object->id > 0)
 	print $boxstat;
 
 
-	$var=true;
-
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
@@ -512,11 +550,9 @@ if ($object->id > 0)
 	            print '</td></tr>';
 	        }
 
-	        $var = True;
 	        while ($i < $num && $i <= $MAXLIST)
 	        {
 	            $obj = $db->fetch_object($resql);
-
 
 	            print '<tr class="oddeven">';
 	            print '<td class="nowrap">';
@@ -611,17 +647,15 @@ if ($object->id > 0)
 			    print '<tr class="liste_titre">';
     			print '<td colspan="3">';
     			print '<table class="nobordernopadding" width="100%"><tr><td>'.$langs->trans("LastSupplierOrders",($num<$MAXLIST?"":$MAXLIST)).'</td>';
-    			print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
+    			print '<td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fourn/commande/list.php?socid='.$object->id.'">'.$langs->trans("AllOrders").' <span class="badge">'.$num.'</span></td>';
                 print '<td width="20px" align="right"><a href="'.DOL_URL_ROOT.'/commande/stats/index.php?mode=supplier&socid='.$object->id.'">'.img_picto($langs->trans("Statistics"),'stats').'</a></td>';
     			print '</tr></table>';
     			print '</td></tr>';
 			}
 
-			$var = True;
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
-
 
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
@@ -690,7 +724,7 @@ if ($object->id > 0)
     			print '</tr></table>';
     			print '</td></tr>';
 			}
-			$var=True;
+
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);

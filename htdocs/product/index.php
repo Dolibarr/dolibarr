@@ -39,8 +39,8 @@ if ($type=='0') $result=restrictedArea($user,'produit');
 else if ($type=='1') $result=restrictedArea($user,'service');
 else $result=restrictedArea($user,'produit|service');
 
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
@@ -272,7 +272,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
  * Last modified products
  */
 $max=15;
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.fk_price_expression,";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type, p.tosell, p.tobuy, p.tobatch, p.fk_price_expression,";
 $sql.= " p.entity,";
 $sql.= " p.tms as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -307,8 +307,6 @@ if ($result)
 
 		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th></tr>';
 
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -336,7 +334,8 @@ if ($result)
 			$product_static->ref=$objp->ref;
 			$product_static->label = $objp->label;
 			$product_static->type=$objp->fk_product_type;
-            $product_static->entity = $objp->entity;
+			$product_static->entity = $objp->entity;
+			$product_static->status_batch = $objp->tobatch;
 			print $product_static->getNomUrl(1,'',16);
 			print "</td>\n";
 			print '<td>'.dol_trunc($objp->label,32).'</td>';

@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015 	   Claudio Aschieri     <c.aschieri@19.coop>
+ * Copyright (C) 2018 	   Ferran Marcet	    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'commercial'));
 
 $action=GETPOST('action','alpha');
@@ -39,6 +41,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'projectlist';
 
 $title = $langs->trans("Projects");
 
@@ -95,12 +98,9 @@ $search_eyear	= GETPOST('search_eyear','int');
 
 if ($search_status == '') $search_status=-1;	// -1 or 1
 
-
-// Initialize context for list
-$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'projectlist';
-
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array($contextpage));
+$object = new Project($db);
+$hookmanager->initHooks(array('projectlist'));
 $extrafields = new ExtraFields($db);
 
 // fetch optionals attributes and labels
@@ -141,7 +141,6 @@ if (is_array($extrafields->attribute_label) && count($extrafields->attribute_lab
    }
 }
 
-$object = new Project($db);
 
 
 /*
@@ -195,6 +194,52 @@ if (empty($reshook))
 	$permtodelete = $user->rights->projet->supprimer;
 	$uploaddir = $conf->projet->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+    // Close records
+    if (! $error && $massaction == 'close' && $user->rights->projet->creer)
+    {
+        $db->begin();
+
+        $objecttmp=new $objectclass($db);
+        $nbok = 0;
+        foreach($toselect as $toselectid)
+        {
+            $result=$objecttmp->fetch($toselectid);
+            if ($result > 0)
+            {
+                $userWrite  = $object->restrictedProjectArea($user,'write');
+                if ($userWrite > 0 && $objecttmp->statut == 1) {
+                    $result = $objecttmp->setClose($user);
+                    if ($result <= 0) {
+                        setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                        $error++;
+                        break;
+                    } else $nbok++;
+                } elseif($userWrite <= 0) {
+                    setEventMessages($langs->trans("DontHavePermissionForCloseProject", $objecttmp->ref), null, 'warnings');
+                } else {
+                    setEventMessages($langs->trans("DontHaveTheValidateStatus", $objecttmp->ref), null, 'warnings');
+                }
+            }
+            else
+            {
+                setEventMessages($objecttmp->error, $objecttmp->errors, 'errors');
+                $error++;
+                break;
+            }
+        }
+
+        if (! $error)
+        {
+            if ($nbok > 1) setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+            else setEventMessages($langs->trans("RecordsClosed", $nbok), null, 'mesgs');
+            $db->commit();
+        }
+        else
+        {
+            $db->rollback();
+        }
+    }
 }
 
 
@@ -329,6 +374,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
@@ -389,9 +439,19 @@ $arrayofmassactions =  array(
 //    'builddoc'=>$langs->trans("PDFMerge"),
 );
 //if($user->rights->societe->creer) $arrayofmassactions['createbills']=$langs->trans("CreateInvoiceForThisCustomer");
+if ($user->rights->projet->creer) $arrayofmassactions['close']=$langs->trans("Close");
 if ($user->rights->societe->supprimer) $arrayofmassactions['predelete']=$langs->trans("Delete");
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
+
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
+
+$newcardbutton='';
+if ($user->rights->projet->creer)
+{
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewProject').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -404,7 +464,7 @@ print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, '', '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_project', 0, $newcardbutton, '', $limit);
 
 // Show description of content
 print '<div class="opacitymedium">';
@@ -606,7 +666,7 @@ if (! empty($arrayfields['p.budget_amount']['checked'])) print_liste_field_titre
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['p.datec']['checked']))  print_liste_field_titre($arrayfields['p.datec']['label'],$_SERVER["PHP_SELF"],"p.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);

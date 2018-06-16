@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 if (!$user->admin)
 accessforbidden();
 
+// Load translation files required by the page
 $langs->load("categories");
 
 $action=GETPOST('action','aZ09');
@@ -38,7 +39,7 @@ $action=GETPOST('action','aZ09');
  *	Actions
  */
 
-if (preg_match('/set_(.*)/',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_set_const($db, $code, 1, 'chaine', 0, '', $conf->entity) > 0)
@@ -52,7 +53,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
     }
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
     $code=$reg[1];
     if (dolibarr_del_const($db, $code, $conf->entity) > 0)
@@ -93,7 +94,6 @@ print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 print '</tr>';
 
-$var=true;
 $form = new Form($db);
 
 // Mail required for members

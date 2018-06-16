@@ -715,8 +715,11 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     global $conf,$user;
 
     if (! is_object($objsoc)) $valueforccc=$objsoc;
-    else if($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
+    else if ($table == "commande_fournisseur" || $table == "facture_fourn" ) $valueforccc=$objsoc->code_fournisseur;
     else $valueforccc=$objsoc->code_client;
+
+    $sharetable = $table;
+    if ($table == 'facture' || $table == 'invoice') $sharetable = 'invoicenumber'; // for getEntity function
 
     // Clean parameters
     if ($date == '') $date=dol_now();	// We use local year and month of PHP server to search numbers
@@ -799,15 +802,15 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     }
 
     // Personalized field {XXX-1} à {XXX-9}
-    /*$maskperso=array();
+    $maskperso=array();
     $maskpersonew=array();
     $tmpmask=$mask;
-    while (preg_match('/\{([A-Z]+)\-([1-9])\}/i',$tmpmask,$regKey))
+    while (preg_match('/\{([A-Z]+)\-([1-9])\}/',$tmpmask,$regKey))
     {
-        $maskperso[$regKey[1]]='\{'.$regKey[1]+'\-'.$regKey[2].'\}';
-        $maskpersonew[$regKey[1]]=str_pad('', '_', $regKey[2], STR_PAD_RIGHT);
-        $tmpmask=preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew, $tmpmask);
-    }*/
+        $maskperso[$regKey[1]]='{'.$regKey[1].'-'.$regKey[2].'}';
+        $maskpersonew[$regKey[1]]=str_pad('', $regKey[2], '_', STR_PAD_RIGHT);
+        $tmpmask=preg_replace('/\{'.$regKey[1].'\-'.$regKey[2].'\}/i', $maskpersonew[$regKey[1]], $tmpmask);
+    }
 
     if (strstr($mask,'user_extra_'))
     {
@@ -824,10 +827,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $maskwithonlyymcode=preg_replace('/\{(c+)(0*)\}/i',$maskrefclient,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(t+)\}/i',$masktype_value,$maskwithonlyymcode);
     $maskwithonlyymcode=preg_replace('/\{(u+)\}/i',$maskuser_value,$maskwithonlyymcode);
-    /*foreach($maskperso as $key => $val)
+    foreach($maskperso as $key => $val)
     {
-        $maskwithonlyymcode=preg_replace('/'.$val.'/i', $maskpersonew[$key], $maskwithonlyymcode);
-    }*/
+        $maskwithonlyymcode=preg_replace('/'.preg_quote($val,'/').'/i', $maskpersonew[$key], $maskwithonlyymcode);
+    }
     $maskwithnocode=$maskwithonlyymcode;
     $maskwithnocode=preg_replace('/\{yyyy\}/i','yyyy',$maskwithnocode);
     $maskwithnocode=preg_replace('/\{yy\}/i','yy',$maskwithnocode);
@@ -971,6 +974,10 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     if ($maskrefclient) $maskLike = str_replace(dol_string_nospecial('{'.$maskrefclient.'}'),str_pad("",dol_strlen($maskrefclient),"_"),$maskLike);
     if ($masktype) $maskLike = str_replace(dol_string_nospecial('{'.$masktype.'}'),$masktype_value,$maskLike);
     if ($maskuser) $maskLike = str_replace(dol_string_nospecial('{'.$maskuser.'}'),$maskuser_value,$maskLike);
+    foreach($maskperso as $key => $val)
+    {
+    	$maskLike = str_replace(dol_string_nospecial($maskperso[$key]),$maskpersonew[$key],$maskLike);
+    }
 
     // Get counter in database
     $counter=0;
@@ -979,7 +986,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
 	$sql.= " AND ".$field." NOT LIKE '(PROV%)'";
     if ($bentityon) // only if entity enable
-    	$sql.= " AND entity IN (".getEntity($table, 1).")";
+    	$sql.= " AND entity IN (".getEntity($sharetable).")";
 
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
@@ -1027,7 +1034,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
         $sql.= " WHERE ".$field." LIKE '".$maskLike."'";
     	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
     	if ($bentityon) // only if entity enable
-        	$sql.= " AND entity IN (".getEntity($table, 1).")";
+        	$sql.= " AND entity IN (".getEntity($sharetable).")";
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -1081,7 +1088,7 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             //$sql.= " WHERE ".$field." not like '(%'";
             $maskrefclient_sql.= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
             if ($bentityon) // only if entity enable
-            	$maskrefclient_sql.= " AND entity IN (".getEntity($table, 1).")";
+            	$maskrefclient_sql.= " AND entity IN (".getEntity($sharetable).")";
             if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
             $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
@@ -1448,7 +1455,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
     foreach ($tab as $key => $value)
     {
         if ($i > 0) $sql.=',';
-        $sql.="'".$key."'";
+        $sql.="'".$db->escape($key)."'";
         $i++;
     }
     $sql.= ")";
@@ -1469,7 +1476,7 @@ function dol_set_user_param($db, $conf, &$user, $tab)
         {
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,entity,param,value)";
             $sql.= " VALUES (".$user->id.",".$conf->entity.",";
-            $sql.= " '".$key."','".$db->escape($value)."')";
+            $sql.= " '".$db->escape($key)."','".$db->escape($value)."')";
 
             dol_syslog("functions2.lib::dol_set_user_param", LOG_DEBUG);
             $result=$db->query($sql);
@@ -1823,6 +1830,11 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 		$module='projet';
 		$subelement='task';
 	}
+	if ($objecttype == 'stock') {
+		$classpath = 'product/stock/class';
+		$module='stock';
+		$subelement='stock';
+	}
 
 	//print "objecttype=".$objecttype." module=".$module." subelement=".$subelement;
 
@@ -1833,22 +1845,30 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 		$classpath = 'fourn/class';
 		$module='fournisseur';
 	}
-	if ($objecttype == 'order_supplier')   {
+	elseif ($objecttype == 'order_supplier')   {
 		$classfile = 'fournisseur.commande';
 		$classname='CommandeFournisseur';
 		$classpath = 'fourn/class';
 		$module='fournisseur';
 	}
-
+	elseif ($objecttype == 'stock')   {
+		$classpath = 'product/stock/class';
+		$classfile='entrepot';
+		$classname='Entrepot';
+	}
 	if (! empty($conf->$module->enabled))
 	{
 		$res=dol_include_once('/'.$classpath.'/'.$classfile.'.class.php');
 		if ($res)
 		{
-			$object = new $classname($db);
-			$res=$object->fetch($objectid);
-			if ($res > 0) $ret=$object->getNomUrl($withpicto,$option);
-			unset($object);
+			if (class_exists($classname))
+			{
+				$object = new $classname($db);
+				$res=$object->fetch($objectid);
+				if ($res > 0) $ret=$object->getNomUrl($withpicto,$option);
+				unset($object);
+			}
+			else dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
 		}
 	}
 	return $ret;
@@ -2260,6 +2280,9 @@ function getModuleDirForApiClass($module)
     }
     elseif ($module == 'ficheinter' || $module == 'interventions') {
     	$moduledirforclass = 'fichinter';
+    }
+    elseif ($module == 'tickets') {
+    	$moduledirforclass = 'ticket';
     }
 
     return $moduledirforclass;

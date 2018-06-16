@@ -297,15 +297,31 @@ function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortc
  * Complete $filearray with data from database.
  * This will call doldir_list_indatabase to complate filearray.
  *
- * @param	array	$filearray		Array of files get using dol_dir_list
+ * @param	array	$filearray			Array of files get using dol_dir_list
  * @param	string	$relativedir		Relative dir from DOL_DATA_ROOT
  * @return	void
  */
 function completeFileArrayWithDatabaseInfo(&$filearray, $relativedir)
 {
-	global $db, $user;
+	global $conf, $db, $user;
 
 	$filearrayindatabase = dol_dir_list_in_database($relativedir, '', null, 'name', SORT_ASC);
+
+	// TODO Remove this when PRODUCT_USE_OLD_PATH_FOR_PHOTO will be removed
+	global $modulepart;
+	if ($modulepart == 'produit' && ! empty($conf->global->PRODUCT_USE_OLD_PATH_FOR_PHOTO)) {
+		global $object;
+		if (! empty($object->id))
+		{
+			if (! empty($conf->product->enabled)) $upload_dirold = $conf->product->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+			else $upload_dirold = $conf->service->multidir_output[$object->entity].'/'.substr(substr("000".$object->id, -2),1,1).'/'.substr(substr("000".$object->id, -2),0,1).'/'.$object->id."/photos";
+
+			$relativedirold = preg_replace('/^'.preg_quote(DOL_DATA_ROOT,'/').'/', '', $upload_dirold);
+			$relativedirold = preg_replace('/^[\\/]/','',$relativedirold);
+
+			$filearrayindatabase = array_merge($filearrayindatabase, dol_dir_list_in_database($relativedirold, '', null, 'name', SORT_ASC));
+		}
+	}
 
 	//var_dump($filearray);
 	//var_dump($filearrayindatabase);
@@ -436,6 +452,18 @@ function dol_is_file($pathoffile)
 {
 	$newpathoffile=dol_osencode($pathoffile);
 	return is_file($newpathoffile);
+}
+
+/**
+ * Return if path is a symbolic link
+ *
+ * @param   string		$pathoffile		Path of file
+ * @return  boolean     			    True or false
+ */
+function dol_is_link($pathoffile)
+{
+	$newpathoffile=dol_osencode($pathoffile);
+	return is_link($newpathoffile);
 }
 
 /**
@@ -1123,7 +1151,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 	if (preg_match('/\.\./',$file) || preg_match('/[<>|]/',$file))
 	{
 		dol_syslog("Refused to delete file ".$file, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	if (empty($nohook))
@@ -1172,17 +1200,20 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 						{
 							$rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
 
-							dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
-							include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-							$ecmfile=new EcmFiles($db);
-							$result = $ecmfile->fetch(0, '', $rel_filetodelete);
-							if ($result >= 0 && $ecmfile->id > 0)
+							if (is_object($db))		// $db may not be defined when lib is in a context with define('NOREQUIREDB',1)
 							{
-								$result = $ecmfile->delete($user);
-							}
-							if ($result < 0)
-							{
-								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
+								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+								$ecmfile=new EcmFiles($db);
+								$result = $ecmfile->fetch(0, '', $rel_filetodelete);
+								if ($result >= 0 && $ecmfile->id > 0)
+								{
+									$result = $ecmfile->delete($user);
+								}
+								if ($result < 0)
+								{
+									setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+								}
 							}
 						}
 					}
@@ -1222,7 +1253,7 @@ function dol_delete_dir($dir,$nophperrors=0)
 	if (preg_match('/\.\./',$dir) || preg_match('/[<>|]/',$dir))
 	{
 		dol_syslog("Refused to delete dir ".$dir, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	$dir_osencoded=dol_osencode($dir);
@@ -1262,6 +1293,7 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
 						$result=dol_delete_file("$dir/$item", 1, $nophperrors);
 						$count++;
 						if ($result) $countdeleted++;
+						//else print 'Error on '.$item."\n";
 					}
 				}
 			}
@@ -1272,6 +1304,7 @@ function dol_delete_dir_recursive($dir, $count=0, $nophperrors=0, $onlysub=0, &$
 				$result=dol_delete_dir($dir, $nophperrors);
 				$count++;
 				if ($result) $countdeleted++;
+				//else print 'Error on '.$dir."\n";
 			}
 		}
 	}
@@ -1931,7 +1964,7 @@ function dol_uncompress($inputfile,$outputdir)
 		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
 		$zip = new ZipArchive;
 		$res = $zip->open($inputfile);
-		if ($res === TRUE)
+		if ($res === true)
 		{
 			$zip->extractTo($outputdir.'/');
 			$zip->close();
@@ -2605,6 +2638,17 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		}
 		if (! empty($conf->product->enabled)) $original_file=$conf->product->multidir_output[$entity].'/'.$original_file;
 		elseif (! empty($conf->service->enabled)) $original_file=$conf->service->multidir_output[$entity].'/'.$original_file;
+	}
+
+	// Wrapping pour les lots produits
+	else if ($modulepart == 'product_batch' || $modulepart == 'produitlot')
+	{
+		if (empty($entity) || (empty($conf->productbatch->multidir_output[$entity]))) return array('accessallowed'=>0, 'error'=>'Value entity must be provided');
+		if (($fuser->rights->produit->{$lire} ) || preg_match('/^specimen/i',$original_file))
+		{
+			$accessallowed=1;
+		}
+		if (! empty($conf->productbatch->enabled)) $original_file=$conf->productbatch->multidir_output[$entity].'/'.$original_file;
 	}
 
 	// Wrapping pour les contrats

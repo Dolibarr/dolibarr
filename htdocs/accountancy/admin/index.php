@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014 Olivier Geffroy      <jeff@jeffinfo.com>
  * Copyright (C) 2013-2014 Florian Henry        <florian.henry@open-concept.pro>
- * Copyright (C) 2013-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014-2015 Ari Elbaz (elarifr)  <github@accedinfo.com>
  * Copyright (C) 2014      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
@@ -27,16 +27,13 @@
  * \ingroup		Advanced accountancy
  * \brief		Setup page to configure accounting expert module
  */
-require '../../main.inc.php';
 
-// Class
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("admin");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","admin","accountancy"));
 
 // Security access
 if (empty($user->rights->accounting->chartofaccount))
@@ -65,39 +62,23 @@ $accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' :
 if ($action == 'update') {
 	$error = 0;
 
-	$accounting_modes = array (
-			'RECETTES-DEPENSES',
-			'CREANCES-DETTES'
-	);
+	if (! $error)
+	{
+	    foreach ($list as $constname)
+	    {
+	        $constvalue = GETPOST($constname, 'alpha');
 
-	$accounting_mode = GETPOST('accounting_mode', 'alpha');
-
-	if (in_array($accounting_mode, $accounting_modes)) {
-
-		if (! dolibarr_set_const($db, 'ACCOUNTING_MODE', $accounting_mode, 'chaine', 0, '', $conf->entity)) {
-			$error ++;
-		}
-	} else {
-		$error ++;
+	        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
+	            $error++;
+	        }
+	    }
+	    if ($error) {
+	    	setEventMessages($langs->trans("Error"), null, 'errors');
+	    }
 	}
-
-	if ($error) {
-		setEventMessages($langs->trans("Error"), null, 'errors');
-	}
-
-    foreach ($list as $constname)
-    {
-        $constvalue = GETPOST($constname, 'alpha');
-
-        if (! dolibarr_set_const($db, $constname, $constvalue, 'chaine', 0, '', $conf->entity)) {
-            $error ++;
-        }
-    }
 
     if (! $error) {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } else {
-        setEventMessages($langs->trans("Error"), null, 'errors');
     }
 }
 
@@ -142,6 +123,18 @@ if ($action == 'setmanagezero') {
 if ($action == 'setdisabledirectinput') {
 	$setdisabledirectinput = GETPOST('value', 'int');
 	$res = dolibarr_set_const($db, "BANK_DISABLE_DIRECT_INPUT", $setdisabledirectinput, 'yesno', 0, '', $conf->entity);
+	if (! $res > 0)
+		$error ++;
+		if (! $error) {
+			setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+		} else {
+			setEventMessages($langs->trans("Error"), null, 'mesgs');
+		}
+}
+
+if ($action == 'setenabledraftexport') {
+	$setenabledraftexport = GETPOST('value', 'int');
+	$res = dolibarr_set_const($db, "ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL", $setenabledraftexport, 'yesno', 0, '', $conf->entity);
 	if (! $res > 0)
 		$error ++;
 		if (! $error) {
@@ -231,6 +224,19 @@ if (! empty($user->admin))
         print '</a></td>';
     }
     print '</tr>';
+
+	print '<tr class="oddeven">';
+	print '<td>' . $langs->trans("ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL") . '</td>';
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=0">';
+		print img_picto($langs->trans("Activated"), 'switch_on');
+		print '</a></td>';
+	} else {
+		print '<td align="right"><a href="' . $_SERVER['PHP_SELF'] . '?action=setenabledraftexport&value=1">';
+		print img_picto($langs->trans("Disabled"), 'switch_off');
+		print '</a></td>';
+	}
+	print '</tr>';
 
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("BANK_DISABLE_DIRECT_INPUT") . '</td>';

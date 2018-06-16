@@ -110,10 +110,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 $boxstat='';
 
-$langs->load("commercial");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("contracts");
+// Load translation files required by page
+$langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 if (empty($user->societe_id))
 {
@@ -262,7 +260,7 @@ if (empty($user->societe_id))
 	    );
 	    // Dashboard Link lines
 	    $links=array(
-	        DOL_URL_ROOT.'/user/index.php',
+	        DOL_URL_ROOT.'/user/list.php',
     	    DOL_URL_ROOT.'/societe/list.php?type=c&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=p&mainmenu=companies',
     	    DOL_URL_ROOT.'/societe/list.php?type=f&mainmenu=companies',

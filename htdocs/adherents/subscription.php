@@ -322,16 +322,25 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 				$error++;
 				setEventMessages($object->error, $object->errors, 'errors');
 			}
+			else
+			{
+				// If an invoice was created, it is into $object->invoice
+			}
         }
 
         if (! $error)
         {
-            $db->commit();
+//            $db->commit();
         }
         else
         {
             $db->rollback();
             $action = 'addsubscription';
+        }
+
+        if (! $error)
+        {
+        	setEventMessages("SubscriptionRecorded", null, 'mesgs');
         }
 
         // Send email
@@ -340,15 +349,63 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
             // Send confirmation Email
             if ($object->email && $sendalsoemail)
             {
-                $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-                $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+            	$subject = '';
+            	$msg= '';
 
-                $result=$object->send_an_email($texttosend,$subjecttosend,array(),array(),array(),"","",0,-1);
+            	// Send subscription email
+            	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            	$formmail=new FormMail($db);
+            	// Set output language
+            	$outputlangs = new Translate('', $conf);
+            	$outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            	$outputlangs->loadLangs(array("main", "members"));
+            	// Get email content fro mtemplae
+            	$arraydefaultmessage=null;
+            	$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+            	if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            	if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            	{
+            		$subject = $arraydefaultmessage->topic;
+            		$msg     = $arraydefaultmessage->content;
+            	}
+
+            	$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            	complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            	$subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            	$texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
+
+                // Attach a file ?
+                $file='';
+                $listofpaths=array();
+                $listofnames=array();
+                $listofmimes=array();
+                if (is_object($object->invoice))
+                {
+                	$invoicediroutput = $conf->facture->dir_output;
+                	$fileparams = dol_most_recent_file($invoicediroutput . '/' . $object->invoice->ref, preg_quote($object->invoice->ref, '/').'[^\-]+');
+                	$file = $fileparams['fullname'];
+
+                	$listofpaths=array($file);
+                	$listofnames=array(basename($file));
+                	$listofmimes=array(dol_mimetype($file));
+                }
+
+                $result=$object->send_an_email($texttosend, $subjecttosend, $listofpaths, $listofnames, $listofmimes, "", "", 0, -1);
                 if ($result < 0)
                 {
                 	$errmsg=$object->error;
-        			setEventMessages($errmsg, null, 'errors');
+                	setEventMessages($object->error, $object->errors, 'errors');
                 }
+                else
+                {
+                	setEventMessages($langs->trans("EmailSentToMember", $object->email), null, 'mesgs');
+                }
+            }
+            else
+            {
+            	setEventMessages($langs->trans("NoEmailSentToMember"), null, 'mesgs');
             }
         }
 
@@ -985,8 +1042,33 @@ if ($rowid > 0)
             $adht = new AdherentType($db);
             $adht->fetch($object->typeid);
 
-            $subjecttosend=$object->makeSubstitution($conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-            $texttosend=$object->makeSubstitution($adht->getMailOnSubscription());
+            // Send subscription email
+            $subject = '';
+            $msg= '';
+
+            // Send subscription email
+            include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+            $formmail=new FormMail($db);
+            // Set output language
+            $outputlangs = new Translate('', $conf);
+            $outputlangs->setDefaultLang(empty($object->thirdparty->default_lang) ? $mysoc->default_lang : $object->thirdparty->default_lang);
+            $outputlangs->loadLangs(array("main", "members"));
+            // Get email content fro mtemplae
+            $arraydefaultmessage=null;
+            $labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_SUBSCRIPTION;
+
+            if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+            if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+            {
+            	$subject = $arraydefaultmessage->topic;
+            	$msg     = $arraydefaultmessage->content;
+            }
+
+            $substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $object);
+            complete_substitutions_array($substitutionarray, $outputlangs, $object);
+            $subjecttosend = make_substitutions($subject, $substitutionarray, $outputlangs);
+            $texttosend = make_substitutions(dol_concatdesc($msg, $adht->getMailOnSubscription()), $substitutionarray, $outputlangs);
 
             $tmp='<input name="sendmail" type="checkbox"'.(GETPOST('sendmail','alpha')?' checked':(! empty($conf->global->ADHERENT_DEFAULT_SENDINFOBYMAIL)?' checked':'')).'>';
             $helpcontent='';
@@ -998,7 +1080,7 @@ if ($rowid > 0)
             $helpcontent.='<b>'.$langs->trans("MailText").'</b>:<br>';
             $helpcontent.=dol_htmlentitiesbr($texttosend)."\n";
 
-            print $form->textwithpicto($tmp,$helpcontent,1,'help');
+            print $form->textwithpicto($tmp, $helpcontent, 1, 'help', '', 0, 2, 'helpemailtosend');
         }
         print '</td></tr>';
         print '</tbody>';

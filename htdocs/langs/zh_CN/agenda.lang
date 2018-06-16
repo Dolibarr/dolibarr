@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=会员 %s 已验证
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=会员 %s 已删除
-MemberSubscriptionAddedInDolibarr=会员订阅 %s 已添加
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=运输 %s 已验证
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -97,7 +99,8 @@ AgendaUrlOptions1=您还可以添加以下参数来筛选输出：
 AgendaUrlOptions3=<b>logina=%s</b> 限制输出到用户所拥有的动作 <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> 限制输出到项目相关的操作\n <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=显示联系人生日
 AgendaHideBirthdayEvents=隐藏联系人生日
 Busy=忙碌
@@ -109,7 +112,7 @@ ExportCal=导出日历
 ExtSites=导入外部日历
 ExtSitesEnableThisTool=显示外部日历(定义为全球设置)到议程。不影响由用户定义的外部日历。 
 ExtSitesNbOfAgenda=日历数
-AgendaExtNb=日历NB %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL来访问。iCal文件
 ExtSiteNoLabel=无说明
 VisibleTimeRange=可见时间范围

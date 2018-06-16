@@ -37,16 +37,16 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$langs->load("products");
-$langs->load("suppliers");
-$langs->load("bills");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'suppliers', 'bills', 'margins'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
 $rowid=GETPOST('rowid','int');
 $action=GETPOST('action', 'alpha');
 $cancel=GETPOST('cancel', 'alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'pricesuppliercard';
+
 $socid=GETPOST('socid', 'int');
 $cost_price=GETPOST('cost_price', 'alpha');
 $backtopage=GETPOST('backtopage','alpha');
@@ -78,8 +78,6 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield="s.nom";
 if (! $sortorder) $sortorder="ASC";
-
-$contextpage='pricesuppliercard';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('pricesuppliercard','globalcard'));
@@ -852,7 +850,7 @@ SCRIPT;
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=add_price&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_edit()."</a>";
 							print ' &nbsp; ';
-							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'disable.png').'</a>';
+							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;socid='.$productfourn->fourn_id.'&amp;action=ask_remove_pf&amp;rowid='.$productfourn->product_fourn_price_id.'">'.img_picto($langs->trans("Remove"),'delete').'</a>';
 						}
 
 						print '</td>';

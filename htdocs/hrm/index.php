@@ -36,9 +36,8 @@ if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplace
 if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
-$langs->load('users');
-$langs->load('holidays');
-$langs->load('trips');
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'holidays', 'trips'));
 
 $socid=GETPOST("socid");
 
@@ -130,27 +129,34 @@ if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is usele
 
 if (! empty($conf->holiday->enabled))
 {
-	$user_id = $user->id;
+	if (empty($conf->global->HOLIDAY_HIDE_BALANCE))
+	{
+		$user_id = $user->id;
 
-    print '<table class="noborder nohover" width="100%">';
-    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
-    print "<tr ".$bc[0].">";
-    print '<td colspan="3">';
+	    print '<table class="noborder nohover" width="100%">';
+	    print '<tr class="liste_titre"><th colspan="3">'.$langs->trans("Holidays").'</th></tr>';
+	    print "<tr ".$bc[0].">";
+	    print '<td colspan="3">';
 
-    $out='';
-    $typeleaves=$holiday->getTypes(1,1);
-    foreach($typeleaves as $key => $val)
-    {
-    	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
-    	$nb_holiday += $nb_type;
-    	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
-    }
-    print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
-    print $out;
+	    $out='';
+	    $typeleaves=$holiday->getTypes(1,1);
+	    foreach($typeleaves as $key => $val)
+	    {
+	    	$nb_type = $holiday->getCPforUser($user->id, $val['rowid']);
+	    	$nb_holiday += $nb_type;
+	    	$out .= ' - '.$val['label'].': <strong>'.($nb_type?price2num($nb_type):0).'</strong><br>';
+	    }
+	    print $langs->trans('SoldeCPUser', round($nb_holiday,5)).'<br>';
+	    print $out;
 
-    print '</td>';
-    print '</tr>';
-    print '</table><br>';
+	    print '</td>';
+	    print '</tr>';
+	    print '</table><br>';
+	}
+	elseif (! is_numeric($conf->global->HOLIDAY_HIDE_BALANCE))
+	{
+		print $langs->trans($conf->global->HOLIDAY_HIDE_BALANCE).'<br>';
+	}
 }
 
 

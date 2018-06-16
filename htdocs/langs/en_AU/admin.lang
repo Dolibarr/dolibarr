@@ -2,7 +2,6 @@
 AntiVirusCommandExample=Example for ClamWin: c:\\Progra~1\\ClamWin\\bin\\clamscan.exe<br>Example for ClamAv: /usr/bin/clamscan
 AntiVirusParamExample=Example for ClamWin: --database="C:\\Program Files (x86)\\ClamWin\\lib"
 ExampleOfDirectoriesForModelGen=Examples of syntax:<br>c:\\mydir<br>/home/mydir<br>DOL_DATA_ROOT/ecm/ecmdir
-HideAnyVATInformationOnPDF=Hide all information related to GST on generated PDF
 OldVATRates=Old GST rate
 NewVATRates=New GST rate
 DictionaryVAT=GST Rates or Sales Tax Rates
@@ -13,5 +12,4 @@ LocalTax1IsNotUsedDesc=Do not use other type of tax (other than GST)
 LocalTax2IsUsedDesc=Use a third type of tax (other than GST)
 LocalTax2IsNotUsedDesc=Do not use other type of tax (other than GST)
 OptionVatMode=GST due
-TextTitleColor=Colour of page title
 LinkColor=Colour of links

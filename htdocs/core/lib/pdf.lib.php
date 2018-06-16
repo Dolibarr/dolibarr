@@ -119,23 +119,24 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		define('K_TCPDF_THROW_EXCEPTION_ERROR', false);
 	}
 
-	if (! empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->MAIN_DISABLE_FPDI))
-		return "Error MAIN_USE_FPDF and MAIN_DISABLE_FPDI can't be set together";
+	// Load TCPDF
+	require_once TCPDF_PATH.'tcpdf.php';
 
-	// We use by default TCPDF else FPDF
-	if (empty($conf->global->MAIN_USE_FPDF)) require_once TCPDF_PATH.'tcpdf.php';
-	else require_once FPDF_PATH.'fpdf.php';
-
-	// We need to instantiate tcpdi or fpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
-    if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
-	else if (empty($conf->global->MAIN_DISABLE_FPDI)) require_once FPDI_PATH.'fpdi.php';
+	// We need to instantiate tcpdi object (instead of tcpdf) to use merging features. But we can disable it (this will break all merge features).
+	if (empty($conf->global->MAIN_DISABLE_TCPDI)) require_once TCPDI_PATH.'tcpdi.php';
 
 	//$arrayformat=pdf_getFormat();
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
+	$pdfa=false;											// PDF-1.3
+	if (! empty($conf->global->PDF_USE_1A)) $pdfa=true;		// PDF1/A
+
+	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format,true,'UTF-8',false,$pdfa);
+	else $pdf = new TCPDF($pagetype,$metric,$format,true,'UTF-8',false,$pdfa);
+
 	// Protection and encryption of pdf
-	if (empty($conf->global->MAIN_USE_FPDF) && ! empty($conf->global->PDF_SECURITY_ENCRYPTION))
+	if (! empty($conf->global->PDF_SECURITY_ENCRYPTION))
 	{
 		/* Permission supported by TCPDF
 		- print : Print the document;
@@ -148,81 +149,48 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 		- print-high : Print the document to a representation from which a faithful digital copy of the PDF content could be generated. When this is not set, printing is limited to a low-level representation of the appearance, possibly of degraded quality.
 		- owner : (inverted logic - only for public-key) when set permits change of encryption and enables all other permissions.
 		*/
-		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
-		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
-		else $pdf = new TCPDF($pagetype,$metric,$format);
+
 		// For TCPDF, we specify permission we want to block
-		$pdfrights = array('modify','copy');
+		$pdfrights = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS)?json_decode($conf->global->PDF_SECURITY_ENCRYPTION_RIGHTS, true):array('modify','copy')); // Json format in llx_const
 
-		$pdfuserpass = ''; // Password for the end user
-		$pdfownerpass = NULL; // Password of the owner, created randomly if not defined
-		$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-	}
-	else
-	{
-		if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
-		else if (class_exists('FPDI')) $pdf = new FPDI($pagetype,$metric,$format);
-		else $pdf = new TCPDF($pagetype,$metric,$format);
-	}
+		// Password for the end user
+		$pdfuserpass = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_USERPASS)?$conf->global->PDF_SECURITY_ENCRYPTION_USERPASS:'');
 
-	// If we use FPDF class, we may need to add method writeHTMLCell
-	if (! empty($conf->global->MAIN_USE_FPDF) && ! method_exists($pdf, 'writeHTMLCell'))
-	{
-		// Declare here a class to overwrite FPDI to add method writeHTMLCell
-		/**
-		 *	This class is an enhanced FPDI class that support method writeHTMLCell
-		 */
-		class FPDI_DolExtended extends FPDI
-        {
-			/**
-			 * __call
-			 *
-			 * @param 	string	$method		Method
-			 * @param 	mixed	$args		Arguments
-			 * @return 	void
-			 */
-			public function __call($method, $args)
-			{
-				if (isset($this->$method)) {
-					$func = $this->$method;
-					$func($args);
-				}
-			}
+		// Password of the owner, created randomly if not defined
+		$pdfownerpass = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_OWNERPASS)?$conf->global->PDF_SECURITY_ENCRYPTION_OWNERPASS:null);
 
-			/**
-			 * writeHTMLCell
-			 *
-			 * @param	int		$w				Width
-			 * @param 	int		$h				Height
-			 * @param 	int		$x				X
-			 * @param 	int		$y				Y
-			 * @param 	string	$html			Html
-			 * @param 	int		$border			Border
-			 * @param 	int		$ln				Ln
-			 * @param 	boolean	$fill			Fill
-			 * @param 	boolean	$reseth			Reseth
-			 * @param 	string	$align			Align
-			 * @param 	boolean	$autopadding	Autopadding
-			 * @return 	void
-			 */
-			public function writeHTMLCell($w, $h, $x, $y, $html = '', $border = 0, $ln = 0, $fill = false, $reseth = true, $align = '', $autopadding = true)
-			{
-				$this->SetXY($x,$y);
-				$val=str_replace('<br>',"\n",$html);
-				//$val=dol_string_nohtmltag($val,false,'ISO-8859-1');
-				$val=dol_string_nohtmltag($val,false,'UTF-8');
-				$this->MultiCell($w,$h,$val,$border,$align,$fill);
-			}
-		}
+		// For encryption strength: 0 = RC4 40 bit; 1 = RC4 128 bit; 2 = AES 128 bit; 3 = AES 256 bit
+		$encstrength = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_STRENGTH)?$conf->global->PDF_SECURITY_ENCRYPTION_STRENGTH:0);
 
-		$pdf2=new FPDI_DolExtended($pagetype,$metric,$format);
-		unset($pdf);
-		$pdf=$pdf2;
+		// Array of recipients containing public-key certificates ('c') and permissions ('p').
+		// For example: array(array('c' => 'file://../examples/data/cert/tcpdf.crt', 'p' => array('print')))
+		$pubkeys = (! empty($conf->global->PDF_SECURITY_ENCRYPTION_PUBKEYS)?json_decode($conf->global->PDF_SECURITY_ENCRYPTION_PUBKEYS, true):null); // Json format in llx_const
+
+		$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass,$encstrength,$pubkeys);
 	}
 
 	return $pdf;
 }
 
+/**
+ * Return if pdf file is protected/encrypted
+ *
+ * @param	TCPDF		$pdf			PDF initialized object
+ * @param   string		$pathoffile		Path of file
+ * @return  boolean     			    True or false
+ */
+function pdf_getEncryption(&$pdf, $pathoffile)
+{
+	$isencrypted = false;
+
+	$pdfparser = $pdf->_getPdfParser($pathoffile);
+	$data = $pdfparser->getParsedData();
+	if (isset($data[0]['trailer'][1]['/Encrypt'])) {
+		$isencrypted = true;
+	}
+
+	return $isencrypted;
+}
 
 /**
  *      Return font name to use for PDF generation
@@ -362,7 +330,7 @@ function pdfBuildThirdpartyName($thirdparty, Translate $outputlangs, $includeali
 	} elseif ($thirdparty instanceof Contact) {
 		$socname = $thirdparty->socname;
 	} else {
-		throw new InvalidArgumentException('Parameter 1=$thirdparty is not a Societe nor Contact');
+		throw new InvalidArgumentException('Parameter 1 $thirdparty is not a Societe nor Contact');
 	}
 
 	return $outputlangs->convToOutputCharset($socname);
@@ -1076,8 +1044,7 @@ function pdf_pagefoot(&$pdf,$outputlangs,$paramfreetext,$fromcompany,$marge_bass
 	{
 		$pdf->SetXY($dims['wk']-$dims['rm']-15, -$posy);
 		//print 'xxx'.$pdf->PageNo().'-'.$pdf->getAliasNbPages().'-'.$pdf->getAliasNumPage();exit;
-		if (empty($conf->global->MAIN_USE_FPDF)) $pdf->MultiCell(15, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
-		else $pdf->MultiCell(15, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
+		$pdf->MultiCell(15, 2, $pdf->PageNo().'/'.$pdf->getAliasNbPages(), 0, 'R', 0);
 	}
 
 	return $marginwithfooter;
@@ -1236,13 +1203,15 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$discount->ref_facture_source);
+			$sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromCreditNote",$sourceref);
 		}
 		elseif ($desc == '(DEPOSIT)' && $object->lines[$i]->fk_remise_except)
 		{
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
-			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$discount->ref_facture_source);
+			$sourceref=!empty($discount->discount_type)?$discount->ref_invoive_supplier_source:$discount->ref_facture_source;
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromDeposit",$sourceref);
 			// Add date of deposit
 			if (! empty($conf->global->INVOICE_ADD_DEPOSIT_DATE)) echo ' ('.dol_print_date($discount->datec,'day','',$outputlangs).')';
 		}
@@ -1251,6 +1220,12 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 			$discount=new DiscountAbsolute($db);
 			$discount->fetch($object->lines[$i]->fk_remise_except);
 			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessReceived",$discount->ref_facture_source);
+		}
+		elseif ($desc == '(EXCESS PAID)' && $object->lines[$i]->fk_remise_except)
+		{
+			$discount=new DiscountAbsolute($db);
+			$discount->fetch($object->lines[$i]->fk_remise_except);
+			$libelleproduitservice=$outputlangs->transnoentitiesnoconv("DiscountFromExcessPaid",$discount->ref_invoice_supplier_source);
 		}
 		else
 		{

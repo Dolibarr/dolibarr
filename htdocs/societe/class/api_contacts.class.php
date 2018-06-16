@@ -194,7 +194,7 @@ class Contacts extends DolibarrApi
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
 	 */
-	function post($request_data = NULL) {
+	function post($request_data = null) {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -219,7 +219,7 @@ class Contacts extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = NULL) {
+	function put($id, $request_data = null) {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -282,7 +282,7 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url	POST {id}/createUser
 	 */
-	function createUser($id, $request_data = NULL) {
+	function createUser($id, $request_data = null) {
 	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 	    //throw new RestException(401);
 	    //}

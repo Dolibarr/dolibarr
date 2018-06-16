@@ -31,11 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 
-$langs->load("errors");
-$langs->load("users");
-$langs->load("companies");
-$langs->load("ldap");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 
 // Security check
 if (! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
@@ -96,7 +93,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
 if ($action == 'buildnewpassword' && $username)
 {
     $sessionkey = 'dol_antispam_value';
-    $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+    $ok=(array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
     // Verify code
     if (! $ok)

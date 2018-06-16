@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (! $user->admin) accessforbidden();
@@ -144,7 +145,7 @@ if ($action == 'update')
 	$plus='';
 	if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $plus = '_PERCENTAGE';
 	// Update values
-	for($i=0;$i<4;$i++) {
+	for($i=0; $i<4; $i++) {
     	if(isset($_POST['MAIN_METEO'.$plus.'_LEVEL'.$i])) dolibarr_set_const($db, 'MAIN_METEO'.$plus.'_LEVEL'.$i, GETPOST('MAIN_METEO'.$plus.'_LEVEL'.$i, 'int'),'chaine',0,'',$conf->entity);
     }
 
@@ -172,7 +173,6 @@ if ($action == 'edit')
     print '<form method="post" action="'.$_SERVER['PHP_SELF'].'" name="form_index">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<input type="hidden" name="action" value="update">';
-    $var=true;
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
@@ -215,7 +215,6 @@ else
 
 	print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("DelaysOfToleranceBeforeWarning").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
-    $var=true;
 
     foreach($modules as $module => $delays)
     {
@@ -241,7 +240,6 @@ else
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td class="center" width="120px">'.$langs->trans("Value").'</td></tr>';
 
-	$var=false;
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MAIN_DISABLE_METEO").'</td><td class="center">' . yn($conf->global->MAIN_DISABLE_METEO) . '</td></tr>';
 

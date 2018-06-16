@@ -1,7 +1,5 @@
 # Dolibarr language file - Source file is en_US - banks
 MenuBankCash=Banco/Caixa
-MenuVariousPayment=Pagamentos diversos
-MenuNewVariousPayment=Novo pagamento diverso
 BankAccounts=Contas bancárias
 ShowAccount=Mostrar conta
 AccountRef=Ref. da conta financeira
@@ -129,8 +127,6 @@ BankAccountModelModule=Temas de documentos para as contas bancárias.
 DocumentModelSepaMandate=Tema do mandato SEPA. Útil somente para os países europeus na Comunidade Europeia.
 DocumentModelBan=Tema para imprimir a página com a informação BAN.
 NewVariousPayment=Novos pagamentos diversos
-VariousPayment=Pagamentos diversos
-VariousPayments=Pagamentos diversos
 ShowVariousPayment=Mostrar pagamentos diversos
 AddVariousPayment=Adicionar pagamentos diversos
 YourSEPAMandate=Seu mandato Área Única de Pagamentos em Euros

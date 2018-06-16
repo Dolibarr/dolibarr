@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2017	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2017	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2017		Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2017-2018	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("sms");
-$langs->load("other");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'errors'));
 
 if (!$user->admin) accessforbidden();
 
@@ -212,9 +208,9 @@ print "<br>\n";
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 if ($optioncss != '')  $param.='&optioncss='.$optioncss;
-if (defaulturl)        $param.='&defaulturl='.urlencode(defaulturl);
-if (defaultkey)        $param.='&defaultkey='.urlencode(defaultkey);
-if (defaultvalue)      $param.='&defaultvalue='.urlencode(defaultvalue);
+if ($defaulturl)        $param.='&defaulturl='.urlencode($defaulturl);
+if ($defaultkey)        $param.='&defaultkey='.urlencode($defaultkey);
+if ($defaultvalue)      $param.='&defaultvalue='.urlencode($defaultvalue);
 
 
 print '<form action="'.$_SERVER["PHP_SELF"].((empty($user->entity) && $debug)?'?debug=1':'').'" method="POST">';

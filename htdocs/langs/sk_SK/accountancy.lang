@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Účtovníctvo
 ACCOUNTING_EXPORT_SEPARATORCSV=Oddeľovač stĺpcov pre exportný súbor
 ACCOUNTING_EXPORT_DATE=Formát dátumu pre súbor exportu
 ACCOUNTING_EXPORT_PIECE=Export čísla kusu
@@ -25,8 +26,8 @@ Chartofaccounts=Účtovná schéma
 CurrentDedicatedAccountingAccount=Aktuálny vyhradený účet
 AssignDedicatedAccountingAccount=New account to assign
 InvoiceLabel=Invoice label
-OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to accounting account
-OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to accounting account
+OverviewOfAmountOfLinesNotBound=Overview of amount of lines not bound to an accounting account
+OverviewOfAmountOfLinesBound=Overview of amount of lines already bound to an accounting account
 OtherInfo=Other information
 DeleteCptCategory=Remove accounting account from group
 ConfirmDeleteCptCategory=Are you sure you want to remove this accounting account from the accounting account group ?
@@ -39,11 +40,11 @@ AccountWithNonZeroValues=Accounts with non zero values
 ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
-MainAccountForSuppliersNotDefined=Main accounting account for suppliers not defined in setup
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Main accounting account for users not defined in setup
 MainAccountForVatPaymentNotDefined=Main accounting account for VAT payment not defined in setup
 
-AccountancyArea=Účtovná oblasť
+AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Použitie účtovného modulu sa vykonáva v niekoľkých krokoch:
 AccountancyAreaDescActionOnce=Nasledujúce akcie sa zvyčajne vykonávajú iba raz alebo raz za rok ...
 AccountancyAreaDescActionOnceBis=Next steps should be done to save you time in future by suggesting you the correct default accounting account when making the journalization (writing record in Journals and General ledger)
@@ -89,7 +90,7 @@ MenuProductsAccounts=Produktové účty
 ProductsBinding=Produkty účty
 Ventilation=Priradené k účtom
 CustomersVentilation=Priradenie zákazníckej faktúry
-SuppliersVentilation=Priradenie dodávateľskej faktúry
+SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Expense report binding
 CreateMvts=Vytvorte novú transakciu
 UpdateMvts=Úprava transakcie
@@ -136,6 +137,7 @@ ACCOUNTING_PURCHASE_JOURNAL=Zakúpte denník
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Rôzne denníky
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Denník výdavkov
 ACCOUNTING_SOCIAL_JOURNAL=Sociálny časopis
+ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Účtovný účet prevodu
 ACCOUNTING_ACCOUNT_SUSPENSE=Účtovný účet čakania
@@ -149,7 +151,6 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Účtovný účet predvolene pre predané služb
 Doctype=Druh dokumentu
 Docdate=dátum
 Docref=referencie
-Code_tiers=Tretia strana
 LabelAccount=Značkový účet
 LabelOperation=Label operation
 Sens=sens
@@ -169,29 +170,29 @@ DelYear=Rok na zmazanie
 DelJournal=Žurnále na zmazanie
 ConfirmDeleteMvt=Tým sa odstránia všetky riadky knihy za rok a / alebo z určitého časopisu. Vyžaduje sa aspoň jedno kritérium.
 ConfirmDeleteMvtPartial=This will delete the transaction from the Ledger (all lines related to same transaction will be deleted)
-DelBookKeeping=Odstrániť záznam knihy
 FinanceJournal=Finančný časopis
 ExpenseReportsJournal=Expense reports journal
 DescFinanceJournal=Finančný denník vrátane všetkých druhov platieb prostredníctvom bankového účtu
-DescJournalOnlyBindedVisible=This is a view of record that are bound to accounting account and can be recorded into the Ledger.
+DescJournalOnlyBindedVisible=This is a view of record that are bound to an accounting account and can be recorded into the Ledger.
 VATAccountNotDefined=Účet DPH nie je definovaný
 ThirdpartyAccountNotDefined=Účet tretej strany nie je definovaný
 ProductAccountNotDefined=Účet pre produkt nie je definovaný
 FeeAccountNotDefined=Account for fee not defined
 BankAccountNotDefined=Účet pre banku nie je definovaný
 CustomerInvoicePayment=Platba zákazníka faktúry
-ThirdPartyAccount=Účet tretej strany
+ThirdPartyAccount=Third party account
 NewAccountingMvt=Nová transakcia
 NumMvts=Počet transakcií
 ListeMvts=Zoznam pohybov
 ErrorDebitCredit=Debit a kredit nemôžu mať hodnotu súčasne
 AddCompteFromBK=Add accounting accounts to the group
 ReportThirdParty=Uveďte účet tretej strany
-DescThirdPartyReport=Prečítajte si zoznam tretích zákazníkov a dodávateľov a ich účtovných účtov
+DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=Zoznam účtovných účtov
 UnknownAccountForThirdparty=Unknown third party account. We will use %s
 UnknownAccountForThirdpartyBlocking=Unknown third party account. Blocking error
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Unknown third party account and waiting account not defined. Blocking error
+PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
@@ -206,8 +207,8 @@ DescVentilDoneCustomer=Pozrite si zoznam riadkov zákazníkov faktúr a ich úč
 DescVentilTodoCustomer=Uviazať linky faktúr, ktoré ešte nie sú viazané účtom účtovania produktu
 ChangeAccount=Zmeniť účtovný účet produktu / služby pre vybrané riadky s týmto účtovným účtom:
 Vide=-
-DescVentilSupplier=Pozrite si zoznam dodávateľských faktúr, ktoré sú viazané alebo ešte nie sú viazané na účet účtovania produktu
-DescVentilDoneSupplier=Pozrite si zoznam liniek dodávateľov faktúr a ich účtovný účet
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
 DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
 DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
@@ -217,13 +218,15 @@ ValidateHistory=Priradzovať automaticky
 AutomaticBindingDone=Automatické priradenie dokončené
 
 ErrorAccountancyCodeIsAlreadyUse=Chyba, nemôžete odstrániť tento účtovný účet, pretože sa používa
-MvtNotCorrectlyBalanced=Pohyb nie je správne vyvážený. Úver = %s. Debit = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Viazacia karta
 GeneralLedgerIsWritten=Transakcie sú zapísané v knihe
-GeneralLedgerSomeRecordWasNotRecorded=Niektoré transakcie nebolo možné odoslať. Ak sa nenachádza žiadna iná chybová správa, pravdepodobne je to preto, že už boli odoslané.
+GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
 NoNewRecordSaved=No more record to journalize
 ListOfProductsWithoutAccountingAccount=Zoznam produktov, ktoré nie sú viazané na žiadny účtovný účet
 ChangeBinding=Zmeňte väzbu
+Accounted=Accounted in ledger
+NotYetAccounted=Not yet accounted in ledger
 
 ## Admin
 ApplyMassCategories=Použiť hromadne kategórie
@@ -234,13 +237,15 @@ AccountingJournal=Accounting journal
 NewAccountingJournal=New accounting journal
 ShowAccoutingJournal=Show accounting journal
 Nature=Príroda
-AccountingJournalType1=Miscellaneous operation
+AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Predaje
 AccountingJournalType3=Platby
 AccountingJournalType4=Banka
 AccountingJournalType5=Expenses report
+AccountingJournalType8=Inventory
 AccountingJournalType9=Has-new
 ErrorAccountingJournalIsAlreadyUse=This journal is already use
+AccountingAccountForSalesTaxAreDefinedInto=Note: Accounting account for Sales tax are defined into menu <b>%s</b> - <b>%s</b>
 
 ## Export
 ExportDraftJournal=Export draft journal
@@ -282,6 +287,8 @@ Formula=Vzorec
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Some mandatory steps of setup was not done, please complete them
 ErrorNoAccountingCategoryForThisCountry=Pre krajinu %s nie je k dispozícii žiadna skupina účtovných účtov (pozri Domovská stránka - Nastavenie - slovníky)
+ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
+ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=Exportovaný formát nie je podporovaný pre túto stránku
 BookeppingLineAlreayExists=Riadky už existujú v archíve
 NoJournalDefined=No journal defined
@@ -289,4 +296,9 @@ Binded=Viazané čiary
 ToBind=Linky na viazanie
 UseMenuToSetBindindManualy=Autodection not possible, use menu <a href="%s">%s</a> to make the binding manually
 
+## Import
+ImportAccountingEntries=Accounting entries
+
 WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+ExpenseReportJournal=Expense Report Journal
+InventoryJournal=Inventory Journal

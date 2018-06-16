@@ -33,7 +33,7 @@
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
-require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
+require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 
 /**
@@ -147,8 +147,10 @@ class Adherent extends CommonObject
 		if ($msgishtml == -1)
 		{
 			$msgishtml = 0;
-			if (dol_textishtml($text,1)) $msgishtml = 1;
+			if (dol_textishtml($text,0)) $msgishtml = 1;
 		}
+
+		dol_syslog('send_an_email msgishtml='.$msgishtml);
 
 		$texttosend=$this->makeSubstitution($text);
 		$subjecttosend=$this->makeSubstitution($subject);
@@ -439,8 +441,8 @@ class Adherent extends CommonObject
 		$sql.= ", note_public = ".($this->note_public?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", public = '".$this->db->escape($this->public)."'";
-		$sql.= ", statut = ".$this->statut;
-		$sql.= ", fk_adherent_type = ".$this->typeid;
+		$sql.= ", statut = ".$this->db->escape($this->statut);
+		$sql.= ", fk_adherent_type = ".$this->db->escape($this->typeid);
 		$sql.= ", morphy = '".$this->db->escape($this->morphy)."'";
 		$sql.= ", birth = ".($this->birth?"'".$this->db->idate($this->birth)."'":"null");
 		if ($this->datefin)   $sql.= ", datefin = '".$this->db->idate($this->datefin)."'";		// Must be modified only when deleting a subscription
@@ -461,24 +463,15 @@ class Adherent extends CommonObject
 
 			$action='update';
 
-			// Actions on extra fields (by external module)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('memberdao'));
-			$parameters=array('id'=>$this->id);
-			$action='';
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			// Update password
 			if (! $error && $this->pass)
@@ -1047,13 +1040,15 @@ class Adherent extends CommonObject
 	/**
 	 *	Load member from database
 	 *
-	 *	@param	int		$rowid      Id of object to load
-	 * 	@param	string	$ref		To load member from its ref
-	 * 	@param	int		$fk_soc		To load member from its link to third party
-	 * 	@param	string	$ref_ext	External reference
-	 *	@return int         		>0 if OK, 0 if not found, <0 if KO
+	 *	@param	int		$rowid      			Id of object to load
+	 * 	@param	string	$ref					To load member from its ref
+	 * 	@param	int		$fk_soc					To load member from its link to third party
+	 * 	@param	string	$ref_ext				External reference
+	 *  @param	bool	$fetch_optionals		To load optionals (extrafields)
+	 *  @param	bool	$fetch_subscriptions	To load member subscriptions
+	 *	@return int								>0 if OK, 0 if not found, <0 if KO
 	 */
-	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='')
+	function fetch($rowid,$ref='',$fk_soc='',$ref_ext='',$fetch_optionals=true,$fetch_subscriptions=true)
 	{
 		global $langs;
 
@@ -1158,10 +1153,14 @@ class Adherent extends CommonObject
 
 				// Retreive all extrafield
 				// fetch optionals attributes and labels
-				$this->fetch_optionals();
+				if ($fetch_optionals) {
+					$this->fetch_optionals();
+				}
 
 				// Load other properties
-				$result=$this->fetch_subscriptions();
+				if ($fetch_subscriptions) {
+					$result=$this->fetch_subscriptions();
+				}
 
 				return $this->id;
 			}
@@ -1330,25 +1329,29 @@ class Adherent extends CommonObject
 	/**
 	 *	Do complementary actions after subscription recording.
 	 *
-	 *	@param	int			$subscriptionid		Id of created subscription
-	 *  @param	string		$option				Which action ('bankdirect', 'invoiceonly', ...)
-	 *	@param	int			$accountid			Id bank account
-	 *	@param	int			$datesubscription	Date of subscription
-	 *	@param	int			$paymentdate		Date of payment
-	 *	@param	string		$operation			Code of type of operation (if Id bank account provided). Example 'CB', ...
-	 *	@param	string		$label				Label operation (if Id bank account provided)
-	 *	@param	double		$amount     		Amount of subscription (0 accepted for some members)
-	 *	@param	string		$num_chq			Numero cheque (if Id bank account provided)
-	 *	@param	string		$emetteur_nom		Name of cheque writer
-	 *	@param	string		$emetteur_banque	Name of bank of cheque
-	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty.
-	 *	@return int         					<0 if KO, >0 if OK
+	 *	@param	int			$subscriptionid			Id of created subscription
+	 *  @param	string		$option					Which action ('bankdirect', 'bankviainvoice', 'invoiceonly', ...)
+	 *	@param	int			$accountid				Id bank account
+	 *	@param	int			$datesubscription		Date of subscription
+	 *	@param	int			$paymentdate			Date of payment
+	 *	@param	string		$operation				Code of type of operation (if Id bank account provided). Example 'CB', ...
+	 *	@param	string		$label					Label operation (if Id bank account provided)
+	 *	@param	double		$amount     			Amount of subscription (0 accepted for some members)
+	 *	@param	string		$num_chq				Numero cheque (if Id bank account provided)
+	 *	@param	string		$emetteur_nom			Name of cheque writer
+	 *	@param	string		$emetteur_banque		Name of bank of cheque
+	 *  @param	string		$autocreatethirdparty	Auto create new thirdparty if member not linked to a thirdparty and we request an option that generate invoice.
+	 *	@return int									<0 if KO, >0 if OK
 	 */
 	function subscriptionComplementaryActions($subscriptionid, $option, $accountid, $datesubscription, $paymentdate, $operation, $label, $amount, $num_chq, $emetteur_nom='', $emetteur_banque='', $autocreatethirdparty=0)
 	{
 		global $conf, $langs, $user, $mysoc;
 
 		$error = 0;
+
+		$this->invoice = null;	// This will contains invoice if an invoice is created
+
+		dol_syslog("subscriptionComplementaryActions subscriptionid=".$subscriptionid." option=".$option." accountid=".$accountid." datesubscription=".$datesubscription." paymentdate=".$paymentdate." label=".$label." amount=".$amount." num_chq=".$num_chq." autocreatethirdparty=".$autocreatethirdparty);
 
 		// Insert into bank account directlty (if option choosed for) + link to llx_subscription if option is 'bankdirect'
 		if ($option == 'bankdirect' && $accountid)
@@ -1405,7 +1408,7 @@ class Adherent extends CommonObject
 
 			if (! $error)
 			{
-				if (! ($this->fk_soc > 0))
+				if (! ($this->fk_soc > 0))	// If not yet linked to a company
 				{
 					if ($autocreatethirdparty)
 					{
@@ -1427,8 +1430,8 @@ class Adherent extends CommonObject
 						$result=$customer->create_from_member($this, $companyname, $companyalias);
 						if ($result < 0)
 						{
-							$this->error = $company->error;
-							$this->errors = $company->errors;
+							$this->error = $customer->error;
+							$this->errors = $customer->errors;
 							$error++;
 						}
 						else
@@ -1489,6 +1492,10 @@ class Adherent extends CommonObject
 					$this->errors=$invoice->errors;
 					$error++;
 				}
+				else
+				{
+					$this->invoice = $invoice;
+				}
 			}
 
 			if (! $error)
@@ -1503,7 +1510,7 @@ class Adherent extends CommonObject
 					$vattouse=get_default_tva($mysoc, $mysoc, $idprodsubscription);
 				}
 				//print xx".$vattouse." - ".$mysoc." - ".$customer;exit;
-				$result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,$datesubend,0,0,'','TTC',$amount,1);
+				$result=$invoice->addline($label,0,1,$vattouse,0,0,$idprodsubscription,0,$datesubscription,'',0,0,'','TTC',$amount,1);
 				if ($result <= 0)
 				{
 					$this->error=$invoice->error;
@@ -1522,6 +1529,11 @@ class Adherent extends CommonObject
 					$this->errors=$invoice->errors;
 					$error++;
 				}
+			}
+
+			if (! $error)
+			{
+				// TODO Link invoice with subscription ?
 			}
 
 			// Add payment onto invoice
@@ -1566,7 +1578,7 @@ class Adherent extends CommonObject
 					}
 				}
 
-				if (! $error)
+				if (! $error && !empty($bank_line_id))
 				{
 					// Update fk_bank into subscription table
 					$sql = 'UPDATE '.MAIN_DB_PREFIX.'subscription SET fk_bank='.$bank_line_id;
@@ -1584,25 +1596,26 @@ class Adherent extends CommonObject
 					// Set invoice as paid
 					$invoice->set_paid($user);
 				}
+			}
 
-				if (! $error)
-				{
-					// Define output language
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($_REQUEST['lang_id']))
-						$newlang = $_REQUEST['lang_id'];
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang))
-						$newlang = $customer->default_lang;
-					if (! empty($newlang)) {
-							$outputlangs = new Translate("", $conf);
-							$outputlangs->setDefaultLang($newlang);
-					}
-					// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
-					//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-
-					$invoice->generateDocument($invoice->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if (! $error)
+			{
+				// Define output language
+				$outputlangs = $langs;
+				$newlang = '';
+				$lang_id=GETPOST('lang_id');
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang) && ! empty($lang_id))
+					$newlang = $lang_id;
+				if ($conf->global->MAIN_MULTILANGS && empty($newlang))
+					$newlang = $customer->default_lang;
+				if (! empty($newlang)) {
+					$outputlangs = new Translate("", $conf);
+					$outputlangs->setDefaultLang($newlang);
 				}
+				// Generate PDF (whatever is option MAIN_DISABLE_PDF_AUTOUPDATE) so we can include it into email
+				//if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+
+				$invoice->generateDocument($invoice->modelpdf, $outputlangs);
 			}
 		}
 
@@ -1655,6 +1668,8 @@ class Adherent extends CommonObject
 			$result=$this->call_trigger('MEMBER_VALIDATE',$user);
 			if ($result < 0) { $error++; $this->db->rollback(); return -1; }
 			// End call triggers
+
+			$this->datevalid = $now;
 
 			$this->db->commit();
 			return 1;
@@ -1880,6 +1895,8 @@ class Adherent extends CommonObject
 			$label.= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($this->firstname) || ! empty($this->lastname))
 			$label.= '<br><b>' . $langs->trans('Name') . ':</b> ' . $this->getFullName($langs);
+		if (! empty($this->societe))
+			$label.= '<br><b>' . $langs->trans('Company') . ':</b> ' . $this->societe;
 		$label.='</div>';
 
 		$url = DOL_URL_ROOT.'/adherents/card.php?rowid='.$this->id;
@@ -2290,15 +2307,15 @@ class Adherent extends CommonObject
 		if ($this->societe && ! empty($conf->global->LDAP_MEMBER_FIELD_COMPANY))				$info[$conf->global->LDAP_MEMBER_FIELD_COMPANY] = $this->societe;
 		if ($this->address && ! empty($conf->global->LDAP_MEMBER_FIELD_ADDRESS))				$info[$conf->global->LDAP_MEMBER_FIELD_ADDRESS] = $this->address;
 		if ($this->zip && ! empty($conf->global->LDAP_MEMBER_FIELD_ZIP))						$info[$conf->global->LDAP_MEMBER_FIELD_ZIP] = $this->zip;
-		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))					$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
+		if ($this->town && ! empty($conf->global->LDAP_MEMBER_FIELD_TOWN))						$info[$conf->global->LDAP_MEMBER_FIELD_TOWN] = $this->town;
 		if ($this->country_code && ! empty($conf->global->LDAP_MEMBER_FIELD_COUNTRY))			$info[$conf->global->LDAP_MEMBER_FIELD_COUNTRY] = $this->country_code;
 		if ($this->skype && ! empty($conf->global->LDAP_MEMBER_FIELD_SKYPE))					$info[$conf->global->LDAP_MEMBER_FIELD_SKYPE] = $this->skype;
 		if ($this->phone && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE))					$info[$conf->global->LDAP_MEMBER_FIELD_PHONE] = $this->phone;
 		if ($this->phone_perso && ! empty($conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO))		$info[$conf->global->LDAP_MEMBER_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && ! empty($conf->global->LDAP_MEMBER_FIELD_MOBILE))			$info[$conf->global->LDAP_MEMBER_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && ! empty($conf->global->LDAP_MEMBER_FIELD_FAX))						$info[$conf->global->LDAP_MEMBER_FIELD_FAX] = $this->fax;
-		if ($this->note_private && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION))		$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = $this->note_private;
-		if ($this->note_public && ! empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC))		$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = $this->note_public;
+		if ($this->note_private && ! empty($conf->global->LDAP_MEMBER_FIELD_DESCRIPTION))		$info[$conf->global->LDAP_MEMBER_FIELD_DESCRIPTION] = dol_string_nohtmltag($this->note_private, 2);
+		if ($this->note_public && ! empty($conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC))		$info[$conf->global->LDAP_MEMBER_FIELD_NOTE_PUBLIC] = dol_string_nohtmltag($this->note_public, 2);
 		if ($this->birth && ! empty($conf->global->LDAP_MEMBER_FIELD_BIRTHDATE))				$info[$conf->global->LDAP_MEMBER_FIELD_BIRTHDATE] = dol_print_date($this->birth,'dayhourldap');
 		if (isset($this->statut) && ! empty($conf->global->LDAP_FIELD_MEMBER_STATUS))			$info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
 		if ($this->datefin && ! empty($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION))	$info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dol_print_date($this->datefin,'dayhourldap');
@@ -2401,6 +2418,34 @@ class Adherent extends CommonObject
 	}
 
 	/**
+	 *  Return number of mass Emailing received by this member with its email
+	 *
+	 *  @return       int     Number of EMailings
+	 */
+	function getNbOfEMailings()
+	{
+		$sql = "SELECT count(mc.email) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
+		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb=$obj->nb;
+
+			$this->db->free($resql);
+			return $nb;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
 	 * Sets object to supplied categories.
 	 *
 	 * Deletes object from existing categories not supplied.
@@ -2478,6 +2523,136 @@ class Adherent extends CommonObject
 		$now = dol_now();
 
 		return $this->datefin < ($now - $conf->adherent->subscription->warning_delay);
+	}
+
+
+
+	/**
+	 * Send reminders by emails before subscription end
+	 * CAN BE A CRON TASK
+	 *
+	 * @param	int			$daysbeforeend		Nb of days before end of subscription (negative number = after subscription)
+	 * @return	int								0 if OK, <>0 if KO (this function is used also by cron so only 0 is OK)
+	 */
+	public function sendReminderForExpiredSubscription($daysbeforeend=10)
+	{
+		global $conf, $langs, $mysoc, $user;
+
+		$error = 0;
+		$this->output = '';
+		$this->error='';
+
+		$blockingerrormsg = '';
+
+		/*if (empty($conf->global->MEMBER_REMINDER_EMAIL))
+		{
+			$langs->load("agenda");
+			$this->output = $langs->trans('EventRemindersByEmailNotEnabled', $langs->transnoentitiesnoconv("Adherent"));
+			return 0;
+		}*/
+
+		$now = dol_now();
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$tmp=dol_getdate($now);
+		$datetosearchfor = dol_time_plus_duree(dol_mktime(0, 0, 0, $tmp['mon'], $tmp['mday'], $tmp['year']), -1 * $daysbeforeend, 'd');
+
+		$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'adherent';
+		$sql.= " WHERE datefin = '".$this->db->idate($datetosearchfor)."'";
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $this->db->num_rows($resql);
+
+			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
+			$adherent = new Adherent($this->db);
+			$formmail = new FormMail($this->db);
+
+			$i=0;
+			$nbok = 0;
+			$nbko = 0;
+			while ($i < $num_rows)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				$adherent->fetch($obj->rowid);
+
+				if (empty($adherent->email))
+				{
+					$nbko++;
+				}
+				else
+				{
+					$adherent->fetch_thirdparty();
+
+					// Send reminder email
+					$outputlangs = new Translate('', $conf);
+					$outputlangs->setDefaultLang(empty($adherent->thirdparty->default_lang) ? $mysoc->default_lang : $adherent->thirdparty->default_lang);
+					$outputlangs->loadLangs(array("main", "members"));
+
+					$arraydefaultmessage=null;
+					$labeltouse = $conf->global->ADHERENT_EMAIL_TEMPLATE_REMIND_EXPIRATION;
+
+					if (! empty($labeltouse)) $arraydefaultmessage=$formmail->getEMailTemplate($this->db, 'member', $user, $outputlangs, 0, 1, $labeltouse);
+
+					if (! empty($labeltouse) && is_object($arraydefaultmessage) && $arraydefaultmessage->id > 0)
+					{
+						$substitutionarray=getCommonSubstitutionArray($outputlangs, 0, null, $adherent);
+						//if (is_array($adherent->thirdparty)) $substitutionarraycomp = ...
+						complete_substitutions_array($substitutionarray, $outputlangs, $adherent);
+
+						$subject = make_substitutions($arraydefaultmessage->topic, $substitutionarray, $outputlangs);
+						$msg     = make_substitutions($arraydefaultmessage->content, $substitutionarray, $outputlangs);
+						$from = $conf->global->ADHERENT_MAIL_FROM;
+						$to = $adherent->email;
+
+						include_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
+						$cmail = new CMailFile($subject, $to, $from, $msg, array(), array(), array(), '', '', 0, 1);
+						$result = $cmail->sendfile();
+						if (! $result)
+						{
+							$error++;
+							$this->error = $cmail->error;
+							$this->errors += $cmail->errors;
+							$nbko++;
+						}
+						else
+						{
+							$nbok++;
+						}
+					}
+					else
+					{
+						$blockingerrormsg="Can't find email template, defined into member module setup, to use for reminding";
+						$nbko++;
+						break;
+					}
+				}
+
+				$i++;
+			}
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return 1;
+		}
+
+		if ($blockingerrormsg)
+		{
+			$this->error = $blockingerrormsg;
+			return 1;
+		}
+		else
+		{
+			$this->output = 'Found '.($nbok + $nbko).' members to send reminder to.';
+			$this->output.= ' Send email successfuly to '.$nbok.' members';
+			if ($nbko) $this->output.= ' - Canceled for '.$nbko.' member (no email or email sending error)';
+		}
+
+		return 0;
 	}
 
 }

@@ -42,13 +42,16 @@ if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS))
     $candisableperms=($user->admin || $user->rights->user->group_advance->delete);
 }
 
-$langs->load("users");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'other'));
 
-$id=GETPOST('id', 'int');
-$action=GETPOST('action', 'alpha');
-$confirm=GETPOST('confirm', 'alpha');
-$userid=GETPOST('user', 'int');
+$id         = GETPOST('id', 'int');
+$action     = GETPOST('action', 'alpha');
+$cancel     = GETPOST('cancel', 'aZ09');
+$confirm    = GETPOST('confirm', 'alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupcard';   // To manage different context of search
+
+$userid     = GETPOST('user', 'int');
 
 // Security check
 $result = restrictedArea($user, 'user', $id, 'usergroup&usergroup', 'user');
@@ -71,8 +74,9 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array
-$contextpage=array('groupcard','globalcard');
-$hookmanager->initHooks($contextpage);
+$hookmanager->initHooks(array('groupcard','globalcard'));
+
+
 
 /**
  * Actions
@@ -83,6 +87,21 @@ $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);   
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 if (empty($reshook)) {
+
+	if ($cancel)
+	{
+		if (! empty($backtopage))
+		{
+			header("Location: ".$backtopage);
+			exit;
+		}
+		else
+		{
+			header("Location: ".DOL_URL_ROOT.'/user/group/list.php');
+			exit;
+		}
+		$action='';
+	}
 
 	// Action remove group
 	if ($action == 'confirm_delete' && $confirm == "yes")
@@ -110,9 +129,9 @@ if (empty($reshook)) {
 				setEventMessages($langs->trans("NameNotDefined"), null, 'errors');
 				$action="create";       // Go back to create page
 			} else {
-				$object->nom	= trim($_POST["nom"]);	// For backward compatibility
-				$object->name	= trim($_POST["nom"]);
-				$object->note	= trim($_POST["note"]);
+				$object->name	= trim(GETPOST("nom",'nohtml'));
+				$object->nom	= $object->name;	// For backward compatibility
+				$object->note	= trim(GETPOST("note",'none'));
 
 				// Fill array 'array_options' with data from add form
 				$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -193,9 +212,9 @@ if (empty($reshook)) {
 
 			$object->oldcopy = clone $object;
 
-			$object->name	= trim($_POST["group"]);
+			$object->name	= trim(GETPOST("group",'nohtml'));
 			$object->nom	= $object->name;			// For backward compatibility
-			$object->note	= dol_htmlcleanlastbr($_POST["note"]);
+			$object->note	= dol_htmlcleanlastbr(GETPOST("note",'none'));
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels,$object);
@@ -258,7 +277,7 @@ if ($action == 'create')
 
 	print "<tr>";
 	print '<td class="fieldrequired titlefield">'.$langs->trans("Name").'</td>';
-	print '<td><input type="text" id="nom" name="nom" value="'.GETPOST('nom','alpha').'"></td></tr>';
+	print '<td><input type="text" id="nom" name="nom" value="'.dol_escape_htmltag(GETPOST('nom','nohtml')).'"></td></tr>';
 
 	// Multicompany
 	if (! empty($conf->multicompany->enabled) && is_object($mc))
@@ -285,7 +304,7 @@ if ($action == 'create')
     $parameters=array('object' => $object, 'colspan' => ' colspan="2"');
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    if (empty($reshook))
     {
 		print $object->showOptionals($extrafields,'edit');
     }
@@ -294,7 +313,11 @@ if ($action == 'create')
 
     dol_fiche_end();
 
-    print '<div class="center"><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></div>';
+    print '<div class="center">';
+    print '<input class="button" value="'.$langs->trans("CreateGroup").'" type="submit">';
+    print ' &nbsp; ';
+    print '<input class="button" value="'.$langs->trans("Cancel").'" name="cancel" type="submit">';
+    print '</div>';
 
     print "</form>";
 }
@@ -309,8 +332,6 @@ else
 {
     if ($id)
     {
-        $object->fetch($id);
-
         $head = group_prepare_head($object);
         $title = $langs->trans("Group");
 
@@ -330,7 +351,7 @@ else
 		{
 			dol_fiche_head($head, 'group', $title, -1, 'group');
 
-			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/index.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
+			$linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 			dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
@@ -343,7 +364,7 @@ else
             if (! empty($conf->mutlicompany->enabled))
             {
     			print '<tr><td class="titlefield">'.$langs->trans("Name").'</td>';
-    			print '<td class="valeur">'.$object->name;
+    			print '<td class="valeur">'.dol_escape_htmltag($object->name);
     			if (empty($object->entity))
     			{
     				print img_picto($langs->trans("GlobalGroup"),'redstar');
@@ -356,7 +377,7 @@ else
 			{
 				$mc->getInfo($object->entity);
 				print "<tr>".'<td class="titlefield">'.$langs->trans("Entity").'</td>';
-				print '<td class="valeur">'.$mc->label;
+				print '<td class="valeur">'.dol_escape_htmltag($mc->label);
 				print "</td></tr>\n";
 			}
 
@@ -460,7 +481,7 @@ else
 						if (! empty($user->admin))
 						{
 							print '<a href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=removeuser&amp;user='.$useringroup->id.'">';
-							print img_delete($langs->trans("RemoveFromGroup"));
+							print img_picto($langs->trans("RemoveFromGroup"), 'unlink');
 							print '</a>';
 						}
 						else
@@ -490,7 +511,7 @@ else
 	        $genallowed = $user->rights->user->user->creer;
 	        $delallowed = $user->rights->user->user->supprimer;
 
-	        $somethingshown = $formfile->show_documents('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
+	        $somethingshown = $formfile->showdocuments('usergroup', $filename, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', 0, '', $soc->default_lang);
 
 	        // Show links to link elements
 	        $linktoelem = $form->showLinkToObjectBlock($object, null, null);
@@ -520,7 +541,7 @@ else
 
             print '<table class="border" width="100%">';
             print '<tr><td class="titlefield fieldrequired">'.$langs->trans("Name").'</td>';
-            print '<td class="valeur"><input size="15" type="text" name="group" value="'.$object->name.'">';
+            print '<td class="valeur"><input class="minwidth300" type="text" name="group" value="'.dol_escape_htmltag($object->name).'">';
             print "</td></tr>\n";
 
             // Multicompany
@@ -549,7 +570,7 @@ else
             $parameters=array();
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            if (empty($reshook))
             {
 				print $object->showOptionals($extrafields,'edit');
             }

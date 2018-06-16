@@ -32,11 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/exports/class/export.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/export/modules_export.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("exports");
-$langs->load("other");
-$langs->load("users");
-$langs->load("companies");
-$langs->load("projects");
+// Load translation files required by the page
+$langs->loadlangs(array('exports', 'other', 'users', 'companies', 'projects'));
 
 // Everybody should be able to go on this page
 //if (! $user->admin)
@@ -63,7 +60,8 @@ $entitytoicon = array(
 	'product'      => 'product',
     'virtualproduct'=>'product',
 	'subproduct'   => 'product',
-    'warehouse'    => 'stock',
+	'product_supplier_ref'      => 'product',
+	'warehouse'    => 'stock',
 	'batch'        => 'stock',
 	'stockbatch'   => 'stock',
 	'category'     => 'category',
@@ -99,7 +97,8 @@ $entitytolang = array(
 	'product'      => 'Product',
 	'virtualproduct'  => 'AssociatedProducts',
 	'subproduct'      => 'SubProduct',
-    'service'      => 'Service',
+	'product_supplier_ref'      => 'SupplierPrices',
+	'service'      => 'Service',
     'stock'        => 'Stock',
 	'movement'	   => 'StockMovement',
 	'batch'        => 'Batch',

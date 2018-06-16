@@ -27,8 +27,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
-$langs->load("stocks");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array('stocks', 'productbatch'));
 
 // Security check
 $result=restrictedArea($user,'stock');
@@ -86,7 +86,6 @@ if ($result)
     {
         $entrepot=new Entrepot($db);
 
-        $var=True;
         while ($i < $num)
         {
             $objp = $db->fetch_object($result);

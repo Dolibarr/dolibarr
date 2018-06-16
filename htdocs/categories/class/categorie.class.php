@@ -338,28 +338,23 @@ class Categorie extends CommonObject
 
 				$action='create';
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO the hook duplicates the trigger !!
-				$hookmanager->initHooks(array('HookModuleNamedao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
-                // Call trigger
-                $result=$this->call_trigger('CATEGORY_CREATE',$user);
-                if ($result < 0) { $error++; }
-                // End call triggers
+				if (! $error)
+				{
+	                // Call trigger
+    	            $result=$this->call_trigger('CATEGORY_CREATE',$user);
+        	        if ($result < 0) { $error++; }
+            	    // End call triggers
+				}
 
                 if ( ! $error )
                 {
@@ -432,28 +427,23 @@ class Categorie extends CommonObject
 		{
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
-			// TODO the hook duplicates the trigger !!
-			$hookmanager->initHooks(array('HookCategorydao'));
-			$parameters=array();
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
-            // Call trigger
-            $result=$this->call_trigger('CATEGORY_MODIFY',$user);
-            if ($result < 0) { $error++; $this->db->rollback(); return -1; }
-            // End call triggers
+			if (! $error)
+			{
+	            // Call trigger
+    	        $result=$this->call_trigger('CATEGORY_MODIFY',$user);
+        	    if ($result < 0) { $error++; $this->db->rollback(); return -1; }
+            	// End call triggers
+			}
 
 			$this->db->commit();
 
@@ -653,18 +643,6 @@ class Categorie extends CommonObject
 
 		if ($this->id == -1) return -2;
 
-		// For backward compatibility
-		if ($type == 'societe')
-		{
-			$type = 'customer';
-			dol_syslog(get_class($this) . "::add_type(): type 'societe' is deprecated, please use 'customer' instead",	LOG_WARNING);
-		}
-		elseif ($type == 'fournisseur')
-		{
-			$type = 'supplier';
-			dol_syslog(get_class($this) . "::add_type(): type 'fournisseur' is deprecated, please use 'supplier' instead", LOG_WARNING);
-		}
-
         $this->db->begin();
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "categorie_" . $this->MAP_CAT_TABLE[$type];
@@ -718,7 +696,6 @@ class Categorie extends CommonObject
 
 
             // Call trigger
-			$this->linkto=$obj;						// Deprecated. Save object we want to link category to into category instance to provide information to trigger
 			$this->context=array('linkto'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
 			$result=$this->call_trigger('CATEGORY_LINK',$user);
             if ($result < 0) { $error++; }
@@ -784,11 +761,9 @@ class Categorie extends CommonObject
 		dol_syslog(get_class($this).'::del_type', LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
-			// Save object we want to unlink category off into category instance to provide information to trigger
-			$this->unlinkoff=$obj;
-
             // Call trigger
-            $result=$this->call_trigger('CATEGORY_UNLINK',$user);
+			$this->context=array('unlinkoff'=>$obj);	// Save object we want to link category to into category instance to provide information to trigger
+			$result=$this->call_trigger('CATEGORY_UNLINK',$user);
             if ($result < 0) { $error++; }
             // End call triggers
 
@@ -918,23 +893,22 @@ class Categorie extends CommonObject
 		$sql.= ' AND s.rowid = sub.fk_categorie';
 		$sql.= ' AND sub.'.$subcol_name.' = '.$id;
 
+		$sql.= $this->db->order($sortfield, $sortorder);
+
+		$offset = 0;
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{
 			$result = $this->db->query($sql);
 			$nbtotalofrecords = $this->db->num_rows($result);
-		}
-
-		$sql.= $this->db->order($sortfield, $sortorder);
-		if ($limit)	{
-			if ($page < 0)
+			if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
 			{
 				$page = 0;
+				$offset = 0;
 			}
-			$offset = $limit * $page;
-
-			$sql.= $this->db->plimit($limit + 1, $offset);
 		}
+
+		$sql.= $this->db->plimit($limit + 1, $offset);
 
 		$result = $this->db->query($sql);
 		if ($result)
@@ -1204,6 +1178,8 @@ class Categorie extends CommonObject
 	 */
 	function get_all_categories($type=null, $parent=false)
 	{
+		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
+
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
 		$sql.= " WHERE entity IN (".getEntity('category').")";
 		if (! is_null($type))
@@ -1222,30 +1198,6 @@ class Categorie extends CommonObject
 				$cats[$rec['rowid']] = $cat;
 			}
 			return $cats;
-		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
-	 * 	Returns total number of categories
-	 *
-	 *	@return		int		Number of categories
-	 *	@deprecated function not used ?
-	 */
-	function get_nb_categories()
-	{
-		$sql = "SELECT count(rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
-		$sql.= " WHERE entity IN (".getEntity('category').")";
-		$res = $this->db->query($sql);
-		if ($res)
-		{
-			$res = $this->db->fetch_array($res);
-			return $res[0];
 		}
 		else
 		{

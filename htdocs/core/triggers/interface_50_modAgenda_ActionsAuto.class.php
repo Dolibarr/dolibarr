@@ -760,7 +760,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
             $langs->load("projects");
 
             if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
-            $object->actionmsg=$langs->transnoentities("ProjectModifieddInDolibarr",$object->ref);
+            $object->actionmsg=$langs->transnoentities("ProjectModifiedInDolibarr",$object->ref);
             $object->actionmsg.="\n".$langs->transnoentities("Task").': '.$object->ref;
 
             $object->sendtoid=0;
@@ -809,7 +809,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    $langs->load("other");
 
 		    if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities($action."InDolibarr",$object->ref);
-		    $object->actionmsg=$langs->transnoentities($action."InDolibarr",$object->ref);
+		    if (empty($object->actionmsg))  $object->actionmsg=$langs->transnoentities($action."InDolibarr",$object->ref);
 
 		    $object->sendtoid=0;
 		}
@@ -888,6 +888,10 @@ class InterfaceActionsAuto extends DolibarrTriggers
 
 		$actioncomm->fk_element  = $elementid;
 		$actioncomm->elementtype = $elementtype;
+
+		if (property_exists($object,'sendtouserid') && is_array($object->sendtouserid) && count($object->sendtouserid)>0) {
+			$actioncomm->userassigned=$object->sendtouserid;
+		}
 
 		$ret=$actioncomm->create($user);       // User creating action
 

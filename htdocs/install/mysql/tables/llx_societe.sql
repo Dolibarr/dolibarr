@@ -78,6 +78,7 @@ create table llx_societe
   customer_rate            real           DEFAULT 0,            		-- taux fiabilite client (0 a 1)
   supplier_rate            real           DEFAULT 0,            		-- taux fiabilite fournisseur (0 a 1)
   remise_client            real           DEFAULT 0,            		-- remise systematique pour le client
+  remise_supplier          real           DEFAULT 0,            		-- remise systematique auprès du fournisseur
   mode_reglement           tinyint,                             		-- mode de reglement
   cond_reglement           tinyint,                             		-- condition de reglement
   mode_reglement_supplier  tinyint,                             		-- mode de reglement fournisseur

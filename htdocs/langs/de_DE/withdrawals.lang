@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Bestellung mit Zahlart Lastschrift 
 SuppliersStandingOrdersArea=Bereich Bankeinzug
-StandingOrders=Bestellungen mit Zahlart Lastschrift 
-StandingOrder=Bestellung mit Zahlart Lastschrift 
+StandingOrdersPayment=Bestellungen mit Zahlart Lastschrift 
+StandingOrderPayment=Lastschrift
 NewStandingOrder=Neue Bestellung mit Zahlart Lastschrift 
 StandingOrderToProcess=Zu bearbeiten
 WithdrawalsReceipts=Lastschriften
@@ -78,7 +78,7 @@ ThisWillAlsoAddPaymentOnInvoice=This will also record payments to invoices and w
 StatisticsByLineStatus=Statistiken nach Statuszeilen
 RUM=UMR
 RUMLong=Eindeutige Mandatsreferenz
-RUMWillBeGenerated=UMR number will be generated once bank account information are saved
+RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved
 WithdrawMode=Lastschriftmodus (FRST oder RECUR)
 WithdrawRequestAmount=Lastschrifteinzug Einzugs Betrag:
 WithdrawRequestErrorNilAmount=Unable to create direct debit request for empty amount.
@@ -98,6 +98,10 @@ ModeFRST=Einmalzahlung
 PleaseCheckOne=Bitte prüfen sie nur eine
 DirectDebitOrderCreated=Lastschrift %s erstellt
 AmountRequested=angeforderter Betrag
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Execution date
+CreateForSepa=Create direct debit file
 
 ### Notifications
 InfoCreditSubject=Zahlung des Lastschrifteinzug %s an die Bank

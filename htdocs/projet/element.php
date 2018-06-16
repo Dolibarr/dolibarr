@@ -53,10 +53,8 @@ if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/s
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 
-$langs->load("projects");
-$langs->load("companies");
-$langs->load("suppliers");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
 if (! empty($conf->facture->enabled))  	    $langs->load("bills");
 if (! empty($conf->commande->enabled)) 	    $langs->load("orders");
 if (! empty($conf->propal->enabled))   	    $langs->load("propal");
@@ -146,7 +144,7 @@ $morehtmlref.='</div>';
 if (! $user->rights->projet->all->lire)
 {
     $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
-    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
+    $object->next_prev_filter=" te.rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 }
 
 dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
@@ -1137,9 +1135,12 @@ foreach ($listofreferent as $key => $value)
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
-		else // error
+		else
 		{
-			print $elementarray;
+			if (! is_array($elementarray))	// error
+			{
+				print $elementarray;
+			}
 		}
 		print "</table>";
 		print "<br>\n";

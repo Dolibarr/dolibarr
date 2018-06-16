@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (!$user->admin)
 	accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("supplier_proposal");
+	// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'supplier_proposal'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -91,10 +90,8 @@ print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
-$var=True;
 foreach($extrafields->attribute_type as $key => $value)
 {
-
     print '<tr class="oddeven">';
     print "<td>".$extrafields->attribute_label[$key]."</td>\n";
     print "<td>".$key."</td>\n";

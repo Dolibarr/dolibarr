@@ -332,7 +332,7 @@ class Account extends CommonObject
 	 *      @param  int         $fk_bank    To search using bank transaction id
 	 *      @param  int         $url_id     To search using link to
 	 *      @param  string      $type       To search using type
-	 *      @return array|-1                Array of links or -1 on error
+	 *      @return array|-1                Array of links array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> ) or -1 on error
 	 */
 	function get_url($fk_bank='', $url_id='', $type='')
 	{
@@ -395,9 +395,10 @@ class Account extends CommonObject
 	 *  @param	string		$emetteur		Name of cheque writer
 	 *  @param	string		$banque			Bank of cheque writer
 	 *  @param	string		$accountancycode	When we record a free bank entry, we must provide accounting account if accountancy module is on.
+	 *  @param	int			$datev			Date value
 	 *  @return	int							Rowid of added entry, <0 if KO
 	 */
-	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='')
+	function addline($date, $oper, $label, $amount, $num_chq, $categorie, User $user, $emetteur='',$banque='', $accountancycode='', $datev=null)
 	{
 		// Deprecatîon warning
 		if (is_numeric($oper)) {
@@ -447,7 +448,7 @@ class Account extends CommonObject
 
 		$this->db->begin();
 
-		$datev = $date;
+		if (is_null($datev) || empty($datev)) $datev = $date;
 
 		$accline = new AccountLine($this->db);
 		$accline->datec = $now;
@@ -505,9 +506,11 @@ class Account extends CommonObject
 	 *  @param  int     $notrigger  1=Disable triggers
 	 *  @return int        			< 0 if KO, > 0 if OK
 	 */
-	function create(User $user = null, $notrigger=0)
+	function create(User $user, $notrigger=0)
 	{
 		global $langs,$conf, $hookmanager;
+
+		$error=0;
 
 		// Clean parameters
 		if (! $this->min_allowed) $this->min_allowed=0;
@@ -668,7 +671,7 @@ class Account extends CommonObject
 	 *      @param  int     $notrigger  1=Disable triggers
 	 *		@return	int					<0 if KO, >0 if OK
 	 */
-	function update(User $user = null, $notrigger = 0)
+	function update(User $user, $notrigger = 0)
 	{
 		global $langs,$conf, $hookmanager;
 
@@ -1135,6 +1138,8 @@ class Account extends CommonObject
 	 */
 	function solde($option=0)
 	{
+		$solde=0;
+
 		$sql = "SELECT sum(amount) as amount";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql.= " WHERE fk_account = ".$this->id;
@@ -1149,8 +1154,13 @@ class Account extends CommonObject
 				$solde = $obj->amount;
 			}
 			$this->db->free($resql);
-			return $solde;
+		} else {
+			$this->errors[]=$this->db->lasterror;
+			return -1;
 		}
+
+		return $solde;
+
 	}
 
 	/**
@@ -1593,7 +1603,7 @@ class Account extends CommonObject
 		$this->code_banque     = '123';
 		$this->code_guichet    = '456';
 		$this->number          = 'ABC12345';
-		$this->cle_rib         = 50;
+		$this->cle_rib         = '50';
 		$this->bic             = 'AA12';
 		$this->iban            = 'FR999999999';
 		$this->domiciliation   = 'My bank address';
@@ -1904,7 +1914,7 @@ class AccountLine extends CommonObject
 	 */
 	function update_conciliation(User $user, $cat)
 	{
-		global $conf;
+		global $conf,$langs;
 
 		$this->db->begin();
 
@@ -2132,9 +2142,10 @@ class AccountLine extends CommonObject
 	 *		@param	int		$withpicto		0=No picto, 1=Include picto into link, 2=Only picto
 	 *		@param	int		$maxlen			Longueur max libelle
 	 *		@param	string	$option			Option ('showall')
+	 * 		@param	int     $notooltip		1=Disable tooltip
 	 *		@return	string					Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$maxlen=0,$option='')
+	function getNomUrl($withpicto=0,$maxlen=0,$option='',$notooltip=0)
 	{
 		global $langs;
 

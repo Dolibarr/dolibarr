@@ -27,8 +27,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT .'/comm/mailing/class/mailing.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("commercial");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('commercial', 'orders'));
 
 
 // Security check
@@ -52,7 +52,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 //if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 //{
     // Recherche emails
-    $var=false;
     print '<form method="post" action="'.DOL_URL_ROOT.'/comm/mailing/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -62,7 +61,7 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
     print '<td rowspan="2"><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
     print '<tr class="oddeven"><td class="nowrap">';
     print $langs->trans("Other").':</td><td><input type="text" class="flat inputsearch" name="sall"></td>';
-    
+
     print "</table></form><br>\n";
 //}
 
@@ -74,7 +73,6 @@ print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("TargetsStatistic
 $dir=DOL_DOCUMENT_ROOT."/core/modules/mailings";
 $handle=opendir($dir);
 
-$var=True;
 if (is_resource($handle))
 {
     while (($file = readdir($handle))!==false)
@@ -106,8 +104,6 @@ if (is_resource($handle))
                 // Si le module mailing est qualifi�
                 if ($qualified)
                 {
-                    $var = !$var;
-
                     foreach ($mailmodule->getSqlArrayForStats() as $sql)
                     {
                         print '<tr class="oddeven">';
@@ -169,14 +165,12 @@ if ($result)
 
   $num = $db->num_rows($result);
   if ($num > 0)
-    {
-      $var = true;
+  {
       $i = 0;
 
-      while ($i < $num )
+    while ($i < $num )
 	{
 	  $obj = $db->fetch_object($result);
-	  
 
 	  print '<tr class="oddeven">';
 	  print '<td class="nowrap"><a href="card.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowEMail"),"email").' '.$obj->rowid.'</a></td>';

@@ -33,6 +33,7 @@ PropalStatusSigned=Signed (needs billing)
 PropalStatusNotSigned=Not signed (closed)
 PropalStatusBilled=Виставлений
 PropalStatusDraftShort=Проект
+PropalStatusValidatedShort=Підтверджений
 PropalStatusClosedShort=Зачинено
 PropalStatusSignedShort=Signed
 PropalStatusNotSignedShort=Not signed

@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once './lib/replenishment.lib.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->societe_id) {
@@ -65,7 +64,7 @@ $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (!$sortfield) {
@@ -158,6 +157,8 @@ if ($action == 'order' && isset($_POST['valid']))
 	                    $line->total_ttc = $line->total_ht + $line->total_tva;
 						$line->remise_percent = $obj->remise_percent;
 	                    $line->ref_fourn = $obj->ref_fourn;
+						$line->type = $product->type;
+						$line->fk_unit = $product->fk_unit;
 	                    $suppliers[$obj->fk_soc]['lines'][] = $line;
                 	}
                 }
@@ -202,7 +203,13 @@ if ($action == 'order' && isset($_POST['valid']))
                         $line->remise_percent,
                         'HT',
                         0,
-                        $line->info_bits
+                        $line->type,
+                        0,
+						false,
+						null,
+						null,
+						0,
+						$line->fk_unit
                     );
                 }
                 if ($result < 0) {

@@ -235,7 +235,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
 	$sortfield = GETPOST("sortfield", 'alpha');
 	$sortorder = GETPOST("sortorder", 'alpha');
-    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+    $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 	$page = GETPOST("page", 'int');
 	if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 	$offset = $limit * $page;
@@ -452,11 +452,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 
-			$var = True;
-
 			foreach ( $prodcustprice->lines as $line ) {
 
-				print '<tr'. $bc[$var].'>';
+				print '<tr class="oddeven">';
 				$staticprod = new Product($db);
 				$staticprod->fetch($line->fk_product);
 
@@ -558,11 +556,9 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 
         if (count($prodcustprice->lines) > 0)
         {
-            $var = False;
-
             foreach ($prodcustprice->lines as $line)
             {
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
 
                 $staticprod = new Product($db);
                 $staticprod->fetch($line->fk_product);

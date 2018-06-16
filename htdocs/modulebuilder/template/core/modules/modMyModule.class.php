@@ -95,12 +95,13 @@ class modMyModule extends DolibarrModules
 									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
 									'css' => array('/mymodule/css/mymodule.css.php'),	// Set this to relative path of css file if module has its own css file
 	 								'js' => array('/mymodule/js/mymodule.js.php'),          // Set this to relative path of js file if module must load a js on all pages
-									'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+									'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0'), 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+									'moduleforexternal' => 0							// Set this to 1 if feature of module are opened to external users
 		                        );
 
 		// Data directories to create when module is enabled.
 		// Example: this->dirs = array("/mymodule/temp","/mymodule/subdir");
-		$this->dirs = array();
+		$this->dirs = array("/mymodule/temp");
 
 		// Config pages. Put here list of php page, stored into mymodule/admin directory, to use to setup module.
 		$this->config_page_url = array("setup.php@mymodule");
@@ -108,7 +109,7 @@ class modMyModule extends DolibarrModules
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
 		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->requiredby = array();	// List of module class names to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->langfiles = array("mymodule@mymodule");
 		$this->phpmin = array(5,3);					// Minimum version of PHP required by module
@@ -127,6 +128,11 @@ class modMyModule extends DolibarrModules
 			1=>array('MYMODULE_MYCONSTANT', 'chaine', 'avalue', 'This is a constant to add', 1, 'allentities', 1)
 		);
 
+		// Some keys to add into the overwriting translation tables
+		/*$this->overwrite_translation = array(
+			'en_US:ParentCompany'=>'Parent company or reseller',
+			'fr_FR:ParentCompany'=>'Maison mère ou revendeur'
+		)*/
 
 		if (! isset($conf->mymodule) || ! isset($conf->mymodule->enabled))
 		{
@@ -308,7 +314,8 @@ class modMyModule extends DolibarrModules
 	 */
 	public function init($options='')
 	{
-		$this->_load_tables('/mymodule/sql/');
+		$result=$this->_load_tables('/mymodule/sql/');
+		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

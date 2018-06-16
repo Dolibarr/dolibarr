@@ -53,6 +53,7 @@ else    // For no ajax call
 	if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 }
 
+// Load translation files required by the page
 $langs->load("ecm");
 
 // Define fullpathselecteddir.

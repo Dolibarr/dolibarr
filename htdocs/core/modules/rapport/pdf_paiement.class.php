@@ -187,7 +187,7 @@ class pdf_paiement
 				if (! empty($conf->banque->enabled))
 					$sql.= ", ba.ref as bankaccount";
 				$sql.= ", p.rowid as prowid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (" . getEntity('c_paiement').")";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql.= ", ".MAIN_DB_PREFIX."facture as f,";
 				$sql.= " ".MAIN_DB_PREFIX."paiement_facture as pf,";
 				if (! empty($conf->banque->enabled))
@@ -218,7 +218,7 @@ class pdf_paiement
 				if (! empty($conf->banque->enabled))
 					$sql.= ", ba.ref as bankaccount";
 				$sql.= ", p.rowid as prowid";
-				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id AND c.entity IN (".getEntity('c_paiement').")";
+				$sql.= " FROM ".MAIN_DB_PREFIX."paiementfourn as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
 				$sql.= ", ".MAIN_DB_PREFIX."facture_fourn as f,";
 				$sql.= " ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf,";
 				if (! empty($conf->banque->enabled))
@@ -248,12 +248,10 @@ class pdf_paiement
 		{
 			$num = $this->db->num_rows($result);
 			$i = 0;
-			$var=True;
 
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-
 
 				$lines[$i][0] = $objp->facnumber;
 				$lines[$i][1] = dol_print_date($this->db->jdate($objp->dp),"day",false,$outputlangs,true);

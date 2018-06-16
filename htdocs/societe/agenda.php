@@ -159,12 +159,14 @@ if ($socid > 0)
 	//print '</div>';
 
 
-	$buttoncreate='';
+	$newcardbutton='';
     if (! empty($conf->agenda->enabled))
     {
     	if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     	{
-        	$buttoncreate.='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'">'.$langs->trans("AddAction").'</a>';
+        	$newcardbutton.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+        	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        	$newcardbutton.= '</a>';
     	}
     }
 
@@ -176,8 +178,8 @@ if ($socid > 0)
         if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
         if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
 
-		print load_fiche_titre($langs->trans("ActionsOnCompany"), $buttoncreate, '');
-        //print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $buttoncreate, '', 0, 1, 1);
+		print load_fiche_titre($langs->trans("ActionsOnCompany"), $newcardbutton, '');
+        //print_barre_liste($langs->trans("ActionsOnCompany"), 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, '', 0, -1, '', 0, $newcardbutton, '', 0, 1, 1);
 
         // List of all actions
 		$filters=array();
