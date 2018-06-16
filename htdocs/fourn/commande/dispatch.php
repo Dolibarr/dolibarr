@@ -626,11 +626,11 @@ if ($id > 0 || ! empty($ref)) {
 							print '<td>';
 							print '<input type="text" class="inputlotnumber" id="lot_number' . $suffix . '" name="lot_number' . $suffix . '" size="40" value="' . GETPOST('lot_number' . $suffix) . '">';
 							print '</td>';
-							print '<td>';
+							print '<td class="nowraponall">';
 							$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc' . $suffix . 'month'), GETPOST('dlc' . $suffix . 'day'), GETPOST('dlc' . $suffix . 'year'));
 							$form->select_date($dlcdatesuffix, 'dlc' . $suffix, '', '', 1, "");
 							print '</td>';
-							print '<td>';
+							print '<td class="nowraponall">';
 							$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo' . $suffix . 'month'), GETPOST('dluo' . $suffix . 'day'), GETPOST('dluo' . $suffix . 'year'));
 							$form->select_date($dluodatesuffix, 'dluo' . $suffix, '', '', 1, "");
 							print '</td>';
@@ -685,9 +685,9 @@ if ($id > 0 || ! empty($ref)) {
 						// Warehouse
 						print '<td align="right">';
 						if (count($listwarehouses) > 1) {
-							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 1, 0, $objp->fk_product, '', 1);
+							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
 						} elseif (count($listwarehouses) == 1) {
-							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 0, 0, $objp->fk_product, '', 1);
+							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
 						} else {
 							$langs->load("errors");
 							print $langs->trans("ErrorNoWarehouseDefined");
@@ -852,7 +852,7 @@ if ($id > 0 || ! empty($ref)) {
 					print '</td>';
 				}
 				// date
-				print '<td>' . dol_print_date($objp->datec) . '</td>';
+				print '<td>' . dol_print_date($objp->datec, "dayhour") . '</td>';
 
 				print "</tr>\n";
 

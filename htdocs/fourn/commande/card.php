@@ -2517,7 +2517,8 @@ elseif (! empty($object->id))
 				print '<table class="noborder" width="100%">';
 				//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 				print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-				print $form->select_date('','',1,1,'',"commande",1,1,1);
+				$datepreselected = dol_now();
+				print $form->select_date($datepreselected,'',1,1,'',"commande",1,1,1);
 				print "</td></tr>\n";
 
 				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
