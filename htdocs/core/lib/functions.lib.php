@@ -1387,17 +1387,20 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick"))
 				{
 					$objectref = dol_sanitizeFileName($object->ref);
-					$dir_output = $conf->$modulepart->multidir_output[$entity] . "/";
+					$dir_output = (empty($conf->$modulepart->multidir_output[$entity]) ? $conf->$modulepart->dir_output : $conf->$modulepart->multidir_output[$entity]) . "/";
 					if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
 					{
-						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart).$objectref;		// the objectref dir is not included into get_exdir when used with level=2, so we add it here
+						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart);
+						$subdir.= ((! empty($subdir) && ! preg_match('/\/$/',$subdir))?'/':'').$objectref;		// the objectref dir is not included into get_exdir when used with level=2, so we add it at end
 					}
 					else
 					{
 						$subdir = get_exdir($object->id, 0, 0, 1, $object, $modulepart);
 					}
+					if (empty($subdir)) $subdir = 'errorgettingsubdirofobject';	// Protection to avoid to return empty path
 
 					$filepath = $dir_output . $subdir . "/";
+
 					$file = $filepath . $objectref . ".pdf";
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
 
@@ -5331,7 +5334,9 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
-		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment','contract','expensereport')))
+		//var_dump($modulepart);
+		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
+			'supplier_order','supplier_proposal','shipment','contract','expensereport')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
