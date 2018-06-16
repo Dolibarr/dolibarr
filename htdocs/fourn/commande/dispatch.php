@@ -624,7 +624,7 @@ if ($id > 0 || ! empty($ref)) {
 							print '</td>';
 
 							print '<td>';
-							print '<input type="text" class="inputlotnumber" id="lot_number' . $suffix . '" name="lot_number' . $suffix . '" size="40" value="' . GETPOST('lot_number' . $suffix) . '">';
+							print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number' . $suffix . '" name="lot_number' . $suffix . '" value="' . GETPOST('lot_number' . $suffix) . '">';
 							print '</td>';
 							print '<td class="nowraponall">';
 							$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc' . $suffix . 'month'), GETPOST('dlc' . $suffix . 'day'), GETPOST('dlc' . $suffix . 'year'));
@@ -665,7 +665,7 @@ if ($id > 0 || ! empty($ref)) {
 
 						// Qty to dispatch
 						print '<td align="right">';
-						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" size="8" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
+						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" class="width50 right" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
 						print '</td>';
 
                         print '<td>';
