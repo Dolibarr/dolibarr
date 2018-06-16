@@ -65,7 +65,7 @@ function addDispatchLine(index, type, mode)
 		
 		//remove cloned select2 with duplicate id.
 		$("#s2id_entrepot_"+nbrTrs+'_'+index).detach();			// old way to find duplicated select2 component
-		$(".csswarehouse_"+nbrTrs+"_"+index+":first-child").parents("span.selection").parents(".select2").detach();
+		$(".csswarehouse_"+nbrTrs+"_"+index+":first-child").parent("span.selection").parent(".select2").detach();
 		
 		/*  Suffix of lines are:  _ trs.length _ index  */
 		$("#qty_"+nbrTrs+"_"+index).focus();
