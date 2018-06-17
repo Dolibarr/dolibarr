@@ -327,8 +327,7 @@ print_liste_field_titre(
 	"",
 	'align="center" width="20%"'
 	);
-print "</tr>\n";
-$var=true;
+print "</tr>\n"; 
 
 if (count($amount)) {
     $arrayforsort=$name;

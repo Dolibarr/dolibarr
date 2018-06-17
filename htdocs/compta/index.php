@@ -568,10 +568,8 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		print '</tr>';
 		if ($num)
 		{
-			$var = true;
 			$total_ttc = $totalam = $total = 0;
 
-			$var=true;
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
@@ -632,7 +630,6 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$resql = $db->query($sql);
 		if ( $resql )
 		{
-			$var = false;
 			$num = $db->num_rows($resql);
 
 			print '<table class="noborder" width="100%">';
@@ -664,7 +661,6 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 					$tot_ttc+=$obj->amount;
-					$var = !$var;
 					$i++;
 				}
 
@@ -722,7 +718,6 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 	$resql = $db->query($sql);
 	if ( $resql )
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 
 		if ($num)
@@ -838,7 +833,6 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -972,7 +966,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1023,7 +1016,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$total_ttc +=  $obj->total_ttc;
 				$totalam +=  $obj->am;
 				$i++;
-				$var = !$var;
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
@@ -1057,7 +1049,6 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
-	$var = true;
 	$i = 0;
 	while ($i < $db->num_rows($resql))
 	{
