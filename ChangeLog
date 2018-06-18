@@ -22,7 +22,8 @@ Following changes may create regressions for some external modules, but were nec
 * The hook contaxt commcard has been renamed thirdpartycomm
 * The hook contaxt thirdpartycard has been renamed thirdpartycontact
 * Remove method Categorie:get_nb_categories() that was not used.
-
+* Hook getnomurltooltip provide a duplicate feature compared to hook getNomUrl so all hooks getnomurltooltip 
+  are now replaced with hook getNomUrl.
 
 
 ***** ChangeLog for 7.0.2 compared to 7.0.1 *****
