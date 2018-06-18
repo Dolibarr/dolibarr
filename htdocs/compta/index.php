@@ -313,7 +313,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-// Last modified customer invoices
+// Latest modified customer invoices
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$langs->load("boxes");
@@ -323,7 +323,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql.= ", f.date_lim_reglement as datelimite";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
-    $sql.= ", s.code_client, s.code_compta";
+    $sql.= ", s.code_client, s.code_compta, s.email";
 	$sql.= ", sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
@@ -338,7 +338,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql.=$hookmanager->resPrint;
 
 	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
-	$sql.= " s.nom, s.rowid, s.code_client, s.code_compta";
+	$sql.= " s.nom, s.rowid, s.code_client, s.code_compta, s.email";
 	$sql.= " ORDER BY f.tms DESC ";
 	$sql.= $db->plimit($max, 0);
 
@@ -374,6 +374,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 				$thirdpartystatic->id=$obj->socid;
 				$thirdpartystatic->name=$obj->name;
+				$thirdpartystatic->email=$obj->email;
 				$thirdpartystatic->client=1;
 				$thirdpartystatic->code_client = $obj->code_client;
 				//$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;

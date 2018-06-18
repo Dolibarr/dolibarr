@@ -177,7 +177,7 @@ ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
 ALTER TABLE llx_societe_rib ADD COLUMN type varchar(32) DEFAULT 'ban' after rowid;
 ALTER TABLE llx_societe_rib ADD COLUMN last_four varchar(4);
 ALTER TABLE llx_societe_rib ADD COLUMN card_type varchar(255);
-ALTER TABLE llx_societe_rib ADD COLUMN cvn varchar(255);										
+ALTER TABLE llx_societe_rib ADD COLUMN cvn varchar(255);
 ALTER TABLE llx_societe_rib ADD COLUMN exp_date_month INTEGER;
 ALTER TABLE llx_societe_rib ADD COLUMN exp_date_year INTEGER;
 ALTER TABLE llx_societe_rib ADD COLUMN country_code varchar(10);
@@ -530,3 +530,7 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 ALTER TABLE llx_expedition ADD fk_user_shipped INT(11) DEFAULT NULL;
 ALTER TABLE llx_expedition ADD date_shipped datetime DEFAULT NULL;
 
+-- New available chart of accounts
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (188, 'RO-BASE', 'Plan de conturi romanesc',    1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR03', 'Standardkontenrahmen SKR 03', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR04', 'Standardkontenrahmen SKR 04', 1);

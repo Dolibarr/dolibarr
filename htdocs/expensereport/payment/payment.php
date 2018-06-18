@@ -282,7 +282,6 @@ if ($action == 'create' || empty($action))
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	$total=0;
 	$totalrecu=0;
 

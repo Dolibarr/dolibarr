@@ -1828,9 +1828,12 @@ class SMTPs
 	{
 		$_errMsg = array();
 
-		foreach ( $this->_smtpsErrors as $_err => $_info )
+		if (is_array($this->_smtpsErrors))
 		{
-			$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+			foreach ( $this->_smtpsErrors as $_err => $_info )
+			{
+				$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+			}
 		}
 
 		return implode("\n", $_errMsg);

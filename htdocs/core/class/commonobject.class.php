@@ -1457,7 +1457,16 @@ abstract class CommonObject
 		{
 			if ($trigkey)
 			{
-				$result=$this->call_trigger($trigkey, (! empty($fuser) && is_object($fuser)) ? $fuser : $user);   // This may set this->errors
+				// call trigger with updated object values
+				if (empty($this->fields) && method_exists($this, 'fetch')) 
+				{
+					$result = $this->fetch($id);
+				} 
+				else 
+				{
+					$result = $this->fetchCommon($id);
+				}
+				if ($result >= 0) $result=$this->call_trigger($trigkey, (! empty($fuser) && is_object($fuser)) ? $fuser : $user);   // This may set this->errors
 				if ($result < 0) $error++;
 			}
 
@@ -6019,7 +6028,9 @@ abstract class CommonObject
 	 */
 	function showOptionals($extrafields, $mode='view', $params=null, $keysuffix='', $keyprefix='', $onetrtd=0)
 	{
-		global $_POST, $conf, $langs, $action;
+		global $db, $conf, $langs, $action, $form;
+
+		if (! is_object($form)) $form=new Form($db);
 
 		$out = '';
 
@@ -6128,12 +6139,12 @@ abstract class CommonObject
 
 					$labeltoshow = $langs->trans($label);
 
-					if ($extrafields->attributes[$this->table_element]['required'][$key])
-					{
-						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
-					}
-
-					$out .= '<td>'.$labeltoshow.'</td>';
+					$out .= '<td class="titlefield';
+					if ($mode != 'view' && ! empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
+					$out .= '">';
+					if (! empty($extrafields->attributes[$object->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$object->table_element]['help'][$key]);
+					else $out .= $labeltoshow;
+					$out .= '</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
 					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';

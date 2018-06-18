@@ -115,8 +115,6 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '</tr>';
 
-	$var=true;
-
 	// Current balance
 
 	print '<tr class="liste_total">';

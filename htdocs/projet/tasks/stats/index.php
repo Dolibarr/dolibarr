@@ -174,7 +174,6 @@ print '<td align="right">'.$langs->trans("NbOfTasks").'</td>';
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data_all_year as $val)
 {
 	$year = $val['year'];
@@ -182,13 +181,13 @@ foreach ($data_all_year as $val)
 	{	// If we have empty year
 		$oldyear--;
 
-		print '<tr '.$bc[$var].' height="24">';
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		print '<td align="right">0</td>';
 		print '</tr>';
 	}
 
-	print '<tr '.$bc[$var].' height="24">';
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	print '</tr>';

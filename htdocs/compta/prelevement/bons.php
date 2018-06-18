@@ -108,7 +108,7 @@ if ($result)
   $newcardbutton='';
   if ($user->rights->prelevement->bons->creer)
   {
-  	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php">'.$langs->trans('NewStandingOrder');
+  	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/prelevement/create.php"><span class="valignmiddle">'.$langs->trans('NewStandingOrder').'</span>';
   	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
   	$newcardbutton.= '</a>';
   }

@@ -73,7 +73,7 @@ $error=0;
 $now=dol_now();
 
 @set_time_limit(0);
-print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . dol_print_date($now, 'dayrfc') . " *****\n";
+print "***** ".$script_file." (".$version.") pid=".dol_getmypid()." ***** userlogin=" . $userlogin . " ***** " . dol_print_date($now, 'dayhourrfc') . " *****\n";
 
 // Check module cron is activated
 if (empty($conf->cron->enabled))

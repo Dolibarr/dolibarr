@@ -521,7 +521,7 @@ else
 
 	print $langs->trans("EMailsDesc")."<br>\n";
 	print "<br>\n";
-	
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
