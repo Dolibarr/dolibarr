@@ -80,7 +80,6 @@ class Export
 
 		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
-        $var=true;
         $i=0;
 
         // Define list of modules directories into modulesdir
@@ -594,8 +593,6 @@ class Export
 
 				// Genere ligne de titre
 				$objmodel->write_title($this->array_export_fields[$indice],$array_selected,$outputlangs,$this->array_export_TypeFields[$indice]);
-
-				$var=true;
 
 				while ($obj = $this->db->fetch_object($resql))
 				{
