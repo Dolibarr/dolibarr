@@ -197,11 +197,9 @@ class doc_generic_odt extends ModeleThirdPartyDoc
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("projects");
+        
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->societe->multidir_output[$object->entity])
 		{
@@ -282,7 +280,6 @@ class doc_generic_odt extends ModeleThirdPartyDoc
                 $result = $this->db->query($sql);
                 $num = $this->db->num_rows($result);
 
-                $var=true;
                 if ($num)
                 {
                     require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';

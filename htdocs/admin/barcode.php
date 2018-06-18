@@ -369,7 +369,6 @@ if ($conf->produit->enabled)
 	    			}
 
 	    			$modBarCode = new $file();
-	    			$var = !$var;
 
 	    			print '<tr class="oddeven">';
 	    			print '<td>'.(isset($modBarCode->name)?$modBarCode->name:$modBarCode->nom)."</td><td>\n";
