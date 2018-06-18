@@ -174,9 +174,9 @@ print '<script type="text/javascript">
  * Supplier Invoice lines
  */
 $sql = "SELECT f.rowid as facid, f.ref as facnumber, f.ref_supplier, f.libelle as invoice_label, f.datef, f.fk_soc,";
-$sql.= " l.rowid, l.fk_product, l.description, l.total_ht , l.qty, l.tva_tx, l.vat_src_code,";
+$sql.= " l.rowid, l.fk_product, l.product_type as line_type, l.description, l.total_ht , l.qty, l.tva_tx, l.vat_src_code,";
 $sql.= " aa.label, aa.account_number, ";
-$sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, co.label as country, s.tva_intra";
+$sql.= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.fk_product_type as type, co.label as country, s.tva_intra";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facture_fourn_det as l";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = l.fk_code_ventilation";
@@ -338,8 +338,8 @@ if ($result) {
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
-		$product_static->type = $objp->type;
 		$product_static->label = $objp->product_label;
+		$product_static->type = $objp->line_type;
 
 		print '<tr class="oddeven">';
 
