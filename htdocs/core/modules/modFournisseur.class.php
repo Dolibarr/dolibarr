@@ -514,8 +514,8 @@ class modFournisseur extends DolibarrModules
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company',
 			's.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','s.idprof5'=>'company','s.idprof6'=>'company','s.tva_intra'=>'company','ua1.login'=>'user',
 			'ua2.login'=>'user','fd.rowid'=>'order_line','fd.description'=>"order_line",'fd.tva_tx'=>"order_line",'fd.qty'=>"order_line",'fd.remise_percent'=>"order_line",
-			'fd.total_ht'=>"order_line",'fd.total_ttc'=>"order_line",'fd.total_tva'=>"order_line",'fd.product_type'=>'order_line','fd.fk_product'=>'product',
-			'p.ref'=>'product','fd.ref'=>'product','p.label'=>'product','project.rowid'=>'project','project.ref'=>'project','project.title'=>'project'
+			'fd.total_ht'=>"order_line",'fd.total_ttc'=>"order_line",'fd.total_tva'=>"order_line",'fd.product_type'=>'order_line','fd.ref'=>'order_line','fd.fk_product'=>'product',
+			'p.ref'=>'product','p.label'=>'product','project.rowid'=>'project','project.ref'=>'project','project.title'=>'project'
 		);
 		$this->export_dependencies_array[$r]=array('order_line'=>'fd.rowid','product'=>'fd.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 		// Add extra fields object
