@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2016  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013-2016	Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2013-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -104,19 +104,19 @@ $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search
 if (empty($action)) $action='list';
 
 // Get object canvas (By default, this is not defined, so standard usage of dolibarr)
-$canvas=GETPOST("canvas");
+/*$canvas=GETPOST("canvas");
 $objcanvas=null;
 if (! empty($canvas))
 {
 	require_once DOL_DOCUMENT_ROOT.'/core/class/canvas.class.php';
 	$objcanvas = new Canvas($db,$action);
 	$objcanvas->getCanvas('product','list',$canvas);
-}
+}*/
 
 // Security check
-if ($search_type=='0') $result=restrictedArea($user,'produit','','','','','',$objcanvas);
-else if ($search_type=='1') $result=restrictedArea($user,'service','','','','','',$objcanvas);
-else $result=restrictedArea($user,'produit|service','','','','','',$objcanvas);
+if ($search_type=='0') $result=restrictedArea($user,'produit');
+else if ($search_type=='1') $result=restrictedArea($user,'service');
+else $result=restrictedArea($user,'produit|service');
 
 // Define virtualdiffersfromphysical
 $virtualdiffersfromphysical=0;
