@@ -109,10 +109,10 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 	}
 
-	$db->begin();
-
 	if (! $error)
 	{
+		$db->begin();
+
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
 		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
 		$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
