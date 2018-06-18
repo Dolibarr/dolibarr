@@ -12,7 +12,7 @@
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014	   Ferran Marcet	 	 <fmarcet@2byte.es>
+ * Copyright (C) 2014-2018 Ferran Marcet	 	 <fmarcet@2byte.es>
  * Copyright (C) 2015-2016 Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -4408,7 +4408,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && empty($discount->id))
+				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && $object->statut > 0 && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
