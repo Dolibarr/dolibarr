@@ -507,8 +507,8 @@ class modFournisseur extends DolibarrModules
 			's.siret'=>'Text','s.ape'=>'Text','s.idprof4'=>'Text','s.idprof5'=>'Text','s.idprof6'=>'Text','s.tva_intra'=>'Text','f.ref'=>"Text",'f.ref_supplier'=>"Text",
 			'f.date_creation'=>"Date",'f.date_commande'=>"Date",'f.date_livraison'=>"Date",'f.total_ht'=>"Numeric",'f.total_ttc'=>"Numeric",'f.tva'=>"Numeric",
 			'f.fk_statut'=>'Status','f.date_approve'=>'Date','f.date_approve2'=>'Date','f.note_public'=>"Text",'f.note_private'=>"Text",'fd.description'=>"Text",
-			'fd.tva_tx'=>"Numeric",'fd.qty'=>"Numeric",'fd.remise_percent'=>"Numeric",'fd.total_ht'=>"Numeric",'fd.total_ttc'=>"Numeric",'fd.total_tva'=>"Numeric",'fd.fk_product'=>'List:product:label',
-			'fd.product_type'=>'Numeric','p.ref'=>'Text','fd.ref'=>'Text','p.label'=>'Text','project.ref'=>'Text','project.title'=>'Text'
+			'fd.tva_tx'=>"Numeric",'fd.qty'=>"Numeric",'fd.remise_percent'=>"Numeric",'fd.total_ht'=>"Numeric",'fd.total_ttc'=>"Numeric",'fd.total_tva'=>"Numeric",
+			'fd.product_type'=>'Numeric','fd.ref'=>'Text','fd.fk_product'=>'List:product:label','p.ref'=>'Text','p.label'=>'Text','project.ref'=>'Text','project.title'=>'Text'
 		);
 		$this->export_entities_array[$r]=array(
 			's.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','c.code'=>'company','s.phone'=>'company','s.siren'=>'company',
