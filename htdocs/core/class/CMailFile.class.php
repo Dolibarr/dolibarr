@@ -657,6 +657,12 @@ class CMailFile
 			}
 			else if ($this->sendmode == 'smtps')
 			{
+				if (! is_object($this->smtps))
+				{
+					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Constructor of object CMailFile was not initialized without errors.";
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					return false;
+				}
 
 				// Use SMTPS library
 				// ------------------------------------------
