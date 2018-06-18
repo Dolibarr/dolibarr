@@ -531,7 +531,6 @@ print "</tr>\n";
 $contractstatic=new Contrat($db);
 $productstatic=new Product($db);
 
-$var=true;
 $i=0;
 $totalarray=array();
 while ($i < min($num,$limit))
