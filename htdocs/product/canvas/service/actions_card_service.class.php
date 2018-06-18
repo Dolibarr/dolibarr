@@ -100,7 +100,7 @@ class ActionsCardService
 		$this->tpl['ref'] = $this->ref;
 
 		// Label
-		$this->tpl['label'] = $this->libelle;
+		$this->tpl['label'] = $this->label;
 
 		// Description
 		$this->tpl['description'] = nl2br($this->description);
