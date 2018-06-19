@@ -102,6 +102,8 @@ ALTER TABLE llx_c_type_fees ADD COLUMN type integer DEFAULT 0;
 
 ALTER TABLE llx_c_ecotaxe CHANGE COLUMN libelle label varchar(255);
 
+ALTER TABLE llx_c_field_list ADD COLUMN checked tinyint DEFAULT 0 NOT NULL AFTER search;
+
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 
 ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;
