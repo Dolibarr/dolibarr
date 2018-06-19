@@ -111,7 +111,7 @@ class modOauth extends DolibarrModules
         //                        'url'=>'/oauth/index.php',
         //                        'langs'=>'oauth',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
         //                        'position'=>300,
-        //                        'enabled'=>'$conf->oauth->enabled && $leftmenu==\'admintools\'',
+        //                        'enabled'=>'$conf->oauth->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',
         //                        'perms'=>'$user->rights->oauth->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
         //                        'target'=>'',
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both
