@@ -2393,7 +2393,7 @@ span.butAction, span.butActionDelete {
     padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
     margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
 	line-height: 20px;
-	text-align: center;
+	/* text-align: center;  New button are on right of screen */
 	vertical-align: middle;
 	cursor: pointer;
 	/* color: #ffffff !important; */
