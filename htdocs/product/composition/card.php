@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2007  Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2017  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005       Eric Seigne             <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012  Regis Houssin           <regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2006       Andre Cianfarani        <acianfa@free.fr>
  * Copyright (C) 2011-2014  Juanjo Menent           <jmenent@2byte.es>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
@@ -369,18 +369,23 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '</td>';
 
-					    $totalline=price2num($value['nb'] * ($product_fourn->fourn_unitprice * (1 - $product_fourn->fourn_remise_percent/100) - $product_fourn->fourn_remise), 'MT');
+						// For avoid a non-numeric value
+						$fourn_unitprice = (!empty($product_fourn->fourn_unitprice)?$product_fourn->fourn_unitprice:0);
+						$fourn_remise_percent = (!empty($product_fourn->fourn_remise_percent)?$product_fourn->fourn_remise_percent:0);
+						$fourn_remise = (!empty($product_fourn->fourn_remise)?$product_fourn->fourn_remise:0);
+
+					    $totalline=price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
 						$total+=$totalline;
 
 						print '<td align="right">';
-						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($product_fourn->fourn_unitprice,'','',0,0,-1,$conf->currency));
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($fourn_unitprice,'','',0,0,-1,$conf->currency));
 						print '</td>';
 
 						// Best selling price
 						$pricesell=$productstatic->price;
 						if (! empty($conf->global->PRODUIT_MULTIPRICES))
 						{
-							$pricesell='Variable';
+							//$pricesell='Variable'; FIXME A non-numeric value encountered
 						}
 						$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
 						$totalsell+=$totallinesell;
