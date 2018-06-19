@@ -2420,7 +2420,7 @@ span.butAction, span.butActionDelete {
 	font-family: <?php print $fontlist ?>;
     border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
-    text-align: center;
+    /* text-align: center; New button are on right of screen */
     cursor: pointer;
     /*color: #fff !important;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
@@ -2477,7 +2477,7 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
     display: inline-block;
-    text-align: center;
+    /* text-align: center;  New button are on right of screen */
     cursor: pointer;
     color: #999 !important;
     padding-top: 0.2em;

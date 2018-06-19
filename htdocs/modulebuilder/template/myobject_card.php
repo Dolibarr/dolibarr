@@ -69,6 +69,7 @@ $langs->loadLangs(array("mymodule@mymodule","other"));
 $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'myobjectcard';   // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
@@ -123,9 +124,9 @@ if (empty($reshook))
 	$permissiontodelete = $user->rights->mymodule->delete;
 	if (empty($backtopage)) $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).'?id=__ID__';
 	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
-	$triggermodname = 'MYMODULE_MODIFY';
+	$triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
 
-	// Actions cancel, add, update or delete
+	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Actions when printing a doc from card
@@ -249,6 +250,13 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteMyObject'), $langs->trans('ConfirmDeleteMyObject'), 'confirm_delete', '', 0, 1);
 	}
 
+	// Clone confirmation
+	if ($action == 'clone') {
+		// Create an array for form
+		$formquestion = array();
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneMyObject'), $langs->trans('ConfirmCloneMyObject', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+	}
+
 	// Confirmation of action xxxx
 	if ($action == 'xxx')
 	{
@@ -258,7 +266,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	            // 'text' => $langs->trans("ConfirmClone"),
 	            // array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 	            // array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
-	            // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
+	            // array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1))
 	    }*/
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
 	}
@@ -358,6 +366,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    // Send
             print '<a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '&action=presend&mode=init#formmailbeforetitle">' . $langs->trans('SendMail') . '</a>'."\n";
 
+            // Modify
     		if ($user->rights->mymodule->write)
     		{
     			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a>'."\n";
@@ -367,8 +376,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     			print '<a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";
     		}
 
+    		// Clone
+    		if ($user->rights->mymodule->write)
+    		{
+    			print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?id=' . $object->id . '&amp;socid=' . $object->socid . '&amp;action=clone&amp;object=order">' . $langs->trans("ToClone") . '</a></div>';
+    		}
+
     		/*
-    		if ($user->rights->mymodule->create)
+    		if ($user->rights->mymodule->write)
     		{
     			if ($object->status == 1)
     		 	{

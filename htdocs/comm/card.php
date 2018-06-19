@@ -1001,7 +1001,7 @@ if ($object->id > 0)
 		$sql.= ', f.tva as total_tva';
 		$sql.= ', f.total_ttc';
 		$sql.= ', f.datec as dc';
-		$sql.= ', f.date_last_gen';
+		$sql.= ', f.date_last_gen, f.date_when';
 		$sql.= ', f.frequency';
 		$sql.= ', f.unit_frequency';
 		$sql.= ', f.suspended as suspended';
@@ -1044,6 +1044,8 @@ if ($object->id > 0)
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
+				$invoicetemplate->date_last_gen = $objp->date_last_gen;
+				$invoicetemplate->date_when = $objp->date_when;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';

@@ -48,6 +48,7 @@ $langs->loadLangs(array("website","other"));
 $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
@@ -106,8 +107,8 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name='MYOBJECT_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
+	$trigger_name='WEBSITEACCOUNT_SENTBYMAIL';
+	$autocopy='MAIN_MAIL_AUTOCOPY_WEBSITEACCOUNT_TO';
 	$trackid='websiteaccount'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
