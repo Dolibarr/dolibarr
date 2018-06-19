@@ -29,6 +29,7 @@ create table llx_contrat
   tms						timestamp,
   datec						datetime,                   	-- creation date
   date_contrat				datetime,
+  date_validation			datetime,
   statut					smallint DEFAULT 0,				-- not used. deprecated
   mise_en_service			datetime,
   fin_validite				datetime,

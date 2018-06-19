@@ -9,7 +9,6 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet			<fmarcet@2byte.es>
- * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -428,6 +427,7 @@ class Contrat extends CommonObject
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET ref = '".$num."', statut = 1";
 			//$sql.= ", fk_user_valid = ".$user->id.", date_valid = '".$this->db->idate($now)."'";
+			$sql.= ", date_validation = '".$this->db->idate($now)."'";
 			$sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
 			dol_syslog(get_class($this)."::validate", LOG_DEBUG);
@@ -533,6 +533,7 @@ class Contrat extends CommonObject
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
 		//$sql.= ", fk_user_valid = null, date_valid = null";
+		$sql.= ", date_validation = null";
 		$sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
 
 		dol_syslog(get_class($this)."::validate", LOG_DEBUG);
@@ -594,6 +595,7 @@ class Contrat extends CommonObject
 		$sql.= " fk_projet,";
 		$sql.= " fk_commercial_signature, fk_commercial_suivi,";
 		$sql.= " note_private, note_public, model_pdf, extraparams";
+		$sql.= " tms as date_modification, date_validation";
 		$sql.= " FROM ".MAIN_DB_PREFIX."contrat";
 		if (! $id) $sql.=" WHERE entity IN (".getEntity('contract').")";
 		else $sql.= " WHERE rowid=".$id;
@@ -631,6 +633,8 @@ class Contrat extends CommonObject
 
 				$this->fin_validite				= $this->db->jdate($result["fin_validite"]);
 				$this->date_cloture				= $this->db->jdate($result["date_cloture"]);
+				$this->date_modification		= $this->db->jdate($result["date_modification"]);
+				$this->date_validation			= $this->db->jdate($result["date_validation"]);
 
 
 				$this->user_author_id			= $result["fk_user_author"];
@@ -2304,10 +2308,9 @@ class Contrat extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
-         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $conf,$langs;
 
@@ -2326,7 +2329,7 @@ class Contrat extends CommonObject
 
 		$modelpath = "core/modules/contract/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
 
 	/**

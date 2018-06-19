@@ -531,4 +531,7 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR03', 'Standardkontenrahmen SKR 03', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR04', 'Standardkontenrahmen SKR 04', 1);
 
+-- Contrat date validation
+ALTER TABLE `llx_contrat` ADD COLUMN `date_validation` DATETIME NULL AFTER `date_contrat`;
+
 
