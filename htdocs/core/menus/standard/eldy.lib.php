@@ -525,6 +525,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 
 			// Setup
 			$newmenu->add("/admin/index.php?mainmenu=home&amp;leftmenu=setup", $langs->trans("Setup"), 0, $user->admin, '', $mainmenu, 'setup', 0, '', '', '', '<i class="fa fa-wrench fa-fw paddingright"></i>');
+
 			if ($usemenuhider || empty($leftmenu) || $leftmenu=="setup")
 			{
 				$langs->load("admin");
@@ -1580,7 +1581,6 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 		}
 
 	}
-
 
 	// Build final $menu_array = $menu_array_before +$newmenu->liste + $menu_array_after
 	//var_dump($menu_array_before);exit;
