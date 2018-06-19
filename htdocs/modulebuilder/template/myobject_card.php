@@ -123,9 +123,9 @@ if (empty($reshook))
 	$permissiontodelete = $user->rights->mymodule->delete;
 	if (empty($backtopage)) $backtopage = dol_buildpath('/mymodule/myobject_card.php',1).'?id=__ID__';
 	$backurlforlist = dol_buildpath('/mymodule/myobject_list.php',1);
-	$triggermodname = 'MYMODULE_MODIFY';
+	$triggermodname = 'MYMODULE_MYOBJECT_MODIFY';	// Name of trigger action code to execute when we modify record
 
-	// Actions cancel, add, update or delete
+	// Actions cancel, add, update, delete or clone
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
 	// Actions when printing a doc from card

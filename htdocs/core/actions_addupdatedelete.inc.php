@@ -18,7 +18,7 @@
 
 /**
  *	\file			htdocs/core/actions_addupdatedelete.inc.php
- *  \brief			Code for common actions cancel / add / update / delete
+ *  \brief			Code for common actions cancel / add / update / delete / clone
  */
 
 
@@ -181,5 +181,35 @@ if ($action == 'confirm_delete' && ! empty($permissiontodelete))
 	{
 		if (! empty($object->errors)) setEventMessages(null, $object->errors, 'errors');
 		else setEventMessages($object->error, null, 'errors');
+	}
+}
+
+// Action clone object
+if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd))
+{
+	if (1==0 && ! GETPOST('clone_content') && ! GETPOST('clone_receivers'))
+	{
+		setEventMessages($langs->trans("NoCloneOptionsSpecified"), null, 'errors');
+	}
+	else
+	{
+		if ($object->id > 0)
+		{
+			// Because createFromClone modifies the object, we must clone it so that we can restore it later
+			$orig = clone $object;
+
+			$result=$object->createFromClone($socid);
+			if ($result > 0)
+			{
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+				exit;
+			}
+			else
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$object = $orig;
+				$action='';
+			}
+		}
 	}
 }
