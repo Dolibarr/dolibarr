@@ -198,10 +198,13 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ! empty($permissiontoadd)
 			// Because createFromClone modifies the object, we must clone it so that we can restore it later
 			$orig = clone $object;
 
-			$result=$object->createFromClone($socid);
+			$result=$object->createFromClone($user, $object->id);
 			if ($result > 0)
 			{
-				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$result);
+				$newid = 0;
+				if (is_object($result)) $newid = $result->id;
+				else $newid = $result;
+				header("Location: ".$_SERVER['PHP_SELF'].'?id='.$newid);	// Open record of new object
 				exit;
 			}
 			else
