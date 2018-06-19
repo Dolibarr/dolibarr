@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,7 +247,7 @@ class ActionsCardService
 
         $this->field_list = array();
 
-		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
+		$sql = "SELECT rowid, name, alias, title, align, sort, search, checked, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -272,6 +272,7 @@ class ActionsCardService
 				$fieldlist["align"]		= $obj->align;
 				$fieldlist["sort"]		= $obj->sort;
 				$fieldlist["search"]	= $obj->search;
+				$fieldlist["checked"]	= $obj->checked;
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
 
