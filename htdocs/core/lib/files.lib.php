@@ -229,12 +229,17 @@ function dol_dir_list($path, $types="all", $recursive=0, $filter="", $excludefil
 function dol_dir_list_in_database($path, $filter="", $excludefilter=null, $sortcriteria="name", $sortorder=SORT_ASC, $mode=0)
 {
 	global $conf, $db;
+	global $object;
 
 	$sql=" SELECT rowid, label, entity, filename, filepath, fullpath_orig, keywords, cover, gen_or_uploaded, extraparams, date_c, date_m, fk_user_c, fk_user_m, acl, position";
 	if ($mode) $sql.=", description";
 	$sql.=" FROM ".MAIN_DB_PREFIX."ecm_files";
 	$sql.=" WHERE filepath = '".$db->escape($path)."'";
-	$sql.=" AND entity = ".$conf->entity;
+	if (!empty($object->element)) {
+		$sql.=" AND entity IN (".getEntity($object->element).")";
+	} else {
+		$sql.=" AND entity = ".$conf->entity;
+	}
 
 	$resql = $db->query($sql);
 	if ($resql)
