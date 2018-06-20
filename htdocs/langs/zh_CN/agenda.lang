@@ -12,6 +12,7 @@ Event=事件
 Events=事件
 EventsNb=事件数
 ListOfActions=事件列表
+EventReports=Event reports
 Location=位置
 ToUserOfGroup=到组内任何用户
 EventOnFullDay=全天事件
@@ -34,6 +35,7 @@ AgendaAutoActionDesc= 在这里定义事件，你想让Dolibarr自动生成的�
 AgendaSetupOtherDesc= 这页允许配置议程模块其他参数。
 AgendaExtSitesDesc=此页面允许声明日历的外部来源，从而在Dolibarr待办事项中可以看到他们的事件。
 ActionsEvents=Dolibarr将为其自动创建一个动作的事件
+EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=合伙人 %s 已创建
 ContractValidatedInDolibarr=联系人 %s 已验证
@@ -51,7 +53,9 @@ MemberValidatedInDolibarr=会员 %s 已验证
 MemberModifiedInDolibarr=Member %s modified
 MemberResiliatedInDolibarr=Member %s terminated
 MemberDeletedInDolibarr=会员 %s 已删除
-MemberSubscriptionAddedInDolibarr=会员订阅 %s 已添加
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=运输 %s 已验证
 ShipmentClassifyClosedInDolibarr=Shipment %s classified billed
 ShipmentUnClassifyCloseddInDolibarr=Shipment %s classified reopened
@@ -65,6 +69,7 @@ OrderApprovedInDolibarr=订单 %s 批准
 OrderRefusedInDolibarr=订单 %s 已被拒绝
 OrderBackToDraftInDolibarr=订单 %s 退回草稿状态
 ProposalSentByEMail=商业建议通过电子邮件发送%s
+ContractSentByEMail=Contract %s sent by EMail
 OrderSentByEMail=客户订单通过电子邮件发送%s
 InvoiceSentByEMail=客户发票通过电子邮件发送%s
 SupplierOrderSentByEMail=供应商的订单通过电子邮件发送%s
@@ -78,6 +83,14 @@ InvoiceDeleted=发票已删除
 PRODUCT_CREATEInDolibarr=Product %s created
 PRODUCT_MODIFYInDolibarr=Product %s modified
 PRODUCT_DELETEInDolibarr=Product %s deleted
+EXPENSE_REPORT_CREATEInDolibarr=Expense report %s created
+EXPENSE_REPORT_VALIDATEInDolibarr=Expense report %s validated
+EXPENSE_REPORT_APPROVEInDolibarr=Expense report %s approved
+EXPENSE_REPORT_DELETEInDolibarr=Expense report %s deleted
+EXPENSE_REPORT_REFUSEDInDolibarr=Expense report %s refused
+PROJECT_CREATEInDolibarr=项目 %s  创建
+PROJECT_MODIFYInDolibarr=Project %s modified
+PROJECT_DELETEInDolibarr=Project %s deleted
 ##### End agenda events #####
 AgendaModelModule=Document templates for event
 DateActionStart=开始日期
@@ -86,7 +99,8 @@ AgendaUrlOptions1=您还可以添加以下参数来筛选输出：
 AgendaUrlOptions3=<b>logina=%s</b> 限制输出到用户所拥有的动作 <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=PROJECT_ID</b> 限制输出到项目相关的操作\n <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=显示联系人生日
 AgendaHideBirthdayEvents=隐藏联系人生日
 Busy=忙碌
@@ -98,7 +112,7 @@ ExportCal=导出日历
 ExtSites=导入外部日历
 ExtSitesEnableThisTool=显示外部日历(定义为全球设置)到议程。不影响由用户定义的外部日历。 
 ExtSitesNbOfAgenda=日历数
-AgendaExtNb=日历NB %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL来访问。iCal文件
 ExtSiteNoLabel=无说明
 VisibleTimeRange=可见时间范围

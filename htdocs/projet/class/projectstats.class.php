@@ -143,6 +143,7 @@ class ProjectStats extends Stats
 
 		if (! empty($this->userid))
 			$sqlwhere[] = ' t.fk_user_resp=' . $this->userid;
+		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
 		if (! empty($this->socid))
 			$sqlwhere[] = ' t.fk_soc=' . $this->socid;
 		if (! empty($this->year) && empty($this->yearmonth))
@@ -163,10 +164,11 @@ class ProjectStats extends Stats
 	/**
 	 * Return Project number by month for a year
 	 *
-	 * @param int $year scan
-	 * @return array of values
+	 * @param 	int 	$year 		Year to scan
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @return 	array 				Array of values
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -182,7 +184,7 @@ class ProjectStats extends Stats
 
 		$this->yearmonth=0;
 
-		$res = $this->_getNbByMonth($year, $sql);
+		$res = $this->_getNbByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';
 		return $res;
 	}
@@ -190,10 +192,11 @@ class ProjectStats extends Stats
 	/**
 	 * Return the Project amount by month for a year
 	 *
-	 * @param int $year scan
-	 * @return array with amount by month
+	 * @param 	int 	$year 		Year to scan
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @return 	array 				Array with amount by month
 	 */
-	function getAmountByMonth($year)
+	function getAmountByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -208,7 +211,7 @@ class ProjectStats extends Stats
 		$sql .= $this->db->order('dm', 'DESC');
 		$this->yearmonth=0;
 
-		$res = $this->_getAmountByMonth($year, $sql);
+		$res = $this->_getAmountByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';
 		return $res;
 	}
@@ -421,10 +424,11 @@ class ProjectStats extends Stats
 	/**
 	 * Return the Project transformation rate by month for a year
 	 *
-	 * @param int $year scan
-	 * @return array with amount by month
+	 * @param 	int 	$year 		Year to scan
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @return 	array 				Array with amount by month
 	 */
-	function getTransformRateByMonth($year)
+	function getTransformRateByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -438,7 +442,7 @@ class ProjectStats extends Stats
 		$sql .= " GROUP BY dm";
 		$sql .= $this->db->order('dm', 'DESC');
 
-		$res_total = $this->_getNbByMonth($year, $sql);
+		$res_total = $this->_getNbByMonth($year, $sql, $format);
 
 		$this->status=6;
 
@@ -453,7 +457,7 @@ class ProjectStats extends Stats
 		$this->status=0;
 		$this->yearmonth=0;
 
-		$res_only_wined = $this->_getNbByMonth($year, $sql);
+		$res_only_wined = $this->_getNbByMonth($year, $sql, $format);
 
 		$res=array();
 

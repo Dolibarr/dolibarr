@@ -43,10 +43,10 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	function __construct()
 	{
 	    global $conf;
-	    
+
 	    if ((float) $conf->global->MAIN_VERSION_LAST_INSTALL >= 5.0) $this->prefix = 'PO';   // We use correct standard code "PO = Purchase Order"
 	}
-	
+
     /**
      * 	Return description of numbering module
      *
@@ -85,7 +85,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 		$posindice=8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref LIKE '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
         $resql=$db->query($sql);
         if ($resql)
@@ -120,7 +120,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         $posindice=8;
         $sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-		$sql.= " WHERE ref like '".$this->prefix."____-%'";
+		$sql.= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
         $sql.= " AND entity = ".$conf->entity;
 
         $resql=$db->query($sql);
@@ -135,7 +135,7 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
         $date=$object->date_commande;   // Not always defined
         if (empty($date)) $date=$object->date;  // Creation date is order date for suppliers orders
         $yymm = strftime("%y%m",$date);
-        
+
         if ($max >= (pow(10, 4) - 1)) $num=$max+1;	// If counter > 9999, we do not format on 4 chars, we take number as it is
         else $num = sprintf("%04s",$max+1);
 

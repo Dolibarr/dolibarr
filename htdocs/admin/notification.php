@@ -29,13 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/triggers/interface_50_modNotification_Notification.class.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
-$langs->load("propal");
-$langs->load("bills");
-$langs->load("errors");
-$langs->load("mails");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'orders', 'propal', 'bills', 'errors', 'mails'));
 
 // Security check
 if (!$user->admin)
@@ -115,7 +110,7 @@ $notify = new Notify($db);
 
 llxHeader('',$langs->trans("NotificationSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("NotificationSetup"),$linkback,'title_setup');
 
 print $langs->trans("NotificationsDesc").'<br>';
@@ -127,8 +122,6 @@ print '<br>';
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="setvalue">';
-
-$var=true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -168,7 +161,6 @@ $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 print '<tr class="oddeven">';
 print '<td>';
 
-$var=true;
 $i=0;
 foreach($listofnotifiedevents as $notifiedevent)
 {
@@ -189,8 +181,10 @@ foreach($listofnotifiedevents as $notifiedevent)
 print '</td></tr>';
 
 print '</table>';
+print '<div class="opacitymedium">';
 print '* '.$langs->trans("GoOntoUserCardToAddMore").'<br>';
 if (! empty($conf->societe->enabled)) print '** '.$langs->trans("GoOntoContactCardToAddMore").'<br>';
+print '</div>';
 print '<br><br>';
 
 
@@ -210,7 +204,6 @@ print "</tr>\n";
 $notificationtrigger=new InterfaceNotification($db);
 $listofnotifiedevents=$notificationtrigger->getListOfManagedEvents();
 
-$var=true;
 foreach($listofnotifiedevents as $notifiedevent)
 {
 

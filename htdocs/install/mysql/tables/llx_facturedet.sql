@@ -47,7 +47,7 @@ create table llx_facturedet
   total_localtax1				double(24,8) DEFAULT 0,				-- Total LocalTax1 for total quantity of line
   total_localtax2				double(24,8) DEFAULT 0,				-- Total LocalTax2 for total quantity of line
   total_ttc						double(24,8),						-- Total TTC de la ligne toute quantite et incluant remise ligne et globale
-  product_type					integer    DEFAULT 0,
+  product_type					integer    DEFAULT 0,				-- 0 or 1. Value 9 may be used by some modules (amount of line may not be included into generated discount if value is 9).
   date_start					datetime   DEFAULT NULL,			-- date start if service
   date_end						datetime   DEFAULT NULL,			-- date end if service
   info_bits						integer    DEFAULT 0,				-- VAT NPR or not (for france only)
@@ -57,7 +57,7 @@ create table llx_facturedet
 
   fk_code_ventilation			integer    DEFAULT 0 NOT NULL,		-- Id in table llx_accounting_bookeeping to know accounting account for product line
   
-  special_code					integer    DEFAULT 0,			    -- code pour les lignes speciales
+  special_code					integer    DEFAULT 0,				-- code for special lines (may be 1=transport, 2=ecotax, 3=option, moduleid=...)
   rang							integer    DEFAULT 0,				-- position of line
   fk_contract_line  			integer NULL,						-- id of contract line when invoice comes from contract lines
   import_key					varchar(14),

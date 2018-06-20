@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width',768);
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height',200);
@@ -108,7 +108,7 @@ else
 		dol_print_error($db);
 	}
 	if (empty($min)) $min = dol_now - 3600 * 24;
-	
+
 	$log="graph.php: min=".$min." max=".$max;
 	dol_syslog($log);
 
@@ -760,7 +760,7 @@ $head=bank_prepare_head($object);
 dol_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0,'account');
 
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 if ($account)
 {

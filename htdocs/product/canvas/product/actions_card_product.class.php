@@ -74,6 +74,7 @@ class ActionsCardProduct
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+		global $limit, $offset, $sortfield, $sortorder;
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
@@ -100,7 +101,7 @@ class ActionsCardProduct
 		$this->tpl['ref'] = $this->ref;
 
 		// Label
-		$this->tpl['label'] = $this->libelle;
+		$this->tpl['label'] = $this->label;
 
 		// Description
 		$this->tpl['description'] = nl2br($this->description);
@@ -215,7 +216,7 @@ class ActionsCardProduct
 			$this->tpl['nblignes'] = 4;
 			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
 			{
-				$this->tpl['photos'] = $this->object->show_photos($conf->product->multidir_output[$this->object->entity],1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->product->multidir_output[$this->object->entity],1,1,0,0,0,80);
 			}
 
 			// Nature
@@ -250,7 +251,7 @@ class ActionsCardProduct
 
 		if ($action == 'list')
 		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 
 	}
@@ -309,7 +310,7 @@ class ActionsCardProduct
 
 
 	/**
-	 * 	Fetch datas list
+	 * 	Fetch datas list and save into ->list_datas
 	 *
 	 *  @param	int		$limit		Limit number of responses
 	 *  @param	int		$offset		Offset for first response
@@ -326,7 +327,7 @@ class ActionsCardProduct
         $this->list_datas = array();
 
 		// Clean parameters
-		$sall=trim(GETPOST('sall', 'alphanohtml'));
+        $sall=trim((GETPOST('search_all', 'alphanohtml')!='')?GETPOST('search_all', 'alphanohtml'):GETPOST('sall', 'alphanohtml'));
 
 		foreach($this->field_list as $field)
 		{

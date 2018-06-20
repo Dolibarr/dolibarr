@@ -48,4 +48,4 @@ SmsInfoNumero= (Formāts starptautiskais t.i.: 37128701761)
 DelayBeforeSending=Aizture pirms nosūtīšanas (minūtēs)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Nav mērķa pieejams. Pārbaudiet iestatījumus jūsu SMS pakalpojumu sniedzēja.
-
+DisableStopIfSupported=Disable STOP message (if supported)

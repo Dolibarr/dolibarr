@@ -1,11 +1,11 @@
 <?php
 /* Copyright (C) 2010-2014	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2011-2012	Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2011-2015	Philippe Grand		<philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2015	Juanjo Menent		<jmenent@2byte.es>
+ * Copyright (C) 2011-2018	Philippe Grand		<philippe.grand@atoo-net.com>
  * Copyright (C) 2013		Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2015		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2015       Marcos García       <marcosgdf@gmail.com>
+ * Copyright (C) 2018		Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load("other");
-$langs->load("projects");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors', 'other', 'projects'));
 
 if (!$user->admin) accessforbidden();
 
@@ -58,6 +56,7 @@ if ($action == 'setmainoptions')
 	if (GETPOST('PROJECT_USE_OPPORTUNITIES')) dolibarr_set_const($db, "PROJECT_USE_OPPORTUNITIES",GETPOST('PROJECT_USE_OPPORTUNITIES'),'chaine',0,'',$conf->entity);
 	else dolibarr_del_const($db, "PROJECT_USE_OPPORTUNITIES", $conf->entity);
 
+	// Warning, the constant saved and used in code is PROJECT_HIDE_TASKS
 	if (GETPOST('PROJECT_USE_TASKS')) dolibarr_del_const($db, "PROJECT_HIDE_TASKS", $conf->entity);
 	else dolibarr_set_const($db, "PROJECT_HIDE_TASKS",1,'chaine',0,'',$conf->entity);
 }
@@ -273,6 +272,11 @@ elseif ($action == 'updateoptions')
 			$conf->global->PROJECT_USE_SEARCH_TO_SELECT = $companysearch;
 		}
 	}
+	if (GETPOST('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY'))
+	{
+		$projectToSelect = GETPOST('projectToSelect','alpha');
+		dolibarr_set_const($db, 'PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY', $projectToSelect, 'chaine', 0, '', $conf->entity);	//Allow to disable this configuration if empty value
+	}
 }
 
 
@@ -286,7 +290,7 @@ llxHeader("",$langs->trans("ProjectsSetup"));
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("ProjectsSetup"),$linkback,'title_setup');
 
 $head=project_admin_prepare_head();
@@ -297,7 +301,6 @@ dol_fiche_head($head, 'project', $langs->trans("Projects"), -1, 'project');
 
 // Main options
 $form=new Form($db);
-$var=true;
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -308,8 +311,6 @@ print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
-
-
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("ManageOpportunitiesStatus").'</td>';
@@ -368,8 +369,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
-
 			while (($file = readdir($handle))!==false)
 			{
 				if (preg_match('/^(mod_.*)\.php$/i',$file,$reg))
@@ -387,7 +386,6 @@ foreach ($dirmodels as $reldir)
 
 					if ($module->isEnabled())
 					{
-
 						print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 						print $module->info();
 						print '</td>';
@@ -472,8 +470,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 			$handle = opendir($dir);
 			if (is_resource($handle))
 			{
-				$var=true;
-
 				while (($file = readdir($handle))!==false)
 				{
 					if (preg_match('/^(mod_.*)\.php$/i',$file,$reg))
@@ -491,7 +487,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 
 						if ($module->isEnabled())
 						{
-
 							print '<tr class="oddeven"><td>'.$module->name."</td><td>\n";
 							print $module->info();
 							print '</td>';
@@ -596,7 +591,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
 	foreach (array('','/doc') as $valdir)
@@ -633,7 +627,6 @@ foreach ($dirmodels as $reldir)
 
 							if ($modulequalified)
 							{
-
 								print '<tr class="oddeven"><td width="100">';
 								print (empty($module->name)?$name:$module->name);
 								print "</td><td>\n";
@@ -755,7 +748,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 
 	clearstatcache();
 
-	$var=true;
 	foreach ($dirmodels as $reldir)
 	{
 		foreach (array('','/doc') as $valdir)
@@ -792,7 +784,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS))
 
 								if ($modulequalified)
 								{
-									$var = !$var;
 									print '<tr class="oddeven"><td width="100">';
 									print (empty($module->name)?$name:$module->name);
 									print "</td><td>\n";
@@ -871,7 +862,6 @@ print load_fiche_titre($langs->trans("Other"), '', '');
 
 // Other options
 $form=new Form($db);
-$var=true;
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -882,8 +872,6 @@ print '<tr class="liste_titre">';
 print "<td>".$langs->trans("Parameters")."</td>\n";
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
-
-
 
 print '<tr class="oddeven">';
 print '<td width="80%">'.$langs->trans("UseSearchToSelectProject").'</td>';
@@ -908,20 +896,19 @@ else
 }
 print '</tr>';
 
-
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AllowToSelectProjectFromOtherCompany").'</td>';
 
-print '<td align="center" width="300">';
-echo ajax_constantonoff('PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY');
+print '<td align="right" width="60" colspan="2">';
+print '<input type="text" id="projectToSelect" name="projectToSelect" value="'.$conf->global->PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.'"/>&nbsp;';
+print $form->textwithpicto('', $langs->trans('AllowToLinkFromOtherCompany'));
+print '<input type="submit" class="button" name="PROJECT_ALLOW_TO_LINK_FROM_OTHER_COMPANY" value="'.$langs->trans("Modify").'">';
 print '</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '</tr>';
 
-print '</table></form>';
+print '</table>';
 
 
-
+print '</form>';
 
 llxFooter();
 $db->close();

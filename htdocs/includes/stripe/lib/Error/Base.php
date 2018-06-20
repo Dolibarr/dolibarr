@@ -20,9 +20,18 @@ abstract class Base extends Exception
         $this->httpHeaders = $httpHeaders;
         $this->requestId = null;
 
+        // TODO: make this a proper constructor argument in the next major
+        //       release.
+        $this->stripeCode = isset($jsonBody["error"]["code"]) ? $jsonBody["error"]["code"] : null;
+
         if ($httpHeaders && isset($httpHeaders['Request-Id'])) {
             $this->requestId = $httpHeaders['Request-Id'];
         }
+    }
+
+    public function getStripeCode()
+    {
+        return $this->stripeCode;
     }
 
     public function getHttpStatus()

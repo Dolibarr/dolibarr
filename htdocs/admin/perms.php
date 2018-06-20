@@ -28,9 +28,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("users");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'users', 'other'));
 
 $action=GETPOST('action','aZ09');
 
@@ -127,7 +126,7 @@ print info_admin(showModulesExludedForExternal($modules)).'<br>'."\n";
 print '<div class="div-table-responsive-no-min">';
 print '<table class="noborder" width="100%">';
 
-// Affiche lignes des permissions
+// Show permissions lines
 $sql = "SELECT r.id, r.libelle, r.module, r.perms, r.subperms, r.bydefault";
 $sql.= " FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql.= " WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"

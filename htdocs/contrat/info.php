@@ -30,6 +30,7 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
+// Load translation files required by the page
 $langs->load("contracts");
 
 $action		= GETPOST('action','alpha');
@@ -40,6 +41,17 @@ $ref		= GETPOST('ref','alpha');
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'contrat', $id, '');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('contractcard','globalcard'));
+
+
+/*
+ * Actions
+ */
+
+// None
+
 
 
 /*
@@ -66,7 +78,7 @@ dol_fiche_head($head, 'info', $langs->trans("Contract"), -1, 'contract');
 
 // Contract card
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/contrat/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
 $morehtmlref='';

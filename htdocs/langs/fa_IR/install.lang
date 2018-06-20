@@ -6,6 +6,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=فایل <b>پیکربندی٪ s</b> �
 ConfFileCouldBeCreated=فایل <b>پیکربندی٪ s را</b> می تواند ایجاد شود.
 ConfFileIsNotWritable=فایل <b>پیکربندی٪ است</b> قابل نوشتن نیست. مجوز بررسی کنید. برای اولین بار نصب کنید، وب سرور شما باید اعطا می شود که قادر به ارسال این فایل در فرایند پیکربندی (به عنوان مثال در یونیکس مانند سیستم عامل "سطح دسترسی 666").
 ConfFileIsWritable=فایل <b>پیکربندی٪ s</b> قابل نوشتن است.
+ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
 ConfFileReload=بازنگری تمام اطلاعات از فایل پیکربندی.
 PHPSupportSessions=این جلسات PHP پشتیبانی می کند.
 PHPSupportPOSTGETOk=این PHP پشتیبانی از متغیر های POST و GET.
@@ -91,8 +92,8 @@ FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=اخطار، به دلایل امنیتی، پس از نصب و یا ارتقا کامل است، برای جلوگیری از استفاده از ابزار را دوباره نصب کنید، شما باید یک فایل <b>install.lock</b> به دایرکتوری سند Dolibarr نام اضافه، به منظور جلوگیری از سوء استفاده از آن را.
 FunctionNotAvailableInThisPHP=در این پی اچ پی در دسترس نیست
 ChoosedMigrateScript=را انتخاب کنید اسکریپت مهاجرت
-DataMigration=اطلاعات مهاجرت
-DatabaseMigration=مهاجرت پایگاه داده ساختار
+DataMigration=Database migration (data)
+DatabaseMigration=Database migration (structure + some data)
 ProcessMigrateScript=پردازش اسکریپت
 ChooseYourSetupMode=حالت راه اندازی خود را انتخاب کنید و دکمه "شروع" ...
 FreshInstall=تازه نصب
@@ -139,12 +140,14 @@ KeepDefaultValuesDeb=شما با استفاده از جادوگر Dolibarr را�
 KeepDefaultValuesMamp=شما با استفاده از جادوگر در راه اندازی Dolibarr از DoliMamp، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
 KeepDefaultValuesProxmox=شما با استفاده از جادوگر در راه اندازی Dolibarr از یک دستگاه مجازی بورس، بنابراین مقادیر ارائه شده در اینجا در حال حاضر بهینه شده است. تغییر آنها را تنها در صورتی شما می دانید آنچه شما انجام دهد.
 UpgradeExternalModule=Run dedicated upgrade process of external modules
-
+SetAtLeastOneOptionAsUrlParameter=Set at least one option as a parameter in URL. For example:  '...repair.php?standard=confirmed'
+NothingToDelete=Nothing to clean/delete
+NothingToDo=Nothing to do
 #########
 # upgrade
 MigrationFixData=ثابت برای داده های denormalized
 MigrationOrder=اطلاعات مهاجرت برای سفارشات مشتری
-MigrationSupplierOrder=اطلاعات مهاجرت برای سفارشات کننده
+MigrationSupplierOrder=Data migration for vendor's orders
 MigrationProposal=مهاجرت داده ها برای طرح های تجاری
 MigrationInvoice=اطلاعات مهاجرت برای صورت حساب مشتری
 MigrationContract=اطلاعات مهاجرت برای قرارداد
@@ -191,9 +194,13 @@ MigrationActioncommElement=به روز کردن اطلاعات در مورد ا�
 MigrationPaymentMode=اطلاعات مهاجرت برای حالت پرداخت
 MigrationCategorieAssociation=مهاجرت از دسته
 MigrationEvents=Migration of events to add event owner into assignement table
+MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
+MigrationUserRightsEntity=Update entity field value of llx_user_rights
+MigrationUserGroupRightsEntity=Update entity field value of llx_usergroup_rights
 MigrationReloadModule=Reload module %s
+MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=نمایش گزینه های در دسترس نیست
 HideNotAvailableOptions=پنهان کردن گزینه های در دسترس نیست
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.

@@ -22,21 +22,22 @@
  *
  */
 /**
- * \file htdocs/accountancy/supplier/card.php
- * \ingroup Accountancy
- * \brief Card supplier ventilation
+ * \file 	htdocs/accountancy/supplier/card.php
+ * \ingroup Advanced accountancy
+ * \brief 	Card supplier ventilation
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy"));
 
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
@@ -44,13 +45,15 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 
-	
+
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write) {
-	if (! GETPOST('cancel', 'alpha')) {
+if ($action == 'ventil' && $user->rights->accounting->bind->write)
+{
+	if (! $cancel)
+	{
 	    if ($codeventil < 0) $codeventil = 0;
 
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facture_fourn_det";
@@ -64,6 +67,11 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		else
 		{
 		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+		    if ($backtopage)
+		    {
+		    	header("Location: ".$backtopage);
+		    	exit();
+		    }
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -97,20 +105,21 @@ if (! empty($id)) {
 	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture_fourn as f ON f.rowid = l.fk_facture_fourn ";
 	$sql .= " WHERE f.fk_statut > 0 AND l.rowid = " . $id;
 	$sql .= " AND f.entity IN (" . getEntity('facture_fourn', 0) . ")";     // We don't share object for accountancy
-	
+
 	dol_syslog("/accounting/supplier/card.php sql=" . $sql, LOG_DEBUG);
 	$result = $db->query($sql);
-	
+
 	if ($result) {
 		$num_lines = $db->num_rows($result);
 		$i = 0;
-		
+
 		if ($num_lines) {
 			$objp = $db->fetch_object($result);
 
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
+			print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 
 			print load_fiche_titre($langs->trans('SuppliersVentilation'), '', 'title_setup');
 

@@ -20,7 +20,7 @@
 /**
  *	\file       htdocs/projet/document.php
  *	\ingroup    project
- *	\brief      Page de gestion des documents attachees a un projet
+ *	\brief      Page to managed related documents linked to a project
  */
 
 require '../main.inc.php';
@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load('projects');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'other'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
@@ -106,11 +106,11 @@ if ($object->id > 0)
 		$totalsize+=$file['size'];
 	}
 
-	
+
 	// Project card
-	
+
 	$linkback = '<a href="'.DOL_URL_ROOT.'/projet/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
 	// Title
 	$morehtmlref.=$object->title;
@@ -120,31 +120,31 @@ if ($object->id > 0)
 	    $morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1, 'project');
 	}
 	$morehtmlref.='</div>';
-	
+
 	// Define a complementary filter for search of next/prev ref.
 	if (! $user->rights->projet->all->lire)
 	{
 	    $objectsListId = $object->getProjectsAuthorizedForUser($user,0,0);
 	    $object->next_prev_filter=" rowid in (".(count($objectsListId)?join(',',array_keys($objectsListId)):'0').")";
 	}
-	
+
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
-	
-	
+
+
 	print '<div class="fichecenter">';
-	print '<div class="underbanner clearboth"></div>';	
+	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border" width="100%">';
 
 	// Files infos
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 	print "</table>\n";
-	
+
 	print '</div>';
 
-	
+
 	dol_fiche_end();
 
 	$modulepart = 'project';

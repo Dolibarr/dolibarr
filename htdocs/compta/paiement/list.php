@@ -6,6 +6,7 @@
  * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2017      Alexandre Spangaro   <aspangaro@zendsi.com>
+ * Copyright (C) 2018      Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingjournal.class.php';
 
-$langs->load("bills");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'compta'));
 
 // Security check
 $facid	= GETPOST('facid','int');
@@ -59,7 +60,7 @@ $search_amount=GETPOST("search_amount",'alpha');    // alpha because we must be 
 $search_company=GETPOST("search_company",'alpha');
 $search_payment_num=GETPOST('search_payment_num','alpha');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -115,11 +116,9 @@ if (GETPOST("orphelins"))
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
-    $sql.= " FROM (".MAIN_DB_PREFIX."paiement as p,";
-    $sql.= " ".MAIN_DB_PREFIX."c_paiement as c)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " WHERE p.fk_paiement = c.id";
-    $sql.= " AND p.entity = ".$conf->entity;
+    $sql.= " WHERE p.entity IN (" . getEntity('facture').")";
     $sql.= " AND pf.fk_facture IS NULL";
 	// Add where from hooks
 	$parameters=array();
@@ -139,7 +138,8 @@ else
 	$parameters=array();
 	$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
 	$sql.=$hookmanager->resPrint;
-    $sql.= " FROM (".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement as p)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON p.fk_paiement = c.id";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
@@ -149,8 +149,7 @@ else
     {
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
     }
-    $sql.= " WHERE p.fk_paiement = c.id";
-    $sql.= " AND p.entity = ".$conf->entity;
+    $sql.= " WHERE p.entity IN (" . getEntity('facture') . ")";
     if (! $user->rights->societe->client->voir && ! $socid)
     {
         $sql.= " AND sc.fk_user = " .$user->id;
@@ -193,6 +192,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit+1, $offset);
@@ -231,21 +235,21 @@ if ($resql)
     // Lines for filters fields
     print '<tr class="liste_titre_filter">';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="4" name="search_ref" value="'.$search_ref.'">';
+    print '<input class="flat" type="text" size="4" name="search_ref" value="'.dol_escape_htmltag($search_ref).'">';
     print '</td>';
     print '<td class="liste_titre" align="center">';
-    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-    print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+    if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.dol_escape_htmltag($day).'">';
+    print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.dol_escape_htmltag($month).'">';
     $formother->select_year($year?$year:-1,'year',1, 20, 5);
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="6" name="search_company" value="'.$search_company.'">';
+    print '<input class="flat" type="text" size="6" name="search_company" value="'.dol_escape_htmltag($search_company).'">';
     print '</td>';
     print '<td class="liste_titre">';
     $form->select_types_paiements($search_paymenttype,'search_paymenttype','',2,1,1);
     print '</td>';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.$search_payment_num.'">';
+    print '<input class="flat" type="text" size="4" name="search_payment_num" value="'.dol_escape_htmltag($search_payment_num).'">';
     print '</td>';
     if (! empty($conf->banque->enabled))
     {
@@ -254,7 +258,7 @@ if ($resql)
 	    print '</td>';
     }
     print '<td class="liste_titre" align="right">';
-    print '<input class="flat" type="text" size="4" name="search_amount" value="'.$search_amount.'">';
+    print '<input class="flat" type="text" size="4" name="search_amount" value="'.dol_escape_htmltag($search_amount).'">';
 	print '</td>';
     print '<td class="liste_titre" align="right">';
     $searchpicto=$form->showFilterAndCheckAddButtons(0);
@@ -280,7 +284,7 @@ if ($resql)
     print_liste_field_titre("Amount",$_SERVER["PHP_SELF"],"p.amount","",$param,'align="right"',$sortfield,$sortorder);
     //print_liste_field_titre("Invoices"),"","","",$param,'align="left"',$sortfield,$sortorder);
 
-    $parameters=array();
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
 
@@ -331,7 +335,7 @@ if ($resql)
 	            $accountstatic->label=$objp->blabel;
 	            $accountstatic->number=$objp->number;
 	            $accountstatic->account_number=$objp->account_number;
-            
+
 				$accountingjournal = new AccountingJournal($db);
 				$accountingjournal->fetch($objp->accountancy_journal);
 				$accountstatic->accountancy_journal = $accountingjournal->code;

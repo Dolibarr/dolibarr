@@ -27,8 +27,8 @@
 require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -70,13 +70,12 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0; $total = 0; $totalnb = 0;
 
-	$var=true;
 	while ($i < $num)
 	{
 		$objp = $db->fetch_object($result);
-		
+
 		print '<tr class="oddeven">';
-		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries.php?bid=$objp->rowid\">$objp->label</a></td>";
+		print "<td><a href=\"".DOL_URL_ROOT."/compta/bank/bankentries_list.php?bid=$objp->rowid\">$objp->label</a></td>";
 		print '<td align="right">'.$objp->nombre.'</td>';
 		print '<td align="right">'.price(abs($objp->somme))."</td>";
 		print '<td align="right">'.price(abs(price2num($objp->somme / $objp->nombre,'MT')))."</td>";

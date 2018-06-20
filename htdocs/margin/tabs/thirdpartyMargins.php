@@ -91,7 +91,7 @@ if ($socid > 0)
 
     dol_fiche_head($head, 'margin', $langs->trans("ThirdParty"), -1, 'company');
 
-    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php">'.$langs->trans("BackToList").'</a>';
+    $linkback = '<a href="'.DOL_URL_ROOT.'/societe/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
     dol_banner_tab($object, 'socid', $linkback, ($user->societe_id?0:1), 'rowid', 'nom');
 
@@ -176,6 +176,7 @@ if ($socid > 0)
     	print_barre_liste($langs->trans("MarginDetails"),$page,$_SERVER["PHP_SELF"],"&amp;socid=".$object->id,$sortfield,$sortorder,'',0,0,'');
 
     	$i = 0;
+    	print '<div class="div-table-responsive">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
     	print "<table class=\"noborder\" width=\"100%\">";
 
     	print '<tr class="liste_titre">';
@@ -198,15 +199,12 @@ if ($socid > 0)
 
     	if ($num > 0)
     	{
-    		$var=True;
     		while ($i < $num /*&& $i < $conf->liste_limit*/)
     		{
     			$objp = $db->fetch_object($result);
 
     			$marginRate = ($objp->buying_price != 0)?(100 * $objp->marge / $objp->buying_price):'' ;
     			$markRate = ($objp->selling_price != 0)?(100 * $objp->marge / $objp->selling_price):'' ;
-
-
 
     			print '<tr class="oddeven">';
     			print '<td>';
@@ -263,6 +261,8 @@ if ($socid > 0)
     	dol_print_error($db);
     }
     print "</table>";
+    print '</div>';
+
     print '<br>';
     $db->free($result);
 }

@@ -20,13 +20,14 @@
  * \ingroup     Advanced accountancy
  * \brief       Page to show a fiscal year
  */
+
 require '../../main.inc.php';
 
 require_once DOL_DOCUMENT_ROOT . '/core/lib/fiscalyear.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/fiscalyear.class.php';
 
-$langs->load("admin");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","compta"));
 
 // Security check
 if ($user->societe_id > 0)

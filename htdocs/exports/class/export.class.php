@@ -80,7 +80,6 @@ class Export
 
 		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
-        $var=true;
         $i=0;
 
         // Define list of modules directories into modulesdir
@@ -127,20 +126,23 @@ class Export
 
                                     // Test if permissions are ok
 									$bool=true;
-									foreach($module->export_permission[$r] as $val)
+									if (isset($module->export_permission))
 									{
-    									$perm=$val;
-    									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
-    									if (! empty($perm[2]))
-    									{
-    										$bool=$user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
-    									}
-    									else
-    									{
-    										$bool=$user->rights->{$perm[0]}->{$perm[1]};
-    									}
-    									if ($perm[0]=='user' && $user->admin) $bool=true;
-    									if (! $bool) break;
+										foreach($module->export_permission[$r] as $val)
+										{
+	    									$perm=$val;
+	    									//print_r("$perm[0]-$perm[1]-$perm[2]<br>");
+	    									if (! empty($perm[2]))
+	    									{
+	    										$bool=$user->rights->{$perm[0]}->{$perm[1]}->{$perm[2]};
+	    									}
+	    									else
+	    									{
+	    										$bool=$user->rights->{$perm[0]}->{$perm[1]};
+	    									}
+	    									if ($perm[0]=='user' && $user->admin) $bool=true;
+	    									if (! $bool) break;
+										}
 									}
 									//print $bool." $perm[0]"."<br>";
 
@@ -592,8 +594,6 @@ class Export
 				// Genere ligne de titre
 				$objmodel->write_title($this->array_export_fields[$indice],$array_selected,$outputlangs,$this->array_export_TypeFields[$indice]);
 
-				$var=true;
-
 				while ($obj = $this->db->fetch_object($resql))
 				{
 					// Process special operations
@@ -694,11 +694,13 @@ class Export
 		$sql.= 'label,';
 		$sql.= 'type,';
 		$sql.= 'field,';
+		$sql.= 'fk_user,';
 		$sql.= 'filter';
 		$sql.= ') VALUES (';
 		$sql.= "'".$this->db->escape($this->model_name)."',";
 		$sql.= "'".$this->db->escape($this->datatoexport)."',";
 		$sql.= "'".$this->db->escape($this->hexa)."',";
+		$sql.= "'".$user->id."',";
 		$sql.= "'".$this->db->escape($this->hexafiltervalue)."'";
 		$sql.= ")";
 

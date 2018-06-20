@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.p
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("admin");
-$langs->load("withdrawals");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","withdrawals"));
 
 // Security check
 if (!$user->admin) accessforbidden();
@@ -74,13 +74,13 @@ if ($action == "set")
 
     $res = dolibarr_set_const($db, "PRELEVEMENT_ICS", GETPOST("PRELEVEMENT_ICS"),'chaine',0,'',$conf->entity);
     if (! $res > 0) $error++;
-    
+
     if (GETPOST("PRELEVEMENT_USER") > 0)
     {
         $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
-    
+
     if (! $error)
 	{
 		$db->commit();
@@ -155,7 +155,7 @@ if ($action == 'specimen')
         setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
         dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
     }
-}    
+}
 
 // Set default model
 else if ($action == 'setdoc')
@@ -187,7 +187,7 @@ $dirmodels=array_merge(array('/'),(array) $conf->modules_parts['models']);
 
 llxHeader('',$langs->trans("WithdrawalsSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 
 print load_fiche_titre($langs->trans("WithdrawalsSetup"),$linkback,'title_setup');
 print '<br>';
@@ -274,7 +274,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -411,18 +410,17 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 
     $sql = "SELECT u.rowid, u.lastname, u.firstname, u.fk_soc, u.email";
     $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE entity IN (0,".$conf->entity.")";
+    $sql.= " WHERE entity IN (".getEntity('facture').")";
 
     $resql=$db->query($sql);
     if ($resql)
     {
         $num = $db->num_rows($resql);
-        $var = true;
         $i = 0;
         while ($i < $num)
         {
             $obj = $db->fetch_object($resql);
-            
+
             if (!$obj->fk_soc)
             {
                 $username=dolGetFirstLastname($obj->firstname,$obj->lastname);
@@ -495,7 +493,7 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 	    while ($i < $num)
 	    {
 	        $obj = $db->fetch_object($resql);
-	        
+
 
 	        print '<tr class="oddeven">';
 	        print '<td>'.dolGetFirstLastname($obj->firstname,$obj->lastname).'</td>';

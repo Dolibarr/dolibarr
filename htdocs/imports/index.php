@@ -24,6 +24,7 @@
 require_once '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/imports/class/import.class.php';
 
+// Load translation files required by the page
 $langs->load("exports");
 
 if (! $user->societe_id == 0)
@@ -44,14 +45,15 @@ llxHeader('',$langs->trans("ImportArea"),'EN:Module_Imports_En|FR:Module_Imports
 print load_fiche_titre($langs->trans("ImportArea"));
 
 print $langs->trans("FormatedImportDesc1").'<br>';
-print $langs->trans("FormatedImportDesc2").'<br>';
+//print $langs->trans("FormatedImportDesc2").'<br>';
 print '<br>';
 
 
-print '<div class="fichecenter"><div class="fichehalfleft">';
+//print '<div class="fichecenter"><div class="fichehalfleft">';
 
 
 // List of import set
+/*
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Module").'</td>';
@@ -84,6 +86,7 @@ else
 }
 print '</table>';
 print '<br>';
+*/
 
 print '<div class="center">';
 if (count($import->array_import_code))
@@ -101,7 +104,7 @@ print '</div>';
 print '<br>';
 
 
-print '</div><div class="fichehalfright"><div class="ficheaddleft">';
+//print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 
 
 // List of available import format
@@ -119,7 +122,7 @@ $liste=$model->liste_modeles($db);
 
 foreach($liste as $key)
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
@@ -132,7 +135,7 @@ foreach($liste as $key)
 print '</table>';
 
 
-print '</div></div></div>';
+//print '</div></div></div>';
 
 
 llxFooter();

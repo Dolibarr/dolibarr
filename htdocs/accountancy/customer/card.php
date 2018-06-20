@@ -18,21 +18,22 @@
  */
 
 /**
- * \file htdocs/accountancy/customer/card.php
- * \ingroup Accountancy
- * \brief Card customer ventilation
+ * \file 	htdocs/accountancy/customer/card.php
+ * \ingroup Advanced accountancy
+ * \brief 	Card customer ventilation
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy"));
 
 $action = GETPOST('action', 'alpha');
+$cancel = GETPOST('cancel', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
 $codeventil = GETPOST('codeventil');
 $id = GETPOST('id');
 
@@ -40,18 +41,21 @@ $id = GETPOST('id');
 if ($user->societe_id > 0)
 	accessforbidden();
 
+
 /*
  * Actions
  */
 
-if ($action == 'ventil' && $user->rights->accounting->bind->write) {
-	if (! GETPOST('cancel', 'alpha')) {
+if ($action == 'ventil' && $user->rights->accounting->bind->write)
+{
+	if (! $cancel)
+	{
 	    if ($codeventil < 0) $codeventil = 0;
-	    
+
 		$sql = " UPDATE " . MAIN_DB_PREFIX . "facturedet";
 		$sql .= " SET fk_code_ventilation = " . $codeventil;
 		$sql .= " WHERE rowid = " . $id;
-		
+
 		$resql = $db->query($sql);
 		if (! $resql) {
 			setEventMessages($db->lasterror(), null, 'errors');
@@ -59,6 +63,11 @@ if ($action == 'ventil' && $user->rights->accounting->bind->write) {
 		else
 		{
 		    setEventMessages($langs->trans("RecordModifiedSuccessfully"), null, 'mesgs');
+		    if ($backtopage)
+		    {
+		    	header("Location: ".$backtopage);
+		    	exit();
+		    }
 		}
 	} else {
 		header("Location: ./lines.php");
@@ -109,6 +118,7 @@ if (! empty($id)) {
 			print '<form action="' . $_SERVER["PHP_SELF"] . '?id=' . $id . '" method="post">' . "\n";
 			print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
 			print '<input type="hidden" name="action" value="ventil">';
+			print '<input type="hidden" name="backtopage" value="'.dol_escape_htmltag($backtopage).'">';
 
 			print load_fiche_titre($langs->trans('CustomersVentilation'), '', 'title_setup');
 

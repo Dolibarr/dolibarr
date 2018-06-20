@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/multicurrency.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 
 
-// Translations
-$langs->load("admin");
-$langs->load("multicurrency");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'multicurrency'));
 
 // Access control
 if (! $user->admin) {
@@ -48,10 +47,11 @@ $action = GETPOST('action', 'alpha');
  */
 
 
-if (preg_match('/set_(.*)/',$action,$reg))
+if (preg_match('/set_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
-	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0)
+	$value=(GETPOST($code, 'alpha') ? GETPOST($code, 'alpha') : 1);
+	if (dolibarr_set_const($db, $code, $value, 'chaine', 0, '', $conf->entity) > 0)
 	{
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
@@ -62,7 +62,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	}
 }
 
-if (preg_match('/del_(.*)/',$action,$reg))
+if (preg_match('/del_([a-z0-9_\-]+)/i',$action,$reg))
 {
 	$code=$reg[1];
 	if (dolibarr_del_const($db, $code, 0) > 0)
@@ -142,17 +142,7 @@ elseif ($action == 'update_currency')
 }
 elseif ($action == 'synchronize')
 {
-	$response = GETPOST('response');
-	$response = json_decode($response);
-
-	if ($response->success)
-	{
-		MultiCurrency::syncRates($response);
-	}
-	else
-	{
-		setEventMessages($langs->trans('multicurrency_syncronize_error', $response->error->info), null, 'errors');
-	}
+	MultiCurrency::syncRates($conf->global->MULTICURRENCY_APP_ID);
 }
 
 
@@ -179,7 +169,7 @@ $page_name = "MultiCurrencySetup";
 llxHeader('', $langs->trans($page_name));
 
 // Subheader
-$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php">' . $langs->trans("BackToModuleList") . '</a>';
+$linkback = '<a href="' . DOL_URL_ROOT . '/admin/modules.php?restore_lastsearch_values=1">' . $langs->trans("BackToModuleList") . '</a>';
 print_fiche_titre($langs->trans($page_name), $linkback);
 
 // Configuration header
@@ -312,7 +302,7 @@ if (!empty($conf->global->MAIN_MULTICURRENCY_ALLOW_SYNCHRONIZATION))
 	print '</td></tr>';
 
 	print '</table>';
-	print '<br />';
+	print '<br>';
 }
 
 

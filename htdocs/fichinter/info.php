@@ -32,8 +32,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('companies');
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'interventions'));
 
 $socid=0;
 $id = GETPOST('id','int');
@@ -67,7 +67,7 @@ $head = fichinter_prepare_head($object);
 dol_fiche_head($head, 'info', $langs->trans('InterventionCard'), -1, 'intervention');
 
 // Intervention card
-$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/fichinter/list.php?restore_lastsearch_values=1'.(! empty($socid)?'&socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 
 $morehtmlref='<div class="refidno">';

@@ -29,9 +29,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load('admin');
-$langs->load('compta');
-$langs->load('accountancy');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'compta', 'accountancy'));
 
 if (!$user->admin)
 accessforbidden();
@@ -54,7 +53,7 @@ $list = array(
  * Actions
  */
 
-$accounting_mode = defined('ACCOUNTING_MODE')?ACCOUNTING_MODE:'RECETTES-DEPENSES';
+$accounting_mode = empty($conf->global->ACCOUNTING_MODE) ? 'RECETTES-DEPENSES' : $conf->global->ACCOUNTING_MODE;
 
 if ($action == 'update')
 {
@@ -103,7 +102,7 @@ llxHeader();
 
 $form=new Form($db);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans('ComptaSetup'),$linkback,'title_setup');
 
 print '<br>';
@@ -162,7 +161,7 @@ foreach ($list as $key)
 
 print "</table>\n";
 
-print '<br /><br /><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
+print '<br><br><div style="text-align:center"><input type="submit" class="button" value="'.$langs->trans('Modify').'" name="button"></div>';
 print '</form>';
 
 llxFooter();

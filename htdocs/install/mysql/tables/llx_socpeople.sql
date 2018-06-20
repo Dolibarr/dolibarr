@@ -25,7 +25,7 @@ create table llx_socpeople
   tms				timestamp,
   fk_soc			integer,									-- lien vers la societe
   entity			integer DEFAULT 1 NOT NULL,					-- multi company id
-  ref_ext           varchar(128),                               -- reference into an external system (not used by dolibarr)
+  ref_ext           varchar(255),                               -- reference into an external system (not used by dolibarr)
   civility			varchar(6),
   lastname			varchar(50),
   firstname			varchar(50),

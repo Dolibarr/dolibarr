@@ -32,11 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('compta');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies', 'compta'));
 
 $id =GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');
@@ -54,7 +51,7 @@ $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="b.dateo,b.rowid";
 if (empty($page) || $page == -1) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $dir=$conf->bank->dir_output.'/checkdeposits/';
@@ -564,7 +561,7 @@ else
 	$accountstatic=new Account($db);
 	$accountstatic->fetch($object->account_id);
 
-	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php">'.$langs->trans("BackToList").'</a>';
+	$linkback='<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref='';
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);

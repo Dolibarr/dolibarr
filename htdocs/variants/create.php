@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,13 +16,18 @@
  */
 
 require '../main.inc.php';
-require 'class/ProductAttribute.class.php';
+require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductAttribute.class.php';
 
-$ref = GETPOST('ref');
-$label = GETPOST('label');
+$ref = GETPOST('ref', 'alpha');
+$label = GETPOST('label', 'alpha');
+$backtopage = GETPOST('backtopage', 'alpha');
+
+
+/*
+ * Actions
+ */
 
 if ($_POST) {
-
 	if (empty($ref) || empty($label)) {
 		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
 	} else {
@@ -32,9 +36,18 @@ if ($_POST) {
 		$prodattr->label = $label;
 		$prodattr->ref = $ref;
 
-		if ($prodattr->create()) {
+		$resid = $prodattr->create($user);
+		if ($resid > 0) {
 			setEventMessage($langs->trans('RecordSaved'));
-			header('Location: '.dol_buildpath('/variants/list.php', 2));
+			if ($backtopage)
+			{
+				header('Location: '.$backtopage);
+			}
+			else
+			{
+				header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$resid.'&backtopage='.urlencode($backtopage));
+			}
+			exit;
 		} else {
 			setEventMessage($langs->trans('ErrorRecordAlreadyExists'), 'errors');
 		}
@@ -42,6 +55,11 @@ if ($_POST) {
 }
 
 $langs->load('products');
+
+
+/*
+ * View
+ */
 
 $title = $langs->trans('NewProductAttribute');
 
@@ -51,16 +69,23 @@ print_fiche_titre($title);
 
 dol_fiche_head();
 
+print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="add">';
+print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
+
 ?>
-<form method="post">
+
 	<table class="border" style="width: 100%">
 		<tr>
-			<td class="fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
+			<td class="titlefield fieldrequired"><label for="ref"><?php echo $langs->trans('Ref') ?></label></td>
 			<td><input type="text" id="ref" name="ref" value="<?php echo $ref ?>"></td>
+			<td><?php echo $langs->trans("VariantRefExample"); ?>
 		</tr>
 		<tr>
 			<td class="fieldrequired"><label for="label"><?php echo $langs->trans('Label') ?></label></td>
 			<td><input type="text" id="label" name="label" value="<?php echo $label ?>"></td>
+			<td><?php echo $langs->trans("VariantLabelExample"); ?>
 		</tr>
 
 	</table>
@@ -68,6 +93,9 @@ dol_fiche_head();
 <?php
 dol_fiche_end();
 
-print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div></form>';
+print '<div class="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></div>';
+
+print '</form>';
 
 llxFooter();
+$db->close();

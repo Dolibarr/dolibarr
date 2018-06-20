@@ -31,11 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 
-$langs->load("errors");
-$langs->load("users");
-$langs->load("companies");
-$langs->load("ldap");
-$langs->load("other");
+// Load translation files required by page
+$langs->loadLangs(array('errors', 'users', 'companies', 'ldap', 'other'));
 
 // Security check
 if (! empty($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK))
@@ -48,19 +45,19 @@ $action=GETPOST('action', 'alpha');
 $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 
-$username 		= GETPOST('username');
-$passwordhash	= GETPOST('passwordhash');
-$conf->entity 	= (GETPOST('entity') ? GETPOST('entity') : 1);
+$username 		= GETPOST('username','alpha');
+$passwordhash	= GETPOST('passwordhash','alpha');
+$conf->entity 	= (GETPOST('entity','int') ? GETPOST('entity','int') : 1);
 
 // Instantiate hooks of thirdparty module only if not already define
 $hookmanager->initHooks(array('passwordforgottenpage'));
 
 
-if (GETPOST('dol_hide_leftmenu') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
-if (GETPOST('dol_hide_topmenu') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
-if (GETPOST('dol_optimize_smallscreen') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
-if (GETPOST('dol_no_mouse_hover') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
-if (GETPOST('dol_use_jmobile') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
+if (GETPOST('dol_hide_leftmenu','alpha') || ! empty($_SESSION['dol_hide_leftmenu']))               $conf->dol_hide_leftmenu=1;
+if (GETPOST('dol_hide_topmenu','alpha') || ! empty($_SESSION['dol_hide_topmenu']))                 $conf->dol_hide_topmenu=1;
+if (GETPOST('dol_optimize_smallscreen','alpha') || ! empty($_SESSION['dol_optimize_smallscreen'])) $conf->dol_optimize_smallscreen=1;
+if (GETPOST('dol_no_mouse_hover','alpha') || ! empty($_SESSION['dol_no_mouse_hover']))             $conf->dol_no_mouse_hover=1;
+if (GETPOST('dol_use_jmobile','alpha') || ! empty($_SESSION['dol_use_jmobile']))                   $conf->dol_use_jmobile=1;
 
 
 /**
@@ -78,7 +75,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
     }
     else
     {
-        if (dol_hash($edituser->pass_temp) == $passwordhash)
+        if (dol_verifyHash($edituser->pass_temp, $passwordhash))
         {
             $newpassword=$edituser->setPassword($user,$edituser->pass_temp,0);
             dol_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
@@ -96,7 +93,7 @@ if ($action == 'validatenewpassword' && $username && $passwordhash)
 if ($action == 'buildnewpassword' && $username)
 {
     $sessionkey = 'dol_antispam_value';
-    $ok=(array_key_exists($sessionkey, $_SESSION) === TRUE && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
+    $ok=(array_key_exists($sessionkey, $_SESSION) === true && (strtolower($_SESSION[$sessionkey]) == strtolower($_POST['code'])));
 
     // Verify code
     if (! $ok)
@@ -133,12 +130,10 @@ if ($action == 'buildnewpassword' && $username)
                     {
 
                         $message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,dolObfuscateEmail($edituser->email)).'</div>';
-                        //$message.=$newpassword;
                         $username='';
                     }
                     else
                     {
-                        //$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
                         $message.= '<div class="error">'.$edituser->error.'</div>';
                     }
                 }
@@ -167,25 +162,6 @@ else
 {
     $template_dir = DOL_DOCUMENT_ROOT."/core/tpl/";
 }
-
-// Note: $conf->css looks like '/theme/eldy/style.css.php'
-$conf->css = "/theme/".(GETPOST('theme','alpha')?GETPOST('theme','alpha'):$conf->theme)."/style.css.php";
-$themepath=dol_buildpath($conf->css,1);
-if (! empty($conf->modules_parts['theme']))	// This slow down
-{
-	foreach($conf->modules_parts['theme'] as $reldir)
-	{
-		if (file_exists(dol_buildpath($reldir.$conf->css, 0)))
-		{
-			$themepath=dol_buildpath($reldir.$conf->css, 1);
-			break;
-		}
-	}
-}
-$conf_css = $themepath."?lang=".$langs->defaultlang;
-
-$jquerytheme = 'smoothness';
-if (! empty($conf->global->MAIN_USE_JQUERY_THEME)) $jquerytheme = $conf->global->MAIN_USE_JQUERY_THEME;
 
 if (! $username) $focus_element = 'username';
 else $focus_element = 'password';
@@ -239,4 +215,3 @@ $reshook = $hookmanager->executeHooks('getPasswordForgottenPageExtraOptions',$pa
 $moreloginextracontent = $hookmanager->resPrint;
 
 include $template_dir.'passwordforgotten.tpl.php';	// To use native PHP
-

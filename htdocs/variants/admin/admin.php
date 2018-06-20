@@ -20,8 +20,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-$langs->load("admin");
-$langs->load("products");
+$langs->loadLangs(array("admin", "products"));
 
 // Security check
 if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))
@@ -37,12 +36,18 @@ if ($_POST) {
 		setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
 	}
 
+       if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
+               setEventMessage($langs->trans('RecordSaved'));
+       } else {
+               setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+       }
+
 }
 
 $title = $langs->trans('ModuleSetup').' '.$langs->trans('ProductAttributes');
 llxHeader('', $title);
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($title,$linkback,'title_setup');
 
 dol_fiche_head(array(), 'general', $tab, 0, 'product');
@@ -53,8 +58,15 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
 print '<td align="right" width="60">'.$langs->trans("Value").'</td>'."\n";
 print '<td width="80">&nbsp;</td></tr>'."\n";
-print '<tr><td>'.$langs->trans('HideProductCombinations').'</td><td>';
+print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td><td>';
 print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD",$conf->global->PRODUIT_ATTRIBUTES_HIDECHILD,1).'</td></tr>';
+print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
+if(isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
+       $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
+} else {
+       $separator = "_";
+}
+print '<td align="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
 print '</table>';
 print '<br><div style="text-align: center"><input type="submit" value="'.$langs->trans('Save').'" class="button"></div>';
 print '</form>';

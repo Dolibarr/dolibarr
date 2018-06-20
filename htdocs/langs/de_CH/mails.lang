@@ -1,7 +1,6 @@
 # Dolibarr language file - Source file is en_US - mails
 DateLastSend=Datum des letzten Versand
 ActivateCheckReadKey=Schlüssel um die URL für "Lesebestätigung" und "Abmelden/Unsubscribe" zu verschlüsseln
-AllRecipientSelected=Alle Partner mit E-Mail ausgewählt
 ResultOfMailSending=Ergebnis der Massen-E-Mailversand
 NbSelected=Anzahl selektiert
 NbIgnored=Anzahl ignoriert

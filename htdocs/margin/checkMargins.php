@@ -29,10 +29,15 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
+
+$action     = GETPOST('action','alpha');
+$massaction = GETPOST('massaction','alpha');
+$toselect   = GETPOST('toselect', 'array');
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'margindetail';   // To manage different context of search
+$backtopage = GETPOST('backtopage','alpha');
+$optioncss  = GETPOST('optioncss','alpha');
 
 // Load variable for pagination
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
@@ -68,8 +73,8 @@ if (GETPOST("button_search_x") || GETPOST("button_search")) {
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters, $object, $action);    // Note that $action and $object may have been modified by some hooks
@@ -143,13 +148,10 @@ llxHeader('', $title);
 $param='';
 if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
 if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
-if (! empty($startdate)) {
-    $param .= '&startdatemonth=' . GETPOST('startdatemonth', 'int') . '&startdateday=' . GETPOST('startdateday', 'int') . '&startdateyear=' . GETPOST('startdateyear', 'int');
-}
-if (! empty($enddate)) {
-    $param .= '&enddatemonth=' . GETPOST('enddatemonth', 'int') . '&enddateday=' . GETPOST('enddateday', 'int') . '&enddateyear=' . GETPOST('enddateyear', 'int');
-}
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
+if ($search_ref != '')   $param.='&search_ref='.urlencode($search_ref);
+if (! empty($startdate)) $param .= '&startdatemonth=' . GETPOST('startdatemonth', 'int') . '&startdateday=' . GETPOST('startdateday', 'int') . '&startdateyear=' . GETPOST('startdateyear', 'int');
+if (! empty($enddate))   $param .= '&enddatemonth=' . GETPOST('enddatemonth', 'int') . '&enddateday=' . GETPOST('enddateday', 'int') . '&enddateyear=' . GETPOST('enddateyear', 'int');
+if ($optioncss != '')    $param.='&optioncss='.$optioncss;
 
 // Show tabs
 $head = marges_prepare_head($user);
@@ -201,10 +203,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
 
 	dol_syslog(__FILE__, LOG_DEBUG);
 	$result = $db->query($sql);
-	if ($result) {
-		$nbtotalofrecords = $db->num_rows($result);
-	} else {
-		setEventMessages($db->lasterror, null, 'errors');
+	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
 	}
 }
 

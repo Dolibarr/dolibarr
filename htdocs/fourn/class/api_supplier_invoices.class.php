@@ -96,7 +96,7 @@ class SupplierInvoices extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 0, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '') {
         global $db, $conf;
 
         $obj_ret = array();
@@ -182,7 +182,7 @@ class SupplierInvoices extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of supplier invoice
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
 			throw new RestException(401, "Insuffisant rights");
@@ -218,7 +218,7 @@ class SupplierInvoices extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->facture->creer) {
 			throw new RestException(401);
@@ -312,7 +312,7 @@ class SupplierInvoices extends DolibarrApi
 
     	$result = $this->invoice->validate(DolibarrApiAccess::$user, '', $idwarehouse, $notrigger);
     	if ($result == 0) {
-    		throw new RestException(500, 'Error nothing done. May be object is already validated');
+    		throw new RestException(304, 'Error nothing done. May be object is already validated');
     	}
     	if ($result < 0) {
     		throw new RestException(500, 'Error when validating Invoice: '.$this->invoice->error);
@@ -337,6 +337,10 @@ class SupplierInvoices extends DolibarrApi
         $object = parent::_cleanObjectDatas($object);
 
         unset($object->rowid);
+        unset($object->barcode_type);
+        unset($object->barcode_type_code);
+        unset($object->barcode_type_label);
+        unset($object->barcode_type_coder);
 
         return $object;
     }
@@ -352,7 +356,7 @@ class SupplierInvoices extends DolibarrApi
     function _validate($data)
     {
         $invoice = array();
-        foreach (Invoices::$FIELDS as $field) {
+        foreach (SupplierInvoices::$FIELDS as $field) {
             if (!isset($data[$field]))
                 throw new RestException(400, "$field field missing");
             $invoice[$field] = $data[$field];

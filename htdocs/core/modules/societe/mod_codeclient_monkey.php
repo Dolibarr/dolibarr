@@ -182,7 +182,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		{
 			if ($this->verif_syntax($code) >= 0)
 			{
-				$is_dispo = $this->verif_dispo($db, $code, $soc);
+				$is_dispo = $this->verif_dispo($db, $code, $soc, $type);
 				if ($is_dispo <> 0)
 				{
 					$result=-3;
@@ -205,7 +205,7 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 			}
 		}
 
-		dol_syslog(get_class($this)."::verif type=".$type." result=".$result);
+		dol_syslog(get_class($this)."::verif code=".$code." type=".$type." result=".$result);
 		return $result;
 	}
 
@@ -216,14 +216,16 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 	 *		@param	DoliDB		$db			Handler acces base
 	 *		@param	string		$code		Code a verifier
 	 *		@param	Societe		$soc		Objet societe
+	 *		@param  int		  	$type   	0 = customer/prospect , 1 = supplier
 	 *		@return	int						0 if available, <0 if KO
 	 */
-	function verif_dispo($db, $code, $soc)
+	function verif_dispo($db, $code, $soc, $type=0)
 	{
 		global $conf, $mc;
 
-		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
-		$sql.= " WHERE code_client = '".$code."'";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
+		if ($type == 1) $sql.= " WHERE code_fournisseur = '".$code."'";
+		else $sql.= " WHERE code_client = '".$code."'";
 		$sql.= " AND entity IN (".getEntity('societe').")";
 		if ($soc->id > 0) $sql.= " AND rowid <> ".$soc->id;
 
@@ -244,7 +246,6 @@ class mod_codeclient_monkey extends ModeleThirdPartyCode
 		{
 			return -2;
 		}
-
 	}
 
 

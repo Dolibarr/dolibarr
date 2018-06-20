@@ -35,7 +35,7 @@ if (!$user->rights->opensurvey->read) accessforbidden();
 
 // Initialisation des variables
 $action=GETPOST('action','aZ09');
-$cancel=GETPOST('cancel');
+$cancel=GETPOST('cancel','alpha');
 
 $numsondage = '';
 
@@ -216,7 +216,7 @@ dol_fiche_head($head,'general',$langs->trans("Survey"), -1, DOL_URL_ROOT.'/opens
 
 $morehtmlref = '';
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/opensurvey/list.php">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/opensurvey/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 dol_banner_tab($object, 'id', $linkback, 1, 'id_sondage', 'id_sondage', $morehtmlref);
 
@@ -310,7 +310,7 @@ if ($action == 'edit') print $form->select_date($expiredate?$expiredate:$object-
 else
 {
     print dol_print_date($object->date_fin,'day');
-    if ($object->date_fin && $object->date_fin < dol_now()) print img_warning($langs->trans("Expired"));
+    if ($object->date_fin && $object->date_fin < dol_now() && $object->status == Opensurveysondage::STATUS_VALIDATED) print img_warning($langs->trans("Expired"));
 }
 print '</td></tr>';
 

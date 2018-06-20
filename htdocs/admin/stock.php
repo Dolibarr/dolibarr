@@ -3,7 +3,7 @@
  * Copyright (C) 2008-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2013 Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2013-2017 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,8 +28,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
-$langs->load("admin");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "stocks"));
 
 // Securit check
 if (!$user->admin) accessforbidden();
@@ -45,6 +45,10 @@ if($action)
 {
 	$db->begin();
 
+	if ($action == 'STOCK_SUPPORTS_SERVICES')
+	{
+		$res = dolibarr_set_const($db, "STOCK_SUPPORTS_SERVICES", GETPOST('STOCK_SUPPORTS_SERVICES','alpha'),'chaine',0,'',$conf->entity);
+	}
 	if ($action == 'STOCK_USERSTOCK_AUTOCREATE')
 	{
 		$res = dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", GETPOST('STOCK_USERSTOCK_AUTOCREATE','alpha'),'chaine',0,'',$conf->entity);
@@ -132,7 +136,7 @@ if($action)
 
 llxHeader('',$langs->trans("StockSetup"));
 
-$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php">'.$langs->trans("BackToModuleList").'</a>';
+$linkback='<a href="'.DOL_URL_ROOT.'/admin/modules.php?restore_lastsearch_values=1">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($langs->trans("StockSetup"),$linkback,'title_setup');
 
 $form=new Form($db);
@@ -158,14 +162,12 @@ print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("RuleForStockManagementDecrease")."</td>\n";
 print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
-$var=true;
 
 $found=0;
 
-
 print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("DeStockOnBill").'</td>';
-print '<td width="160" align="right">';
+print '<td>'.$langs->trans("DeStockOnBill").'</td>';
+print '<td align="right">';
 if (! empty($conf->facture->enabled))
 {
     print "<form method=\"post\" action=\"stock.php\">";
@@ -184,8 +186,8 @@ $found++;
 
 
 print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("DeStockOnValidateOrder").'</td>';
-print '<td width="160" align="right">';
+print '<td>'.$langs->trans("DeStockOnValidateOrder").'</td>';
+print '<td align="right">';
 if (! empty($conf->commande->enabled))
 {
     print "<form method=\"post\" action=\"stock.php\">";
@@ -206,8 +208,8 @@ $found++;
 //{
 
 print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("DeStockOnShipment").'</td>';
-print '<td width="160" align="right">';
+print '<td>'.$langs->trans("DeStockOnShipment").'</td>';
+print '<td align="right">';
 if (! empty($conf->expedition->enabled))
 {
 	print "<form method=\"post\" action=\"stock.php\">";
@@ -226,8 +228,8 @@ $found++;
 
 
 print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
-print '<td width="160" align="right">';
+print '<td>'.$langs->trans("DeStockOnShipmentOnClosing").'</td>';
+print '<td align="right">';
 if (! empty($conf->expedition->enabled))
 {
 	print "<form method=\"post\" action=\"stock.php\">";
@@ -246,7 +248,7 @@ $found++;
 
 /*if (! $found)
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockDecrease").'</td>';
 	print "</tr>\n";
@@ -262,14 +264,12 @@ print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("RuleForStockManagementIncrease")."</td>\n";
 print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 print '</tr>'."\n";
-$var=true;
 
 $found=0;
 
-
 print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("ReStockOnBill").'</td>';
-print '<td width="160" align="right">';
+print '<td>'.$langs->trans("ReStockOnBill").'</td>';
+print '<td align="right">';
 if (! empty($conf->fournisseur->enabled))
 {
     print "<form method=\"post\" action=\"stock.php\">";
@@ -289,8 +289,8 @@ $found++;
 
 
 print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("ReStockOnValidateOrder").'</td>';
-print '<td width="160" align="right">';
+print '<td>'.$langs->trans("ReStockOnValidateOrder").'</td>';
+print '<td align="right">';
 if (! empty($conf->fournisseur->enabled))
 {
     print "<form method=\"post\" action=\"stock.php\">";
@@ -309,8 +309,8 @@ $found++;
 
 
 print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("ReStockOnDispatchOrder").'</td>';
-print '<td width="160" align="right">';
+print '<td>'.$langs->trans("ReStockOnDispatchOrder").'</td>';
+print '<td align="right">';
 if (! empty($conf->fournisseur->enabled))
 {
     print "<form method=\"post\" action=\"stock.php\">";
@@ -329,7 +329,7 @@ $found++;
 
 /*if (! $found)
 {
-	
+
 	print '<tr class="oddeven">';
 	print '<td colspan="2">'.$langs->trans("NoModuleToManageStockIncrease").'</td>';
 	print "</tr>\n";
@@ -346,8 +346,8 @@ print '</tr>'."\n";
 
 
 print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("WarehouseAllowNegativeTransfer").'</td>';
-print '<td width="160" align="right">';
+print '<td>'.$langs->trans("WarehouseAllowNegativeTransfer").'</td>';
+print '<td align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"STOCK_ALLOW_NEGATIVE_TRANSFER\">";
@@ -358,11 +358,11 @@ print "</td>\n";
 print "</tr>\n";
 
 // Option to force stock to be enough before adding a line into document
-if($conf->invoice->enabled) {
-	$var = !$var;
+if($conf->invoice->enabled)
+{
 	print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
-	print '<td width="160" align="right">';
+	print '<td>'.$langs->trans("StockMustBeEnoughForInvoice").'</td>';
+	print '<td align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_INVOICE\">";
@@ -373,11 +373,11 @@ if($conf->invoice->enabled) {
 	print "</tr>\n";
 }
 
-if($conf->order->enabled) {
-	$var = !$var;
+if($conf->order->enabled) 
+{
 	print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
-	print '<td width="160" align="right">';
+	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
+	print '<td align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_ORDER\">";
@@ -388,11 +388,11 @@ if($conf->order->enabled) {
 	print "</tr>\n";
 }
 
-if($conf->expedition->enabled) {
-	$var = !$var;
+if($conf->expedition->enabled) 
+{
 	print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
-	print '<td width="160" align="right">';
+	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';
+	print '<td align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_MUST_BE_ENOUGH_FOR_SHIPMENT\">";
@@ -404,6 +404,8 @@ if($conf->expedition->enabled) {
 }
 print '</table>';
 
+print '<br>';
+
 $virtualdiffersfromphysical=0;
 if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 	|| ! empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)
@@ -411,16 +413,15 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 
 if ($virtualdiffersfromphysical)
 {
-	print '<br>';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
 	print "  <td>".$langs->trans("RuleForStockReplenishment")." ".img_help('help',$langs->trans("VirtualDiffersFromPhysical"))."</td>\n";
 	print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
 	print '</tr>'."\n";
-	$var = !$var;
+
 	print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("UseVirtualStockByDefault").'</td>';
-	print '<td width="160" align="right">';
+	print '<td>'.$langs->trans("UseVirtualStockByDefault").'</td>';
+	print '<td align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USE_VIRTUAL_STOCK\">";
@@ -430,10 +431,71 @@ if ($virtualdiffersfromphysical)
 	print "</td>\n";
 	print "</tr>\n";
 	print '</table>';
+	print '<br>';
 }
 
 
-print '<br />';
+print '<table class="noborder" width="100%">';
+
+print '<tr class="liste_titre">';
+print "  <td>".$langs->trans("Other")."</td>\n";
+print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
+print '</tr>'."\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("UserWarehouseAutoCreate").'</td>';
+print '<td class="width100" align="right">';
+print "<form method=\"post\" action=\"stock.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
+print $form->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print "</td>\n";
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>';
+print $form->textwithpicto($langs->trans("StockSupportServices"), $langs->trans("StockSupportServicesDesc")).'</td>';
+print '<td align="right">';
+print "<form method=\"post\" action=\"stock.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"STOCK_SUPPORTS_SERVICES\">";
+print $form->selectyesno("STOCK_SUPPORTS_SERVICES",$conf->global->STOCK_SUPPORTS_SERVICES,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print "</td>\n";
+print "</tr>\n";
+
+print '<tr class="oddeven">';
+print '<td>'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
+print '<td align="right">';
+print "<form method=\"post\" action=\"stock.php\">";
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print "<input type=\"hidden\" name=\"action\" value=\"STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE\">";
+print $form->selectyesno("STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE",$conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print "</td>\n";
+print "</tr>\n";
+
+if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
+
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("UseDispatchStatus").'</td>';
+    print '<td align="right">';
+    print "<form method=\"post\" action=\"stock.php\">";
+    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+    print "<input type=\"hidden\" name=\"action\" value=\"SUPPLIER_ORDER_USE_DISPATCH_STATUS\">";
+    print $form->selectyesno("SUPPLIER_ORDER_USE_DISPATCH_STATUS",$conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS,1);
+    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+    print "</form>\n";
+    print "</td>\n</tr>\n";
+}
+
+print '</table>';
+
+print '<br>';
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 {
 	print '<table class="noborder" width="100%">';
@@ -441,7 +503,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<td>'.$langs->trans("Inventory").'</td>'."\n";
 	print '<td align="center" width="20">&nbsp;</td>';
 	print '<td align="center" width="100">&nbsp;</td>'."\n";
-	
+
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_DISABLE_VIRTUAL").'</td>';
@@ -454,7 +516,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_USE_MIN_PA_IF_NO_LAST_PA").'</td>';
@@ -467,7 +529,7 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	// Example with a yes / no select
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("INVENTORY_USE_INVENTORY_DATE_FROM_DATEMVT").'</td>';
@@ -480,68 +542,19 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 	print '</form>';
 	print '</td></tr>';
-	
+
 	print '</table>';
 }
-
-print '<table class="noborder" width="100%">';
-
-print '<tr class="liste_titre">';
-print "  <td>".$langs->trans("Other")."</td>\n";
-print "  <td align=\"right\" width=\"160\">&nbsp;</td>\n";
-print '</tr>'."\n";
-
-if (! empty($conf->fournisseur->enabled) && !empty($conf->global->STOCK_CALCULATE_ON_SUPPLIER_DISPATCH_ORDER)) {
-    
-    print '<tr class="oddeven">';
-    print '<td width="60%">'.$langs->trans("UseDispatchStatus").'</td>';
-    print '<td width="160" align="right">';
-    print "<form method=\"post\" action=\"stock.php\">";
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print "<input type=\"hidden\" name=\"action\" value=\"SUPPLIER_ORDER_USE_DISPATCH_STATUS\">";
-    print $form->selectyesno("SUPPLIER_ORDER_USE_DISPATCH_STATUS",$conf->global->SUPPLIER_ORDER_USE_DISPATCH_STATUS,1);
-    print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-    print "</form>\n";
-    print "</td>\n</tr>\n";
-}
-
-print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("UserWarehouseAutoCreate").'</td>';
-print '<td width="160" align="right">';
-print "<form method=\"post\" action=\"stock.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"STOCK_USERSTOCK_AUTOCREATE\">";
-print $form->selectyesno("STOCK_USERSTOCK_AUTOCREATE",$conf->global->STOCK_USERSTOCK_AUTOCREATE,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
-print "</td>\n";
-print "</tr>\n";
-
-print '<tr class="oddeven">';
-print '<td width="60%">'.$langs->trans("AllowAddLimitStockByWarehouse").'</td>';
-
-print '<td width="160" align="right">';
-print "<form method=\"post\" action=\"stock.php\">";
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print "<input type=\"hidden\" name=\"action\" value=\"STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE\">";
-print $form->selectyesno("STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE",$conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
-print "</td>\n";
-print "</tr>\n";
-
-print '<br>';
 
 /* I keep the option/feature, but hidden to end users for the moment. If feature is used by module, no need to have users see it.
 If not used by a module, I still need to understand in which case user may need this now we can set rule on product page.
 if ($conf->global->PRODUIT_SOUSPRODUITS)
 {
-	
+
 
 	print '<tr class="oddeven">';
-	print '<td width="60%">'.$langs->trans("IndependantSubProductStock").'</td>';
-
-	print '<td width="160" align="right">';
+	print '<td>'.$langs->trans("IndependantSubProductStock").'</td>';
+	print '<td align="right">';
 	print "<form method=\"post\" action=\"stock.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 	print "<input type=\"hidden\" name=\"action\" value=\"INDEPENDANT_SUBPRODUCT_STOCK\">";
@@ -552,8 +565,6 @@ if ($conf->global->PRODUIT_SOUSPRODUITS)
 	print "</tr>\n";
 }
 */
-
-print '</table>';
 
 
 llxFooter();

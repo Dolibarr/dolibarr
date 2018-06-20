@@ -48,4 +48,4 @@ SmsInfoNumero= (Format internationella dvs 33899701761)
 DelayBeforeSending=Fördröjning innan du skickar (minuter)
 SmsNoPossibleSenderFound=No sender available. Check setup of your SMS provider.
 SmsNoPossibleRecipientFound=Inget mål tillgänglig. Kontrollera inställningarna i din SMS-leverantör.
-
+DisableStopIfSupported=Disable STOP message (if supported)

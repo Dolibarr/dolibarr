@@ -35,12 +35,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("resource");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'resource', 'companies'));
 
 $id = GETPOST('id','int');
-$ref = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref','alpha');
 $action = GETPOST('action','alpha');
 $confirm = GETPOST('confirm','alpha');
 
@@ -100,20 +99,20 @@ if ($object->id)
 		$totalsize+=$file['size'];
 	}
 
-	
+
 	$linkback = '<a href="' . DOL_URL_ROOT . '/resource/list.php' . (! empty($socid) ? '?id=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	 
-	 
+
+
 	$morehtmlref='<div class="refidno">';
 	$morehtmlref.='</div>';
-	 
-	 
-	dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'ref', $morehtmlref);
-	 
-	 
+
+
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+
+
 	print '<div class="fichecenter">';
 	print '<div class="underbanner clearboth"></div>';
-	 
+
     print '<table class="border" width="100%">';
 
 	// Resource type
@@ -125,16 +124,16 @@ if ($object->id)
 	print '</tr>';
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
     print '</table>';
 
     print '</div>';
 
     dol_fiche_end();
-    
+
     $modulepart = 'dolresource';
     $permission = $user->rights->resource->write;
-    $param = '&id=' . $object->id;
+
     include_once DOL_DOCUMENT_ROOT . '/core/tpl/document_actions_post_headers.tpl.php';
 
 }

@@ -26,7 +26,6 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/admin.lib.php';
@@ -35,12 +34,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
-// Langs
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("main");
-$langs->load("accountancy");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array("companies","compta","accountancy","products"));
 
 // Security check
 if (empty($conf->accounting->enabled)) {
@@ -90,8 +85,8 @@ $arrayfields=array();
  * Actions
  */
 
-if (GETPOST('cancel')) { $action='list'; $massaction=''; }
-if (! GETPOST('confirmmassaction') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
+if (GETPOST('cancel','alpha')) { $action='list'; $massaction=''; }
+if (! GETPOST('confirmmassaction','alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction=''; }
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
@@ -136,17 +131,25 @@ if ($action == 'update') {
 			$accounting = new AccountingAccount($db);
 
 			//$msg .= '<div><span  class="accountingprocessing">' . count($chk_prod) . ' ' . $langs->trans("SelectedLines") . '</span></div>';
+			$arrayofdifferentselectedvalues = array();
 
 			$cpt = 0; $ok = 0; $ko = 0;
-			foreach ( $chk_prod as $productid ) {
-
+			foreach ( $chk_prod as $productid )
+			{
 				$accounting_account_id = GETPOST('codeventil_' . $productid);
 
-				$result = $accounting->fetch($accounting_account_id, null, 1);
-				if ($result < 0) {
+				$result = 0;
+				if ($accounting_account_id > 0)
+				{
+					$arrayofdifferentselectedvalues[$accounting_account_id]=$accounting_account_id;
+					$result = $accounting->fetch($accounting_account_id, null, 1);
+				}
+				if ($result <= 0) {
 					// setEventMessages(null, $accounting->errors, 'errors');
 					$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : id=' . $accounting_account_id . '<br/> <pre>' . $sql . '</pre></font></div>';
+					$ko++;
 				} else {
+					$db->begin();
 
 					$sql = " UPDATE " . MAIN_DB_PREFIX . "product";
 					if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
@@ -158,23 +161,23 @@ if ($action == 'update') {
 					$sql .= " WHERE rowid = " . $productid;
 
 					dol_syslog("/accountancy/admin/productaccount.php sql=" . $sql, LOG_DEBUG);
-					if ($db->query($sql)) {
+					if ($db->query($sql))
+					{
 					    $ok++;
-						//$msg .= '<div><font color="green">' . $langs->trans("Product") . ' ' . $productid . ' - ' . $langs->trans("VentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '</font></div>';
+					    $db->commit();
 					} else {
 					    $ko++;
-						//$msg .= '<div><font color="red">' . $langs->trans("ErrorDB") . ' : ' . $langs->trans("Product") . ' ' . $productid . ' ' . $langs->trans("NotVentilatedinAccount") . ' : ' . length_accountg($accounting->account_number) . '<br/> <pre>' . $sql . '</pre></font></div>';
+					    $db->rollback();
 					}
 				}
 
-				$cpt ++;
+				$cpt++;
 			}
-		} else {
-			//$msg .= '<div><span class="accountingprocessing">' . $langs->trans("AnyLineVentilate") . '</span></div>';
+
 		}
+
 		if ($ko) setEventMessages($langs->trans("XLineFailedToBeBinded", $ko), null, 'errors');
 		if ($ok) setEventMessages($langs->trans("XLineSuccessfullyBinded", $ok), null, 'mesgs');
-		//$msg .= '<div><span class="accountingprocessing">' . $langs->trans("EndProcessing") . '</span></div>';
 	}
 }
 
@@ -253,7 +256,13 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
+
 $sql .= $db->plimit($limit + 1, $offset);
 
 dol_syslog("/accountancy/admin/productaccount.php:: sql=" . $sql, LOG_DEBUG);
@@ -264,8 +273,8 @@ if ($result)
 	$i = 0;
 
     $param='';
-    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+    if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+    if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
     if ($search_ref > 0) $param.="&search_desc=".urlencode($search_ref);
     if ($search_label > 0) $param.="&search_desc=".urlencode($search_label);
     if ($search_desc > 0) $param.="&search_desc=".urlencode($search_desc);
@@ -292,10 +301,10 @@ if ($result)
 	print '<tr class="liste_titre">';
 	print '<td>' . $langs->trans('Options') . '</td><td>' . $langs->trans('Description') . '</td>';
 	print "</tr>\n";
-	print '<tr ' . $bc[false] . '><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL"' . ($accounting_product_mode != 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductSell') . '</td>';
+	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_SELL"' . ($accounting_product_mode != 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductSell') . '</td>';
 	print '<td>'.$langs->trans('OptionModeProductSellDesc');
 	print "</td></tr>\n";
-	print '<tr ' . $bc[true] . '><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY"' . ($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductBuy') . '</td>';
+	print '<tr class="oddeven"><td class="titlefield"><input type="radio" name="accounting_product_mode" value="ACCOUNTANCY_BUY"' . ($accounting_product_mode == 'ACCOUNTANCY_BUY' ? ' checked' : '') . '> ' . $langs->trans('OptionModeProductBuy') . '</td>';
 	print '<td>'.$langs->trans('OptionModeProductBuyDesc')."</td></tr>\n";
 	print "</table>\n";
 
@@ -312,6 +321,7 @@ if ($result)
 	$texte=$langs->trans("ListOfProductsServices");
 	print_barre_liste($texte, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, '', 0, '', '', $limit);
 
+	print '<div class="div-table-responsive">';
 	print '<table class="liste '.($moreforfilter?"listwithfilterbefore":"").'">';
 
 	print '<tr class="liste_titre_filter">';
@@ -319,9 +329,9 @@ if ($result)
 	print '<td class="liste_titre"><input type="text" class="flat" size="10" name="search_label" value="' . dol_escape_htmltag($search_label) . '"></td>';
 	if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print '<td class="liste_titre"><input type="text" class="flat" size="20" name="search_desc" value="' . dol_escape_htmltag($search_desc) . '"></td>';
 	// On sell
-	print '<td class="liste_titre"></td>';
+	if ($accounting_product_mode == 'ACCOUNTANCY_SELL') print '<td class="liste_titre"></td>';
 	// On buy
-	print '<td class="liste_titre"></td>';
+	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') print '<td class="liste_titre"></td>';
 	// Current account
 	print '<td class="liste_titre">';
 	print '<input type="text" class="flat" size="6" name="search_current_account" value="' . dol_escape_htmltag($search_current_account) . '">';
@@ -339,11 +349,9 @@ if ($result)
 	print_liste_field_titre("Ref", $_SERVER["PHP_SELF"], "p.ref", "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("Label", $_SERVER["PHP_SELF"], "p.label", "", $param, '', $sortfield, $sortorder);
     if (! empty($conf->global->ACCOUNTANCY_SHOW_PROD_DESC)) print_liste_field_titre("Description", $_SERVER["PHP_SELF"], "p.description", "", $param, '', $sortfield, $sortorder);
-	print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
-   	print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
-   	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') {
-   	    $fieldtosortaccount="p.accountancy_code_buy";
-   	}
+    if ($accounting_product_mode == 'ACCOUNTANCY_SELL') print_liste_field_titre("OnSell", $_SERVER["PHP_SELF"], "p.tosell", "", $param, 'align="center"', $sortfield, $sortorder);
+    if ($accounting_product_mode == 'ACCOUNTANCY_BUY')  print_liste_field_titre("OnBuy", $_SERVER["PHP_SELF"], "p.tobuy", "", $param, 'align="center"', $sortfield, $sortorder);
+   	if ($accounting_product_mode == 'ACCOUNTANCY_BUY') $fieldtosortaccount="p.accountancy_code_buy";
    	else $fieldtosortaccount="p.accountancy_code_sell";
    	print_liste_field_titre("CurrentDedicatedAccountingAccount", $_SERVER["PHP_SELF"], $fieldtosortaccount, "", $param, '', $sortfield, $sortorder);
 	print_liste_field_titre("AssignDedicatedAccountingAccount");
@@ -353,7 +361,6 @@ if ($result)
 
 	$product_static = new Product($db);
 
-	$var = true;
 	$i=0;
     while ($i < min($num,$limit))
     {
@@ -401,9 +408,11 @@ if ($result)
     		print '<td style="' . $code_sell_p_l_differ . '">' . nl2br(dol_trunc($obj->description, $trunclengh)) . '</td>';
 		}
 
-		print '<td align="center">'.$product_static->getLibStatut(3, 0).'</td>';
+		if ($accounting_product_mode == 'ACCOUNTANCY_SELL')
+			print '<td align="center">'.$product_static->getLibStatut(3, 0).'</td>';
 
-		print '<td align="center">'.$product_static->getLibStatut(3, 1).'</td>';
+		if ($accounting_product_mode == 'ACCOUNTANCY_BUY')
+			print '<td align="center">'.$product_static->getLibStatut(3, 1).'</td>';
 
 		// Current accounting account
 		print '<td align="left">';
@@ -448,6 +457,7 @@ if ($result)
 		$i ++;
 	}
 	print '</table>';
+	print '</div>';
 
 	// Example : Adding jquery code
 	print '<script type="text/javascript" language="javascript">

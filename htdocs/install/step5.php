@@ -33,11 +33,11 @@ require_once $dolibarr_main_document_root . '/core/lib/security.lib.php'; // for
 
 global $langs;
 
-$setuplang=GETPOST("selectlang",'',3)?GETPOST("selectlang",'',3):'auto';
+$versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
+$versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'alpha',3):(empty($argv[2])?'':$argv[2]);
+$setuplang=GETPOST('selectlang','aZ09',3)?GETPOST('selectlang','aZ09',3):(empty($argv[3])?'auto':$argv[3]);
 $langs->setDefaultLang($setuplang);
-$versionfrom=GETPOST("versionfrom",'',3)?GETPOST("versionfrom",'',3):(empty($argv[1])?'':$argv[1]);
-$versionto=GETPOST("versionto",'',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
-$action=GETPOST('action', 'alpha');
+$action=GETPOST('action','alpha')?GETPOST('action','alpha'):(empty($argv[4])?'':$argv[4]);
 
 // Define targetversion used to update MAIN_VERSION_LAST_INSTALL for first install
 // or MAIN_VERSION_LAST_UPGRADE for upgrade.
@@ -55,9 +55,9 @@ if (! empty($action) && preg_match('/upgrade/i', $action))	// If it's an old upg
 $langs->load("admin");
 $langs->load("install");
 
-$login = GETPOST('login', 'alpha');
-$pass = GETPOST('pass', 'alpha');
-$pass_verif = GETPOST('pass_verif', 'alpha');
+$login = GETPOST('login', 'alpha')?GETPOST('login', 'alpha'):(empty($argv[5])?'':$argv[5]);
+$pass = GETPOST('pass', 'alpha')?GETPOST('pass', 'alpha'):(empty($argv[6])?'':$argv[6]);
+$pass_verif = GETPOST('pass_verif', 'alpha')?GETPOST('pass_verif', 'alpha'):(empty($argv[7])?'':$argv[7]);
 
 $success=0;
 
@@ -76,6 +76,8 @@ if (@file_exists($forcedfile)) {
 }
 
 dolibarr_install_syslog("--- step5: entering step5.php page");
+
+$error=0;
 
 
 /*
@@ -165,6 +167,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         if ($db->connected)
         {
             $conf->setValues($db);
+            // Reset forced setup after the setValues
+            if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+            $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
             // Create admin user
             include_once DOL_DOCUMENT_ROOT .'/user/class/user.class.php';
@@ -181,8 +186,13 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
     			    // Define default setup for password encryption
     			    dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1", 'chaine', 0, '', $conf->entity);
     			    dolibarr_set_const($db, "MAIN_SECURITY_SALT", dol_print_date(dol_now(), 'dayhourlog'), 'chaine', 0, '', 0);      // All entities
-    			    dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                               // All entities
+                    if (function_exists('password_hash'))
+                        dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'password_hash', 'chaine', 0, '', 0);                     // All entities
+                    else
+                        dolibarr_set_const($db, "MAIN_SECURITY_HASH_ALGO", 'sha1md5', 'chaine', 0, '', 0);                           // All entities
     			}
+
+    			dolibarr_install_syslog('step5: DATABASE_PWD_ENCRYPTED = '.$conf->global->DATABASE_PWD_ENCRYPTED.' MAIN_SECURITY_HASH_ALGO = '.$conf->global->MAIN_SECURITY_HASH_ALGO, LOG_INFO);
 		    }
 
 		    // Create user used to create the admin user
@@ -295,6 +305,9 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
         if ($db->connected)
         {
             $conf->setValues($db);
+            // Reset forced setup after the setValues
+            if (defined('SYSLOG_FILE')) $conf->global->SYSLOG_FILE=constant('SYSLOG_FILE');
+            $conf->global->MAIN_ENABLE_LOG_TO_HTML = 1;
 
             // Define if we need to update the MAIN_VERSION_LAST_UPGRADE value in database
             $tagdatabase=false;
@@ -342,7 +355,8 @@ if ($action == "set" || empty($action) || preg_match('/upgrade/i',$action))
 // Create lock file
 
 // If first install
-if ($action == "set" && $success) {
+if ($action == "set" && $success)
+{
     if (empty($conf->global->MAIN_VERSION_LAST_UPGRADE) || ($conf->global->MAIN_VERSION_LAST_UPGRADE == DOL_VERSION))
     {
         // Install is finished
@@ -350,14 +364,14 @@ if ($action == "set" && $success) {
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall))
+        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Install is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
             $fp = @fopen($lockfile, "w");
             if ($fp)
             {
-                if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+            	if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
                 @chmod($lockfile, octdec($force_install_lockinstall));
@@ -400,14 +414,14 @@ elseif (empty($action) || preg_match('/upgrade/i',$action))
 
         $createlock=0;
 
-        if (! empty($force_install_lockinstall))
+        if (! empty($force_install_lockinstall) || ! empty($conf->global->MAIN_ALWAYS_CREATE_LOCK_AFTER_LAST_UPGRADE))
         {
             // Upgrade is finished, we create the lock file
             $lockfile=DOL_DATA_ROOT.'/install.lock';
             $fp = @fopen($lockfile, "w");
             if ($fp)
             {
-                if ($force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
+            	if (empty($force_install_lockinstall) || $force_install_lockinstall == 1) $force_install_lockinstall=444;    // For backward compatibility
                 fwrite($fp, "This is a lock file to prevent use of install pages (set with permission ".$force_install_lockinstall.")");
                 fclose($fp);
                 @chmod($lockfile, octdec($force_install_lockinstall));
@@ -449,6 +463,14 @@ else
 clearstatcache();
 
 
+$ret=0;
+if ($error && isset($argv[1])) $ret=1;
+dolibarr_install_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step5: Dolibarr setup finished");
 
 pFooter(1,$setuplang);
+
+// Return code if ran from command line
+if ($ret) exit($ret);
+

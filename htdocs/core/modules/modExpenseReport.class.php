@@ -51,11 +51,7 @@ class modExpenseReport extends DolibarrModules
 		$this->description = "Manage and claim expense reports (transportation, meal, ...)";
 		$this->version = 'dolibarr';
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='trip';
-
-		// Defined if the directory /mymodule/inc/triggers/ contains triggers or not
-		$this->triggers = 0;
 
 		// Data directories to create when module is enabled.
 		$this->dirs = array("/expensereport/temp");
@@ -83,6 +79,13 @@ class modExpenseReport extends DolibarrModules
 		$this->const[$r][4] = 0;
 		$r++;
 
+		$this->const[$r][0] = "EXPENSEREPORT_ADDON";
+		$this->const[$r][1] = "chaine";
+		$this->const[$r][2] = "mod_expensereport_jade";
+		$this->const[$r][3] = 'Name of manager to generate expense report ref number';
+		$this->const[$r][4] = 0;
+		$r++;
+
 		$this->const[$r][0] = "MAIN_DELAY_EXPENSEREPORTS";
 		$this->const[$r][1] = "chaine";
 		$this->const[$r][2] = "15";
@@ -98,7 +101,7 @@ class modExpenseReport extends DolibarrModules
 		$r++;
 
 		// Array to add new pages in new tabs
-		$this->tabs = array();
+		$this->tabs[] = array('data'=>'user:+expensereport:ExpenseReport:expensereport:$user->rights->expensereport->lire:/expensereport/list.php?mainmenu=hrm&id=__ID__');
 
 		// Boxes
 		$this->boxes = array();			// List of boxes
@@ -114,56 +117,56 @@ class modExpenseReport extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'lire';
 		$r++;
-		
+
 		$this->rights[$r][0] = 772;
 		$this->rights[$r][1] = 'Create/modify expense reports';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'creer';
 		$r++;
-		
+
 		$this->rights[$r][0] = 773;
 		$this->rights[$r][1] = 'Delete expense reports';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
-		
+
 		$this->rights[$r][0] = 775;
 		$this->rights[$r][1] = 'Approve expense reports';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'approve';
 		$r++;
-		
+
 		$this->rights[$r][0] = 776;
 		$this->rights[$r][1] = 'Pay expense reports';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'to_paid';
 		$r++;
-		
+
 		$this->rights[$r][0] = 777;
 		$this->rights[$r][1] = 'Read expense reports of everybody';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'readall';
 		$r++;
-		
+
 		$this->rights[$r][0] = 778;
 		$this->rights[$r][1] = 'Create expense reports for everybody';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'writeall_advance';
 		$r++;
-		
+
 		$this->rights[$r][0] = 779;
 		$this->rights[$r][1] = 'Export expense reports';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'export';
 		$r++;
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
@@ -176,8 +179,17 @@ class modExpenseReport extends DolibarrModules
 		$this->export_label[$r]='ListTripsAndExpenses';
 		$this->export_icon[$r]='trip';
 		$this->export_permission[$r]=array(array("expensereport","export"));
-        $this->export_fields_array[$r]=array('d.rowid'=>"TripId",'d.ref'=>'Ref','d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.date_create'=>'DateCreation','d.date_approve'=>'DateApprove','d.total_ht'=>"TotalHT",'d.total_tva'=>'TotalVAT','d.total_ttc'=>'TotalTTC','d.note_private'=>'NotePrivate','d.note_public'=>'NotePublic','u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'ed.rowid'=>'LineId','tf.code'=>'Type','ed.date'=>'Date','ed.tva_tx'=>'VATRate','ed.total_ht'=>'TotalHT','ed.total_tva'=>'TotalVAT','ed.total_ttc'=>'TotalTTC','ed.comments'=>'Comment','p.rowid'=>'ProjectId','p.ref'=>'Ref');
-        $this->export_entities_array[$r]=array('u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ed.rowid'=>'expensereport_line','ed.date'=>'expensereport_line','ed.tva_tx'=>'expensereport_line','ed.total_ht'=>'expensereport_line','ed.total_tva'=>'expensereport_line','ed.total_ttc'=>'expensereport_line','ed.comments'=>'expensereport_line','tf.code'=>'expensereport_line','p.project_ref'=>'expensereport_line','p.rowid'=>'project','p.ref'=>'project');
+        $this->export_fields_array[$r]=array(
+			'd.rowid'=>"TripId",'d.ref'=>'Ref','d.date_debut'=>'DateStart','d.date_fin'=>'DateEnd','d.date_create'=>'DateCreation','d.date_approve'=>'DateApprove',
+			'd.total_ht'=>"TotalHT",'d.total_tva'=>'TotalVAT','d.total_ttc'=>'TotalTTC','d.note_private'=>'NotePrivate','d.note_public'=>'NotePublic',
+			'u.lastname'=>'Lastname','u.firstname'=>'Firstname','u.login'=>"Login",'ed.rowid'=>'LineId','tf.code'=>'Type','ed.date'=>'Date','ed.tva_tx'=>'VATRate',
+			'ed.total_ht'=>'TotalHT','ed.total_tva'=>'TotalVAT','ed.total_ttc'=>'TotalTTC','ed.comments'=>'Comment','p.rowid'=>'ProjectId','p.ref'=>'Ref'
+		);
+		$this->export_entities_array[$r]=array(
+			'u.lastname'=>'user','u.firstname'=>'user','u.login'=>'user','ed.rowid'=>'expensereport_line','ed.date'=>'expensereport_line',
+			'ed.tva_tx'=>'expensereport_line','ed.total_ht'=>'expensereport_line','ed.total_tva'=>'expensereport_line','ed.total_ttc'=>'expensereport_line',
+			'ed.comments'=>'expensereport_line','tf.code'=>'expensereport_line','p.project_ref'=>'expensereport_line','p.rowid'=>'project','p.ref'=>'project'
+		);
         $this->export_alias_array[$r]=array('d.rowid'=>"idtrip",'d.type'=>"type",'d.note_private'=>'note_private','d.note_public'=>'note_public','u.lastname'=>'name','u.firstname'=>'firstname','u.login'=>'login');
 		$this->export_dependencies_array[$r]=array('expensereport_line'=>'ed.rowid','type_fees'=>'tf.rowid'); // To add unique key if we ask a field of a child to avoid the DISTINCT to discard them
 

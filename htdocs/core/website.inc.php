@@ -23,6 +23,6 @@
  */
 
 
-include_once DOL_DOCUMENT_ROOT.'/websites/class/website.class.php';
+include_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 $website=new Website($db);
 $website->fetch(0,$websitekey);

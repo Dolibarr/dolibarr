@@ -1,6 +1,8 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=银行
 MenuBankCash=银行/现金
+MenuVariousPayment=Miscellaneous payments
+MenuNewVariousPayment=New Miscellaneous payment
 BankName=银行名称
 FinancialAccount=帐户
 BankAccount=银行帐户
@@ -87,6 +89,7 @@ AccountIdShort=数字
 LineRecord=交易
 AddBankRecord=Add entry
 AddBankRecordLong=Add entry manually
+Conciliated=Reconciled
 ConciliatedBy=由调和
 DateConciliating=核对日期
 BankLineConciliated=Entry reconciled
@@ -155,3 +158,6 @@ NewVariousPayment=New miscellaneous payments
 VariousPayment=Miscellaneous payments
 VariousPayments=Miscellaneous payments
 ShowVariousPayment=Show miscellaneous payments
+AddVariousPayment=Add miscellaneous payments
+YourSEPAMandate=Your SEPA mandate
+FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

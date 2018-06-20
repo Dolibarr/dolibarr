@@ -1,5 +1,6 @@
 # Dolibarr language file - Source file is en_US - languages
 Language_ar_AR=Arabă
+Language_ar_EG=Arabic (Egypt)
 Language_ar_SA=Arabă (Arabia Saudită)
 Language_bn_BD=Bengaleza
 Language_bg_BG=Bulgară
@@ -34,6 +35,7 @@ Language_es_PA=Spaniolă (Panama)
 Language_es_PY=Spaniolă (Paraguay)
 Language_es_PE=Spaniolă (Peru)
 Language_es_PR=Spaniolă (Puerto Rico)
+Language_es_UY=Spanish (Uruguay)
 Language_es_VE=Spaniolă (Venezuela)
 Language_et_EE=Estoniană
 Language_eu_ES=Basc

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -292,11 +292,21 @@ class Loan extends CommonObject
 	{
 		$this->db->begin();
 
+		if (! is_numeric($this->nbterm))
+		{
+			$this->error='BadValueForParameterForNbTerm';
+			return -1;
+		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."loan";
 		$sql.= " SET label='".$this->db->escape($this->label)."',";
 		$sql.= " capital='".price2num($this->db->escape($this->capital))."',";
 		$sql.= " datestart='".$this->db->idate($this->datestart)."',";
 		$sql.= " dateend='".$this->db->idate($this->dateend)."',";
+		$sql.= " nbterm=".$this->nbterm.",";
+		$sql.= " accountancy_account_capital = '".$this->db->escape($this->account_capital)."',";
+		$sql.= " accountancy_account_insurance = '".$this->db->escape($this->account_insurance)."',";
+		$sql.= " accountancy_account_interest = '".$this->db->escape($this->account_interest)."',";
 		$sql.= " fk_projet=".(empty($this->fk_project)?'NULL':$this->fk_project).",";
 		$sql.= " fk_user_modif = ".$user->id;
 		$sql.= " WHERE rowid=".$this->id;
@@ -359,8 +369,7 @@ class Loan extends CommonObject
 	function LibStatut($statut,$mode=0,$alreadypaid=-1)
 	{
 		global $langs;
-		$langs->load('customers');
-		$langs->load('bills');
+		$langs->loadLangs(array("customers","bills"));
 
 		if ($mode == 0)
 		{
@@ -425,13 +434,15 @@ class Loan extends CommonObject
 			$tooltip .= '<br><b>' . $langs->trans('Ref') . ':</b> ' . $this->ref;
 		if (! empty($this->label))
 			$tooltip .= '<br><b>' . $langs->trans('Label') . ':</b> ' . $this->label;
-		$link = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'"';
-		$linkclose = '" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
+
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/loan/card.php?id='.$this->id.'" title="'.str_replace('\n', '', dol_escape_htmltag($tooltip, 1)).'" class="classfortooltip">';
 		$linkend = '</a>';
 
-		if ($withpicto) $result.=($link.$linkclose.img_object($langs->trans("ShowLoan").': '.$this->label,'bill', 'class="classfortooltip"').$linkend.' ');
-		if ($withpicto && $withpicto != 2) $result.=' ';
-		if ($withpicto != 2) $result.=$link.$linkclose.($maxlen?dol_trunc($this->label,$maxlen):$this->label).$linkend;
+		$result .= $linkstart;
+		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
+		if ($withpicto != 2) $result.= ($maxlen?dol_trunc($this->ref,$maxlen):$this->ref);
+		$result .= $linkend;
+
 		return $result;
 	}
 

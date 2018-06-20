@@ -55,10 +55,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load('orders');
-$langs->load('companies');
-$langs->load('other');
-$langs->load('suppliers');
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'companies', 'other', 'suppliers'));
 
 
 /*
@@ -280,7 +278,7 @@ if ($mode == 'customer')
     $liststatus=array(
         Commande::STATUS_DRAFT=>$langs->trans("StatusOrderDraft"),
         Commande::STATUS_VALIDATED=>$langs->trans("StatusOrderValidated"),
-        Commande::STATUS_ACCEPTED=>$langs->trans("StatusOrderSent"),
+        Commande::STATUS_SHIPMENTONPROCESS=>$langs->trans("StatusOrderSent"),
         Commande::STATUS_CLOSED=>$langs->trans("StatusOrderDelivered"),
         Commande::STATUS_CANCELED=>$langs->trans("StatusOrderCanceled")
     );
@@ -354,7 +352,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
     print $px1->show();

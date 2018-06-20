@@ -28,10 +28,8 @@ require('../../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/class/remisecheque.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -70,7 +68,6 @@ print "</tr>\n";
 
 if ($resql)
 {
-  $var=false;
   if ($row = $db->fetch_row($resql) )
     {
       $num = $row[0];
@@ -92,10 +89,12 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 $max=10;
 
-$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref";
-$sql.= ", bc.statut, bc.nbcheque";
-$sql.= ", ba.label, ba.rowid as bid";
+$sql = "SELECT bc.rowid, bc.date_bordereau as db, bc.amount, bc.ref as ref,";
+$sql.= " bc.statut, bc.nbcheque,";
+$sql.= " ba.ref, ba.label, ba.rowid as bid, ba.number, ba.currency_code, ba.account_number, ba.fk_accountancy_journal,";
+$sql.= " aj.code";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc, ".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."accounting_journal as aj ON aj.rowid = ba.fk_accountancy_journal";
 $sql.= " WHERE ba.rowid = bc.fk_bank_account";
 $sql.= " AND bc.entity = ".$conf->entity;
 $sql.= " ORDER BY bc.date_bordereau DESC, rowid DESC";
@@ -114,7 +113,6 @@ if ($resql)
 	print '<th align="right">'.$langs->trans("Status").'</th>';
 	print "</tr>\n";
 
-	$var=true;
 	while ( $objp = $db->fetch_object($resql) )
 	{
         $checkdepositstatic->id=$objp->rowid;
@@ -122,8 +120,14 @@ if ($resql)
 	    $checkdepositstatic->statut=$objp->statut;
 
 		$accountstatic->id=$objp->bid;
+		$accountstatic->ref=$objp->ref;
 		$accountstatic->label=$objp->label;
-		
+		$accountstatic->number=$objp->number;
+		$accountstatic->currency_code=$objp->currency_code;
+		$accountstatic->account_number=$objp->account_number;
+		$accountstatic->accountancy_journal=$objp->code;
+		$accountstatic->fk_accountancy_journal=$objp->fk_accountancy_journal;
+
 		print '<tr class="oddeven">'."\n";
 
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';

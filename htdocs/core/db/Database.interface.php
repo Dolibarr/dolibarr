@@ -280,7 +280,7 @@ interface Database
 	/**
 	 * Create a table into database
 	 *
-	 * @param        string $table 			Nom de la table
+	 * @param        string $table 			Name of table
 	 * @param        array 	$fields 		Tableau associatif [nom champ][tableau des descriptions]
 	 * @param        string $primary_key 	Nom du champ qui sera la clef primaire
 	 * @param        string $type 			Type de la table
@@ -290,6 +290,14 @@ interface Database
 	 * @return       int                    <0 if KO, >=0 if OK
 	 */
 	function DDLCreateTable($table, $fields, $primary_key, $type, $unique_keys = null, $fulltext_keys = null, $keys = null);
+
+	/**
+	 * Drop a table into database
+	 *
+	 * @param        string $table 			Name of table
+	 * @return       int                    <0 if KO, >=0 if OK
+	 */
+	function DDLDropTable($table);
 
 	/**
 	 * Return list of available charset that can be used to store data in database

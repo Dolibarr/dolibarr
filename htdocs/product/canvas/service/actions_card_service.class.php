@@ -73,6 +73,7 @@ class ActionsCardService
 	 */
 	function assign_values(&$action, $id=0, $ref='')
 	{
+		global $limit, $offset, $sortfield, $sortorder;
         global $conf, $langs, $user, $mysoc, $canvas;
 		global $form, $formproduct;
 
@@ -99,7 +100,7 @@ class ActionsCardService
 		$this->tpl['ref'] = $this->ref;
 
 		// Label
-		$this->tpl['label'] = $this->libelle;
+		$this->tpl['label'] = $this->label;
 
 		// Description
 		$this->tpl['description'] = nl2br($this->description);
@@ -210,7 +211,7 @@ class ActionsCardService
 			$this->tpl['nblignes'] = 4;
 			if ($this->object->is_photo_available($conf->service->multidir_output[$this->object->entity]))
 			{
-				$this->tpl['photos'] = $this->object->show_photos($conf->service->multidir_output[$this->object->entity],1,1,0,0,0,80);
+				$this->tpl['photos'] = $this->object->show_photos('product', $conf->service->multidir_output[$this->object->entity],1,1,0,0,0,80);
 			}
 
 			// Duration
@@ -229,7 +230,7 @@ class ActionsCardService
 
 		if ($action == 'list')
 		{
-	        $this->LoadListDatas($GLOBALS['limit'], $GLOBALS['offset'], $GLOBALS['sortfield'], $GLOBALS['sortorder']);
+	        $this->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 		}
 
 	}
@@ -287,7 +288,7 @@ class ActionsCardService
 	}
 
 	/**
-	 * 	Fetch datas list
+	 * 	Fetch datas list and save into ->list_datas
 	 *
 	 *  @param	int		$limit		Limit number of responses
 	 *  @param	int		$offset		Offset for first response
@@ -298,7 +299,7 @@ class ActionsCardService
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
 		global $conf;
-		global $search_categ,$sall,$sref,$sbarcode,$snom,$catid;
+		global $search_categ,$sall,$sref,$search_barcode,$snom,$catid;
 
         $this->getFieldList();
 
@@ -320,7 +321,7 @@ class ActionsCardService
 			$sql.= " AND (p.ref LIKE '%".$this->db->escape($sall)."%' OR p.label LIKE '%".$this->db->escape($sall)."%' OR p.description LIKE '%".$this->db->escape($sall)."%' OR p.note LIKE '%".$this->db->escape($sall)."%')";
 		}
 		if ($sref)     $sql.= " AND p.ref LIKE '%".$sref."%'";
-		if ($sbarcode) $sql.= " AND p.barcode LIKE '%".$sbarcode."%'";
+		if ($search_barcode) $sql.= " AND p.barcode LIKE '%".$search_barcode."%'";
 		if ($snom)     $sql.= " AND p.label LIKE '%".$this->db->escape($snom)."%'";
 		if (isset($_GET["tosell"]) && dol_strlen($_GET["tosell"]) > 0)
 		{

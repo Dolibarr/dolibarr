@@ -138,8 +138,9 @@ class TaskStats extends Stats
 
 		if (! empty($this->userid))
 			$sqlwhere[] = ' t.fk_user_resp=' . $this->userid;
+		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
 		if (! empty($this->socid))
-			$sqlwhere[] = ' t.fk_soc=' . $this->socid;
+			$sqlwhere[] = ' p.fk_soc=' . $this->socid;		// Link on thirdparty is on project, not on task
 		if (! empty($this->year) && empty($this->yearmonth))
 			$sqlwhere[] = " date_format(t.datec,'%Y')='" . $this->db->escape($this->year) . "'";
 		if (! empty($this->yearmonth))
@@ -158,10 +159,11 @@ class TaskStats extends Stats
 	/**
 	 * Return Task number by month for a year
 	 *
-	 * @param int $year scan
-	 * @return array of values
+	 * @param 	int 	$year 		Year to scan
+     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @return 	array 				Array of values
 	 */
-	function getNbByMonth($year)
+	function getNbByMonth($year, $format=0)
 	{
 		global $user;
 
@@ -177,7 +179,7 @@ class TaskStats extends Stats
 
 		$this->yearmonth=0;
 
-		$res = $this->_getNbByMonth($year, $sql);
+		$res = $this->_getNbByMonth($year, $sql, $format);
 		// var_dump($res);print '<br>';
 		return $res;
 	}

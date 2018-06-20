@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/facture/modules_facture.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'companies'));
 
 // Security check
 $id=GETPOST("id",'int');
@@ -44,10 +43,10 @@ if ($user->societe_id) $socid=$user->societe_id;
 // TODO ajouter regle pour restreindre acces paiement
 //$result = restrictedArea($user, 'facture', $id,'');
 
-$paiement = new PaymentSocialContribution($db);
-if ($id > 0) 
+$object = new PaymentSocialContribution($db);
+if ($id > 0)
 {
-	$result=$paiement->fetch($id);
+	$result=$object->fetch($id);
 	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
 }
 
@@ -61,7 +60,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 {
 	$db->begin();
 
-	$result = $paiement->delete($user);
+	$result = $object->delete($user);
 	if ($result > 0)
 	{
         $db->commit();
@@ -70,7 +69,7 @@ if ($action == 'confirm_delete' && $confirm == 'yes' && $user->rights->tax->char
 	}
 	else
 	{
-		setEventMessages($paiement->error, $paiement->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
         $db->rollback();
 	}
 }
@@ -80,8 +79,8 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 {
 	$db->begin();
 
-	$result=$paiement->valide();
-	
+	$result=$object->valide();
+
 	if ($result > 0)
 	{
 		$db->commit();
@@ -103,12 +102,12 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->tax->char
 			}
 		}
 
-		header('Location: card.php?id='.$paiement->id);
+		header('Location: card.php?id='.$object->id);
 		exit;
 	}
 	else
 	{
-		setEventMessages($paiement->error, $paiement->errors, 'errors');
+		setEventMessages($object->error, $object->errors, 'errors');
 		$db->rollback();
 	}
 }
@@ -137,15 +136,15 @@ $h++;
 */
 
 
-dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), 0, 'payment');
+dol_fiche_head($head, $hselected, $langs->trans("PaymentSocialContribution"), -1, 'payment');
 
 /*
  * Deletion confirmation of payment
  */
 if ($action == 'delete')
 {
-	print $form->formconfirm('card.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
-	
+	print $form->formconfirm('card.php?id='.$object->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete','',0,2);
+
 }
 
 /*
@@ -154,41 +153,49 @@ if ($action == 'delete')
 if ($action == 'valide')
 {
 	$facid = $_GET['facid'];
-	print $form->formconfirm('card.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
-	
+	print $form->formconfirm('card.php?id='.$object->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), $langs->trans("ConfirmValidatePayment"), 'confirm_valide','',0,2);
+
 }
 
+
+$linkback = '<a href="' . DOL_URL_ROOT . '/compta/sociales/payments.php">' . $langs->trans("BackToList") . '</a>';
+
+dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', '');
+
+
+print '<div class="fichecenter">';
+print '<div class="underbanner clearboth"></div>';
 
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
+/*print '<tr><td class="titlefield">'.$langs->trans('Ref').'</td>';
 print '<td colspan="3">';
-print $form->showrefnav($paiement,'id','',1,'rowid','id');
-print '</td></tr>';
+print $form->showrefnav($object,'id','',1,'rowid','id');
+print '</td></tr>';*/
 
 // Date
-print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($paiement->datep,'day').'</td></tr>';
+print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">'.dol_print_date($object->datep,'day').'</td></tr>';
 
 // Mode
-print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$paiement->type_code).'</td></tr>';
+print '<tr><td>'.$langs->trans('Mode').'</td><td colspan="3">'.$langs->trans("PaymentType".$object->type_code).'</td></tr>';
 
 // Numero
-print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->num_paiement.'</td></tr>';
+print '<tr><td>'.$langs->trans('Numero').'</td><td colspan="3">'.$object->num_paiement.'</td></tr>';
 
 // Montant
-print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
+print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount, 0, $outputlangs, 1, -1, -1, $conf->currency).'</td></tr>';
 
 // Note
-print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
+print '<tr><td>'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($object->note).'</td></tr>';
 
 // Bank account
 if (! empty($conf->banque->enabled))
 {
-    if ($paiement->bank_account)
+    if ($object->bank_account)
     {
     	$bankline=new AccountLine($db);
-    	$bankline->fetch($paiement->bank_line);
+    	$bankline->fetch($object->bank_line);
 
     	print '<tr>';
     	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
@@ -201,6 +208,10 @@ if (! empty($conf->banque->enabled))
 
 print '</table>';
 
+print '</div>';
+
+dol_fiche_end();
+
 
 /*
  * List of social contributions payed
@@ -211,7 +222,7 @@ $sql = 'SELECT f.rowid as scid, f.libelle, f.paye, f.amount as sc_amount, pf.amo
 $sql.= ' FROM '.MAIN_DB_PREFIX.'paiementcharge as pf,'.MAIN_DB_PREFIX.'chargesociales as f, '.MAIN_DB_PREFIX.'c_chargesociales as pc';
 $sql.= ' WHERE pf.fk_charge = f.rowid AND f.fk_type = pc.id';
 $sql.= ' AND f.entity = '.$conf->entity;
-$sql.= ' AND pf.rowid = '.$paiement->id;
+$sql.= ' AND pf.rowid = '.$object->id;
 
 dol_syslog("compta/payment_sc/card.php", LOG_DEBUG);
 $resql=$db->query($sql);
@@ -233,13 +244,10 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
 
-			
 			print '<tr class="oddeven">';
 			// Ref
 			print '<td>';
@@ -268,7 +276,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	
+
 
 	print "</table>\n";
 	$db->free($resql);
@@ -278,7 +286,6 @@ else
 	dol_print_error($db);
 }
 
-dol_fiche_end();
 
 
 /*
@@ -289,7 +296,7 @@ print '<div class="tabsAction">';
 /*
 if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 {
-	if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
+	if ($user->societe_id == 0 && $object->statut == 0 && $_GET['action'] == '')
 	{
 		if ($user->rights->facture->paiement)
 		{
@@ -299,7 +306,7 @@ if (! empty($conf->global->BILL_ADD_PAYMENT_VALIDATION))
 }
 */
 
-if ($_GET['action'] == '')
+if ($action == '')
 {
 	if ($user->rights->tax->charges->supprimer)
 	{

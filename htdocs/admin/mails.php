@@ -27,12 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("mails");
-$langs->load("other");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
 
 $action=GETPOST('action','alpha');
 
@@ -50,7 +46,7 @@ $substitutionarrayfortest=array(
 '__ID__' => 'RecipientIdRecord',
 //'__EMAIL__' => 'RecipientEMail',				// Done into actions_sendmails
 '__CHECK_READ__' => (is_object($object) && is_object($object->thirdparty))?'<img src="'.DOL_MAIN_URL_ROOT.'/public/emailing/mailing-read.php?tag='.$object->thirdparty->tag.'&securitykey='.urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY).'" width="1" height="1" style="width:1px;height:1px" border="0"/>':'',
-'__SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),		// Done into actions_sendmails
+'__USER_SIGNATURE__' => (($user->signature && empty($conf->global->MAIN_MAIL_DO_NOT_USE_SIGN))?$usersignature:''),		// Done into actions_sendmails
 '__LOGIN__' => 'RecipientLogin',
 '__LASTNAME__' => 'RecipientLastname',
 '__FIRSTNAME__' => 'RecipientFirstname',
@@ -69,20 +65,27 @@ complete_substitutions_array($substitutionarrayfortest, $langs);
 
 if ($action == 'update' && empty($_POST["cancel"]))
 {
-	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",   GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
-    // Send mode parameters
-	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",       GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",      GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",    GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",       GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",       GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",      GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS", GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
-    // Content parameters
-	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",     GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",    GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE',GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_DISABLE_ALL_MAILS",     GETPOST("MAIN_DISABLE_ALL_MAILS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_FORCE_SENDTO",     GETPOST("MAIN_MAIL_FORCE_SENDTO"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_ENABLED_USER_DEST_SELECT",     GETPOST("MAIN_MAIL_ENABLED_USER_DEST_SELECT"),'chaine',0,'',$conf->entity);
+	// Send mode parameters
+	dolibarr_set_const($db, "MAIN_MAIL_SENDMODE",         GETPOST("MAIN_MAIL_SENDMODE"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_PORT",        GETPOST("MAIN_MAIL_SMTP_PORT"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTP_SERVER",      GETPOST("MAIN_MAIL_SMTP_SERVER"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_ID",         GETPOST("MAIN_MAIL_SMTPS_ID"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_SMTPS_PW",         GETPOST("MAIN_MAIL_SMTPS_PW"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_TLS",        GETPOST("MAIN_MAIL_EMAIL_TLS"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_STARTTLS",   GETPOST("MAIN_MAIL_EMAIL_STARTTLS"),'chaine',0,'',$conf->entity);
+
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_ENABLED",     GETPOST("MAIN_MAIL_EMAIL_DKIM_ENABLED"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_DOMAIN",      GETPOST("MAIN_MAIL_EMAIL_DKIM_DOMAIN"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_SELECTOR",    GETPOST("MAIN_MAIL_EMAIL_DKIM_SELECTOR"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY", GETPOST("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY"),'chaine',0,'',$conf->entity);
+	// Content parameters
+	dolibarr_set_const($db, "MAIN_MAIL_EMAIL_FROM",       GETPOST("MAIN_MAIL_EMAIL_FROM"), 'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_ERRORS_TO",		  GETPOST("MAIN_MAIL_ERRORS_TO"),  'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_MAIL_AUTOCOPY_TO",      GETPOST("MAIN_MAIL_AUTOCOPY_TO"),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, 'MAIN_MAIL_DEFAULT_FROMTYPE', GETPOST('MAIN_MAIL_DEFAULT_FROMTYPE'),'chaine',0,'',$conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
@@ -119,24 +122,12 @@ $server=! empty($conf->global->MAIN_MAIL_SMTP_SERVER)?$conf->global->MAIN_MAIL_S
 if (! $server) $server='127.0.0.1';
 
 
-$wikihelp='EN:Setup EMails|FR:Paramétrage EMails|ES:Configuración EMails';
+$wikihelp='EN:Setup_EMails|FR:Paramétrage_EMails|ES:Configuración_EMails';
 llxHeader('',$langs->trans("Setup"),$wikihelp);
 
 print load_fiche_titre($langs->trans("EMailsSetup"),'','title_setup');
 
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails.php";
-$head[$h][1] = $langs->trans("OutGoingEmailSetup");
-$head[$h][2] = 'common';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/mails_templates.php";
-$head[$h][1] = $langs->trans("DictionaryEMailTemplates");
-$head[$h][2] = 'templates';
-$h++;
-
+$head = email_admin_prepare_head();
 
 // List of sending methods
 $listofmethods=array();
@@ -158,75 +149,100 @@ if ($action == 'edit')
                     {
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'mail\')
                         {
+							console.log("I choose php mail mode");
                             jQuery(".drag").hide();
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_TLS").prop("disabled", true);
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val(0);
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val(0);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").prop("disabled", true);
+                            jQuery(".dkim").hide();
                             ';
 		if ($linuxlike)
 		{
 			print '
-			               jQuery("#MAIN_MAIL_SMTP_SERVER").hide();
-			               jQuery("#MAIN_MAIL_SMTP_PORT").hide();
-			               jQuery("#smtp_server_mess").show();
-			               jQuery("#smtp_port_mess").show();
-			               ';
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").hide();
+                            jQuery("#MAIN_MAIL_SMTP_PORT").hide();
+                            jQuery("#smtp_server_mess").show();
+                            jQuery("#smtp_port_mess").show();';
 		}
 		else
 		{
-			print '
-			               jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);
-			               jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);
-			               jQuery("#smtp_server_mess").hide();
-			               jQuery("#smtp_port_mess").hide();
-			               ';
-		}
-		print '
+            print '
+                            jQuery("#MAIN_MAIL_SMTP_SERVER").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_SMTP_PORT").prop("disabled", true);
+                            jQuery("#smtp_server_mess").hide();
+                            jQuery("#smtp_port_mess").hide();';
+        }
+        print '
                         }
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'smtps\')
                         {
+							console.log("I choose smtps mode");
                             jQuery(".drag").show();
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val('.$conf->global->MAIN_MAIL_EMAIL_TLS.');
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val(0);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").prop("disabled", true);
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").hide();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").hide();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").hide();
                             jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER").show();
                             jQuery("#MAIN_MAIL_SMTP_PORT").show();
                             jQuery("#smtp_server_mess").hide();
 			                jQuery("#smtp_port_mess").hide();
+                            jQuery(".dkim").hide();
 						}
                         if (jQuery("#MAIN_MAIL_SENDMODE").val()==\'swiftmailer\')
                         {
+							console.log("I choose swiftmailer mode");
                             jQuery(".drag").show();
                             jQuery("#MAIN_MAIL_EMAIL_TLS").val('.$conf->global->MAIN_MAIL_EMAIL_TLS.');
                             jQuery("#MAIN_MAIL_EMAIL_TLS").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val('.$conf->global->MAIN_MAIL_EMAIL_STARTTLS.');
                             jQuery("#MAIN_MAIL_EMAIL_STARTTLS").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").val('.$conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED.');
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_ENABLED").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").removeAttr("disabled");
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_DOMAIN").show();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_SELECTOR").show();
+                            jQuery("#MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").show();
                             jQuery("#MAIN_MAIL_SMTP_SERVER").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_PORT").removeAttr("disabled");
                             jQuery("#MAIN_MAIL_SMTP_SERVER").show();
                             jQuery("#MAIN_MAIL_SMTP_PORT").show();
                             jQuery("#smtp_server_mess").hide();
                             jQuery("#smtp_port_mess").hide();
+                            jQuery(".dkim").show();
                         }
                     }
                     initfields();
                     jQuery("#MAIN_MAIL_SENDMODE").change(function() {
                         initfields();
                     });
-					jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
+                    jQuery("#MAIN_MAIL_EMAIL_TLS").change(function() {
 						if (jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val() == 1)
 							jQuery("#MAIN_MAIL_EMAIL_STARTTLS").val(0);
 					});
 					jQuery("#MAIN_MAIL_EMAIL_STARTTLS").change(function() {
 						if (jQuery("#MAIN_MAIL_EMAIL_TLS").val() == 1)
 							jQuery("#MAIN_MAIL_EMAIL_TLS").val(0);
-					});
+                    });
                })';
-		print '</script>'."\n";
+        print '</script>'."\n";
 	}
 
 	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
@@ -240,23 +256,30 @@ if ($action == 'edit')
 
 
 	clearstatcache();
-	$var=true;
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
 	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
 	print '</td></tr>';
 
-	// Separator
+	// Force e-mail recipient
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>';
+	print '<input class="flat" name="MAIN_MAIL_FORCE_SENDTO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_FORCE_SENDTO)?$conf->global->MAIN_MAIL_FORCE_SENDTO:'') . '" />';
+	print '</td></tr>';
 
+
+	//Add user to select destinaries list
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>';
+	print $form->selectyesno('MAIN_MAIL_ENABLED_USER_DEST_SELECT',$conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT,1);
+	print '</td></tr>';
+
+	// Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 
 	// SuperAdministrator access only
@@ -275,13 +298,12 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// Host server
-
 	print '<tr class="oddeven"><td>';
 	if (! $conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 	{
 		print $langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike");
 		print '</td><td>';
-		print $langs->trans("SeeLocalSendMailSetup");
+		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 	}
 	else
 	{
@@ -295,7 +317,7 @@ if ($action == 'edit')
 		{
 			print '<input class="flat" id="MAIN_MAIL_SMTP_SERVER" name="MAIN_MAIL_SMTP_SERVER" size="18" value="' . $mainserver . '">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_SERVER_sav" name="MAIN_MAIL_SMTP_SERVER_sav" value="' . $mainserver . '">';
-			print '<span id="smtp_server_mess">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
+			print '<span id="smtp_server_mess" class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 		}
 		else
 		{
@@ -308,13 +330,12 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// Port
-
 	print '<tr class="oddeven"><td>';
 	if (! $conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 	{
 		print $langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike");
 		print '</td><td>';
-		print $langs->trans("SeeLocalSendMailSetup");
+		print '<span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 	}
 	else
 	{
@@ -328,7 +349,7 @@ if ($action == 'edit')
 		{
 			print '<input class="flat" id="MAIN_MAIL_SMTP_PORT" name="MAIN_MAIL_SMTP_PORT" size="3" value="' . $mainport . '">';
 			print '<input type="hidden" id="MAIN_MAIL_SMTP_PORT_sav" name="MAIN_MAIL_SMTP_PORT_sav" value="' . $mainport . '">';
-			print '<span id="smtp_port_mess">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
+			print '<span id="smtp_port_mess" class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span>';
 		}
 		else
 		{
@@ -380,9 +401,8 @@ if ($action == 'edit')
 		print '</td></tr>';
 	}
 
-	// TLS
-
-	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
+    // TLS
+    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
 		if (function_exists('openssl_open'))
@@ -395,7 +415,6 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// STARTTLS
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
@@ -408,77 +427,119 @@ if ($action == 'edit')
 	else print yn(0).' ('.$langs->trans("NotSupported").')';
 	print '</td></tr>';
 
-	// Separator
+	// DKIM
+	print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
+	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer'))))
+	{
+		if (function_exists('openssl_open'))
+		{
+			print $form->selectyesno('MAIN_MAIL_EMAIL_DKIM_ENABLED',(! empty($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED)?$conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED:0),1);
+		}
+		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+	}
+	else print yn(0).' ('.$langs->trans("NotSupported").')';
+	print '</td></tr>';
 
+    // DKIM Domain
+    print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
+    print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_DOMAIN" name="MAIN_MAIL_EMAIL_DKIM_DOMAIN" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN)?$conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN:'');
+    print '"></td></tr>';
+
+    // DKIM Selector
+    print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
+    print '<td><input class="flat" id="MAIN_MAIL_EMAIL_DKIM_SELECTOR" name="MAIN_MAIL_EMAIL_DKIM_SELECTOR" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR)?$conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR:'');
+    print '"></td></tr>';
+
+    // DKIM PRIVATE KEY
+    print '<tr class="oddeven dkim"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
+    print '<td><textarea id="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" name="MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY" rows="15" cols="100">' . (! empty($conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY)?$conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY:'').'</textarea>';
+    print '</td></tr>';
+
+    // Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_FROM)?$conf->global->MAIN_MAIL_EMAIL_FROM:'');
 	print '"></td></tr>';
 
-    // Default from type
+	// Default from type
+	$liste = array();
+	$liste['user'] = $langs->trans('UserEmail');
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	/*
+	$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i=0;
+		while($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+			}
+			$i++;
+		}
+	}
+	else dol_print_error($db);*/
 
-    $liste = array();
-    $liste['user'] = $langs->trans('UserEmail');
-    $liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
+	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
+	print '</td></tr>';
 
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
-    print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE',$liste,$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE,0);
-    print '</td></tr>';
-
-    // Separator
-
-    print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
+	// Separator
+	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_ERRORS_TO)?$conf->global->MAIN_MAIL_ERRORS_TO:'');
 	print '"></td></tr>';
 
 	// Autocopy to
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)?$conf->global->MAIN_MAIL_AUTOCOPY_TO:'');
 	print '"></td></tr>';
 
-    print '</table>';
+	print '</table>';
 
-    dol_fiche_end();
+	dol_fiche_end();
 
-    print '<br><div class="center">';
-    print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
-    print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
-    print '</div>';
+	print '<br><div class="center">';
+	print '<input class="button" type="submit" name="save" value="'.$langs->trans("Save").'">';
+	print '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'">';
+	print '</div>';
 
 	print '</form>';
 }
 else
 {
-    dol_fiche_head($head, 'common', '', -1);
+	dol_fiche_head($head, 'common', '', -1);
 
-    print $langs->trans("EMailsDesc")."<br>\n";
-    print "<br>\n";
-
-
-	$var=true;
+	print $langs->trans("EMailsDesc")."<br>\n";
+	print "<br>\n";
 
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
 
-	// Separator
+	// Force e-mail recipient
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_FORCE_SENDTO").'</td><td>'.$conf->global->MAIN_MAIL_FORCE_SENDTO;
+	if (! empty($conf->global->MAIN_MAIL_FORCE_SENDTO) && ! isValidEmail($conf->global->MAIN_MAIL_FORCE_SENDTO)) print img_warning($langs->trans("ErrorBadEMail"));
+	print '</td></tr>';
 
+	//Add user to select destinaries list
+	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT).'</td></tr>';
+
+	// Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 	if (empty($text)) $text=$langs->trans("Undefined").img_warning();
@@ -486,10 +547,9 @@ else
 	print '</td></tr>';
 
 	// Host server
-
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
 	}
 	else
 	{
@@ -497,10 +557,9 @@ else
 	}
 
 	// Port
-
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{
-		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td>'.$langs->trans("SeeLocalSendMailSetup").'</td></tr>';
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
 	}
 	else
 	{
@@ -508,21 +567,18 @@ else
 	}
 
 	// SMTPS ID
-
 	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
 	}
 
 	// SMTPS PW
-
 	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./','*',$conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
 	}
 
 	// TLS
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
@@ -532,11 +588,10 @@ else
 		}
 		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 	}
-	else print yn(0).' ('.$langs->trans("NotSupported").')';
+	else print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 	print '</td></tr>';
 
 	// STARTTLS
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
@@ -546,44 +601,108 @@ else
 		}
 		else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
 	}
-	else print yn(0).' ('.$langs->trans("NotSupported").')';
+	else print '<span class="opacitymedium">'.yn(0).' ('.$langs->trans("NotSupported").')</span>';
 	print '</td></tr>';
 
-	// Separator
 
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer')
+	{
+		// DKIM
+		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
+		if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer')))
+		{
+			if (function_exists('openssl_open'))
+			{
+				print yn($conf->global->MAIN_MAIL_EMAIL_DKIM_ENABLED);
+			}
+			else print yn(0).' ('.$langs->trans("YourPHPDoesNotHaveSSLSupport").')';
+		}
+		else print yn(0).' ('.$langs->trans("NotSupported").')';
+		print '</td></tr>';
+
+	    // Domain
+	    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_DOMAIN").'</td>';
+	    print '<td>' . $conf->global->MAIN_MAIL_EMAIL_DKIM_DOMAIN;
+	    print '</td></tr>';
+
+	    // Selector
+	    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_SELECTOR").'</td>';
+	    print '<td>' . $conf->global->MAIN_MAIL_EMAIL_DKIM_SELECTOR;
+	    print '</td></tr>';
+
+	    // PRIVATE KEY
+	    print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY").'</td>';
+	    print '<td>' . $conf->global->MAIN_MAIL_EMAIL_DKIM_PRIVATE_KEY;
+	    print '</td></tr>';
+	}
+
+    // Separator
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
 	if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
 	// Default from type
+	$liste = array();
+	$liste['user'] = $langs->trans('UserEmail');
+	$liste['company'] = $langs->trans('CompanyEmail').' ('.(empty($conf->global->MAIN_INFO_SOCIETE_MAIL)?$langs->trans("NotDefined"):$conf->global->MAIN_INFO_SOCIETE_MAIL).')';
+	$sql='SELECT rowid, label, email FROM '.MAIN_DB_PREFIX.'c_email_senderprofile WHERE active = 1';
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i=0;
+		while($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				$liste['senderprofile_'.$obj->rowid] = $obj->label.' <'.$obj->email.'>';
+			}
+			$i++;
+		}
+	}
+	else dol_print_error($db);
 
-    print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
-    print '<td>';
-    if($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user'){
-        print $langs->trans('UserEmail');
-    } else {
-        print $langs->trans('CompanyEmail');
-    }
-    print '</td></tr>';
+	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td>';
+	print '<td>';
+	if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'robot')
+	{
+		print $langs->trans('RobotEmail');
+	}
+	else if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'user')
+	{
+		print $langs->trans('UserEmail');
+	}
+	else if ($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE === 'company')
+	{
+		print $langs->trans('CompanyEmail').' '.dol_escape_htmltag('<'.$mysoc->email.'>');
+	}
+	else {
+		$id = preg_replace('/senderprofile_/', '', $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE);
+		if ($id > 0)
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/class/emailsenderprofile.class.php';
+			$emailsenderprofile = new EmailSenderProfile($db);
+			$emailsenderprofile->fetch($id);
+			print $emailsenderprofile->label.' '.dol_escape_htmltag('<'.$emailsenderprofile->email.'>');
+		}
+	}
+	print '</td></tr>';
 
 	// Separator
-
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
-    // Errors To
-
+	// Errors To
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
 	if (! empty($conf->global->MAIN_MAIL_ERRORS_TO) && ! isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
 	// Autocopy to
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td>';
 	if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO))
@@ -602,25 +721,7 @@ else
 	dol_fiche_end();
 
 
-    if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
-    {
-        print '<br>';
-        /*
-	    // Warning 1
-    	if ($linuxlike)
-    	{
-    		$sendmailoption=ini_get('mail.force_extra_parameters');
-    		if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
-    		{
-    			print info_admin($langs->trans("SendmailOptionNotComplete"));
-    		}
-    	}*/
-    	// Warning 2
-   	    print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
-    }
-
-
-	// Boutons actions
+	// Actions button
 	print '<div class="tabsAction">';
 
 	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Modify").'</a>';
@@ -629,7 +730,7 @@ else
 	{
 		if (function_exists('fsockopen') && $port && $server)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect">'.$langs->trans("DoTestServerAvailability").'</a>';
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testconnect#formmailbeforetitle">'.$langs->trans("DoTestServerAvailability").'</a>';
 		}
 	}
 	else
@@ -637,20 +738,45 @@ else
 		print '<a class="butActionRefused" href="#" title="'.$langs->trans("FeatureNotAvailableOnLinux").'">'.$langs->trans("DoTestServerAvailability").'</a>';
 	}
 
-	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&amp;mode=init">'.$langs->trans("DoTestSend").'</a>';
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSend").'</a>';
 
 	if (! empty($conf->fckeditor->enabled))
 	{
-		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&amp;mode=init">'.$langs->trans("DoTestSendHTML").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testhtml&mode=init#formmailbeforetitle">'.$langs->trans("DoTestSendHTML").'</a>';
 	}
 
 	print '</div>';
 
 
-	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && ! in_array($action, array('testconnect', 'test', 'testhtml')))
+	if ($conf->global->MAIN_MAIL_SENDMODE == 'mail' && empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA))
 	{
-        $text = $langs->trans("WarningPHPMail");
-	    print info_admin($text);
+		/*
+		 // Warning 1
+		 if ($linuxlike)
+		 {
+		 $sendmailoption=ini_get('mail.force_extra_parameters');
+		 if (empty($sendmailoption) || ! preg_match('/ba/',$sendmailoption))
+		 {
+		 print info_admin($langs->trans("SendmailOptionNotComplete"));
+		 }
+		 }*/
+		// Warning 2
+		print info_admin($langs->trans("SendmailOptionMayHurtBuggedMTA"));
+	}
+
+	if (! in_array($action, array('testconnect', 'test', 'testhtml')))
+	{
+		$text = '';
+		if ($conf->global->MAIN_MAIL_SENDMODE == 'mail')
+		{
+			$text.= $langs->trans("WarningPHPMail");
+		}
+		//$conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS='1.2.3.4';
+		if (! empty($conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS))
+		{
+			$text.= ($text?'<br>':'').$langs->trans("WarningPHPMail2", $conf->global->MAIN_EXTERNAL_SMTP_CLIENT_IP_ADDRESS);
+		}
+		if ($text) print info_admin($text);
 	}
 
 	// Run the test to connect
@@ -678,7 +804,7 @@ else
 	// Show email send test form
 	if ($action == 'test' || $action == 'testhtml')
 	{
-	    print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
+		print '<div id="formmailbeforetitle" name="formmailbeforetitle"></div>';
 		print load_fiche_titre($action == 'testhtml'?$langs->trans("DoTestSendHTML"):$langs->trans("DoTestSend"));
 
 		dol_fiche_head('');
@@ -686,11 +812,14 @@ else
 		// Cree l'objet formulaire mail
 		include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 		$formmail = new FormMail($db);
+		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
 		$formmail->fromname = (isset($_POST['fromname'])?$_POST['fromname']:$conf->global->MAIN_MAIL_EMAIL_FROM);
 		$formmail->frommail = (isset($_POST['frommail'])?$_POST['frommail']:$conf->global->MAIN_MAIL_EMAIL_FROM);
-		$formmail->trackid=(($action == 'testhtml')?"testhtml":"test");
-		$formmail->withfromreadonly=0;
-		$formmail->withsubstit=0;
+		$formmail->fromid=$user->id;
+		$formmail->fromalsorobot=1;
+		$formmail->fromtype=(GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
+		$formmail->withfromreadonly=1;
+		$formmail->withsubstit=1;
 		$formmail->withfrom=1;
 		$formmail->witherrorsto=1;
 		$formmail->withto=(! empty($_POST['sendto'])?$_POST['sendto']:($user->email?$user->email:1));
@@ -714,7 +843,7 @@ else
 		$formmail->param["returnurl"]=$_SERVER["PHP_SELF"];
 
 		// Init list of files
-        if (GETPOST("mode")=='init')
+		if (GETPOST("mode")=='init')
 		{
 			$formmail->clear_attached_files();
 		}

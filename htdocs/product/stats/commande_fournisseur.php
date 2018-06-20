@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-$langs->load("orders");
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -51,13 +50,13 @@ $hookmanager->initHooks(array (
 
 $mesg = '';
 
-$sortfield = GETPOST("sortfield", 'alpha');
-$sortorder = GETPOST("sortorder", 'alpha');
-$page = GETPOST("page", 'int');
-if ($page == - 1) {
-	$page = 0;
-}
-$offset = $conf->liste_limit * $page;
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
+$sortfield = GETPOST('sortfield','alpha');
+$sortorder = GETPOST('sortorder','alpha');
+$page = GETPOST('page','int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder)
@@ -107,7 +106,7 @@ if ($id > 0 || ! empty($ref)) {
         print $hookmanager->resPrint;
 		if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
         $shownav = 1;
         if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
@@ -220,12 +219,11 @@ if ($id > 0 || ! empty($ref)) {
 				print "</tr>\n";
 
 				if ($num > 0) {
-					$var = True;
+
 					while ( $i < $num && $i < $conf->liste_limit ) {
 						$objp = $db->fetch_object($result);
-						$var = ! $var;
 
-						print '<tr ' . $bc[$var] . '>';
+						print '<tr class="oddeven">';
 						print '<td>';
 						$supplierorderstatic->id = $objp->commandeid;
 						$supplierorderstatic->ref = $objp->ref;
@@ -236,7 +234,7 @@ if ($id > 0 || ! empty($ref)) {
 						print '<td>' . $societestatic->getNomUrl(1) . '</td>';
 						print "<td>" . $objp->code_client . "</td>\n";
 						print '<td align="center">';
-						print dol_print_date($db->jdate($objp->date_commande)) . "</td>";
+						print dol_print_date($db->jdate($objp->date_commande), 'dayhour') . "</td>";
 						print '<td align="center">' . $objp->qty . "</td>\n";
 						print '<td align="right">' . price($objp->total_ht) . "</td>\n";
 						print '<td align="right">' . $supplierorderstatic->getLibStatut(4) . '</td>';

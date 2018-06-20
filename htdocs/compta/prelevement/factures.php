@@ -31,11 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("companies");
-$langs->load('withdrawals');
-$langs->load('bills');
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'companies', 'withdrawals', 'bills'));
 
 // Securite acces client
 if ($user->societe_id > 0) accessforbidden();
@@ -71,12 +68,14 @@ llxHeader('',$langs->trans("WithdrawalsReceipts"));
 
 if ($prev_id > 0 || $ref)
 {
-  	if ($object->fetch($prev_id, $ref) == 0)
+  	if ($object->fetch($prev_id, $ref) >= 0)
     {
     	$head = prelevement_prepare_head($object);
 		dol_fiche_head($head, 'invoices', $langs->trans("WithdrawalsReceipts"), -1, 'payment');
 
-		dol_banner_tab($object, 'ref', '', 1, 'ref', 'ref');
+		$linkback = '<a href="'.DOL_URL_ROOT.'/compta/prelevement/bons.php">'.$langs->trans("BackToList").'</a>';
+
+		dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref');
 
 		print '<div class="fichecenter">';
 		print '<div class="underbanner clearboth"></div>';
@@ -168,6 +167,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit + 1,$offset);
@@ -203,7 +207,7 @@ if ($result)
   	print_liste_field_titre("Bill",$_SERVER["PHP_SELF"],"p.ref",'',$param,'',$sortfield,$sortorder);
   	print_liste_field_titre("ThirdParty",$_SERVER["PHP_SELF"],"s.nom",'',$param,'',$sortfield,$sortorder);
   	print_liste_field_titre("AmountInvoice",$_SERVER["PHP_SELF"],"f.total_ttc","",$param,'align="right"',$sortfield,$sortorder);
-  	print_liste_field_titre("AmountRequested",$_SERVER["PHP_SELF"],"pl.amount_requested","",$param,'align="right"',$sortfield,$sortorder);
+  	print_liste_field_titre("AmountRequested",$_SERVER["PHP_SELF"],"pl.amount","",$param,'align="right"',$sortfield,$sortorder);
   	print_liste_field_titre("StatusDebitCredit",$_SERVER["PHP_SELF"],"","",$param,'align="center"',$sortfield,$sortorder);
 	print_liste_field_titre('');
 	print "</tr>\n";

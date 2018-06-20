@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("bills");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'bills', 'companies'));
 
 // Security check
 if (isset($_GET["account"]) || isset($_GET["ref"]))
@@ -91,16 +89,16 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 
 	// Onglets
 	$head=bank_prepare_head($object);
-	dol_fiche_head($head, 'cash', $langs->trans("FinancialAccount"), -1, 'account');
+	dol_fiche_head($head, 'cash', $langs->trans("FinancialAccount"), 0, 'account');
 
-	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/index.php">'.$langs->trans("BackToList").'</a>';
+	$linkback = '<a href="'.DOL_URL_ROOT.'/compta/bank/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref, '', 0, '', '', 1);
 
 	dol_fiche_end();
-	
+
     print '<br>';
-    
+
 	$solde = $object->solde(0);
 
 	// Show next coming entries
@@ -117,16 +115,14 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '</tr>';
 
-	$var=true;
-
 	// Current balance
-	
+
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("CurrentBalance").'</td>';
 	print '<td align="right" class="nowrap">'.price($solde).'</td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="liste_titre">';
 	print '<td align="left" colspan="5">'.$langs->trans("RemainderToPay").'</td>';
 	print '<td align="right" class="nowrap">&nbsp;</td>';
@@ -295,7 +291,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			// We discard lines with a remainder to pay to 0
 			if (price2num($total_ttc) != 0)
 			{
-                
+
 
     			// Show line
     			print '<tr class="oddeven">';
@@ -320,7 +316,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	}
 
 	// Solde actuel
-	
+
 	print '<tr class="liste_total">';
 	print '<td align="left" colspan="5">'.$langs->trans("FutureBalance").' ('.$object->currency_code.')</td>';
 	print '<td align="right" class="nowrap">'.price($solde, 0, $langs, 0, 0, -1, $object->currency_code).'</td>';

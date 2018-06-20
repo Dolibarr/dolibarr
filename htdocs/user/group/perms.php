@@ -29,20 +29,15 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("users");
-$langs->load("admin");
+// Load translation files required by page
+$langs->loadLangs(array('users', 'admin'));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action', 'alpha');
 $confirm=GETPOST('confirm', 'alpha');
 $module=GETPOST('module', 'alpha');
 $rights=GETPOST('rights', 'int');
-
-// Users/Groups management only in master entity if transverse mode
-if (! empty($conf->multicompany->enabled) && $conf->entity > 1 && $conf->global->MULTICOMPANY_TRANSVERSE_MODE)
-{
-	accessforbidden();
-}
+$contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'groupperms';   // To manage different context of search
 
 // Defini si peux lire les permissions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
@@ -61,41 +56,41 @@ if (! $canreadperms) accessforbidden();
 
 $object = new Usergroup($db);
 $object->fetch($id);
-$object->getrights();
 
 $entity=$conf->entity;
-if (! empty($conf->multicompany->enabled))
-{
-	if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
-		$entity=(GETPOST('entity','int') ? GETPOST('entity','int') : $conf->entity);
-	else
-		$entity=(! empty($object->entity) ? $object->entity : $conf->entity);
-}
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('groupcard','globalcard'));
+$hookmanager->initHooks(array('groupperms','globalcard'));
 
 
 /**
  * Actions
  */
+
 $parameters=array();
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-if (empty($reshook)) {
+if (empty($reshook))
+{
 	if ($action == 'addrights' && $caneditperms)
 	{
 		$editgroup = new Usergroup($db);
 		$result=$editgroup->fetch($id);
-		if ($result > 0) $editgroup->addrights($rights, $module, '', $entity);
+		if ($result > 0)
+		{
+			$editgroup->addrights($rights, $module, '', $entity);
+		}
 	}
 
 	if ($action == 'delrights' && $caneditperms)
 	{
 		$editgroup = new Usergroup($db);
 		$result=$editgroup->fetch($id);
-		if ($result > 0) $editgroup->delrights($rights, $module, '', $entity);
+		if ($result > 0)
+		{
+			$editgroup->delrights($rights, $module, '', $entity);
+		}
 	}
 }
 
@@ -108,11 +103,13 @@ $form = new Form($db);
 
 llxHeader('',$langs->trans("Permissions"));
 
-if ($object->id)
+if ($object->id > 0)
 {
-    /*
+	/*
      * Affichage onglets
      */
+	$object->getrights();	// Reload permission
+
     $head = group_prepare_head($object);
     $title = $langs->trans("Group");
     dol_fiche_head($head, 'rights', $title, -1, 'group');
@@ -193,8 +190,9 @@ if ($object->id)
     	dol_print_error($db);
     }
 
+    $linkback = '<a href="'.DOL_URL_ROOT.'/user/group/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
-    dol_banner_tab($object,'id','',$user->rights->user->user->lire || $user->admin);
+    dol_banner_tab($object,'id',$linkback,$user->rights->user->user->lire || $user->admin);
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
@@ -218,7 +216,7 @@ if ($object->id)
     }
 
     // Note
-    print '<tr><td class="tdtop">'.$langs->trans("Description").'</td>';
+    print '<tr><td class="titlefield tdtop">'.$langs->trans("Description").'</td>';
     print '<td class="valeur">'.dol_htmlentitiesbr($object->note).'</td>';
     print "</tr>\n";
 
@@ -249,7 +247,6 @@ if ($object->id)
     if ($result)
     {
         $i = 0;
-        $var = true;
         $oldmod = '';
 
         $num = $db->num_rows($result);
@@ -268,31 +265,30 @@ if ($object->id)
             if ($oldmod <> $obj->module)
             {
                 $oldmod = $obj->module;
-                $var = !$var;
 
                 // Rupture detectee, on recupere objMod
                 $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
 
+                print '<tr class="oddeven trforbreak">';
+                print '<td class="nowrap">'.img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName();
+                print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
+                print '<td align="center" class="nowrap">';
                 if ($caneditperms)
                 {
-                    print '<tr '. $bc[$var].'>';
-                    print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName();
-                    print '<a name="'.$objMod->getName().'">&nbsp;</a></td>';
-                    print '<td align="center" class="nowrap">';
-                    print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
+                	print '<a title='.$langs->trans("All").' alt='.$langs->trans("All").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=addrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("All")."</a>";
                     print '/';
                     print '<a title='.$langs->trans("None").' alt='.$langs->trans("None").' href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=delrights&amp;entity='.$entity.'&amp;module='.$obj->module.'#'.$objMod->getName().'">'.$langs->trans("None")."</a>";
-                    print '</td>';
-                    print '<td colspan="2">&nbsp;</td>';
-                    print '</tr>';
                 }
+                print '</td>';
+                print '<td colspan="2">&nbsp;</td>';
+                print '</tr>';
             }
 
-            print '<tr '. $bc[$var].'>';
+            print '<tr class="oddeven">';
 
             // Module
-            print '<td class="nowrap">'.img_object('',$picto).' '.$objMod->getName().'</td>';
+            print '<td class="nowrap">'.img_object('', $picto, 'class="inline-block pictoobjectwidth"').' '.$objMod->getName().'</td>';
 
             if (is_array($permsgroupbyentity[$entity]))
             {

@@ -18,6 +18,9 @@
 --
 -- ============================================================================
 
+-- To save customer prices (one price per product or several prices per segment/level)
+-- TODO We should introduce table llx_product_price_log to store changes and keep in this table only last current price !
+
 create table llx_product_price
 (
   rowid				integer AUTO_INCREMENT PRIMARY KEY,
