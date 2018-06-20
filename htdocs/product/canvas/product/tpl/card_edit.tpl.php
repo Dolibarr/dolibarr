@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018 Regis Houssin <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ dol_htmloutput_errors($object->error,$object->errors);
 
 <tr>
 <td class="fieldrequired"><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_tobuy); ?></td>
+<td><?php echo $form->selectarray('statut_buy',$statutarray,$object->status_buy); ?></td>
 </tr>
 
 <?php if (! empty($conf->stock->enabled)) { ?>

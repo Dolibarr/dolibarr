@@ -64,16 +64,6 @@ dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref');
 </tr>
 
 <tr>
-<td><?php echo $langs->trans("Status").' ('.$langs->trans("Sell").')'; ?></td>
-<td><?php echo $object->status; ?></td>
-</tr>
-
-<tr>
-<td><?php echo $langs->trans("Status").' ('.$langs->trans("Buy").')'; ?></td>
-<td><?php echo $object->status_buy; ?></td>
-</tr>
-
-<tr>
 <td class="tdtop"><?php echo $langs->trans("Description"); ?></td>
 <td colspan="2"><?php echo $object->description; ?></td>
 </tr>
