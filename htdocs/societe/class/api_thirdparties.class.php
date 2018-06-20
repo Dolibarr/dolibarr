@@ -123,6 +123,7 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX . "societe_extrafields as te ON te.fk_object = t.rowid";
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
