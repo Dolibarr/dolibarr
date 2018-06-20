@@ -30,7 +30,10 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 
 <!-- BEGIN PHP TEMPLATE -->
 
-<?php print load_fiche_titre($langs->trans("Product")); ?>
+<?php
+print load_fiche_titre($langs->trans("NewProduct"),'','title_products.png');
+dol_fiche_head('');
+?>
 
 <?php dol_htmloutput_errors((is_numeric($object->error)?'':$object->error),$object->errors); ?>
 
