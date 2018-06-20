@@ -82,7 +82,6 @@ if ($socid > 0)
         $resql=$db->query($sql);
         if ($resql)
         {
-            $var=true;
             $num = $db->num_rows($resql);
 
             print '<tr class="liste_titre">';

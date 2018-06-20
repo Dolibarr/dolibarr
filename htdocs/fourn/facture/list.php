@@ -822,8 +822,6 @@ if ($resql)
 	if ($num > 0)
 	{
 		$i=0;
-
-		$var=true;
 		$totalarray=array();
 		while ($i < min($num,$limit))
 		{

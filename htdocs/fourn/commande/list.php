@@ -935,12 +935,10 @@ if ($resql)
 	$projectstatic=new Project($db);
 
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-
 
 		$objectstatic->id=$obj->rowid;
 		$objectstatic->ref=$obj->ref;
