@@ -83,22 +83,22 @@ class ProjectStats extends Stats
 				$row = $this->db->fetch_row($resql);
 				if ($i < $limit || $num == $limit)
 				{
-				    $label = (($langs->trans("OppStatus".$row[2]) != "OppStatus".$row[2]) ? $langs->trans("OppStatus".$row[2]) : $row[2]);
+					$label = (($langs->trans("OppStatus".$row[2]) != "OppStatus".$row[2]) ? $langs->trans("OppStatus".$row[2]) : $row[2]);
 					$result[$i] = array(
-						$label. ' (' . price(price2num($row[0], 'MT'), 1, $langs, 1, -1, -1, $conf->currency) . ')',
-						$row[0]
+					$label. ' (' . price(price2num($row[0], 'MT'), 1, $langs, 1, -1, -1, $conf->currency) . ')',
+					$row[0]
 					);
 				}
 				else
 					$other += $row[1];
-				$i++;
+					$i++;
 			}
 			if ($num > $limit)
 				$result[$i] = array (
-						$langs->transnoentitiesnoconv("Other"),
-						$other
+				$langs->transnoentitiesnoconv("Other"),
+				$other
 				);
-			$this->db->free($resql);
+				$this->db->free($resql);
 		} else {
 			$this->error = "Error " . $this->db->lasterror();
 			dol_syslog(get_class($this) . '::' . __METHOD__ . ' ' . $this->error, LOG_ERR);
@@ -124,6 +124,9 @@ class ProjectStats extends Stats
 		$sql = "SELECT date_format(t.datec,'%Y') as year, COUNT(t.rowid) as nb, SUM(t.opp_amount) as total, AVG(t.opp_amount) as avg,";
 		$sql.= " SUM(t.opp_amount * ".$this->db->ifsql("t.opp_percent IS NULL".($wonlostfilter?" OR cls.code IN ('WON','LOST')":""), '0', 't.opp_percent')." / 100) as weighted";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "projet as t LEFT JOIN ".MAIN_DB_PREFIX."c_lead_status as cls ON cls.rowid = t.fk_opp_status";
+		// No check is done on company permission because readability is managed by public status of project and assignement.
+		//if (! $user->rights->societe->client->voir && ! $user->soc_id)
+		//	$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe_commerciaux as sc ON sc.fk_soc=t.fk_soc AND sc.fk_user=" . $user->id;
 		$sql.= $this->buildWhere();
 		// For external user, no check is done on company permission because readability is managed by public status of project and assignement.
 		//if ($socid > 0) $sql.= " AND t.fk_soc = ".$socid;
@@ -157,6 +160,7 @@ class ProjectStats extends Stats
 
 		if (! empty($this->userid))
 			$sqlwhere[] = ' t.fk_user_resp=' . $this->userid;
+
 		// Forced filter on socid is similar to forced filter on project. TODO Use project assignement to allow to not use filter on project
 		if (! empty($this->socid))
 			$sqlwhere[] = ' t.fk_soc=' . $this->socid;
@@ -181,7 +185,7 @@ class ProjectStats extends Stats
 	 * Return Project number by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array of values
 	 */
 	function getNbByMonth($year, $format=0)
@@ -210,7 +214,7 @@ class ProjectStats extends Stats
 	 * Return the Project amount by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array with amount by month
 	 */
 	function getAmountByMonth($year, $format=0)
@@ -248,45 +252,45 @@ class ProjectStats extends Stats
 	{
 		global $conf,$user,$langs;
 
-        if ($startyear > $endyear) return -1;
+		if ($startyear > $endyear) return -1;
 
-        $datay=array();
+		$datay=array();
 
-        // Search into cache
-        if (! empty($cachedelay))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-        	include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
-        }
+		// Search into cache
+		if (! empty($cachedelay))
+		{
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			include_once DOL_DOCUMENT_ROOT.'/core/lib/json.lib.php';
+		}
 
-        $newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
-        $newmask='0644';
+		$newpathofdestfile=$conf->user->dir_temp.'/'.get_class($this).'_'.__FUNCTION__.'_'.(empty($this->cachefilesuffix)?'':$this->cachefilesuffix.'_').$langs->defaultlang.'_user'.$user->id.'.cache';
+		$newmask='0644';
 
-        $nowgmt = dol_now();
+		$nowgmt = dol_now();
 
-        $foundintocache=0;
-        if ($cachedelay > 0)
-        {
-        	$filedate=dol_filemtime($newpathofdestfile);
-        	if ($filedate >= ($nowgmt - $cachedelay))
-        	{
-        		$foundintocache=1;
+		$foundintocache=0;
+		if ($cachedelay > 0)
+		{
+			$filedate=dol_filemtime($newpathofdestfile);
+			if ($filedate >= ($nowgmt - $cachedelay))
+			{
+				$foundintocache=1;
 
-        		$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
-        	}
-        	else
-        	{
-        		dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
-        	}
-        }
+				$this->_lastfetchdate[get_class($this).'_'.__FUNCTION__]=$filedate;
+			}
+			else
+			{
+				dol_syslog(get_class($this).'::'.__FUNCTION__." cache file ".$newpathofdestfile." is not found or older than now - cachedelay (".$nowgmt." - ".$cachedelay.") so we can't use it.");
+			}
+		}
 
-        // Load file into $data
-        if ($foundintocache)    // Cache file found and is not too old
-        {
-        	dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
-        	$data = json_decode(file_get_contents($newpathofdestfile), true);
-        }
-        else
+		// Load file into $data
+		if ($foundintocache)    // Cache file found and is not too old
+		{
+			dol_syslog(get_class($this).'::'.__FUNCTION__." read data from cache file ".$newpathofdestfile." ".$filedate.".");
+			$data = json_decode(file_get_contents($newpathofdestfile), true);
+		}
+		else
 		{
 			$year=$startyear;
 			while($year <= $endyear)
@@ -444,7 +448,7 @@ class ProjectStats extends Stats
 	 * Return the Project transformation rate by month for a year
 	 *
 	 * @param 	int 	$year 		Year to scan
-     * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
+	 * @param	int		$format		0=Label of absiss is a translated text, 1=Label of absiss is month number, 2=Label of absiss is first letter of month
 	 * @return 	array 				Array with amount by month
 	 */
 	function getTransformRateByMonth($year, $format=0)
