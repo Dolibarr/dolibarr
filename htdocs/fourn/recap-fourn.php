@@ -38,6 +38,8 @@ if ($user->societe_id > 0)
 }
 
 
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('supplierbalencelist','globalcard'));
 
 /*
  * View
@@ -67,7 +69,7 @@ if ($socid > 0)
         // Invoice list
         print load_fiche_titre($langs->trans("SupplierPreview"));
 
-        print '<table class="noborder" width="100%">';
+        print '<table class="noborder tagtable liste" width="100%">';
 
         $sql = "SELECT s.nom, s.rowid as socid, f.ref_supplier, f.amount, f.datef as df,";
         $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
@@ -114,7 +116,7 @@ if ($socid > 0)
                 }
                 $totalpaye = $fac->getSommePaiement();
 
-                
+
                 print '<tr class="oddeven">';
 
                 print "<td align=\"center\">".dol_print_date($fac->date)."</td>\n";
@@ -182,7 +184,7 @@ if ($socid > 0)
         {
             dol_print_error($db);
         }
-        
+
         print "</table>";
     }
 }
