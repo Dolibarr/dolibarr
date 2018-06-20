@@ -31,7 +31,9 @@ $statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSe
 <!-- BEGIN PHP TEMPLATE -->
 
 <?php
-print load_fiche_titre($langs->trans("Product"));
+$head=product_prepare_head($object);
+$titre=$langs->trans("CardProduct".$object->type);
+dol_fiche_head($head, 'card', $titre, 0, 'product');
 
 dol_htmloutput_errors($object->error,$object->errors);
 ?>
