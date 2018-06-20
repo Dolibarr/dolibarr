@@ -35,12 +35,15 @@
 
 -- Forgot in 7.0
 
+-- VMYSQL4.1 DROP INDEX nom on llx_societe;
 -- VMYSQL4.1 ALTER TABLE llx_c_regions drop FOREIGN KEY fk_c_regions_fk_pays;
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 
 ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
+
+
 
 -- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
