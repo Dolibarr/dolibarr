@@ -685,6 +685,13 @@ div.divsearchfield {
     margin-bottom: 4px;
   	padding-left: 2px;
 }
+.divsearchfieldfilter {
+    text-overflow: clip;
+    overflow: auto;
+    white-space: nowrap;
+    padding-bottom: 5px;
+    opacity: 0.6;
+}
 div.confirmmessage {
 	padding-top: 6px;
 }
