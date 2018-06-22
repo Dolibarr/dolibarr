@@ -2059,6 +2059,8 @@ input.vmenusearchselectcombo[type=text] {
 #menu_contenu_logo { /* padding-top: 0; */ }
 .companylogo { }
 .searchform { padding-top: 10px; }
+.searchform input { font-size: 16px; }
+
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }

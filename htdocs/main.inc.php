@@ -1904,7 +1904,10 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
 	$ret.=' placeholder="'.strip_tags($title).'"';
 	$ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
-	$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
+	//$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
+	$ret.='<button type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret.='<span class="fa fa-search"></span>';
+	$ret.='</button>';
 	$ret.="</form>\n";
 	return $ret;
 }
