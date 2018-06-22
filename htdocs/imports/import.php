@@ -440,7 +440,6 @@ if ($step == 2 && $datatoimport)
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
-	$var=true;
 
 	// Add format informations and link to download example
 	print '<tr class="liste_titre"><td colspan="6">';
@@ -556,14 +555,12 @@ if ($step == 3 && $datatoimport)
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 	$filetoimport='';
-	$var=true;
 
 	print '<tr><td colspan="6">'.$langs->trans("ChooseFileToImport",img_picto('','filenew')).'</td></tr>';
 
 	//print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("FileWithDataToImport").'</td></tr>';
 
 	// Input file name box
-	$var=false;
 	print '<tr class="oddeven"><td colspan="6">';
 	print '<input type="file"   name="userfile" size="20" maxlength="80"> &nbsp; &nbsp; ';
 	$out = (empty($conf->global->MAIN_UPLOAD_DOC)?' disabled':'');
@@ -907,13 +904,12 @@ if ($step == 4 && $datatoimport)
 	// List of targets fields
 	$height=24;
 	$i = 0;
-	$var=true;
 	$mandatoryfieldshavesource=true;
 	print '<table width="100%" class="nobordernopadding">';
 	foreach($fieldstarget as $code=>$label)
 	{
 
-		print '<tr '.$bc[$var].' height="'.$height.'">';
+		print '<tr class="oddeven" height="'.$height.'">';
 
 		$i++;
 		$entity=(! empty($objimport->array_import_entities[0][$code])?$objimport->array_import_entities[0][$code]:$objimport->array_import_icon[0]);
@@ -1128,7 +1124,7 @@ if ($step == 4 && $datatoimport)
 		print '<td>'.$langs->trans("ImportModelName").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
-		$var=false;
+		
 		print '<tr class="oddeven">';
 		print '<td><input name="import_name" size="48" value=""></td><td align="right">';
 		print '<input type="submit" class="button" value="'.$langs->trans("SaveImportProfile").'">';
@@ -1144,7 +1140,6 @@ if ($step == 4 && $datatoimport)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$var=false;
 			while ($i < $num)
 			{
 
