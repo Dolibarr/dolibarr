@@ -253,7 +253,7 @@ class ActionsCardProduct
 
 		$this->field_list = array();
 
-		$sql = "SELECT rowid, name, alias, title, align, sort, search, checked, enabled, rang";
+		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -278,7 +278,7 @@ class ActionsCardProduct
 				$fieldlist["align"]		= $obj->align;
 				$fieldlist["sort"]		= $obj->sort;
 				$fieldlist["search"]	= $obj->search;
-				$fieldlist["checked"]	= $obj->checked;
+				$fieldlist["visible"]	= $obj->visible;
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
 
