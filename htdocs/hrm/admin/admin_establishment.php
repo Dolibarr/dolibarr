@@ -98,8 +98,6 @@ if ($result)
 	print_liste_field_titre("Status",$_SERVER["PHP_SELF"],"e.status","","",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
-	$var=true;
-
 	if ($num > 0)
     {
 	    $establishmentstatic=new Establishment($db);

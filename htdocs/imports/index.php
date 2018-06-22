@@ -60,13 +60,12 @@ print '<td>'.$langs->trans("Module").'</td>';
 print '<td>'.$langs->trans("ImportableDatas").'</td>';
 //print '<td>&nbsp;</td>';
 print '</tr>';
-$val=true;
+
 if (count($import->array_import_code))
 {
 	foreach ($import->array_import_code as $key => $value)
 	{
-		$val=!$val;
-		print '<tr '.$bc[$val].'><td>';
+		print '<tr class="oddeven"><td>';
 		print img_object($import->array_import_module[$key]->getName(),$import->array_import_module[$key]->picto).' ';
 		print $import->array_import_module[$key]->getName();
 		print '</td><td>';
@@ -108,7 +107,6 @@ print '<br>';
 
 
 // List of available import format
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("AvailableFormats").'</td>';
@@ -122,7 +120,6 @@ $liste=$model->liste_modeles($db);
 
 foreach($liste as $key)
 {
-
 	print '<tr class="oddeven">';
 	print '<td width="16">'.img_picto_common($model->getDriverLabelForKey($key),$model->getPictoForKey($key)).'</td>';
 	$text=$model->getDriverDescForKey($key);
