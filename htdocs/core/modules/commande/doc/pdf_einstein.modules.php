@@ -319,7 +319,7 @@ class pdf_einstein extends ModelePDFCommandes
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
 
-						$tab_top = $nexY+6+$height_incoterms;
+						$tab_top = $nexY+6;
 					}
 				}
 
@@ -353,7 +353,7 @@ class pdf_einstein extends ModelePDFCommandes
 					$pdf->SetDrawColor(192,192,192);
 					$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
-					$tab_top = $nexY+6+$height_note;
+					$tab_top = $nexY+6;
 				}
 
 				$iniY = $tab_top + 7;

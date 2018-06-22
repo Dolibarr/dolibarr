@@ -509,7 +509,6 @@ else
     		}
 
 			$nboflines=count($contents);
-			$var=true;
 			$rawlisthasfailed=false;
 			$i=0;
 			while ($i < $nboflines && $i < 1000)
@@ -553,7 +552,7 @@ else
 				}
 
 				
-				print '<tr '.$bc[$var].' height="18">';
+				print '<tr class="oddeven" height="18">';
 				// Name
 				print '<td>';
 				$newsection=$section.(preg_match('@[\\\/]$@',$section)?'':'/').$file;
