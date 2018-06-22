@@ -342,6 +342,7 @@ if ($id > 0 || ! empty($ref))
 
 			$class='pair';
 
+			$totalsell=0;
 			if (count($prods_arbo))
 			{
 				foreach($prods_arbo as $value)
@@ -374,7 +375,7 @@ if ($id > 0 || ! empty($ref))
 						$fourn_remise_percent = (!empty($product_fourn->fourn_remise_percent)?$product_fourn->fourn_remise_percent:0);
 						$fourn_remise = (!empty($product_fourn->fourn_remise)?$product_fourn->fourn_remise:0);
 
-					    $totalline=price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
+						$totalline=price2num($value['nb'] * ($fourn_unitprice * (1 - $fourn_remise_percent/100) - $fourn_remise), 'MT');
 						$total+=$totalline;
 
 						print '<td align="right">';
@@ -385,12 +386,17 @@ if ($id > 0 || ! empty($ref))
 						$pricesell=$productstatic->price;
 						if (! empty($conf->global->PRODUIT_MULTIPRICES))
 						{
-							//$pricesell='Variable'; FIXME A non-numeric value encountered
+							$pricesell='Variable';
 						}
-						$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
-						$totalsell+=$totallinesell;
+						else
+						{
+							$totallinesell=price2num($value['nb'] * ($pricesell), 'MT');
+							$totalsell+=$totallinesell;
+						}
 						print '<td align="right" colspan="2">';
-						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '').price($pricesell,'','',0,0,-1,$conf->currency));
+						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '');
+						if (is_numeric($pricesell)) print price($pricesell,'','',0,0,-1,$conf->currency));
+						else print $langs->trans($pricesell);
 						print '</td>';
 
 						// Stock
