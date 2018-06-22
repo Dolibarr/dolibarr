@@ -710,3 +710,14 @@ ALTER TABLE llx_facture_rec_extrafields ADD INDEX idx_facture_rec_extrafields (f
 
 UPDATE llx_cronjob set entity = 1 where entity = 0 and label in ('RecurringInvoices', 'SendEmailsReminders');
 UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTemporaryFilesShort', 'MakeLocalDatabaseDumpShort');
+
+
+
+
+-- advtargetmailing
+
+ALTER TABLE llx_advtargetemailing ADD COLUMN fk_element integer NOT NULL;
+ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
+UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element="mailing";
+ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
+		
