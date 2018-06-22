@@ -1752,7 +1752,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 
 	$i=-1;
 
-	$sql = "SELECT s.rowid, s.nom as name, s.address, s.zip, s.town, s.code_client, s.canvas";
+	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= " WHERE s.parent = ".$object->id;
 	$sql.= " AND s.entity IN (".getEntity('societe').")";
@@ -1780,12 +1780,22 @@ function show_subsidiaries($conf,$langs,$db,$object)
 		{
 			$obj = $db->fetch_object($result);
 
+			$socstatic->id = $obj->rowid;
+			$socstatic->name = $obj->name;
+			$socstatic->name_alias = $obj->name_alias;
+			$socstatic->email = $obj->email;
+			$socstatic->code_client = $obj->code_client;
+			$socstatic->code_fournisseur = $obj->code_client;
+			$socstatic->code_compta = $obj->code_compta;
+			$socstatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+			$socstatic->email = $obj->email;
+			$socstatic->canvas = $obj->canvas;
+			$socstatic->client = $obj->client;
+			$socstatic->fournisseur = $obj->fournisseur;
+
 			print '<tr class="oddeven">';
 
 			print '<td>';
-			$socstatic->id = $obj->rowid;
-			$socstatic->name = $obj->name;
-			$socstatic->canvas = $obj->canvas;
 			print $socstatic->getNomUrl(1);
 			print '</td>';
 

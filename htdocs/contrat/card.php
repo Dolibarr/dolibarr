@@ -897,10 +897,7 @@ if (empty($reshook))
 		$cancelbutton = GETPOST('cancel','alpha');
 		if (!$cancelbutton) {
 
-			$result = $object->fetch($id);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 			if ($result < 0) {
@@ -922,10 +919,7 @@ if (empty($reshook))
 
 		if (!$cancelbutton)
 		{
-			$result = $object->fetch($id);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 			if ($result < 0) {
