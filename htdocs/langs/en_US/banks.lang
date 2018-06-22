@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Bank
-MenuBankCash=Bank/Cash
+MenuBankCash=Bank | Cash
 MenuVariousPayment=Miscellaneous payments
 MenuNewVariousPayment=New Miscellaneous payment
 BankName=Bank name
@@ -132,7 +132,7 @@ PaymentDateUpdateSucceeded=Payment date updated successfully
 PaymentDateUpdateFailed=Payment date could not be updated
 Transactions=Transactions
 BankTransactionLine=Bank entry
-AllAccounts=All bank/cash accounts
+AllAccounts=All bank and cash accounts
 BackToAccount=Back to account
 ShowAllAccounts=Show for all accounts
 FutureTransaction=Transaction in futur. No way to conciliate.
