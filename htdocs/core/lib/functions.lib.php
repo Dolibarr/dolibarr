@@ -293,7 +293,6 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 
 	if (empty($method) || $method == 3 || $method == 4)
 	{
-
 		$relativepathstring = $_SERVER["PHP_SELF"];
 		// Clean $relativepathstring
 		if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
@@ -303,19 +302,30 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 		//var_dump($user->default_values);
 
 		// Code for search criteria persistence.
-		// Retrieve values if restore_lastsearch_values is set and there is saved values
-		if (! empty($_GET['restore_lastsearch_values']) && ! empty($_SESSION['lastsearch_values_'.$relativepathstring]))        // Keep $_GET here
+		// Retrieve values if restore_lastsearch_values
+		if (! empty($_GET['restore_lastsearch_values']))        // Use $_GET here and not GETPOST
 		{
-			$tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
-			if (is_array($tmp))
+			if (! empty($_SESSION['lastsearch_values_'.$relativepathstring]))	// If there is saved values
 			{
-				foreach($tmp as $key => $val)
+				$tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+				if (is_array($tmp))
 				{
-					if ($key == $paramname)
+					foreach($tmp as $key => $val)
 					{
-						$out=$val;
-						break;
+						if ($key == $paramname)	// We are on the requested parameter
+						{
+							$out=$val;
+							break;
+						}
 					}
+				}
+			}
+			if (! empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))	// If there is saved contextpage
+			{
+				if ($paramname == 'contextpage')
+				{
+					$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
+					//var_dump($paramname.' '.$out);
 				}
 			}
 		}
