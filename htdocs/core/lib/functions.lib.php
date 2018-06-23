@@ -4072,10 +4072,6 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		//print "&nbsp;";
-		//$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-		//$sortimg.= '<span class="nowrap">';
-
 		if (! $sortorder || $field1 != $sortfield1)
 		{
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
@@ -4094,8 +4090,6 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 				$sortimg.= '<span class="nowrap">'.img_down("A-Z",0).'</span>';
 			}
 		}
-
-		//$sortimg.= '</span>';
 	}
 
 	$out.=$sortimg;

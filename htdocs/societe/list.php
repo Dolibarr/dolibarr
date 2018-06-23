@@ -108,9 +108,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if ($type == 'c' && (empty($contextpage) || $contextpage == 'thirdpartylist')) { $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
-if ($type == 'p' && (empty($contextpage) || $contextpage == 'thirdpartylist')) { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
-if ($type == 'f' && (empty($contextpage) || $contextpage == 'thirdpartylist')) { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
+if ($type == 'c') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
+if ($type == 'p') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
+if ($type == 'f') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
