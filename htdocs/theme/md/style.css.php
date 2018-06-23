@@ -807,6 +807,10 @@ select.flat.selectlimit {
 .amountremaintopayback {
 	font-weight: bold;
 }
+.amountpaymentneutral {
+	font-weight: bold;
+	font-size: 1.4em;
+}
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;

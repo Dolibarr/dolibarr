@@ -201,8 +201,8 @@ $nbtopmenuentries=$menumanager->showmenu('topnb');
 
 
 $minwidthtmenu=66;		/* minimum width for one top menu entry */
-$heightmenu=46;			/* height of top menu, part with image */
-$heightmenu2=48;        /* height of top menu, part with login  */
+$heightmenu=48;			/* height of top menu, part with image */
+$heightmenu2=49;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 130;
 if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
@@ -813,6 +813,10 @@ select.flat.selectlimit {
 	font-size: 1.4em;
 }
 .amountremaintopayback {
+	font-weight: bold;
+	font-size: 1.4em;
+}
+.amountpaymentneutral {
 	font-weight: bold;
 	font-size: 1.4em;
 }
@@ -2403,7 +2407,7 @@ span.butAction, span.butActionDelete {
 }
 
 .butAction {
-	background: rgb(230, 238, 230)
+	background: rgb(230, 236, 230)
 	/* background: rgb(230, 232, 239); */
 }
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
