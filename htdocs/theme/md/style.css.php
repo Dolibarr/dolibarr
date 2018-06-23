@@ -872,11 +872,10 @@ div.fiche>form>div.div-table-responsive {
 	flex: 1 1 150px;
 }
 .thumbstat, .thumbstat150 {
-    /* flex-grow: 1; */
-    /* flex-shrink: 1; */
+    flex-grow: 1;
+    flex-shrink: 1;
     /* flex-basis: 140px; */
-	display: inline;
-    width: 100%;
+    min-width: 150px;
     justify-content: flex-start;
     align-self: flex-start;
 }
