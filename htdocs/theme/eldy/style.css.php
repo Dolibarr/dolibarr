@@ -1440,9 +1440,9 @@ div.statusrefbis {
    	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
-	border: 1px solid #CCC;
-    -webkit-box-shadow: 2px 2px 4px #ccc;
-    box-shadow: 2px 2px 4px #ccc;
+	border: 1px solid #DDD;
+    -webkit-box-shadow: 1px 1px 4px #DDD;
+    box-shadow: 1px 1px 4px #DDD;
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -2402,6 +2402,10 @@ span.butAction, span.butActionDelete {
 	cursor: pointer;
 }
 
+.butAction {
+	background: rgb(230, 238, 230)
+	/* background: rgb(230, 232, 239); */
+}
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
 	text-transform: uppercase;
@@ -2410,14 +2414,14 @@ span.butAction, span.butActionDelete {
 	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em !important;
 	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
-    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
     text-align: center;
     cursor: pointer;
     /* color: #fff; */
     /* background: rgb(<?php echo $colorbackhmenu1 ?>); */
-    color: #000;
-    border: 1px solid #aaa;
+    color: #444;
+    /* border: 1px solid #aaa; */
+    /* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
@@ -2432,13 +2436,13 @@ span.butAction, span.butActionDelete {
 	margin: 0em 0.3em 0 0.3em !important;
 	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
-    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
     /* text-align: center; New button are on right of screen */
     cursor: pointer;
     /*color: #fff !important;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
     border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);*/
+    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
@@ -2454,8 +2458,8 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-    /* background: #633; */
-    border: 1px solid #633;
+    background: rgb(239, 232, 230);
+    /* border: 1px solid #633; */
     color: #633;
 }
 
@@ -2749,7 +2753,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #625;
+  	color: rgb(<?php print $colortexttitlenotab; ?>);
   	font-size: 1.2em;
 }
 div.refidno  {

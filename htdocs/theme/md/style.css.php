@@ -2731,7 +2731,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #766;
+	color: rgb(<?php print $colortexttitlenotab; ?>);
   	font-size: 160%;
 }
 div.refidno  {

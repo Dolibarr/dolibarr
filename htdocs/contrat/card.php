@@ -2147,13 +2147,28 @@ else
 
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+					if ($user->rights->contrat->activer)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
+					}
 				}
 				if ($object->nbofservicesclosed < $nbofservices)
 				{
+					if ($user->rights->contrat->desactiver)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
+					}
+
 					//if (! $numactive)
 					//{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
 					//}
 					//else
 					//{
