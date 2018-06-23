@@ -395,7 +395,7 @@ if ($id > 0 || ! empty($ref))
 						}
 						print '<td align="right" colspan="2">';
 						print ($notdefined?'':($value['nb']> 1 ? $value['nb'].'x' : '');
-						if (is_numeric($pricesell)) print price($pricesell,'','',0,0,-1,$conf->currency));
+						if (is_numeric($pricesell)) print price($pricesell,'','',0,0,-1,$conf->currency);
 						else print $langs->trans($pricesell);
 						print '</td>';
 
