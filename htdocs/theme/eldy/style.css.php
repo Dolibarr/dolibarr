@@ -3187,7 +3187,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
     background: #f8f8f8;
     border: 1px solid #eee;
-    box-shadow: 1px 1px 6px #bbb;
+    box-shadow: 1px 1px 8px #ddd;
     border-radius: 0px;
 }
 .boxstats, .boxstats130, .boxstatscontent {
