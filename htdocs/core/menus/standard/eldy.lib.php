@@ -1062,7 +1062,7 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 								if ($objp->nature == 9) $nature="hasnew";
 
 								// To enable when page exists
-								if (! empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))
+								if (empty($conf->global->ACCOUNTANCY_SHOW_DEVELOP_JOURNAL))
 								{
 									if ($nature == 'various' || $nature == 'hasnew' || $nature == 'inventory') $nature='';
 								}
