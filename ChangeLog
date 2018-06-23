@@ -2,6 +2,43 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 7.0.3 compared to 7.0.2 *****
+FIX: 7.0 task contact card without withproject parameters
+FIX: #8722
+FIX: #8762
+FIX: #8813
+FIX: #8858 #8860 Backport better compatibility fix
+FIX: #8893 to get formatted price as substitution vars
+FIX: Avoid converting into reduction twice and draft invoice
+FIX: bad result on fetch ProductStockEntrepot
+FIX: Bad substitution key used for default send proposal email
+FIX: button to pay still visible when amount null used
+FIX: clause must not be there
+FIX: Contact tab not visible when using canvas
+FIX: dol_delete_file must work in a context without db handler loaded
+FIX: entity test must be on product_fourn_price table and not product table
+FIX: Fetch shipping will now fetch project id
+FIX: If we enable 3 steps for supplier order approbation, we must not delete all fourn rights def.
+FIX: intervention: extrafield error when calling insertExtrafields
+FIX: It's not possible to remove a contact which is assigned to an event #8852
+FIX: javascript showempty error
+FIX: Keep supplier proposal price for supplier order
+FIX: link for projets not linked to a thirdparties
+FIX: Missing extrafields in export of stock or products
+FIX: missing filters during ordering
+FIX: missing filters during reordering
+FIX: missing parenthesis
+FIX: need to filter on aa.entity for same accounting accounts available in several entities
+FIX: picto for type in product link in accountany list is wrong
+FIX: Problems in accountancy module when using multicompany module.
+FIX: proposal: missing contact type translation key
+FIX: pu_ht_devise was not converted to numeric so decimals were lost when calculating total_ht_devise
+FIX: Select user on add time spent form
+FIX: shipment: fk_proje(c)t not handled in fetch() and update() methods
+FIX: sometimes amounts are identical but php find them different.
+FIX: supplier order: product supplier ref not saved on addline
+FIX: test is_erasable() must be done before call function delete() too to avoid delete invoice with &action=delete in url
+FIX: wrong var name $search_month_lim
 
 ***** ChangeLog for 7.0.2 compared to 7.0.1 *****
 FIX: #8023
