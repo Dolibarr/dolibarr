@@ -90,11 +90,11 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 		else
 		{
 			print '<tr>';
-			print '<td>';
+			print '<td class="titlefield">';
 			print '<table width="100%" class="nobordernopadding">';
 			print '<tr>';
 			print '<td';
-			print ' class="titlefield';
+			print ' class="';
 			//var_dump($action);exit;
 			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' fieldrequired';
 			print '">';

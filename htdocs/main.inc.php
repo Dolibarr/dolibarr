@@ -707,7 +707,7 @@ if (! defined('NOLOGIN'))
 		    $hookmanager->initHooks(array('main'));
 
 		    // Code for search criteria persistence.
-		    if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
+		    if (! empty($_GET['save_lastsearch_values']))    // We must use $_GET here
 		    {
 			    $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
 			    $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
@@ -720,8 +720,14 @@ if (! defined('NOLOGIN'))
 			    // We click on a link that leave a page we have to save search criteria. We save them from tmp to no tmp
 			    if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
 			    {
-				    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
+			    	$_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
 				    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
+			    }
+			    // We also save contextpage
+			    if (! empty($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]))
+			    {
+			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
+			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			    }
 		    }
 
@@ -1904,7 +1910,10 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
 	$ret.=' placeholder="'.strip_tags($title).'"';
 	$ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
-	$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
+	//$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
+	$ret.='<button type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret.='<span class="fa fa-search"></span>';
+	$ret.='</button>';
 	$ret.="</form>\n";
 	return $ret;
 }
@@ -1925,7 +1934,7 @@ if (! function_exists("llxFooter"))
 	function llxFooter($comment='',$zone='private', $disabledoutputofmessages=0)
 	{
 		global $conf, $langs, $user, $object;
-		global $delayedhtmlcontent;
+		global $delayedhtmlcontent, $contextpage;
 
 		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -1933,22 +1942,35 @@ if (! function_exists("llxFooter"))
 		dol_htmloutput_events($disabledoutputofmessages);
 
 		// Code for search criteria persistence.
-		// Save $user->lastsearch_values if defined (define on list pages when a form field search_xxx exists)
+		// $user->lastsearch_values was set by the GETPOST when form field search_xxx exists
 		if (is_object($user) && ! empty($user->lastsearch_values_tmp) && is_array($user->lastsearch_values_tmp))
 		{
-			// Clean data
+			// Clean and save data
 			foreach($user->lastsearch_values_tmp as $key => $val)
 			{
-				unset($_SESSION['lastsearch_values_tmp_'.$key]);			// Clean arry to rebuild it just after
+				unset($_SESSION['lastsearch_values_tmp_'.$key]);			// Clean array to rebuild it just after
 				if (count($val) && empty($_POST['button_removefilter']))	// If there is search criteria to save and we did not click on 'Clear filter' button
 				{
 					if (empty($val['sortfield'])) unset($val['sortfield']);
 					if (empty($val['sortorder'])) unset($val['sortorder']);
-					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criteria)");
+					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criterias)");
 					$_SESSION['lastsearch_values_tmp_'.$key]=json_encode($val);
 					unset($_SESSION['lastsearch_values_'.$key]);
 				}
 			}
+		}
+
+
+		$relativepathstring = $_SERVER["PHP_SELF"];
+		// Clean $relativepathstring
+		if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+		$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+		$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+		if (preg_match('/list\.php$/', $relativepathstring))
+		{
+			unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
+			if (! empty($contextpage)) $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
+			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
 		}
 
 		// Core error message

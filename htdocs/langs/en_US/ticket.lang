@@ -140,7 +140,7 @@ TicketStatByStatus=Tickets by status
 #
 Ticket=Incident ticket
 TicketCard=Ticket card
-CreateTicket=Create new ticket
+CreateTicket=Create ticket
 EditTicket=Edit ticket
 TicketsManagement=Tickets Management
 CreatedBy=Created by

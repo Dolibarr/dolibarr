@@ -4324,7 +4324,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'badcustomer'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'badcustomer') {
@@ -4332,7 +4332,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			// $resteapayeraffiche=0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'product_returned'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
@@ -4340,7 +4340,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'abandon'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'abandon') {
@@ -4351,7 +4351,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 
 		// Billed

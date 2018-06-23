@@ -481,10 +481,18 @@ if ($resql)
 
 	if ($moreforfilter)
 	{
+<<<<<<< HEAD
 		print '<div class="liste_titre liste_titre_bydiv centpercent">';
 		print $moreforfilter;
 		print '</div>';
 	}
+=======
+		if ($sall)
+		{
+			foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
+			print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
+		}
+>>>>>>> e9b4141dd980341de89d17007eb68da1dddd1b1e
 
 	$varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 	$selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
