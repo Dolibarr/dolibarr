@@ -2415,8 +2415,8 @@ span.butAction, span.butActionDelete {
 	text-transform: uppercase;
     font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em !important;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em !important;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
     display: inline-block;
     text-align: center;
@@ -2479,14 +2479,17 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
     display: inline-block;
     text-align: center;
     cursor: pointer;
     color: #999 !important;
-    border: 1px solid #bbb;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 .butActionNewRefused, .butActionNewRefused:link, .butActionNewRefused:visited, .butActionNewRefused:hover, .butActionNewRefused:active {
 	text-decoration: none !important;
