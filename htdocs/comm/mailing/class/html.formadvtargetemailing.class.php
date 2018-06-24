@@ -409,15 +409,15 @@ class FormAdvTargetEmailing extends Form
 	}
 
 	/**
-	 * selectAdvtargetemailingTemplate
+	 * Return a combo list to select emailing target selector
 	 *
-	 * @param string $htmlname control name
-	 * @param integer $selected  defaut selected
-	 * @param integer $showempty empty lines
-	 *
-	 * @return	string HTML combo
+	 * @param	string 		$htmlname 		control name
+	 * @param	integer 	$selected  		defaut selected
+	 * @param	integer 	$showempty 		empty lines
+	 * @param	string		$type_element	Type element. Example: 'mailing'
+	 * @return	string 						HTML combo
 	 */
-	public function selectAdvtargetemailingTemplate($htmlname='template_id',$selected=0,$showempty=0,$type_element='mailing') {
+	public function selectAdvtargetemailingTemplate($htmlname='template_id', $selected=0, $showempty=0, $type_element='mailing') {
 		global $conf, $user, $langs;
 
 		$out = '';
