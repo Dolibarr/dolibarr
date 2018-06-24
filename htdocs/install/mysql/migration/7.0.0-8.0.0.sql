@@ -539,6 +539,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- advtargetmailing
 ALTER TABLE llx_advtargetemailing ADD COLUMN fk_element integer NOT NULL;
 ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
-UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element="mailing";
+UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing';
 ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 
