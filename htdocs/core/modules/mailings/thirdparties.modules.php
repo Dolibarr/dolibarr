@@ -131,7 +131,7 @@ class mailing_thirdparties extends MailingTargets
                     }
                     else
                     {
-                        $sql.= " AND s.status=0"; 
+                        $sql.= " AND s.status=0";
                         $addDescription.= $langs->trans("Disabled");
                     }
                 }
@@ -239,7 +239,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$langs->load("companies");
 
-		$s='';
+		$s=$langs->trans("Categories").': ';
 		$s.='<select name="filter" class="flat">';
 
 		// Show categories
@@ -284,7 +284,7 @@ class mailing_thirdparties extends MailingTargets
                 $s.= $langs->trans('ProspectCustomer');
                 $s.=': <select name="filter_client" class="flat">';
                 $s.= '<option value="-1">&nbsp;</option>';
-                if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS)) 
+                if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
                 {
                     $s.= '<option value="2">'.$langs->trans('Prospect').'</option>';
                 }
@@ -297,12 +297,12 @@ class mailing_thirdparties extends MailingTargets
                 $s.= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';
 
                 $s.='</select> ';
-                
+
                 $s.=$langs->trans("Status");
                 $s.=': <select name="filter_status" class="flat">';
-                $s.='<option value="1">'.$langs->trans("Enabled").'</option>';
+                $s.='<option value="-1">&nbsp;</option>';
+                $s.='<option value="1" selected>'.$langs->trans("Enabled").'</option>';
                 $s.='<option value="0">'.$langs->trans("Disabled").'</option>';
-                $s.='<option value="-1">Alle</option>';
 		$s.='</select>';
 		return $s;
 
