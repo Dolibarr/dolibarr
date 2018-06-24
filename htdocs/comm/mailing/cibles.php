@@ -331,7 +331,7 @@ if ($object->fetch($id) >= 0)
 
 					if ($allowaddtarget)
 					{
-						print '<form class="oddeven" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form class="oddeven tagtr" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 					else
