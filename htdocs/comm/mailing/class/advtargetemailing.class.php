@@ -95,7 +95,7 @@ class AdvanceTargetingMailing extends CommonObject
 		// Clean parameters
 		if (isset($this->fk_element)) $this->fk_element=trim($this->fk_element);
 		if (isset($this->type_element)) $this->type_element=trim($this->type_element);
-		
+
 		if (isset($this->name)) $this->name=trim($this->name);
 		if (isset($this->filtervalue)) $this->filtervalue=trim($this->filtervalue);
 		if (isset($this->fk_user_author)) $this->fk_user_author=trim($this->fk_user_author);
@@ -294,17 +294,18 @@ class AdvanceTargetingMailing extends CommonObject
 			return -1;
 		}
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 *  Load object in memory from the database
 	 *
-	 *  @param	int		$id    Id object
-	 *  @return int          	<0 if KO, >0 if OK
+	 *  @param	int		$id    			Id object
+	 *  @param	string	$type_element	Type target
+	 *  @return int          			<0 if KO, >0 if OK
 	 */
-	function fetch_by_element($id=0,$type_element='mailing')
+	function fetch_by_element($id=0, $type_element='mailing')
 	{
 		global $langs;
 		$sql = "SELECT";
