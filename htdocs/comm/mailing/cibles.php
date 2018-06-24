@@ -336,7 +336,7 @@ if ($object->fetch($id) >= 0)
 					}
 					else
 					{
-					    print '<div class="oddeven">';
+					    print '<div class="oddeven tagtr">';
 					}
 
 					print '<div class="tagtd">';
