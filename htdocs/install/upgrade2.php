@@ -106,7 +106,7 @@ pHeader('','step5',GETPOST('action','aZ09')?GETPOST('action','aZ09'):'upgrade','
 
 if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09')))
 {
-    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans('DataMigration').'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans('DataMigration').'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 
@@ -254,7 +254,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_rename_directories($db,$langs,$conf,'/societe','/mycompany');
         }
 
-        // Script for VX (X<2.8) -> V2.8
+        // Script for 2.8
         $afterversionarray=explode('.','2.7.9');
         $beforeversionarray=explode('.','2.8.9');
         //print $versionto.' '.versioncompare($versiontoarray,$afterversionarray).' '.versioncompare($versiontoarray,$beforeversionarray);
@@ -281,7 +281,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_project_task_actors($db,$langs,$conf);
         }
 
-        // Script for VX (X<2.9) -> V2.9
+        // Script for 2.9
         $afterversionarray=explode('.','2.8.9');
         $beforeversionarray=explode('.','2.9.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -295,7 +295,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_shipping_delivery2($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.0) -> V3.0
+        // Script for 3.0
         $afterversionarray=explode('.','2.9.9');
         $beforeversionarray=explode('.','3.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -303,7 +303,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             // No particular code
         }
 
-        // Script for VX (X<3.1) -> V3.1
+        // Script for 3.1
         $afterversionarray=explode('.','3.0.9');
         $beforeversionarray=explode('.','3.1.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -313,7 +313,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_actioncomm_element($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.2) -> V3.2
+        // Script for 3.2
         $afterversionarray=explode('.','3.1.9');
         $beforeversionarray=explode('.','3.2.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -325,7 +325,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_clean_association($db,$langs,$conf);
         }
 
-        // Script for VX (X<3.3) -> V3.3
+        // Script for 3.3
         $afterversionarray=explode('.','3.2.9');
         $beforeversionarray=explode('.','3.3.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -333,7 +333,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	migrate_categorie_association($db,$langs,$conf);
         }
 
-		// Script for VX (X<3.4) -> V3.4
+		// Script for 3.4
 		// No specific scripts
 
         // Tasks to do always and only into last targeted version
@@ -344,7 +344,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
        	    migrate_event_assignement($db,$langs,$conf);
         }
 
-        // Scripts for last version
+        // Scripts for 3.9
         $afterversionarray=explode('.','3.7.9');
         $beforeversionarray=explode('.','3.8.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -352,7 +352,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	// No particular code
         }
 
-        // Scripts for last version
+        // Scripts for 4.0
         $afterversionarray=explode('.','3.9.9');
         $beforeversionarray=explode('.','4.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -360,7 +360,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_rename_directories($db,$langs,$conf,'/fckeditor','/medias');
         }
 
-        // Scripts for last version
+        // Scripts for 5.0
         $afterversionarray=explode('.','4.0.9');
         $beforeversionarray=explode('.','5.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -372,7 +372,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
             migrate_remise_except_entity($db,$langs,$conf);
         }
 
-        // Scripts for last version
+        // Scripts for 6.0
         $afterversionarray=explode('.','5.0.9');
         $beforeversionarray=explode('.','6.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -393,7 +393,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         	}
         }
 
-        // Scripts for last version
+        // Scripts for 7.0
         $afterversionarray=explode('.','6.0.9');
         $beforeversionarray=explode('.','7.0.9');
         if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
@@ -403,13 +403,23 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 
         	migrate_reset_blocked_log($db,$langs,$conf);
         }
+
+        // Scripts for 8.0
+        $afterversionarray=explode('.','7.0.9');
+        $beforeversionarray=explode('.','8.0.9');
+        if (versioncompare($versiontoarray,$afterversionarray) >= 0 && versioncompare($versiontoarray,$beforeversionarray) <= 0)
+        {
+        	migrate_rename_directories($db,$langs,$conf,'/contracts','/contract');
+        }
+
     }
 
-	// Code executed only if migrate is LAST ONE. Must always be done.
+	// Code executed only if migration is LAST ONE. Must always be done.
 	if (versioncompare($versiontoarray,$versionranarray) >= 0 || versioncompare($versiontoarray,$versionranarray) <= -3)
 	{
 		// Reload modules (this must be always done and only into last targeted version, because code to reload module may need table structure of last version)
 		$listofmodule=array(
+			'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
 			'MAIN_MODULE_AGENDA'=>'newboxdefonly',
 			'MAIN_MODULE_BARCODE'=>'newboxdefonly',
 			'MAIN_MODULE_CRON'=>'newboxdefonly',
@@ -422,17 +432,15 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 			'MAIN_MODULE_HOLIDAY'=>'newboxdefonly',
 			'MAIN_MODULE_OPENSURVEY'=>'newboxdefonly',
 			'MAIN_MODULE_PAYBOX'=>'newboxdefonly',
+			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
 			'MAIN_MODULE_PRODUIT'=>'newboxdefonly',
+			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
+			'MAIN_MODULE_SYSLOG'=>'newboxdefonly',
 			'MAIN_MODULE_SOCIETE'=>'newboxdefonly',
 			'MAIN_MODULE_SERVICE'=>'newboxdefonly',
-			'MAIN_MODULE_USER'=>'newboxdefonly',
-			'MAIN_MODULE_ACCOUNTING'=>'newboxdefonly',
-			'MAIN_MODULE_BARCODE'=>'newboxdefonly',
-			'MAIN_MODULE_CRON'=>'newboxdefonly',
-			'MAIN_MODULE_PRINTING'=>'newboxdefonly',
-			'MAIN_MODULE_SALARIES'=>'newboxdefonly',
-
-			'MAIN_MODULE_USER'=>'newboxdefonly',        //This one must be always done and only into last targeted version)
+			'MAIN_MODULE_USER'=>'newboxdefonly',		//This one must be always done and only into last targeted version)
+			'MAIN_MODULE_VARIANTS'=>'newboxdefonly',
+			'MAIN_MODULE_WEBSITE'=>'newboxdefonly',
 		);
 		migrate_reload_modules($db,$langs,$conf,$listofmodule);
 
@@ -525,7 +533,7 @@ else
 
 $ret=0;
 if ($error && isset($argv[1])) $ret=1;
-dol_syslog("Exit ".$ret);
+dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("--- upgrade2: end");
 pFooter($error?2:0,$setuplang);
@@ -4524,7 +4532,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_API')
+		elseif ($moduletoreload == 'MAIN_MODULE_API')
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Rest API module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modApi.class.php';
@@ -4534,7 +4542,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_BARCODE')
+		elseif ($moduletoreload == 'MAIN_MODULE_BARCODE')
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Barcode module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modBarcode.class.php';
@@ -4544,7 +4552,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_CRON')
+		elseif ($moduletoreload == 'MAIN_MODULE_CRON')
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Cron module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCron.class.php';
@@ -4554,7 +4562,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_SOCIETE')
+		elseif ($moduletoreload == 'MAIN_MODULE_SOCIETE')
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Societe module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSociete.class.php';
@@ -4564,7 +4572,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_PRODUIT')    // Permission has changed into 2.7
+		elseif ($moduletoreload == 'MAIN_MODULE_PRODUIT')    // Permission has changed into 2.7
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Produit module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modProduct.class.php';
@@ -4574,7 +4582,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
+		elseif ($moduletoreload == 'MAIN_MODULE_SERVICE')    // Permission has changed into 2.7
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Service module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modService.class.php';
@@ -4584,7 +4592,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
+		elseif ($moduletoreload == 'MAIN_MODULE_COMMANDE')   // Permission has changed into 2.9
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Commande module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modCommande.class.php';
@@ -4594,7 +4602,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
+		elseif ($moduletoreload == 'MAIN_MODULE_FACTURE')    // Permission has changed into 2.9
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Facture module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFacture.class.php';
@@ -4604,7 +4612,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR')    // Permission has changed into 2.9
+		elseif ($moduletoreload == 'MAIN_MODULE_FOURNISSEUR')    // Permission has changed into 2.9
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Fournisseur module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
@@ -4614,7 +4622,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_HOLIDAY')    // Permission and tabs has changed into 3.8
+		elseif ($moduletoreload == 'MAIN_MODULE_HOLIDAY')    // Permission and tabs has changed into 3.8
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Leave Request module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modHoliday.class.php';
@@ -4624,7 +4632,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT')    // Permission has changed into 3.0
+		elseif ($moduletoreload == 'MAIN_MODULE_DEPLACEMENT')    // Permission has changed into 3.0
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Deplacement module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDeplacement.class.php';
@@ -4634,7 +4642,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
+		elseif ($moduletoreload == 'MAIN_MODULE_DON')    // Permission has changed into 3.0
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Don module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modDon.class.php';
@@ -4644,7 +4652,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
+		elseif ($moduletoreload == 'MAIN_MODULE_ECM')    // Permission has changed into 3.0 and 3.1
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate ECM module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modECM.class.php';
@@ -4654,7 +4662,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_PAYBOX')    // Permission has changed into 3.0
+		elseif ($moduletoreload == 'MAIN_MODULE_PAYBOX')    // Permission has changed into 3.0
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Paybox module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modPaybox.class.php';
@@ -4664,7 +4672,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_SUPPLIERPROPOSAL')		// Module after 3.5
+		elseif ($moduletoreload == 'MAIN_MODULE_SUPPLIERPROPOSAL')		// Module after 3.5
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Supplier Proposal module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSupplierProposal.class.php';
@@ -4674,7 +4682,7 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
+		elseif ($moduletoreload == 'MAIN_MODULE_OPENSURVEY')    // Permission has changed into 3.0
 		{
 			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Opensurvey module");
 			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modOpenSurvey.class.php';
@@ -4684,34 +4692,24 @@ function migrate_reload_modules($db,$langs,$conf,$listofmodule=array(),$force=0)
 				$mod->init($reloadmode);
 			}
 		}
-		if ($moduletoreload == 'MAIN_MODULE_SALARIES')    // Permission has changed into 6.0
+		else
 		{
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Salaries module");
-			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modSalaries.class.php';
-			if ($res) {
-				$mod=new modSalaries($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
+			$tmp = preg_match('/MAIN_MODULE_([a-zA-Z0-9]+)/', $moduletoreload, $reg);
+			if (! empty($reg[1]))
+			{
+				$moduletoreloadshort = ucfirst(strtolower($reg[1]));
+				dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate module ".$moduletoreloadshort);
+				$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/mod'.$moduletoreloadshort.'.class.php';
+				if ($res) {
+					$classname = 'mod'.$moduletoreloadshort;
+					$mod=new $classname($db);
+					//$mod->remove('noboxes');
+					$mod->init($reloadmode);
+				}
 			}
-		}
-		if ($moduletoreload == 'MAIN_MODULE_USER')    // Permission has changed into 3.0
-		{
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate User module");
-			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modUser.class.php';
-			if ($res) {
-				$mod=new modUser($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
-			}
-		}
-		if ($moduletoreload == 'MAIN_MODULE_WEBSITE')    // Module added in 7.0
-		{
-			dolibarr_install_syslog("upgrade2::migrate_reload_modules Reactivate Website module");
-			$res=@include_once DOL_DOCUMENT_ROOT.'/core/modules/modWebsite.class.php';
-			if ($res) {
-				$mod=new modWebsite($db);
-				//$mod->remove('noboxes');
-				$mod->init($reloadmode);
+			else
+			{
+				print "Error, can't find module name";
 			}
 		}
 

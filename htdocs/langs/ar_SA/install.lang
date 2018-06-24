@@ -6,6 +6,7 @@ ConfFileDoesNotExistsAndCouldNotBeCreated=ملف الإعداد <b>%s</b> مفق
 ConfFileCouldBeCreated=يمكن إنشاء ملف الإعداد <b>%s</b>
 ConfFileIsNotWritable=لا يمكن الكتابة الى ملف الإعداد <b>%s</b>. تحقق من الصلاحيات. اذا كان هذا التنصيب هو الأول، تحقق من أن السيرفر قادر ولديه جميع صلاحيات الكتابة والقراءة خلال عملية التنصيب، مثال: (chmod 666) لمستخدمي سيرفرات يونكس.
 ConfFileIsWritable=ملف الإعداد <b>%s</b> قابل للكتابة.
+ConfFileMustBeAFileNotADir=Configuration file <b>%s</b> must be a file, not a directory.
 ConfFileReload=إعادة تحميل جميع المعلومات من ملف الإعداد.
 PHPSupportSessions=يدعم هذا الـ PHP ميزة الجلسات الزمنية.
 PHPSupportPOSTGETOk=يدعم هذا الـ PHP وظائف POST و GET.
@@ -91,8 +92,8 @@ FailedToCreateAdminLogin=Failed to create Dolibarr administrator account.
 WarningRemoveInstallDir=تحذير ، لأسباب أمنية ، بعد تثبيت أو تحديث كاملة ، يجب إزالة <b>تثبيت أو إعادة تسمية الدليل على install.lock من أجل تجنب استخدام الخبيثة.</b>
 FunctionNotAvailableInThisPHP=لا تتوفر على هذا PHP
 ChoosedMigrateScript=اختار الهجرة سكريبت
-DataMigration=بيانات الهجرة
-DatabaseMigration=هيكل قاعدة بيانات الهجرة
+DataMigration=Database migration (data)
+DatabaseMigration=Database migration (structure + some data)
 ProcessMigrateScript=السيناريو تجهيز
 ChooseYourSetupMode=اختر طريقة الإعداد وانقر على "ابدأ"...
 FreshInstall=تركيب جديد
@@ -146,7 +147,7 @@ NothingToDo=Nothing to do
 # upgrade
 MigrationFixData=إصلاح البيانات الذي لم تتم تسويته
 MigrationOrder=بيانات الهجرة طلبات الزبائن
-MigrationSupplierOrder=بيانات الهجرة من أجل الموردين أوامر
+MigrationSupplierOrder=Data migration for vendor's orders
 MigrationProposal=بيانات الهجرة لأغراض تجارية اقتراحات
 MigrationInvoice=بيانات الهجرة لعملاء الفواتير
 MigrationContract=بيانات الهجرة للحصول على عقود
@@ -196,6 +197,8 @@ MigrationEvents=الترحيل من الأحداث لإضافة مالك الح�
 MigrationEventsContact=Migration of events to add event contact into assignement table
 MigrationRemiseEntity=Update entity field value of llx_societe_remise
 MigrationRemiseExceptEntity=Update entity field value of llx_societe_remise_except
+MigrationUserRightsEntity=Update entity field value of llx_user_rights
+MigrationUserGroupRightsEntity=Update entity field value of llx_usergroup_rights
 MigrationReloadModule=إعادة تحديث الوحدات %s
 MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=عرض خيارات غير متوفرة

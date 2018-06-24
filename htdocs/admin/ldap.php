@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/ldap.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/ldap.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (!$user->admin)
@@ -102,7 +103,6 @@ if (! function_exists("ldap_connect"))
 }
 
 
-$var=true;
 $form=new Form($db);
 
 
@@ -180,7 +180,6 @@ print '<td>'.$langs->trans("Example").'</td>';
 print "</tr>\n";
 
 // Type
-
 print '<tr class="oddeven"><td>'.$langs->trans("Type").'</td><td>';
 $arraylist=array();
 $arraylist['activedirectory']='Active Directory';
@@ -190,7 +189,6 @@ print $form->selectarray('type',$arraylist,$conf->global->LDAP_SERVER_TYPE);
 print '</td><td>&nbsp;</td></tr>';
 
 // Version
-
 print '<tr class="oddeven"><td>'.$langs->trans("Version").'</td><td>';
 $arraylist=array();
 $arraylist['3']='Version 3';
@@ -199,21 +197,18 @@ print $form->selectarray('LDAP_SERVER_PROTOCOLVERSION',$arraylist,$conf->global-
 print '</td><td>'.$langs->trans("LDAPServerProtocolVersion").'</td></tr>';
 
 // Serveur primaire
-
 print '<tr class="oddeven"><td>';
 print $langs->trans("LDAPPrimaryServer").'</td><td>';
 print '<input size="25" type="text" name="host" value="'.$conf->global->LDAP_SERVER_HOST.'">';
 print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
 
 // Serveur secondaire
-
 print '<tr class="oddeven"><td>';
 print $langs->trans("LDAPSecondaryServer").'</td><td>';
 print '<input size="25" type="text" name="slave" value="'.$conf->global->LDAP_SERVER_HOST_SLAVE.'">';
 print '</td><td>'.$langs->trans("LDAPServerExample").'</td></tr>';
 
 // Port
-
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPServerPort").'</td><td>';
 if (! empty($conf->global->LDAP_SERVER_PORT))
 {
@@ -226,13 +221,11 @@ else
 print '</td><td>'.$langs->trans("LDAPServerPortExample").'</td></tr>';
 
 // DNserver
-
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPServerDn").'</td><td>';
 print '<input size="25" type="text" name="dn" value="'.$conf->global->LDAP_SERVER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPServerDnExample").'</td></tr>';
 
 // Utiliser TLS
-
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPServerUseTLS").'</td><td>';
 $arraylist=array();
 $arraylist['0']=$langs->trans("No");
@@ -245,13 +238,11 @@ print '<td colspan="3">'.$langs->trans("ForANonAnonymousAccess").'</td>';
 print "</tr>\n";
 
 // DNAdmin
-
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPAdminDn").'</td><td>';
 print '<input size="25" type="text" name="admin" value="'.$conf->global->LDAP_ADMIN_DN.'">';
 print '</td><td>'.$langs->trans("LDAPAdminDnExample").'</td></tr>';
 
 // Pass
-
 print '<tr class="oddeven"><td>'.$langs->trans("LDAPPassword").'</td><td>';
 if (! empty($conf->global->LDAP_ADMIN_PASS))
 {

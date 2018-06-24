@@ -15,3 +15,4 @@ THMDescription=Este valor puede ser usado para calcular los costos de tiempo con
 TJMDescription=Este valor actualmente es informativo y no se utiliza para realizar cualquier tipo de cálculo
 LastSalaries=Últimos %s pagos salariales
 AllSalaries=Todos los pagos salariales
+SalariesStatistics=Estadísticas de salarios

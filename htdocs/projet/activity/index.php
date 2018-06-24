@@ -39,7 +39,7 @@ if ($user->societe_id > 0) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'projet', $projectid);
 if (!$user->rights->projet->lire) accessforbidden();
 
-
+// Load translation files required by the page
 $langs->load("projects");
 
 
@@ -145,12 +145,10 @@ $sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$var=true;
 	$total=0;
 
 	while ($row = $db->fetch_object($resql))
 	{
-
 		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
@@ -202,12 +200,10 @@ $sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 $resql = $db->query($sql);
 if ( $resql )
 {
-	$var=true;
 	$total=0;
 
 	while ($row = $db->fetch_object($resql))
 	{
-
 		print '<tr class="oddeven">';
 		print '<td>';
 		$projectstatic->id=$row->rowid;
@@ -263,11 +259,9 @@ if ($db->type != 'pgsql')
     if ( $resql )
     {
     	$total = 0;
-    	$var=true;
 
     	while ($row = $db->fetch_object($resql))
     	{
-
     		print '<tr class="oddeven">';
     		print '<td>';
     		$projectstatic->id=$row->rowid;
@@ -320,8 +314,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_MONTH))
     $resql = $db->query($sql);
     if ( $resql )
     {
-    	$var=false;
-
     	while ($row = $db->fetch_object($resql))
     	{
     		print '<tr class="oddeven">';
@@ -369,7 +361,6 @@ if (! empty($conf->global->PROJECT_TASK_TIME_YEAR))
 	$sql.= " AND p.rowid in (".$projectsListId.")";
 	$sql.= " GROUP BY p.rowid, p.ref, p.title, p.public";
 
-	$var=false;
 	$resql = $db->query($sql);
 	if ( $resql )
 	{
@@ -463,8 +454,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 	$sql.= " ORDER BY t.dateo desc, t.rowid desc, t.datee";
 	$sql.= $db->plimit($max+1);	// We want more to know if we have more than limit
 
-	$var=true;
-
 	dol_syslog('projet:index.php: affectationpercent', LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ( $resql )
@@ -491,7 +480,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 		while ($i < $num && $i < $max)
 		{
 			$obj = $db->fetch_object($resql);
-
 
 			$username='';
 			if ($obj->userid && $userstatic->id != $obj->userid)	// We have a user and it is not last loaded user

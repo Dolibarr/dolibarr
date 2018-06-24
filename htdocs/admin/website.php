@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("website");
+// Load translation files required by the page
+$langs->loadlangs(array('errors', 'admin', 'companies', 'website'));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -64,7 +62,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('admin'));
+$hookmanager->initHooks(array('website'));
 
 // Name of SQL tables of dictionaries
 $tabname=array();
@@ -401,6 +399,23 @@ $titre=$langs->trans("WebsiteSetup");
 $linkback='<a href="'.($backtopage?$backtopage:DOL_URL_ROOT.'/admin/modules.php').'">'.$langs->trans("BackToModuleList").'</a>';
 print load_fiche_titre($titre,$linkback,'title_setup');
 
+// Onglets
+$head=array();
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/website.php";
+$head[$h][1] = $langs->trans("WebSites");
+$head[$h][2] = 'website';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/website_options.php";
+$head[$h][1] = $langs->trans("Options");
+$head[$h][2] = 'options';
+$h++;
+
+dol_fiche_head($head, 'website', '', -1);
+
+
 print $langs->trans("WebsiteSetupDesc").'<br>';
 print "<br>\n";
 
@@ -480,15 +495,7 @@ if ($id)
             }
         }
 
-        $tmpaction = 'create';
-        $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-        $reshook=$hookmanager->executeHooks('createDictionaryFieldlist',$parameters, $obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
-        $error=$hookmanager->error; $errors=$hookmanager->errors;
-
-        if (empty($reshook))
-        {
-       		fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
-        }
+        fieldListWebsites($fieldlist,$obj,$tabname[$id],'add');
 
         print '<td colspan="3" align="right">';
         if ($action != 'edit')
@@ -568,7 +575,7 @@ if ($id)
                 {
                     $tmpaction='edit';
                     $parameters=array('fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                    $reshook=$hookmanager->executeHooks('editDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('editWebsiteFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
                     if (empty($reshook)) fieldListWebsites($fieldlist,$obj,$tabname[$id],'edit');
@@ -580,7 +587,7 @@ if ($id)
                 {
 	              	$tmpaction = 'view';
                     $parameters=array('var'=>$var, 'fieldlist'=>$fieldlist, 'tabname'=>$tabname[$id]);
-                    $reshook=$hookmanager->executeHooks('viewDictionaryFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
+                    $reshook=$hookmanager->executeHooks('viewWebsiteFieldlist',$parameters,$obj, $tmpaction);    // Note that $action and $object may have been modified by some hooks
 
                     $error=$hookmanager->error; $errors=$hookmanager->errors;
 
@@ -631,7 +638,9 @@ if ($id)
     }
 }
 
-print '<br>';
+dol_fiche_end();
+
+//print '<br>';
 
 
 llxFooter();

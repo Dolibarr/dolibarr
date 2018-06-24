@@ -36,9 +36,8 @@ if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplace
 if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
-$langs->load('users');
-$langs->load('holidays');
-$langs->load('trips');
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'holidays', 'trips'));
 
 $socid=GETPOST("socid");
 

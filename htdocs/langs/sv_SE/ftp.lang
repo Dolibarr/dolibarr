@@ -10,5 +10,5 @@ FailedToConnectToFTPServerWithCredentials=Det gick inte att logga in på FTP-ser
 FTPFailedToRemoveFile=Misslyckades med att ta bort fil <b>%s.</b>
 FTPFailedToRemoveDir=Misslyckades med att ta bort katalogen <b>%s</b> (Kontrollera behörigheter och att katalogen är tom).
 FTPPassiveMode=Passivt läge
-ChooseAFTPEntryIntoMenu=Välj FTP-server i meny...
-FailedToGetFile=Filhämtning misslyckades %s
+ChooseAFTPEntryIntoMenu=Choose a FTP entry into menu...
+FailedToGetFile=Failed to get files %s

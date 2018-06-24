@@ -45,8 +45,8 @@ if (! empty($conf->tax->enabled))
 //if (!$user->rights->compta->general->lire)
 //  accessforbidden();
 
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'bills'));
 if (! empty($conf->commande->enabled))
 	$langs->load("orders");
 
@@ -199,7 +199,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td class="nowrap">';
-				print $companystatic->getNomUrl(1,'',16);
+				print $companystatic->getNomUrl(1,'customer',16);
 				print '</td>';
 				print '<td align="right" class="nowrap">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
@@ -313,7 +313,7 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
-// Last modified customer invoices
+// Latest modified customer invoices
 if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 {
 	$langs->load("boxes");
@@ -323,7 +323,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql.= ", f.date_lim_reglement as datelimite";
 	$sql.= ", s.nom as name";
     $sql.= ", s.rowid as socid";
-    $sql.= ", s.code_client, s.code_compta";
+    $sql.= ", s.code_client, s.code_compta, s.email";
 	$sql.= ", sum(pf.amount) as am";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
@@ -338,7 +338,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$sql.=$hookmanager->resPrint;
 
 	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
-	$sql.= " s.nom, s.rowid, s.code_client, s.code_compta";
+	$sql.= " s.nom, s.rowid, s.code_client, s.code_compta, s.email";
 	$sql.= " ORDER BY f.tms DESC ";
 	$sql.= $db->plimit($max, 0);
 
@@ -374,6 +374,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 				$thirdpartystatic->id=$obj->socid;
 				$thirdpartystatic->name=$obj->name;
+				$thirdpartystatic->email=$obj->email;
 				$thirdpartystatic->client=1;
 				$thirdpartystatic->code_client = $obj->code_client;
 				//$thirdpartystatic->code_fournisseur = $obj->code_fournisseur;
@@ -567,10 +568,8 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 		print '</tr>';
 		if ($num)
 		{
-			$var = true;
 			$total_ttc = $totalam = $total = 0;
 
-			$var=true;
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
@@ -631,7 +630,6 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$resql = $db->query($sql);
 		if ( $resql )
 		{
-			$var = false;
 			$num = $db->num_rows($resql);
 
 			print '<table class="noborder" width="100%">';
@@ -663,7 +661,6 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 					print '<td align="center">'.$chargestatic->getLibStatut(3).'</td>';
 					print '</tr>';
 					$tot_ttc+=$obj->amount;
-					$var = !$var;
 					$i++;
 				}
 
@@ -721,7 +718,6 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 	$resql = $db->query($sql);
 	if ( $resql )
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 
 		if ($num)
@@ -837,7 +833,6 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -971,7 +966,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 
 		print '<div class="div-table-responsive-no-min">';
@@ -1022,7 +1016,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$total_ttc +=  $obj->total_ttc;
 				$totalam +=  $obj->am;
 				$i++;
-				$var = !$var;
 			}
 
 			print '<tr class="liste_total"><td colspan="2">'.$langs->trans("Total").' &nbsp; <font style="font-weight: normal">('.$langs->trans("RemainderToPay").': '.price($total_ttc-$totalam).')</font> </td>';
@@ -1056,7 +1049,6 @@ if ($resql)
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><thcolspan="2">'.$langs->trans("TasksToDo").'</th>';
 	print "</tr>\n";
-	$var = true;
 	$i = 0;
 	while ($i < $db->num_rows($resql))
 	{

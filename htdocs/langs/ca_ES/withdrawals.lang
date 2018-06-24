@@ -100,7 +100,11 @@ DirectDebitOrderCreated=S'ha creat l'ordre de domiciliació bancària %s
 AmountRequested=Quantitat sol·licitada
 SEPARCUR=SEPA CUR
 SEPAFRST=SEPA FRST
+<<<<<<< HEAD
+ExecutionDate=Execution date
+=======
 ExecutionDate=Data d'execució
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 CreateForSepa=Create direct debit file
 
 ### Notifications

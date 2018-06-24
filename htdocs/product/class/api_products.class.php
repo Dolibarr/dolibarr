@@ -59,16 +59,16 @@ class Products extends DolibarrApi
      *
      * @param 	int 	$id     			ID of product
      * @param	int		$includestockdata	Load also information about stock (slower)
-     * @return 	array|mixed data without useless information
+     * @return 	array|mixed 				Data without useless information
 	 *
-     * @throws RestException
      * @throws 401
+     * @throws 403
      * @throws 404
      */
     function get($id, $includestockdata=0)
     {
         if(! DolibarrApiAccess::$user->rights->produit->lire) {
-			throw new RestException(401);
+			throw new RestException(403);
 		}
 
         $result = $this->product->fetch($id);
@@ -178,7 +178,7 @@ class Products extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of product
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
 			throw new RestException(401);
@@ -197,7 +197,8 @@ class Products extends DolibarrApi
     }
 
     /**
-     * Update product
+     * Update product.
+     * Price will be updated by this API only if option is set on "One price per product". See other APIs for other price modes.
      *
      * @param int   $id             Id of product to update
      * @param array $request_data   Datas
@@ -207,8 +208,10 @@ class Products extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
+    	global $conf;
+
         if(! DolibarrApiAccess::$user->rights->produit->creer) {
 			throw new RestException(401);
 		}
@@ -222,15 +225,63 @@ class Products extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		$oldproduct = dol_clone($this->product, 0);
+
         foreach($request_data as $field => $value) {
             if ($field == 'id') continue;
             $this->product->$field = $value;
         }
 
-        if($this->product->update($id, DolibarrApiAccess::$user,1,'update'))
-            return $this->get ($id);
+        $result = $this->product->update($id, DolibarrApiAccess::$user, 1, 'update');
 
-        return false;
+        // If price mode is 1 price per product
+        if ($result > 0 && ! empty($conf->global->PRODUCT_PRICE_UNIQ))
+        {
+        	// We update price only if it was changed
+        	$pricemodified = false;
+        	if ($this->product->price_base_type != $oldproduct->price_base_type) $pricemodified = true;
+        	else
+        	{
+        		if ($this->product->tva_tx != $oldproduct->tva_tx) $pricemodified = true;
+        		if ($this->product->tva_npr != $oldproduct->tva_npr) $pricemodified = true;
+        		if ($this->product->default_vat_code != $oldproduct->default_vat_code) $pricemodified = true;
+
+        		if ($this->product->price_base_type == 'TTC')
+	        	{
+	        		if ($this->product->price_ttc != $oldproduct->price_ttc) $pricemodified = true;
+	        		if ($this->product->price_min_ttc != $oldproduct->price_min_ttc) $pricemodified = true;
+	        	}
+	        	else
+	        	{
+	        		if ($this->product->price != $oldproduct->price) $pricemodified = true;
+	        		if ($this->product->price_min != $oldproduct->price_min) $pricemodified = true;
+		      	}
+        	}
+
+        	if ($pricemodified)
+        	{
+        		$newvat = $this->product->tva_tx;
+        		$newnpr = $this->product->tva_npr;
+        		$newvatsrccode = $this->product->default_vat_code;
+
+        		$newprice = $this->product->price;
+        		$newpricemin = $this->product->price_min;
+        		if ($this->product->price_base_type == 'TTC')
+        		{
+        			$newprice = $this->product->price_ttc;
+        			$newpricemin = $this->product->price_min_ttc;
+        		}
+
+        		$result = $this->product->updatePrice($newprice, $this->product->price_base_type, DolibarrApiAccess::$user, $newvat, $newpricemin, 0, $newnpr, 0, 0, array(), $newvatsrccode);
+        	}
+        }
+
+        if ($result <= 0)
+        {
+			throw new RestException(500, "Error updating product", array_merge(array($this->product->error), $this->product->errors));
+		}
+
+		return $this->get($id);
     }
 
     /**
@@ -430,6 +481,8 @@ class Products extends DolibarrApi
         unset($object->firstname);
         unset($object->lastname);
         unset($object->civility_id);
+
+        unset($object->recuperableonly);
 
         return $object;
     }

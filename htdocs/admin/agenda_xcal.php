@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 if (!$user->admin)
     accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other","agenda"));
 
 $def = array();
 $actionsave=GETPOST('save','alpha');
@@ -173,11 +172,12 @@ $message.='<br>';
 $message.='<br>';
 print $message;
 
-$message=$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
+$message =$langs->trans("AgendaUrlOptions1",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions3",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptionsNotAdmin",$user->login,$user->login).'<br>';
 $message.=$langs->trans("AgendaUrlOptions4",$user->login,$user->login).'<br>';
-$message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login);
+$message.=$langs->trans("AgendaUrlOptionsProject",$user->login,$user->login).'<br>';
+$message.=$langs->trans("AgendaUrlOptionsNotAutoEvent",'systemauto','systemauto').'<br>';
 
 print info_admin($message);
 

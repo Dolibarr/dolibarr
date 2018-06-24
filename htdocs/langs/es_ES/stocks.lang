@@ -203,3 +203,4 @@ RegulateStock=Regular stock
 ListInventory=Listado
 StockSupportServices=Servicios de apoyo a la gestión de stocks
 StockSupportServicesDesc=Por defecto sólo puede almacenar el producto con el tipo "producto". Si está activado y si el servicio de módulo está activado, también puede almacenar un producto con el tipo "servicio"
+ReceiveProducts=Receive products

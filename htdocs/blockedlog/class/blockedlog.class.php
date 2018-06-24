@@ -749,11 +749,12 @@ class BlockedLog
 			return -2;
 		}
 
-		if (empty($this->action) || empty($this->fk_user) || empty($this->user_fullname)) {
+		if (empty($this->action)) {
 			$this->error=$langs->trans("BadParameterWhenCallingCreateOfBlockedLog");
 			dol_syslog($this->error, LOG_WARNING);
 			return -3;
 		}
+		if (empty($this->fk_user)) $this->user_fullname='(Anonymous)';
 
 		$this->date_creation = dol_now();
 

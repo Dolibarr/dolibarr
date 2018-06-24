@@ -32,10 +32,8 @@ require('../../main.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
 if (! empty($conf->adherent->enabled)) $langs->load("members");
 if (! empty($conf->don->enabled)) $langs->load("donations");
 if (! empty($conf->loan->enabled)) $langs->load("loan");
@@ -62,6 +60,7 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate) acces
 /*
  * Actions
  */
+
 if ($cancel)
 {
     if ($backtopage)
@@ -108,10 +107,23 @@ if ($user->rights->banque->modifier && $action == "update")
 {
 	$error=0;
 
-	$ac = new Account($db);
-	$ac->fetch($id);
+	$acline = new AccountLine($db);
+	$acline->fetch($rowid);
 
-	if ($ac->courant == Account::TYPE_CASH && $_POST['value'] != 'LIQ')
+	$acsource = new Account($db);
+	$acsource->fetch($id);
+
+	$actarget = new Account($db);
+	if (GETPOST('accountid','int') > 0 && ! $acline->rappro && ! $acline->getVentilExportCompta())	// We ask to change bank account
+	{
+		$actarget->fetch(GETPOST('accountid','int'));
+	}
+	else
+	{
+		$actarget->fetch($id);
+	}
+
+	if ($actarget->courant == Account::TYPE_CASH && GETPOST('value','alpha') != 'LIQ')
 	{
 		setEventMessages($langs->trans("ErrorCashAccountAcceptsOnlyCashMoney"), null, 'errors');
 		$error++;
@@ -119,16 +131,6 @@ if ($user->rights->banque->modifier && $action == "update")
 
 	if (! $error)
 	{
-		// Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
-		$conciliated=0;
-		$sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=".$rowid;
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$objp = $db->fetch_object($result);
-			$conciliated=$objp->rappro;
-		}
-
 		$db->begin();
 
 		$amount = price2num($_POST['amount']);
@@ -142,15 +144,15 @@ if ($user->rights->banque->modifier && $action == "update")
 		if (isset($_POST['banque']))     $sql.=" banque='".$db->escape($_POST["banque"])."',";
 		if (isset($_POST['emetteur']))   $sql.=" emetteur='".$db->escape($_POST["emetteur"])."',";
 		// Blocked when conciliated
-		if (! $conciliated)
+		if (! $acline->rappro)
 		{
 			if (isset($_POST['label']))      $sql.=" label='".$db->escape($_POST["label"])."',";
 			if (isset($_POST['amount']))     $sql.=" amount='".$amount."',";
 			if (isset($_POST['dateomonth'])) $sql.=" dateo = '".$db->idate($dateop)."',";
 			if (isset($_POST['datevmonth'])) $sql.=" datev = '".$db->idate($dateval)."',";
 		}
-		$sql.= " fk_account = ".$id;
-		$sql.= " WHERE rowid = ".$rowid;
+		$sql.= " fk_account = ".$actarget->id;
+		$sql.= " WHERE rowid = ".$acline->id;
 
 		$result = $db->query($sql);
 		if (! $result)
@@ -282,7 +284,7 @@ if ($result)
         $account = $acct->id;
 
         $bankline = new AccountLine($db);
-        $bankline->fetch($rowid,$ref);
+        $bankline->fetch($rowid, $ref);
 
         $links=$acct->get_url($rowid);
         $bankline->load_previous_next_ref('','rowid');
@@ -311,21 +313,19 @@ if ($result)
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border" width="100%">';
 
-        // Ref
-        /*
-        print '<tr><td class="titlefield">'.$langs->trans("Ref")."</td>";
-        print '<td>';
-        print $form->showrefnav($bankline, 'rowid', $linkback, 1, 'rowid', 'rowid');
-        print '</td>';
-        print '</tr>';
-        */
-
         $i++;
 
         // Bank account
         print '<tr><td class="titlefield">'.$langs->trans("Account").'</td>';
         print '<td>';
-        print $acct->getNomUrl(1,'transactions','reflabel');
+        if (! $objp->rappro && ! $bankline->getVentilExportCompta())
+        {
+        	print $form->select_comptes($acct->id, 'accountid', 0, '', 0);
+        }
+        else
+        {
+        	print $acct->getNomUrl(1,'transactions','reflabel');
+        }
         print '</td>';
         print '</tr>';
 

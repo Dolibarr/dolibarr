@@ -1,0 +1,297 @@
+# en_US lang file for module ticket
+# Copyright (C) 2013  Jean-François FERRY <hello@librethic.io>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#
+# Generic
+#
+
+Module56000Name=Gestionnaire de tickets
+Module56000Desc=Système de ticket pour de l'assistance ou une demande d'accompagnement
+
+Permission56001=Voir tickets
+Permission56002=Modifier des tickets
+Permission56003=Supprimer tickets
+Permission56004=Gérer les tickets
+Permission56005=See tickets of all third parties (not effective for external users, always be limited to the thirdparty they depend on)
+
+TicketDictType=Type de ticket
+TicketDictCategory=Catégories de tickets
+TicketDictSeverity=Sévérité des tickets
+TicketTypeShortBUGSOFT=Dysfonctionnement logiciel
+TicketTypeShortBUGHARD=Dysfonctionnement matériel
+TicketTypeShortCOM=Question commerciale
+TicketTypeShortINCIDENT=Demande d'assistance
+TicketTypeShortPROJET=Projet
+TicketTypeShortOTHER=Autre
+
+TicketSeverityShortLOW=Faible
+TicketSeverityShortNORMAL=Normal
+TicketSeverityShortHIGH=Élevé
+TicketSeverityShortBLOCKING=Critique/Bloquant
+
+ErrorBadEmailAddress=Champ '%s' incorrect
+MenuTicketMyAssign=Mes tickets
+MenuTicketMyAssignNonClosed=Mes tickets ouverts
+MenuListNonClosed=Tickets ouverts
+
+TypeContact_ticket_internal_CONTRIBUTOR=Contributeur
+TypeContact_ticket_internal_SUPPORTTEC=Utilisateur assigné
+TypeContact_ticket_external_SUPPORTCLI=Customer contact / incident tracking
+TypeContact_ticket_external_CONTRIBUTOR=Contributeur externe
+
+OriginEmail=Email source
+Notify_TICKETMESSAGE_SENTBYMAIL=Envoyée la réponse par email
+
+# Status
+NotRead=Non lu
+Read=Lu
+Answered=Répondu
+Assigned=assigné
+InProgress=En cours
+Waiting=En attente
+Closed=Fermé
+Deleted=Supprimé
+
+# Dict
+Type=Type
+Category=Catégorie
+Severity=Sévérité
+
+# Email templates
+MailToSendTicketMessage=To send email from ticket message
+
+#
+# Admin page
+#
+TicketSetup=Ticket module setup
+TicketSettings=Paramètres
+TicketSetupPage=
+TicketPublicAccess=A public interface requiring no identification is available at the following url
+TicketSetupDictionaries=The type of application categories and severity level are configurable from dictionaries
+TicketParamModule=Module variable setup
+TicketParamMail=Configuration de la messagerie
+TicketEmailNotificationFrom=Email from de notification
+TicketEmailNotificationFromHelp=Used into ticket message answer by example
+TicketEmailNotificationTo=Email de notification à
+TicketEmailNotificationToHelp=Send email notifications to this address.
+TicketNewEmailBodyLabel=Text message sent after creating a ticket (public interface)
+TicketNewEmailBodyHelp=The text specified here will be inserted into the email confirming the creation of a new ticket from the public interface. Information on the consultation of the ticket are automatically added.
+TicketParamPublicInterface=Configuration de l'interface publique\n
+TicketsEmailMustExist=Une adresse mail existante est requise pour créer un ticket
+TicketsEmailMustExistHelp=Pour accéder à l'interface publique et créer un nouveau ticket, votre compte doit déjà être existant.
+PublicInterface=Interface publique
+TicketUrlPublicInterfaceLabelAdmin=URL interface publique
+TicketUrlPublicInterfaceHelpAdmin=It is possible to define an alias to the web server and thus make available the public interface to another IP address.
+TicketPublicInterfaceTextHomeLabelAdmin=Texte de bienvenu dans l'interface publique
+TicketPublicInterfaceTextHome=You can create a support ticket or view existing from its identifier tracking ticket.
+TicketPublicInterfaceTextHomeHelpAdmin=The text defined here will appear on the home page of the public interface.
+TicketPublicInterfaceTopicLabelAdmin=Titre de l'interface
+TicketPublicInterfaceTopicHelp=Ce texte apparaîtra comme titre sur l'interface publique.
+TicketPublicInterfaceTextHelpMessageLabelAdmin=Help text to the message entry
+TicketPublicInterfaceTextHelpMessageHelpAdmin=This text will appear above the message input area of the user.
+ExtraFieldsTicket=Attributs complémentaires
+TicketCkEditorEmailNotActivated=HTML editor is not activated. Please put FCKEDITOR_ENABLE_MAIL contant equal to 1
+TicketsDisableEmail=Do not send ticket creation or message send emails
+TicketsDisableEmailHelp=By default, emails are sent when new tickets or messages created. Enable this option to disable *all* email notifications
+TicketsLogEnableEmail=Activer l'alerte par mail
+TicketsLogEnableEmailHelp=A chaque changements, un email sera envoyé à chaque contact associé à ce ticket
+TicketParams=Params
+TicketsShowModuleLogo=Display the logo of the module in the public interface
+TicketsShowModuleLogoHelp=Enable this option to hide the logo module in the pages of the public interface
+TicketsShowCompanyLogo=Afficher le logo de la société dans l'interface publique
+TicketsShowCompanyLogoHelp=Enable this option to hide the logo of the main company in the pages of the public interface
+TicketsEmailAlsoSendToMainAddress=Also send notification to main email address
+TicketsEmailAlsoSendToMainAddressHelp=Enable this option to send an email to "Notification email from" address (see setup below)
+TicketsLimitViewAssignedOnly=Restrict the display to tickets assigned to the current user (not effective for external users, always be limited to the thirdparty they depend on)
+TicketsLimitViewAssignedOnlyHelp=Seuls les tickets affectés à l'utilisateur actuel seront visibles. Ne s'applique pas à un utilisateur disposant de droits de gestion des tickets.
+TicketsActivatePublicInterface=Activer l'interface publique
+TicketsActivatePublicInterfaceHelp=Public interface allow any visitors to create tickets.
+TicketsAutoAssignTicket=Automatically assign the user who created the ticket
+TicketsAutoAssignTicketHelp=When creating a ticket, the user can be automatically assigned to the ticket.
+TicketNumberingModules=Tickets numbering module
+TicketNotifyTiersAtCreation=Notifier le tiers à la création
+
+#
+# About page
+#
+TicketAboutModule=The development of this module has been initiated by the company Libr&thic.
+TicketAboutModuleHelp=You can get help by using the contact form on the website <a href="http://librethic.io">librethic.io</a>
+TicketAboutModuleImprove=Feel free to suggest improvements! Please visit <a href="https://code.librethic.io/Dolibarr/modules/ticket">the project page</a> on Doliforge website to report bugs and add tasks.
+TicketAboutModuleThanks=Thanks to <a href="http://sayatnowa.com">nwa</a> who creates icons for this module./
+
+#
+# Index & list page
+#
+TicketsIndex=Accueil
+TicketList=Liste des tickets
+TicketAssignedToMeInfos=Cette page présente la liste des tickets assignés à l'utilisateur actuel
+NoTicketsFound=Aucun ticket trouvé
+TicketViewAllTickets=Voir tous les tickets
+TicketViewNonClosedOnly=View only open tickets
+TicketStatByStatus=Tickets par statut
+
+#
+# Ticket card
+#
+Ticket=Ticket
+TicketCard=Ticket card
+CreateTicket=Créer nouveau ticket
+EditTicket=Modifier ticket
+TicketsManagement=Gestion de tickets
+CreatedBy=Créé par
+NewTicket=Nouveau ticket
+SubjectAnswerToTicket=Réponse ticket
+TicketTypeRequest=Request type
+TicketCategory=Catégorie
+SeeTicket=Voir le ticket
+TicketMarkedAsRead=Le ticket a été marqué comme lu
+TicketReadOn=Lu
+TicketCloseOn=Fermé le
+MarkAsRead=Mark ticket as read
+TicketMarkedAsReadButLogActionNotSaved=Ticket marqué comme Clos mais aucune action enregistrée
+TicketHistory=Historique des tickets
+AssignUser=Assigner à l'utilisateur
+TicketAssigned=Le ticket est à présent assigné
+TicketChangeType=Change type
+TicketChangeCategory=Changer la catégorie
+TicketChangeSeverity=Changer la sévérité
+TicketAddMessage=Ajouter un message
+TicketEditProperties=Éditer les propriétés
+AddMessage=Ajouter un message
+MessageSuccessfullyAdded=Ticket créé
+TicketMessageSuccessfullyAdded=Message ajouté avec succès
+TicketMessagesList=Message list
+NoMsgForThisTicket=Pas de message pour ce ticket
+Properties=Classification
+LatestNewTickets=Latest %s newest tickets (not read)
+TicketSeverity=Sévérité
+ShowTicket=Voir le ticket
+RelatedTickets=Tickets liés
+TicketAddIntervention=Créer intervention
+CloseTicket=Fermer le ticket
+CloseATicket=Fermer un ticket
+ConfirmCloseAticket=Confirmer la fermeture du ticket
+ConfirmDeleteTicket=Confirmez la suppression du ticket
+TicketDeletedSuccess=Ticket supprimé avec succès
+TicketMarkedAsClosed=Ticket indiqué fermé
+TicketMarkedAsClosedButLogActionNotSaved=Ticket marqué comme fermé mais pas commenté !
+TicketDurationAuto=Durée calculée
+TicketDurationAutoInfos=Duration calculated automatically from intervention related
+TicketUpdated=Ticket mis à jour
+SendMessageByEmail=Envoyer ce message par email
+TicketNewMessage=Nouveau message
+ErrorMailRecipientIsEmptyForSendTicketMessage=Le destinataire est vide. Aucun e-mail envoyé
+TicketGoIntoContactTab=Please go into "Contacts" tab to select them
+TicketMessageMailIntro=Introduction
+TicketMessageMailIntroHelp=This text is added only at the beginning of the email and will not be saved.
+TicketMessageMailIntroLabelAdmin=Introduction to the message when sending email
+TicketMessageMailIntroText=<p> Bonjour </ p> Une nouvelle réponse a été ajoutée à un ticket que vous suivez. Voici le message : </ p>
+TicketMessageMailIntroHelpAdmin=This text will be inserted before the text of the response to a ticket.
+TicketMessageMailSignature=Signature
+TicketMessageMailSignatureHelp=This text is added only at the end of the email and will not be saved.
+TicketMessageMailSignatureText=<p> Cordialement, </p> <p> -- </p>
+TicketMessageMailSignatureLabelAdmin=Signature of response email
+TicketMessageMailSignatureHelpAdmin=This text will be inserted after the response message.
+TicketMessageHelp=Only this text will be saved in the message list on ticket card.
+TicketMessageSubstitutionReplacedByGenericValues=Substitutions variables are replaced by generic values.
+TicketTimeToRead=Temps écoulé avant la lecture du ticket
+TicketContacts=Contacts ticket
+TicketDocumentsLinked=Documents liés
+ConfirmReOpenTicket=Voulez-vous ré-ouvrir ce ticket ?
+TicketMessageMailIntroAutoNewPublicMessage=A new message was posted on the ticket with the subject %s :
+TicketAssignedToYou=Ticket attribué
+TicketAssignedEmailBody=You have been assigned the ticket #%s by %s
+MarkMessageAsPrivate=Mark message as private
+TicketMessagePrivateHelp=This message will not display to external users
+TicketEmailOriginIssuer=Issuer at origin of the tickets
+InitialMessage=Message initial
+LinkToAContract=Link to a contract
+TicketPleaseSelectAContract=Sélectionner un contrat
+UnableToCreateInterIfNoSocid=Impossible de créer une intervention si aucun tiers n'est défini
+TicketMailExchanges=Mail exchanges
+TicketInitialMessageModified=Message initial modifié
+TicketMessageSuccesfullyUpdated=Message successfully updated
+TicketChangeStatus=Changer l'état
+TicketConfirmChangeStatus=Confirm the status change : %s ?
+TicketLogStatusChanged=Status changed : %s to %s
+TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
+
+#
+# Logs
+#
+TicketLogMesgReadBy=Ticket lu par %s
+NoLogForThisTicket=No log for this ticket yet
+TicketLogAssignedTo=Ticket assigned to %s
+TicketAssignedButLogActionNotSaved=Ticket assigned but no log saved !
+TicketLogPropertyChanged=Change classification : from %s to %s
+TicketLogClosedBy=Ticket clôt par %s
+TicketLogProgressSetTo=Progression de %s pour-cent appliquée
+TicketLogReopen=Ticket ré-ouvert
+
+#
+# Public pages
+#
+TicketSystem=Gestionnaire de tickets
+ShowListTicketWithTrackId=Afficher la liste des tickets à partir de l'ID de suivi
+ShowTicketWithTrackId=Afficher le ticket à partir de l'ID de suivi
+TicketPublicDesc=You can create a support ticket or check from an existing ID.
+YourTicketSuccessfullySaved=Le ticket a été enregistré avec succès
+MesgInfosPublicTicketCreatedWithTrackId=A new ticket has been created with ID %s.
+PleaseRememberThisId=Merci de conserver le code de suivi du ticket, il vous sera peut-être nécessaire ultérieurement
+TicketNewEmailSubject=Ticket creation confirmation
+TicketNewEmailSubjectCustomer=Nouveau ticket
+TicketNewEmailBody=Ceci est un message automatique pour confirmer l'enregistrement de votre ticket.
+TicketNewEmailBodyCustomer=This is an automatic email to confirm a new ticket has just been created into your account.
+TicketNewEmailBodyInfosTicket=Information for monitoring the ticket
+TicketNewEmailBodyInfosTrackId=Numéro de suivi du ticket : %s
+TicketNewEmailBodyInfosTrackUrl=Vous pouvez voir la progression du ticket en cliquant sur le lien ci-dessus.
+TicketNewEmailBodyInfosTrackUrlCustomer=You can view the progress of the ticket in the specific interface by clicking the following link
+TicketEmailPleaseDoNotReplyToThisEmail=Merci de ne pas répondre directement à ce courriel ! Utilisez le lien pour répondre via l'interface.
+TicketPublicInfoCreateTicket=This form allows you to record a trouble ticket in our management system.
+TicketPublicPleaseBeAccuratelyDescribe=Veuillez décrire avec précision le problème. Fournissez le plus d'informations possibles pour nous permettre d'identifier correctement votre demande.
+TicketPublicMsgViewLogIn=Merci d'entrer le code de suivi du ticket
+TicketTrackId=Tracking ID
+OneOfTicketTrackId=One of yours tracking ID
+ErrorTicketNotFound=Ticket avec numéro de suivi %s non trouvé!
+Subject=Sujet
+ViewTicket=Voir le ticket
+ViewMyTicketList=Voir la liste de mes tickets
+ErrorEmailMustExistToCreateTicket=Erreur : Email introuvable dans notre base de données
+TicketNewEmailSubjectAdmin=Nouveau ticket créé
+TicketNewEmailBodyAdmin=<p>Ticket has just been created with ID #%s, see informations :</p>
+SeeThisTicketIntomanagementInterface=See ticket in management interface
+TicketPublicInterfaceForbidden=Accès à cette partie : interdit
+
+# notifications
+TicketNotificationEmailSubject=Ticket %s mis à jour
+TicketNotificationEmailBody=This is an automatic message to notify you that ticket %s has just been updated
+TicketNotificationRecipient=Notification recipient
+TicketNotificationLogMessage=Log message
+TicketNotificationEmailBodyInfosTrackUrlinternal=View ticket into interface
+TicketNotificationNumberEmailSent=Email de notification envoyé: %s
+
+
+#
+# Boxes
+#
+BoxLastTicket=Derniers tickets créés
+BoxLastTicketDescription=Latest %s created tickets
+BoxLastTicketContent=
+BoxLastTicketNoRecordedTickets=Pas de ticket non lu
+BoxLastModifiedTicket=Latest modified tickets
+BoxLastModifiedTicketDescription=Latest %s modified tickets
+BoxLastModifiedTicketContent=
+BoxLastModifiedTicketNoRecordedTickets=Pas de tickets modifiés récemment

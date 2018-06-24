@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006-2015	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2006-2012	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2006-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2018	Regis Houssin		<regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,8 @@ $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="date";
-if ($page < 0) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+if (empty($page) || $page == -1) { $page = 0; }
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page;
 
 if (! $user->admin)

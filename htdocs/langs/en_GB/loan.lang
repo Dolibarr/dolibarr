@@ -2,19 +2,14 @@
 PaymentLoan=Loan repayment\n
 LoanPayment=Loan repayment\n
 ShowLoanPayment=Show Loan Repayment\n
+LoanAccountancyCapitalCode=Financial account - Capital
+LoanAccountancyInsuranceCode=Financial account - Insurance
+LoanAccountancyInterestCode=Financial account - Interest
 ConfirmPayLoan=Confirm Loan Classification - Paid
 LoanPaid=Loan Repaid
-LoanCalc=Bank Loan Calculator
-PercentageDown=Percentage Deposit
-ShowMeCalculationsAndAmortization=Show me the calculations and amortisation
-MortgagePaymentInformation=Mortgage Repayment Information
-DownPayment=Initial Deposit
-DownPaymentDesc=The <b>Initial Deposit</b> = The price of the home multiplied by the deposit percentage divided by 100 (for 5% deposit becomes 5/100 or 0.05)\n
-InterestRateDesc=The <b>interest rate</b> = The annual interest rate divided by 100\n
-MonthTermDesc=The <b>monthly term</b> of the loan in months = The duration of the loan in years multiplied by 12\n
-MonthlyPaymentDesc=The monthly payment is calculated using the following formula\n
-AmortizationPaymentDesc=The <a href="#amortization">amortisation</a> calculates how much of your monthly repayment goes towards the bank's interest, and how much goes into paying off the principal of your loan.\n
-AmortizationMonthlyPaymentOverYears=Amortisation For Monthly Payment: <b>%s</b> over %s years\n
-MonthlyPayment=Monthly Repayment\n
-LoanCalcDesc=This <b>mortgage calculator</b> can be used to calculate the monthly repayments of a loan, based on the amount borrowed, the term of the loan desired and the interest rate.<br> This calculator includes also PMI (Private Mortgage Insurance) for loans where less than 20%% is offered as an initial deposit. Also taken into consideration are any local property taxes, and their effect on the total monthly mortgage repayment.<br>\n
-CreateCalcSchedule=Edit financial commitment
+ListLoanAssociatedProject=List of loans associated with this project
+AddLoan=Create new loan
+CapitalRemain=Capital Balance
+LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Financial account - Capital by default
+LOAN_ACCOUNTING_ACCOUNT_INTEREST=Financial account - Interest by default
+LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Financial account - Insurance by default

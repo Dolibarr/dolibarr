@@ -2,7 +2,7 @@
 ModuleBuilderDesc=Cet outil est réservé aux utilisateurs avancés ou développeurs. Il donne accès aux outil de création ou d'édition de modules additionnels (Cliquez <a href="%s" target="_blank">ici</a> pour plus d'information).
 EnterNameOfModuleDesc=Saisissez le nom du module/application à créer, sans espaces. Utilisez les majuscules pour identifier les mots (par exemple : MonModule, BoutiqueECommerce,...)
 EnterNameOfObjectDesc=Entrez le nom de l'objet à créer sans espaces. Utilisez les majuscules pour séparer des mots (par exemple: MyObject, Student, Teacher ...). Le fichier de classe CRUD, mais aussi le fichier API, les pages à afficher / ajouter / éditer / supprimer des objets et des fichiers SQL seront générés.
-ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés (premier répertoire alternatif défini dans %s):<strong>%s</strong>
+ModuleBuilderDesc2=Chemin ou les modules sont générés/modifiés ( premier répertoire alternatif défini dans %s):<strong>%s</strong>
 ModuleBuilderDesc3=Modules générés/éditables trouvés : <strong>%s</strong> 
 ModuleBuilderDesc4=Un module est détecté comme 'modifiable' quand le fichier <strong> %s </strong> existe à la racine du répertoire du module
 NewModule=Nouveau module

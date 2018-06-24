@@ -140,7 +140,6 @@ class DolibarrApi
         unset($object->class_element_line);
         unset($object->picto);
 
-        unset($object->facturee);		// Replace with billed
         unset($object->fieldsforcombobox);
 		unset($object->comments);
 

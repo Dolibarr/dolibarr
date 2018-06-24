@@ -19,10 +19,10 @@
  */
 
 // Following var can be set
-// $permission = permission or not to add a file
-// $permtoedit = permission or not to edit file name, crop file
-// $modulepart = for download
-// $param      = param to add to download links
+// $permission  = permission or not to add a file
+// $permtoedit  = permission or not to edit file name, crop file
+// $modulepart  = for download
+// $param       = param to add to download links
 
 // Protection to avoid direct call of template
 if (empty($langs) || ! is_object($langs))
@@ -35,6 +35,15 @@ if (empty($langs) || ! is_object($langs))
 $langs->load("link");
 if (empty($relativepathwithnofile)) $relativepathwithnofile='';
 if (empty($permtoedit)) $permtoedit=-1;
+
+// Drag and drop for up and down allowed on product, thirdparty, ...
+// The drag and drop call the page core/ajax/row.php
+// If you enable the move up/down of files here, check that page that include template set its sortorder on 'position_name' instead of 'name'
+// Also the object->fk_element must be defined.
+$disablemove=1;
+if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) $disablemove=0;
+
+
 
 /*
  * Confirm form to delete
@@ -62,7 +71,7 @@ $savingdocmask='';
 if (empty($conf->global->MAIN_DISABLE_SUGGEST_REF_AS_PREFIX))
 {
 	//var_dump($modulepart);
-	if (in_array($modulepart,array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','project','project_task','expensereport','tax')))
+	if (in_array($modulepart,array('facture_fournisseur','commande_fournisseur','facture','commande','propal','supplier_proposal','ficheinter','contract','expedition','project','project_task','expensereport','tax', 'produit', 'product_batch')))
 	{
 		$savingdocmask=dol_sanitizeFileName($object->ref).'-__file__';
 	}
@@ -85,9 +94,6 @@ $formfile->form_attach_new_file(
 	1,
 	$savingdocmask
 );
-
-$disablemove=1;
-if (in_array($modulepart, array('product', 'produit', 'societe', 'user'))) $disablemove=0;		// Drag and drop for up and down allowed on product, thirdparty, ...
 
 // List of document
 $formfile->list_of_documents(

@@ -242,8 +242,15 @@ else if ($action == 'classin' && $user->rights->don->creer)
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
+
+// Actions to build doc
+$upload_dir = $conf->don->dir_output;
+$permissioncreate = $user->rights->don->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+
 // Remove file in doc form
-if ($action == 'remove_file')
+/*if ($action == 'remove_file')
 {
 	$object = new Don($db, 0, $_GET['id']);
 	if ($object->fetch($id))
@@ -261,11 +268,12 @@ if ($action == 'remove_file')
 		$action='';
 	}
 }
+*/
 
 /*
  * Build doc
  */
-
+/*
 if ($action == 'builddoc')
 {
 	$object = new Don($db);
@@ -291,6 +299,7 @@ if ($action == 'builddoc')
 		exit;
 	}
 }
+*/
 
 
 /*
@@ -387,7 +396,7 @@ if ($action == 'create')
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    if (empty($reshook))
     {
 		print $object->showOptionals($extrafields,'edit',$parameters);
     }
@@ -419,7 +428,7 @@ if (! empty($id) && $action == 'edit')
 	if ($result < 0) {
 		dol_print_error($db,$object->error); exit;
 	}
-	$result=$object->fetch_optionals($object->id,$extralabels);
+	$result=$object->fetch_optionals();
 	if ($result < 0) {
 		dol_print_error($db); exit;
 	}
@@ -513,7 +522,7 @@ if (! empty($id) && $action == 'edit')
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    if (empty($reshook))
     {
       	print $object->showOptionals($extrafields,'edit');
     }
@@ -547,7 +556,7 @@ if (! empty($id) && $action != 'edit')
 	if ($result < 0) {
 		dol_print_error($db,$object->error); exit;
 	}
-	$result=$object->fetch_optionals($object->id,$extralabels);
+	$result=$object->fetch_optionals();
 	if ($result < 0) {
 		dol_print_error($db); exit;
 	}
@@ -643,8 +652,9 @@ if (! empty($id) && $action != 'edit')
 	 * Payments
 	 */
 	$sql = "SELECT p.rowid, p.num_payment, p.datep as dp, p.amount,";
-	$sql.= " c.code as type_code,c.libelle as paiement_type";
-	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON c.entity IN (".getEntity('c_paiement').")";
+	$sql.= "c.code as type_code,c.libelle as paiement_type";
+	$sql.= " FROM ".MAIN_DB_PREFIX."payment_donation as p";
+	$sql.= ", ".MAIN_DB_PREFIX."c_paiement as c ";
 	$sql.= ", ".MAIN_DB_PREFIX."don as d";
 	$sql.= " WHERE d.rowid = '".$id."'";
 	$sql.= " AND p.fk_donation = d.rowid";
@@ -720,7 +730,7 @@ if (! empty($id) && $action != 'edit')
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a></div>';
 	}
 
-    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paid == 0)
+    if (($object->statut == 0 || $object->statut == 1) && $totalpaid == 0 && $object->paid == 0)
     {
         print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_cancel">'.$langs->trans("ClassifyCanceled")."</a></div>";
     }

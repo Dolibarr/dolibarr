@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 if (!$user->admin) accessforbidden();
 
-$langs->load("agenda");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('agenda', 'admin', 'other'));
 
 $def = array();
 $actiontest=GETPOST('test','alpha');
@@ -48,9 +47,11 @@ $MAXAGENDA=$conf->global->AGENDA_EXT_NB;
 // List of aviable colors
 $colorlist=array('BECEDD','DDBECE','BFDDBE','F598B4','F68654','CBF654','A4A4A5');
 
+
 /*
  * Actions
  */
+
 if ($actionsave)
 {
     $db->begin();
@@ -146,7 +147,6 @@ print "<br>\n";
 $selectedvalue=$conf->global->AGENDA_DISABLE_EXT;
 if ($selectedvalue==1) $selectedvalue=0; else $selectedvalue=1;
 
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 
 print "<tr class=\"liste_titre\">";
@@ -200,7 +200,6 @@ print '<td align="right">'.$langs->trans("Color").'</td>';
 print "</tr>";
 
 $i=1;
-$var=true;
 while ($i <= $MAXAGENDA)
 {
 	$key=$i;

@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks","categories","companies","bills","trips"));
 
 $action=GETPOST('action', 'alpha');
@@ -72,7 +73,7 @@ if ($user->rights->banque->consolidate && $action == 'dvprev' && ! empty($dvid))
 }
 
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
@@ -395,7 +396,6 @@ if (empty($numref))
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=True;
 		$numrows = $db->num_rows($result);
 		$i = 0;
 
@@ -534,11 +534,10 @@ else
     $title=$langs->trans("AccountStatement").' '.$numref.' - '.$langs->trans("BankAccount").' '.$object->getNomUrl(1, 'receipts');
 	print load_fiche_titre($title, $mesprevnext, 'title_bank.png');
 	//print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, 0, $nbtotalofrecords, 'title_bank.png', 0, '', '', 0, 1);
-	print '<br>';
 
 	print "<form method=\"post\" action=\"releve.php\">";
 	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+	print '<input type="hidden" name="action" value="add">';
 
     print '<div class="div-table-responsive">';
 	print '<table class="noborder" width="100%">';
@@ -573,7 +572,6 @@ else
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=False;
 		$numrows = $db->num_rows($result);
 		$i = 0;
 
@@ -753,7 +751,7 @@ else
 					while ($ii < $numc)
 					{
 						$objc = $db->fetch_object($resc);
-						print "<br>-&nbsp;<i>$objc->label</i>";
+						print "<br>-&nbsp;<i>".$objc->label."</i>";
 						$ii++;
 					}
 				}
@@ -776,7 +774,7 @@ else
 				print '<td>&nbsp;</td><td align="right" class="nowrap">'.price($objp->amount)."</td>\n";
 			}
 
-			print '<td align="right" class="nowrap">'.price($total)."</td>\n";
+			print '<td align="right" class="nowrap">'.price(price2num($total, 'MT'))."</td>\n";
 
 			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
@@ -798,8 +796,9 @@ else
 	print "\n".'<tr class="liste_total"><td align="right" colspan="4">'.$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
 
 	// Line Balance
-	print "\n<tr><td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
-	print '<td class="right"><b>'.price($total)."</b></td><td>&nbsp;</td>";
+	print "\n<tr>";
+	print "<td align=\"right\" colspan=\"3\">&nbsp;</td><td colspan=\"3\"><b>".$langs->trans("EndBankBalance")." :</b></td>";
+	print '<td class="right"><b>'.price(price2num($total, 'MT'))."</b></td><td>&nbsp;</td>";
 	print "</tr>\n";
 	print "</table>";
 	print "</div>";

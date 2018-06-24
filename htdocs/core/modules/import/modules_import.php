@@ -59,7 +59,7 @@ class ModeleImports
 	{
 	}
 
-	
+
 	/**
 	 * getDriverId
 	 *
@@ -69,7 +69,7 @@ class ModeleImports
 	{
 	    return $this->id;
 	}
-	
+
 	/**
 	 *	getDriverLabel
 	 *
@@ -79,7 +79,7 @@ class ModeleImports
 	{
 	    return $this->label;
 	}
-	
+
 	/**
 	 *	getDriverDesc
 	 *
@@ -89,7 +89,7 @@ class ModeleImports
 	{
 	    return $this->desc;
 	}
-	
+
 	/**
 	 * getDriverExtension
 	 *
@@ -99,7 +99,7 @@ class ModeleImports
 	{
 	    return $this->extension;
 	}
-	
+
 	/**
 	 *	getDriverVersion
 	 *
@@ -109,7 +109,7 @@ class ModeleImports
 	{
 	    return $this->version;
 	}
-	
+
 	/**
 	 *	getDriverLabel
 	 *
@@ -119,7 +119,7 @@ class ModeleImports
 	{
 	    return $this->label_lib;
 	}
-	
+
 	/**
 	 * getLibVersion
 	 *
@@ -129,8 +129,8 @@ class ModeleImports
 	{
 	    return $this->version_lib;
 	}
-	
-	
+
+
 	/**
 	 *  Charge en memoire et renvoie la liste des modeles actifs
 	 *
@@ -146,7 +146,6 @@ class ModeleImports
 		$handle=opendir($dir);
 
 		// Recherche des fichiers drivers imports disponibles
-		$var=True;
 		$i=0;
         if (is_resource($handle))
         {

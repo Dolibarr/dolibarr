@@ -66,7 +66,7 @@ $extrafields = new ExtraFields($db);
 $extralabels=$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('thirdpartycard','globalcard'));
+$hookmanager->initHooks(array('thirdpartycontact','globalcard'));
 
 if ($action == 'view' && $object->fetch($socid)<=0)
 {

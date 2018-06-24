@@ -30,6 +30,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('compta','bills','donation','salaries'));
 
 $date_startmonth=GETPOST('date_startmonth','int');
@@ -90,7 +91,7 @@ $tmps=dol_getdate($date_start);
 $year_start = $tmps['year'];
 $tmpe=dol_getdate($date_end);
 $year_end = $tmpe['year'];
-$nbofyear = ($year_end - $start_year) + 1;
+$nbofyear = ($year_end - $year_start) + 1;
 //var_dump("year_start=".$year_start." year_end=".$year_end." nbofyear=".$nbofyear." date_start=".dol_print_date($date_start, 'dayhour')." date_end=".dol_print_date($date_end, 'dayhour'));
 
 
@@ -692,7 +693,7 @@ if (! empty($conf->expensereport->enabled) && ($modecompta == 'CREANCES-DETTES' 
 		$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql.= " WHERE p.entity IN (".getEntity('expensereport').")";
 		$sql.= " AND p.fk_statut>=5";
 
@@ -755,7 +756,7 @@ if (! empty($conf->don->enabled) && ($modecompta == 'CREANCES-DETTES' || $modeco
         $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(pe.datep,'%Y-%m') as dm, sum(p.amount) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 		$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 		$sql.= " WHERE p.entity IN (".getEntity('donation').")";
    	    $sql.= " AND fk_statut >= 2";
 		if (! empty($date_start) && ! empty($date_end))
@@ -840,9 +841,13 @@ if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 				$obj = $db->fetch_object($result);
 
 				if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-				$encaiss[$obj->dm] += $obj->debit;
+				if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+				$encaiss[$obj->dm] += $obj->credit;
+				$decaiss[$obj->dm] += $obj->debit;
 				if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
+				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 				$encaiss_ttc[$obj->dm] += 0;
+				$decaiss_ttc[$obj->dm] += 0;
 
 				$i++;
 			}

@@ -14,3 +14,5 @@ STRIPE_TEST_PUBLISHABLE_KEY=Senha editável
 STRIPE_LIVE_SECRET_KEY=Chave ao vivo secreta
 STRIPE_LIVE_PUBLISHABLE_KEY=Chave editável
 StripeLiveEnabled=Boleto ativado (caso contrário teste / modo cx)
+StripeImportPayment=Importação de pagamentos de franquia
+ExampleOfTestCreditCard=Exemplo de cartão de crédito para teste: %s (válido), %s (erro CVC), %s (expirou), %s (falha na carga)

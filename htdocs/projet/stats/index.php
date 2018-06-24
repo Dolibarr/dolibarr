@@ -49,8 +49,8 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 $startyear=$year-1;
 $endyear=$year;
 
-$langs->load('companies');
-$langs->load('projects');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'projects'));
 
 
 /*
@@ -315,15 +315,14 @@ if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 print '</tr>';
 
 $oldyear=0;
-$var=true;
 foreach ($data_all_year as $val)
 {
 	$year = $val['year'];
 	while ($year && $oldyear > $year+1)
 	{	// If we have empty year
 		$oldyear--;
-		
-		print '<tr '.$bc[$var].' height="24">';
+
+		print '<tr class="oddeven" height="24">';
 		print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$oldyear.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$oldyear.'</a></td>';
 		if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
 		{
@@ -334,8 +333,8 @@ foreach ($data_all_year as $val)
 		print '<td align="right">0</td>';
 		print '</tr>';
 	}
-	
-	print '<tr '.$bc[$var].' height="24">';
+
+	print '<tr class="oddeven" height="24">';
 	print '<td align="center"><a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;mode='.$mode.($socid>0?'&socid='.$socid:'').($userid>0?'&userid='.$userid:'').'">'.$year.'</a></td>';
 	print '<td align="right">'.$val['nb'].'</td>';
 	if (! empty($conf->global->PROJECT_USE_OPPORTUNITIES))
@@ -352,7 +351,7 @@ print '</table>';
 
 print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
-$stringtoshow.= '<table class="border" width="100%"><tr valign="top"><td align="center">';
+$stringtoshow.= '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
 	$stringtoshow.= $px1->show();

@@ -1,10 +1,4 @@
 # Dolibarr language file - Source file is en_US - bills
-HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess paid for each overpaid invoice.
-DiscountFromExcessReceived=Payments in excess of invoice %s
-MaxPeriodNumber=Max number of invoice generation
-NbOfGenerationDone=Number of invoice generation already done
-NbOfGenerationDoneShort=Number of generation done
-MaxGenerationReached=Maximum number of generations reached
 PaymentTypeCHQ=Cheque
 PaymentTypeShortCHQ=Cheque
 BankCode=BSB

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
+/* Copyright (C) 2005-2018 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2010-2012 Destailleur Laurent <eldy@users.sourceforge.net>
  * Copyright (C) 2014 	   Henry Florian <florian.henry@open-concept.pro>
@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("products");
-$langs->load("languages");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'languages'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -205,7 +205,7 @@ $linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?restore_lastsearch_value
 $shownav = 1;
 if ($user->societe_id && ! in_array('product', explode(',',$conf->global->MAIN_MODULES_FOR_EXTERNAL))) $shownav=0;
 
-dol_banner_tab($object, 'ref', $linkback, shownav, 'ref', '', '', '', 0, '', '', 1);
+dol_banner_tab($object, 'ref', $linkback, $shownav, 'ref', '', '', '', 0, '', '', 1);
 
 dol_fiche_end();
 

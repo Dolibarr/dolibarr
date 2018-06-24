@@ -25,7 +25,6 @@ Lineofinvoice=Factuur lijn
 Docdate=Datum
 Docref=Artikelcode
 TotalVente=Totaal omzet voor belastingen
-AccountingJournalType1=Miscellaneous operations
 AccountingJournalType2=Verkoop
 AccountingJournalType3=Inkoop
 Modelcsv=Model van een export
