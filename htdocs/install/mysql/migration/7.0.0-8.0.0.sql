@@ -100,6 +100,8 @@ ALTER TABLE llx_inventory MODIFY COLUMN fk_warehouse integer DEFAULT NULL;
 ALTER TABLE llx_c_type_fees DROP COLUMN llx_c_type_fees;
 ALTER TABLE llx_c_type_fees ADD COLUMN type integer DEFAULT 0;
 
+ALTER TABLE llx_c_ecotax CHANGE COLUMN libelle label varchar(255);
+
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 
 ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;

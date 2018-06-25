@@ -165,7 +165,7 @@ class FormOther
     {
         global $langs;
 
-        $sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
+        $sql = "SELECT e.rowid, e.code, e.label, e.price, e.organization,";
         $sql.= " c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_country as c";
         $sql.= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
@@ -191,7 +191,7 @@ class FormOther
                     else
                     {
                         print '<option value="'.$obj->rowid.'">';
-                        //print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+                        //print '<option onmouseover="showtip(\''.$obj->label.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
                     }
                     $selectOptionValue = $obj->code.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
                     print $selectOptionValue;
