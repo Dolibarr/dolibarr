@@ -102,6 +102,8 @@ ALTER TABLE llx_c_type_fees ADD COLUMN type integer DEFAULT 0;
 
 ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
 
+ALTER TABLE llx_c_ecotax CHANGE COLUMN libelle label varchar(255);
+
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 
 ALTER TABLE llx_societe ADD COLUMN fk_entrepot integer DEFAULT 0;
@@ -537,4 +539,10 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR03', 'Standardkontenrahmen SKR 03', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR04', 'Standardkontenrahmen SKR 04', 1);
 
+
+-- advtargetmailing
+ALTER TABLE llx_advtargetemailing ADD COLUMN fk_element integer NOT NULL;
+ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
+UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing';
+ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 

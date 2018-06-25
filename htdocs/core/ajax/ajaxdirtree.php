@@ -321,10 +321,8 @@ if (empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_ECM_DISABLE
 
 	$nbofentries=0;
 	$oldvallevel=0;
-	$var=true;
 	foreach($sqltree as $key => $val)
 	{
-		$var=false;
 
 		$ecmdirstatic->id=$val['id'];
 		$ecmdirstatic->ref=$val['label'];

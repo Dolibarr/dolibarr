@@ -1403,7 +1403,6 @@ else if ($id > 0 || ! empty($ref))
 				print '<td class="liste_titre">&nbsp;</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
