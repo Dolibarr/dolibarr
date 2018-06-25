@@ -193,7 +193,7 @@ class FormOther
                         print '<option value="'.$obj->rowid.'">';
                         //print '<option onmouseover="showtip(\''.$obj->label.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
                     }
-                    $selectOptionValue = $obj->code.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
+                    $selectOptionValue = $obj->code.' - '.$obj->label.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
                     print $selectOptionValue;
                     print '</option>';
                     $i++;
