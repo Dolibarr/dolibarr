@@ -3322,7 +3322,14 @@ abstract class CommonObject
 					$langs->load("errors");
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
-					$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+					if (is_numeric($elementname))	// old usage
+					{
+						$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $table);
+					}
+					else	// new usage: $elementname=Translation key
+					{
+						$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+					}
 					break;    // We found at least one, we stop here
 				}
 			}
