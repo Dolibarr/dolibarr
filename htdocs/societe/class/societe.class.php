@@ -909,6 +909,8 @@ class Societe extends CommonObject
 			$sql .= ",skype = ".(! empty($this->skype)?"'".$this->db->escape($this->skype)."'":"null");
 			$sql .= ",url = ".(! empty($this->url)?"'".$this->db->escape($this->url)."'":"null");
 
+			$sql .= ",parent = " . ($this->parent > 0 ? $this->parent : "null");
+
 			$sql .= ",note_private = ".(! empty($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 			$sql .= ",note_public = ".(! empty($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 
@@ -2098,11 +2100,7 @@ class Societe extends CommonObject
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.=' class="classfortooltip refurl"';
 
-		 	/*if (! is_object($hookmanager))
-			{
-				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager=new HookManager($this->db);
-			}
+		 	/*
 			$hookmanager->initHooks(array('thirdpartydao'));
 			$parameters=array('id'=>$this->id);
 			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -2125,11 +2123,6 @@ class Societe extends CommonObject
 		$result.=$linkend;
 
 		global $action;
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('thirdpartydao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -2939,7 +2932,7 @@ class Societe extends CommonObject
 			//algorithm checking type code CIF
 			$sum = $num[2] + $num[4] + $num[6];
 			for ($i = 1; $i < 8; $i += 2)
-			$sum += substr((2 * $num[$i]),0,1) + substr((2 * $num[$i]),1,1);
+			$sum += intval(substr((2 * $num[$i]),0,1)) + intval(substr((2 * $num[$i]),1,1));
 			$n = 10 - substr($sum, strlen($sum) - 1, 1);
 
 			//Chek special NIF
@@ -3021,20 +3014,21 @@ class Societe extends CommonObject
 			}
 
 			// TODO Move links to validate professional ID into a dictionary table "country" + "link"
+            $strippedIdProf1 = str_replace(' ', '', $thirdparty->idprof1);
 			if ($idprof == 1 && $thirdparty->country_code == 'FR') {
-				$url='http://www.societe.com/cgi-bin/search?champs='.$thirdparty->idprof1;    // See also http://avis-situation-sirene.insee.fr/
+				$url='http://www.societe.com/cgi-bin/search?champs='.$strippedIdProf1;    // See also http://avis-situation-sirene.insee.fr/
 			}
 			if ($idprof == 1 && ($thirdparty->country_code == 'GB' || $thirdparty->country_code == 'UK')) {
-				$url='https://beta.companieshouse.gov.uk/company/'.$thirdparty->idprof1;
+				$url='https://beta.companieshouse.gov.uk/company/'.$strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'ES') {
-				$url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$thirdparty->idprof1;
+				$url='http://www.e-informa.es/servlet/app/portal/ENTP/screen/SProducto/prod/ETIQUETA_EMPRESA/nif/'.$strippedIdProf1;
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'IN') {
-				$url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$thirdparty->idprof1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
+				$url='http://www.tinxsys.com/TinxsysInternetWeb/dealerControllerServlet?tinNumber='.$strippedIdProf1.';&searchBy=TIN&backPage=searchByTin_Inter.jsp';
 			}
 			if ($idprof == 1 && $thirdparty->country_code == 'PT') {
-				$url='http://www.nif.pt/'.$thirdparty->idprof1;
+				$url='http://www.nif.pt/'.$strippedIdProf1;
 			}
 
 			if ($url) {

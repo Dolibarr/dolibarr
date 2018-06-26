@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
 
 $action=GETPOST('action','aZ09');
@@ -397,7 +399,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'Mon module'=>$module,
 			'htdocs/modulebuilder/template/'=>strtolower($modulename),
 			'myobject'=>strtolower($objectname),
-			'MyObject'=>$objectname
+			'MyObject'=>$objectname,
+                        'MYOBJECT'=>strtoupper($objectname)
 			);
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);

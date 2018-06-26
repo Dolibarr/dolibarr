@@ -37,8 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 if (!empty($conf->global->PRODUIT_PDF_MERGE_PROPAL))
 	require_once DOL_DOCUMENT_ROOT.'/product/class/propalmergepdfproduct.class.php';
 
-$langs->load("other");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'products'));
 
 $id     = GETPOST('id', 'int');
 $ref    = GETPOST('ref', 'alpha');

@@ -28,6 +28,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->load("accountancy");
 
 $socid = GETPOST('socid','int');
@@ -326,8 +327,7 @@ print_liste_field_titre(
 	"",
 	'align="center" width="20%"'
 	);
-print "</tr>\n";
-$var=true;
+print "</tr>\n"; 
 
 if (count($amount)) {
     $arrayforsort=$name;

@@ -40,10 +40,8 @@ if (! empty($conf->projet->enabled))
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("other");
-$langs->load("companies");
-$langs->load("compta");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'companies', 'compta', 'bills'));
 
 $id = GETPOST('id','int');
 $action = GETPOST('action','aZ09');

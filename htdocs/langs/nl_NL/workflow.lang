@@ -1,12 +1,12 @@
 # Dolibarr language file - Source file is en_US - workflow
 WorkflowSetup=Workflow module setup
 WorkflowDesc=Deze module is ontworpen om het gedrag van automatische acties aan te passen. Standaard is de workflow open (u kunt dingen doen in de volgorde die u wilt). U kunt automatische acties activeren indien u wenst.
-ThereIsNoWorkflowToModify=There is no workflow modifications available with the activated modules.
+ThereIsNoWorkflowToModify=Er zijn geen wijzigingen in de workflow beschikbaar met de geactiveerde modules.
 # Autocreate
-descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatically create a customer order after a commercial proposal is signed (new order will have same amount than proposal)
-descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Automatically create a customer invoice after a commercial proposal is signed (new invoice will have same amount than proposal)
-descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Automatically create a customer invoice after a contract is validated
-descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Automatically create a customer invoice after a customer order is closed (new invoice will have same amount than order)
+descWORKFLOW_PROPAL_AUTOCREATE_ORDER=Automatisch een order aanmaken nadat een offerte is ondertekend (nieuwe order heeft hetzelfde bedrag als offerte)
+descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Maak automatisch een klant factuur aan nadat de offerte is ondertekend (nieuwe factuur heeft hetzelfde bedrag als offerte)
+descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Maak automatisch een klant factuur aan nadat contract is gevalideerd.
+descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Maak automatisch een klant factuur aan nadat order is gesloten. (nieuwe factuur heeft zelfde bedrag als order)
 # Autoclassify customer proposal or order
 descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
@@ -14,7 +14,7 @@ descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source custome
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source supplier proposal(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source supplier order(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked orders)
-AutomaticCreation=Automatic creation
-AutomaticClassification=Automatic classification
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+AutomaticCreation=Automatisch aanmaken
+AutomaticClassification=Automatisch classificeren

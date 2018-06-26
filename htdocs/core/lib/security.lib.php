@@ -38,6 +38,7 @@ function dol_encode($chain, $key='1')
 {
 	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
+		$output_tab=array();
 	    $strlength=dol_strlen($chain);
 		for ($i=0; $i < $strlength; $i++)
 		{
@@ -75,6 +76,7 @@ function dol_decode($chain, $key='1')
 
 	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
+		$output_tab=array();
 		$strlength=dol_strlen($chain);
 		for ($i=0; $i < $strlength;$i++)
 		{

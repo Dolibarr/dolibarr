@@ -809,7 +809,7 @@ class InterfaceActionsAuto extends DolibarrTriggers
 		    $langs->load("other");
 
 		    if (empty($object->actionmsg2)) $object->actionmsg2=$langs->transnoentities($action."InDolibarr",$object->ref);
-		    $object->actionmsg=$langs->transnoentities($action."InDolibarr",$object->ref);
+		    if (empty($object->actionmsg))  $object->actionmsg=$langs->transnoentities($action."InDolibarr",$object->ref);
 
 		    $object->sendtoid=0;
 		}

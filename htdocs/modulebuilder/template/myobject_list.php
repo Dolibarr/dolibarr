@@ -44,7 +44,7 @@
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
-// Try main.inc.php into web root detected using web root caluclated from SCRIPT_FILENAME
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
 while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
 if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
@@ -60,7 +60,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule","other"));
 
 $action     = GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -352,7 +352,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 //if ($user->rights->mymodule->creer)
 //{
-	$newcardbutton='<a class="butActionNew" href="card.php?action=create">'.$langs->trans('New');
+	$newcardbutton='<a class="butActionNew" href="card.php?action=create"><span class="valignmiddle">'.$langs->trans('New').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 //}
@@ -369,7 +369,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';

@@ -28,11 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("users");
-$langs->load("salaries");
-$langs->load('hrm');
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","users","salaries","hrm"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');

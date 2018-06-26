@@ -311,25 +311,25 @@ class Conf
 
 		// For user storage
 		$this->user->multidir_output	= array($this->entity => $rootfordata."/users");
-		$this->user->multidir_temp	= array($this->entity => $rootfordata."/users/temp");
+		$this->user->multidir_temp		= array($this->entity => $rootfordata."/users/temp");
 		// For backward compatibility
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
 
-		// UserGroup
+		// For usergroup storage
 		$this->usergroup->dir_output=$rootforuser."/usergroups";
 		$this->usergroup->dir_temp=$rootforuser."/usergroups/temp";
 
-		// For propal storage
+		// For proposal storage
 		$this->propal->multidir_output	= array($this->entity => $rootfordata."/propale");
-		$this->propal->multidir_temp		= array($this->entity => $rootfordata."/propale/temp");
+		$this->propal->multidir_temp	= array($this->entity => $rootfordata."/propale/temp");
 		// For backward compatibility
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
 		// For medias storage
 		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");
-		$this->medias->multidir_temp		= array($this->entity => $rootfordata."/medias/temp");
+		$this->medias->multidir_temp	= array($this->entity => $rootfordata."/medias/temp");
 
 		// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
@@ -387,15 +387,19 @@ class Conf
 		$this->productbatch->multidir_temp  =array($this->entity => $rootfordata."/produitlot/temp");
 
 		// Module contrat
-		$this->contrat->dir_output=$rootfordata."/contracts";
-		$this->contrat->dir_temp  =$rootfordata."/contracts/temp";
+		$this->contrat->multidir_output	= array($this->entity => $rootfordata."/contract");
+		$this->contrat->multidir_temp	= array($this->entity => $rootfordata."/contract/temp");
+		// For backward compatibility
+		$this->contrat->dir_output=$rootfordata."/contract";
+		$this->contrat->dir_temp  =$rootfordata."/contract/temp";
+
 		// Module bank
 		$this->bank->dir_output=$rootfordata."/bank";
 		$this->bank->dir_temp  =$rootfordata."/bank/temp";
 
 
 		// Set some default values
-
+		//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
 		$this->global->MAIN_ACTIVATE_HTML5=1;
         $this->global->MAIN_MAIL_USE_MULTI_PART=1;
 
@@ -515,10 +519,10 @@ class Conf
 
 		// Define list of limited modules (value must be key found for "name" property of module, so for example 'supplierproposal' for Module "Supplier Proposal"
 		if (! isset($this->global->MAIN_MODULES_FOR_EXTERNAL)) $this->global->MAIN_MODULES_FOR_EXTERNAL='user,societe,propal,commande,facture,categorie,supplierproposal,fournisseur,contact,projet,contrat,ficheinter,expedition,agenda,resource,adherent,blockedlog';	// '' means 'all'. Note that contact is added here as it should be a module later.
-
-		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
-		if (! empty($this->modules_parts['moduleforexternal']))
-			foreach($this->modules_parts['moduleforexternal'] as $key=>$value) $this->global->MAIN_MODULES_FOR_EXTERNAL.=",$key";
+		if (! empty($this->modules_parts['moduleforexternal']))		// Module part to include an external module into the MAIN_MODULES_FOR_EXTERNAL list
+		{
+			foreach($this->modules_parts['moduleforexternal'] as $key=>$value) $this->global->MAIN_MODULES_FOR_EXTERNAL.=",".$key;
+		}
 
 		// Enable select2
 		if (empty($this->global->MAIN_USE_JQUERY_MULTISELECT) || $this->global->MAIN_USE_JQUERY_MULTISELECT == '1') $this->global->MAIN_USE_JQUERY_MULTISELECT='select2';

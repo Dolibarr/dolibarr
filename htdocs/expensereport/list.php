@@ -35,9 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/usergroups.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'trips'));
 
 $action=GETPOST('action','aZ09');
 $massaction=GETPOST('massaction','alpha');
@@ -472,7 +471,7 @@ if ($resql)
 		$newcardbutton='';
 		if ($user->rights->expensereport->creer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create">'.$langs->trans('NewTrip');
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewTrip').'</span>';
 			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 			$newcardbutton.= '</a>';
 		}
@@ -489,7 +488,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
     }
 
 	$moreforfilter='';
@@ -537,7 +536,7 @@ if ($resql)
 	if (! empty($arrayfields['d.date_debut']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
+    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
     	$formother->select_year($year_start,'year_start',1, $min_year, $max_year);
     	print '</td>';
 	}
@@ -545,7 +544,7 @@ if ($resql)
 	if (! empty($arrayfields['d.date_fin']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
     	$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
     	print '</td>';
     }
@@ -645,7 +644,6 @@ if ($resql)
 	if ($num > 0)
 	{
         $i=0;
-    	$var=true;
     	$totalarray=array();
  	    while ($i < min($num,$limit))
 		{

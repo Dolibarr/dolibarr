@@ -478,6 +478,24 @@ class FormFile
 					$modellist=ModelePDFProductBatch::liste_modeles($this->db);
 				}
 			}
+			elseif ($modulepart == 'stock')
+			{
+				if (is_array($genallowed)) $modellist=$genallowed;
+				else
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_stock.php';
+					$modellist=ModelePDFStock::liste_modeles($this->db);
+				}
+			}
+			elseif ($modulepart == 'movement')
+			{
+				if (is_array($genallowed)) $modellist=$genallowed;
+				else
+				{
+					include_once DOL_DOCUMENT_ROOT.'/core/modules/stock/modules_movement.php';
+					$modellist=ModelePDFMovement::liste_modeles($this->db);
+				}
+			}
 			elseif ($modulepart == 'export')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
@@ -541,7 +559,7 @@ class FormFile
 					$modellist=ModelePDFCards::liste_modeles($this->db);
 				}
 			}
-			elseif ($modulepart == 'agenda')
+			elseif ($modulepart == 'agenda' || $modulepart == 'actions')
 			{
 				if (is_array($genallowed)) $modellist=$genallowed;
 				else
@@ -581,7 +599,7 @@ class FormFile
 					$modellist=ModelePDFUserGroup::liste_modeles($this->db);
 				}
 			}
-			else //if ($modulepart != 'agenda')
+			else
 			{
 				// For normalized standard modules
 				$file=dol_buildpath('/core/modules/'.$modulepart.'/modules_'.$modulepart.'.php',0);
@@ -601,7 +619,7 @@ class FormFile
 					$modellist=call_user_func($class.'::liste_modeles',$this->db);
 				}
 				else
-			  {
+				{
 					dol_print_error($this->db,'Bad value for modulepart');
 					return -1;
 				}
@@ -993,7 +1011,7 @@ class FormFile
 		global $form;
 
 		$disablecrop=1;
-		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticketsup','user'))) $disablecrop=0;
+		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticket','user'))) $disablecrop=0;
 
 		// Define relative path used to store the file
 		if (empty($relativepath))

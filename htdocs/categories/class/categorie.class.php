@@ -895,6 +895,7 @@ class Categorie extends CommonObject
 
 		$sql.= $this->db->order($sortfield, $sortorder);
 
+		$offset = 0;
 		$nbtotalofrecords = '';
 		if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 		{

@@ -12,7 +12,7 @@
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014	   Ferran Marcet	 	 <fmarcet@2byte.es>
+ * Copyright (C) 2014-2018 Ferran Marcet	 	 <fmarcet@2byte.es>
  * Copyright (C) 2015-2016 Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,6 +64,7 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array('bills','companies','compta','products','banks','main','withdrawals'));
 if (! empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
@@ -189,13 +190,16 @@ if (empty($reshook))
 			$qualified_for_stock_change = $object->hasProductsOrServices(1);
 		}
 
-		$result = $object->delete($user, 0, $idwarehouse);
-		if ($result > 0) {
-			header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1');
-			exit();
-		} else {
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action='';
+		if ($object->is_erasable())
+		{
+			$result = $object->delete($user, 0, $idwarehouse);
+			if ($result > 0) {
+				header('Location: ' . DOL_URL_ROOT . '/compta/facture/list.php?restore_lastsearch_values=1');
+				exit();
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+				$action='';
+			}
 		}
 	}
 
@@ -405,7 +409,7 @@ if (empty($reshook))
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
-			if ($discount->amount_ttc > $object->getRemainToPay(0))
+			if (price2num($discount->amount_ttc) > price2num($object->getRemainToPay(0)))
 			{
 				// TODO Split the discount in 2 automatically
 				$error++;
@@ -720,7 +724,6 @@ if (empty($reshook))
 				$sql.= ' WHERE pf.fk_facture = '.$object->id;
 				$sql.= ' AND pf.fk_paiement = p.rowid';
 				$sql.= ' AND p.entity IN (' . getEntity('facture').')';
-				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
@@ -914,12 +917,21 @@ if (empty($reshook))
 				$object->fk_facture_source = $sourceinvoice > 0 ? $sourceinvoice : '';
 				$object->type = Facture::TYPE_CREDIT_NOTE;
 
+				$facture_source = new Facture($db); // fetch origin object
+				if ($facture_source->fetch($object->fk_facture_source)>0)
+				{
+				    if ($facture_source->type == Facture::TYPE_SITUATION)
+				    {
+				        $object->situation_counter =  $facture_source->situation_counter;
+				        $object->situation_cycle_ref = $facture_source->situation_cycle_ref;
+				        $facture_source->fetchPreviousNextSituationInvoice();
+				    }
+				}
 				$id = $object->create($user);
 
-	            $facture_source = new Facture($db); // fetch origin object
 				if (GETPOST('invoiceAvoirWithLines', 'int')==1 && $id>0)
 				{
-					if ($facture_source->fetch($object->fk_facture_source)>0)
+					if (!empty($facture_source->lines))
 					{
 						$fk_parent_line = 0;
 
@@ -934,6 +946,61 @@ if (empty($reshook))
 							// Reset fk_parent_line for no child products and special product
 							if (($line->product_type != 9 && empty($line->fk_parent_line)) || $line->product_type == 9) {
 								$fk_parent_line = 0;
+							}
+
+
+
+
+							if($facture_source->type == Facture::TYPE_SITUATION)
+							{
+
+							    if(!empty($facture_source->tab_previous_situation_invoice))
+							    {
+							        // search the last invoice in cycle
+							        $lineIndex = count($facture_source->tab_previous_situation_invoice) - 1;
+							        $searchPreviousInvoice = true;
+							        while( $searchPreviousInvoice )
+							        {
+							            if($facture_source->tab_previous_situation_invoice[$lineIndex]->type  == Facture::TYPE_SITUATION || $lineIndex < 1)
+							            {
+							                $searchPreviousInvoice=false; // find, exit;
+							                break;
+							            }
+							            else
+							            {
+							                $lineIndex--; // go to previous invoice in cycle
+							            }
+							        }
+
+
+							        $maxPrevSituationPercent = 0;
+							        foreach($facture_source->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
+							        {
+							            if($prevLine->id == $line->fk_prev_id)
+							            {
+							                $maxPrevSituationPercent = max($maxPrevSituationPercent,$prevLine->situation_percent);
+
+							                //$line->subprice  = $line->subprice - $prevLine->subprice;
+							                $line->total_ht  = $line->total_ht - $prevLine->total_ht;
+							                $line->total_tva = $line->total_tva - $prevLine->total_tva;
+							                $line->total_ttc = $line->total_ttc - $prevLine->total_ttc;
+							                $line->total_localtax1 = $line->total_localtax1 - $prevLine->total_localtax1;
+							                $line->total_localtax2 = $line->total_localtax2 - $prevLine->total_localtax2;
+
+							                $line->multicurrency_subprice  = $line->multicurrency_subprice  - $prevLine->multicurrency_subprice;
+							                $line->multicurrency_total_ht  = $line->multicurrency_total_ht  - $prevLine->multicurrency_total_ht;
+							                $line->multicurrency_total_tva = $line->multicurrency_total_tva - $prevLine->multicurrency_total_tva;
+							                $line->multicurrency_total_ttc = $line->multicurrency_total_ttc - $prevLine->multicurrency_total_ttc;
+
+
+							            }
+							        }
+
+							        // prorata
+							        $line->situation_percent = $maxPrevSituationPercent - $line->situation_percent;
+
+
+							    }
 							}
 
 							$line->fk_facture = $object->id;
@@ -1350,7 +1417,13 @@ if (empty($reshook))
 										$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 										$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
-										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit);
+										$result = $object->addline(
+											$desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product,
+											$lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except,
+											'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid,
+											$fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+											$lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit
+										);
 
 										if ($result > 0) {
 											$lineid = $result;
@@ -1456,11 +1529,26 @@ if (empty($reshook))
 					$object->origin = $origin;
 					$object->origin_id = $originid;
 
-					foreach ($object->lines as &$line)
+					foreach ($object->lines as $i => &$line)
 					{
 						$line->origin = $object->origin;
 						$line->origin_id = $line->id;
 						$line->fetch_optionals($line->id);
+
+						// Si fk_remise_except defini on vérifie si la réduction à déjà été appliquée
+						if ($line->fk_remise_except)
+						{
+						    $discount=new DiscountAbsolute($line->db);
+						    $result=$discount->fetch($line->fk_remise_except);
+						    if ($result > 0)
+						    {
+						        // Check if discount not already affected to another invoice
+						        if ($discount->fk_facture_line > 0)
+						        {
+						            $line->fk_remise_except = 0;
+						        }
+						    }
+						}
 					}
 				}
 
@@ -1729,7 +1817,28 @@ if (empty($reshook))
 				// If price per quantity and customer
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 				{
-					// TODO Same than PRODUIT_CUSTOMER_PRICES_BY_QTY but using $object->thirdparty->price_level
+					if ($prod->prices_by_qty[$object->thirdparty->price_level]) // yes, this product has some prices per quantity
+					{
+						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+						$pqp = GETPOST('pbq','int');
+
+						// Search price into product_price_by_qty from $prod->id
+						foreach($prod->prices_by_qty_list[$object->thirdparty->price_level] as $priceforthequantityarray)
+						{
+							if ($priceforthequantityarray['rowid'] != $pqp) continue;
+							// We found the price
+							if ($priceforthequantityarray['price_base_type'] == 'HT')
+							{
+								$pu_ht = $priceforthequantityarray['unitprice'];
+							}
+							else
+							{
+								$pu_ttc = $priceforthequantityarray['unitprice'];
+							}
+							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
+							break;
+						}
+					}
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
@@ -1960,7 +2069,25 @@ if (empty($reshook))
 		$line->fetch(GETPOST('lineid'));
 		$percent = $line->get_prev_progress($object->id);
 
-		if (GETPOST('progress') < $percent)
+		if($object->type == Facture::TYPE_CREDIT_NOTE && $object->situation_cycle_ref>0)
+		{
+		    // in case of situation credit note
+		    if(GETPOST('progress') >= 0 )
+		    {
+		        $mesg = $langs->trans("CantBeNullOrPositive");
+		        setEventMessages($mesg, null, 'warnings');
+		        $error++;
+		        $result = -1;
+		    }
+		    elseif (GETPOST('progress') < $line->situation_percent) // TODO : use a modified $line->get_prev_progress($object->id) result
+		    {
+		        $mesg = $langs->trans("CantBeLessThanMinPercent");
+		        setEventMessages($mesg, null, 'warnings');
+		        $error++;
+		        $result = -1;
+		    }
+		}
+		elseif (GETPOST('progress') < $percent)
 		{
 			$mesg = '<div class="warning">' . $langs->trans("CantBeLessThanMinPercent") . '</div>';
 			setEventMessages($mesg, null, 'warnings');
@@ -1978,7 +2105,7 @@ if (empty($reshook))
 			$type = $product->type;
 
 			$price_min = $product->price_min;
-			if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
+			if ((! empty($conf->global->PRODUIT_MULTIPRICES)  || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && ! empty($object->thirdparty->price_level))
 				$price_min = $product->multiprices_min [$object->thirdparty->price_level];
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
@@ -2106,6 +2233,126 @@ if (empty($reshook))
 		exit();
 	}
 
+	// Outing situation invoice from cycle
+	elseif ($action == 'confirm_situationout' && $confirm == 'yes' && $user->rights->facture->creer)
+	{
+	    $object->fetch($id,'', '','', true);
+
+	    if ($object->statut == Facture::STATUS_VALIDATED
+	        && $object->type == Facture::TYPE_SITUATION
+	        && $user->rights->facture->creer
+	        && !$objectidnext
+	        && $object->is_last_in_cycle()
+	        && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+	            || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
+	        )
+	    {
+	        $outingError = 0;
+	        $newCycle = $object->newCycle(); // we need to keep the "situation behavior" so we place it on a new situation cycle
+	        if($newCycle > 1)
+	        {
+	            // Search credit notes
+	            $lastCycle = $object->situation_cycle_ref;
+	            $lastSituationCounter = $object->situation_counter;
+	            $linkedCreditNotesList = array();
+
+                if (count($object->tab_next_situation_invoice) > 0) {
+                    foreach ($object->tab_next_situation_invoice as $next_invoice) {
+                        if($next_invoice->type == Facture::TYPE_CREDIT_NOTE
+                            && $next_invoice->situation_counter == $object->situation_counter
+                            && $next_invoice->fk_facture_source == $object->id
+                          )
+                        {
+                            $linkedCreditNotesList[] = $next_invoice->id ;
+                        }
+                    }
+                }
+
+	            $object->situation_cycle_ref = $newCycle;
+	            $object->situation_counter = 1;
+	            $object->situation_final = 0;
+	            if($object->update($user) > 0)
+	            {
+	                $errors = 0;
+	                if(count($linkedCreditNotesList) > 0)
+	                {
+	                    // now, credit note must follow
+	                    $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
+	                    $sql.= ' SET situation_cycle_ref='.$newCycle;
+	                    $sql.= ' , situation_final=0';
+	                    $sql.= ' , situation_counter='.$object->situation_counter;
+	                    $sql.= ' WHERE rowid IN ('.implode(',',$linkedCreditNotesList).')';
+
+	                    $resql=$db->query($sql);
+	                    if (!$resql) $errors++;
+
+	                    // Change each progression persent on each lines
+	                    foreach($object->lines as $line)
+	                    {
+
+	                        // no traitement for special product
+	                        if ($line->product_type == 9 )  continue;
+
+
+	                        if(!empty($object->tab_previous_situation_invoice))
+	                        {
+                                // search the last invoice in cycle
+	                            $lineIndex = count($object->tab_previous_situation_invoice) - 1;
+                                $searchPreviousInvoice = true;
+                                while( $searchPreviousInvoice )
+                                {
+                                    if($object->tab_previous_situation_invoice[$lineIndex]->type  == Facture::TYPE_SITUATION || $lineIndex < 1)
+                                    {
+                                        $searchPreviousInvoice=false; // find, exit;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        $lineIndex--; // go to previous invoice in cycle
+                                    }
+                                }
+
+
+                                $maxPrevSituationPercent = 0;
+                                foreach($object->tab_previous_situation_invoice[$lineIndex]->lines as $prevLine)
+                                {
+                                    if($prevLine->id == $line->fk_prev_id)
+                                    {
+                                        $maxPrevSituationPercent = max($maxPrevSituationPercent,$prevLine->situation_percent);
+                                    }
+                                }
+
+
+                                $line->situation_percent = $line->situation_percent - $maxPrevSituationPercent;
+
+                                if($line->update()<0) $errors++;
+
+	                        }
+	                    }
+	                }
+
+                    if (!$errors)
+                    {
+                        setEventMessages($langs->trans('Updated'), '', 'mesgs');
+                        header("Location: ".$_SERVER['PHP_SELF']."?id=".$id);
+                    }
+                    else
+                    {
+                        setEventMessages($langs->trans('ErrorOutingSituationInvoiceCreditNote'), array(), 'errors');
+                    }
+	            }
+	            else
+	            {
+	                setEventMessages($langs->trans('ErrorOutingSituationInvoiceOnUpdate'), array(), 'errors');
+	            }
+	        }
+	        else
+	        {
+	            setEventMessages($langs->trans('ErrorFindNextSituationInvoice'), array(), 'errors');
+	        }
+	    }
+	}
+
 	// add lines from objectlinked
 	elseif($action == 'import_lines_from_object'
 	    && $user->rights->facture->creer
@@ -2120,8 +2367,13 @@ if (empty($reshook))
 	    {
 	        if($fromElement == 'commande')
 	        {
-	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class');
+	            dol_include_once('/'.$fromElement.'/class/'.$fromElement.'.class.php');
 	            $lineClassName = 'OrderLine';
+	        }
+	        elseif($fromElement == 'propal')
+	        {
+	            dol_include_once('/comm/'.$fromElement.'/class/'.$fromElement.'.class.php');
+	            $lineClassName = 'PropaleLigne';
 	        }
 	        $nextRang = count($object->lines) + 1;
 	        $importCount = 0;
@@ -2164,6 +2416,7 @@ if (empty($reshook))
                     $pu_ht_devise = $originLine->multicurrency_subprice;
 
                     $res = $object->addline($desc, $pu_ht, $qty, $txtva, $txlocaltax1, $txlocaltax2, $fk_product, $remise_percent, $date_start, $date_end, $ventil, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc, $type, $rang, $special_code, $origin, $origin_id, $fk_parent_line, $fk_fournprice, $pa_ht, $label, $array_options, $situation_percent, $fk_prev_id, $fk_unit,$pu_ht_devise);
+
                     if($res > 0){
                         $importCount++;
                     }else{
@@ -3136,6 +3389,24 @@ else if ($id > 0 || ! empty($ref))
 		}
 	}
 
+	// Confirmation to remove invoice from cycle
+	if ($action == 'situationout') {
+	    $text = $langs->trans('ConfirmRemoveSituationFromCycle', $object->ref);
+	    $label = $langs->trans("ConfirmOuting");
+	    $formquestion = array();
+	    // remove situation from cycle
+	    if ($object->statut == Facture::STATUS_VALIDATED
+	        && $user->rights->facture->creer
+	        && !$objectidnext
+	        && $object->is_last_in_cycle()
+	        && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+	            || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
+	        )
+	    {
+	        $formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $label, $text, 'confirm_situationout', $formquestion, "yes", 1);
+		}
+	}
+
 	// Confirmation of validation
 	if ($action == 'valid')
 	{
@@ -3267,7 +3538,7 @@ else if ($id > 0 || ! empty($ref))
 		// Cree un tableau formulaire
 		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"),array('type' => 'radio','name' => 'close_code','label' => $langs->trans("Reason"),'values' => $arrayreasons),array('type' => 'text','name' => 'close_note','label' => $langs->trans("Comment"),'value' => '','morecss' => 'minwidth300'));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 310);
 	}
 
 	// Confirmation du classement abandonne
@@ -3617,54 +3888,10 @@ else if ($id > 0 || ! empty($ref))
 	print "</td>";
 	print '</tr>';
 
-	// Situations
-	if (! empty($conf->global->INVOICE_USE_SITUATION))
-	{
-		if ($object->type == 5 && ($object->situation_counter > 1))
-		{
-			$prevsits = $object->get_prev_sits();
-			print '<tr><td>';
-			print $langs->trans('SituationAmount');
-			print ' ';
 
-			print $prevsits[0]->situation_counter;
-			$cprevsits = count($prevsits);
 
-		  for ($i = 1; $i < $cprevsits; $i++) {
-				print ' + ';
-				print $prevsits[$i]->situation_counter;
-			}
-			print ' + ';
-			print $object->situation_counter;
 
-			print '</td>';
-			print '<td class="nowrap">';
 
-			$prevsits_total_amount = 0;
-			foreach ($prevsits as $situation) {
-				$prevsits_total_amount += $situation->total_ht;
-			}
-			$prevsits_total_amount += $object->total_ht;
-
-			print price($prevsits_total_amount, 0, $langs, 1, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency) );
-
-			print '</td></tr>';
-
-			// Previous situation(s) deduction(s)
-			for ($i = 0; $i < $cprevsits; $i++) {
-				print '<tr><td>';
-				print '<a href="' . $_SERVER['PHP_SELF'] . '?facid=' . $prevsits[$i]->id . '">';
-				print $langs->trans('SituationDeduction');
-				print ' ';
-				print $prevsits[$i]->situation_counter;
-				print '</a></td>';
-
-				print '<td class="nowrap">';
-				print '- ' . price($prevsits[$i]->total_ht, 0, $langs, 1, -1, -1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency) );
-				print '</td></tr>';
-			}
-		}
-	}
 
 	// Incoterms
 	if (!empty($conf->incoterm->enabled))
@@ -3823,88 +4050,129 @@ else if ($id > 0 || ! empty($ref))
 	if (! empty($conf->incoterm->enabled))
 		$nbrows += 1;
 
-	if ($object->type == Facture::TYPE_SITUATION && ! empty($conf->global->INVOICE_USE_SITUATION))
+	// List of previous situation invoices
+	if (($object->situation_cycle_ref > 0) && ! empty($conf->global->INVOICE_USE_SITUATION))
 	{
-		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
-			print '<table class="noborder situationstable" width="100%">';
 
-		if (count($object->tab_previous_situation_invoice) > 0) {
-			// List of previous invoices
-			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans('ListOfPreviousSituationInvoices') . '</td>';
-			print '<td></td>';
-			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
-			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
-			print '<td width="18">&nbsp;</td>';
-			print '</tr>';
+	    print '<table class="noborder situationstable" width="100%">';
 
-			$total_prev_ht = $total_prev_ttc = 0;
-			foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
-				$totalpaye = $prev_invoice->getSommePaiement();
-				$total_prev_ht += $prev_invoice->total_ht;
-				$total_prev_ttc += $prev_invoice->total_ttc;
-				print '<tr class="oddeven">';
-				print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
-				print '<td></td>';
-				if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-				print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
-				print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
-				print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
-				print '</tr>';
 
-			}
+	    print '<tr class="liste_titre">';
+	    print '<td>' . $langs->trans('ListOfSituationInvoices') . '</td>';
+	    print '<td></td>';
+	    print '<td align="center">' . $langs->trans('Situation') . '</td>';
+	    if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	    print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+	    print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+	    print '<td width="18">&nbsp;</td>';
+	    print '</tr>';
 
-			print '<tr class="oddeven">';
-			print '<td></td>';
-			print '<td></td>';
-			if (! empty($conf->banque->enabled)) print '<td></td>';
-			print '<td align="right"><b>' . price($total_prev_ht) . '</b></td>';
-			print '<td align="right"><b>' . price($total_prev_ttc) . '</b></td>';
-			print '<td width="18">&nbsp;</td>';
-			print '</tr>';
-		}
 
-		if (count($object->tab_next_situation_invoice) > 0) {
-			// List of next invoices
-			print '<tr class="liste_titre">';
-			print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
-			print '<td></td>';
-			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-			print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
-			print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
-			print '<td width="18">&nbsp;</td>';
-			print '</tr>';
+	    $total_prev_ht = $total_prev_ttc = 0;
+	    $total_global_ht = $total_global_ttc = 0;
 
-			$total_next_ht = $total_next_ttc = 0;
+	    if (count($object->tab_previous_situation_invoice) > 0) {
+	        // List of previous invoices
 
-			foreach ($object->tab_next_situation_invoice as $next_invoice) {
-				$totalpaye = $next_invoice->getSommePaiement();
-				$total_next_ht += $next_invoice->total_ht;
-				$total_next_ttc += $next_invoice->total_ttc;
-				print '<tr class="oddeven">';
-				print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
-				print '<td></td>';
-				if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
-				print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
-				print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
-				print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
-				print '</tr>';
+	        $current_situation_counter = array();
+	        foreach ($object->tab_previous_situation_invoice as $prev_invoice) {
+	            $totalpaye = $prev_invoice->getSommePaiement();
+	            $total_prev_ht += $prev_invoice->total_ht;
+	            $total_prev_ttc += $prev_invoice->total_ttc;
+	            $current_situation_counter[] = (($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?-1:1) * $prev_invoice->situation_counter;
+	            print '<tr class="oddeven">';
+	            print '<td>' . $prev_invoice->getNomUrl(1) . '</td>';
+	            print '<td></td>';
+	            print '<td align="center" >'.(($prev_invoice->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $prev_invoice->situation_counter.'</td>';
+	            if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	            print '<td align="right">' . price($prev_invoice->total_ht) . '</td>';
+	            print '<td align="right">' . price($prev_invoice->total_ttc) . '</td>';
+	            print '<td align="right">' . $prev_invoice->getLibStatut(3, $totalpaye) . '</td>';
+	            print '</tr>';
+	        }
+	    }
 
-			}
 
-			print '<tr class="oddeven">';
-			print '<td colspan="2" align="right"></td>';
-			if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	    $total_global_ht += $total_prev_ht ;
+	    $total_global_ttc += $total_prev_ttc ;
+	    $total_global_ht += $object->total_ht;
+	    $total_global_ttc += $object->total_ttc;
+	    $current_situation_counter[] = (($object->type == Facture::TYPE_CREDIT_NOTE)?-1:1) * $object->situation_counter;
+	    print '<tr class="oddeven">';
+	    print '<td>' . $object->getNomUrl(1) . '</td>';
+	    print '<td></td>';
+	    print '<td align="center">'.(($object->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $object->situation_counter.'</td>';
+	    if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	    print '<td align="right">' . price($object->total_ht) . '</td>';
+	    print '<td align="right">' . price($object->total_ttc) . '</td>';
+	    print '<td align="right">' . $object->getLibStatut(3, $object->getSommePaiement()) . '</td>';
+	    print '</tr>';
 
-			print '<td align="right"><b>' . price($total_next_ht) . '</b></td>';
-			print '<td align="right"><b>' . price($total_next_ttc) . '</b></td>';
-			print '<td width="18">&nbsp;</td>';
-			print '</tr>';
-		}
 
-		if (count($object->tab_previous_situation_invoice) > 0 || count($object->tab_next_situation_invoice) > 0)
-			print '</table>';
+	    print '<tr class="oddeven">';
+	    print '<td colspan="2" align="left"><b>' . $langs->trans('CurrentSituationTotal') . '</b></td>';
+	    print '<td>';
+	    $i =0;
+	    foreach ($current_situation_counter as $sit)
+	    {
+	        $curSign = $sit>0?'+':'-';
+	        $curType = $sit>0?$langs->trans('situationInvoiceShortcode_S'):$langs->trans('situationInvoiceShortcode_AS');
+	        if($i>0) print ' '.$curSign.' ';
+	        print $curType . abs($sit);
+	        $i++;
+	    }
+	    print '</td>';
+	    if (! empty($conf->banque->enabled)) print '<td></td>';
+	    print '<td align="right"><b>' . price($total_global_ht) . '</b></td>';
+	    print '<td align="right"><b>' . price($total_global_ttc) . '</b></td>';
+	    print '<td width="18">&nbsp;</td>';
+	    print '</tr>';
+
+
+	    if (count($object->tab_next_situation_invoice) > 0) {
+	        // List of next invoices
+	        /*print '<tr class="liste_titre">';
+	         print '<td>' . $langs->trans('ListOfNextSituationInvoices') . '</td>';
+	         print '<td></td>';
+	         print '<td></td>';
+	         if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	         print '<td align="right">' . $langs->trans('AmountHT') . '</td>';
+	         print '<td align="right">' . $langs->trans('AmountTTC') . '</td>';
+	         print '<td width="18">&nbsp;</td>';
+	         print '</tr>';*/
+
+	        $total_next_ht = $total_next_ttc = 0;
+
+	        foreach ($object->tab_next_situation_invoice as $next_invoice) {
+	            $totalpaye = $next_invoice->getSommePaiement();
+	            $total_next_ht += $next_invoice->total_ht;
+	            $total_next_ttc += $next_invoice->total_ttc;
+
+	            print '<tr class="oddeven">';
+	            print '<td>' . $next_invoice->getNomUrl(1) . '</td>';
+	            print '<td></td>';
+	            print '<td align="center">'.(($next_invoice->type == Facture::TYPE_CREDIT_NOTE)?$langs->trans('situationInvoiceShortcode_AS'):$langs->trans('situationInvoiceShortcode_S')) . $next_invoice->situation_counter.'</td>';
+	            if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	            print '<td align="right">' . price($next_invoice->total_ht) . '</td>';
+	            print '<td align="right">' . price($next_invoice->total_ttc) . '</td>';
+	            print '<td align="right">' . $next_invoice->getLibStatut(3, $totalpaye) . '</td>';
+	            print '</tr>';
+
+	        }
+
+	        $total_global_ht += $total_next_ht;
+	        $total_global_ttc += $total_next_ttc;
+
+	        print '<tr class="oddeven">';
+	        print '<td colspan="3" align="right"></td>';
+	        if (! empty($conf->banque->enabled)) print '<td align="right"></td>';
+	        print '<td align="right"><b>' . price($total_global_ht) . '</b></td>';
+	        print '<td align="right"><b>' . price($total_global_ttc) . '</b></td>';
+	        print '<td width="18">&nbsp;</td>';
+	        print '</tr>';
+	    }
+
+	    print '</table>';
 	}
 
 
@@ -4056,7 +4324,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'badcustomer'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'badcustomer') {
@@ -4064,7 +4332,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			// $resteapayeraffiche=0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'product_returned'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
@@ -4072,7 +4340,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'abandon'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'abandon') {
@@ -4083,7 +4351,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 
 		// Billed
@@ -4397,7 +4665,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && empty($discount->id))
+				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && $object->statut > 0 && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}
@@ -4458,6 +4726,45 @@ else if ($id > 0 || ! empty($ref))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
 				}
+			}
+
+			// For situation invoice with excess received
+			if ($object->statut == Facture::STATUS_VALIDATED
+			    && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) > 0
+			    && $user->rights->facture->creer
+			    && !$objectidnext
+			    && $object->is_last_in_cycle()
+			    && $conf->global->INVOICE_USE_SITUATION_CREDIT_NOTE
+			    )
+			{
+			    if ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+			        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
+			    {
+			        print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER['PHP_SELF'] . '?socid=' . $object->socid .'&amp;fac_avoir=' . $object->id . '&amp;invoiceAvoirWithLines=1&amp;action=create&amp;type=2'.($object->fk_project > 0 ? '&amp;projectid='.$object->fk_project : '').'">' . $langs->trans("CreateCreditNote") . '</a></div>';
+			    } else {
+			        print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("NotEnoughPermissions") . '">' . $langs->trans("CreateCreditNote") . '</span></div>';
+			    }
+			}
+
+			// remove situation from cycle
+			if ($object->statut == Facture::STATUS_VALIDATED
+			    && $object->type == Facture::TYPE_SITUATION
+			    && $user->rights->facture->creer
+			    && !$objectidnext
+			    && $object->situation_counter > 1
+			    && $object->is_last_in_cycle()
+			    && ((empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->creer))
+			        || (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->facture->invoice_advance->unvalidate)))
+			    )
+			{
+			    if(($object->total_ttc - $totalcreditnotes  ) == 0 )
+			    {
+			        print '<div class="inline-block divButAction"><a id="butSituationOut" class="butAction" href="' . $_SERVER['PHP_SELF'] . '?facid=' . $object->id . '&amp;action=situationout">' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
+			    }
+			    else
+			    {
+			        print '<div class="inline-block divButAction"><a id="butSituationOutRefused" class="butActionRefused" href="#" title="' . $langs->trans("DisabledBecauseNotEnouthCreditNote") . '" >' . $langs->trans("RemoveSituationFromCycle") . '</a></div>';
+			    }
 			}
 
 			// Create next situation invoice
@@ -4534,7 +4841,7 @@ else if ($id > 0 || ! empty($ref))
 		    && $object->statut == Facture::STATUS_DRAFT
 		    && ($object->type == Facture::TYPE_STANDARD || $object->type == Facture::TYPE_REPLACEMENT || $object->type == Facture::TYPE_DEPOSIT || $object->type == Facture::TYPE_PROFORMA || $object->type == Facture::TYPE_SITUATION) )
 		{
-		    $compatibleImportElementsList = array('commande'); // import from linked elements
+		    $compatibleImportElementsList = array('commande','propal'); // import from linked elements
 		}
 		$somethingshown = $form->showLinkedObjectBlock($object, $linktoelem,$compatibleImportElementsList);
 

@@ -365,7 +365,7 @@ class pdf_crabe extends ModelePDFFactures
 	                $desc_incoterms = $object->getIncotermsForPDF();
 	                if ($desc_incoterms)
 	                {
-	                    $tab_top = 88;
+						$tab_top -= 2;
 	                    
 	                    $pdf->SetFont('','', $default_font_size - 1);
 	                    $pdf->writeHTMLCell(190, 3, $this->posxdesc-1, $tab_top-1, dol_htmlentitiesbr($desc_incoterms), 0, 1);
@@ -398,6 +398,8 @@ class pdf_crabe extends ModelePDFFactures
 	            $pagenb = $pdf->getPage();
 	            if ($notetoshow)
 	            {
+					$tab_top -= 2;
+
 	                $tab_width = $this->page_largeur-$this->marge_gauche-$this->marge_droite;
 	                $pageposbeforenote = $pagenb;
 	                
@@ -405,7 +407,6 @@ class pdf_crabe extends ModelePDFFactures
 	                complete_substitutions_array($substitutionarray, $outputlangs, $object);
 	                $notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 	                
-	                $tab_top = 88 + $height_incoterms;
 	                
 	                $pdf->startTransaction();
 	                

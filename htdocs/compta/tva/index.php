@@ -31,6 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 // Date range
@@ -86,7 +87,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * @param		string	$date	Date
  * @return		void
  */
-function pt ($db, $sql, $date)
+function pt($db, $sql, $date)
 {
     global $conf, $bc,$langs;
 
@@ -103,12 +104,18 @@ function pt ($db, $sql, $date)
         print '<td align="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
         print "</tr>\n";
 
+        $totalclaimed = 0;
+        $totalpaid = 0;
         $amountclaimed = 0;
         $amountpaid = 0;
         $previousmonth = '';
         $previousmode = '';
+        $mode = '';
+
         while ($i < $num) {
             $obj = $db->fetch_object($result);
+            $mode = $obj->mode;
+
             //print $obj->dm.' '.$obj->mode.' '.$previousmonth.' '.$previousmode;
             if ($obj->mode == 'claimed' && ! empty($previousmode))
             {
@@ -154,7 +161,7 @@ function pt ($db, $sql, $date)
             $i++;
         }
 
-        if ($obj->mode == 'claimed' && ! empty($previousmode))
+        if ($mode == 'claimed' && ! empty($previousmode))
         {
         	print '<tr class="oddeven">';
         	print '<td class="nowrap">'.$previousmonth."</td>\n";
@@ -173,6 +180,7 @@ function pt ($db, $sql, $date)
         print "</tr>";
 
         print "</table>";
+
         $db->free($result);
     }
     else {

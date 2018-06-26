@@ -8,17 +8,9 @@ WarehouseEdit=Modifikovanje skladišta
 MenuNewWarehouse=Novo skladište
 WarehouseSource=Izvorno skladište
 WarehouseSourceNotDefined=Nema definisanog skladišta,
-<<<<<<< HEAD
-AddWarehouse=Create warehouse
-=======
 AddWarehouse=Napravi skladište
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 AddOne=Dodaj jedno
-<<<<<<< HEAD
-DefaultWarehouse=Default warehouse
-=======
 DefaultWarehouse=Glavno skladište
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 WarehouseTarget=Ciljano skladište
 ValidateSending=Obriši slanje
 CancelSending=Poništi slanje
@@ -32,11 +24,7 @@ Movements=Kretanja
 ErrorWarehouseRefRequired=Referentno ime skladište je potrebno
 ListOfWarehouses=Lista skladišta
 ListOfStockMovements=Lista kretanja zaliha
-<<<<<<< HEAD
-ListOfInventories=List of inventories
-=======
 ListOfInventories=Spisak inventara
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 MovementId=Movement ID
 StockMovementForId=Movement ID %d
 ListMouvementStockProject=List of stock movements associated to project
@@ -215,3 +203,4 @@ RegulateStock=Regulate Stock
 ListInventory=Spisak
 StockSupportServices=Stock management support services
 StockSupportServicesDesc=By default, you can stock only product with type "product". If on, and if module service is on, you can also stock a product with type "service"
+ReceiveProducts=Receive products

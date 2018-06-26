@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - propal
-Proposals=Orçamentos
-Proposal=Orçamento
+Proposals=Propostas comerciais
+Proposal=Proposta comercial
 ProposalShort=Orçamento
 ProposalsDraft=Orçamentos Rascunho
 ProposalsOpened=Orçamentos a clientes abertos
@@ -16,7 +16,7 @@ AddProp=Criar orçamento
 ConfirmDeleteProp=Tem a certeza que pretende eliminar este orçamento?
 ConfirmValidateProp=Tem certeza de que deseja validar este orçamento com o nome <b>%s</b>?
 LastPropals=Os últimos %s orçamentos
-LastModifiedProposals=Os últimos %s orçamentos modificados
+LastModifiedProposals=Últimos %s orçamentos modificados
 AllPropals=Todos Os Orçamentos
 SearchAProposal=Procurar um Orçamento
 NoProposal=Nenhum orçamento

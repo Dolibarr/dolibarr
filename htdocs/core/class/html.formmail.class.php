@@ -632,7 +632,7 @@ class FormMail extends Form
 			if (! empty($this->withtouser) && is_array($this->withtouser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
 			{
 				$out.= '<tr><td>';
-				$out.= $langs->trans("MailToSalaries");
+				$out.= $langs->trans("MailToUsers");
 				$out.= '</td><td>';
 
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
@@ -698,7 +698,7 @@ class FormMail extends Form
 			if (! empty($this->withtoccuser) && is_array($this->withtoccuser) && !empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT))
 			{
 				$out.= '<tr><td>';
-				$out.= $langs->trans("MailToCCSalaries");
+				$out.= $langs->trans("MailToCCUsers");
 				$out.= '</td><td>';
 
 				// multiselect array convert html entities into options tags, even if we dont want this, so we encode them a second time
@@ -1046,7 +1046,7 @@ class FormMail extends Form
 	 *      This search into table c_email_templates. Used by the get_form function.
 	 *
 	 * 		@param	DoliDB		$db				Database handler
-	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
+	 * 		@param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
 	 *      @param	string		$user			Get template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
@@ -1100,7 +1100,8 @@ class FormMail extends Form
 			}
 			else {	// If there is no template at all
 				$defaultmessage='';
-				if     ($type_template=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
+				if ($type_template=='body')							{ $defaultmessage=$this->withbody; }		// Special case to use this->withbody as content
+				elseif ($type_template=='facture_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
 				elseif ($type_template=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
 				elseif ($type_template=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
 				elseif ($type_template=='supplier_proposal_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal"); }
@@ -1112,7 +1113,7 @@ class FormMail extends Form
 				elseif ($type_template=='thirdparty')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentThirdparty"); }
 				elseif ($type_template=='user')				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentUser"); }
 				elseif (!empty($type_template))				        { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContent".ucfirst($type_template)); }
-				
+
 				$ret->label = 'default';
 				$ret->lang = $outputlangs->defaultlang;
 				$ret->topic = '';

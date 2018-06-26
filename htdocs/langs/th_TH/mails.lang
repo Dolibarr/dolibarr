@@ -11,7 +11,9 @@ MailFrom=ผู้ส่ง
 MailErrorsTo=ข้อผิดพลาดที่จะ
 MailReply=ตอบกลับ
 MailTo=รับสัญญาณ (s)
+MailToUsers=To user(s)
 MailCC=คัดลอกไป
+MailToCCUsers=Copy to users(s)
 MailCCC=คัดลอกเก็บไว้เพื่อ
 MailTopic=หัวข้ออีเมล
 MailText=ข่าวสาร
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=ข้อมูล
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $action=GETPOST('action','aZ09');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'admincompany';   // To manage different context of search
 
-$langs->load("admin");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'companies'));
 
 if (! $user->admin) accessforbidden();
 
@@ -75,9 +75,9 @@ if ( ($action == 'update' && ! GETPOST("cancel",'alpha'))
 	}
 
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM", GETPOST("nom",'nohtml'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("address",'nohtml'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("town",'nohtml'),'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("zipcode",'alpha'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADDRESS", GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TOWN", GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml'),'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ZIP", GETPOST("MAIN_INFO_SOCIETE_ZIP",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_STATE", GETPOST("state_id",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_REGION", GETPOST("region_code",'alpha'),'chaine',0,'',$conf->entity);
 	dolibarr_set_const($db, "MAIN_MONNAIE", GETPOST("currency",'aZ09'),'chaine',0,'',$conf->entity);
@@ -300,7 +300,7 @@ $head = company_admin_prepare_head();
 
 dol_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
 
-print $langs->trans("CompanyFundationDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Modify"), $langs->transnoentities("Save"))."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit' || $action == 'updateedit')
@@ -331,16 +331,16 @@ if ($action == 'edit' || $action == 'updateedit')
 
 	// Addresse
 
-	print '<tr class="oddeven"><td><label for="address">'.$langs->trans("CompanyAddress").'</label></td><td>';
-	print '<textarea name="address" id="address" class="quatrevingtpercent" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS: GETPOST("address",'nohtml')) . '</textarea></td></tr>'."\n";
+	print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ADDRESS">'.$langs->trans("CompanyAddress").'</label></td><td>';
+	print '<textarea name="MAIN_INFO_SOCIETE_ADDRESS" id="MAIN_INFO_SOCIETE_ADDRESS" class="quatrevingtpercent" rows="'.ROWS_3.'">'. ($conf->global->MAIN_INFO_SOCIETE_ADDRESS?$conf->global->MAIN_INFO_SOCIETE_ADDRESS: GETPOST("MAIN_INFO_SOCIETE_ADDRESS",'nohtml')) . '</textarea></td></tr>'."\n";
 
 
-	print '<tr class="oddeven"><td><label for="zipcode">'.$langs->trans("CompanyZip").'</label></td><td>';
-	print '<input class="minwidth100" name="zipcode" id="zipcode" value="'. ($conf->global->MAIN_INFO_SOCIETE_ZIP?$conf->global->MAIN_INFO_SOCIETE_ZIP: GETPOST("zipcode",'alpha')) . '"></td></tr>'."\n";
+	print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_ZIP">'.$langs->trans("CompanyZip").'</label></td><td>';
+	print '<input class="minwidth100" name="MAIN_INFO_SOCIETE_ZIP" id="MAIN_INFO_SOCIETE_ZIP" value="'. ($conf->global->MAIN_INFO_SOCIETE_ZIP?$conf->global->MAIN_INFO_SOCIETE_ZIP: GETPOST("MAIN_INFO_SOCIETE_ZIP",'alpha')) . '"></td></tr>'."\n";
 
 
-	print '<tr class="oddeven"><td><label for="town">'.$langs->trans("CompanyTown").'</label></td><td>';
-	print '<input name="town" class="minwidth100" id="town" value="'. ($conf->global->MAIN_INFO_SOCIETE_TOWN?$conf->global->MAIN_INFO_SOCIETE_TOWN: GETPOST("town",'nohtml')) . '"></td></tr>'."\n";
+	print '<tr class="oddeven"><td><label for="MAIN_INFO_SOCIETE_TOWN">'.$langs->trans("CompanyTown").'</label></td><td>';
+	print '<input name="MAIN_INFO_SOCIETE_TOWN" class="minwidth100" id="MAIN_INFO_SOCIETE_TOWN" value="'. ($conf->global->MAIN_INFO_SOCIETE_TOWN?$conf->global->MAIN_INFO_SOCIETE_TOWN: GETPOST("MAIN_INFO_SOCIETE_TOWN",'nohtml')) . '"></td></tr>'."\n";
 
 	// Country
 

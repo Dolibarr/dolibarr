@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 $action=GETPOST('action','aZ09');
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("users","admin","other"));
 
 if (!$user->admin) accessforbidden();
 
@@ -178,10 +177,6 @@ if ($action == 'maj_pattern')
 
 
 
-
-
-
-
 /*
  * View
  */
@@ -199,9 +194,6 @@ print "<br>\n";
 $head=security_prepare_head();
 
 dol_fiche_head($head, 'passwords', $langs->trans("Security"), -1);
-
-
-$var=false;
 
 
 // Choix du gestionnaire du generateur de mot de passe
@@ -250,7 +242,6 @@ foreach ($arrayhandler as $key => $module)
 
 	if ($module->isEnabled())
 	{
-        $var = !$var;
         print '<tr class="oddeven"><td width="100">';
         print ucfirst($key);
         print "</td><td>\n";
@@ -395,7 +386,6 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 
 // Cryptage mot de passe
 print '<br>';
-$var=true;
 print "<form method=\"post\" action=\"" . $_SERVER["PHP_SELF"] . "\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";

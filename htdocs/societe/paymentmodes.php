@@ -614,7 +614,7 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
-		elseif ($action == 'deletecard')
+		elseif ($action == 'deletecard' && $source)
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
@@ -758,7 +758,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '</td><td>';
 		//print $stripecu;
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
-		if ($stripecu)
+		if ($stripecu && $action != 'editkey_account')
 		{
 			$url='https://dashboard.stripe.com/test/customers/'.$stripecu;
 			if ($servicestatus)
@@ -796,7 +796,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with StripeConnect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
 		$listofsources = array();
 		if (is_object($stripe))
@@ -841,6 +841,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$sql='SELECT rowid FROM '.MAIN_DB_PREFIX."societe_rib";
 			$sql.=" WHERE type in ('card', 'paypal')";
 			$sql.=" AND fk_soc = ".$object->id;
+			$sql.=" AND status = ".$servicestatus;
 
 			$resql = $db->query($sql);
 			if ($resql)
@@ -918,7 +919,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print img_picto($langs->trans("Modify"),'edit');
 								print '</a>';
 								print '&nbsp;';
-								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';	// source='.$companypaymentmodetemp->stripe_card_ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}

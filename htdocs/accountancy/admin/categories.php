@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
+// Load translation files required by the page
 $langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';

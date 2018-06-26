@@ -27,12 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load('other');
-$langs->load('bills');
-$langs->load('orders');
-
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
 
 if (! $user->admin) accessforbidden();
 
@@ -217,7 +213,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-            $var=true;
 
             while (($file = readdir($handle))!==false)
             {
@@ -249,7 +244,6 @@ foreach ($dirmodels as $reldir)
 
                         if ($module->isEnabled())
                         {
-                            $var = !$var;
                             print '<tr class="oddeven"><td width="100">';
                             echo preg_replace('/\-.*$/','',preg_replace('/mod_supplier_payment_/','',preg_replace('/\.php$/','',$file)));
                             print "</td><td>\n";
@@ -359,7 +353,6 @@ foreach ($dirmodels as $reldir)
 
 	                require_once $dir.'/'.$file;
 	                $module = new $classname($db, new PaiementFourn($db));
-
 
                     print "<tr class=\"oddeven\">\n";
                     print "<td>";

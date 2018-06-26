@@ -26,6 +26,7 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta", "banks", "bills", "users", "accountancy"));
 
 $id=GETPOST('id','int');

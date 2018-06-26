@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 if (!$user->admin)
     accessforbidden();
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","other","agenda"));
 
 $action = GETPOST('action','alpha');

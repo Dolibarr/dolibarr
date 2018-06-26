@@ -172,12 +172,11 @@ if (! empty($dolibarr_main_document_root_alt))
 // Security check (old method, when directory is renamed /install.lock)
 if (preg_match('/install\.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
-    print 'Install pages have been disabled for security reason (directory renamed with .lock suffix).';
+	print $langs->trans("YouTryInstallDisabledByDirLock");
     if (! empty($dolibarr_main_url_root))
     {
-        print 'Click on following link. ';
-        print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-        print 'Click here to go to Dolibarr';
+        print 'Click on following link, <a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
+        print $langs->trans("ClickHereToGoToApp");
         print '</a>';
     }
     exit;
@@ -191,13 +190,12 @@ if (constant('DOL_DATA_ROOT') === null) {
 }
 if (@file_exists($lockfile))
 {
-    print 'Install pages have been disabled for security reason (by lock file install.lock into dolibarr documents directory).<br>';
+	print $langs->trans("YouTryInstallDisabledByFileLock");
     if (! empty($dolibarr_main_url_root))
     {
-        print 'Click on following link. ';
-        print 'If you always reach this page, you must remove install.lock file manually.<br>';
+        print $langs->trans("ClickOnLinkOrRemoveManualy").'<br>';
         print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
-        print 'Click here to go to Dolibarr';
+        print $langs->trans("ClickHereToGoToApp");
         print '</a>';
     }
     else
@@ -370,6 +368,7 @@ function pHeader($subtitle,$next,$action='set',$param='',$forcejqueryurl='',$css
     global $langs;
     $langs->load("main");
     $langs->load("admin");
+	$langs->load("install");
 
     $jquerytheme='base';
 

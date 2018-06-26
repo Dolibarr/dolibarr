@@ -9,6 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -674,14 +675,14 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::Fetch Erreur contrat non trouve");
+				dol_syslog(get_class($this)."::fetch Contract not found");
 				$this->error="Contract not found";
 				return 0;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture contrat");
+			dol_syslog(get_class($this)."::fetch Error searching contract");
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -1287,35 +1288,35 @@ class Contrat extends CommonObject
 				$result=$this->call_trigger('CONTRACT_MODIFY',$user);
 				if ($result < 0) { $error++; }
 				// End call triggers
-				}
-			}
-
-			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-
-			// Commit or rollback
-			if ($error)
-			{
-				foreach($this->errors as $errmsg)
-				{
-					dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-					$this->error.=($this->error?', '.$errmsg:$errmsg);
-				}
-				$this->db->rollback();
-				return -1*$error;
-			}
-			else
-			{
-				$this->db->commit();
-				return 1;
 			}
 		}
+
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+		{
+			$result=$this->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
 
 
 	/**
@@ -2303,9 +2304,10 @@ class Contrat extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -2324,7 +2326,7 @@ class Contrat extends CommonObject
 
 		$modelpath = "core/modules/contract/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**

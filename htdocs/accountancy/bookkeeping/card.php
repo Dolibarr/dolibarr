@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("accountancy", "bills", "compta"));
 
 $action = GETPOST('action','aZ09');
@@ -554,8 +555,9 @@ if ($action == 'create')
 		*/
 		print "</table>\n";
 
-		print '</div></div>';
-		print '</div>';
+		print '</div></div><!-ee-->';
+
+		dol_fiche_end();
 
 		print '<div style="clear:both"></div>';
 
@@ -711,5 +713,6 @@ if ($action == 'create')
 }
 
 dol_fiche_end();
+
 llxFooter();
 $db->close();

@@ -28,10 +28,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
-$langs->load("admin");
-$langs->load("errors");
-$langs->load('other');
-$langs->load('supplier_proposal');
+
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "errors", "other", "supplier_proposal"));
 
 if (! $user->admin) accessforbidden();
 
@@ -247,7 +246,6 @@ foreach ($dirmodels as $reldir)
 		$handle = opendir($dir);
 		if (is_resource($handle))
 		{
-			$var=true;
 
 			while (($file = readdir($handle))!==false)
 			{
@@ -366,7 +364,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -403,7 +400,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
@@ -492,7 +488,6 @@ print '<br>';
  */
 print load_fiche_titre($langs->trans("OtherOptions"),'','');
 
-$var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
@@ -506,7 +501,6 @@ $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
-$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_SUPPLIER_PROPOSAL_FREE_TEXT">';
@@ -585,7 +579,7 @@ print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
-print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
+print "<tr class=\"oddeven\">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
 llxFooter();

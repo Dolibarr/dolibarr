@@ -32,7 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "members", "mailmanspip"));
 
 if (! $user->admin) accessforbidden();

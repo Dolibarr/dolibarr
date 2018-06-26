@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("other","compta","banks","bills","companies","product","trips","admin"));
 
 $local=GETPOST('localTaxType', 'int');
@@ -164,7 +165,7 @@ if($calc ==0 || $calc == 2)
 	print "<td align=\"right\">".$vatcust."</td>";
 	print "</tr>\n";
 
-	$coll_list = tax_by_thirdparty($db,0,$date_start,$date_end,$modetax,'sell');
+	$coll_list = tax_by_thirdparty('localtax'.$local, $db, 0, $date_start, $date_end, $modetax, 'sell');
 
 	$action = "tvaclient";
 	$object = &$coll_list;
@@ -180,12 +181,11 @@ if($calc ==0 || $calc == 2)
 
 	if (is_array($coll_list))
 	{
-		$var=true;
 		$total = 0;  $totalamount = 0;
 		$i = 1;
 		foreach($coll_list as $coll)
 		{
-			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
+			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
 
 				$intra = str_replace($find,$replace,$coll->tva_intra);
@@ -248,19 +248,18 @@ if($calc ==0 || $calc == 1){
 
 	$company_static=new Societe($db);
 
-	$coll_list = tax_by_thirdparty($db,0,$date_start,$date_end,$modetax,'buy');
+	$coll_list = tax_by_thirdparty('localtax'.$local, $db, 0, $date_start, $date_end,$modetax, 'buy');
 	$parameters["direction"] = 'buy';
 	$parameters["type"] = 'localtax'.$local;
 
 	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	if (is_array($coll_list))
 	{
-		$var=true;
 		$total = 0;  $totalamount = 0;
 		$i = 1;
 		foreach($coll_list as $coll)
 		{
-			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
+			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
 
 				$intra = str_replace($find,$replace,$coll->tva_intra);

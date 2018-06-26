@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2016  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -344,7 +344,7 @@ class Loan extends CommonObject
 			$this->error=$this->db->lasterror();
 			return -1;
 		}
-    }
+	}
 
 	/**
 	 *  Return label of loan status (unpaid, paid)
@@ -369,8 +369,7 @@ class Loan extends CommonObject
 	function LibStatut($statut,$mode=0,$alreadypaid=-1)
 	{
 		global $langs;
-		$langs->load('customers');
-		$langs->load('bills');
+		$langs->loadLangs(array("customers","bills"));
 
 		if ($mode == 0)
 		{

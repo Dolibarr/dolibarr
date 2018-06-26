@@ -72,24 +72,30 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
  * @param		string		$val		Value
- * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
+ * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
 function test_sql_and_script_inject($val, $type)
 {
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
-	if ($type == 1)
+	if ($type == 1 || $type == 3)
 	{
-		$inj += preg_match('/updatexml\(/i',	 $val);
 		$inj += preg_match('/delete\s+from/i',	 $val);
 		$inj += preg_match('/create\s+table/i',	 $val);
 		$inj += preg_match('/insert\s+into/i', 	 $val);
 		$inj += preg_match('/select\s+from/i', 	 $val);
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+		$inj += preg_match('/user\s*\(/i',  $val);						// avoid to use function user() that return current database login
+		$inj += preg_match('/information_schema/i',  $val);				// avoid to use request that read information_schema database
 	}
-	if ($type != 2)	// Not common, we can check on POST
+	if ($type == 3)
 	{
+		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i',	 $val);
+	}
+	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
+	{
+		$inj += preg_match('/updatexml\(/i', 	 $val);
 		$inj += preg_match('/update.+set.+=/i',  $val);
 		$inj += preg_match('/union.+select/i', 	 $val);
 		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
@@ -474,8 +480,8 @@ if (! defined('NOLOGIN'))
 			if (! $ok)
 			{
 				dol_syslog('Bad value for code, connexion refused');
-				$langs->load('main');
-				$langs->load('errors');
+				// Load translation files required by page
+				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorBadValueForCode");
 				$test=false;
@@ -552,8 +558,8 @@ if (! defined('NOLOGIN'))
 			if (! $login)
 			{
 				dol_syslog('Bad password, connexion refused',LOG_DEBUG);
-				$langs->load('main');
-				$langs->load('errors');
+				// Load translation files required by page
+				$langs->loadLangs(array('main', 'errors'));
 
 				// Bad password. No authmode has found a good password.
 				// We set a generic message if not defined inside function checkLoginPassEntity or subfunctions
@@ -602,8 +608,8 @@ if (! defined('NOLOGIN'))
 
 			if ($resultFetchUser == 0)
 			{
-				$langs->load('main');
-				$langs->load('errors');
+				// Load translation files required by page
+				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
 
@@ -661,8 +667,8 @@ if (! defined('NOLOGIN'))
 
 			if ($resultFetchUser == 0)
 			{
-				$langs->load('main');
-				$langs->load('errors');
+				// Load translation files required by page
+				$langs->loadLangs(array('main', 'errors'));
 
 				$_SESSION["dol_loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
 
@@ -707,7 +713,7 @@ if (! defined('NOLOGIN'))
 		    $hookmanager->initHooks(array('main'));
 
 		    // Code for search criteria persistence.
-		    if (! empty($_GET['save_lastsearch_values']))    // Keep $_GET here
+		    if (! empty($_GET['save_lastsearch_values']))    // We must use $_GET here
 		    {
 			    $relativepathstring = preg_replace('/\?.*$/','',$_SERVER["HTTP_REFERER"]);
 			    $relativepathstring = preg_replace('/^https?:\/\/[^\/]*/','',$relativepathstring);     // Get full path except host server
@@ -720,8 +726,14 @@ if (! defined('NOLOGIN'))
 			    // We click on a link that leave a page we have to save search criteria. We save them from tmp to no tmp
 			    if (! empty($_SESSION['lastsearch_values_tmp_'.$relativepathstring]))
 			    {
-				    $_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
+			    	$_SESSION['lastsearch_values_'.$relativepathstring]=$_SESSION['lastsearch_values_tmp_'.$relativepathstring];
 				    unset($_SESSION['lastsearch_values_tmp_'.$relativepathstring]);
+			    }
+			    // We also save contextpage
+			    if (! empty($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]))
+			    {
+			    	$_SESSION['lastsearch_contextpage_'.$relativepathstring]=$_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring];
+			    	unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
 			    }
 		    }
 
@@ -935,8 +947,8 @@ dol_syslog("--- Access to ".$_SERVER["PHP_SELF"].' - action='.GETPOST('action','
 // Load main languages files
 if (! defined('NOREQUIRETRAN'))
 {
-	$langs->load("main");
-	$langs->load("dict");
+	// Load translation files required by page
+	$langs->loadLangs(array('main', 'dict'));
 }
 
 // Define some constants used for style of arrays
@@ -1160,6 +1172,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		print "<head>\n";
 		if (GETPOST('dol_basehref','alpha')) print '<base href="'.dol_escape_htmltag(GETPOST('dol_basehref','alpha')).'">'."\n";
 		// Displays meta
+		print '<meta charset="UTF-8">'."\n";
 		print '<meta name="robots" content="noindex'.($disablenofollow?'':',nofollow').'">'."\n";	// Do not index
 		print '<meta name="viewport" content="width=device-width, initial-scale=1.0">'."\n";		// Scale for mobile device
 		print '<meta name="author" content="Dolibarr Development Team">'."\n";
@@ -1613,8 +1626,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 		print '</div></div>';
 
-		//unset($form);
-
 		print '<div style="clear: both;"></div>';
 		print "<!-- End top horizontal menu -->\n\n";
 	}
@@ -1903,7 +1914,10 @@ function printSearchForm($urlaction, $urlobject, $title, $htmlmorecss, $htmlinpu
 	$ret.=($accesskey?' accesskey="'.$accesskey.'"':'');
 	$ret.=' placeholder="'.strip_tags($title).'"';
 	$ret.=' name="'.$htmlinputname.'" id="'.$prefhtmlinputname.$htmlinputname.'" />';
-	$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
+	//$ret.='<input type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px" value="'.$langs->trans("Go").'">';
+	$ret.='<button type="submit" class="button" style="padding-top: 4px; padding-bottom: 4px; padding-left: 6px; padding-right: 6px">';
+	$ret.='<span class="fa fa-search"></span>';
+	$ret.='</button>';
 	$ret.="</form>\n";
 	return $ret;
 }
@@ -1924,7 +1938,7 @@ if (! function_exists("llxFooter"))
 	function llxFooter($comment='',$zone='private', $disabledoutputofmessages=0)
 	{
 		global $conf, $langs, $user, $object;
-		global $delayedhtmlcontent;
+		global $delayedhtmlcontent, $contextpage;
 
 		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
@@ -1932,22 +1946,35 @@ if (! function_exists("llxFooter"))
 		dol_htmloutput_events($disabledoutputofmessages);
 
 		// Code for search criteria persistence.
-		// Save $user->lastsearch_values if defined (define on list pages when a form field search_xxx exists)
+		// $user->lastsearch_values was set by the GETPOST when form field search_xxx exists
 		if (is_object($user) && ! empty($user->lastsearch_values_tmp) && is_array($user->lastsearch_values_tmp))
 		{
-			// Clean data
+			// Clean and save data
 			foreach($user->lastsearch_values_tmp as $key => $val)
 			{
-				unset($_SESSION['lastsearch_values_tmp_'.$key]);			// Clean arry to rebuild it just after
+				unset($_SESSION['lastsearch_values_tmp_'.$key]);			// Clean array to rebuild it just after
 				if (count($val) && empty($_POST['button_removefilter']))	// If there is search criteria to save and we did not click on 'Clear filter' button
 				{
 					if (empty($val['sortfield'])) unset($val['sortfield']);
 					if (empty($val['sortorder'])) unset($val['sortorder']);
-					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criteria)");
+					dol_syslog('Save lastsearch_values_tmp_'.$key.'='.json_encode($val, 0)." (systematic recording of last search criterias)");
 					$_SESSION['lastsearch_values_tmp_'.$key]=json_encode($val);
 					unset($_SESSION['lastsearch_values_'.$key]);
 				}
 			}
+		}
+
+
+		$relativepathstring = $_SERVER["PHP_SELF"];
+		// Clean $relativepathstring
+		if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
+		$relativepathstring = preg_replace('/^\//', '', $relativepathstring);
+		$relativepathstring = preg_replace('/^custom\//', '', $relativepathstring);
+		if (preg_match('/list\.php$/', $relativepathstring))
+		{
+			unset($_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]);
+			if (! empty($contextpage)) $_SESSION['lastsearch_contextpage_tmp_'.$relativepathstring]=$contextpage;
+			unset($_SESSION['lastsearch_contextpage_'.$relativepathstring]);
 		}
 
 		// Core error message

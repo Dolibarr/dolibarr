@@ -44,6 +44,7 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("trips","bills","mails"));
 
 $action=GETPOST('action','aZ09');
@@ -1354,7 +1355,7 @@ if ($action == 'create')
 	if (GETPOST('fk_user_author', 'int') > 0) $defaultselectuser=GETPOST('fk_user_author', 'int');
     $include_users = 'hierarchyme';
     if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
-	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
+	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users, '', '0,'.$conf->entity);
 	print $s;
 	print '</td>';
 	print '</tr>';

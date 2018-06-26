@@ -919,6 +919,10 @@ class ExtraFields
 			{
 				$morecss = 'maxwidth75';
 			}
+			elseif ($type == 'password')
+			{
+				$morecss='maxwidth100';
+			}
 			elseif ($type == 'url')
 			{
 				$morecss='minwidth400';
@@ -1390,7 +1394,8 @@ class ExtraFields
 		elseif ($type == 'password')
 		{
 			// If prefix is 'search_', field is used as a filter, we use a common text field.
-			$out='<input type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
+			$out='<input style="display:none" type="text" name="fakeusernameremembered">';	// Hidden field to reduce impact of evil Google Chrome autopopulate bug.
+			$out.='<input autocomplete="new-password" type="'.($keyprefix=='search_'?'text':'password').'" class="flat '.$morecss.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'" value="'.$value.'" '.($moreparam?$moreparam:'').'>';
 		}
 		if (!empty($hidden)) {
 			$out='<input type="hidden" value="'.$value.'" name="'.$keyprefix.$key.$keysuffix.'" id="'.$keyprefix.$key.$keysuffix.'"/>';
@@ -1429,7 +1434,8 @@ class ExtraFields
 			$perms=dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
 			$langfile=$this->attributes[$extrafieldsobjectkey]['langfile'][$key];
 			$list=dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
-			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+			$help=$this->attributes[$extrafieldsobjectkey]['help'][$key];
+			$hidden=(empty($list) ? 1 : 0);		// If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 		else	// Old usage
 		{
@@ -1444,7 +1450,8 @@ class ExtraFields
 			$perms=dol_eval($this->attribute_perms[$key], 1);
 			$langfile=$this->attribute_langfile[$key];
 			$list=dol_eval($this->attribute_list[$key], 1);
-			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
+			$help='';	// Not supported with old syntax
+			$hidden=(empty($list) ? 1 : 0);		// If $list empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
 		if ($hidden) return '';		// This is a protection. If field is hidden, we should just not call this method.
@@ -1710,7 +1717,7 @@ class ExtraFields
 		}
 		elseif ($type == 'password')
 		{
-			$value=preg_replace('/./i','*',$value);
+			$value=dol_trunc(preg_replace('/./i','*',$value), 8, 'right', 'UTF-8', 1);
 		}
 		else
 		{

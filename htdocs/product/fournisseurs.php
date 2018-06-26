@@ -37,10 +37,8 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_expression.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.php';
 
-$langs->load("products");
-$langs->load("suppliers");
-$langs->load("bills");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'suppliers', 'bills', 'margins'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');

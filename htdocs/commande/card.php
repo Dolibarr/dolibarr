@@ -56,6 +56,7 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array('orders','sendings','companies','bills','propal','deliveries','products','other'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
@@ -358,8 +359,7 @@ if (empty($reshook))
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
-																																	  // trigger used
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) // For avoid conflicts if trigger used
 								{
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_options = $lines[$i]->array_options;
@@ -368,7 +368,12 @@ if (empty($reshook))
 								$tva_tx = $lines[$i]->tva_tx;
 								if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid);
+								$result = $object->addline(
+									$desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product,
+									$lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type,
+									$lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+									$lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid
+								);
 
 								if ($result < 0) {
 									$error++;
@@ -798,7 +803,27 @@ if (empty($reshook))
 				// If price per quantity and customer
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 				{
-					// TODO Same than PRODUIT_CUSTOMER_PRICES_BY_QTY but using $object->thirdparty->price_level
+					if ($prod->prices_by_qty[$object->thirdparty->price_level])	// yes, this product has some prices per quantity
+					{
+						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+						$pqp = GETPOST('pbq','int');
+						// Search price into product_price_by_qty from $prod->id
+						foreach($prod->prices_by_qty_list[$object->thirdparty->price_level] as $priceforthequantityarray)
+						{
+							if ($priceforthequantityarray['rowid'] != $pqp) continue;
+							// We found the price
+							if ($priceforthequantityarray['price_base_type'] == 'HT')
+							{
+								$pu_ht = $priceforthequantityarray['unitprice'];
+							}
+							else
+							{
+								$pu_ttc = $priceforthequantityarray['unitprice'];
+							}
+							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
+							break;
+						}
+					}
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
@@ -1019,8 +1044,8 @@ if (empty($reshook))
 			$type = $product->type;
 
 			$price_min = $product->price_min;
-			if (! empty($conf->global->PRODUIT_MULTIPRICES) && ! empty($object->thirdparty->price_level))
-				$price_min = $product->multiprices_min [$object->thirdparty->price_level];
+			if ((! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && ! empty($object->thirdparty->price_level))
+				$price_min = $product->multiprices_min[$object->thirdparty->price_level];
 
 			$label = ((GETPOST('update_label') && GETPOST('product_label')) ? GETPOST('product_label') : '');
 
@@ -1934,7 +1959,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 								// => 1),
 								array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=3)')));
-			// Paiement incomplet. On demande si motif = escompte ou autre
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneOrder'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 

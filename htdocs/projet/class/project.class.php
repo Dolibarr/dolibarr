@@ -940,7 +940,7 @@ class Project extends CommonObject
      */
     function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
     {
-        global $conf, $langs, $user;
+        global $conf, $langs, $user, $hookmanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -989,10 +989,7 @@ class Project extends CommonObject
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
 
-			/*if (! is_object($hookmanager)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager=new HookManager($this->db);
-			}
+			/*
 			$hookmanager->initHooks(array('projectdao'));
 			$parameters=array('id'=>$this->id);
 			// Note that $action and $object may have been modified by some hooks
@@ -1016,11 +1013,6 @@ class Project extends CommonObject
         if ($withpicto != 2) $result.=(($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
 
         global $action;
-        if (! is_object($hookmanager))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        	$hookmanager=new HookManager($this->db);
-        }
         $hookmanager->initHooks(array('projectdao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
         $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1727,7 +1719,7 @@ class Project extends CommonObject
         //$socid=$user->societe_id;
 
         if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user,0,1,$socid);
-        
+
         $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
         $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
         $sql.= ")";
@@ -1741,7 +1733,7 @@ class Project extends CommonObject
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
         //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-        
+
         //print $sql;
         $resql=$this->db->query($sql);
         if ($resql)

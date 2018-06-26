@@ -52,6 +52,7 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("sendings","companies","bills",'deliveries','orders','stocks','other','propal'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
@@ -502,12 +503,16 @@ if (empty($reshook))
 	}
 
 	// Action update
-	else if ($action == 'settracking_number' || $action == 'settracking_url'
-	|| $action == 'settrueWeight'
-	|| $action == 'settrueWidth'
-	|| $action == 'settrueHeight'
-	|| $action == 'settrueDepth'
-	|| $action == 'setshipping_method_id')
+	else if (
+		($action == 'settracking_number' 
+		|| $action == 'settracking_url'
+		|| $action == 'settrueWeight'
+		|| $action == 'settrueWidth'
+		|| $action == 'settrueHeight'
+		|| $action == 'settrueDepth'
+		|| $action == 'setshipping_method_id')
+		&& $user->rights->expedition->creer
+		)
 	{
 	    $error=0;
 
@@ -1127,7 +1132,6 @@ if ($action == 'create')
                 print "</tr>\n";
             }
 
-            $var=true;
             $indiceAsked = 0;
             while ($indiceAsked < $numAsked)
             {

@@ -1052,7 +1052,7 @@ class Form
 	 *
 	 *	@param	string	$selected       Preselected type
 	 *	@param  string	$htmlname       Name of field in form
-	 *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
+	 *  @param  string	$filter         Optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
 	 *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use standard HTML select component without beautification
@@ -1071,6 +1071,9 @@ class Form
 		$out='';
 		$num=0;
 		$outarray=array();
+
+		// Clean $filter that may contains sql conditions so sql code
+		if (function_exists('test_sql_and_script_inject')) $filter = test_sql_and_script_inject($filter, 3);
 
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
@@ -1437,12 +1440,12 @@ class Form
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array	$include        Array list of users id to include
 	 * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
-	 *  @param	int		$force_entity	0 or Id of environment to force
+	 *  @param	string	$force_entity	'0' or Ids of environment to force
 	 * 	@return	void
 	 *  @deprecated		Use select_dolusers instead
 	 *  @see select_dolusers()
 	 */
-	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude=null,$disabled=0,$include='',$enableonly='',$force_entity=0)
+	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude=null,$disabled=0,$include='',$enableonly='',$force_entity='0')
 	{
 		print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
 	}
@@ -1457,7 +1460,7 @@ class Form
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
-	 *  @param	int		$force_entity	0 or Id of environment to force
+	 *  @param	string	$force_entity	'0' or Ids of environment to force
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 *  @param	string	$morefilter		Add more filters into sql request (Example: 'employee = 1')
@@ -1469,7 +1472,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0, $outputmode=0)
+	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity='0', $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0, $outputmode=0)
 	{
 		global $conf,$user,$langs;
 
@@ -1606,13 +1609,13 @@ class Form
 					}
 					if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 					{
-						if ($obj->admin && ! $obj->entity)
+						if (! $obj->entity)
 						{
 							$out.=($moreinfo?' - ':' (').$langs->trans("AllEntities");
 							$moreinfo++;
 						}
 						else
-					 {
+						{
 							$out.=($moreinfo?' - ':' (').($obj->label?$obj->label:$langs->trans("EntityNameNotDefined"));
 							$moreinfo++;
 					 	}
@@ -1656,7 +1659,7 @@ class Form
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
 	 * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
-	 *  @param	int		$force_entity	0 or Id of environment to force
+	 *  @param	int		$force_entity	'0' or Ids of environment to force
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 *  @param	string	$morefilter		Add more filters into sql request
@@ -1667,7 +1670,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $showproperties=0, $listofuserid=array(), $listofcontactid=array(), $listofotherid=array())
+	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity='0', $maxlength=0, $showstatus=0, $morefilter='', $showproperties=0, $listofuserid=array(), $listofcontactid=array(), $listofotherid=array())
 	{
 		global $conf, $user, $langs;
 
@@ -1943,7 +1946,7 @@ class Form
 			$selectFields.= ", label_translated";
 		}
 		// Price by quantity
-		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 		{
 			$sql.= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
@@ -2064,7 +2067,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
+				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -2213,7 +2216,8 @@ class Form
 		$found=0;
 
 		// Multiprice
-		if (empty($hidepriceinlabel) && $price_level >= 1 && $conf->global->PRODUIT_MULTIPRICES)		// If we need a particular price level (from 1 to 6)
+		// If we need a particular price level (from 1 to 6)
+		if (empty($hidepriceinlabel) && $price_level >= 1 && (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)))
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
@@ -2254,7 +2258,7 @@ class Form
 		}
 
 		// Price by quantity
-		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)))
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
@@ -2650,7 +2654,7 @@ class Form
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
-		$sql.= " WHERE p.entity IN (".getEntity('productprice').")";
+		$sql.= " WHERE pfp.entity IN (".getEntity('productprice').")";
 		$sql.= " AND p.tobuy = 1";
 		$sql.= " AND s.fournisseur = 1";
 		$sql.= " AND p.rowid = ".$productid;
@@ -3794,7 +3798,7 @@ class Form
                          		    if ($("#" + inputname).attr("type") == "radio") { more = ":checked"; }
                          			var inputvalue = $("#" + inputname + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + inputvalue;
+                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
@@ -3812,7 +3816,7 @@ class Form
                          			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
                          			var inputvalue = $("#" + inputname + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + inputvalue;
+                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
                          	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
@@ -6722,11 +6726,11 @@ class Form
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  string	$include        Array list of groups id to include
 	 * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
-	 * 	@param	int		$force_entity	0 or Id of environment to force
+	 * 	@param	string	$force_entity	'0' or Ids of environment to force
 	 *  @return	string
 	 *  @see select_dolusers
 	 */
-	function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0)
+	function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity='0')
 	{
 		global $conf,$user,$langs;
 

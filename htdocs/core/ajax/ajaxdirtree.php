@@ -53,6 +53,7 @@ else    // For no ajax call
 	if (empty($url)) $url=DOL_URL_ROOT.'/ecm/index.php';
 }
 
+// Load translation files required by the page
 $langs->load("ecm");
 
 // Define fullpathselecteddir.
@@ -320,10 +321,8 @@ if (empty($conf->use_javascript_ajax) || ! empty($conf->global->MAIN_ECM_DISABLE
 
 	$nbofentries=0;
 	$oldvallevel=0;
-	$var=true;
 	foreach($sqltree as $key => $val)
 	{
-		$var=false;
 
 		$ecmdirstatic->id=$val['id'];
 		$ecmdirstatic->ref=$val['label'];

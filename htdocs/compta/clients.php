@@ -39,7 +39,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->facture->lire)
 accessforbidden();
 
-
+// Load translation files required by the page
 $langs->load("companies");
 
 $mode=GETPOST("mode");
@@ -172,13 +172,9 @@ if ($resql)
 	print '</td>';
 	print "</tr>\n";
 
-	$var=true;
-
 	while ($i < min($num,$conf->liste_limit))
 	{
 		$obj = $db->fetch_object($resql);
-
-
 
 		print '<tr class="oddeven">';
 		print '<td>';

@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Domēna parole
 YouMustChangePassNextLogon=Parole lietotāju <b>%s</b> par domēna <b>%s</b> ir jāmaina.
 UserMustChangePassNextLogon=Lietotājam ir nomainīt paroli uz domēna %s
 LDAPInformationsForThisContact=Informācija LDAP datubāzē šim kontaktam
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=Kontakti sinhronizēti
 ForceSynchronize=Force sinhronizācija Dolibarr -&gt; LDAP
 ErrorFailedToReadLDAP=Neizdevās nolasīt LDAP datu bāzi. Pārbaudiet LDAP modulis uzstādīšanas un datu bāzes pieejamību.
+PasswordOfUserInLDAP=Password of user in LDAP
