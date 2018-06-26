@@ -172,6 +172,12 @@ if (! empty($dolibarr_main_document_root_alt))
 // Security check (old method, when directory is renamed /install.lock)
 if (preg_match('/install\.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
+	if (! is_object($langs))
+	{
+		$langs = new Translate('..');
+		$langs->setDefaultLang('auto');
+	}
+	$langs->load("install");
 	print $langs->trans("YouTryInstallDisabledByDirLock");
     if (! empty($dolibarr_main_url_root))
     {
@@ -190,6 +196,12 @@ if (constant('DOL_DATA_ROOT') === null) {
 }
 if (@file_exists($lockfile))
 {
+	if (! is_object($langs))
+	{
+		$langs = new Translate('..');
+		$langs->setDefaultLang('auto');
+	}
+	$langs->load("install");
 	print $langs->trans("YouTryInstallDisabledByFileLock");
     if (! empty($dolibarr_main_url_root))
     {
