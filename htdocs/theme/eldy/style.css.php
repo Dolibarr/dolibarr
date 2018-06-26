@@ -1445,8 +1445,8 @@ div.statusrefbis {
 }
 img.photoref, div.photoref {
 	border: 1px solid #DDD;
-    -webkit-box-shadow: 1px 1px 4px #DDD;
-    box-shadow: 1px 1px 4px #DDD;
+    -webkit-box-shadow: 0px 0px 6px #DDD;
+    box-shadow: 0px 0px 6px #DDD;
     padding: 4px;
 	height: 80px;
 	width: 80px;
