@@ -35,12 +35,15 @@
 
 -- Forgot in 7.0
 
+-- VMYSQL4.1 DROP INDEX nom on llx_societe;
 -- VMYSQL4.1 ALTER TABLE llx_c_regions drop FOREIGN KEY fk_c_regions_fk_pays;
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 
 ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
+
+
 
 -- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
@@ -94,7 +97,10 @@ delete from llx_usergroup_rights where fk_id not in (select id from llx_rights_d
 ALTER TABLE llx_inventory ADD COLUMN fk_product integer DEFAULT NULL;
 ALTER TABLE llx_inventory MODIFY COLUMN fk_warehouse integer DEFAULT NULL;
 
-ALTER TABLE llx_c_type_fees ADD COLUMN llx_c_type_fees integer DEFAULT 0;
+ALTER TABLE llx_c_type_fees DROP COLUMN llx_c_type_fees;
+ALTER TABLE llx_c_type_fees ADD COLUMN type integer DEFAULT 0;
+
+ALTER TABLE llx_c_ecotax CHANGE COLUMN libelle label varchar(255);
 
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 
@@ -534,3 +540,10 @@ ALTER TABLE llx_expedition ADD date_shipped datetime DEFAULT NULL;
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (188, 'RO-BASE', 'Plan de conturi romanesc',    1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR03', 'Standardkontenrahmen SKR 03', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR04', 'Standardkontenrahmen SKR 04', 1);
+
+-- advtargetmailing
+ALTER TABLE llx_advtargetemailing ADD COLUMN fk_element integer NOT NULL;
+ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
+UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing';
+ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
+

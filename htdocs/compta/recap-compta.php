@@ -129,7 +129,6 @@ if ($id > 0)
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			$var=true;
 			$num = $db->num_rows($resql);
 
 			// Boucle sur chaque facture

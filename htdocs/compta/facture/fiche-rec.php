@@ -44,7 +44,7 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('bills', 'compta', 'admin', 'other'));
+$langs->loadLangs(array('bills', 'compta', 'admin', 'other', 'products'));
 
 $action     = GETPOST('action','alpha');
 $massaction = GETPOST('massaction','alpha');
