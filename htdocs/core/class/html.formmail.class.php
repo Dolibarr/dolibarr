@@ -917,7 +917,7 @@ class FormMail extends Form
 				}
 
 				// Complete substitution array with the url to make online payment
-				$paymenturl='';
+				$paymenturl=''; $validpaymentmethod=array();
 				if (empty($this->substit['__REF__']))
 				{
 					$paymenturl='';
@@ -926,16 +926,27 @@ class FormMail extends Form
 				{
 					// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-					$langs->load('paypal');
+					$langs->loadLangs(array('paypal','other'));
 					$typeforonlinepayment='free';
 					if ($this->param["models"]=='order'   || $this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
 					if ($this->param["models"]=='invoice' || $this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
 					if ($this->param["models"]=='member') $typeforonlinepayment='member';												// TODO use detection on something else than template
 					$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
 					$paymenturl=$url;
+
+					$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 				}
-				$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$langs->trans("PredefinedMailContentLink", $paymenturl):'');
-				$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
+				var_dump($validpaymentmethod);
+				if (count($validpaymentmethod) > 0)
+				{
+					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$langs->trans("PredefinedMailContentLink", $paymenturl):'');
+					$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
+				}
+				else
+				{
+					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']='';
+					$this->substit['__ONLINE_PAYMENT_URL__']='';
+				}
 
 				//Add lines substitution key from each line
 				$lines = '';
