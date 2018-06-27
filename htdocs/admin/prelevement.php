@@ -80,6 +80,16 @@ if ($action == "set")
         $res = dolibarr_set_const($db, "PRELEVEMENT_USER", GETPOST("PRELEVEMENT_USER"),'chaine',0,'',$conf->entity);
         if (! $res > 0) $error++;
     }
+    if (GETPOST("PRELEVEMENT_END_TO_END") || GETPOST("PRELEVEMENT_END_TO_END")=="")
+    {
+        $res = dolibarr_set_const($db, "END_TO_END", GETPOST("PRELEVEMENT_END_TO_END"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    }
+    if (GETPOST("PRELEVEMENT_USTRD") || GETPOST("PRELEVEMENT_USTRD")=="")
+    {
+        $res = dolibarr_set_const($db, "USTRD", GETPOST("PRELEVEMENT_USTRD"),'chaine',0,'',$conf->entity);
+        if (! $res > 0) $error++;
+    }
 
     if (! $error)
 	{
