@@ -999,7 +999,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Get CompanyBankAccount objects for thirdparty
 	 * 
-	 * @param int $socid
+	 * @param int $socid Thirdparty id
 	 * 
 	 * @return array
 	 */
@@ -1019,7 +1019,7 @@ class Thirdparties extends DolibarrApi
 		}
 
 		/**
-		 * On requete sur tous les enregistrements qui ont comme fk_soc, la société passée en paramètre
+		 * We select all the records that match the socid
 		 */
 
 		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
@@ -1076,14 +1076,14 @@ class Thirdparties extends DolibarrApi
 	
 	/**
 	 * Create CompanyBankAccount object for thirdparty
-	 * @param int  $socid id de l'entreprise
+	 * @param int  $socid thirdparty id
 	 * @param array $request_data   Request datas
 	 * 
 	 * @return object  ID of thirdparty
 	 * 
 	 * @url POST {socid}/CompanyBankAccount
 	 */
-	function createCompanyBankAccount($socid, $request_data = NULL)
+	function createCompanyBankAccount($socid, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -1110,15 +1110,16 @@ class Thirdparties extends DolibarrApi
 
 	/**
 	 * Update CompanyBankAccount object for thirdparty
-	 * @param int  $id Id du compte
-	 * @param int $socid 
+	 * 
+	 * @param int $socid Thirdparty id
+	 * @param int  $id CompanyBankAccount's id
 	 * @param array $request_data   Request datas
 	 * 
 	 * @return object  ID of thirdparty
 	 * 
 	 * @url PUT {socid}/CompanyBankAccount/{id}
 	 */
-	function updateCompanyBankAccount($socid, $id, $request_data = NULL)
+	function updateCompanyBankAccount($socid, $id, $request_data = null)
 	{
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
@@ -1146,10 +1147,10 @@ class Thirdparties extends DolibarrApi
 	}
 
 	/**
-	 * @param int $id Id du compte
-	 * @param int $socid Id de l'entreprise
+	 * @param int $id CompanyBankAccount's id
+	 * @param int $socid Thirdparty id
 	 * 
-	 * @return int -1 si erreur 1 si suppression
+	 * @return int -1 if error 1 if correct deletion
 	 * 
 	 * @url DELETE {socid}/CompanyBankAccount/{id}
 	 */
