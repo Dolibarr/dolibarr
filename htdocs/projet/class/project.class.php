@@ -1750,7 +1750,7 @@ class Project extends CommonObject
 	    $sql = "SELECT count(p.rowid) as nb";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	    $sql.= " WHERE";
-	    $sql.= " p.entity IN (".getEntity('projet').")";
+	    $sql.= " p.entity IN (".getEntity('project').")";
 		if (! $user->rights->projet->all->lire)
 		{
 			$projectsListId = $this->getProjectsAuthorizedForUser($user,0,1);
