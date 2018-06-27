@@ -5773,6 +5773,7 @@ function dol_textishtml($msg,$option=0)
 		if (preg_match('/<html/i',$msg))				return true;
 		elseif (preg_match('/<body/i',$msg))			return true;
 		elseif (preg_match('/<(b|em|i|u)>/i',$msg))		return true;
+		elseif (preg_match('/<br\/>/i',$msg))	  return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i',$msg)) 	  return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;

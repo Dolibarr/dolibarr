@@ -79,7 +79,7 @@ $search_montant_vat=GETPOST('search_montant_vat','alpha');
 $search_montant_localtax1=GETPOST('search_montant_localtax1','alpha');
 $search_montant_localtax2=GETPOST('search_montant_localtax2','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
-$search_status=GETPOST('search_status','int');
+$search_status=GETPOST('search_status','intcomma');
 $search_paymentmode=GETPOST('search_paymentmode','int');
 $search_town=GETPOST('search_town','alpha');
 $search_zip=GETPOST('search_zip','alpha');
@@ -108,7 +108,7 @@ $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
-if (! $sortorder && ! empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == 1) $sortorder=$conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
+if (! $sortorder && ! empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == '1') $sortorder=$conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='f.datef';
 $pageprev = $page - 1;
@@ -442,12 +442,19 @@ if ($search_montant_localtax2 != '') $sql.= natural_search('f.localtax2', $searc
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
-if ($search_status != '' && $search_status >= 0)
+if ($search_status != '')
 {
-	if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
-	if ($search_status == '1') $sql.=" AND f.fk_statut = 1";  // unpayed
-	if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
-	if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
+	if (is_numeric($search_status) && $search_status >= 0)
+	{
+		if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
+		if ($search_status == '1') $sql.=" AND f.fk_statut = 1";  // unpayed
+		if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+		if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
+	}
+	else
+	{
+		$sql.= " AND f.fk_statut IN (".$search_status.")";	// When search_status is '1,2' for example
+	}
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
 if ($search_month > 0)
@@ -854,7 +861,7 @@ if ($resql)
 	if (! empty($arrayfields['f.fk_statut']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-		$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
+		$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 		print $form->selectarray('search_status', $liststatus, $search_status, 1);
 		print '</td>';
 	}

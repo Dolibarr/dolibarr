@@ -1099,11 +1099,28 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/resultat/index.php?leftmenu=accountancy_report",$langs->trans("MenuReportInOut"),2,$user->rights->accounting->comptarapport->lire);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/resultat/clientfourn.php?leftmenu=accountancy_report",$langs->trans("ByPredefinedAccountGroups"),3,$user->rights->accounting->comptarapport->lire);
 				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/resultat/result.php?leftmenu=accountancy_report",$langs->trans("ByPersonalizedAccountGroups"),3,$user->rights->accounting->comptarapport->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/index.php?leftmenu=accountancy_report",$langs->trans("ReportTurnover"),2,$user->rights->accounting->comptarapport->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report",$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report",$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report", $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
-				if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/byratecountry.php?leftmenu=accountancy_report", $langs->trans("ByVatRate"),3,$user->rights->accounting->comptarapport->lire);
+
+				$modecompta='CREANCES-DETTES';
+				if(! empty($conf->accounting->enabled) && ! empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') $modecompta='BOOKKEEPING';	// Not yet implemented. Should be BOOKKEEPINGCOLLECTED
+				if ($modecompta)
+				{
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ReportTurnover"),2,$user->rights->accounting->comptarapport->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/byratecountry.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByVatRate"),3,$user->rights->accounting->comptarapport->lire);
+				}
+
+				$modecompta='RECETTES-DEPENSES';
+				//if (! empty($conf->accounting->enabled) && ! empty($user->rights->accounting->comptarapport->lire) && $mainmenu == 'accountancy') $modecompta='';	// Not yet implemented. Should be BOOKKEEPINGCOLLECTED
+				if ($modecompta)
+				{
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/index.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ReportTurnoverCollected"),2,$user->rights->accounting->comptarapport->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/casoc.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByCompanies"),3,$user->rights->accounting->comptarapport->lire);
+					if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyuser.php?leftmenu=accountancy_report&modecompta=".$modecompta,$langs->trans("ByUsers"),3,$user->rights->accounting->comptarapport->lire);
+					//if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/cabyprodserv.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByProductsAndServices"),3,$user->rights->accounting->comptarapport->lire);
+					//if ($usemenuhider || empty($leftmenu) || preg_match('/accountancy_report/',$leftmenu)) $newmenu->add("/compta/stats/byratecountry.php?leftmenu=accountancy_report&modecompta=".$modecompta, $langs->trans("ByVatRate"),3,$user->rights->accounting->comptarapport->lire);
+				}
 			}
 
 			// Accountancy (simple)

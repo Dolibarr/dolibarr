@@ -102,7 +102,7 @@ ALTER TABLE llx_c_type_fees ADD COLUMN type integer DEFAULT 0;
 
 ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
 
-ALTER TABLE llx_c_ecotax CHANGE COLUMN libelle label varchar(255);
+ALTER TABLE llx_c_ecotaxe CHANGE COLUMN libelle label varchar(255);
 
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 
