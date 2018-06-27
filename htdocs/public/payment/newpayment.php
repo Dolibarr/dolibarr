@@ -208,6 +208,8 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stri
 	$validpaymentmethod['stripe']='valid';
 }
 
+// TODO Replace previous set of $validpaymentmethod with this line:
+//$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 
 // Check security token
