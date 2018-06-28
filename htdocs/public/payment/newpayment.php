@@ -208,6 +208,8 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stri
 	$validpaymentmethod['stripe']='valid';
 }
 
+// TODO Replace previous set of $validpaymentmethod with this line:
+//$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 
 // Check security token
@@ -444,10 +446,12 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 			$thirdparty = new Societe($db);
 			$thirdparty->fetch($thirdparty_id);
 
+			// Create Stripe customer
 			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 			$stripe = new Stripe($db);
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
+			// Create Stripe card from Token
 			$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
 
 			if (empty($card))
@@ -1559,7 +1563,7 @@ if (preg_match('/^dopayment/',$action))
 
 		?>
 
-	    // Create a Stripe client
+	    // Create a Stripe client.
 	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
 
 	    // Create an instance of Elements
@@ -1605,43 +1609,40 @@ if (preg_match('/^dopayment/',$action))
 	    console.log(form);
 	    form.addEventListener('submit', function(event) {
 	      event.preventDefault();
-
-
 			<?php
 			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
 			{
 			?>
-			/* Use token */
-	      stripe.createToken(card).then(function(result) {
-	        if (result.error) {
-	          // Inform the user if there was an error
-	          var errorElement = document.getElementById('card-errors');
-	          errorElement.textContent = result.error.message;
-	        } else {
-	          // Send the token to your server
-	          stripeTokenHandler(result.token);
-	        }
-	      });
+				/* Use token */
+				stripe.createToken(card).then(function(result) {
+			        if (result.error) {
+			          // Inform the user if there was an error
+			          var errorElement = document.getElementById('card-errors');
+			          errorElement.textContent = result.error.message;
+			        } else {
+			          // Send the token to your server
+			          stripeTokenHandler(result.token);
+			        }
+				});
 			<?php
 			}
 			else											// Ask credit card with 3DS test
 			{
 			?>
-			/* Use 3DS source */
-		  stripe.createSource(card).then(function(result) {
-		    if (result.error) {
-		      // Inform the user if there was an error
-		      var errorElement = document.getElementById('card-errors');
-		      errorElement.textContent = result.error.message;
-		    } else {
-		      // Send the source to your server
-		      stripeSourceHandler(result.source);
-		    }
-		  });
+				/* Use 3DS source */
+				stripe.createSource(card).then(function(result) {
+				    if (result.error) {
+				      // Inform the user if there was an error
+				      var errorElement = document.getElementById('card-errors');
+				      errorElement.textContent = result.error.message;
+				    } else {
+				      // Send the source to your server
+				      stripeSourceHandler(result.source);
+				    }
+				});
 			<?php
 			}
 			?>
-
 	    });
 
 

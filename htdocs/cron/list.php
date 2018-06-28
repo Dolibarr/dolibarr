@@ -519,7 +519,11 @@ if ($num > 0)
 		print '</td>';
 
 		print '<td class="center">';
-		if(!empty($obj->datenextrun)) {print dol_print_date($db->jdate($obj->datenextrun),'dayhour');}
+		if(!empty($obj->datenextrun)) {
+			if (empty($obj->status)) print '<span class="opacitymedium">';
+			print dol_print_date($db->jdate($obj->datenextrun),'dayhour');
+			if (empty($obj->status)) print '</span>';
+		}
 		print '</td>';
 
 		// Status

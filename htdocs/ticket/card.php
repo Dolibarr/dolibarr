@@ -80,11 +80,14 @@ $result = restrictedArea($user, 'ticket', $object->id);
 $triggermodname = 'TICKETSUP_MODIFY';
 $permissiontoadd = $user->rights->ticket->write;
 
+$actionobject = new ActionsTicket($db);
 
 
 /*
  * Actions
  */
+
+// TODO Replace actions with common includes actions_addupdatedelete.inc.php
 
 if ($cancel)
 {
@@ -96,8 +99,7 @@ if ($cancel)
 	$action='';
 }
 
-
-$actionobject = new ActionsTicket($db);
+// Do action
 $actionobject->doActions($action, $object);
 
 // Action to update one extrafield

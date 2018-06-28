@@ -272,15 +272,12 @@ if ($action == 'create')
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	$total=0;
 	$totalrecu=0;
 
 	while ($i < $num)
 	{
 		$objp = $charge;
-
-
 
 		print '<tr class="oddeven">';
 
@@ -325,7 +322,7 @@ if ($action == 'create')
 	if ($i > 1)
 	{
 		// Print total
-		print "<tr ".$bc[!$var].">";
+		print '<tr class="oddeven">';
 		print '<td colspan="2" align="left">'.$langs->trans("Total").':</td>';
 		print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";

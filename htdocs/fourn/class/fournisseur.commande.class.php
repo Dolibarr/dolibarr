@@ -8,6 +8,7 @@
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
+ * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1568,6 +1569,7 @@ class CommandeFournisseur extends CommonOrder
             }
 
             $tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, $txlocaltax1, $txlocaltax2, 0, $price_base_type, $info_bits, $product_type, $this->thirdparty, $localtaxes_type, 100, $this->multicurrency_tx,$pu_ht_devise);
+
             $total_ht  = $tabprice[0];
             $total_tva = $tabprice[1];
             $total_ttc = $tabprice[2];
@@ -2810,9 +2812,10 @@ class CommandeFournisseur extends CommonOrder
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int          				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf, $langs;
 
@@ -2831,7 +2834,7 @@ class CommandeFournisseur extends CommonOrder
 
 		$modelpath = "core/modules/supplier_order/pdf/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**
@@ -3280,10 +3283,10 @@ class CommandeFournisseurLigne extends CommonOrderLine
         $sql.= ($this->fk_unit ? "'".$this->db->escape($this->fk_unit)."'":"null");
         $sql.= ", ".($this->fk_multicurrency ? $this->fk_multicurrency : "null");
         $sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
-        $sql.= ", ".price2num($this->multicurrency_subprice);
-        $sql.= ", ".price2num($this->multicurrency_total_ht);
-        $sql.= ", ".price2num($this->multicurrency_total_tva);
-        $sql.= ", ".price2num($this->multicurrency_total_ttc);
+        $sql.= ", ".($this->multicurrency_subprice ? price2num($this->multicurrency_subprice) : '0');
+        $sql.= ", ".($this->multicurrency_total_ht ? price2num($this->multicurrency_total_ht) : '0');
+        $sql.= ", ".($this->multicurrency_total_tva ? price2num($this->multicurrency_total_tva) : '0');
+        $sql.= ", ".($this->multicurrency_total_ttc ? price2num($this->multicurrency_total_ttc) : '0');
         $sql.= ")";
 
         dol_syslog(get_class($this)."::insert", LOG_DEBUG);

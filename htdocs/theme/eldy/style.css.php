@@ -36,7 +36,7 @@ if (! defined('NOREQUIREHTML'))   define('NOREQUIREHTML',1);
 if (! defined('NOREQUIREAJAX'))   define('NOREQUIREAJAX','1');
 
 // Colors
-$colorbackhmenu1='80,90,120';      // topmenu
+$colorbackhmenu1='60,70,100';      // topmenu
 $colorbackvmenu1='248,248,248';      // vmenu
 $colortopbordertitle1='200,200,200';    // top border of title
 $colorbacktitle1='220,220,223';      // title of tables,list
@@ -201,8 +201,8 @@ $nbtopmenuentries=$menumanager->showmenu('topnb');
 
 
 $minwidthtmenu=66;		/* minimum width for one top menu entry */
-$heightmenu=46;			/* height of top menu, part with image */
-$heightmenu2=48;        /* height of top menu, part with login  */
+$heightmenu=48;			/* height of top menu, part with image */
+$heightmenu2=49;        /* height of top menu, part with login  */
 $disableimages = 0;
 $maxwidthloginblock = 130;
 if (! empty($conf->global->THEME_TOPMENU_DISABLE_IMAGE)) { $disableimages = 1; $maxwidthloginblock = 180; $minwidthtmenu=0; }
@@ -285,8 +285,13 @@ input.select2-input {
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month], .liste_titre select[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
 .liste_titre input[name=search_month_lim], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end], .liste_titre input[name=search_month_create],
-.liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_month_create], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end],
+.liste_titre input[name=day_date_when], .liste_titre input[name=dayvalid], .liste_titre input[name=search_orderday], .liste_titre input[name=search_deliveryday],
+.liste_titre input[name=search_sday], .liste_titre input[name=search_day], .liste_titre input[name=search_eday], .liste_titre input[name=sday], .liste_titre input[name=day], .liste_titre select[name=day],
+.liste_titre input[name=day_lim], .liste_titre input[name=day_start], .liste_titre input[name=day_end], .liste_titre input[name=day_create],
+.liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
+.liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
+.liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth]
 {
 	margin-right: 4px;
@@ -586,6 +591,9 @@ th .button {
 .soixantepercent {
 	width: 60%;
 }
+.quatrevingtquinzepercent {
+	width: 95%;
+}
 textarea.centpercent {
 	width: 96%;
 }
@@ -688,6 +696,13 @@ div.divsearchfield {
 	margin-top: 4px;
     margin-bottom: 4px;
   	padding-left: 2px;
+}
+.divsearchfieldfilter {
+    text-overflow: clip;
+    overflow: auto;
+    white-space: nowrap;
+    padding-bottom: 5px;
+    opacity: 0.6;
 }
 div.confirmmessage {
 	padding-top: 6px;
@@ -798,6 +813,10 @@ select.flat.selectlimit {
 	font-size: 1.4em;
 }
 .amountremaintopayback {
+	font-weight: bold;
+	font-size: 1.4em;
+}
+.amountpaymentneutral {
 	font-weight: bold;
 	font-size: 1.4em;
 }
@@ -1425,9 +1444,9 @@ div.statusrefbis {
    	vertical-align: text-bottom;
 }
 img.photoref, div.photoref {
-	border: 1px solid #CCC;
-    -webkit-box-shadow: 2px 2px 4px #ccc;
-    box-shadow: 2px 2px 4px #ccc;
+	border: 1px solid #DDD;
+    -webkit-box-shadow: 0px 0px 6px #DDD;
+    box-shadow: 0px 0px 6px #DDD;
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -2049,6 +2068,8 @@ input.vmenusearchselectcombo[type=text] {
 #menu_contenu_logo { /* padding-top: 0; */ }
 .companylogo { }
 .searchform { padding-top: 10px; }
+.searchform input { font-size: 16px; }
+
 
 a.vmenu:link, a.vmenu:visited, a.vmenu:hover, a.vmenu:active, span.vmenu { white-space: nowrap; font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; }
 font.vmenudisabled  { font-family: <?php print $fontlist ?>; text-align: <?php print $left; ?>; font-weight: bold; color: #aaa; margin-left: 4px; }
@@ -2385,22 +2406,26 @@ span.butAction, span.butActionDelete {
 	cursor: pointer;
 }
 
+.butAction {
+	background: rgb(230, 236, 230)
+	/* background: rgb(230, 232, 239); */
+}
 .butActionRefused, .butAction, .butAction:link, .butAction:visited, .butAction:hover, .butAction:active, .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active {
 	text-decoration: none;
 	text-transform: uppercase;
     font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em !important;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em !important;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
-    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
     text-align: center;
     cursor: pointer;
     /* color: #fff; */
     /* background: rgb(<?php echo $colorbackhmenu1 ?>); */
-    color: #000;
-    border: 1px solid #aaa;
+    color: #444;
+    /* border: 1px solid #aaa; */
+    /* border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25); */
 
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
@@ -2415,13 +2440,13 @@ span.butAction, span.butActionDelete {
 	margin: 0em 0.3em 0 0.3em !important;
 	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em 0.3em;
 	font-family: <?php print $fontlist ?>;
-    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
     display: inline-block;
-    text-align: center;
+    /* text-align: center; New button are on right of screen */
     cursor: pointer;
     /*color: #fff !important;
     background: rgb(<?php echo $colorbackhmenu1 ?>);
     border: 1px solid rgb(<?php echo $colorbackhmenu1 ?>);*/
+    border-color: rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.15) rgba(0, 0, 0, 0.25);
 
     border-top-right-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
@@ -2437,8 +2462,8 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 }
 
 .butActionDelete, .butActionDelete:link, .butActionDelete:visited, .butActionDelete:hover, .butActionDelete:active, .buttonDelete {
-    /* background: #633; */
-    border: 1px solid #633;
+    background: rgb(239, 232, 230);
+    /* border: 1px solid #633; */
     color: #633;
 }
 
@@ -2454,14 +2479,17 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
     display: inline-block;
     text-align: center;
     cursor: pointer;
     color: #999 !important;
-    border: 1px solid #bbb;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 .butActionNewRefused, .butActionNewRefused:link, .butActionNewRefused:visited, .butActionNewRefused:hover, .butActionNewRefused:active {
 	text-decoration: none !important;
@@ -2474,7 +2502,7 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 	padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
     display: inline-block;
-    text-align: center;
+    /* text-align: center;  New button are on right of screen */
     cursor: pointer;
     color: #999 !important;
     padding-top: 0.2em;
@@ -2732,7 +2760,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #625;
+  	color: rgb(<?php print $colortexttitlenotab; ?>);
   	font-size: 1.2em;
 }
 div.refidno  {
@@ -3162,7 +3190,7 @@ ul.noborder li:nth-child(even):not(.liste_titre) {
 
     background: #f8f8f8;
     border: 1px solid #eee;
-    box-shadow: 1px 1px 6px #bbb;
+    box-shadow: 1px 1px 8px #ddd;
     border-radius: 0px;
 }
 .boxstats, .boxstats130, .boxstatscontent {

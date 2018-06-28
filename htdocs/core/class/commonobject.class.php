@@ -1458,11 +1458,11 @@ abstract class CommonObject
 			if ($trigkey)
 			{
 				// call trigger with updated object values
-				if (empty($this->fields) && method_exists($this, 'fetch')) 
+				if (empty($this->fields) && method_exists($this, 'fetch'))
 				{
 					$result = $this->fetch($id);
-				} 
-				else 
+				}
+				else
 				{
 					$result = $this->fetchCommon($id);
 				}
@@ -3322,7 +3322,14 @@ abstract class CommonObject
 					$langs->load("errors");
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
-					$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+					if (is_numeric($elementname))	// old usage
+					{
+						$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $table);
+					}
+					else	// new usage: $elementname=Translation key
+					{
+						$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+					}
 					break;    // We found at least one, we stop here
 				}
 			}
@@ -6140,6 +6147,7 @@ abstract class CommonObject
 					$labeltoshow = $langs->trans($label);
 
 					$out .= '<td class="titlefield';
+					if (GETPOST('action','none') == 'create') $out.='create';
 					if ($mode != 'view' && ! empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
 					$out .= '">';
 					if (! empty($extrafields->attributes[$object->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$object->table_element]['help'][$key]);

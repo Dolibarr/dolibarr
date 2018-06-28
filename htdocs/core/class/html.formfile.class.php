@@ -1200,7 +1200,7 @@ class FormFile
 					print '</td>';
 
 					// Date
-					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
+					print '<td align="center" width="140px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';	// 140px = width for date with PM format
 
 					// Preview
 					if (empty($useinecm))
@@ -1271,7 +1271,7 @@ class FormFile
 						print '<td class="valignmiddle right actionbuttons"><!-- action on files -->';
 						if ($useinecm == 1)
 						{
-							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
+							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 						if (! $useinecm || $useinecm == 2)
 						{

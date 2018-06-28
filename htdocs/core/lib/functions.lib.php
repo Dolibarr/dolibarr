@@ -293,7 +293,6 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 
 	if (empty($method) || $method == 3 || $method == 4)
 	{
-
 		$relativepathstring = $_SERVER["PHP_SELF"];
 		// Clean $relativepathstring
 		if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
@@ -303,19 +302,30 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 		//var_dump($user->default_values);
 
 		// Code for search criteria persistence.
-		// Retrieve values if restore_lastsearch_values is set and there is saved values
-		if (! empty($_GET['restore_lastsearch_values']) && ! empty($_SESSION['lastsearch_values_'.$relativepathstring]))        // Keep $_GET here
+		// Retrieve values if restore_lastsearch_values
+		if (! empty($_GET['restore_lastsearch_values']))        // Use $_GET here and not GETPOST
 		{
-			$tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
-			if (is_array($tmp))
+			if (! empty($_SESSION['lastsearch_values_'.$relativepathstring]))	// If there is saved values
 			{
-				foreach($tmp as $key => $val)
+				$tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+				if (is_array($tmp))
 				{
-					if ($key == $paramname)
+					foreach($tmp as $key => $val)
 					{
-						$out=$val;
-						break;
+						if ($key == $paramname)	// We are on the requested parameter
+						{
+							$out=$val;
+							break;
+						}
 					}
+				}
+			}
+			if (! empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))	// If there is saved contextpage
+			{
+				if ($paramname == 'contextpage')
+				{
+					$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
+					//var_dump($paramname.' '.$out);
 				}
 			}
 		}
@@ -1387,17 +1397,20 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick"))
 				{
 					$objectref = dol_sanitizeFileName($object->ref);
-					$dir_output = $conf->$modulepart->multidir_output[$entity] . "/";
+					$dir_output = (empty($conf->$modulepart->multidir_output[$entity]) ? $conf->$modulepart->dir_output : $conf->$modulepart->multidir_output[$entity]) . "/";
 					if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
 					{
-						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart).$objectref;		// the objectref dir is not included into get_exdir when used with level=2, so we add it here
+						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart);
+						$subdir.= ((! empty($subdir) && ! preg_match('/\/$/',$subdir))?'/':'').$objectref;		// the objectref dir is not included into get_exdir when used with level=2, so we add it at end
 					}
 					else
 					{
 						$subdir = get_exdir($object->id, 0, 0, 1, $object, $modulepart);
 					}
+					if (empty($subdir)) $subdir = 'errorgettingsubdirofobject';	// Protection to avoid to return empty path
 
 					$filepath = $dir_output . $subdir . "/";
+
 					$file = $filepath . $objectref . ".pdf";
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
 
@@ -4059,10 +4072,6 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		//print "&nbsp;";
-		//$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-		//$sortimg.= '<span class="nowrap">';
-
 		if (! $sortorder || $field1 != $sortfield1)
 		{
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
@@ -4081,8 +4090,6 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 				$sortimg.= '<span class="nowrap">'.img_down("A-Z",0).'</span>';
 			}
 		}
-
-		//$sortimg.= '</span>';
 	}
 
 	$out.=$sortimg;
@@ -5331,7 +5338,9 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
-		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment','contract','expensereport')))
+		//var_dump($modulepart);
+		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
+			'supplier_order','supplier_proposal','shipment','contract','expensereport')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
@@ -5764,6 +5773,7 @@ function dol_textishtml($msg,$option=0)
 		if (preg_match('/<html/i',$msg))				return true;
 		elseif (preg_match('/<body/i',$msg))			return true;
 		elseif (preg_match('/<(b|em|i|u)>/i',$msg))		return true;
+		elseif (preg_match('/<br\/>/i',$msg))	  return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i',$msg)) 	  return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;

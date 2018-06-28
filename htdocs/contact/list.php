@@ -42,6 +42,7 @@ $massaction=GETPOST('massaction','alpha');
 $show_files=GETPOST('show_files','int');
 $confirm=GETPOST('confirm','alpha');
 $toselect = GETPOST('toselect', 'array');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'contactlist';
 
 // Security check
 $id = GETPOST('id','int');
@@ -81,8 +82,8 @@ if ($search_status=='') $search_status=1; // always display activ customer first
 $optioncss = GETPOST('optioncss','alpha');
 
 
-$type=GETPOST("type");
-$view=GETPOST("view");
+$type=GETPOST("type",'aZ');
+$view=GETPOST("view",'alpha');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST('sortfield', 'alpha');
@@ -95,29 +96,28 @@ if (! $sortfield) $sortfield="p.lastname";
 if (empty($page) || $page < 0) { $page = 0; }
 $offset = $limit * $page;
 
-$contextpage='contactlist';
 $titre = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ListOfContacts") : $langs->trans("ListOfContactsAddresses"));
 if ($type == "p")
 {
-	$contextpage='contactprospectlist';
+	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactprospectlist';
 	$titre.='  ('.$langs->trans("ThirdPartyProspects").')';
 	$urlfiche="card.php";
 }
 if ($type == "c")
 {
-	$contextpage='contactcustomerlist';
+	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactcustomerlist';
 	$titre.='  ('.$langs->trans("ThirdPartyCustomers").')';
 	$urlfiche="card.php";
 }
 else if ($type == "f")
 {
-	$contextpage='contactsupplierlist';
+	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactsupplierlist';
 	$titre.=' ('.$langs->trans("ThirdPartySuppliers").')';
 	$urlfiche="card.php";
 }
 else if ($type == "o")
 {
-	$contextpage='contactotherlist';
+	if (empty($contextpage) || $contextpage == 'contactlist') $contextpage='contactotherlist';
 	$titre.=' ('.$langs->trans("OthersNotLinkedToThirdParty").')';
 	$urlfiche="";
 }
@@ -435,6 +435,7 @@ print '<input type="hidden" name="formfilteraction" id="formfilteraction" value=
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="type" value="'.$type.'">';
 print '<input type="hidden" name="view" value="'.dol_escape_htmltag($view).'">';
 
 print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_companies.png', 0, $newcardbutton, '', $limit);
@@ -448,11 +449,11 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 if ($search_firstlast_only)
 {
-	print $langs->trans("FilterOnInto", $search_firstlast_only) . $langs->trans("Lastname").", ".$langs->trans("Firstname");
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_firstlast_only) . $langs->trans("Lastname").", ".$langs->trans("Firstname").'</div>';
 }
 
 $moreforfilter='';

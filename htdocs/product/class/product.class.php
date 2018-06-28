@@ -275,14 +275,10 @@ class Product extends CommonObject
 
     public $fk_price_expression;
 
-	/**
-	 * @deprecated
-	 * @see fourn_pu
-	 */
-	public $buyprice;
+    /* To store supplier price found */
 	public $fourn_pu;
-
 	public $fourn_price_base_type;
+	public $fourn_socid;
 
 	/**
 	 * @deprecated
@@ -1544,6 +1540,7 @@ class Product extends CommonObject
 				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product of supplier
 				$this->fourn_price_base_type = 'HT';                // Price base type
+				$this->fourn_socid = $obj->fk_soc;                  // Company that offer this price
 				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
@@ -1599,6 +1596,7 @@ class Product extends CommonObject
 						$this->fourn_qty = $obj->quantity;					// min quantity for price for a virtual supplier
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product for a virtual supplier
 						$this->fourn_price_base_type = 'HT';                // Price base type for a virtual supplier
+						$this->fourn_socid = $obj->fk_soc;                  // Company that offer this price
 						$this->ref_fourn = $obj->ref_supplier;              // deprecated
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
