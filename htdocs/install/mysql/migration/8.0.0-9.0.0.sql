@@ -29,4 +29,5 @@
 
 
 
+ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
 
