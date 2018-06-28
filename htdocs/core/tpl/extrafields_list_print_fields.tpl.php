@@ -58,10 +58,16 @@ else								// Old method
 				if (in_array($extrafields->attribute_type[$key], array('date', 'datetime', 'timestamp')))
 				{
 					$value = $db->jdate($obj->$tmpkey);
+                                        if(is_a($obj, "Dolresource")){
+                                            $value = $db->jdate($obj->array_options[$tmpkey]);
+                                        }
 				}
 				else
 				{
 					$value = $obj->$tmpkey;
+                                        if(is_a($obj, "Dolresource")){
+                                            $value = $obj->array_options[$tmpkey];
+                                        }
 				}
 				print $extrafields->showOutputField($key, $value, '');
 				print '</td>';
