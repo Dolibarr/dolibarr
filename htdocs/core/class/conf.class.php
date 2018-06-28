@@ -39,6 +39,8 @@ class Conf
 	var $db;
 	//! To store properties found into database
 	var $global;
+	//! To store browser info
+	var $browser;
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;

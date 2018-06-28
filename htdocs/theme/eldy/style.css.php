@@ -890,9 +890,14 @@ div.fiche {
     min-width: 170px;
 }
 .thumbstat, .thumbstat150 {
-    flex-grow: 1;
-    flex-shrink: 0;
+<?php if ($conf->browser->name == 'ie') { ?>
     min-width: 150px;
+    width: 100%;
+    display: inline;
+<?php } else { ?>
+	flex-grow: 1;
+	flex-shrink: 0;
+<?php } ?>
 }
 
 select.selectarrowonleft {
