@@ -242,6 +242,8 @@ if ($resql)
 	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
 	if ($snom)		$param.="&snom=".$snom;
 	if ($sref)		$param.="&sref=".$sref;
+	if ($toolowstock)		$param.="&toolowstock=".$toolowstock;
+	if ($search_categ)		$param.="&search_categ=".$search_categ;
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
