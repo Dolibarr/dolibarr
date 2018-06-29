@@ -182,10 +182,12 @@ class HookManager
 				'printTabsHead',
 				'printObjectLine',
 				'printObjectSubLine',
+				'restrictedArea',
 				'sendMail',
 				'sendMailAfter',
 				'showLinkToObjectBlock',
-				'setContentSecurityPolicy'
+				'setContentSecurityPolicy',
+				'setHtmlTitle'
 				)
 			)) $hooktype='addreplace';
 

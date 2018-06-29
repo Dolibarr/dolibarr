@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("users","admin","other"));
 
 if (! $user->admin)
 	accessforbidden();
@@ -107,8 +106,6 @@ dol_fiche_head($head, 'misc', $langs->trans("Security"), -1);
 
 
 // Other Options
-$var=true;
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
@@ -116,7 +113,6 @@ print '<td align="right" width="100">'.$langs->trans("Status").'</td>';
 print '</tr>';
 
 // Enable Captcha code
-
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
 print '<td align="right">';
@@ -146,7 +142,6 @@ else
 print '</td></tr>';
 
 // Enable advanced perms
-
 print '<tr class="oddeven">';
 print '<td colspan="3">'.$langs->trans("UseAdvancedPerms").'</td>';
 print '<td align="right">';
@@ -174,8 +169,6 @@ print '<br>';
 
 
 // Timeout
-$var=true;
-
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Parameters").'</td>';

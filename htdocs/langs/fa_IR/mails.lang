@@ -11,7 +11,9 @@ MailFrom=فرستنده
 MailErrorsTo=خطاها به
 MailReply=پاسخ به
 MailTo=گیرنده (ها)
+MailToUsers=To user(s)
 MailCC=کپی کنید به
+MailToCCUsers=Copy to users(s)
 MailCCC=نسخه های کش شده به
 MailTopic=موضوع ایمیل
 MailText=پیام
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=اطلاعات
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

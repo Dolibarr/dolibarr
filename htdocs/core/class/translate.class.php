@@ -542,7 +542,7 @@ class Translate
 	 */
 	private function getTradFromKey($key)
 	{
-		global $db;
+		global $conf, $db;
 
 		if (! is_string($key)) return 'ErrorBadValueForParamNotAString';	// Avoid multiple errors with code not using function correctly.
 
@@ -576,6 +576,9 @@ class Translate
         	// TODO OrderSourceX must be replaced with content of table llx_c_input_reason or llx_c_input_method
             //$newstr=$this->getLabelFromKey($db,$reg[1],'c_ordersource','code','label');
         }
+
+        if (! empty($conf->global->MAIN_FEATURES_LEVEL) && $conf->global->MAIN_FEATURES_LEVEL >= 2) dol_syslog(__METHOD__." missing translation for key '".$newstr."' in ".$_SERVER["PHP_SELF"], LOG_DEBUG);
+
         return $newstr;
 	}
 

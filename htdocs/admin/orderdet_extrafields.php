@@ -35,9 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (!$user->admin)
 	accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadlangs(array('admin', 'other', 'orders'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -76,7 +75,7 @@ print "<br>\n";
 
 $head = order_admin_prepare_head();
 
-dol_fiche_head($head, 'attributeslines', $langs->trans("OrderLines"), -1, 'order');
+dol_fiche_head($head, 'attributeslines', $langs->trans("Orders"), -1, 'order');
 
 require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_view.tpl.php';
 

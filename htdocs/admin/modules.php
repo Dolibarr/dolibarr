@@ -34,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/admin/dolistore/class/dolistore.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","modulebuilder"));
 
 $mode=GETPOST('mode', 'alpha');
@@ -78,10 +79,13 @@ $familyinfo=array(
 );
 
 $param='';
-if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
-if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
-if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
-if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+if (! GETPOST('buttonreset','alpha'))
+{
+	if ($search_keyword) $param.='&search_keyword='.urlencode($search_keyword);
+	if ($search_status && $search_status != '-1')  $param.='&search_status='.urlencode($search_status);
+	if ($search_nature && $search_nature != '-1')  $param.='&search_nature='.urlencode($search_nature);
+	if ($search_version && $search_version != '-1') $param.='&search_version='.urlencode($search_version);
+}
 
 $dirins=DOL_DOCUMENT_ROOT.'/custom';
 $urldolibarrmodules='https://www.dolistore.com/';

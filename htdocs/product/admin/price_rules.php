@@ -23,8 +23,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 
-$langs->load("admin");
-$langs->load("products");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'products'));
 
 // Security check
 if (! $user->admin || (empty($conf->product->enabled) && empty($conf->service->enabled)))

@@ -30,9 +30,8 @@ require '../main.inc.php';
 if (! $user->rights->user->user->lire && ! $user->admin)
 	accessforbidden();
 
-$langs->load("users");
-$langs->load("companies");
-$langs->load('hrm');
+	// Load translation files required by page
+$langs->loadLangs(array('users', 'companies', 'hrm'));
 
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'userlist';   // To manage different context of search
 
@@ -277,7 +276,7 @@ $text = $langs->trans("ListOfUsers");
 $newcardbutton='';
 if ($canadduser)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu=">'.$langs->trans('NewUser');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/user/card.php?action=create'.($mode == 'employee' ? '&employee=1': '').'&leftmenu="><span class="valignmiddle">'.$langs->trans('NewUser').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -299,7 +298,7 @@ print_barre_liste($text, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sorto
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter='';

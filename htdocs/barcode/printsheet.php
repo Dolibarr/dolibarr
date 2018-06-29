@@ -28,9 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/printsheet/modules_labels.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 
-$langs->load("admin");
-$langs->load("members");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'members', 'errors'));
 
 // Choice of print year or current year.
 $now = dol_now();

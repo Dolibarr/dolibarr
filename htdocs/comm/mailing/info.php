@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 
 $id=GETPOST('id');
 
+// Load translation files required by the page
 $langs->load("mails");
 
 // Security check

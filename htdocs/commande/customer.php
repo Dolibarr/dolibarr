@@ -42,8 +42,8 @@ if ($user->societe_id > 0)
 if (! $user->rights->facture->creer)
 accessforbidden();
 
-$langs->load("companies");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "orders"));
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -155,13 +155,9 @@ if ($resql)
 
 	print "</tr>\n";
 
-	$var=true;
-
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-
-
 
 		print '<tr class="oddeven">';
 		print '<td>';

@@ -36,9 +36,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-
-$langs->load('companies');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other'));
 
 $action		= GETPOST('action','aZ09');
 $confirm	= GETPOST('confirm');

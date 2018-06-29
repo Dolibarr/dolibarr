@@ -27,6 +27,7 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/report.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('compta','bills','donation','salaries'));
 
 $date_startmonth=GETPOST('date_startmonth');
@@ -114,9 +115,9 @@ $form=new Form($db);
 // Affiche en-tete du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-	$name=$langs->trans("SalesTurnover");
+	$name=$langs->trans("Turnover");
 	$calcmode=$langs->trans("CalcModeDebt");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
@@ -128,10 +129,10 @@ if ($modecompta=="CREANCES-DETTES")
 }
 else if ($modecompta=="RECETTES-DEPENSES")
 {
-	$name=$langs->trans("SalesTurnover");
+	$name=$langs->trans("TurnoverCollected");
 	$calcmode=$langs->trans("CalcModeEngagement");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPINGCOLLECTED">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCAIn");
@@ -141,10 +142,10 @@ else if ($modecompta=="RECETTES-DEPENSES")
 }
 else if ($modecompta=="BOOKKEEPING")
 {
-	$name=$langs->trans("SalesTurnover");
+	$name=$langs->trans("Turnover");
 	$calcmode=$langs->trans("CalcModeBookkeeping");
 	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
 	$description=$langs->trans("RulesCATotalSaleJournal");
@@ -565,7 +566,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r?gl? des factures partiellement r?gl?es</td></tr>";
+ print "<tr class="oddeven"><td align=\"right\" colspan=\"5\"><i>Facture a encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"5\"><-- bug ici car n'exclut pas le deja r?gl? des factures partiellement r?gl?es</td></tr>";
  }
  $db->free($resql);
  }
@@ -614,7 +615,7 @@ print '</div>';
  $i++;
  }
 
- print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
+ print "<tr class="oddeven"><td align=\"right\" colspan=\"5\"><i>Signe et non facture:</i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"5\"><-- bug ici, ca devrait exclure le deja facture</td></tr>";
  }
  $db->free($resql);
  }
@@ -622,7 +623,7 @@ print '</div>';
  {
  dol_print_error($db);
  }
- print "<tr ".$bc[$var]."><td align=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
+ print "<tr class="oddeven"><td align=\"right\" colspan=\"5\"><i>Total CA previsionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\"><-- bug ici car bug sur les 2 precedents</td></tr>";
  }
  print "</table>";
 

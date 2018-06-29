@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Regnskab
 ACCOUNTING_EXPORT_SEPARATORCSV=Kolonneseparator for eksportfil
 ACCOUNTING_EXPORT_DATE=Datoformat for eksportfil
 ACCOUNTING_EXPORT_PIECE=Export the number of piece
@@ -39,11 +40,11 @@ AccountWithNonZeroValues=Konti med ikke-nul-værdier
 ListOfAccounts=Liste over konti
 
 MainAccountForCustomersNotDefined=Standardkonto for kunder, der ikke er defineret i opsætningen
-MainAccountForSuppliersNotDefined=Standardkonto for leverandører, der ikke er defineret i opsætningen
+MainAccountForSuppliersNotDefined=Main accounting account for vendors not defined in setup
 MainAccountForUsersNotDefined=Standardkonto for brugere, der ikke er defineret i opsætningen
 MainAccountForVatPaymentNotDefined=Standardkonto for momsbetaling ikke defineret i opsætningen
 
-AccountancyArea=Regnskab
+AccountancyArea=Accounting area
 AccountancyAreaDescIntro=Brugen af regnskabsmodulet sker i følgende trin:
 AccountancyAreaDescActionOnce=Følgende handlinger udføres normalt kun én gang eller en gang om året ...
 AccountancyAreaDescActionOnceBis=Næste skridt skal gøres for at spare tid i fremtiden, så den korrekte standardregnskabskonto foreslås, når du bogfører (skrivning i kladder og hovedbog)
@@ -89,7 +90,7 @@ MenuProductsAccounts=Varekonti
 ProductsBinding=Varekonti
 Ventilation=Bind til konto
 CustomersVentilation=Bind kundefaktura
-SuppliersVentilation=Bind leverandørfaktura
+SuppliersVentilation=Vendor invoice binding
 ExpenseReportsVentilation=Bind udgiftsrapport
 CreateMvts=Opret ny transaktion
 UpdateMvts=Rediger en transaktion
@@ -136,6 +137,7 @@ ACCOUNTING_PURCHASE_JOURNAL=Indkøbskladde
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diversekladde
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Udgiftskladde
 ACCOUNTING_SOCIAL_JOURNAL=Kladde for skat/afgift
+ACCOUNTING_HAS_NEW_JOURNAL=Has new Journal
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Regnskabskonto for overførsel
 ACCOUNTING_ACCOUNT_SUSPENSE=Regnskabskonto for afventning
@@ -185,11 +187,12 @@ ListeMvts=Liste over bevægelser
 ErrorDebitCredit=Debet og kredit kan ikke have en værdi på samme tid
 AddCompteFromBK=Tilføj regnskabskonto til gruppen
 ReportThirdParty=Liste over tredjepartskonto
-DescThirdPartyReport=Her findes listen over tredjepartskunder, leverandører og deres regnskabskonti
+DescThirdPartyReport=Consult here the list of the third party customers and vendors and their accounting accounts
 ListAccounts=Liste over regnskabskonti
 UnknownAccountForThirdparty=Ukendt tredjepartskonto. Vi vil bruge %s
 UnknownAccountForThirdpartyBlocking=Ukendt tredjepartskonto. Blokerende fejl
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Ukendt tredjepartskonto og ventekonto ikke defineret. Blokeringsfejl
+PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Kontoens gruppe
 Pcgsubtype=Kontoens undergruppe
@@ -204,8 +207,8 @@ DescVentilDoneCustomer=Her findes list over fakturalinjer bundet til kunder og d
 DescVentilTodoCustomer=Bind fakturaer, der ikke allerede er bundet til en varekonto
 ChangeAccount=Skift regnskabskonto for vare/ydelse for valgte linjer med følgende regnskabskonto:
 Vide=-
-DescVentilSupplier=Her findes listen over leverandørfakturalinjer, der er bundet eller endnu ikke bundet til en varekonto
-DescVentilDoneSupplier=Gå til en liste over de linjer af fakturaer leverandør og deres regnskabskonto
+DescVentilSupplier=Consult here the list of vendor invoice lines bound or not yet bound to a product accounting account
+DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=Bind udgiftsrapportlinjer, der ikke allerede er bundet, til en gebyrkonto
 DescVentilExpenseReport=Her vises listen over udgiftsrapporter linjer bundet (eller ej) til en gebyrkonto
 DescVentilExpenseReportMore=Hvis du angiver en regnskabskonto for typen af linjer i udgiftsrapporter, kan systemet udføre bindingen mellem linjerne i din udgiftsrapport og kontoen fra kontoplanen med bare et enkelt klik på knappen <strong>"%s"</strong>. Hvis en linje ikke kunne tilknyttes en konto automatisk, bliver du nødt til at binde manuelt fra menuen "<strong>%s</strong>".
@@ -215,7 +218,7 @@ ValidateHistory=Bind automatisk
 AutomaticBindingDone=Automatisk bundet
 
 ErrorAccountancyCodeIsAlreadyUse=Fejl. Du kan ikke slette denne regnskabskonto, fordi den er i brug
-MvtNotCorrectlyBalanced=Bevægelsen er ikke korrekt afstemt. Kredit = %s. Debet = %s
+MvtNotCorrectlyBalanced=Movement not correctly balanced. Debit = %s | Credit = %s
 FicheVentilation=Oversigt over bindinger
 GeneralLedgerIsWritten=Transaktionerne er blevet bogført
 GeneralLedgerSomeRecordWasNotRecorded=Some of the transactions could not be journalized. If there is no other error message, this is probably because they were already journalized.
@@ -293,4 +296,9 @@ Binded=Bundne linjer
 ToBind=Ubundne linjer
 UseMenuToSetBindindManualy=Auto detektion ikke muligt, brug menuen <a href="%s"> %s </a> for at gøre bogføringen manuelt
 
+## Import
+ImportAccountingEntries=Accounting entries
+
 WarningReportNotReliable=Advarsel, denne rapport er ikke baseret på hovedbogen, så den indeholder ikke transaktioner der er ændret manuelt i hovedbogen. Hvis din kladde er opdateret, bliver bogføringsoversigten mere retvisende.
+ExpenseReportJournal=Expense Report Journal
+InventoryJournal=Inventory Journal

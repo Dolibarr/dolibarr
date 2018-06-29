@@ -84,7 +84,8 @@ class AccountingAccount extends CommonObject
 	 * @param 	int 	$limittocurrentchart   1=Do not load record if it is into another accounting system
 	 * @return 	int                            <0 if KO, 0 if not found, Id of record if OK and found
 	 */
-	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0) {
+	function fetch($rowid = null, $account_number = null, $limittocurrentchart = 0)
+	{
 		global $conf;
 
 		if ($rowid || $account_number) {
@@ -96,10 +97,10 @@ class AccountingAccount extends CommonObject
 			if ($rowid) {
 				$sql .= " a.rowid = '" . $rowid . "'";
 			} elseif ($account_number) {
-				$sql .= " a.account_number = '" . $account_number . "'";
+				$sql .= " a.account_number = '" . $this->db->escape($account_number) . "'";
 			}
 			if (! empty($limittocurrentchart)) {
-				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
+				$sql .= ' AND a.fk_pcg_version IN (SELECT pcg_version FROM ' . MAIN_DB_PREFIX . 'accounting_system WHERE rowid=' . $this->db->escape($conf->global->CHARTOFACCOUNTS) . ')';
 			}
 
 			dol_syslog(get_class($this) . "::fetch sql=" . $sql, LOG_DEBUG);
@@ -201,9 +202,9 @@ class AccountingAccount extends CommonObject
 		$sql .= ", " . (empty($this->pcg_type) ? 'NULL' : "'" . $this->db->escape($this->pcg_type) . "'");
 		$sql .= ", " . (empty($this->pcg_subtype) ? 'NULL' : "'" . $this->db->escape($this->pcg_subtype) . "'");
 		$sql .= ", " . (empty($this->account_number) ? 'NULL' : "'" . $this->db->escape($this->account_number) . "'");
-		$sql .= ", " . (empty($this->account_parent) ? 'NULL' : "'" . $this->db->escape($this->account_parent) . "'");
+		$sql .= ", " . (empty($this->account_parent) ? '0' : "'" . $this->db->escape($this->account_parent) . "'");
 		$sql .= ", " . (empty($this->label) ? 'NULL' : "'" . $this->db->escape($this->label) . "'");
-		$sql .= ", " . (empty($this->account_category) ? 'NULL' : "'" . $this->db->escape($this->account_category) . "'");
+		$sql .= ", " . (empty($this->account_category) ? 0 : $this->db->escape($this->account_category));
 		$sql .= ", " . $user->id;
 		$sql .= ", " . (! isset($this->active) ? 'NULL' : $this->db->escape($this->active));
 		$sql .= ")";
@@ -274,7 +275,7 @@ class AccountingAccount extends CommonObject
 		$sql .= " , account_number = '" . $this->db->escape($this->account_number) . "'";
 		$sql .= " , account_parent = '" . $this->db->escape($this->account_parent) . "'";
 		$sql .= " , label = " . ($this->label ? "'" . $this->db->escape($this->label) . "'" : "null");
-		$sql .= " , fk_accounting_category = '" . $this->db->escape($this->account_category) . "'";
+		$sql .= " , fk_accounting_category = " . (empty($this->account_category) ? 0 : $this->db->escape($this->account_category));
 		$sql .= " , fk_user_modif = " . $user->id;
 		$sql .= " , active = " . $this->active;
 		$sql .= " WHERE rowid = " . $this->id;

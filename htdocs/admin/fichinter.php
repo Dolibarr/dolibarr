@@ -34,10 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load("interventions");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors', 'interventions', 'other'));
 
 if (! $user->admin) accessforbidden();
 

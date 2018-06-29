@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/mailmanspip.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("admin");
-$langs->load("members");
-$langs->load("mailmanspip");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "members", "mailmanspip"));
 
 if (! $user->admin) accessforbidden();
 
@@ -117,8 +116,6 @@ print load_fiche_titre($langs->trans("MailmanSpipSetup"),$linkback,'title_setup'
 
 $head = mailmanspip_admin_prepare_head();
 
-
-$var=true;
 
 /*
  * Spip

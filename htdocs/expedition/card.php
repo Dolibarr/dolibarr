@@ -52,6 +52,7 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("sendings","companies","bills",'deliveries','orders','stocks','other','propal'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
@@ -122,6 +123,11 @@ if (empty($reshook))
 	}
 
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';		// Must be include, not include_once
+
+	// Actions to build doc
+	$upload_dir = $conf->expedition->dir_output.'/sending';
+	$permissioncreate = $user->rights->expedition->creer;
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 
 	// Reopen
 	if ($action == 'reopen' && $user->rights->expedition->creer)
@@ -497,12 +503,16 @@ if (empty($reshook))
 	}
 
 	// Action update
-	else if ($action == 'settracking_number' || $action == 'settracking_url'
-	|| $action == 'settrueWeight'
-	|| $action == 'settrueWidth'
-	|| $action == 'settrueHeight'
-	|| $action == 'settrueDepth'
-	|| $action == 'setshipping_method_id')
+	else if (
+		($action == 'settracking_number' 
+		|| $action == 'settracking_url'
+		|| $action == 'settrueWeight'
+		|| $action == 'settrueWidth'
+		|| $action == 'settrueHeight'
+		|| $action == 'settrueDepth'
+		|| $action == 'setshipping_method_id')
+		&& $user->rights->expedition->creer
+		)
 	{
 	    $error=0;
 
@@ -531,42 +541,6 @@ if (empty($reshook))
 	    }
 
 	    $action="";
-	}
-
-	// Build document
-	else if ($action == 'builddoc')	// En get ou en post
-	{
-		// Save last template used to generate document
-		if (GETPOST('model')) $object->setDocModel($user, GETPOST('model','alpha'));
-
-	    // Define output language
-	    $outputlangs = $langs;
-	    $newlang='';
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
-	    if ($conf->global->MAIN_MULTILANGS && empty($newlang)) $newlang=$shipment->thirdparty->default_lang;
-	    if (! empty($newlang))
-	    {
-	        $outputlangs = new Translate("",$conf);
-	        $outputlangs->setDefaultLang($newlang);
-	    }
-		$result = $object->generateDocument($object->modelpdf, $outputlangs, $hidedetails, $hidedesc, $hideref);
-	    if ($result <= 0)
-	    {
-			setEventMessages($object->error, $object->errors, 'errors');
-	        $action='';
-	    }
-	}
-
-	// Delete file in doc form
-	elseif ($action == 'remove_file')
-	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
-
-		$upload_dir =	$conf->expedition->dir_output . "/sending";
-		$file =	$upload_dir	. '/' .	GETPOST('file');
-		$ret=dol_delete_file($file,0,0,0,$object);
-		if ($ret) setEventMessages($langs->trans("FileWasRemoved", GETPOST('urlfile')), null, 'mesgs');
-		else setEventMessages($langs->trans("ErrorFailToDeleteFile", GETPOST('urlfile')), null, 'errors');
 	}
 
 	elseif ($action == 'classifybilled')
@@ -1158,7 +1132,6 @@ if ($action == 'create')
                 print "</tr>\n";
             }
 
-            $var=true;
             $indiceAsked = 0;
             while ($indiceAsked < $numAsked)
             {

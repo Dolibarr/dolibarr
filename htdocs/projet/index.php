@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $search_project_user = GETPOST('search_project_user','int');
 $mine = GETPOST('mode','aZ09')=='mine' ? 1 : 0;
@@ -266,7 +265,6 @@ if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$soci
 $sql.= " GROUP BY s.nom, s.rowid";
 $sql.= $db->order($sortfield, $sortorder);
 
-$var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -290,7 +288,10 @@ if ( $resql )
 			print $langs->trans("OthersNotLinkedToThirdParty");
 		}
 		print '</td>';
-		print '<td align="right"><a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a></td>';
+		print '<td align="right">';
+		if ($obj->socid) print '<a href="'.DOL_URL_ROOT.'/projet/list.php?socid='.$obj->socid.'&search_status=1">'.$obj->nb.'</a>';
+		else print '<a href="'.DOL_URL_ROOT.'/projet/list.php?search_societe='.urlencode('^$').'&search_status=1">'.$obj->nb.'</a>';
+		print '</td>';
 		print "</tr>\n";
 
 		$i++;

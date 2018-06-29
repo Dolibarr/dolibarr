@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("banks","categories","companies","bills","trips"));
 
 $action=GETPOST('action', 'alpha');

@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadlangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST("ref",'alpha',1);          // task ref
@@ -611,8 +611,6 @@ if ($id > 0 || ! empty($ref))
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed=($user->rights->projet->lire);
 			$delallowed=($user->rights->projet->creer);
-
-			$var=true;
 
 			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 

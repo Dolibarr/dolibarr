@@ -27,12 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("mails");
-$langs->load("other");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
 
 $action=GETPOST('action','alpha');
 
@@ -260,13 +256,11 @@ if ($action == 'edit')
 
 
 	clearstatcache();
-	$var=true;
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>';
 	print $form->selectyesno('MAIN_DISABLE_ALL_MAILS',$conf->global->MAIN_DISABLE_ALL_MAILS,1);
 	print '</td></tr>';
@@ -283,11 +277,9 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// Separator
-
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 
 	// SuperAdministrator access only
@@ -338,7 +330,6 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	// Port
-
 	print '<tr class="oddeven"><td>';
 	if (! $conf->use_javascript_ajax && $linuxlike && $conf->global->MAIN_MAIL_SENDMODE == 'mail')
 	{
@@ -411,7 +402,6 @@ if ($action == 'edit')
 	}
 
     // TLS
-
     print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (! empty($conf->use_javascript_ajax) || (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer'))))
 	{
@@ -469,7 +459,6 @@ if ($action == 'edit')
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_EMAIL_FROM" size="32" value="' . (! empty($conf->global->MAIN_MAIL_EMAIL_FROM)?$conf->global->MAIN_MAIL_EMAIL_FROM:'');
 	print '"></td></tr>';
@@ -497,22 +486,19 @@ if ($action == 'edit')
 	}
 	else dol_print_error($db);*/
 
-	print '<tr '.$bc[$var?1:0].'><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
+	print '<tr class="oddeven"><td>'.$langs->trans('MAIN_MAIL_DEFAULT_FROMTYPE').'</td><td>';
 	print $form->selectarray('MAIN_MAIL_DEFAULT_FROMTYPE', $liste, $conf->global->MAIN_MAIL_DEFAULT_FROMTYPE, 0);
 	print '</td></tr>';
 
 	// Separator
-
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_ERRORS_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_ERRORS_TO)?$conf->global->MAIN_MAIL_ERRORS_TO:'');
 	print '"></td></tr>';
 
 	// Autocopy to
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td><input class="flat" name="MAIN_MAIL_AUTOCOPY_TO" size="32" value="' . (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO)?$conf->global->MAIN_MAIL_AUTOCOPY_TO:'');
 	print '"></td></tr>';
@@ -536,14 +522,10 @@ else
 	print $langs->trans("EMailsDesc")."<br>\n";
 	print "<br>\n";
 
-
-	$var=true;
-
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
 	// Disable
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
 
 	// Force e-mail recipient
@@ -555,11 +537,9 @@ else
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ENABLED_USER_DEST_SELECT").'</td><td>'.yn($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT).'</td></tr>';
 
 	// Separator
-
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Method
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SENDMODE").'</td><td>';
 	$text=$listofmethods[$conf->global->MAIN_MAIL_SENDMODE];
 	if (empty($text)) $text=$langs->trans("Undefined").img_warning();
@@ -567,7 +547,6 @@ else
 	print '</td></tr>';
 
 	// Host server
-
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_SERVER_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
@@ -578,7 +557,6 @@ else
 	}
 
 	// Port
-
 	if ($linuxlike && (isset($conf->global->MAIN_MAIL_SENDMODE) && $conf->global->MAIN_MAIL_SENDMODE == 'mail'))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTP_PORT_NotAvailableOnLinuxLike").'</td><td><span class="opacitymedium">'.$langs->trans("SeeLocalSendMailSetup").'</span></td></tr>';
@@ -589,21 +567,18 @@ else
 	}
 
 	// SMTPS ID
-
 	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>'.$conf->global->MAIN_MAIL_SMTPS_ID.'</td></tr>';
 	}
 
 	// SMTPS PW
-
 	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>'.preg_replace('/./','*',$conf->global->MAIN_MAIL_SMTPS_PW).'</td></tr>';
 	}
 
 	// TLS
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_TLS").'</td><td>';
 	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
@@ -617,7 +592,6 @@ else
 	print '</td></tr>';
 
 	// STARTTLS
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_STARTTLS").'</td><td>';
 	if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('smtps', 'swiftmailer')))
 	{
@@ -634,7 +608,6 @@ else
 	if ($conf->global->MAIN_MAIL_SENDMODE == 'swiftmailer')
 	{
 		// DKIM
-
 		print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_DKIM_ENABLED").'</td><td>';
 		if (isset($conf->global->MAIN_MAIL_SENDMODE) && in_array($conf->global->MAIN_MAIL_SENDMODE, array('swiftmailer')))
 		{
@@ -664,11 +637,9 @@ else
 	}
 
     // Separator
-
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// From
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_EMAIL_FROM",ini_get('sendmail_from')?ini_get('sendmail_from'):$langs->transnoentities("Undefined")).'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_EMAIL_FROM;
 	if (! empty($conf->global->MAIN_MAIL_EMAIL_FROM) && ! isValidEmail($conf->global->MAIN_MAIL_EMAIL_FROM)) print img_warning($langs->trans("ErrorBadEMail"));
@@ -723,18 +694,15 @@ else
 	print '</td></tr>';
 
 	// Separator
-
 	print '<tr class="oddeven"><td colspan="2">&nbsp;</td></tr>';
 
 	// Errors To
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_ERRORS_TO").'</td>';
 	print '<td>'.$conf->global->MAIN_MAIL_ERRORS_TO;
 	if (! empty($conf->global->MAIN_MAIL_ERRORS_TO) && ! isValidEmail($conf->global->MAIN_MAIL_ERRORS_TO)) print img_warning($langs->trans("ErrorBadEMail"));
 	print '</td></tr>';
 
 	// Autocopy to
-
 	print '<tr class="oddeven"><td>'.$langs->trans("MAIN_MAIL_AUTOCOPY_TO").'</td>';
 	print '<td>';
 	if (! empty($conf->global->MAIN_MAIL_AUTOCOPY_TO))

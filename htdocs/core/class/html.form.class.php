@@ -16,6 +16,7 @@
  * Copyright (C) 2012       Cedric Salvador         <csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2015  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014       Alexandre Spangaro      <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2018       Ferran Marcet           <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1051,7 +1052,7 @@ class Form
 	 *
 	 *	@param	string	$selected       Preselected type
 	 *	@param  string	$htmlname       Name of field in form
-	 *  @param  string	$filter         optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
+	 *  @param  string	$filter         Optional filters criteras (example: 's.rowid <> x', 's.client in (1,3)')
 	 *	@param	string	$showempty		Add an empty field (Can be '1' or text to use on empty line like 'SelectThirdParty')
 	 * 	@param	int		$showtype		Show third party type in combolist (customer, prospect or supplier)
 	 * 	@param	int		$forcecombo		Force to use standard HTML select component without beautification
@@ -1070,6 +1071,9 @@ class Form
 		$out='';
 		$num=0;
 		$outarray=array();
+
+		// Clean $filter that may contains sql conditions so sql code
+		if (function_exists('test_sql_and_script_inject')) $filter = test_sql_and_script_inject($filter, 3);
 
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
@@ -1436,12 +1440,12 @@ class Form
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array	$include        Array list of users id to include
 	 * 	@param	int		$enableonly		Array list of users id to be enabled. All other must be disabled
-	 *  @param	int		$force_entity	0 or Id of environment to force
+	 *  @param	string	$force_entity	'0' or Ids of environment to force
 	 * 	@return	void
 	 *  @deprecated		Use select_dolusers instead
 	 *  @see select_dolusers()
 	 */
-	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude=null,$disabled=0,$include='',$enableonly='',$force_entity=0)
+	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude=null,$disabled=0,$include='',$enableonly='',$force_entity='0')
 	{
 		print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
 	}
@@ -1456,7 +1460,7 @@ class Form
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array|string	$include        Array list of users id to include or 'hierarchy' to have only supervised users or 'hierarchyme' to have supervised + me
 	 * 	@param	array	$enableonly		Array list of users id to be enabled. If defined, it means that others will be disabled
-	 *  @param	int		$force_entity	0 or Id of environment to force
+	 *  @param	string	$force_entity	'0' or Ids of environment to force
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 *  @param	string	$morefilter		Add more filters into sql request (Example: 'employee = 1')
@@ -1468,7 +1472,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0, $outputmode=0)
+	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity='0', $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0, $outputmode=0)
 	{
 		global $conf,$user,$langs;
 
@@ -1605,13 +1609,13 @@ class Form
 					}
 					if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
 					{
-						if ($obj->admin && ! $obj->entity)
+						if (! $obj->entity)
 						{
 							$out.=($moreinfo?' - ':' (').$langs->trans("AllEntities");
 							$moreinfo++;
 						}
 						else
-					 {
+						{
 							$out.=($moreinfo?' - ':' (').($obj->label?$obj->label:$langs->trans("EntityNameNotDefined"));
 							$moreinfo++;
 					 	}
@@ -1655,7 +1659,7 @@ class Form
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  array	$include        Array list of users id to include or 'hierarchy' to have only supervised users
 	 * 	@param	array	$enableonly		Array list of users id to be enabled. All other must be disabled
-	 *  @param	int		$force_entity	0 or Id of environment to force
+	 *  @param	int		$force_entity	'0' or Ids of environment to force
 	 *  @param	int		$maxlength		Maximum length of string into list (0=no limit)
 	 *  @param	int		$showstatus		0=show user status only if status is disabled, 1=always show user status into label, -1=never show user status
 	 *  @param	string	$morefilter		Add more filters into sql request
@@ -1666,7 +1670,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
-	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity=0, $maxlength=0, $showstatus=0, $morefilter='', $showproperties=0, $listofuserid=array(), $listofcontactid=array(), $listofotherid=array())
+	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity='0', $maxlength=0, $showstatus=0, $morefilter='', $showproperties=0, $listofuserid=array(), $listofcontactid=array(), $listofotherid=array())
 	{
 		global $conf, $user, $langs;
 
@@ -1942,7 +1946,7 @@ class Form
 			$selectFields.= ", label_translated";
 		}
 		// Price by quantity
-		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 		{
 			$sql.= ", (SELECT pp.rowid FROM ".MAIN_DB_PREFIX."product_price as pp WHERE pp.fk_product = p.rowid";
 			if ($price_level >= 1 && !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $sql.= " AND price_level=".$price_level;
@@ -2063,7 +2067,7 @@ class Form
 				$optJson = array();
 				$objp = $this->db->fetch_object($result);
 
-				if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
+				if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !empty($objp->price_by_qty) && $objp->price_by_qty == 1)
 				{ // Price by quantity will return many prices for the same product
 					$sql = "SELECT rowid, quantity, price, unitprice, remise_percent, remise, price_base_type";
 					$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -2212,7 +2216,8 @@ class Form
 		$found=0;
 
 		// Multiprice
-		if (empty($hidepriceinlabel) && $price_level >= 1 && $conf->global->PRODUIT_MULTIPRICES)		// If we need a particular price level (from 1 to 6)
+		// If we need a particular price level (from 1 to 6)
+		if (empty($hidepriceinlabel) && $price_level >= 1 && (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)))
 		{
 			$sql = "SELECT price, price_ttc, price_base_type, tva_tx";
 			$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
@@ -2253,7 +2258,7 @@ class Form
 		}
 
 		// Price by quantity
-		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY))
+		if (empty($hidepriceinlabel) && !empty($objp->quantity) && $objp->quantity >= 1 && (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY) || !empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)))
 		{
 			$found = 1;
 			$outqty=$objp->quantity;
@@ -2649,7 +2654,7 @@ class Form
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
-		$sql.= " WHERE p.entity IN (".getEntity('productprice').")";
+		$sql.= " WHERE pfp.entity IN (".getEntity('productprice').")";
 		$sql.= " AND p.tobuy = 1";
 		$sql.= " AND s.fournisseur = 1";
 		$sql.= " AND p.rowid = ".$productid;
@@ -2903,7 +2908,7 @@ class Form
 
 		dol_syslog(__METHOD__." selected=".$selected.", htmlname=".$htmlname, LOG_DEBUG);
 
-		print '<select class="flat" name="'.$htmlname.'">';
+		print '<select id="'.$htmlname.'" class="flat" name="'.$htmlname.'">';
 		if ($addempty) print '<option value="0">&nbsp;</option>';
 		foreach($this->cache_availability as $id => $arrayavailability)
 		{
@@ -3793,7 +3798,7 @@ class Form
                          		    if ($("#" + inputname).attr("type") == "radio") { more = ":checked"; }
                          			var inputvalue = $("#" + inputname + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + inputvalue;
+                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
                          	var urljump = pageyes + (pageyes.indexOf("?") < 0 ? "?" : "") + options;
@@ -3811,7 +3816,7 @@ class Form
                          			if ($("#" + inputname).attr("type") == "checkbox") { more = ":checked"; }
                          			var inputvalue = $("#" + inputname + more).val();
                          			if (typeof inputvalue == "undefined") { inputvalue=""; }
-                         			options += "&" + inputname + "=" + inputvalue;
+                         			options += "&" + inputname + "=" + encodeURIComponent(inputvalue);
                          		});
                          	}
                          	var urljump=pageno + (pageno.indexOf("?") < 0 ? "?" : "") + options;
@@ -4774,7 +4779,7 @@ class Form
 	 *            	- local date in user area, if set_time is '' (so if set_time is '', output may differs when done from two different location)
 	 *            	- Empty (fields empty), if set_time is -1 (in this case, parameter empty must also have value 1)
 	 *
-	 *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date (emptydate must be 0).
+	 *	@param	timestamp	$set_time 		Pre-selected date (must be a local PHP server timestamp), -1 to keep date not preselected, '' to use current date with 00:00 hour (Parameter 'empty' must be 0 or 2).
 	 *	@param	string		$prefix			Prefix for fields name
 	 *	@param	int			$h				1 or 2=Show also hours (2=hours on a new line), -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show hour always empty
 	 *	@param	int			$m				1=Show also minutes, -1 has same effect but hour and minutes are prefilled with 23:59 if date is empty, 3 show minutes always empty
@@ -4812,7 +4817,7 @@ class Form
 		}
 
 		// Analysis of the pre-selection date
-		if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))
+		if (preg_match('/^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?/',$set_time,$reg))	// deprecated usage
 		{
 			// Date format 'YYYY-MM-DD' or 'YYYY-MM-DD HH:MM:SS'
 			$syear	= (! empty($reg[1])?$reg[1]:'');
@@ -5541,7 +5546,7 @@ class Form
 
 
 	/**
-	 *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
+	 *	Return a HTML select string, built from an array of key+value, but content returned into select come from an Ajax call of an URL.
 	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
 	 *	@param	string	$htmlname       		Name of html select area
@@ -5556,7 +5561,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
-	 *  @see ajax_combobox in ajax.lib.php
+	 *  @see selectArrayFilter, ajax_combobox in ajax.lib.php
 	 */
 	static function selectArrayAjax($htmlname, $url, $id='', $moreparam='', $moreparamtourl='', $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
 	{
@@ -5617,7 +5622,7 @@ class Form
                 /* Code to execute a GET when we select a value */
                 $(".'.$htmlname.'").change(function() {
 			    	var selected = $(".'.$htmlname.'").val();
-                	console.log("We select "+selected)
+                	console.log("We select in selectArrayAjax the entry "+selected)
 			        $(".'.$htmlname.'").val("");  /* reset visible combo value */
     			    $.each( saveRemoteData, function( key, value ) {
     				        if (key == selected)
@@ -5643,7 +5648,7 @@ class Form
 	}
 
 	/**
-	 *	Return a HTML select string, built from an array of key+value but content returned into select come from an Ajax call of an URL.
+	 *	Return a HTML select string, built from an array of key+value, but content returned into select is defined into $array parameter.
 	 *  Note: Do not apply langs->trans function on returned content of Ajax service, content may be entity encoded twice.
 	 *
 	 *	@param	string	$htmlname       		Name of html select area
@@ -5658,7 +5663,7 @@ class Form
 	 *  @param  string  $placeholder            String to use as placeholder
 	 *  @param  integer $acceptdelayedhtml      1 if caller request to have html js content not returned but saved into global $delayedhtmlcontent (so caller can show it at end of page to avoid flash FOUC effect)
 	 * 	@return	string   						HTML select string
-	 *  @see ajax_combobox in ajax.lib.php
+	 *  @see selectArrayAjax, ajax_combobox in ajax.lib.php
 	 */
 	static function selectArrayFilter($htmlname, $array, $id='', $moreparam='', $disableFiltering=0, $disabled=0, $minimumInputLength=1, $morecss='', $callurlonselect=0, $placeholder='', $acceptdelayedhtml=0)
 	{
@@ -5707,8 +5712,9 @@ class Form
 
 						var urlBase = data.url;
 						var separ = urlBase.indexOf("?") >= 0 ? "&" : "?";
-
-						saveRemoteData[data.id].url = urlBase + separ + "sall=" + params.term;';
+						/* console.log("params.term="+params.term); */
+						/* console.log("params.term encoded="+encodeURIComponent(params.term)); */
+						saveRemoteData[data.id].url = urlBase + separ + "sall=" + encodeURIComponent(params.term);';
 		}
 
 		if(! $disableFiltering) {
@@ -6720,11 +6726,11 @@ class Form
 	 * 	@param	int		$disabled		If select list must be disabled
 	 *  @param  string	$include        Array list of groups id to include
 	 * 	@param	int		$enableonly		Array list of groups id to be enabled. All other must be disabled
-	 * 	@param	int		$force_entity	0 or Id of environment to force
+	 * 	@param	string	$force_entity	'0' or Ids of environment to force
 	 *  @return	string
 	 *  @see select_dolusers
 	 */
-	function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity=0)
+	function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity='0')
 	{
 		global $conf,$user,$langs;
 

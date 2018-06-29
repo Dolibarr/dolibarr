@@ -5,6 +5,7 @@ CountryIT=Ý
 CountryES=Tây Ban Nha
 CountryDE=Đức
 CountryCH=Thụy Sĩ
+# Warning, country code GB is for United Kingdom. UK Does not exists as country code in ISO standard.
 CountryGB=Vương quốc Anh
 CountryUK=Vương quốc Anh
 CountryIE=Ireland

@@ -34,9 +34,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
-$langs->load("orders");
-$langs->load("sendings");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'sendings', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');

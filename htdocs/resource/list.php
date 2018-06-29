@@ -25,7 +25,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 
-// Load translations files required by page
+// Load translation files required by the page
 $langs->loadLangs(array("resource","companies","other"));
 
 // Get parameters
@@ -162,10 +162,6 @@ if ($action == 'delete_resource')
 	print $form->formconfirm($_SERVER['PHP_SELF']."?element=".$element."&element_id=".$element_id."&lineid=".$lineid,$langs->trans("DeleteResource"),$langs->trans("ConfirmDeleteResourceElement"),"confirm_delete_resource",'','',1);
 }
 
-
-
-$var=true;
-
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);
 
@@ -199,7 +195,7 @@ if($ret == -1) {
 	$newcardbutton='';
 	if ($user->rights->resource->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuResourceAdd');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuResourceAdd').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -265,6 +261,7 @@ if ($ret)
 	        if (! $i) $totalarray['nbfield']++;
         }
         // Extra fields
+        $obj = (Object) $resource->array_options;
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td align="center">';

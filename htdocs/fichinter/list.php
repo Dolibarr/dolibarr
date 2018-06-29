@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'interventions'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -280,7 +279,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->ficheinter->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create">'.$langs->trans('NewIntervention');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/fichinter/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewIntervention').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -307,7 +306,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter='';

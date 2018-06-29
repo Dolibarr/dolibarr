@@ -129,8 +129,11 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
-	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
-	else $pdf = new TCPDF($pagetype,$metric,$format);
+	$pdfa=false;											// PDF-1.3
+	if (! empty($conf->global->PDF_USE_1A)) $pdfa=true;		// PDF1/A
+
+	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format,true,'UTF-8',false,$pdfa);
+	else $pdf = new TCPDF($pagetype,$metric,$format,true,'UTF-8',false,$pdfa);
 
 	// Protection and encryption of pdf
 	if (! empty($conf->global->PDF_SECURITY_ENCRYPTION))
@@ -169,6 +172,25 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	return $pdf;
 }
 
+/**
+ * Return if pdf file is protected/encrypted
+ *
+ * @param	TCPDF		$pdf			PDF initialized object
+ * @param   string		$pathoffile		Path of file
+ * @return  boolean     			    True or false
+ */
+function pdf_getEncryption(&$pdf, $pathoffile)
+{
+	$isencrypted = false;
+
+	$pdfparser = $pdf->_getPdfParser($pathoffile);
+	$data = $pdfparser->getParsedData();
+	if (isset($data[0]['trailer'][1]['/Encrypt'])) {
+		$isencrypted = true;
+	}
+
+	return $isencrypted;
+}
 
 /**
  *      Return font name to use for PDF generation

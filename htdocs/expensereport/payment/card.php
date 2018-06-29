@@ -28,10 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expenserepor
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
-$langs->load('trips');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'companies', 'trips'));
 
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
 $action=GETPOST('action','aZ09');

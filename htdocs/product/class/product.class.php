@@ -275,14 +275,10 @@ class Product extends CommonObject
 
     public $fk_price_expression;
 
-	/**
-	 * @deprecated
-	 * @see fourn_pu
-	 */
-	public $buyprice;
+    /* To store supplier price found */
 	public $fourn_pu;
-
 	public $fourn_price_base_type;
+	public $fourn_socid;
 
 	/**
 	 * @deprecated
@@ -987,7 +983,7 @@ class Product extends CommonObject
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
-					if (empty($conf->barcode->enabled)) $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
+					if (empty($conf->barcode->enabled) || empty($this->barcode)) $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
 					else $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductBarCodeAlreadyExists",$this->barcode);
 					$this->errors[]=$this->error;
 					$this->db->rollback();
@@ -1103,7 +1099,7 @@ class Product extends CommonObject
 				//If it is a parent product, then we remove the association with child products
 				$prodcomb = new ProductCombination($this->db);
 
-				if ($prodcomb->deleteByFkProductParent($id) < 0) {
+				if ($prodcomb->deleteByFkProductParent($user, $id) < 0) {
 					$error++;
 					$this->errors[] = 'Error deleting combinations';
 				}
@@ -1544,6 +1540,7 @@ class Product extends CommonObject
 				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product of supplier
 				$this->fourn_price_base_type = 'HT';                // Price base type
+				$this->fourn_socid = $obj->fk_soc;                  // Company that offer this price
 				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
@@ -1599,6 +1596,7 @@ class Product extends CommonObject
 						$this->fourn_qty = $obj->quantity;					// min quantity for price for a virtual supplier
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product for a virtual supplier
 						$this->fourn_price_base_type = 'HT';                // Price base type for a virtual supplier
+						$this->fourn_socid = $obj->fk_soc;                  // Company that offer this price
 						$this->ref_fourn = $obj->ref_supplier;              // deprecated
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
@@ -1665,7 +1663,7 @@ class Product extends CommonObject
 
 		// If multiprices are enabled, then we check if the current product is subject to price autogeneration
 		// Price will be modified ONLY when the first one is the one that is being modified
-		if (!empty($conf->global->PRODUIT_MULTIPRICES) && !$ignore_autogen && $this->price_autogen && ($level == 1))
+		if ((!empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) && !$ignore_autogen && $this->price_autogen && ($level == 1))
 		{
 			return $this->generateMultiprices($user, $newprice, $newpricebase, $newvat, $newnpr, $newpbq);
 		}
@@ -1845,7 +1843,7 @@ class Product extends CommonObject
 		if (! $id && ! $ref && ! $ref_ext)
 		{
 			$this->error='ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error);
+			dol_syslog(get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 
@@ -2088,7 +2086,71 @@ class Product extends CommonObject
 				}
 				else if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))	// prices per customer and quantity
 				{
-					// Not yet implemented
+					for ($i=1; $i <= $conf->global->PRODUIT_MULTIPRICES_LIMIT; $i++)
+					{
+						$sql = "SELECT price, price_ttc, price_min, price_min_ttc,";
+						$sql.= " price_base_type, tva_tx, default_vat_code, tosell, price_by_qty, rowid, recuperableonly";
+						$sql.= " FROM ".MAIN_DB_PREFIX."product_price";
+						$sql.= " WHERE entity IN (".getEntity('productprice').")";
+						$sql.= " AND price_level=".$i;
+						$sql.= " AND fk_product = ".$this->id;
+						$sql.= " ORDER BY date_price DESC, rowid DESC";
+						$sql.= " LIMIT 1";
+						$resql = $this->db->query($sql);
+						if ($resql)
+						{
+							$result = $this->db->fetch_array($resql);
+
+							$this->multiprices[$i]=$result["price"];
+							$this->multiprices_ttc[$i]=$result["price_ttc"];
+							$this->multiprices_min[$i]=$result["price_min"];
+							$this->multiprices_min_ttc[$i]=$result["price_min_ttc"];
+							$this->multiprices_base_type[$i]=$result["price_base_type"];
+							// Next two fields are used only if PRODUIT_MULTIPRICES_USE_VAT_PER_LEVEL is on
+							$this->multiprices_tva_tx[$i]=$result["tva_tx"];     // TODO Add ' ('.$result['default_vat_code'].')'
+							$this->multiprices_recuperableonly[$i]=$result["recuperableonly"];
+
+							// Price by quantity
+							$this->prices_by_qty[$i]=$result["price_by_qty"];
+							$this->prices_by_qty_id[$i]=$result["rowid"];
+							// Récuperation de la liste des prix selon qty si flag positionné
+							if ($this->prices_by_qty[$i] == 1)
+							{
+								$sql = "SELECT rowid, price, unitprice, quantity, remise_percent, remise, price_base_type";
+								$sql.= " FROM ".MAIN_DB_PREFIX."product_price_by_qty";
+								$sql.= " WHERE fk_product_price = ".$this->prices_by_qty_id[$i];
+								$sql.= " ORDER BY quantity ASC";
+								$resultat=array();
+								$resql = $this->db->query($sql);
+								if ($resql)
+								{
+									$ii=0;
+									while ($result= $this->db->fetch_array($resql)) {
+										$resultat[$ii]=array();
+										$resultat[$ii]["rowid"]=$result["rowid"];
+										$resultat[$ii]["price"]= $result["price"];
+										$resultat[$ii]["unitprice"]= $result["unitprice"];
+										$resultat[$ii]["quantity"]= $result["quantity"];
+										$resultat[$ii]["remise_percent"]= $result["remise_percent"];
+										$resultat[$ii]["remise"]= $result["remise"];					// deprecated
+										$resultat[$ii]["price_base_type"]= $result["price_base_type"];
+										$ii++;
+									}
+									$this->prices_by_qty_list[$i]=$resultat;
+								}
+								else
+								{
+									dol_print_error($this->db);
+									return -1;
+								}
+							}
+						}
+						else
+						{
+							dol_print_error($this->db);
+							return -1;
+						}
+					}
 				}
 
                 if (!empty($conf->dynamicprices->enabled) && !empty($this->fk_price_expression) && empty($ignore_expression))
@@ -3535,11 +3597,7 @@ class Product extends CommonObject
 		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
 		    $linkclose.= ' class="classfortooltip"';
 
-		    /*if (! is_object($hookmanager))
-	        {
-	            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	            $hookmanager=new HookManager($this->db);
-	        }
+		    /*
 	        $hookmanager->initHooks(array('productdao'));
 	        $parameters=array('id'=>$this->id);
 	        $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -3578,11 +3636,6 @@ class Product extends CommonObject
 		$result.= $linkend;
 
 		global $action;
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('productdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

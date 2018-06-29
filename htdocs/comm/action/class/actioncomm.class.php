@@ -281,6 +281,7 @@ class ActionComm extends CommonObject
                 return -1;
             }
         }
+        $code = empty($this->code)?$this->type_code:$this->code;
 
         // Check parameters
         if (! $this->type_id)
@@ -309,14 +310,15 @@ class ActionComm extends CommonObject
         $sql.= "transparency,";
         $sql.= "fk_element,";
         $sql.= "elementtype,";
-        $sql.= "entity";
+        $sql.= "entity,";
+        $sql.= "extraparams";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."', ";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
         $sql.= (strval($this->datef)!=''?"'".$this->db->idate($this->datef)."'":"null").", ";
         $sql.= ((isset($this->durationp) && $this->durationp >= 0 && $this->durationp != '')?"'".$this->db->escape($this->durationp)."'":"null").", ";	// deprecated
         $sql.= (isset($this->type_id)?$this->type_id:"null").",";
-        $sql.= (isset($this->type_code)?" '".$this->db->escape($this->type_code)."'":"null").", ";
+        $sql.= ($code?("'".$code."'"):"null").", ";
         $sql.= ((isset($this->socid) && $this->socid > 0) ? $this->socid:"null").", ";
         $sql.= ((isset($this->fk_project) && $this->fk_project > 0) ? $this->fk_project:"null").", ";
         $sql.= " '".$this->db->escape($this->note)."', ";
@@ -328,7 +330,8 @@ class ActionComm extends CommonObject
         $sql.= "'".$this->db->escape($this->transparency)."', ";
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
         $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
-        $sql.= $conf->entity;
+        $sql.= $conf->entity.",";
+        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -1202,15 +1205,16 @@ class ActionComm extends CommonObject
      *    	Return URL of event
      *      Use $this->id, $this->type_code, $this->label and $this->type_label
      *
-     * 		@param	int		$withpicto			0=No picto, 1=Include picto into link, 2=Only picto
-     *		@param	int		$maxlength			Max number of charaters into label. If negative, use the ref as label.
-     *		@param	string	$classname			Force style class on a link
-     * 		@param	string	$option				''=Link to action, 'birthday'=Link to contact
-     * 		@param	int		$overwritepicto		1=Overwrite picto
-     *      @param	int   	$notooltip		    1=Disable tooltip
-     *		@return	string						Chaine avec URL
+     * 		@param	int		$withpicto				0=No picto, 1=Include picto into link, 2=Only picto
+     *		@param	int		$maxlength				Max number of charaters into label. If negative, use the ref as label.
+     *		@param	string	$classname				Force style class on a link
+     * 		@param	string	$option					''=Link to action, 'birthday'=Link to contact
+     * 		@param	int		$overwritepicto			1=Overwrite picto
+     *      @param	int   	$notooltip		    	1=Disable tooltip
+     *  	@param  int     $save_lastsearch_value  -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
+     *		@return	string							Chaine avec URL
      */
-    function getNomUrl($withpicto=0,$maxlength=0,$classname='',$option='',$overwritepicto=0, $notooltip=0)
+    function getNomUrl($withpicto=0, $maxlength=0, $classname='', $option='', $overwritepicto=0, $notooltip=0, $save_lastsearch_value=-1)
     {
 		global $conf, $langs, $user, $hookmanager, $action;
 
@@ -1256,11 +1260,7 @@ class ActionComm extends CommonObject
 		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
 		    $linkclose.=' class="'.$classname.' classfortooltip"';
 
-		    /*if (! is_object($hookmanager))
-		    {
-		        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		        $hookmanager=new HookManager($this->db);
-		    }
+		    /*
 		    $hookmanager->initHooks(array('actiondao'));
 		    $parameters=array('id'=>$this->id);
 		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1274,6 +1274,13 @@ class ActionComm extends CommonObject
 			$url = DOL_URL_ROOT.'/contact/perso.php?id='.$this->id;
 		else
 			$url = DOL_URL_ROOT.'/comm/action/card.php?id='.$this->id;
+		if ($option !== 'nolink')
+		{
+			// Add param to save lastsearch_values or not
+			$add_save_lastsearch_values=($save_lastsearch_value == 1 ? 1 : 0);
+			if ($save_lastsearch_value == -1 && preg_match('/list\.php/',$_SERVER["PHP_SELF"])) $add_save_lastsearch_values=1;
+			if ($add_save_lastsearch_values) $url.='&save_lastsearch_values=1';
+		}
 
 		$linkstart = '<a href="'.$url.'"';
 		$linkstart.=$linkclose.'>';
@@ -1312,11 +1319,6 @@ class ActionComm extends CommonObject
         $result.=$linkend;
 
         global $action;
-        if (! is_object($hookmanager))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        	$hookmanager=new HookManager($this->db);
-        }
         $hookmanager->initHooks(array('actiondao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
         $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

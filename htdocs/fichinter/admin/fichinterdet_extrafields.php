@@ -30,10 +30,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("admin");
-$langs->load("members");
-$langs->load('interventions');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'admin', 'members', 'interventions'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);

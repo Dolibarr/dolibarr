@@ -327,16 +327,28 @@ function project_admin_prepare_head()
  * @param	int			$projectsListId		List of id of project allowed to user (string separated with comma)
  * @param	int			$addordertick		Add a tick to move task
  * @param   int         $projectidfortotallink     0 or Id of project to use on total line (link to see all time consumed for project)
+ * @param   string      $filterprogresscalc     filter text
  * @return	void
  */
-function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0)
+function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0, $filterprogresscalc='')
 {
-	global $user, $bc, $langs, $conf;
+	global $user, $bc, $langs, $conf, $db;
 	global $projectstatic, $taskstatic;
 
 	$lastprojectid=0;
 
 	$projectsArrayId=explode(',',$projectsListId);
+	if ($filterprogresscalc!=='') {
+		foreach ($lines as $key=>$line) {
+			if (!empty($line->planned_workload) && !empty($line->duration)) {
+				$filterprogresscalc = str_replace(' = ', ' == ', $filterprogresscalc);
+				if (!eval($filterprogresscalc)) {
+					unset($lines[$key]);
+				}
+			}
+		}
+		$lines=array_values($lines);
+	}
 
 	$numlines=count($lines);
 
@@ -519,6 +531,27 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				}
 				print '</td>';
 
+				// Contacts of task
+				if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST))
+				{
+					print '<td>';
+					foreach(array('internal','external') as $source)
+					{
+						$tab = $lines[$i]->liste_contact(-1,$source);
+						$num=count($tab);
+						if (!empty($num)){
+							foreach ($tab as $contacttask){
+								//var_dump($contacttask);
+								if ($source == 'internal') $c = new User($db);
+								else $c = new Contact($db);
+								$c->fetch($contacttask['id']);
+								print $c->getNomUrl(1) . ' (' . $contacttask['libelle'] . ')' . '<br>';
+							}
+						}
+					}
+					print '</td>';
+				}
+
 				// Tick to drag and drop
 				if ($addordertick)
 				{
@@ -567,6 +600,11 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 		if ($total_projectlinesa_planned) print round(100 * $total_projectlinesa_spent / $total_projectlinesa_planned,2).' %';
 		print '</td>';
 		print '<td></td>';
+		// Contacts of task
+		if (! empty($conf->global->PROJECT_SHOW_CONTACTS_IN_LIST))
+		{
+			print '<td></td>';
+		}
 		if ($addordertick) print '<td class="hideonsmartphone"></td>';
 		print '</tr>';
 	}

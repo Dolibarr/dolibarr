@@ -12,6 +12,7 @@
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
+ * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -414,6 +415,7 @@ class Propal extends CommonObject
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
+		$pu_ht_devise=price2num($pu_ht_devise);
 		$pu_ttc=price2num($pu_ttc);
 		$txtva=price2num($txtva);               // $txtva can have format '5.0(XXX)' or '5'
 		$txlocaltax1=price2num($txlocaltax1);
@@ -635,6 +637,7 @@ class Propal extends CommonObject
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu = price2num($pu);
+		$pu_ht_devise=price2num($pu_ht_devise);
 		$txtva = price2num($txtva);
 		$txlocaltax1=price2num($txlocaltax1);
 		$txlocaltax2=price2num($txlocaltax2);
@@ -3081,21 +3084,23 @@ class Propal extends CommonObject
 	 */
 	function LibStatut($statut,$mode=1)
 	{
+		global $conf;
+
 		// Init/load array of translation of status
 		if (empty($this->labelstatut) || empty($this->labelstatut_short))
 		{
 			global $langs;
 			$langs->load("propal");
-			$this->labelstatut[0]=(! empty($conf->global->PROPAL_STATUS_DRAFT_LABEL) ? $conf->global->PROPAL_STATUS_DRAFT_LABEL : $langs->trans("PropalStatusDraft"));
-			$this->labelstatut[1]=(! empty($conf->global->PROPAL_STATUS_VALIDATED_LABEL) ? $conf->global->PROPAL_STATUS_VALIDATED_LABEL : $langs->trans("PropalStatusValidated"));
-			$this->labelstatut[2]=(! empty($conf->global->PROPAL_STATUS_SIGNED_LABEL) ? $conf->global->PROPAL_STATUS_SIGNED_LABEL : $langs->trans("PropalStatusSigned"));
-			$this->labelstatut[3]=(! empty($conf->global->PROPAL_STATUS_NOTSIGNED_LABEL) ? $conf->global->PROPAL_STATUS_NOTSIGNED_LABEL : $langs->trans("PropalStatusNotSigned"));
-			$this->labelstatut[4]=(! empty($conf->global->PROPAL_STATUS_BILLED_LABEL) ? $conf->global->PROPAL_STATUS_BILLED_LABEL : $langs->trans("PropalStatusBilled"));
-			$this->labelstatut_short[0]=(! empty($conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL) ? $conf->global->PROPAL_STATUS_DRAFTSHORT_LABEL : $langs->trans("PropalStatusDraftShort"));
-			$this->labelstatut_short[1]=(! empty($conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_VALIDATEDSHORT_LABEL : $langs->trans("Opened"));
-			$this->labelstatut_short[2]=(! empty($conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_SIGNEDSHORT_LABEL : $langs->trans("PropalStatusSignedShort"));
-			$this->labelstatut_short[3]=(! empty($conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_NOTSIGNEDSHORT_LABEL : $langs->trans("PropalStatusNotSignedShort"));
-			$this->labelstatut_short[4]=(! empty($conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL) ? $conf->global->PROPAL_STATUS_BILLEDSHORT_LABEL : $langs->trans("PropalStatusBilledShort"));
+			$this->labelstatut[0]=$langs->trans("PropalStatusDraft");
+			$this->labelstatut[1]=$langs->trans("PropalStatusValidated");
+			$this->labelstatut[2]=$langs->trans("PropalStatusSigned");
+			$this->labelstatut[3]=$langs->trans("PropalStatusNotSigned");
+			$this->labelstatut[4]=$langs->trans("PropalStatusBilled");
+			$this->labelstatut_short[0]=$langs->trans("PropalStatusDraftShort");
+			$this->labelstatut_short[1]=$langs->trans("Opened");
+			$this->labelstatut_short[2]=$langs->trans("PropalStatusSignedShort");
+			$this->labelstatut_short[3]=$langs->trans("PropalStatusNotSignedShort");
+			$this->labelstatut_short[4]=$langs->trans("PropalStatusBilledShort");
 		}
 
 		$statuttrans='';
@@ -3575,9 +3580,10 @@ class Propal extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -3596,7 +3602,7 @@ class Propal extends CommonObject
 
 		$modelpath = "core/modules/propale/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
 	}
 
 	/**

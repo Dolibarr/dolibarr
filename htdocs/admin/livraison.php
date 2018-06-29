@@ -6,8 +6,8 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2014 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
- * Copyright (C) 2015			 Claudio Aschieri			<c.aschieri@19.coop>
+ * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expedition.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/livraison/class/livraison.class.php';
 
-$langs->load("admin");
-$langs->load("sendings");
-$langs->load("deliveries");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "sendings", "deliveries", "other"));
 
 if (!$user->admin) accessforbidden();
 
@@ -216,7 +214,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-            $var=true;
             while (($file = readdir($handle))!==false)
             {
                 if (substr($file, 0, 14) == 'mod_livraison_' && substr($file, dol_strlen($file)-3, 3) == 'php')
@@ -337,7 +334,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     $dir = dol_buildpath($reldir."core/modules/livraison/doc/");
@@ -452,7 +448,6 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
-$var=true;
 
 $substitutionarray=pdf_getSubstitutionArray($langs, null, null, 2);
 $substitutionarray['__(AnyTranslationKey)__']=$langs->trans("Translation");
@@ -460,7 +455,6 @@ $htmltext = '<i>'.$langs->trans("AvailableVariables").':<br>';
 foreach($substitutionarray as $key => $val)	$htmltext.=$key.'<br>';
 $htmltext.='</i>';
 
-$var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_DELIVERY_FREE_TEXT">';

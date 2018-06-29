@@ -33,9 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 
-$langs->load("companies");
-$langs->load("other");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadlangs(array('companies', 'other', 'compta'));
 
 $date_startmonth=GETPOST('date_startmonth');
 $date_startday=GETPOST('date_startday');

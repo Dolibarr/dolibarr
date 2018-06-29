@@ -36,6 +36,11 @@ ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accountingaccount_fk_pcg_
 -- Drop foreign key, so next alter will be a success
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY fk_pcg_version VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY fk_pcg_version VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_system MODIFY pcg_version VARCHAR(20) CHARACTER SET utf8;
@@ -577,21 +582,21 @@ ALTER TABLE llx_c_email_senderprofile ADD UNIQUE INDEX uk_c_email_senderprofile(
 -- Add new chart of account entries
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 67,'PC-MIPYME', 'The PYME accountancy Chile plan', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  7,'ENG-BASE',  'England plan', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 49,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 60,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 24,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 65,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 71,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 72,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 21,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 16,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 87,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (147,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (168,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 73,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 22,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 66,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
-INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 15,'SYSCOHADA', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 49,'SYSCOHADA-BJ', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 60,'SYSCOHADA-BF', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 24,'SYSCOHADA-CM', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 65,'SYSCOHADA-CF', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 71,'SYSCOHADA-KM', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 72,'SYSCOHADA-CG', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 21,'SYSCOHADA-CI', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 16,'SYSCOHADA-GA', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 87,'SYSCOHADA-GQ', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (147,'SYSCOHADA-ML', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (168,'SYSCOHADA-NE', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 73,'SYSCOHADA-CD', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 22,'SYSCOHADA-SN', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 66,'SYSCOHADA-TD', 'Plan comptable Ouest-Africain', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 15,'SYSCOHADA-TG', 'Plan comptable Ouest-Africain', 1);
 
 
 -- Update old chart of account entries
@@ -716,4 +721,3 @@ DROP TABLE llx_c_accountancy_category;
 
 UPDATE llx_cronjob set entity = 1 where entity = 0 and label in ('RecurringInvoices', 'SendEmailsReminders');
 UPDATE llx_cronjob set entity = 0 where entity = 1 and label in ('PurgeDeleteTemporaryFilesShort', 'MakeLocalDatabaseDumpShort');
-

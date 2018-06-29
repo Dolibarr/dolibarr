@@ -70,6 +70,7 @@ $search_state=trim(GETPOST("search_state"));
 $search_region=trim(GETPOST("search_region"));
 $search_email=trim(GETPOST('search_email'));
 $search_phone=trim(GETPOST('search_phone'));
+$search_fax=trim(GETPOST('search_fax'));
 $search_url=trim(GETPOST('search_url'));
 $search_idprof1=trim(GETPOST('search_idprof1'));
 $search_idprof2=trim(GETPOST('search_idprof2'));
@@ -90,9 +91,9 @@ $search_level_to   = GETPOST("search_level_to","alpha");
 $search_stcomm=GETPOST('search_stcomm','int');
 $search_import_key  = GETPOST("search_import_key","alpha");
 
-$type=GETPOST('type');
+$type=GETPOST('type','alpha');
 $optioncss=GETPOST('optioncss','alpha');
-$mode=GETPOST("mode");
+$mode=GETPOST("mode",'');
 
 $diroutputmassaction=$conf->societe->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -107,9 +108,9 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if ($type == 'c') { $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
-if ($type == 'p') { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
-if ($type == 'f') { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
+if ($type == 'c') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
+if ($type == 'p') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
+if ($type == 'f') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
@@ -135,6 +136,7 @@ $fieldstosearchall = array(
 	's.siret'=>"ProfId2",
 	's.ape'=>"ProfId3",
 	's.phone'=>"Phone",
+	's.fax'=>"Fax",
 );
 if (($tmp = $langs->transnoentities("ProfId4".$mysoc->country_code)) && $tmp != "ProfId4".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof4']='ProfId4';
 if (($tmp = $langs->transnoentities("ProfId5".$mysoc->country_code)) && $tmp != "ProfId5".$mysoc->country_code && $tmp != '-') $fieldstosearchall['s.idprof5']='ProfId5';
@@ -178,6 +180,7 @@ $arrayfields=array(
 	's.email'=>array('label'=>"Email", 'checked'=>0),
 	's.url'=>array('label'=>"Url", 'checked'=>0),
 	's.phone'=>array('label'=>"Phone", 'checked'=>1),
+	's.fax'=>array('label'=>"Fax", 'checked'=>0),
 	'typent.code'=>array('label'=>"ThirdPartyType", 'checked'=>$checkedtypetiers),
 	's.siren'=>array('label'=>"ProfId1Short", 'checked'=>$checkedprofid1),
 	's.siret'=>array('label'=>"ProfId2Short", 'checked'=>$checkedprofid2),
@@ -242,6 +245,7 @@ if (empty($reshook))
 		$search_country='';
 		$search_email='';
 		$search_phone='';
+		$search_fax='';
 		$search_url='';
 		$search_idprof1='';
 		$search_idprof2='';
@@ -391,7 +395,7 @@ else dol_print_error($db);
 
 $sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.barcode, s.town, s.zip, s.datec, s.code_client, s.code_fournisseur, s.logo,";
 $sql.= " st.libelle as stcomm, s.fk_stcomm as stcomm_id, s.fk_prospectlevel, s.prefix_comm, s.client, s.fournisseur, s.canvas, s.status as status,";
-$sql.= " s.email, s.phone, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
+$sql.= " s.email, s.phone, s.fax, s.url, s.siren as idprof1, s.siret as idprof2, s.ape as idprof3, s.idprof4 as idprof4, s.idprof5 as idprof5, s.idprof6 as idprof6, s.tva_intra, s.fk_pays,";
 $sql.= " s.tms as date_update, s.datec as date_creation,";
 $sql.= " s.code_compta,s.code_compta_fournisseur,";
 $sql.= " typent.code as typent_code,";
@@ -451,6 +455,7 @@ if ($search_region)         $sql.= natural_search("region.nom",$search_region);
 if ($search_country)       $sql .= " AND s.fk_pays IN (".$search_country.')';
 if ($search_email)         $sql.= natural_search("s.email",$search_email);
 if (strlen($search_phone)) $sql.= natural_search("s.phone", $search_phone);
+if (strlen($search_fax)) $sql.= natural_search("s.phone", $search_fax);
 if ($search_url)           $sql.= natural_search("s.url",$search_url);
 if (strlen($search_idprof1)) $sql.= natural_search("s.siren",$search_idprof1);
 if (strlen($search_idprof2)) $sql.= natural_search("s.siret",$search_idprof2);
@@ -528,19 +533,20 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($search_all != '')     $param = "&sall=".urlencode($search_all);
 if ($sall != '')           $param.= "&sall=".urlencode($sall);
-if ($search_categ_cus > 0) $param.='&search_categ_cus='.urlencode($search_categ_cus);
-if ($search_categ_sup > 0) $param.='&search_categ_sup='.urlencode($search_categ_sup);
-if ($search_sale > 0)	   $param.='&search_sale='.urlencode($search_sale);
+if ($search_categ_cus > 0) $param.= '&search_categ_cus='.urlencode($search_categ_cus);
+if ($search_categ_sup > 0) $param.= '&search_categ_sup='.urlencode($search_categ_sup);
+if ($search_sale > 0)	   $param.= '&search_sale='.urlencode($search_sale);
 if ($search_id > 0)        $param.= "&search_id=".urlencode($search_id);
 if ($search_nom != '')     $param.= "&search_nom=".urlencode($search_nom);
 if ($search_alias != '')   $param.= "&search_alias=".urlencode($search_alias);
 if ($search_town != '')    $param.= "&search_town=".urlencode($search_town);
 if ($search_zip != '')     $param.= "&search_zip=".urlencode($search_zip);
 if ($search_phone != '')   $param.= "&search_phone=".urlencode($search_phone);
+if ($search_fax != '')     $param.= "&search_fax=".urlencode($search_fax);
 if ($search_email != '')   $param.= "&search_email=".urlencode($search_email);
 if ($search_url != '')     $param.= "&search_url=".urlencode($search_url);
 if ($search_state != '')   $param.= "&search_state=".urlencode($search_state);
@@ -599,12 +605,12 @@ if ($user->rights->societe->creer)
 		if($type == 'f') $label='NewSupplier';
 	}
 
-	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'">'.$langs->trans($label);
+	$newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/societe/card.php?action=create'.$typefilter.'"><span class="valignmiddle">'.$langs->trans($label).'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
 
-print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
+print '<form method="post" action="'.$_SERVER["PHP_SELF"].'" name="formfilter" autocomplete="off">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -636,7 +642,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall).'</div>';
 }
 
 // Filter on categories
@@ -801,6 +807,13 @@ if (! empty($arrayfields['s.phone']['checked']))
 	// Phone
 	print '<td class="liste_titre">';
 	print '<input class="flat searchstring" size="4" type="text" name="search_phone" value="'.dol_escape_htmltag($search_phone).'">';
+	print '</td>';
+}
+if (! empty($arrayfields['s.fax']['checked']))
+{
+	// Fax
+	print '<td class="liste_titre">';
+	print '<input class="flat searchstring" size="4" type="text" name="search_fax" value="'.dol_escape_htmltag($search_fax).'">';
 	print '</td>';
 }
 if (! empty($arrayfields['s.url']['checked']))
@@ -971,6 +984,7 @@ if (! empty($arrayfields['country.code_iso']['checked'])) print_liste_field_titr
 if (! empty($arrayfields['typent.code']['checked']))      print_liste_field_titre($arrayfields['typent.code']['label'],$_SERVER["PHP_SELF"],"typent.code","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.email']['checked']))          print_liste_field_titre($arrayfields['s.email']['label'],$_SERVER["PHP_SELF"],"s.email","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['s.phone']['checked']))          print_liste_field_titre($arrayfields['s.phone']['label'],$_SERVER["PHP_SELF"],"s.phone","",$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['s.fax']['checked'])) print_liste_field_titre($arrayfields['s.fax']['label'],$_SERVER["PHP_SELF"],"s.fax","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['s.url']['checked']))            print_liste_field_titre($arrayfields['s.url']['label'],$_SERVER["PHP_SELF"],"s.url","",$param,'',$sortfield,$sortorder);
 if (! empty($arrayfields['s.siren']['checked']))          print_liste_field_titre($form->textwithpicto($langs->trans("ProfId1Short"),$textprofid[1],1,0),$_SERVER["PHP_SELF"],"s.siren","",$param,'class="nowrap"',$sortfield,$sortorder);
 if (! empty($arrayfields['s.siret']['checked']))          print_liste_field_titre($form->textwithpicto($langs->trans("ProfId2Short"),$textprofid[2],1,0),$_SERVER["PHP_SELF"],"s.siret","",$param,'class="nowrap"',$sortfield,$sortorder);
@@ -1123,7 +1137,12 @@ while ($i < min($num, $limit))
 	}
 	if (! empty($arrayfields['s.phone']['checked']))
 	{
-       		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid)."</td>\n";
+		print "<td>".dol_print_phone($obj->phone, $obj->country_code, 0, $obj->rowid)."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+	}
+	if (! empty($arrayfields['s.fax']['checked']))
+	{
+		print "<td>".dol_print_phone($obj->fax, $obj->country_code, 0, $obj->rowid)."</td>\n";
 		if (! $i) $totalarray['nbfield']++;
 	}
 	if (! empty($arrayfields['s.url']['checked']))

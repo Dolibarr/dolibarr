@@ -353,7 +353,7 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->adherent->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create">'.$langs->trans('NewMember');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewMember').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -379,7 +379,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 // Filter on categories
