@@ -79,9 +79,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- For 8.0
 
-
-
-
 -- delete old permission no more used
 DELETE FROM llx_rights_def WHERE perms = 'main' and module = 'commercial';
 
