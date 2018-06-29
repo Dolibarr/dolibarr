@@ -999,9 +999,9 @@ class Thirdparties extends DolibarrApi
 	}
 	/**
 	 * Get CompanyBankAccount objects for thirdparty
-	 * 
+	 *
 	 * @param int $socid Thirdparty id
-	 * 
+	 *
 	 * @return array
 	 */
 	function getCompanyBankAccount($socid){
@@ -1028,12 +1028,12 @@ class Thirdparties extends DolibarrApi
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." ";
 
-	
+
 		$result = $db->query($sql);
 
 		if($result->num_rows == 0 ){
 			throw new RestException(404, 'Account not found');
-		}	
+		}
 
 		$i=0;
 
@@ -1055,7 +1055,7 @@ class Thirdparties extends DolibarrApi
 		else{
 			throw new RestException(404, 'Account not found');
 		}
- 
+
 
 		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id'];
 
@@ -1069,19 +1069,19 @@ class Thirdparties extends DolibarrApi
 
 			}
 			$returnAccounts[] = $object;
-		} 
+		}
 
 		return $returnAccounts;
 	}
 
-	
+
 	/**
 	 * Create CompanyBankAccount object for thirdparty
 	 * @param int  $socid thirdparty id
 	 * @param array $request_data   Request datas
-	 * 
+	 *
 	 * @return object  ID of thirdparty
-	 * 
+	 *
 	 * @url POST {socid}/CompanyBankAccount
 	 */
 	function createCompanyBankAccount($socid, $request_data = null)
@@ -1104,20 +1104,20 @@ class Thirdparties extends DolibarrApi
 
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
-		
+
 			return $account;
 	}
 
 
 	/**
 	 * Update CompanyBankAccount object for thirdparty
-	 * 
+	 *
 	 * @param int $socid Thirdparty id
 	 * @param int  $id CompanyBankAccount's id
 	 * @param array $request_data   Request datas
-	 * 
+	 *
 	 * @return object  ID of thirdparty
-	 * 
+	 *
 	 * @url PUT {socid}/CompanyBankAccount/{id}
 	 */
 	function updateCompanyBankAccount($socid, $id, $request_data = null)
@@ -1128,14 +1128,13 @@ class Thirdparties extends DolibarrApi
 
 		$account = new CompanyBankAccount($this->db);
 
-		$account->fetchFromApi($id, $socid);
-
+		$account->fetch($id, $socid, -1, '');
 
 
 		if($account->socid != $socid){
 			throw new RestException(401);
 		}
-			
+
 
 		foreach($request_data as $field => $value) {
 			$account->$field = $value;
@@ -1143,16 +1142,16 @@ class Thirdparties extends DolibarrApi
 
 		if ($account->update(DolibarrApiAccess::$user) < 0)
 			throw new RestException(500, 'Error updating values');
-		
+
 		return $account;
 	}
 
 	/**
 	 * @param int $id CompanyBankAccount's id
 	 * @param int $socid Thirdparty id
-	 * 
+	 *
 	 * @return int -1 if error 1 if correct deletion
-	 * 
+	 *
 	 * @url DELETE {socid}/CompanyBankAccount/{id}
 	 */
 	function deleteCompanyBankAccount($id, $socid){
