@@ -759,12 +759,9 @@ SCRIPT;
 
 				if (is_array($product_fourn_list))
 				{
-					$var=true;
 
 					foreach($product_fourn_list as $productfourn)
 					{
-
-
 						print '<tr class="oddeven">';
 
 						// Supplier
