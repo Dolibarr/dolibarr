@@ -648,7 +648,6 @@ if ($ok && GETPOST('clean_orphelin_dir','alpha'))
             $object_instance=new ChargeSociales($db);
         }
 
-        $var=true;
         foreach($filearray as $key => $file)
         {
             if (!is_dir($file['name'])

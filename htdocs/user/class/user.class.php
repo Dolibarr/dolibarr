@@ -10,7 +10,8 @@
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018      charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,6 +133,7 @@ class User extends CommonObject
 	public $color;						// Define background color for user in agenda
 
 	public $dateemployment;			// Define date of employment by company
+	public $dateemploymentend;		// Define date of employment end by company
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
@@ -208,7 +210,7 @@ class User extends CommonObject
 		$sql.= " u.salaryextra,";
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
-		$sql.= " u.dateemployment,";
+		$sql.= " u.dateemployment, u.dateemploymentend,";
 		$sql.= " u.ref_int, u.ref_ext,";
 		$sql.= " u.default_range, u.default_c_exp_tax_cat,";			// Expense report default mode
 		$sql.= " c.code as country_code, c.label as country,";
@@ -311,6 +313,7 @@ class User extends CommonObject
 				$this->weeklyhours	= $obj->weeklyhours;
 				$this->color		= $obj->color;
 				$this->dateemployment	= $this->db->jdate($obj->dateemployment);
+				$this->dateemploymentend = $this->db->jdate($obj->dateemploymentend);
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -1383,6 +1386,7 @@ class User extends CommonObject
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
+		$this->dateemploymentend = empty($this->dateemploymentend)?'':$this->dateemploymentend;
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1425,6 +1429,7 @@ class User extends CommonObject
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
 		$sql.= ", color = '".$this->db->escape($this->color)."'";
 		$sql.= ", dateemployment=".(strval($this->dateemployment)!='' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
+		$sql.= ", dateemploymentend=".(strval($this->dateemploymentend)!='' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");
