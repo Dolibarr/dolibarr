@@ -8,13 +8,13 @@ descWORKFLOW_PROPAL_AUTOCREATE_INVOICE=Erstellen Sie automatisch eine Kundenrech
 descWORKFLOW_CONTRACT_AUTOCREATE_INVOICE=Erstelle automatisch eine Kundenrechnung, nachdem der Vertrag bestätigt wurde.
 descWORKFLOW_ORDER_AUTOCREATE_INVOICE=Erstellen Sie automatisch eine Kundenrechnung, nachdem eine Kundenbestellung geschlossen wurde (die neue Rechnung hat den gleichen Betrag wie die Bestellung)
 # Autoclassify customer proposal or order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer order is set to billed (and if amount of the order is same than total amount of signed linked proposals)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL=Die verbundenen Quellangebote auf abgerechnet setzen, wenn die Kunden-Bestellung als abgerechnet gesetzt wurde (und der Betrag der Bestellung gleich mit dem der gezeichneten verbundenen Angebote ist)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL=Classify linked source proposal(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of signed linked proposals)
 descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is validated (and if amount of the invoice is same than total amount of linked orders)
 descWORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER=Classify linked source customer order(s) to billed when customer invoice is set to paid (and if amount of the invoice is same than total amount of linked orders)
 descWORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING=Classify linked source customer order to shipped when a shipment is validated (and if quantity shipped by all shipments is the same as in the order to update)
 # Autoclassify supplier order
-descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source supplier proposal(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
-descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source supplier order(s) to billed when supplier invoice is validated (and if amount of the invoice is same than total amount of linked orders)
+descWORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL=Classify linked source vendor proposal(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked proposals)
+descWORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_SUPPLIER_ORDER=Classify linked source purchase order(s) to billed when vendor invoice is validated (and if amount of the invoice is same than total amount of linked orders)
 AutomaticCreation=automatische Erstellung
 AutomaticClassification=Automatische Klassifikation

@@ -880,10 +880,17 @@ class DolGraph
 		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
 		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;
-		while ($i < $nblot)
+		if ($nblot < 0)
 		{
-			$this->stringtoshow.=$serie[$i];
-			$i++;
+			$this->stringtoshow.='<!-- No series of data -->';
+		}
+		else
+		{
+			while ($i < $nblot)
+			{
+				$this->stringtoshow.=$serie[$i];
+				$i++;
+			}
 		}
 		$this->stringtoshow.="\n";
 

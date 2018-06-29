@@ -33,10 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->load("admin");
-$langs->load("errors");
-$langs->load('other');
-$langs->load('bills');
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'errors', 'other', 'bills'));
 
 if (! $user->admin) accessforbidden();
 

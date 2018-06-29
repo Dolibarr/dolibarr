@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+// Load translation files required by the page
 $langs->load('projects');
 
 $id=GETPOST('id','int');
@@ -74,7 +75,7 @@ if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 //$object = new TaskTime($db);
-$hookmanager->initHooks(array('projecttaskcard','globalcard'));
+$hookmanager->initHooks(array('projecttasktime','globalcard'));
 
 $object = new Task($db);
 $projectstatic = new Project($db);
@@ -577,7 +578,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			$contactsoftask=$object->getListContactId('internal');
 			if (count($contactsoftask)>0)
 			{
-				$userid=$contactsoftask[0];
+				if(in_array($user->id, $contactsoftask)) $userid = $user->id;
+				else $userid=$contactsoftask[0];
 				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTheTask"), 'maxwidth200');
 			}
 			else

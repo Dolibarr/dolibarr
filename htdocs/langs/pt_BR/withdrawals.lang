@@ -15,7 +15,6 @@ NotPossibleForThisStatusOfWithdrawReceiptORLine=Ainda não é possível. Retirar
 NbOfInvoiceToWithdraw=Nº da Nota Fiscal qualificada com ordem de débito direto
 NbOfInvoiceToWithdrawWithInfo=Nº da fatura do cliente com pedidos para pagamento por Débito direto com informação bancária definida
 InvoiceWaitingWithdraw=Fatura aguardando o Débito direto
-WithdrawsRefused=Débito direto recusado
 NoInvoiceToWithdraw=Nenhuma Nota Fiscal do cliente com aberto 'Ordem de débito direto' está aguardando. Vá na guia '%s' no cartão de Nota Fiscal para fazer um pedido.
 ResponsibleUser=Usuário Responsável dos Débitos Diretos
 WithdrawStatistics=Estatísticas do pagamento por Débito direto

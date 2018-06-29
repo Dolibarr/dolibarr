@@ -27,9 +27,8 @@ require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("bills");
-$langs->load("banks");
-$langs->load("trips");
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'trips'));
 
 $id=GETPOST("id",'int');
 $ref=GETPOST('ref','alpha');
@@ -283,7 +282,6 @@ if ($action == 'create' || empty($action))
 	print '<td align="center">'.$langs->trans("Amount").'</td>';
 	print "</tr>\n";
 
-	$var=true;
 	$total=0;
 	$totalrecu=0;
 

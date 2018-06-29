@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "products", "admin", "mails", "other", "errors"));
 
 $action=GETPOST('action','alpha');
@@ -521,7 +521,7 @@ else
 
 	print $langs->trans("EMailsDesc")."<br>\n";
 	print "<br>\n";
-	
+
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td class="titlefieldmiddle">'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 

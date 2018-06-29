@@ -89,9 +89,18 @@ if (empty($pageid))
     if ($pageref)
     {
     	$result=$objectpage->fetch(0, $object->id, $pageref);
-        if ($result > 0)
+    	if ($result > 0)
 	    {
 	        $pageid = $objectpage->id;
+	    }
+	    elseif($result == 0)
+	    {
+	    	// Page not found from ref=pageurl, we try using alternative alias
+	    	$result=$objectpage->fetch(0, $object->id, null, $pageref);
+	    	if ($result > 0)
+	    	{
+	    		$pageid = $objectpage->id;
+	    	}
 	    }
     }
     else

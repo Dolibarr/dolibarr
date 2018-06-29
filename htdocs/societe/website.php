@@ -224,7 +224,7 @@ dol_fiche_end();
 $newcardbutton = '';
 if (! empty($conf->website->enabled)) {
 	if (! empty($user->rights->societe->lire)) {
-		$newcardbutton .= '<a class="butActionNew" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">' . $langs->trans("AddWebsiteAccount");
+		$newcardbutton .= '<a class="butActionNew" href="' . DOL_URL_ROOT.'/website/websiteaccount_card.php?action=create&fk_soc='.$object->id.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle">' . $langs->trans("AddWebsiteAccount").'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	} else {
@@ -343,7 +343,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 /*$moreforfilter = '';

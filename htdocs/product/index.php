@@ -39,8 +39,8 @@ if ($type=='0') $result=restrictedArea($user,'produit');
 else if ($type=='1') $result=restrictedArea($user,'service');
 else $result=restrictedArea($user,'produit|service');
 
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
 
 // Initialize technical object to manage hooks. Note that conf->hooks_modules contains array of hooks
 $hookmanager->initHooks(array('productindex'));
@@ -302,10 +302,12 @@ if ($result)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
-		$colnb=5;
+		$colnb=4;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
-		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th></tr>';
+		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
+		print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '</tr>';
 
 		while ($i < $num)
 		{
@@ -455,8 +457,6 @@ function activitytrim($product_type)
 		}
 		$i = 0;
 
-		$var=true;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -464,7 +464,6 @@ function activitytrim($product_type)
 			{
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
-
 					print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 					print '<td align=right>'.price($trim1).'</td>';
 					print '<td align=right>'.price($trim2).'</td>';
@@ -498,7 +497,6 @@ function activitytrim($product_type)
 		}
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
-
 			print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 			print '<td align=right>'.price($trim1).'</td>';
 			print '<td align=right>'.price($trim2).'</td>';

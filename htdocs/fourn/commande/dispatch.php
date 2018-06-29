@@ -492,7 +492,7 @@ if ($id > 0 || ! empty($ref)) {
 			$db->free($resql);
 		}
 
-		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, SUM(l.qty) as qty,";
+		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON l.fk_product=p.rowid";
@@ -514,6 +514,7 @@ if ($id > 0 || ! empty($ref)) {
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
+				print '<td align="right">' . $langs->trans("SupplierRef") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyOrdered") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyDispatchedShort") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyToDispatchShort") . '</td>';
@@ -590,6 +591,9 @@ if ($id > 0 || ! empty($ref)) {
 						if (! empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP))
 							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
 
+						// Supplier ref
+						print '<td align="right">'.$objp->sref.'</td>';
+						
 						// Qty ordered
 						print '<td align="right">' . $objp->qty . '</td>';
 
@@ -624,13 +628,13 @@ if ($id > 0 || ! empty($ref)) {
 							print '</td>';
 
 							print '<td>';
-							print '<input type="text" class="inputlotnumber" id="lot_number' . $suffix . '" name="lot_number' . $suffix . '" size="40" value="' . GETPOST('lot_number' . $suffix) . '">';
+							print '<input type="text" class="inputlotnumber quatrevingtquinzepercent" id="lot_number' . $suffix . '" name="lot_number' . $suffix . '" value="' . GETPOST('lot_number' . $suffix) . '">';
 							print '</td>';
-							print '<td>';
+							print '<td class="nowraponall">';
 							$dlcdatesuffix = dol_mktime(0, 0, 0, GETPOST('dlc' . $suffix . 'month'), GETPOST('dlc' . $suffix . 'day'), GETPOST('dlc' . $suffix . 'year'));
 							$form->select_date($dlcdatesuffix, 'dlc' . $suffix, '', '', 1, "");
 							print '</td>';
-							print '<td>';
+							print '<td class="nowraponall">';
 							$dluodatesuffix = dol_mktime(0, 0, 0, GETPOST('dluo' . $suffix . 'month'), GETPOST('dluo' . $suffix . 'day'), GETPOST('dluo' . $suffix . 'year'));
 							$form->select_date($dluodatesuffix, 'dluo' . $suffix, '', '', 1, "");
 							print '</td>';
@@ -665,7 +669,7 @@ if ($id > 0 || ! empty($ref)) {
 
 						// Qty to dispatch
 						print '<td align="right">';
-						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" size="8" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
+						print '<input id="qty' . $suffix . '" name="qty' . $suffix . '" type="text" class="width50 right" value="' . (GETPOST('qty' . $suffix) != '' ? GETPOST('qty' . $suffix) : $remaintodispatch) . '">';
 						print '</td>';
 
                         print '<td>';
@@ -685,9 +689,9 @@ if ($id > 0 || ! empty($ref)) {
 						// Warehouse
 						print '<td align="right">';
 						if (count($listwarehouses) > 1) {
-							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 1, 0, $objp->fk_product, '', 1);
+							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 1, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
 						} elseif (count($listwarehouses) == 1) {
-							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 0, 0, $objp->fk_product, '', 1);
+							print $formproduct->selectWarehouses(GETPOST("entrepot" . $suffix)?GETPOST("entrepot" . $suffix):($objp->fk_default_warehouse?$objp->fk_default_warehouse:''), "entrepot" . $suffix, '', 0, 0, $objp->fk_product, '', 1, 0, null, 'csswarehouse'.$suffix);
 						} else {
 							$langs->load("errors");
 							print $langs->trans("ErrorNoWarehouseDefined");
@@ -852,7 +856,7 @@ if ($id > 0 || ! empty($ref)) {
 					print '</td>';
 				}
 				// date
-				print '<td>' . dol_print_date($objp->datec) . '</td>';
+				print '<td>' . dol_print_date($objp->datec, "dayhour") . '</td>';
 
 				print "</tr>\n";
 

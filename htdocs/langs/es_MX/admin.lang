@@ -134,4 +134,7 @@ LDAPFieldFirstName=Nombre(s)
 CacheByServerDesc=Por ejemplo, utilizando la directiva Apache "ExpiresByType image/gif A2592000"
 AGENDA_SHOW_LINKED_OBJECT=Mostrar objeto vinculado en la vista de agenda
 ConfFileMustContainCustom=Instalar o construir un módulo externo desde la aplicación necesita guardar los archivos del módulo en el directorio <strong> %s </strong>. Para que este directorio sea procesado por Dolibarr, debe configurar su <strong> conf/conf.php </strong> para agregar las 2 líneas de directiva: <strong> $dolibarr_main_url_root_alt='/custom'; </strong> <br> <strong> $dolibarr_main_document_root_alt='%s/custom'; </strong>
+MailToSendProposal=Propuestas de clientes
+MailToSendOrder=Pedidos de los clientes
+MailToSendInvoice=Facturas de clientes
 WarningNoteModulePOSForFrenchLaw=Este módulo %s es compatible con las leyes francesas (Loi Finance 2016) porque el módulo Non Reversible Logs se activa automáticamente.

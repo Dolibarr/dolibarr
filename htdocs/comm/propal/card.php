@@ -56,14 +56,8 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
-$langs->load('companies');
-$langs->load('propal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('products');
-$langs->load("deliveries");
-$langs->load('sendings');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'propal', 'compta', 'bills', 'orders', 'products', 'deliveries', 'sendings'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled))
 	$langs->load('margins');
@@ -848,7 +842,28 @@ if (empty($reshook))
 				// If price per quantity and customer
 				elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 				{
-					// TODO Same than PRODUIT_CUSTOMER_PRICES_BY_QTY but using $object->thirdparty->price_level
+					if ($prod->prices_by_qty[$object->thirdparty->price_level]) // yes, this product has some prices per quantity
+					{
+						// Search the correct price into loaded array product_price_by_qty using id of array retrieved into POST['pqp'].
+						$pqp = GETPOST('pbq','int');
+
+						// Search price into product_price_by_qty from $prod->id
+						foreach($prod->prices_by_qty_list[$object->thirdparty->price_level] as $priceforthequantityarray)
+						{
+							if ($priceforthequantityarray['rowid'] != $pqp) continue;
+							// We found the price
+							if ($priceforthequantityarray['price_base_type'] == 'HT')
+							{
+								$pu_ht = $priceforthequantityarray['unitprice'];
+							}
+							else
+							{
+								$pu_ttc = $priceforthequantityarray['unitprice'];
+							}
+							// Note: the remise_percent or price by qty is used to set data on form, so we will use value from POST.
+							break;
+						}
+					}
 				}
 
 				$tmpvat = price2num(preg_replace('/\s*\(.*\)/', '', $tva_tx));
@@ -2278,7 +2293,7 @@ if ($action == 'create')
 		$ret = $object->printObjectLines($action, $mysoc, $soc, $lineid, 1);
 
 	// Form to add new line
-	if ($object->statut == Propal::STATUS_DRAFT && $user->rights->propal->creer)
+	if ($object->statut == Propal::STATUS_DRAFT && $user->rights->propal->creer && $action != 'selectlines')
 	{
 		if ($action != 'editline')
 		{

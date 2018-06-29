@@ -42,10 +42,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT. '/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/categories/class/categorie.class.php';
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
-$langs->load("commercial");
+
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg=''; $error=0; $errors=array();
 

@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
 $servicename='PayBox';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("paybox");
-$langs->load("paypal");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'paybox', 'paypal'));
 
 if (!$user->admin)
   accessforbidden();

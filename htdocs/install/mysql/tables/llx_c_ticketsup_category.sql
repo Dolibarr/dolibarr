@@ -15,7 +15,7 @@
 --
 --
 
-create table llx_c_ticketsup_category
+create table llx_c_ticket_category
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,

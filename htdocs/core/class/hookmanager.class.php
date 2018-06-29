@@ -186,7 +186,8 @@ class HookManager
 				'sendMail',
 				'sendMailAfter',
 				'showLinkToObjectBlock',
-				'setContentSecurityPolicy'
+				'setContentSecurityPolicy',
+				'setHtmlTitle'
 				)
 			)) $hooktype='addreplace';
 

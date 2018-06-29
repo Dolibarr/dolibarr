@@ -252,8 +252,14 @@ if (! file_exists($conffile))
 }
 else
 {
+	if (dol_is_dir($conffile))
+	{
+		print '<img src="../theme/eldy/img/error.png" alt="Warning"> '.$langs->trans("ConfFileMustBeAFileNotADir",$conffiletoshow);
+
+		$allowinstall=0;
+	}
 	// File exists but can't be modified
-	if (!is_writable($conffile))
+	elseif (!is_writable($conffile))
 	{
 		if ($confexists)
 		{
@@ -430,7 +436,8 @@ else
 								array('from'=>'4.0.0', 'to'=>'5.0.0'),
 								array('from'=>'5.0.0', 'to'=>'6.0.0'),
 								array('from'=>'6.0.0', 'to'=>'7.0.0'),
-								array('from'=>'7.0.0', 'to'=>'8.0.0')
+								array('from'=>'7.0.0', 'to'=>'8.0.0'),
+								array('from'=>'8.0.0', 'to'=>'9.0.0')
 		);
 
 		$count=0;

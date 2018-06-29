@@ -38,10 +38,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load("other");
-$langs->load("fichinter");
-$langs->load("companies");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'fichinter', 'companies', 'interventions'));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');

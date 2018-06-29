@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - ldap
-DomainPassword=Salasana verkkotunnuksen
 YouMustChangePassNextLogon=Salasana <b>käyttäjän %s verkkotunnuksen %s</b> on muuttunut.
 UserMustChangePassNextLogon=Käyttäjän on muutettava salasana verkkotunnuksen %s
 LDAPInformationsForThisContact=Tiedot LDAP-tietokannan tämä yhteystieto
@@ -25,3 +24,4 @@ MemberTypeSynchronized=Member type synchronized
 ContactSynchronized=Yhteystiedot synkronoidaan
 ForceSynchronize=Force synkronointi Dolibarr -> LDAP
 ErrorFailedToReadLDAP=Lukeminen epäonnistui LDAP-tietokantaan. Tarkista LDAP-moduulin asennus ja tietokannan saavutettavuus.
+PasswordOfUserInLDAP=Password of user in LDAP

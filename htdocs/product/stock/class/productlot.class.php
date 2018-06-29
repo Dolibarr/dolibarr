@@ -300,6 +300,13 @@ class Productlot extends CommonObject
 
 		// Check parameters
 		// Put here code to add a control on parameters values
+		
+		if (empty($this->oldcopy))
+		{
+			$org=new self($this->db);
+			$org->fetch($this->id);
+			$this->oldcopy=$org;
+		}
 
 		// Update request
 		$sql = 'UPDATE ' . MAIN_DB_PREFIX . $this->table_element . ' SET';

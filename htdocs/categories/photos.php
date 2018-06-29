@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/categories.lib.php';
 
-$langs->load("categories");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadlangs(array('categories', 'bills'));
 
 
 $id=GETPOST('id','int');

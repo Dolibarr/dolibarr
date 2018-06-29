@@ -49,7 +49,7 @@ $website=GETPOST('website', 'alpha');
 $page=GETPOST('page', 'alpha');
 $pageid=GETPOST('pageid', 'int');
 $pageref=GETPOST('pageref', 'aZ09');
-$action=GETPOST('action','alpha');
+$action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm','alpha');
 $cancel=GETPOST('cancel','alpha');
 
@@ -109,6 +109,12 @@ if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 {
 	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
+	//var_dump($res);exit;
+	//if ($res == 0)		// Page ref not found, we check in alias
+	//{
+	//	$res = $objectpage->fetch($pageid, ($object->id > 0 ? $object->id : null), $pageref);
+	//}
+
 	// Check if pageid is inside the new website, if not we reset param pageid
 	if ($object->id > 0 && ($objectpage->fk_website != $object->id))
 	{
@@ -542,10 +548,10 @@ if ($action == 'addcontainer')
 	}
 	else
 	{
+		$objectpage->title = GETPOST('WEBSITE_TITLE','alpha');
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER','alpha');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME','alpha');
 		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT','alpha');
-		$objectpage->title = GETPOST('WEBSITE_TITLE','alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION','alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS','alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG','aZ09');
@@ -958,10 +964,10 @@ if ($action == 'updatemeta')
 	{
 		$objectpage->old_object = clone $objectpage;
 
+		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alpha');
 		$objectpage->type_container = GETPOST('WEBSITE_TYPE_CONTAINER', 'alpha');
 		$objectpage->pageurl = GETPOST('WEBSITE_PAGENAME', 'alpha');
 		$objectpage->aliasalt = GETPOST('WEBSITE_ALIASALT', 'alpha');
-		$objectpage->title = GETPOST('WEBSITE_TITLE', 'alpha');
 		$objectpage->description = GETPOST('WEBSITE_DESCRIPTION', 'alpha');
 		$objectpage->keywords = GETPOST('WEBSITE_KEYWORDS', 'alpha');
 		$objectpage->lang = GETPOST('WEBSITE_LANG', 'aZ09');
@@ -1009,17 +1015,43 @@ if ($action == 'updatemeta')
 
 		if (! $result) setEventMessages('Failed to write file '.$filemaster, null, 'errors');
 
-
-		// Now generate the alias.php page
+		// Now delete the alias.php page
 		if (! empty($fileoldalias))
 		{
-			dol_syslog("We regenerate alias page new name=".$filealias.", old name=".$fileoldalias);
+			dol_syslog("We delete old alias page name=".$fileoldalias." to build a new alias page=".$filealias);
 			dol_delete_file($fileoldalias);
+		}
+		// Now delete the alternative alias.php pages
+		if (! empty($objectpage->old_object->aliasalt))
+		{
+			$tmpaltaliases=explode(',', $objectpage->old_object->aliasalt);
+			if (is_array($tmpaltaliases))
+			{
+				foreach($tmpaltaliases as $tmpaliasalt)
+				{
+					dol_syslog("We delete old alt alias pages name=".trim($tmpaliasalt));
+					dol_delete_file($pathofwebsite.'/'.trim($tmpaliasalt).'.php');
+				}
+			}
 		}
 
 		// Save page alias
 		$result=dolSavePageAlias($filealias, $object, $objectpage);
 		if (! $result) setEventMessages('Failed to write file '.$filealias, null, 'errors');
+		// Save alt aliases
+		if (! empty($objectpage->aliasalt))
+		{
+			$tmpaltaliases=explode(',', $objectpage->aliasalt);
+			if (is_array($tmpaltaliases))
+			{
+				foreach($tmpaltaliases as $tmpaliasalt)
+				{
+					$result=dolSavePageAlias($pathofwebsite.'/'.trim($tmpaliasalt).'.php', $object, $objectpage);
+					if (! $result) setEventMessages('Failed to write file '.$pathofwebsite.'/'.trim($tmpaliasalt).'.php', null, 'errors');
+				}
+			}
+		}
+
 
 		// Save page of content
 		$result=dolSavePageContent($filetpl, $object, $objectpage);
@@ -1516,7 +1548,7 @@ if (count($object->records) > 0)
 					$out.='<option value="'.$key.'"';
 					if ($pageid > 0 && $pageid == $key) $out.=' selected';		// To preselect a value
 					$out.='>';
-					$out.='['.$valpage->type_container.'] ';
+					$out.='['.$valpage->type_container.' '.$valpage->id.'] ';
 					$out.=$valpage->pageurl.' - '.$valpage->title;
 					if ($object->fk_default_home && $key == $object->fk_default_home) $out.=' ('.$langs->trans("HomePage").')';
 					$out.='</option>';
@@ -1534,6 +1566,41 @@ if (count($object->records) > 0)
 
 		//print '<input type="submit" class="button" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
 		print '<input type="image" class="valignbottom" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'"'.($atleastonepage?'':' disabled="disabled"').'>';
+
+
+		// Print nav arrows
+		$pagepreviousid=0;
+		$pagenextid=0;
+		if ($pageid)
+		{
+			$sql = 'SELECT MAX(rowid) as pagepreviousid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid < '.$pageid.' AND fk_website = '.$object->id;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+				if ($obj)
+				{
+					$pagepreviousid = $obj->pagepreviousid;
+				}
+			}
+			else dol_print_error($db);
+			$sql = 'SELECT MIN(rowid) as pagenextid FROM '.MAIN_DB_PREFIX.'website_page WHERE rowid > '.$pageid.' AND fk_website = '.$object->id;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+				if ($obj)
+				{
+					$pagenextid = $obj->pagenextid;
+				}
+			}
+			else dol_print_error($db);
+		}
+
+		if ($pagepreviousid) print '<a href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagepreviousid.'&action='.$action.'">'.img_previous($langs->trans("PreviousContainer")).'</a>';
+		else print '<span class="opacitymedium">'.img_previous($langs->trans("PreviousContainer")).'</span>';
+		if ($pagenextid) print '<a href="'.$_SERVER['PHP_SELF'].'?website='.urlencode($object->ref).'&pageid='.$pagenextid.'&action='.$action.'">'.img_next($langs->trans("NextContainer")).'</a>';
+		else print '<span class="opacitymedium">'.img_next($langs->trans("NextContainer")).'</span>';
 
 		$websitepage = new WebSitePage($db);
 		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
@@ -1661,13 +1728,23 @@ if (count($object->records) > 0)
                     jQuery(document).ready(function() {
                 		jQuery("#websiteinputurl").keyup(function() {
                             console.log("Website external url modified "+jQuery("#previewsiteurl").val());
-                			if (jQuery("#previewsiteurl").val() != "") jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
+                			if (jQuery("#previewsiteurl").val() != "" && jQuery("#previewsiteurl").val().startsWith("http"))
+							{
+								jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 1 });
+							}
                 			else jQuery("a.websitebuttonsitepreviewdisabled img").css({ opacity: 0.2 });
 						';
 				print '
                 		});
                     	jQuery("#previewsiteext,#previewpageext").click(function() {
+
                             newurl=jQuery("#previewsiteurl").val();
+							if (! newurl.startsWith("http"))
+							{
+								alert(\''.dol_escape_js($langs->trans("ExternalURLMustStartWithHttp")).'\');
+								return false;
+							}
+
                             newpage=jQuery("#previewsiteurl").val() + "/" + jQuery("#previewpageurl").val() + ".php";
                             console.log("Open url "+newurl);
                             /* Save url */
@@ -1874,6 +1951,7 @@ if ($action == 'editcss')
 	print '<br>';
 }
 
+
 if ($action == 'createsite')
 {
 	print '<div class="fiche">';
@@ -1945,6 +2023,7 @@ if ($action == 'createsite')
 
 	print '<br>';
 }
+
 
 if ($action == 'editmeta' || $action == 'createcontainer')
 {
@@ -2026,24 +2105,36 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		$pagelang=$objectpage->lang;
 		$pagehtmlheader=$objectpage->htmlheader;
 	}
+	else
+	{
+		$type_container = 'page';
+	}
+	if (GETPOST('WEBSITE_TITLE','alpha'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
 	if (GETPOST('WEBSITE_PAGENAME','alpha'))    $pageurl=GETPOST('WEBSITE_PAGENAME','alpha');
 	if (GETPOST('WEBSITE_ALIASALT','alpha'))    $pagealiasalt=GETPOST('WEBSITE_ALIASALT','alpha');
-	if (GETPOST('WEBSITE_TITLE','alpha'))       $pagetitle=GETPOST('WEBSITE_TITLE','alpha');
 	if (GETPOST('WEBSITE_DESCRIPTION','alpha')) $pagedescription=GETPOST('WEBSITE_DESCRIPTION','alpha');
 	if (GETPOST('WEBSITE_KEYWORDS','alpha'))    $pagekeywords=GETPOST('WEBSITE_KEYWORDS','alpha');
 	if (GETPOST('WEBSITE_LANG','aZ09'))         $pagelang=GETPOST('WEBSITE_LANG','aZ09');
 	if (GETPOST('htmlheader','none'))			$pagehtmlheader=GETPOST('htmlheader','none');
 
+	// Title
+	print '<tr><td class="fieldrequired">';
+	print $langs->trans('WEBSITE_TITLE');
+	print '</td><td>';
+	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" id="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
+	print '</td></tr>';
+
+	// Alias
 	print '<tr><td class="titlefieldcreate fieldrequired">';
 	print $langs->trans('WEBSITE_PAGENAME');
 	print '</td><td>';
-	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
+	print '<input type="text" class="flat minwidth300" name="WEBSITE_PAGENAME" id="WEBSITE_PAGENAME" value="'.dol_escape_htmltag($pageurl).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="titlefield fieldrequired">';
 	print $langs->trans('WEBSITE_TYPE_CONTAINER');
 	print '</td><td>';
-	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER')?GETPOST('WEBSITE_TYPE_CONTAINER'):'page'));
+	print $formwebsite->selectTypeOfContainer('WEBSITE_TYPE_CONTAINER', (GETPOST('WEBSITE_TYPE_CONTAINER','alpha')?GETPOST('WEBSITE_TYPE_CONTAINER','alpha'):$type_container));
 	print '</td></tr>';
 
 	if ($action == 'createcontainer')
@@ -2051,15 +2142,9 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<tr><td class="titlefield fieldrequired">';
 		print $langs->trans('WEBSITE_PAGE_EXAMPLE');
 		print '</td><td>';
-		print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample')?GETPOST('sample'):'corporatehomepage'));
+		print $formwebsite->selectSampleOfContainer('sample', (GETPOST('sample','alpha')?GETPOST('sample','alpha'):'corporatehomepage'));
 		print '</td></tr>';
 	}
-
-	print '<tr><td class="fieldrequired">';
-	print $langs->trans('WEBSITE_TITLE');
-	print '</td><td>';
-	print '<input type="text" class="flat quatrevingtpercent" name="WEBSITE_TITLE" value="'.dol_escape_htmltag($pagetitle).'">';
-	print '</td></tr>';
 
 	print '<tr><td>';
 	print $langs->trans('WEBSITE_DESCRIPTION');
@@ -2080,25 +2165,23 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 	print '</td></tr>';
 
 	print '<tr><td class="titlefieldcreate">';
-	print $langs->trans('WEBSITE_ALIASALT');
+	$htmlhelp=$langs->trans("WEBSITE_ALIASALTDesc");
+	print $form->textwithpicto($langs->trans('WEBSITE_ALIASALT'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
 	print '<input type="text" class="flat minwidth300" name="WEBSITE_ALIASALT" value="'.dol_escape_htmltag($pagealiasalt).'">';
 	print '</td></tr>';
 
 	print '<tr><td class="tdhtmlheader tdtop">';
 	$htmlhelp=$langs->trans("EditTheWebSiteForACommonHeader").'<br><br>';
-
 	$htmlhelp=$langs->trans("Example").' :<br>';
 	$htmlhelp.=dol_htmlentitiesbr($htmlheadercontentdefault);
-
 	print $form->textwithpicto($langs->trans('HtmlHeaderPage'), $htmlhelp, 1, 'help', '', 0, 2, 'htmlheadertooltip');
 	print '</td><td>';
-	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '220', 'ace', 'In', true, false, 'ace', 0, '100%', '');
+	$doleditor=new DolEditor('htmlheader', $pagehtmlheader, '', '180', 'ace', 'In', true, false, 'ace', 0, '100%', '');
 	print $doleditor->Create(1, '', true, 'HTML Header', 'html');
 	print '</td></tr>';
 
 	print '</table>';
-
 	if ($action == 'createcontainer')
 	{
 		print '<div class="center">';
@@ -2109,7 +2192,26 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '</div>';
 	}
 
-
+	if ($action == 'createcontainer')
+	{
+		print '<script type="text/javascript" language="javascript">
+			jQuery(document).ready(function() {
+				var disableautofillofalias = 0;
+				jQuery("#WEBSITE_TITLE").keyup(function() {
+					if (disableautofillofalias == 0)
+					{
+						var valnospecial = jQuery("#WEBSITE_TITLE").val().replace(/[^\w]/gi, \'-\').toLowerCase();
+						valnospecial = valnospecial.replace(/\-+/g, \'-\').replace(/\-$/, \'\');
+						console.log("disableautofillofalias=0 so we replace WEBSITE_TITLE with "+valnospecial);
+						jQuery("#WEBSITE_PAGENAME").val(valnospecial);
+					}
+				});
+				jQuery("#WEBSITE_PAGENAME").keyup(function() {
+					disableautofillofalias = 1;
+				});
+			});
+			</script>';
+	}
 	//print '</div>';
 
 	//dol_fiche_end();

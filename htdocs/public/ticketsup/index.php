@@ -16,8 +16,8 @@
  */
 
 /**
- *       \file       htdocs/public/ticketsup/index.php
- *       \ingroup    ticketsup
+ *       \file       htdocs/public/ticket/index.php
+ *       \ingroup    ticket
  *       \brief      Public file to add and manage ticket
  */
 
@@ -26,16 +26,13 @@ if (!defined('NOREQUIREMENU')) define('NOREQUIREMENU', '1');
 if (!defined("NOLOGIN"))       define("NOLOGIN", '1');				// If this page is public (can be called outside logged session)
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security.lib.php';
 
-// Load traductions files requiredby by page
-$langs->load("companies");
-$langs->load("other");
-$langs->load("ticketsup");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other', 'ticket', 'errors'));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
@@ -46,10 +43,10 @@ $action = GETPOST('action', 'alpha');
  *
  ****************************************************/
 $form = new Form($db);
-$formticket = new FormTicketsup($db);
+$formticket = new FormTicket($db);
 
 $arrayofjs = array();
-$arrayofcss = array('/ticketsup/css/styles.css.php');
+$arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
 if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {

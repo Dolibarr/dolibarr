@@ -27,7 +27,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "mails"));
 
 if (!$user->admin) accessforbidden();
@@ -60,7 +60,7 @@ if ($action == 'setvalue')
 	// Create temporary encryption key if nedded
 	$res=dolibarr_set_const($db, "MAILING_EMAIL_UNSUBSCRIBE_KEY",$checkread_key,'chaine',0,'',$conf->entity);
 	if (! $res > 0) $error++;
-    
+
     if (! $error)
     {
     	$db->commit();
@@ -128,6 +128,7 @@ print $langs->trans("MailingDelay").'</td><td>';
 print '<input size="32" type="text" name="MAILING_DELAY" value="'.$conf->global->MAILING_DELAY.'">';
 print '</td></tr>';
 
+
 // Constant to add salt into the unsubscribe and check read tag.
 // It is also used as a security key parameter.
 
@@ -136,6 +137,13 @@ print $langs->trans("ActivateCheckReadKey").'</td><td>';
 print '<input size="32" type="text" name="MAILING_EMAIL_UNSUBSCRIBE_KEY" id="MAILING_EMAIL_UNSUBSCRIBE_KEY" value="'.$conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY.'">';
 if (! empty($conf->use_javascript_ajax)) print '&nbsp;'.img_picto($langs->trans('Generate'), 'refresh', 'id="generate_token" class="linkobject"');
 print '</td></tr>';
+
+if (!empty($conf->use_javascript_ajax) && $conf->global->MAIN_FEATURES_LEVEL >=1) {
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("MailAdvTargetRecipients").'</td><td>';
+	print ajax_constantonoff('EMAILING_USE_ADVANCED_SELECTOR');
+	print '</td></tr>';
+}
 
 print '</table>';
 

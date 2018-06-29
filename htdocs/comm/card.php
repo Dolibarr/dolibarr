@@ -45,8 +45,8 @@ if (! empty($conf->contrat->enabled)) require_once DOL_DOCUMENT_ROOT.'/contrat/c
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 if (! empty($conf->ficheinter->enabled)) require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 
-$langs->load("companies");
-$langs->load('banks');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'banks'));
 
 if (! empty($conf->contrat->enabled))  $langs->load("contracts");
 if (! empty($conf->commande->enabled)) $langs->load("orders");
@@ -436,7 +436,7 @@ if ($object->id > 0)
 
 
 	// Multiprice level
-	if (! empty($conf->global->PRODUIT_MULTIPRICES))
+	if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 	{
 		print '<tr><td class="nowrap">';
 		print '<table width="100%" class="nobordernopadding"><tr><td class="nowrap">';
@@ -679,7 +679,8 @@ if ($object->id > 0)
 			$num = $db->num_rows($resql);
             if ($num > 0)
             {
-		        print '<table class="noborder" width="100%">';
+            	print '<div class="div-table-responsive-no-min">';
+            	print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
     			print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/comm/propal/list.php?socid='.$object->id.'">'.$langs->trans("AllPropals").' <span class="badge">'.$num.'</span></a></td>';
@@ -712,7 +713,11 @@ if ($object->id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -759,6 +764,7 @@ if ($object->id > 0)
 				$orders2invoice = $db->num_rows($resql2);
 				$db->free($resql2);
 
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
@@ -793,7 +799,11 @@ if ($object->id > 0)
 			}
 			$db->free($resql);
 
-			if ($num >0) print "</table>";
+			if ($num >0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -830,7 +840,8 @@ if ($object->id > 0)
 
         	$num = $db->num_rows($resql);
             if ($num > 0) {
-                print '<table class="noborder" width="100%">';
+            	print '<div class="div-table-responsive-no-min">';
+            	print '<table class="noborder" width="100%">';
 
                 print '<tr class="liste_titre">';
                 print '<td colspan="4"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastSendings",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/expedition/list.php?socid='.$object->id.'">'.$langs->trans("AllSendings").' <span class="badge">'.$num.'</span></a></td>';
@@ -864,7 +875,10 @@ if ($object->id > 0)
             $db->free($resql);
 
             if ($num > 0)
+            {
                 print "</table>";
+                print '</div>';
+            }
         } else {
             dol_print_error($db);
         }
@@ -890,7 +904,8 @@ if ($object->id > 0)
 			$num = $db->num_rows($resql);
 			if ($num >0)
 			{
-		        print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder" width="100%">';
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="6"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastContracts",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
@@ -909,6 +924,7 @@ if ($object->id > 0)
 				$contrat->ref=$objp->ref?$objp->ref:$objp->id;
 				$contrat->ref_customer=$objp->refcus;
 				$contrat->ref_supplier=$objp->refsup;
+				$contrat->fetch_lines();
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -918,8 +934,7 @@ if ($object->id > 0)
 				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dc),'day')."</td>\n";
 				print '<td align="right" width="80px">'.dol_print_date($db->jdate($objp->dcon),'day')."</td>\n";
 				print '<td width="20">&nbsp;</td>';
-				print '<td align="right" class="nowrap">';
-				$contrat->fetch_lines();
+				print '<td align="right" class="nowraponall">';
 				print $contrat->getLibStatut(4);
 				print "</td>\n";
 				print '</tr>';
@@ -927,7 +942,11 @@ if ($object->id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -955,7 +974,8 @@ if ($object->id > 0)
 			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
-		        print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder" width="100%">';
 
 			    print '<tr class="liste_titre">';
 				print '<td colspan="3"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastInterventions",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/fichinter/list.php?socid='.$object->id.'">'.$langs->trans("AllInterventions").' <span class="badge">'.$num.'</span></td>';
@@ -983,7 +1003,11 @@ if ($object->id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -1001,7 +1025,7 @@ if ($object->id > 0)
 		$sql.= ', f.tva as total_tva';
 		$sql.= ', f.total_ttc';
 		$sql.= ', f.datec as dc';
-		$sql.= ', f.date_last_gen';
+		$sql.= ', f.date_last_gen, f.date_when';
 		$sql.= ', f.frequency';
 		$sql.= ', f.unit_frequency';
 		$sql.= ', f.suspended as suspended';
@@ -1023,6 +1047,7 @@ if ($object->id > 0)
 			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
+				print '<div class="div-table-responsive-no-min">';
 				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
@@ -1044,6 +1069,8 @@ if ($object->id > 0)
 				$invoicetemplate->total_ht = $objp->total_ht;
 				$invoicetemplate->total_tva = $objp->total_tva;
 				$invoicetemplate->total_ttc = $objp->total_ttc;
+				$invoicetemplate->date_last_gen = $objp->date_last_gen;
+				$invoicetemplate->date_when = $objp->date_when;
 
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -1084,7 +1111,11 @@ if ($object->id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{
@@ -1121,7 +1152,8 @@ if ($object->id > 0)
 			$num = $db->num_rows($resql);
 			if ($num > 0)
 			{
-		        print '<table class="noborder" width="100%">';
+				print '<div class="div-table-responsive-no-min">';
+				print '<table class="noborder" width="100%">';
 
 				print '<tr class="liste_titre">';
 				print '<td colspan="5"><table width="100%" class="nobordernopadding"><tr><td>'.$langs->trans("LastCustomersBills",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a class="notasortlink" href="'.DOL_URL_ROOT.'/compta/facture/list.php?socid='.$object->id.'">'.$langs->trans("AllBills").' <span class="badge">'.$num.'</span></a></td>';
@@ -1171,7 +1203,11 @@ if ($object->id > 0)
 			}
 			$db->free($resql);
 
-			if ($num > 0) print "</table>";
+			if ($num > 0)
+			{
+				print "</table>";
+				print '</div>';
+			}
 		}
 		else
 		{

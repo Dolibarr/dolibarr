@@ -121,7 +121,7 @@ class modService extends DolibarrModules
 								'url'=>'/product/admin/product_tools.php?mainmenu=home&leftmenu=admintools',
 								'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>300,
-								'enabled'=>'$conf->product->enabled && $leftmenu=="admintools"',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'enabled'=>'$conf->product->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both
@@ -212,7 +212,12 @@ class modService extends DolibarrModules
 					'pr.price_min'=>"MinPriceLevelUnitPriceHT",'pr.price_min_ttc'=>"MinPriceLevelUnitPriceTTC",
 					'pr.tva_tx'=>'PriceLevelVATRate',
 					'pr.date_price'=>'DateCreation');
-				//$this->export_TypeFields_array[$r]=array('p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",'p.note'=>"Text",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text','p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",'p.datec'=>'Date','p.tms'=>'Date');
+				//$this->export_TypeFields_array[$r]=array(
+				//	'p.ref'=>"Text",'p.label'=>"Text",'p.description'=>"Text",'p.url'=>"Text",'p.accountancy_code_sell'=>"Text",'p.accountancy_code_buy'=>"Text",
+				//	'p.note'=>"Text",'p.length'=>"Numeric",'p.surface'=>"Numeric",'p.volume'=>"Numeric",'p.weight'=>"Numeric",'p.customcode'=>'Text',
+				//	'p.price_base_type'=>"Text",'p.price'=>"Numeric",'p.price_ttc'=>"Numeric",'p.tva_tx'=>'Numeric','p.tosell'=>"Boolean",'p.tobuy'=>"Boolean",
+				//	'p.datec'=>'Date','p.tms'=>'Date'
+				//);
 				$this->export_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",
 					'pr.price_base_type'=>"product",'pr.price_level'=>"product",'pr.price'=>"product",
 					'pr.price_ttc'=>"product",
@@ -238,7 +243,12 @@ class modService extends DolibarrModules
 		$this->import_entities_array[$r]=array();		// We define here only fields that use another icon that the one defined into import_icon
 		$this->import_tables_array[$r]=array('p'=>MAIN_DB_PREFIX.'product','extra'=>MAIN_DB_PREFIX.'product_extrafields');
 		$this->import_tables_creator_array[$r]=array('p'=>'fk_user_author');	// Fields to store import user id
-        $this->import_fields_array[$r]=array('p.ref'=>"Ref*",'p.label'=>"Label*",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",'p.weight'=>"Weight",'p.duration'=>"Duration",'p.customcode'=>'CustomCode','p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",'p.tva_tx'=>'VAT','p.tosell'=>"OnSell*",'p.tobuy'=>"OnBuy*",'p.fk_product_type'=>"Type*",'p.finished'=>'Nature','p.datec'=>'DateCreation');
+        $this->import_fields_array[$r]=array(
+			'p.ref'=>"Ref*",'p.label'=>"Label*",'p.description'=>"Description",'p.url'=>"PublicUrl",'p.accountancy_code_sell'=>"ProductAccountancySellCode",
+			'p.accountancy_code_buy'=>"ProductAccountancyBuyCode",'p.note'=>"Note",'p.length'=>"Length",'p.surface'=>"Surface",'p.volume'=>"Volume",
+			'p.weight'=>"Weight",'p.duration'=>"Duration",'p.customcode'=>'CustomCode','p.price'=>"SellingPriceHT",'p.price_ttc'=>"SellingPriceTTC",
+			'p.tva_tx'=>'VAT','p.tosell'=>"OnSell*",'p.tobuy'=>"OnBuy*",'p.fk_product_type'=>"Type*",'p.finished'=>'Nature','p.datec'=>'DateCreation'
+		);
 		if (! empty($conf->barcode->enabled)) $this->import_fields_array[$r]=array_merge($this->import_fields_array[$r],array('p.barcode'=>'BarCode'));
 		if (! empty($conf->global->PRODUCT_USE_UNITS)) $this->import_fields_array[$r]['p.fk_unit'] = 'Unit';
         // Add extra fields

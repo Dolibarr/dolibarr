@@ -42,13 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/supplier_proposal/class/supplier_proposal.class
 if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
-$langs->load('companies');
-$langs->load('propal');
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('products');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'propal', 'supplier_proposal', 'compta', 'bills', 'orders', 'products'));
 
 $socid=GETPOST('socid','int');
 
@@ -394,7 +389,7 @@ if ($resql)
 	$newcardbutton='';
 	if($user->rights->supplier_proposal->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create">'.$langs->trans('NewAskPrice');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/supplier_proposal/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewAskPrice').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -420,7 +415,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$i = 0;

@@ -1,9 +1,5 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2010 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016		Charlie Benke		<charlie@patas-monkey.com>
+/* Copyright (C) 2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +19,12 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
 
 /**
- *	\class      ModeleStock
- *	\brief      Parent class for stock models of doc generators
+ *	Parent class for stock models of doc generators
  */
-abstract class ModeleStock extends CommonDocGenerator
+abstract class ModelePDFStock extends CommonDocGenerator
 {
     var $error='';
+
 
     /**
      *  Return list of active generation modules

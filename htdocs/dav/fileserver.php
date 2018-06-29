@@ -43,6 +43,7 @@ if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 	$user->getrights();
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("main","other"));
 
 

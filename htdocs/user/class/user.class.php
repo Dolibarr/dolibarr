@@ -11,6 +11,7 @@
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2018      charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,6 +137,12 @@ class User extends CommonObject
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
+	
+	public $fields=array(
+        	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+        	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
+        	'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name','enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+    	);
 
 	/**
 	 *    Constructor de la classe
@@ -2205,17 +2212,14 @@ class User extends CommonObject
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+			/*
+			 $hookmanager->initHooks(array('userdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
 		}
-		/*if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
-		$hookmanager->initHooks(array('userdao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-		*/
 
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
@@ -2245,11 +2249,6 @@ class User extends CommonObject
 		$result.=$companylink;
 
 		global $action;
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('userdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -2573,7 +2572,8 @@ class User extends CommonObject
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
-		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2982,9 +2982,10 @@ class User extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$user,$langs;
 
@@ -3005,7 +3006,7 @@ class User extends CommonObject
 
 		$modelpath = "core/modules/user/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**

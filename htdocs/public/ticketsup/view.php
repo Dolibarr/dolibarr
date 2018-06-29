@@ -16,8 +16,8 @@
  */
 
 /**
- *       \file       htdocs/public/ticketsup/index.php
- *       \ingroup    ticketsup
+ *       \file       htdocs/public/ticket/index.php
+ *       \ingroup    ticket
  *       \brief      Public file to add and manage ticket
  */
 
@@ -35,12 +35,12 @@ if (!defined("NOLOGIN")) {
 // If this page is public (can be called outside logged session)
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/actions_ticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticketsup.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/ticketsup.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/ticket/class/actions_ticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formticket.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/ticket.lib.php';
 
-// Load traductions files requiredby by page
-$langs->loadLangs(array("companies","other","ticketsup"));
+// Load translation files required by the page
+$langs->loadLangs(array("companies","other","ticket"));
 
 // Get parameters
 $track_id = GETPOST('track_id', 'alpha');
@@ -54,7 +54,7 @@ if (isset($_SESSION['email_customer'])) {
     $email = $_SESSION['email_customer'];
 }
 
-$object = new ActionsTicketsup($db);
+$object = new ActionsTicket($db);
 
 
 /*
@@ -126,10 +126,10 @@ $object->doActions($action);
  */
 
 $form = new Form($db);
-$formticket = new FormTicketsup($db);
+$formticket = new FormTicket($db);
 
 $arrayofjs = array();
-$arrayofcss = array('/ticketsup/css/styles.css.php');
+$arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
@@ -245,9 +245,9 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         print '<div style="clear: both; margin-top: 1.5em;"></div>';
 
         if ($action == 'add_message') {
-            print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'messages@ticketsup');
+            print load_fiche_titre($langs->trans('TicketAddMessage'), '', 'messages@ticket');
 
-            $formticket = new FormTicketsup($db);
+            $formticket = new FormTicket($db);
 
             $formticket->action = "new_public_message";
             $formticket->track_id = $object->dao->track_id;
@@ -258,7 +258,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
             $formticket->withfile = 2;
             $formticket->showMessageForm('100%');
         } else {
-            print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticketsup/list.php', 1) . '">';
+            print '<form method="post" id="form_view_ticket_list" name="form_view_ticket_list" enctype="multipart/form-data" action="' . dol_buildpath('/public/ticket/list.php', 1) . '">';
             print '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
             print '<input type="hidden" name="action" value="view_ticketlist">';
             print '<input type="hidden" name="track_id" value="'.$object->dao->track_id.'">';
@@ -284,13 +284,13 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         }
 
         // Message list
-        print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticketsup');
+        print load_fiche_titre($langs->trans('TicketMessagesList'), '', 'messages@ticket');
         $object->viewTicketMessages(false);
 
         print '<br>';
 
         // Logs list
-        print load_fiche_titre($langs->trans('TicketHistory'), '', 'history@ticketsup');
+        print load_fiche_titre($langs->trans('TicketHistory'), '', 'history@ticket');
         $object->viewTicketLogs(false);
     } else {
         print '<div class="error">Not Allowed<br><a href="' . $_SERVER['PHP_SELF'] . '?track_id=' . $object->dao->track_id . '">' . $langs->trans('Back') . '</a></div>';

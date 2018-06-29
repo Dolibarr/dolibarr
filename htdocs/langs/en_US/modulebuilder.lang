@@ -95,3 +95,6 @@ DropTableIfEmpty=(Delete table if empty)
 TableDoesNotExists=The table %s does not exists
 TableDropped=Table %s deleted
 InitStructureFromExistingTable=Build the structure array string of an existing table 
+UseAboutPage=Disallow the about page
+UseDocFolder=Disallow the documentation folder
+UseSpecificReadme=Use a specific ReadMe

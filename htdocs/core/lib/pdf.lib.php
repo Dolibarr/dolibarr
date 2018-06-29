@@ -129,8 +129,11 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
-	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
-	else $pdf = new TCPDF($pagetype,$metric,$format);
+	$pdfa=false;											// PDF-1.3
+	if (! empty($conf->global->PDF_USE_1A)) $pdfa=true;		// PDF1/A
+
+	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format,true,'UTF-8',false,$pdfa);
+	else $pdf = new TCPDF($pagetype,$metric,$format,true,'UTF-8',false,$pdfa);
 
 	// Protection and encryption of pdf
 	if (! empty($conf->global->PDF_SECURITY_ENCRYPTION))
@@ -1228,7 +1231,17 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc)) $libelleproduitservice.=$desc;
+				if (empty($hidedesc))
+				{
+					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST))
+					{
+						$libelleproduitservice=$desc."\n".$libelleproduitservice;
+					}
+					else
+					{
+						$libelleproduitservice.=$desc;
+					}
+				}
 			}
 			else
 			{

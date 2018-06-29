@@ -45,6 +45,7 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("sendings","bills",'deliveries','orders'));
 
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
@@ -603,11 +604,8 @@ else
 				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num_prod)
 			{
-
-
 				print '<tr class="oddeven">';
 				if ($object->lines[$i]->fk_product > 0)
 				{
