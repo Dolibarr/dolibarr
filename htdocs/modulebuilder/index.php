@@ -120,6 +120,13 @@ if ($dirins && $action == 'initmodule' && $modulename)
 				setEventMessages($langs->trans("AllFilesDidAlreadyExist", $srcdir, $destdir), null, 'warnings');
 			}
 		}
+                
+                if(!empty($conf->global->MODULEBUILDER_USE_ABOUT)){
+                    dol_delete_file($destdir.'/admin/about.php');
+                }
+                if(!empty($conf->global->MODULEBUILDER_USE_DOCFOLDER)){
+                    dol_delete_dir($destdir.'/doc/');
+                }
 
 		// Delete some files
 		dol_delete_file($destdir.'/myobject_card.php');
@@ -165,6 +172,11 @@ if ($dirins && $action == 'initmodule' && $modulename)
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
 			}
 		}
+                
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_README)){
+                    dol_delete_file($destdir.'/README.md');
+                    file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
+                }
 	}
 
 	if (! $error)
