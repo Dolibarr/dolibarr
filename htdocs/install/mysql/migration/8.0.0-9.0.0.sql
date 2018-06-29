@@ -31,3 +31,7 @@
 
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
 
+
+ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
+
+
