@@ -44,7 +44,6 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
 
-
 update llx_propal set fk_statut = 1 where fk_statut = -1;
 
 ALTER TABLE llx_inventory ADD COLUMN fk_user_creat integer;
@@ -81,7 +80,6 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 -- For 8.0
 
 
-ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
 
 
 -- delete old permission no more used
