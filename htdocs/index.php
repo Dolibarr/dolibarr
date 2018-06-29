@@ -526,7 +526,7 @@ foreach($valid_dashboardlines as $board)
     }
 }
 //var_dump($totallate, $totaltodo);
-if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = round($totallate / $totaltodo * 100, 2);
+if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) && !empty($totaltodo)) $totallate = round($totallate / $totaltodo * 100, 2);
 //var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
