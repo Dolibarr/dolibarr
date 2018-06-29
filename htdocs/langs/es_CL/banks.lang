@@ -4,6 +4,7 @@ MenuVariousPayment=Pagos diversos
 MenuNewVariousPayment=Nuevo pago misceláneo
 BankAccount=cuenta bancaria
 BankAccounts=Cuentas bancarias
+BankAccountsAndGateways=Cuentas bancarias | Puertas de enlace
 AccountRef=Ref de cuenta financiera
 AccountLabel=Etiqueta de cuenta financiera
 CashAccount=Cuenta de efectivo

@@ -20,7 +20,7 @@ CronJobProfiles=Lista dei profili cron predefiniti
 EnabledAndDisabled=Attivato e disattivato
 # Page list
 CronLastOutput=Output dell'ultimo avvio
-CronLastResult=Latest result code
+CronLastResult=Ultimo codice risultato
 CronCommand=Comando
 CronList=Processi pianificati
 CronDelete=Cancella i processi pianificati
@@ -43,7 +43,7 @@ CronNoJobs=Nessun processo registrato
 CronPriority=Priorità
 CronLabel=Titolo
 CronNbRun=Num. lancio
-CronMaxRun=Max number launch
+CronMaxRun=Numero massimo di lanci
 CronEach=Ogni
 JobFinished=Processo eseguito e completato
 #Page card

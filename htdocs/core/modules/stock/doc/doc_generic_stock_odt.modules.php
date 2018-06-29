@@ -302,6 +302,7 @@ class doc_generic_stock_odt extends ModelePDFStock
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact

@@ -46,6 +46,7 @@ if (! empty($conf->projet->enabled)) {
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("contracts","orders","companies","bills","products",'compta'));
 
 $action=GETPOST('action','alpha');
@@ -896,10 +897,7 @@ if (empty($reshook))
 		$cancelbutton = GETPOST('cancel','alpha');
 		if (!$cancelbutton) {
 
-			$result = $object->fetch($id);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_supplier', GETPOST('ref_supplier','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 			if ($result < 0) {
@@ -921,10 +919,7 @@ if (empty($reshook))
 
 		if (!$cancelbutton)
 		{
-			$result = $object->fetch($id);
-			if ($result < 0) {
-				setEventMessages($object->error, $object->errors, 'errors');
-			}
+			$object->oldcopy = dol_clone($object);
 
 			$result = $object->setValueFrom('ref_customer', GETPOST('ref_customer','alpha'), '', null, 'text', '', $user, 'CONTRACT_MODIFY');
 			if ($result < 0) {
@@ -2152,13 +2147,28 @@ else
 
 				if ($object->nbofservicesclosed > 0 || $object->nbofserviceswait > 0)
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+					if ($user->rights->contrat->activer)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=activate">'.$langs->trans("ActivateAllContracts").'</a></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("ActivateAllContracts").'</a></div>';
+					}
 				}
 				if ($object->nbofservicesclosed < $nbofservices)
 				{
+					if ($user->rights->contrat->desactiver)
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#">'.$langs->trans("CloseAllContracts").'</a></div>';
+					}
+
 					//if (! $numactive)
 					//{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&amp;action=close">'.$langs->trans("CloseAllContracts").'</a></div>';
 					//}
 					//else
 					//{

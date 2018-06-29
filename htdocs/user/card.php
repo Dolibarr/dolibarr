@@ -11,7 +11,7 @@
  * Copyright (C) 2013-2016 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015-2017 Jean-François Ferry  <jfefe@aternatik.fr>
  * Copyright (C) 2015      Ari Elbaz (elarifr)  <github@accedinfo.com>
- * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2015-2018 Charlene Benke       <charlie@patas-monkey.com>
  * Copyright (C) 2016      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,11 +89,8 @@ if (!$canreaduser) {
 }
 if ($user->id <> $id && ! $canreaduser) accessforbidden();
 
-$langs->load("users");
-$langs->load("companies");
-$langs->load("ldap");
-$langs->load("admin");
-$langs->load('hrm');
+// Load translation files required by page
+$langs->loadLangs(array('users', 'companies', 'ldap', 'admin', 'hrm'));
 
 $object = new User($db);
 $extrafields = new ExtraFields($db);
@@ -221,6 +218,9 @@ if (empty($reshook)) {
 			$object->color = GETPOST("color") != '' ? GETPOST("color") : '';
 			$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth'), GETPOST('dateemploymentday'), GETPOST('dateemploymentyear'));
 			$object->dateemployment = $dateemployment;
+
+			$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth'), GETPOST('dateemploymentendday'), GETPOST('dateemploymentendyear'));
+			$object->dateemploymentend = $dateemploymentend;
 
 			// Fill array 'array_options' with data from add form
 			$ret = $extrafields->setOptionalsFromPost($extralabels, $object);
@@ -364,6 +364,8 @@ if (empty($reshook)) {
 				$object->color = GETPOST("color",'alpha') != '' ? GETPOST("color",'alpha') : '';
 				$dateemployment = dol_mktime(0, 0, 0, GETPOST('dateemploymentmonth','int'), GETPOST('dateemploymentday','int'), GETPOST('dateemploymentyear','int'));
 				$object->dateemployment = $dateemployment;
+				$dateemploymentend = dol_mktime(0, 0, 0, GETPOST('dateemploymentendmonth','int'), GETPOST('dateemploymentendday','int'), GETPOST('dateemploymentendyear','int'));
+				$object->dateemploymentend = $dateemploymentend;
 
 				if (! empty($conf->multicompany->enabled))
 				{
@@ -1159,6 +1161,13 @@ if ($action == 'create' || $action == 'adduserldap')
 	print '</td>';
 	print "</tr>\n";
 
+	// Date employment END
+	print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+	print '<td>';
+	echo $form->select_date(GETPOST('dateemploymentend'),'dateemploymentend',0,0,1,'form'.'dateemploymentend',1,0,1);
+	print '</td>';
+	print "</tr>\n";
+
 	// Date birth
 	print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 	print '<td>';
@@ -1505,6 +1514,13 @@ else
 			print '</td>';
 			print "</tr>\n";
 
+			// Date employment
+			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			print '<td>';
+			print dol_print_date($object->dateemploymentend);
+			print '</td>';
+			print "</tr>\n";
+
 			// Date of birth
 			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 			print '<td>';
@@ -1651,85 +1667,90 @@ else
 
 			print '<div class="tabsAction">';
 
-			if (! empty($object->email))
+			$parameters=array();
+			$reshook=$hookmanager->executeHooks('addMoreActionsButtons',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
+			if (empty($reshook))
 			{
-				$langs->load("mails");
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#presend">'.$langs->trans('SendMail').'</a></div>';
-			}
-			else
-			{
-				$langs->load("mails");
-				print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
-			}
-
-			if ($caneditfield && (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
-			{
-				if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
+				if (! empty($object->email))
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
+					$langs->load("mails");
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=presend&amp;mode=init#presend">'.$langs->trans('SendMail').'</a></div>';
 				}
 				else
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
+					$langs->load("mails");
+					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans('SendMail').'</a></div>';
 				}
-			}
-			elseif ($caneditpassword && ! $object->ldap_sid &&
-			(empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
-			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a></div>';
-			}
 
-			// Si on a un gestionnaire de generation de mot de passe actif
-			if ($conf->global->USER_PASSWORD_GENERATED != 'none')
-			{
-				if ($object->statut == 0)
+				if ($caneditfield && (empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("ReinitPassword").'</a></div>';
+					if (! empty($conf->global->MAIN_ONLY_LOGIN_ALLOWED))
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("DisabledInMonoUserMode")).'">'.$langs->trans("Modify").'</a></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("Modify").'</a></div>';
+					}
 				}
-				elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+				elseif ($caneditpassword && ! $object->ldap_sid &&
+				(empty($conf->multicompany->enabled) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
+				{
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=edit">'.$langs->trans("EditPassword").'</a></div>';
+				}
+
+				// Si on a un gestionnaire de generation de mot de passe actif
+				if ($conf->global->USER_PASSWORD_GENERATED != 'none')
+				{
+					if ($object->statut == 0)
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("ReinitPassword").'</a></div>';
+					}
+					elseif (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
+					{
+						print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a></div>';
+					}
+
+					if ($object->statut == 0)
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a></div>';
+					}
+					else if (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+					((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
+					{
+						if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a></div>';
+						else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendNewPassword").'</a></div>';
+					}
+				}
+
+				// Activer
+				if ($user->id <> $id && $candisableuser && $object->statut == 0 &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
-					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=password">'.$langs->trans("ReinitPassword").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a></div>';
 				}
-
-				if ($object->statut == 0)
-				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("UserDisabled")).'">'.$langs->trans("SendNewPassword").'</a></div>';
-				}
-				else if (($user->id != $id && $caneditpassword) && $object->login && !$object->ldap_sid &&
+				// Desactiver
+				if ($user->id <> $id && $candisableuser && $object->statut == 1 &&
 				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
-					if ($object->email) print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=passwordsend">'.$langs->trans("SendNewPassword").'</a></div>';
-					else print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("NoEMail")).'">'.$langs->trans("SendNewPassword").'</a></div>';
+					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a></div>';
 				}
-			}
-
-			// Activer
-			if ($user->id <> $id && $candisableuser && $object->statut == 0 &&
-			((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
-			{
-				print '<div class="inline-block divButAction"><a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&amp;action=enable">'.$langs->trans("Reactivate").'</a></div>';
-			}
-			// Desactiver
-			if ($user->id <> $id && $candisableuser && $object->statut == 1 &&
-			((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
-			{
-				print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=disable&amp;id='.$object->id.'">'.$langs->trans("DisableUser").'</a></div>';
-			}
-			// Delete
-			if ($user->id <> $id && $candisableuser &&
-			((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
-			{
-				if ($user->admin || ! $object->admin) // If user edited is admin, delete is possible on for an admin
+				// Delete
+				if ($user->id <> $id && $candisableuser &&
+				((empty($conf->multicompany->enabled) && $object->entity == $user->entity) || ! $user->entity || ($object->entity == $conf->entity) || ($conf->global->MULTICOMPANY_TRANSVERSE_MODE && $conf->entity == 1)))
 				{
-					print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
-				}
-				else
-				{
-					print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a></div>';
+					if ($user->admin || ! $object->admin) // If user edited is admin, delete is possible on for an admin
+					{
+						print '<div class="inline-block divButAction"><a class="butActionDelete" href="'.$_SERVER['PHP_SELF'].'?action=delete&amp;id='.$object->id.'">'.$langs->trans("DeleteUser").'</a></div>';
+					}
+					else
+					{
+						print '<div class="inline-block divButAction"><a class="butActionRefused" href="#" title="'.dol_escape_htmltag($langs->trans("MustBeAdminToDeleteOtherAdmin")).'">'.$langs->trans("DeleteUser").'</a></div>';
+					}
 				}
 			}
-
+			
 			print "</div>\n";
 
 
@@ -2430,6 +2451,14 @@ else
 			print '</td>';
 			print "</tr>\n";
 
+			// Date employmentEnd
+			print '<tr><td>'.$langs->trans("DateEmploymentEnd").'</td>';
+			print '<td>';
+			echo $form->select_date(GETPOST('dateemploymentend')?GETPOST('dateemploymentend'):$object->dateemploymentend,'dateemploymentend',0,0,1,'form'.'dateemploymentend',1,0,1);
+			print '</td>';
+			print "</tr>\n";
+
+
 			// Date birth
 			print '<tr><td>'.$langs->trans("DateToBirth").'</td>';
 			print '<td>';
@@ -2455,7 +2484,7 @@ else
 			print '<div class="fichecenter"><div class="fichehalfleft">';
 			/*
              * Documents generes
-            */
+             */
 			$filename = dol_sanitizeFileName($object->ref);
 			$filedir = $conf->user->dir_output . "/" . dol_sanitizeFileName($object->ref);
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;

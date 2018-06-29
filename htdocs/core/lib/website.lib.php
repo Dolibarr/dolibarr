@@ -131,6 +131,8 @@ function dolWebsiteOutput($content)
 		}
 	}
 
+	$content=preg_replace('/ contenteditable="true"/', ' contenteditable="false"', $content, -1, $nbrep);
+
 	dol_syslog("dolWebsiteOutput end");
 
 	print $content;

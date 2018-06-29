@@ -7,7 +7,6 @@ QtyInOtherShipments=Aantal in andere verzendingen
 SendingsAndReceivingForSameOrder=Verzendingen en ontvangstbevestigingen van deze bestelling
 ConfirmDeleteSending=Weet u zeker dat u deze verzending wilt verwijderen?
 ConfirmValidateSending=Weet u zeker dat u deze verzending met referentie <b>%s</b> wilt valideren?
-ConfirmCancelSending=Weet u zeker dat u deze verzending wilt annuleren?
 DateDeliveryPlanned=Verwachte leveringsdatum
 RefDeliveryReceipt=Referentie ontvangstbevestiging
 StatusReceipt=Status ontvangstbevestiging

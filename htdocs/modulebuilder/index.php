@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
 
 $action=GETPOST('action','aZ09');
@@ -118,6 +120,13 @@ if ($dirins && $action == 'initmodule' && $modulename)
 				setEventMessages($langs->trans("AllFilesDidAlreadyExist", $srcdir, $destdir), null, 'warnings');
 			}
 		}
+                
+                if(!empty($conf->global->MODULEBUILDER_USE_ABOUT)){
+                    dol_delete_file($destdir.'/admin/about.php');
+                }
+                if(!empty($conf->global->MODULEBUILDER_USE_DOCFOLDER)){
+                    dol_delete_dir($destdir.'/doc/');
+                }
 
 		// Delete some files
 		dol_delete_file($destdir.'/myobject_card.php');
@@ -163,6 +172,11 @@ if ($dirins && $action == 'initmodule' && $modulename)
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
 			}
 		}
+                
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_README)){
+                    dol_delete_file($destdir.'/README.md');
+                    file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
+                }
 	}
 
 	if (! $error)
@@ -397,7 +411,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'Mon module'=>$module,
 			'htdocs/modulebuilder/template/'=>strtolower($modulename),
 			'myobject'=>strtolower($objectname),
-			'MyObject'=>$objectname
+			'MyObject'=>$objectname,
+                        'MYOBJECT'=>strtoupper($objectname)
 			);
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);

@@ -276,6 +276,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact

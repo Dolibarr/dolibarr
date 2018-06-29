@@ -67,9 +67,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("companies");
+        
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("companies", "main"));
 
 		$this->db = $db;
 		$this->name = "ODT templates";
@@ -452,11 +452,9 @@ class doc_generic_project_odt extends ModelePDFProjects
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("projects");
+        
+		// Load translation files required by the page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
 		if ($conf->projet->dir_output)
 		{
@@ -526,6 +524,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
         			// if we have a PROJECTLEADER contact and we dont use it as recipient we store the contact object for later use
@@ -950,7 +949,6 @@ class doc_generic_project_odt extends ModelePDFProjects
 							$elementarray = $object->get_element_list($keyref, $tablename);
 							if (count($elementarray)>0 && is_array($elementarray))
 							{
-								$var=true;
 								$total_ht = 0;
 								$total_ttc = 0;
 								$num=count($elementarray);

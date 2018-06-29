@@ -44,6 +44,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('companies','propal','compta','bills','orders','products','deliveries'));
 
 $socid=GETPOST('socid','int');
@@ -441,8 +442,8 @@ if ($resql)
 	if ($search_zip)		 $param.='&search_zip='.urlencode($search_zip);
 	if ($socid > 0)          $param.='&socid='.urlencode($socid);
 	if ($optioncss != '')    $param.='&optioncss='.urlencode($optioncss);
-	if ($search_categ_cus > 0) $param.='&search_categ_cus='.urlencode($search_categ_cus);
-
+	if ($search_categ_cus > 0)          $param.='&search_categ_cus='.urlencode($search_categ_cus);
+	if ($search_product_category != '') $param.='&search_product_category='.$search_product_category;
 
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
@@ -460,7 +461,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->propal->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create">'.$langs->trans('NewPropal');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/propal/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewPropal').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -487,7 +488,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$i = 0;

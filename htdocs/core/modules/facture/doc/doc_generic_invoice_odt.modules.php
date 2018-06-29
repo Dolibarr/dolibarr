@@ -286,6 +286,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact

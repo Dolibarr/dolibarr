@@ -31,7 +31,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/events.class.php';
 if (!$user->admin)
 accessforbidden();
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("users","admin","other"));
 
 $action=GETPOST('action','aZ09');

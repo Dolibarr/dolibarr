@@ -17,18 +17,18 @@
  */
 
 /**
- * \file    htdocs/assets/admin/setup.php
+ * \file    htdocs/asset/admin/setup.php
  * \ingroup assets
  * \brief   Assets setup page.
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/core/lib/assets.lib.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 
 global $langs, $user;
 
-// Translations
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "assets"));
 
 // Access control

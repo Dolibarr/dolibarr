@@ -735,7 +735,7 @@ abstract class CommonObject
 		if ($id_type_contact == 0)
 		{
 			$this->error='CODE_NOT_VALID_FOR_THIS_ELEMENT';
-			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT");
+			dol_syslog("CODE_NOT_VALID_FOR_THIS_ELEMENT: Code type of contact '".$type_contact."' does not exists or is not active for element ".$this->element.", we can ignore it");
 			return -3;
 		}
 
@@ -1457,7 +1457,16 @@ abstract class CommonObject
 		{
 			if ($trigkey)
 			{
-				$result=$this->call_trigger($trigkey, (! empty($fuser) && is_object($fuser)) ? $fuser : $user);   // This may set this->errors
+				// call trigger with updated object values
+				if (empty($this->fields) && method_exists($this, 'fetch'))
+				{
+					$result = $this->fetch($id);
+				}
+				else
+				{
+					$result = $this->fetchCommon($id);
+				}
+				if ($result >= 0) $result=$this->call_trigger($trigkey, (! empty($fuser) && is_object($fuser)) ? $fuser : $user);   // This may set this->errors
 				if ($result < 0) $error++;
 			}
 
@@ -1578,11 +1587,11 @@ abstract class CommonObject
 
 
 	/**
-	 *      Return list of id of contacts of project
+	 *      Return list of id of contacts of object
 	 *
 	 *      @param	string	$source     Source of contact: external (llx_socpeople) or internal (llx_user) or thirdparty (llx_societe)
 	 *      @return array				Array of id of contacts (if source=external or internal)
-	 * 									Array of id of third parties with at least one contact on project (if source=thirdparty)
+	 * 									Array of id of third parties with at least one contact on object (if source=thirdparty)
 	 */
 	function getListContactId($source='external')
 	{
@@ -1757,22 +1766,50 @@ abstract class CommonObject
 
 						switch ($this->element) {
 							case 'propal':
-								$this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx,  ($line->description?$line->description:$line->desc), 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+								$this->updateline(
+									$line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx,
+									($line->description?$line->description:$line->desc), 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line,
+									$line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->date_start,
+									$line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
+								);
 								break;
 							case 'commande':
-								$this->updateline($line->id,  ($line->description?$line->description:$line->desc), $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->date_start, $line->date_end, $line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+								$this->updateline(
+									$line->id, ($line->description?$line->description:$line->desc), $line->subprice, $line->qty, $line->remise_percent,
+									$line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->date_start, $line->date_end,
+									$line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label,
+									$line->special_code, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
+								);
 								break;
 							case 'facture':
-								$this->updateline($line->id,  ($line->description?$line->description:$line->desc), $line->subprice, $line->qty, $line->remise_percent, $line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice);
+								$this->updateline(
+									$line->id, ($line->description?$line->description:$line->desc), $line->subprice, $line->qty, $line->remise_percent,
+									$line->date_start, $line->date_end, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits,
+									$line->product_type, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label,
+									$line->special_code, $line->array_options, $line->situation_percent, $line->fk_unit, $line->multicurrency_subprice
+								);
 								break;
 							case 'supplier_proposal':
-								$this->updateline($line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, ($line->description?$line->description:$line->desc), 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line, $line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options, $line->ref_fourn, $line->multicurrency_subprice);
+								$this->updateline(
+									$line->id, $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx,
+									($line->description?$line->description:$line->desc), 'HT', $line->info_bits, $line->special_code, $line->fk_parent_line,
+									$line->skip_update_total, $line->fk_fournprice, $line->pa_ht, $line->label, $line->product_type, $line->array_options,
+									$line->ref_fourn, $line->multicurrency_subprice
+								);
 								break;
 							case 'order_supplier':
-								$this->updateline($line->id,  ($line->description?$line->description:$line->desc), $line->subprice, $line->qty, $line->remise_percent, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits,  $line->product_type, false, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+								$this->updateline(
+									$line->id, ($line->description?$line->description:$line->desc), $line->subprice, $line->qty, $line->remise_percent,
+									$line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits,  $line->product_type, false,
+									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
+								);
 								break;
 							case 'invoice_supplier':
-								$this->updateline($line->id, ($line->description?$line->description:$line->desc), $line->subprice, $line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, $line->qty, 0, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, false, $line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice);
+								$this->updateline(
+									$line->id, ($line->description?$line->description:$line->desc), $line->subprice, $line->tva_tx, $line->localtax1_tx,
+									$line->localtax2_tx, $line->qty, 0, 'HT', $line->info_bits, $line->product_type, $line->remise_percent, false,
+									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
+								);
 								break;
 							default:
 								dol_syslog(get_class($this).'::setMulticurrencyRate no updateline defined', LOG_DEBUG);
@@ -3285,7 +3322,14 @@ abstract class CommonObject
 					$langs->load("errors");
 					//print 'Found into table '.$table.', type '.$langs->transnoentitiesnoconv($elementname).', haschild='.$haschild;
 					$haschild += $obj->nb;
-					$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+					if (is_numeric($elementname))	// old usage
+					{
+						$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $table);
+					}
+					else	// new usage: $elementname=Translation key
+					{
+						$this->errors[]=$langs->trans("ErrorRecordHasAtLeastOneChildOfType", $langs->transnoentitiesnoconv($elementname));
+					}
 					break;    // We found at least one, we stop here
 				}
 			}
@@ -3658,6 +3702,8 @@ abstract class CommonObject
 		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
 		if (empty($reshook))
 		{
+		    print "<thead>\n";
+
 			print '<tr class="liste_titre nodrag nodrop">';
 
 			if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum" align="center" width="5">&nbsp;</td>';
@@ -3735,11 +3781,13 @@ abstract class CommonObject
 			}
 
 			print "</tr>\n";
+			print "</thead>\n";
 		}
 
 		$var = true;
 		$i	 = 0;
 
+		print "<tbody>\n";
 		foreach ($this->lines as $line)
 		{
 			//Line extrafield
@@ -3767,6 +3815,7 @@ abstract class CommonObject
 
 			$i++;
 		}
+		print "</tbody>\n";
 	}
 
 	/**
@@ -5986,7 +6035,9 @@ abstract class CommonObject
 	 */
 	function showOptionals($extrafields, $mode='view', $params=null, $keysuffix='', $keyprefix='', $onetrtd=0)
 	{
-		global $_POST, $conf, $langs, $action;
+		global $db, $conf, $langs, $action, $form;
+
+		if (! is_object($form)) $form=new Form($db);
 
 		$out = '';
 
@@ -6080,7 +6131,12 @@ abstract class CommonObject
 					// Convert date into timestamp format (value in memory must be a timestamp)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('date','datetime')))
 					{
-						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$this->db->jdate($this->array_options['options_'.$key]);
+						$datenotinstring = $this->array_options['options_' . $key];
+						if (! is_numeric($this->array_options['options_' . $key]))	// For backward compatibility
+						{
+							$datenotinstring = $this->db->jdate($datenotinstring);
+						}
+						$value = GETPOSTISSET($keyprefix.'options_'.$key.$keysuffix)?dol_mktime(GETPOST($keyprefix.'options_'.$key.$keysuffix."hour", 'int', 3), GETPOST($keyprefix.'options_'.$key.$keysuffix."min",'int',3), 0, GETPOST($keyprefix.'options_'.$key.$keysuffix."month",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."day",'int',3), GETPOST($keyprefix.'options_'.$key.$keysuffix."year",'int',3)):$datenotinstring;
 					}
 					// Convert float submited string into real php numeric (value in memory must be a php numeric)
 					if (in_array($extrafields->attributes[$this->table_element]['type'][$key],array('price','double')))
@@ -6090,12 +6146,13 @@ abstract class CommonObject
 
 					$labeltoshow = $langs->trans($label);
 
-					if ($extrafields->attributes[$this->table_element]['required'][$key])
-					{
-						$labeltoshow = '<span'.($mode != 'view' ? ' class="fieldrequired"':'').'>'.$labeltoshow.'</span>';
-					}
-
-					$out .= '<td>'.$labeltoshow.'</td>';
+					$out .= '<td class="titlefield';
+					if (GETPOST('action','none') == 'create') $out.='create';
+					if ($mode != 'view' && ! empty($extrafields->attributes[$this->table_element]['required'][$key])) $out .= ' fieldrequired';
+					$out .= '">';
+					if (! empty($extrafields->attributes[$object->table_element]['help'][$key])) $out .= $form->textwithpicto($labeltoshow, $extrafields->attributes[$object->table_element]['help'][$key]);
+					else $out .= $labeltoshow;
+					$out .= '</td>';
 
 					$html_id = !empty($this->id) ? $this->element.'_extras_'.$key.'_'.$this->id : '';
 					$out .='<td id="'.$html_id.'" class="'.$this->element.'_extras_'.$key.'" '.($colspan?' colspan="'.$colspan.'"':'').'>';
@@ -6282,7 +6339,7 @@ abstract class CommonObject
 	/**
 	 *  Show photos of an object (nbmax maximum), into several columns
 	 *
-	 *  @param		string	$modulepart		'product', 'ticketsup', ...
+	 *  @param		string	$modulepart		'product', 'ticket', ...
 	 *  @param      string	$sdir        	Directory to scan (full absolute path)
 	 *  @param      int		$size        	0=original size, 1='small' use thumbnail if possible
 	 *  @param      int		$nbmax       	Nombre maximum de photos (0=pas de max)
@@ -6308,7 +6365,7 @@ abstract class CommonObject
 
 		$dir = $sdir . '/';
 		$pdir = '/';
-		if ($modulepart == 'ticketsup')
+		if ($modulepart == 'ticket')
 		{
 			$dir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';
 			$pdir .= get_exdir(0, 0, 0, 0, $this, $modulepart).$this->track_id.'/';

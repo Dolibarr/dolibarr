@@ -33,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/lettering.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/company.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta"));
 
 $action = GETPOST('action', 'aZ09');

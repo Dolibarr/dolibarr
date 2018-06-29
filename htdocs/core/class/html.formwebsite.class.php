@@ -174,7 +174,7 @@ class FormWebsite
 
     	$langs->load("admin");
 
-    	$arrayofsamples=array('corporatehome'=>'CorporateHomePage', 'empty'=>'EmptyPage');
+    	$arrayofsamples=array('empty'=>'EmptyPage', 'corporatehome'=>'CorporateHomePage');
 
     	$out = '';
     	$out .= '<select id="select'.$htmlname.'" class="flat selectTypeOfContainer" name="'.$htmlname.'"'.($moreattrib?' '.$moreattrib:'').'>';

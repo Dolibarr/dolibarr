@@ -82,7 +82,7 @@ PredefinedMailTest=__(Hello)__\nThis is a test mail sent to __EMAIL__.\nThe two 
 PredefinedMailTestHtml=__(Hello)__\nThis is a <b>test</b> mail (the word test must be in bold).<br>The two lines are separated by a carriage return.<br><br>__USER_SIGNATURE__
 PredefinedMailContentSendInvoice=__(Hello)__\n\nYou will find here the invoice __REF__\n\nThis is the link to make your online payment if this invoice is not already payed:\n__ONLINE_PAYMENT_URL__\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__(Hello)__\n\nWe would like to warn you that the invoice  __REF__ seems to not be payed. So this is the invoice in attachment again, as a reminder.\n\nThis is the link to make your online payment:\n__ONLINE_PAYMENT_URL__\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
-PredefinedMailContentSendProposal=__(Hello)__\n\nYou will find here the commercial proposal __PREF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
+PredefinedMailContentSendProposal=__(Hello)__\n\nYou will find here the commercial proposal __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierProposal=__(Hello)__\n\nYou will find here the price request __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendOrder=__(Hello)__\n\nYou will find here the order __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierOrder=__(Hello)__\n\nYou will find here our order __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
@@ -218,7 +218,7 @@ FileIsTooBig=ไฟล์ที่มีขนาดใหญ่เกินไ�
 PleaseBePatient=กรุณาเป็นผู้ป่วย ...
 NewPassword=New password
 ResetPassword=Reset password
-RequestToResetPasswordReceived=ขอให้เปลี่ยนรหัสผ่านของคุณ Dolibarr ได้รับการตอบรับ
+RequestToResetPasswordReceived=A request to change your password has been received
 NewKeyIs=นี่คือกุญแจใหม่ของคุณเข้าสู่ระบบ
 NewKeyWillBe=คีย์ใหม่ของคุณที่จะเข้าสู่ระบบซอฟแวร์จะเป็น
 ClickHereToGoTo=คลิกที่นี่เพื่อไปยัง% s
@@ -233,6 +233,8 @@ PermissionsDelete=Permissions removed
 YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</strong> chars
 YourPasswordHasBeenReset=Your password has been reset successfully
 ApplicantIpAddress=IP address of applicant
+SMSSentTo=SMS sent to %s
+
 ##### Export #####
 ExportsArea=พื้นที่การส่งออก
 AvailableFormats=รูปแบบที่ใช้ได้

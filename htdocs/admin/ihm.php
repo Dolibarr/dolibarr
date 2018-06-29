@@ -32,16 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("admin");
-$langs->load("languages");
-$langs->load("other");
-
-$langs->load("companies");
-$langs->load("products");
-$langs->load("members");
-$langs->load("projects");
-$langs->load("hrm");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'languages', 'other', 'companies', 'products', 'members', 'projects', 'hrm', 'agenda'));
 
 if (! $user->admin) accessforbidden();
 

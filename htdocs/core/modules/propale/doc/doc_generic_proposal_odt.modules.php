@@ -316,6 +316,7 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact

@@ -82,7 +82,7 @@ PredefinedMailTest=__(Hello)__\nAquest és un correu electrònic de prova enviat
 PredefinedMailTestHtml=__(Hello)__\nAquest és un correu electrònic de <b>prova</b> (la paraula prova ha d'estar en negreta). <br> Les dues línies es separen amb un salt de línia. <br> <br> __USER_SIGNATURE__
 PredefinedMailContentSendInvoice=__(Hello)__\n\nAquí trobareu la factura __REF__\n\nAquest es l'enllaç per realitzar el pagament en línia en cas de que la factura encara no esitga pagada:\n__ONLINE_PAYMENT_URL__\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
 PredefinedMailContentSendInvoiceReminder=__(Hello)__\n\nEns agradaria advertir-vos que la factura __REF__ sembla que no està pagada. Així que adjuntem de nou la factura en el fitxer adjunt, com a recordatori.\n\n__ONLINE_PAYMENT_URL__\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
-PredefinedMailContentSendProposal=__(Hello)__\n\nTrobareu aquí la proposta comercial __PREF__\n\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
+PredefinedMailContentSendProposal=__(Hello)__\n\nYou will find here the commercial proposal __REF__\n\n\n__(Sincerely)__\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierProposal=__(Hello)__\n\nTrobareu aquí la sol·licitud de cotització __REF__\n\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
 PredefinedMailContentSendOrder=__(Hello)__\n\nTrobareu aquí la comanda __REF__\n\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
 PredefinedMailContentSendSupplierOrder=__(Hello)__\n\nTrobareu aquí la nostra comanda __REF__\n\n\n__ (Sincerely) __\n\n__USER_SIGNATURE__
@@ -218,7 +218,7 @@ FileIsTooBig=L'arxiu és massa gran
 PleaseBePatient=Preguem esperi uns instants...
 NewPassword=Nova contrasenya
 ResetPassword=Restablir la contrasenya
-RequestToResetPasswordReceived=S'ha rebut una sol·licitud per canviar la contrasenya de Dolibarr
+RequestToResetPasswordReceived=A request to change your password has been received
 NewKeyIs=Aquesta és la nova contrasenya per iniciar sessió
 NewKeyWillBe=La seva nova contrasenya per iniciar sessió en el software serà
 ClickHereToGoTo=Clica aquí per anar a %s
@@ -233,6 +233,8 @@ PermissionsDelete=Permisos eliminats
 YourPasswordMustHaveAtLeastXChars=La teva contrasenya ha de tenir almenys <strong>%s</strong> \ncaràcters
 YourPasswordHasBeenReset=La teva contrasenya s'ha restablert correctament
 ApplicantIpAddress=Adreça IP del sol·licitant
+SMSSentTo=SMS sent to %s
+
 ##### Export #####
 ExportsArea=Àrea d'exportacions
 AvailableFormats=Formats disponibles
@@ -246,8 +248,4 @@ WEBSITE_PAGEURL=URL de pàgina
 WEBSITE_TITLE=Títol
 WEBSITE_DESCRIPTION=Descripció
 WEBSITE_KEYWORDS=Paraules clau
-<<<<<<< HEAD
-LinesToImport=Lines to import
-=======
 LinesToImport=Línies per importar
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
