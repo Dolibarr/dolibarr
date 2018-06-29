@@ -47,14 +47,14 @@ $main_data_dir = GETPOST('main_data_dir') ? GETPOST('main_data_dir') : $main_dir
 // Dolibarr root URL
 $main_url = GETPOST('main_url');
 // Database login informations
-$userroot=GETPOST('db_user_root','aZ09');
-$passroot=GETPOST('db_pass_root');	// FIXME protect for injection
+$userroot=GETPOST('db_user_root','alpha');
+$passroot=GETPOST('db_pass_root','none');
 // Database server
 $db_type=GETPOST('db_type','aZ09');
-$db_host=GETPOST('db_host','aZ09');
-$db_name=GETPOST('db_name','aZ09');
-$db_user=GETPOST('db_user','aZ09');
-$db_pass=GETPOST('db_pass');		// FIXME protect for injection
+$db_host=GETPOST('db_host','alpha');
+$db_name=GETPOST('db_name','alpha');
+$db_user=GETPOST('db_user','alpha');
+$db_pass=GETPOST('db_pass','none');
 $db_port=GETPOST('db_port','int');
 $db_prefix=GETPOST('db_prefix','aZ09');
 $db_create_database = GETPOST('db_create_database','none');
