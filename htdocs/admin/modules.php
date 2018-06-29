@@ -637,6 +637,7 @@ if ($mode == 'common')
         }
 
         print '<tr class="oddeven">'."\n";
+        if (!empty($conf->global->MAIN_MODULES_SHOW_LINENUMBERS)) print '<td width="20px">'.++$linenum.'</td>';
 
         // Picto + Name of module
         print '  <td width="200px">';
