@@ -613,6 +613,7 @@ class CMailFile
 
 					if (! $res)
 					{
+						$langs->load("errors");
 						$this->error="Failed to send mail with php mail";
 						$linuxlike=1;
 						if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
