@@ -121,12 +121,12 @@ class mod_holiday_immaculate extends ModelNumRefHolidays
 	/**
 	 *	Return next value
 	 *
-	 *	@param	Societe		$objsoc     third party object
-	 *	@param	Object		$objforref	contract object
+	 *	@param	User		$fuser     	User object
+	 *	@param	Object		$objforref	Holiday object
 	 *	@return string      			Value if OK, 0 if KO
 	 */
-    function holiday_get_num($user, $objforref)
+    function holiday_get_num($fuser, $objforref)
     {
-        return $this->getNextValue($user, $objforref);
+        return $this->getNextValue($fuser, $objforref);
     }
 }
