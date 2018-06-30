@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016	Laurent Destailleur		<eldy@users.sourceforge.net>
- * Copyright (C) 2005-2015	Regis Houssin			<regis.houssin@capnetworks.com>
+ * Copyright (C) 2005-2018	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2017  Juanjo Menent			<jmenent@2byte.es>
  * Copyright (C) 2013       Florian Henry           <florian.henry@open-concept.pro>
  * Copyright (C) 2014-2018  Ferran Marcet           <fmarcet@2byte.es>
@@ -1646,9 +1646,8 @@ else if ($id > 0 || ! empty($ref))
 		    		// create interventional model
 				if ($object->statut == Fichinter::STATUS_DRAFT && $user->rights->ficheinter->creer && (count($object->lines) > 0)) {
 					print '<div class="inline-block divButAction">';
-					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/', 1);
-					print 'card-rec.php?id='.$object->id.'&action=create"';
-					print '>'.$langs->trans("ChangeIntoRepeatableInterventional").'</a></div>';
+					print '<a class="butAction" href="'.DOL_URL_ROOT.'/fichinter/card-rec.php?id='.$object->id.'&action=create">'.$langs->trans("ChangeIntoRepeatableInterventional").'</a>';
+					print '</div>';
 				}
 
 				// Proposal
