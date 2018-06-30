@@ -354,8 +354,8 @@ script:
   set +e
 
 - |
-  #echo "Output dolibarr.log"
-  #cat documents/dolibarr.log
+  echo "Output 50 latest lines of dolibarr.log"
+  tail -n 50 documents/dolibarr.log
 
 after_script:
 - |
