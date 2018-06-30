@@ -174,7 +174,7 @@ if (preg_match('/install\.lock/i',$_SERVER["SCRIPT_FILENAME"]))
 {
 	if (! is_object($langs))
 	{
-		$langs = new Translate('..');
+		$langs = new Translate('..', $conf);
 		$langs->setDefaultLang('auto');
 	}
 	$langs->load("install");
@@ -198,7 +198,7 @@ if (@file_exists($lockfile))
 {
 	if (! is_object($langs))
 	{
-		$langs = new Translate('..');
+		$langs = new Translate('..', $conf);
 		$langs->setDefaultLang('auto');
 	}
 	$langs->load("install");
