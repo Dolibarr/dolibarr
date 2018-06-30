@@ -212,7 +212,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
         
 		// Load traductions files requiredby by page
-		$outputlangs->loadLangs(array("compta", "banks""));
+		$outputlangs->loadLangs(array("compta", "banks"));
 
 		$title = $outputlangs->transnoentities("CheckReceipt");
 		$pdf->SetFont('','B', $default_font_size);
