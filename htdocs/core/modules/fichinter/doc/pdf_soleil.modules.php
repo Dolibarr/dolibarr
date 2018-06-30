@@ -495,11 +495,9 @@ class pdf_soleil extends ModelePDFFicheinter
 	{
 		global $conf,$langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("interventions");
+        
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "interventions"));
 
 		pdf_pagehead($pdf,$outputlangs,$this->page_hauteur);
 
