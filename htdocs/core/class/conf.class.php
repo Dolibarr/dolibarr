@@ -508,7 +508,7 @@ class Conf
 		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
 
 		// Default max file size for upload
-		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
+		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 
 		// By default, we propagate contacts
 		if (! isset($this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN)) $this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN='*';  // Can be also '*' or '^(BILLING|SHIPPING|CUSTOMER|.*)$' (regex not yet implemented)
