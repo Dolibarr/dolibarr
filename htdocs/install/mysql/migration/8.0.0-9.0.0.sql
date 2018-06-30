@@ -35,3 +35,5 @@ ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
 
 
+ALTER TABLE llx_c_field_list ADD COLUMN visible tinyint	DEFAULT 1 NOT NULL AFTER search;
+
