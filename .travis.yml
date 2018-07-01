@@ -349,12 +349,14 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
-  set -e
+  set +e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+  phpunitresult=$?
+  echo "Phpunit return code = $phpunitresult
   set +e
 
 - |
-  echo "Output 50 latest lines of dolibarr.log"
+  echo Output 50 latest lines of dolibarr.log"
   tail -n 50 documents/dolibarr.log
 
 after_script:
