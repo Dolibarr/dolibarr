@@ -357,7 +357,7 @@ script:
   set +e
 
 - |
-  echo Output 50 latest lines of dolibarr.log"
+  echo "Output 50 latest lines of dolibarr.log"
   ls $TRAVIS_BUILD_DIR/documents
   tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
