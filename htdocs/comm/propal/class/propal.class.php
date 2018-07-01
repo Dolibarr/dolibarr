@@ -3347,12 +3347,19 @@ class Propal extends CommonObject
 		global $conf,$langs;
 		$langs->load("propal");
 
-		if (! empty($conf->global->PROPALE_ADDON))
+		$constant = 'PROPALE_ADDON_'.$this->entity;
+
+		if (! empty($conf->global->$constant)) {
+			$classname = $conf->global->$constant; // for multicompany proposal sharing
+		} else {
+			$classname = $conf->global->PROPALE_ADDON;
+		}
+
+		if (! empty($classname))
 		{
 			$mybool=false;
 
-			$file = $conf->global->PROPALE_ADDON.".php";
-			$classname = $conf->global->PROPALE_ADDON;
+			$file = $classname.".php";
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
