@@ -239,7 +239,7 @@ before_script:
     echo "Create documents directory and set permissions"
     # and admin/temp subdirectory needed for unit tests
     mkdir -p documents/admin/temp
-    echo "first line" > documents/dolibarr.log
+    echo "***** First line of dolibarr.log" > documents/dolibarr.log
     echo
 
 
@@ -357,7 +357,7 @@ script:
 
 - |
   echo Output 50 latest lines of dolibarr.log"
-  tail -n 50 documents/dolibarr.log
+  tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
 after_script:
 - |
@@ -383,7 +383,7 @@ after_failure:
   # Dolibarr log file
   if [ "$DEBUG" = true ]; then
     echo Output 50 latest lines of dolibarr.log"
-    tail -n 50 documents/dolibarr.log
+    tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
     # MariaDB log file
     sudo tail -n 50 /var/log/mysql/error.log
     # TODO: PostgreSQL log file
