@@ -357,6 +357,7 @@ script:
 
 - |
   echo Output 50 latest lines of dolibarr.log"
+  ls $TRAVIS_BUILD_DIR/documents
   tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
 after_script:
@@ -378,7 +379,7 @@ after_failure:
   for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
   do
     echo "Debugging informations for file $ficlog"
-    cat $ficlog
+    #cat $ficlog
   done
   echo "Debugging informations for file apache error.log"
   # Apache log file
