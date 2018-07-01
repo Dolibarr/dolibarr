@@ -381,10 +381,11 @@ after_failure:
   # Apache log file
   sudo cat /var/log/apache2/error.log
   # Dolibarr log file
-  cat documents/dolibarr.log
   if [ "$DEBUG" = true ]; then
+    echo Output 50 latest lines of dolibarr.log"
+	tail -n 50 documents/dolibarr.log
     # MariaDB log file
-    sudo cat /var/log/mysql/error.log
+    sudo tail -n 50 /var/log/mysql/error.log
     # TODO: PostgreSQL log file
     echo
   fi
