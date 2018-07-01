@@ -363,9 +363,8 @@ script:
 
 after_script:
 - |
-  # Dolibarr log file
-  #echo "After script"
-  #cat documents/dolibarr.log
+  #echo "After script - Debugging informations for file dolibarr.log (latest 50 lines)"
+  #tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
 
 
 after_success:
