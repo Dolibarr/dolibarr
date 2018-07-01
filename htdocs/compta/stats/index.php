@@ -120,6 +120,14 @@ if ($modecompta=="CREANCES-DETTES")
 {
 	$name=$langs->trans("Turnover");
 	$calcmode=$langs->trans("CalcModeDebt");
+	$calcmode.='<br>';
+	if ($display_cumul) {
+		$calcmode.=$langs->trans("CalcModeWithTTC",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=0">','</a>');
+	}
+	else {
+		$calcmode.=$langs->trans("CalcModeWithCumul",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES&display_cumul=1">','</a>');
+	}
+	
 	$calcmode.='<br>('.$langs->trans("SeeReportInBookkeepingMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=BOOKKEEPING">','</a>').')';
 	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
 	$periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear-2)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year=".($year_start+$nbofyear)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
