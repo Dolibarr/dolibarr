@@ -124,9 +124,12 @@ class mod_propale_saphir extends ModeleNumRefPropales
 			return 0;
 		}
 
+		// Use object entity ID
+		$entity = ((isset($propal->entity) && is_numeric($propal->entity)) ? $propal->entity : $conf->entity);
+
 		$date = $propal->date;
 
-		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date);
+		$numFinal=get_next_value($db,$mask,'propal','ref','',$objsoc,$date,'next',false,null,$entity);
 
 		return  $numFinal;
 	}
