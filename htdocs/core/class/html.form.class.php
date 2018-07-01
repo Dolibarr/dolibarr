@@ -6233,7 +6233,7 @@ class Form
 					print '</tr>';
 					while ($i < $num)
 					{
-						$objp = $this->db->fetch_object($resqlorderlist);
+						$objp = $this->db->fetch_object($resqllist);
 
 						$var = ! $var;
 						print '<tr ' . $bc [$var] . '>';
