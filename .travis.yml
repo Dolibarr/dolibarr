@@ -353,7 +353,7 @@ script:
   set +e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
   phpunitresult=$?
-  echo "Phpunit return code = $phpunitresult
+  echo "Phpunit return code = $phpunitresult"
   set +e
 
 - |
@@ -382,11 +382,11 @@ after_failure:
     echo "Debugging informations for file $ficlog"
     #cat $ficlog
   done
-  echo "Debugging informations for file apache error.log"
   # Apache log file
+  echo "Debugging informations for file apache error.log"
   sudo cat /var/log/apache2/error.log
-  # Dolibarr log file
   if [ "$DEBUG" = true ]; then
+    # Dolibarr log file
     echo "Debugging informations for file dolibarr.log (latest 50 lines)"
     tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
     # MariaDB log file
