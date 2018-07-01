@@ -372,19 +372,23 @@ after_success:
 
 after_failure:
 - |
-  echo Failure
-  # This part of code seems to be never executed, error or not ???
-  echo "Debugging informations"
+  echo Failure detected, so we show samples of log to help diagnose
+  # This part of code is executed only if previous commande that fails are enclosed with set +e
   # Upgrade log files
-  cat *.log
-  echo "Debugging informations"
+  for ficlog in `ls $TRAVIS_BUILD_DIR/*.log`
+  do
+    echo "Debugging informations for file $ficlog"
+    cat $ficlog
+  done
+  echo "Debugging informations for file apache error.log"
   # Apache log file
   sudo cat /var/log/apache2/error.log
   # Dolibarr log file
   if [ "$DEBUG" = true ]; then
-    echo Output 50 latest lines of dolibarr.log"
+    echo "Debugging informations for file dolibarr.log (latest 50 lines)"
     tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
     # MariaDB log file
+    echo "Debugging informations for file mysql error.log"
     sudo tail -n 50 /var/log/mysql/error.log
     # TODO: PostgreSQL log file
     echo
