@@ -238,8 +238,9 @@ before_script:
   - |
     echo "Create documents directory and set permissions"
     # and admin/temp subdirectory needed for unit tests
-    mkdir -p documents/admin/temp
-    echo "***** First line of dolibarr.log" > documents/dolibarr.log
+    mkdir -p $TRAVIS_BUILD_DIR/documents/admin/temp
+    sudo chmod -R a+rwx $TRAVIS_BUILD_DIR/documents
+    echo "***** First line of dolibarr.log" > $TRAVIS_BUILD_DIR/documents/dolibarr.log
     echo
 
 
