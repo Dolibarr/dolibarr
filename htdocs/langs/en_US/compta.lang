@@ -150,6 +150,7 @@ CalcModeLT2= Mode <b>%sIRPF on customer invoices - suppliers invoices%s</b>
 CalcModeLT2Debt=Mode <b>%sIRPF on customer invoices%s</b>
 CalcModeLT2Rec= Mode <b>%sIRPF on suppliers invoices%s</b>
 CalcModeWithCumul=Get a table %with an accumulation column%s.
+CalcModeWithoutCumul=Get a table %without the accumulation column%s.
 CalcModeWithTTC=Get a table %with an amount with tax column%s.
 AnnualSummaryDueDebtMode=Balance of income and expenses, annual summary
 AnnualSummaryInputOutputMode=Balance of income and expenses, annual summary
