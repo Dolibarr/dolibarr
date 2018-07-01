@@ -341,11 +341,6 @@ script:
   cd -
   set +e
   echo
-  #cat $TRAVIS_BUILD_DIR/upgrade400500-2.log
-  #cat $TRAVIS_BUILD_DIR/upgrade500600.log
-  #cat $TRAVIS_BUILD_DIR/upgrade500600-2.log
-  #cat $TRAVIS_BUILD_DIR/upgrade500600-3.log
-  #cat /tmp/dolibarr_install.log
   
 - |
   echo "Unit testing"
@@ -356,16 +351,11 @@ script:
   echo "Phpunit return code = $phpunitresult"
   set +e
 
-- |
-  echo "Output 50 latest lines of dolibarr.log"
-  ls $TRAVIS_BUILD_DIR/documents
-  tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
-
 after_script:
 - |
-  echo "After script - Debugging informations for file dolibarr.log (latest 50 lines)"
+  echo "After script - Output 50 latest lines of dolibarr.log"
+  ls $TRAVIS_BUILD_DIR/documents
   tail -n 50 $TRAVIS_BUILD_DIR/documents/dolibarr.log
-
 
 after_success:
 - |

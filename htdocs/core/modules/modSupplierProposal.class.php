@@ -32,7 +32,7 @@ include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 
 /**
- *	Class to describe and enable module AskPriceSupllier
+ *	Class to describe and enable module SupplierProposal
  */
 class modSupplierProposal extends DolibarrModules
 {
