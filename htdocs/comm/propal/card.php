@@ -1924,11 +1924,11 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Date');
 	print '</td>';
-	if ($action != 'editdate' && ! empty($object->brouillon))
+	if ($action != 'editdate' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdate&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetDate'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
-	if (! empty($object->brouillon) && $action == 'editdate') {
+	if (! empty($object->brouillon) && $action == 'editdate' && $usercancreate) {
 		print '<form name="editdate" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setdate">';
@@ -1950,11 +1950,11 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('DateEndPropal');
 	print '</td>';
-	if ($action != 'editecheance' && ! empty($object->brouillon))
+	if ($action != 'editecheance' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editecheance&amp;id=' . $object->id . '">' . img_edit($langs->trans('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
-	if (! empty($object->brouillon) && $action == 'editecheance') {
+	if (! empty($object->brouillon) && $action == 'editecheance' && $usercancreate) {
 		print '<form name="editecheance" action="' . $_SERVER["PHP_SELF"] . '?id=' . $object->id . '" method="post">';
 		print '<input type="hidden" name="token" value="' . $_SESSION ['newtoken'] . '">';
 		print '<input type="hidden" name="action" value="setecheance">';
@@ -1978,11 +1978,11 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentConditionsShort');
 	print '</td>';
-	if ($action != 'editconditions' && ! empty($object->brouillon))
+	if ($action != 'editconditions' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editconditions&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetConditions'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
-	if ($action == 'editconditions') {
+	if (! empty($object->brouillon) && $action == 'editconditions' && $usercancreate) {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'cond_reglement_id');
 	} else {
 		$form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->cond_reglement_id, 'none');
@@ -2006,11 +2006,11 @@ if ($action == 'create')
 	if (! empty($conf->commande->enabled))
 		print ' (' . $langs->trans('AfterOrder') . ')';
 	print '</td>';
-	if ($action != 'editavailability' && ! empty($object->brouillon))
+	if ($action != 'editavailability' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editavailability&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetAvailability'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
-	if ($action == 'editavailability') {
+	if (! empty($object->brouillon) && $action == 'editavailability' && $usercancreate) {
 		$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->availability_id, 'availability_id', 1);
 	} else {
 		$form->form_availability($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->availability_id, 'none', 1);
@@ -2029,7 +2029,7 @@ if ($action == 'create')
 			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editshippingmethod&amp;id='.$object->id.'">'.img_edit($langs->trans('SetShippingMode'),1).'</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editshippingmethod') {
+		if ($action == 'editshippingmethod' && $usercancreate) {
 			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'shipping_method_id', 1);
 		} else {
 			$form->formSelectShippingMethod($_SERVER['PHP_SELF'].'?id='.$object->id, $object->shipping_method_id, 'none');
@@ -2043,11 +2043,11 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('Source');
 	print '</td>';
-	if ($action != 'editdemandreason' && ! empty($object->brouillon))
+	if ($action != 'editdemandreason' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editdemandreason&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetDemandReason'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
-	if ($action == 'editdemandreason') {
+	if (! empty($object->brouillon) && $action == 'editdemandreason' && $usercancreate) {
 		$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'demand_reason_id', 1);
 	} else {
 		$form->formInputReason($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->demand_reason_id, 'none');
@@ -2061,11 +2061,11 @@ if ($action == 'create')
 	print '<table class="nobordernopadding" width="100%"><tr><td>';
 	print $langs->trans('PaymentMode');
 	print '</td>';
-	if ($action != 'editmode' && ! empty($object->brouillon))
+	if ($action != 'editmode' && ! empty($object->brouillon) && $usercancreate)
 		print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMode'), 1) . '</a></td>';
 	print '</tr></table>';
 	print '</td><td>';
-	if ($action == 'editmode') {
+	if (! empty($object->brouillon) && $action == 'editmode' && $usercancreate) {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'mode_reglement_id');
 	} else {
 		$form->form_modes_reglement($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->mode_reglement_id, 'none');
@@ -2081,11 +2081,11 @@ if ($action == 'create')
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('Currency','multicurrency_code');
 		print '</td>';
-		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon))
+		if ($action != 'editmulticurrencycode' && ! empty($object->brouillon) && $usercancreate)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencycode&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editmulticurrencycode') {
+		if (! empty($object->brouillon) && $action == 'editmulticurrencycode' && $usercancreate) {
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'multicurrency_code');
 		} else {
 			$form->form_multicurrency_code($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->multicurrency_code, 'none');
@@ -2098,11 +2098,11 @@ if ($action == 'create')
 		print '<table class="nobordernopadding" width="100%"><tr><td>';
 		print fieldLabel('CurrencyRate','multicurrency_tx');
 		print '</td>';
-		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency)
+		if ($action != 'editmulticurrencyrate' && ! empty($object->brouillon) && $object->multicurrency_code && $object->multicurrency_code != $conf->currency && $usercancreate)
 			print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editmulticurrencyrate&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetMultiCurrencyCode'), 1) . '</a></td>';
 		print '</tr></table>';
 		print '</td><td>';
-		if ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') {
+		if (! empty($object->brouillon) && ($action == 'editmulticurrencyrate' || $action == 'actualizemulticurrencyrate') && $usercancreate) {
 			if($action == 'actualizemulticurrencyrate') {
 				list($object->fk_multicurrency, $object->multicurrency_tx) = MultiCurrency::getIdAndTxFromCode($object->db, $object->multicurrency_code);
 			}
