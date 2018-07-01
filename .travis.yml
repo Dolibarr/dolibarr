@@ -334,6 +334,9 @@ script:
   php upgrade.php 7.0.0 8.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade700800.log
   php upgrade2.php 7.0.0 8.0.0 MAIN_MODULE_TICKETSUP > $TRAVIS_BUILD_DIR/upgrade700800-2.log
   php step5.php 7.0.0 8.0.0 > $TRAVIS_BUILD_DIR/upgrade700800-3.log
+  php upgrade.php 8.0.0 9.0.0 ignoredbversion > $TRAVIS_BUILD_DIR/upgrade800900.log
+  php upgrade2.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-2.log
+  php step5.php 8.0.0 9.0.0 > $TRAVIS_BUILD_DIR/upgrade800900-3.log
   cd -
   set +e
   echo
@@ -346,13 +349,15 @@ script:
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
-  set -e
+  set +e
   phpunit -d memory_limit=-1 -c test/phpunit/phpunittest.xml test/phpunit/AllTests.php
+  phpunitresult=$?
+  echo "Phpunit return code = $phpunitresult
   set +e
 
 - |
-  #echo "Output dolibarr.log"
-  #cat documents/dolibarr.log
+  echo Output 50 latest lines of dolibarr.log"
+  tail -n 50 documents/dolibarr.log
 
 after_script:
 - |
