@@ -3838,7 +3838,7 @@ abstract class CommonObject
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
-		global $object_rights, $disableedit, $disablemove;   // TODO We should not use global var for this !
+		global $object_rights, $disableedit, $disablemove, $disableremove;   // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
 
