@@ -1335,8 +1335,11 @@ class Propal extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
 		$sql.= " WHERE p.fk_statut = c.id";
-		$sql.= " AND p.entity IN (".getEntity('propal').")";
-		if ($ref) $sql.= " AND p.ref='".$ref."'";
+
+		if ($ref) {
+			$sql.= " AND p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
+			$sql.= " AND p.ref='".$ref."'";
+		}
 		else $sql.= " AND p.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
