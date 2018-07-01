@@ -6012,6 +6012,7 @@ class Form
 		// Bypass the default method
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array(
+			'morehtmlright' => $morehtmlright,
 		    'compatibleImportElementsList' =>& $compatibleImportElementsList,
 		);
 		$reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
