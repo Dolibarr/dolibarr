@@ -137,7 +137,7 @@ class User extends CommonObject
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
-	
+
 	public $fields=array(
         	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
         	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
@@ -434,7 +434,7 @@ class User extends CommonObject
 	/**
 	 *  Add a right to the user
 	 *
-	 * 	@param	int		$rid			id of permission to add
+	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
 	 *  @param  string	$allmodule		Add all permissions of module $allmodule
 	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
 	 *  @param	int		$entity			Entity to use
@@ -679,24 +679,28 @@ class User extends CommonObject
 	/**
 	 *	Load permissions granted to user into object user
 	 *
-	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
+	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
+	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
 	 *  @see	clearrights, delrights, addrights
 	 */
-	function getrights($moduletag='')
+	function getrights($moduletag='', $forcereload=0)
 	{
 		global $conf;
 
-		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+		if (empty($forcereload))
 		{
-			// Le fichier de ce module est deja charge
-			return;
-		}
+			if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+			{
+				// Rights for this module are already loaded, so we leave
+				return;
+			}
 
-		if ($this->all_permissions_are_loaded)
-		{
-			// Si les permissions ont deja ete charge pour ce user, on quitte
-			return;
+			if ($this->all_permissions_are_loaded)
+			{
+				// We already loaded all rights for this user, so we leave
+				return;
+			}
 		}
 
 		// Recuperation des droits utilisateurs + recuperation des droits groupes

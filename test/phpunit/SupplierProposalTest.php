@@ -31,7 +31,7 @@ require_once dirname(__FILE__).'/../../htdocs/supplier_proposal/class/supplier_p
 
 if (empty($user->id))
 {
-	print "Load permissions for admin user nb 1\n";
+	print "Load permissions for user nb 1 (that should be admin)\n";
 	$user->fetch(1);
 
 	//$user->addrights(0, 'supplier_proposal');
@@ -110,7 +110,12 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 
 		print __METHOD__."\n";
 		//print $db->getVersion()."\n";
+
+		// Set permission not set by default sql sample
+		$user->addrights(0, 'supplier_proposal');
+		$user->getrights('supplier_proposal', 1);
     }
+
 	/**
 	 * End phpunit tests
 	 *
@@ -133,10 +138,6 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-
-		var_dump($conf->supplier_proposal->enabled);
-		var_dump($user->rights->supplier_proposal);
-		$user->rights->supplier_proposal->creer = 1;		// Not set after the reload of module done in 7.0
 
 		$localobject=new SupplierProposal($this->savdb);
     	$localobject->initAsSpecimen();
@@ -213,8 +214,6 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 		$user=$this->savuser;
 		$langs=$this->savlangs;
 		$db=$this->savdb;
-
-		$user->rights->supplier_proposal->creer = 1;		// Not set after the reload of module done in 7.0
 
 		$result=$localobject->valid($user);
 
