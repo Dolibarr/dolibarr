@@ -470,13 +470,32 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		{
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-			$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
-			if (($feature == 'user' || $feature == 'usergroup') && ! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+			if (($feature == 'user' || $feature == 'usergroup') && ! empty($conf->multicompany->enabled))
 			{
-				$sql.= " AND dbt.entity IS NOT NULL";
+				if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+				{
+					if ($conf->entity == 1 && $user->admin && ! $user->entity)
+					{
+						$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
+						$sql.= " AND dbt.entity IS NOT NULL";
+					}
+					else
+					{
+						$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+						$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
+						$sql.= " AND (ug.fk_user = dbt.rowid";
+						$sql.= " AND ug.entity IN (".getEntity('user')."))";
+						$sql.= " OR dbt.entity = 0"; // Show always superadmin
+					}
+				}
+				else {
+					$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
+					$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+				}
 			}
 			else
 			{
+				$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
@@ -510,12 +529,12 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		else if (in_array($feature,$checkother))	// Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
 		{
 			// If external user: Check permission for external users
-			if ($user->societe_id > 0)
+			if ($user->socid > 0)
 			{
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
-				$sql.= " AND dbt.fk_soc = ".$user->societe_id;
+				$sql.= " AND dbt.fk_soc = ".$user->socid;
 			}
 			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
@@ -578,13 +597,13 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		else if (! in_array($feature,$nocheck))		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 		{
 			// If external user: Check permission for external users
-			if ($user->societe_id > 0)
+			if ($user->socid > 0)
 			{
 				if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.rowid IN (".$objectid.")";
-				$sql.= " AND dbt.".$dbt_keyfield." = ".$user->societe_id;
+				$sql.= " AND dbt.".$dbt_keyfield." = ".$user->socid;
 			}
 			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
