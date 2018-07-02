@@ -1539,8 +1539,12 @@ abstract class CommonObject
 		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql.= " AND (ug.fk_user = te.rowid";
-				$sql.= " AND ug.entity IN (".getEntity($this->element)."))";
+				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+					$sql.= " AND te.entity IS NOT NULL"; // Show all users
+				} else {
+					$sql.= " AND ug.fk_user = te.rowid";
+					$sql.= " AND ug.entity IN (".getEntity($this->element).")";
+				}
 			} else {
 				$sql.= ' AND te.entity IN ('.getEntity($this->element).')';
 			}
@@ -1581,8 +1585,12 @@ abstract class CommonObject
 		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
 			if ($this->element == 'user' && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
-				$sql.= " AND (ug.fk_user = te.rowid";
-				$sql.= " AND ug.entity IN (".getEntity($this->element)."))";
+				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+					$sql.= " AND te.entity IS NOT NULL"; // Show all users
+				} else {
+					$sql.= " AND ug.fk_user = te.rowid";
+					$sql.= " AND ug.entity IN (".getEntity($this->element).")";
+				}
 			} else {
 				$sql.= ' AND te.entity IN ('.getEntity($this->element).')';
 			}
