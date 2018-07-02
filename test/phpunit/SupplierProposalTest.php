@@ -134,6 +134,8 @@ class SupplierProposalTest extends PHPUnit_Framework_TestCase
 		$langs=$this->savlangs;
 		$db=$this->savdb;
 
+		var_dump($conf->supplier_proposal->enabled);
+		var_dump($user->rights->supplier_proposal);
 		$user->rights->supplier_proposal->creer = 1;		// Not set after the reload of module done in 7.0
 
 		$localobject=new SupplierProposal($this->savdb);
