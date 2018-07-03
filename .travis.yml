@@ -340,7 +340,7 @@ script:
   cd -
   set +e
   echo
-  cat /tmp/dolibarr_install.log
+  #cat /tmp/dolibarr_install.log
 
 - |
   echo "Unit testing"
