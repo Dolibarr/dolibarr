@@ -1671,11 +1671,12 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
 					$sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
+
 					$resqlselect=$this->db->query($sql);
 					if ($resqlselect)
 					{
-						$obj = $this->db->fetch_object($resqlselect);
-						if ($obj->nb == 0)
+						$objcount = $this->db->fetch_object($resqlselect);
+						if ($objcount && $objcount->nb == 0)
 						{
 							if (dol_strlen($r_perms) )
 							{
@@ -1739,23 +1740,33 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 							{
 								$obj2=$this->db->fetch_object($resqlseladmin);
 								dol_syslog(get_class($this)."::insert_permissions Add permission to user id=".$obj2->rowid);
+
 								$tmpuser=new User($this->db);
-								$tmpuser->fetch($obj2->rowid);
-								if (!empty($tmpuser->id)) {
+								$result = $tmpuser->fetch($obj2->rowid);
+								if ($result > 0) {
 									$tmpuser->addrights($r_id, '', '', 0, 1);
+								}
+								else
+								{
+									dol_syslog(get_class($this)."::insert_permissions Failed to add the permission to user because fetch return an error", LOG_ERR);
 								}
 								$i++;
 							}
-							if (! empty($user->admin))  // Reload permission for current user if defined
-							{
-								// We reload permissions
-								$user->clearrights();
-								$user->getrights();
-							}
 						}
-						else dol_print_error($this->db);
+						else
+						{
+							dol_print_error($this->db);
+						}
 					}
 				}
+
+				if ($reinitadminperms && ! empty($user->admin))  // Reload permission for current user if defined
+				{
+					// We reload permissions
+					$user->clearrights();
+					$user->getrights();
+				}
+
 			}
 			$this->db->free($resql);
 		}
