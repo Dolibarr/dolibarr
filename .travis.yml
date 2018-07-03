@@ -207,8 +207,7 @@ before_script:
       mysql -D travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
     fi
     if [ "$DB" = 'postgresql' ]; then
-      #pgsql travis < dev/initdemo/mysqldump_dolibarr_3.5.0.sql
-      #pgloader mysql://root:pass@127.0.0.1/base postgresql://dolibarrowner@127.0.0.1/dolibarr
+      #pgloader mysql://root:pass@127.0.0.1/dolibarr_35 postgresql://dolibarrowner:dolibarrownerpass@127.0.0.1/dolibarr_dev
       pgloader mysql://root@127.0.0.1/travis postgresql:///travis
     fi
     # TODO: SQLite
