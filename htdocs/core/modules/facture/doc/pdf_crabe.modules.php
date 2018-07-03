@@ -812,10 +812,10 @@ class pdf_crabe extends ModelePDFFactures
 				$y+=3;
 				$obj = $this->db->fetch_object($resql);
 
-				if ($obj->type == 2) $text=$outputlangs->trans("CreditNote");
-				elseif ($obj->type == 3) $text=$outputlangs->trans("Deposit");
-				elseif ($obj->type == 0) $text=$outputlangs->trans("ExcessReceived");
-				else $text=$outputlangs->trans("UnknownType");
+				if ($obj->type == 2) $text=$outputlangs->transnoentities("CreditNote");
+				elseif ($obj->type == 3) $text=$outputlangs->transnoentities("Deposit");
+				elseif ($obj->type == 0) $text=$outputlangs->transnoentities("ExcessReceived");
+				else $text=$outputlangs->transnoentities("UnknownType");
 
 				$invoice->fetch($obj->fk_facture_source);
 

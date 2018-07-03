@@ -291,7 +291,7 @@ class Form
 		$out='';
 
 		// Check parameters
-		if ($inputType == 'textarea') $value = dol_nl2br($value);
+		if (preg_match('/^text/',$inputType)) $value = dol_nl2br($value);
 		else if (preg_match('/^numeric/',$inputType)) $value = price($value);
 		else if ($inputType == 'day' || $inputType == 'datepicker') $value = dol_print_date($value, 'day');
 
@@ -6024,6 +6024,7 @@ class Form
 		// Bypass the default method
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array(
+			'morehtmlright' => $morehtmlright,
 		    'compatibleImportElementsList' =>& $compatibleImportElementsList,
 		);
 		$reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -6197,7 +6198,7 @@ class Form
 
 		// Can complete the possiblelink array
 		$hookmanager->initHooks(array('commonobject'));
-		$parameters=array();
+		$parameters=array('listofidcompanytoscan' => $listofidcompanytoscan);
 		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
@@ -6245,7 +6246,7 @@ class Form
 					print '</tr>';
 					while ($i < $num)
 					{
-						$objp = $this->db->fetch_object($resqlorderlist);
+						$objp = $this->db->fetch_object($resqllist);
 
 						$var = ! $var;
 						print '<tr ' . $bc [$var] . '>';
