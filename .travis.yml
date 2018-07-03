@@ -341,7 +341,8 @@ script:
   cd -
   set +e
   echo
-  
+  cat /tmp/dolibarr_install.log
+
 - |
   echo "Unit testing"
   # Ensure we catch errors. Set this to +e if you want to go to the end to see dolibarr.log file.
