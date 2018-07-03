@@ -341,7 +341,8 @@ script:
   #cat $TRAVIS_BUILD_DIR/upgrade500600.log
   #cat $TRAVIS_BUILD_DIR/upgrade500600-2.log
   #cat $TRAVIS_BUILD_DIR/upgrade500600-3.log
-  #cat /tmp/dolibarr_install.log
+  #cat $TRAVIS_BUILD_DIR/upgrade600700-2.log
+  cat /tmp/dolibarr_install.log
   
 - |
   echo "Unit testing"

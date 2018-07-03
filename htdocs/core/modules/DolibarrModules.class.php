@@ -953,7 +953,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
 		$sql.= " AND entity IN (0, ".$entity.")";
 
-		dol_syslog(get_class($this)."::_active delect activation constant", LOG_DEBUG);
+		dol_syslog(get_class($this)."::_active delete activation constant", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql) $err++;
 
@@ -1672,53 +1672,55 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
 					$sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
 					$resqlselect=$this->db->query($sql);
-
-					$obj = $this->db->fetch_object($resqlselect);
-					if ($obj->nb == 0)
+					if ($resqlselect)
 					{
-						if (dol_strlen($r_perms) )
+						$obj = $this->db->fetch_object($resqlselect);
+						if ($obj->nb == 0)
 						{
-							if (dol_strlen($r_subperms) )
+							if (dol_strlen($r_perms) )
 							{
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-								$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-								$sql.= " VALUES ";
-								$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+								if (dol_strlen($r_subperms) )
+								{
+									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+									$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+									$sql.= " VALUES ";
+									$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+								}
+								else
+								{
+									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+									$sql.= " (id, entity, libelle, module, type, bydefault, perms)";
+									$sql.= " VALUES ";
+									$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+								}
 							}
 							else
 							{
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-								$sql.= " (id, entity, libelle, module, type, bydefault, perms)";
-								$sql.= " VALUES ";
-								$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+								$sql .= " (id, entity, libelle, module, type, bydefault)";
+								$sql .= " VALUES ";
+								$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
 							}
-						}
-						else
-						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-							$sql .= " (id, entity, libelle, module, type, bydefault)";
-							$sql .= " VALUES ";
-							$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
-						}
 
-						$resqlinsert=$this->db->query($sql,1);
+							$resqlinsert=$this->db->query($sql,1);
 
-						if (! $resqlinsert)
-						{
-							if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+							if (! $resqlinsert)
 							{
-								$this->error=$this->db->lasterror();
-								$err++;
-								break;
-							}
-							else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+								if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+								{
+									$this->error=$this->db->lasterror();
+									$err++;
+									break;
+								}
+								else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
 
+							}
+
+							$this->db->free($resqlinsert);
 						}
 
-						$this->db->free($resqlinsert);
+						$this->db->free($resqlselect);
 					}
-
-					$this->db->free($resqlselect);
 
 					// If we want to init permissions on admin users
 					if ($reinitadminperms)
