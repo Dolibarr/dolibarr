@@ -122,6 +122,7 @@ function print_eldy_menu($db,$atarget,$type_user,&$tabMenu,&$menu,$noout=0,$mode
 	if (! empty($conf->propal->enabled)) $menuqualified++;
 	if (! empty($conf->commande->enabled)) $menuqualified++;
 	if (! empty($conf->supplier_order->enabled)) $menuqualified++;
+	if (! empty($conf->supplier_proposal->enabled)) $menuqualified++;
 	if (! empty($conf->contrat->enabled)) $menuqualified++;
 	if (! empty($conf->ficheinter->enabled)) $menuqualified++;
 	$tmpentry=array(
@@ -660,11 +661,11 @@ function print_left_eldy_menu($db,$menu_array_before,$menu_array_after,&$tabMenu
 			}
 
 			// Suppliers
-			if (! empty($conf->societe->enabled) && ! empty($conf->fournisseur->enabled))
+			if (! empty($conf->societe->enabled) && (! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled)))
 			{
 				$langs->load("suppliers");
-				$newmenu->add("/societe/list.php?type=f&amp;leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, $user->rights->fournisseur->lire, '', $mainmenu, 'suppliers');
-				$newmenu->add("/societe/card.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && $user->rights->fournisseur->lire);
+				$newmenu->add("/societe/list.php?type=f&amp;leftmenu=suppliers", $langs->trans("ListSuppliersShort"), 1, ($user->rights->fournisseur->lire || $user->rights->supplier_proposal->lire), '', $mainmenu, 'suppliers');
+				$newmenu->add("/societe/card.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("MenuNewSupplier"), 2, $user->rights->societe->creer && ($user->rights->fournisseur->lire || $user->rights->supplier_proposal->lire));
 			}
 
 			// Contacts

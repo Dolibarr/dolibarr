@@ -485,11 +485,6 @@ if (empty($reshook))
 	                $langs->load("errors");
 	                setEventMessages('', $langs->trans("ErrorBadUrl",$object->url), 'errors');
 	            }
-	            if ($object->fournisseur && ! $conf->fournisseur->enabled)
-	            {
-	                $langs->load("errors");
-	                setEventMessages('', $langs->trans("ErrorSupplierModuleNotEnabled"), 'errors');
-	            }
 	            if (! empty($object->webservices_url)) {
 	                //Check if has transport, without any the soap client will give error
 	                if (strpos($object->webservices_url, "http") === false)
@@ -1166,7 +1161,8 @@ else
         print '</td></tr></table>';
         print '</td></tr>';
 
-        if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+        if ((! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+        	|| (! empty($conf->supplier_proposal->enabled) && ! empty($user->rights->supplier_proposal->lire)))
         {
             // Supplier
             print '<tr>';
@@ -1175,15 +1171,23 @@ else
             if (! empty($conf->global->THIRDPARTY_SUPPLIER_BY_DEFAULT)) $default=1;
             print $form->selectyesno("fournisseur", (GETPOST('fournisseur','int')!=''?GETPOST('fournisseur','int'):(GETPOST("type",'alpha') == '' ? $default : $object->fournisseur)), 1, 0, (GETPOST("type",'alpha') == '' ? 1 : 0));
             print '</td>';
-            print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
-            print '<table class="nobordernopadding"><tr><td>';
-            $tmpcode=$object->code_fournisseur;
-            if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-            print '<input type="text" name="code_fournisseur" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+            print '<td>';
+            if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+            {
+            	print fieldLabel('SupplierCode','supplier_code');
+            }
             print '</td><td>';
-            $s=$modCodeFournisseur->getToolTip($langs,$object,1);
-            print $form->textwithpicto('',$s,1);
-            print '</td></tr></table>';
+            if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+            {
+	            print '<table class="nobordernopadding"><tr><td>';
+	            $tmpcode=$object->code_fournisseur;
+	            if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
+	            print '<input type="text" name="code_fournisseur" id="supplier_code" class="maxwidthonsmartphone" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+	            print '</td><td>';
+	            $s=$modCodeFournisseur->getToolTip($langs,$object,1);
+	            print $form->textwithpicto('',$s,1);
+	            print '</td></tr></table>';
+            }
             print '</td></tr>';
         }
 
@@ -1721,36 +1725,43 @@ else
             print '</td></tr>';
 
             // Supplier
-            if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+            if ((! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+            	|| (! empty($conf->supplier_proposal->enabled) && ! empty($user->rights->supplier_proposal->lire)))
             {
                 print '<tr>';
                 print '<td>'.fieldLabel('Supplier','fournisseur',1).'</td><td class="maxwidthonsmartphone">';
                 print $form->selectyesno("fournisseur",$object->fournisseur,1);
                 print '</td>';
-                print '<td>'.fieldLabel('SupplierCode','supplier_code').'</td><td>';
-
-                print '<table class="nobordernopadding"><tr><td>';
-                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
+                print '<td>';
+                if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
                 {
-                    $tmpcode=$object->code_fournisseur;
-                    if (empty($tmpcode) && ! empty($object->oldcopy->code_fournisseur)) $tmpcode=$object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
-                    if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
-                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
-                }
-                else if ($object->codefournisseur_modifiable())
-                {
-                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
-                }
-                else
-              {
-                    print $object->code_fournisseur;
-                    print '<input type="hidden" name="code_fournisseur" value="'.$object->code_fournisseur.'">';
+                	print fieldLabel('SupplierCode','supplier_code');
                 }
                 print '</td><td>';
-                $s=$modCodeFournisseur->getToolTip($langs,$object,1);
-                print $form->textwithpicto('',$s,1);
-                print '</td></tr></table>';
-
+                if (! empty($conf->fournisseur->enabled) && ! empty($user->rights->fournisseur->lire))
+                {
+	                print '<table class="nobordernopadding"><tr><td>';
+	                if ((!$object->code_fournisseur || $object->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
+	                {
+	                    $tmpcode=$object->code_fournisseur;
+	                    if (empty($tmpcode) && ! empty($object->oldcopy->code_fournisseur)) $tmpcode=$object->oldcopy->code_fournisseur; // When there is an error to update a thirdparty, the number for supplier and customer code is kept to old value.
+	                    if (empty($tmpcode) && ! empty($modCodeFournisseur->code_auto)) $tmpcode=$modCodeFournisseur->getNextValue($object,1);
+	                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.dol_escape_htmltag($tmpcode).'" maxlength="15">';
+	                }
+	                else if ($object->codefournisseur_modifiable())
+	                {
+	                    print '<input type="text" name="code_fournisseur" id="supplier_code" size="16" value="'.$object->code_fournisseur.'" maxlength="15">';
+	                }
+	                else
+	              {
+	                    print $object->code_fournisseur;
+	                    print '<input type="hidden" name="code_fournisseur" value="'.$object->code_fournisseur.'">';
+	                }
+	                print '</td><td>';
+	                $s=$modCodeFournisseur->getToolTip($langs,$object,1);
+	                print $form->textwithpicto('',$s,1);
+	                print '</td></tr></table>';
+                }
                 print '</td></tr>';
             }
 
@@ -2129,7 +2140,7 @@ else
     	print '</td></tr>';
 
     	// Supplier
-    	if (! empty($conf->fournisseur->enabled))
+   		if (! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled))
     	{
     		print '<tr><td>'.$langs->trans('Supplier').'</td><td>';
     		print yn($object->fournisseur);
