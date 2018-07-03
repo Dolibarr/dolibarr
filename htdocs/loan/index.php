@@ -71,7 +71,7 @@ $loan_static = new Loan($db);
 
 llxHeader();
 
-$sql = "SELECT l.rowid, l.label, l.capital, l.datestart, l.dateend,";
+$sql = "SELECT l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend,";
 $sql.= " SUM(pl.amount_capital) as alreadypayed";
 $sql.= " FROM ".MAIN_DB_PREFIX."loan as l LEFT JOIN ".MAIN_DB_PREFIX."payment_loan AS pl";
 $sql.= " ON l.rowid = pl.fk_loan";
@@ -83,7 +83,7 @@ if ($filtre) {
     $filtre=str_replace(":","=",$filtre);
     $sql .= " AND ".$filtre;
 }
-$sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
+$sql.= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = '';
