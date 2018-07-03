@@ -135,7 +135,7 @@ class User extends CommonObject
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
-	
+
 	public $fields=array(
         	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
         	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
@@ -484,8 +484,15 @@ class User extends CommonObject
 			// Where pour la liste des droits a ajouter
 			if (! empty($allmodule))
 			{
-				$whereforadd="module='".$this->db->escape($allmodule)."'";
-				if (! empty($allperms)) $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				if ($allmodule == 'allmodules')
+				{
+					$whereforadd='allmodules';
+				}
+				else
+				{
+					$whereforadd="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
 			}
 		}
 
@@ -495,8 +502,10 @@ class User extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE ".$whereforadd;
-			$sql.= " AND entity = ".$entity;
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($whereforadd) && $whereforadd != 'allmodules') {
+				$sql.= " AND ".$whereforadd;
+			}
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -597,8 +606,18 @@ class User extends CommonObject
 		else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
 			// Where pour la liste des droits a supprimer
-			if (! empty($allmodule)) $wherefordel="module='".$this->db->escape($allmodule)."'";
-			if (! empty($allperms))  $wherefordel=" AND perms='".$this->db->escape($allperms)."'";
+			if (! empty($allmodule))
+			{
+				if ($allmodule == 'allmodules')
+				{
+					$wherefordel='allmodules';
+				}
+				else
+				{
+					$wherefordel="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
+			}
 		}
 
 		// Suppression des droits selon critere defini dans wherefordel
@@ -607,8 +626,10 @@ class User extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE $wherefordel";
-			$sql.= " AND entity = ".$entity;
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($wherefordel) && $wherefordel != 'allmodules') {
+				$sql.= " AND ".$wherefordel;
+			}
 
 			$result=$this->db->query($sql);
 			if ($result)
