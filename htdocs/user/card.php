@@ -1190,8 +1190,11 @@ else
 		$res=$object->fetch_optionals();
 
 		// Check if user has rights
-		$object->getrights();
-		if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+		if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+		{
+			$object->getrights();
+			if (empty($object->nb_rights) && $object->statut != 0) setEventMessages($langs->trans('UserHasNoPermissions'), null, 'warnings');
+		}
 
 		// Connexion ldap
 		// pour recuperer passDoNotExpire et userChangePassNextLogon
@@ -1731,7 +1734,7 @@ else
 					}
 				}
 			}
-			
+
 			print "</div>\n";
 
 
