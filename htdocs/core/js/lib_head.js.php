@@ -556,11 +556,15 @@ function setConstant(url, code, input, entity, strict) {
 						$(newvalue).addClass("butActionRefused");
 					}
 				});
-			// Show another element
-			} else if (type == "showhide" || type == "show") {
+			// Show or hide another element
+			} else if (type == "showhide" || type == "show" || type == "hideshow") {
 				$.each(data, function(key, value) {
 					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
-					$(newvalue).show();
+					if ((type == "showhide" || type == "show")) {
+						$(newvalue).show();
+					} else if (type == "hideshow") {
+						$(newvalue).hide();
+					}
 				});
 			// Set another constant
 			} else if (type == "set") {
@@ -617,11 +621,15 @@ function delConstant(url, code, input, entity, strict) {
 						$(newvalue).addClass("butAction");
 					}
 				});
-			// Hide another element
-			} else if (type == "showhide" || type == "hide") {
+			// Hide or show another element
+			} else if (type == "showhide" || type == "hide" || type == "hideshow") {
 				$.each(data, function(key, value) {
 					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
-					$(newvalue).hide();
+					if ((type == "showhide" || type == "hide")) {
+						$(newvalue).hide();
+					} else if (type == "hideshow") {
+						$(newvalue).show();
+					}
 				});
 			// Delete another constant
 			} else if (type == "del") {
