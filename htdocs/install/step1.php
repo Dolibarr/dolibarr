@@ -893,45 +893,45 @@ function write_conf_file($conffile)
         fputs($fp,'// and explanations for all possibles parameters.'."\n");
         fputs($fp,'//'."\n");
 
-        fputs($fp, '$dolibarr_main_url_root=\''.str_replace("'","\'",($main_url)).'\';');
+        fputs($fp, '$dolibarr_main_url_root=\''.str_replace("'","\'",trim($main_url)).'\';');
         fputs($fp,"\n");
 
-        fputs($fp, '$dolibarr_main_document_root=\''.str_replace("'","\'",($main_dir)).'\';');
+        fputs($fp, '$dolibarr_main_document_root=\''.str_replace("'","\'",trim($main_dir)).'\';');
         fputs($fp,"\n");
 
-        fputs($fp, $main_use_alt_dir.'$dolibarr_main_url_root_alt=\''.str_replace("'","\'",("/".$main_alt_dir_name)).'\';');
+        fputs($fp, $main_use_alt_dir.'$dolibarr_main_url_root_alt=\''.str_replace("'","\'",trim("/".$main_alt_dir_name)).'\';');
         fputs($fp,"\n");
 
-        fputs($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt=\''.str_replace("'","\'",($main_dir."/".$main_alt_dir_name)).'\';');
+        fputs($fp, $main_use_alt_dir.'$dolibarr_main_document_root_alt=\''.str_replace("'","\'",trim($main_dir."/".$main_alt_dir_name)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_data_root=\''.str_replace("'","\'",($main_data_dir)).'\';');
+		fputs($fp, '$dolibarr_main_data_root=\''.str_replace("'","\'",trim($main_data_dir)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_host=\''.str_replace("'","\'",($db_host)).'\';');
+		fputs($fp, '$dolibarr_main_db_host=\''.str_replace("'","\'",trim($db_host)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_port=\''.str_replace("'","\'",($db_port)).'\';');
+		fputs($fp, '$dolibarr_main_db_port=\''.str_replace("'","\'",trim($db_port)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_name=\''.str_replace("'","\'",($db_name)).'\';');
+		fputs($fp, '$dolibarr_main_db_name=\''.str_replace("'","\'",trim($db_name)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_prefix=\''.str_replace("'","\'",($main_db_prefix)).'\';');
+		fputs($fp, '$dolibarr_main_db_prefix=\''.str_replace("'","\'",trim($main_db_prefix)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_user=\''.str_replace("'","\'",($db_user)).'\';');
+		fputs($fp, '$dolibarr_main_db_user=\''.str_replace("'","\'",trim($db_user)).'\';');
 		fputs($fp,"\n");
-		fputs($fp, '$dolibarr_main_db_pass=\''.str_replace("'","\'",($db_pass)).'\';');
-		fputs($fp,"\n");
-
-		fputs($fp, '$dolibarr_main_db_type=\''.str_replace("'","\'",($db_type)).'\';');
+		fputs($fp, '$dolibarr_main_db_pass=\''.str_replace("'","\'",trim($db_pass)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'","\'",($db_character_set)).'\';');
+		fputs($fp, '$dolibarr_main_db_type=\''.str_replace("'","\'",trim($db_type)).'\';');
 		fputs($fp,"\n");
 
-		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'","\'",($db_collation)).'\';');
+		fputs($fp, '$dolibarr_main_db_character_set=\''.str_replace("'","\'",trim($db_character_set)).'\';');
+		fputs($fp,"\n");
+
+		fputs($fp, '$dolibarr_main_db_collation=\''.str_replace("'","\'",trim($db_collation)).'\';');
 		fputs($fp,"\n");
 
 		/* Authentication */
