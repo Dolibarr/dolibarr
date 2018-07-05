@@ -560,7 +560,7 @@ function setConstant(url, code, input, entity, strict) {
 			} else if (type == "showhide" || type == "show" || type == "hideshow") {
 				$.each(data, function(key, value) {
 					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
-					if ((type == "showhide" || type == "show")) {
+					if (type == "showhide" || type == "show") {
 						$(newvalue).show();
 					} else if (type == "hideshow") {
 						$(newvalue).hide();
@@ -625,7 +625,7 @@ function delConstant(url, code, input, entity, strict) {
 			} else if (type == "showhide" || type == "hide" || type == "hideshow") {
 				$.each(data, function(key, value) {
 					var newvalue=((value.search("^#") < 0 && value.search("^\.") < 0) ? "#" : "") + value;
-					if ((type == "showhide" || type == "hide")) {
+					if (type == "showhide" || type == "hide") {
 						$(newvalue).hide();
 					} else if (type == "hideshow") {
 						$(newvalue).show();
