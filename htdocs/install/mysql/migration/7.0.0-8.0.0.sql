@@ -84,6 +84,9 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- For 8.0
 
+DROP TABLE llx_website_account;
+DROP TABLE llx_website_account_extrafields;
+
 ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
 -- delete old permission no more used

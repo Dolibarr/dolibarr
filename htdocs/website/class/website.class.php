@@ -44,7 +44,7 @@ class Website extends CommonObject
 	 */
 	public $table_element = 'website';
 	/**
-	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
 	/**
