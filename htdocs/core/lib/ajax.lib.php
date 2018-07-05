@@ -501,15 +501,11 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 				var code = \''.$code.'\';
 				var entity = \''.$entity.'\';
 				var strict = \''.$strict.'\';
-				var yesButton = "'.dol_escape_js($langs->transnoentities("Yes")).'";
-				var noButton = "'.dol_escape_js($langs->transnoentities("No")).'";
 
 				// Set constant
 				$("#set_" + code).click(function() {
 					if (input.alert && input.alert.set) {
-						if (input.alert.set.yesButton) yesButton = input.alert.set.yesButton;
-						if (input.alert.set.noButton)  noButton = input.alert.set.noButton;
-						confirmConstantAction("set", url, code, input, input.alert.set, entity, yesButton, noButton, strict);
+						confirmConstantAction("set", url, code, input, entity, strict);
 					} else {
 						setConstant(url, code, input, entity);
 					}
@@ -518,9 +514,7 @@ function ajax_constantonoff($code, $input=array(), $entity=null, $revertonoff=0,
 				// Del constant
 				$("#del_" + code).click(function() {
 					if (input.alert && input.alert.del) {
-						if (input.alert.del.yesButton) yesButton = input.alert.del.yesButton;
-						if (input.alert.del.noButton)  noButton = input.alert.del.noButton;
-						confirmConstantAction("del", url, code, input, input.alert.del, entity, yesButton, noButton, strict);
+						confirmConstantAction("del", url, code, input, entity, strict);
 					} else {
 						delConstant(url, code, input, entity);
 					}
