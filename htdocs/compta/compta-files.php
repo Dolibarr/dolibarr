@@ -278,13 +278,15 @@ if ($result)
 			// Balance calculation
 			$balance = 0;
 			foreach($TData as &$data1) {
-				if($data1['item']=='Invoice'||$data1['item']=='Donation' ){
-                                    $balance += $data1['amount'];
-                                    $totalCredit+=$data1['amount'];
+				if($data1['item']!='Invoice'&& $data1['item']!='Donation' ){
+                                     $data1['amount']=-$data1['amount'];
+                                }
+                                if ($data1['amount']>0){
+
                                }else{ 
-                                   $balance -= $data1['amount'];
-                                   $totalDebit+=$data1['amount'];
+
                                }
+                               $balance += $data1['amount'];
 				$data1['balance'] = $balance;
 			}
 
@@ -320,7 +322,7 @@ if ($result)
                 }
 
                 print '<tr class="liste_total">';
-                print '<td colspan="3">&nbsp;</td>';
+                print '<td colspan="5">&nbsp;</td>';
                 print '<td align="right">'.price($totalDebit).'</td>';
                 print '<td align="right">'.price($totalCredit).'</td>';
                 print '<td align="right">'.price(price2num($totalDebit - $totalCredit, 'MT')).'</td>';
