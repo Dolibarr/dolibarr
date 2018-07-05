@@ -136,6 +136,20 @@ function getEntity($element, $shared=1, $forceentity=null)
 }
 
 /**
+ * Get list of user ids for current user and its subordonates
+ * 
+ * @return	mixed				User id(s) to use
+ */
+function getUserAndSub()
+{
+	global $user;
+	if(!$user->rights->societe->client->read_sub) return $user->id;
+	
+	$userids = $user->getAllChildIds(1);
+	return implode(',', $userids);
+}
+
+/**
  * Return information about user browser
  *
  * Returns array with the following format:

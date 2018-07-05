@@ -208,6 +208,14 @@ class modSociete extends DolibarrModules
 		$this->rights[$r][3] = 0;
 		$this->rights[$r][4] = 'client';
 		$this->rights[$r][5] = 'voir';
+		
+		$r++;
+		$this->rights[$r][0] = 263;
+		$this->rights[$r][1] = 'Read third parties of subordonates.';
+		$this->rights[$r][2] = 'r';
+		$this->rights[$r][3] = 0;
+		$this->rights[$r][4] = 'client';
+		$this->rights[$r][5] = 'read_sub';
 
 		$r++;
 		$this->rights[$r][0] = 281; // id de la permission
