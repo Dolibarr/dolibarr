@@ -3422,6 +3422,9 @@ class Commande extends CommonOrder
         if (! empty($conf->expedition->enabled) && ($option == '1' || $option == '2')) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
         else $url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
 
+        if (!$user->rights->commande->lire)
+            $option = 'nolink';
+        
         if ($option !== 'nolink')
         {
             // Add param to save lastsearch_values or not
@@ -3465,6 +3468,11 @@ class Commande extends CommonOrder
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
+        if ($option == 'nolink') {
+            $linkstart = '';
+            $linkend = '';
+        }
+        
         $result .= $linkstart;
         if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
         if ($withpicto != 2) $result.= $this->ref;

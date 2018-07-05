@@ -1301,13 +1301,17 @@ class Account extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $mode='', $option='', $save_lastsearch_value=-1, $notooltip=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$result='';
 		$label = '<u>' . $langs->trans("ShowAccount") . '</u>';
 		$label .= '<br><b>' . $langs->trans('BankAccount') . ':</b> ' . $this->label;
 		$label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
 		$label .= '<br><b>' . $langs->trans("AccountCurrency") . ':</b> ' . $this->currency_code;
+                
+                if (!$user->rights->accounting->read || !empty($user->socid))
+                    $option = 'nolink';
+                
 		if (! empty($conf->accounting->enabled))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -1338,6 +1342,11 @@ class Account extends CommonObject
 		$linkstart = '<a href="'.$url.$linkclose;
 		$linkend = '</a>';
 
+                if ($option == 'nolink') {
+                    $linkstart = '';
+                    $linkend = '';
+                }
+        
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
