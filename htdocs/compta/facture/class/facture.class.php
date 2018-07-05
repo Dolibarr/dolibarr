@@ -53,7 +53,8 @@ if (!empty($conf->accounting->enabled))
 /**
  * 	Class to manage invoices
  */
-class Facture extends CommonInvoice {
+class Facture extends CommonInvoice 
+{
 
     public $element = 'facture';
     public $table_element = 'facture';
@@ -227,7 +228,8 @@ class Facture extends CommonInvoice {
      * 	@param	DoliDB		$db			Database handler
      */
 
-    function __construct($db) {
+    function __construct($db) 
+    {
         $this->db = $db;
     }
 
@@ -3868,7 +3870,8 @@ class Facture extends CommonInvoice {
  * 	Class to manage invoice lines.
  *  Saved into database table llx_facturedet
  */
-class FactureLigne extends CommonInvoiceLine {
+class FactureLigne extends CommonInvoiceLine 
+{
 
     public $element = 'facturedet';
     public $table_element = 'facturedet';
