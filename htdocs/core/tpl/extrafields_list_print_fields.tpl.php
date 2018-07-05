@@ -58,14 +58,14 @@ else								// Old method
 				if (in_array($extrafields->attribute_type[$key], array('date', 'datetime', 'timestamp')))
 				{
 					$value = $db->jdate($obj->$tmpkey);
-                                        if(is_a($obj, "Dolresource")){
+                                        if (is_array($obj->array_options) && isset($obj->array_options[$tmpkey])){
                                             $value = $db->jdate($obj->array_options[$tmpkey]);
                                         }
 				}
 				else
 				{
 					$value = $obj->$tmpkey;
-                                        if(is_a($obj, "Dolresource")){
+                                        if (is_array($obj->array_options) && isset($obj->array_options[$tmpkey])){
                                             $value = $obj->array_options[$tmpkey];
                                         }
 				}
