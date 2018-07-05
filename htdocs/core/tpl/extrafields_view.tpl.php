@@ -98,7 +98,7 @@ if (empty($reshook) && is_array($extrafields->attributes[$object->table_element]
 			//var_dump($action);exit;
 			if ((! empty($action) && ($action == 'create' || $action == 'edit')) && ! empty($extrafields->attributes[$object->table_element]['required'][$key])) print ' fieldrequired';
 			print '">';
-			if (! empty($extrafields->attributes[$object->table_element]['help'][$key])) print $form->textwithpicto($langs->trans($label), $extrafields->attributes[$object->table_element]['help'][$key]);
+			if (! empty($extrafields->attributes[$object->table_element]['help'][$key])) print $form->textwithpicto($langs->trans($label), $langs->trans($extrafields->attributes[$object->table_element]['help'][$key]));
 			else print $langs->trans($label);
 			print '</td>';
 

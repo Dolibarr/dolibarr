@@ -2783,6 +2783,35 @@ function isValidEmail($address, $acceptsupervisorkey=0)
 }
 
 /**
+ *	Return if the domain name has a valid MX record.
+ *  WARNING: This need function idn_to_ascii, checkdnsrr and getmxrr
+ *
+ *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
+ *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
+ */
+function isValidMXRecord($domain)
+{
+	if (function_exists('idn_to_ascii') && function_exists('checkdnsrr'))
+	{
+		if (! checkdnsrr(idn_to_ascii($domain), 'MX'))
+		{
+			return 0;
+		}
+		if (function_exists('getmxrr'))
+		{
+			$mxhosts=array();
+			$weight=array();
+			getmxrr(idn_to_ascii($domain), $mxhosts, $weight);
+			if (count($mxhosts) > 1) return 1;
+			if (count($mxhosts) == 1 && ! empty($mxhosts[0])) return 1;
+
+			return 0;
+		}
+	}
+	return -1;
+}
+
+/**
  *  Return true if phone number syntax is ok
  *  TODO Decide what to do with this
  *

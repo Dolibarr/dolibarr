@@ -604,11 +604,8 @@ else
 				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num_prod)
 			{
-
-
 				print '<tr class="oddeven">';
 				if ($object->lines[$i]->fk_product > 0)
 				{

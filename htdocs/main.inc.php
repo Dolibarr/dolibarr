@@ -1059,7 +1059,7 @@ if (! function_exists("llxHeader"))
 		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
 
 		// top menu and left menu area
-		if (empty($conf->dol_hide_topmenu))
+		if (empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu','int'))
 		{
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
@@ -1154,7 +1154,7 @@ function top_httphead($contenttype='text/html', $forcenocache=0)
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0, $disablenofollow=0)
 {
-	global $user, $conf, $langs, $db;
+	global $db, $conf, $langs, $user, $hookmanager;
 
 	top_httphead();
 
@@ -1188,9 +1188,22 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$appli=constant('DOL_APPLICATION_TITLE');
 		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
-		if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
-		else if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
-		else print "<title>".dol_htmlentities($appli)."</title>";
+		print '<title>';
+		$titletoshow='';
+		if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) $titletoshow = dol_htmlentities($title);
+		else if ($title) $titletoshow = dol_htmlentities($appli.' - '.$title);
+		else $titletoshow = dol_htmlentities($appli);
+
+		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
+		$hookmanager->initHooks("main");
+		$parameters=array('title'=>$titletoshow);
+		$result=$hookmanager->executeHooks('setHtmlTitle',$parameters);		// Note that $action and $object may have been modified by some hooks
+		if ($result > 0) $titletoshow = $hookmanager->resPrint;				// Replace Title to show
+		else $titletoshow .= $hookmanager->resPrint;						// Concat to Title to show
+
+		print $titletoshow;
+		print '</title>';
+
 		print "\n";
 
 		if (GETPOST('version','int')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
@@ -1467,11 +1480,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	/*
      * Top menu
      */
-	if (empty($conf->dol_hide_topmenu) && (! defined('NOREQUIREMENU') || ! constant('NOREQUIREMENU')))
+	if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu','int')) && (! defined('NOREQUIREMENU') || ! constant('NOREQUIREMENU')))
 	{
 		print "\n".'<!-- Start top horizontal -->'."\n";
 
-		print '<div class="side-nav-vert"><div id="id-top">';
+		print '<div class="side-nav-vert'.(GETPOST('dol_invisible_topmenu','int')?' hidden':'').'"><div id="id-top">';		// dol_invisible_topmenu differs from dol_hide_topmenu: dol_invisible_topmenu means we output menu but we make it invisible.
 
 		// Show menu entries
 		print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";

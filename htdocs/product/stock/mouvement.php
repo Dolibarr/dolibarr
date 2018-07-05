@@ -1027,7 +1027,15 @@ if ($resql)
         if (! empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.$objp->inventorycode.'</td>';
+	        print '<td>'.'<a href="'
+								.DOL_URL_ROOT.'/product/stock/mouvement.php'
+								.'?id='.$objp->entrepot_id
+								.'&amp;search_inventorycode='.$objp->inventorycode							   
+							    .'&amp;search_type_mouvement='.$objp->type_mouvement
+						.'">'
+							.$objp->inventorycode
+						.'</a>'
+					.'</td>';
         }
         if (! empty($arrayfields['m.label']['checked']))
         {

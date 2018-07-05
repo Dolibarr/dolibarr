@@ -2,6 +2,28 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
+***** ChangeLog for 8.0.0 compared to 7.0.3 *****
+
+WARNING:
+
+Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
+* Remove old deprecated hook 'insertExtraFields'. Triggers must be used for action on CRUD events.
+* Hook 'maildao' was renamed into 'mail' into the method sendfile that send emails, and method was renamed from
+  'doaction' into 'sendMail'. 
+* Rename trigger CONTRACT_SERVICE_ACTIVATE into LINECONTRACT_ACTIVATE and
+  CONTRACT_SERVICE_CLOSE into LINECONTRACT_CLOSE
+* Remove triggers *_CLONE. The trigger CREATE with context 'createfromclone' is already called so this is 
+  a duplicated feature. Cloning is not a business event, the business event is CREATE, so no trigger required.
+* PHP 5.3 is no more supported. Minimum PHP is now 5.4+
+* Remove the old deprecated code of doActions and getInstanceDao in canvas. The doActions of standard hooks are
+  already available and are better.
+* Removed method fetch_prods() and get_each_prod() not used, keep only get_arbo_each_prod() that is better.
+* The hook contaxt commcard has been renamed thirdpartycomm
+* The hook contaxt thirdpartycard has been renamed thirdpartycontact
+* Remove method Categorie:get_nb_categories() that was not used.
+* Hook getnomurltooltip provide a duplicate feature compared to hook getNomUrl so all hooks getnomurltooltip 
+  are now replaced with hook getNomUrl.
+
 ***** ChangeLog for 7.0.3 compared to 7.0.2 *****
 FIX: 7.0 task contact card without withproject parameters
 FIX: #8722
@@ -39,29 +61,6 @@ FIX: sometimes amounts are identical but php find them different.
 FIX: supplier order: product supplier ref not saved on addline
 FIX: test is_erasable() must be done before call function delete() too to avoid delete invoice with &action=delete in url
 FIX: wrong var name $search_month_lim
-
-***** ChangeLog for 8.0.0 compared to 7.0.0 *****
-
-WARNING:
-
-Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
-* Remove old deprecated hook 'insertExtraFields'. Triggers must be used for action on CRUD events.
-* Hook 'maildao' was renamed into 'mail' into the method sendfile that send emails, and method was renamed from
-  'doaction' into 'sendMail'. 
-* Rename trigger CONTRACT_SERVICE_ACTIVATE into LINECONTRACT_ACTIVATE and
-  CONTRACT_SERVICE_CLOSE into LINECONTRACT_CLOSE
-* Remove triggers *_CLONE. The trigger CREATE with context 'createfromclone' is already called so this is 
-  a duplicated feature. Cloning is not a business event, the business event is CREATE, so no trigger required.
-* PHP 5.3 is no more supported. Minimum PHP is now 5.4+
-* Remove the old deprecated code of doActions and getInstanceDao in canvas. The doActions of standard hooks are
-  already available and are better.
-* Removed method fetch_prods() and get_each_prod() not used, keep only get_arbo_each_prod() that is better.
-* The hook contaxt commcard has been renamed thirdpartycomm
-* The hook contaxt thirdpartycard has been renamed thirdpartycontact
-* Remove method Categorie:get_nb_categories() that was not used.
-* Hook getnomurltooltip provide a duplicate feature compared to hook getNomUrl so all hooks getnomurltooltip 
-  are now replaced with hook getNomUrl.
-
 
 ***** ChangeLog for 7.0.2 compared to 7.0.1 *****
 FIX: #8023
@@ -220,7 +219,7 @@ FIX: Use of undefined constant _ROWS_2
 FIX: warning when adding ECM files using old photo path
 
 
-***** ChangeLog for 7.0.0 compared to 6.0.5 *****
+***** ChangeLog for 7.0.0 compared to 6.0.7 *****
 For users:
 NEW: Add a preview icon after files that can be previewed (pdf + images)
 NEW: When payment is registered, PDF of invoices are also regenerated so payments
