@@ -182,7 +182,7 @@ class Contracts extends DolibarrApi
      * @param   array   $request_data   Request data
      * @return  int     ID of contrat
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
       if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 			  throw new RestException(401, "Insuffisant rights");
@@ -247,7 +247,7 @@ class Contracts extends DolibarrApi
      *
      * @return int
      */
-    function postLine($id, $request_data = NULL) {
+    function postLine($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 		  	throw new RestException(401);
 		  }
@@ -300,7 +300,7 @@ class Contracts extends DolibarrApi
      *
      * @return object
      */
-    function putLine($id, $lineid, $request_data = NULL) {
+    function putLine($id, $lineid, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 		  	throw new RestException(401);
 		  }
@@ -359,7 +359,7 @@ class Contracts extends DolibarrApi
      *
      * @return object
      */
-    function activateLine($id, $lineid, $datestart, $dateend = NULL, $comment = NULL) {
+    function activateLine($id, $lineid, $datestart, $dateend = null, $comment = null) {
     	if(! DolibarrApiAccess::$user->rights->contrat->creer) {
     		throw new RestException(401);
     	}
@@ -396,7 +396,7 @@ class Contracts extends DolibarrApi
      *
      * @return object
      */
-    function unactivateLine($id, $lineid, $datestart, $comment = NULL) {
+    function unactivateLine($id, $lineid, $datestart, $comment = null) {
     	if(! DolibarrApiAccess::$user->rights->contrat->creer) {
     		throw new RestException(401);
     	}
@@ -470,7 +470,7 @@ class Contracts extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = NULL) {
+    function put($id, $request_data = null) {
       if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 		  	throw new RestException(401);
 		  }

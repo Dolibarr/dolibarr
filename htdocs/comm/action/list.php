@@ -25,26 +25,28 @@
  *		\brief      Page to list actions
  */
 
+if (! defined("NOREDIRECTBYMAINTOLOGIN"))  define('NOREDIRECTBYMAINTOLOGIN',1);
+
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 include_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("users");
-$langs->load("companies");
-$langs->load("agenda");
-$langs->load("commercial");
+// Load translation files required by the page
+$langs->loadLangs(array("users","companies","agenda","commercial"));
 
 $action=GETPOST('action','alpha');
+$contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'actioncommlist';   // To manage different context of search
 $resourceid=GETPOST("resourceid","int");
 $year=GETPOST("year",'int');
 $month=GETPOST("month",'int');
 $day=GETPOST("day",'int');
 $pid=GETPOST("projectid",'int',3);
 $status=GETPOST("status",'alpha');
-$type=GETPOST('type');
+$type=GETPOST('type','alphanohtml');
 $optioncss = GETPOST('optioncss','alpha');
 // Set actioncode (this code must be same for setting actioncode into peruser, listacton and index)
 if (GETPOST('actioncode','array'))
@@ -57,6 +59,7 @@ else
     $actioncode=GETPOST("actioncode","alpha",3)?GETPOST("actioncode","alpha",3):(GETPOST("actioncode")=='0'?'0':(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE));
 }
 if ($actioncode == '' && empty($actioncodearray)) $actioncode=(empty($conf->global->AGENDA_DEFAULT_FILTER_TYPE)?'':$conf->global->AGENDA_DEFAULT_FILTER_TYPE);
+$search_id=GETPOST('search_id','alpha');
 $search_title=GETPOST('search_title','alpha');
 
 $dateselect=dol_mktime(0, 0, 0, GETPOST('dateselectmonth','int'), GETPOST('dateselectday','int'), GETPOST('dateselectyear','int'));
@@ -65,12 +68,10 @@ $dateend=dol_mktime(0, 0, 0, GETPOST('dateendmonth','int'), GETPOST('dateendday'
 if ($status == ''   && ! isset($_GET['status']) && ! isset($_POST['status'])) $status=(empty($conf->global->AGENDA_DEFAULT_FILTER_STATUS)?'':$conf->global->AGENDA_DEFAULT_FILTER_STATUS);
 if (empty($action) && ! isset($_GET['action']) && ! isset($_POST['action'])) $action=(empty($conf->global->AGENDA_DEFAULT_VIEW)?'show_month':$conf->global->AGENDA_DEFAULT_VIEW);
 
-$filter = GETPOST("filter",'',3);
+$filter = GETPOST("filter",'alpha',3);
 $filtert = GETPOST("filtert","int",3);
 $usergroup = GETPOST("usergroup","int",3);
 $showbirthday = empty($conf->use_javascript_ajax)?GETPOST("showbirthday","int"):1;
-
-$contextpage='actioncommlist';
 
 $extrafields = new ExtraFields($db);
 // fetch optionals attributes and labels
@@ -116,6 +117,7 @@ if (! $user->rights->agenda->allactions->read || $filter=='mine')	// If no permi
 }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new ActionComm($db);
 $hookmanager->initHooks(array('agendalist'));
 
 $arrayfields=array(
@@ -170,7 +172,8 @@ include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
 {
     //$actioncode='';
-    $search_title='';
+    $search_id='';
+	$search_title='';
     $datestart='';
     $dateend='';
     $status='';
@@ -199,24 +202,25 @@ llxHeader('',$langs->trans("Agenda"),$help_url);
 $listofextcals=array();
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($actioncode != '') {
 	if(is_array($actioncode)) {
-		foreach($actioncode as $str_action) $param.="&actioncode[]=".$str_action;
-	} else $param.="&actioncode=".$actioncode;
+		foreach($actioncode as $str_action) $param.="&actioncode[]=".urlencode($str_action);
+	} else $param.="&actioncode=".urlencode($actioncode);
 }
-if ($resourceid > 0) $param.="&resourceid=".$resourceid;
-if ($status != '' && $status > -1) $param.="&status=".$status;
-if ($filter) $param.="&filter=".$filter;
-if ($filtert) $param.="&filtert=".$filtert;
-if ($socid) $param.="&socid=".$socid;
+if ($resourceid > 0) $param.="&resourceid=".urlencode($resourceid);
+if ($status != '' && $status > -1) $param.="&status=".urlencode($status);
+if ($filter) $param.="&filter=".urlencode($filter);
+if ($filtert) $param.="&filtert=".urlencode($filtert);
+if ($socid) $param.="&socid=".urlencode($socid);
 if ($showbirthday) $param.="&showbirthday=1";
-if ($pid) $param.="&projectid=".$pid;
-if ($type) $param.="&type=".$type;
-if ($usergroup) $param.="&usergroup=".$usergroup;
-if ($optioncss != '') $param.='&optioncss='.$optioncss;
-if ($search_title != '') $param.='&search_title='.$search_title;
+if ($pid) $param.="&projectid=".urlencode($pid);
+if ($type) $param.="&type=".urlencode($type);
+if ($usergroup) $param.="&usergroup=".urlencode($usergroup);
+if ($optioncss != '') $param.='&optioncss='.urlencode($optioncss);
+if ($search_id != '') $param.='&search_title='.urlencode($search_id);
+if ($search_title != '') $param.='&search_title='.urlencode($search_title);
 if (GETPOST('datestartday','int')) $param.='&datestartday='.GETPOST('datestartday','int');
 if (GETPOST('datestartmonth','int')) $param.='&datestartmonth='.GETPOST('datestartmonth','int');
 if (GETPOST('datestartyear','int')) $param.='&datestartyear='.GETPOST('datestartyear','int');
@@ -234,7 +238,7 @@ $sql.= ' a.fk_user_author,a.fk_user_action,';
 $sql.= " a.fk_contact, a.note, a.percent as percent,";
 $sql.= " a.fk_element, a.elementtype,";
 $sql.= " c.code as type_code, c.libelle as type_label,";
-$sql.= " sp.lastname, sp.firstname";
+$sql.= " sp.lastname, sp.firstname, sp.email, sp.phone, sp.address, sp.phone as phone_pro, sp.phone_mobile, sp.phone_perso, sp.fk_pays as country_id";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
@@ -291,8 +295,9 @@ if ($status == '0') { $sql.= " AND a.percent = 0"; }
 if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
 if ($status == '100') { $sql.= " AND a.percent = 100"; }
-if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
-if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+if ($status == 'done') { $sql.= " AND (a.percent = 100)"; }
+if ($status == 'todo') { $sql.= " AND (a.percent >= 0 AND a.percent < 100)"; }
+if ($search_id) $sql.=natural_search("a.id", $search_id, 1);
 if ($search_title) $sql.=natural_search("a.label", $search_title);
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
@@ -317,6 +322,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql.= $db->plimit($limit + 1, $offset);
@@ -331,13 +341,9 @@ if ($resql)
 
 	$num = $db->num_rows($resql);
 
-	/*$title=$langs->trans("DoneAndToDoActions");
-	if ($status == 'done') $title=$langs->trans("DoneActions");
-	if ($status == 'todo') $title=$langs->trans("ToDoActions");
-	*/
-	$title=$langs->trans("ListOfEvents");
-
-	$newtitle=$langs->trans($title);
+	// Local calendar
+	$newtitle ='<div class="nowrap clear inline-block minheight20"><input type="checkbox" id="check_mytasks" name="check_mytasks" checked disabled> ' . $langs->trans("LocalAgenda").' &nbsp; </div>';
+	//$newtitle=$langs->trans($title);
 
 	$tabactive='cardlist';
 
@@ -358,7 +364,7 @@ if ($resql)
 	//if ($actioncode)    $nav.='<input type="hidden" name="actioncode" value="'.$actioncode.'">';
 	//if ($resourceid)      $nav.='<input type="hidden" name="resourceid" value="'.$resourceid.'">';
 	if ($filter)          $nav.='<input type="hidden" name="filter" value="'.$filter.'">';
-	if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
+	//if ($filtert)         $nav.='<input type="hidden" name="filtert" value="'.$filtert.'">';
 	//if ($socid)           $nav.='<input type="hidden" name="socid" value="'.$socid.'">';
 	if ($showbirthday)    $nav.='<input type="hidden" name="showbirthday" value="1">';
 	//if ($pid)             $nav.='<input type="hidden" name="projectid" value="'.$pid.'">';
@@ -400,6 +406,7 @@ if ($resql)
     	$s = $hookmanager->resPrint;
     }
 
+    $newcardbutton='';
     if ($user->rights->agenda->myactions->create || $user->rights->agenda->allactions->create)
     {
         $tmpforcreatebutton=dol_getdate(dol_now(), true);
@@ -408,12 +415,12 @@ if ($resql)
 
         //$param='month='.$monthshown.'&year='.$year;
         $hourminsec='100000';
-        $link = '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$tmpforcreatebutton['year'],$tmpforcreatebutton['mon'],$tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'">';
-        $link.= $langs->trans("AddAction");
-        $link.= '</a>';
+        $newcardbutton = '<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create&datep='.sprintf("%04d%02d%02d",$tmpforcreatebutton['year'],$tmpforcreatebutton['mon'],$tmpforcreatebutton['mday']).$hourminsec.'&backtopage='.urlencode($_SERVER["PHP_SELF"].($newparam?'?'.$newparam:'')).'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+        $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+        $newcardbutton.= '</a>';
     }
 
-    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$link, '', $limit);
+    print_barre_liste($s, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, -1 * $nbtotalofrecords, '', 0, $nav.$newcardbutton, '', $limit);
 
     $moreforfilter='';
 
@@ -425,7 +432,7 @@ if ($resql)
     print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"").'">'."\n";
 
 	print '<tr class="liste_titre_filter">';
-	if (! empty($arrayfields['a.id']['checked']))		print '<td class="liste_titre"></td>';
+	if (! empty($arrayfields['a.id']['checked']))		print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_id" value="'.$search_id.'"></td>';
 	if (! empty($arrayfields['owner']['checked']))		print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['c.libelle']['checked']))	print '<td class="liste_titre"></td>';
 	if (! empty($arrayfields['a.label']['checked']))	print '<td class="liste_titre"><input type="text" class="maxwidth75" name="search_title" value="'.$search_title.'"></td>';
@@ -496,7 +503,6 @@ if ($resql)
 	$caction=new CActionComm($db);
 	$arraylist=$caction->liste_array(1, 'code', '', (empty($conf->global->AGENDA_USE_EVENT_TYPE)?1:0), '', 1);
 
-	$var=true;
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
@@ -606,9 +612,14 @@ if ($resql)
 			print '<td>';
 			if ($obj->fk_contact > 0)
 			{
+				$contactstatic->id=$obj->fk_contact;
+				$contactstatic->email=$obj->email;
 				$contactstatic->lastname=$obj->lastname;
 				$contactstatic->firstname=$obj->firstname;
-				$contactstatic->id=$obj->fk_contact;
+				$contactstatic->phone_pro=$obj->phone_pro;
+				$contactstatic->phone_mobile=$obj->phone_mobile;
+				$contactstatic->phone_perso=$obj->phone_perso;
+				$contactstatic->country_id=$obj->country_id;
 				print $contactstatic->getNomUrl(1,'',28);
 			}
 			else
@@ -621,6 +632,7 @@ if ($resql)
 		// Linked object
 		if (! empty($arrayfields['a.fk_element']['checked'])) {
 		        print '<td>';
+		        //var_dump($obj->fkelement.' '.$obj->elementtype);
 		        if ($obj->fk_element > 0 && ! empty($obj->elementtype)) {
               		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 		            print dolGetElementUrl($obj->fk_element,$obj->elementtype,1);

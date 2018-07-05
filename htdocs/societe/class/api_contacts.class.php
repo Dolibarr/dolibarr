@@ -122,6 +122,7 @@ class Contacts extends DolibarrApi
 
 		$sql = "SELECT t.rowid";
 		$sql.= " FROM " . MAIN_DB_PREFIX . "socpeople as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX . "socpeople_extrafields as te ON te.fk_object = t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) {
 			// We need this table joined to the select in order to filter by sale
 			$sql.= ", " . MAIN_DB_PREFIX . "societe_commerciaux as sc";
@@ -194,7 +195,7 @@ class Contacts extends DolibarrApi
 	 * @param   array   $request_data   Request datas
 	 * @return  int     ID of contact
 	 */
-	function post($request_data = NULL) {
+	function post($request_data = null) {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -219,7 +220,7 @@ class Contacts extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = NULL) {
+	function put($id, $request_data = null) {
 		if (!DolibarrApiAccess::$user->rights->societe->contact->creer)
 		{
 			throw new RestException(401, 'No permission to create/update contacts');
@@ -282,7 +283,7 @@ class Contacts extends DolibarrApi
 	 *
 	 * @url	POST {id}/createUser
 	 */
-	function createUser($id, $request_data = NULL) {
+	function createUser($id, $request_data = null) {
 	    //if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 	    //throw new RestException(401);
 	    //}

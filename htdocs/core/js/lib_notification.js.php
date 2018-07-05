@@ -14,7 +14,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * Library javascript to enable Browser notifications
  */
 
@@ -34,17 +34,17 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
     global $langs, $conf;
 
     top_httphead('text/javascript; charset=UTF-8');
-    
+
     $nowtime = time();
     //$nowtimeprevious = floor($nowtime / 60) * 60;   // auto_check_events_not_before is rounded to previous minute
 
     // TODO Try to make a solution with only a javascript timer that is easier. Difficulty is to avoid notification twice when.
     /* session already started into main
-    session_cache_limiter(FALSE);
+    session_cache_limiter(false);
     header('Cache-Control: no-cache');
     session_set_cookie_params(0, '/', null, false, true);   // Add tag httponly on session cookie
     session_start();*/
-    if (! isset($_SESSION['auto_check_events_not_before'])) 
+    if (! isset($_SESSION['auto_check_events_not_before']))
     {
         print 'console.log("_SESSION[auto_check_events_not_before] is not set");'."\n";
         // Round to eliminate the seconds
@@ -65,9 +65,9 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
 	/* Launch timer */
    	// We set a delay before launching first test so next check will arrive after the time_auto_update compared to previous one.
     var time_first_execution = (time_auto_update - (nowtime - time_js_next_test)) * 1000;	//need milliseconds
-    if (login != '') { 
+    if (login != '') {
     	console.log("Launch browser notif check: setTimeout is set to launch 'first_execution' function after a wait of time_first_execution="+time_first_execution+". nowtime (time php page generation) = "+nowtime+" auto_check_events_not_before (val in session)= "+auto_check_events_not_before+" time_js_next_test (max now,auto_check_events_not_before) = "+time_js_next_test+" time_auto_update="+time_auto_update);
-    	setTimeout(first_execution, time_first_execution); 
+    	setTimeout(first_execution, time_first_execution);
     } //first run auto check
 
 
@@ -88,13 +88,13 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
                 success: function (result) {
                     var arr = JSON.parse(result);
                     if (arr.length > 0) {
-                    	var audio = null; 
+                    	var audio = null;
                         <?php
                         if (! empty($conf->global->AGENDA_REMINDER_BROWSER_SOUND)) {
                             print 'audio = new Audio(\''.DOL_URL_ROOT.'/theme/common/sound/notification_agenda.wav'.'\');';
                         }
                         ?>
-    
+
                         $.each(arr, function (index, value) {
                             var url="notdefined";
                             var title="Not defined";
@@ -102,7 +102,7 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
                             if (value['type'] == 'agenda' && value['location'] != null && value['location'] != '') {
                                 body += '\n' + value['location'];
                             }
-    
+
                             if (value['type'] == 'agenda')
                             {
                              	url = '<?php echo DOL_URL_ROOT.'/comm/action/card.php?id='; ?>' + value['id'];
@@ -113,10 +113,10 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
                                 body: body,
                                 tag: value['id']
                             };
-    
+
                             // We release the notify
                             var noti = new Notification(title, extra);
-                            if (index==0 && audio) 
+                            if (index==0 && audio)
                             {
                             	audio.play();
                             }
@@ -140,5 +140,5 @@ if (! ($_SERVER['HTTP_REFERER'] === $dolibarr_main_url_root . '/' || $_SERVER['H
         time_js_next_test += time_auto_update;
 		console.log('Updated time_js_next_test. New value is '+time_js_next_test);
     }
-<?php 
+<?php
 }

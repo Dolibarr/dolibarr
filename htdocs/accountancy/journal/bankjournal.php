@@ -1,12 +1,12 @@
 <?php
-/* Copyright (C) 2007-2010  Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2007-2010  Jean Heimburger		<jean@tiaris.info>
- * Copyright (C) 2011       Juanjo Menent		<jmenent@2byte.es>
- * Copyright (C) 2012       Regis Houssin		<regis.houssin@capnetworks.com>
- * Copyright (C) 2013       Christophe Battarel	<christophe.battarel@altairis.fr>
- * Copyright (C) 2013-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
- * Copyright (C) 2013-2014  Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2013-2014  Olivier Geffroy		<jeff@jeffinfo.com>
+/* Copyright (C) 2007-2010  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2007-2010  Jean Heimburger     <jean@tiaris.info>
+ * Copyright (C) 2011       Juanjo Menent       <jmenent@2byte.es>
+ * Copyright (C) 2012       Regis Houssin       <regis.houssin@capnetworks.com>
+ * Copyright (C) 2013       Christophe Battarel <christophe.battarel@altairis.fr>
+ * Copyright (C) 2013-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2013-2014  Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2013-2014  Olivier Geffroy     <jeff@jeffinfo.com>
  * Copyright (C) 2017       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,9 +24,9 @@
  */
 
 /**
- * \file 		htdocs/accountancy/journal/bankjournal.php
- * \ingroup 	Advanced accountancy
- * \brief 		Page with bank journal
+ *  \file       htdocs/accountancy/journal/bankjournal.php
+ *  \ingroup    Advanced accountancy
+ *  \brief      Page with bank journal
  */
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/report.lib.php';
@@ -53,8 +53,11 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/paymentvarious.class.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
+require_once DOL_DOCUMENT_ROOT . '/loan/class/loan.class.php';
+require_once DOL_DOCUMENT_ROOT . '/loan/class/paymentloan.class.php';
 
-$langs->loadLangs(array("companies","other","compta","banks",'bills','donations',"accountancy","trips","salaries","hrm"));
+// Load translation files required by the page
+$langs->loadLangs(array("companies","other","compta","banks","bills","donations","loan","accountancy","trips","salaries","hrm"));
 
 // Multi journal
 $id_journal = GETPOST('id_journal', 'int');
@@ -104,8 +107,8 @@ $idpays = $mysoc->country_id;
 
 $sql  = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type, b.fk_account,";
 $sql .= " ba.courant, ba.ref as baref, ba.account_number, ba.fk_accountancy_journal,";
-$sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, bu1.type as typeop_company,";
-$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, bu2.type as typeop_user,";
+$sql .= " soc.code_compta, soc.code_compta_fournisseur, soc.rowid as socid, soc.nom as name, soc.email as email, bu1.type as typeop_company,";
+$sql .= " u.accountancy_code, u.rowid as userid, u.lastname as lastname, u.firstname as firstname, u.email as useremail, bu2.type as typeop_user,";
 $sql .= " bu3.type as typeop_payment, bu4.type as typeop_payment_supplier";
 $sql .= " FROM " . MAIN_DB_PREFIX . "bank as b";
 $sql .= " JOIN " . MAIN_DB_PREFIX . "bank_account as ba on b.fk_account=ba.rowid";
@@ -143,6 +146,7 @@ $paymentvatstatic = new TVA($db);
 $paymentsalstatic = new PaymentSalary($db);
 $paymentexpensereportstatic = new PaymentExpenseReport($db);
 $paymentvariousstatic = new PaymentVarious($db);
+$paymentloanstatic = new PaymentLoan($db);
 
 // Get code of finance journal
 $accountingjournalstatic = new AccountingJournal($db);
@@ -212,6 +216,7 @@ if ($result) {
 				'id' => $obj->socid,
 				'name' => $obj->name,
 				'code_compta' => $compta_soc,
+				'email' => $obj->email
 		);
 
 		// Set accountancy code for user
@@ -222,7 +227,8 @@ if ($result) {
 				'name' => dolGetFirstLastname($obj->firstname, $obj->lastname),
 				'lastname' => $obj->lastname,
 				'firstname' => $obj->firstname,
-				'accountancy_code' => $compta_user,
+				'email' => $obj->useremail,
+				'accountancy_code' => $compta_user
 		);
 
 		// Variable bookkeeping ($obj->rowid is Bank Id)
@@ -237,7 +243,7 @@ if ($result) {
 		} else {
 			$tabpay[$obj->rowid]["lib"] = dol_trunc($obj->label, 60);
 		}
-		$links = $object->get_url($obj->rowid);
+		$links = $object->get_url($obj->rowid);		// Get an array('url'=>, 'url_id'=>, 'label'=>, 'type'=> 'fk_bank'=> )
 
 		//var_dump($i);
 		//var_dump($tabpay);
@@ -252,7 +258,7 @@ if ($result) {
 			// Now loop on each link of record in bank.
 			foreach ($links as $key => $val) {
 
-				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'payment_salary', 'payment_various')))
+				if (in_array($links[$key]['type'], array('sc', 'payment_sc', 'payment', 'payment_supplier', 'payment_vat', 'payment_expensereport', 'banktransfert', 'payment_donation', 'payment_loan', 'payment_salary', 'payment_various')))
 				{
 					// So we excluded 'company' and 'user' here. We want only payment lines
 
@@ -282,11 +288,15 @@ if ($result) {
 				} else if ($links[$key]['type'] == 'company') {
 					$societestatic->id = $links[$key]['url_id'];
 					$societestatic->name = $links[$key]['label'];
+					$societestatic->email = $tabcompany[$obj->rowid]['email'];
 					$tabpay[$obj->rowid]["soclib"] = $societestatic->getNomUrl(1, '', 30);
 					if ($compta_soc) $tabtp[$obj->rowid][$compta_soc] += $obj->amount;
 				} else if ($links[$key]['type'] == 'user') {
 					$userstatic->id = $links[$key]['url_id'];
 					$userstatic->name = $links[$key]['label'];
+					$userstatic->email = $tabuser[$obj->rowid]['email'];
+					$userstatic->firstname = $tabuser[$obj->rowid]['firstname'];
+					$userstatic->lastname = $tabuser[$obj->rowid]['lastname'];
 					if ($userstatic->id > 0) $tabpay[$obj->rowid]["soclib"] = $userstatic->getNomUrl(1, '', 30);
 					else $tabpay[$obj->rowid]["soclib"] = '???';	// Should not happen, but happens with old data when id of user was not saved on expense report payment.
 					if ($compta_user) $tabtp[$obj->rowid][$compta_user] += $obj->amount;
@@ -341,7 +351,7 @@ if ($result) {
 					$tabpay[$obj->rowid]["paymentsalid"] = $paymentsalstatic->id;
 				} else if ($links[$key]['type'] == 'payment_expensereport') {
 					$paymentexpensereportstatic->id = $links[$key]['url_id'];
-					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentexpensereportstatic->getNomUrl(2);
+					$tabpay[$obj->rowid]["lib"] .= $paymentexpensereportstatic->getNomUrl(2);
 					$tabpay[$obj->rowid]["paymentexpensereport"] = $paymentexpensereportstatic->id;
 				} else if ($links[$key]['type'] == 'payment_various') {
 					$paymentvariousstatic->id = $links[$key]['url_id'];
@@ -352,6 +362,13 @@ if ($result) {
 					$paymentvariousstatic->fetch($paymentvariousstatic->id);
 					$account_various = (! empty($paymentvariousstatic->accountancy_code) ? $paymentvariousstatic->accountancy_code : 'NotDefined');	// NotDefined is a reserved word
 					$tabtp[$obj->rowid][$account_various] += $obj->amount;
+				} else if ($links[$key]['type'] == 'payment_loan') {
+					$paymentloanstatic->id = $links[$key]['url_id'];
+					$paymentloanstatic->ref = $links[$key]['url_id'];
+					$paymentloanstatic->fk_loan = $links[$key]['url_id'];
+					$tabpay[$obj->rowid]["lib"] .= ' ' . $paymentloanstatic->getNomUrl(2);
+					$tabpay[$obj->rowid]["paymentloanid"] = $paymentloanstatic->id;
+					//$tabtp[$obj->rowid][$account_pay_loan] += $obj->amount;
 				} else if ($links[$key]['type'] == 'banktransfert') {
 					$tabpay[$obj->rowid]["lib"] .= ' ' . $langs->trans("BankTransfer");
 					$tabtp[$obj->rowid][$account_transfer] += $obj->amount;
@@ -542,6 +559,11 @@ if (! $error && $action == 'writebookkeeping') {
 							$bookkeeping->subledger_label = '';
 							$bookkeeping->numero_compte = $k;
 							$bookkeeping->label_compte = '';
+						} else if ($tabtype[$key] == 'payment_loan') {
+							$bookkeeping->subledger_account = '';
+							$bookkeeping->subledger_label = '';
+							$bookkeeping->numero_compte = $k;
+							$bookkeeping->label_compte = '';
 						} else if ($tabtype[$key] == 'payment_various') {
 							$bookkeeping->subledger_account = '';
 							$bookkeeping->subledger_label = '';
@@ -696,6 +718,7 @@ if (! $error && $action == 'writebookkeeping') {
 if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
+	$filename = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// CSV header line
@@ -706,8 +729,8 @@ if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	print '"' . $langs->trans("LedgerAccount") . '"' . $sep;
 	print '"' . $langs->trans("SubledgerAccount") . '"' . $sep;
 	print '"' . $langs->trans("Label"). '"' . $sep;
-	print '"' . $langs->trans("Amount") . '"' . $sep;
-	print '"' . $langs->trans("Amount") . '"' . $sep;
+	print '"' . $langs->trans("Debit") . '"' . $sep;
+	print '"' . $langs->trans("Credit") . '"' . $sep;
 	print '"' . $langs->trans("Journal")  . '"' . $sep;
 	print '"' . $langs->trans("Note")  . '"' . $sep;
 	print "\n";
@@ -815,17 +838,18 @@ if (empty($action) || $action == 'view') {
 	$expensereportstatic = new ExpenseReport($db);
 	$vatstatic = new Tva($db);
 	$donationstatic = new Don($db);
+	$loanstatic = new Loan($db);
 	$salarystatic = new PaymentSalary($db);
 	$variousstatic = new PaymentVarious($db);
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
+	$nom = $langs->trans("FinanceJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
 	$builddate=dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
 
-	$listofchoices=array('already'=>$langs->trans("AlreadyInGeneralLedger"), 'notyet'=>$langs->trans("NotYetInGeneralLedger"));
+	$listofchoices=array('notyet'=>$langs->trans("NotYetInGeneralLedger"), 'already'=>$langs->trans("AlreadyInGeneralLedger"));
 	$period = $form->select_date($date_start?$date_start:-1, 'date_start', 0, 0, 0, '', 1, 0, 1) . ' - ' . $form->select_date($date_end?$date_end:-1, 'date_end', 0, 0, 0, '', 1, 0, 1). ' -  ' .$langs->trans("JournalizationInLedgerStatus").' '. $form->selectarray('in_bookkeeping', $listofchoices, $in_bookkeeping, 1);
 
 	$varlink = 'id_journal=' . $id_journal;
@@ -858,7 +882,7 @@ if (empty($action) || $action == 'view') {
 
 
 	print '<div class="tabsAction tabsActionNoBottom">';
-	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	else print '<a class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
 	print '</div>';
@@ -886,7 +910,7 @@ if (empty($action) || $action == 'view') {
 	print '<br>';
 
 	$i = 0;
-    print '<div class="div-table-responsive">';
+	print '<div class="div-table-responsive">';
 	print "<table class=\"noborder\" width=\"100%\">";
 	print "<tr class=\"liste_titre\">";
 	print "<td></td>";
@@ -1112,6 +1136,9 @@ function getSourceDocRef($val, $typerecord)
 	if ($ref == '(ExpenseReportPayment)') {
 		$ref = $langs->trans('Employee');
 	}
+	if ($ref == '(LoanPayment)') {
+		$ref = $langs->trans('Loan');
+	}
 	if ($ref == '(payment_salary)') {
 		$ref = $langs->trans('Employee');
 	}
@@ -1165,6 +1192,13 @@ function getSourceDocRef($val, $typerecord)
 		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_donation as payd";
 		$sqlmid .= " WHERE payd.fk_donation=" . $val["paymentdonationid"];
 		$ref = $langs->trans("Donation");
+	}
+	elseif ($typerecord == 'payment_loan')
+	{
+		$sqlmid = 'SELECT l.rowid as ref';
+		$sqlmid .= " FROM " . MAIN_DB_PREFIX . "payment_loan as l";
+		$sqlmid .= " WHERE l.rowid=" . $val["paymentloanid"];
+		$ref = $langs->trans("LoanPayment");
 	}
 	elseif ($typerecord == 'payment_various')
 	{

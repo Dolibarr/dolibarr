@@ -103,6 +103,7 @@ class BlockedLog
 	public $ref_object = '';
 
 	public $object_data = null;
+	public $user_fullname='';
 
 	/**
 	 * Array of tracked event codes
@@ -312,11 +313,14 @@ class BlockedLog
 	 *      @param		Object		$object     object to store
 	 *      @param		string		$action     action
 	 *      @param		string		$amounts    amounts
+	 *      @param		User		$fuser		User object (forced)
 	 *      @return		int						>0 if OK, <0 if KO
 	 */
-	public function setObjectData(&$object, $action, $amounts)
+	public function setObjectData(&$object, $action, $amounts, $fuser = null)
 	{
 		global $langs, $user, $mysoc;
+
+		if (is_object($fuser)) $user = $fuser;
 
 		// Generic fields
 
@@ -745,11 +749,12 @@ class BlockedLog
 			return -2;
 		}
 
-		if (empty($this->action) || empty($this->fk_user) || empty($this->user_fullname)) {
+		if (empty($this->action)) {
 			$this->error=$langs->trans("BadParameterWhenCallingCreateOfBlockedLog");
 			dol_syslog($this->error, LOG_WARNING);
 			return -3;
 		}
+		if (empty($this->fk_user)) $this->user_fullname='(Anonymous)';
 
 		$this->date_creation = dol_now();
 

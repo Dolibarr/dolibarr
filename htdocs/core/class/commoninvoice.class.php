@@ -173,19 +173,13 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 *    	Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise
 	 */
 	function getSumCreditNotesUsed($multicurrency=0)
 	{
-	    if ($this->element == 'facture_fourn' || $this->element == 'invoice_supplier')
-	    {
-	        // TODO
-	        return 0;
-	    }
-
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 
 	    $discountstatic=new DiscountAbsolute($this->db);
@@ -602,9 +596,11 @@ abstract class CommonInvoice extends CommonObject
 
 		$sqltemp = 'SELECT c.type_cdr,c.nbjour,c.decalage';
 		$sqltemp.= ' FROM '.MAIN_DB_PREFIX.'c_payment_term as c';
-		$sqltemp.= " WHERE c.entity IN (" . getEntity('c_payment_term').")";
-		if (is_numeric($cond_reglement)) $sqltemp.= " AND c.rowid=".$cond_reglement;
-		else $sqltemp.= " AND c.code='".$this->db->escape($cond_reglement)."'";
+		if (is_numeric($cond_reglement)) $sqltemp.= " WHERE c.rowid=".$cond_reglement;
+		else {
+			$sqltemp.= " WHERE c.entity IN (".getEntity('c_payment_term').")";
+			$sqltemp.= " AND c.code='".$this->db->escape($cond_reglement)."'";
+		}
 
 		dol_syslog(get_class($this).'::calculate_date_lim_reglement', LOG_DEBUG);
 		$resqltemp=$this->db->query($sqltemp);
@@ -680,7 +676,7 @@ abstract class CommonInvoiceLine extends CommonObjectLine
 {
 	/**
 	 * Quantity
-	 * @var int
+	 * @var double
 	 */
 	public $qty;
 

@@ -42,23 +42,23 @@ $toselect = GETPOST('toselect', 'array');
 // Security check
 $result=restrictedArea($user,'adherent');
 
-$filter=GETPOST("filter");
-$statut=GETPOST("statut");
-$search=GETPOST("search");
-$search_ref=GETPOST("search_ref");
-$search_lastname=GETPOST("search_lastname");
-$search_firstname=GETPOST("search_firstname");
-$search_login=GETPOST("search_login");
-$search_address=GETPOST("search_address");
-$search_zip=GETPOST("search_zip");
-$search_town=GETPOST("search_town");
-$search_state=GETPOST("search_state");
-$search_country=GETPOST("search_country");
-$search_phone=GETPOST("search_phone");
-$search_phone_perso=GETPOST("search_phone_perso");
-$search_phone_mobile=GETPOST("search_phone_mobile");
-$search_type=GETPOST("search_type");
-$search_email=GETPOST("search_email");
+$filter=GETPOST("filter",'alpha');
+$statut=GETPOST("statut",'intcomma');
+$search=GETPOST("search",'alpha');
+$search_ref=GETPOST("search_ref",'alpha');
+$search_lastname=GETPOST("search_lastname",'alpha');
+$search_firstname=GETPOST("search_firstname",'alpha');
+$search_login=GETPOST("search_login",'alpha');
+$search_address=GETPOST("search_address",'alpha');
+$search_zip=GETPOST("search_zip",'alpha');
+$search_town=GETPOST("search_town",'alpha');
+$search_state=GETPOST("search_state",'alpha');
+$search_country=GETPOST("search_country",'alpha');
+$search_phone=GETPOST("search_phone",'alpha');
+$search_phone_perso=GETPOST("search_phone_perso",'alpha');
+$search_phone_mobile=GETPOST("search_phone_mobile",'alpha');
+$search_type=GETPOST("search_type",'alpha');
+$search_email=GETPOST("search_email",'alpha');
 $search_categ = GETPOST("search_categ",'int');
 $catid        = GETPOST("catid",'int');
 $optioncss = GETPOST('optioncss','alpha');
@@ -79,6 +79,7 @@ if (! $sortorder) { $sortorder=($filter=='outofdate'?"DESC":"ASC"); }
 if (! $sortfield) { $sortfield=($filter=='outofdate'?"d.datefin":"d.lastname"); }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$object = new Adherent($db);
 $hookmanager->initHooks(array('memberlist'));
 $extrafields = new ExtraFields($db);
 
@@ -261,6 +262,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$resql = $db->query($sql);
 	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
 	else dol_print_error($db);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 // Add limit
 $sql.= $db->plimit($limit+1, $offset);
@@ -288,7 +294,7 @@ if ($num == 1 && ! empty($conf->global->MAIN_SEARCH_DIRECT_OPEN_IF_ONLY_ONE) && 
 llxHeader('',$langs->trans("Member"),'EN:Module_Foundations|FR:Module_Adh&eacute;rents|ES:M&oacute;dulo_Miembros');
 
 $titre=$langs->trans("MembersList");
-if (isset($_GET["statut"]))
+if (GETPOSTISSET("statut"))
 {
 	if ($statut == '-1,1') { $titre=$langs->trans("MembersListQualified"); }
 	if ($statut == '-1')   { $titre=$langs->trans("MembersListToValid"); }
@@ -344,6 +350,14 @@ if ($user->rights->adherent->supprimer) $arrayofmassactions['predelete']=$langs-
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
+$newcardbutton='';
+if ($user->rights->adherent->creer)
+{
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewMember').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
+
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -354,7 +368,7 @@ print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
 print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
-print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, '', '', $limit);
+print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_generic.png', 0, $newcardbutton, '', $limit);
 
 $topicmail="Information";
 $modelmail="member";
@@ -365,7 +379,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 // Filter on categories
@@ -593,7 +607,6 @@ while ($i < min($num, $limit))
 	$memberstatic->ref=$obj->rowid;
 	$memberstatic->lastname=$obj->lastname;
 	$memberstatic->firstname=$obj->firstname;
-	$memberstatic->societe=$obj->company;
 	$memberstatic->statut=$obj->statut;
 	$memberstatic->datefin= $datefin;
 	$memberstatic->socid = $obj->fk_soc;
@@ -605,6 +618,7 @@ while ($i < min($num, $limit))
 	} else {
 		$companyname=$obj->company;
 	}
+	$memberstatic->societe = $companyname;
 
 	print '<tr class="oddeven">';
 

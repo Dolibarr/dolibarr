@@ -28,10 +28,10 @@ UseDiscountAsService=เป็นบริการ
 UseDiscountOnTotal=เกี่ยวกับผลรวมย่อย
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=กำหนดถ้าลดราคาทั่วโลกจะถือว่าเป็นสินค้าบริการหรือเพียง แต่ในผลรวมย่อยสำหรับการคำนวณอัตรากำไรขั้นต้น
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
-MargeType1=Margin on Best supplier price
+MargeType1=Margin on Best vendor price
 MargeType2=Margin on Weighted Average Price (WAP)
 MargeType3=Margin on Cost Price
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=ราคาทุน
 UnitCharges=ค่าใช้จ่ายต่อหน่วย
 Charges=ค่าใช้จ่าย
@@ -41,4 +41,4 @@ rateMustBeNumeric=อัตราจะต้องเป็นค่าตั�
 markRateShouldBeLesserThan100=อัตรามาร์คควรจะต่ำกว่า 100
 ShowMarginInfos=แสดงขอบข่าวสาร
 CheckMargins=Margins detail
-MarginPerSaleRepresentativeWarning=The report of margin per user use the link between thirdparties and sale representatives to calculate the margin of each salerepresentaive. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).
+MarginPerSaleRepresentativeWarning=The report of margin per user use the link between third parties and sale representatives to calculate the margin of each sale representative. Because some thirdparties may not have any ddiated sale representative and some thirdparties may be linked to several, some amounts may not be included into this report (if there is no sale representative) and some may appear on different lines (for each sale representative).

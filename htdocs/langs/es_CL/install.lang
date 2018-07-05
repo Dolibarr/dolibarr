@@ -73,8 +73,8 @@ AdminLoginAlreadyExists=La cuenta de administrador de Dolibarr '<b>%s</b>' ya ex
 FailedToCreateAdminLogin=Error al crear la cuenta de administrador de Dolibarr.
 WarningRemoveInstallDir=Advertencia, por razones de seguridad, una vez completada la instalación o actualización, para evitar el uso de herramientas de instalación nuevamente, debe agregar un archivo llamado <b> install.lock </ b> en el directorio de documentos de Dolibarr, para evitar el uso malicioso de este. .
 ChoosedMigrateScript=Elija script de migración
-DataMigration=Migración de datos
-DatabaseMigration=Estructura de la migración de bases
+DataMigration=Migración de base de datos (datos)
+DatabaseMigration=Migración de la base de datos (estructura + algunos datos)
 ProcessMigrateScript=Procesamiento de script
 ChooseYourSetupMode=Elija su modo de configuración y haga clic en "Comenzar" ...
 FreshInstall=Instalación nueva
@@ -170,4 +170,6 @@ MigrationCategorieAssociation=Migración de categorías
 MigrationEvents=Migración de eventos para agregar el propietario del evento a la tabla de asignación
 MigrationRemiseEntity=Actualizar el valor del campo de entidad de llx_societe_remise
 MigrationRemiseExceptEntity=Actualizar el valor del campo de entidad de llx_societe_remise_except
+MigrationUserRightsEntity=Actualizar el valor del campo de entidad de llx_user_rights
+MigrationUserGroupRightsEntity=Actualizar el valor del campo de entidad de llx_usergroup_rights
 ErrorFoundDuringMigration=Se informó un error durante el proceso de migración, por lo que el siguiente paso no está disponible. Para ignorar los errores, puede <a href="%s"> hacer clic aquí </a>, pero la aplicación o algunas características pueden no funcionar correctamente hasta que se solucionen.

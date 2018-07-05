@@ -38,8 +38,8 @@ if (! empty($_REQUEST['CASHDESK_ID_THIRDPARTY_id']))
 if (!$user->admin)
 accessforbidden();
 
-$langs->load("admin");
-$langs->load("cashdesk");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "cashdesk"));
 
 
 /*
@@ -91,7 +91,6 @@ print '<br>';
 
 
 // Mode
-$var=true;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set">';
@@ -162,7 +161,6 @@ if (! empty($conf->stock->enabled))
 
 if (! empty($conf->service->enabled))
 {
-    $var=! $var;
     print '<tr class="oddeven"><td>';
     print $langs->trans("CashdeskShowServices");
     print '<td colspan="2">';
@@ -173,7 +171,6 @@ if (! empty($conf->service->enabled))
 // Use Dolibarr Receipt Printer
 if (! empty($conf->receiptprinter->enabled))
 {
-    $var=! $var;
     print '<tr class="oddeven"><td>';
     print $langs->trans("DolibarrReceiptPrinter").' ('.$langs->trans("FeatureNotYetAvailable").')';
     print '<td colspan="2">';

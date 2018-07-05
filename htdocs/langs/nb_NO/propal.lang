@@ -33,6 +33,7 @@ PropalStatusSigned=Akseptert(kan faktureres)
 PropalStatusNotSigned=Ikke akseptert(lukket)
 PropalStatusBilled=Fakturert
 PropalStatusDraftShort=Kladd
+PropalStatusValidatedShort=Validert
 PropalStatusClosedShort=Lukket
 PropalStatusSignedShort=Signert
 PropalStatusNotSignedShort=Ikke signert

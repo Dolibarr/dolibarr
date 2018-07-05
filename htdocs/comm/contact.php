@@ -26,6 +26,7 @@
 
 require '../main.inc.php';
 
+// Load translation files required by the page
 $langs->load("companies");
 
 $sortfield=GETPOST('sortfield', 'alpha');
@@ -34,7 +35,7 @@ $page=GETPOST('page', 'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="p.name";
 if ($page < 0) { $page = 0; }
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 $type=GETPOST('type', 'alpha');
@@ -78,7 +79,7 @@ if (! $user->rights->societe->client->voir && ! $socid) $sql .= " ".MAIN_DB_PREF
 $sql.= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql.= " WHERE s.fk_stcomm = st.id";
-$sql.= " AND p.entity IN (".getEntity('societe').")";
+$sql.= " AND p.entity IN (".getEntity('socpeople').")";
 if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($type == "c") $sql.= " AND s.client IN (1, 3)";
 if ($type == "p") $sql.= " AND s.client IN (2, 3)";
@@ -144,13 +145,10 @@ if ($resql)
 	print '<td class="liste_titre" align="right"><input type="image" class="liste_titre" src="'.img_picto($langs->trans("Search"),'search.png','','',1).'" value="'.dol_escape_htmltag($langs->trans("Search")).'" title="'.dol_escape_htmltag($langs->trans("Search")).'"></td>';
 	print "</tr>\n";
 
-	$var=True;
 	$i = 0;
 	while ($i < min($num,$limit))
 	{
 		$obj = $db->fetch_object($resql);
-
-
 
 		print '<tr class="oddeven">';
 		print '<td><a href="'.DOL_URL_ROOT.'/contact/card.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");

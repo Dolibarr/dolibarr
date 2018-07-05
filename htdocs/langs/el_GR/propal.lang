@@ -33,6 +33,7 @@ PropalStatusSigned=Υπογραφή (ανάγκες χρέωσης)
 PropalStatusNotSigned=Δεν έχει υπογραφεί (κλειστό)
 PropalStatusBilled=Χρεώνεται
 PropalStatusDraftShort=Προσχέδιο
+PropalStatusValidatedShort=Επικυρώθηκε
 PropalStatusClosedShort=Κλειστό
 PropalStatusSignedShort=Υπογραφή
 PropalStatusNotSignedShort=Δεν έχει υπογραφεί

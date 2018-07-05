@@ -100,7 +100,7 @@ class mailing_advthirdparties extends MailingTargets
     								'source_url' => $this->url($obj->id,'thirdparty'),
     								'source_id' => $obj->id,
     								'source_type' => 'thirdparty'
-    						);
+    							);
     						}
     					}
 
@@ -122,7 +122,7 @@ class mailing_advthirdparties extends MailingTargets
 			{
 				$sql= "SELECT socp.rowid as id, socp.email as email, socp.lastname as lastname, socp.firstname as firstname";
 				$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as socp";
-				$sql.= " WHERE socp.entity IN (".getEntity('societe').")";
+				$sql.= " WHERE socp.entity IN (".getEntity('socpeople').")";
 				if (count($contactid)>0) {
 					$sql.= " AND socp.rowid IN (".implode(',',$contactid).")";
 				}
@@ -289,11 +289,11 @@ class mailing_advthirdparties extends MailingTargets
 		if ($type=='thirdparty') {
 			$companystatic=new Societe($this->db);
 			$companystatic->fetch($id);
-			return $companystatic->getNomUrl(0);
+			return $companystatic->getNomUrl(0, '', 0, 1);
 		} elseif ($type=='contact') {
 			$contactstatic=new Contact($this->db);
 			$contactstatic->fetch($id);
-			return $contactstatic->getNomUrl(0);
+			return $contactstatic->getNomUrl(0, '', 0, '', -1, 1);
 		}
 	}
 

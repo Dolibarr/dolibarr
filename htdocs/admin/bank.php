@@ -1,9 +1,9 @@
 <?php
 
-/* Copyright (C) 2009       Laurent Destailleur        <eldy@users.sourceforge.net>
+/* Copyright (C) 2009       Laurent Destailleur    <eldy@users.sourceforge.net>
  * Copyright (C) 2010-2016  Juanjo Menent	       <jmenent@2byte.es>
- * Copyright (C) 2013-2014  Philippe Grand             <philippe.grand@atoo-net.com>
- * Copyright (C) 2015       Jean-François Ferry         <jfefe@aternatik.fr>
+ * Copyright (C) 2013-2018  Philippe Grand         <philippe.grand@atoo-net.com>
+ * Copyright (C) 2015       Jean-François Ferry    <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("banks");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","companies","bills","other","banks"));
 
 if (!$user->admin)
     accessforbidden();
@@ -178,10 +175,6 @@ print load_fiche_titre($langs->trans("BankSetupModule"), $linkback,
 $head = bank_admin_prepare_head(null);
 dol_fiche_head($head, 'general', $langs->trans("BankSetupModule"), -1, 'account');
 
-$var = true;
-
-$var = !$var;
-
 //Show bank account order
 print load_fiche_titre($langs->trans("BankOrderShow"), '', '');
 
@@ -201,12 +194,10 @@ $bankorder[1][0] = $langs->trans("BankOrderES");
 $bankorder[1][1] = $langs->trans("BankOrderESDesc");
 $bankorder[1][2] = 'BankCode DeskCode BankAccountNumberKey BankAccountNumber';
 
-$var = true;
 $i = 0;
 
 $nbofbank = count($bankorder);
 while ($i < $nbofbank) {
-    $var = !$var;
 
     print '<tr class="oddeven">';
     print '<td>' . $bankorder[$i][0] . "</td><td>\n";
@@ -237,7 +228,6 @@ while ($i < $nbofbank) {
 }
 
 print '</table>' . "\n";
-
 
 print '<br><br>';
 
@@ -430,7 +420,8 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
     print '</a>';
     print '</td>';
 }
-else {
+else 
+{
     print '<td align="center">' . "\n";
     print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setreportlastnumreleve">' . img_picto($langs->trans("Disabled"),
                     'switch_off') . '</a>';

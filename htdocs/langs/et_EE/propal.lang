@@ -33,6 +33,7 @@ PropalStatusSigned=Allkirjastatud (vaja arve esitada)
 PropalStatusNotSigned=Allkirjastamata (suletud)
 PropalStatusBilled=Arve esitatud
 PropalStatusDraftShort=Mustand
+PropalStatusValidatedShort=Kinnitatud
 PropalStatusClosedShort=Suletud
 PropalStatusSignedShort=Allkirjastatud
 PropalStatusNotSignedShort=Allkirjastamata

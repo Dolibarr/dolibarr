@@ -6,6 +6,7 @@
  * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García 		 <marcosgdf@gmail.com>
  * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,6 +60,7 @@ class Paiement extends CommonObject
 	// de llx_paiement qui est lie aux types de
 	//paiement de llx_c_paiement
 	var $num_paiement;	// Numero du CHQ, VIR, etc...
+	var $num_payment;	// Numero du CHQ, VIR, etc...
 	var $bank_account;	// Id compte bancaire du paiement
 	var $bank_line;     // Id de la ligne d'ecriture bancaire
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
@@ -88,7 +90,7 @@ class Paiement extends CommonObject
 	{
 		$sql = 'SELECT p.rowid, p.ref, p.datep as dp, p.amount, p.statut, p.fk_bank,';
 		$sql.= ' c.code as type_code, c.libelle as type_libelle,';
-		$sql.= ' p.num_paiement, p.note,';
+		$sql.= ' p.num_paiement as num_payment, p.note,';
 		$sql.= ' b.fk_account';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as c ON p.fk_paiement = c.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
@@ -110,7 +112,9 @@ class Paiement extends CommonObject
 				$this->ref            = $obj->ref?$obj->ref:$obj->rowid;
 				$this->date           = $this->db->jdate($obj->dp);
 				$this->datepaye       = $this->db->jdate($obj->dp);
-				$this->numero         = $obj->num_paiement;
+				$this->numero         = $obj->num_payment;	// deprecated
+				$this->num_paiement   = $obj->num_payment;	// deprecated
+				$this->num_payment    = $obj->num_payment;
 				$this->montant        = $obj->amount;   // deprecated
 				$this->amount         = $obj->amount;
 				$this->note           = $obj->note;
@@ -209,9 +213,10 @@ class Paiement extends CommonObject
 			$total = $totalamount_converted; // Maybe use price2num with MT for the converted value
 			$mtotal = $totalamount;
 		}
+		$note = ($this->note_public?$this->note_public:$this->note);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (entity, ref, datec, datep, amount, multicurrency_amount, fk_paiement, num_paiement, note, fk_user_creat)";
-		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($this->note)."', ".$user->id.")";
+		$sql.= " VALUES (".$conf->entity.", '".$this->ref."', '". $this->db->idate($now)."', '".$this->db->idate($this->datepaye)."', '".$total."', '".$mtotal."', ".$this->paiementid.", '".$this->num_paiement."', '".$this->db->escape($note)."', ".$user->id.")";
 
 		dol_syslog(get_class($this)."::Create insert paiement", LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -288,39 +293,40 @@ class Paiement extends CommonObject
                                 {
 			                        $amount_ht = $amount_tva = $amount_ttc = array();
 
-                                    // Loop on each vat rate
-                                    $i = 0;
-                                    foreach ($invoice->lines as $line)
-                                    {
-                                        if ($line->total_ht!=0)
-                                        { 	// no need to create discount if amount is null
-                                            $amount_ht[$line->tva_tx] += $line->total_ht;
-                                            $amount_tva[$line->tva_tx] += $line->total_tva;
-                                            $amount_ttc[$line->tva_tx] += $line->total_ttc;
-                                            $i ++;
-                                        }
-                                    }
+									// Insert one discount by VAT rate category
+									$discount = new DiscountAbsolute($this->db);
+									$discount->fetch('',$invoice->id);
+									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 
-                                    // Insert one discount by VAT rate category
-                                    $discount = new DiscountAbsolute($this->db);
-                                    $discount->description = '(DEPOSIT)';
-                                    $discount->fk_soc = $invoice->socid;
-                                    $discount->fk_facture_source = $invoice->id;
 
-                                    foreach ($amount_ht as $tva_tx => $xxx)
-                                    {
-                                        $discount->amount_ht = abs($amount_ht[$tva_tx]);
-                                        $discount->amount_tva = abs($amount_tva[$tva_tx]);
-                                        $discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-                                        $discount->tva_tx = abs($tva_tx);
+										$discount->description = '(DEPOSIT)';
+										$discount->fk_soc = $invoice->socid;
+										$discount->fk_facture_source = $invoice->id;
 
-                                        $result = $discount->create($user);
-                                        if ($result < 0)
-                                        {
-                                            $error++;
-                                            break;
-                                        }
-                                    }
+										// Loop on each vat rate
+										$i = 0;
+										foreach ($invoice->lines as $line) {
+											if ($line->total_ht != 0) {    // no need to create discount if amount is null
+												$amount_ht[$line->tva_tx] += $line->total_ht;
+												$amount_tva[$line->tva_tx] += $line->total_tva;
+												$amount_ttc[$line->tva_tx] += $line->total_ttc;
+												$i++;
+											}
+										}
+
+										foreach ($amount_ht as $tva_tx => $xxx) {
+											$discount->amount_ht = abs($amount_ht[$tva_tx]);
+											$discount->amount_tva = abs($amount_tva[$tva_tx]);
+											$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+											$discount->tva_tx = abs($tva_tx);
+
+											$result = $discount->create($user);
+											if ($result < 0) {
+												$error++;
+												break;
+											}
+										}
+									}
 
                                     if ($error)
                                     {
@@ -530,7 +536,7 @@ class Paiement extends CommonObject
         {
         	if ($accountid <= 0)
         	{
-        		$this->error='Bad value for parameter accountid';
+        		$this->error='Bad value for parameter accountid='.$accountid;
         		dol_syslog(get_class($this).'::addPaymentToBank '.$this->error, LOG_ERR);
         		return -1;
         	}

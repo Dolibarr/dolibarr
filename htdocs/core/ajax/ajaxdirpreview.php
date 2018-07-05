@@ -93,7 +93,7 @@ if (empty($url))
 	else $url=DOL_URL_ROOT.'/ecm/index.php';
 }
 
-// Load traductions files
+// Load translation files required by the page
 $langs->loadLangs(array("ecm","companies","other"));
 
 // Security check

@@ -58,7 +58,6 @@ class modTax extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='bill';
 
 		// Data directories to create when module is enabled
@@ -119,10 +118,10 @@ class modTax extends DolibarrModules
 
 		// Menus
 		//-------
-		
+
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
@@ -140,7 +139,7 @@ class modTax extends DolibarrModules
 		$this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'paiementcharge as p ON p.fk_charge = c.rowid';
 		$this->export_sql_end[$r] .=' WHERE c.fk_type = cc.id';
 		$this->export_sql_end[$r] .=' AND c.entity IN ('.getEntity('tax').')';
-		
+
 		// Import social contributions
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
@@ -151,14 +150,14 @@ class modTax extends DolibarrModules
 		$this->import_fields_array[$r]=array('t.libelle'=>"Label*",'t.fk_type'=>"Type",
 		    't.amount'=>"Amount*",'t.date_ech'=>"DateDue*",'t.periode'=>"PeriodEndDate*"
 		);
-		
+
 		$this->import_convertvalue_array[$r]=array(
 		    't.fk_type'=>array('rule'=>'fetchidfromref','classfile'=>'/compta/sociales/class/cchargesociales.class.php','class'=>'Cchargesociales','method'=>'fetch','element'=>'Cchargesociales')
 		);
 		$this->import_examplevalues_array[$r]=array('t.libelle'=>"Social/fiscal contribution",'t.fk_type'=>"TAXPRO (must be id or code found into dictionary)",
 		    't.date_ech'=>"2016-01-01", 't.periode'=>"2016-01-01"
 		);
-		
+
 		// Import Taxes
 		$r++;
 		$this->import_code[$r]=$this->rights_class.'_'.$r;
@@ -169,14 +168,14 @@ class modTax extends DolibarrModules
 		$this->import_fields_array[$r]=array('t.datep'=>"DatePayment*",'t.datev'=>"DateValue*",'t.label'=>"Label*",'t.fk_typepayment'=>"PaymentMode*",
 		    't.amount'=>"Amount*",'t.num_payment'=>'Numero'
 		);
-		
+
 		$this->import_convertvalue_array[$r]=array(
 		    't.fk_typepayment'=>array('rule'=>'fetchidfromref','classfile'=>'/compta/paiement/class/cpaiement.class.php','class'=>'Cpaiement','method'=>'fetch','element'=>'Cpaiement')
 		);
 		$this->import_examplevalues_array[$r]=array('t.label'=>"VAT Payment 1st quarter 2016",'t.fk_typepayment'=>"CHQ (must be id or code found into dictionary)",
 		    't.datep'=>"2016-04-02", 't.datev'=>"2016-03-31", 't.amount'=>1000, 't.num_payment'=>'123456'
 		);
-		
+
 	}
 
 

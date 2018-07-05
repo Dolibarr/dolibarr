@@ -74,7 +74,7 @@ if (empty($conf) || ! is_object($conf))
 		{
 		    print '<td class="fieldrequired">'.$langs->trans("WarehouseSource").'</td>';
 		    print '<td>';
-		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):'ifone')), 'id_entrepot', 'warehouseopen,warehouseinternal', 1);
+		    print $formproduct->selectWarehouses((GETPOST("dwid")?GETPOST("dwid",'int'):(GETPOST('id_entrepot')?GETPOST('id_entrepot','int'):($object->element=='product' && $object->fk_default_warehouse?$object->fk_default_warehouse:'ifone'))), 'id_entrepot', 'warehouseopen,warehouseinternal', 1);
 		    print '</td>';
 		}
 		if ($object->element == 'stock')

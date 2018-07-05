@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +34,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/modulebuilder.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/utils.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "modulebuilder", "other", "cron"));
 
 $action=GETPOST('action','aZ09');
@@ -119,6 +121,13 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			}
 		}
 
+                if(!empty($conf->global->MODULEBUILDER_USE_ABOUT)){
+                    dol_delete_file($destdir.'/admin/about.php');
+                }
+                if(!empty($conf->global->MODULEBUILDER_USE_DOCFOLDER)){
+                    dol_delete_dir($destdir.'/doc/');
+                }
+
 		// Delete some files
 		dol_delete_file($destdir.'/myobject_card.php');
 		dol_delete_file($destdir.'/myobject_note.php');
@@ -163,6 +172,11 @@ if ($dirins && $action == 'initmodule' && $modulename)
 				setEventMessages($langs->trans("ErrorFailToMakeReplacementInto", $phpfileval['fullname']), null, 'errors');
 			}
 		}
+
+                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_README)){
+                    dol_delete_file($destdir.'/README.md');
+                    file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
+                }
 	}
 
 	if (! $error)
@@ -179,6 +193,62 @@ if ($dirins && $action == 'addlanguage' && !empty($module))
 	$srcfile = $dirins.'/'.strtolower($module).'/langs/en_US';
 	$destfile = $dirins.'/'.strtolower($module).'/langs/'.$newlangcode;
 	$result = dolCopyDir($srcfile, $destfile, 0, 0);
+}
+
+if ($dirins && $action == 'initobject' && $module && GETPOST('createtablearray','alpha'))
+{
+	$tablename = GETPOST('initfromtablename','alpha');
+	$_results = $db->DDLDescTable($tablename);
+	if (empty($_results))
+	{
+		setEventMessages($langs->trans("ErrorTableNotFound", $tablename), null, 'errors');
+	}
+	else
+	{
+		/*public $fields=array(
+		 'rowid'         =>array('type'=>'integer',      'label'=>'TechnicalID',      'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+		 'ref'           =>array('type'=>'varchar(128)', 'label'=>'Ref',              'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+		 'entity'        =>array('type'=>'integer',      'label'=>'Entity',           'enabled'=>1, 'visible'=>0,  'default'=>1, 'notnull'=>1,  'index'=>1, 'position'=>20),
+		 'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text'),
+		 'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
+		 'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>'LinkToThirparty'),
+		 'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		 'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
+		 'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
+		 'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
+		 'tms'           =>array('type'=>'timestamp',    'label'=>'DateModification', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>501),
+		 //'date_valid'    =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'position'=>502),
+		 'fk_user_creat' =>array('type'=>'integer',      'label'=>'UserAuthor',       'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>510),
+		 'fk_user_modif' =>array('type'=>'integer',      'label'=>'UserModif',        'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'position'=>511),
+		 //'fk_user_valid' =>array('type'=>'integer',      'label'=>'UserValidation',        'enabled'=>1, 'visible'=>-1, 'position'=>512),
+		 'import_key'    =>array('type'=>'varchar(14)',  'label'=>'ImportId',         'enabled'=>1, 'visible'=>-2, 'notnull'=>-1, 'index'=>0,  'position'=>1000),
+		 'status'        =>array('type'=>'integer',      'label'=>'Status',           'enabled'=>1, 'visible'=>1,  'notnull'=>1, 'default'=>0, 'index'=>1,  'position'=>1000, 'arrayofkeyval'=>array(0=>'Draft', 1=>'Active', -1=>'Cancel')),
+		 );*/
+
+		$string = 'public $fields=array('."\n";
+		$string.="<br>";
+		$i=10;
+		while ($obj = $db->fetch_object($_results))
+		{
+			$fieldname = $obj->Field;
+			$type = $obj->Type;
+			if ($type == 'int(11)') $type='integer';
+			$notnull = ($obj->Null == 'YES'?0:1);
+			$label = preg_replace('/_/', ' ', ucfirst($fieldname));
+			if ($fieldname == 'rowid') $label='ID';
+
+			$string.= "'".$obj->Field."' =>array('type'=>'".$type."', 'label'=>'".$label."', 'enabled'=>1, 'visible'=>-2";
+			if ($notnull) $string.= ", 'notnull'=>".$notnull;
+			if ($fieldname == 'ref') $string.= ", 'showoncombobox'=>1";
+			$string.= ", 'position'=>".$i."),\n";
+			$string.="<br>";
+			$i+=5;
+		}
+		$string.= ');'."\n";
+		$string.="<br>";
+		print $string;
+		exit;
+	}
 }
 
 if ($dirins && $action == 'initobject' && $module && $objectname)
@@ -341,7 +411,8 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 			'Mon module'=>$module,
 			'htdocs/modulebuilder/template/'=>strtolower($modulename),
 			'myobject'=>strtolower($objectname),
-			'MyObject'=>$objectname
+			'MyObject'=>$objectname,
+                        'MYOBJECT'=>strtoupper($objectname)
 			);
 
 			$result=dolReplaceInFile($phpfileval['fullname'], $arrayreplacement);
@@ -490,7 +561,6 @@ if ($dirins && $action == 'addproperty' && !empty($module) && ! empty($tabobj))
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		clearstatcache(true);
-		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname.'&nocache='.time());
@@ -526,7 +596,6 @@ if ($dirins && $action == 'confirm_deleteproperty' && $propertykey)
 		setEventMessages($langs->trans('FilesForObjectUpdated', $objectname), null);
 
 		clearstatcache(true);
-		sleep(4);	// With sleep 2, after the header("Location...", the new page output does not see the change. TODO Why do we need this sleep ?
 
 		// Make a redirect to reload all data
 		header("Location: ".DOL_URL_ROOT.'/modulebuilder/index.php?tab=objects&module='.$module.'&tabobj='.$objectname);
@@ -1415,7 +1484,20 @@ elseif (! empty($module))
 				print $langs->trans("EnterNameOfObjectDesc").'<br><br>';
 
 				print '<input type="text" name="objectname" value="'.dol_escape_htmltag(GETPOST('objectname','alpha')?GETPOST('objectname','alpha'):$modulename).'" placeholder="'.dol_escape_htmltag($langs->trans("ObjectKey")).'">';
-				print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Create")).'"'.($dirins?'':' disabled="disabled"').'>';
+				print '<input type="submit" class="button" name="create" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins?'':' disabled="disabled"').'>';
+				print '<br>';
+				print '<br>';
+				print '<br>';
+				print $langs->trans("Or");
+				print '<br>';
+				print '<br>';
+				print '<br>';
+				//print '<input type="checkbox" name="initfromtablecheck"> ';
+				print $langs->trans("InitStructureFromExistingTable");
+				print '<input type="text" name="initfromtablename" value="" placeholder="'.$langs->trans("TableName").'">';
+				print '<input type="submit" class="button" name="createtablearray" value="'.dol_escape_htmltag($langs->trans("Generate")).'"'.($dirins?'':' disabled="disabled"').'>';
+				print '<br>';
+
 				print '</form>';
 			}
 			elseif ($tabobj == 'deleteobject')
@@ -1550,6 +1632,8 @@ elseif (! empty($module))
 
 						print '<br><br><br>';
 
+						if(function_exists('opcache_invalidate')) opcache_invalidate($dirread.'/'.$pathtoclass,true); // remove the include cache hell !
+
 						if (empty($forceddirread))
 						{
 							$result = dol_include_once($pathtoclass);
@@ -1596,24 +1680,24 @@ elseif (! empty($module))
 							print '<div class="div-table-responsive">';
 							print '<table class="noborder">';
 							print '<tr class="liste_titre">';
-							print '<td>'.$langs->trans("Property");
-							print ' (<a href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("Example").'</a>)';
-							print '</td>';
-							print '<td>';
+							print '<th class="liste_titre">'.$langs->trans("Property");
+							print ' (<a class="" href="https://wiki.dolibarr.org/index.php/Language_and_development_rules#Table_and_fields_structures" target="_blank">'.$langs->trans("SeeExamples").'</a>)';
+							print '</th>';
+							print '<th>';
 							print $form->textwithpicto($langs->trans("Label"), $langs->trans("YouCanUseTranslationKey"));
-							print '</td>';
-							print '<td>'.$langs->trans("Type").'</td>';
-							print '<td>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</td>';
-							print '<td class="center">'.$langs->trans("DefaultValue").'</td>';
-							print '<td class="center">'.$langs->trans("DatabaseIndex").'</td>';
-							print '<td class="right">'.$langs->trans("Position").'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</td>';
-							print '<td class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</td>';
-							print '<td>'.$langs->trans("Comment").'</td>';
-							print '<td></td>';
+							print '</th>';
+							print '<th>'.$langs->trans("Type").'</td>';
+							print '<th>'.$form->textwithpicto($langs->trans("ArrayOfKeyValues"), $langs->trans("ArrayOfKeyValuesDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("NotNull"), $langs->trans("NotNullDesc")).'</th>';
+							print '<th class="center">'.$langs->trans("DefaultValue").'</th>';
+							print '<th class="center">'.$langs->trans("DatabaseIndex").'</th>';
+							print '<th class="right">'.$langs->trans("Position").'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("Enabled"), $langs->trans("EnabledDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("IsAMeasure"), $langs->trans("IsAMeasureDesc")).'</th>';
+							print '<th class="center">'.$form->textwithpicto($langs->trans("SearchAll"), $langs->trans("SearchAllDesc")).'</th>';
+							print '<th>'.$langs->trans("Comment").'</th>';
+							print '<th></th>';
 							print '</tr>';
 
 							// We must use $reflectorpropdefault['fields'] to get list of fields because $tmpobjet->fields may have been

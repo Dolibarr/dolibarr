@@ -53,7 +53,9 @@ MemberValidatedInDolibarr=Uživatel %s ověřen
 MemberModifiedInDolibarr=Uživatel %s upraven
 MemberResiliatedInDolibarr=Členské %s ukončeno
 MemberDeletedInDolibarr=Uživatel %s smazán
-MemberSubscriptionAddedInDolibarr=Předplatné pro člena %s přidáno
+MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
+MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
+MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
 ShipmentValidatedInDolibarr=Doprava %s ověřena
 ShipmentClassifyClosedInDolibarr=Zásilka %s klasifikováno účtoval
 ShipmentUnClassifyCloseddInDolibarr=Zásilka %s klasifikováno znovuotevření
@@ -97,7 +99,8 @@ AgendaUrlOptions1=Můžete také přidat následující parametry filtrování v
 AgendaUrlOptions3=<b>logina=%s</b> omezuje výstup na akce vlastněné uživatelem <b>%s</b>.
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>projekt=PROJECT_ID</b> omezit výstup na akce spojené s projektem <b>PROJECT_ID</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
 AgendaShowBirthdayEvents=Zobrazit narozeniny kontaktů
 AgendaHideBirthdayEvents=Skrýt narozeniny kontaktů
 Busy=Zaneprázdněný
@@ -109,7 +112,7 @@ ExportCal=Export kalendáře
 ExtSites=Importovat externí kalendáře
 ExtSitesEnableThisTool=Zobrazit externí kalendáře (definováno v globálním nastavení) do agendy. Nemá vliv na externí kalendáře definované uživateli.
 ExtSitesNbOfAgenda=Počet kalendářů
-AgendaExtNb=Kalendář nb %s
+AgendaExtNb=Calendar no. %s
 ExtSiteUrlAgenda=URL pro přístup *.iCal souboru
 ExtSiteNoLabel=Nepodepsáno
 VisibleTimeRange=Viditelný časový rozsah

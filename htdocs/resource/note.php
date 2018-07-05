@@ -29,8 +29,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 
-$langs->load('companies');
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'interventions'));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref','alpha');

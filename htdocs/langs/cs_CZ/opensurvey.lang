@@ -58,3 +58,4 @@ MoreChoices=Zadejte více možností pro hlasující
 SurveyExpiredInfo=Doba hlasování pro tuto anketu vypršela.
 EmailSomeoneVoted=%s vyplnilo řádek.\nMůžete si najít své hlasování v odkazu: \n%s
 ShowSurvey=Show survey
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

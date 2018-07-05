@@ -58,7 +58,6 @@ class modBanque extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='account';
 
 		// Data directories to create when module is enabled
@@ -138,8 +137,8 @@ class modBanque extends DolibarrModules
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
@@ -148,9 +147,18 @@ class modBanque extends DolibarrModules
 		$this->export_code[$r]=$this->rights_class.'_'.$r;
 		$this->export_label[$r]='Ecritures bancaires et releves';
 		$this->export_permission[$r]=array(array("banque","export"));
-		$this->export_fields_array[$r]=array('b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','b.num_chq'=>'ChequeOrTransferNumber','b.fk_bordereau'=>'ChequeBordereau','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode");
+		$this->export_fields_array[$r]=array(
+			'b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label',
+			'b.num_chq'=>'ChequeOrTransferNumber','b.fk_bordereau'=>'ChequeBordereau','-b.amount'=>'Debit','b.amount'=>'Credit',
+			'b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","bu.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty",
+			"s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode"
+		);
 		$this->export_TypeFields_array[$r]=array('ba.ref'=>'Text','ba.label'=>'Text','b.datev'=>'Date','b.dateo'=>'Date','b.label'=>'Text','b.num_chq'=>'Text','b.fk_bordereau'=>'Text','-b.amount'=>'Numeric','b.amount'=>'Numeric','b.num_releve'=>'Text','b.datec'=>"Date","bu.url_id"=>"Text","s.nom"=>"Text","s.code_compta"=>"Text","s.code_compta_fournisseur"=>"Text");
-		$this->export_entities_array[$r]=array('b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account','b.num_chq'=>'account','b.fk_bordereau'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account","bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company");
+		$this->export_entities_array[$r]=array(
+			'b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account',
+			'b.num_chq'=>'account','b.fk_bordereau'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account',
+			'b.datec'=>"account","bu.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company"
+		);
 		$this->export_special_array[$r]=array('-b.amount'=>'NULLIFNEG','b.amount'=>'NULLIFNEG');
 	    if (empty($conf->fournisseur->enabled))
         {

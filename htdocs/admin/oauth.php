@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2015       Frederic France     <frederic.france@free.fr>
+/* Copyright (C) 2015-2018  Frederic France     <frederic.france@netlogic.fr>
  * Copyright (C) 2016       Raphaël Doursenaud  <rdoursenaud@gpcsolutions.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,9 +33,8 @@ $urlwithouturlroot=preg_replace('/'.preg_quote(DOL_URL_ROOT,'/').'$/i','',trim($
 $urlwithroot=$urlwithouturlroot.DOL_URL_ROOT;		// This is to use external domain name found into config file
 //$urlwithroot=DOL_MAIN_URL_ROOT;					// This is to use same domain name than current
 
-
-$langs->load("admin");
-$langs->load("oauth");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'oauth'));
 
 // Security check
 if (!$user->admin)
@@ -95,6 +94,7 @@ print '<table class="noborder" width="100%">';
 
 $i=0;
 
+// $list is defined into oauth.lib.php
 foreach ($list as $key)
 {
     $supported=0;

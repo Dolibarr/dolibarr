@@ -58,3 +58,4 @@ MoreChoices=Introdueixi més opcions pels votants
 SurveyExpiredInfo=L'enquesta s'ha tancat o el temps de votació s'ha acabat.
 EmailSomeoneVoted=%s ha emplenat una línia.\nPot trobar la seva enquesta en l'enllaç:\n%s
 ShowSurvey=Mostra l'enquesta
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

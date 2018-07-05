@@ -32,10 +32,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/supplier_proposal.lib.php';
 if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
-
-$langs->load('supplier_proposal');
-$langs->load('compta');
-$langs->load('bills');
+// Load translation files required by the page
+$langs->loadLangs(array('supplier_proposal', 'compta', 'bills'));
 
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');

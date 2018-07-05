@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (!$user->admin)
 	accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
+	// Load translation files required by the page
+$langs->loadLangs(array('admin', 'other', 'orders'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -86,7 +85,7 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
     print '<div class="tabsAction">';
-    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
+    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
     print "</div>";
 }
 
@@ -99,7 +98,7 @@ if ($action != 'create' && $action != 'edit')
 
 if ($action == 'create')
 {
-    print "<br>";
+	print '<br><div id="newattrib"></div>';
     print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';

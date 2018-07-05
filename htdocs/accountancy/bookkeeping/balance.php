@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2016       Olivier Geffroy		<jeff@jeffinfo.com>
- * Copyright (C) 2016       Florian Henry		<florian.henry@open-concept.pro>
- * Copyright (C) 2016-2017  Alexandre Spangaro	<aspangaro@zendsi.com>
+/* Copyright (C) 2016       Olivier Geffroy     <jeff@jeffinfo.com>
+ * Copyright (C) 2016       Florian Henry       <florian.henry@open-concept.pro>
+ * Copyright (C) 2016-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,12 +34,12 @@ require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountancyexport.class.php
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-// Langs
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("accountancy"));
 
 $page = GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
@@ -53,7 +53,7 @@ if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
 
-if (GETPOST("exportcsv")) $action = 'export_csv';
+if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
 
 
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -138,8 +138,7 @@ if ($action == 'export_csv') {
 
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
-	$journal = 'balance';
-
+	$filename = 'balance';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	$result = $object->fetchAllBalance($sortorder, $sortfield, 0, 0, $filter);
@@ -153,7 +152,6 @@ if ($action == 'export_csv') {
 		print $object->get_compte_desc($line->numero_compte) . $sep;
 		print price($line->debit) . $sep;
 		print price($line->credit) . $sep;
-		print price($line->debit) . $sep;
 		print price($line->credit - $line->debit) . $sep;
 		print "\n";
 	}
@@ -189,7 +187,7 @@ else {
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
 	$button = '<input type="submit" name="exportcsv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
-	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, $button, $result, $result, 'title_accountancy', 0);
 
 	$moreforfilter = '';
 
@@ -254,8 +252,8 @@ else {
 		print '<tr class="oddeven">';
 
 		// Permet d'afficher le compte comptable
-		if ($root_account_description != $displayed_account) {
-
+		if (empty($displayed_account) || $root_account_description != $displayed_account)
+		{
 			// Affiche un Sous-Total par compte comptable
 			if ($displayed_account != "") {
 				print '<tr class="liste_total"><td align="right" colspan="2">' . $langs->trans("SubTotal") . ':</td><td class="nowrap" align="right">' . price($sous_total_debit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit) . '</td><td class="nowrap" align="right">' . price($sous_total_credit - $sous_total_debit) . '</td>';
@@ -263,9 +261,9 @@ else {
 				print '</tr>';
 			}
 
-			// Affiche le compte comptable en d�but de ligne
+			// Affiche le compte comptable en debut de ligne
 			print "<tr>";
-			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $root_account_description . '</td>';
+			print '<td colspan="6" style="font-weight:bold; border-bottom: 1pt solid black;">' . $line->numero_compte . ($root_account_description ? ' - ' . $root_account_description : '') . '</td>';
 			print '</tr>';
 
 			$displayed_account = $root_account_description;

@@ -1,0 +1,26 @@
+language: php
+php:
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7
+  - 7.1
+  - hhvm
+
+matrix:
+  fast_finish: true
+
+env:
+  matrix:
+    - PREFER_LOWEST=""
+    - PREFER_LOWEST="--prefer-lowest"
+
+
+before_script:
+    - rm -f ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/xdebug.ini
+#    - composer self-update
+    - composer update --prefer-source $PREFER_LOWEST
+
+script:
+  - ./bin/phpunit --configuration tests/phpunit.xml
+  - ./bin/sabre-cs-fixer fix . --dry-run --diff

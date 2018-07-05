@@ -30,9 +30,8 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("admin");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadlangs(array('companies', 'admin', 'bills'));
 
 $extrafields = new ExtraFields($db);
 $form = new Form($db);
@@ -82,7 +81,7 @@ dol_fiche_end();
 if ($action != 'create' && $action != 'edit')
 {
     print '<div class="tabsAction">';
-    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create\">".$langs->trans("NewAttribute")."</a>";
+    print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?action=create#newattrib\">".$langs->trans("NewAttribute")."</a>";
     print "</div>";
 }
 
@@ -95,7 +94,7 @@ if ($action != 'create' && $action != 'edit')
 
 if ($action == 'create')
 {
-    print "<br>";
+	print '<br><div id="newattrib"></div>';
     print load_fiche_titre($langs->trans('NewAttribute'));
 
     require DOL_DOCUMENT_ROOT.'/core/tpl/admin_extrafields_add.tpl.php';

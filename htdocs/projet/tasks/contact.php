@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -303,6 +303,7 @@ if ($id > 0 || ! empty($ref))
 		// Project
 		if (empty($withproject))
 		{
+		    $result=$projectstatic->fetch($object->fk_project);
 		    $morehtmlref.='<div class="refidno">';
 		    $morehtmlref.=$langs->trans("Project").': ';
 		    $morehtmlref.=$projectstatic->getNomUrl(1);
@@ -310,7 +311,11 @@ if ($id > 0 || ! empty($ref))
 
 		    // Third party
 		    $morehtmlref.=$langs->trans("ThirdParty").': ';
-		    $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    if($projectstatic->socid>0) {
+		        $projectstatic->fetch_thirdparty();
+		        $morehtmlref.=$projectstatic->thirdparty->getNomUrl(1);
+		    }
+
 		    $morehtmlref.='</div>';
 		}
 

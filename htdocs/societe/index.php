@@ -296,7 +296,7 @@ if ($result)
 
         print '<tr class="liste_titre"><th colspan="2">'.$transRecordedType.'</th>';
         print '<th>&nbsp;</th>';
-        print '<th align="right">'.$langs->trans('Status').'</th>';
+        print '<th class="right"><a href="'.DOL_URL_ROOT.'/societe/list.php?sortfield=s.tms&sortorder=DESC">'.$langs->trans("FullList").'</th>';
         print '</tr>'."\n";
 
         while ($i < $num)

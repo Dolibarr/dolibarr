@@ -58,3 +58,4 @@ MoreChoices=ใส่เลือกมากขึ้นสำหรับผ�
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=% s ที่เต็มไปด้วยเส้น คุณสามารถค้นหาการสำรวจความคิดเห็นของคุณได้ที่ลิงค์:% s
 ShowSurvey=Show survey
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

@@ -24,6 +24,7 @@
  *  \ingroup    Advanced accountancy
  *	\brief      File of class with all html predefined components
  */
+require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 
 
 /**
@@ -63,7 +64,7 @@ class FormAccounting extends Form
 	 */
 	function select_journal($selectid, $htmlname = 'journal', $nature=0, $showempty = 0, $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='', $disabledajaxcombo=0)
 	{
-		global $conf;
+		global $conf,$langs;
 
 		$out = '';
 
@@ -92,9 +93,10 @@ class FormAccounting extends Form
 			}
 
     		$selected = 0;
+			$langs->load('accountancy');
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				$label = $obj->code . ' - ' . $obj->label;
+				$label = $obj->code . ' - ' . $langs->trans($obj->label);
 
     			$select_value_in = $obj->rowid;
 				$select_value_out = $obj->rowid;
@@ -242,7 +244,7 @@ class FormAccounting extends Form
 	 *
 	 * @param string   $selectid           Preselected id or code of accounting accounts (depends on $select_in)
 	 * @param string   $htmlname           Name of HTML field id. If name start with '.', it is name of HTML css class, so several component with same name in different forms can be used.
-	 * @param int      $showempty          Add an empty field
+	 * @param int      $showempty          1=Add an empty field, 2=Add an empty field+'None' field
 	 * @param array    $event              Event options
 	 * @param int      $select_in          0=selectid value is a aa.rowid (default) or 1=selectid is aa.account_number
 	 * @param int      $select_out         Set value returned by select. 0=rowid (default), 1=account_number
@@ -252,7 +254,7 @@ class FormAccounting extends Form
 	 */
 	function select_account($selectid, $htmlname = 'account', $showempty = 0, $event = array(), $select_in = 0, $select_out = 0, $morecss='maxwidth300 maxwidthonsmartphone', $usecache='')
 	{
-		global $conf;
+		global $conf, $langs;
 
 		require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
@@ -273,6 +275,7 @@ class FormAccounting extends Form
     		$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_system as asy ON aa.fk_pcg_version = asy.pcg_version";
     		$sql .= " AND asy.rowid = " . $conf->global->CHARTOFACCOUNTS;
     		$sql .= " AND aa.active = 1";
+    		$sql .= " AND aa.entity=".$conf->entity;
     		$sql .= " ORDER BY aa.account_number";
 
     		dol_syslog(get_class($this) . "::select_account", LOG_DEBUG);
@@ -317,7 +320,12 @@ class FormAccounting extends Form
     		}
 		}
 
-		$out .= Form::selectarray($htmlname, $options, $selected, $showempty, 0, 0, '', 0, 0, 0, '', $morecss, 1);
+		if ($showempty == 2)
+		{
+			$options['0'] = $langs->trans("None");
+		}
+
+		$out .= Form::selectarray($htmlname, $options, $selected, ($showempty > 0 ? 1 : 0), 0, 0, '', 0, 0, 0, '', $morecss, 1);
 
 		return $out;
 	}

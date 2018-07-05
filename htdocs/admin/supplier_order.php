@@ -5,7 +5,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2010-2013 Juanjo Menent           <jmenent@2byte.es>
- * Copyright (C) 2011-2017 Philippe Grand          <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand          <philippe.grand@atoo-net.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 
-$langs->load("admin");
-$langs->load("other");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "other", "orders"));
 
 if (!$user->admin)
 accessforbidden();
@@ -179,24 +178,30 @@ else if ($action == 'set_SUPPLIER_ORDER_OTHER')
     // TODO We add/delete permission here until permission can have a condition on a global var
     include_once DOL_DOCUMENT_ROOT.'/core/modules/modFournisseur.class.php';
     $newmodule=new modFournisseur($db);
-	// clear default rights array
-    $newmodule->rights=array();
-    // add new right
-    $r=0;
-    $newmodule->rights[$r][0] = 1190;
-	$newmodule->rights[$r][1] = $langs->trans("Permission1190");
-	$newmodule->rights[$r][2] = 'w';
-	$newmodule->rights[$r][3] = 0;
-	$newmodule->rights[$r][4] = 'commande';
-	$newmodule->rights[$r][5] = 'approve2';
-
+    
     if ($conf->global->SUPPLIER_ORDER_3_STEPS_TO_BE_APPROVED)
     {
+    	// clear default rights array
+    	$newmodule->rights=array();
+    	// add new right
+    	$r=0;
+    	$newmodule->rights[$r][0] = 1190;
+    	$newmodule->rights[$r][1] = $langs->trans("Permission1190");
+    	$newmodule->rights[$r][2] = 'w';
+    	$newmodule->rights[$r][3] = 0;
+    	$newmodule->rights[$r][4] = 'commande';
+    	$newmodule->rights[$r][5] = 'approve2';
+    	
+    	// Insert
     	$newmodule->insert_permissions(1);
     }
     else
     {
+    	// Remove all rights with Permission1190
     	$newmodule->delete_permissions();
+    	
+    	// Add all right without Permission1190
+    	$newmodule->insert_permissions(1);
     }
 }
 
@@ -262,7 +267,6 @@ foreach ($dirmodels as $reldir)
         $handle = opendir($dir);
         if (is_resource($handle))
         {
-            $var=true;
 
             while (($file = readdir($handle))!==false)
             {
