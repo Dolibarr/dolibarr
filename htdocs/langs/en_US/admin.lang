@@ -1231,6 +1231,9 @@ WatermarkOnDraftInvoices=Watermark on draft invoices (none if empty)
 PaymentsNumberingModule=Payments numbering model
 SuppliersPayment=Suppliers payments
 SupplierPaymentSetup=Suppliers payments setup
+DiscountRate=Discount rate
+PenaltyRate=Penalty rate
+RecoveryCosts=Recovery costs
 ##### Proposals #####
 PropalSetup=Commercial proposals module setup
 ProposalsNumberingModules=Commercial proposal numbering models
