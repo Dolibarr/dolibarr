@@ -442,7 +442,7 @@ if ($search_montant_localtax2 != '') $sql.= natural_search('f.localtax2', $searc
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
-if ($search_status != '')
+if ($search_status != '-1' && $search_status != '')
 {
 	if (is_numeric($search_status) && $search_status >= 0)
 	{
