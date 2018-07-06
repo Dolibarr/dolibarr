@@ -2,7 +2,7 @@
 English Dolibarr ChangeLog
 --------------------------------------------------------------
 
-***** ChangeLog for 8.0.0 compared to 7.0.3 *****
+***** ChangeLog for 8.0.0 compared to 7.0.0 *****
 
 For Users:
 NEW: Experimental module: Ticket
@@ -170,8 +170,6 @@ NEW: Call to trigger on payment social contribution creation
 NEW: Call to trigger on social contribution creation
 NEW: hook getnomurltooltip is replaced with hook getNomUrl more powerfull
 
-
-
 WARNING:
 
 Following changes may create regressions for some external modules, but were necessary to make Dolibarr better:
@@ -191,6 +189,8 @@ Following changes may create regressions for some external modules, but were nec
 * Remove method Categorie:get_nb_categories() that was not used.
 * Hook getnomurltooltip provide a duplicate feature compared to hook getNomUrl so all hooks getnomurltooltip 
   are now replaced with hook getNomUrl.
+
+
 
 ***** ChangeLog for 7.0.3 compared to 7.0.2 *****
 FIX: 7.0 task contact card without withproject parameters
