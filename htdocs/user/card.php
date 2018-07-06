@@ -1058,22 +1058,23 @@ if ($action == 'create' || $action == 'adduserldap')
 	}
 
 	// Multicompany
-	// This is now done with hook formObjectOptions
-	/*
-	 if (! empty($conf->multicompany->enabled) && is_object($mc))
-	 {
-	 if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
-	 {
-	 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-	 print "<td>".$mc->select_entities($conf->entity);
-	 print "</td></tr>\n";
-	 }
-	 else
-	 {
-	 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-	 }
-	 }
-	 */
+	if (! empty($conf->multicompany->enabled) && is_object($mc))
+	{
+		// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+		if (! method_exists($mc, 'formObjectOptions'))
+		{
+			if (empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)	// condition must be same for create and edit mode
+			{
+				 print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+				 print "<td>".$mc->select_entities($conf->entity);
+				 print "</td></tr>\n";
+			}
+			else
+			{
+				 print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+			}
+		 }
+	}
 
 	// Other attributes
 	$parameters=array('objectsrc' => $objectsrc, 'colspan' => ' colspan="3"');
@@ -1577,23 +1578,25 @@ else
 			print '<td>'.dol_print_date($object->datepreviouslogin,"dayhour").'</td>';
 			print "</tr>\n";
 
-			// Multicompany
-			// This is now done with hook formObjectOptions (included into /core/tpl/extrafields_view.tpl.php)
-			/*
-		     if (! empty($conf->multicompany->enabled) && is_object($mc))
-		     {
-		     if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
-		     {
-		     print '<tr><td>' . $langs->trans("Entity") . '</td><td>';
-		     if (empty($object->entity)) {
-		     print $langs->trans("AllEntities");
-		     } else {
-		     $mc->getInfo($object->entity);
-		     print $mc->label;
-		     }
-		     print "</td></tr>\n";
-		     }
-		     }*/
+		    // Multicompany
+			if (! empty($conf->multicompany->enabled) && is_object($mc))
+			{
+				// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+				if (! method_exists($mc, 'formObjectOptions'))
+				{
+				     if (! empty($conf->multicompany->enabled) && empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && $conf->entity == 1 && $user->admin && ! $user->entity)
+				     {
+				     	print '<tr><td>' . $langs->trans("Entity") . '</td><td>';
+				     	if (empty($object->entity)) {
+				     		print $langs->trans("AllEntities");
+				     	} else {
+				     		$mc->getInfo($object->entity);
+				     		print $mc->label;
+				     	}
+				     	print "</td></tr>\n";
+				     }
+			     }
+			}
 
 			// Other attributes
 			include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -1750,7 +1753,7 @@ else
 					}
 				}
 			}
-			
+
 			print "</div>\n";
 
 
@@ -2341,24 +2344,25 @@ else
 				print "</tr>\n";
 			}
 
-			// Multicompany
-			// This is now done with hook formObjectOptions
-			/*
+            // Multicompany
             // TODO check if user not linked with the current entity before change entity (thirdparty, invoice, etc.) !!
             if (! empty($conf->multicompany->enabled) && is_object($mc))
             {
-            	if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+            	// This is now done with hook formObjectOptions. Keep this code for backward compatibility with old multicompany module
+            	if (! method_exists($mc, 'formObjectOptions'))
             	{
-            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
-            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
-            		print "</td></tr>\n";
-            	}
-            	else
-            	{
-            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
-            	}
-            }
-            */
+            		if (empty($conf->multicompany->transverse_mode) && $conf->entity == 1 && $user->admin && ! $user->entity)
+	            	{
+	            		print "<tr>".'<td>'.$langs->trans("Entity").'</td>';
+	            		print "<td>".$mc->select_entities($object->entity, 'entity', '', 0, 1);		// last parameter 1 means, show also a choice 0=>'all entities'
+	            		print "</td></tr>\n";
+	            	}
+	            	else
+	            	{
+	            		print '<input type="hidden" name="entity" value="'.$conf->entity.'" />';
+	            	}
+	            }
+			}
 
 			// Other attributes
 			$parameters=array('colspan' => ' colspan="2"');
