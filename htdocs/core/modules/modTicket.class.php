@@ -108,7 +108,7 @@ class modTicket extends DolibarrModules
         // Example:
         $this->const = array();
         $this->const[1] = array('TICKETS_ENABLE_PUBLIC_INTERFACE', 'chaine', '1', 'Enable ticket public interface');
-        $this->const[2] = array('TICKETSUP_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module');
+        $this->const[2] = array('TICKET_ADDON', 'chaine', 'mod_ticket_simple', 'Ticket ref module');
 
         $this->tabs = array(
             'thirdparty:+ticket:Tickets:@ticket:$user->rights->ticket->read:/ticket/list.php?socid=__ID__',

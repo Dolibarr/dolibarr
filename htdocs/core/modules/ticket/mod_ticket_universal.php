@@ -22,7 +22,7 @@
  *    \brief      Fichier contenant la classe du modele de numerotation de reference de projet Universal
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/modules_ticket.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
 
 /**
  *     Classe du modele de numerotation de reference de projet Universal
@@ -52,7 +52,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
         $texte .= '<form action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
         $texte .= '<input type="hidden" name="token" value="' . $_SESSION['newtoken'] . '">';
         $texte .= '<input type="hidden" name="action" value="updateMask">';
-        $texte .= '<input type="hidden" name="maskconstticket" value="TICKETSUP_UNIVERSAL_MASK">';
+        $texte .= '<input type="hidden" name="maskconstticket" value="TICKET_UNIVERSAL_MASK">';
         $texte .= '<table class="nobordernopadding" width="100%">';
 
         $tooltip = $langs->trans("GenericMaskCodes", $langs->transnoentities("Ticket"), $langs->transnoentities("Ticket"));
@@ -63,7 +63,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
 
         // Parametrage du prefix
         $texte .= '<tr><td>' . $langs->trans("Mask") . ':</td>';
-        $texte .= '<td align="right">' . $form->textwithpicto('<input type="text" class="flat" size="24" name="maskticket" value="' . $conf->global->TICKETSUP_UNIVERSAL_MASK . '">', $tooltip, 1, 1) . '</td>';
+        $texte .= '<td align="right">' . $form->textwithpicto('<input type="text" class="flat" size="24" name="maskticket" value="' . $conf->global->TICKET_UNIVERSAL_MASK . '">', $tooltip, 1, 1) . '</td>';
 
         $texte .= '<td align="left" rowspan="2">&nbsp; <input type="submit" class="button" value="' . $langs->trans("Modify") . '" name="Button"></td>';
 
@@ -109,7 +109,7 @@ class mod_ticket_universal extends ModeleNumRefTicket
         include_once DOL_DOCUMENT_ROOT . '/core/lib/functions2.lib.php';
 
         // On defini critere recherche compteur
-        $mask = $conf->global->TICKETSUP_UNIVERSAL_MASK;
+        $mask = $conf->global->TICKET_UNIVERSAL_MASK;
 
         if (!$mask) {
             $this->error = 'NotConfigured';
