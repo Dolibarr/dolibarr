@@ -150,7 +150,7 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     top_htmlhead($head, $title, $disablejs, $disablehead, $arrayofjs, $arrayofcss); // Show html headers
     print '<body id="mainbody" class="publicnewticketform" style="margin-top: 10px;">';
 
-    if (! empty($conf->global->TICKETS_SHOW_COMPANY_LOGO)) {
+    if (! empty($conf->global->TICKET_SHOW_COMPANY_LOGO)) {
     	// Print logo
     	$urllogo = DOL_URL_ROOT . '/theme/login_logo.png';
 
@@ -163,8 +163,8 @@ function llxHeaderTicket($title, $head = "", $disablejs = 0, $disablehead = 0, $
     		$urllogo = DOL_URL_ROOT . '/theme/dolibarr_logo.png';
     	}
     	print '<center>';
-    	print '<a href="' . ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
-    	print '<strong>' . ($conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKETS_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
+    	print '<a href="' . ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE : dol_buildpath('/public/ticket/index.php', 1)) . '"><img alt="Logo" id="logosubscribe" title="" src="' . $urllogo . '" style="max-width: 440px" /></a><br>';
+    	print '<strong>' . ($conf->global->TICKET_PUBLIC_INTERFACE_TOPIC ? $conf->global->TICKET_PUBLIC_INTERFACE_TOPIC : $langs->trans("TicketSystem")) . '</strong>';
     	print '</center><br>';
     }
 
