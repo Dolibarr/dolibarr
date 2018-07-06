@@ -284,8 +284,10 @@ class Paiement extends CommonObject
                             //else if ($mustwait) dol_syslog("There is ".$mustwait." differed payment to process, we do nothing more.");
                             else
                             {
-                                // If invoice is a down payment, we also convert down payment to discount
-                                if ($invoice->type == Facture::TYPE_DEPOSIT)
+                            	$tmpdiscount = new DiscountAbsolute($this->db);
+
+                                // If invoice is a down payment, we also convert down payment to discount if it has not already been done
+                            	if ($invoice->type == Facture::TYPE_DEPOSIT && $tmpdiscount->fetch('', $invoice->id) <= 0)
                                 {
 			                        $amount_ht = $amount_tva = $amount_ttc = array();
 
