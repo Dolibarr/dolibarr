@@ -88,7 +88,7 @@ $user = new User($db);
 $user->fetch(5);
 $user->getrights();
 
-if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled)) {
+if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc)) {
 	$sql = "SELECT entity";
 	$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql.= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
@@ -102,10 +102,12 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabl
 			$obj = $db->fetch_object($result);
 			$key=$obj->entity;
 		}
-		else {$key=1;
+		else {
+			$key=1;
 		}
 	}
-	else {$key=1;
+	else {
+		$key=1;
 	}
 	$ret=$mc->switchEntity($key);
 	if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
