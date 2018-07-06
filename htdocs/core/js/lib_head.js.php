@@ -656,16 +656,12 @@ function delConstant(url, code, input, entity, strict) {
  * @param	string	intput		Input
  * @param	string	box			Box
  * @param	int		entity		Entity
+ * @param	int		yesButton	yesButton
+ * @param	int		noButton	noButton
  * @param	int		strict		Strict
  */
-function confirmConstantAction(action, url, code, input, entity, strict) {
-	yesButton = (input.alert.set.yesButton ? input.alert.set.yesButton : "<?php echo dol_escape_js($langs->transnoentities("Yes")); ?>");
-	noButton = (input.alert.set.noButton ? input.alert.set.noButton : "<?php echo dol_escape_js($langs->transnoentities("No")); ?>");
-	if (action == "set") {
-		var boxConfirm = input.alert.set;
-	} else {
-		var boxConfirm = input.alert.del;
-	}
+function confirmConstantAction(action, url, code, input, box, entity, yesButton, noButton, strict) {
+	var boxConfirm = box;
 	$("#confirm_" + code)
 			.attr("title", boxConfirm.title)
 			.html(boxConfirm.content)
