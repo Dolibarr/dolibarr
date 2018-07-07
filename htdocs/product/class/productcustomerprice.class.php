@@ -341,6 +341,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= " WHERE soc.rowid=t.fk_soc ";
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (" . getEntity('product') . ")";
+		$sql .= " AND t.entity IN (" . getEntity('productprice') . ")";
+		$sql .= " AND soc.entity IN (" . getEntity('societe') . ")";
 
 		// Manage filter
 		if (count($filter) > 0) {
@@ -450,6 +452,8 @@ class Productcustomerprice extends CommonObject
 		$sql .= " WHERE soc.rowid=t.fk_soc ";
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (" . getEntity('product') . ")";
+		$sql .= " AND t.entity IN (" . getEntity('productprice') . ")";
+		$sql .= " AND soc.entity IN (" . getEntity('societe') . ")";
 
 		// Manage filter
 		if (count($filter) > 0) {
