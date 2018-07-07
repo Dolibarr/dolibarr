@@ -149,7 +149,7 @@ if ($suburi == '/') $suburi = '';   // If $suburi is /, it is now ''
 define('DOL_URL_ROOT', $suburi);    // URL relative root ('', '/dolibarr', ...)
 
 
-if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="UTF-8";
+if (empty($conf->file->character_set_client))      	$conf->file->character_set_client="utf-8";
 if (empty($conf->db->character_set))  				$conf->db->character_set='utf8';
 if (empty($conf->db->dolibarr_main_db_collation))  	$conf->db->dolibarr_main_db_collation='utf8_unicode_ci';
 if (empty($conf->db->dolibarr_main_db_encryption)) 	$conf->db->dolibarr_main_db_encryption=0;

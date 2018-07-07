@@ -549,11 +549,11 @@ if ($ok && GETPOST('clean_menus','alpha'))
 								dol_print_error($db);
 							}
 							else
-								print ' - <font class="warning">Cleaned</font>';
+								print ' - <span class="warning">Cleaned</span>';
 						}
 						else
 						{
-							print ' - <font class="warning">Canceled (test mode)</font>';
+							print ' - <span class="warning">Canceled (test mode)</span>';
 						}
 					}
 					else
@@ -982,11 +982,11 @@ if ($ok && GETPOST('force_disable_of_modules_not_found','alpha'))
 	                                    dol_print_error($db);
 	                                }
 	                                else
-	                                    print ' - <font class="warning">Cleaned</font>';
+	                                    print ' - <span class="warning">Cleaned</span>';
 	                            }
 	                            else
 	                            {
-	                                print ' - <font class="warning">Canceled (test mode)</font>';
+	                                print ' - <span class="warning">Canceled (test mode)</span>';
 	                            }
 	                        }
 	                        else
