@@ -51,7 +51,7 @@ print '<tr class="liste_titre">';
 print '<td align="left">'.$langs->trans("Position");
 print '<span class="nowrap"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" alt="" title="A-Z" class="imgdown"></span>';
 print '</td>';
-print '<td>'.$langs->trans("Label").'</td>';
+print '<td>'.$langs->trans("LabelOrTranslationKey").'</td>';
 print '<td>'.$langs->trans("TranslationString").'</td>';
 print '<td>'.$langs->trans("AttributeCode").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
