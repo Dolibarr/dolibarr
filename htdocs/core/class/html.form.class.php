@@ -1073,10 +1073,10 @@ class Form
 		$out='';
 		$num=0;
 		$outarray=array();
-		
+
 		if ($selected === '') $selected = array();
 		else if (!is_array($selected)) $selected = array($selected);
-		
+
 		// Clean $filter that may contains sql conditions so sql code
 		if (function_exists('test_sql_and_script_inject')) $filter = test_sql_and_script_inject($filter, 3);
 
@@ -1335,7 +1335,7 @@ class Form
 		$langs->load('companies');
 
 		if (empty($htmlid)) $htmlid = $htmlname;
-		
+
 		if ($selected === '') $selected = array();
 		else if (!is_array($selected)) $selected = array($selected);
         $out='';
@@ -1484,13 +1484,13 @@ class Form
 	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity='0', $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0, $outputmode=0, $multiple=false)
 	{
 		global $conf,$user,$langs;
-		
+
 		// If no preselected user defined, we take current user
 		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
 
 		if ($selected === '') $selected = array();
 		else if (!is_array($selected)) $selected = array($selected);
-		
+
 		$excludeUsers=null;
 		$includeUsers=null;
 
@@ -1568,7 +1568,7 @@ class Form
 				if ($show_every) $out.= '<option value="-2"'.((in_array(-2,$selected))?' selected':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
 				$userstatic=new User($this->db);
-				
+
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -6754,7 +6754,7 @@ class Form
 		if (is_array($include))	$includeGroups = implode("','",$include);
 
 		if (!is_array($selected)) $selected = array($selected);
-		
+
 		$out='';
 
 		// On recherche les groupes
