@@ -507,6 +507,7 @@ NoneF=Nič
 NoneOrSeveral=None or several
 Late=Prekoračeno
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
+NoItemLate=No late item
 Photo=Slika
 Photos=Slike
 AddPhoto=Dodaj sliko
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Se nanaša na
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

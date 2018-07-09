@@ -507,6 +507,7 @@ NoneF=Hiçbiri
 NoneOrSeveral=Yok veya Birkaç
 Late=Son
 LateDesc=Bir kayıdın sizin ayarlarınıza dayanarak gecikmiş olduğu ya da olmadığını tanımlayabilmek için gerekli süre. Yöneticinizden Giriş - Ayarlar - Uyarılar menüsünden süreyi değiştirmesini isteyin.
+NoItemLate=No late item
 Photo=Resim
 Photos=Resimler
 AddPhoto=Resim ekle
@@ -945,3 +946,5 @@ KeyboardShortcut=Klavye kısayolu
 AssignedTo=Görevlendirilen
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

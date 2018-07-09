@@ -1,5 +1,4 @@
 # Dolibarr language file - Source file is en_US - banks
-MenuBankCash=Banco/Efectivo
 BankAccount=Cuenta de banco
 BankAccounts=Cuentas de banco
 AccountRef=Ref de la cuenta financiera
