@@ -822,7 +822,7 @@ TooManyRecordForMassAction=Too many records selected for mass action. The action
 NoRecordSelected=No record selected
 MassFilesArea=Area for files built by mass actions
 ShowTempMassFilesArea=Show area of files built by mass actions
-ConfirmMassDeletion=Bulk delete confirmation
+ConfirmMassDeletion=Mass delete confirmation
 ConfirmMassDeletionQuestion=Are you sure you want to delete the %s selected record?
 RelatedObjects=Related Objects
 ClassifyBilled=Classify billed
@@ -945,6 +945,6 @@ LocalAndRemote=Local and Remote
 KeyboardShortcut=Keyboard shortcut
 AssignedTo=Assigned to
 Deletedraft=Delete draft
-ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+ConfirmMassDraftDeletion=Draft mass delete confirmation
 FileSharedViaALink=File shared via a link
 
