@@ -38,7 +38,7 @@ if (!$user->admin) accessforbidden();
 $id=GETPOST('rowid','int');
 $action=GETPOST('action','alpha');
 
-$mode = GETPOST('mode')?GETPOST('mode'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
+$mode = GETPOST('mode','aZ09')?GETPOST('mode','aZ09'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
