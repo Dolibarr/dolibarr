@@ -2021,7 +2021,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 	}
 	else
 	{
-		dol_print_error('','PHP version must be 5.3+');
+		dol_print_error('','PHP version must be 5.4+');
 		return '';
 	}
 }
