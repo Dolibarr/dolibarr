@@ -61,27 +61,23 @@ class modWebsite extends DolibarrModules
 		$this->dirs = array("/website/temp");
 
         // Config pages
-        //-------------
         $this->config_page_url = array('website.php');
 
-        // Dependancies
-        //-------------
+        // Dependencies
 		$this->hidden = ! empty($conf->global->MODULE_WEBSITE_DISABLED);	// A condition to disable module
 		$this->depends = array('modFckeditor');		// List of modules id that must be enabled if this module is enabled
         $this->requiredby = array();	// List of modules id to disable if this one is disabled
 		$this->conflictwith = array();	// List of modules id this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("website");
 
         // Constants
-        //-----------
        	$this->const = array();
 
         // New pages on tabs
-        // -----------------
        	//$this->tabs[] = array();  					// To add a new tab identified by code tabname1
 
         // Boxes
-        //------
         $this->boxes = array();
 
 		// Permissions
