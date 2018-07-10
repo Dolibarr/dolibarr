@@ -3942,11 +3942,11 @@ class PropaleLigne extends CommonObjectLine
 		$sql.= " ".(price2num($this->subprice)!==''?price2num($this->subprice):"null").",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".(isset($this->info_bits)?"'".$this->db->escape($this->info_bits)."'":"null").",";
-		$sql.= " ".(price2num($this->total_ht)!==''?price2num($this->total_ht):"null").",";
-		$sql.= " ".(price2num($this->total_tva)!==''?price2num($this->total_tva):"null").",";
-		$sql.= " ".(price2num($this->tottotal_localtax1al_ht)!==''?price2num($this->total_localtax1):"null").",";
-		$sql.= " ".(price2num($this->total_localtax2)!==''?price2num($this->total_localtax2):"null").",";
-		$sql.= " ".(price2num($this->total_ttc)!==''?price2num($this->total_ttc):"null").",";
+		$sql.= " ".price2num($this->total_ht).",";
+		$sql.= " ".price2num($this->total_tva).",";
+		$sql.= " ".price2num($this->total_localtax1).",";
+		$sql.= " ".price2num($this->total_localtax2).",";
+		$sql.= " ".price2num($this->total_ttc).",";
 		$sql.= " ".(!empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null").",";
 		$sql.= " ".(isset($this->pa_ht)?"'".price2num($this->pa_ht)."'":"null").",";
 		$sql.= ' '.$this->special_code.',';
