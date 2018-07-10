@@ -530,7 +530,7 @@ class ProductFournisseur extends Product
         $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE pfp.entity IN (".getEntity('productprice').")";
+        $sql.= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
         $sql.= " AND pfp.fk_soc = s.rowid";
         $sql.= " AND s.status=1"; // only enabled company selected
         $sql.= " AND pfp.fk_product = ".$prodid;

@@ -39,7 +39,6 @@ DeStockOnValidateOrder=Decrementar os estoques físicos sobre os pedidos
 DeStockOnShipment=Diminuir o estoque real na validação do envio
 DeStockOnShipmentOnClosing=Baixa real no estoque ao classificar o embarque como fechado
 ReStockOnBill=Incrementar os estoques físicos sobre as faturas/recibos
-ReStockOnValidateOrder=Incrementar os estoques físicos sobre os pedidos
 OrderStatusNotReadyToDispatch=Não tem ordem  ainda não ou nato tem um status que permite envio de produtos em para armazenamento.
 NoPredefinedProductToDispatch=Não há produtos pré-definidos para este objeto. Portanto, não envio em estoque é necessária.
 DispatchVerb=Despachar

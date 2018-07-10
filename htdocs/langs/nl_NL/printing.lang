@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - printing
 Module64000Name=Direct afdrukken
 Module64000Desc=Direct afdruksysteem inschakelen
-PrintingSetup=Setup of Direct Printing System
+PrintingSetup=Installatie van Direct Printing System
 PrintingDesc=This module adds a Print button to send documents directly to a printer (without opening document into an application) with various module.
 MenuDirectPrinting=Directe print opdrachten
 DirectPrint=Direct afdrukken

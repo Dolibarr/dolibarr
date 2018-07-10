@@ -507,6 +507,7 @@ NoneF=Żaden
 NoneOrSeveral=Brak lub kilka
 Late=Późno
 LateDesc=Opóźnienie w celu określenia, czy rekord jest opóźniony, czy nie zależy od konfiguracji. Poproś swojego administratora o zmianę opóźnienia z menu Strona główna - Konfiguracja - Alerty.
+NoItemLate=No late item
 Photo=Obraz
 Photos=Obrazy
 AddPhoto=Dodaj obraz
@@ -945,3 +946,5 @@ KeyboardShortcut=Skróty klawiaturowe
 AssignedTo=Przypisany do
 Deletedraft=Usuń szkic
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

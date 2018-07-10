@@ -507,6 +507,7 @@ NoneF=Nė vienas
 NoneOrSeveral=None or several
 Late=Vėlai
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
+NoItemLate=No late item
 Photo=Nuotrauka
 Photos=Nuotraukos
 AddPhoto=Pridėti nuotrauką
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Priskirtas
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

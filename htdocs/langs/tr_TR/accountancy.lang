@@ -55,6 +55,7 @@ AccountancyAreaDescChartModel=ADIM %s: "%s" menüsünü kullanarak hesap planı 
 AccountancyAreaDescChart=ADIM %s: "%s" menüsünü kullanarak hesap planınızın içeriğini oluşturun veya kontrol edin.
 
 AccountancyAreaDescVat=ADIM %s: "%s" menüsünü kullanarak her bir KDV Oranı için muhasebe hesaplarını tanımlayın.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=ADIM %s: "%s" menüsünü kullanarak her bir harcama raporu türü için varsayılan muhasebe hesaplarını tanımlayın.
 AccountancyAreaDescSal=ADIM %s: "%s" menüsünü kullanarak maaş ödemeleri için varsayılan muhasebe hesaplarını tanımlayın.
 AccountancyAreaDescContrib=ADIM %s: "%s" menüsünü kullanarak özel harcamalar (çeşitli vergiler) için varsayılan muhasebe hesaplarını tanımlayın.
@@ -131,6 +132,7 @@ ACCOUNTING_LENGTH_GACCOUNT=Genel muhasebe hesaplarının uzunluğu (eğer burada
 ACCOUNTING_LENGTH_AACCOUNT=Üçüncü taraf muhasebe hesaplarının uzunluğu (eğer burada değeri 6 olarak ayarlarsanız '401' nolu hesap ekranda '401000' gibi görüntülenecektir)
 ACCOUNTING_MANAGE_ZERO=Allow to manage different number of zero at the end of an accounting account. Needed by some countries (like switzerland). If keep to off (default), you can set the 2 following parameters to ask application to add virtual zero.
 BANK_DISABLE_DIRECT_INPUT=Disable direct recording of transaction in bank account
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Satış günlüğü
 ACCOUNTING_PURCHASE_JOURNAL=Alış günlüğü
