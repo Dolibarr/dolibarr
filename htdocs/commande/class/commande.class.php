@@ -4065,7 +4065,7 @@ class OrderLine extends CommonOrderLine
         $sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
         $sql.= " '".$this->db->escape($this->product_type)."',";
         $sql.= " '".price2num($this->remise_percent)."',";
-        $sql.= " ".price2num($this->subprice).",";
+        $sql.= " ".(price2num($this->subprice)!==''?price2num($this->subprice):"null").",";
         $sql.= " ".($this->price!=''?"'".price2num($this->price)."'":"null").",";
         $sql.= " '".price2num($this->remise)."',";
         $sql.= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';
