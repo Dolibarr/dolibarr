@@ -276,7 +276,7 @@ function GETPOSTISSET($paramname)
  *  @param	string	$noreplace	 Force disable of replacement of __xxx__ strings.
  *  @return string|string[]      Value found (string or array), or '' if check fails
  */
-function GETPOST($paramname, $check='none', $method=0, $filter=NULL, $options=NULL, $noreplace=0)
+function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=null, $noreplace=0)
 {
 	global $mysoc,$user,$conf;
 
@@ -5070,6 +5070,7 @@ function dol_string_onlythesehtmltags($stringtoclean)
  *	Clean a string from some undesirable HTML tags.
  *
  *	@param	string	$stringtoclean		String to clean
+ *  @param	array	$disallowed_tags	Array of tags not allowed
  *	@return string	    				String cleaned
  *
  * 	@see	dol_escape_htmltag strip_tags dol_string_nohtmltag dol_string_onlythesehtmltags
@@ -6147,7 +6148,7 @@ function dol_sort_array(&$array, $index, $order='asc', $natsort=0, $case_sensiti
 		else
 		{
 			($case_sensitive) ? natsort($temp) : natcasesort($temp);
-			if($order!='asc') $temp=array_reverse($temp,TRUE);
+			if($order!='asc') $temp=array_reverse($temp,true);
 		}
 
 		$sorted = array();
