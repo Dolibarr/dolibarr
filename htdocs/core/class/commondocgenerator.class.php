@@ -540,10 +540,11 @@ abstract class CommonDocGenerator
 		// Load product data optional fields to the line -> enables to use "line_options_{extrafield}"
 		if (isset($line->fk_product) && $line->fk_product > 0)
 		{
+			$extrafields = new ExtraFields($this->db);
+			$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
 			$tmpproduct = new Product($this->db);
 			$result = $tmpproduct->fetch($line->fk_product);
-			foreach($tmpproduct->array_options as $key=>$label)
-				$resarray["line_".$key] = $label;
+			$resarray = $this->fill_substitutionarray_with_extrafields($tmpproduct,$resarray,$extrafields,$array_key="line",$outputlangs);
 		}
 
 		return $resarray;
@@ -721,6 +722,29 @@ abstract class CommonDocGenerator
 				$object->array_options['options_'.$key.'_rfc'] = ($datetime!="0000-00-00 00:00:00"?dol_print_date($object->array_options['options_'.$key],'dayhourrfc'):'');                             // international format
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
+			}
+			else if($extrafields->attribute_type[$key] == 'link')
+			{
+				$id = $object->array_options['options_'.$key];
+				if($id != "")
+				{
+					$param = $extrafields->attribute_param[$key];
+					$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
+					$InfoFieldList = explode(":", $param_list[0]);
+					$classname=$InfoFieldList[0];
+					$classpath=$InfoFieldList[1];
+					if (! empty($classpath))
+					{
+						dol_include_once($InfoFieldList[1]);
+						if ($classname && class_exists($classname))
+						{
+							$tmpobject = new $classname($this->db);
+							$tmpobject->fetch($id);
+							// completely replace the id with the linked object name
+							$object->array_options['options_'.$key] = $tmpobject->name;
+						}
+					}
+				}
 			}
 			$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
 		}
