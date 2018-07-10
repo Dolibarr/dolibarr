@@ -25,7 +25,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Class to describe a Cron module
+ *	Class to describe a Skype module
  */
 class modSkype extends DolibarrModules
 {
