@@ -55,7 +55,7 @@ print '<br><br><div class="center">';
 print '<table>';
 
 print '<tr>';
-print '<td>'.$langs->trans("DefaultLanguage").' : </td><td align="left">';
+print '<td>'.$langs->trans("DefaultLanguage").' : </td><td>';
 print $formadmin->select_language('auto','selectlang',1,0,0,1);
 print '</td>';
 print '</tr>';
