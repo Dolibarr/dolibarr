@@ -647,8 +647,14 @@ class ImportCsv extends ModeleImports
 								// Run update request
 								$resql=$this->db->query($sql);
 								if($resql) {
-									// No error, update has been done. $this->db->db->affected_rows can be 0 if data hasn't changed
-									$updatedone = true;
+									// No error, $this->db->db->affected_rows can be 0 if data hasn't changed
+									// Update was done if there is an entry, nothing was done otherwise
+									$sql = "SELECT count(*) AS count FROM $tablename WHERE $keyfield = $lastinsertid";
+									$resql = $this->db->query($sql);
+									if($resql) {
+										$res = $this->db->fetch_object($resql);
+										$updatedone = $res->count > 0;
+									}
 								}
 								else
 								{
