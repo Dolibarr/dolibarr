@@ -98,9 +98,20 @@ $authBackend->setRealm(constant('DOL_APPLICATION_TITLE'));
 $nodes = array();
 
 // Enable directories and features according to DAV setup
-// / Public docs
-if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR)) $nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public');
+// Public dir
+if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
+{
+	$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public');
+}
+// Private dir
 $nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/private');
+// ECM dir
+if (! empty($conf->ecm->enabled) && ! empty($conf->global->DAV_ALLOW_ECM_DIR))
+{
+	$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/ecm');
+}
+
+
 
 // Principals Backend
 //$principalBackend = new \Sabre\DAVACL\PrincipalBackend\Dolibarr($user,$db);

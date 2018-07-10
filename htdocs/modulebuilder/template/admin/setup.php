@@ -53,7 +53,10 @@ if (! $user->admin) accessforbidden();
 $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
-$arrayofparameters=array('MYMODULE_MYPARAM1'=>array('css'=>'minwidth200'), 'MYMODULE_MYPARAM2'=>array('css'=>'minwidth500'));
+$arrayofparameters=array(
+	'MYMODULE_MYPARAM1'=>array('css'=>'minwidth200','enabled'=>1),
+	'MYMODULE_MYPARAM2'=>array('css'=>'minwidth500','enabled'=>1)
+);
 
 
 /*
@@ -96,6 +99,8 @@ if ($action == 'edit')
 
 	foreach($arrayofparameters as $key => $val)
 	{
+		if (isset($val['enabled']) && empty($val['enabled'])) continue;
+
 		print '<tr class="oddeven"><td>';
 		print $form->textwithpicto($langs->trans($key),$langs->trans($key.'Tooltip'));
 		print '</td><td><input name="'.$key.'"  class="flat '.(empty($val['css'])?'minwidth200':$val['css']).'" value="' . $conf->global->$key . '"></td></tr>';
