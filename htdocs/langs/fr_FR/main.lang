@@ -507,6 +507,7 @@ NoneF=Aucune
 NoneOrSeveral=Aucun ou plusieurs
 Late=Retard
 LateDesc=Le délai qui définit si un enregistrement est en retard ou non dépend de votre configuration. Demandez à votre administrateur pour changer ce délai depuis Accueil - Configuration - Alertes 
+NoItemLate=Aucun élément en retard
 Photo=Photo
 Photos=Photos
 AddPhoto=Ajouter photo
@@ -945,3 +946,5 @@ KeyboardShortcut=Raccourci clavier
 AssignedTo=Assigné à
 Deletedraft=Supprimer brouillon
 ConfirmMassDraftDeletion=Confirmation de suppression de brouillon en bloc
+FileSharedViaALink=Fichier partagé via un lien
+

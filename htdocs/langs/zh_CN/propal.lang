@@ -75,6 +75,7 @@ AvailabilityTypeAV_1M=1 个月
 TypeContact_propal_internal_SALESREPFOLL=跟进报价的销售代表
 TypeContact_propal_external_BILLING=客户账单联系人
 TypeContact_propal_external_CUSTOMER=跟进报价的客户联系人
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=完整的订单模版 (LOGO标志...)
 DefaultModelPropalCreate=设置默认模板

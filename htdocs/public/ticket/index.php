@@ -49,11 +49,11 @@ $arrayofjs = array();
 $arrayofcss = array('/ticket/css/styles.css.php');
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
+if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
     print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
 } else {
     print '<div style="margin: 0 auto; width:60%">';
-    print '<p style="text-align: center">' . ($conf->global->TICKETS_PUBLIC_TEXT_HOME ? $conf->global->TICKETS_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")) . '</p>';
+    print '<p style="text-align: center">' . ($conf->global->TICKET_PUBLIC_TEXT_HOME ? $conf->global->TICKET_PUBLIC_TEXT_HOME : $langs->trans("TicketPublicDesc")) . '</p>';
     print '<div class="corps">';
     print '<div class="index_create"><a href="create_ticket.php" class="button orange bigrounded"><strong>&nbsp;' . dol_escape_htmltag($langs->trans("CreateTicket")) . '</strong></a></div>';
     print '<div class="index_display"><a href="list.php" class="button blue bigrounded"><strong>&nbsp;' . dol_escape_htmltag($langs->trans("ShowListTicketWithTrackId")) . '</strong></a></div>';

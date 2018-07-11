@@ -62,7 +62,7 @@ class modModuleBuilder extends DolibarrModules
         //-------------
         $this->config_page_url = array('setup@modulebuilder');
 
-        // Dependancies
+        // Dependencies
         //-------------
 	    $this->hidden = false;	// A condition to disable module
 	    $this->depends = array();		// List of modules id that must be enabled if this module is enabled

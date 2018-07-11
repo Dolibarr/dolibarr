@@ -6,7 +6,7 @@ Permission23102 = Maak/wijzig geplande taak
 Permission23103 = Verwijder geplande taak
 Permission23104 = Voer geplande taak uit
 # Admin
-CronSetup= Beheer taakplanning
+CronSetup=Beheer taakplanning
 URLToLaunchCronJobs=URL to check and launch qualified cron jobs
 OrToLaunchASpecificJob=Or to check and launch a specific job
 KeyForCronAccess=Security key for URL to launch cron jobs
@@ -34,7 +34,7 @@ CronDtStart=Niet voor
 CronDtEnd=Niet na
 CronDtNextLaunch=Volgende uitvoering
 CronDtLastLaunch=Startdatum van de laatste uitvoering
-CronDtLastResult=End date of latest execution
+CronDtLastResult=Einddatum van de laatste uitvoering
 CronFrequency=Frequentie
 CronClass=Class
 CronMethod=Wijze
