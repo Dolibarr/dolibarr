@@ -95,7 +95,7 @@ class Dolistore
 				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang;
 
 				// Call
-				var_dump($this->api);
+				//var_dump($this->api);
 
 				dol_syslog("Call API with opt = ".var_export($opt, true));
 				dol_syslog("Call API with opt2 = ".var_export($opt2, true));
