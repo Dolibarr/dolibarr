@@ -11,5 +11,6 @@ LocalTax1IsUsedDesc=Use a second type of tax (other than GST)
 LocalTax1IsNotUsedDesc=Do not use other type of tax (other than GST)
 LocalTax2IsUsedDesc=Use a third type of tax (other than GST)
 LocalTax2IsNotUsedDesc=Do not use other type of tax (other than GST)
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
 OptionVatMode=GST due
 LinkColor=Colour of links

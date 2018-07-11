@@ -285,6 +285,8 @@ class EcmFiles extends CommonObject
 	 */
 	public function fetch($id, $ref = '', $relativepath = '', $hashoffile='', $hashforshare='', $src_object_type='', $src_object_id=0)
 	{
+		global $conf;
+
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$sql = 'SELECT';
@@ -317,25 +319,31 @@ class EcmFiles extends CommonObject
 		}*/
 		if ($relativepath) {
 			$sql .= " AND t.filepath = '" . $this->db->escape(dirname($relativepath)) . "' AND t.filename = '".$this->db->escape(basename($relativepath))."'";
+			$sql .= " AND t.entity = ".$conf->entity;				// unique key include the entity so each company has its own index
 		}
-		elseif (! empty($ref)) {
+		elseif (! empty($ref)) {		// hash of file path
 			$sql .= " AND t.ref = '".$this->db->escape($ref)."'";
+			$sql .= " AND t.entity = ".$conf->entity;				// unique key include the entity so each company has its own index
 		}
-		elseif (! empty($hashoffile)) {
+		elseif (! empty($hashoffile)) {	// hash of content
 			$sql .= " AND t.label = '".$this->db->escape($hashoffile)."'";
+			$sql .= " AND t.entity = ".$conf->entity;				// unique key include the entity so each company has its own index
 		}
 		elseif (! empty($hashforshare)) {
 			$sql .= " AND t.share = '".$this->db->escape($hashforshare)."'";
+			//$sql .= " AND t.entity = ".$conf->entity;							// hashforshare already unique
 		}
 		elseif ($src_object_type && $src_object_id)
 		{
-			$sql.= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
+			// Warning: May return several record, and only first one is returned !
+			$sql .= " AND t.src_object_type ='".$this->db->escape($src_object_type)."' AND t.src_object_id = ".$this->db->escape($src_object_id);
+			$sql .= " AND t.entity = ".$conf->entity;
 		}
 		else {
-			$sql .= ' AND t.rowid = '.$this->db->escape($id);
+			$sql .= ' AND t.rowid = '.$this->db->escape($id);					// rowid already unique
 		}
-		// When we search on hash of content, we take the first one. Solve also hash conflict.
-		$this->db->plimit(1);
+		
+		$this->db->plimit(1);	// When we search on src or on hash of content (hashforfile) to solve hash conflict when several files has same content, we take first one only
 		$this->db->order('t.rowid', 'ASC');
 
 		$resql = $this->db->query($sql);

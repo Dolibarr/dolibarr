@@ -38,23 +38,78 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functionsnumtoword.lib.php';
  */
 class pdf_standard extends ModelePDFSuppliersPayments
 {
-    var $db;
-    var $name;
-    var $description;
-    var $type;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
+	/**
+     * @var string model name
+     */
+    public $name;
+    
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+    
+	/**
+     * @var string document type
+     */
+    public $type;
 
-    var $phpmin = array(4,3,0); // Minimum version of PHP required by module
-    var $version = 'dolibarr';
-
-    var $page_largeur;
-    var $page_hauteur;
-    var $format;
-	var $marge_gauche;
-	var	$marge_droite;
-	var	$marge_haute;
-	var	$marge_basse;
-
-	var $emetteur;	// Objet societe qui emet
+    /**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4); 
+	
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+	
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+	
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+	
+	/**
+     * @var array format
+     */
+    public $format;
+	
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+	
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+	
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+	
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+    
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;	 
 
 
 	/**

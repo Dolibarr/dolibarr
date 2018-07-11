@@ -139,7 +139,7 @@ if ($user->societe_id > 0) {
     $sql .= " AND t.fk_soc='" . $user->societe_id . "'";
 } else {
     // For internals users,
-    if (!empty($conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
+    if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
         $sql .= " AND t.fk_user_assign=" . $user->id;
     }
 }
@@ -283,7 +283,7 @@ if ($user->societe_id > 0) {
     $sql .= " AND t.fk_soc='" . $user->societe_id . "'";
 } else {
     // Restricted to assigned user only
-    if ($conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
+    if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
         $sql .= " AND t.fk_user_assign=" . $user->id;
     }
 }

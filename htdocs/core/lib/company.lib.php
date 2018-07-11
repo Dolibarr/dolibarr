@@ -234,8 +234,8 @@ function societe_prepare_head(Societe $object)
     	$head[$h][1] = $langs->trans("WebSiteAccounts");
     	$nbNote = 0;
     	$sql = "SELECT COUNT(n.rowid) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."website_account as n";
-    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$sql.= " FROM ".MAIN_DB_PREFIX."societe_account as n";
+    	$sql.= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
     	$resql=$db->query($sql);
     	if ($resql)
     	{

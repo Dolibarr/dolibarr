@@ -216,7 +216,7 @@ foreach($search as $key => $val)
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project);
-if (!$user->societe_id && ($mode == "my_assign" || (!$user->admin && $conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY))) {
+if (!$user->societe_id && ($mode == "my_assign" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND t.fk_user_assign=".$user->id;
 }
 

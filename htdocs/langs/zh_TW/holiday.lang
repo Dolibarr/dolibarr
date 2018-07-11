@@ -121,4 +121,4 @@ HolidaysCanceled=Canceled leaved request
 HolidaysCanceledBody=Your leave request for %s to %s has been canceled.
 FollowedByACounter=1: This type of leave need to be followed by a counter. Counter is incremented manually or automatically and when a leave request is validated, counter is decremented.<br>0: Not followed by a counter.
 NoLeaveWithCounterDefined=There is no leave types defined that need to be followed by a counter
-GoIntoDictionaryHolidayTypes=Go into <strong>Home - Setup - Dictionaries - Type of leaves</strong> to setup the different types of leaves.
+GoIntoDictionaryHolidayTypes=到 <strong> 首頁 - 設定 - 各式分類 - 離職類型 </strong> 設定不同離職類型。 
