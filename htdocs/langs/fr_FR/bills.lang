@@ -282,6 +282,7 @@ RelativeDiscount=Remise relative
 GlobalDiscount=Ligne de déduction
 CreditNote=Avoir
 CreditNotes=Avoirs
+CreditNotesOrExcessReceived=Avoirs ou trop perçus
 Deposit=Acompte
 Deposits=Acomptes
 DiscountFromCreditNote=Remise issue de l'avoir %s

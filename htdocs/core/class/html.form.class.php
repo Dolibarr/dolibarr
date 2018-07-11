@@ -190,7 +190,12 @@ class Form
 						$morealt=' style="width: '.$cols.'"';
 						$cols='';
 					}
-					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1]?$tmp[1]:'20').'"'.($cols?' cols="'.$cols.'"':'class="quatrevingtpercent"').$morealt.'">'.($editvalue?$editvalue:$value).'</textarea>';
+
+					$valuetoshow = ($editvalue?$editvalue:$value);
+
+					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1]?$tmp[1]:'20').'"'.($cols?' cols="'.$cols.'"':'class="quatrevingtpercent"').$morealt.'">';
+					$ret.=dol_string_neverthesehtmltags($valuetoshow, array('textarea'));
+					$ret.='</textarea>';
 				}
 				else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
 				{
@@ -288,7 +293,7 @@ class Form
 		$out='';
 
 		// Check parameters
-		if ($inputType == 'textarea') $value = dol_nl2br($value);
+		if (preg_match('/^text/',$inputType)) $value = dol_nl2br($value);
 		else if (preg_match('/^numeric/',$inputType)) $value = price($value);
 		else if ($inputType == 'day' || $inputType == 'datepicker') $value = dol_print_date($value, 'day');
 
