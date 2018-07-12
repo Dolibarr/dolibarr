@@ -7576,7 +7576,7 @@ function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='
 	{
 		$dictvalues[$tablename] = array();
 		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
-		if ($checkentity) $sql.= ' entity IN (0,'.getEntity('').')';
+		if ($checkentity) $sql.= ' and entity IN (0,'.getEntity('').')';
 
 		$resql = $db->query($sql);
 		if ($resql)
