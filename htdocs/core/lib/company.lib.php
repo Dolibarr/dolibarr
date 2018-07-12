@@ -1478,10 +1478,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 	    $formactions=new FormActions($db);
@@ -1489,12 +1486,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 	    $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
-
-        // TODO mutualize/uniformize
-        $propalstatic=new Propal($db);
-        $orderstatic=new Commande($db);
-        $supplierorderstatic=new CommandeFournisseur($db);
-        $facturestatic=new Facture($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
         if ($objcon && get_class($objcon) == 'Contact' && $filterobj && get_class($filterobj) == 'Societe')
@@ -1656,45 +1647,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
             // Objet lie
-            // TODO mutualize/uniformize
             $out.='<td>';
-            //var_dump($histo[$key]['elementtype']);
-            if (isset($histo[$key]['elementtype']))
+            if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element']))
             {
-            	if ($histo[$key]['elementtype'] == 'propal' && ! empty($conf->propal->enabled))
-            	{
-            		//$propalstatic->ref=$langs->trans("ProposalShort");
-            		//$propalstatic->id=$histo[$key]['fk_element'];
-                    if ($propalstatic->fetch($histo[$key]['fk_element'])>0) {
-                        $propalstatic->type=$histo[$key]['ftype'];
-                        $out.=$propalstatic->getNomUrl(1);
-                    } else {
-                        //$out.= '<span class="opacitymedium">'.$langs->trans("ProposalDeleted").'</span>';
-                    }
-             	}
-            	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
-            	{
-            		//$orderstatic->ref=$langs->trans("Order");
-            		//$orderstatic->id=$histo[$key]['fk_element'];
-                    if ($orderstatic->fetch($histo[$key]['fk_element'])>0) {
-                        $orderstatic->type=$histo[$key]['ftype'];
-                        $out.=$orderstatic->getNomUrl(1);
-                    } else {
-                    	//$out.= '<span class="opacitymedium">'.$langs->trans("OrderDeleted").'<span>';
-                    }
-             	}
-            	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
-            	{
-            		//$facturestatic->ref=$langs->trans("Invoice");
-            		//$facturestatic->id=$histo[$key]['fk_element'];
-                    if ($facturestatic->fetch($histo[$key]['fk_element'])>0) {
-                        $facturestatic->type=$histo[$key]['ftype'];
-                        $out.=$facturestatic->getNomUrl(1,'compta');
-                    } else {
-                    	//$out.= '<span class="opacitymedium">'.$langs->trans("InvoiceDeleted").'</span>';
-                    }
-            	}
-            	else $out.='&nbsp;';
+            	$out.=dolGetElementUrl($histo[$key]['fk_element'],$histo[$key]['elementtype'],1);
             }
             else $out.='&nbsp;';
             $out.='</td>';
