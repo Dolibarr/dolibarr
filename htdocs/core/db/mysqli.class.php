@@ -765,28 +765,36 @@ class DoliDBMysqli extends DoliDB
         // ex. : $field_desc = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
         $sql= "ALTER TABLE ".$table." ADD ".$field_name." ";
         $sql.= $field_desc['type'];
-        if(preg_match("/^[^\s]/i",$field_desc['value']))
+        if (preg_match("/^[^\s]/i",$field_desc['value']))
+        {
             if (! in_array($field_desc['type'],array('date','datetime')))
             {
                 $sql.= "(".$field_desc['value'].")";
             }
-        if(preg_match("/^[^\s]/i",$field_desc['attribute']))
-        $sql.= " ".$field_desc['attribute'];
-        if(preg_match("/^[^\s]/i",$field_desc['null']))
-        $sql.= " ".$field_desc['null'];
-        if(preg_match("/^[^\s]/i",$field_desc['default']))
+        }
+        if (isset($field_desc['attribute']) && preg_match("/^[^\s]/i",$field_desc['attribute']))
+        {
+        	$sql.= " ".$field_desc['attribute'];
+        }
+        if (isset($field_desc['null']) && preg_match("/^[^\s]/i",$field_desc['null']))
+        {
+        	$sql.= " ".$field_desc['null'];
+        }
+        if (isset($field_desc['default']) && preg_match("/^[^\s]/i",$field_desc['default']))
         {
             if(preg_match("/null/i",$field_desc['default']))
             $sql.= " default ".$field_desc['default'];
             else
             $sql.= " default '".$field_desc['default']."'";
         }
-        if(preg_match("/^[^\s]/i",$field_desc['extra']))
-        $sql.= " ".$field_desc['extra'];
+        if (isset($field_desc['extra']) && preg_match("/^[^\s]/i",$field_desc['extra']))
+        {
+        	$sql.= " ".$field_desc['extra'];
+        }
         $sql.= " ".$field_position;
 
         dol_syslog(get_class($this)."::DDLAddField ".$sql,LOG_DEBUG);
-        if($this->query($sql)) {
+        if ($this->query($sql)) {
             return 1;
         }
         return -1;

@@ -42,8 +42,8 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-$langs->load("products");
-$langs->load("stocks");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 // Security check
@@ -735,7 +735,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
     }
 
     $moreforfilter='';
@@ -1027,7 +1027,15 @@ if ($resql)
         if (! empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.$objp->inventorycode.'</td>';
+	        print '<td>'.'<a href="'
+								.DOL_URL_ROOT.'/product/stock/mouvement.php'
+								.'?id='.$objp->entrepot_id
+								.'&amp;search_inventorycode='.$objp->inventorycode							   
+							    .'&amp;search_type_mouvement='.$objp->type_mouvement
+						.'">'
+							.$objp->inventorycode
+						.'</a>'
+					.'</td>';
         }
         if (! empty($arrayfields['m.label']['checked']))
         {

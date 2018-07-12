@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010 Regis Houssin  <regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018 Regis Houssin  <regis.houssin@capnetworks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ class ActionsCardProduct
 		$this->tpl['ref'] = $this->ref;
 
 		// Label
-		$this->tpl['label'] = $this->libelle;
+		$this->tpl['label'] = $this->label;
 
 		// Description
 		$this->tpl['description'] = nl2br($this->description);
@@ -121,20 +121,6 @@ class ActionsCardProduct
 
 			// VAT
 			$this->tpl['tva_tx'] = $form->load_tva("tva_tx",-1,$mysoc,'');
-		}
-
-		if ($action == 'create' || $action == 'edit')
-		{
-			// Status
-			$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-			$this->tpl['status'] = $form->selectarray('statut',$statutarray,$this->status);
-
-			//To Buy
-			$statutarray=array('1' => $langs->trans("Yes"), '0' => $langs->trans("No"));
-			$this->tpl['tobuy'] = $form->selectarray('tobuy',$statutarray,$this->status_buy);
-
-            $this->tpl['description'] = $this->description;
-            $this->tpl['note'] = $this->note;
 		}
 
 		if ($action == 'view')
@@ -180,10 +166,13 @@ class ActionsCardProduct
 		{
     		// Status
     		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
-    		$this->tpl['status'] = $form->selectarray('statut',$statutarray,$_POST["statut"]);
+    		$this->tpl['status'] = $form->selectarray('statut',$statutarray,$this->object->status);
 
     		$statutarray=array('1' => $langs->trans("ProductStatusOnBuy"), '0' => $langs->trans("ProductStatusNotOnBuy"));
-    		$this->tpl['status_buy'] = $form->selectarray('statut_buy',$statutarray,$_POST["statut_buy"]);
+    		$this->tpl['status_buy'] = $form->selectarray('statut_buy',$statutarray,$this->object->status_buy);
+
+    		$this->tpl['description'] = $this->description;
+    		$this->tpl['note'] = $this->note;
 
 		    // Finished
 			$statutarray=array('1' => $langs->trans("Finished"), '0' => $langs->trans("RowMaterial"));
@@ -208,10 +197,6 @@ class ActionsCardProduct
 
 		if ($action == 'view')
 		{
-    		// Status
-    		$this->tpl['status'] = $this->object->getLibStatut(2,0);
-    		$this->tpl['status_buy'] = $this->object->getLibStatut(2,1);
-
     		// Photo
 			$this->tpl['nblignes'] = 4;
 			if ($this->object->is_photo_available($conf->product->multidir_output[$this->object->entity]))
@@ -268,7 +253,7 @@ class ActionsCardProduct
 
 		$this->field_list = array();
 
-		$sql = "SELECT rowid, name, alias, title, align, sort, search, enabled, rang";
+		$sql = "SELECT rowid, name, alias, title, align, sort, search, visible, enabled, rang";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_field_list";
 		$sql.= " WHERE element = '".$this->db->escape($this->fieldListName)."'";
 		$sql.= " AND entity = ".$conf->entity;
@@ -293,6 +278,7 @@ class ActionsCardProduct
 				$fieldlist["align"]		= $obj->align;
 				$fieldlist["sort"]		= $obj->sort;
 				$fieldlist["search"]	= $obj->search;
+				$fieldlist["visible"]	= $obj->visible;
 				$fieldlist["enabled"]	= verifCond($obj->enabled);
 				$fieldlist["order"]		= $obj->rang;
 

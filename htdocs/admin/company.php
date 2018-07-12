@@ -40,8 +40,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 $action=GETPOST('action','aZ09');
 $contextpage=GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'admincompany';   // To manage different context of search
 
-$langs->load("admin");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'companies'));
 
 if (! $user->admin) accessforbidden();
 
@@ -300,7 +300,7 @@ $head = company_admin_prepare_head();
 
 dol_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
 
-print $langs->trans("CompanyFundationDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Modify"), $langs->transnoentities("Save"))."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit' || $action == 'updateedit')

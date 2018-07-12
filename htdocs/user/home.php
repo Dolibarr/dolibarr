@@ -33,6 +33,7 @@ if (! $user->rights->user->user->lire && ! $user->admin)
 	exit;
 }
 
+// Load translation files required by page
 $langs->load("users");
 
 $canreadperms=true;
@@ -123,7 +124,9 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="5">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
+	print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td>';
+	print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/list.php?sortfield=u.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+	print '</tr>';
 	$i = 0;
 
 	while ($i < $num && $i < $max)
@@ -232,11 +235,13 @@ if ($canreadperms)
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$colspan=2;
+		$colspan=1;
 		if (! empty($conf->multicompany->enabled)) $colspan++;
 		$num = $db->num_rows($resql);
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="'.$colspan.'">'.$langs->trans("LastGroupsCreated",($num ? $num : $max)).'</td>';
+		print '<td class="right"><a class="commonlink" href="'.DOL_URL_ROOT.'/user/group/list.php?sortfield=g.datec&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '</tr>';
 		$i = 0;
 
 		$grouptemp = new UserGroup($db);

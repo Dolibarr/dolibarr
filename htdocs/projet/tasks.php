@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("users", "projects"));
 
 $id = GETPOST('id', 'int');
@@ -461,7 +462,7 @@ if ($action == 'create' && $user->rights->projet->creer && (empty($object->third
 
 	// List of projects
 	print '<tr><td class="fieldrequired">'.$langs->trans("ChildOfProjectTask").'</td><td>';
-	print $formother->selectProjectTasks(GETPOST('task_parent'),$projectid?$projectid:$object->id, 'task_parent', 0, 0, 1, 1);
+	print $formother->selectProjectTasks(GETPOST('task_parent'), $projectid?$projectid:$object->id, 'task_parent', 0, 0, 1, 1, 0, '0,1', 'maxwidth500');
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("AffectedTo").'</td><td>';

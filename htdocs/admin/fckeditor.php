@@ -28,8 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/doleditor.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
-$langs->load("admin");
-$langs->load("fckeditor");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'fckeditor'));
 
 $action = GETPOST('action','alpha');
 // Possible modes are:

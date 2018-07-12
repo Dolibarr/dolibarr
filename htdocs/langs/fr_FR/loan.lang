@@ -10,6 +10,7 @@ LoanCapital=Capital
 Insurance=Assurance
 Interest=Intérêt
 Nbterms=Nombre de termes
+Term=Terme
 LoanAccountancyCapitalCode=Compte comptable capital
 LoanAccountancyInsuranceCode=Compte comptable assurance
 LoanAccountancyInterestCode=Compte comptable intérêts
@@ -17,39 +18,14 @@ ConfirmDeleteLoan=Confirmer la suppression de cet emprunt ?
 LoanDeleted=Emprunt supprimé avec succès
 ConfirmPayLoan=Classer cet emprunt comme payé
 LoanPaid=Emprunt payé
-# Calc
-LoanCalc=Calculateur d'Emprunt Bancaire
-PurchaseFinanceInfo=Information de Financement et d'Achat
-SalePriceOfAsset=Prix de vente du Bien
-PercentageDown=Réduction Pourcentage
-LengthOfMortgage=Durée du prêt
-AnnualInterestRate=Taux d'Intérêts Annuel
-ExplainCalculations=Expliquer les Calculs
-ShowMeCalculationsAndAmortization=Montrer les calculs et l'ammortissement
-MortgagePaymentInformation=Information de Paiement de l'Hypothèque
-DownPayment=Acompte
-DownPaymentDesc=L'<b>acompte</b> = Le prix de la maison multiplié par le pourcentage divisé par 100 (5% devient 5/100 ou 0,05)
-InterestRateDesc=Le  <b>taux d'intérêt</b> = Le pourcentage annuel d'intérêt divisé par 100.
-MonthlyFactorDesc=<b> facteur mensuel </b> = le résultat de la formule suivant
-MonthlyInterestRateDesc=Le  <b>taux d'intérêt mensuel</b> = Le taux annuel d'intérêt divisé par 12 (pour les 12 mois de l'année)
-MonthTermDesc=Le <b>terme en mois</b> du prêt en mois = Le nombre d'années que vous avez pris pour le prêt multiplié par 12
-MonthlyPaymentDesc=Le paiement mensuel est déterminé en utilisant la formule suivante
-AmortizationPaymentDesc=L' <a href="#amortization">amortissement</a> décompose votre paiement mensuel entre l'intérêt de la banque et le remboursement du principal de votre prêt.
-AmountFinanced=Montant financé
-AmortizationMonthlyPaymentOverYears=Amortissement pour paiement mensuel : <b>%s</b> sur %s ans
-Totalsforyear=Total pour l'année
-MonthlyPayment=Paiement mensuel
-LoanCalcDesc=Cette <b>simulation de prêt</b> peut être utilisée pour comprendre les paiements mensuels d'un emprunt, basé sur le montant emprunté, le terme du prêt désiré et l'intérêt.<br> Cette simulation inclut aussi PMI (l'Assurance Hypothécaire Privée) pour des prêts où moins de 20 %% est mis comme un acompte. Sont pris en considération les impôts fonciers de ville et leur effet sur le paiement total mensuel.<br>
-GoToInterest=%s remboursera les intérêts
-GoToPrincipal=%s remboursera le principal (capital)
-YouWillSpend=Vous allez dépenser %s pour l'année %s
 ListLoanAssociatedProject=Liste des prêts associés au projet
 AddLoan=Créer prêt
+FinancialCommitment=Echéancier
+InterestAmount=Intérêt
+CapitalRemain=Capital restant
 # Admin
 ConfigLoan=Configuration du module Emprunt
 LOAN_ACCOUNTING_ACCOUNT_CAPITAL=Compte comptable remboursement capital d'un emprunt par défaut
 LOAN_ACCOUNTING_ACCOUNT_INTEREST=Compte comptable paiement d'intérêt d'un emprunt par défaut
 LOAN_ACCOUNTING_ACCOUNT_INSURANCE=Compte comptable paiement de l'assurance d'un emprunt par défaut
-FinancialCommitment=Echéancier
 CreateCalcSchedule=Créer / Modifier échéancier de prêt
-InterestAmount=Montant des intérêts

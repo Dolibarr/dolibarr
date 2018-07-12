@@ -26,8 +26,8 @@ require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
-$langs->load("companies");
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'other'));
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 
 // Security check

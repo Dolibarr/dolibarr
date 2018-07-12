@@ -293,7 +293,6 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 
 	if (empty($method) || $method == 3 || $method == 4)
 	{
-
 		$relativepathstring = $_SERVER["PHP_SELF"];
 		// Clean $relativepathstring
 		if (constant('DOL_URL_ROOT')) $relativepathstring = preg_replace('/^'.preg_quote(constant('DOL_URL_ROOT'),'/').'/', '', $relativepathstring);
@@ -303,19 +302,30 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 		//var_dump($user->default_values);
 
 		// Code for search criteria persistence.
-		// Retrieve values if restore_lastsearch_values is set and there is saved values
-		if (! empty($_GET['restore_lastsearch_values']) && ! empty($_SESSION['lastsearch_values_'.$relativepathstring]))        // Keep $_GET here
+		// Retrieve values if restore_lastsearch_values
+		if (! empty($_GET['restore_lastsearch_values']))        // Use $_GET here and not GETPOST
 		{
-			$tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
-			if (is_array($tmp))
+			if (! empty($_SESSION['lastsearch_values_'.$relativepathstring]))	// If there is saved values
 			{
-				foreach($tmp as $key => $val)
+				$tmp=json_decode($_SESSION['lastsearch_values_'.$relativepathstring], true);
+				if (is_array($tmp))
 				{
-					if ($key == $paramname)
+					foreach($tmp as $key => $val)
 					{
-						$out=$val;
-						break;
+						if ($key == $paramname)	// We are on the requested parameter
+						{
+							$out=$val;
+							break;
+						}
 					}
+				}
+			}
+			if (! empty($_SESSION['lastsearch_contextpage_'.$relativepathstring]))	// If there is saved contextpage
+			{
+				if ($paramname == 'contextpage')
+				{
+					$out = $_SESSION['lastsearch_contextpage_'.$relativepathstring];
+					//var_dump($paramname.' '.$out);
 				}
 			}
 		}
@@ -1008,6 +1018,14 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 	// If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
 
+	if ($ident < 0)
+	{
+		foreach ($conf->loghandlers as $loghandlerinstance)
+		{
+			$loghandlerinstance->setIdent($ident);
+		}
+	}
+
 	if (! empty($message))
 	{
 		// Test log level
@@ -1060,7 +1078,7 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 		unset($data);
 	}
 
-	if (! empty($ident))
+	if ($ident > 0)
 	{
 		foreach ($conf->loghandlers as $loghandlerinstance)
 		{
@@ -1349,13 +1367,13 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 			//}
 		}
 	}
-	elseif ($object->element == 'ticketsup')
+	elseif ($object->element == 'ticket')
 	{
 		$width=80; $cssclass='photoref';
-		$showimage=$object->is_photo_available($conf->ticketsup->multidir_output[$entity].'/'.$object->track_id);
+		$showimage=$object->is_photo_available($conf->ticket->multidir_output[$entity].'/'.$object->track_id);
 		$maxvisiblephotos=(isset($conf->global->TICKETSUP_MAX_VISIBLE_PHOTO)?$conf->global->TICKETSUP_MAX_VISIBLE_PHOTO:2);
 		if ($conf->browser->phone) $maxvisiblephotos=1;
-		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticketsup', $conf->ticketsup->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
+		if ($showimage) $morehtmlleft.='<div class="floatleft inline-block valignmiddle divphotoref">'.$object->show_photos('ticket', $conf->ticket->multidir_output[$entity],'small',$maxvisiblephotos,0,0,0,$width,0).'</div>';
 		else
 		{
 			if (!empty($conf->global->TICKETSUP_NODISPLAYIFNOPHOTO)) {
@@ -1379,17 +1397,20 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
 				if (in_array($modulepart, array('propal', 'commande', 'facture', 'ficheinter', 'contract', 'supplier_order', 'supplier_proposal', 'supplier_invoice', 'expensereport')) && class_exists("Imagick"))
 				{
 					$objectref = dol_sanitizeFileName($object->ref);
-					$dir_output = $conf->$modulepart->multidir_output[$entity] . "/";
+					$dir_output = (empty($conf->$modulepart->multidir_output[$entity]) ? $conf->$modulepart->dir_output : $conf->$modulepart->multidir_output[$entity]) . "/";
 					if (in_array($modulepart, array('invoice_supplier', 'supplier_invoice')))
 					{
-						$subdir = get_exdir($object->id, 2, 0, 0, $object, $modulepart).$objectref;		// the objectref dir is not include into get_exdir when used with level=2, so we add it here
+						$subdir = get_exdir($object->id, 2, 0, 1, $object, $modulepart);
+						$subdir.= ((! empty($subdir) && ! preg_match('/\/$/',$subdir))?'/':'').$objectref;		// the objectref dir is not included into get_exdir when used with level=2, so we add it at end
 					}
 					else
 					{
-						$subdir = get_exdir($object->id, 0, 0, 0, $object, $modulepart);
+						$subdir = get_exdir($object->id, 0, 0, 1, $object, $modulepart);
 					}
+					if (empty($subdir)) $subdir = 'errorgettingsubdirofobject';	// Protection to avoid to return empty path
 
 					$filepath = $dir_output . $subdir . "/";
+
 					$file = $filepath . $objectref . ".pdf";
 					$relativepath = $subdir.'/'.$objectref.'.pdf';
 
@@ -2000,7 +2021,7 @@ function dol_mktime($hour,$minute,$second,$month,$day,$year,$gm=false,$check=1)
 	}
 	else
 	{
-		dol_print_error('','PHP version must be 5.3+');
+		dol_print_error('','PHP version must be 5.4+');
 		return '';
 	}
 }
@@ -2759,6 +2780,35 @@ function isValidEmail($address, $acceptsupervisorkey=0)
 	if (filter_var($address, FILTER_VALIDATE_EMAIL)) return true;
 
 	return false;
+}
+
+/**
+ *	Return if the domain name has a valid MX record.
+ *  WARNING: This need function idn_to_ascii, checkdnsrr and getmxrr
+ *
+ *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
+ *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
+ */
+function isValidMXRecord($domain)
+{
+	if (function_exists('idn_to_ascii') && function_exists('checkdnsrr'))
+	{
+		if (! checkdnsrr(idn_to_ascii($domain), 'MX'))
+		{
+			return 0;
+		}
+		if (function_exists('getmxrr'))
+		{
+			$mxhosts=array();
+			$weight=array();
+			getmxrr(idn_to_ascii($domain), $mxhosts, $weight);
+			if (count($mxhosts) > 1) return 1;
+			if (count($mxhosts) == 1 && ! empty($mxhosts[0])) return 1;
+
+			return 0;
+		}
+	}
+	return -1;
 }
 
 /**
@@ -4051,10 +4101,6 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 		$options=preg_replace('/&+/i','&',$options);
 		if (! preg_match('/^&/',$options)) $options='&'.$options;
 
-		//print "&nbsp;";
-		//$sortimg.= '<img width="2" src="'.DOL_URL_ROOT.'/theme/common/transparent.png" alt="">';
-		//$sortimg.= '<span class="nowrap">';
-
 		if (! $sortorder || $field1 != $sortfield1)
 		{
 			//$out.= '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
@@ -4073,8 +4119,6 @@ function getTitleFieldOfList($name, $thead=0, $file="", $field="", $begin="", $m
 				$sortimg.= '<span class="nowrap">'.img_down("A-Z",0).'</span>';
 			}
 		}
-
-		//$sortimg.= '</span>';
 	}
 
 	$out.=$sortimg;
@@ -4296,7 +4340,7 @@ function print_fleche_navigation($page, $file, $options='', $nextpage=0, $betwee
 	print '<div class="pagination"><ul>';
 	if ((int) $limit >= 0 && empty($hideselectlimit))
 	{
-		$pagesizechoices='10:10,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
+		$pagesizechoices='10:10,15:15,20:20,30:30,40:40,50:50,100:100,250:250,500:500,1000:1000,5000:5000';
 		//$pagesizechoices.=',0:'.$langs->trans("All");     // Not yet supported
 		//$pagesizechoices.=',2:2';
 		if (! empty($conf->global->MAIN_PAGESIZE_CHOICES)) $pagesizechoices=$conf->global->MAIN_PAGESIZE_CHOICES;
@@ -4415,7 +4459,7 @@ function vatrate($rate, $addpercent=false, $info_bits=0, $usestarfornpr=0)
  *		@param	integer		$form			Type of format, HTML or not (not by default)
  *		@param	Translate	$outlangs		Object langs for output
  *		@param	int			$trunc			1=Truncate if there is more decimals than MAIN_MAX_DECIMALS_SHOWN (default), 0=Does not truncate. Deprecated because amount are rounded (to unit or total amount accurancy) before beeing inserted into database or after a computation, so this parameter should be useless.
- *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOTAL)
+ *		@param	int			$rounding		Minimum number of decimal to show. If 0, no change, if -1, we use min($conf->global->MAIN_MAX_DECIMALS_UNIT,$conf->global->MAIN_MAX_DECIMALS_TOT)
  *		@param	int			$forcerounding	Force the number of decimal to forcerounding decimal (-1=do not force)
  *		@param	string		$currency_code	To add currency symbol (''=add nothing, 'auto'=Use default currency, 'XXX'=add currency symbols for XXX currency)
  *		@return	string						Chaine avec montant formate
@@ -4505,7 +4549,7 @@ function price($amount, $form=0, $outlangs='', $trunc=1, $rounding=-1, $forcerou
  *									'MT'=Round to Max for totals with Tax (MAIN_MAX_DECIMALS_TOT)
  *									'MS'=Round to Max for stock quantity (MAIN_MAX_DECIMALS_STOCK)
  * 	@param	int		$alreadysqlnb	Put 1 if you know that content is already universal format number
- *	@return	string					Amount with universal numeric format (Example: '99.99999') or unchanged text if conversion fails.
+ *	@return	string					Amount with universal numeric format (Example: '99.99999') or unchanged text if conversion fails. If amount is null or '', it returns ''.
  *
  *	@see    price					Opposite function of price2num
  */
@@ -5110,7 +5154,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".$seller_in_cee.", buyer country=".$buyer_country_code.", buyer in cee=".$buyer_in_cee.", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
+	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".$seller_in_cee.", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer in cee=".$buyer_in_cee.", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
@@ -5323,7 +5367,9 @@ function get_exdir($num, $level, $alpha, $withoutslash, $object, $modulepart)
 		// TODO
 		// We will enhance here a common way of forging path for document storage
 		// Here, object->id, object->ref and modulepart are required.
-		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice','shipment','expensereport')))
+		//var_dump($modulepart);
+		if (in_array($modulepart, array('thirdparty','contact','member','propal','proposal','commande','order','facture','invoice',
+			'supplier_order','supplier_proposal','shipment','contract','expensereport')))
 		{
 			$path=($object->ref?$object->ref:$object->id);
 		}
@@ -5431,7 +5477,7 @@ function picto_required()
  *  @param	integer	$strip_tags			0=Use internal strip, 1=Use strip_tags() php function (bugged when text contains a < char that is not for a html tag)
  *	@return string	    				String cleaned
  *
- * 	@see	dol_escape_htmltag strip_tags
+ * 	@see	dol_escape_htmltag strip_tags dol_string_onlythesehtmltags dol_string_neverthesehtmltags
  */
 function dol_string_nohtmltag($stringtoclean, $removelinefeed=1, $pagecodeto='UTF-8', $strip_tags=0)
 {
@@ -5461,6 +5507,51 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed=1, $pagecodeto='UT
 	}
 
 	return trim($temp);
+}
+
+/**
+ *	Clean a string to keep only desirable HTML tags.
+ *
+ *	@param	string	$stringtoclean		String to clean
+ *	@return string	    				String cleaned
+ *
+ * 	@see	dol_escape_htmltag strip_tags dol_string_nohtmltag dol_string_neverthesehtmltags
+ */
+function dol_string_onlythesehtmltags($stringtoclean)
+{
+	$allowed_tags = array(
+		"html", "head", "meta", "body", "b", "br", "div", "em", "font", "img", "hr", "i", "li", "link",
+		"ol", "p", "s", "section", "span", "strong", "title",
+		"table", "tr", "th", "td", "u", "ul"
+	);
+
+	$allowed_tags_string = join("><", $allowed_tags);
+	$allowed_tags_string = preg_replace('/^>/','',$allowed_tags_string);
+	$allowed_tags_string = preg_replace('/<$/','',$allowed_tags_string);
+
+	$temp = strip_tags($stringtoclean, $allowed_tags_string);
+
+	return $temp;
+}
+
+/**
+ *	Clean a string from some undesirable HTML tags.
+ *
+ *	@param	string	$stringtoclean		String to clean
+ *  @param	array	$disallowed_tags	Array of tags not allowed
+ *	@return string	    				String cleaned
+ *
+ * 	@see	dol_escape_htmltag strip_tags dol_string_nohtmltag dol_string_onlythesehtmltags
+ */
+function dol_string_neverthesehtmltags($stringtoclean, $disallowed_tags=array('textarea'))
+{
+	$temp = $stringtoclean;
+	foreach($disallowed_tags as $tagtoremove)
+	{
+		$temp = preg_replace('/<\/?'.$tagtoremove.'>/', '', $temp);
+		$temp = preg_replace('/<\/?'.$tagtoremove.'\s+[^>]*>/', '', $temp);
+	}
+	return $temp;
 }
 
 
@@ -5756,6 +5847,7 @@ function dol_textishtml($msg,$option=0)
 		if (preg_match('/<html/i',$msg))				return true;
 		elseif (preg_match('/<body/i',$msg))			return true;
 		elseif (preg_match('/<(b|em|i|u)>/i',$msg))		return true;
+		elseif (preg_match('/<br\/>/i',$msg))	  return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)>/i',$msg)) 	  return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*>/i',$msg)) return true;
 		elseif (preg_match('/<(br|div|font|li|p|span|strong|table)\s+[^<>\/]*\/>/i',$msg)) return true;
@@ -6017,17 +6109,20 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 	{
 		$substitutionarray['__DATE_YMD__']        = is_object($object)?(isset($object->date) ? dol_print_date($object->date, 'day', 0, $outputlangs) : '') : '';
 		$substitutionarray['__DATE_DUE_YMD__']    = is_object($object)?(isset($object->date_lim_reglement)? dol_print_date($object->date_lim_reglement, 'day', 0, $outputlangs) : '') : '';
+
 		$substitutionarray['__AMOUNT__']          = is_object($object)?$object->total_ttc:'';
 		$substitutionarray['__AMOUNT_EXCL_TAX__'] = is_object($object)?$object->total_ht:'';
 		$substitutionarray['__AMOUNT_VAT__']      = is_object($object)?($object->total_vat?$object->total_vat:$object->total_tva):'';
- 		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2__']     = is_object($object)?$object->total_localtax1:'';
+		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2__']     = is_object($object)?$object->total_localtax1:'';
 		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3__']     = is_object($object)?$object->total_localtax2:'';
-    	$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+
+		$substitutionarray['__AMOUNT_FORMATED__']          = is_object($object)?price($object->total_ttc, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
 		$substitutionarray['__AMOUNT_EXCL_TAX_FORMATED__'] = is_object($object)?price($object->total_ht, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-        $substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object)?($object->total_vat?price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency_code):price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency_code)):'';
-        if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object)?price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-        if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object)?price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
-        // TODO Add keys for foreign multicurrency
+		$substitutionarray['__AMOUNT_VAT_FORMATED__']      = is_object($object)?($object->total_vat?price($object->total_vat, 0, $outputlangs, 0, 0, -1, $conf->currency_code):price($object->total_tva, 0, $outputlangs, 0, 0, -1, $conf->currency_code)):'';
+		if ($onlykey != 2 || $mysoc->useLocalTax(1)) $substitutionarray['__AMOUNT_TAX2_FORMATED__']     = is_object($object)?price($object->total_localtax1, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+		if ($onlykey != 2 || $mysoc->useLocalTax(2)) $substitutionarray['__AMOUNT_TAX3_FORMATED__']     = is_object($object)?price($object->total_localtax2, 0, $outputlangs, 0, 0, -1, $conf->currency_code):'';
+
+		// TODO Add keys for foreign multicurrency
 
 		// For backward compatibility
 		if ($onlykey != 2)

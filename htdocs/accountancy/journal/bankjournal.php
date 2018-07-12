@@ -56,6 +56,7 @@ require_once DOL_DOCUMENT_ROOT . '/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT . '/loan/class/loan.class.php';
 require_once DOL_DOCUMENT_ROOT . '/loan/class/paymentloan.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("companies","other","compta","banks","bills","donations","loan","accountancy","trips","salaries","hrm"));
 
 // Multi journal
@@ -843,7 +844,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("FinanceJournal"));
 
-	$nom = $langs->trans("FinanceJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
+	$nom = $langs->trans("FinanceJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
 	$builddate=dol_now();
 	//$description = $langs->trans("DescFinanceJournal") . '<br>';
 	$description.= $langs->trans("DescJournalOnlyBindedVisible").'<br>';
@@ -881,7 +882,7 @@ if (empty($action) || $action == 'view') {
 
 
 	print '<div class="tabsAction tabsActionNoBottom">';
-	print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
+	if (! empty($conf->global->ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL)) print '<input type="button" class="butAction" name="exportcsv" value="' . $langs->trans("ExportDraftJournal") . '" onclick="launch_export();" />';
 	if ($in_bookkeeping == 'notyet') print '<input type="button" class="butAction" name="writebookkeeping" value="' . $langs->trans("WriteBookKeeping") . '" onclick="writebookkeeping();" />';
 	else print '<a class="butActionRefused" name="writebookkeeping">' . $langs->trans("WriteBookKeeping") . '</a>';
 	print '</div>';

@@ -12,7 +12,7 @@
  * Copyright (C) 2013      Jean-Francois FERRY   <jfefe@aternatik.fr>
  * Copyright (C) 2013-2014 Florian Henry         <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador       <csalvador@gpcsolutions.fr>
- * Copyright (C) 2014	   Ferran Marcet	 	 <fmarcet@2byte.es>
+ * Copyright (C) 2014-2018 Ferran Marcet	 	 <fmarcet@2byte.es>
  * Copyright (C) 2015-2016 Marcos García         <marcosgdf@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,6 +64,7 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array('bills','companies','compta','products','banks','main','withdrawals'));
 if (! empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
@@ -408,7 +409,7 @@ if (empty($reshook))
 
 			//var_dump($object->getRemainToPay(0));
 			//var_dump($discount->amount_ttc);exit;
-			if ($discount->amount_ttc > $object->getRemainToPay(0))
+			if (price2num($discount->amount_ttc) > price2num($object->getRemainToPay(0)))
 			{
 				// TODO Split the discount in 2 automatically
 				$error++;
@@ -1289,7 +1290,7 @@ if (empty($reshook))
 							{
 								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
 								$descline = $langs->trans('Deposit');
-								$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
+								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
 								if ($typeamount=='amount') {
 									$descline.= ' ('. price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
 								} elseif ($typeamount=='variable') {
@@ -1416,7 +1417,13 @@ if (empty($reshook))
 										$localtax1_tx = get_localtax($tva_tx, 1, $object->thirdparty);
 										$localtax2_tx = get_localtax($tva_tx, 2, $object->thirdparty);
 
-										$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit);
+										$result = $object->addline(
+											$desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $localtax1_tx, $localtax2_tx, $lines[$i]->fk_product,
+											$lines[$i]->remise_percent, $date_start, $date_end, 0, $lines[$i]->info_bits, $lines[$i]->fk_remise_except,
+											'HT', 0, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $object->origin, $lines[$i]->rowid,
+											$fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+											$lines[$i]->situation_percent, $lines[$i]->fk_prev_id, $lines[$i]->fk_unit
+										);
 
 										if ($result > 0) {
 											$lineid = $result;
@@ -2866,7 +2873,7 @@ if ($action == 'create')
 			if (($origin == 'propal') || ($origin == 'commande'))
 			{
 				print '<td class="nowrap" style="padding-left: 5px">';
-				$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
+				$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
 				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
 				print '</td>';
 				print '<td class="nowrap" style="padding-left: 5px">' . $langs->trans('Value') . ':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="' . GETPOST('valuedeposit', 'int') . '"/>';
@@ -3193,7 +3200,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="origin"         value="' . $objectsrc->element . '">';
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
-		switch ($classname) {
+		switch (get_class($objectsrc)) {
 			case 'Propal':
 				$newclassname = 'CommercialProposal';
 				break;
@@ -3210,7 +3217,7 @@ if ($action == 'create')
 				$newclassname = 'Intervention';
 				break;
 			default:
-				$newclassname = $classname;
+				$newclassname = get_class($objectsrc);
 		}
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1);
@@ -3369,13 +3376,14 @@ else if ($id > 0 || ! empty($ref))
 			require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 			$formproduct = new FormProduct($db);
 			$label = $object->type == Facture::TYPE_CREDIT_NOTE ? $langs->trans("SelectWarehouseForStockDecrease") : $langs->trans("SelectWarehouseForStockIncrease");
+			$forcecombo=0;
+			if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 			$formquestion = array(
-								// 'text' => $langs->trans("ConfirmClone"),
-								// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' =>
-								// 1),
-								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
-								// => 1),
-								array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"))));
+				// 'text' => $langs->trans("ConfirmClone"),
+				// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+				// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+				array('type' => 'other','name' => 'idwarehouse','label' => $label,'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, $langs->trans("NoStockAction"), 0, $forcecombo))
+			);
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', $formquestion, "yes", 1);
 		} else {
 			$formconfirm = $form->formconfirm($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $langs->trans('DeleteBill'), $text, 'confirm_delete', '', 'no', 1);
@@ -3531,7 +3539,7 @@ else if ($id > 0 || ! empty($ref))
 		// Cree un tableau formulaire
 		$formquestion = array('text' => $langs->trans("ConfirmClassifyPaidPartiallyQuestion"),array('type' => 'radio','name' => 'close_code','label' => $langs->trans("Reason"),'values' => $arrayreasons),array('type' => 'text','name' => 'close_note','label' => $langs->trans("Comment"),'value' => '','morecss' => 'minwidth300'));
 		// Paiement incomplet. On demande si motif = escompte ou autre
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 250);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('ClassifyPaid'), $langs->trans('ConfirmClassifyPaidPartially', $object->ref), 'confirm_paid_partially', $formquestion, "yes", 1, 310);
 	}
 
 	// Confirmation du classement abandonne
@@ -4317,7 +4325,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'badcustomer'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'badcustomer') {
@@ -4325,7 +4333,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			// $resteapayeraffiche=0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'product_returned'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
@@ -4333,7 +4341,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 		// Paye partiellement ou Abandon 'abandon'
 		if (($object->statut == Facture::STATUS_CLOSED || $object->statut == Facture::STATUS_ABANDONED) && $object->close_code == 'abandon') {
@@ -4344,7 +4352,7 @@ else if ($id > 0 || ! empty($ref))
 			print $form->textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
 			print '</td><td align="right">' . price(price2num($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye, 'MT')) . '</td><td>&nbsp;</td></tr>';
 			$resteapayeraffiche = 0;
-			$cssforamountpaymentcomplete = '';
+			$cssforamountpaymentcomplete = 'amountpaymentneutral';
 		}
 
 		// Billed
@@ -4625,7 +4633,7 @@ else if ($id > 0 || ! empty($ref))
 				if ($objectidnext) {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('DoPayment') . '</span></div>';
 				} else {
-					//if ($resteapayer == 0) {
+					//if ($resteapayer == 0) {		// Sometimes we can receive more, so we accept to enter more and will offer a button to convert into discount (but it is not a credit note, just a prepayment done)
 					//	print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
 					//} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'. DOL_URL_ROOT .'/compta/paiement.php?facid=' . $object->id . '&amp;action=create&amp;accountid='.$object->fk_account.'">' . $langs->trans('DoPayment') . '</a></div>';
@@ -4658,7 +4666,7 @@ else if ($id > 0 || ! empty($ref))
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="' . $_SERVER["PHP_SELF"] . '?facid=' . $object->id . '&amp;action=converttoreduc">' . $langs->trans('ConvertToReduc') . '</a></div>';
 				}
 				// For deposit invoice
-				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && empty($discount->id))
+				if ($object->type == Facture::TYPE_DEPOSIT && $user->rights->facture->creer && $object->statut > 0 && empty($discount->id))
 				{
 					print '<div class="inline-block divButAction"><a class="butAction'.($conf->use_javascript_ajax?' reposition':'').'" href="'.$_SERVER["PHP_SELF"].'?facid='.$object->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a></div>';
 				}

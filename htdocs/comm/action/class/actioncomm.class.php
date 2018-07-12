@@ -310,7 +310,8 @@ class ActionComm extends CommonObject
         $sql.= "transparency,";
         $sql.= "fk_element,";
         $sql.= "elementtype,";
-        $sql.= "entity";
+        $sql.= "entity,";
+        $sql.= "extraparams";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."', ";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
@@ -329,7 +330,8 @@ class ActionComm extends CommonObject
         $sql.= "'".$this->db->escape($this->transparency)."', ";
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
         $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
-        $sql.= $conf->entity;
+        $sql.= $conf->entity.",";
+        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -1258,11 +1260,7 @@ class ActionComm extends CommonObject
 		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
 		    $linkclose.=' class="'.$classname.' classfortooltip"';
 
-		    /*if (! is_object($hookmanager))
-		    {
-		        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		        $hookmanager=new HookManager($this->db);
-		    }
+		    /*
 		    $hookmanager->initHooks(array('actiondao'));
 		    $parameters=array('id'=>$this->id);
 		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1321,11 +1319,6 @@ class ActionComm extends CommonObject
         $result.=$linkend;
 
         global $action;
-        if (! is_object($hookmanager))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        	$hookmanager=new HookManager($this->db);
-        }
         $hookmanager->initHooks(array('actiondao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
         $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

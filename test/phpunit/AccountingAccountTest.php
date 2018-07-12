@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       test/phpunit/AccountingAccount.php
+ *      \file       test/phpunit/AccountingAccountTest.php
  *      \ingroup    test
  *      \brief      PHPUnit test
  *      \remarks    To run this script as CLI:  phpunit filename.php
@@ -121,7 +121,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
     /**
      * testAccountingAccountCreate
      *
-     * @return  void
+     * @return  int		Id of created object
      */
     public function testAccountingAccountCreate()
     {
@@ -149,7 +149,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
     /**
      * testAccountingAccountFetch
      *
-     * @param   int $id     Id order
+     * @param   int $id     Id accounting account
      * @return  AccountingAccount
      *
      * @depends	testAccountingAccountCreate
@@ -175,7 +175,7 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
      * testAccountingAccountUpdate
      *
      * @param	Object		$localobject	AccountingAccount
-     * @return	AccountingAccount
+     * @return	int							ID accounting account
      *
      * @depends	testAccountingAccountFetch
      * The depends says test is run only if previous is ok
@@ -199,8 +199,8 @@ class AccountingAccountTest extends PHPUnit_Framework_TestCase
     /**
      * testAccountingAccountDelete
      *
-     * @param   int $id         Id of order
-     * @return  void
+     * @param   int $id         Id of accounting account
+     * @return  int				Result of delete
      *
      * @depends testAccountingAccountUpdate
      * The depends says test is run only if previous is ok

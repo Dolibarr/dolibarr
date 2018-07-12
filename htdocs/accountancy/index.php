@@ -26,6 +26,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("compta","bills","other","accountancy","loans","banks","admin","dict"));
 
 // Security check
@@ -75,7 +76,7 @@ if ($conf->accounting->enabled)
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	print "<br>\n";
 
 	$step++;

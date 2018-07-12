@@ -796,7 +796,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		{
 			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with StripeConnect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
 		$listofsources = array();
 		if (is_object($stripe))

@@ -199,7 +199,7 @@ input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 50px #FBFFEA inset;
 }
 
-table.listofchoices, tr.listofchoices, td.listofchoices {
+table.listofchoices, table.listofchoices tr, table.listofchoices td {
 	border-collapse: collapse;
     padding: 4px;
     color: #000000;
@@ -207,9 +207,6 @@ table.listofchoices, tr.listofchoices, td.listofchoices {
 	line-height: 18px;
 }
 
-tr.listofchoices {
-    height: 42px;	
-}
 .listofchoicesdesc {
 	color: #999 !important;
 }
@@ -230,7 +227,7 @@ tr.listofchoices {
 div.ok {
 	color: #114466;
 }
-font.ok {
+span.ok {
 	color: #114466;
 }
 
@@ -238,7 +235,7 @@ font.ok {
 div.warning {
 	color: #777711;
 }
-font.warning {
+span.warning {
 	color: #777711;
 }
 
@@ -249,7 +246,7 @@ div.error {
 	padding: 0.2em 0.2em 0.2em 0;
 	margin: 0.5em 0 0.5em 0;
 }
-font.error {
+span.error {
 	color: #550000;
 	font-weight: bold;
 }

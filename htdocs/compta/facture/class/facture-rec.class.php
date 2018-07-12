@@ -1118,7 +1118,21 @@ class FactureRec extends CommonInvoice
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("ShowInvoice").': '.$this->ref;
+
+		$label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
+		if (! empty($this->ref))
+			$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
+		if (! empty($this->date_last_gen))
+			$label .= '<br><b>'.$langs->trans('DateLastGeneration') . ':</b> ' . dol_print_date($this->date_last_gen, 'dayhour');
+		if ($this->frequency > 0)
+		{
+			if (! empty($this->date_when))
+			{
+				$label .= '<br><b>'.$langs->trans('NextDateToExecution') . ':</b> ';
+				$label .= (empty($this->suspended)?'':'<strike>'). dol_print_date($this->date_when, 'day').(empty($this->suspended)?'':'</strike>');	// No hour for this property
+				if (! empty($this->suspended)) $label .= ' ('.$langs->trans("Disabled").')';
+			}
+		}
 
         $url = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id;
 
@@ -1750,22 +1764,17 @@ class FactureLigneRec extends CommonInvoiceLine
     /**
      * 	Update a line to invoice_rec.
      *
+     *  @param		User	$user					User
+     *  @param		int		$notrigger				No trigger
      *	@return    	int             				<0 if KO, Id of line if OK
      */
-    function update()
+    function update(User $user, $notrigger=0)
     {
-    	global $user;
+    	global $conf;
 
     	include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
-    	if ($fk_product)
-    	{
-    		$product=new Product($this->db);
-    		$result=$product->fetch($fk_product);
-    		$product_type=$product->type;
-    	}
-
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET ";
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet_rec SET";
     	$sql.= " fk_facture = ".$this->fk_facture;
     	$sql.= ", label=".(! empty($this->label)?"'".$this->db->escape($this->label)."'":"null");
     	$sql.= ", description='".$this->db->escape($this->desc)."'";
@@ -1784,16 +1793,18 @@ class FactureLigneRec extends CommonInvoiceLine
     	$sql.= ", info_bits='".price2num($this->info_bits)."'";
     	$sql.= ", date_start_fill=".(int) $this->date_start_fill;
     	$sql.= ", date_end_fill=".(int) $this->date_end_fill;
-    	$sql.= ", total_ht='".price2num($this->total_ht)."'";
-    	$sql.= ", total_tva='".price2num($this->total_tva)."'";
-    	$sql.= ", total_localtax1='".price2num($this->total_localtax1)."'";
-    	$sql.= ", total_localtax2='".price2num($this->total_localtax2)."'";
-    	$sql.= ", total_ttc='".price2num($this->total_ttc)."'";
+    	if (empty($this->skip_update_total))
+    	{
+    		$sql.= ", total_ht=".price2num($this->total_ht);
+	    	$sql.= ", total_tva=".price2num($this->total_tva);
+	    	$sql.= ", total_localtax1=".price2num($this->total_localtax1);
+	    	$sql.= ", total_localtax2=".price2num($this->total_localtax2);
+	    	$sql.= ", total_ttc=".price2num($this->total_ttc);
+    	}
     	$sql.= ", rang=".$this->rang;
     	$sql.= ", special_code=".$this->special_code;
     	$sql.= ", fk_unit=".($this->fk_unit ?"'".$this->db->escape($this->fk_unit )."'":"null");
     	$sql.= ", fk_contract_line=".($this->fk_contract_line?$this->fk_contract_line:"null");
-
     	$sql.= " WHERE rowid = ".$this->id;
 
     	dol_syslog(get_class($this)."::updateline", LOG_DEBUG);
@@ -1812,7 +1823,7 @@ class FactureLigneRec extends CommonInvoiceLine
     		if (! $error && ! $notrigger)
     		{
     			// Call trigger
-    			$result=$this->call_trigger('LINEBILL_REC_UPDATE',$user);
+    			$result=$this->call_trigger('LINEBILL_REC_UPDATE', $user);
     			if ($result < 0)
     			{
     				$this->db->rollback();
@@ -1825,7 +1836,7 @@ class FactureLigneRec extends CommonInvoiceLine
     	}
     	else
     	{
-    		$this->error=$this->db->error();
+    		$this->error=$this->db->lasterror();
     		$this->db->rollback();
     		return -2;
     	}

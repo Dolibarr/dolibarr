@@ -334,7 +334,7 @@ class SocieteAccount extends CommonObject
         $label.= '<b>' . $langs->trans('Login') . ':</b> ' . $this->ref;
         //$label.= '<b>' . $langs->trans('WebSite') . ':</b> ' . $this->ref;
 
-        $url = dol_buildpath('/societe/societeaccount_card.php',1).'?id='.$this->id;
+        $url = dol_buildpath('/website/websiteaccount_card.php',1).'?id='.$this->id;
 
         if ($option != 'nolink')
         {

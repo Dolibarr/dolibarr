@@ -60,7 +60,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 dol_include_once('/mymodule/class/myobject.class.php');
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("mymodule@mymodule","other"));
 
 $action     = GETPOST('action','aZ09')?GETPOST('action','aZ09'):'view';				// The action 'add', 'create', 'edit', 'update', 'view', ...
@@ -352,7 +352,7 @@ print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 $newcardbutton='';
 //if ($user->rights->mymodule->creer)
 //{
-	$newcardbutton='<a class="butActionNew" href="card.php?action=create">'.$langs->trans('New');
+	$newcardbutton='<a class="butActionNew" href="card.php?action=create"><span class="valignmiddle">'.$langs->trans('New').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 //}
@@ -369,7 +369,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter = '';

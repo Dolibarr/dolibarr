@@ -42,7 +42,7 @@ if ($user->societe_id > 0)
 if (! $user->rights->facture->creer)
 accessforbidden();
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("companies", "orders"));
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;

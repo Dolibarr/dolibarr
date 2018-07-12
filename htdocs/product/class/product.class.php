@@ -275,14 +275,10 @@ class Product extends CommonObject
 
     public $fk_price_expression;
 
-	/**
-	 * @deprecated
-	 * @see fourn_pu
-	 */
-	public $buyprice;
+    /* To store supplier price found */
 	public $fourn_pu;
-
 	public $fourn_price_base_type;
+	public $fourn_socid;
 
 	/**
 	 * @deprecated
@@ -987,7 +983,7 @@ class Product extends CommonObject
 				if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 				{
 					$langs->load("errors");
-					if (empty($conf->barcode->enabled)) $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
+					if (empty($conf->barcode->enabled) || empty($this->barcode)) $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductAlreadyExists",$this->ref);
 					else $this->error=$langs->trans("Error")." : ".$langs->trans("ErrorProductBarCodeAlreadyExists",$this->barcode);
 					$this->errors[]=$this->error;
 					$this->db->rollback();
@@ -1544,6 +1540,7 @@ class Product extends CommonObject
 				$this->buyprice = $obj->price;                      // deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product of supplier
 				$this->fourn_price_base_type = 'HT';                // Price base type
+				$this->fourn_socid = $obj->fk_soc;                  // Company that offer this price
 				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
 				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
@@ -1599,6 +1596,7 @@ class Product extends CommonObject
 						$this->fourn_qty = $obj->quantity;					// min quantity for price for a virtual supplier
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Unit price of product for a virtual supplier
 						$this->fourn_price_base_type = 'HT';                // Price base type for a virtual supplier
+						$this->fourn_socid = $obj->fk_soc;                  // Company that offer this price
 						$this->ref_fourn = $obj->ref_supplier;              // deprecated
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
 						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
@@ -1845,7 +1843,7 @@ class Product extends CommonObject
 		if (! $id && ! $ref && ! $ref_ext)
 		{
 			$this->error='ErrorWrongParameters';
-			dol_print_error(get_class($this)."::fetch ".$this->error);
+			dol_syslog(get_class($this)."::fetch ".$this->error);
 			return -1;
 		}
 
@@ -3083,7 +3081,7 @@ class Product extends CommonObject
     		$sql.= " WHERE fk_soc = ".$id_fourn;
     		$sql.= " AND ref_fourn = '".$this->db->escape($ref_fourn)."'";
     		$sql.= " AND fk_product != ".$this->id;
-    		$sql.= " AND entity IN (".getEntity('productprice').")";
+    		$sql.= " AND entity IN (".getEntity('productsupplierprice').")";
 
     		$resql=$this->db->query($sql);
     		if ($resql)
@@ -3106,7 +3104,7 @@ class Product extends CommonObject
 		else $sql.= " AND (ref_fourn = '' OR ref_fourn IS NULL)";
 		$sql.= " AND quantity = '".$quantity."'";
 		$sql.= " AND fk_product = ".$this->id;
-		$sql.= " AND entity IN (".getEntity('productprice').")";
+		$sql.= " AND entity IN (".getEntity('productsupplierprice').")";
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -3599,11 +3597,7 @@ class Product extends CommonObject
 		    $linkclose.= ' title="'.dol_escape_htmltag($label, 1, 1).'"';
 		    $linkclose.= ' class="classfortooltip"';
 
-		    /*if (! is_object($hookmanager))
-	        {
-	            include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-	            $hookmanager=new HookManager($this->db);
-	        }
+		    /*
 	        $hookmanager->initHooks(array('productdao'));
 	        $parameters=array('id'=>$this->id);
 	        $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -3642,11 +3636,6 @@ class Product extends CommonObject
 		$result.= $linkend;
 
 		global $action;
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('productdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

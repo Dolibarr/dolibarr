@@ -67,9 +67,11 @@ class modReceiptPrinter extends DolibarrModules
         $this->config_page_url = array("receiptprinter.php");
 
         // Dependencies
-        $this->depends = array();
-        $this->requiredby = array();
-        $this->phpmin = array(5,1);                     // Minimum version of PHP required by module
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->need_dolibarr_version = array(3,9,-2);   // Minimum version of Dolibarr required by module
         $this->conflictwith = array();
         $this->langfiles = array("receiptprinter");
@@ -111,7 +113,7 @@ class modReceiptPrinter extends DolibarrModules
         //                        'url'=>'/printing/index.php',
         //                        'langs'=>'printing',            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
         //                        'position'=>300,
-        //                        'enabled'=>'$conf->printing->enabled && $leftmenu==\'admintools\'',
+        //                        'enabled'=>'$conf->printing->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',
         //                        'perms'=>'$user->rights->printing->read',    // Use 'perms'=>'1' if you want your menu with no permission rules
         //                        'target'=>'',
         //                        'user'=>0);                     // 0=Menu for internal users, 1=external users, 2=both

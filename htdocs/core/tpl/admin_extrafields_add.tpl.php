@@ -144,7 +144,7 @@ $langs->load("modulebuilder");
 
 <table summary="listofattributes" class="border centpercent">
 <!-- Label -->
-<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("Label"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label','alpha'); ?>"></td></tr>
+<tr><td class="titlefield fieldrequired"><?php echo $langs->trans("LabelOrTranslationKey"); ?></td><td class="valeur"><input type="text" name="label" size="40" value="<?php echo GETPOST('label','alpha'); ?>"></td></tr>
 <!-- Code -->
 <tr><td class="fieldrequired"><?php echo $langs->trans("AttributeCode"); ?></td><td class="valeur"><input type="text" name="attrname" id="attrname"  size="10" value="<?php echo GETPOST('attrname','alpha'); ?>"> (<?php echo $langs->trans("AlphaNumOnlyLowerCharsAndNoSpace"); ?>)</td></tr>
 <!-- Type -->
@@ -186,12 +186,15 @@ $langs->load("modulebuilder");
 <tr class="extra_required"><td><?php echo $langs->trans("Required"); ?></td><td class="valeur"><input id="required" type="checkbox" name="required"<?php echo (GETPOST('required','alpha')?' checked':''); ?>></td></tr>
 <!-- Always editable -->
 <tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ((GETPOST('alwayseditable','alpha') || ! GETPOST('button','alpha'))?' checked':''); ?>></td></tr>
-<?php if ($conf->multicompany->enabled) { ?>
-    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (GETPOST('entitycurrentorall','alpha') ? '':' checked'); ?>></td></tr>
-<?php } ?>
 <!-- Visibility -->
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo GETPOST('list','int')!='' ? GETPOST('list','int') : '1'; ?>"></td></tr>
+<!-- Help tooltip -->
+<tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
+<?php if ($conf->multicompany->enabled) { ?>
+	<!-- Multicompany entity -->
+    <tr><td><?php echo $langs->trans("AllEntities"); ?></td><td class="valeur"><input id="entitycurrentorall" type="checkbox" name="entitycurrentorall"<?php echo (GETPOST('entitycurrentorall','alpha') ? '':' checked'); ?>></td></tr>
+<?php } ?>
 </table>
 
 <?php dol_fiche_end(); ?>

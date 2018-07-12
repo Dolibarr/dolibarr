@@ -75,6 +75,7 @@ AvailabilityTypeAV_1M=1 kuukausi
 TypeContact_propal_internal_SALESREPFOLL=Edustaja seuraamaan tarjousta
 TypeContact_propal_external_BILLING=Asiakkaan lasku yhteystiedot
 TypeContact_propal_external_CUSTOMER=Asiakkaan yhteystiedot tarjouksen seurantaan
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Kokonainen tarjouspohja (logo...)
 DefaultModelPropalCreate=Oletusmallin luonti

@@ -234,8 +234,8 @@ function societe_prepare_head(Societe $object)
     	$head[$h][1] = $langs->trans("WebSiteAccounts");
     	$nbNote = 0;
     	$sql = "SELECT COUNT(n.rowid) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."website_account as n";
-    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$sql.= " FROM ".MAIN_DB_PREFIX."societe_account as n";
+    	$sql.= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
     	$resql=$db->query($sql);
     	if ($resql)
     	{
@@ -420,7 +420,7 @@ function societe_admin_prepare_head()
  *    @param      Translate	$outputlangs	Langs object for output translation
  *    @param      int		$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return     mixed       				String with country code or translated country name or Array('id','code','label')
+ *    @return     mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entconv=1, $searchlabel='')
 {
@@ -728,7 +728,7 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
         $newcardbutton='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
         {
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle">'.$langs->trans("AddProject").'</span>';
 			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 			$newcardbutton.= '</a>';
         }
@@ -891,7 +891,13 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
     	foreach($extrafields->attributes[$contactstatic->table_element]['label'] as $key => $val)
     	{
-    		if (! empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$contactstatic->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key])!=3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+    		if (! empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
+				$arrayfields["ef.".$key]=array(
+					'label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key],
+					'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key]<0)?0:1),
+					'position'=>$extrafields->attributes[$contactstatic->table_element]['pos'][$key],
+					'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key])!=3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+			}
     	}
     }
 
@@ -925,7 +931,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle">'.$addcontact.'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
     }
@@ -1179,7 +1185,7 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	$newcardbutton='';
 	if ($user->rights->societe->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress");
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle">'.$langs->trans("AddAddress").'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -1702,7 +1708,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 
 	$i=-1;
 
-	$sql = "SELECT s.rowid, s.nom as name, s.address, s.zip, s.town, s.code_client, s.canvas";
+	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= " WHERE s.parent = ".$object->id;
 	$sql.= " AND s.entity IN (".getEntity('societe').")";
@@ -1730,12 +1736,22 @@ function show_subsidiaries($conf,$langs,$db,$object)
 		{
 			$obj = $db->fetch_object($result);
 
+			$socstatic->id = $obj->rowid;
+			$socstatic->name = $obj->name;
+			$socstatic->name_alias = $obj->name_alias;
+			$socstatic->email = $obj->email;
+			$socstatic->code_client = $obj->code_client;
+			$socstatic->code_fournisseur = $obj->code_client;
+			$socstatic->code_compta = $obj->code_compta;
+			$socstatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+			$socstatic->email = $obj->email;
+			$socstatic->canvas = $obj->canvas;
+			$socstatic->client = $obj->client;
+			$socstatic->fournisseur = $obj->fournisseur;
+
 			print '<tr class="oddeven">';
 
 			print '<td>';
-			$socstatic->id = $obj->rowid;
-			$socstatic->name = $obj->name;
-			$socstatic->canvas = $obj->canvas;
 			print $socstatic->getNomUrl(1);
 			print '</td>';
 

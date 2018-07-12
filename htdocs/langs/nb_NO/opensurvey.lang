@@ -58,3 +58,4 @@ MoreChoices=Legg til flere valg for stemmeavgivere
 SurveyExpiredInfo=Avstemningen er blitt stengt eller utløpt
 EmailSomeoneVoted=%s har fylt ut en linje\nDu kan finne undersøkelsen din med lenken:\n%s
 ShowSurvey=Vis undersøkelse
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

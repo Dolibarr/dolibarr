@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("sendings","deliveries",'companies','bills'));
 
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'shipmentlist';   // To manage different context of search
@@ -277,7 +278,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->expedition->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2">'.$langs->trans('NewSending');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2"><span class="valignmiddle">'.$langs->trans('NewSending').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -297,7 +298,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter='';
@@ -460,7 +461,6 @@ if ($resql)
 	print "</tr>\n";
 
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num,$limit))
 	{

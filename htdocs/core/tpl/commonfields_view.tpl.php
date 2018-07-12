@@ -29,6 +29,7 @@ if (empty($conf) || ! is_object($conf))
 	print "Error, template page can't be called as URL";
 	exit;
 }
+if (! is_object($form)) $form=new Form($db);
 
 ?>
 <!-- BEGIN PHP TEMPLATE commonfields_view.tpl.php -->
@@ -50,8 +51,10 @@ foreach($object->fields as $key => $val)
 	print ' class="titlefield';
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
-	print '"';
-	print '>'.$langs->trans($val['label']).'</td>';
+	print '">';
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+	else print $langs->trans($val['label']);
+	print '</td>';
 	print '<td>';
 	print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	//print dol_escape_htmltag($object->$key, 1, 1);
@@ -87,8 +90,10 @@ foreach($object->fields as $key => $val)
 	print ' class="titlefield';
 	if ($val['notnull'] > 0) print ' fieldrequired';
 	if ($val['type'] == 'text' || $val['type'] == 'html') print ' tdtop';
-	print '"';
-	print '>'.$langs->trans($val['label']).'</td>';
+	print '">';
+	if (! empty($val['help'])) print $form->textwithpicto($langs->trans($val['label']), $val['help']);
+	else print $langs->trans($val['label']);
+	print '</td>';
 	print '<td>';
 	print $object->showOutputField($val, $key, $value, '', '', '', 0);
 	//print dol_escape_htmltag($object->$key, 1, 1);

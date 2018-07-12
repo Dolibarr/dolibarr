@@ -35,11 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/resource.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-// Load traductions files requiredby by page
-$langs->load("resource");
-$langs->load("companies");
-$langs->load("other");
-$langs->load("main");
+// Load translation files required by the page
+$langs->loadLangs(array('resource', 'companies', 'other', 'main'));
 
 // Get parameters
 $id						= GETPOST('id','int');

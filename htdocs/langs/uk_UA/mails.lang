@@ -11,7 +11,9 @@ MailFrom=Відправник
 MailErrorsTo=Errors to
 MailReply=Відповісти
 MailTo=Receiver(s)
+MailToUsers=To user(s)
 MailCC=Copy to
+MailToCCUsers=Copy to users(s)
 MailCCC=Cached copy to
 MailTopic=EMail topic
 MailText=Message
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Information
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

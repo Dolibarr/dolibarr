@@ -81,6 +81,9 @@ class Invoices extends DolibarrApi
 			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
 		}
 
+		// Add external contacts ids
+		$this->invoice->contacts_ids = $this->invoice->liste_contact(-1,'external',1);
+
 		$this->invoice->fetchObjectLinked();
 		return $this->_cleanObjectDatas($this->invoice);
 	}
@@ -175,6 +178,9 @@ class Invoices extends DolibarrApi
                 	$invoice_static->totalcreditnotes = $invoice_static->getSumCreditNotesUsed();
                 	$invoice_static->totaldeposits = $invoice_static->getSumDepositsUsed();
                 	$invoice_static->remaintopay = price2num($invoice_static->total_ttc - $invoice_static->totalpaid - $invoice_static->totalcreditnotes - $invoice_static->totaldeposits, 'MT');
+
+					// Add external contacts ids
+					$invoice_static->contacts_ids = $invoice_static->liste_contact(-1,'external',1);
 
                 	$obj_ret[] = $this->_cleanObjectDatas($invoice_static);
                 }
@@ -485,7 +491,13 @@ class Invoices extends DolibarrApi
     /**
      * Add a line to a given invoice
      *
-     * Exemple of POST query : { "desc": "Desc", "subprice": "1.00000000", "qty": "1", "tva_tx": "20.000", "localtax1_tx": "0.000", "localtax2_tx": "0.000", "fk_product": "1", "remise_percent": "0", "date_start": "", "date_end": "", "fk_code_ventilation": 0,  "info_bits": "0", "fk_remise_except": null,  "product_type": "1", "rang": "-1", "special_code": "0", "fk_parent_line": null, "fk_fournprice": null, "pa_ht": "0.00000000", "label": "", "array_options": [], "situation_percent": "100", "fk_prev_id": null, "fk_unit": null }
+     * Exemple of POST query :
+     * {
+     *     "desc": "Desc", "subprice": "1.00000000", "qty": "1", "tva_tx": "20.000", "localtax1_tx": "0.000", "localtax2_tx": "0.000",
+     *     "fk_product": "1", "remise_percent": "0", "date_start": "", "date_end": "", "fk_code_ventilation": 0,  "info_bits": "0",
+     *     "fk_remise_except": null,  "product_type": "1", "rang": "-1", "special_code": "0", "fk_parent_line": null, "fk_fournprice": null,
+     *     "pa_ht": "0.00000000", "label": "", "array_options": [], "situation_percent": "100", "fk_prev_id": null, "fk_unit": null
+     * }
      *
      * @param int   $id             Id of invoice
      * @param array $request_data   InvoiceLine data

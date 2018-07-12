@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2018	   Nicolas ZABOURI 	<info@inovea-conseil.com>
  * Copyright (C) ---Put here your own copyright and developer email---
  *
  * This program is free software; you can redistribute it and/or modify
@@ -73,6 +74,9 @@ class modMyModule extends DolibarrModules
 
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
 		$this->version = '1.0';
+                
+                //Url to the file with your last numberversion of this module
+                $this->url_last_version = 'http://www.example.com/versionmodule.txt';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Name of image file used for this module.
@@ -95,7 +99,8 @@ class modMyModule extends DolibarrModules
 									'models' => 0,                                   	// Set this to 1 if module has its own models directory (core/modules/xxx)
 									'css' => array('/mymodule/css/mymodule.css.php'),	// Set this to relative path of css file if module has its own css file
 	 								'js' => array('/mymodule/js/mymodule.js.php'),          // Set this to relative path of js file if module must load a js on all pages
-									'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0') 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+									'hooks' => array('data'=>array('hookcontext1','hookcontext2'), 'entity'=>'0'), 	// Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context 'all'
+									'moduleforexternal' => 0							// Set this to 1 if feature of module are opened to external users
 		                        );
 
 		// Data directories to create when module is enabled.
@@ -108,10 +113,10 @@ class modMyModule extends DolibarrModules
 		// Dependencies
 		$this->hidden = false;			// A condition to hide module
 		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
-		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->requiredby = array();	// List of module class names to disable if this one is disabled
 		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
 		$this->langfiles = array("mymodule@mymodule");
-		$this->phpmin = array(5,3);					// Minimum version of PHP required by module
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(4,0);	// Minimum version of Dolibarr required by module
 		$this->warnings_activation = array();                     // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array();                 // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
@@ -313,7 +318,8 @@ class modMyModule extends DolibarrModules
 	 */
 	public function init($options='')
 	{
-		$this->_load_tables('/mymodule/sql/');
+		$result=$this->_load_tables('/mymodule/sql/');
+		if ($result < 0) return -1; // Do not activate module if not allowed errors found on module SQL queries (the _load_table run sql with run_sql with error allowed parameter to 'default')
 
 		// Create extrafields
 		include_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';

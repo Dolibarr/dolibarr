@@ -1274,8 +1274,10 @@ class Facture extends CommonInvoice
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
-		$sql.= ' WHERE f.entity IN ('.getEntity('facture').')';
-		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
+
+		if ($rowid)   $sql.= " WHERE f.rowid=".$rowid;
+		else $sql.= ' WHERE f.entity IN ('.getEntity('facture').')'; // Dont't use entity if you use rowid
+
 		if ($ref)     $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
 		if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
@@ -2608,6 +2610,7 @@ class Facture extends CommonInvoice
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
+        $pu_ht_devise=price2num($pu_ht_devise);
 		$pu_ttc=price2num($pu_ttc);
 		$pa_ht=price2num($pa_ht);
 		$txtva=price2num($txtva);
@@ -2832,6 +2835,7 @@ class Facture extends CommonInvoice
 			$remise_percent	= price2num($remise_percent);
 			$qty			= price2num($qty);
 			$pu 			= price2num($pu);
+        	$pu_ht_devise	= price2num($pu_ht_devise);
 			$pa_ht			= price2num($pa_ht);
 			$txtva			= price2num($txtva);
 			$txlocaltax1	= price2num($txlocaltax1);
@@ -4676,11 +4680,11 @@ class FactureLigne extends CommonInvoiceLine
         $sql.= ", special_code='".$this->db->escape($this->special_code)."'";
         if (empty($this->skip_update_total))
         {
-        	$sql.= ", total_ht=".price2num($this->total_ht)."";
-        	$sql.= ", total_tva=".price2num($this->total_tva)."";
-        	$sql.= ", total_ttc=".price2num($this->total_ttc)."";
-        	$sql.= ", total_localtax1=".price2num($this->total_localtax1)."";
-        	$sql.= ", total_localtax2=".price2num($this->total_localtax2)."";
+        	$sql.= ", total_ht=".price2num($this->total_ht);
+        	$sql.= ", total_tva=".price2num($this->total_tva);
+        	$sql.= ", total_ttc=".price2num($this->total_ttc);
+        	$sql.= ", total_localtax1=".price2num($this->total_localtax1);
+        	$sql.= ", total_localtax2=".price2num($this->total_localtax2);
         }
 		$sql.= ", fk_product_fournisseur_price=".(! empty($this->fk_fournprice)?"'".$this->db->escape($this->fk_fournprice)."'":"null");
 		$sql.= ", buy_price_ht='".price2num($this->pa_ht)."'";
@@ -4773,6 +4777,7 @@ class FactureLigne extends CommonInvoiceLine
 
 	/**
 	 *  Mise a jour en base des champs total_xxx de ligne de facture
+	 *  TODO What is goal of this method ?
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */

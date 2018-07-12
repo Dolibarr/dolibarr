@@ -75,6 +75,7 @@ AvailabilityTypeAV_1M=1 Monat
 TypeContact_propal_internal_SALESREPFOLL=Vertreter für Angebot
 TypeContact_propal_external_BILLING=Kontakt für Kundenrechnungen
 TypeContact_propal_external_CUSTOMER=Partnerkontakt für Angebot
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Eine vollständige Angebotsvorlage (Logo, uwm.)
 DefaultModelPropalCreate=Erstellung Standardvorlage

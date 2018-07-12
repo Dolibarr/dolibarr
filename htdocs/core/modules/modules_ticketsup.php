@@ -27,7 +27,7 @@
 /**
  *  Classe mere des modeles de numerotation des references de projets
  */
-abstract class ModeleNumRefTicketsup
+abstract class ModeleNumRefTicket
 {
     public $error = '';
 
@@ -49,7 +49,7 @@ abstract class ModeleNumRefTicketsup
     public function info()
     {
         global $langs;
-        $langs->load("ticketsup");
+        $langs->load("ticket");
         return $langs->trans("NoDescription");
     }
 
@@ -61,7 +61,7 @@ abstract class ModeleNumRefTicketsup
     public function getExample()
     {
         global $langs;
-        $langs->load("ticketsup");
+        $langs->load("ticket");
         return $langs->trans("NoExample");
     }
 

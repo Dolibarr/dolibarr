@@ -141,7 +141,7 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->don->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create">'.$langs->trans('NewDonation');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/don/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewDonation').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -160,7 +160,7 @@ if ($resql)
 	if ($search_all)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall).'</div>';
     }
 
     print '<div class="div-table-responsive">';

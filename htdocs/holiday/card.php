@@ -47,6 +47,7 @@ if ($user->societe_id > 0) accessforbidden();
 
 $now=dol_now();
 
+// Load translation files required by the page
 $langs->load("holiday");
 
 $childids = $user->getAllChildIds(1);
@@ -867,12 +868,13 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
         print '<td>';
+
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_dolusers(($fuserid?$fuserid:$user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth300');
+        	print $form->select_dolusers(($fuserid?$fuserid:$user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         	//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id, 'fuserid', 0, '', 0, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth300');
+        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         print '</td>';
         print '</tr>';
 

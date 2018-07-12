@@ -56,6 +56,7 @@ if (!empty($conf->variants->enabled)) {
 	require_once DOL_DOCUMENT_ROOT.'/variants/class/ProductCombination.class.php';
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array('orders','sendings','companies','bills','propal','deliveries','products','other'));
 if (!empty($conf->incoterm->enabled)) $langs->load('incoterm');
 if (! empty($conf->margin->enabled)) $langs->load('margins');
@@ -358,8 +359,7 @@ if (empty($reshook))
 								}
 
 								// Extrafields
-								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) 							// For avoid conflicts if
-																																	  // trigger used
+								if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && method_exists($lines[$i], 'fetch_optionals')) // For avoid conflicts if trigger used
 								{
 									$lines[$i]->fetch_optionals($lines[$i]->rowid);
 									$array_options = $lines[$i]->array_options;
@@ -368,7 +368,12 @@ if (empty($reshook))
 								$tva_tx = $lines[$i]->tva_tx;
 								if (! empty($lines[$i]->vat_src_code) && ! preg_match('/\(/', $tva_tx)) $tva_tx .= ' ('.$lines[$i]->vat_src_code.')';
 
-								$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid);
+								$result = $object->addline(
+									$desc, $lines[$i]->subprice, $lines[$i]->qty, $tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product,
+									$lines[$i]->remise_percent, $lines[$i]->info_bits, $lines[$i]->fk_remise_except, 'HT', 0, $date_start, $date_end, $product_type,
+									$lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+									$lines[$i]->fk_unit, $object->origin, $lines[$i]->rowid
+								);
 
 								if ($result < 0) {
 									$error++;
@@ -1853,13 +1858,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
+				$forcecombo=0;
+				if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value'
-									// => 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"),
-									// 'value' => 1),
-									array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockDecrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockDecrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse','int')?GETPOST('idwarehouse','int'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+				);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateOrder'), $text, 'confirm_validate', $formquestion, 0, 1, 220);
@@ -1885,13 +1891,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
+				$forcecombo=0;
+				if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value'
-									// => 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"),
-									// 'value' => 1),
-									array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockIncrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockIncrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+				);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('UnvalidateOrder'), $text, 'confirm_modif', $formquestion, "yes", 1, 220);
@@ -1926,13 +1933,14 @@ if ($action == 'create' && $user->rights->commande->creer)
 				$langs->load("stocks");
 				require_once DOL_DOCUMENT_ROOT . '/product/class/html.formproduct.class.php';
 				$formproduct = new FormProduct($db);
+				$forcecombo=0;
+				if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 				$formquestion = array(
-									// 'text' => $langs->trans("ConfirmClone"),
-									// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value'
-									// => 1),
-									// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"),
-									// 'value' => 1),
-									array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockIncrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1)));
+					// 'text' => $langs->trans("ConfirmClone"),
+					// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+					// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+					array('type' => 'other','name' => 'idwarehouse','label' => $langs->trans("SelectWarehouseForStockIncrease"),'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+				);
 			}
 
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('Cancel'), $text, 'confirm_cancel', $formquestion, 0, 1);
@@ -1954,7 +1962,6 @@ if ($action == 'create' && $user->rights->commande->creer)
 								// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value'
 								// => 1),
 								array('type' => 'other','name' => 'socid','label' => $langs->trans("SelectThirdParty"),'value' => $form->select_company(GETPOST('socid', 'int'), 'socid', '(s.client=1 OR s.client=3)')));
-			// Paiement incomplet. On demande si motif = escompte ou autre
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('CloneOrder'), $langs->trans('ConfirmCloneOrder', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 		}
 

@@ -27,7 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fourn.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fourn/class/paiementfourn.class.php';
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "errors", "other", "bills", "orders"));
 
 if (! $user->admin) accessforbidden();

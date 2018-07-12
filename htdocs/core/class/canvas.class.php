@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2010-2011	Regis Houssin		<regis.houssin@capnetworks.com>
+/* Copyright (C) 2010-2018	Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2011 		Laurent Destailleur	<eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -145,7 +145,7 @@ class Canvas
     {
         if (empty($this->template_dir)) return 0;
 
-        if (file_exists($this->template_dir.($this->card?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php')) return 1;
+        if (file_exists($this->template_dir.(!empty($this->card)?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php')) return 1;
         else return 0;
     }
 
@@ -161,7 +161,7 @@ class Canvas
 		global $db, $conf, $langs, $user, $canvas;
 		global $form, $formfile;
 
-		include $this->template_dir.($this->card?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php';        // Include native PHP template
+		include $this->template_dir.(!empty($this->card)?$this->card.'_':'').$this->_cleanaction($action).'.tpl.php';        // Include native PHP template
 	}
 
 

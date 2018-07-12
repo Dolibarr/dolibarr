@@ -26,19 +26,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';
 
-$langs->load("companies");
-$langs->load("products");
-$langs->load("admin");
-$langs->load("sms");
-$langs->load("other");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'products', 'admin', 'sms', 'other', 'errors'));
 
 if (!$user->admin) accessforbidden();
 
 $id=GETPOST('rowid','int');
 $action=GETPOST('action','alpha');
 
-$mode = GETPOST('mode')?GETPOST('mode'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
+$mode = GETPOST('mode','aZ09')?GETPOST('mode','aZ09'):'createform';   // 'createform', 'filters', 'sortorder', 'focus'
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
