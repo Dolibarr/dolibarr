@@ -764,7 +764,7 @@ if ($resql)
 		// Sell price
 		if (! empty($arrayfields['p.sellprice']['checked']))
 		{
-			print '<td align="right">';
+			print '<td class="right nowraponall">';
 			if ($obj->tosell)
 			{
 				if ($obj->price_base_type == 'TTC') print price($obj->price_ttc).' '.$langs->trans("TTC");
@@ -777,7 +777,7 @@ if ($resql)
 		// Better buy price
 		if (! empty($arrayfields['p.minbuyprice']['checked']))
 		{
-			print  '<td align="right">';
+			print  '<td class="right nowraponall">';
 			if ($obj->tobuy && $obj->minsellprice != '')
 			{
 				//print price($obj->minsellprice).' '.$langs->trans("HT");
