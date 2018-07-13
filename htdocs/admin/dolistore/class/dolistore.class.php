@@ -42,6 +42,8 @@ class Dolistore
 
 	/**
 	 * Constructor
+	 *
+	 * @param	boolean		$debug		Enable debug of request on screen
 	 */
 	function __construct($debug=false)
 	{
