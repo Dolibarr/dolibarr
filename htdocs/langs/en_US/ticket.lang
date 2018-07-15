@@ -138,7 +138,7 @@ TicketStatByStatus=Tickets by status
 #
 # Ticket card
 #
-Ticket=Incident ticket
+Ticket=Ticket
 TicketCard=Ticket card
 CreateTicket=Create ticket
 EditTicket=Edit ticket
