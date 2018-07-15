@@ -1871,7 +1871,11 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 			{
 				$object = new $classname($db);
 				$res=$object->fetch($objectid);
-				if ($res > 0) $ret=$object->getNomUrl($withpicto,$option);
+				if ($res > 0) {
+					$ret=$object->getNomUrl($withpicto,$option);
+				} elseif($res==0) {
+					$ret=$langs->trans('Deleted');
+				}
 				unset($object);
 			}
 			else dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
