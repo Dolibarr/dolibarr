@@ -337,7 +337,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
 	 */
 	public $phpmin;
 
@@ -464,7 +464,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 	/**
-	 * Disable function. Deletes the module constant and boxes from the database.
+	 * Disable function. Deletes the module constants and boxes from the database.
 	 *
 	 * @param   string[]    $array_sql  SQL requests to be executed when module is disabled
 	 * @param   string      $options	Options when disabling module:
@@ -553,7 +553,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		}
 		else
 		{
-			// If module name translation using it's unique id does not exists, we try to use its name to find translation
+			// If module name translation using it's unique id does not exist, we try to use its name to find translation
 			if (is_array($this->langfiles))
 			{
 				foreach($this->langfiles as $val)
@@ -613,9 +613,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * Gives the long description of a module. First check README-la_LA.md then README.md
-	 * If not markdown files found, it return translated value of the key ->descriptionlong.
+	 * If no markdown files found, it returns translated value of the key ->descriptionlong.
 	 *
-	 * @return  string                  Long description of a module from README.md of from property.
+	 * @return  string     Long description of a module from README.md of from property.
 	 */
 	function getDescLong()
 	{
