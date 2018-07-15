@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2013-2014      Jean-François Ferry     <jfefe@aternatik.fr>
- *
+ * Copyright (C) 2018           Nicolas ZABOURI         <info@inovea-conseil.com>
+ * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -237,14 +238,14 @@ print "</tr>\n";
 
 if ($ret)
 {
-    foreach ($object->lines as $resource)
+    foreach ($object->lines as $obj)
     {
         print '<tr class="oddeven">';
 
         if (! empty($arrayfields['t.ref']['checked']))
         {
         	print '<td>';
-        	print $resource->getNomUrl(5);
+        	print $obj->getNomUrl(5);
         	print '</td>';
 	        if (! $i) $totalarray['nbfield']++;
         }
@@ -252,7 +253,7 @@ if ($ret)
         if (! empty($arrayfields['ty.label']['checked']))
         {
         	print '<td>';
-        	print $resource->type_label;
+        	print $obj->type_label;
         	print '</td>';
 	        if (! $i) $totalarray['nbfield']++;
         }
@@ -260,11 +261,11 @@ if ($ret)
         include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
         print '<td align="center">';
-        print '<a href="./card.php?action=edit&id='.$resource->id.'">';
+        print '<a href="./card.php?action=edit&id='.$obj->id.'">';
         print img_edit();
         print '</a>';
         print '&nbsp;';
-        print '<a href="./card.php?action=delete&id='.$resource->id.'">';
+        print '<a href="./card.php?action=delete&id='.$obj->id.'">';
         print img_delete();
         print '</a>';
         print '</td>';
