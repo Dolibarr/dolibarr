@@ -55,29 +55,26 @@ class modWebServicesClient extends DolibarrModules
         $this->dirs = array();
 
         // Config pages
-        //-------------
         //$this->config_page_url = array();
 
-        // Dependancies
-        //-------------
-        $this->depends = array();
-        $this->requiredby = array();
+        // Dependencies
+        $this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array("other");
 
         // Constants
-        //-----------
         $this->const = array();
 
         // New pages on tabs
-        // -----------------
         $this->tabs = array();
 
         // Boxes
-        //------
         $this->boxes = array();
 
         // Permissions
-        //------------
         $this->rights = array();
         $this->rights_class = 'syncsupplierwebservices';
         $r=0;
