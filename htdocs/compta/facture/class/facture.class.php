@@ -1159,7 +1159,8 @@ class Facture extends CommonInvoice
 		if ($option == 'withdraw') $url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id;
 		else $url = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$this->id;
 
-		if ($short) return $url;
+        if (!$user->rights->facture->lire)
+            $option = 'nolink';
 
 		if ($option !== 'nolink')
 		{
@@ -1213,6 +1214,11 @@ class Facture extends CommonInvoice
         $linkstart='<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
 		$linkend='</a>';
+
+        if ($option == 'nolink') {
+            $linkstart = '';
+            $linkend = '';
+        }
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
