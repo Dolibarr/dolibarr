@@ -219,6 +219,7 @@ TicketChangeStatus=Changer l'état
 TicketConfirmChangeStatus=Confirmez le changement d'état: %s?
 TicketLogStatusChanged=Statut changé: %s à %s
 TicketNotNotifyTiersAtCreate=Ne pas notifier l'entreprise à la création
+Unread=Non lu
 
 #
 # Logs

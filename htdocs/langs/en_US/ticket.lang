@@ -220,6 +220,7 @@ TicketChangeStatus=Change status
 TicketConfirmChangeStatus=Confirm the status change : %s ?
 TicketLogStatusChanged=Status changed : %s to %s
 TicketNotNotifyTiersAtCreate=Not notify company at create
+Unread=Unread
 
 #
 # Logs
