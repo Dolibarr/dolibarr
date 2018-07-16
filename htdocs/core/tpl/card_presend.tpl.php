@@ -177,24 +177,8 @@ if ($action == 'presend')
         $contactstatic = new Contact($db);
 
 		foreach ($contactarr as $contact) {
-            switch($contact['code']) {
-                case 'BILLING':
-                    $contactstatic->fetch($contact['id']);
-                    $substitutionarray['__CONTACT_NAME_BILLING__'] = $contactstatic->getFullName($langs, 1);
-                    break;
-                case 'CUSTOMER':
-                    $contactstatic->fetch($contact['id']);
-                    $substitutionarray['__CONTACT_NAME_CUSTOMER__'] = $contactstatic->getFullName($langs, 1);
-                    break;
-                case 'SHIPPING':
-                    $contactstatic->fetch($contact['id']);
-                    $substitutionarray['__CONTACT_NAME_SHIPPING__'] = $contactstatic->getFullName($langs, 1);
-                    break;
-                case 'SERVICE':
-                    $contactstatic->fetch($contact['id']);
-                    $substitutionarray['__CONTACT_NAME_SERVICE__'] = $contactstatic->getFullName($langs, 1);
-                    break;
-            }
+            $contactstatic->fetch($contact['id']);
+            $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($langs, 1);
 		}
 	}
 
