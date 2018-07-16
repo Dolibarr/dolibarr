@@ -7637,3 +7637,15 @@ function isVisibleToUserType($type_user, &$menuentry, &$listofmodulesforexternal
 	if (! $menuentry['perms']) return 2;															// No permissions and user is external
 	return 1;
 }
+
+/**
+ * Round to next multiple.
+ *
+ * @param 	double		$n		Number to round up
+ * @param 	integer		$x		Multiple. For example 60 to round up to nearest exact minute for a date with seconds.
+ * @return 	integer				Value rounded.
+ */
+function roundUpToNextMultiple($n, $x=5)
+{
+	return (ceil($n)%$x === 0) ? ceil($n) : round(($n+$x/2)/$x)*$x;
+}
