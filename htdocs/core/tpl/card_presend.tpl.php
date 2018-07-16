@@ -173,18 +173,28 @@ if ($action == 'presend')
 	$contactarr = $object->liste_contact(- 1, 'external');
 
 	if (is_array($contactarr) && count($contactarr) > 0) {
+		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+        $contactstatic = new Contact($db);
+
 		foreach ($contactarr as $contact) {
-			if (in_array($contact['code'], array('BILLING'))) {
-				require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
-
-				$contactstatic = new Contact($db);
-				$contactstatic->fetch($contact['id']);
-				$custcontact = $contactstatic->getFullName($langs, 1);
-			}
-		}
-
-		if (! empty($custcontact)) {
-			$substitutionarray['__CONTACTCIVNAME__'] = $custcontact;
+            switch($contact['code']) {
+                case 'BILLING':
+                    $contactstatic->fetch($contact['id']);
+                    $substitutionarray['__CONTACT_NAME_BILLING__'] = $contactstatic->getFullName($langs, 1);
+                    break;
+                case 'CUSTOMER':
+                    $contactstatic->fetch($contact['id']);
+                    $substitutionarray['__CONTACT_NAME_CUSTOMER__'] = $contactstatic->getFullName($langs, 1);
+                    break;
+                case 'SHIPPING':
+                    $contactstatic->fetch($contact['id']);
+                    $substitutionarray['__CONTACT_NAME_SHIPPING__'] = $contactstatic->getFullName($langs, 1);
+                    break;
+                case 'SERVICE':
+                    $contactstatic->fetch($contact['id']);
+                    $substitutionarray['__CONTACT_NAME_SERVICE__'] = $contactstatic->getFullName($langs, 1);
+                    break;
+            }
 		}
 	}
 
