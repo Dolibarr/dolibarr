@@ -239,9 +239,9 @@ class FormTicket
 
                 // Contact and type
                 print '<tr><td>' . $langs->trans("Contact") . '</td><td>';
-                // If no socid, set to first one (id=1) to avoid full contacts list
-                $selectedCompany = $this->withfromsocid > 0 ? $this->withfromsocid : 1;
-                $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid',  0, '', '', 0, 'minwidth200');
+                // If no socid, set to -1 to avoid full contacts list
+                $selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
+                $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
                 $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
                 print '</td></tr>';
             } else {

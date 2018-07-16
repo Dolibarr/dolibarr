@@ -90,10 +90,10 @@ class Dolistore
 			// Here we set the option array for the Webservice : we want products resources
 			$opt             = array();
 			$opt['resource'] = 'products';
+			$opt2            = array();
 
 			// make a search to limit the id returned.
 			if ($this->search != '') {
-				$opt2        = array();
 				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang;
 
 				// Call
@@ -109,7 +109,6 @@ class Dolistore
 				}
 				$opt['filter[id]'] = '['.implode('|', $products).']';
 			} elseif ($this->categorie != 0) {
-				$opt2             = array();
 				$opt2['resource'] = 'categories';
 				$opt2['id']       = $this->categorie;
 				// Call
