@@ -388,4 +388,3 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		return pdf_pagefoot($pdf,$outputlangs,$newfreetext,$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 }
-
