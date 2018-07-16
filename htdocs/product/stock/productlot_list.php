@@ -396,14 +396,12 @@ if ($resql)
 	$productlot = new Productlot($db);
 
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 		if ($obj)
 		{
-			$var = !$var;
 
 			$productlot->id = $obj->rowid;
 			$productlot->batch = $obj->batch;

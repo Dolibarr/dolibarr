@@ -10,7 +10,8 @@
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
- * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
+ * Copyright (C) 2018      charlene Benke       <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Nicolas ZABOURI      <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,10 +133,11 @@ class User extends CommonObject
 	public $color;						// Define background color for user in agenda
 
 	public $dateemployment;			// Define date of employment by company
+	public $dateemploymentend;		// Define date of employment end by company
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
-	
+
 	public $fields=array(
         	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
         	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
@@ -208,7 +210,7 @@ class User extends CommonObject
 		$sql.= " u.salaryextra,";
 		$sql.= " u.weeklyhours,";
 		$sql.= " u.color,";
-		$sql.= " u.dateemployment,";
+		$sql.= " u.dateemployment, u.dateemploymentend,";
 		$sql.= " u.ref_int, u.ref_ext,";
 		$sql.= " u.default_range, u.default_c_exp_tax_cat,";			// Expense report default mode
 		$sql.= " c.code as country_code, c.label as country,";
@@ -311,6 +313,7 @@ class User extends CommonObject
 				$this->weeklyhours	= $obj->weeklyhours;
 				$this->color		= $obj->color;
 				$this->dateemployment	= $this->db->jdate($obj->dateemployment);
+				$this->dateemploymentend = $this->db->jdate($obj->dateemploymentend);
 
 				$this->datec				= $this->db->jdate($obj->datec);
 				$this->datem				= $this->db->jdate($obj->datem);
@@ -431,7 +434,7 @@ class User extends CommonObject
 	/**
 	 *  Add a right to the user
 	 *
-	 * 	@param	int		$rid			id of permission to add
+	 * 	@param	int		$rid			Id of permission to add or 0 to add several permissions
 	 *  @param  string	$allmodule		Add all permissions of module $allmodule
 	 *  @param  string	$allperms		Add all permissions of module $allmodule, subperms $allperms only
 	 *  @param	int		$entity			Entity to use
@@ -484,8 +487,15 @@ class User extends CommonObject
 			// Where pour la liste des droits a ajouter
 			if (! empty($allmodule))
 			{
-				$whereforadd="module='".$this->db->escape($allmodule)."'";
-				if (! empty($allperms)) $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				if ($allmodule == 'allmodules')
+				{
+					$whereforadd='allmodules';
+				}
+				else
+				{
+					$whereforadd="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
 			}
 		}
 
@@ -495,8 +505,10 @@ class User extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE ".$whereforadd;
-			$sql.= " AND entity = ".$entity;
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($whereforadd) && $whereforadd != 'allmodules') {
+				$sql.= " AND ".$whereforadd;
+			}
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -597,8 +609,18 @@ class User extends CommonObject
 		else {
 			// On a demande suppression d'un droit sur la base d'un nom de module ou perms
 			// Where pour la liste des droits a supprimer
-			if (! empty($allmodule)) $wherefordel="module='".$this->db->escape($allmodule)."'";
-			if (! empty($allperms))  $wherefordel=" AND perms='".$this->db->escape($allperms)."'";
+			if (! empty($allmodule))
+			{
+				if ($allmodule == 'allmodules')
+				{
+					$wherefordel='allmodules';
+				}
+				else
+				{
+					$wherefordel="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
+			}
 		}
 
 		// Suppression des droits selon critere defini dans wherefordel
@@ -607,8 +629,10 @@ class User extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE $wherefordel";
-			$sql.= " AND entity = ".$entity;
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($wherefordel) && $wherefordel != 'allmodules') {
+				$sql.= " AND ".$wherefordel;
+			}
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -676,24 +700,28 @@ class User extends CommonObject
 	/**
 	 *	Load permissions granted to user into object user
 	 *
-	 *	@param  string	$moduletag    Limit permission for a particular module ('' by default means load all permissions)
+	 *	@param  string	$moduletag		Limit permission for a particular module ('' by default means load all permissions)
+	 *  @param	int		$forcereload	Force reload of permissions even if they were already loaded (ignore cache)
 	 *	@return	void
 	 *  @see	clearrights, delrights, addrights
 	 */
-	function getrights($moduletag='')
+	function getrights($moduletag='', $forcereload=0)
 	{
 		global $conf;
 
-		if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+		if (empty($forcereload))
 		{
-			// Le fichier de ce module est deja charge
-			return;
-		}
+			if ($moduletag && isset($this->_tab_loaded[$moduletag]) && $this->_tab_loaded[$moduletag])
+			{
+				// Rights for this module are already loaded, so we leave
+				return;
+			}
 
-		if ($this->all_permissions_are_loaded)
-		{
-			// Si les permissions ont deja ete charge pour ce user, on quitte
-			return;
+			if ($this->all_permissions_are_loaded)
+			{
+				// We already loaded all rights for this user, so we leave
+				return;
+			}
 		}
 
 		// Recuperation des droits utilisateurs + recuperation des droits groupes
@@ -1384,6 +1412,7 @@ class User extends CommonObject
 		$this->accountancy_code = trim($this->accountancy_code);
 		$this->color 		= empty($this->color)?'':$this->color;
 		$this->dateemployment 	= empty($this->dateemployment)?'':$this->dateemployment;
+		$this->dateemploymentend = empty($this->dateemploymentend)?'':$this->dateemploymentend;
 
 		// Check parameters
 		if (! empty($conf->global->USER_MAIL_REQUIRED) && ! isValidEMail($this->email))
@@ -1426,6 +1455,7 @@ class User extends CommonObject
 		$sql.= ", accountancy_code = '".$this->db->escape($this->accountancy_code)."'";
 		$sql.= ", color = '".$this->db->escape($this->color)."'";
 		$sql.= ", dateemployment=".(strval($this->dateemployment)!='' ? "'".$this->db->idate($this->dateemployment)."'" : 'null');
+		$sql.= ", dateemploymentend=".(strval($this->dateemploymentend)!='' ? "'".$this->db->idate($this->dateemploymentend)."'" : 'null');
 		$sql.= ", note = '".$this->db->escape($this->note)."'";
 		$sql.= ", photo = ".($this->photo?"'".$this->db->escape($this->photo)."'":"null");
 		$sql.= ", openid = ".($this->openid?"'".$this->db->escape($this->openid)."'":"null");

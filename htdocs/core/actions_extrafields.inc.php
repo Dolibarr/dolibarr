@@ -178,7 +178,7 @@ if ($action == 'add')
                 	(GETPOST('alwayseditable', 'alpha')?1:0),
                 	(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
                 	$visibility,
-					0,
+					GETPOST('help','alpha'),
                     GETPOST('computed_value','alpha'),
                 	(GETPOST('entitycurrentorall', 'alpha')?0:''),
                 	GETPOST('langfile', 'alpha')
@@ -344,7 +344,7 @@ if ($action == 'update')
     				(GETPOST('alwayseditable', 'alpha')?1:0),
     				(GETPOST('perms', 'alpha')?GETPOST('perms', 'alpha'):''),
                 	$visibility,
-					0,
+					GETPOST('help','alpha'),
     			    GETPOST('default_value','alpha'),
     				GETPOST('computed_value','alpha'),
     				(GETPOST('entitycurrentorall', 'alpha')?0:''),
