@@ -2158,9 +2158,11 @@ class User extends CommonObject
 	 */
 	function getNomUrl($withpictoimg=0, $option='', $infologin=0, $notooltip=0, $maxlen=24, $hidethirdpartylogo=0, $mode='',$morecss='', $save_lastsearch_value=-1)
 	{
-		global $langs, $conf, $db, $hookmanager;
+		global $langs, $conf, $db, $hookmanager, $user;
 		global $dolibarr_main_authentication, $dolibarr_main_demo;
 		global $menumanager;
+
+                if(!$user->rights->user->user->lire && $user->id !=$this->id) $option='nolink';
 
 		if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER) && $withpictoimg) $withpictoimg=0;
 
@@ -2293,17 +2295,26 @@ class User extends CommonObject
 	 */
 	function getLoginUrl($withpicto=0,$option='')
 	{
-		global $langs;
+		global $langs, $user;
 
 		$result='';
 
 		$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 		$linkend='</a>';
 
+                //Check user's rights to see an other user
+                if((!$user->rights->user->user->lire && $this->id !=$user->id)) $option='nolink';
+                
 		if ($option == 'xxx')
 		{
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$linkend='</a>';
+		}
+                
+                if ($option == 'nolink')
+		{
+			$linkstart = '';
+			$linkend='';
 		}
 
 		$result.=$linkstart;
