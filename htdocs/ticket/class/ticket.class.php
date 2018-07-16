@@ -188,7 +188,7 @@ class Ticket extends CommonObject
     	'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToProject"),
         'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
         'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>60, 'notnull'=>-1,),
-        'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+        'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>-1, 'searchall'=>1, 'css'=>'right', 'help'=>""),
         'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
         'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
