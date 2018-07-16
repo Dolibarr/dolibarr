@@ -302,7 +302,7 @@ if ($result) {
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th>' . $transRecordedType . '</th>';
-    print '<th>' . $langs->trans('Ref') . '</th>';
+    print '<th>' . $langs->trans('Date') . '</th>';
     print '<th>' . $langs->trans('Subject') . '</th>';
     print '<th>' . $langs->trans('Type') . '</th>';
     print '<th>' . $langs->trans('Category') . '</th>';
@@ -322,15 +322,16 @@ if ($result) {
             $tickesupstatic->subject = $objp->subject;
 
             print '<tr class="oddeven">';
-            // Creation date
-            print '<td align="left">';
-            print dol_print_date($db->jdate($objp->datec), 'dayhour');
-            print "</td>";
 
             // Ref
             print '<td class="nowrap">';
             print $tickesupstatic->getNomUrl(1);
             print "</td>\n";
+
+            // Creation date
+            print '<td align="left">';
+            print dol_print_date($db->jdate($objp->datec), 'dayhour');
+            print "</td>";
 
             // Subject
             print '<td class="nowrap">';
