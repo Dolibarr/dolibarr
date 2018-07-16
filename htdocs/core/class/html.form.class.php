@@ -6160,6 +6160,7 @@ class Form
 
 		$linktoelem='';
 		$linktoelemlist='';
+		$listofidcompanytoscan='';
 
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 
