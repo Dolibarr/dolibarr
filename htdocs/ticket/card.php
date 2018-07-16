@@ -82,6 +82,8 @@ $permissiontoadd = $user->rights->ticket->write;
 
 $actionobject = new ActionsTicket($db);
 
+$now = dol_now();
+
 
 /*
  * Actions
@@ -364,26 +366,23 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         // Creation date
         print '<tr><td>' . $langs->trans("DateCreation") . '</td><td>';
         print dol_print_date($object->datec, 'dayhour');
+        print ' - '.$langs->trans("TimeElapsedSince").': '.'<i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->datec, 60)).'</i>';
         print '</td></tr>';
 
         // Read date
+        print '<tr><td>' . $langs->trans("TicketReadOn") . '</td><td>';
         if (!empty($object->date_read)) {
-            print '<tr><td>' . $langs->trans("TicketReadOn") . '</td><td>';
-            print dol_print_date($object->date_read, 'dayhour');
-            print '</td></tr>';
-
-            print '<tr><td>' . $langs->trans("TicketTimeToRead") . '</td><td>';
-            print '<strong>' . convertSecondToTime($object->date_read - $object->datec) . '</strong>';
-            print '</td></tr>';
+        	print dol_print_date($object->date_read, 'dayhour');
+        	print ' - '.$langs->trans("TicketTimeToRead").': <i>'.convertSecondToTime(roundUpToNextMultiple($object->date_read - $object->datec, 60)).'</i>';
+        	print ' - '.$langs->trans("TimeElapsedSince").': '.'<i>'.convertSecondToTime(roundUpToNextMultiple($now - $object->date_read, 60)).'</i>';
         }
+        print '</td></tr>';
 
         // Close date
+        print '<tr><td>' . $langs->trans("TicketCloseOn") . '</td><td>';
         if (!empty($object->date_close)) {
-            print '<tr><td>' . $langs->trans("TicketCloseOn") . '</td><td>';
-            print dol_print_date($object->date_close, 'dayhour');
-            print '</td></tr>';
+        	print dol_print_date($object->date_close, 'dayhour');
         }
-
         print '</td></tr>';
 
         // Thirdparty
@@ -453,25 +452,28 @@ if ($action == 'view' || $action == 'add_message' || $action == 'close' || $acti
         print '</td>';
         print '</tr>';
 
-        // Timing (Duration sum of linked fichinter
-        $object->fetchObjectLinked();
-        $num = count($object->linkedObjects);
-        $timing = 0;
-        if ($num) {
-            foreach ($object->linkedObjects as $objecttype => $objects) {
-                if ($objecttype = "fichinter") {
-                    foreach ($objects as $fichinter) {
-                        $timing += $fichinter->duration;
-                    }
-                }
-            }
-        }
-        print '<tr><td valign="top">';
+        // Timing (Duration sum of linked fichinter)
+        if ($conf->fichinter->enabled)
+        {
+	        $object->fetchObjectLinked();
+	        $num = count($object->linkedObjects);
+	        $timing = 0;
+	        if ($num) {
+	            foreach ($object->linkedObjects as $objecttype => $objects) {
+	                if ($objecttype = "fichinter") {
+	                    foreach ($objects as $fichinter) {
+	                        $timing += $fichinter->duration;
+	                    }
+	                }
+	            }
+	        }
+	        print '<tr><td valign="top">';
 
-        print $form->textwithpicto($langs->trans("TicketDurationAuto"), $langs->trans("TicketDurationAutoInfos"), 1);
-        print '</td><td>';
-        print convertSecondToTime($timing, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
-        print '</td></tr>';
+	        print $form->textwithpicto($langs->trans("TicketDurationAuto"), $langs->trans("TicketDurationAutoInfos"), 1);
+	        print '</td><td>';
+	        print convertSecondToTime($timing, 'all', $conf->global->MAIN_DURATION_OF_WORKDAY);
+	        print '</td></tr>';
+        }
 
         // Other attributes
         include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';

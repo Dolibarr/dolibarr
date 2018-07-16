@@ -90,7 +90,7 @@ function payment_supplier_prepare_head(Paiement $object) {
 /**
  * Return array of valid payment mode
  *
- * @param	string	$paymentmethod		Filter on this payment method
+ * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
  * @return	array						Array of valid payment method
  */
 function getValidOnlinePaymentMethods($paymentmethod='')
