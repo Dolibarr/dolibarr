@@ -526,8 +526,8 @@ if (! empty($debit)) $mode_balance_ok=false;
 if (! empty($credit)) $mode_balance_ok=false;
 if (! empty($thirdparty)) $mode_balance_ok=false;
 
-$sql.= $db->plimit($limit+1,$offset);
-
+$sql.= $db->plimit($limit+1, $offset);
+//print $sql;
 dol_syslog('compta/bank/bankentries_list.php', LOG_DEBUG);
 $resql = $db->query($sql);
 if ($resql)
@@ -950,7 +950,8 @@ if ($resql)
 	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center"',$sortfield,$sortorder,'maxwidthsearch ');
 	print "</tr>\n";
 
-    $balance = 0;    // For balance
+	$balance = 0;    // For balance
+	$balancebefore = 0;    // For balance
 	$balancecalculated = false;
 	$posconciliatecol = 0;
 
@@ -974,7 +975,7 @@ if ($resql)
             // Loop on each record before
             $sign = 1;
             $i = 0;
-            $sqlforbalance='SELECT SUM(b.amount) as balance';
+            $sqlforbalance='SELECT SUM(b.amount) as previoustotal';
             $sqlforbalance.= " FROM ";
             $sqlforbalance.= " ".MAIN_DB_PREFIX."bank_account as ba,";
             $sqlforbalance.= " ".MAIN_DB_PREFIX."bank as b";
@@ -989,7 +990,16 @@ if ($resql)
                 $objforbalance = $db->fetch_object($resqlforbalance);
                 if ($objforbalance)
                 {
-                    $balance = $objforbalance->balance;
+                	// If sort is desc,desc,desc then total of previous date is balance of the line to show
+                	if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
+                	{
+                		$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
+                	}
+                	// If sort is asc,asc,asc then total of previous date is balancebefore of the line to show
+                	else
+                	{
+                		$balancebefore = $objforbalance->previoustotal;
+                	}
                 }
             }
             else dol_print_error($db);
@@ -1065,7 +1075,17 @@ if ($resql)
             }
         }
 
-        $balance = price2num($balance + ($sign * $objp->amount),'MT');
+
+        if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
+        {
+        	$balance = price2num($balancebefore, 'MT');		// balance = balancebefore of previous line (sort is desc)
+        	$balancebefore = price2num($balancebefore - ($sign * $objp->amount),'MT');
+        }
+		else
+		{
+			$balancebefore = price2num($balance, 'MT');		// balancebefore = balance of previous line (sort is asc)
+			$balance = price2num($balance + ($sign * $objp->amount),'MT');
+		}
 
         if (empty($cachebankaccount[$objp->bankid]))
         {
@@ -1342,7 +1362,6 @@ if ($resql)
     	{
     		if ($mode_balance_ok)
     		{
-    			$balancebefore = price2num($balance - ($sign * $objp->amount),'MT');
     			if ($balancebefore >= 0)
     			{
     				print '<td align="right" class="nowrap">&nbsp;'.price($balancebefore).'</td>';
