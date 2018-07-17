@@ -282,7 +282,7 @@ class Form
         $out='';
 
         // Check parameters
-        if ($inputType == 'textarea') $value = dol_nl2br($value);
+        if (preg_match('/^text/',$inputType)) $value = dol_nl2br($value);
         else if (preg_match('/^numeric/',$inputType)) $value = price($value);
         else if ($inputType == 'day' || $inputType == 'datepicker') $value = dol_print_date($value, 'day');
 
