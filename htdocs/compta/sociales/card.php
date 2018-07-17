@@ -241,11 +241,12 @@ if ($action == 'confirm_clone' && $confirm == 'yes' && ($user->rights->tax->char
 	{
 		$object->paye = 0;
 		$object->id = $object->ref = null;
+		$object->lib = $langs->trans("CopyOf").' '.$object->lib;
 
-		if(GETPOST('clone_for_next_month') != '') {
-
-			$object->date_ech = strtotime('+1month', $object->date_ech);
-			$object->periode = strtotime('+1month', $object->periode);
+		if (GETPOST('clone_for_next_month') != '')
+		{
+			$object->date_ech = dol_time_plus_duree($object->date_ech, 1, 'm');
+			$object->periode = dol_time_plus_duree($object->periode, 1, 'm');
 		}
 
 		if ($object->check())
