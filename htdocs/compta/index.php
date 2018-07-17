@@ -162,7 +162,6 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 
 	if ( $resql )
 	{
-		$var = false;
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
@@ -207,7 +206,6 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 				$i++;
 
 			}
-
 			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
 			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
@@ -350,7 +348,6 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 		$i = 0;
 
@@ -473,7 +470,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 	$resql=$db->query($sql);
 	if ($resql)
 	{
-		$var=false;
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
@@ -520,7 +516,6 @@ if (! empty($conf->fournisseur->enabled) && $user->rights->fournisseur->facture-
 				$total_ttc +=  $obj->total_ttc;
 				$totalam +=  $obj->am;
 				$i++;
-				$var = !$var;
 			}
 		}
 		else
@@ -561,7 +556,6 @@ if (! empty($conf->don->enabled) && $user->rights->societe->lire)
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$var=false;
 		$num = $db->num_rows($result);
 
 		$i = 0;
@@ -1069,7 +1063,7 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 
-		print "<tr ".$bc[$var]."><td>".dol_print_date($db->jdate($obj->da),"day")."</td>";
+		print '<tr class="oddeven"><td>'.dol_print_date($db->jdate($obj->da),"day").'</td>';
 		print '<td><a href="action/card.php">'.$obj->libelle.' '.$obj->label.'</a></td></tr>';
 		$i++;
 	}
