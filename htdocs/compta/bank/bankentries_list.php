@@ -990,15 +990,15 @@ if ($resql)
                 $objforbalance = $db->fetch_object($resqlforbalance);
                 if ($objforbalance)
                 {
-                	// If sort is desc,desc,desc then total of previous date is balance of the line to show
+                	// If sort is desc,desc,desc then total of previous date + amount is the balancebefore of the previous line before the line to show
                 	if ($sortfield == 'b.datev,b.dateo,b.rowid' && $sortorder == 'desc,desc,desc')
                 	{
                 		$balancebefore = $objforbalance->previoustotal + ($sign * $objp->amount);
                 	}
-                	// If sort is asc,asc,asc then total of previous date is balancebefore of the line to show
+                	// If sort is asc,asc,asc then total of previous date is balance of line before the next line to show
                 	else
                 	{
-                		$balancebefore = $objforbalance->previoustotal;
+                		$balance = $objforbalance->previoustotal;
                 	}
                 }
             }
