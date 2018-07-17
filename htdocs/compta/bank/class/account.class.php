@@ -1308,10 +1308,12 @@ class Account extends CommonObject
 		$label .= '<br><b>' . $langs->trans('BankAccount') . ':</b> ' . $this->label;
 		$label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
 		$label .= '<br><b>' . $langs->trans("AccountCurrency") . ':</b> ' . $this->currency_code;
-                
-                if (!$user->rights->accounting->read || !empty($user->socid))
-                    $option = 'nolink';
-                
+
+		if (empty($user->rights->banque->lire) || !empty($user->socid))
+		{
+			$option = 'nolink';
+		}
+
 		if (! empty($conf->accounting->enabled))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -1346,7 +1348,7 @@ class Account extends CommonObject
                     $linkstart = '';
                     $linkend = '';
                 }
-        
+
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= $this->ref.($option == 'reflabel' && $this->label ? ' - '.$this->label : '');
