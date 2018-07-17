@@ -700,10 +700,17 @@ div.divsearchfield {
 .divsearchfieldfilter {
     text-overflow: clip;
     overflow: auto;
-    white-space: nowrap;
     padding-bottom: 5px;
     opacity: 0.6;
 }
+<?php
+// Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
+if ($conf->browser->layout == 'phone') {
+?>
+.divsearchfieldfilter {
+   	white-space: nowrap;
+}
+<?php } ?>
 div.confirmmessage {
 	padding-top: 6px;
 }
