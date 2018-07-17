@@ -537,7 +537,6 @@ if ($id > 0 || ! empty($ref)) {
 			$nbproduct = 0;			// Nb of predefined product lines to dispatch (already done or not) if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is off (default)
 									// or nb of line that remain to dispatch if SUPPLIER_ORDER_DISABLE_STOCK_DISPATCH_WHEN_TOTAL_REACHED is on.
 
-			$var = false;
 			while ( $i < $num ) {
 				$objp = $db->fetch_object($resql);
 
@@ -786,12 +785,10 @@ if ($id > 0 || ! empty($ref)) {
 			print '<td>' . $langs->trans("Date") . '</td>';
 			print "</tr>\n";
 
-			$var = false;
-
 			while ( $i < $num ) {
 				$objp = $db->fetch_object($resql);
 
-				print "<tr " . $bc[$var] . ">";
+				print '<tr class="oddeven">';
 				print '<td>';
 				print '<a href="' . DOL_URL_ROOT . '/product/fournisseurs.php?id=' . $objp->fk_product . '">' . img_object($langs->trans("ShowProduct"), 'product') . ' ' . $objp->ref . '</a>';
 				print ' - ' . $objp->label;
@@ -861,7 +858,6 @@ if ($id > 0 || ! empty($ref)) {
 				print "</tr>\n";
 
 				$i ++;
-				$var = ! $var;
 			}
 			$db->free($resql);
 

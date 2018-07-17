@@ -85,10 +85,9 @@ print '<tr class="liste_titre">';
 print '<td colspan="3">' . $langs->trans('Journaux') . '</td>';
 print "</tr>\n";
 
-foreach ( $list as $key ) {
-	$var = ! $var;
-	
-	print '<tr ' . $bc[$var] . ' class="value">';
+foreach ( $list as $key ) 
+{	
+	print '<tr class="value oddeven">';
 	
 	// Param
 	$label = $langs->trans($key);
