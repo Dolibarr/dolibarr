@@ -5122,7 +5122,7 @@ abstract class CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form=new Form($this->db);
 		}
-		
+
 		$val=$this->fields[$key];
 
 		$out='';
@@ -5137,20 +5137,20 @@ abstract class CommonObject
                     $param['options']=array($reg[1].':'.$reg[2]=>'N');
                     $type ='link';
                 }else if(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)){
-                   
+
                     $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
                     $type ='sellist';
                 }else if(preg_match('/varchar\((\d+)\)/', $val['type'],$reg)){
-                   
+
                     $param['options']=array();
                     $type ='varchar';
                     $size=$reg[1];
                 }else if(preg_match('/varchar/', $val['type'])){
-                   
+
                     $param['options']=array();
                     $type ='varchar';
                 }else if(is_array($this->fields[$key]['arrayofkeyval'])){
-                   
+
                     $param['options']=$this->fields[$key]['arrayofkeyval'];
                     $type ='select';
                 }else {
@@ -5164,7 +5164,7 @@ abstract class CommonObject
 		$computed=$this->fields[$key]['computed'];
 		$unique=$this->fields[$key]['unique'];
 		$required=$this->fields[$key]['required'];
-		
+
 		$langfile=$this->fields[$key]['langfile'];
 		$list=$this->fields[$key]['list'];
 		$hidden=abs($this->fields[$key]['visible'])!=1?1:0;
@@ -5707,7 +5707,7 @@ abstract class CommonObject
 		 */
 		return $out;
 	}
-        
+
 	/**
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
