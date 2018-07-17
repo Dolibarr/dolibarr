@@ -272,7 +272,6 @@ if ($resql) {
 	print '</td>';
 	print '</tr>';
 
-	$var = false;
 	$solde = 0;
 	$tmp = '';
 	while ($obj = $db->fetch_object($resql)) {
@@ -281,11 +280,10 @@ if ($resql) {
 			$tmp = $obj->lettering_code;
 
 			if ($tmp != $obj->lettering_code || empty($obj->lettering_code))
-			$var = ! $var;
 
 		$solde += ($obj->credit - $obj->debit);
 
-		print "<tr $bc[$var]>";
+		print '<tr class="oddeven">';
 
 		if (empty($obj->lettering_code)) {
 			print '<td><a href="' . dol_buildpath('/accountancy/bookkeeping/card.php', 1) . '?piece_num=' . $obj->piece_num . '">';
@@ -320,7 +318,7 @@ if ($resql) {
 	print '<td colspan="5"></td>';
 	print "</tr>\n";
 
-	print "<tr $bc[$var]>";
+	print '<tr class="oddeven">';
 	print '<td colspan="9">Solde Comptable</td>' . "\n";
 	print '<td><strong>' . price($credit - $debit) . '</strong></td>';
 	print '<td colspan="5"></td>';
