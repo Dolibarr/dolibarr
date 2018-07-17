@@ -332,7 +332,7 @@ function project_admin_prepare_head()
  */
 function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$taskrole, $projectsListId='', $addordertick=0, $projectidfortotallink=0, $filterprogresscalc='')
 {
-	global $user, $bc, $langs, $conf, $db;
+	global $user, $langs, $conf, $db;
 	global $projectstatic, $taskstatic;
 
 	$lastprojectid=0;
@@ -416,11 +416,10 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
 				// Break on a new project
 				if ($parent == 0 && $lines[$i]->fk_project != $lastprojectid)
 				{
-					$var = !$var;
 					$lastprojectid=$lines[$i]->fk_project;
 				}
 
-				print '<tr '.$bc[$var].' id="row-'.$lines[$i]->id.'">'."\n";
+				print '<tr class="oddeven" id="row-'.$lines[$i]->id.'">'."\n";
 
 				if ($showproject)
 				{
@@ -632,7 +631,7 @@ function projectLinesa(&$inc, $parent, &$lines, &$level, $var, $showproject, &$t
  */
 function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak=0)
 {
-	global $conf, $db, $user, $bc, $langs;
+	global $conf, $db, $user, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
 
 	$lastprojectid=0;
@@ -858,7 +857,7 @@ function projectLinesPerAction(&$inc, $parent, $fuser, $lines, &$level, &$projec
  */
 function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, $preselectedday, &$isavailable, $oldprojectforbreak=0)
 {
-	global $conf, $db, $user, $bc, $langs;
+	global $conf, $db, $user, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
 
 	$lastprojectid=0;
@@ -1142,7 +1141,7 @@ function projectLinesPerDay(&$inc, $parent, $fuser, $lines, &$level, &$projectsr
  */
 function projectLinesPerWeek(&$inc, $firstdaytoshow, $fuser, $parent, $lines, &$level, &$projectsrole, &$tasksrole, $mine, $restricteditformytask, &$isavailable, $oldprojectforbreak=0)
 {
-	global $conf, $db, $user, $bc, $langs;
+	global $conf, $db, $user, $langs;
 	global $form, $formother, $projectstatic, $taskstatic, $thirdpartystatic;
 
 	$numlines=count($lines);
@@ -1448,7 +1447,7 @@ function searchTaskInChild(&$inc, $parent, &$lines, &$taskrole)
  */
 function print_projecttasks_array($db, $form, $socid, $projectsListId, $mytasks=0, $statut=-1, $listofoppstatus=array(),$hiddenfields=array())
 {
-	global $langs,$conf,$user,$bc;
+	global $langs,$conf,$user;
 
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 

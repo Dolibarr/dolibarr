@@ -34,7 +34,6 @@
 function show_skin($fuser,$edit=0)
 {
     global $conf,$langs,$db;
-    global $bc;
 
 	require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
@@ -59,8 +58,6 @@ function show_skin($fuser,$edit=0)
 
     $thumbsbyrow=6;
     print '<table class="noborder" width="100%">';
-
-    $var=false;
 
     // Title
    	print '<tr class="liste_titre"><th width="35%">'.$langs->trans("DefaultSkin").'</th>';
@@ -110,11 +107,11 @@ function show_skin($fuser,$edit=0)
     					print '<div class="inline-block" style="margin-top: 10px; margin-bottom: 10px; margin-right: 20px; margin-left: 20px;">';
     					if ($subdir == $selected_theme)
     					{
-    						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="fckeditor_skin" value="'.$subdir.'"> <b>'.$subdir.'</b>';
+    						print '<input '.($edit?'':'disabled').' type="radio" class="oddeven" style="border: 0px;" checked name="fckeditor_skin" value="'.$subdir.'"> <b>'.$subdir.'</b>';
     					}
     					else
     					{
-    						print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" name="fckeditor_skin" value="'.$subdir.'"> '.$subdir;
+    						print '<input '.($edit?'':'disabled').' type="radio" class="oddeven" style="border: 0px;" name="fckeditor_skin" value="'.$subdir.'"> '.$subdir;
     					}
 						print '</div>';
 

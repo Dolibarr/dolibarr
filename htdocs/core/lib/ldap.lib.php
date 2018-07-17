@@ -143,7 +143,7 @@ function show_ldap_test_button($butlabel,$testlabel,$key,$dn,$objectclass)
  */
 function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 {
-	global $bc, $conf;
+	global $conf;
 
 	$count--;
 	if ($count == 0) return -1;	// To stop loop
@@ -163,8 +163,7 @@ function show_ldap_content($result,$level,$count,$var,$hide=0,$subcount=0)
 			$hide=0;
 			if (! is_numeric($key))
 			{
-
-				print '<tr '.$bc[$var].' valign="top">';
+				print '<tr class="oddeven" valign="top">';
 				print '<td>';
 				print $key;
 				print '</td><td>';
