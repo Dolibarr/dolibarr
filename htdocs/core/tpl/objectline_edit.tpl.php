@@ -61,7 +61,7 @@ if (!empty($conf->multicurrency->enabled) && $this->multicurrency_code != $conf-
 <?php
 $coldisplay=-1; // We remove first td
 ?>
-<tr <?php echo $bc[$var]; ?>>
+<tr class="oddeven">
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
@@ -246,12 +246,12 @@ $coldisplay=-1; // We remove first td
 //Line extrafield
 if (!empty($extrafieldsline))
 {
-	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>$bc[$var],'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafieldsline, 'edit', array('style'=>'class="oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 
 <?php if (! empty($conf->service->enabled) && $line->product_type == 1 && $dateSelector)	 { ?>
-<tr id="service_duration_area" <?php echo $bc[$var]; ?>>
+<tr id="service_duration_area" class="oddeven">
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 		<td class="linecolnum" align="center"><?php $coldisplay++; ?></td>
 	<?php } ?>
