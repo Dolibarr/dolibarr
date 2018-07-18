@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2009 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2013	   Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2014	   Florian Henry		<florian.henry@open-concept.pro>
@@ -225,7 +225,7 @@ if ($id > 0 || ! empty($ref))
 						$supplierinvoicestatic->total_ht = $objp->total_ht;
 						$supplierinvoicestatic->total_ttc = $objp->total_ttc;
 						$supplierinvoicestatic->total_tva = $objp->total_tva;
-						$supplierinvoicestatic->ref = $objp->facnumber;
+
 						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';
