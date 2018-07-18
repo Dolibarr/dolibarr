@@ -103,7 +103,7 @@ if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, 
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-if (! $sortorder) $sortorder='ASC';
+if (! $sortorder) $sortorder='desc,desc,desc';
 if (! $sortfield) $sortfield='b.datev,b.dateo,b.rowid';
 
 $mode_balance_ok=false;
@@ -113,7 +113,6 @@ if (($sortfield == 'b.datev' || $sortfield == 'b.datev,b.dateo,b.rowid'))
     $sortfield = 'b.datev,b.dateo,b.rowid';
     if ($id > 0 || ! empty($ref) || $search_account > 0) $mode_balance_ok = true;
 }
-if (strtolower($sortorder) == 'desc') $mode_balance_ok = false;
 
 $object = new Account($db);
 if ($id > 0 || ! empty($ref))
