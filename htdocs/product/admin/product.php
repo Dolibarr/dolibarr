@@ -658,7 +658,6 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
 	// Add canvas feature
 	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
-	$var = false;
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
@@ -686,8 +685,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
     				if ($conf->$module->enabled)
     				{
-
-    					print "<tr ".$bc[$var]."><td>";
+    					print '<tr class="oddeven"><td>';
 
     					print $object->description;
 
