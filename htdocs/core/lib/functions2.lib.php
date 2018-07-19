@@ -2214,6 +2214,10 @@ function getModuleDirForApiClass($module)
     elseif ($module == 'users') {
         $moduledirforclass = 'user';
     }
+    elseif ( isset(glob('../custom/*/class/api_'.$module.'*.php')[0]) ) {
+        $apifilepath = glob('../custom/*/class/api_'.$module.'*.php')[0];
+        $moduledirforclass = explode('/', $apifilepath)[2];
+    }
 
     return $moduledirforclass;
 }
