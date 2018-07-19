@@ -1170,6 +1170,127 @@ class Thirdparties extends DolibarrApi
 		return $account->delete(DolibarrApiAccess::$user);
 	}
 
+	/**
+	 * Generate a sepamandate Document
+	 * 
+	 * @param int $socid thirdparty id
+	 * 
+	 * @return array Check success
+	 * 
+	 * @url GET /generateMandat/{socid}
+	 */
+	public function generateMandat($socid){
+
+		$this->langs->load("database");
+		$this->langs->load("main");
+		$this->langs->load("dict");
+		$this->langs->load("agenda");
+		$this->langs->load("margins");
+		$this->langs->load("resource");
+		$this->langs->load("commercial");
+		$this->langs->load("ecm");
+		$this->langs->load("products");
+		$this->langs->load("companies");
+		$this->langs->load("banks");
+		$this->langs->load("bills");
+		$this->langs->load("withdrawals");
+
+
+		$model = "sepamandate";
+		
+		$this->company->fetch($socid);
+		
+		$action = 'builddoc';
+		if(! DolibarrApiAccess::$user->rights->societe->creer)
+			throw new RestException(401);
+		
+		
+		// Reload to get all modified line records and be ready for hooks
+		
+		
+		$this->company->setDocModel($user, $model);
+		
+		$this->company->fk_bank = $this->company->fk_account;
+		
+		$outputlangs = $this->langs;
+		$newlang='';
+		
+		
+		
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang=GETPOST('lang_id','aZ09');
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->thirdparty->default_lang)) $newlang=$this->company->thirdparty->default_lang;  // for proposal, order, invoice, ...
+		if ($this->conf->global->MAIN_MULTILANGS && empty($newlang) && isset($this->company->default_lang)) $newlang=$this->company->default_lang;                  // for thirdparty
+		if (! empty($newlang))
+		{
+			$outputlangs = new Translate("",$conf);
+			$outputlangs->setDefaultLang($newlang);
+		}
+		
+		// To be sure vars is defined
+		if (empty($hidedetails)) $hidedetails=0;
+		if (empty($hidedesc)) $hidedesc=0;
+		if (empty($hideref)) $hideref=0;
+		if (empty($moreparams)) $moreparams=null;
+		
+		
+		$sql = "SELECT rowid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." ";
+		
+		
+		$result = $this->db->query($sql);
+		
+		if($result->num_rows == 0 ){
+			throw new RestException(404, 'Account not found');
+		}	
+		
+		$i=0;
+		
+		$accounts =[];
+		
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				$account = new CompanyBankAccount($this->db);
+				if($account->fetchFromApi($obj->rowid)) {
+					$accounts[] = $account;
+				}
+				$i++;
+			}
+		}
+		else{
+			throw new RestException(404, 'Account not found');
+		}
+
+		
+		$moreparams = array(
+			'use_companybankid'=>$accounts[0]->id,
+			'force_dir_output'=>$this->conf->societe->multidir_output[$this->company->entity].'/'.dol_sanitizeFileName($this->company->id)
+		);
+
+		
+		
+		
+		$result = 0;
+
+		
+
+		
+		$result = $this->company->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+		
+		if ($result > 0)
+		{
+			return array("success" => $result);
+		}
+		else
+		{
+			throw new RestException(500);
+		}
+    }
+
 
 	/**
 	 * Clean sensible object datas
