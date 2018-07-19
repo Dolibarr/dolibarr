@@ -1651,16 +1651,29 @@ if (count($object->records) > 0)
 				print ' &nbsp; ';
 
 				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditPageMeta")).'" name="editmeta">';
+
+				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
+
 				if ($websitepage->grabbed_from)
 				{
-					print '<input type="submit" class="button nobordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
+					//print '<input type="submit" class="button nobordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
+					print '<a class="button nobordertransp"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.dol_escape_htmltag($langs->trans("EditInLine")).'</a>';
 				}
 				else
 				{
-					print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
+					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
+					if (empty($conf->global->WEBSITE_EDITINLINE))
+					{
+						print '<a class="button nobordertransp"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->id.'&pageid='.$websitepage->id.'&action=seteditinline">'.dol_escape_htmltag($langs->trans("EditInLine")).'</a>';
+					}
+					else
+					{
+						print '<a class="button nobordertransp"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->id.'&pageid='.$websitepage->id.'&action=unseteditinline">'.dol_escape_htmltag($langs->trans("EditInLine")).'</a>';
+					}
 				}
 
-				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditHTMLSource")).'" name="editsource">';
+				print ' &nbsp; ';
+
 				if ($object->fk_default_home > 0 && $pageid == $object->fk_default_home) print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
 				else print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("SetAsHomePage")).'" name="setashome">';
 				print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ClonePage")).'" name="createpagefromclone">';
@@ -2305,8 +2318,6 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
 
-		// Note: <div> or <section> with contenteditable="true" inside this can be edited with inline ckeditor
-
 		// REPLACEMENT OF LINKS When page called by website editor
 
 		$out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". No more supported by browsers, snif !
@@ -2329,12 +2340,25 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.=$tmpout;
 		$out.='</style>'."\n";
 
+		// Note: <div> or <section> with contenteditable="true" inside this can be edited with inline ckeditor
+
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
 		// so editable will be available only from container created from scratch
 		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
 		$out.='<div id="bodywebsite" class="bodywebsite">'."\n";
 
-		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->content)."\n";
+		// TODO Add the contenteditable="true" when mode Edit Inline is on
+		$newcontent = $objectpage->content;
+		if (empty($conf->global->WEBSITE_EDITINLINE_ON))
+		{
+			$newcontent = preg_replace('/(div|section) contenteditable="true"/', '\1', $newcontent);
+		}
+		else
+		{
+
+		}
+
+		$out.=dolWebsiteReplacementOfLinks($object, $newcontent)."\n";
 
 		$out.='</div>';
 
