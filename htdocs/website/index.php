@@ -157,7 +157,10 @@ $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/jquery
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>'."\n";
 $htmlheadercontentdefault.='<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>'."\n";
+$htmlheadercontentdefault.='<!--'."\n";
+$htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=css/myfile.css"></script>'."\n";
 $htmlheadercontentdefault.='<script src="/document.php?modulepart=medias&file=js/myfile.js"></script>'."\n";
+$htmlheadercontentdefault.='-->'."\n";
 
 
 /*
@@ -2292,9 +2295,17 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		$out = '<!-- Page content '.$filetpl.' : Div with (CSS Of website from file + Style/htmlheader of page from database + Page content from database) -->'."\n";
 
-		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
-		// TODO Use contenteditable="true" / document.getElementById("myP").contentEditable="true" for part coming from CKEditor
+		// Include a html so we can benefit of the header of page.
+		// Note: We can't use iframe as it can be used to include another external html file
+		// Note: We can't use frame as it is deprecated.
+		$out.="\n<html><head>\n";
+		$out.=dolWebsiteReplacementOfLinks($object, $objectpage->htmlheader, 1);
+		$out.="</head>\n";
+		$out.="\n<body>";
 
+		$out.='<div id="websitecontentundertopmenu" class="websitecontentundertopmenu">'."\n";
+
+		// Note: <div> or <section> with contenteditable="true" inside this can be edited with inline ckeditor
 
 		// REPLACEMENT OF LINKS When page called by website editor
 
@@ -2319,7 +2330,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.='</style>'."\n";
 
 		// Do not enable the contenteditable when page was grabbed, ckeditor is removing span and adding borders,
-		// so editable will be available from container created from scratch
+		// so editable will be available only from container created from scratch
 		//$out.='<div id="bodywebsite" class="bodywebsite"'.($objectpage->grabbed_from ? ' contenteditable="true"' : '').'>'."\n";
 		$out.='<div id="bodywebsite" class="bodywebsite">'."\n";
 
@@ -2328,6 +2339,12 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.='</div>';
 
 		$out.='</div> <!-- End div id=websitecontentundertopmenu -->';
+
+		/*if ($includepageintoaframeoradiv == 'iframe')
+		{
+			$out .= "</body></html></iframe>";
+		}*/
+		$out .= "\n</body></html>\n";
 
 		$out.= "\n".'<!-- End page content '.$filetpl.' -->'."\n\n";
 
