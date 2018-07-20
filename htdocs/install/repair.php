@@ -1087,6 +1087,9 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
 
         foreach($listoftables as $table)
         {
+        	// do not convert llx_const if mysql encrypt/decrypt is used
+        	if ($conf->db->dolibarr_main_db_encryption != 0 && preg_match('/\_const$/', $table)) continue;
+
             print '<tr><td colspan="2">';
             print $table;
             $sql='ALTER TABLE '.$table.' CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci';
