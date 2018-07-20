@@ -172,6 +172,19 @@ include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
 
+if ($action == 'seteditinline')
+{
+	dolibarr_set_const($db, 'WEBSITE_EDITINLINE', 1);
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
+	exit;
+}
+if ($action == 'unseteditinline')
+{
+	dolibarr_del_const($db, 'WEBSITE_EDITINLINE');
+	header("Location: ".$_SERVER["PHP_SELF"].'?website='.GETPOST('website','alphanohtml').'&pageid='.GETPOST('pageid','int'));
+	exit;
+}
+
 // Add directory
 /*
 if ($action == 'adddir' && $permtouploadfile)
@@ -197,12 +210,12 @@ if ($action == 'adddir' && $permtouploadfile)
 */
 
 
-if (GETPOST('refreshsite'))		// If we change the site, we reset the pageid and cancel addsite action.
+if (GETPOST('refreshsite','alpha'))		// If we change the site, we reset the pageid and cancel addsite action.
 {
 	$pageid=0;
 	if ($action == 'addsite') $action = 'preview';
 }
-if (GETPOST('refreshpage') && ! in_array($action, array('updatecss'))) $action='preview';
+if (GETPOST('refreshpage','alpha') && ! in_array($action, array('updatecss'))) $action='preview';
 
 
 // Add site
@@ -1657,18 +1670,18 @@ if (count($object->records) > 0)
 				if ($websitepage->grabbed_from)
 				{
 					//print '<input type="submit" class="button nobordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-					print '<a class="button nobordertransp"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.dol_escape_htmltag($langs->trans("EditInLine")).'</a>';
+					print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.$langs->trans("EditInLine").img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 				}
 				else
 				{
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					if (empty($conf->global->WEBSITE_EDITINLINE))
 					{
-						print '<a class="button nobordertransp"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->id.'&pageid='.$websitepage->id.'&action=seteditinline">'.dol_escape_htmltag($langs->trans("EditInLine")).'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.$langs->trans("EditInLine").img_picto($langs->trans("Disabled"),'switch_off').'</a>';
 					}
 					else
 					{
-						print '<a class="button nobordertransp"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->id.'&pageid='.$websitepage->id.'&action=unseteditinline">'.dol_escape_htmltag($langs->trans("EditInLine")).'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.$langs->trans("EditInLine").img_picto($langs->trans("Disabled"),'switch_on').'</a>';
 					}
 				}
 
@@ -2296,7 +2309,6 @@ if ($action == 'editcontent')
 print "</div>\n</form>\n";
 
 
-
 if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 {
 	if ($pageid > 0)
@@ -2349,9 +2361,9 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 
 		// TODO Add the contenteditable="true" when mode Edit Inline is on
 		$newcontent = $objectpage->content;
-		if (empty($conf->global->WEBSITE_EDITINLINE_ON))
+		if (empty($conf->global->WEBSITE_EDITINLINE))
 		{
-			$newcontent = preg_replace('/(div|section) contenteditable="true"/', '\1', $newcontent);
+			$newcontent = preg_replace('/(div|section)(\s[^\>]*)contenteditable="true"/', '\1\2', $newcontent);
 		}
 		else
 		{
@@ -2400,7 +2412,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 	}
 	else
 	{
-		print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $website).'</center><br><br><br>';
+		print '<br><br><div class="center">'.$langs->trans("PreviewOfSiteNotYetAvailable", $object->ref).'</center><br><br><br>';
 		print '<div class="center"><div class="logo_setup"></div></div>';
 	}
 }

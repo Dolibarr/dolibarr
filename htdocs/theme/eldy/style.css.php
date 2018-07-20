@@ -2931,6 +2931,11 @@ div.pagination li.paginationafterarrows {
 .nohover:hover {
 	background: unset;
 }
+.nohoverborder:hover {
+	border: unset;
+	box-shadow: unset;
+	-webkit-box-shadow: unset;
+}
 .oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {
 	font-family: <?php print $fontlist ?>;
