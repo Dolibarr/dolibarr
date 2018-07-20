@@ -1087,6 +1087,7 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
     	if ($force_utf8_on_tables == 'confirmed')
     	{
     		$sql='SET FOREIGN_KEY_CHECKS=0';
+    		print '<!-- '.$sql.' -->';
     		$resql = $db->query($sql);
     	}
 
@@ -1112,6 +1113,7 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
         if ($force_utf8_on_tables == 'confirmed')
         {
         	$sql='SET FOREIGN_KEY_CHECKS=1';
+        	print '<!-- '.$sql.' -->';
         	$resql = $db->query($sql);
         }
     }
