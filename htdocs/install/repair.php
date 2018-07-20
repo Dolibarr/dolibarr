@@ -1081,6 +1081,10 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
     {
         $listoftables = $db->DDLListTables($db->database_name);
 
+        // Disable foreign key checking for avoid errors
+        $sql='SET FOREIGN_KEY_CHECKS=0';
+        $resql = $db->query($sql);
+
         foreach($listoftables as $table)
         {
             print '<tr><td colspan="2">';
@@ -1095,6 +1099,10 @@ if ($ok && GETPOST('force_utf8_on_tables','alpha'))
             else print ' - Disabled';
             print '</td></tr>';
         }
+
+        // Enable foreign key checking
+        $sql='SET FOREIGN_KEY_CHECKS=1';
+        $resql = $db->query($sql);
     }
     else
     {
