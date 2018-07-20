@@ -10,6 +10,7 @@
  * Copyright (C) 2014-2017  Francis Appels          <francis.appels@yahoo.com>
  * Copyright (C) 2015       Claudio Aschieri        <c.aschieri@19.coop>
  * Copyright (C) 2016		Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -311,23 +312,15 @@ class Expedition extends CommonObject
 					}
 				}
 
-				// Actions on extra fields (by external module or standard code)
-				// TODO le hook fait double emploi avec le trigger !!
-				$hookmanager->initHooks(array('expeditiondao'));
-				$parameters=array('socid'=>$this->id);
-				$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-				if (empty($reshook))
+				// Actions on extra fields
+				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
-					if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+					$result=$this->insertExtraFields();
+					if ($result < 0)
 					{
-						$result=$this->insertExtraFields();
-						if ($result < 0)
-						{
-							$error++;
-						}
+						$error++;
 					}
 				}
-				else if ($reshook < 0) $error++;
 
 				if (! $error && ! $notrigger)
 				{
@@ -467,14 +460,14 @@ class Expedition extends CommonObject
 		// Check parameters
 		if (empty($id) && empty($ref) && empty($ref_ext) && empty($ref_int)) return -1;
 
-		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.billed";
+		$sql = "SELECT e.rowid, e.ref, e.fk_soc as socid, e.date_creation, e.ref_customer, e.ref_ext, e.ref_int, e.fk_user_author, e.fk_statut, e.fk_projet, e.billed";
 		$sql.= ", e.weight, e.weight_units, e.size, e.size_units, e.width, e.height";
 		$sql.= ", e.date_expedition as date_expedition, e.model_pdf, e.fk_address, e.date_delivery";
 		$sql.= ", e.fk_shipping_method, e.tracking_number";
-		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= ", e.note_private, e.note_public";
 		$sql.= ', e.fk_incoterms, e.location_incoterms';
 		$sql.= ', i.libelle as libelle_incoterms';
+		$sql.= ", el.fk_source as origin_id, el.sourcetype as origin";
 		$sql.= " FROM ".MAIN_DB_PREFIX."expedition as e";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."element_element as el ON el.fk_target = e.rowid AND el.targettype = '".$this->db->escape($this->element)."'";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON e.fk_incoterms = i.rowid';
@@ -512,6 +505,7 @@ class Expedition extends CommonObject
 				$this->origin               = ($obj->origin?$obj->origin:'commande'); // For compatibility
 				$this->origin_id            = $obj->origin_id;
 				$this->billed               = $obj->billed;
+				$this->fk_project			= $obj->fk_projet;
 
 				$this->trueWeight           = $obj->weight;
 				$this->weight_units         = $obj->weight_units;
@@ -1031,6 +1025,7 @@ class Expedition extends CommonObject
 		$sql.= " fk_shipping_method=".((isset($this->shipping_method_id) && $this->shipping_method_id > 0)?$this->shipping_method_id:"null").",";
 		$sql.= " tracking_number=".(isset($this->tracking_number)?"'".$this->db->escape($this->tracking_number)."'":"null").",";
 		$sql.= " fk_statut=".(isset($this->statut)?$this->statut:"null").",";
+		$sql.= " fk_projet=".(isset($this->fk_project)?$this->fk_project:"null").",";
 		$sql.= " height=".(($this->trueHeight != '')?$this->trueHeight:"null").",";
 		$sql.= " width=".(($this->trueWidth != '')?$this->trueWidth:"null").",";
 		$sql.= " size_units=".(isset($this->size_units)?$this->size_units:"null").",";
@@ -1105,7 +1100,7 @@ class Expedition extends CommonObject
 			$error++;
 		}
 
-		if (! $error) 
+		if (! $error)
 		{
 			if (! $notrigger)
 			{
@@ -2222,9 +2217,10 @@ class Expedition extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs,$hidedetails=0, $hidedesc=0, $hideref=0,$moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -2245,7 +2241,7 @@ class Expedition extends CommonObject
 
 		$this->fetch_origin();
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
 	}
 
 	/**
@@ -2690,19 +2686,21 @@ class ExpeditionLigne extends CommonObjectLine
 				$this->errors[]=$this->db->lasterror()." - sql=$sql";
 				$error++;
 			}
-			else
+		}
+
+		if (! $error)
+		{
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$this->errors[]=$this->error;
-						$error++;
-					}
+					$this->errors[]=$this->error;
+					$error++;
 				}
 			}
 		}
+
 		if (! $error && ! $notrigger)
 		{
 			// Call trigger

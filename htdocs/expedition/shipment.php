@@ -39,6 +39,7 @@ if (! empty($conf->stock->enabled))  require_once DOL_DOCUMENT_ROOT.'/product/st
 if (! empty($conf->propal->enabled)) require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->product->enabled) || ! empty($conf->service->enabled)) 	require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('orders',"companies","bills",'propal','deliveries','stocks',"productbatch",'incoterm'));
 
 $id=GETPOST('id','int');			// id of order
@@ -189,20 +190,13 @@ if (empty($reshook))
 
         if (! $error)
         {
-            // Actions on extra fields (by external module or standard code)
-            $hookmanager->initHooks(array('orderdao'));
-            $parameters = array('id' => $object->id);
-            $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-            // some hooks
-            if (empty($reshook)) {
-                $result = $object->insertExtraFields('SHIPMENT_MODIFY');
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-            } else if ($reshook < 0)
-                $error++;
+            // Actions on extra fields
+            $result = $object->insertExtraFields('SHIPMENT_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
         }
 
         if ($error)
@@ -648,7 +642,6 @@ if ($id > 0 || ! empty($ref))
 			}
 			print "</tr>\n";
 
-			$var=true;
 			$toBeShipped=array();
 			$toBeShippedTotal=0;
 			while ($i < $num)

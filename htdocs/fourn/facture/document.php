@@ -239,7 +239,7 @@ if ($object->id > 0)
 	// Nb of files
 	print '<tr><td class="titlefield nowrap">'.$langs->trans('NbOfAttachedFiles').'</td><td>'.count($filearray).'</td></tr>';
 
-	print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td>'.$totalsize.' '.$langs->trans('bytes').'</td></tr>';
+	print '<tr><td>'.$langs->trans('TotalSizeOfAttachedFiles').'</td><td>'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 	print '</table>';
 	print '</div>';

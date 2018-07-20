@@ -213,7 +213,7 @@ function limitChars(textarea, limit, infodiv)
                         else
                         {
                         	$sms = new stdClass();
-                        	$sms->error='The SMS manager '.$classfile.' defined into SMS setup MAIN_SMS_SENDMODE is not found';
+                        	$sms->error='The SMS manager "'.$classfile.'" defined into SMS setup MAIN_SMS_SENDMODE is not found';
                         }
                     }
                     catch(Exception $e)

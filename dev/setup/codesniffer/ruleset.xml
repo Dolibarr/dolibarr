@@ -10,6 +10,7 @@
 	<exclude-pattern type="relative">htdocs/conf.php</exclude-pattern>
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
+	<exclude-pattern type="relative">*.min.css</exclude-pattern>
 
 		<!-- List of all tests -->
 
@@ -82,7 +83,7 @@
 	<!-- Lines can be 85 chars long, but never show errors -->
 	<rule ref="Generic.Files.LineLength">
 		<properties>
-			<property name="lineLimit" value="1000" />
+			<property name="lineLimit" value="500" />
 			<property name="absoluteLineLimit" value="0" />
 		</properties>
 	</rule>
@@ -138,9 +139,7 @@
 
 	<rule ref="Generic.NamingConventions.ConstructorName" />
 	<!-- Check if we use PHP4 constructor instead of __construct() -->
-	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle">
-        <severity>0</severity>
-	</rule>
+	<rule ref="Generic.NamingConventions.ConstructorName.OldStyle" />
 
 	<rule ref="Generic.NamingConventions.UpperCaseConstantName" />
 
@@ -156,8 +155,8 @@
     <!-- Warning when using @ before functions -->
     <!-- <rule ref="Generic.PHP.NoSilencedErrors" /> -->
 
-	<!-- Say if null, true, false must be uppercase -->
-	<!-- <rule ref="Generic.PHP.UpperCaseConstant" /> -->
+	<!-- Say if null, true, false must be uppercase (Rule 2.5 of PSR2 https://www.php-fig.org/psr/psr-2/) -->
+	<rule ref="Generic.PHP.LowerCaseConstant" />
 
 	<rule ref="Generic.Strings.UnnecessaryStringConcat" />
 

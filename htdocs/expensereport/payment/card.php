@@ -28,10 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/modules/expensereport/modules_expenserepor
 require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
-$langs->load('trips');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'banks', 'companies', 'trips'));
 
 $id=GETPOST('rowid')?GETPOST('rowid','int'):GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -73,7 +71,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 	$db->begin();
 
 	$result=$object->valide();
-	
+
 	if ($result > 0)
 	{
 		$db->commit();
@@ -112,7 +110,7 @@ if ($action == 'confirm_valide' && $confirm == 'yes' && $user->rights->expensere
 
 llxHeader('', $langs->trans("ExpenseReportPayment"));
 
-if ($id > 0) 
+if ($id > 0)
 {
 	$result=$object->fetch($id);
 	if (! $result) dol_print_error($db,'Failed to get payment id '.$id);
@@ -240,8 +238,6 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);
@@ -277,7 +273,7 @@ if ($resql)
 			$i++;
 		}
 	}
-	
+
 
 	print "</table>\n";
 	print '</div>';

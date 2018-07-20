@@ -110,10 +110,8 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
  */
 $boxstat='';
 
-$langs->load("commercial");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("contracts");
+// Load translation files required by page
+$langs->loadLangs(array('commercial', 'bills', 'orders', 'contracts'));
 
 if (empty($user->societe_id))
 {
@@ -526,7 +524,7 @@ foreach($valid_dashboardlines as $board)
     }
 }
 //var_dump($totallate, $totaltodo);
-if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE)) $totallate = round($totallate / $totaltodo * 100, 2);
+if(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) && !empty($totaltodo)) $totallate = round($totallate / $totaltodo * 100, 2);
 //var_dump($totallate);
 $boxwork='';
 $boxwork.='<div class="box">';
@@ -541,7 +539,8 @@ if ($showweather)
     $boxwork.='<td class="nohover hideonsmartphone center valignmiddle">';
     $text='';
     if ($totallate > 0) $text=$langs->transnoentitiesnoconv("WarningYouHaveAtLeastOneTaskLate").' ('.$langs->transnoentitiesnoconv("NActionsLate",$totallate.(!empty($conf->global->MAIN_USE_METEO_WITH_PERCENTAGE) ? '%' : '')).')';
-    $text.='. '.$langs->trans("LateDesc");
+    else $text=$langs->transnoentitiesnoconv("NoItemLate");
+    $text.='. '.$langs->transnoentitiesnoconv("LateDesc");
     //$text.=$form->textwithpicto('',$langs->trans("LateDesc"));
     $options='height="64px"';
     $boxwork.=showWeather($totallate,$text,$options);

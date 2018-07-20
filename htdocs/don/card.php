@@ -242,8 +242,15 @@ else if ($action == 'classin' && $user->rights->don->creer)
 	$object->fetch($id);
 	$object->setProject($projectid);
 }
+
+// Actions to build doc
+$upload_dir = $conf->don->dir_output;
+$permissioncreate = $user->rights->don->creer;
+include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+
 // Remove file in doc form
-if ($action == 'remove_file')
+/*if ($action == 'remove_file')
 {
 	$object = new Don($db, 0, $_GET['id']);
 	if ($object->fetch($id))
@@ -261,11 +268,12 @@ if ($action == 'remove_file')
 		$action='';
 	}
 }
+*/
 
 /*
  * Build doc
  */
-
+/*
 if ($action == 'builddoc')
 {
 	$object = new Don($db);
@@ -291,6 +299,7 @@ if ($action == 'builddoc')
 		exit;
 	}
 }
+*/
 
 
 /*
@@ -387,7 +396,7 @@ if ($action == 'create')
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    if (empty($reshook))
     {
 		print $object->showOptionals($extrafields,'edit',$parameters);
     }
@@ -513,7 +522,7 @@ if (! empty($id) && $action == 'edit')
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    if (empty($reshook))
     {
       	print $object->showOptionals($extrafields,'edit');
     }
@@ -721,7 +730,7 @@ if (! empty($id) && $action != 'edit')
 		print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=valid_promesse">'.$langs->trans("ValidPromess").'</a></div>';
 	}
 
-    if (($object->statut == 0 || $object->statut == 1) && $remaintopay == 0 && $object->paid == 0)
+    if (($object->statut == 0 || $object->statut == 1) && $totalpaid == 0 && $object->paid == 0)
     {
         print '<div class="inline-block divButAction"><a class="butAction" href="' . $_SERVER["PHP_SELF"] . '?rowid='.$object->id.'&action=set_cancel">'.$langs->trans("ClassifyCanceled")."</a></div>";
     }

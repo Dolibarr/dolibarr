@@ -111,7 +111,8 @@ class MenuManager
 
 
     /**
-     *  Show menu
+     *  Show menu.
+     *  Module defined in sql tables are stored into this->tabMenu BEFORE this is called.
      *
      *	@param	string	$mode			'top', 'topnb', 'left', 'jmobile' (used to get full xml ul/li menu)
      *  @param	array	$moredata		An array with more data to output

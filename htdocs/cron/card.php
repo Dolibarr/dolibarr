@@ -32,9 +32,8 @@ require_once DOL_DOCUMENT_ROOT."/cron/class/cronjob.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
-
-$langs->load("admin");
-$langs->load("cron");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'cron'));
 
 if (!$user->rights->cron->create) accessforbidden();
 
@@ -251,7 +250,7 @@ if ($action=='inactive')
 $form = new Form($db);
 $formCron = new FormCron($db);
 
-llxHeader('',$langs->trans("CronAdd"));
+llxHeader('',$langs->trans("CronTask"));
 
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {
@@ -624,7 +623,7 @@ else
 		}
 		else
 		{
-			$mc->getInfo($obj->entity);
+			$mc->getInfo($object->entity);
 			print $mc->label;
 		}
 		print "</td></tr>";
@@ -710,7 +709,9 @@ else
 
 	print '<tr><td>';
 	print $langs->trans('CronLastResult')."</td><td>";
+	if ($object->lastresult) print '<span class="error">';
 	print $object->lastresult;
+	if ($object->lastresult) print '</span>';
 	print "</td></tr>";
 
 	print '<tr><td>';

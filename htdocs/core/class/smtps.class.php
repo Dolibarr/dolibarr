@@ -647,7 +647,7 @@ class SMTPs
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
@@ -655,7 +655,7 @@ class SMTPs
 		if ( ! empty ($_strConfigPath) )
 		{
 			// If the path is not valid, this will NOT generate an error,
-			// it will simply return FALSE.
+			// it will simply return false.
 			if ( ! @include ( $_strConfigPath ) )
 			{
 				$this->_setErr(110, '"' . $_strConfigPath . '" is not a valid path.');
@@ -1360,7 +1360,9 @@ class SMTPs
 		$strContentAltText = '';
 		if ($strType == 'html')
 		{
-			$strContentAltText = html_entity_decode(strip_tags($strContent));
+			// Similar code to forge a text from html is also in CMailFile.class.php
+			$strContentAltText = preg_replace("/<br\s*[^>]*>/"," ", $strContent);
+			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, "\r\n"));
 		}
 
@@ -1410,7 +1412,7 @@ class SMTPs
 			$content = 'Content-Type: ' . $_msgData['mimeType'] . '; charset="' . $this->getCharSet() . '"' . "\r\n"
 			. 'Content-Transfer-Encoding: ' . $this->getTransEncodeType() . "\r\n"
 			. 'Content-Disposition: inline'  . "\r\n"
-			. 'Content-Description: message' . "\r\n";
+			. 'Content-Description: Message' . "\r\n";
 
 			if ( $this->getMD5flag() )
 			$content .= 'Content-MD5: ' . $_msgData['md5'] . "\r\n";
@@ -1459,7 +1461,7 @@ class SMTPs
 						.  'Content-Disposition: attachment; filename="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Type: ' . $_data['mimeType'] . '; name="' . $_data['fileName'] . '"' . "\r\n"
 						.  'Content-Transfer-Encoding: base64' . "\r\n"
-						.  'Content-Description: File Attachment' . "\r\n";
+						.  'Content-Description: ' . $_data['fileName'] ."\r\n";
 
 						if ( $this->getMD5flag() )
 						$content .= 'Content-MD5: ' . $_data['md5'] . "\r\n";
@@ -1756,7 +1758,7 @@ class SMTPs
 	{
 		/**
 		 * Returns constructed SELECT Object string or boolean upon failure
-		 * Default value is set at TRUE
+		 * Default value is set at true
 		 */
 		$_retVal = true;
 
@@ -1828,9 +1830,12 @@ class SMTPs
 	{
 		$_errMsg = array();
 
-		foreach ( $this->_smtpsErrors as $_err => $_info )
+		if (is_array($this->_smtpsErrors))
 		{
-			$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+			foreach ( $this->_smtpsErrors as $_err => $_info )
+			{
+				$_errMsg[] = 'Error [' . $_info['num'] .']: '. $_info['msg'];
+			}
 		}
 
 		return implode("\n", $_errMsg);

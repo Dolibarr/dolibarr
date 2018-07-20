@@ -30,9 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
-$langs->load("orders");
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('orders', 'products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -49,11 +48,13 @@ $hookmanager->initHooks(array('productstatsorder'));
 
 $mesg = '';
 
+// Load variable for pagination
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$offset = $conf->liste_limit * $page;
+$offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="DESC";
@@ -112,7 +113,7 @@ if ($id > 0 || ! empty($ref))
         print '<div class="underbanner clearboth"></div>';
         print '<table class="border tableforfield" width="100%">';
 
-		show_stats_for_company($product,$socid);
+        $nboflines = show_stats_for_company($product, $socid);
 
 		print "</table>";
 
@@ -142,24 +143,21 @@ if ($id > 0 || ! empty($ref))
 	            	$sql.= ' AND YEAR(c.date_commande) IN (' . $search_year . ')';
 			if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if ($socid) $sql.= " AND c.fk_soc = ".$socid;
-			$sql.= " ORDER BY $sortfield $sortorder ";
+			$sql.= $db->order($sortfield, $sortorder);
 
 	        //Calcul total qty and amount for global if full scan list
 	        $total_ht=0;
 	        $total_qty=0;
-			$totalrecords=0;
-	        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
+
+	        // Count total nb of records
+	        $totalofrecords = '';
+	        if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+	        {
 	        	$result = $db->query($sql);
-	        	if ($result) {
-	        		$totalrecords = $db->num_rows($result);
-	        		while ($objp = $db->fetch_object($result)) {
-	        			$total_ht+=$objp->total_ht;
-	        			$total_qty+=$objp->qty;
-	        		}
-	        	}
+	        	$totalofrecords = $db->num_rows($result);
 	        }
 
-			$sql.= $db->plimit($conf->liste_limit +1, $offset);
+	        $sql .= $db->plimit($limit + 1, $offset);
 
 			$result = $db->query($sql);
 			if ($result)
@@ -172,6 +170,7 @@ if ($id > 0 || ! empty($ref))
 	            	$option .= '&amp;search_month='.$search_month;
 	            if (! empty($search_year))
 	            	$option .= '&amp;search_year='.$search_year;
+	            if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
 
 	            print '<form method="post" action="' . $_SERVER ['PHP_SELF'] . '?id='.$product->id.'" name="search_form">' . "\n";
 	            if (! empty($sortfield))
@@ -183,7 +182,7 @@ if ($id > 0 || ! empty($ref))
 	            	$option .= '&amp;page=' . $page;
 	            }
 
-				print_barre_liste($langs->trans("CustomersOrders"),$page,$_SERVER["PHP_SELF"],"&amp;id=$product->id",$sortfield,$sortorder,'',$num,$totalrecords,'');
+	            print_barre_liste($langs->trans("CustomersOrders"), $page, $_SERVER["PHP_SELF"], "&amp;id=".$product->id, $sortfield, $sortorder, '', $num, $totalofrecords, '', 0, '', '', $limit);
                 print '<div class="liste_titre liste_titre_bydiv centpercent">';
                 print '<div class="divsearchfield">';
 			    print $langs->trans('Period').' ('.$langs->trans("OrderDate") .') - ';
@@ -211,20 +210,22 @@ if ($id > 0 || ! empty($ref))
 
 				if ($num > 0)
 				{
-					$var=True;
-					while ($i < $num && $i < $conf->liste_limit)
+					while ($i < min($num, $limit))
 					{
 						$objp = $db->fetch_object($result);
 
+						$total_ht+=$objp->total_ht;
+						$total_qty+=$objp->qty;
+
+						$orderstatic->id=$objp->commandeid;
+						$orderstatic->ref=$objp->ref;
+						$orderstatic->ref_client=$objp->ref_client;
+						$societestatic->fetch($objp->socid);
 
 						print '<tr class="oddeven">';
 	 					print '<td>';
-	                    $orderstatic->id=$objp->commandeid;
-	                    $orderstatic->ref=$objp->ref;
-	                    $orderstatic->ref_client=$objp->ref_client;
 	                    print $orderstatic->getNomUrl(1);
 	                    print "</td>\n";
-						$societestatic->fetch($objp->socid);
 	                    print '<td>'.$societestatic->getNomUrl(1).'</td>';
 	                    print "<td>".$objp->code_client."</td>\n";
 						print '<td align="center">';
@@ -234,15 +235,11 @@ if ($id > 0 || ! empty($ref))
 						print '<td align="right">'.$orderstatic->LibStatut($objp->statut,$objp->facture,5).'</td>';
 						print "</tr>\n";
 						$i++;
-
-	                    if (!empty($conf->global->MAIN_DISABLE_FULL_SCANLIST)) {
-	                        $total_ht+=$objp->total_ht;
-	                        $total_qty+=$objp->qty;
-						}
 					}
 				}
                 print '<tr class="liste_total">';
-                print '<td>' . $langs->trans('Total') . '</td>';
+                if ($num < $limit) print '<td align="left">'.$langs->trans("Total").'</td>';
+                else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
                 print '<td colspan="3"></td>';
                 print '<td align="center">'.$total_qty.'</td>';
                 print '<td align="right">'.price($total_ht).'</td>';

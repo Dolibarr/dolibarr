@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,9 +56,10 @@ class Fichinter extends CommonObject
 	var $datet;
 	var $datem;
 	var $duration;
-	var $statut;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
+	var $statut = 0;		// 0=draft, 1=validated, 2=invoiced, 3=Terminate
 	var $description;
-	var $fk_contrat;
+	var $fk_contrat = 0;
+	var $fk_project = 0;
 	var $extraparams=array();
 
 	var $lines = array();
@@ -87,24 +89,8 @@ class Fichinter extends CommonObject
 	function __construct($db)
 	{
 		$this->db = $db;
-		$this->products = array();
-		$this->fk_project = 0;
-		$this->fk_contrat = 0;
-		$this->statut = 0;
 
-		// List of language codes for status
-		$this->statuts[0]='Draft';
-		$this->statuts[1]='Validated';
-		$this->statuts[2]='StatusInterInvoiced';
-		$this->statuts[3]='Done';
-		$this->statuts_short[0]='Draft';
-		$this->statuts_short[1]='Validated';
-		$this->statuts_short[2]='StatusInterInvoiced';
-		$this->statuts_short[3]='Done';
-		$this->statuts_logo[0]='statut0';
-		$this->statuts_logo[1]='statut1';
-		$this->statuts_logo[2]='statut6';
-		$this->statuts_logo[3]='statut6';
+		$this->products = array();
 	}
 
 	/**
@@ -253,7 +239,7 @@ class Fichinter extends CommonObject
 			}
 
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('FICHINTER_CREATE',$user);
@@ -369,8 +355,8 @@ class Fichinter extends CommonObject
 				$this->statut       = $obj->fk_statut;
 				$this->duration     = $obj->duree;
 				$this->datec        = $this->db->jdate($obj->datec);
-				$this->datee        = $this->db->jdate($obj->dateo);
-				$this->dateo        = $this->db->jdate($obj->datee);
+				$this->dateo        = $this->db->jdate($obj->dateo);
+				$this->datee        = $this->db->jdate($obj->datee);
 				$this->datet        = $this->db->jdate($obj->datet);
 				$this->datev        = $this->db->jdate($obj->datev);
 				$this->datem        = $this->db->jdate($obj->datem);
@@ -590,9 +576,10 @@ class Fichinter extends CommonObject
 	 *  @param      int                     $hidedetails    Hide details of lines
 	 *  @param      int                     $hidedesc       Hide description
 	 *  @param      int                     $hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int                                     0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -611,7 +598,7 @@ class Fichinter extends CommonObject
 
 		$modelpath = "core/modules/fichinter/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
 	}
 
 	/**
@@ -634,22 +621,40 @@ class Fichinter extends CommonObject
 	 */
 	function LibStatut($statut,$mode=0)
 	{
-		global $langs;
+		// Init/load array of translation of status
+		if (empty($this->statuts) || empty($this->statuts_short))
+		{
+			global $langs;
+			$langs->load("fichinter");
+
+			$this->statuts[0]=$langs->trans('Draft');
+			$this->statuts[1]=$langs->trans('Validated');
+			$this->statuts[2]=$langs->trans('StatusInterInvoiced');
+			$this->statuts[3]=$langs->trans('Done');
+			$this->statuts_short[0]=$langs->trans('Draft');
+			$this->statuts_short[1]=$langs->trans('Validated');
+			$this->statuts_short[2]=$langs->trans('StatusInterInvoiced');
+			$this->statuts_short[3]=$langs->trans('Done');
+			$this->statuts_logo[0]='statut0';
+			$this->statuts_logo[1]='statut1';
+			$this->statuts_logo[2]='statut6';
+			$this->statuts_logo[3]='statut6';
+		}
 
 		if ($mode == 0)
-			return $langs->trans($this->statuts[$statut]);
+			return $this->statuts[$statut];
 		if ($mode == 1)
-			return $langs->trans($this->statuts_short[$statut]);
+			return $this->statuts_short[$statut];
 		if ($mode == 2)
-			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]).' '.$langs->trans($this->statuts_short[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts_short[$statut];
 		if ($mode == 3)
-			return img_picto($langs->trans($this->statuts_short[$statut]), $this->statuts_logo[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]);
 		if ($mode == 4)
-			return img_picto($langs->trans($this->statuts_short[$statut]),$this->statuts_logo[$statut]).' '.$langs->trans($this->statuts[$statut]);
+			return img_picto($this->statuts_short[$statut], $this->statuts_logo[$statut]).' '.$this->statuts[$statut];
 		if ($mode == 5)
-			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts_short[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+			return '<span class="hideonsmartphone">'.$this->statuts_short[$statut].' </span>'.img_picto($this->statuts[$statut],$this->statuts_logo[$statut]);
 		if ($mode == 6)
-			return '<span class="hideonsmartphone">'.$langs->trans($this->statuts[$statut]).' </span>'.img_picto($langs->trans($this->statuts[$statut]),$this->statuts_logo[$statut]);
+			return '<span class="hideonsmartphone">'.$this->statuts[$statut].' </span>'.img_picto($this->statuts[$statut],$this->statuts_logo[$statut]);
 
 		return '';
 	}
@@ -665,7 +670,7 @@ class Fichinter extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $save_lastsearch_value=-1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result='';
 
@@ -693,6 +698,13 @@ class Fichinter extends CommonObject
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.=' class="classfortooltip"';
+
+			/*
+			$hookmanager->initHooks(array('fichinterdao'));
+			$parameters=array('id'=>$this->id);
+			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			*/
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -703,6 +715,13 @@ class Fichinter extends CommonObject
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= $this->ref;
 		$result .= $linkend;
+
+		global $action;
+		$hookmanager->initHooks(array('intervnetiondao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
 		return $result;
 	}
@@ -1389,11 +1408,11 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->rowid=$this->id;
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->id;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -1464,7 +1483,6 @@ class FichinterLigne extends CommonObjectLine
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->id;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{

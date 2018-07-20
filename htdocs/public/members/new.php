@@ -35,8 +35,9 @@
  *  MEMBER_NEWFORM_FORCECOUNTRYCODE     Force country
  */
 
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOLOGIN'))		define("NOLOGIN",1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))	define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOIPCHECK'))		define('NOIPCHECK','1');	// Do not check IP defined into conf $dolibarr_main_restrict_ip
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -59,11 +60,7 @@ $backtopage=GETPOST('backtopage','alpha');
 $action=GETPOST('action','alpha');
 
 // Load translation files
-$langs->load("main");
-$langs->load("members");
-$langs->load("companies");
-$langs->load("install");
-$langs->load("other");
+$langs->loadLangs(array("main","members","companies","install","other"));
 
 // Security check
 if (empty($conf->adherent->enabled)) accessforbidden('',0,0,1);
@@ -75,6 +72,8 @@ if (empty($conf->global->MEMBER_ENABLE_PUBLIC))
 }
 
 $extrafields = new ExtraFields($db);
+
+$object = new Adherent($db);
 
 
 /**
@@ -358,7 +357,7 @@ if ($action == 'add')
                 if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'all')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
                     if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
@@ -375,51 +374,51 @@ if ($action == 'add')
             	else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paybox')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paybox/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($conf->global->PAYBOX_SECURITY_TOKEN))
+                    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                    	if (! empty($conf->global->PAYBOX_SECURITY_TOKEN_UNIQUE))
+                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                     	{
-                    		$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYBOX_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                    		$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                     	}
                     	else
                     	{
-                    		$urlback.='&securekey='.urlencode($conf->global->PAYBOX_SECURITY_TOKEN);
+                    		$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                     	}
                     }
                 }
                 else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'paypal')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/paypal/newpayment.php?from=membernewform&source=membersubscription&ref='.urlencode($adh->ref);
-                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($conf->global->PAYPAL_SECURITY_TOKEN))
+                    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                        if (! empty($conf->global->PAYPAL_SECURITY_TOKEN_UNIQUE))
+                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYPAL_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        	$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
-                            $urlback.='&securekey='.urlencode($conf->global->PAYPAL_SECURITY_TOKEN);
+                        	$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
                 }
 				else if ($conf->global->MEMBER_NEWFORM_PAYONLINE == 'stripe')
                 {
                     $urlback=DOL_MAIN_URL_ROOT.'/public/stripe/newpayment.php?from=membernewform&source=membersubscription&ref='.$adh->ref;
-                    if (price2num(GETPOST('amount'))) $urlback.='&amount='.price2num(GETPOST('amount'));
+                    if (price2num(GETPOST('amount','alpha'))) $urlback.='&amount='.price2num(GETPOST('amount','alpha'));
                     if (GETPOST('email')) $urlback.='&email='.urlencode(GETPOST('email'));
-                    if (! empty($conf->global->STRIPE_SECURITY_TOKEN))
+                    if (! empty($conf->global->PAYMENT_SECURITY_TOKEN))
                     {
-                        if (! empty($conf->global->STRIPE_SECURITY_TOKEN_UNIQUE))
+                    	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
                         {
-                    	    $urlback.='&securekey='.urlencode(dol_hash($conf->global->STRIPE_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
+                        	$urlback.='&securekey='.urlencode(dol_hash($conf->global->PAYMENT_SECURITY_TOKEN . 'membersubscription' . $adh->ref, 2));
                         }
                         else
                         {
-                            $urlback.='&securekey='.urlencode($conf->global->STRIPE_SECURITY_TOKEN);
+                        	$urlback.='&securekey='.urlencode($conf->global->PAYMENT_SECURITY_TOKEN);
                         }
                     }
                 }
@@ -487,16 +486,16 @@ llxHeaderVierge($langs->trans("NewSubscription"));
 
 print load_fiche_titre($langs->trans("NewSubscription"), '', '', 0, 0, 'center');
 
-print '<div class="center subscriptionformhelptext">';
+
+print '<div align="center">';
+print '<div id="divsubscribe">';
+
+print '<div class="center subscriptionformhelptext justify">';
 if (! empty($conf->global->MEMBER_NEWFORM_TEXT)) print $langs->trans($conf->global->MEMBER_NEWFORM_TEXT)."<br>\n";
 else print $langs->trans("NewSubscriptionDesc",$conf->global->MAIN_INFO_SOCIETE_MAIL)."<br>\n";
 print '</div>';
 
 dol_htmloutput_errors($errmsg);
-
-print '<div align="center">';
-print '<div id="divsubscribe">';
-
 
 // Print form
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST" name="newmember">'."\n";
@@ -631,13 +630,8 @@ print '</td></tr>'."\n";
 print '<tr><td>'.$langs->trans("URLPhoto").'</td><td><input type="text" name="photo" class="minwidth150" value="'.dol_escape_htmltag(GETPOST('photo')).'"></td></tr>'."\n";
 // Public
 print '<tr><td>'.$langs->trans("Public").'</td><td><input type="checkbox" name="public"></td></tr>'."\n";
-// Extrafields
-foreach($extrafields->attribute_label as $key=>$value)
-{
-    print "<tr><td>".$value."</td><td>";
-    print $extrafields->showInputField($key,GETPOST('options_'.$key));
-    print "</td></tr>\n";
-}
+// Other attributes
+include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_add.tpl.php';
 // Comments
 print '<tr>';
 print '<td class="tdtop">'.$langs->trans("Comments").'</td>';

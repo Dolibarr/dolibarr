@@ -204,7 +204,7 @@ class Contact extends CommonObject
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 
-		$entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
@@ -220,15 +220,15 @@ class Contact extends CommonObject
 		$sql.= ", import_key";
 		$sql.= ") VALUES (";
 		$sql.= "'".$this->db->idate($now)."',";
-		if ($this->socid > 0) $sql.= " ".$this->socid.",";
+		if ($this->socid > 0) $sql.= " ".$this->db->escape($this->socid).",";
 		else $sql.= "null,";
 		$sql.= "'".$this->db->escape($this->lastname)."',";
         $sql.= "'".$this->db->escape($this->firstname)."',";
-		$sql.= " ".($user->id > 0 ? "'".$user->id."'":"null").",";
-		$sql.= " ".$this->priv.",";
-		$sql.= " ".$this->statut.",";
+        $sql.= " ".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"null").",";
+		$sql.= " ".$this->db->escape($this->priv).",";
+		$sql.= " ".$this->db->escape($this->statut).",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$entity.",";
+        $sql.= " ".$this->db->escape($this->entity).",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
@@ -307,6 +307,8 @@ class Contact extends CommonObject
 
 		$this->id = $id;
 
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+
 		// Clean parameters
 		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
 		$this->firstname=trim($this->firstname);
@@ -342,6 +344,7 @@ class Contact extends CommonObject
 		$sql .= ", email='".$this->db->escape($this->email)."'";
 		$sql .= ", skype='".$this->db->escape($this->skype)."'";
 		$sql .= ", photo='".$this->db->escape($this->photo)."'";
+		$sql .= ", birthday=".($this->birthday ? "'".$this->db->idate($this->birthday)."'" : "null");
 		$sql .= ", note_private = ".(isset($this->note_private)?"'".$this->db->escape($this->note_private)."'":"null");
 		$sql .= ", note_public = ".(isset($this->note_public)?"'".$this->db->escape($this->note_public)."'":"null");
 		$sql .= ", phone = ".(isset($this->phone_pro)?"'".$this->db->escape($this->phone_pro)."'":"null");
@@ -349,10 +352,11 @@ class Contact extends CommonObject
 		$sql .= ", phone_mobile = ".(isset($this->phone_mobile)?"'".$this->db->escape($this->phone_mobile)."'":"null");
 		$sql .= ", jabberid = ".(isset($this->jabberid)?"'".$this->db->escape($this->jabberid)."'":"null");
 		$sql .= ", priv = '".$this->db->escape($this->priv)."'";
-		$sql .= ", statut = ".$this->statut;
+		$sql .= ", statut = ".$this->db->escape($this->statut);
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->db->escape($this->default_lang)."'":"NULL");
 		$sql .= ", no_email=".($this->no_email?"'".$this->db->escape($this->no_email)."'":"0");
+		$sql .= ", entity = " . $this->db->escape($this->entity);
 		$sql .= " WHERE rowid=".$this->db->escape($id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -366,11 +370,8 @@ class Contact extends CommonObject
 
 		    $action='update';
 
-		    // Actions on extra fields (by external module or standard code)
-		    $hookmanager->initHooks(array('contactdao'));
-		    $parameters=array('socid'=>$this->id);
-		    $reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		    if (empty($reshook))
+		    // Actions on extra fields
+		    if (! $error)
 		    {
 		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 		    	{
@@ -381,7 +382,6 @@ class Contact extends CommonObject
 		    		}
 		    	}
 		    }
-		    else if ($reshook < 0) $error++;
 
 			if (! $error && $this->user_id > 0)
 			{
@@ -588,8 +588,8 @@ class Contact extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-            $error++;
-		    $this->error=$this->db->lasterror();
+			$error++;
+			$this->error=$this->db->lasterror();
 		}
 
 		// Mis a jour alerte birthday
@@ -690,7 +690,10 @@ class Contact extends CommonObject
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON c.fk_soc = s.rowid";
 		if ($id) $sql.= " WHERE c.rowid = ". $id;
-		elseif ($ref_ext) $sql .= " WHERE c.ref_ext = '".$this->db->escape($ref_ext)."'";
+		elseif ($ref_ext) {
+			$sql .= " WHERE c.entity IN (".getEntity($this->element).")";
+			$sql .= " AND c.ref_ext = '".$this->db->escape($ref_ext)."'";
+		}
 
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -1050,10 +1053,7 @@ class Contact extends CommonObject
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
 		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
 
-		dol_syslog(get_class($this)."::getNbOfEMailings", LOG_DEBUG);
-
 		$resql=$this->db->query($sql);
-
 		if ($resql)
 		{
 			$obj = $this->db->fetch_object($resql);
@@ -1111,7 +1111,6 @@ class Contact extends CommonObject
 
         $url .= $moreparam;
 
-        $linkstart = '<a href="'.$url.'"';
         $linkclose="";
 		if (empty($notooltip)) {
 	    	if (! empty($conf->global->MAIN_OPTIMIZEFORTEXTBROWSER))
@@ -1121,20 +1120,17 @@ class Contact extends CommonObject
         	}
 	       	$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
     	   	$linkclose.= ' class="classfortooltip"';
-		}
-		$linkclose.='>';
 
-		/*if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
+    	   	/*
+    	   	 $hookmanager->initHooks(array('contactdao'));
+    	   	 $parameters=array('id'=>$this->id);
+    	   	 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+    	   	 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+    	   	 */
 		}
-		$hookmanager->initHooks(array('contactdao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;*/
 
-		$linkstart.=$linkclose;
+		$linkstart = '<a href="'.$url.'"';
+		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
 		if ($option == 'xxx')
@@ -1149,11 +1145,6 @@ class Contact extends CommonObject
 		$result.=$linkend;
 
 		global $action;
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('contactdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks

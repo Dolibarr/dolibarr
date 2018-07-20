@@ -25,6 +25,7 @@
 require '../main.inc.php';
 include_once DOL_DOCUMENT_ROOT.'/core/modules/printing/modules_printing.php';
 
+// Load translation files required by the page
 $langs->load("printing");
 
 

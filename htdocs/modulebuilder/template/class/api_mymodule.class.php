@@ -192,7 +192,7 @@ class MyModuleApi extends DolibarrApi
      *
      * @url	POST myobjects/
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->myobject->create) {
 			throw new RestException(401);
@@ -218,7 +218,7 @@ class MyModuleApi extends DolibarrApi
      *
      * @url	PUT myobjects/{id}
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->myobject->create) {
 			throw new RestException(401);

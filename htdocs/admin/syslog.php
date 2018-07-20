@@ -31,8 +31,8 @@ global $conf;
 
 if (!$user->admin) accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other"));
 
 $error=0;
 $action = GETPOST('action','aZ09');
@@ -50,7 +50,6 @@ foreach ($dirsyslogs as $reldir) {
 		$handle = opendir($newdir);
 
 		if (is_resource($handle)) {
-			$var = true;
 
 			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
@@ -280,7 +279,6 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td align="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
-$var=true;
 
 print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogLevel").'</td>';
 print '<td colspan="2"><select class="flat" name="level" '.$option.'>';

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2014-2017  Alexandre Spangaro   <aspangaro@zendsi.com>
+/* Copyright (C) 2014-2018  Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015       Frederic France      <frederic.france@free.fr>
  * Copyright (C) 2017       Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -32,9 +32,8 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accoun
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("loan");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","loan"));
 
 $id=GETPOST('id','int');
 $action=GETPOST('action','aZ09');
@@ -308,7 +307,7 @@ if ($action == 'create')
 		$formproject=new FormProjets($db);
 
 		// Projet associe
-		$langs->load("projects");
+		$langs->loadLangs(array("projects"));
 
 		print '<tr><td>'.$langs->trans("Project").'</td><td>';
 
@@ -444,7 +443,7 @@ if ($id > 0)
 		// Project
 		if (! empty($conf->projet->enabled))
 		{
-			$langs->load("projects");
+			$langs->loadLangs(array("projects"));
 			$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
 			if ($user->rights->loan->write)
 			{
@@ -699,10 +698,9 @@ if ($id > 0)
 			print '<td>'.$langs->trans("Type").'</td>';
 			print '<td align="right">'.$langs->trans("Insurance").'</td>';
 			print '<td align="right">'.$langs->trans("Interest").'</td>';
-	  		print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
-	  		print '</tr>';
+			print '<td align="right">'.$langs->trans("LoanCapital").'</td>';
+			print '</tr>';
 
-			$var=True;
 			while ($i < $num)
 			{
 				$objp = $db->fetch_object($resql);
@@ -711,9 +709,9 @@ if ($id > 0)
 				print '<td><a href="'.DOL_URL_ROOT.'/loan/payment/card.php?id='.$objp->rowid.'">'.img_object($langs->trans("Payment"),"payment").' '.$objp->rowid.'</a></td>';
 				print '<td>'.dol_print_date($db->jdate($objp->dp),'day')."</td>\n";
 				print "<td>".$objp->paiement_type.' '.$objp->num_payment."</td>\n";
-				print '<td align="right">'.price($objp->amount_insurance, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_interest, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
-				print '<td align="right">'.price($objp->amount_capital, 0, $langs, 0, 0, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_insurance, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_interest, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
+				print '<td align="right">'.price($objp->amount_capital, 0, $outputlangs, 1, -1, -1, $conf->currency)."</td>\n";
 				print "</tr>";
 				$total_capital += $objp->amount_capital;
 				$i++;
@@ -771,7 +769,7 @@ if ($id > 0)
 				print '<div class="tabsAction">';
 
 				// Edit
-				if ($user->rights->loan->write)
+				if ($object->paid == 0 && $user->rights->loan->write)
 				{
 					print '<a href="javascript:popEcheancier()" class="butAction">'.$langs->trans('CreateCalcSchedule').'</a>';
 
@@ -791,7 +789,7 @@ if ($id > 0)
 				}
 
 				// Delete
-				if ($user->rights->loan->delete)
+				if ($object->paid == 0 && $user->rights->loan->delete)
 				{
 					print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/loan/card.php?id='.$object->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 				}

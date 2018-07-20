@@ -30,11 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
-$langs->load('admin');
-$langs->load('other');
-$langs->load('trips');
-$langs->load('errors');
-$langs->load('dict');
+// Load translation files required by the page
+$langs->loadLangs(array("admin","trips","errors","other","dict"));
 
 if (!$user->admin) accessforbidden();
 
@@ -129,7 +126,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 	if ($Tab['active'] == 0) continue;
 
 	$tranche=1;
-	$var = true;
+
 	foreach ($Tab['ranges'] as $k => $range)
 	{
 		if (isset($Tab['ranges'][$k+1])) $label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k+1]->range_ik-1));
@@ -137,7 +134,7 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 
 		if ($range->range_active == 0) $label = $form->textwithpicto($label, $langs->trans('expenseReportRangeDisabled'), 1, 'help', '', 0, 3);
 
-		echo '<tr '.$bc[$var].'>';
+		echo '<tr class="oddeven">';
 
 		// Label
 		echo '<td width="20%"><b>['.$langs->trans('RangeNum', $tranche++).']</b> - '.$label.'</td>';
@@ -175,7 +172,6 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		echo '</td>';
 
 		echo '</tr>';
-		$var=!$var;
 	}
 }
 

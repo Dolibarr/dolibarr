@@ -35,10 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('multicurrency');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'banks', 'multicurrency'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
@@ -591,7 +589,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=true;
                 $total=0;
                 $totalrecu=0;
                 $totalrecucreditnote=0;
@@ -600,7 +597,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($resql);
-
 
 					$soc = new Societe($db);
 					$soc->fetch($objp->socid);
@@ -819,7 +815,7 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
 if (! GETPOST('action','aZ09'))
 {
     if ($page == -1) $page = 0 ;
-    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+    $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
     $offset = $limit * $page ;
 
     if (! $sortorder) $sortorder='DESC';
@@ -844,7 +840,6 @@ if (! GETPOST('action','aZ09'))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';

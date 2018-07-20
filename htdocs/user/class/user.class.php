@@ -10,6 +10,7 @@
  * Copyright (C) 2013-2014 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013-2015 Alexandre Spangaro   <aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
+ * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +116,7 @@ class User extends CommonObject
 	public $lastsearch_values_tmp;  // To store current search criterias for user
 	public $lastsearch_values;      // To store last saved search criterias for user
 
-	public $users;					// To store all tree of users hierarchy
+	public $users = array();		// To store all tree of users hierarchy
 	public $parentof;				// To store an array of all parents for all ids.
 	private $cache_childids;
 
@@ -134,6 +135,12 @@ class User extends CommonObject
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
+	
+	public $fields=array(
+        	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+        	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
+        	'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name','enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+    	);
 
 	/**
 	 *    Constructor de la classe
@@ -795,7 +802,8 @@ class User extends CommonObject
 					else
 					{
 						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
+						// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
+						if (!is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = 1;
 					}
 
 				}
@@ -1572,7 +1580,7 @@ class User extends CommonObject
 
 			$action='update';
 
-			// Actions on extra fields (by external module or standard code)
+			// Actions on extra fields
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
@@ -2200,17 +2208,14 @@ class User extends CommonObject
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.= ' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+			/*
+			 $hookmanager->initHooks(array('userdao'));
+			 $parameters=array('id'=>$this->id);
+			 $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			 if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			 */
 		}
-		/*if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
-		$hookmanager->initHooks(array('userdao'));
-		$parameters=array('id'=>$this->id);
-		$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-		if ($reshook > 0) $linkclose = $hookmanager->resPrint;
-		*/
 
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
@@ -2240,11 +2245,6 @@ class User extends CommonObject
 		$result.=$companylink;
 
 		global $action;
-		if (! is_object($hookmanager))
-		{
-			include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-			$hookmanager=new HookManager($this->db);
-		}
 		$hookmanager->initHooks(array('userdao'));
 		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
 		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -2568,7 +2568,8 @@ class User extends CommonObject
 		$sql = "SELECT count(mc.email) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
-		$sql.= " AND mc.statut=1";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -2977,9 +2978,10 @@ class User extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$user,$langs;
 
@@ -3000,7 +3002,107 @@ class User extends CommonObject
 
 		$modelpath = "core/modules/user/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
+	}
+
+	/**
+	 *  Return property of user from its id
+	 *
+	 *  @param	int		$rowid      id of contact
+	 *  @param  string	$mode       'email' or 'mobile'
+	 *  @return string  			Email of user with format: "Full name <email>"
+	 */
+	function user_get_property($rowid,$mode)
+	{
+		$user_property='';
+
+		if (empty($rowid)) return '';
+
+		$sql = "SELECT rowid, email, user_mobile, civility, lastname, firstname";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE rowid = '".$rowid."'";
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+
+			if ($nump)
+			{
+				$obj = $this->db->fetch_object($resql);
+
+				if ($mode == 'email') $user_property = dolGetFirstLastname($obj->firstname, $obj->lastname)." <".$obj->email.">";
+				else if ($mode == 'mobile') $user_property = $obj->user_mobile;
+			}
+			return $user_property;
+		}
+		else
+		{
+			dol_print_error($this->db);
+		}
+	}
+
+	/**
+	 *	Load all objects into $this->users
+	 *
+	 *  @param	string		$sortorder    sort order
+	 *  @param	string		$sortfield    sort field
+	 *  @param	int			$limit		  limit page
+	 *  @param	int			$offset    	  page
+	 *  @param	array		$filter    	  filter output
+	 *  @return int          	<0 if KO, >0 if OK
+	 */
+	function fetchAll($sortorder='', $sortfield='', $limit=0, $offset=0, $filter=array())
+	{
+		global $conf;
+
+		$sql="SELECT t.rowid";
+		$sql.= ' FROM '.MAIN_DB_PREFIX .$this->table_element.' as t ';
+		$sql.= " WHERE 1";
+
+		//Manage filter
+		if (!empty($filter)){
+			foreach($filter as $key => $value) {
+				if (strpos($key,'date')) {
+					$sql.= ' AND '.$key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key=='customsql') {
+					$sql.= ' AND '.$value;
+				} else {
+					$sql.= ' AND '.$key.' LIKE \'%'.$value.'%\'';
+				}
+			}
+		}
+		$sql.= $this->db->order($sortfield,$sortorder);
+		if ($limit) $sql.= $this->db->plimit($limit+1,$offset);
+
+		dol_syslog(get_class($this)."::".__METHOD__, LOG_DEBUG);
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->users=array();
+			$num = $this->db->num_rows($resql);
+			if ($num)
+			{
+				while ($obj = $this->db->fetch_object($resql))
+				{
+					$line = new self($this->db);
+					$result = $line->fetch($obj->rowid);
+					if ($result>0 && !empty($line->id)) {
+						$this->users[$obj->rowid] = clone $line;
+					}
+				}
+				$this->db->free($resql);
+			}
+			return $num;
+		}
+		else
+		{
+			$this->errors[] = $this->db->lasterror();
+			return -1;
+		}
+
 	}
 
 }

@@ -29,8 +29,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
 $error = 0;
 
-$langs->load("bills");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy"));
 
 $mesg = '';
 $id = GETPOST('id', 'int');
@@ -71,7 +71,7 @@ if (! empty($selectcpt)) {
 	if ($return<0) {
 		setEventMessages($langs->trans('errors'), $accountingcategory->errors, 'errors');
 	} else {
-		setEventMessages($langs->trans('Saved'), null, 'mesgs');
+		setEventMessages($langs->trans('SetupSaved'), null, 'mesgs');
 	}
 }
 if ($action == 'delete') {
@@ -94,7 +94,7 @@ $formaccounting = new FormAccounting($db);
 
 llxheader('', $langs->trans('AccountingCategory'));
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?search_country_id='.$mysoc->country_id.'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/accountancy/admin/categories_list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 print load_fiche_titre($langs->trans('AccountingCategory'), $linkback);
 

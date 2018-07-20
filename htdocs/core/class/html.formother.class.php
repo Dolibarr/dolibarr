@@ -165,7 +165,7 @@ class FormOther
     {
         global $langs;
 
-        $sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
+        $sql = "SELECT e.rowid, e.code, e.label, e.price, e.organization,";
         $sql.= " c.label as country";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_country as c";
         $sql.= " WHERE e.active = 1 AND e.fk_pays = c.rowid";
@@ -191,9 +191,9 @@ class FormOther
                     else
                     {
                         print '<option value="'.$obj->rowid.'">';
-                        //print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+                        //print '<option onmouseover="showtip(\''.$obj->label.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
                     }
-                    $selectOptionValue = $obj->code.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
+                    $selectOptionValue = $obj->code.' - '.$obj->label.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
                     print $selectOptionValue;
                     print '</option>';
                     $i++;
@@ -470,9 +470,11 @@ class FormOther
      * 	@param	int		$mode					0=Return list of tasks and their projects, 1=Return projects and tasks if exists
      *  @param  int		$useempty       		0=Allow empty values
      *  @param	int		$disablechildoftaskid	1=Disable task that are child of the provided task id
+	 *  @param	string	$filteronprojstatus		Filter on project status ('-1'=no filter, '0,1'=Draft+Validated status)
+     *  @param	string	$morecss				More css
      *  @return	void
      */
-    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0, $disablechildoftaskid=0)
+    function selectProjectTasks($selectedtask='', $projectid=0, $htmlname='task_parent', $modeproject=0, $modetask=0, $mode=0, $useempty=0, $disablechildoftaskid=0, $filteronprojstatus='', $morecss='')
     {
         global $user, $langs;
 
@@ -480,10 +482,10 @@ class FormOther
 
         //print $modeproject.'-'.$modetask;
         $task=new Task($this->db);
-        $tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid, 0, $mode);
+        $tasksarray=$task->getTasksArray($modetask?$user:0, $modeproject?$user:0, $projectid, 0, $mode, '', $filteronprojstatus);
         if ($tasksarray)
         {
-            print '<select class="flat" name="'.$htmlname.'" id="'.$htmlname.'">';
+        	print '<select class="flat'.($morecss?' '.$morecss:'').'" name="'.$htmlname.'" id="'.$htmlname.'">';
             if ($useempty) print '<option value="0">&nbsp;</option>';
             $j=0;
             $level=0;
@@ -569,6 +571,7 @@ class FormOther
                     if ($disabled) print ' disabled';
                     print '>';
                     print $langs->trans("Project").' '.$lines[$i]->projectref;
+                    print ' '.$lines[$i]->projectlabel;
                     if (empty($lines[$i]->public))
                     {
                         print ' ('.$langs->trans("Visibility").': '.$langs->trans("PrivateProject").')';
@@ -867,7 +870,7 @@ class FormOther
      *  @param	string		$morecss		More CSS
      *  @return	string
      */
-    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='')
+    function select_year($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
     {
         print $this->selectyear($selected,$htmlname,$useempty,$min_year,$max_year,$offset,$invert,$option,$morecss);
     }
@@ -886,7 +889,7 @@ class FormOther
      *  @param	string	$morecss		More css
      *  @return	string
      */
-    function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='')
+    function selectyear($selected='',$htmlname='yearid',$useempty=0, $min_year=10, $max_year=5, $offset=0, $invert=0, $option='', $morecss='valignmiddle widthauto')
     {
         $out='';
 

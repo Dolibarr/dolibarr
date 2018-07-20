@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2011-2017 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2014      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2015      Charlie BENKE		<charlie@patas-monkey.com>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
+ * Copyright (C) 2015      Charlie BENKE        <charlie@patas-monkey.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,9 +19,9 @@
  */
 
 /**
- *	\file       htdocs/compta/salaries/card.php
- *	\ingroup    salaries
- *	\brief      Page of salaries payments
+ *  \file       htdocs/compta/salaries/card.php
+ *  \ingroup    salaries
+ *  \brief      Page of salaries payments
  */
 
 require '../../main.inc.php';
@@ -30,13 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 
-
-$langs->load("compta");
-$langs->load("banks");
-$langs->load("bills");
-$langs->load("users");
-$langs->load("salaries");
-$langs->load('hrm');
+// Load translation files required by the page
+$langs->loadLangs(array("compta","banks","bills","users","salaries","hrm"));
 
 $id=GETPOST("id",'int');
 $action=GETPOST('action','aZ09');

@@ -26,8 +26,8 @@ require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salariesstats.class.php';
 
-$langs->load("salaries");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array("salaries","companies"));
 
 $WIDTH=DolGraph::getDefaultGraphSizeForStats('width');
 $HEIGHT=DolGraph::getDefaultGraphSizeForStats('height');
@@ -58,6 +58,7 @@ $year = GETPOST('year')>0?GETPOST('year'):$nowyear;
 //$startyear=$year-2;
 $startyear=$year-1;
 $endyear=$year;
+
 
 /*
  * View
@@ -231,11 +232,11 @@ print '</form>';
 print '<br><br>';
 
 print '<table class="border" width="100%">';
-print '<tr height="24">';
+print '<tr>';
 print '<td align="center">'.$langs->trans("Year").'</td>';
-print '<td align="center">'.$langs->trans("Number").'</td>';
-print '<td align="center">'.$langs->trans("AmountTotal").'</td>';
-print '<td align="center">'.$langs->trans("AmountAverage").'</td>';
+print '<td align="right">'.$langs->trans("Number").'</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print '</tr>';
 
 $oldyear=0;
@@ -269,7 +270,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
 	print $px1->show();

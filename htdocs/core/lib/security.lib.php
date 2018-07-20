@@ -27,44 +27,77 @@
 
 
 /**
- *	Encode a string with base 64 algorithm + specific change
- *	Code of this function is useless and we should use base64_encode only instead
+ *	Encode a string with base 64 algorithm + specific delta change.
  *
  *	@param   string		$chain		string to encode
+ *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					encoded string
+ *  @see dol_decode
  */
-function dol_encode($chain)
+function dol_encode($chain, $key='1')
 {
-    $strlength=dol_strlen($chain);
-	for ($i=0; $i < $strlength; $i++)
+	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
-		$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
+		$output_tab=array();
+	    $strlength=dol_strlen($chain);
+		for ($i=0; $i < $strlength; $i++)
+		{
+			$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
+		}
+		$chain = implode("",$output_tab);
+	}
+	elseif ($key)
+	{
+		$result='';
+		$strlength=dol_strlen($chain);
+		for ($i=0; $i < $strlength; $i++)
+		{
+			$keychar = substr($key, ($i % strlen($key))-1, 1);
+			$result.= chr(ord(substr($chain,$i,1))+(ord($keychar)-65));
+		}
+		$chain=$result;
 	}
 
-	$string_coded = base64_encode(implode("",$output_tab));
-	return $string_coded;
+	return base64_encode($chain);
 }
 
 /**
- *	Decode a base 64 encoded + specific string.
+ *	Decode a base 64 encoded + specific delta change.
  *  This function is called by filefunc.inc.php at each page call.
- *	Code of this function is useless and we should use base64_decode only instead
  *
  *	@param   string		$chain		string to decode
+ *	@param   string		$key		rule to use for delta ('0', '1' or 'myownkey')
  *	@return  string					decoded string
+ *  @see dol_encode
  */
-function dol_decode($chain)
+function dol_decode($chain, $key='1')
 {
 	$chain = base64_decode($chain);
 
-	$strlength=dol_strlen($chain);
-	for($i=0; $i < $strlength;$i++)
+	if (is_numeric($key) && $key == '1')	// rule 1 is offset of 17 for char
 	{
-		$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
+		$output_tab=array();
+		$strlength=dol_strlen($chain);
+		for ($i=0; $i < $strlength;$i++)
+		{
+			$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
+		}
+
+		$chain = implode("",$output_tab);
+	}
+	elseif ($key)
+	{
+		$result='';
+		$strlength=dol_strlen($chain);
+		for ($i=0; $i < $strlength; $i++)
+		{
+			$keychar = substr($key, ($i % strlen($key))-1, 1);
+			$result.= chr(ord(substr($chain, $i, 1))-(ord($keychar)-65));
+		}
+		$chain=$result;
 	}
 
-	$string_decoded = implode("",$output_tab);
-	return $string_decoded;
+	return $chain;
 }
 
 
@@ -74,7 +107,7 @@ function dol_decode($chain)
  *  If constant MAIN_SECURITY_SALT is defined, we use it as a salt (used only if hashing algorightm is something else than 'password_hash').
  *
  * 	@param 		string		$chain		String to hash
- * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO then md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
+ * 	@param		string		$type		Type of hash ('0':auto will use MAIN_SECURITY_HASH_ALGO else md5, '1':sha1, '2':sha1+md5, '3':md5, '4':md5 for OpenLdap, '5':sha256). Use '3' here, if hash is not needed for security purpose, for security need, prefer '0'.
  * 	@return		string					Hash of string
  *  @getRandomPassword
  */
@@ -147,22 +180,23 @@ function dol_verifyHash($chain, $hash, $type='0')
  */
 function restrictedArea($user, $features, $objectid=0, $tableandshare='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid', $objcanvas=null)
 {
-    global $db, $conf;
+	global $db, $conf;
+	global $hookmanager;
 
     //dol_syslog("functions.lib:restrictedArea $feature, $objectid, $dbtablename,$feature2,$dbt_socfield,$dbt_select");
     //print "user_id=".$user->id.", features=".$features.", feature2=".$feature2.", objectid=".$objectid;
     //print ", dbtablename=".$dbtablename.", dbt_socfield=".$dbt_keyfield.", dbt_select=".$dbt_select;
     //print ", perm: ".$features."->".$feature2."=".($user->rights->$features->$feature2->lire)."<br>";
 
-    // If we use canvas, we try to use function that overlod restrictarea if provided with canvas
-    if (is_object($objcanvas))
-    {
-        if (method_exists($objcanvas->control,'restrictedArea')) return $objcanvas->control->restrictedArea($user,$features,$objectid,$dbtablename,$feature2,$dbt_keyfield,$dbt_select);
-    }
+	// Get more permissions checks from hooks
+	$parameters=array('features'=>$features, 'objectid'=>$objectid, 'idtype'=>$dbt_select);
+	$reshook=$hookmanager->executeHooks('restrictedArea',$parameters);
+	if (! empty($hookmanager->resArray['result'])) return true;
+	if ($reshook > 0) return false;
 
-    if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
+	if ($dbt_select != 'rowid' && $dbt_select != 'id') $objectid = "'".$objectid."'";
 
-    // Features/modules to check
+	// Features/modules to check
     $featuresarray = array($features);
     if (preg_match('/&/', $features)) $featuresarray = explode("&", $features);
     else if (preg_match('/\|/', $features)) $featuresarray = explode("|", $features);
@@ -300,7 +334,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check create user permission
     $createuserok=1;
-    if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm") == 'yes')
+    if (GETPOST('action','aZ09') == 'confirm_create_user' && GETPOST("confirm",'aZ09') == 'yes')
     {
         if (! $user->rights->user->user->creer) $createuserok=0;
 
@@ -310,7 +344,7 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
 
     // Check delete permission from module
     $deleteok=1; $nbko=0;
-    if ((GETPOST('action','aZ09')  == 'confirm_delete' && GETPOST("confirm") == 'yes') || GETPOST('action','aZ09')  == 'delete')
+    if ((GETPOST("action","aZ09")  == 'confirm_delete' && GETPOST("confirm","aZ09") == 'yes') || GETPOST("action","aZ09")  == 'delete')
     {
         foreach ($featuresarray as $feature)
         {
@@ -377,8 +411,8 @@ function restrictedArea($user, $features, $objectid=0, $tableandshare='', $featu
     // is linked to a company allowed to $user.
     if (! empty($objectid) && $objectid > 0)
     {
-    	$ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
-		return $ok ? 1 : accessforbidden();
+        $ok = checkUserAccessToObject($user, $featuresarray, $objectid, $tableandshare, $feature2, $dbt_keyfield, $dbt_select);
+        return $ok ? 1 : accessforbidden();
     }
 
     return 1;
@@ -416,7 +450,7 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		if ($feature == 'project') $feature='projet';
 		if ($feature == 'task')    $feature='projet_task';
 
-		$check = array('adherent','banque','don','user','usergroup','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
+		$check = array('adherent','banque','don','user','usergroup','product','produit','service','produit|service','categorie','resource'); // Test on entity only (Objects with no link to company)
 		$checksoc = array('societe');	 // Test for societe object
 		$checkother = array('contact','agenda');	 // Test on entity and link to third party. Allowed if link is empty (Ex: contacts...).
 		$checkproject = array('projet','project'); // Test for project object
@@ -436,13 +470,32 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		{
 			$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 			$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-			$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
-			if (($feature == 'user' || $feature == 'usergroup') && ! empty($conf->multicompany->enabled) && $conf->entity == 1 && $user->admin && ! $user->entity)
+			if (($feature == 'user' || $feature == 'usergroup') && ! empty($conf->multicompany->enabled))
 			{
-				$sql.= " AND dbt.entity IS NOT NULL";
+				if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
+				{
+					if ($conf->entity == 1 && $user->admin && ! $user->entity)
+					{
+						$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
+						$sql.= " AND dbt.entity IS NOT NULL";
+					}
+					else
+					{
+						$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+						$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
+						$sql.= " AND (ug.fk_user = dbt.rowid";
+						$sql.= " AND ug.entity IN (".getEntity('user')."))";
+						$sql.= " OR dbt.entity = 0"; // Show always superadmin
+					}
+				}
+				else {
+					$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
+					$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
+				}
 			}
 			else
 			{
+				$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
 				$sql.= " AND dbt.entity IN (".getEntity($sharedelement, 1).")";
 			}
 		}
@@ -476,12 +529,12 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		else if (in_array($feature,$checkother))	// Test on entity and link to societe. Allowed if link is empty (Ex: contacts...).
 		{
 			// If external user: Check permission for external users
-			if ($user->societe_id > 0)
+			if ($user->socid > 0)
 			{
 				$sql = "SELECT COUNT(dbt.".$dbt_select.") as nb";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.".$dbt_select." IN (".$objectid.")";
-				$sql.= " AND dbt.fk_soc = ".$user->societe_id;
+				$sql.= " AND dbt.fk_soc = ".$user->socid;
 			}
 			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))
@@ -544,13 +597,13 @@ function checkUserAccessToObject($user, $featuresarray, $objectid=0, $tableandsh
 		else if (! in_array($feature,$nocheck))		// By default (case of $checkdefault), we check on object entity + link to third party on field $dbt_keyfield
 		{
 			// If external user: Check permission for external users
-			if ($user->societe_id > 0)
+			if ($user->socid > 0)
 			{
 				if (empty($dbt_keyfield)) dol_print_error('','Param dbt_keyfield is required but not defined');
 				$sql = "SELECT COUNT(dbt.".$dbt_keyfield.") as nb";
 				$sql.= " FROM ".MAIN_DB_PREFIX.$dbtablename." as dbt";
 				$sql.= " WHERE dbt.rowid IN (".$objectid.")";
-				$sql.= " AND dbt.".$dbt_keyfield." = ".$user->societe_id;
+				$sql.= " AND dbt.".$dbt_keyfield." = ".$user->socid;
 			}
 			// If internal user: Check permission for internal users that are restricted on their objects
 			else if (! empty($conf->societe->enabled) && ($user->rights->societe->lire && ! $user->rights->societe->client->voir))

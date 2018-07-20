@@ -34,11 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("widthdrawals");
-$langs->load("companies");
-$langs->load("bills");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'widthdrawals', 'companies', 'bills'));
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
@@ -297,8 +294,6 @@ if ($result)
     print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td>';
     print '<td align="center">'.$langs->trans("Date").'</td><td align="right">'.$langs->trans("Amount").'</td>';
     print '</tr>';
-
-    $var=True;
 
     while ($i < min($num,$limit))
     {

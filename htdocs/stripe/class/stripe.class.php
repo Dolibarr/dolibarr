@@ -135,7 +135,7 @@ class Stripe extends CommonObject
 		$sql.= " AND sa.site = 'stripe' AND sa.status = ".((int) $status);
 		$sql.= " AND key_account IS NOT NULL AND key_account <> ''";
 
-		dol_syslog(get_class($this) . "::fetch search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::customerStripe search stripe customer id for thirdparty id=".$object->id, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -143,6 +143,13 @@ class Stripe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$tiers = $obj->key_account;
+
+				dol_syslog(get_class($this) . "::customerStripe found stripe customer key_account = ".$tiers);
+
+				// Force to use the correct API key
+				global $stripearrayofkeysbyenv;
+				\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
 				try {
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 						$customer = \Stripe\Customer::retrieve("$tiers");
@@ -167,6 +174,10 @@ class Stripe extends CommonObject
 				//$a = \Stripe\Stripe::getApiKey();
 				//var_dump($a);var_dump($key);exit;
 				try {
+					// Force to use the correct API key
+					global $stripearrayofkeysbyenv;
+					\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
 					if (empty($key)) {				// If the Stripe connect account not set, we use common API usage
 						$customer = \Stripe\Customer::create($dataforcustomer);
 					} else {
@@ -217,7 +228,7 @@ class Stripe extends CommonObject
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.type = 'card'";
 
-		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -225,13 +236,15 @@ class Stripe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
+				dol_syslog("************* cardref=".$cardref);
 				if ($cardref)
 				{
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->retrieve($cardref);
 						} else {
-							$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));
+							//$card = $cu->sources->retrieve($cardref, array("stripe_account" => $stripeacc));		// this API fails when array stripe_account is provided
+							$card = $cu->sources->retrieve($cardref);
 						}
 					}
 					catch(Exception $e)
@@ -256,6 +269,7 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
+					dol_syslog("Try to create card dataforcard = ".dol_json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->create($dataforcard);
@@ -334,10 +348,10 @@ class Stripe extends CommonObject
 				$obj = $this->db->fetch_object($result);
 				$key = $obj->fk_soc;
 			} else {
-				$key = NULL;
+				$key = null;
 			}
 		} else {
-			$key = NULL;
+			$key = null;
 		}
 
 		$arrayzerounitcurrency=array('BIF', 'CLP', 'DJF', 'GNF', 'JPY', 'KMF', 'KRW', 'MGA', 'PYG', 'RWF', 'VND', 'VUV', 'XAF', 'XOF', 'XPF');
@@ -371,6 +385,10 @@ class Stripe extends CommonObject
 		);
 		$return = new Stripe($this->db);
 		try {
+			// Force to use the correct API key
+			global $stripearrayofkeysbyenv;
+			\Stripe\Stripe::setApiKey($stripearrayofkeysbyenv[$status]['secret_key']);
+
 			if (empty($conf->stripeconnect->enabled))
 			{
 				if (preg_match('/acct_/i', $source))
@@ -408,17 +426,17 @@ class Stripe extends CommonObject
 				}
 
 				$charge = \Stripe\Charge::create(array(
-				"amount" => "$stripeamount",
-				"currency" => "$currency",
-				// "statement_descriptor" => " ",
-				"description" => "$description",
-				"metadata" => $metadata,
-				"source" => "$source",
-				"customer" => "$customer",
-				"application_fee" => "$fee"
-				), array(
-				"idempotency_key" => "$ref",
-				"stripe_account" => "$account"
+					"amount" => "$stripeamount",
+					"currency" => "$currency",
+					// "statement_descriptor" => " ",
+					"description" => "$description",
+					"metadata" => $metadata,
+					"source" => "$source",
+					"customer" => "$customer",
+					"application_fee" => "$fee"
+					), array(
+					"idempotency_key" => "$ref",
+					"stripe_account" => "$account"
 				));
 			}
 			if (isset($charge->id)) {}

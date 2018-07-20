@@ -74,6 +74,7 @@ NoWidget=No hay widget
 GoToApiExplorer=Ir al Explorador de API
 ListOfMenusEntries=Lista de entradas de menú
 ListOfPermissionsDefined=Listado de permisos definidos
+SeeExamples=See examples here
 EnabledDesc=Condición para tener este campo activo (Ejemplos: 1 o $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=¿Es el campo visible? (Ejemplos: 0=Nunca visible, 1=Visible en listado y  en formularios creación /actualización/visualización, 2=Visible en listado solamente, 3=Visible en formularios creación /actualización/visualización. Usar un valor negativo significa que no se muestra el campo predeterminado en el listado pero se puede seleccionar para verlo)
 IsAMeasureDesc=¿Se puede acumular el valor del campo para obtener un total en el listado? (Ejemplos: 1 o 0)
@@ -94,3 +95,7 @@ YouCanUseTranslationKey=Aquí puede usar una clave que es la clave de traducció
 DropTableIfEmpty=(Eliminar tabla si está vacía)
 TableDoesNotExists=La tabla %s no existe
 TableDropped=Tabla %s eliminada
+InitStructureFromExistingTable=Construir la estructura de array de una tabla existente
+UseAboutPage=Disallow the about page
+UseDocFolder=Disallow the documentation folder
+UseSpecificReadme=Use a specific ReadMe

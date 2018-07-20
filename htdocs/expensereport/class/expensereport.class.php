@@ -3,6 +3,7 @@
  * Copyright (C) 2015 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2015 Alexandre Spangaro  <aspangaro@zendsi.com>
  * Copyright (C) 2016 Ferran Marcet       <fmarcet@2byte.es>
+ * Copyright (C) 2018 Nicolas ZABOURI     <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1690,6 +1691,13 @@ class ExpenseReport extends CommonObject
 
 			$this->line = new ExpenseReportLine($this->db);
 
+			if (preg_match('/\((.*)\)/', $vatrate, $reg))
+			{
+				$vat_src_code = $reg[1];
+				$vatrate = preg_replace('/\s*\(.*\)/', '', $vatrate);    // Remove code into vatrate.
+			}
+			$vatrate = preg_replace('/\*/','',$vatrate);
+
 			$seller = '';  // seller is unknown
 			$tmp = calcul_price_total($qty, $up, 0, $vatrate, 0, 0, 0, 'TTC', 0, $type, $seller);
 
@@ -1924,7 +1932,6 @@ class ExpenseReport extends CommonObject
 
             // Clean vat code
             $vat_src_code='';
-
             if (preg_match('/\((.*)\)/', $vatrate, $reg))
             {
                 $vat_src_code = $reg[1];
@@ -2140,9 +2147,10 @@ class ExpenseReport extends CommonObject
      *  @param      int         $hidedetails    Hide details of lines
      *  @param      int         $hidedesc       Hide description
      *  @param      int         $hideref        Hide ref
+     *  @param   null|array  $moreparams     Array to provide more information
      *  @return     int                         0 if KO, 1 if OK
      */
-    public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+    public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
     {
         global $conf,$langs;
 
@@ -2161,7 +2169,7 @@ class ExpenseReport extends CommonObject
 
         $modelpath = "core/modules/expensereport/doc/";
 
-        return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+        return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
     }
 
     /**
@@ -2417,7 +2425,7 @@ class ExpenseReportLine
         $sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
         $sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
-        $sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';	// Sometimes type of expense report has been removed, so we use a left join here.
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
         $sql.= ' WHERE fde.rowid = '.$rowid;
 

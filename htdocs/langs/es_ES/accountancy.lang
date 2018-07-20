@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - Accounting Expert
+Accounting=Contabilidad
 ACCOUNTING_EXPORT_SEPARATORCSV=Separador de columnas en el archivo de exportación
 ACCOUNTING_EXPORT_DATE=Formato de fecha en el archivo de exportación
 ACCOUNTING_EXPORT_PIECE=Exportar el número de asiento
@@ -54,6 +55,7 @@ AccountancyAreaDescChartModel=PASO %s: Crear un modelo de plan general contable 
 AccountancyAreaDescChart=PASO %s: Crear o comprobar el contenido de su plan general contable desde el menú %s
 
 AccountancyAreaDescVat=PASO %s: Defina las cuentas contables para cada tasa de IVA. Para ello puede usar el menú %s.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=PASO %s: Defina las cuentas contables para los informes de gastos. Para ello puede utilizar el menú %s.
 AccountancyAreaDescSal=PASO %s: Defina las cuentas contables para los pagos de salarios. Para ello puede utilizar el menú %s.
 AccountancyAreaDescContrib=PASO %s: Defina las cuentas contables de los gastos especiales (impuestos varios). Para ello puede utilizar el menú %s.
@@ -130,12 +132,14 @@ ACCOUNTING_LENGTH_GACCOUNT=Longitud de las cuentas generales (si ajusta el valor
 ACCOUNTING_LENGTH_AACCOUNT=Longitud de las subcuentas ( si ajusta el valor a 6 aquí, la cuenta '401' aparecerá como '401000' en la pantalla)
 ACCOUNTING_MANAGE_ZERO=Gestiona el cero al final de una cuenta contable. Necesario en algunos países (como Suiza). Si se mantiene desactivada (por defecto), puede configurar los 2 parámetros siguientes para pedir que la aplicación agregue el cero virtual
 BANK_DISABLE_DIRECT_INPUT=Desactivar transacciones directas en cuenta bancaria
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Habilitar exportación de borradores al diario
 
 ACCOUNTING_SELL_JOURNAL=Diario de ventas
 ACCOUNTING_PURCHASE_JOURNAL=Diario de compras
 ACCOUNTING_MISCELLANEOUS_JOURNAL=Diario de operaciones diversas
 ACCOUNTING_EXPENSEREPORT_JOURNAL=Informe de gastos diario
 ACCOUNTING_SOCIAL_JOURNAL=Diario social
+ACCOUNTING_HAS_NEW_JOURNAL=Tiene un nuevo diario
 
 ACCOUNTING_ACCOUNT_TRANSFER_CASH=Cuenta de caja
 ACCOUNTING_ACCOUNT_SUSPENSE=Cuenta operaciones pendientes de asignar
@@ -149,7 +153,6 @@ ACCOUNTING_SERVICE_SOLD_ACCOUNT=Cuenta contable predeterminada para los servicio
 Doctype=Tipo de documento
 Docdate=Fecha
 Docref=Referencia
-Code_tiers=Tercero
 LabelAccount=Descripción
 LabelOperation=Etiqueta operación
 Sens=Sentido
@@ -169,7 +172,6 @@ DelYear=Año a eliminar
 DelJournal=Diario a eliminar
 ConfirmDeleteMvt=Esto eliminará todas las lineas del Libro Mayor del año y/o de un diario específico. Se requiere al menos un criterio.
 ConfirmDeleteMvtPartial=Esto eliminará la transacción del libro mayor (se eliminarán todas las líneas relacionadas con la misma transacción)
-DelBookKeeping=Eliminar los registros del Libro Mayor
 FinanceJournal=Diario financiero
 ExpenseReportsJournal=Diario informe de gastos
 DescFinanceJournal=El diario financiero incluye todos los tipos de pagos por cuenta bancaria
@@ -192,6 +194,7 @@ ListAccounts=Listado de cuentas contables
 UnknownAccountForThirdparty=Cuenta contable de tercero desconocida, usaremos %s
 UnknownAccountForThirdpartyBlocking=Cuenta contable de tercero desconocida. Error de bloqueo
 UnknownAccountForThirdpartyAndWaitingAccountNotDefinedBlocking=Cuenta del terceros desconocida y cuenta de espera no definida. Error de bloqueo
+PaymentsNotLinkedToProduct=Pagos no vinculados a un producto/servicio
 
 Pcgtype=Grupo de cuenta
 Pcgsubtype=Subgrupo de cuenta
@@ -220,7 +223,7 @@ ErrorAccountancyCodeIsAlreadyUse=Error, no puede eliminar esta cuenta ya que est
 MvtNotCorrectlyBalanced=Asiento contabilizado incorrectamente. Debe=%s. Haber=%s
 FicheVentilation=Ficha contable
 GeneralLedgerIsWritten=Transacciones escritas en el Libro Mayor
-GeneralLedgerSomeRecordWasNotRecorded=Algunas de las operaciones que no podrán registrarse. Si no hay un mensaje de error, es probable que ya estén contabilizadas
+GeneralLedgerSomeRecordWasNotRecorded=Algunas de las operaciones no pueden contabilizarse. Si no hay otro mensaje de error, es probable que ya estén contabilizadas.
 NoNewRecordSaved=No hay más registros para el diario
 ListOfProductsWithoutAccountingAccount=Listado de productos sin cuentas contables
 ChangeBinding=Cambiar la unión
@@ -241,8 +244,10 @@ AccountingJournalType2=Ventas
 AccountingJournalType3=Compras
 AccountingJournalType4=Banco
 AccountingJournalType5=Informes de gastos
+AccountingJournalType8=Inventario
 AccountingJournalType9=Haber
 ErrorAccountingJournalIsAlreadyUse=Este diario ya esta siendo usado
+AccountingAccountForSalesTaxAreDefinedInto=Nota: La cuenta contable del IVA a las ventas se define en el menú <b> %s</b> - <b> %s</b>
 
 ## Export
 ExportDraftJournal=Exportar libro borrador
@@ -284,6 +289,8 @@ Formula=Fórmula
 ## Error
 SomeMandatoryStepsOfSetupWereNotDone=Algunos pasos necesarios de la configuración no están realizados, por favor complételos.
 ErrorNoAccountingCategoryForThisCountry=No hay grupos contables disponibles para %s (Vea Inicio - Configuración - Diccionarios)
+ErrorInvoiceContainsLinesNotYetBounded=Intenta hacer un diario de algunas líneas de la factura <strong>%s</strong>, pero algunas otras líneas aún no están vinculadas a cuentas contables. Se rechaza la contabilización de todas las líneas de factura de esta factura.
+ErrorInvoiceContainsLinesNotYetBoundedShort=Algunas líneas de la factura no están vinculadas a cuentas contables.
 ExportNotSupported=El formato de exportación configurado no es soportado en esta página
 BookeppingLineAlreayExists=Lineas ya existentes en la contabilidad
 NoJournalDefined=Sin diario definido
@@ -291,4 +298,9 @@ Binded=Líneas contabilizadas
 ToBind=Líneas a contabilizar
 UseMenuToSetBindindManualy=No es posible autodetectar, utilice el menú <a href="%s"> %s </a> para realizar el apunte manualmente
 
+## Import
+ImportAccountingEntries=Entradas contables
+
 WarningReportNotReliable=Advertencia, este informe no se basa en el Libro mayor, por lo que no contiene modificaciones manualmente modificadas en el Libro mayor.. Si su diario está actualizado, la vista contable es más precisa.
+ExpenseReportJournal=Informe de gastos diario
+InventoryJournal=Inventario

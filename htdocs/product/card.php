@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/genericobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/product/modules_product.class.php';
 
 if (! empty($conf->propal->enabled))     require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 if (! empty($conf->facture->enabled))    require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -55,8 +55,8 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/l
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/core/class/html.formaccounting.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountingaccount.class.php';
 
-$langs->load("products");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'other'));
 if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
@@ -167,7 +167,7 @@ if (empty($reshook))
 
 		if ($result >= 0)
 		{
-	    	$result = $object->setValueFrom('barcode', GETPOST('barcode'));
+	    	$result = $object->setValueFrom('barcode', GETPOST('barcode'), '', null, 'text', '', $user, 'PRODUCT_MODIFY');
 	    	header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 	    	exit;
 		}
@@ -289,8 +289,8 @@ if (empty($reshook))
             $object->url					 = GETPOST('url');
             $object->note_private          	 = dol_htmlcleanlastbr(GETPOST('note_private','none'));
             $object->note               	 = $object->note_private;   // deprecated
-            $object->customcode              = GETPOST('customcode');
-            $object->country_id              = GETPOST('country_id');
+            $object->customcode              = GETPOST('customcode','alpha');
+            $object->country_id              = GETPOST('country_id','int');
             $object->duration_value     	 = $duration_value;
             $object->duration_unit      	 = $duration_unit;
             $object->fk_default_warehouse	 = GETPOST('fk_default_warehouse');
@@ -307,13 +307,13 @@ if (empty($reshook))
             $object->surface_units      	 = GETPOST('surface_units');
             $object->volume             	 = GETPOST('volume');
             $object->volume_units       	 = GETPOST('volume_units');
-            $object->finished           	 = GETPOST('finished');
-	        $object->fk_unit                 = GETPOST('units');
+            $object->finished           	 = GETPOST('finished','alpha');
+            $object->fk_unit                 = GETPOST('units','alpha');
 
-			$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
-			$accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra');
-			$accountancy_code_sell_export	 = GETPOST('accountancy_code_sell_export');
-			$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
+	        $accountancy_code_sell 			 = GETPOST('accountancy_code_sell','alpha');
+	        $accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra','alpha');
+	        $accountancy_code_sell_export	 = GETPOST('accountancy_code_sell_export','alpha');
+	        $accountancy_code_buy 			 = GETPOST('accountancy_code_buy','alpha');
 
 			if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 			if ($accountancy_code_sell_intra <= 0) { $object->accountancy_code_sell_intra = ''; } else { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
@@ -386,11 +386,11 @@ if (empty($reshook))
                 	$object->note_private           = dol_htmlcleanlastbr(GETPOST('note_private','none'));
                     $object->note                   = $object->note_private;
     			}
-                $object->customcode             = GETPOST('customcode');
-                $object->country_id             = GETPOST('country_id');
-                $object->status                 = GETPOST('statut');
-                $object->status_buy             = GETPOST('statut_buy');
-                $object->status_batch	        = GETPOST('status_batch');
+                $object->customcode             = GETPOST('customcode','alpha');
+                $object->country_id             = GETPOST('country_id','int');
+                $object->status                 = GETPOST('statut','int');
+                $object->status_buy             = GETPOST('statut_buy','int');
+                $object->status_batch	        = GETPOST('status_batch','aZ09');
                 // removed from update view so GETPOST always empty
                 $object->fk_default_warehouse   = GETPOST('fk_default_warehouse');
                 /*
@@ -412,7 +412,7 @@ if (empty($reshook))
                 $object->surface_units          = GETPOST('surface_units');
                 $object->volume                 = GETPOST('volume');
                 $object->volume_units           = GETPOST('volume_units');
-                $object->finished               = GETPOST('finished');
+                $object->finished               = GETPOST('finished','alpha');
 
 	            $units = GETPOST('units', 'int');
 
@@ -439,10 +439,10 @@ if (empty($reshook))
     	        $object->barcode_type_coder     = $stdobject->barcode_type_coder;
     	        $object->barcode_type_label     = $stdobject->barcode_type_label;
 
-				$accountancy_code_sell 			 = GETPOST('accountancy_code_sell');
-				$accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra');
-				$accountancy_code_sell_export	 = GETPOST('accountancy_code_sell_export');
-				$accountancy_code_buy 			 = GETPOST('accountancy_code_buy');
+    	        $accountancy_code_sell 			 = GETPOST('accountancy_code_sell','alpha');
+    	        $accountancy_code_sell_intra	 = GETPOST('accountancy_code_sell_intra','alpha');
+    	        $accountancy_code_sell_export	 = GETPOST('accountancy_code_sell_export','alpha');
+    	        $accountancy_code_buy 			 = GETPOST('accountancy_code_buy','alpha');
 
 				if ($accountancy_code_sell <= 0) { $object->accountancy_code_sell = ''; } else { $object->accountancy_code_sell = $accountancy_code_sell; }
 				if ($accountancy_code_sell_intra <= 0) { $object->accountancy_code_sell_intra = ''; } else { $object->accountancy_code_sell_intra = $accountancy_code_sell_intra; }
@@ -1033,7 +1033,8 @@ else
         if ($type == 1)
         {
             print '<tr><td>' . $langs->trans("Duration") . '</td><td colspan="3"><input name="duration_value" size="6" maxlength="5" value="' . $duration_value . '"> &nbsp;';
-            print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
+            print '<input name="duration_unit" type="radio" value="i">'.$langs->trans("Minute").'&nbsp;';
+	    print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
             print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
@@ -1094,10 +1095,10 @@ else
         }
 
         // Other attributes
-        $parameters=array('cols' => 3);
+        $parameters=array('colspan' => 3);
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        if (empty($reshook))
         {
         	print $object->showOptionals($extrafields,'edit',$parameters);
         }
@@ -1248,8 +1249,8 @@ else
     else if ($object->id > 0)
     {
         // Fiche en mode edition
-        	if ($action == 'edit' && $usercancreate)
-        {
+		if ($action == 'edit' && $usercancreate)
+		{
             //WYSIWYG Editor
             require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 
@@ -1310,11 +1311,15 @@ else
             print '</td></tr>';
 
 			// Batch number managment
-			if ($conf->productbatch->enabled) {
-				print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
-				$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
-				print $form->selectarray('status_batch',$statutarray,$object->status_batch);
-				print '</td></tr>';
+			if ($conf->productbatch->enabled)
+			{
+				if ($object->isProduct() || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+				{
+					print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="3">';
+					$statutarray=array('0' => $langs->trans("ProductStatusNotOnBatch"), '1' => $langs->trans("ProductStatusOnBatch"));
+					print $form->selectarray('status_batch',$statutarray,$object->status_batch);
+					print '</td></tr>';
+				}
 			}
 
             // Barcode
@@ -1397,6 +1402,8 @@ else
                 // Duration
                 print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="3"><input name="duration_value" size="3" maxlength="5" value="'.$object->duration_value.'">';
                 print '&nbsp; ';
+                print '<input name="duration_unit" type="radio" value="i"'.($object->duration_unit=='i'?' checked':'').'>'.$langs->trans("Minute");
+		print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="h"'.($object->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
                 print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="d"'.($object->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
@@ -1406,7 +1413,6 @@ else
                 print '<input name="duration_unit" type="radio" value="m"'.($object->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
                 print '&nbsp; ';
                 print '<input name="duration_unit" type="radio" value="y"'.($object->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
-
                 print '</td></tr>';
             }
             else
@@ -1467,7 +1473,7 @@ else
             $parameters=array('colspan' => ' colspan="3"', 'cols'=>3);
             $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-            if (empty($reshook) && ! empty($extrafields->attribute_label))
+            if (empty($reshook))
             {
             	print $object->showOptionals($extrafields,'edit');
             }
@@ -1627,7 +1633,7 @@ else
                 {
                     require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
                     $formbarcode = new FormBarCode($db);
-		}
+				}
                 if ($action == 'editbarcodetype')
                 {
                     $formbarcode->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$object->id,$object->barcode_type,'fk_barcode_type');
@@ -1733,35 +1739,19 @@ else
 			}
 			print '</td></tr>';
 
-            // Status (to sell)
-            /*
-            print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Sell").')</td><td colspan="2">';
-            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-                print ajax_object_onoff($object, 'status', 'tosell', 'ProductStatusOnSell', 'ProductStatusNotOnSell');
-            } else {
-                print $object->getLibStatut(2,0);
-            }
-            print '</td></tr>';
-
-            // Status (to buy)
-            print '<tr><td>'.$langs->trans("Status").' ('.$langs->trans("Buy").')</td><td colspan="2">';
-            if (! empty($conf->use_javascript_ajax) && $user->rights->produit->creer && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-                print ajax_object_onoff($object, 'status_buy', 'tobuy', 'ProductStatusOnBuy', 'ProductStatusNotOnBuy');
-            } else {
-                print $object->getLibStatut(2,1);
-            }
-            print '</td></tr>';
-            */
-
             // Batch number management (to batch)
-            if (! empty($conf->productbatch->enabled)) {
-                print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
-                if (! empty($conf->use_javascript_ajax) && $usercancreate && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
-                    print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
-                } else {
-                    print $object->getLibStatut(0,2);
-                }
-                print '</td></tr>';
+            if (! empty($conf->productbatch->enabled))
+            {
+				if ($object->isProduct() || ! empty($conf->global->STOCK_SUPPORTS_SERVICES))
+				{
+            		print '<tr><td>'.$langs->trans("ManageLotSerial").'</td><td colspan="2">';
+            	    if (! empty($conf->use_javascript_ajax) && $usercancreate && ! empty($conf->global->MAIN_DIRECT_STATUS_UPDATE)) {
+            	        print ajax_object_onoff($object, 'status_batch', 'tobatch', 'ProductStatusOnBatch', 'ProductStatusNotOnBatch');
+            	    } else {
+            	        print $object->getLibStatut(0,2);
+            	    }
+            	    print '</td></tr>';
+				}
             }
 
             // Description
@@ -1784,7 +1774,7 @@ else
             }
 
             //Parent product.
-            if (!empty($conf->variants->enabled) && $object->isProduct()) {
+            if (!empty($conf->variants->enabled) && ($object->isProduct() || $object->isService())) {
 
                 $combination = new ProductCombination($db);
 
@@ -1820,11 +1810,11 @@ else
                 print '<tr><td class="titlefield">'.$langs->trans("Duration").'</td><td colspan="2">'.$object->duration_value.'&nbsp;';
                 if ($object->duration_value > 1)
                 {
-                    $dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+                    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
                 }
                 else if ($object->duration_value > 0)
                 {
-                    $dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+                    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
                 }
                 print (! empty($object->duration_unit) && isset($dur[$object->duration_unit]) ? $langs->trans($dur[$object->duration_unit]) : '')."&nbsp;";
 
@@ -2177,8 +2167,6 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
     $genallowed=$usercanread;
     $delallowed=$usercancreate;
-
-    $var=true;
 
     print $formfile->showdocuments($modulepart,$object->ref,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,28,0,'',0,'',$object->default_lang, '', $object);
     $somethingshown=$formfile->numoffiles;

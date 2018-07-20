@@ -31,8 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/images.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("users");
-$langs->load('other');
+// Load translation files required by page
+$langs->loadLangs(array('users', 'other'));
 
 $action=GETPOST('action','aZ09');
 $confirm=GETPOST('confirm');
@@ -159,7 +159,7 @@ if ($object->id)
 	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
 
 	//Total taille
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 	print '</table>';
     print '</div>';

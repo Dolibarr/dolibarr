@@ -463,24 +463,15 @@ class Adherent extends CommonObject
 
 			$action='update';
 
-			// Actions on extra fields (by external module)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('memberdao'));
-			$parameters=array('id'=>$this->id);
-			$action='';
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$this->insertExtraFields();
+				if ($result < 0)
 				{
-					$result=$this->insertExtraFields();
-					if ($result < 0)
-					{
-						$error++;
-					}
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 
 			// Update password
 			if (! $error && $this->pass)
@@ -601,14 +592,14 @@ class Adherent extends CommonObject
 						$error++;
 					}
 				}
+			}
 
-				if (! $error && ! $notrigger)
-				{
-					// Call trigger
-					$result=$this->call_trigger('MEMBER_MODIFY',$user);
-					if ($result < 0) { $error++; }
-					// End call triggers
-				}
+			if (! $error && ! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('MEMBER_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 
 			if (! $error)
@@ -2168,9 +2159,10 @@ class Adherent extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -2189,7 +2181,7 @@ class Adherent extends CommonObject
 
 		$modelpath = "core/modules/member/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 
@@ -2427,6 +2419,34 @@ class Adherent extends CommonObject
 	}
 
 	/**
+	 *  Return number of mass Emailing received by this member with its email
+	 *
+	 *  @return       int     Number of EMailings
+	 */
+	function getNbOfEMailings()
+	{
+		$sql = "SELECT count(mc.email) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
+		$sql.= " WHERE mc.email = '".$this->db->escape($this->email)."'";
+		$sql.= " AND mc.statut NOT IN (-1,0)";      // -1 erreur, 0 non envoye, 1 envoye avec succes
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			$nb=$obj->nb;
+
+			$this->db->free($resql);
+			return $nb;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+
+	/**
 	 * Sets object to supplied categories.
 	 *
 	 * Deletes object from existing categories not supplied.
@@ -2549,7 +2569,7 @@ class Adherent extends CommonObject
 
 			include_once DOL_DOCUMENT_ROOT.'/core/class/html.formmail.class.php';
 			$adherent = new Adherent($this->db);
-			$formmail=new FormMail($db);
+			$formmail = new FormMail($this->db);
 
 			$i=0;
 			$nbok = 0;

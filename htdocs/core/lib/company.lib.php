@@ -10,6 +10,7 @@
  * Copyright (C) 2015       Frederic France         <frederic.france@free.fr>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Rui Strecht			    <rui.strecht@aliartalentos.com>
+ * Copyright (C) 2018       Ferran Marcet		    <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,26 +50,38 @@ function societe_prepare_head(Societe $object)
     $head[$h][2] = 'card';
     $h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-	    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
-		$nbContact = 0;	// TODO
-
-		$sql = "SELECT COUNT(p.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-		$sql .= " WHERE p.fk_soc = ".$object->id;
-		$resql = $db->query($sql);
-		if ($resql)
+    if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
+    {
+	    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 		{
-			$obj = $db->fetch_object($resql);
-			if ($obj) $nbContact = $obj->nb;
-		}
+		    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+			$nbContact = 0;	// TODO
 
-	    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans('ContactsAddresses');
-	    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
-	    $head[$h][2] = 'contact';
-	    $h++;
+			$sql = "SELECT COUNT(p.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+			$sql .= " WHERE p.fk_soc = ".$object->id;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+				if ($obj) $nbContact = $obj->nb;
+			}
+
+		    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
+		    $head[$h][1] = $langs->trans('ContactsAddresses');
+		    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		    $head[$h][2] = 'contact';
+		    $h++;
+		}
+    }
+    else
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+		$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		$head[$h][2] = 'contact';
+		$h++;
 	}
 
     if ($object->client==1 || $object->client==2 || $object->client==3)
@@ -96,16 +109,6 @@ function societe_prepare_head(Societe $object)
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
         $head[$h][2] = 'supplier';
-        $h++;
-    }
-
-    if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
-	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
-        $head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
-        $head[$h][2] = 'contact';
         $h++;
     }
 
@@ -233,8 +236,8 @@ function societe_prepare_head(Societe $object)
     	$head[$h][1] = $langs->trans("WebSiteAccounts");
     	$nbNote = 0;
     	$sql = "SELECT COUNT(n.rowid) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."website_account as n";
-    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$sql.= " FROM ".MAIN_DB_PREFIX."societe_account as n";
+    	$sql.= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
     	$resql=$db->query($sql);
     	if ($resql)
     	{
@@ -419,7 +422,7 @@ function societe_admin_prepare_head()
  *    @param      Translate	$outputlangs	Langs object for output translation
  *    @param      int		$entconv       	0=Return value without entities and not converted to output charset, 1=Ready for html output
  *    @param      int		$searchlabel    Label of country to search (warning: searching on label is not reliable)
- *    @return     mixed       				String with country code or translated country name or Array('id','code','label')
+ *    @return     mixed       				Integer with country id or String with country code or translated country name or Array('id','code','label') or 'NotDefined'
  */
 function getCountry($searchkey, $withcode='', $dbtouse=0, $outputlangs='', $entconv=1, $searchlabel='')
 {
@@ -635,9 +638,58 @@ function getFormeJuridiqueLabel($code)
     }
 }
 
+
+/**
+ *  Return list of countries that are inside the EEC (European Economic Community)
+ *  TODO Add a field into country dictionary.
+ *
+ *  @return     array					Array of countries code in EEC
+ */
+function getCountriesInEEC()
+{
+	// List of all country codes that are in europe for european vat rules
+	// List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
+	$country_code_in_EEC=array(
+		'AT',	// Austria
+		'BE',	// Belgium
+		'BG',	// Bulgaria
+		'CY',	// Cyprus
+		'CZ',	// Czech republic
+		'DE',	// Germany
+		'DK',	// Danemark
+		'EE',	// Estonia
+		'ES',	// Spain
+		'FI',	// Finland
+		'FR',	// France
+		'GB',	// United Kingdom
+		'GR',	// Greece
+		'HR',   // Croatia
+		'NL',	// Holland
+		'HU',	// Hungary
+		'IE',	// Ireland
+		'IM',	// Isle of Man - Included in UK
+		'IT',	// Italy
+		'LT',	// Lithuania
+		'LU',	// Luxembourg
+		'LV',	// Latvia
+		'MC',	// Monaco - Included in France
+		'MT',	// Malta
+		//'NO',	// Norway
+		'PL',	// Poland
+		'PT',	// Portugal
+		'RO',	// Romania
+		'SE',	// Sweden
+		'SK',	// Slovakia
+		'SI',	// Slovenia
+		'UK',	// United Kingdom
+		//'CH',	// Switzerland - No. Swizerland in not in EEC
+	);
+
+	return $country_code_in_EEC;
+}
+
 /**
  *  Return if a country of an object is inside the EEC (European Economic Community)
- *  TODO Add a field into country dictionary.
  *
  *  @param      Object      $object    Object
  *  @return     boolean		           true = country inside EEC, false = country outside EEC
@@ -646,43 +698,8 @@ function isInEEC($object)
 {
 	if (empty($object->country_code)) return false;
 
-    // List of all country codes that are in europe for european vat rules
-    // List found on http://ec.europa.eu/taxation_customs/common/faq/faq_1179_en.htm#9
-    $country_code_in_EEC=array(
-        'AT',	// Austria
-        'BE',	// Belgium
-        'BG',	// Bulgaria
-        'CY',	// Cyprus
-        'CZ',	// Czech republic
-        'DE',	// Germany
-        'DK',	// Danemark
-        'EE',	// Estonia
-        'ES',	// Spain
-        'FI',	// Finland
-        'FR',	// France
-        'GB',	// United Kingdom
-        'GR',	// Greece
-        'HR',   // Croatia
-        'NL',	// Holland
-        'HU',	// Hungary
-        'IE',	// Ireland
-        'IM',	// Isle of Man - Included in UK
-        'IT',	// Italy
-        'LT',	// Lithuania
-        'LU',	// Luxembourg
-        'LV',	// Latvia
-        'MC',	// Monaco - Included in France
-        'MT',	// Malta
-        //'NO',	// Norway
-        'PL',	// Poland
-        'PT',	// Portugal
-        'RO',	// Romania
-        'SE',	// Sweden
-        'SK',	// Slovakia
-        'SI',	// Slovenia
-        'UK',	// United Kingdom
-        //'CH',	// Switzerland - No. Swizerland in not in EEC
-    );
+	$country_code_in_EEC = getCountriesInEEC();
+
     //print "dd".$this->country_code;
     return in_array($object->country_code, $country_code_in_EEC);
 }
@@ -710,17 +727,16 @@ function show_projects($conf, $langs, $db, $object, $backtopage='', $nocreatelin
     {
         $langs->load("projects");
 
-        $buttoncreate='';
+        $newcardbutton='';
         if (! empty($conf->projet->enabled) && $user->rights->projet->creer && empty($nocreatelink))
         {
-            //$buttoncreate='<a class="butAction" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject").'</a>';
-			$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddProject");
-			if (empty($conf->dol_optimize_smallscreen)) $buttoncreate.=' '.img_picto($langs->trans("AddProject"),'filenew');
-			$buttoncreate.='</a>'."\n";
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/projet/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle">'.$langs->trans("AddProject").'</span>';
+			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+			$newcardbutton.= '</a>';
         }
 
         print "\n";
-        print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $buttoncreate.$morehtmlright, '');
+        print load_fiche_titre($langs->trans("ProjectsDedicatedToThisThirdParty"), $newcardbutton.$morehtmlright, '');
         print '<div class="div-table-responsive">';
         print "\n".'<table class="noborder" width=100%>';
 
@@ -877,7 +893,13 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     {
     	foreach($extrafields->attributes[$contactstatic->table_element]['label'] as $key => $val)
     	{
-    		if (! empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) $arrayfields["ef.".$key]=array('label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key], 'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key]<0)?0:1), 'position'=>$extrafields->attributes[$contactstatic->table_element]['pos'][$key], 'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key])!=3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+    		if (! empty($extrafields->attributes[$contactstatic->table_element]['list'][$key])) {
+				$arrayfields["ef.".$key]=array(
+					'label'=>$extrafields->attributes[$contactstatic->table_element]['label'][$key],
+					'checked'=>(($extrafields->attributes[$contactstatic->table_element]['list'][$key]<0)?0:1),
+					'position'=>$extrafields->attributes[$contactstatic->table_element]['pos'][$key],
+					'enabled'=>(abs($extrafields->attributes[$contactstatic->table_element]['list'][$key])!=3 && $extrafields->attributes[$contactstatic->table_element]['perms'][$key]));
+			}
     	}
     }
 
@@ -907,18 +929,19 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     $contactstatic->fields = dol_sort_array($contactstatic->fields, 'position');
     $arrayfields = dol_sort_array($arrayfields, 'position');
 
-    $buttoncreate='';
+    $newcardbutton='';
     if ($user->rights->societe->contact->creer)
     {
     	$addcontact = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("AddContact") : $langs->trans("AddContactAddress"));
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$addcontact;
-		$buttoncreate.='</a>'."\n";
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contact/card.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle">'.$addcontact.'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
     }
 
     print "\n";
 
     $title = (! empty($conf->global->SOCIETE_ADDRESSES_MANAGEMENT) ? $langs->trans("ContactsForCompany") : $langs->trans("ContactsAddressesForCompany"));
-    print load_fiche_titre($title, $buttoncreate,'');
+    print load_fiche_titre($title, $newcardbutton,'');
 
     print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'" name="formfilter">';
     print '<input type="hidden" name="formfilteraction" id="formfilteraction" value="list">';
@@ -939,6 +962,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_name != '')   $param.='&search_name='.urlencode($search_name);
     if ($optioncss != '')     $param.='&optioncss='.urlencode($optioncss);
     // Add $param from extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
     $sql = "SELECT t.rowid, t.lastname, t.firstname, t.fk_pays as country_id, t.civility, t.poste, t.phone as phone_pro, t.phone_mobile, t.phone_perso, t.fax, t.email, t.skype, t.statut, t.photo,";
@@ -949,6 +973,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     if ($search_status!='' && $search_status != '-1') $sql .= " AND t.statut = ".$db->escape($search_status);
     if ($search_name) $sql .= natural_search(array('t.lastname', 't.firstname'), $search_name);
     // Add where from extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
     if ($sortfield == "t.name") $sql.=" ORDER BY t.lastname $sortorder, t.firstname $sortorder";
     else $sql.= " ORDER BY $sortfield $sortorder";
@@ -977,6 +1002,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	}
     }
     // Extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
     // Fields from hook
@@ -1003,9 +1029,10 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
     	if (! empty($arrayfields['t.'.$key]['checked'])) print getTitleFieldOfList($arrayfields['t.'.$key]['label'], 0, $_SERVER['PHP_SELF'], 't.'.$key, '', $param, ($align?'class="'.$align.'"':''), $sortfield, $sortorder, $align.' ')."\n";
     }
     // Extra fields
+    $extrafieldsobjectkey=$contactstatic->table_element;
     include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
     // Hook fields
-    $parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
     $reshook=$hookmanager->executeHooks('printFieldListTitle', $parameters, $object);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
     print getTitleFieldOfList($selectedfields, 0, $_SERVER["PHP_SELF"],'','','','align="center"',$sortfield,$sortorder,'maxwidthsearch ')."\n";
@@ -1096,7 +1123,7 @@ function show_contacts($conf,$langs,$db,$object,$backtopage='')
             }
 
             // Extra fields
-            $extrafieldsobjectkey='socpeople';
+            $extrafieldsobjectkey=$contactstatic->table_element;
             include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 
             // Actions
@@ -1157,14 +1184,16 @@ function show_addresses($conf,$langs,$db,$object,$backtopage='')
 	$addressstatic = new Address($db);
 	$num = $addressstatic->fetch_lines($object->id);
 
-	$buttoncreate='';
+	$newcardbutton='';
 	if ($user->rights->societe->creer)
 	{
-		$buttoncreate='<a class="addnewrecord" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'">'.$langs->trans("AddAddress").' '.img_picto($langs->trans("AddAddress"),'filenew').'</a>'."\n";
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/address.php?socid='.$object->id.'&amp;action=create&amp;backtopage='.urlencode($backtopage).'"><span class="valignmiddle">'.$langs->trans("AddAddress").'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	print "\n";
-	print load_fiche_titre($langs->trans("AddressesForCompany"),$buttoncreate,'');
+	print load_fiche_titre($langs->trans("AddressesForCompany"),$newcardbutton,'');
 
 	print "\n".'<table class="noborder" width="100%">'."\n";
 
@@ -1531,7 +1560,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 		$out.=getTitleFieldOfList($langs->trans("Label"), 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder);
         $out.=getTitleFieldOfList($langs->trans("Date"), 0, $_SERVER["PHP_SELF"], 'a.datep,a.id', '', $param, 'align="center"', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList('');
-		$out.=getTitleFieldOfList('');
+		$out.=getTitleFieldOfList($langs->trans("ActionOnContact"), 0, $_SERVER["PHP_SELF"], 'a.fk_contact', '', $param, '', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList($langs->trans("Status"), 0, $_SERVER["PHP_SELF"], 'a.percent', '', $param, 'align="center"', $sortfield, $sortorder);
 		$out.=getTitleFieldOfList('', 0, $_SERVER["PHP_SELF"], '', '', $param, '', $sortfield, $sortorder, 'maxwidthsearch ');
 		$out.='</tr>';
@@ -1679,7 +1708,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             $out.='</td>';
 
             // Contact pour cette action
-            if (! empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
+            if (empty($objcon->id) && isset($histo[$key]['contact_id']) && $histo[$key]['contact_id'] > 0)
             {
                 $contactstatic->lastname=$histo[$key]['lastname'];
                 $contactstatic->firstname=$histo[$key]['firstname'];
@@ -1725,7 +1754,7 @@ function show_subsidiaries($conf,$langs,$db,$object)
 
 	$i=-1;
 
-	$sql = "SELECT s.rowid, s.nom as name, s.address, s.zip, s.town, s.code_client, s.canvas";
+	$sql = "SELECT s.rowid, s.client, s.fournisseur, s.nom as name, s.name_alias, s.email, s.address, s.zip, s.town, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur, s.canvas";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 	$sql.= " WHERE s.parent = ".$object->id;
 	$sql.= " AND s.entity IN (".getEntity('societe').")";
@@ -1753,12 +1782,22 @@ function show_subsidiaries($conf,$langs,$db,$object)
 		{
 			$obj = $db->fetch_object($result);
 
+			$socstatic->id = $obj->rowid;
+			$socstatic->name = $obj->name;
+			$socstatic->name_alias = $obj->name_alias;
+			$socstatic->email = $obj->email;
+			$socstatic->code_client = $obj->code_client;
+			$socstatic->code_fournisseur = $obj->code_client;
+			$socstatic->code_compta = $obj->code_compta;
+			$socstatic->code_compta_fournisseur = $obj->code_compta_fournisseur;
+			$socstatic->email = $obj->email;
+			$socstatic->canvas = $obj->canvas;
+			$socstatic->client = $obj->client;
+			$socstatic->fournisseur = $obj->fournisseur;
+
 			print '<tr class="oddeven">';
 
 			print '<td>';
-			$socstatic->id = $obj->rowid;
-			$socstatic->name = $obj->name;
-			$socstatic->canvas = $obj->canvas;
 			print $socstatic->getNomUrl(1);
 			print '</td>';
 

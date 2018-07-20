@@ -62,7 +62,7 @@ pHeader('','');     // No next step for navigation buttons. Next step is defined
 //print "<br>\n";
 //print $langs->trans("InstallEasy")."<br><br>\n";
 
-print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/gear.svg" width="20" alt="Database"> '.$langs->trans("MiscellaneousChecks").":</h3>\n";
+print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/gear.svg" width="20" alt="Database"> '.$langs->trans("MiscellaneousChecks").":</h3>\n";
 
 // Check browser
 $useragent=$_SERVER['HTTP_USER_AGENT'];
@@ -252,8 +252,14 @@ if (! file_exists($conffile))
 }
 else
 {
+	if (dol_is_dir($conffile))
+	{
+		print '<img src="../theme/eldy/img/error.png" alt="Warning"> '.$langs->trans("ConfFileMustBeAFileNotADir",$conffiletoshow);
+
+		$allowinstall=0;
+	}
 	// File exists but can't be modified
-	if (!is_writable($conffile))
+	elseif (!is_writable($conffile))
 	{
 		if ($confexists)
 		{

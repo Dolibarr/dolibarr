@@ -42,12 +42,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 
-$langs->load("companies");
-$langs->load("commercial");
-$langs->load("other");
-$langs->load("bills");
-$langs->load("orders");
-$langs->load("agenda");
+// Load translation files required by the page
+$langs->loadLangs(array("companies", "other", "commercial", "bills", "orders", "agenda"));
 
 $action=GETPOST('action','alpha');
 $cancel=GETPOST('cancel','alpha');
@@ -417,6 +413,7 @@ if ($action == 'update')
 		$object->location    = GETPOST('location');
 		$object->socid       = GETPOST("socid");
 		$socpeopleassigned   = GETPOST("socpeopleassigned",'array');
+		$object->socpeopleassigned = array();
 		foreach ($socpeopleassigned as $cid) $object->socpeopleassigned[$cid] = array('id' => $cid);
 		$object->contactid   = GETPOST("contactid",'int');
 		$object->fk_project  = GETPOST("projectid",'int');
@@ -908,7 +905,7 @@ if ($action == 'create')
     $parameters=array();
     $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
     print $hookmanager->resPrint;
-    if (empty($reshook) && ! empty($extrafields->attribute_label))
+    if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields,'edit');
 	}
@@ -1260,7 +1257,7 @@ if ($id > 0)
         $parameters=array();
         $reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
-        if (empty($reshook) && ! empty($extrafields->attribute_label))
+        if (empty($reshook))
 		{
 			print $object->showOptionals($extrafields,'edit');
 		}
@@ -1291,7 +1288,7 @@ if ($id > 0)
 		}
 
 		$linkback =img_picto($langs->trans("BackToList"),'object_list','class="hideonsmartphone pictoactionview"');
-		$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php">'.$langs->trans("BackToList").'</a>';
+		$linkback.= '<a href="'.DOL_URL_ROOT.'/comm/action/list.php?restore_lastsearch_values=1">'.$langs->trans("BackToList").'</a>';
 
 		// Link to other agenda views
 		$out='';
@@ -1603,7 +1600,6 @@ if ($id > 0)
             $genallowed=$user->rights->agenda->myactions->read;
 	        $delallowed=$user->rights->agenda->myactions->create;
 
-            $var=true;
 
             print $formfile->showdocuments('agenda',$object->id,$filedir,$urlsource,$genallowed,$delallowed,'',0,0,0,0,0,'','','',$object->default_lang);
 

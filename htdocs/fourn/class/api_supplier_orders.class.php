@@ -186,7 +186,7 @@ class SupplierOrders extends DolibarrApi
      * @param array $request_data   Request datas
      * @return int  ID of supplier order
      */
-    function post($request_data = NULL)
+    function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401, "Insuffisant rights");
@@ -222,7 +222,7 @@ class SupplierOrders extends DolibarrApi
      * @param array $request_data   Datas
      * @return int
      */
-    function put($id, $request_data = NULL)
+    function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->fournisseur->commande->creer) {
 			throw new RestException(401);

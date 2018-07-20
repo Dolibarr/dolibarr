@@ -246,7 +246,7 @@ class modSupplierProposal extends DolibarrModules
 	public function remove($options = '')
 	{
 	    $sql = array(
-	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"
+	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"		// To delete/clean deprecated entries
 	    );
 
 	    return $this->_remove($sql, $options);

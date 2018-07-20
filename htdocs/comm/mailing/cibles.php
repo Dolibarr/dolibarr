@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/emailing.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+// Load translation files required by the page
 $langs->load("mails");
 
 // Security check
@@ -74,8 +75,6 @@ if ($action == 'add')
 {
 	$module=GETPOST("module");
 	$result=-1;
-
-	$var=true;
 
 	foreach ($modulesdir as $dir)
 	{
@@ -277,8 +276,6 @@ if ($object->fetch($id) >= 0)
 
 		clearstatcache();
 
-		$var = true;
-
 		foreach ($modulesdir as $dir)
 		{
 		    $modulenames=array();
@@ -306,6 +303,8 @@ if ($object->fetch($id) >= 0)
 			// Sort $modulenames
 			sort($modulenames);
 
+			$var = true;
+
 			// Loop on each submodule
             foreach($modulenames as $modulename)
             {
@@ -331,7 +330,7 @@ if ($object->fetch($id) >= 0)
 				// Si le module mailing est qualifie
 				if ($qualified)
 				{
-					$var = !$var;
+					$var = ! $var;
 
 					if ($allowaddtarget)
 					{
@@ -425,7 +424,13 @@ if ($object->fetch($id) >= 0)
 	{
 	    $result = $db->query($sql);
 	    $nbtotalofrecords = $db->num_rows($result);
+	    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	    {
+	    	$page = 0;
+	    	$offset = 0;
+	    }
 	}
+
 	//$nbtotalofrecords=$object->nbemail;     // nbemail is a denormalized field storing nb of targets
 	$sql .= $db->plimit($limit+1, $offset);
 
@@ -555,7 +560,7 @@ if ($object->fetch($id) >= 0)
                         include_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
                         $objectstatic=new Adherent($db);
 						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
                     }
                     else if ($obj->source_type == 'user')
                     {
@@ -563,14 +568,21 @@ if ($object->fetch($id) >= 0)
                         $objectstatic=new User($db);
 						$objectstatic->fetch($obj->source_id);
                         $objectstatic->id=$obj->source_id;
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
                     }
                     else if ($obj->source_type == 'thirdparty')
                     {
                         include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
                         $objectstatic=new Societe($db);
 						$objectstatic->fetch($obj->source_id);
-                        print $objectstatic->getNomUrl(2);
+                        print $objectstatic->getNomUrl(1);
+                    }
+                    else if ($obj->source_type == 'contact')
+                    {
+                    	include_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+                    	$objectstatic=new Contact($db);
+                    	$objectstatic->fetch($obj->source_id);
+                    	print $objectstatic->getNomUrl(1);
                     }
                     else
                     {

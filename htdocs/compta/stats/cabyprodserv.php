@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("products");
-$langs->load("categories");
-$langs->load("errors");
+// Load translation files required by the page
+$langs->loadLangs(array("products","categories","errors",'accountancy'));
 
 // Security pack (data & check)
 $socid = GETPOST('socid','int');
@@ -78,13 +77,13 @@ if (empty($year))
 	$month_current = strftime("%m",dol_now());
 	$year_start = $year;
 }
-$date_start=dol_mktime(0,0,0,$_REQUEST["date_startmonth"],$_REQUEST["date_startday"],$_REQUEST["date_startyear"]);
-$date_end=dol_mktime(23,59,59,$_REQUEST["date_endmonth"],$_REQUEST["date_endday"],$_REQUEST["date_endyear"]);
+$date_start=dol_mktime(0,0,0,GETPOST("date_startmonth"),GETPOST("date_startday"),GETPOST("date_startyear"));
+$date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GETPOST("date_endyear"));
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q")?GETPOST("q"):0;
-	if ($q==0)
+	$q=GETPOST("q","int");
+	if (empty($q))
 	{
 		// We define date_start and date_end
 		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
@@ -103,13 +102,23 @@ if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 		}
 		$date_start=dol_get_first_day($year_start,$month_start,false); $date_end=dol_get_last_day($year_end,$month_end,false);
 	}
-	if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
-	if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
-	if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
-	if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	else
+	{
+		if ($q==1) { $date_start=dol_get_first_day($year_start,1,false); $date_end=dol_get_last_day($year_start,3,false); }
+		if ($q==2) { $date_start=dol_get_first_day($year_start,4,false); $date_end=dol_get_last_day($year_start,6,false); }
+		if ($q==3) { $date_start=dol_get_first_day($year_start,7,false); $date_end=dol_get_last_day($year_start,9,false); }
+		if ($q==4) { $date_start=dol_get_first_day($year_start,10,false); $date_end=dol_get_last_day($year_start,12,false); }
+	}
 } else {
 	// TODO We define q
 }
+
+// $date_start and $date_end are defined. We force $year_start and $nbofyear
+$tmps=dol_getdate($date_start);
+$year_start = $tmps['year'];
+$tmpe=dol_getdate($date_end);
+$year_end = $tmpe['year'];
+$nbofyear = ($year_end - $year_start) + 1;
 
 $commonparams=array();
 $commonparams['modecompta']=$modecompta;
@@ -149,14 +158,15 @@ llxHeader();
 $form=new Form($db);
 $formother = new FormOther($db);
 
+// TODO Report from bookkeeping not yet available, so we switch on report on business events
+if ($modecompta=="BOOKKEEPING") $modecompta="CREANCES-DETTES";
+if ($modecompta=="BOOKKEEPINGCOLLECTED") $modecompta="RECETTES-DEPENSES";
+
 // Show report header
-$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByProductsAndServices");
-
 if ($modecompta=="CREANCES-DETTES") {
+	$name=$langs->trans("Turnover").', '.$langs->trans("ByProductsAndServices");
 	$calcmode=$langs->trans("CalcModeDebt");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 
 	$description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
@@ -166,23 +176,38 @@ if ($modecompta=="CREANCES-DETTES") {
 	}
 
 	$builddate=dol_now();
-} else {
+}
+else if ($modecompta=="RECETTES-DEPENSES")
+{
+	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByProductsAndServices");
 	$calcmode=$langs->trans("CalcModeEngagement");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
-
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
 
 	$builddate=dol_now();
 }
+else if ($modecompta=="BOOKKEEPING")
+{
+
+
+}
+else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+{
+
+
+}
+
+$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+else $periodlink = '';
 
 report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
 if (! empty($conf->accounting->enabled) && $modecompta != 'BOOKKEEPING')
 {
-    print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
+	print info_admin($langs->trans("WarningReportNotReliable"), 0, 0, 1);
 }
 
 
@@ -199,17 +224,17 @@ if ($modecompta == 'CREANCES-DETTES')
 	$sql = "SELECT DISTINCT p.rowid as rowid, p.ref as ref, p.label as label, p.fk_product_type as product_type,";
 	$sql.= " SUM(l.total_ht) as amount, SUM(l.total_ttc) as amount_ttc,";
 	$sql.= " SUM(CASE WHEN f.type = 2 THEN -l.qty ELSE l.qty END) as qty";
-	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l, ".MAIN_DB_PREFIX."product as p";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as l";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
 	if ($selected_cat === -2)	// Without any category
 	{
-		$sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
 	}
 	else if ($selected_cat) 	// Into a specific category
 	{
 		$sql.= ", ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_product as cp";
 	}
-	$sql.= " WHERE l.fk_product = p.rowid";
-	$sql.= " AND l.fk_facture = f.rowid";
+	$sql.= " WHERE l.fk_facture = f.rowid";
 	$sql.= " AND f.fk_statut in (1,2)";
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) {
 		$sql.= " AND f.type IN (0,1,2,5)";
@@ -357,23 +382,21 @@ if ($modecompta == 'CREANCES-DETTES')
 	);
 	print "</tr>\n";
 
-	// Array Data
-	$var=true;
-
 	if (count($name)) {
 		foreach($name as $key=>$value) {
 
 			print '<tr class="oddeven">';
 
 			// Product
+			print "<td>";
 			$fullname=$name[$key];
-			if ($key >= 0) {
+			if ($key > 0) {
 				$linkname='<a href="'.DOL_URL_ROOT.'/product/card.php?id='.$key.'">'.img_object($langs->trans("ShowProduct"),$type[$key]==0?'product':'service').' '.$fullname.'</a>';
 			} else {
 				$linkname=$langs->trans("PaymentsNotLinkedToProduct");
 			}
-
-			print "<td>".$linkname."</td>\n";
+			print $linkname;
+			print "</td>\n";
 
 			// Quantity
 			print '<td align="right">';
@@ -417,11 +440,11 @@ if ($modecompta == 'CREANCES-DETTES')
 		// Total
 		print '<tr class="liste_total">';
 		print '<td>'.$langs->trans("Total").'</td>';
-		print '<td align="right">'.price($qtytotal).'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td align="right">'.$qtytotal.'</td>';
+		print '<td align="right">100%</td>';
 		print '<td align="right">'.price($catotal_ht).'</td>';
 		print '<td align="right">'.price($catotal).'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td align="right">100%</td>';
 		print '</tr>';
 
 		$db->free($result);

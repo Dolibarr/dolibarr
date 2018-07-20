@@ -136,11 +136,8 @@ if (GETPOST('viewyear','alpha') || $action == 'show_year')  {
     $action='show_year';
 }                                  // View by year
 
-
-$langs->load("users");
-$langs->load("agenda");
-$langs->load("other");
-$langs->load("commercial");
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'agenda', 'other', 'commercial'));
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('agenda'));
@@ -427,8 +424,8 @@ if ($type) $sql.= " AND ca.id = ".$type;
 if ($status == '0') { $sql.= " AND a.percent = 0"; }
 if ($status == '-1') { $sql.= " AND a.percent = -1"; }	// Not applicable
 if ($status == '50') { $sql.= " AND (a.percent > 0 AND a.percent < 100)"; }	// Running already started
-if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100 OR (a.percent = -1 AND a.datep2 <= '".$db->idate($now)."'))"; }
-if ($status == 'todo') { $sql.= " AND ((a.percent >= 0 AND a.percent < 100) OR (a.percent = -1 AND a.datep2 > '".$db->idate($now)."'))"; }
+if ($status == 'done' || $status == '100') { $sql.= " AND (a.percent = 100)"; }
+if ($status == 'todo') { $sql.= " AND (a.percent >= 0 AND a.percent < 100)"; }
 // We must filter on assignement table
 if ($filtert > 0 || $usergroup > 0)
 {

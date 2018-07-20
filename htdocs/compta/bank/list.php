@@ -5,6 +5,7 @@ use Stripe\BankAccount;
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2018      Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingaccount.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
-$langs->load("accountancy");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('banks', 'categories', 'accountancy', 'compta'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -54,7 +53,8 @@ $optioncss = GETPOST('optioncss','alpha');
 
 // Security check
 if ($user->societe_id) $socid=$user->societe_id;
-$result=restrictedArea($user,'banque');
+if (! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with list of banks accounting account allowed to manager of chart account
+if (! $allowed) $result=restrictedArea($user,'banque');
 
 $diroutputmassaction=$conf->bank->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -229,7 +229,9 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->banque->configurer)
 {
-	$newcardbutton.='<a class="butAction" href="card.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
+	$newcardbutton.='<a class="butActionNew" href="card.php?action=create"><span class="valignmiddle">'.$langs->trans("NewFinancialAccount").'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 
@@ -255,7 +257,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $all) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter='';
@@ -388,7 +390,7 @@ if (! empty($arrayfields['toreconcile']['checked']))      print_liste_field_titr
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['b.datec']['checked']))          print_liste_field_titre($arrayfields['b.datec']['label'],$_SERVER["PHP_SELF"],"b.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -400,7 +402,7 @@ print "</tr>\n";
 
 
 $total = array(); $found = 0; $i=0; $lastcurrencycode='';
-$var=true;
+
 foreach ($accounts as $key=>$type)
 {
 	if ($i >= $limit) break;
@@ -410,7 +412,6 @@ foreach ($accounts as $key=>$type)
 	$obj = new Account($db);
 	$obj->fetch($key);
 
-	$var = !$var;
 	$solde = $obj->solde(1);
 
 	if (! empty($lastcurrencycode) && $lastcurrencycode != $obj->currency_code)
@@ -552,7 +553,7 @@ foreach ($accounts as $key=>$type)
     if (! empty($arrayfields['balance']['checked']))
     {
 		print '<td align="right">';
-		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, 0, -1, $obj->currency_code).'</a>';
+		print '<a href="'.DOL_URL_ROOT.'/compta/bank/bankentries_list.php?id='.$obj->id.'">'.price($solde, 0, $langs, 0, -1, -1, $obj->currency_code).'</a>';
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 		if (! $i) $totalarray['totalbalancefield']=$totalarray['nbfield'];

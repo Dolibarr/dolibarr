@@ -94,7 +94,7 @@ class modModuleBuilder extends DolibarrModules
             'langs'=>'modulebuilder',
             'position'=>100,
             'perms'=>'1',
-            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^admintools/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
+            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
             'target'=>'_modulebuilder',
             'user'=>0);
 

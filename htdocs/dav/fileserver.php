@@ -21,16 +21,12 @@
  *      \brief      Server DAV
  */
 
-//if (! defined('NOREQUIREUSER'))  define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))    define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
 if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1');
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1'); // If there is no menu to show
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1'); // If we don't need to load the html.form.class.php
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-define("NOLOGIN",1);		// This means this output page does not require to be logged.
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOLOGIN'))  		 define("NOLOGIN",1);		// This means this output page does not require to be logged.
+if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
 require ("../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
@@ -47,6 +43,7 @@ if(isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!='')
 	$user->getrights();
 }
 
+// Load translation files required by the page
 $langs->loadLangs(array("main","other"));
 
 
@@ -56,7 +53,9 @@ if(empty($conf->dav->enabled))
 
 // settings
 $publicDir = $conf->dav->dir_output.'/public';
-$tmpDir = $conf->dav->dir_output.'/tmp';
+$privateDir = $conf->dav->dir_output.'/private';
+$tmpDir = $conf->dav->dir_temp;
+//var_dump($tmpDir);exit;
 
 // Authentication callback function
 $authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password)
@@ -99,8 +98,20 @@ $authBackend->setRealm(constant('DOL_APPLICATION_TITLE'));
 $nodes = array();
 
 // Enable directories and features according to DAV setup
-// / Public docs
-$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public');
+// Public dir
+if (!empty($conf->global->DAV_ALLOW_PUBLIC_DIR))
+{
+	$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/public');
+}
+// Private dir
+$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/dav/private');
+// ECM dir
+if (! empty($conf->ecm->enabled) && ! empty($conf->global->DAV_ALLOW_ECM_DIR))
+{
+	$nodes[] = new \Sabre\DAV\FS\Directory($dolibarr_main_data_root. '/ecm');
+}
+
+
 
 // Principals Backend
 //$principalBackend = new \Sabre\DAVACL\PrincipalBackend\Dolibarr($user,$db);
@@ -124,8 +135,14 @@ $baseUri = DOL_URL_ROOT.'/dav/fileserver.php/';
 if (isset($baseUri)) $server->setBaseUri($baseUri);
 
 // Add authentication function
-$server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
-
+if ((empty($conf->global->DAV_ALLOW_PUBLIC_DIR)
+	|| ! preg_match('/'.preg_quote(DOL_URL_ROOT.'/dav/fileserver.php/public','/').'/', $_SERVER["PHP_SELF"]))
+	&& ! preg_match('/^sabreAction=asset&assetName=[a-zA-Z0-9%\-\/]+\.(png|css|woff|ico|ttf)$/', $_SERVER["QUERY_STRING"])	// URL for Sabre browser resources
+	)
+{
+	//var_dump($_SERVER["QUERY_STRING"]);exit;
+	$server->addPlugin(new \Sabre\DAV\Auth\Plugin($authBackend));
+}
 // Support for LOCK and UNLOCK
 $lockBackend = new \Sabre\DAV\Locks\Backend\File($tmpDir . '/.locksdb');
 $lockPlugin = new \Sabre\DAV\Locks\Plugin($lockBackend);

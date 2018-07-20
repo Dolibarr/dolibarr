@@ -317,6 +317,8 @@ class AdherentTest extends PHPUnit_Framework_TestCase
         $langs=$this->savlangs;
         $db=$this->savdb;
 
+        $conf->global->MAIN_FIRSTNAME_NAME_POSITION = 1;	// Force setup for firstname then lastname
+
         $template = '__CIVILITY__,__FIRSTNAME__,__LASTNAME__,__FULLNAME__,__COMPANY__,'.
                     '__ADDRESS__,__ZIP__,__TOWN__,__COUNTRY__,__EMAIL__,__BIRTH__,__PHOTO__,__LOGIN__';
 

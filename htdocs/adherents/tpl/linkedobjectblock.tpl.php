@@ -36,13 +36,12 @@ $langs = $GLOBALS['langs'];
 $linkedObjectBlock = $GLOBALS['linkedObjectBlock'];
 $langs->load("members");
 
-$var=true;
 $total=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
 
 ?>
-<tr <?php echo $GLOBALS['bc'][$var]; ?> >
+<tr class="oddeven" >
     <td><?php echo $langs->trans("Subscription"); ?></td>
     <td><?php echo $objectlink->getNomUrl(1); ?></td>
 	<td align="center"></td>

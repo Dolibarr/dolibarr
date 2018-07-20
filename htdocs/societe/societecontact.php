@@ -253,7 +253,6 @@ if ($id > 0 || ! empty($ref))
 					print_liste_field_titre("EndSubscription",$_SERVER["PHP_SELF"],"d.datefin",$param,"",'align="center"',$sortfield,$sortorder);
 					print "</tr>\n";
 
-					$var=True;
 					$i=0;
 					while ($i < $num && $i < $conf->liste_limit)
 					{
@@ -268,7 +267,6 @@ if ($id > 0 || ! empty($ref))
 						$memberstatic->datefin=$db->jdate($objp->datefin);
 
 						$companyname=$objp->company;
-
 
 						print '<tr class="oddeven">';
 

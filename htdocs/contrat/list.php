@@ -6,7 +6,7 @@
  * Copyright (C) 2014      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015	   Claudio Aschieri		<c.aschieri@19.coop>
  * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
- * Copyright (C) 2016      Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,10 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
-$langs->load("contracts");
-$langs->load("products");
-$langs->load("companies");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('contracts', 'products', 'companies', 'compta'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -301,6 +299,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
 $sql.= $db->plimit($limit + 1, $offset);
@@ -372,7 +375,9 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->contrat->creer)
 {
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create">'.$langs->trans('NewContractSubscription').'</a>';
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/contrat/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewContractSubscription').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
@@ -383,6 +388,7 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="contextpage" value="'.$contextpage.'">';
 
 print_barre_liste($langs->trans("ListOfContracts"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $totalnboflines, 'title_commercial.png', 0, $newcardbutton, '', $limit);
 
@@ -395,7 +401,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $moreforfilter='';
@@ -512,11 +518,11 @@ if (! empty($arrayfields['c.date_contrat']['checked']))
 	// Date contract
 	print '<td class="liste_titre center nowraponall">';
 	//print $langs->trans('Month').': ';
-	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="day" value="'.$day.'">';
-	print '<input class="flat" type="text" size="1" maxlength="2" name="month" value="'.$month.'">';
+	if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="day" value="'.$day.'">';
+	print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="month" value="'.$month.'">';
 	//print '&nbsp;'.$langs->trans('Year').': ';
 	$syear = $year;
-	print $formother->selectyear($syear,'year',1, 20, 5, 0, 0, '', 'widthauto');
+	print $formother->selectyear($syear,'year',1, 20, 5);
 	print '</td>';
 }
 // Extra fields
@@ -541,13 +547,13 @@ if (! empty($arrayfields['c.tms']['checked']))
 // First end date
 if (! empty($arrayfields['lower_planned_end_date']['checked']))
 {
-		print '<td class="liste_titre" align="center">';
+		print '<td class="liste_titre nowraponall" align="center">';
 		$arrayofoperators=array('0'=>'','='=>'=','<='=>'<=','>='=>'>=');
 		print $form->selectarray('search_op2df',$arrayofoperators,$search_op2df,0);
 		print '</br>';
-		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1);
+		print $formother->select_month($search_dfmonth, 'search_dfmonth', 1, 0, 'valignmiddle');
 		print ' ';
-		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5);
+		$formother->select_year($search_dfyear, 'search_dfyear', 1, 20, 5, 0, 0, '', 'valignmiddle');
 		print '</td>';
 }
 // Status
@@ -577,7 +583,7 @@ if (! empty($arrayfields['c.date_contrat']['checked']))      print_liste_field_t
 // Extra fields
 include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 // Hook fields
-$parameters=array('arrayfields'=>$arrayfields);
+$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 print $hookmanager->resPrint;
 if (! empty($arrayfields['c.datec']['checked']))     print_liste_field_titre($arrayfields['c.datec']['label'],$_SERVER["PHP_SELF"],"c.datec","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -764,7 +770,7 @@ while ($i < min($num,$limit))
 	// Date lower end date
 	if (! empty($arrayfields['lower_planned_end_date']['checked']))
 	{
-		print '<td align="center" class="nowrap">';
+		print '<td align="center" class="nowrapforall">';
 		print dol_print_date($db->jdate($obj->lower_planned_end_date), 'day', 'tzuser');
 		print '</td>';
 		if (! $i) $totalarray['nbfield']++;

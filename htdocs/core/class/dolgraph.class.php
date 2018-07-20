@@ -674,7 +674,7 @@ class DolGraph
 		$group->setPadding($paddleft, $paddright);		// Width on left and right for Y axis values
 		$group->legend->setSpace(0);
 		$group->legend->setPadding(2,2,2,2);
-		$group->legend->setPosition(NULL,0.1);
+		$group->legend->setPosition(null, 0.1);
 		$group->legend->setBackgroundColor($colorsemitrans);
 
 		if (is_array($this->bgcolorgrid)) $group->grid->setBackgroundColor($bgcolorgrid);
@@ -734,7 +734,7 @@ class DolGraph
 				$plot->barShadow->setSize($this->SetShading);
 				$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
 				$plot->barShadow->setColor(new Color(160, 160, 160, 50));
-				$plot->barShadow->smooth(TRUE);
+				$plot->barShadow->smooth(true);
 				//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
 
@@ -880,10 +880,17 @@ class DolGraph
 		$this->stringtoshow.='<script id="'.$tag.'">'."\n";
 		$this->stringtoshow.='$(function () {'."\n";
 		$i=$firstlot;
-		while ($i < $nblot)
+		if ($nblot < 0)
 		{
-			$this->stringtoshow.=$serie[$i];
-			$i++;
+			$this->stringtoshow.='<!-- No series of data -->';
+		}
+		else
+		{
+			while ($i < $nblot)
+			{
+				$this->stringtoshow.=$serie[$i];
+				$i++;
+			}
 		}
 		$this->stringtoshow.="\n";
 

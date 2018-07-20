@@ -29,10 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 
-$langs->load("trips");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('trips', 'companies', 'bills', 'orders'));
 
 $id = GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -90,7 +88,7 @@ if ($id > 0 || ! empty($ref))
 
     print '<div class="fichecenter">';
     print '<div class="underbanner clearboth"></div>';
-var_dump($value_public);
+
 	$cssclass="titlefield";
 	include DOL_DOCUMENT_ROOT.'/core/tpl/notes.tpl.php';
 

@@ -469,8 +469,8 @@ if (empty($reshook))
 			'use_companybankid'=>GETPOST('companybankid'),
 			'force_dir_output'=>$conf->societe->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->id)
 		);
-		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid'));
-		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid'));
+		$_POST['lang_id'] = GETPOST('lang_idrib'.GETPOST('companybankid','int'), 'alpha');
+		$_POST['model'] =  GETPOST('modelrib'.GETPOST('companybankid','int'), 'alpha');
 	}
 
 	$id = $socid;
@@ -614,7 +614,7 @@ if (empty($reshook))
 				setEventMessages($e->getMessage(), null, 'errors');
 			}
 		}
-		elseif ($action == 'deletecard')
+		elseif ($action == 'deletecard' && $source)
 		{
 			try {
 				$cu=$stripe->customerStripe($object, $stripeacc, $servicestatus);
@@ -758,7 +758,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		print '</td><td>';
 		//print $stripecu;
 		print $form->editfieldval("StripeCustomerId", 'key_account', $stripecu, $object, $permissiontowrite, 'string', '', null, null, '', 2, '', 'socid');
-		if ($stripecu)
+		if ($stripecu && $action != 'editkey_account')
 		{
 			$url='https://dashboard.stripe.com/test/customers/'.$stripecu;
 			if ($servicestatus)
@@ -784,6 +784,8 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	print '</table>';
 	print '</div>';
 
+	dol_fiche_end();
+
 	print '<br>';
 
 	// List of Stripe payment modes
@@ -792,9 +794,9 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$morehtmlright='';
 		if (! empty($conf->global->STRIPE_ALLOW_LOCAL_CARD))
 		{
-			$morehtmlright='<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").'</a>';
+			$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=createcard">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 		}
-		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with Stripe OAuth Connect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
+		print load_fiche_titre($langs->trans('StripePaymentModes').($stripeacc?' (Stripe connection with StripeConnect account '.$stripeacc.')':' (Stripe connection with keys from Stripe module setup)'), $morehtmlright, '');
 
 		$listofsources = array();
 		if (is_object($stripe))
@@ -839,6 +841,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 			$sql='SELECT rowid FROM '.MAIN_DB_PREFIX."societe_rib";
 			$sql.=" WHERE type in ('card', 'paypal')";
 			$sql.=" AND fk_soc = ".$object->id;
+			$sql.=" AND status = ".$servicestatus;
 
 			$resql = $db->query($sql);
 			if ($resql)
@@ -916,7 +919,7 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 								print img_picto($langs->trans("Modify"),'edit');
 								print '</a>';
 								print '&nbsp;';
-								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';
+								print '<a href="' . DOL_URL_ROOT.'/societe/paymentmodes.php?socid='.$object->id.'&id='.$companypaymentmodetemp->id.'&action=deletecard">';	// source='.$companypaymentmodetemp->stripe_card_ref.'&
 								print img_picto($langs->trans("Delete"), 'delete');
 								print '</a>';
 							}
@@ -1041,12 +1044,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 	// List of bank accounts
 	print '<br>';
 
-	$morehtmlright='<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").'</a>';
+	$morehtmlright='<a class="butActionNew" href="'.$_SERVER["PHP_SELF"].'?socid='.$object->id.'&amp;action=create">'.$langs->trans("Add").' <span class="fa fa-plus-circle valignmiddle"></span></a>';
 
 	print load_fiche_titre($langs->trans("BankAccounts"), $morehtmlright, '');
 
 	$rib_list = $object->get_all_rib();
-	$var = false;
 	if (is_array($rib_list))
 	{
 		print '<div class="div-table-responsive-no-min">';		// You can use div-table-responsive-no-min if you dont need reserved height for your table
@@ -1235,11 +1237,11 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		dol_print_error($db);
 	}
 
-	dol_fiche_end();
-
 
 	if (empty($conf->global->SOCIETE_DISABLE_BUILDDOC))
 	{
+		print '<br>';
+
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
@@ -1251,9 +1253,25 @@ if ($socid && $action != 'edit' && $action != 'create' && $action != 'editcard' 
 		$genallowed=$user->rights->societe->lire;
 		$delallowed=$user->rights->societe->creer;
 
-		$var=true;
-
 		print $formfile->showdocuments('company', $object->id, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 0, 0, 0, 28, 0, 'entity='.$object->entity, 0, '', $object->default_lang);
+
+		// Show direct download link
+		if (! empty($conf->global->BANK_ACCOUNT_ALLOW_EXTERNAL_DOWNLOAD))
+		{
+			$companybankaccounttemp = new CompanyBankAccount($db);
+			$companypaymentmodetemp = new CompanyPaymentMode($db);
+			$result = $companypaymentmodetemp->fetch(0, null, $object->id, 'ban');
+
+			include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+			$ecmfile = new EcmFiles($db);
+			$result = $ecmfile->fetch(0, '', '', '', '', $companybankaccounttemp->table_element, $companypaymentmodetemp->id);
+			if ($result > 0)
+			{
+				$companybankaccounttemp->last_main_doc = $ecmfile->filepath.'/'.$ecmfile->filename;
+				print '<br><!-- Link to download main doc -->'."\n";
+				print showDirectDownloadLink($companybankaccounttemp).'<br>';
+			}
+		}
 
 		print '</div><div class="fichehalfright"><div class="ficheaddleft">';
 

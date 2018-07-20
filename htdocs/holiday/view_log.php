@@ -41,6 +41,7 @@ if (empty($year))
 	$year=$tmpdate['year'];
 }
 
+// Load translation files required by the page
 $langs->load('users');
 
 

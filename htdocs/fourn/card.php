@@ -37,12 +37,15 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 if (! empty($conf->adherent->enabled)) require_once DOL_DOCUMENT_ROOT.'/adherents/class/adherent.class.php';
 
-$langs->load('companies');
-$langs->load('suppliers');
-$langs->load('products');
-$langs->load('bills');
-$langs->load('orders');
-$langs->load('commercial');
+// Load translation files required by page
+$langs->loadLangs(array(
+	'companies',
+	'suppliers',
+	'products',
+	'bills',
+	'orders',
+	'commercial',
+));
 
 $action	= GETPOST('action','aZ09');
 $cancelbutton = GETPOST('cancel','alpha');
@@ -121,11 +124,13 @@ if (empty($reshook))
         $ret = $extrafields->setOptionalsFromPost($extralabels, $object, GETPOST('attribute', 'none'));
 
         if ($ret < 0) $error++;
+
         if (! $error)
         {
             $result = $object->insertExtraFields('COMPANY_MODIFY');
             if ($result < 0) $error++;
         }
+
         if ($error) $action = 'edit_extras';
     }
 }
@@ -428,8 +433,6 @@ if ($object->id > 0)
 	print $boxstat;
 
 
-	$var=true;
-
 	$MAXLIST=$conf->global->MAIN_SIZE_SHORTLIST_LIMIT;
 
 	// Lien recap
@@ -547,11 +550,9 @@ if ($object->id > 0)
 	            print '</td></tr>';
 	        }
 
-	        $var = True;
 	        while ($i < $num && $i <= $MAXLIST)
 	        {
 	            $obj = $db->fetch_object($resql);
-
 
 	            print '<tr class="oddeven">';
 	            print '<td class="nowrap">';
@@ -652,11 +653,9 @@ if ($object->id > 0)
     			print '</td></tr>';
 			}
 
-			$var = True;
 			while ($i < $num && $i < $MAXLIST)
 			{
 				$obj = $db->fetch_object($resql);
-
 
 				print '<tr class="oddeven">';
                 print '<td class="nowrap">';
@@ -725,7 +724,7 @@ if ($object->id > 0)
     			print '</tr></table>';
     			print '</td></tr>';
 			}
-			$var=True;
+
 			while ($i < min($num,$MAXLIST))
 			{
 				$obj = $db->fetch_object($resql);

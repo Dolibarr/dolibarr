@@ -3,7 +3,7 @@
  * Copyright (c) 2004-2012 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2012      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015      Jean-François Ferry	<jfefe@aternatik.fr>
+ * Copyright (C) 2015      Jean-François Ferry  <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,10 +57,8 @@ $endyear=$year;
 /*
  * View
  */
-
-$langs->load('bills');
-$langs->load('companies');
-$langs->load('other');
+// Load translation files required by the page
+$langs->loadLangs(array('bills', 'companies', 'other'));
 
 $form=new Form($db);
 
@@ -331,7 +329,7 @@ print '</div><div class="fichetwothirdright"><div class="ficheaddleft">';
 
 
 // Show graphs
-print '<table class="border" width="100%"><tr valign="top"><td align="center">';
+print '<table class="border" width="100%"><tr class="pair nohover"><td align="center">';
 if ($mesg) { print $mesg; }
 else {
 	print $px1->show();

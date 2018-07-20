@@ -33,6 +33,7 @@ PropalStatusSigned=Undirritað (þarf greiðanda)
 PropalStatusNotSigned=Ekki skráð (lokað)
 PropalStatusBilled=Billed
 PropalStatusDraftShort=Víxill
+PropalStatusValidatedShort=Staðfest
 PropalStatusClosedShort=Loka
 PropalStatusSignedShort=Innsigli
 PropalStatusNotSignedShort=Ekki skráð
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 mánuður
 TypeContact_propal_internal_SALESREPFOLL=Fulltrúi eftirfarandi upp tillögu
 TypeContact_propal_external_BILLING=Viðskiptavinur Reikningar samband
 TypeContact_propal_external_CUSTOMER=Viðskiptavinur samband eftirfarandi upp tillögu
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=A heill tillögu líkan (logo. ..)
 DefaultModelPropalCreate=Default model creation

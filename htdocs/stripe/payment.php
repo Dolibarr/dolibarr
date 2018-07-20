@@ -32,17 +32,15 @@
 // Load Dolibarr environment
 $res=@include("../main.inc.php");                                // For root directory
 if (! $res) $res=@include("../../main.inc.php");
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
 
-$langs->load('companies');
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('multicurrency');
-$langs->load('stripe@stripe');
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'banks', 'multicurrency', 'stripe'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm');
@@ -240,42 +238,43 @@ if (empty($reshook))
 	if ($action == 'confirm_paiement' && $confirm == 'yes')
 	{
 
-  	    $error=0;
+		$error=0;
 
-	    $datepaye = dol_now();
+		$datepaye = dol_now();
 
-	    $db->begin();
+		$db->begin();
 
-	    // Clean parameters amount if payment is for a credit note
-	    if (GETPOST('type') == 2)
-	    {
-		    foreach ($amounts as $key => $value)	// How payment is dispatch
-		    {
-		    	$newvalue = price2num($value,'MT');
-		    	$amounts[$key] = -$newvalue;
-		    }
+		// Clean parameters amount if payment is for a credit note
+		if (GETPOST('type') == 2)
+		{
+			foreach ($amounts as $key => $value)	// How payment is dispatch
+			{
+				$newvalue = price2num($value,'MT');
+				$amounts[$key] = -$newvalue;
+			}
 
 			foreach ($multicurrency_amounts as $key => $value)	// How payment is dispatch
-		    {
-		    	$newvalue = price2num($value,'MT');
-		    	$multicurrency_amounts[$key] = -$newvalue;
-		    }
-	    }
+			{
+				$newvalue = price2num($value,'MT');
+				$multicurrency_amounts[$key] = -$newvalue;
+			}
+		}
 
-	    if (! empty($conf->banque->enabled))
-	    {
-	    	// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
-	    	if (GETPOST('accountid') <= 0)
-	    	{
-	    		setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), null, 'errors');
-	    		$error++;
-	    	}
-	    }
-$facture = new Facture($db);
-$facture->fetch($facid);
-$facture->fetch_thirdparty();
+		if (! empty($conf->banque->enabled))
+		{
+			// Si module bank actif, un compte est obligatoire lors de la saisie d'un paiement
+			if (GETPOST('accountid') <= 0)
+			{
+				setEventMessages($langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')), null, 'errors');
+				$error++;
+			}
+		}
 
- $error = 0;
+		$facture = new Facture($db);
+		$facture->fetch($facid);
+		$facture->fetch_thirdparty();
+
+		$error = 0;
 
 		if (is_object($stripe) && $stripeacc)
 		{
@@ -286,56 +285,59 @@ $facture->fetch_thirdparty();
 			}
 		}
 
-$stripeamount=0;
-		    foreach ($amounts as $key => $value)	// How payment is dispatch
-		    {
-$stripeamount+=price2num($value,'MT');
-}
+		$stripeamount=0;
+		foreach ($amounts as $key => $value)	// How payment is dispatch
+		{
+			$stripeamount+=price2num($value,'MT');
+		}
 
-if (preg_match('/acct_/i',$source))
-{
-$paiementcode ="VIR";
-}
-elseif (preg_match('/card_/i',$source))
-{
-$paiementcode ="CB";
-}
-elseif (preg_match('/src_/i',$source))
-{
-$customer2 = \Stripe\Customer::retrieve($customer->id,array("stripe_account" => $stripe->getStripeAccount($entity)));
-$src = $customer2->sources->retrieve("$source");
-if ($src->type=='card'){
-$paiementcode ="CB";
-}
-}
-$societe = new Societe($db);
-$societe->fetch($facture->socid);
-        dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
+		if (preg_match('/acct_/i',$source))
+		{
+			$paiementcode ="VIR";
+		}
+		elseif (preg_match('/card_/i',$source))
+		{
+			$paiementcode ="CB";
+		}
+		elseif (preg_match('/src_/i',$source))
+		{
+	
+		        $customer2 = $customerstripe=$stripe->customerStripe($facture->thirdparty, $stripeacc, $servicestatus);
+			$src = $customer2->sources->retrieve("$source");
+			if ($src->type=='card')
+			{
+				$paiementcode ="CB";
+			}
+		}
 
-$charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$source,$customer->id,$stripe->getStripeAccount($conf->entity));
+		$societe = new Societe($db);
+		$societe->fetch($facture->socid);
+		dol_syslog("Create charge", LOG_DEBUG, 0, '_stripe');
 
-    if (!$error)
-    {
-	    // Creation of payment line
-	    $paiement = new Paiement($db);
-	    $paiement->datepaye     = $datepaye;
-	    $paiement->amounts      = $amounts;   // Array with all payments dispatching
-	    $paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
-	    $paiement->paiementid   = dol_getIdFromCode($db,$paiementcode,'c_paiement');
-	    $paiement->num_paiement = $charge->message;
-	    $paiement->note         = GETPOST('comment');
-    }
+		$charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$source,$customer->id,$stripe->getStripeAccount($conf->entity));
 
-	    if (! $error)
-	    {
+		if (!$error)
+		{
+			// Creation of payment line
+			$paiement = new Paiement($db);
+			$paiement->datepaye     = $datepaye;
+			$paiement->amounts      = $amounts;   // Array with all payments dispatching
+			$paiement->multicurrency_amounts = $multicurrency_amounts;   // Array with all payments dispatching
+			$paiement->paiementid   = dol_getIdFromCode($db,$paiementcode,'c_paiement');
+			$paiement->num_paiement = $charge->message;
+			$paiement->note         = GETPOST('comment');
+		}
 
-	    	$paiement_id = $paiement->create($user, 0);
-	    	if ($paiement_id < 0)
-	        {
-	            setEventMessages($paiement->error, $paiement->errors, 'errors');
-	            $error++;
-	        }
-      if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($facture->lines))
+		if (! $error)
+		{
+
+			$paiement_id = $paiement->create($user, 0);
+			if ($paiement_id < 0)
+			{
+				setEventMessages($paiement->error, $paiement->errors, 'errors');
+				$error++;
+			}
+			if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($facture->lines))
 			{
 				$outputlangs = $langs;
 				$newlang = '';
@@ -349,53 +351,53 @@ $charge=$stripe->CreatePaymentStripe($stripeamount,"EUR","invoice",$facid,$sourc
 				$ret = $facture->fetch($facid); // Reload to get new records
 
 				$facture->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-
 			}
 
-	    }
+		}
 
-	    if (! $error)
-	    {
-	    	$label='(CustomerInvoicePayment)';
-	    	if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
-	        $result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),'','');
-	        if ($result < 0)
-	        {
-	            setEventMessages($paiement->error, $paiement->errors, 'errors');
-	            $error++;
-	        }
-          elseif (GETPOST('closepaidinvoices')=='on') {
-          $facture->set_paid($user);
-          }
-	    }
+		if (! $error)
+		{
+			$label='(CustomerInvoicePayment)';
+			if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
+			$result=$paiement->addPaymentToBank($user,'payment',$label,GETPOST('accountid'),'','');
+			if ($result < 0)
+			{
+				setEventMessages($paiement->error, $paiement->errors, 'errors');
+				$error++;
+			}
+			elseif (GETPOST('closepaidinvoices')=='on') {
+				$facture->set_paid($user);
+			}
+		}
 
-	    if (! $error)
-	    {
-	        $db->commit();
+		if (! $error)
+		{
+			$db->commit();
 
-	        // If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
-	        $invoiceid=0;
-	        foreach ($paiement->amounts as $key => $amount)
-	        {
-	            $facid = $key;
-	            if (is_numeric($amount) && $amount <> 0)
-	            {
-	                if ($invoiceid != 0) $invoiceid=-1; // There is more than one invoice payed by this payment
-	                else $invoiceid=$facid;
-	            }
-	        }
-	        if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$invoiceid;
-	        else $loc = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id;
-	        header('Location: '.$loc);
-	        exit;
-	    }
-	    else
-	    {
-      $loc = dol_buildpath('/stripeconnect/payment.php?facid='.$facid.'&action=create&error='.$e->getMessage().'', 1);
-	        $db->rollback();
-          header('Location: '.$loc);
-	    }
+			// If payment dispatching on more than one invoice, we keep on summary page, otherwise go on invoice card
+			$invoiceid=0;
+			foreach ($paiement->amounts as $key => $amount)
+			{
+				$facid = $key;
+				if (is_numeric($amount) && $amount <> 0)
+				{
+					if ($invoiceid != 0) $invoiceid=-1; // There is more than one invoice payed by this payment
+					else $invoiceid=$facid;
+				}
+			}
+			if ($invoiceid > 0) $loc = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$invoiceid;
+			else $loc = DOL_URL_ROOT.'/compta/paiement/card.php?id='.$paiement_id;
+			header('Location: '.$loc);
+			exit;
+		}
+		else
+		{
+			$loc = DOL_URL_ROOT.'/stripeconnect/payment.php?facid='.$facid.'&action=create&error='.$e->getMessage();
+			$db->rollback();
 
+			header('Location: '.$loc);
+			exit;
+		}
 	}
 }
 
@@ -418,7 +420,7 @@ else {
 }
 
 if (GETPOST('error')){
-	setEventMessages(GETPOST('error'), NULL, 'errors');
+	setEventMessages(GETPOST('error'), null, 'errors');
 }
 
 if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paiement')
@@ -716,7 +718,7 @@ print '</tr>';
 //}
 
 	if (($account->type=='custom' or $account->type=='express') && $entity==1) {
-	print '<tr '.$bc[0].'>';
+	print '<tr class="oddeven">';
 
 	            print '<td align="center" width="20" ';
 	if ($action == 'add_paiement' && $stripe->getStripeCustomerAccount($facture->socid)!=$source) { print'class="opacitymedium"';}
@@ -829,7 +831,6 @@ print '</tr>';
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=true;
                 $total=0;
                 $totalrecu=0;
                 $totalrecucreditnote=0;
@@ -838,7 +839,6 @@ print '</tr>';
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($resql);
-                    $var=!$var;
 
 					$soc = new Societe($db);
 					$soc->fetch($objp->socid);
@@ -861,7 +861,7 @@ print '</tr>';
 	                    $multicurrency_remaintopay=price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits,'MT');
 					}
 
-                    print '<tr '.$bc[$var].'>';
+                    print '<tr class="oddeven">';
 
                     print '<td>';
                     print $invoice->getNomUrl(1,'');
@@ -1060,7 +1060,7 @@ print '</tr>';
 if (! GETPOST('action'))
 {
     if ($page == -1) $page = 0 ;
-    $limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+    $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
     $offset = $limit * $page ;
 
     if (! $sortorder) $sortorder='DESC';
@@ -1084,7 +1084,6 @@ if (! GETPOST('action'))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';
@@ -1099,8 +1098,7 @@ if (! GETPOST('action'))
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($resql);
-            $var=!$var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td><a href="'.DOL_URL_ROOT.'compta/facture/card.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
             print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
             print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";

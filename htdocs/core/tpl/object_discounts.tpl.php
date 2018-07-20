@@ -34,16 +34,20 @@ $addabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $thir
 $viewabsolutediscount = '<a href="' . DOL_URL_ROOT . '/comm/remx.php?id=' . $thirdparty->id . '&backtopage=' . $backtopage . '">' . $langs->trans("ViewAvailableGlobalDiscounts") . '</a>';
 
 $fixedDiscount = $thirdparty->remise_percent;
-
 if(! empty($discount_type)) {
 	$fixedDiscount = $thirdparty->remise_supplier_percent;
 }
 
-$translationKey = ! empty($discount_type) ? 'HasRelativeDiscountFromSupplier' : 'CompanyHasRelativeDiscount';
 if ($fixedDiscount > 0)
+{
+	$translationKey = (! empty($discount_type)) ? 'HasRelativeDiscountFromSupplier' : 'CompanyHasRelativeDiscount';
 	print $langs->trans($translationKey, $fixedDiscount).'.';
+}
 else
+{
+	$translationKey = (! empty($discount_type)) ? 'HasNoRelativeDiscountFromSupplier' : 'CompanyHasNoRelativeDiscount';
 	print $langs->trans($translationKey).'.';
+}
 if($isNewObject) print ' ('.$addrelativediscount.')';
 
 // Is there is commercial discount or down payment available ?
@@ -56,7 +60,7 @@ if ($absolute_discount > 0) {
 		if ($isInvoice && ! $isNewObject && $object->statut > $classname::STATUS_DRAFT && $object->type != $classname::TYPE_CREDIT_NOTE && $object->type != $classname::TYPE_DEPOSIT) {
 			$text = $form->textwithpicto($text, $langs->trans('AbsoluteDiscountUse'));
 		}
-		
+
 		if ($isNewObject) {
 			$text.= ' ('.$addabsolutediscount.')';
 		}
@@ -71,7 +75,7 @@ if ($absolute_discount > 0) {
 
 // Is there credit notes availables ?
 if ($absolute_creditnote > 0) {
-	
+
 	// If validated, we show link "add credit note to payment"
 	if ($cannotApplyDiscount || ! $isInvoice || $isNewObject || $object->statut != $classname::STATUS_VALIDATED || $object->type == $classname::TYPE_CREDIT_NOTE) {
 		$translationKey = ! empty($discount_type) ? 'HasCreditNoteFromSupplier' : 'CompanyHasCreditNote';
@@ -80,7 +84,7 @@ if ($absolute_creditnote > 0) {
 		if ($isInvoice && ! $isNewObject && $object->statut == $classname::STATUS_DRAFT && $object->type != $classname::TYPE_DEPOSIT) {
 			$text = $form->textwithpicto($text, $langs->trans('CreditNoteDepositUse'));
 		}
-		
+
 		if ($absolute_discount <= 0 || $isNewObject) {
 			$text.= '('.$addabsolutediscount.')';
 		}

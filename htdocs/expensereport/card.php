@@ -44,9 +44,8 @@ if (! empty($conf->accounting->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
-$langs->load("trips");
-$langs->load("bills");
-$langs->load("mails");
+// Load translation files required by the page
+$langs->loadLangs(array("trips","bills","mails"));
 
 $action=GETPOST('action','aZ09');
 $cancel=GETPOST('cancel','alpha');
@@ -288,20 +287,13 @@ if (empty($reshook))
 
         if (! $error)
         {
-            // Actions on extra fields (by external module or standard code)
-            $hookmanager->initHooks(array('expensereportdao'));
-            $parameters = array('id' => $object->id);
-            $reshook = $hookmanager->executeHooks('insertExtraFields', $parameters, $object, $action); // Note that $action and $object may have been modified by
-            // some hooks
-            if (empty($reshook)) {
-            	$result = $object->insertExtraFields('FICHINTER_MODIFY');
-       			if ($result < 0)
-				{
-					setEventMessages($object->error, $object->errors, 'errors');
-					$error++;
-				}
-            } else if ($reshook < 0)
-                $error++;
+            // Actions on extra fields
+           	$result = $object->insertExtraFields('FICHINTER_MODIFY');
+			if ($result < 0)
+			{
+				setEventMessages($object->error, $object->errors, 'errors');
+				$error++;
+			}
         }
 
         if ($error)
@@ -1355,6 +1347,7 @@ if ($action == 'create')
 	print '</td>';
 	print '</tr>';
 
+	// User for expense report
 	print '<tr>';
 	print '<td class="fieldrequired">'.$langs->trans("User").'</td>';
 	print '<td>';
@@ -1362,11 +1355,12 @@ if ($action == 'create')
 	if (GETPOST('fk_user_author', 'int') > 0) $defaultselectuser=GETPOST('fk_user_author', 'int');
     $include_users = 'hierarchyme';
     if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && ! empty($user->rights->expensereport->writeall_advance)) $include_users=array();
-	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users);
+	$s=$form->select_dolusers($defaultselectuser, "fk_user_author", 0, "", 0, $include_users, '', '0,'.$conf->entity);
 	print $s;
 	print '</td>';
 	print '</tr>';
 
+	// Approver
 	print '<tr>';
 	print '<td>'.$langs->trans("VALIDATOR").'</td>';
 	print '<td>';
@@ -1419,7 +1413,7 @@ if ($action == 'create')
 	$parameters = array('colspan' => ' colspan="3"');
 	$reshook = $hookmanager->executeHooks('formObjectOptions', $parameters, $object, $action); // Note that $action and $object may have been modified by
     print $hookmanager->resPrint;
-	if (empty($reshook) && ! empty($extrafields->attribute_label)) {
+	if (empty($reshook)) {
 	    print $object->showOptionals($extrafields, 'edit');
 	}
 

@@ -28,10 +28,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/margin/lib/margins.lib.php';
 
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("products");
-$langs->load("margins");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'bills', 'products', 'margins'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -258,8 +256,6 @@ if ($result)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num /*&& $i < $conf->liste_limit*/)
 		{
 			$objp = $db->fetch_object($result);
@@ -277,8 +273,6 @@ if ($result)
 				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
-
-
 
 			print '<tr class="oddeven">';
 			if ($id > 0) {

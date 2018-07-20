@@ -5,6 +5,7 @@
  * Copyright (C) 2005-2009 Regis Houssin          <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2011 Juanjo Menent          <jmenent@2byte.es>
  * Copyright (C) 2014      Marcos García          <marcosgdf@gmail.com>
+ * Copyright (C) 2018      Nicolas ZABOURI	  <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,6 +103,7 @@ class PaiementFourn extends Paiement
 				$this->ref            = $obj->ref;
 				$this->entity         = $obj->entity;
 				$this->date           = $this->db->jdate($obj->dp);
+				$this->datepaye       = $this->db->jdate($obj->dp);
 				$this->numero         = $obj->num_paiement;
 				$this->bank_account   = $obj->fk_account;
 				$this->bank_line      = $obj->fk_bank;
@@ -697,9 +699,10 @@ class PaiementFourn extends Paiement
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				<0 if KO, 0 if nothing done, >0 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf, $user, $langs;
 
@@ -726,7 +729,7 @@ class PaiementFourn extends Paiement
 		{
 			$modelpath = "core/modules/supplier_payment/doc/";
 
-			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}
 	}
 

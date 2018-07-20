@@ -319,6 +319,12 @@ if (empty($reshook))
 		$result=$object->setPaymentTerms(GETPOST('cond_reglement_id','int'));
 	}
 
+	// Set incoterm
+	elseif ($action == 'set_incoterms' && !empty($conf->incoterm->enabled))
+	{
+		$result = $object->setIncoterms(GETPOST('incoterm_id', 'int'), GETPOST('location_incoterms', 'alpha'));
+	}
+
 	// payment mode
 	else if ($action == 'setmode' && $user->rights->fournisseur->facture->creer)
 	{
@@ -502,7 +508,6 @@ if (empty($reshook))
 				$sql.= ' WHERE pf.fk_facturefourn = '.$object->id;
 				$sql.= ' AND pf.fk_paiementfourn = p.rowid';
 				$sql.= ' AND p.entity IN (' . getEntity('facture').')';
-				$sql.= ' ORDER BY p.datep, p.tms';
 
 				$resql = $db->query($sql);
 				if (! $resql) dol_print_error($db);
@@ -994,8 +999,17 @@ if (empty($reshook))
 				$price_base_type = 'TTC';
 			}
 
-			if (GETPOST('productid'))
+			if (GETPOST('productid') > 0)
 			{
+				$productsupplier = new ProductFournisseur($db);
+				if (! empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY))
+				{
+					if (GETPOST('productid') > 0 && $productsupplier->get_buyprice(0, price2num($_POST['qty']), GETPOST('productid'), 'none', GETPOST('socid','int')) < 0 )
+					{
+						setEventMessages($langs->trans("ErrorQtyTooLowForThisSupplier"), null, 'warnings');
+					}
+				}
+
 				$prod = new Product($db);
 				$prod->fetch(GETPOST('productid'));
 				$label = $prod->description;
@@ -1036,7 +1050,7 @@ if (empty($reshook))
 				}
 			}
 
-	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise);
+	        $result=$object->updateline(GETPOST('lineid'), $label, $up, $tva_tx, $localtax1_tx, $localtax2_tx, GETPOST('qty'), GETPOST('productid'), $price_base_type, $info_bits, $type, $remise_percent, 0, $date_start, $date_end, $array_options, $_POST['units'], $pu_ht_devise, GETPOST('fourn_ref','alpha'));
 	        if ($result >= 0)
 	        {
 	            unset($_POST['label']);
@@ -1081,6 +1095,8 @@ if (empty($reshook))
 		// Set if we used free entry or predefined product
 		$predef='';
 		$product_desc=(GETPOST('dp_desc')?GETPOST('dp_desc'):'');
+		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 		$prod_entry_mode = GETPOST('prod_entry_mode');
 		if ($prod_entry_mode == 'free')
 		{
@@ -1098,9 +1114,6 @@ if (empty($reshook))
 		$qty = GETPOST('qty'.$predef);
 		$remise_percent=GETPOST('remise_percent'.$predef);
 		$price_ht_devise = GETPOST('multicurrency_price_ht');
-
-		$date_start=dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start' . $predef . 'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
-		$date_end=dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end' . $predef . 'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 
 		// Extrafields
 		$extrafieldsline = new ExtraFields($db);
@@ -1159,25 +1172,37 @@ if (empty($reshook))
 			$productsupplier=new ProductFournisseur($db);
 
 			$idprod=0;
-			if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
+			if (GETPOST('idprodfournprice','alpha') == -1 || GETPOST('idprodfournprice','alpha') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
-			if (preg_match('/^idprod_([0-9]+)$/',GETPOST('idprodfournprice'), $reg))
+			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice','alpha'), $reg))
 			{
 				$idprod=$reg[1];
-				$res=$productsupplier->fetch($idprod);
-				// Call to init properties of $productsupplier
+				$res=$productsupplier->fetch($idprod);	// Load product from its id
+				// Call to init some price properties of $productsupplier
 				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-				$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+				if (! empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER))
+				{
+					$fksoctosearch = 0;
+					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+					if ($productsupplier->fourn_socid != $socid)	// The price we found is for another supplier, so we clear supplier price
+					{
+						$productsupplier->ref_supplier = '';
+					}
+				}
+				else
+				{
+					$fksoctosearch = $object->thirdparty->id;
+					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+				}
 			}
-			elseif (GETPOST('idprodfournprice') > 0)
+			elseif (GETPOST('idprodfournprice','alpha') > 0)
 			{
 				$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
 				//$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
-				$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+				$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice','alpha'), $qtytosearch);
 				$res=$productsupplier->fetch($idprod);
 			}
 
-			//Replaces $fk_unit with the product's
 			if ($idprod > 0)
 			{
 				$label = $productsupplier->label;
@@ -1185,18 +1210,23 @@ if (empty($reshook))
 				$desc = $productsupplier->description;
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
-				$tva_tx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
-				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, $_POST['idprodfournprice']);
+				$type = $productsupplier->type;
+				$price_base_type = ($productsupplier->fourn_price_base_type?$productsupplier->fourn_price_base_type:'HT');
+
+				$ref_supplier = $productsupplier->ref_supplier;
+
+				$tva_tx=get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
+				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 				if (empty($tva_tx)) $tva_npr=0;
 				$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
-				$type = $productsupplier->type;
-				$price_base_type = 'HT';
+				$pu = $productsupplier->fourn_pu;
+				if (empty($pu)) $pu = 0;	// If pu is '' or null, we force to have a numeric value
 
 				$result=$object->addline(
 					$desc,
-					$productsupplier->fourn_pu,
+					$pu,
 					$tva_tx,
 					$localtax1_tx,
 					$localtax2_tx,
@@ -1215,7 +1245,7 @@ if (empty($reshook))
 					$productsupplier->fk_unit,
 					0,
                     $productsupplier->fourn_multicurrency_unitprice,
-                    $productsupplier->fourn_ref
+                    $ref_supplier
 				);
 			}
 			if ($idprod == -99 || $idprod == 0)
@@ -1459,35 +1489,21 @@ if (empty($reshook))
 		$ret = $extrafields->setOptionalsFromPost($extralabels,$object,GETPOST('attribute', 'none'));
 		if ($ret < 0) $error++;
 
-		if (!$error)
+		if (! $error)
 		{
-			// Actions on extra fields (by external module or standard code)
-			// TODO le hook fait double emploi avec le trigger !!
-			$hookmanager->initHooks(array('supplierinvoicedao'));
-			$parameters=array('id'=>$object->id);
-
-			$reshook=$hookmanager->executeHooks('insertExtraFields',$parameters,$object,$action); // Note that $action and $object may have been modified by some hooks
-
-			if (empty($reshook))
+			// Actions on extra fields
+			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				$result=$object->insertExtraFields('BILL_SUPPLIER_MODIFY');
+				if ($result < 0)
 				{
-
-					$result=$object->insertExtraFields('BILL_SUPPLIER_MODIFY');
-
-					if ($result < 0)
-					{
-						$error++;
-					}
-
+					$error++;
 				}
 			}
-			else if ($reshook < 0) $error++;
 		}
-		else
-		{
+
+		if ($error)
 			$action = 'edit_extras';
-		}
 	}
 
 	if (! empty($conf->global->MAIN_DISABLE_CONTACTS_TAB) && $user->rights->fournisseur->facture->creer)
@@ -1891,8 +1907,10 @@ if ($action == 'create')
 				print $desc;
 
 				print '<div id="credit_note_options" class="clearboth">';
-				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
-				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> <label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
+				print '&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithLines" id="invoiceAvoirWithLines" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true); $(\'#invoiceAvoirWithPaymentRestAmount\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithLines','int')>0 ? 'checked':'').' /> ';
+				print '<label for="invoiceAvoirWithLines">'.$langs->trans('invoiceAvoirWithLines')."</label>";
+				print '<br>&nbsp;&nbsp;&nbsp; <input type="checkbox" name="invoiceAvoirWithPaymentRestAmount" id="invoiceAvoirWithPaymentRestAmount" value="1" onclick="if($(this).is(\':checked\') ) { $(\'#radio_creditnote\').prop(\'checked\', true);  $(\'#invoiceAvoirWithLines\').removeAttr(\'checked\');   }" '.(GETPOST('invoiceAvoirWithPaymentRestAmount','int')>0 ? 'checked':'').' /> ';
+				print '<label for="invoiceAvoirWithPaymentRestAmount">'.$langs->trans('invoiceAvoirWithPaymentRestAmount')."</label>";
 				print '</div>';
 
 				print '</div></div>';
@@ -2006,7 +2024,7 @@ if ($action == 'create')
 	// print '<td><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td>';
 	print '</tr>';
 
-	if (empty($reshook) && ! empty($extrafields->attribute_label))
+	if (empty($reshook))
 	{
 		print $object->showOptionals($extrafields, 'edit');
 	}
@@ -2820,7 +2838,7 @@ else
 				print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
 				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
-				$cssforamountpaymentcomplete = '';
+				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 			// Paye partiellement ou Abandon 'badsupplier'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'badsupplier') {
@@ -2828,7 +2846,7 @@ else
 				print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
 				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 				// $resteapayeraffiche=0;
-				$cssforamountpaymentcomplete = '';
+				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 			// Paye partiellement ou Abandon 'product_returned'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
@@ -2836,7 +2854,7 @@ else
 				print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
 				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
-				$cssforamountpaymentcomplete = '';
+				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 			// Paye partiellement ou Abandon 'abandon'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'abandon') {
@@ -2847,7 +2865,7 @@ else
 				print $form->textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
 				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
-				$cssforamountpaymentcomplete = '';
+				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 
 			// Billed
@@ -2860,12 +2878,12 @@ else
 			else
 				print $langs->trans('ExcessPaid');
 			print ' :</td>';
-			print '<td align="right" class="'.($resteapayeraffiche?'amountremaintopay':$cssforamountpaymentcomplete).'">' . price($resteapayeraffiche) . '</td>';
+			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 		}
 		else // Credit note
 		{
-			$cssforamountpaymentcomplete='';
+			$cssforamountpaymentcomplete='amountpaymentneutral';
 
 			// Total already paid back
 			print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -2882,7 +2900,7 @@ else
 			else
 				print $langs->trans('ExcessPaydBack');
 			print ' :</td>';
-			print '<td align="right" class="'.($resteapayeraffiche?'amountremaintopay':$cssforamountpaymentcomplete).'">' . price($sign * $resteapayeraffiche) . '</td>';
+			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 
 			// Sold credit note
@@ -2934,7 +2952,10 @@ else
 		print '<table id="tablelines" class="noborder noshadow" width="100%">';
 
 		global $forceall, $senderissupplier, $dateSelector, $inputalsopricewithtax;
-		$forceall=1; $senderissupplier=1; $dateSelector=0; $inputalsopricewithtax=1;
+		$forceall=1; $dateSelector=0; $inputalsopricewithtax=1;
+		$senderissupplier=2;	// $senderissupplier=2 is same than 1 but disable test on minimum qty and disable autofill qty with minimum.
+		//if (! empty($conf->global->SUPPLIER_INVOICE_WITH_NOPRICEDEFINED)) $senderissupplier=2;
+		if (! empty($conf->global->SUPPLIER_INVOICE_WITH_PREDEFINED_PRICES_ONLY)) $senderissupplier=1;
 
 		// Show object lines
 		if (! empty($object->lines))

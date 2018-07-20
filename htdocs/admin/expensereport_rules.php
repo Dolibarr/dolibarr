@@ -30,11 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_rule.class.php';
 
-$langs->load('admin');
-$langs->load('other');
-$langs->load('trips');
-$langs->load('errors');
-$langs->load('dict');
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other","trips","errors","dict"));
 
 if (!$user->admin) accessforbidden();
 
@@ -176,8 +173,7 @@ if ($action != 'edit')
 	echo '<th>&nbsp;</th>';
 	echo '</tr>';
 
-	$var=true;
-	echo '<tr '.$bc[$var].'>';
+	echo '<tr class="oddeven">';
 	echo '<td>';
 	echo '<div class="float">'.$form->selectarray('apply_to', $tab_apply, '', 0).'</div>';
 	echo '<div id="user" class="float">'.$form->select_dolusers('', 'fk_user').'</div>';
@@ -220,10 +216,9 @@ echo '<th>'.$langs->trans('ExpenseReportRestrictive').'</th>';
 echo '<th>&nbsp;</th>';
 echo '</tr>';
 
-$var=true;
 foreach ($rules as $rule)
 {
-	echo '<tr '.$bc[$var].'>';
+	echo '<tr class="oddeven">';
 
 	echo '<td>';
 	if ($action == 'edit' && $object->id == $rule->id)
@@ -258,7 +253,6 @@ foreach ($rules as $rule)
 		}
 	}
 	echo '</td>';
-
 
 
 	echo '<td>';
@@ -335,7 +329,6 @@ foreach ($rules as $rule)
 	echo '</td>';
 
 	echo '</tr>';
-	$var=!$var;
 }
 
 

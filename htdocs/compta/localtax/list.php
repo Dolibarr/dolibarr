@@ -16,7 +16,7 @@
  */
 
 /**
- *	    \file       htdocs/compta/localtax/reglement.php
+ *	    \file       htdocs/compta/localtax/list.php
  *      \ingroup    tax
  *		\brief      List of IRPF payments
  */
@@ -24,14 +24,15 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/localtax/class/localtax.class.php';
 
-$langs->load("compta");
+// Load translation files required by the page
 $langs->load("compta");
 
 // Security check
-$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$socid = GETPOST('socid','int');
 if ($user->societe_id) $socid=$user->societe_id;
 $result = restrictedArea($user, 'tax', '', '', 'charges');
 $ltt=GETPOST("localTaxType");
+
 
 /*
  * View
@@ -41,12 +42,20 @@ llxHeader();
 
 $localtax_static = new Localtax($db);
 
-print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments",$mysoc->country_code));
+$newcardbutton='';
+if ($user->rights->tax->charges->creer)
+{
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt.'"><span class="valignmiddle">'.$langs->trans('NewLocalTaxPayment', ($ltt+1)).'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
+}
 
-$sql = "SELECT rowid, amount, label, f.datev as dm";
+print load_fiche_titre($langs->transcountry($ltt==2?"LT2Payments":"LT1Payments",$mysoc->country_code), $newcardbutton);
+
+$sql = "SELECT rowid, amount, label, f.datev, f.datep";
 $sql.= " FROM ".MAIN_DB_PREFIX."localtax as f ";
 $sql.= " WHERE f.entity = ".$conf->entity." AND localtaxtype=".$db->escape($ltt);
-$sql.= " ORDER BY dm DESC";
+$sql.= " ORDER BY datev DESC";
 
 $result = $db->query($sql);
 if ($result)
@@ -59,6 +68,7 @@ if ($result)
     print '<tr class="liste_titre">';
     print '<td class="nowrap" align="left">'.$langs->trans("Ref").'</td>';
     print "<td>".$langs->trans("Label")."</td>";
+    print "<td>".$langs->trans("PeriodEndDate")."</td>";
     print '<td class="nowrap" align="left">'.$langs->trans("DatePayment").'</td>';
     print "<td align=\"right\">".$langs->trans("PayedByThisPayment")."</td>";
     print "</tr>\n";
@@ -66,14 +76,15 @@ if ($result)
     while ($i < $num)
     {
         $obj = $db->fetch_object($result);
-        
+
         print '<tr class="oddeven">';
 
 		$localtax_static->id=$obj->rowid;
 		$localtax_static->ref=$obj->rowid;
 		print "<td>".$localtax_static->getNomUrl(1)."</td>\n";
         print "<td>".dol_trunc($obj->label,40)."</td>\n";
-        print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day')."</td>\n";
+        print '<td align="left">'.dol_print_date($db->jdate($obj->datev),'day')."</td>\n";
+        print '<td align="left">'.dol_print_date($db->jdate($obj->datep),'day')."</td>\n";
         $total = $total + $obj->amount;
 
         print "<td align=\"right\">".price($obj->amount)."</td>";
@@ -81,8 +92,8 @@ if ($result)
 
         $i++;
     }
-    print '<tr class="liste_total"><td colspan="3">'.$langs->trans("Total").'</td>';
-    print "<td align=\"right\"><b>".price($total)."</b></td></tr>";
+    print '<tr class="liste_total"><td colspan="4">'.$langs->trans("Total").'</td>';
+    print '<td align="right">'.price($total).'</td></tr>';
 
     print "</table>";
     $db->free($result);

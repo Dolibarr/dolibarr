@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004       Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2016  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010  Regis Houssin           <regis.houssin@capnetworks.com>
  * Copyright (C) 2015-2016  Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  *
@@ -21,10 +21,13 @@
  *
  * cd htdocs/install
  * php upgrade.php 3.4.0 3.5.0 [dirmodule|ignoredbversion]
- * php upgrade2.php 3.4.0 3.5.0
+ * php upgrade2.php 3.4.0 3.5.0 [MODULE_NAME1_TO_ENABLE,MODULE_NAME2_TO_ENABLE]
  *
- * Option 'dirmodule' allows to provide a path for an external module, so we migrate from command line a script from a module.
- * Option 'ignoredbversion' allows to run migration even if database is a bugged database version.
+ * And for final step:
+ * php step5.php 3.4.0 3.5.0
+ *
+ * Option 'dirmodule' allows to provide a path for an external module, so we migrate from command line using a script from a module.
+ * Option 'ignoredbversion' allows to run migration even if database version does not match start version of migration
  * Return code is 0 if OK, >0 if error
  */
 
@@ -61,7 +64,7 @@ $langs->setDefaultLang($setuplang);
 $versionfrom=GETPOST("versionfrom",'alpha',3)?GETPOST("versionfrom",'alpha',3):(empty($argv[1])?'':$argv[1]);
 $versionto=GETPOST("versionto",'alpha',3)?GETPOST("versionto",'',3):(empty($argv[2])?'':$argv[2]);
 $dirmodule=((GETPOST("dirmodule",'alpha',3) && GETPOST("dirmodule",'alpha',3) != 'ignoredbversion'))?GETPOST("dirmodule",'alpha',3):((empty($argv[3]) || $argv[3] == 'ignoredbversion')?'':$argv[3]);
-$ignoredbversion=(GETPOST('ignoredbversion','',3)=='ignoredbversion')?GETPOST('ignoredbversion','',3):((empty($argv[3]) || $argv[3] != 'ignoredbversion')?'':$argv[3]);
+$ignoredbversion=(GETPOST('ignoredbversion','alpha',3)=='ignoredbversion')?GETPOST('ignoredbversion','alpha',3):((empty($argv[3]) || $argv[3] != 'ignoredbversion')?'':$argv[3]);
 
 $langs->load("admin");
 $langs->load("install");
@@ -84,7 +87,7 @@ if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initial
 if (! $versionfrom && ! $versionto)
 {
 	print 'Error: Parameter versionfrom or versionto missing.'."\n";
-	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install) instead of page install/upgrade.php'."\n";
+	print 'Upgrade must be ran from command line with parameters or called from page install/index.php (like a first install)'."\n";
 	// Test if batch mode
 	$sapi_type = php_sapi_name();
 	$script_file = basename(__FILE__);
@@ -106,7 +109,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
 {
     $actiondone=1;
 
-    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/lib/svg/database.svg" width="20" alt="Database"> '.$langs->trans("DatabaseMigration").'</h3>';
+    print '<h3><img class="valigntextbottom" src="../theme/common/octicons/build/svg/database.svg" width="20" alt="Database"> '.$langs->trans("DatabaseMigration").'</h3>';
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
     $error=0;
@@ -183,7 +186,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
         print '<td align="right">'.$version.'</td></tr>';
         dolibarr_install_syslog("upgrade: " . $langs->transnoentities("ServerVersion") . ": " .$version);
-        if ($db->type == 'mysqli')
+        if ($db->type == 'mysqli' && function_exists('mysqli_get_charset'))
         {
         	$tmparray = $db->db->get_charset();
         	print '<tr><td>'.$langs->trans("ClientCharset").'</td>';
@@ -254,6 +257,8 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
         if (count($versioncommande) && count($versionarray)
         && versioncompare($versioncommande,$versionarray) <= 0)	// Si mysql >= 4.0
         {
+        	dolibarr_install_syslog("Clean database from bad named constraints");
+
             // Suppression vieilles contraintes sans noms et en doubles
             // Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
             $listtables=array(
@@ -310,6 +315,7 @@ if (! GETPOST('action','aZ09') || preg_match('/upgrade/i',GETPOST('action','aZ09
     {
         $dir = "mysql/migration/";		// We use mysql migration scripts whatever is database driver
 		if (! empty($dirmodule)) $dir=dol_buildpath('/'.$dirmodule.'/sql/',0);
+		dolibarr_install_syslog("Scan sql files for migration files in ".$dir);
 
 		// Clean last part to exclude minor version x.y.z -> x.y
         $newversionfrom=preg_replace('/(\.[0-9]+)$/i','.0',$versionfrom);
@@ -420,7 +426,7 @@ if (empty($actiondone))
 
 $ret=0;
 if (! $ok && isset($argv[1])) $ret=1;
-dol_syslog("Exit ".$ret);
+dolibarr_install_syslog("Exit ".$ret);
 
 dolibarr_install_syslog("--- upgrade: end ".((! $ok && empty($_GET["ignoreerrors"])) || $dirmodule));
 $nonext = (! $ok && empty($_GET["ignoreerrors"]))?2:0;

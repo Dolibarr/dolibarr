@@ -111,14 +111,14 @@ SendingAnEMailToMember=Sending information email to member
 SendingEmailOnAutoSubscription=Sending email on auto registration
 SendingEmailOnMemberValidation=Sending email on new member validation
 SendingEmailOnNewSubscription=Sending email on new subscription
-SendingReminderForExpiredSubscription=Sending reminder for expired subscription
+SendingReminderForExpiredSubscription=Sending reminder for expired subscriptions
 SendingEmailOnCancelation=Sending email on cancelation
 # Topic of email templates
 YourMembershipRequestWasReceived=Your membership was received.
 YourMembershipWasValidated=Your membership was validated 
 YourSubscriptionWasRecorded=Your new subscription was recorded
 SubscriptionReminderEmail=Subscription reminder
-YourMembershipWasCanceled=You membership was canceled
+YourMembershipWasCanceled=Your membership was canceled
 CardContent=Content of your member card
 # Text of email templates
 ThisIsContentOfYourMembershipRequestWasReceived=We want to let you know that your membership request was received.<br><br>

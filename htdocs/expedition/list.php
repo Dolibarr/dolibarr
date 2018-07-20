@@ -2,7 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2016	   Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2016-2018 Ferran Marcet        <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("sendings","deliveries",'companies','bills'));
 
 $contextpage= GETPOST('contextpage','aZ')?GETPOST('contextpage','aZ'):'shipmentlist';   // To manage different context of search
@@ -233,14 +234,20 @@ $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
 
+$sql.= $db->order($sortfield,$sortorder);
+
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
 	$result = $db->query($sql);
 	$nbtotalofrecords = $db->num_rows($result);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 
-$sql.= $db->order($sortfield,$sortorder);
 $sql.= $db->plimit($limit + 1,$offset);
 
 //print $sql;
@@ -253,13 +260,16 @@ if ($resql)
 
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
-	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 	if ($sall) $param.= "&amp;sall=".urlencode($sall);
-	if ($search_ref_exp) $param.= "&amp;search_ref_exp=".urlencode($search_ref_exp);
-	if ($search_ref_liv) $param.= "&amp;search_ref_liv=".urlencode($search_ref_liv);
+	if ($search_ref_exp)  $param.= "&amp;search_ref_exp=".urlencode($search_ref_exp);
+	if ($search_ref_liv)  $param.= "&amp;search_ref_liv=".urlencode($search_ref_liv);
 	if ($search_ref_customer) $param.= "&amp;search_ref_customer=".urlencode($search_ref_customer);
-	if ($search_company) $param.= "&amp;search_company=".urlencode($search_company);
-	if ($optioncss != '') $param.='&amp;optioncss='.urlencode($optioncss);
+	if ($search_company)   $param.= "&amp;search_company=".urlencode($search_company);
+	if ($search_town)      $param.= '&search_town='.urlencode($search_town);
+	if ($search_zip)       $param.= '&search_zip='.urlencode($search_zip);
+	if ($viewstatut != '') $param.= '&viewstatut='.urlencode($viewstatut);
+	if ($optioncss != '')  $param.='&amp;optioncss='.urlencode($optioncss);
 	// Add $param from extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 
@@ -268,7 +278,9 @@ if ($resql)
 	$newcardbutton='';
 	if ($user->rights->expedition->creer)
 	{
-		$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2">'.$langs->trans('NewSending').'</a>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expedition/card.php?action=create2"><span class="valignmiddle">'.$langs->trans('NewSending').'</span>';
+		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+		$newcardbutton.= '</a>';
 	}
 
 	$i = 0;
@@ -286,7 +298,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter='';
@@ -438,7 +450,7 @@ if ($resql)
 		}
 	}
 	// Hook fields
-	$parameters=array('arrayfields'=>$arrayfields);
+	$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
 	$reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
 	print $hookmanager->resPrint;
 	if (! empty($arrayfields['e.datec']['checked']))  print_liste_field_titre($arrayfields['e.datec']['label'],$_SERVER["PHP_SELF"],"e.date_creation","",$param,'align="center" class="nowrap"',$sortfield,$sortorder);
@@ -449,7 +461,6 @@ if ($resql)
 	print "</tr>\n";
 
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num,$limit))
 	{

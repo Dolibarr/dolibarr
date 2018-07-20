@@ -3,6 +3,7 @@
  * Copyright (C) 2006-2018	Laurent Destailleur		<eldy@users.sourceforge.net>
  * Copyright (C) 2010-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2011		Juanjo Menent			<jmenent@2byte.es>
+ * Copyright (C) 2018		Ferran Marcet			<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 
+// Load translation files required by the page
 $langs->load('projects');
 
 $id=GETPOST('id','int');
@@ -73,7 +75,7 @@ if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 //$object = new TaskTime($db);
-$hookmanager->initHooks(array('projecttaskcard','globalcard'));
+$hookmanager->initHooks(array('projecttasktime','globalcard'));
 
 $object = new Task($db);
 $projectstatic = new Project($db);
@@ -319,7 +321,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if ($withproject)
 		{
 			// Tabs for project
-			$tab='tasks';
+			if (empty($id)) $tab='timespent';
+			else $tab='tasks';
 			$head=project_prepare_head($projectstatic);
 			dol_fiche_head($head, $tab, $langs->trans("Project"), -1, ($projectstatic->public?'projectpub':'project'));
 
@@ -419,16 +422,16 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			{
     				if ($projectstatic->public || $userWrite > 0)
     			    {
-    			    	$linktocreatetime = '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?withproject=1'.($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTimeSpent').'</a>';
+    			    	$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?withproject=1'.($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTimeSpent').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
     			    }
     			    else
     			    {
-    			    	$linktocreatetime = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTime').'</a>';
+    			    	$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotOwnerOfProject").'">'.$langs->trans('AddTime').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
     			    }
     			}
     			else
     			{
-    				$linktocreatetime = '<a class="butActionRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTime').'</a>';
+    				$linktocreatetime = '<a class="butActionNewRefused" href="#" title="'.$langs->trans("NotEnoughPermissions").'">'.$langs->trans('AddTime').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
     			}
 			//}
 		}
@@ -575,7 +578,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			$contactsoftask=$object->getListContactId('internal');
 			if (count($contactsoftask)>0)
 			{
-				$userid=$contactsoftask[0];
+				if(in_array($user->id, $contactsoftask)) $userid = $user->id;
+				else $userid=$contactsoftask[0];
 				print $form->select_dolusers((GETPOST('userid')?GETPOST('userid'):$userid), 'userid', 0, '', 0, '', $contactsoftask, 0, 0, 0, '', 0, $langs->trans("ResourceNotAssignedToTheTask"), 'maxwidth200');
 			}
 			else
@@ -694,9 +698,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 				print '<!-- List of time spent for project -->'."\n";
 
 				$title=$langs->trans("ListTaskTimeUserProject");
-			    $linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
+			    //$linktotasks='<a href="'.DOL_URL_ROOT.'/projet/tasks.php?id='.$projectstatic->id.'">'.$langs->trans("GoToListOfTasks").'</a>';
 			    //print_barre_liste($title, 0, $_SERVER["PHP_SELF"], '', $sortfield, $sortorder, $linktotasks, $num, $totalnboflines, 'title_generic.png', 0, '', '', 0, 1);
-			    print load_fiche_titre($title,$linktotasks.' &nbsp; '.$linktocreatetime, 'title_generic.png');
+			    print load_fiche_titre($title, $linktocreatetime, 'title_generic.png');
 			}
 
 			$i = 0;
@@ -867,8 +871,8 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		if (! empty($arrayfields['t.task_date']['checked']))
 		{
 			print '<td class="liste_titre">';
-			if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
-			print '<input class="flat" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
+			if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.$search_day.'">';
+			print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.$search_month.'">';
 			$formother->select_year($search_year,'search_year',1, 20, 5);
 			print '</td>';
 		}
@@ -919,7 +923,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 		*/
 	    // Hook fields
-    	$parameters=array('arrayfields'=>$arrayfields);
+		$parameters=array('arrayfields'=>$arrayfields,'param'=>$param,'sortfield'=>$sortfield,'sortorder'=>$sortorder);
         $reshook=$hookmanager->executeHooks('printFieldListTitle',$parameters);    // Note that $action and $object may have been modified by hook
         print $hookmanager->resPrint;
     	print_liste_field_titre($selectedfields, $_SERVER["PHP_SELF"],"",'','','align="center" width="80"',$sortfield,$sortorder,'maxwidthsearch ');
@@ -948,7 +952,11 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			print '<td class="nowrap">';
     			if ($_GET['action'] == 'editline' && $_GET['lineid'] == $task_time->rowid)
     			{
-    				print $form->select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
+    				if (empty($task_time->task_date_withhour))
+    				{
+    					print $form->select_date(($date2?$date2:$date1),'timeline',3,3,2,"timespent_date",1,0,1);
+    				}
+    				else print $form->select_date(($date2?$date2:$date1),'timeline',1,1,2,"timespent_date",1,0,1);
     			}
     			else
     			{
@@ -1085,7 +1093,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 			print $hookmanager->resPrint;
 
             // Action column
-			print '<td class="center"">';
+			print '<td class="center nowraponall">';
 			if ($action == 'editline' && $_GET['lineid'] == $task_time->rowid)
 			{
 				print '<input type="hidden" name="lineid" value="'.$_GET['lineid'].'">';

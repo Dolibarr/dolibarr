@@ -31,10 +31,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/website/class/website.class.php';
 
-$langs->load("errors");
-$langs->load("admin");
-$langs->load("companies");
-$langs->load("website");
+// Load translation files required by the page
+$langs->loadlangs(array('errors', 'admin', 'companies', 'website'));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
 $confirm=GETPOST('confirm','alpha');
@@ -436,24 +434,7 @@ if ($id)
 {
     // Complete requete recherche valeurs avec critere de tri
     $sql=$tabsql[$id];
-
-    if ($sortfield)
-    {
-        // If sort order is "country", we use country_code instead
-        $sql.= " ORDER BY ".$sortfield;
-        if ($sortorder)
-        {
-            $sql.=" ".strtoupper($sortorder);
-        }
-        $sql.=", ";
-        // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value
-        $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.' '.$sortorder.',/i','',$tabsqlsort[$id]);
-        $tabsqlsort[$id]=preg_replace('/([a-z]+\.)?'.$sortfield.',/i','',$tabsqlsort[$id]);
-    }
-    else {
-        $sql.=" ORDER BY ";
-    }
-    $sql.=$tabsqlsort[$id];
+    $sql.=$db->order($sortfield,$sortorder);
     $sql.=$db->plimit($limit+1, $offset);
     //print $sql;
 

@@ -9,6 +9,7 @@
  * Copyright (C) 2013		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015	Marcos García			<marcosgdf@gmail.com>
  * Copyright (C) 2015-2017	Ferran Marcet			<fmarcet@2byte.es>
+ * Copyright (C) 2018   	Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -237,7 +238,13 @@ class Contrat extends CommonObject
 	 */
 	function active_line($user, $line_id, $date, $date_end='', $comment='')
 	{
-		return $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
+		$result = $this->lines[$this->lines_id_index_mapper[$line_id]]->active_line($user, $date, $date_end, $comment);
+		if ($result < 0)
+		{
+			$this->error = $this->lines[$this->lines_id_index_mapper[$line_id]]->error;
+			$this->errors = $this->lines[$this->lines_id_index_mapper[$line_id]]->errors;
+		}
+		return $result;
 	}
 
 
@@ -252,7 +259,13 @@ class Contrat extends CommonObject
 	 */
 	function close_line($user, $line_id, $date_end, $comment='')
 	{
-		return $this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
+		$result=$this->lines[$this->lines_id_index_mapper[$line_id]]->close_line($user, $date_end, $comment);
+		if ($result < 0)
+		{
+			$this->error = $this->lines[$this->lines_id_index_mapper[$line_id]]->error;
+			$this->errors = $this->lines[$this->lines_id_index_mapper[$line_id]]->errors;
+		}
+		return $result;
 	}
 
 
@@ -394,7 +407,10 @@ class Contrat extends CommonObject
 		$this->fetch_thirdparty();
 
 		// A contract is validated so we can move thirdparty to status customer
-		$result=$this->thirdparty->set_as_client();
+		if (empty($conf->global->CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION))
+		{
+			$result=$this->thirdparty->set_as_client();
+		}
 
 		// Define new ref
 		if ($force_number)
@@ -662,14 +678,14 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::Fetch Erreur contrat non trouve");
+				dol_syslog(get_class($this)."::fetch Contract not found");
 				$this->error="Contract not found";
 				return 0;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture contrat");
+			dol_syslog(get_class($this)."::fetch Error searching contract");
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -767,17 +783,7 @@ class Contrat extends CommonObject
 				$line->fk_user_cloture  = $objp->fk_user_cloture;
 				$line->fk_unit           = $objp->fk_unit;
 
-				$line->ref				= $objp->product_ref;						// deprecated
-				if (empty($objp->fk_product))
-				{
-					$line->label			= '';         			// deprecated
-					$line->libelle 			= $objp->description;	// deprecated
-				}
-				else
-				{
-					$line->label			= $objp->product_label;         			// deprecated
-					$line->libelle			= $objp->product_label;         		// deprecated
-				}
+				$line->ref				= $objp->product_ref;	// deprecated
 				$line->product_ref		= $objp->product_ref;   // Ref product
 				$line->product_desc		= $objp->product_desc;  // Description product
 				$line->product_label	= $objp->product_label; // Label product
@@ -1285,35 +1291,35 @@ class Contrat extends CommonObject
 				$result=$this->call_trigger('CONTRACT_MODIFY',$user);
 				if ($result < 0) { $error++; }
 				// End call triggers
-				}
-			}
-
-			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
-			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
-			}
-
-			// Commit or rollback
-			if ($error)
-			{
-				foreach($this->errors as $errmsg)
-				{
-					dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
-					$this->error.=($this->error?', '.$errmsg:$errmsg);
-				}
-				$this->db->rollback();
-				return -1*$error;
-			}
-			else
-			{
-				$this->db->commit();
-				return 1;
 			}
 		}
+
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+		{
+			$result=$this->insertExtraFields();
+			if ($result < 0)
+			{
+				$error++;
+			}
+		}
+
+		// Commit or rollback
+		if ($error)
+		{
+			foreach($this->errors as $errmsg)
+			{
+				dol_syslog(get_class($this)."::update ".$errmsg, LOG_ERR);
+				$this->error.=($this->error?', '.$errmsg:$errmsg);
+			}
+			$this->db->rollback();
+			return -1*$error;
+		}
+		else
+		{
+			$this->db->commit();
+			return 1;
+		}
+	}
 
 
 	/**
@@ -2301,9 +2307,10 @@ class Contrat extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -2322,7 +2329,7 @@ class Contrat extends CommonObject
 
 		$modelpath = "core/modules/contract/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 	/**
@@ -2459,12 +2466,15 @@ class ContratLigne extends CommonObjectLine
 	var $fk_contrat;
 	var $fk_product;
 	var $statut;					// 0 inactive, 4 active, 5 closed
-	var $type;                     // 0 for product, 1 for service
+	var $type;						// 0 for product, 1 for service
+	/**
+	 * @var string
+	 * @deprecated
+	 */
 	var $label;
 	/**
 	 * @var string
-	 * @deprecated Use $label instead
-	 * @see label
+	 * @deprecated
 	 */
 	public $libelle;
 

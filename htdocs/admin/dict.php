@@ -41,6 +41,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("errors","admin","main","companies","resource","holiday","accountancy","hrm","orders","contracts","projects","propal","bills","interventions"));
 
 $action=GETPOST('action','alpha')?GETPOST('action','alpha'):'view';
@@ -53,6 +54,7 @@ $code=GETPOST('code','alpha');
 $allowed=$user->admin;
 if ($id == 7 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;     // Tax page allowed to manager of chart account
 if ($id == 10 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Vat page allowed to manager of chart account
+if ($id == 17 && ! empty($user->rights->accounting->chartofaccount)) $allowed=1;    // Dictionary with type of expense report and accounting account allowed to manager of chart account
 if (! $allowed) accessforbidden();
 
 $acts[0] = "activate";
@@ -181,7 +183,7 @@ $tabsql[10]= "SELECT t.rowid, t.code, t.taux, t.localtax1_type, t.localtax1, t.l
 $tabsql[11]= "SELECT t.rowid as rowid, t.element, t.source, t.code, t.libelle, t.position, t.active FROM ".MAIN_DB_PREFIX."c_type_contact AS t";
 $tabsql[12]= "SELECT c.rowid as rowid, c.code, c.libelle, c.libelle_facture, c.nbjour, c.type_cdr, c.decalage, c.active, c.sortorder, c.entity FROM ".MAIN_DB_PREFIX."c_payment_term AS c WHERE c.entity = " . getEntity($tabname[12]);
 $tabsql[13]= "SELECT c.id    as rowid, c.code, c.libelle, c.type, c.active, c.entity FROM ".MAIN_DB_PREFIX."c_paiement AS c WHERE c.entity = " . getEntity($tabname[13]);
-$tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
+$tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.label, e.price, e.organization, e.fk_pays as country_id, c.code as country_code, c.label as country, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_country as c WHERE e.fk_pays=c.rowid and c.active=1";
 $tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 $tabsql[16]= "SELECT code, label as libelle, sortorder, active FROM ".MAIN_DB_PREFIX."c_prospectlevel";
 $tabsql[17]= "SELECT id      as rowid, code, label, accountancy_code, active FROM ".MAIN_DB_PREFIX."c_type_fees";
@@ -259,7 +261,7 @@ $tabfield[10]= "country_id,country,code,taux,localtax1_type,localtax1,localtax2_
 $tabfield[11]= "element,source,code,libelle,position";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfield[13]= "code,libelle,type,entity";
-$tabfield[14]= "code,libelle,price,organization,country_id,country";
+$tabfield[14]= "code,label,price,organization,country";
 $tabfield[15]= "code,libelle,width,height,unit";
 $tabfield[16]= "code,libelle,sortorder";
 $tabfield[17]= "code,label,accountancy_code";
@@ -298,7 +300,7 @@ $tabfieldvalue[10]= "country,code,taux,localtax1_type,localtax1,localtax2_type,l
 $tabfieldvalue[11]= "element,source,code,libelle,position";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder";
 $tabfieldvalue[13]= "code,libelle,type";
-$tabfieldvalue[14]= "code,libelle,price,organization,country";
+$tabfieldvalue[14]= "code,label,price,organization,country";
 $tabfieldvalue[15]= "code,libelle,width,height,unit";
 $tabfieldvalue[16]= "code,libelle,sortorder";
 $tabfieldvalue[17]= "code,label,accountancy_code";
@@ -337,7 +339,7 @@ $tabfieldinsert[10]= "fk_pays,code,taux,localtax1_type,localtax1,localtax2_type,
 $tabfieldinsert[11]= "element,source,code,libelle,position";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,type_cdr,decalage,sortorder,entity";
 $tabfieldinsert[13]= "code,libelle,type,entity";
-$tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
+$tabfieldinsert[14]= "code,label,price,organization,fk_pays";
 $tabfieldinsert[15]= "code,label,width,height,unit";
 $tabfieldinsert[16]= "code,label,sortorder";
 $tabfieldinsert[17]= "code,label,accountancy_code";
@@ -417,7 +419,7 @@ $tabcond[10]= true;
 $tabcond[11]= (! empty($conf->societe->enabled));
 $tabcond[12]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled));
 $tabcond[13]= (! empty($conf->commande->enabled) || ! empty($conf->propal->enabled) || ! empty($conf->facture->enabled) || ! empty($conf->fournisseur->enabled));
-$tabcond[14]= (! empty($conf->product->enabled) && ! empty($conf->ecotax->enabled));
+$tabcond[14]= (! empty($conf->product->enabled) && (! empty($conf->ecotax->enabled) || ! empty($conf->global->MAIN_SHOW_ECOTAX_DICTIONNARY)));
 $tabcond[15]= true;
 $tabcond[16]= (! empty($conf->societe->enabled) && empty($conf->global->SOCIETE_DISABLE_PROSPECTS));
 $tabcond[17]= (! empty($conf->deplacement->enabled) || ! empty($conf->expensereport->enabled));
@@ -952,14 +954,14 @@ if (empty($id))
 print "<br>\n";
 
 
-$param = '&id='.$id;
-if ($search_country_id > 0) $param.= '&search_country_id='.$search_country_id;
+$param = '&id='.urlencode($id);
+if ($search_country_id > 0) $param.= '&search_country_id='.urlencode($search_country_id);
 if ($search_code != '')     $param.= '&search_code='.urlencode($search_country_id);
 if ($entity != '') $param.= '&entity=' . (int) $entity;
 $paramwithsearch = $param;
-if ($sortorder) $paramwithsearch.= '&sortorder='.$sortorder;
-if ($sortfield) $paramwithsearch.= '&sortfield='.$sortfield;
-if (GETPOST('from')) $paramwithsearch.= '&from='.GETPOST('from','alpha');
+if ($sortorder) $paramwithsearch.= '&sortorder='.urlencode($sortorder);
+if ($sortfield) $paramwithsearch.= '&sortfield='.urlencode($sortfield);
+if (GETPOST('from')) $paramwithsearch.= '&from='.urlencode(GETPOST('from','alpha'));
 
 
 // Confirmation de la suppression de la ligne
@@ -986,10 +988,10 @@ if ($id)
     {
         // If sort order is "country", we use country_code instead
     	if ($sortfield == 'country') $sortfield='country_code';
-        $sql.= " ORDER BY ".$sortfield;
+        $sql.= " ORDER BY ".$db->escape($sortfield);
         if ($sortorder)
         {
-            $sql.=" ".strtoupper($sortorder);
+        	$sql.=" ".strtoupper($db->escape($sortorder));
         }
         $sql.=", ";
         // Clear the required sort criteria for the tabsqlsort to be able to force it with selected value

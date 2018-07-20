@@ -152,6 +152,24 @@ if ($action == 'presend')
 			}
 		}
 	}
+	if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+		$listeuser=array();
+		$fuserdest = new User($db);
+
+		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''));
+		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
+			foreach($fuserdest->users as $uuserdest) {
+				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id,'email');
+			}
+		} elseif ($result<0) {
+			setEventMessages(null, $fuserdest->errors,'errors');
+		}
+		if (count($listeuser)>0) {
+			$formmail->withtouser = $listeuser;
+			$formmail->withtoccuser = $listeuser;
+		}
+
+	}
 
 	$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
 	$formmail->withtocc = $liste;

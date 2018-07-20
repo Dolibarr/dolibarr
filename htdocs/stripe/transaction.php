@@ -27,18 +27,15 @@ require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
-$langs->load("compta");
-$langs->load("salaries");
-$langs->load("bills");
-$langs->load("hrm");
-$langs->load("stripe");
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'salaries', 'bills', 'hrm', 'stripe'));
 
 // Security check
 $socid = GETPOST("socid","int");
 if ($user->societe_id) $socid=$user->societe_id;
 //$result = restrictedArea($user, 'salaries', '', '', '');
 
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $rowid = GETPOST("rowid",'alpha');
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');

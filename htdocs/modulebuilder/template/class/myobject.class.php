@@ -285,7 +285,7 @@ class MyObject extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
-		global $db, $conf, $langs;
+		global $db, $conf, $langs, $hoomanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 
@@ -318,6 +318,13 @@ class MyObject extends CommonObject
             }
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip'.($morecss?' '.$morecss:'').'"';
+
+            /*
+             $hookmanager->initHooks(array('myobjectdao'));
+             $parameters=array('id'=>$this->id);
+             $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+             if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+             */
         }
         else $linkclose = ($morecss?' class="'.$morecss.'"':'');
 
@@ -331,66 +338,76 @@ class MyObject extends CommonObject
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');
 
+		global $action;
+		$hookmanager->initHooks(array('myobjectdao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
+
 		return $result;
 	}
 
 	/**
-	 *  Retourne le libelle du status d'un user (actif, inactif)
+	 *  Return label of the status
 	 *
-	 *  @param	int		$mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
 	 *  @return	string 			       Label of status
 	 */
 	function getLibStatut($mode=0)
 	{
-		return $this->LibStatut($this->status,$mode);
+		return $this->LibStatut($this->status, $mode);
 	}
 
 	/**
 	 *  Return the status
 	 *
-	 *  @param	int		$status        	Id status
-	 *  @param  int		$mode          	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
-	 *  @return string 			       	Label of status
+	 *  @param	int		$status        Id status
+	 *  @param  int		$mode          0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto, 6=Long label + Picto
+	 *  @return string 			       Label of status
 	 */
-	static function LibStatut($status,$mode=0)
+	function LibStatut($status, $mode=0)
 	{
-		global $langs;
+		if (empty($this->labelstatus))
+		{
+			global $langs;
+			//$langs->load("mymodule");
+			$this->labelstatus[1] = $langs->trans('Enabled');
+			$this->labelstatus[0] = $langs->trans('Disabled');
+		}
 
 		if ($mode == 0)
 		{
-			$prefix='';
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			return $this->labelstatus[$status];
 		}
 		if ($mode == 1)
 		{
-			if ($status == 1) return $langs->trans('Enabled');
-			if ($status == 0) return $langs->trans('Disabled');
+			return $this->labelstatus[$status];
 		}
 		if ($mode == 2)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4').' '.$this->labelstatus[$status];
+			if ($status == 0) return img_picto($this->labelstatus[$status],'statut5').' '.$this->labelstatus[$status];
 		}
 		if ($mode == 3)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4');
+			if ($status == 0) return img_picto($this->labelstatus[$status],'statut5');
 		}
 		if ($mode == 4)
 		{
-			if ($status == 1) return img_picto($langs->trans('Enabled'),'statut4').' '.$langs->trans('Enabled');
-			if ($status == 0) return img_picto($langs->trans('Disabled'),'statut5').' '.$langs->trans('Disabled');
+			if ($status == 1) return img_picto($this->labelstatus[$status],'statut4').' '.$this->labelstatus[$status];
+			if ($status == 0) return img_picto($this->labelstatus[$status],'statut5').' '.$this->labelstatus[$status];
 		}
 		if ($mode == 5)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4');
+			if ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
 		}
 		if ($mode == 6)
 		{
-			if ($status == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
-			if ($status == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
+			if ($status == 1) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut4');
+			if ($status == 0) return $this->labelstatus[$status].' '.img_picto($this->labelstatus[$status],'statut5');
 		}
 	}
 

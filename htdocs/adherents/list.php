@@ -43,7 +43,7 @@ $toselect = GETPOST('toselect', 'array');
 $result=restrictedArea($user,'adherent');
 
 $filter=GETPOST("filter",'alpha');
-$statut=GETPOST("statut",'alpha');
+$statut=GETPOST("statut",'intcomma');
 $search=GETPOST("search",'alpha');
 $search_ref=GETPOST("search_ref",'alpha');
 $search_lastname=GETPOST("search_lastname",'alpha');
@@ -262,6 +262,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 	$resql = $db->query($sql);
 	if ($resql) $nbtotalofrecords = $db->num_rows($resql);
 	else dol_print_error($db);
+	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	{
+		$page = 0;
+		$offset = 0;
+	}
 }
 // Add limit
 $sql.= $db->plimit($limit+1, $offset);
@@ -348,7 +353,9 @@ $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 $newcardbutton='';
 if ($user->rights->adherent->creer)
 {
-	$newcardbutton='<a class="butAction" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create">'.$langs->trans('NewMember').'</a>';
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/adherents/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewMember').'</span>';
+	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+	$newcardbutton.= '</a>';
 }
 
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
@@ -372,7 +379,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($sall)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $sall) . implode(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 // Filter on categories

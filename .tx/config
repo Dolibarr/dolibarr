@@ -20,6 +20,12 @@ source_file = htdocs/langs/en_US/agenda.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
+[dolibarr.assets]
+file_filter = htdocs/langs/<lang>/assets.lang
+source_file = htdocs/langs/en_US/assets.lang
+source_lang = en_US
+type = MOZILLAPROPERTIES
+
 [dolibarr.banks]
 file_filter = htdocs/langs/<lang>/banks.lang
 source_file = htdocs/langs/en_US/banks.lang
@@ -350,9 +356,9 @@ source_file = htdocs/langs/en_US/supplier_proposal.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 
-[dolibarr.ticketsup]
-file_filter = htdocs/langs/<lang>/ticketsup.lang
-source_file = htdocs/langs/en_US/ticketsup.lang
+[dolibarr.ticket]
+file_filter = htdocs/langs/<lang>/ticket.lang
+source_file = htdocs/langs/en_US/ticket.lang
 source_lang = en_US
 type = MOZILLAPROPERTIES
 

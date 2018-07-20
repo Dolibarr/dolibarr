@@ -26,7 +26,6 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
@@ -34,14 +33,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-// Langs
-$langs->load("compta");
-$langs->load("bills");
-$langs->load("other");
-$langs->load("main");
-$langs->load("accountancy");
-$langs->load("trips");
-$langs->load("productbatch");
+// Load translation files required by the page
+$langs->loadLangs(array("compta","bills","other","accountancy","trips","productbatch"));
 
 $account_parent = GETPOST('account_parent','int');
 $changeaccount = GETPOST('changeaccount');
@@ -109,10 +102,10 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 	}
 
-	$db->begin();
-
 	if (! $error)
 	{
+		$db->begin();
+
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
 		$sql1 .= " SET erd.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
 		$sql1 .= ' WHERE erd.rowid IN (' . implode(',', $changeaccount) . ')';
@@ -216,6 +209,11 @@ if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
     $result = $db->query($sql);
     $nbtotalofrecords = $db->num_rows($result);
+    if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+    {
+    	$page = 0;
+    	$offset = 0;
+    }
 }
 
 $sql .= $db->plimit($limit + 1, $offset);
