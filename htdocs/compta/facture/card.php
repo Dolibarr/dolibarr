@@ -4730,7 +4730,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// For situation invoice with excess received
-			if ($object->statut == Facture::STATUS_VALIDATED
+			if ($object->statut > 0
 			    && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) > 0
 			    && $user->rights->facture->creer
 			    && !$objectidnext
@@ -4748,7 +4748,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// remove situation from cycle
-			if ($object->statut == Facture::STATUS_VALIDATED
+			if ($object->statut > 0
 			    && $object->type == Facture::TYPE_SITUATION
 			    && $user->rights->facture->creer
 			    && !$objectidnext
