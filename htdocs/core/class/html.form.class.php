@@ -3231,21 +3231,21 @@ class Form
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			// Last seen cycle
 			$ref = 0;
-			while ($res = $this->db->fetch_array($resql, MYSQL_NUM)) {
+			while ($obj = $this->db->fetch_object($resql)){
 				//Same company ?
-				if ($socid == $res[5]) {
+			    if ($socid == $obj->fk_soc) {
 					//Same cycle ?
-					if ($res[2] != $ref) {
+			        if ($obj->situation_cycle_ref != $ref) {
 						// Just seen this cycle
-						$ref = $res[2];
+			            $ref = $obj->situation_cycle_ref;
 						//not final ?
-						if ($res[4] != 1) {
+			            if ($obj->situation_final != 1) {
 							//Not prov?
-							if (substr($res[1], 1, 4) != 'PROV') {
-								if ($selected == $res[0]) {
-									$opt .= '<option value="' . $res[0] . '" selected>' . $res[1] . '</option>';
+			                if (substr($obj->facnumber, 1, 4) != 'PROV') {
+			                    if ($selected == $obj->situation_final) {
+			                        $opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->facnumber . '</option>';
 								} else {
-									$opt .= '<option value="' . $res[0] . '">' . $res[1] . '</option>';
+								    $opt .= '<option value="' . $obj->rowid . '">' . $obj->facnumber . '</option>';
 								}
 							}
 						}
