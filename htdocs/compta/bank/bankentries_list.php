@@ -444,7 +444,7 @@ $sql = "SELECT b.rowid, b.dateo as do, b.datev as dv, b.amount, b.label, b.rappr
 $sql.= " b.fk_account, b.fk_type,";
 $sql.= " ba.rowid as bankid, ba.ref as bankref,";
 $sql.= " bu.url_id,";
-$sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
+$sql.= " s.nom, s.name_alias, s.client, s.fournisseur, s.email, s.code_client, s.code_fournisseur, s.code_compta, s.code_compta_fournisseur";
 // Add fields from extrafields
 foreach ($extrafields->attribute_label as $key => $val) $sql.=($extrafields->attribute_type[$key] != 'separate' ? ",ef.".$key.' as options_'.$key : '');
 // Add fields from hooks
@@ -1304,6 +1304,7 @@ if ($resql)
 				$companystatic->name=$objp->nom;
 				$companystatic->name_alias=$objp->name_alias;
 				$companystatic->client=$objp->client;
+				$companystatic->email=$objp->email;
 				$companystatic->fournisseur=$objp->fournisseur;
 				$companystatic->code_client=$objp->code_client;
 				$companystatic->code_fournisseur=$objp->code_fournisseur;

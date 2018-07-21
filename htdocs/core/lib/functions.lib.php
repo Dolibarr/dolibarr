@@ -5520,7 +5520,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed=1, $pagecodeto='UT
 function dol_string_onlythesehtmltags($stringtoclean)
 {
 	$allowed_tags = array(
-		"html", "head", "meta", "body", "b", "br", "div", "em", "font", "img", "hr", "i", "li", "link",
+		"html", "head", "meta", "body", "b", "br", "div", "em", "font", "img", "ins", "hr", "i", "li", "link",
 		"ol", "p", "s", "section", "span", "strong", "title",
 		"table", "tr", "th", "td", "u", "ul"
 	);
