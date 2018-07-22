@@ -322,10 +322,16 @@ if ($action == 'confirm_delete' && $confirm == 'yes')       // delete
 
     if ($website->id > 0)
     {
-	    $sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
-	    $result = $db->query($sql);
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_account WHERE fk_website ='".$rowid."'";
+    	$result = $db->query($sql);
 
-	    $sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_page WHERE fk_website ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website_extrafields WHERE fk_object ='".$rowid."'";
+    	$result = $db->query($sql);
+
+    	$sql = "DELETE from ".MAIN_DB_PREFIX."website WHERE rowid ='".$rowid."'";
 	    $result = $db->query($sql);
 	    if (! $result)
 	    {
