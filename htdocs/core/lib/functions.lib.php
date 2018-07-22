@@ -5159,9 +5159,9 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
         {
             $tmp=dol_getdate(dol_now(), true);
             $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-            $tmp3=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+            $tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
             $tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-            $tmp5=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+            $tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
         }
         $substitutionarray=array_merge($substitutionarray, array(
             '__DAY__' => $tmp['mday'],
