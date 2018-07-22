@@ -122,7 +122,15 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 
 		if (!file_exists($conf->global->SYSLOG_FIREPHP_INCLUDEPATH . self::$firephp_class_path))
 		{
-			$errors[] = $langs->trans("ErrorFailedToOpenFile", self::$firephp_class_path);
+			$conf->global->MAIN_SYSLOG_DISABLE_FIREPHP = 1; // avoid infinite loop
+			if (is_object($langs))   // $langs may not be defined yet.
+			{
+				$errors[] = $langs->trans("ErrorFailedToOpenFile", self::$firephp_class_path);
+			} 
+			else 
+			{
+				$errors[] = "ErrorFailedToOpenFile " . self::$firephp_class_path;
+			}
 		}
 
 		return $errors;
