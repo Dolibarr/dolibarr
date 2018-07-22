@@ -45,7 +45,7 @@ if (! ((GETPOST('testmenuhider','int') || ! empty($conf->global->MAIN_TESTMENUHI
 }
 
 $error=0;
-$website=GETPOST('website', 'alpha');
+$websitekey=GETPOST('website', 'alpha');
 $page=GETPOST('page', 'alpha');
 $pageid=GETPOST('pageid', 'int');
 $pageref=GETPOST('pageref', 'aZ09');
@@ -92,18 +92,19 @@ $objectpage=new WebsitePage($db);
 $object->fetchAll();    // Init $object->records
 
 // If website not defined, we take first found
-if (empty($website))
+if (empty($websitekey))
 {
 	foreach($object->records as $key => $valwebsite)
 	{
-		$website=$valwebsite->ref;
+		$websitekey=$valwebsite->ref;
 		break;
 	}
 }
-if ($website)
+if ($websitekey)
 {
-	$res = $object->fetch(0, $website);
+	$res = $object->fetch(0, $websitekey);
 }
+$website = $object;
 
 if ($pageid < 0) $pageid = 0;
 if (($pageid > 0 || $pageref) && $action != 'addcontainer')
@@ -128,7 +129,7 @@ if (($pageid > 0 || $pageref) && $action != 'addcontainer')
 }
 
 global $dolibarr_main_data_root;
-$pathofwebsite=$dolibarr_main_data_root.'/website/'.$website;
+$pathofwebsite=$dolibarr_main_data_root.'/website/'.$websitekey;
 $filehtmlheader=$pathofwebsite.'/htmlheader.html';
 $filecss=$pathofwebsite.'/styles.css.php';
 $filejs=$pathofwebsite.'/javascript.js.php';
@@ -167,7 +168,7 @@ $htmlheadercontentdefault.='-->'."\n";
  * Actions
  */
 
-$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$website.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
+$backtopage=$_SERVER["PHP_SELF"].'?file_manager=1&website='.$websitekey.'&pageid='.$pageid;	// used after a confirm_deletefile into actions_linkedfiles.inc.php
 include DOL_DOCUMENT_ROOT.'/core/actions_linkedfiles.inc.php';
 
 if ($action == 'renamefile') $action='file_manager';		// After actions_linkedfiles, if action were renamefile, we set it to 'file_manager'
@@ -636,13 +637,13 @@ if ($action == 'addcontainer')
 			if ($result)
 			{
 				setEventMessages($langs->trans("Saved"), null, 'mesgs');
-				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 				//exit;
 			}
 			else
 			{
 				setEventMessages('Failed to write file '.$filetpl, null, 'errors');
-				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+				//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 				//exit;
 			}
 		}
@@ -717,7 +718,8 @@ if ($action == 'delete')
 
 	$db->begin();
 
-	$res = $object->fetch(0, $website);
+	$res = $object->fetch(0, $websitekey);
+	$website = $object;
 
 	$res = $objectpage->fetch($pageid, $object->fk_website);
 
@@ -734,9 +736,9 @@ if ($action == 'delete')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $website), null, 'mesgs');
+		setEventMessages($langs->trans("PageDeleted", $objectpage->pageurl, $websitekey), null, 'mesgs');
 
-		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website);
+		header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey);
 		exit;
 	}
 	else
@@ -755,7 +757,8 @@ if ($action == 'updatecss')
 	}
 	else
 	{
-		$res = $object->fetch(0, $website);
+		$res = $object->fetch(0, $websitekey);
+		$website = $object;
 
 		// Html header file
 		$htmlheadercontent ='';
@@ -922,7 +925,8 @@ if ($action == 'updatecss')
 if ($action == 'setashome')
 {
 	$db->begin();
-	$object->fetch(0, $website);
+	$object->fetch(0, $websitekey);
+	$website = $object;
 
 	$object->fk_default_home = $pageid;
 	$res = $object->update($user);
@@ -956,7 +960,8 @@ if ($action == 'updatemeta')
 {
 	$db->begin();
 
-	$object->fetch(0, $website);
+	$object->fetch(0, $websitekey);
+	$website = $object;
 
 	$objectpage->fk_website = $object->id;
 
@@ -1074,13 +1079,13 @@ if ($action == 'updatemeta')
 		if ($result)
 		{
 			setEventMessages($langs->trans("Saved"), null, 'mesgs');
-			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 			//exit;
 		}
 		else
 		{
 			setEventMessages('Failed to write file '.$filetpl, null, 'errors');
-			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+			//header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
    			//exit;
 		}
 
@@ -1092,7 +1097,8 @@ if ($action == 'updatemeta')
 if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'confirm_createfromclone' || $action == 'confirm_createpagefromclone')
 	|| ($action == 'preview' && (GETPOST('refreshsite') || GETPOST('refreshpage') || GETPOST('preview'))))
 {
-	$object->fetch(0, $website);
+	$object->fetch(0, $websitekey);
+	$website = $object;
 
 	if ($action == 'confirm_createfromclone')
 	{
@@ -1244,13 +1250,13 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 				if ($result)
 				{
 					setEventMessages($langs->trans("Saved"), null, 'mesgs');
-					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 	   				exit;
 				}
 				else
 				{
 					setEventMessages('Failed to write file '.$filetpl, null, 'errors');
-					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 	   				exit;
 				}
 			}
@@ -1261,7 +1267,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 		}
 		else
 		{
-			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$website.'&pageid='.$pageid);
+			header("Location: ".$_SERVER["PHP_SELF"].'?website='.$websitekey.'&pageid='.$pageid);
 			exit;
 		}
 	}
@@ -1401,10 +1407,10 @@ if (count($object->records) > 0)
 	$i=0;
 	foreach($object->records as $key => $valwebsite)
 	{
-		if (empty($website)) $website=$valwebsite->ref;
+		if (empty($websitekey)) $websitekey=$valwebsite->ref;
 
 		$out.='<option value="'.$valwebsite->ref.'"';
-		if ($website == $valwebsite->ref) $out.=' selected';		// To preselect a value
+		if ($websitekey == $valwebsite->ref) $out.=' selected';		// To preselect a value
 		$out.='>';
 		$out.=$valwebsite->ref;
 		$out.='</option>';
@@ -1417,14 +1423,14 @@ if (count($object->records) > 0)
 	print '<input type="image" class="valignbottom" src="'.img_picto('', 'refresh', '', 0, 1).'" name="refreshpage" value="'.$langs->trans("Load").'">';
 
 
-	if ($website)
+	if ($websitekey)
 	{
 		$virtualurl='';
-		$dataroot=DOL_DATA_ROOT.'/website/'.$website;
+		$dataroot=DOL_DATA_ROOT.'/website/'.$websitekey;
 		if (! empty($object->virtualhost)) $virtualurl=$object->virtualhost;
 	}
 
-	if ($website && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
+	if ($websitekey && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
 	{
 		$disabled='';
 		if (empty($user->rights->website->write)) $disabled=' disabled="disabled"';
@@ -1443,7 +1449,7 @@ if (count($object->records) > 0)
 		print '<script language="javascript">
 			jQuery(document).ready(function () {
            		jQuery(".button_file_manager").click(function () {
-					var $dialog = $(\'<div></div>\').html(\'<iframe style="border: 0px;" src="'.DOL_URL_ROOT.'/website/index.php?hide_websitemenu=1&dol_hide_topmenu=1&dol_hide_leftmenu=1&file_manager=1&website='.$website.'&pageid='.$pageid.'" width="100%" height="100%"></iframe>\')
+					var $dialog = $(\'<div></div>\').html(\'<iframe style="border: 0px;" src="'.DOL_URL_ROOT.'/website/index.php?hide_websitemenu=1&dol_hide_topmenu=1&dol_hide_leftmenu=1&file_manager=1&website='.$websitekey.'&pageid='.$pageid.'" width="100%" height="100%"></iframe>\')
 					.dialog({
 						autoOpen: false,
 						modal: true,
@@ -1466,18 +1472,18 @@ if (count($object->records) > 0)
 	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
 	{
 		$urlext=$virtualurl;
-		$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
+		$urlint=$urlwithroot.'/public/website/index.php?website='.$websitekey;
 
 		$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $urlint, $dataroot);
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 		$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
-		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/website/index.php?website='.$website.'" target="tab'.$website.'" alt="'.dol_escape_htmltag($htmltext).'">';
+		print '<a class="websitebuttonsitepreview" id="previewsite" href="'.$urlwithroot.'/public/website/index.php?website='.$websitekey.'" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
 		print $form->textwithpicto('', $htmltext, 1, 'preview');
 		print '</a>';
 
 		print '<div class="websiteinputurl" id="websiteinputurl">';
 		print '<input type="text" id="previewsiteurl" class="minwidth200imp" name="previewsite" placeholder="'.$langs->trans("http://myvirtualhost").'" value="'.$virtualurl.'">';
-		//print '<input type="submit" class="button" name="previewwebsite" target="tab'.$website.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
+		//print '<input type="submit" class="button" name="previewwebsite" target="tab'.$websitekey.'" value="'.$langs->trans("ViewSiteInNewTab").'">';
 		$htmltext =$langs->trans("SetHereVirtualHost", $dataroot);
 		$htmltext.='<br>';
 		$htmltext.='<br>';
@@ -1494,7 +1500,7 @@ if (count($object->records) > 0)
 			$htmltext.='<br>';
 			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
-			print '<span class="websitebuttonsitepreview websitebuttonsitepreviewdisabled cursornotallowed" id="previewsiteextdisabled" href="" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+			print '<span class="websitebuttonsitepreview websitebuttonsitepreviewdisabled cursornotallowed" id="previewsiteextdisabled" href="" target="tab'.$websitekey.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview_ext');
 			print '</span>';
 		}
@@ -1504,7 +1510,7 @@ if (count($object->records) > 0)
 			$htmltext.='<br>';
 			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
-			print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
+			print '<a class="websitebuttonsitepreview'.($urlext?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewsiteext" href="'.$urlext.'" target="tab'.$websitekey.'ext" alt="'.dol_escape_htmltag($langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Site"), $langs->transnoentitiesnoconv("Site"), $dataroot, $urlext)).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview_ext');
 			print '</a>';
 		}
@@ -1522,7 +1528,7 @@ if (count($object->records) > 0)
 
 	// ***** Part for pages
 
-	if ($website && ! in_array($action, array('editcss','editmenu')))
+	if ($websitekey && ! in_array($action, array('editcss','editmenu')))
 	{
 		print '</div>';	// Close current websitebar to open a new one
 
@@ -1670,18 +1676,18 @@ if (count($object->records) > 0)
 				if ($websitepage->grabbed_from)
 				{
 					//print '<input type="submit" class="button nobordertransp" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'" value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
-					print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("EditInLineOff"),'switch_off').'</a>';
+					print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="#" disabled="disabled" title="'.dol_escape_htmltag($langs->trans("OnlyEditionOfSourceForGrabbedContent")).'">'.img_picto($langs->trans("EditInLineOff"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
 				}
 				else
 				{
 					//print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditWithEditor")).'" name="editcontent">';
 					if (empty($conf->global->WEBSITE_EDITINLINE))
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOff"),'switch_off').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=seteditinline">'.img_picto($langs->trans("EditInLineOff"),'switch_off','',false,0,0,'','nomarginleft').'</a>';
 					}
 					else
 					{
-						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOn"),'switch_on').'</a>';
+						print '<a class="button nobordertransp nohoverborder"'.$disabled.' href="'.$_SERVER["PHP_SELF"].'?website='.$object->ref.'&pageid='.$websitepage->id.'&action=unseteditinline">'.img_picto($langs->trans("EditInLineOn"),'switch_on','',false,0,0,'','nomarginleft').'</a>';
 					}
 				}
 
@@ -1700,14 +1706,14 @@ if (count($object->records) > 0)
 
 		if ($pageid > 0 && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
 		{
-			$realpage=$urlwithroot.'/public/website/index.php?website='.$website.'&pageref='.$websitepage->pageurl;
+			$realpage=$urlwithroot.'/public/website/index.php?website='.$websitekey.'&pageref='.$websitepage->pageurl;
 			$pagealias = $websitepage->pageurl;
 
 			$htmltext = $langs->trans("PreviewSiteServedByDolibarr", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $realpage, $dataroot);
 			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("ReadPerm"), DOL_DOCUMENT_ROOT);
 			$htmltext.='<br>'.$langs->trans("CheckVirtualHostPerms", $langs->transnoentitiesnoconv("WritePerm"), DOL_DATA_ROOT);
 
-			print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$website.'" alt="'.dol_escape_htmltag($htmltext).'">';
+			print '<a class="websitebuttonsitepreview" id="previewpage" href="'.$realpage.'&nocache='.dol_now().'" class="button" target="tab'.$websitekey.'" alt="'.dol_escape_htmltag($htmltext).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview');
 			print '</a>';       // View page in new Tab
 
@@ -1718,14 +1724,14 @@ if (count($object->records) > 0)
 			print '</div>';
 
 			$urlext=$virtualurl.'/'.$pagealias.'.php';
-			$urlint=$urlwithroot.'/public/website/index.php?website='.$website;
+			$urlint=$urlwithroot.'/public/website/index.php?website='.$websitekey;
 
 			$htmltext = $langs->trans("PreviewSiteServedByWebServer", $langs->transnoentitiesnoconv("Page"), $langs->transnoentitiesnoconv("Page"), $dataroot, $virtualurl?$urlext:'<span class="error">'.$langs->trans("VirtualHostUrlNotDefined").'</span>');
 
-			print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$website.'ext" alt="'.dol_escape_htmltag($htmltext).'">';
+			print '<a class="websitebuttonsitepreview'.($virtualurl?'':' websitebuttonsitepreviewdisabled cursornotallowed').'" id="previewpageext" href="'.$urlext.'" target="tab'.$websitekey.'ext" alt="'.dol_escape_htmltag($htmltext).'">';
 			print $form->textwithpicto('', $htmltext, 1, 'preview_ext');
 			print '</a>';
-			//print '<input type="submit" class="button" name="previewpage" target="tab'.$website.'"value="'.$langs->trans("ViewPageInNewTab").'">';
+			//print '<input type="submit" class="button" name="previewpage" target="tab'.$websitekey.'"value="'.$langs->trans("ViewPageInNewTab").'">';
 
 			// TODO Add js to save alias like we save virtual host name and use dynamic virtual host for url of id=previewpageext
 		}
@@ -1916,7 +1922,7 @@ if ($action == 'editcss')
 	print '<tr><td class="titlefieldcreate">';
 	print $langs->trans('WebSite');
 	print '</td><td>';
-	print $website;
+	print $websitekey;
 	print '</td></tr>';
 
 	// CSS file
@@ -2114,7 +2120,7 @@ if ($action == 'editmeta' || $action == 'createcontainer')
 		print '<tr><td class="titlefield">';
 		print $langs->trans('WEBSITE_PAGEURL');
 		print '</td><td>';
-		print '/public/website/index.php?website='.urlencode($website).'&pageid='.urlencode($pageid);
+		print '/public/website/index.php?website='.urlencode($websitekey).'&pageid='.urlencode($pageid);
 		print '</td></tr>';
 
 		/*
@@ -2335,6 +2341,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		$out.='<style scoped>'."\n";        // "scoped" means "apply to parent element only". No more supported by browsers, snif !
 		$tmpout='';
 		$tmpout.= '/* Include website CSS file */'."\n";
+		//var_dump($website);
 		$tmpout.= dolWebsiteReplacementOfLinks($object, $csscontent, 1);
 		$tmpout.= '/* Include style from the HTML header of page */'."\n";
 		// Clean the html header of page to get only <style> content
@@ -2407,7 +2414,7 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
         //include_once $original_file_osencoded;
         */
 
-		/*print '<iframe class="websiteiframenoborder centpercent" src="'.DOL_URL_ROOT.'/public/website/index.php?website='.$website.'&pageid='.$pageid.'"/>';
+		/*print '<iframe class="websiteiframenoborder centpercent" src="'.DOL_URL_ROOT.'/public/website/index.php?website='.$websitekey.'&pageid='.$pageid.'"/>';
         print '</iframe>';*/
 	}
 	else
