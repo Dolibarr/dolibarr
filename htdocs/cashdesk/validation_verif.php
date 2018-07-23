@@ -253,7 +253,7 @@ switch ($action)
 			}
 			else
 			{
-				setEventMessage($invoice->error, $invoice->errors, 'errors');
+				setEventMessages($invoice->error, $invoice->errors, 'errors');
 			    $error++;
 			}
 
