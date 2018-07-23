@@ -48,6 +48,10 @@ function dolWebsiteReplacementOfLinks($website, $content, $removephppart=0)
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/"mailto:<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
 
+	$replacewith='src="php';
+	if ($removephppart) $replacewith='';
+	$content = preg_replace('/src="<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);
+
 	$replacewith='<span class="phptag">...php...</span>';
 	if ($removephppart) $replacewith='';
 	$content = preg_replace('/<\?php((?!\?>).)*\?>\n*/ims', $replacewith, $content);

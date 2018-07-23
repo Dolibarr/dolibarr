@@ -2319,6 +2319,10 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 {
 	if ($pageid > 0)
 	{
+		// $filejs
+		// $filecss
+		// $filephp
+
 		// Ouput page under the Dolibarr top menu
 		$objectpage->fetch($pageid);
 		$jscontent = @file_get_contents($filejs);
@@ -2379,6 +2383,14 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 		{
 
 		}
+
+		/*
+		$filephp = $objectpage->
+		ob_start();
+		include $filephp;
+		$newcontent = ob_get_contents();
+		ob_end_clean();
+		*/
 
 		$out.=dolWebsiteReplacementOfLinks($object, $newcontent)."\n";
 
