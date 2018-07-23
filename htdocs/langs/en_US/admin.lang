@@ -1794,7 +1794,7 @@ EnterCalculationRuleIfPreviousFieldIsYes=Enter calculcation rule if previous fie
 SeveralLangugeVariatFound=Several language variants found
 COMPANY_AQUARIUM_REMOVE_SPECIAL=Remove special characters
 COMPANY_AQUARIUM_CLEAN_REGEX=Regex filter to clean value (COMPANY_AQUARIUM_CLEAN_REGEX)
-GDPRContact=GDPR contact
+GDPRContact=Privacy Policies or GDPR contact
 GDPRContactDesc=If you store data about European companies/citizen, you can store here the contact who is responsible for the General Data Protection Regulation
 ##### Resource ####
 ResourceSetup=Configuration du module Resource 
