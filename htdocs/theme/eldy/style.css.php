@@ -1664,6 +1664,9 @@ div.mainmenu.menu {
 #mainmenutd_menu a.tmenuimage {
     display: unset;
 }
+a.tmenuimage {
+    display: block;
+}
 
 /* Do not load menu img for other if hidden to save bandwidth */
 
