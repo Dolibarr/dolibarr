@@ -1001,7 +1001,7 @@ class ActionsTicket
      */
     public function viewTicketLogs($show_user = true)
     {
-        global $conf, $langs, $bc;
+        global $conf, $langs;
 
         // Load logs in cache
         $ret = $this->dao->loadCacheLogsTicket();
@@ -1021,11 +1021,8 @@ class ActionsTicket
                 print '</th>';
             }
 
-            $var = true;
-
             foreach ($this->dao->cache_logs_ticket as $id => $arraylogs) {
-                $var = !$var;
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td><strong>';
                 print dol_print_date($arraylogs['datec'], 'dayhour');
                 print '</strong></td>';
@@ -1042,7 +1039,7 @@ class ActionsTicket
                     print '</td>';
                 }
                 print '</tr>';
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td colspan="2">';
                 print dol_nl2br($arraylogs['message']);
 
@@ -1064,7 +1061,7 @@ class ActionsTicket
      */
     public function viewTimelineTicketLogs($show_user = true, $object = true)
     {
-    	global $conf, $langs, $bc;
+    	global $conf, $langs;
 
     	// Load logs in cache
     	$ret = $object->loadCacheLogsTicket();
@@ -1171,7 +1168,7 @@ class ActionsTicket
      */
     public function viewTicketMessages($show_private, $show_user = true)
     {
-        global $conf, $langs, $user, $bc;
+        global $conf, $langs, $user;
 		global $object;
 
         // Load logs in cache
@@ -1202,8 +1199,7 @@ class ActionsTicket
                     || ($arraymsgs['private'] == "1" && $show_private)
                 ) {
                     //print '<tr>';
-                    $var = !$var;
-                    print "<tr " . $bc[$var] . ">";
+                    print '<tr class="oddeven">';
                     print '<td><strong>';
                     print dol_print_date($arraymsgs['datec'], 'dayhour');
                     print '<strong></td>';
@@ -1221,7 +1217,7 @@ class ActionsTicket
                         print '</td>';
                     }
                     print '</td>';
-                    print "<tr " . $bc[$var] . ">";
+                    print '<tr class="oddeven">';
                     print '<td colspan="2">';
                     print $arraymsgs['message'];
                     print '</td>';
@@ -1244,7 +1240,7 @@ class ActionsTicket
      */
     public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
     {
-    	global $conf, $langs, $user, $bc;
+    	global $conf, $langs, $user;
 
     	// Load logs in cache
     	$ret = $object->loadCacheMsgsTicket();
