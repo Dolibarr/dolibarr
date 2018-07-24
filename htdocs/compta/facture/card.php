@@ -1705,8 +1705,10 @@ if (empty($reshook))
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} else {
-					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+				} 
+				else 
+				{
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error ++;
 				}
 			}
@@ -2430,7 +2432,7 @@ if (empty($reshook))
 
 	        if($error)
 	        {
-	            setEventMessage($langs->trans('ErrorsOnXLines',$error), 'errors');
+	            setEventMessages($langs->trans('ErrorsOnXLines',$error), null, 'errors');
 	        }
 	    }
 	}
