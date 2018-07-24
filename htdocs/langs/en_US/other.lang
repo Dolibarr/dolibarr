@@ -235,6 +235,7 @@ YourPasswordMustHaveAtLeastXChars=Your password must have at least <strong>%s</s
 YourPasswordHasBeenReset=Your password has been reset successfully
 ApplicantIpAddress=IP address of applicant
 SMSSentTo=SMS sent to %s
+MissingIds=Missing ids
 
 ##### Export #####
 ExportsArea=Exports area

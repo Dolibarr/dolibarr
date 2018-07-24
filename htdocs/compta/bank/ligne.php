@@ -98,8 +98,10 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
     	{
         	dol_print_error($db);
     	}
-	} else {
-		setEventMessage('Missing ids','errors');
+	} 
+	else 
+	{
+		setEventMessages($langs->trans("MissingIds"), null, 'errors');
 	}
 }
 
