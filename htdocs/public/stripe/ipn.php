@@ -222,7 +222,6 @@ elseif ($event->type == 'charge.failed') {
 
 	$subject = 'Your payment has been received: '.$event->data->object->id.'';
 	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-	//mail('ptibogxiv@msn.com', $subject, 'test', $headers);
 
 }
 elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
@@ -321,7 +320,6 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 	$body = "";
 	$subject = 'Facture '.$invoice->ref;
 	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-	//mail('ptibogxiv@msn.com', $subject, $body, $headers); TODO  convert in dolibarr standard
 }
 elseif ($event->type == 'customer.deleted') {
 	$db->begin();
