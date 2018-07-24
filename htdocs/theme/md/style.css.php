@@ -3743,6 +3743,8 @@ tr.visible {
     border: 0px;
     background-color: transparent;
     background-image: none;
+    color: #000 !important;
+    text-shadow: none;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;
