@@ -121,13 +121,14 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 
 		if (! file_exists($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH.'/ChromePhp.php') && ! file_exists($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH.'/ChromePhp.class.php'))
 		{
+			$conf->global->MAIN_SYSLOG_DISABLE_CHROMEPHP = 1; // avoid infinite loop
 			if (is_object($langs))   // $langs may not be defined yet.
 			{
-			    $errors[] = $langs->trans("ErrorFailedToOpenFile", 'ChromePhp.class.php or ChromePhp.php');
+				$errors[] = $langs->trans("ErrorFailedToOpenFile", 'ChromePhp.class.php or ChromePhp.php');
 			}
 			else
 			{
-		        $errors[] = "ErrorFailedToOpenFile ChromePhp.class.php or ChromePhp.php";
+				$errors[] = "ErrorFailedToOpenFile ChromePhp.class.php or ChromePhp.php";
 			}
 		}
 
