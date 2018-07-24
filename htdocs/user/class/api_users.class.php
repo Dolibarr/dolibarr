@@ -67,7 +67,7 @@ class Users extends DolibarrApi
 	    global $db, $conf;
 
 	    $obj_ret = array();
-se
+
 		if(! DolibarrApiAccess::$user->rights->user->user->lire) {
 	       throw new RestException(401, "You are not allowed to read list of users");
 	    }
