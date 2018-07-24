@@ -231,11 +231,12 @@ class Users extends DolibarrApi
 	 *
 	 * @param   int     $id        User ID
 	 * @param   int     $group     Group ID
+	 * @param   int     $entity    Entity ID
 	 * @return  int                1 if success
      *
 	 * @url	GET {id}/setGroup/{group}
 	 */
-	function setGroup($id, $group) {
+	function setGroup($id, $group, $entity = 1) {
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
 		//}
@@ -250,7 +251,7 @@ class Users extends DolibarrApi
           throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
         }
 
-        $result = $this->useraccount->SetInGroup($group,1);
+        $result = $this->useraccount->SetInGroup($group, $entity);
         if (! ($result > 0))
         {
             throw new RestException(500, $this->useraccount->error);
