@@ -29,12 +29,7 @@
  *	\brief	  Page to show predefined fichinter
  */
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) 
-	$res=@include("../../main.inc.php");		// For root directory
-if (! $res && file_exists("../../../main.inc.php")) 
-	$res=@include("../../../main.inc.php");	// For "custom" directory
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterrec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
