@@ -296,6 +296,9 @@ if ($type_element == 'contract')
 	$thirdTypeSelect='customer';
 }
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListSelect',$parameters);    // Note that $action and $object may have been modified by hook
+
 if (!empty($sql_select))
 {
 	$sql = $sql_select;
