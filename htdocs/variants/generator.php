@@ -1,6 +1,6 @@
 <?php
-
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,18 +115,18 @@ if ($_POST) {
 
 			if ($res > 0) {
 				$db->commit();
-				setEventMessage($langs->trans('RecordSaved'));
+				setEventMessages($langs->trans('RecordSaved'), null);
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 				exit;
 			}
 		} else {
-			setEventMessage($langs->trans('ErrorDeletingGeneratedProducts'), 'errors');
+			setEventMessages($langs->trans('ErrorDeletingGeneratedProducts'), null, 'errors');
 		}
 
 		$db->rollback();
 
 	} else {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	}
 }
 
