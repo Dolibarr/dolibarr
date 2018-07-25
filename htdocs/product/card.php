@@ -689,7 +689,7 @@ if (empty($reshook))
                 if (($result = $propal->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
-                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
                 else
                 {
@@ -732,7 +732,7 @@ if (empty($reshook))
                 if (($result = $commande->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
-                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
                 else
                 {
@@ -775,7 +775,7 @@ if (empty($reshook))
                 if (($result = $facture->defineBuyPrice($pu_ht, GETPOST('remise_percent'), $object->id)) < 0)
                 {
                     dol_syslog($langs->trans('FailedToGetCostPrice'));
-                    setEventMessage($langs->trans('FailedToGetCostPrice'), 'errors');
+                    setEventMessages($langs->trans('FailedToGetCostPrice'), null, 'errors');
                 }
                 else
                 {
