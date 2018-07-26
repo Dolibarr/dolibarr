@@ -458,7 +458,7 @@ class FormProjets
 	 *    @param    int         $limitonstatus      Add filters to limit length of list to opened status (for example to avoid ERR_RESPONSE_HEADERS_TOO_BIG on project/element.php page). TODO To implement
 	 *    @return	int|string						The HTML select list of element or '' if nothing or -1 if KO
 	 */
-	function select_element($table_element, $socid=0, $morecss='', $limitonstatus=-2)
+	function select_element($table_element, $socid=0, $morecss='', $limitonstatus=-2,$projectkey="fk_projet")
 	{
 		global $conf, $langs;
 
@@ -468,7 +468,7 @@ class FormProjets
 		if (! in_array($table_element, array('don','expensereport_det','expensereport','loan','stock_mouvement','chargesociales'))) $linkedtothirdparty=true;
 
 		$sqlfilter='';
-		$projectkey="fk_projet";
+		
 		//print $table_element;
 		switch ($table_element)
 		{
