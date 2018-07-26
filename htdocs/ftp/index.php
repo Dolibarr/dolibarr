@@ -22,7 +22,7 @@
  *	\brief      Main page for FTP section area
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/treeview.lib.php';
@@ -83,7 +83,7 @@ $mesg='';
 // Submit file
 if (GETPOST("sendit") && ! empty($conf->global->MAIN_UPLOAD_DOC))
 {
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 	$result=$ecmdir->fetch($_REQUEST["section"]);
 	if (! $result > 0)
