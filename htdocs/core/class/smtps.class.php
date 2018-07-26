@@ -656,7 +656,7 @@ class SMTPs
 		{
 			// If the path is not valid, this will NOT generate an error,
 			// it will simply return false.
-			if ( ! @include ( $_strConfigPath ) )
+			if ( ! @include $_strConfigPath)
 			{
 				$this->_setErr(110, '"' . $_strConfigPath . '" is not a valid path.');
 				$_retVal = false;

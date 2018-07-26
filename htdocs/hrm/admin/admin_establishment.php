@@ -20,7 +20,7 @@
  * \ingroup HRM
  * \brief 	HRM Establishment module setup page
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 

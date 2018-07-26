@@ -206,7 +206,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			$ret[$pc.'phone_mobile'] = $ct->phone_mobile;
 
 			// fetch external user extrafields
-			require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 			$extrafields=new ExtraFields($this->db);
 			$extralabels=$extrafields->fetch_name_optionals_label($ct->table_element, true);
 			$extrafields_num = $ct->fetch_optionals();

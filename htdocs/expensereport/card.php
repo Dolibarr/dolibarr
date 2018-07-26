@@ -41,7 +41,7 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/paymentexpensereport.clas
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 if (! empty($conf->accounting->enabled)) {
-	include_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page
@@ -95,7 +95,7 @@ $extrafields = new ExtraFields($db);
 $extralabels = $extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-require DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be require, not require_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $hookmanager->initHooks(array('expensereportcard','globalcard'));
@@ -2456,7 +2456,7 @@ $defaulttopic='SendExpenseReportRef';
 $diroutput = $conf->expensereport->dir_output;
 $trackid = 'exp'.$object->id;
 
-require DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 
 
 llxFooter();

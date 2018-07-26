@@ -443,7 +443,7 @@ class FactureRec extends CommonInvoice
 
 		// Retreive all extrafield for line
 		// fetch optionals attributes and labels
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline=new ExtraFields($this->db);
 		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec',true);
 

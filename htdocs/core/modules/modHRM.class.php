@@ -20,7 +20,7 @@
  * \ingroup HRM
  * \brief   Description and activation file for module HRM
  */
-include_once (DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php");
+include_once DOL_DOCUMENT_ROOT . "/core/modules/DolibarrModules.class.php";
 
 /**
  * Class to describe and activate the HRM module

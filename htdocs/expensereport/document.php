@@ -73,7 +73,7 @@ $modulepart='trip';
  * Actions
  */
 
-require_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
+include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 
 
 /*

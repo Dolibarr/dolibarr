@@ -22,7 +22,7 @@
  *       \brief      File that is entry point to call Dolibarr WebServices
  */
 
-if (! defined("NOCSRFCHECK"))    define("NOCSRFCHECK",'1');
+if (! defined("NOCSRFCHECK")) define("NOCSRFCHECK",'1');
 
 require '../master.inc.php';
 require_once NUSOAP_PATH.'/nusoap.php';        // Include SOAP
@@ -659,7 +659,7 @@ function createOrder($authentication,$order)
 {
 	global $db,$conf,$langs;
 
-	require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
 	$now=dol_now();
 
