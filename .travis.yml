@@ -27,6 +27,7 @@ addons:
     - apache2
     # mod_php is not supported by Travis. Add fcgi. We install FPM later on.
     - libapache2-mod-fastcgi
+    - sourceline: 'deb http://http.us.debian.org/debian  main non-free'
     # We need pgloader for import mysql database into pgsql
     - pgloader
 
