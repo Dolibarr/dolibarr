@@ -21,13 +21,13 @@ addons:
     - postgresql
     - sourceline: 'deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main'
     - key_url: 'https://www.postgresql.org/media/keys/ACCC4CF8.asc'  
+    - sourceline: 'deb http://http.us.debian.org/debian  main non-free'
     packages:
     # We need a webserver to test the webservices
     # Let's install Apache with.
     - apache2
     # mod_php is not supported by Travis. Add fcgi. We install FPM later on.
     - libapache2-mod-fastcgi
-    - sourceline: 'deb http://http.us.debian.org/debian  main non-free'
     # We need pgloader for import mysql database into pgsql
     - pgloader
 
