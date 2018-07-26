@@ -56,7 +56,7 @@ $permissionnote=$user->rights->expensereport->creer;	// Used by the include of a
  * Actions
  */
 
-include DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be include, not includ_once
+require DOL_DOCUMENT_ROOT.'/core/actions_setnotes.inc.php';	// Must be require, not require_once
 
 
 /*

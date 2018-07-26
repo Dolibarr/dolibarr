@@ -1127,7 +1127,7 @@ class ExpenseReport extends CommonObject
 			    // Rename directory if dir was a temporary ref
 			    if (preg_match('/^[\(]?PROV/i', $this->ref))
 			    {
-			    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+			    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 			    	// On renomme repertoire ($this->ref = ancienne ref, $num = nouvelle ref)
 					// in order not to lose the attachments

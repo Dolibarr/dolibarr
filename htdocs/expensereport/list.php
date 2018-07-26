@@ -143,7 +143,7 @@ $parameters=array('socid'=>$socid);
 $reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
-include DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
+require DOL_DOCUMENT_ROOT.'/core/actions_changeselectedfields.inc.php';
 
 if (empty($reshook))
 {
@@ -179,7 +179,7 @@ if (empty($reshook))
 
     if ($action == 'update' && ! $cancel)
     {
-    	require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+    	include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
     	if ($canedituser)    // Case we can edit all field
     	{
@@ -313,7 +313,7 @@ if (empty($user->rights->expensereport->readall) && empty($user->rights->expense
 	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
 // Add where from extra fields
-include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
+require DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_sql.tpl.php';
 // Add where from hooks
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListWhere',$parameters);    // Note that $action and $object may have been modified by hook
