@@ -285,7 +285,7 @@
 	<!-- <rule ref="PEAR.ControlStructures.MultiLineCondition" /> -->
 
 	<!-- Test if () are removed for includes -->
-	<!-- <rule ref="PEAR.Files.IncludingFile"/> -->
+	<rule ref="PEAR.Files.IncludingFile" />
 
 	<rule ref="PEAR.Formatting.MultiLineAssignment" />
 
