@@ -59,10 +59,10 @@ class FormPropal
 
         $prefix='';
         $listofstatus=array();
-        if ($mode == 'supplier') 
+        if ($mode == 'supplier')
         {
             $prefix='SupplierProposalStatus';
-            
+
             $langs->load("supplier_proposal");
             $listofstatus=array(
                 0=>array('id'=>0, 'code'=>'PR_DRAFT'),
@@ -75,7 +75,7 @@ class FormPropal
         else
         {
             $prefix="PropalStatus";
-            
+
             $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
             $sql .= " WHERE active = 1";
             dol_syslog(get_class($this)."::selectProposalStatus", LOG_DEBUG);
@@ -139,4 +139,3 @@ class FormPropal
         print '</select>';
     }
 }
-

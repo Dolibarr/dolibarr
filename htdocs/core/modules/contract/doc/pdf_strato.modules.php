@@ -43,17 +43,17 @@ class pdf_strato extends ModelePDFContract
      * @var DoliDb Database handler
      */
     public $db;
-	
+
 	/**
      * @var string model name
      */
     public $name;
-	
+
 	/**
      * @var string model description (short text)
      */
     public $description;
-	
+
 	/**
      * @var string document type
      */
@@ -63,8 +63,8 @@ class pdf_strato extends ModelePDFContract
      * @var array() Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 4); 
-	
+	public $phpmin = array(5, 4);
+
 	/**
      * Dolibarr version of the loaded document
      * @public string
@@ -75,32 +75,32 @@ class pdf_strato extends ModelePDFContract
      * @var int page_largeur
      */
     public $page_largeur;
-	
+
 	/**
      * @var int page_hauteur
      */
     public $page_hauteur;
-	
+
 	/**
      * @var array format
      */
     public $format;
-	
+
 	/**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
@@ -177,7 +177,7 @@ class pdf_strato extends ModelePDFContract
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-		
+
 		// Translations
 		$outputlangs->loadLangs(array("main", "dict", "companies", "contracts"));
 
@@ -537,9 +537,9 @@ class pdf_strato extends ModelePDFContract
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs;
-		
+
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-		
+
 		// Translations
 		$outputlangs->loadLangs(array("main", "dict", "contract", "companies"));
 
@@ -721,4 +721,3 @@ class pdf_strato extends ModelePDFContract
 	}
 
 }
-

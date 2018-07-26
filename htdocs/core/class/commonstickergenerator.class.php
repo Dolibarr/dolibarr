@@ -93,7 +93,7 @@ abstract class CommonStickerGenerator
 	{
 		$this->db = $db;
 	}
-		
+
 	/**
 	 *  Function to build PDF on disk, then output on HTTP strem.
 	 *
@@ -114,7 +114,7 @@ abstract class CommonStickerGenerator
 	 * @return  void
 	 */
 	abstract function addSticker(&$pdf,$outputlangs,$param);
-	
+
 	/**
 	 * Methode qui permet de modifier la taille des caracteres
 	 * Cela modiera aussi l'espace entre chaque ligne
@@ -130,7 +130,7 @@ abstract class CommonStickerGenerator
 			$this->_Line_Height = $this->_Get_Height_Chars($pt);
 			$pdf->SetFont('','',$pt);
 		}
-	}	
+	}
 
 	/**
 	 * protected Print dot line
@@ -251,7 +251,7 @@ abstract class CommonStickerGenerator
 	 * @param    string    $format  Format
 	 * @return   void
 	 */
-	function _Set_Format(&$pdf, $format)  
+	function _Set_Format(&$pdf, $format)
 	{
 		$this->_Metric 	= $format['metric'];
 		$this->_Avery_Name 	= $format['name'];

@@ -83,7 +83,7 @@ if ($id > 0 || ! empty($ref))
 
 }
 
-if(empty($id) && !empty($object->id)) $id = $object->id; 
+if(empty($id) && !empty($object->id)) $id = $object->id;
 
 $modulepart='product';
 
@@ -989,8 +989,8 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 
 	print "</table>";
 
-	if (!empty($user->rights->produit->creer)){ 
-	    print '</form>'; 
+	if (!empty($user->rights->produit->creer)){
+	    print '</form>';
 	}
 }
 

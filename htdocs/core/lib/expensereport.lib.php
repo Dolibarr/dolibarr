@@ -67,7 +67,7 @@ function expensereport_prepare_head($object)
 	    $head[$h][2] = 'note';
 	    $h++;
 	}
-	
+
 	$head[$h][0] = DOL_URL_ROOT . '/expensereport/info.php?id=' . $object->id;
 	$head[$h][1] = $langs->trans("Info");
 	$head[$h][2] = 'info';
@@ -81,7 +81,7 @@ function expensereport_prepare_head($object)
 /**
  * Returns an array with the tabs for the "Expense report payment" section
  * It loads tabs from modules looking for the entity payment
- * 
+ *
  * @param	Paiement	$object		Current payment object
  * @return	array					Tabs for the payment section
  */
@@ -139,7 +139,7 @@ function expensereport_admin_prepare_head()
 		$head[$h][2] = 'expenseik';
 		$h++;
 	}
-	
+
 	if (!empty($conf->global->MAIN_USE_EXPENSE_RULE))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/expensereport_rules.php";
@@ -147,7 +147,7 @@ function expensereport_admin_prepare_head()
 		$head[$h][2] = 'expenserules';
 		$h++;
 	}
-	
+
 	// Show more tabs from modules
 	// Entries must be declared in modules descriptor with line
 	// $this->tabs = array('entity:+tabname:Title:@mymodule:/mymodule/mypage.php?id=__ID__');   to add new tab
