@@ -1305,7 +1305,7 @@ if ($id > 0)
                })';
 			    print '</script>'."\n";
 			    
-			    $formproject->selectTasks((! empty($societe->id)?$societe->id:-1), $object->fk_element, 'fk_element', 24, 0, '1', 1, 0, 0, 'maxwidth500',$object->fk_project);
+			    $formproject->selectTasks((! empty($societe->id)?$societe->id:-1), $object->fk_element, 'fk_element', 24, 0, 0, 1, 0, 0, 'maxwidth500',$object->fk_project);
 			}
 			else{
                 print '<td>';
