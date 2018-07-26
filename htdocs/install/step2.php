@@ -65,6 +65,8 @@ if ($conffile == "/etc/dolibarr/conf.php") $forcedfile="/etc/dolibarr/install.fo
 if (@file_exists($forcedfile)) {
 	$useforcedwizard = true;
 	include_once $forcedfile;
+	// test for travis
+	if (!empty($argv[1]) && $argv[1] == "set") $action = "set";
 }
 
 dolibarr_install_syslog("--- step2: entering step2.php page");
@@ -620,8 +622,15 @@ else
     print 'Parameter action=set not defined';
 }
 
+$ret=0;
+if (! $ok && isset($argv[1])) $ret=1;
+dol_syslog("Exit ".$ret);
+
 dolibarr_install_syslog("--- step2: end");
 
 pFooter($ok?0:1,$setuplang);
 
 if (isset($db) && is_object($db)) $db->close();
+
+// Return code if ran from command line
+if ($ret) exit($ret);
