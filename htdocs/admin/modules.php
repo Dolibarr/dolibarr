@@ -8,7 +8,7 @@
  * Copyright (C) 2015		Jean-François Ferry		<jfefe@aternatik.fr>
  * Copyright (C) 2015		Raphaël Doursenaud		<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2018		Nicolas ZABOURI 		<info@inovea-conseil.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -672,7 +672,7 @@ if ($mode == 'common')
         print '<td class="center nowrap" width="120px">';
         print $versiontrans;
         if(!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)){
-            require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';            
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
             if (!empty($objMod->url_last_version)) {
                 $newversion = getURLContent($objMod->url_last_version);
                 if(isset($newversion['content'])){

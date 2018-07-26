@@ -420,7 +420,7 @@ if ($conf->global->BANK_REPORT_LAST_NUM_RELEVE) {
     print '</a>';
     print '</td>';
 }
-else 
+else
 {
     print '<td align="center">' . "\n";
     print '<a href="' . $_SERVER["PHP_SELF"] . '?action=setreportlastnumreleve">' . img_picto($langs->trans("Disabled"),

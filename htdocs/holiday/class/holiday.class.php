@@ -418,7 +418,7 @@ class Holiday extends CommonObject
 		}
 		else
 		{
-			// SQL Error 
+			// SQL Error
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -542,7 +542,7 @@ class Holiday extends CommonObject
 		}
 		else
 		{
-			// SQL Error 
+			// SQL Error
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
