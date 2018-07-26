@@ -155,7 +155,7 @@ class vCard
      *	@return	void
      */
     function setBirthday($date)
-    { 
+    {
         // $date format is YYYY-MM-DD - RFC 2425 and RFC 2426
         $this->properties["BDAY"] = dol_print_date($date, 'dayrfc');
     }

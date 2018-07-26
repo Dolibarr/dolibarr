@@ -22,7 +22,7 @@
 /* Enable jcrop plugin onto id cropbox */
 jQuery(function() {
    jQuery('#cropbox').Jcrop({
-      onSelect: updateCoords, 
+      onSelect: updateCoords,
       onChange: updateCoords
    });
 });
