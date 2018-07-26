@@ -1275,7 +1275,7 @@ if ($id > 0)
 		}
 
 		// Priority
-		print '<tr><td class="titlefieldcreate nowrap">'.$langs->trans("Priority").'</td><td>';
+		print '<tr><td class="titlefieldcreate nowrap" >'.$langs->trans("Priority").'</td><td>';
 		print '<input type="text" name="priority" value="'.($object->priority?$object->priority:'').'" size="5">';
 		print '</td></tr>';
 
@@ -1283,8 +1283,35 @@ if ($id > 0)
 		if (! empty($object->fk_element) && ! empty($object->elementtype))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+			
 			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
+			
+			if($object->elementtype == 'task' && ! empty($conf->projet->enabled)){
+			    print '<td id="project-task-input-container" >';
+			    
+			    $urloption='?action=create'; // we use create not edit for more flexibility
+			    $url = dol_buildpath('comm/action/card.php',2).$urloption;
+			    
+			    // update task list
+			    print "\n".'<script type="text/javascript" >';
+			    print '$(document).ready(function () {
+	               $("#projectid").change(function () {
+                        var url = "'.$url.'&projectid="+$("#projectid").val();
+                        $.get(url, function(data) {
+                            console.log($( data ).find("#fk_element").html());
+                            if (data) $("#fk_element").html( $( data ).find("#taskid").html() ).select2();
+                        })
+                  });
+               })';
+			    print '</script>'."\n";
+			    
+			    $formproject->selectTasks((! empty($societe->id)?$societe->id:-1), $object->fk_element, 'fk_element', 24, 0, '1', 1, 0, 0, 'maxwidth500',$object->fk_project);
+			}
+			else{
+                print '<td>';
+			    print dolGetElementUrl($object->fk_element,$object->elementtype,1);
+			}
+			print '</td></tr>';
 		}
 
         // Description
