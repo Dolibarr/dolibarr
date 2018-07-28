@@ -566,7 +566,6 @@ if ($conf->global->PRODUIT_SOUSPRODUITS)
 }
 */
 
-
+// End of page
 llxFooter();
-
 $db->close();
