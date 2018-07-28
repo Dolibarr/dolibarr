@@ -280,6 +280,6 @@ dol_fiche_end();
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();
