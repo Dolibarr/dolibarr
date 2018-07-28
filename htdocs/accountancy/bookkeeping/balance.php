@@ -298,7 +298,8 @@ else {
 	print "</table>";
 	print '</form>';
 
-	llxFooter();
 }
 
+// End of page
+llxFooter();
 $db->close();
