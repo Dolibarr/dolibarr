@@ -1,0 +1,30 @@
+<html>
+<head>
+    <title>Mouse Buttons Test Page</title>
+    <style type="text/css">
+        #input {
+            width: 200px;
+            height: 200px;
+            border: 1px solid red;
+        }
+    </style>
+    <script type="text/javascript">
+
+        window.onload = function() {
+            var input = document.getElementById('input'),
+                check = document.getElementById('check');
+
+            input.addEventListener('mousedown', function(e) {
+                check.innerHTML = e.button;
+            });
+        };
+
+    </script>
+</head>
+<body>
+<div id="input" />
+<div id="check" />
+
+</body>
+
+</html>

@@ -13,8 +13,12 @@
  *  - Ar-PHP library, available from sourceforge, for the first
  *      part of this example. Drop it in the folder listed below:
  */
-require_once(dirname(__FILE__) . "/../../Escpos.php");
-require_once(dirname(__FILE__) . "/../../vendor/I18N/Arabic.php");
+require __DIR__ . '/../../autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintBuffers\ImagePrintBuffer;
+use Mike42\Escpos\CapabilityProfiles\EposTepCapabilityProfile;
+
+require_once(dirname(__FILE__) . "/../../I18N/Arabic.php");
 
 /*
  * First, convert the text into LTR byte order with joined letters,
@@ -38,10 +42,10 @@ $text = $Arabic -> utf8Glyphs($text);
 $buffer = new ImagePrintBuffer();
 $profile = EposTepCapabilityProfile::getInstance();
 $connector = new FilePrintConnector("php://output");
-		// = WindowsPrintConnector("LPT2");
-		// Windows LPT2 was used in the bug tracker
+        // = WindowsPrintConnector("LPT2");
+        // Windows LPT2 was used in the bug tracker
 
-$printer = new Escpos($connector, $profile);
+$printer = new Printer($connector, $profile);
 $printer -> setPrintBuffer($buffer);
 $printer -> text($text . "\n");
 $printer -> close();

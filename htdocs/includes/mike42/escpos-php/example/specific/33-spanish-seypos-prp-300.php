@@ -6,11 +6,14 @@
  *
  * Use the hardware switch to activate "Two-byte Character Code"
  */
-require_once(dirname(__FILE__) . "/../../Escpos.php");
+require __DIR__ . '/../../autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\CapabilityProfiles\SimpleCapabilityProfile;
+
 $connector = new FilePrintConnector("php://output");
 $profile = SimpleCapabilityProfile::getInstance();
-$printer = new Escpos($connector);
+$printer = new Printer($connector);
 $printer -> text("El pingüino Wenceslao hizo kilómetros bajo exhaustiva lluvia y frío, añoraba a su querido cachorro.\n");
 $printer -> cut();
 $printer -> close();
-

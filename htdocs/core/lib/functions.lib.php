@@ -13,6 +13,7 @@
  * Copyright (C) 2014		Cédric GROSS					<c.gross@kreiz-it.fr>
  * Copyright (C) 2014-2015	Marcos García				<marcosgdf@gmail.com>
  * Copyright (C) 2015		Jean-François Ferry			<jfefe@aternatik.fr>
+ * Copyright (C) 2018       Rafael San José             <info@rsanjoseo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1013,9 +1014,9 @@ function dol_strtoupper($utf8_string)
  */
 function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='', $restricttologhandler='')
 {
-	global $conf, $user;
+	global $conf, $user, $debugBar;
 
-	// If syslog module enabled
+    // If syslog module enabled
 	if (empty($conf->syslog->enabled)) return;
 
 	if ($ident < 0)
@@ -1028,7 +1029,9 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 
 	if (! empty($message))
 	{
-		// Test log level
+        $debugBar['messages']->addMessage($message);
+
+        // Test log level
 		$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);
 		if (!in_array($level, $logLevels, true))
 		{

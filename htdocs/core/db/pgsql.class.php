@@ -8,6 +8,7 @@
  * Copyright (C) 2012		Yann Droneaud			<yann@droneaud.fr>
  * Copyright (C) 2012		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2015       Marcos García           <marcosgdf@gmail.com>
+ * Copyright (C) 2018       Rafael San José         <info@rsanjoseo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -480,11 +481,12 @@ class DoliDBPgsql extends DoliDB
 	 */
 	function query($query,$usesavepoint=0,$type='auto')
 	{
-		global $conf;
+		global $conf, $debugBar;
 
-		$query = trim($query);
+        $query = trim($query);
+        $debugBar['sql']->addMessage('Pgsql: ' . $query);
 
-		// Convert MySQL syntax to PostgresSQL syntax
+        // Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query,$type,($this->unescapeslashquot && $this->standard_conforming_strings));
 		//print "After convertSQLFromMysql:\n".$query."<br>\n";
 

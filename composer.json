@@ -39,7 +39,8 @@
         "jakub-onderka/php-console-highlighter": "^0",
         "phpunit/phpunit": "^4",
         "squizlabs/php_codesniffer": "^2",
-        "phpunit/phpunit-selenium": "^2"
+        "phpunit/phpunit-selenium": "^2",
+        "maximebf/debugbar": "1.*"
     },
     "suggest": {
         "ext-mysqlnd": "To use with MySQL or MariaDB",

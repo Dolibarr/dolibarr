@@ -4,6 +4,7 @@
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2007      Simon Desee          <simon@dedisoft.com>
  * Copyright (C) 2015       Cedric GROSS            <c.gross@kreiz-it.fr>
+ * Copyright (C) 2018       Rafael San José         <info@rsanjoseo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -324,9 +325,12 @@ class DoliDBMssql extends DoliDB
 	 */
 	function query($query,$usesavepoint=0,$type='auto')
 	{
-		$query = trim($query);
+        global $debugBar;
 
-		if (preg_match('/^--/',$query)) return true;
+        $query = trim($query);
+        $debugBar['sql']->addMessage('Mssql: ' . $query);
+
+        if (preg_match('/^--/',$query)) return true;
 
 		// Conversion syntaxe MySql vers MSDE.
 		$query = str_ireplace("now()", "getdate()", $query);

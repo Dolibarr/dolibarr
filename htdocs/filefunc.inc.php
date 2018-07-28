@@ -9,6 +9,7 @@
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net>
  * Copyright (C) 2010      Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Bahfir Abbes         <bafbes@gmail.com>
+ * Copyright (C) 2018      Rafael San José      <info@rsanjoseo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +38,9 @@ if (! defined('EURO')) define('EURO',chr(128));
 
 // Define syslog constants
 if (! defined('LOG_DEBUG'))
-{
-	if (! function_exists("syslog")) {
-		// For PHP versions without syslog (like running on Windows OS)
+ {
+    if (!function_exists("syslog")) {
+        // For PHP versions without syslog (like running on Windows OS)
 		define('LOG_EMERG',0);
 		define('LOG_ALERT',1);
 		define('LOG_CRIT',2);
@@ -238,6 +239,8 @@ define('DOL_URL_ROOT', $suburi);											// URL relative root ('', '/dolibarr'
 // Define prefix MAIN_DB_PREFIX
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 
+// Load vendor packages
+include_once DOL_DOCUMENT_ROOT . '/includes/autoload.php';
 
 /*
  * Define PATH to external libraries
@@ -262,6 +265,14 @@ if (! defined('JS_JQUERY_FLOT'))       { define('JS_JQUERY_FLOT',       (!isset(
 if (! defined('DOL_DEFAULT_TTF'))      { define('DOL_DEFAULT_TTF',      (!isset($dolibarr_font_DOL_DEFAULT_TTF))?DOL_DOCUMENT_ROOT.'/includes/fonts/Aerial.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF)?'':$dolibarr_font_DOL_DEFAULT_TTF)); }
 if (! defined('DOL_DEFAULT_TTF_BOLD')) { define('DOL_DEFAULT_TTF_BOLD', (!isset($dolibarr_font_DOL_DEFAULT_TTF_BOLD))?DOL_DOCUMENT_ROOT.'/includes/fonts/AerialBd.ttf':(empty($dolibarr_font_DOL_DEFAULT_TTF_BOLD)?'':$dolibarr_font_DOL_DEFAULT_TTF_BOLD)); }
 
+ use DebugBar\StandardDebugBar;
+
+if (LOG_DEBUG > 0) {
+    $debugBar = new StandardDebugBar();
+    $debugBar->addCollector(new DebugBar\DataCollector\MessagesCollector('sql'));
+    $debugBar['time']->startMeasure('init', 'Counter initialization');
+    $debugBarRender = $debugBar->getJavascriptRenderer(DOL_URL_ROOT . '/includes/maximebf/debugbar/src/DebugBar/Resources/');
+}
 
 /*
  * Include functions

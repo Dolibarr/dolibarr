@@ -1,0 +1,26 @@
+language: php
+
+php:
+  - 5.3.3
+  - 5.4
+  - 5.5
+  - 5.6
+  - 7.0
+  - hhvm
+
+sudo: false
+
+cache:
+  directories:
+    - vendor
+    - $HOME/.composer/cache
+
+before_script:
+  - composer self-update
+  - composer install --no-interaction --prefer-source --dev
+  - composer require jakub-onderka/php-console-highlighter 0.3
+
+script:
+  - ./vendor/bin/tester -p php tests
+  - ./parallel-lint --exclude vendor --exclude tests/examples --no-colors .
+  - ./parallel-lint --exclude vendor --exclude tests/examples .

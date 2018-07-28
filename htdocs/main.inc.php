@@ -11,6 +11,7 @@
  * Copyright (C) 2012       Christophe Battarel     <christophe.battarel@altairis.fr>
  * Copyright (C) 2014-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Rafael San José         <info@rsanjoseo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1154,9 +1155,9 @@ function top_httphead($contenttype='text/html', $forcenocache=0)
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0, $disablenofollow=0)
 {
-	global $db, $conf, $langs, $user, $hookmanager;
+	global $db, $conf, $langs, $user, $hookmanager, $debugBarRender;
 
-	top_httphead();
+    top_httphead();
 
 	if (empty($conf->css)) $conf->css = '/theme/eldy/style.css.php';	// If not defined, eldy by default
 
@@ -1430,8 +1431,14 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
             }
         }
 
-        if (! empty($head)) print $head."\n";
+        if (!empty($head))
+            print $head . "\n";
         if (! empty($conf->global->MAIN_HTML_HEADER)) print $conf->global->MAIN_HTML_HEADER."\n";
+
+        if (isset($debugBarRender)) {
+            print '<!-- Includes CSS/JS added by DebugBar -->' . "\n";
+            print $debugBarRender->renderHead();
+        }
 
         print "</head>\n\n";
     }
@@ -1952,8 +1959,9 @@ if (! function_exists("llxFooter"))
 	{
 		global $conf, $langs, $user, $object;
 		global $delayedhtmlcontent, $contextpage;
+        global $debugBarRender;
 
-		$ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
+        $ext='layout='.$conf->browser->layout.'&version='.urlencode(DOL_VERSION);
 
 		// Global html output events ($mesgs, $errors, $warnings)
 		dol_htmloutput_events($disabledoutputofmessages);
@@ -2067,8 +2075,13 @@ if (! function_exists("llxFooter"))
 		print "\n<!-- A div to allow dialog popup -->\n";
 		print '<div id="dialogforpopup" style="display: none;"></div>'."\n";
 
-		print "</body>\n";
-		print "</html>\n";
+        if (isset($debugBarRender)) {
+            print '<!-- Includes info added by DebugBar -->' . "\n";
+            print $debugBarRender->render();
+        }
+
+        print "</body>\n";
+        print "</html>\n";
 	}
 }
 

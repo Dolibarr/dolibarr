@@ -5,6 +5,7 @@
  * Copyright (C) 2006		Andre Cianfarani		<acianfa@free.fr>
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2015       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018       Rafael San José         <info@rsanjoseo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -250,14 +251,14 @@ class DoliDBMysqli extends DoliDB
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
-    	global $conf;
+    	global $conf, $debugBar;
 
         $query = trim($query);
+        $debugBar['sql']->addMessage('Mysqli: ' . $query);
 
-	    if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
+        if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
 
-        if (! $this->database_name)
-        {
+        if (!$this->database_name) {
             // Ordre SQL ne necessitant pas de connexion a une base (exemple: CREATE DATABASE)
             $ret = $this->db->query($query);
         }

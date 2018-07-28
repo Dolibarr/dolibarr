@@ -1,5 +1,9 @@
 <?php
-require_once(dirname(__FILE__) . "/../../Escpos.php");
+require __DIR__ . '/../../autoload.php';
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\CapabilityProfiles\DefaultCapabilityProfile;
+
 /*
  * This example shows how tok send a custom command to the printer-
  * The use case here is an Epson TM-T20II and German text.
@@ -20,13 +24,12 @@ require_once(dirname(__FILE__) . "/../../Escpos.php");
 $connector = new FilePrintConnector("php://output");
 $profile = DefaultCapabilityProfile::getInstance(); // Works for Epson printers
 
-$printer = new Escpos($connector, $profile);
-$cmd = Escpos::ESC . "V" . chr(1); // Try out 90-degree rotation.
+$printer = new Printer($connector, $profile);
+$cmd = Printer::ESC . "V" . chr(1); // Try out 90-degree rotation.
 $printer -> getPrintConnector() -> write($cmd);
 $printer -> text("Beispieltext in Deutsch\n");
 $printer -> cut();
 $printer -> close();
-
 /*
  * Hex-dump of output confirms that ESC V 1 being sent:
  *

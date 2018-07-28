@@ -5,6 +5,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2009 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2015      Raphaël Doursenaud   <rdoursenaud@gpcsolutions.fr>
+ * Copyright (C) 2018      Rafael San José      <info@rsanjoseo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -402,8 +403,11 @@ class DoliDBSqlite3 extends DoliDB
      */
     function query($query,$usesavepoint=0,$type='auto')
     {
+        global $debugBar;
+
         $ret=null;
         $query = trim($query);
+        $debugBar['sql']->addMessage('sqlite3: ' . $query);
         $this->error = 0;
 
         // Convert MySQL syntax to SQLite syntax

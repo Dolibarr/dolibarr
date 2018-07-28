@@ -1,0 +1,52 @@
+{
+    "name": "phpunit/phpunit-selenium",
+    "description": "Selenium Server integration for PHPUnit",
+    "type": "library",
+    "keywords": [
+        "xunit",
+        "phpunit",
+        "testing",
+        "selenium"
+    ],
+    "homepage": "http://www.phpunit.de/",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Giorgio Sironi",
+            "email": "info@giorgiosironi.com",
+            "role": "developer"
+        },
+        {
+            "name": "Ivan Kurnosov",
+            "email": "zerkms@zerkms.com",
+            "role": "developer"
+        },
+        {
+            "name": "Sebastian Bergmann",
+            "email": "sb@sebastian-bergmann.de",
+            "role": "original developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/sebastianbergmann/phpunit-selenium/issues",
+        "irc": "irc://irc.freenode.net/phpunit"
+    },
+    "require": {
+        "php": ">=5.3.3",
+        "phpunit/phpunit": "~4.8",
+        "sebastian/comparator": "~1.0",
+        "ext-curl": "*",
+        "ext-dom": "*"
+    },
+    "require-dev": {
+       "phing/phing": "2.*"
+    },
+    "autoload": {
+        "classmap": [
+            "PHPUnit/"
+        ]
+    },
+    "include-path": [
+        ""
+    ]
+}

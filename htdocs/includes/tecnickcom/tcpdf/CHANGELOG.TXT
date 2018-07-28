@@ -1,9 +1,3 @@
-Unreleased
-	- fix Undesired mouseover effect on links in PDF on Chrome Pdf Viewer
-
-6.2.13 (2016-06-10)
-	- IMPORTANT: A new version of this library is under development at https://github.com/tecnickcom/tc-lib-pdf and as a consequence this version will not receive any additional development or support. This version should be considered obsolete, new projects should use the new version as soon it will become stable.
-
 6.2.12 (2015-09-12)
 	- fix composer package name to tecnickcom/tcpdf
 

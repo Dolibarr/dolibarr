@@ -1,0 +1,29 @@
+build: off
+cache:
+    - c:\php -> appveyor.yml
+    - '%LOCALAPPDATA%\Composer\files -> appveyor.yml'
+
+clone_folder: c:\projects\php-parallel-lint
+
+init:
+    - SET PATH=c:\php;%PATH%
+    - SET INSTALL_PHP=1
+    - SET ANSICON=121x90 (121x90)
+
+install:
+    # Install PHP
+    - IF EXIST c:\php (SET INSTALL_PHP=0) ELSE (mkdir c:\php)
+    - IF %INSTALL_PHP%==1 cd c:\php
+    - IF %INSTALL_PHP%==1 appveyor DownloadFile http://windows.php.net/downloads/releases/archives/php-5.6.15-nts-Win32-VC11-x86.zip
+    - IF %INSTALL_PHP%==1 7z x php-5.6.15-nts-Win32-VC11-x86.zip >nul
+    - IF %INSTALL_PHP%==1 del /Q *.zip
+    - cd c:\projects\php-parallel-lint
+
+    # Install Composer dependencies
+    - appveyor DownloadFile https://getcomposer.org/composer.phar
+    - php composer.phar install --no-interaction --prefer-source --no-progress
+
+test_script:
+    - vendor\bin\tester tests -p php
+    - php parallel-lint.php --exclude vendor --exclude tests\examples --no-colors .
+    - php parallel-lint.php --exclude vendor --exclude tests\examples .

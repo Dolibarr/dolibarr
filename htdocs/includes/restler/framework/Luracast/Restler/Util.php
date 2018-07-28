@@ -226,10 +226,6 @@ class Util
 
     public static function getShortName($className)
     {
-    	// @CHANGE LDR
-    	if (! is_string($className)) return '';
-    	//var_dump($className);
-
         $className = explode('\\', $className);
         return end($className);
     }

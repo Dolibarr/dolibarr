@@ -1,0 +1,60 @@
+<!--
+Copyright 2004 ThoughtWorks, Inc
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<html>
+<head>
+<title>Moveto Test Page</title>
+<style type="text/css">
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+#moveto {
+    border: 1px black dashed;
+    width: 200px;
+    height: 200px;
+}
+
+</style>
+<script type="text/javascript">
+
+window.addEventListener('load', function load() {
+    window.removeEventListener('load', load, false);
+    init();
+}, false);
+
+function init() {
+    var movetoDiv = document.getElementById('moveto');
+    
+    movetoDiv.addEventListener('mouseup', function(e) {
+        document.getElementById('up').innerHTML = e.clientX + ',' + e.clientY;
+    });
+    
+    movetoDiv.addEventListener('mousedown', function(e) {
+        document.getElementById('down').innerHTML = e.clientX + ',' + e.clientY;
+    });
+}
+
+</script>
+</head>
+<body>
+<div id="moveto"></div>
+<div id="down"></div>
+<div id="up"></div>
+</body>
+
+</html>
