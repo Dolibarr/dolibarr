@@ -187,5 +187,6 @@ else
 
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();
