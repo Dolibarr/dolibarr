@@ -494,5 +494,6 @@ else
 
 print "\n</div><br>\n";
 
+// End of page
 llxFooter();
 $db->close();
