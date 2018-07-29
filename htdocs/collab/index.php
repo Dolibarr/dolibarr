@@ -456,9 +456,6 @@ if ($action == 'editcontent')
 
 print "</div>\n</form>\n";
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();
