@@ -1175,12 +1175,13 @@ class Thirdparties extends DolibarrApi
 	 * Generate a sepamandate Document
 	 * 
 	 * @param int $socid thirdparty id
+	 * @param int $id companybankid
 	 * 
 	 * @return array Check success
 	 * 
 	 * @url GET /generateMandat/{socid}
 	 */
-	public function generateMandat($socid){
+	public function generateMandat($socid, $id = null){
 
 		$this->langs->load("database");
 		$this->langs->load("main");
@@ -1237,6 +1238,7 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." ";
+		if ($id) $sql.= " AND id = ".$id."";
 		
 		
 		$result = $this->db->query($sql);
