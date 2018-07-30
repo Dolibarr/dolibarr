@@ -4886,5 +4886,6 @@ else if ($id > 0 || ! empty($ref))
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
+// End of page
 llxFooter();
 $db->close();
