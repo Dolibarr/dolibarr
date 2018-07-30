@@ -1057,7 +1057,7 @@ class Thirdparties extends DolibarrApi
 		}
  
 
-		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id'];
+		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id', 'rum'];
 
 		$returnAccounts = [];
 
