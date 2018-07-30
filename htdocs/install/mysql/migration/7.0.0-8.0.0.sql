@@ -46,10 +46,15 @@ ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFA
 ALTER TABLE llx_ecm_files DROP INDEX uk_ecm_files;
 ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, entity);
 
+UPDATE llx_const set name = __ENCRYPT('INVOICE_FREE_TEXT')__  where name = __ENCRYPT('FACTURE_FREE_TEXT')__;
+
 
 -- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
+
+-- drop old postgresql unique key
+-- VPGSQL8.2 DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;
 
