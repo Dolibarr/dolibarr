@@ -239,9 +239,9 @@ class FormTicket
 
                 // Contact and type
                 print '<tr><td>' . $langs->trans("Contact") . '</td><td>';
-                // If no socid, set to first one (id=1) to avoid full contacts list
-                $selectedCompany = $this->withfromsocid > 0 ? $this->withfromsocid : 1;
-                $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid',  0, '', '', 0, 'minwidth200');
+                // If no socid, set to -1 to avoid full contacts list
+                $selectedCompany = ($this->withfromsocid > 0) ? $this->withfromsocid : -1;
+                $nbofcontacts = $form->select_contacts($selectedCompany, $this->withfromcontactid, 'contactid', 3, '', '', 0, 'minwidth200');
                 $formcompany->selectTypeContact($ticketstatic, '', 'type', 'external', '', 0, 'maginleftonly');
                 print '</td></tr>';
             } else {
@@ -327,7 +327,7 @@ class FormTicket
 
         // If public form, display more information
         if ($this->ispublic) {
-            print '<div class="warning">' . ($conf->global->TICKETS_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKETS_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')) . '</div>';
+            print '<div class="warning">' . ($conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE ? $conf->global->TICKET_PUBLIC_TEXT_HELP_MESSAGE : $langs->trans('TicketPublicPleaseBeAccuratelyDescribe')) . '</div>';
         }
         include_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
         $uselocalbrowser = true;
@@ -889,8 +889,8 @@ class FormTicket
                     }
                 }
 
-                if ($conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS) {
-                    $sendto[] = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO . '(generic email)';
+                if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS) {
+                    $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO . '(generic email)';
                 }
 
                 // Print recipient list
@@ -906,7 +906,7 @@ class FormTicket
         // Intro
         // External users can't send message email
         if ($user->rights->ticket->write && !$user->socid) {
-            $mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKETS_MESSAGE_MAIL_INTRO;
+            $mail_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
             print '<tr class="email_line"><td><label for="mail_intro">' . $langs->trans("TicketMessageMailIntro") . '</label>';
 
             print '</td><td>';
@@ -957,7 +957,7 @@ class FormTicket
         // Signature
         // External users can't send message email
         if ($user->rights->ticket->write && !$user->socid) {
-            $mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE;
+            $mail_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
             print '<tr class="email_line"><td><label for="mail_intro">' . $langs->trans("TicketMessageMailSignature") . '</label>';
 
             print '</td><td>';

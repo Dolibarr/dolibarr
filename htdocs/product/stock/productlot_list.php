@@ -218,7 +218,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."product_lot as t";
 if (is_array($extrafields->attribute_label) && count($extrafields->attribute_label)) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_lot_extrafields as ef on (t.rowid = ef.fk_object)";
 $sql.= ", ".MAIN_DB_PREFIX."product as p";
 $sql.= " WHERE p.rowid = t.fk_product";
-//$sql.= " WHERE u.entity IN (".getEntity('productlot').")";
+$sql.= " WHERE p.entity IN (".getEntity('product').")";
 
 if ($search_entity) $sql.= natural_search("entity",$search_entity);
 if ($search_product) $sql.= natural_search("p.ref",$search_product);
@@ -396,14 +396,12 @@ if ($resql)
 	$productlot = new Productlot($db);
 
 	$i=0;
-	$var=true;
 	$totalarray=array();
 	while ($i < min($num, $limit))
 	{
 		$obj = $db->fetch_object($resql);
 		if ($obj)
 		{
-			$var = !$var;
 
 			$productlot->id = $obj->rowid;
 			$productlot->batch = $obj->batch;

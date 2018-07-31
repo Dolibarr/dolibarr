@@ -157,7 +157,7 @@ $i=0;
 foreach($_SESSION as $key => $val)
 {
 	if ($i > 0) print ', ';
-	print $key.' => '.$val;
+	print $key.' => '.dol_escape_htmltag($val);
 	$i++;
 }
 print '</td></tr>'."\n";

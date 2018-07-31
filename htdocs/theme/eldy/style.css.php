@@ -700,10 +700,17 @@ div.divsearchfield {
 .divsearchfieldfilter {
     text-overflow: clip;
     overflow: auto;
-    white-space: nowrap;
     padding-bottom: 5px;
     opacity: 0.6;
 }
+<?php
+// Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
+if ($conf->browser->layout == 'phone') {
+?>
+.divsearchfieldfilter {
+   	white-space: nowrap;
+}
+<?php } ?>
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -890,9 +897,14 @@ div.fiche {
     min-width: 170px;
 }
 .thumbstat, .thumbstat150 {
-    flex-grow: 1;
-    flex-shrink: 0;
+<?php if ($conf->browser->name == 'ie') { ?>
     min-width: 150px;
+    width: 100%;
+    display: inline;
+<?php } else { ?>
+	flex-grow: 1;
+	flex-shrink: 0;
+<?php } ?>
 }
 
 select.selectarrowonleft {
@@ -1445,8 +1457,8 @@ div.statusrefbis {
 }
 img.photoref, div.photoref {
 	border: 1px solid #DDD;
-    -webkit-box-shadow: 1px 1px 4px #DDD;
-    box-shadow: 1px 1px 4px #DDD;
+    -webkit-box-shadow: 0px 0px 6px #DDD;
+    box-shadow: 0px 0px 6px #DDD;
     padding: 4px;
 	height: 80px;
 	width: 80px;
@@ -1651,6 +1663,9 @@ div.mainmenu.menu {
 }
 #mainmenutd_menu a.tmenuimage {
     display: unset;
+}
+a.tmenuimage {
+    display: block;
 }
 
 /* Do not load menu img for other if hidden to save bandwidth */
@@ -2415,8 +2430,8 @@ span.butAction, span.butActionDelete {
 	text-transform: uppercase;
     font-weight: bold;
 
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em !important;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em !important;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
 	font-family: <?php print $fontlist ?>;
     display: inline-block;
     text-align: center;
@@ -2479,14 +2494,17 @@ a.butActionNewRefused>span.fa-plus-circle, a.butActionNewRefused>span.fa-plus-ci
 
 	white-space: nowrap !important;
 	cursor: not-allowed !important;
-	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
-	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
+	margin: 0em <?php echo ($dol_optimize_smallscreen?'0.6':'0.9'); ?>em;
+	padding: 0.6em <?php echo ($dol_optimize_smallscreen?'0.6':'0.7'); ?>em;
     font-family: <?php print $fontlist ?> !important;
     display: inline-block;
     text-align: center;
     cursor: pointer;
     color: #999 !important;
-    border: 1px solid #bbb;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
 }
 .butActionNewRefused, .butActionNewRefused:link, .butActionNewRefused:visited, .butActionNewRefused:hover, .butActionNewRefused:active {
 	text-decoration: none !important;
@@ -2915,6 +2933,11 @@ div.pagination li.paginationafterarrows {
 }
 .nohover:hover {
 	background: unset;
+}
+.nohoverborder:hover {
+	border: unset;
+	box-shadow: unset;
+	-webkit-box-shadow: unset;
 }
 .oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {

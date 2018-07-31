@@ -87,6 +87,32 @@ function payment_supplier_prepare_head(Paiement $object) {
 	return $head;
 }
 
+/**
+ * Return array of valid payment mode
+ *
+ * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
+ * @return	array						Array of valid payment method
+ */
+function getValidOnlinePaymentMethods($paymentmethod='')
+{
+	global $conf;
+
+	$validpaymentmethod=array();
+
+	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
+	{
+		$validpaymentmethod['paypal']='valid';
+	}
+	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
+	{
+		$validpaymentmethod['paybox']='valid';
+	}
+	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
+	{
+		$validpaymentmethod['stripe']='valid';
+	}
+	return $validpaymentmethod;
+}
 
 /**
  * Return string with full Url

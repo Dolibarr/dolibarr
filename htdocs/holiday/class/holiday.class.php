@@ -346,12 +346,12 @@ class Holiday extends CommonObject
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid"; // Hack pour la recherche sur le tableau
 		$sql.= " AND cp.fk_user IN (".$user_id.")";
 
-		// Filtre de séléction
+		// Selection filter
 		if(!empty($filter)) {
 			$sql.= $filter;
 		}
 
-		// Ordre d'affichage du résultat
+		// Order of display of the result
 		if(!empty($order)) {
 			$sql.= $order;
 		}
@@ -359,19 +359,19 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::fetchByUser", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 
-		// Si pas d'erreur SQL
+		// If no SQL error
 		if ($resql) {
 
 			$i = 0;
 			$tab_result = $this->holiday;
 			$num = $this->db->num_rows($resql);
 
-			// Si pas d'enregistrement
+			// If no registration
 			if(!$num) {
 				return 2;
 			}
 
-			// Liste les enregistrements et les ajoutent au tableau
+			// List the records and add them to the table
 			while($i < $num) {
 
 				$obj = $this->db->fetch_object($resql);
@@ -412,13 +412,13 @@ class Holiday extends CommonObject
 				$i++;
 			}
 
-			// Retourne 1 avec le tableau rempli
+			// Returns 1 with the filled array
 			$this->holiday = $tab_result;
 			return 1;
 		}
 		else
 		{
-			// Erreur SQL
+			// SQL Error 
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -471,12 +471,12 @@ class Holiday extends CommonObject
 		$sql.= " WHERE cp.entity IN (".getEntity('holiday').")";
 		$sql.= " AND cp.fk_user = uu.rowid AND cp.fk_validator = ua.rowid "; // Hack pour la recherche sur le tableau
 
-		// Filtrage de séléction
+		// Selection filtering
 		if(!empty($filter)) {
 			$sql.= $filter;
 		}
 
-		// Ordre d'affichage
+		// order of display
 		if(!empty($order)) {
 			$sql.= $order;
 		}
@@ -484,19 +484,19 @@ class Holiday extends CommonObject
 		dol_syslog(get_class($this)."::fetchAll", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 
-		// Si pas d'erreur SQL
+		// If no SQL error
 		if ($resql) {
 
 			$i = 0;
 			$tab_result = $this->holiday;
 			$num = $this->db->num_rows($resql);
 
-			// Si pas d'enregistrement
+			// If no registration
 			if(!$num) {
 				return 2;
 			}
 
-			// On liste les résultats et on les ajoutent dans le tableau
+			// List the records and add them to the table
 			while($i < $num) {
 
 				$obj = $this->db->fetch_object($resql);
@@ -536,13 +536,13 @@ class Holiday extends CommonObject
 
 				$i++;
 			}
-			// Retourne 1 et ajoute le tableau à la variable
+			// Returns 1 and adds the array to the variable
 			$this->holiday = $tab_result;
 			return 1;
 		}
 		else
 		{
-			// Erreur SQL
+			// SQL Error 
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}

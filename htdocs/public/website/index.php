@@ -131,7 +131,8 @@ if (empty($pageid))
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 
     $langs->load("website");
-    print $langs->trans("PreviewOfSiteNotYetAvailable");
+
+    if (! GETPOSTISSET('pageref')) print $langs->trans("PreviewOfSiteNotYetAvailable", $websitekey);
 
     include DOL_DOCUMENT_ROOT.'/public/error-404.php';
     exit;

@@ -507,6 +507,7 @@ NoneF=없음
 NoneOrSeveral=없음 또는 여러 개
 Late=늦은
 LateDesc=레코드가 늦었는지 아닌지를 정의하는 지연은 설정에 따라 다릅니다. 관리자에게 홈 - 셋업 - 경고 메뉴에서 지연을 변경하도록 요청하십시오.
+NoItemLate=No late item
 Photo=사진
 Photos=사진
 AddPhoto=사진 추가
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Assigned to
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

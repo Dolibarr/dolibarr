@@ -44,7 +44,7 @@ MainAccountForSuppliersNotDefined=Main accounting account for vendors not define
 MainAccountForUsersNotDefined=STandardkonto für Benutzer ist im Setup nicht definiert
 MainAccountForVatPaymentNotDefined=Standardkonto für MWSt Zahlungen ist im Setup nicht definiert
 
-AccountancyArea=Accounting area
+AccountancyArea=Bereich Buchhaltung
 AccountancyAreaDescIntro=Die Verwendung des Buchhaltungsmoduls erfolgt in mehreren Schritten:
 AccountancyAreaDescActionOnce=Die folgenden Aktionen werden üblicherweise nur ein Mal ausgeführt, oder jährlich...
 AccountancyAreaDescActionOnceBis=Die nächsten Schritte sollten getan werden, um Ihnen in Zukunft  Zeit zu sparen, indem Sie Ihnen das korrekte Standardbuchhaltungskonto vorschlagen, wenn Sie die Journalisierung (Schreiben des Buchungsjournal und des Hauptbuchs) machen.
@@ -55,6 +55,7 @@ AccountancyAreaDescChartModel=SCHRITT %s: Erstellen Sie ein Modell des Kontenpla
 AccountancyAreaDescChart=SCHRITT %s: Erstellen oder überprüfen des Inhalts Ihres Kontenplans im Menü %s
 
 AccountancyAreaDescVat=SCHRITT %s: Definition des Buchhaltungskonto für jeden Steuersatz. Kann im Menü %s geändert werden.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=SCHRITT %s: Definition der Buchhaltungskonten für die verschiedenen Arten der Spesenabrechnung. Kann im Menü %s geändert werden.
 AccountancyAreaDescSal=SCHRITT %s: Buchhaltungskonto für Lohnzahlungen definieren. Kann im Menü %s geändert werden.
 AccountancyAreaDescContrib=SCHRITT %s: Definition der Buchhaltungskonten für besondere Aufwendungen (Sonstige Steuern) . Kann im Menü %s geändert werden.
@@ -131,6 +132,7 @@ ACCOUNTING_LENGTH_GACCOUNT=Länge der Kontonummern der Buchhaltung (Wenn dieser 
 ACCOUNTING_LENGTH_AACCOUNT=Länge von den Partner Buchhaltungskonten (Wenn dieser Wert auf 6 gesetzt ist, wird das Konto '401' als '401000' am Bildschirm angezeigt)
 ACCOUNTING_MANAGE_ZERO=Verwalten der Null am Ende eines Buchhaltungskontos. In einigen Ländern notwendig (zB. Schweiz). Standardmäßig deaktiviert. Wenn ausgeschaltet, können die folgenden 2 Parameter konfigurieren werden um virtuelle Nullen anzuhängen
 BANK_DISABLE_DIRECT_INPUT=Deaktivieren der direkte Aufzeichnung von Transaktion auf dem Bankkonto
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Ausgangsrechnungen
 ACCOUNTING_PURCHASE_JOURNAL=Eingangsrechnungen

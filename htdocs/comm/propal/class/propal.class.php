@@ -1328,15 +1328,19 @@ class Propal extends CommonObject
 		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
 		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_propalst as c ON p.fk_statut = c.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
 		$sql.= " WHERE p.fk_statut = c.id";
-		$sql.= " AND p.entity IN (".getEntity('propal').")";
-		if ($ref) $sql.= " AND p.ref='".$ref."'";
+
+		if ($ref) {
+			$sql.= " AND p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
+			$sql.= " AND p.ref='".$ref."'";
+		}
 		else $sql.= " AND p.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
@@ -3347,12 +3351,19 @@ class Propal extends CommonObject
 		global $conf,$langs;
 		$langs->load("propal");
 
-		if (! empty($conf->global->PROPALE_ADDON))
+		$constant = 'PROPALE_ADDON_'.$this->entity;
+
+		if (! empty($conf->global->$constant)) {
+			$classname = $conf->global->$constant; // for multicompany proposal sharing
+		} else {
+			$classname = $conf->global->PROPALE_ADDON;
+		}
+
+		if (! empty($classname))
 		{
 			$mybool=false;
 
-			$file = $conf->global->PROPALE_ADDON.".php";
-			$classname = $conf->global->PROPALE_ADDON;
+			$file = $classname.".php";
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -3919,7 +3930,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
+		$sql.= " ".(price2num($this->subprice)!==''?price2num($this->subprice):"null").",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".(isset($this->info_bits)?"'".$this->db->escape($this->info_bits)."'":"null").",";
 		$sql.= " ".price2num($this->total_ht).",";

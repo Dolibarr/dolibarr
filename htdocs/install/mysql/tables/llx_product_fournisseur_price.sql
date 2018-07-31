@@ -51,6 +51,6 @@ create table llx_product_fournisseur_price
   fk_multicurrency		integer,
   multicurrency_code	varchar(255),
   multicurrency_tx			double(24,8) DEFAULT 1,
-  multicurrency_price	double(24,8) DEFAULT NULL,
-  multicurrency_price_ttc	double(24,8) DEFAULT NULL
+  multicurrency_unitprice   double(24,8) DEFAULT NULL,		-- unit price without tax
+  multicurrency_price		double(24,8) DEFAULT NULL
 )ENGINE=innodb;

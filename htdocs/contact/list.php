@@ -32,6 +32,7 @@
 
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 // Load translation files required by the page
@@ -76,6 +77,7 @@ $search_type=GETPOST('search_type','alpha');
 $search_zip=GETPOST('search_zip','alpha');
 $search_town=GETPOST('search_town','alpha');
 $search_import_key=GETPOST("search_import_key","alpha");
+$search_country=GETPOST("search_country",'intcomma');
 
 if ($search_status=='') $search_status=1; // always display activ customer first
 
@@ -148,6 +150,7 @@ $arrayfields=array(
 	'p.poste'=>array('label'=>"PostOrFunction", 'checked'=>1),
 	'p.town'=>array('label'=>"Town", 'checked'=>0),
 	'p.zip'=>array('label'=>"Zip", 'checked'=>0),
+	'country.code_iso'=>array('label'=>"Country", 'checked'=>0),
 	'p.phone'=>array('label'=>"Phone", 'checked'=>1),
 	'p.phone_perso'=>array('label'=>"PhonePerso", 'checked'=>0),
 	'p.phone_mobile'=>array('label'=>"PhoneMobile", 'checked'=>1),
@@ -203,6 +206,9 @@ if (empty($reshook))
 		$search_lastname="";
 		$search_firstname="";
 		$search_societe="";
+		$search_town="";
+		$search_zip="";
+		$search_country="";
 		$search_poste="";
 		$search_phone="";
 		$search_phone_perso="";
@@ -298,6 +304,7 @@ if ($search_id > 0)                 $sql.= natural_search("p.rowid",$search_id,1
 if ($search_lastname)               $sql.= natural_search('p.lastname', $search_lastname);
 if ($search_firstname)              $sql.= natural_search('p.firstname', $search_firstname);
 if ($search_societe)                $sql.= natural_search('s.nom', $search_societe);
+if ($search_country)                $sql .= " AND p.fk_pays IN (".$search_country.')';
 if (strlen($search_poste))          $sql.= natural_search('p.poste', $search_poste);
 if (strlen($search_phone_perso))    $sql.= natural_search('p.phone_perso', $search_phone_perso);
 if (strlen($search_phone_pro))      $sql.= natural_search('p.phone', $search_phone);
@@ -396,6 +403,7 @@ if ($search_firstname != '') $param.='&amp;search_firstname='.urlencode($search_
 if ($search_societe != '') $param.='&amp;search_societe='.urlencode($search_societe);
 if ($search_zip != '') $param.='&amp;search_zip='.urlencode($search_zip);
 if ($search_town != '') $param.='&amp;search_town='.urlencode($search_town);
+if ($search_country != '') $param.= "&search_country=".urlencode($search_country);
 if ($search_job != '') $param.='&amp;search_job='.urlencode($search_job);
 if ($search_phone_pro != '') $param.='&amp;search_phone_pro='.urlencode($search_phone_pro);
 if ($search_phone_perso != '') $param.='&amp;search_phone_perso='.urlencode($search_phone_perso);
@@ -518,6 +526,12 @@ if (! empty($arrayfields['p.firstname']['checked']))
 	print '<input class="flat" type="text" name="search_firstname" size="6" value="'.dol_escape_htmltag($search_firstname).'">';
 	print '</td>';
 }
+if (! empty($arrayfields['p.poste']['checked']))
+{
+	print '<td class="liste_titre">';
+	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
+	print '</td>';
+}
 if (! empty($arrayfields['p.zip']['checked']))
 {
 	print '<td class="liste_titre">';
@@ -530,10 +544,25 @@ if (! empty($arrayfields['p.town']['checked']))
 	print '<input class="flat" type="text" name="search_town" size="5" value="'.dol_escape_htmltag($search_town).'">';
 	print '</td>';
 }
-if (! empty($arrayfields['p.poste']['checked']))
+// State
+/*if (! empty($arrayfields['state.nom']['checked']))
+ {
+ print '<td class="liste_titre">';
+ print '<input class="flat searchstring" size="4" type="text" name="search_state" value="'.dol_escape_htmltag($search_state).'">';
+ print '</td>';
+ }
+ // Region
+ if (! empty($arrayfields['region.nom']['checked']))
+ {
+ print '<td class="liste_titre">';
+ print '<input class="flat searchstring" size="4" type="text" name="search_region" value="'.dol_escape_htmltag($search_region).'">';
+ print '</td>';
+ }*/
+// Country
+if (! empty($arrayfields['country.code_iso']['checked']))
 {
-	print '<td class="liste_titre">';
-	print '<input class="flat" type="text" name="search_poste" size="5" value="'.dol_escape_htmltag($search_poste).'">';
+	print '<td class="liste_titre" align="center">';
+	print $form->select_country($search_country,'search_country','',0,'maxwidth100');
 	print '</td>';
 }
 if (! empty($arrayfields['p.phone']['checked']))
@@ -630,9 +659,12 @@ print '<tr class="liste_titre">';
 if (! empty($arrayfields['p.rowid']['checked']))               print_liste_field_titre($arrayfields['p.rowid']['label'], $_SERVER["PHP_SELF"],"p.rowid","",$param,"",$sortfield,$sortorder);
 if (! empty($arrayfields['p.lastname']['checked']))            print_liste_field_titre($arrayfields['p.lastname']['label'],$_SERVER["PHP_SELF"],"p.lastname", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.firstname']['checked']))           print_liste_field_titre($arrayfields['p.firstname']['label'],$_SERVER["PHP_SELF"],"p.firstname", $begin, $param, '', $sortfield,$sortorder);
+if (! empty($arrayfields['p.poste']['checked']))               print_liste_field_titre($arrayfields['p.poste']['label'],$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.zip']['checked']))                 print_liste_field_titre($arrayfields['p.zip']['label'],$_SERVER["PHP_SELF"],"p.zip", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.town']['checked']))                print_liste_field_titre($arrayfields['p.town']['label'],$_SERVER["PHP_SELF"],"p.town", $begin, $param, '', $sortfield,$sortorder);
-if (! empty($arrayfields['p.poste']['checked']))               print_liste_field_titre($arrayfields['p.poste']['label'],$_SERVER["PHP_SELF"],"p.poste", $begin, $param, '', $sortfield,$sortorder);
+//if (! empty($arrayfields['state.nom']['checked']))           print_liste_field_titre($arrayfields['state.nom']['label'],$_SERVER["PHP_SELF"],"state.nom","",$param,'',$sortfield,$sortorder);
+//if (! empty($arrayfields['region.nom']['checked']))          print_liste_field_titre($arrayfields['region.nom']['label'],$_SERVER["PHP_SELF"],"region.nom","",$param,'',$sortfield,$sortorder);
+if (! empty($arrayfields['country.code_iso']['checked']))      print_liste_field_titre($arrayfields['country.code_iso']['label'],$_SERVER["PHP_SELF"],"co.code_iso","",$param,'align="center"',$sortfield,$sortorder);
 if (! empty($arrayfields['p.phone']['checked']))               print_liste_field_titre($arrayfields['p.phone']['label'],$_SERVER["PHP_SELF"],"p.phone", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.phone_perso']['checked']))         print_liste_field_titre($arrayfields['p.phone_perso']['label'],$_SERVER["PHP_SELF"],"p.phone_perso", $begin, $param, '', $sortfield,$sortorder);
 if (! empty($arrayfields['p.phone_mobile']['checked']))        print_liste_field_titre($arrayfields['p.phone_mobile']['label'],$_SERVER["PHP_SELF"],"p.phone_mobile", $begin, $param, '', $sortfield,$sortorder);
@@ -697,6 +729,12 @@ while ($i < min($num,$limit))
 		print '<td>'.$obj->firstname.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
+	// Job position
+	if (! empty($arrayfields['p.poste']['checked']))
+	{
+		print '<td>'.dol_trunc($obj->poste,20).'</td>';
+		if (! $i) $totalarray['nbfield']++;
+	}
 	// Zip
 	if (! empty($arrayfields['p.zip']['checked']))
 	{
@@ -709,10 +747,25 @@ while ($i < min($num,$limit))
 		print '<td>'.$obj->town.'</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
-	// Function
-	if (! empty($arrayfields['p.poste']['checked']))
+	// State
+	/*if (! empty($arrayfields['state.nom']['checked']))
 	{
-		print '<td>'.dol_trunc($obj->poste,20).'</td>';
+		print "<td>".$obj->state_name."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+	}
+	// Region
+	if (! empty($arrayfields['region.nom']['checked']))
+	{
+		print "<td>".$obj->region_name."</td>\n";
+		if (! $i) $totalarray['nbfield']++;
+	}*/
+	// Country
+	if (! empty($arrayfields['country.code_iso']['checked']))
+	{
+		print '<td align="center">';
+		$tmparray=getCountry($obj->fk_pays,'all');
+		print $tmparray['label'];
+		print '</td>';
 		if (! $i) $totalarray['nbfield']++;
 	}
 	// Phone

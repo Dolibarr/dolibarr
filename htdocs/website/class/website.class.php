@@ -44,7 +44,7 @@ class Website extends CommonObject
 	 */
 	public $table_element = 'website';
 	/**
-	 * @var array  Does websiteaccount support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
+	 * @var array  Does website support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 1;
 	/**
@@ -781,13 +781,21 @@ class Website extends CommonObject
 			return '';
 		}
 
-		$srcdir = $conf->website->dir_output.'/'.$website->ref;
-		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
+		$destdir = $conf->website->dir_temp.'/'.$website->ref;
+
+		dol_syslog("Clear temp dir ".$destdir);
+		$count=0; $countreallydeleted=0;
+		$counttodelete = dol_delete_dir_recursive($destdir, $count, 1, 0, $countreallydeleted);
+		if ($counttodelete != $countreallydeleted)
+		{
+			setEventMessages("Failed to clean temp directory ".$destdir, null, 'errors');
+			return '';
+		}
 
 		$arrayreplacement=array();
 
-		dol_syslog("Clear temp dir ".$destdir);
-		dol_delete_dir($destdir, 1);
+		$srcdir = $conf->website->dir_output.'/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/containers';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);

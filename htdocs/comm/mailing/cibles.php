@@ -76,8 +76,6 @@ if ($action == 'add')
 	$module=GETPOST("module");
 	$result=-1;
 
-	$var=true;
-
 	foreach ($modulesdir as $dir)
 	{
 	    // Load modules attributes in arrays (name, numero, orders) from dir directory
@@ -278,8 +276,6 @@ if ($object->fetch($id) >= 0)
 
 		clearstatcache();
 
-		$var = true;
-
 		foreach ($modulesdir as $dir)
 		{
 		    $modulenames=array();
@@ -307,6 +303,8 @@ if ($object->fetch($id) >= 0)
 			// Sort $modulenames
 			sort($modulenames);
 
+			$var = true;
+
 			// Loop on each submodule
             foreach($modulenames as $modulename)
             {
@@ -332,7 +330,7 @@ if ($object->fetch($id) >= 0)
 				// Si le module mailing est qualifie
 				if ($qualified)
 				{
-					$var = !$var;
+					$var = ! $var;
 
 					if ($allowaddtarget)
 					{

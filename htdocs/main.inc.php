@@ -72,24 +72,30 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
  * @param		string		$val		Value
- * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
+ * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
 function test_sql_and_script_inject($val, $type)
 {
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
-	if ($type == 1)
+	if ($type == 1 || $type == 3)
 	{
-		$inj += preg_match('/updatexml\(/i',	 $val);
 		$inj += preg_match('/delete\s+from/i',	 $val);
 		$inj += preg_match('/create\s+table/i',	 $val);
 		$inj += preg_match('/insert\s+into/i', 	 $val);
 		$inj += preg_match('/select\s+from/i', 	 $val);
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+		$inj += preg_match('/user\s*\(/i',  $val);						// avoid to use function user() that return current database login
+		$inj += preg_match('/information_schema/i',  $val);				// avoid to use request that read information_schema database
 	}
-	if ($type != 2)	// Not common, we can check on POST
+	if ($type == 3)
 	{
+		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i',	 $val);
+	}
+	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
+	{
+		$inj += preg_match('/updatexml\(/i', 	 $val);
 		$inj += preg_match('/update.+set.+=/i',  $val);
 		$inj += preg_match('/union.+select/i', 	 $val);
 		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
@@ -1053,7 +1059,7 @@ if (! function_exists("llxHeader"))
 		print '<body id="mainbody"'.($morecssonbody?' class="'.$morecssonbody.'"':'').'>' . "\n";
 
 		// top menu and left menu area
-		if (empty($conf->dol_hide_topmenu))
+		if (empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu','int'))
 		{
 			top_menu($head, $title, $target, $disablejs, $disablehead, $arrayofjs, $arrayofcss, $morequerystring, $help_url);
 		}
@@ -1148,7 +1154,7 @@ function top_httphead($contenttype='text/html', $forcenocache=0)
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $disablejmobile=0, $disablenofollow=0)
 {
-	global $user, $conf, $langs, $db;
+	global $db, $conf, $langs, $user, $hookmanager;
 
 	top_httphead();
 
@@ -1182,9 +1188,22 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
 		$appli=constant('DOL_APPLICATION_TITLE');
 		if (!empty($conf->global->MAIN_APPLICATION_TITLE)) $appli=$conf->global->MAIN_APPLICATION_TITLE;
 
-		if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) print '<title>'.dol_htmlentities($title).'</title>';
-		else if ($title) print '<title>'.dol_htmlentities($appli.' - '.$title).'</title>';
-		else print "<title>".dol_htmlentities($appli)."</title>";
+		print '<title>';
+		$titletoshow='';
+		if ($title && ! empty($conf->global->MAIN_HTML_TITLE) && preg_match('/noapp/',$conf->global->MAIN_HTML_TITLE)) $titletoshow = dol_htmlentities($title);
+		else if ($title) $titletoshow = dol_htmlentities($appli.' - '.$title);
+		else $titletoshow = dol_htmlentities($appli);
+
+		if (! is_object($hookmanager)) $hookmanager = new HookManager($db);
+		$hookmanager->initHooks("main");
+		$parameters=array('title'=>$titletoshow);
+		$result=$hookmanager->executeHooks('setHtmlTitle',$parameters);		// Note that $action and $object may have been modified by some hooks
+		if ($result > 0) $titletoshow = $hookmanager->resPrint;				// Replace Title to show
+		else $titletoshow .= $hookmanager->resPrint;						// Concat to Title to show
+
+		print $titletoshow;
+		print '</title>';
+
 		print "\n";
 
 		if (GETPOST('version','int')) $ext='version='.GETPOST('version','int');	// usefull to force no cache on css/js
@@ -1461,11 +1480,11 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 	/*
      * Top menu
      */
-	if (empty($conf->dol_hide_topmenu) && (! defined('NOREQUIREMENU') || ! constant('NOREQUIREMENU')))
+	if ((empty($conf->dol_hide_topmenu) || GETPOST('dol_invisible_topmenu','int')) && (! defined('NOREQUIREMENU') || ! constant('NOREQUIREMENU')))
 	{
 		print "\n".'<!-- Start top horizontal -->'."\n";
 
-		print '<div class="side-nav-vert"><div id="id-top">';
+		print '<div class="side-nav-vert'.(GETPOST('dol_invisible_topmenu','int')?' hidden':'').'"><div id="id-top">';		// dol_invisible_topmenu differs from dol_hide_topmenu: dol_invisible_topmenu means we output menu but we make it invisible.
 
 		// Show menu entries
 		print '<div id="tmenu_tooltip'.(empty($conf->global->MAIN_MENU_INVERT)?'':'invert').'" class="tmenu">'."\n";
@@ -1619,8 +1638,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 		print "</div>\n";		// end div class="login_block"
 
 		print '</div></div>';
-
-		//unset($form);
 
 		print '<div style="clear: both;"></div>';
 		print "<!-- End top horizontal menu -->\n\n";

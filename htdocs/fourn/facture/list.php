@@ -2,7 +2,7 @@
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2016 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@capnetworks.com>
- * Copyright (C) 2013	   Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2013-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2013	   Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Cédric Salvador      <csalvador@gpcsolutions.fr>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
@@ -44,10 +44,8 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 
 if (!$user->rights->fournisseur->facture->lire) accessforbidden();
 
-$langs->load("bills");
-$langs->load("companies");
-$langs->load('products');
-$langs->load('projects');
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'bills', 'companies', 'projects'));
 
 $action=GETPOST('action','alpha');
 $massaction=GETPOST('massaction','alpha');
@@ -823,7 +821,6 @@ if ($resql)
 	{
 		$i=0;
 
-		$var=true;
 		$totalarray=array();
 		while ($i < min($num,$limit))
 		{

@@ -1219,7 +1219,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 					}
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 					// TODO Failure to remove can be because file was already removed or because of permission
-					// If error because of not exists, we must should return true and we should return false if this is a permission problem
+					// If error because it does not exists, we should return true, and we should return false if this is a permission problem
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_DEBUG);
