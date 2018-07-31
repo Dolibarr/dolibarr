@@ -5856,7 +5856,7 @@ function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
 	$ret='';
 	// If order not defined, we use the setup
 	if ($nameorder < 0) $nameorder=$conf->global->MAIN_FIRSTNAME_NAME_POSITION;
-	if ($nameorder && ((string) $nameorder != '2'))
+	if (empty($nameorder) && ((string) $nameorder != '2'))
 	{
 		$ret.=$firstname;
 		if ($firstname && $lastname) $ret.=' ';
