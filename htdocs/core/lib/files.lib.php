@@ -1118,10 +1118,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
+ *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null,$allowdotdot=false)
 {
 	global $db, $conf, $user, $langs;
 	global $hookmanager;
@@ -1133,7 +1134,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
-	if (preg_match('/\.\./',$file) || preg_match('/[<>|]/',$file))
+	if ((! $allowdotdot && preg_match('/\.\./',$file)) || preg_match('/[<>|]/',$file))
 	{
 		dol_syslog("Refused to delete file ".$file, LOG_WARNING);
 		return false;

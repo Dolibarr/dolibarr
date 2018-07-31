@@ -4442,7 +4442,7 @@ function migrate_delete_old_files($db,$langs,$conf)
         $result=1;
         if (file_exists($filetodelete))
         {
-            $result=dol_delete_file($filetodelete);
+            $result=dol_delete_file($filetodelete,0,0,0,null,true);
             if (! $result)
             {
                 $langs->load("errors");
