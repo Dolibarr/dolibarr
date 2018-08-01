@@ -54,4 +54,4 @@ else
 }
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
-\Stripe\Stripe::setAppInfo("Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
+\Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
