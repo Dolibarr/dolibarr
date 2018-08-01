@@ -879,13 +879,9 @@ foreach ($listofreferent as $key => $value)
 				{
 					print $expensereport->getNomUrl(1);
 				}
-				if ($tablename == 'payment_salary')
-				{
-					print '';
-				}
 				else
 				{
-				    // Show ref with link
+					// Show ref with link
 					if ($element instanceof Task)
 					{
 						print $element->getNomUrl(1,'withproject','time');
@@ -969,7 +965,7 @@ foreach ($listofreferent as $key => $value)
 				else if ($tablename == 'payment_salary')
 				{
 					$tmpuser=new User($db);
-					$tmpuser->fetch($salaries->fk_user);
+					$tmpuser->fetch($element->fk_user);
 					print $tmpuser->getNomUrl(1,'',48);
 				}
 				else if ($tablename == 'don' || $tablename == 'stock_mouvement')

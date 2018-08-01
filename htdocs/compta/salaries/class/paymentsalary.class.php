@@ -508,12 +508,10 @@ class PaymentSalary extends CommonObject
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
+		$label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+		$linkstart = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
-
-		$picto='payment';
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), ($this->picto?$this->picto:'generic'), ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
