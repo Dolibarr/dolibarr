@@ -134,7 +134,7 @@ if (dol_strlen($type))
         $sql.= " AND p.fk_product_type <> '1'";
     }
 }
-if ($sref)     $sql.= natural_search('p.ref', $ref);
+if ($sref)     $sql.= natural_search('p.ref', $sref);
 if ($sbarcode) $sql.= natural_search('p.barcode', $sbarcode);
 if ($snom)     $sql.= natural_search('p.label', $snom);
 if (! empty($tosell)) $sql.= " AND p.tosell = ".$tosell;
