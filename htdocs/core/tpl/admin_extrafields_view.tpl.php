@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2018	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012-2017	Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,7 @@ print '<td align="center">'.$langs->trans("Unique").'</td>';
 print '<td align="center">'.$langs->trans("Required").'</td>';
 print '<td align="center">'.$langs->trans("AlwaysEditable").'</td>';
 print '<td align="center">'.$form->textwithpicto($langs->trans("Visible"), $langs->trans("VisibleDesc")).'</td>';
+print '<td align="center">'.$form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")).'</td>';
 if ($conf->multicompany->enabled)  {
 	print '<td align="center">'.$langs->trans("Entities").'</td>';
 }
@@ -88,6 +90,7 @@ if (is_array($extrafields->attributes[$elementtype]['type']) && count($extrafiel
 		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['required'][$key])."</td>\n";
 		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['alwayseditable'][$key])."</td>\n";
 		print '<td align="center">'.$extrafields->attributes[$elementtype]['list'][$key]."</td>\n";
+		print '<td align="center">'.yn($extrafields->attributes[$elementtype]['totalizable'][$key])."</td>\n";
 		if (! empty($conf->multicompany->enabled))  {
 			print '<td align="center">'.($extrafields->attributes[$elementtype]['entityid'][$key]==0?$langs->trans("All"):$extrafields->attributes[$elementtype]['entitylabel'][$key]).'</td>';
 		}

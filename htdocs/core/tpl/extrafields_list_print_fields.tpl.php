@@ -40,6 +40,14 @@ if (! empty($extrafieldsobjectkey))	// $extrafieldsobject is the $object->table_
 				print $extrafields->showOutputField($key, $value, '', $extrafieldsobjectkey);
 				print '</td>';
 				if (! $i) $totalarray['nbfield']++;
+
+                if ($extrafields->attributes[$extrafieldsobjectkey]['totalizable'][$key]) {
+                    if (! $i) {
+                        // we keep position for the first line
+                        $totalarray['totalizable'][$key]['pos'] = $totalarray['nbfield'];
+                    }
+                    $totalarray['totalizable'][$key]['total'] += $obj->$tmpkey;
+                }
 				if (! empty($val['isameasure']))
 				{
 					if (! $i) $totalarray['pos'][$totalarray['nbfield']]='ef.'.$tmpkey;

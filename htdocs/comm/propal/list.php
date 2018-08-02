@@ -988,27 +988,40 @@ if ($resql)
 	}
 
 	// Show total line
-		if (isset($totalarray['totalhtfield'])
+	if (isset($totalarray['totalhtfield'])
  	   || isset($totalarray['totalvatfield'])
  	   || isset($totalarray['totalttcfield'])
  	   || isset($totalarray['totalamfield'])
  	   || isset($totalarray['totalrtpfield'])
+ 	   || isset($totalarray['totalizable'])
  	   )
 	{
 		print '<tr class="liste_total">';
 		$i=0;
 		while ($i < $totalarray['nbfield'])
 		{
-		   $i++;
-		   if ($i == 1)
-		   {
+		    $i++;
+		    if ($i == 1)
+		    {
 				if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
-		   }
-		   elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-		   elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-		   elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
-		   else print '<td></td>';
+		    }
+		    elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
+		    elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+		    elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+		    elseif ($totalarray['totalizable']) {
+                $printed = false;
+                foreach ($totalarray['totalizable'] as $totalizable) {
+                    if ($totalizable['pos']==$i && ! $printed) {
+                        print '<td align="right">'.price($totalizable['total']).'</td>';
+                        $printed = true;
+                    }
+                }
+                if (! $printed) {
+                    print '<td></td>';
+                }
+            }
+		    else print '<td></td>';
 		}
 		print '</tr>';
 	}
