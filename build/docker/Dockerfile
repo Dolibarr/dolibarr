@@ -3,7 +3,7 @@ FROM php:7.0-apache
 ENV HOST_USER_ID 33
 ENV PHP_INI_DATE_TIMEZONE 'UTC'
 
-RUN apt-get update && apt-get install -y libpng12-dev libjpeg-dev libldap2-dev \
+RUN apt-get update && apt-get install -y libpng-dev libjpeg-dev libldap2-dev \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr \
 	&& docker-php-ext-install gd \
