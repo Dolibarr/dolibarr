@@ -1201,7 +1201,7 @@ function activateModulesRequiredByCountry($country_code)
 							{
 								activateModule($modName);
 
-								setEventMessage($objMod->automatic_activation[$country_code],'warnings');
+								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
 
 						}

@@ -703,7 +703,7 @@ if ($massaction == 'confirm_createbills')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+		setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 
 		// Make a redirect to avoid to bill twice if we make a refresh or back
 		$param='';
