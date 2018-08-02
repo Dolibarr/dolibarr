@@ -491,7 +491,7 @@ class Dolresource extends CommonObject
     	$sql.= " t.fk_code_type_resource,";
     	$sql.= " t.tms,";
 
-    	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     	$extrafields=new ExtraFields($this->db);
     	$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
     	if (is_array($extralabels) && count($extralabels)>0) {

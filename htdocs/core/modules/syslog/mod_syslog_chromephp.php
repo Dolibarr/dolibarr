@@ -66,8 +66,8 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 			}
 			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
 
-		    $res = @include_once('ChromePhp.php');
-		    if (! $res) $res=@include_once('ChromePhp.class.php');
+		    $res = @include_once 'ChromePhp.php';
+		    if (! $res) $res=@include_once 'ChromePhp.class.php';
 
 		    restore_include_path();
 
@@ -152,12 +152,12 @@ class mod_syslog_chromephp extends LogHandler implements LogHandlerInterface
 
 		try
 		{
-			// Warning ChromePHP must be into PHP include path. It is not possible to use into require_once() a constant from
+			// Warning ChromePHP must be into PHP include path. It is not possible to use into require_once a constant from
 			// database or config file because we must be able to log data before database or config file read.
 			$oldinclude=get_include_path();
 			set_include_path($conf->global->SYSLOG_CHROMEPHP_INCLUDEPATH);
-		    $res = @include_once('ChromePhp.php');
-		    if (! $res) $res=@include_once('ChromePhp.class.php');
+		    $res = @include_once 'ChromePhp.php';
+		    if (! $res) $res=@include_once 'ChromePhp.class.php';
 			set_include_path($oldinclude);
 			
 			ob_start();	// To be sure headers are not flushed until all page is completely processed

@@ -504,7 +504,7 @@ if (empty($reshook))
 
 	// Action update
 	else if (
-		($action == 'settracking_number' 
+		($action == 'settracking_number'
 		|| $action == 'settracking_url'
 		|| $action == 'settrueWeight'
 		|| $action == 'settrueWidth'

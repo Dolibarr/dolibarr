@@ -378,7 +378,7 @@ if (! $error && $massaction == 'confirm_presend')
 					//var_dump($filepath);
 
 					// Send mail (substitutionarray must be done just before this)
-					require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 					$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
 					if ($mailfile->error)
 					{
@@ -433,7 +433,7 @@ if (! $error && $massaction == 'confirm_presend')
 								if (! empty($trigger_name))
 								{
 									// Appel des triggers
-									include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+									include_once DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php";
 									$interface=new Interfaces($db);
 									$result=$interface->run_triggers($trigger_name, $objectobj, $user, $langs, $conf);
 									if ($result < 0) { $error++; $errors=$interface->errors; }

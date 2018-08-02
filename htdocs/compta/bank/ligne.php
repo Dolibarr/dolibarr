@@ -28,7 +28,7 @@
  *	\brief      Page to edit a bank transaction record
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
@@ -98,8 +98,8 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
     	{
         	dol_print_error($db);
     	}
-	} 
-	else 
+	}
+	else
 	{
 		setEventMessages($langs->trans("MissingIds"), null, 'errors');
 	}

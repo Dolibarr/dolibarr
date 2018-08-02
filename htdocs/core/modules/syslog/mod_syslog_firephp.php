@@ -153,7 +153,7 @@ class mod_syslog_firephp extends LogHandler implements LogHandlerInterface
 
 		try
 		{
-			// Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once() a constant from
+			// Warning FirePHPCore must be into PHP include path. It is not possible to use into require_once a constant from
 			// database or config file because we must be able to log data before database or config file read.
 			$oldinclude=get_include_path();
 			set_include_path($conf->global->SYSLOG_FIREPHP_INCLUDEPATH);
