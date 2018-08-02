@@ -33,15 +33,17 @@ require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 require_once './lib/replenishment.lib.php';
 
-$langs->load("products");
-$langs->load("stocks");
-$langs->load("orders");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'stocks', 'orders'));
 
 // Security check
 if ($user->societe_id) {
     $socid = $user->societe_id;
 }
 $result=restrictedArea($user,'produit|service');
+
+// Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
+$hookmanager->initHooks(array('stockreplenishlist'));
 
 //checks if a product has been ordered
 
@@ -65,7 +67,7 @@ $sortfield = GETPOST('sortfield','alpha');
 $sortorder = GETPOST('sortorder','alpha');
 $page = GETPOST('page','int');
 if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
-$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $offset = $limit * $page ;
 
 if (!$sortfield) {
@@ -87,6 +89,9 @@ if (! empty($conf->global->STOCK_CALCULATE_ON_SHIPMENT)
 $usevirtualstock=0;
 if ($mode == 'virtual') $usevirtualstock=1;
 
+$parameters=array();
+$reshook=$hookmanager->executeHooks('doActions',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 /*
  * Actions
@@ -670,6 +675,11 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	}
 	$i++;
 }
+
+$parameters=array('sql'=>$sql);
+$reshook=$hookmanager->executeHooks('printFieldListFooter',$parameters);    // Note that $action and $object may have been modified by hook
+print $hookmanager->resPrint;
+
 print '</table>';
 print '</div>';
 

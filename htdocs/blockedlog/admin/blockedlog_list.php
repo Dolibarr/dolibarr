@@ -29,6 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/blockedlog/class/authority.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin", "other", "blockedlog", "bills"));
 
 if ((! $user->admin && ! $user->rights->blockedlog->read) || empty($conf->blockedlog->enabled)) accessforbidden();
@@ -137,7 +138,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		else
 		{
 			$error++;
-			setEventMessage($db->lasterror, 'errors');
+			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
 
@@ -242,7 +243,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		}
 		else
 		{
-			setEventMessage($db->lasterror, 'errors');
+			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
 }
@@ -586,5 +587,6 @@ if (GETPOST('withtab','alpha'))
 
 print '<br><br>';
 
+// End of page
 llxFooter();
 $db->close();

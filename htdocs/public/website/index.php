@@ -22,12 +22,12 @@
  *		\author	    Laurent Destailleur
  */
 
-define('NOTOKENRENEWAL',1); // Disables token renewal
-define("NOLOGIN",1);
-define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
-if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
-if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
-if (! defined('NOREQUIREAJAX')) define('NOREQUIREAJAX','1');
+if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL',1); // Disables token renewal
+if (! defined('NOLOGIN'))        define("NOLOGIN",1);
+if (! defined('NOCSRFCHECK'))    define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
+if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
+if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 
 /**
  * Header empty
@@ -89,9 +89,18 @@ if (empty($pageid))
     if ($pageref)
     {
     	$result=$objectpage->fetch(0, $object->id, $pageref);
-        if ($result > 0)
+    	if ($result > 0)
 	    {
 	        $pageid = $objectpage->id;
+	    }
+	    elseif($result == 0)
+	    {
+	    	// Page not found from ref=pageurl, we try using alternative alias
+	    	$result=$objectpage->fetch(0, $object->id, null, $pageref);
+	    	if ($result > 0)
+	    	{
+	    		$pageid = $objectpage->id;
+	    	}
 	    }
     }
     else
@@ -122,7 +131,8 @@ if (empty($pageid))
     header($_SERVER["SERVER_PROTOCOL"]." 404 Not Found", true, 404);
 
     $langs->load("website");
-    print $langs->trans("PreviewOfSiteNotYetAvailable");
+
+    if (! GETPOSTISSET('pageref')) print $langs->trans("PreviewOfSiteNotYetAvailable", $websitekey);
 
     include DOL_DOCUMENT_ROOT.'/public/error-404.php';
     exit;

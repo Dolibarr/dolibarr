@@ -53,7 +53,7 @@ class PrestaShopWebservice
 	 * PrestaShopWebservice constructor. Throw an exception when CURL is not installed/activated
 	 * <code>
 	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
+	 * require_once './PrestaShopWebservice.php';
 	 * try
 	 * {
 	 * 	$ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);
@@ -118,9 +118,9 @@ class PrestaShopWebservice
 	public function executeRequest($url, $curl_params = array())
 	{
 		$defaultParams = array(
-			CURLOPT_HEADER => TRUE,
-			CURLOPT_RETURNTRANSFER => TRUE,
-			CURLINFO_HEADER_OUT => TRUE,
+			CURLOPT_HEADER => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLINFO_HEADER_OUT => true,
 			CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
 			CURLOPT_USERPWD => $this->key.':',
 			CURLOPT_HTTPHEADER => array( 'Expect:' )
@@ -279,7 +279,7 @@ class PrestaShopWebservice
 	 * </p>
 	 * <code>
 	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
+	 * require_once './PrestaShopWebservice.php';
 	 * try
 	 * {
 	 * $ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);

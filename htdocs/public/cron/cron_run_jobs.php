@@ -27,9 +27,7 @@ if (! defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL','1'); // Disables token
 if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML'))  define('NOREQUIREHTML','1');
 if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
-//if (! defined('NOREQUIRESOC'))   define('NOREQUIRESOC','1');
-if (! defined('NOLOGIN'))   define('NOLOGIN','1');
-//if (! defined('NOREQUIRETRAN'))  define('NOREQUIRETRAN','1');
+if (! defined('NOLOGIN'))        define('NOLOGIN','1');
 
 // For MultiCompany module.
 // Do not use GETPOST here, function is not defined and define must be done before including main.inc.php
@@ -38,11 +36,7 @@ if (is_numeric($entity)) define("DOLENTITY", $entity);
 
 // librarie core
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
-if (! $res) {
-	$res = @include("../../../main.inc.php"); // From "custom" directory
-}
-if (! $res) die("Include of master.inc.php fails");
+require '../../main.inc.php';
 
 // librarie jobs
 dol_include_once("/cron/class/cronjob.class.php");
@@ -52,10 +46,6 @@ global $langs, $conf;
 // Language Management
 $langs->load("admin");
 $langs->load("cron");
-
-
-
-
 
 /*
  * View

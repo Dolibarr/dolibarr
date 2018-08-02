@@ -24,8 +24,8 @@
 
 require '../main.inc.php';
 
-$langs->load("admin");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'companies'));
 
 if (!$user->admin) accessforbidden();
 
@@ -114,7 +114,6 @@ if (empty($reshook))
 	print '<div class="center"><div class="logo_setup"></div></div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

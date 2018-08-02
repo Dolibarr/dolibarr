@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT . '/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT . '/accountancy/class/bookkeeping.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("commercial", "compta","bills","other","accountancy","trips","errors"));
 
 $id_journal = GETPOST('id_journal', 'int');
@@ -412,9 +413,10 @@ $form = new Form($db);
 $userstatic = new User($db);
 
 // Export
-/*if ($action == 'exportcsv') {
+/*if ($action == 'exportcsv') {		// ISO and not UTF8 !
 	$sep = $conf->global->ACCOUNTING_EXPORT_SEPARATORCSV;
 
+	$filename = 'journal';
 	include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
 
 	// Model Cegid Expert Export
@@ -524,7 +526,7 @@ if (empty($action) || $action == 'view') {
 
 	llxHeader('', $langs->trans("ExpenseReportsJournal"));
 
-	$nom = $langs->trans("ExpenseReportsJournal") . ' - ' . $accountingjournalstatic->getNomUrl(1);
+	$nom = $langs->trans("ExpenseReportsJournal") . ' | ' . $accountingjournalstatic->getNomUrl(0,1,1,'',1);
 	$nomlink = '';
 	$periodlink = '';
 	$exportlink = '';

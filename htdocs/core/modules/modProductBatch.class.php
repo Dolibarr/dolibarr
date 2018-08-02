@@ -47,7 +47,7 @@ class modProductBatch extends DolibarrModules
 
 		$this->family = "products";
 		$this->module_position = 45;
-		
+
 		$this->name = preg_replace('/^mod/i','',get_class($this));
 		$this->description = "Batch number, eat-by and sell-by date management module";
 
@@ -56,7 +56,6 @@ class modProductBatch extends DolibarrModules
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where dluo is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 
 		$this->picto='stock';
 
@@ -69,9 +68,11 @@ class modProductBatch extends DolibarrModules
 		$this->config_page_url = array("product_lot_extrafields.php@product");
 
 		// Dependencies
-		$this->depends = array("modProduct","modStock","modExpedition","modFournisseur");		// List of modules id that must be enabled if this module is enabled. modExpedition is required to manage batch exit (by manual stock decrease on shipment), modSupplier to manage batch entry (after supplier order).
-		$this->requiredby = array();	// List of modules id to disable if this one is disabled
-		$this->phpmin = array(5,0);					// Minimum version of PHP required by module
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array("modProduct","modStock","modExpedition","modFournisseur");		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(3,0);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("productbatch");
 
@@ -95,12 +96,12 @@ class modProductBatch extends DolibarrModules
 		$this->rights = array();		// Permission array used by this module
 		$r=0;
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		$r=0;
 

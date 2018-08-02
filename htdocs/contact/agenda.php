@@ -44,10 +44,8 @@ require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("companies");
-$langs->load("users");
-$langs->load("other");
-$langs->load("commercial");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'users', 'other', 'commercial'));
 
 $mesg=''; $error=0; $errors=array();
 
@@ -101,7 +99,7 @@ if (! $sortfield) $sortfield='a.datep, a.id';
 if (! $sortorder) $sortorder='DESC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
-$hookmanager->initHooks(array('contactcard','globalcard'));
+$hookmanager->initHooks(array('contactagenda','globalcard'));
 
 
 /*
@@ -190,7 +188,8 @@ else
         $object = new Contact($db);
         $res=$object->fetch($id, $user);
         if ($res < 0) { dol_print_error($db,$object->error); exit; }
-        $res=$object->fetch_optionals($object->id,$extralabels);
+        $res=$object->fetch_optionals();
+        if ($res < 0) { dol_print_error($db,$object->error); exit; }
 
         // Show tabs
         $head = contact_prepare_head($object);

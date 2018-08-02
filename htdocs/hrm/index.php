@@ -24,7 +24,7 @@
  *		\brief      Home page for HRM area.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -36,7 +36,8 @@ if ($conf->deplacement->enabled) require_once DOL_DOCUMENT_ROOT.'/compta/deplace
 if ($conf->expensereport->enabled) require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 
-$langs->loadLangs(array('users','holidays','trips'));
+// Load translation files required by the page
+$langs->loadLangs(array('users', 'holidays', 'trips'));
 
 $socid=GETPOST("socid","int");
 

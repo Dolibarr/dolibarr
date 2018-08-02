@@ -55,7 +55,6 @@ class modCashDesk extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = 'list';
 
 		// Data directories to create when module is enabled
@@ -65,9 +64,10 @@ class modCashDesk extends DolibarrModules
 		$this->config_page_url = array("cashdesk.php@cashdesk");
 
 		// Dependencies
+		$this->hidden = false;			            // A condition to hide module
 		$this->depends = array('always'=>"modBanque", 'always'=>"modFacture", 'always'=>"modProduct", 'FR'=>'modBlockedLog');	// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();			    // List of modules id to disable if this one is disabled
-		$this->phpmin = array(4,1);					// Minimum version of PHP required by module
+		$this->phpmin = array(5,4);					// Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(2,4);	// Minimum version of Dolibarr required by module
 		$this->langfiles = array("cashdesk");
 		$this->warnings_activation = array('FR'=>'WarningNoteModulePOSForFrenchLaw');                     // Warning to show when we activate module. array('always'='text') or array('FR'='text')

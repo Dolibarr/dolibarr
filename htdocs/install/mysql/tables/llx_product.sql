@@ -85,6 +85,7 @@ create table llx_product
   pmp                           double(24,8) DEFAULT 0 NOT NULL,    -- To store valuation of stock calculated using average price method, for this product
   fifo                          double(24,8),                       -- To store valuation of stock calculated using fifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
   lifo                          double(24,8),                       -- To store valuation of stock calculated using lifo method, for this product. TODO Not used, should be replaced by stock value stored into movement table.
+  fk_default_warehouse          integer      DEFAULT NULL,
   canvas                        varchar(32)  DEFAULT NULL,
   finished                      tinyint      DEFAULT NULL,          -- 1=manufactured product, 0=matiere premiere
   hidden                        tinyint      DEFAULT 0,             -- Not used. Deprecated.

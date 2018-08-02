@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/product.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formbarcode.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","products"));
 
 // Security check
@@ -129,7 +130,7 @@ if ($action == 'other')
 
 	}
 
-	$value = GETPOST('activate_sousproduits','alpha');
+	$value = GETPOST('PRODUIT_SOUSPRODUITS','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $value,'chaine',0,'',$conf->entity);
 
 	$value = GETPOST('activate_viewProdDescInForm','alpha');
@@ -179,13 +180,13 @@ if ($action == 'specimen') // For products
 		}
 		else
 		{
-			setEventMessage($obj->error,'errors');
+			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -400,7 +401,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -437,7 +437,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
@@ -523,12 +522,10 @@ print "<br>";
 print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
 
 
-
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="other">';
 
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -541,7 +538,7 @@ print '<td width="80">&nbsp;</td></tr>'."\n";
  */
 
 $rowspan = 4;
-if (! empty($conf->global->PRODUIT_MULTIPRICES)) $rowspan++;
+if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
 
@@ -553,7 +550,7 @@ $current_rule = 'PRODUCT_PRICE_UNIQ';
 if (!empty($conf->global->PRODUIT_MULTIPRICES)) $current_rule='PRODUIT_MULTIPRICES';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY';
 if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES';
-if ((!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY)) && (!empty($conf->global->PRODUIT_MULTIPRICES))) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
+if (!empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $current_rule='PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES';
 print $form->selectarray("princingrule",$select_pricing_rules,$current_rule);
 if ( empty($conf->multicompany->enabled))
 {
@@ -566,9 +563,8 @@ print '</tr>';
 
 
 // multiprix nombre de prix a proposer
-if (! empty($conf->global->PRODUIT_MULTIPRICES))
+if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
@@ -580,7 +576,7 @@ if (! empty($conf->global->PRODUIT_MULTIPRICES))
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td width="60" align="right">';
-print $form->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
+print $form->selectyesno("PRODUIT_SOUSPRODUITS",$conf->global->PRODUIT_SOUSPRODUITS,1);
 print '</td>';
 print '</tr>';
 
@@ -610,7 +606,6 @@ print '</tr>';
 
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
@@ -618,7 +613,6 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 }
 
 // Visualiser description produit dans les formulaires activation/desactivation
-
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
@@ -651,7 +645,6 @@ print '</tr>';
 // View product description in thirdparty language
 if (! empty($conf->global->MAIN_MULTILANGS))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" align="right">';
@@ -665,7 +658,6 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
 	// Add canvas feature
 	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
-	$var = false;
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
@@ -693,8 +685,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
     				if ($conf->$module->enabled)
     				{
-
-    					print "<tr ".$bc[$var]."><td>";
+    					print '<tr class="oddeven"><td>';
 
     					print $object->description;
 

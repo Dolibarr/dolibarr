@@ -214,7 +214,6 @@ if ($showpromotemessage)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

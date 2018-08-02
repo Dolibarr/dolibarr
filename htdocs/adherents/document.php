@@ -144,7 +144,7 @@ if ($id > 0)
 		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
 
 		//Total taille
-		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 		print '</table>';
 
@@ -170,6 +170,6 @@ else
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-
+// End of page
 llxFooter();
 $db->close();

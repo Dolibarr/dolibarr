@@ -25,12 +25,12 @@
  */
 
 // Dolibarr environment
-$res = @include("../../main.inc.php"); // From htdocs directory
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
-$langs->load("admin");
-$langs->load("cron");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'cron'));
 
 if (! $user->admin)
 	accessforbidden();

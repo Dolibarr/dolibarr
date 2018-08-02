@@ -23,11 +23,7 @@
  */
 
 
-$res=0;
-$res=@include("../main.inc.php");                               // For root directory
-if (! $res) $res=@include("../../main.inc.php");        // For "custom" directory
-if (! $res) die("Include of main fails");
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
@@ -36,10 +32,8 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
-// Load traductions files requiredby by page
-$langs->load("resource");
-$langs->load("other");
-$langs->load("interventions");
+// Load translation files required by the page
+$langs->loadLangs(array('resource', 'other', 'interventions'));
 
 /*
 $sortorder                      = GETPOST('sortorder','alpha');

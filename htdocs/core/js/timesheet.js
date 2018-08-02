@@ -45,11 +45,16 @@ function regexEvent(objet,evt,type)
           case 'hours':
               var regex= /^[0-9]{1,2}:[0-9]{2}$/;
               var regex2=/^[0-9]{1,2}$/;
+              var regex3= /^[0-9]{1}([.,]{1}[0-9]{1,2})?$/;
               if(!regex.test(objet.value))
               { 
                   if(regex2.test(objet.value))
                     objet.value=objet.value+':00';
-                  else
+                  else if(regex3.test(objet.value)) {
+                    var tmp=parseFloat(objet.value.replace(',','.'));
+                    var rnd=Math.trunc(tmp);
+                    objet.value=rnd+':'+ Math.round(60*(tmp-rnd));
+                  } else
                     objet.value='';
               }
               /* alert(jQuery("#"+id).val()); */
@@ -213,11 +218,24 @@ function updateTotal(days,mode)
             }
         });
         
-        if (document.getElementById('totalDay['+days+']'))	// May be null if no task records to output (nbline is also 0 in this case)
+        if (total.getHours() || total.getMinutes()) jQuery('.totalDay'+days).addClass("bold");
+        else jQuery('.totalDay'+days).removeClass("bold");
+    	jQuery('.totalDay'+days).text(pad(total.getHours())+':'+pad(total.getMinutes()));
+    	
+    	var total = new Date(0);
+        total.setHours(0);
+        total.setMinutes(0); 
+        for (var i=0; i<7; i++)
         {
-        	document.getElementById('totalDay['+days+']').innerHTML = pad(total.getHours())+':'+pad(total.getMinutes());
-        	//addText(,total.getHours()+':'+total.getMinutes());
+        	var taskTime= new Date(0);
+        	result=parseTime(jQuery('.totalDay'+i).text(),taskTime);
+        	if (result >= 0)
+        	{
+        		total.setHours(total.getHours()+taskTime.getHours());
+        		total.setMinutes(total.getMinutes()+taskTime.getMinutes());
+        	}
         }
+    	jQuery('.totalDayAll').text(pad(total.getHours())+':'+pad(total.getMinutes()));
     }
     else
     {
@@ -257,12 +275,11 @@ function updateTotal(days,mode)
                 }
             }
         }
-        if (document.getElementById('totalDay['+days+']'))	// May be null if no task records to output (nbline is also 0 in this case)
-        {
-        	document.getElementById('totalDay['+days+']').innerHTML = total;
-        }
+        
+        if (total) jQuery('.totalDay'+days).addClass("bold");
+        else jQuery('.totalDay'+days).removeClass("bold");
+    	jQuery('.totalDay'+days).text(total);
     }
-    
 }
 
    

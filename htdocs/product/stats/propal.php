@@ -30,8 +30,8 @@ require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 
-$langs->load("products");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('products', 'companies'));
 
 $id = GETPOST('id', 'int');
 $ref = GETPOST('ref', 'alpha');
@@ -153,7 +153,7 @@ if ($id > 0 || ! empty($ref))
 			// Calcul total qty and amount for global if full scan list
 			$total_ht = 0;
 			$total_qty = 0;
-			
+
 			// Count total nb of records
 			$totalofrecords = '';
 			if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
@@ -161,7 +161,7 @@ if ($id > 0 || ! empty($ref))
 				$result = $db->query($sql);
 				$totalofrecords = $db->num_rows($result);
 			}
-			
+
 			$sql .= $db->plimit($limit + 1, $offset);
 
 			$result = $db->query($sql);
@@ -176,7 +176,7 @@ if ($id > 0 || ! empty($ref))
 				if (! empty($search_year))
 					$option .= '&amp;search_year=' . $search_year;
 				if ($limit > 0 && $limit != $conf->liste_limit) $option.='&limit='.urlencode($limit);
-					
+
 				print '<form method="post" action="' . $_SERVER['PHP_SELF'] . '?id=' . $product->id . '" name="search_form">' . "\n";
 				if (! empty($sortfield))
 					print '<input type="hidden" name="sortfield" value="' . $sortfield . '"/>';
@@ -220,12 +220,12 @@ if ($id > 0 || ! empty($ref))
 
 						$total_ht+=$objp->amount;
 						$total_qty+=$objp->qty;
-						
+
 						$propalstatic->id=$objp->propalid;
 						$propalstatic->ref=$objp->ref;
 						$propalstatic->ref_client=$objp->ref_client;
 						$societestatic->fetch($objp->socid);
-						
+
 						print '<tr class="oddeven">';
 						print '<td>';
 						print $propalstatic->getNomUrl(1);

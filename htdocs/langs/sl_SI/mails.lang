@@ -11,7 +11,9 @@ MailFrom=Pošiljatelj
 MailErrorsTo=Naslov za napake
 MailReply=Odgovoriti
 MailTo=Za
+MailToUsers=To user(s)
 MailCC=Kopija
+MailToCCUsers=Copy to users(s)
 MailCCC=Skrita kopija
 MailTopic=Zadeva
 MailText=Sporočilo
@@ -164,4 +166,4 @@ InGoingEmailSetup=Incoming email setup
 OutGoingEmailSetupForEmailing=Outgoing email setup (for mass emailing)
 DefaultOutgoingEmailSetup=Default outgoing email setup
 Information=Informacija
-
+ContactsWithThirdpartyFilter=Contacts avec filtre client

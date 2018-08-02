@@ -6,7 +6,7 @@ NewIntervention=Nieuwe interventie
 AddIntervention=Nieuwe interventie
 ListOfInterventions=Interventielijst
 ActionsOnFicheInter=Acties bij interventie
-LastInterventions=Laatste %s interventies
+LastInterventions=Latest %s interventions
 AllInterventions=Alle interventies
 CreateDraftIntervention=Creëer conceptinterventie
 InterventionContact=Interventiecontactpersoon
@@ -39,7 +39,7 @@ InterventionSentByEMail=Interventie %s per e-mail verstuurd
 InterventionDeletedInDolibarr=Interventie %s verwijderd
 InterventionsArea=Interventions area
 DraftFichinter=Draft interventions
-LastModifiedInterventions=Laatste %s aangepaste interventies
+LastModifiedInterventions=Latest %s modified interventions
 FichinterToProcess=Interventions to process
 ##### Types de contacts #####
 TypeContact_fichinter_external_CUSTOMER=Nabehandeling afnemerscontact

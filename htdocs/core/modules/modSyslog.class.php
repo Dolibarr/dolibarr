@@ -52,13 +52,11 @@ class modSyslog extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Activate debug logs (syslog)";
 		// Can be enabled / disabled only in the main company
-		$this->core_enabled = true;
+		$this->core_enabled = 1;
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
 		$this->version = 'dolibarr';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
-		$this->special = 2;
 		// Name of image file used for this module.
 		$this->picto='technic';
 
@@ -69,8 +67,11 @@ class modSyslog extends DolibarrModules
 		$this->config_page_url = array("syslog.php");
 
 		// Dependencies
-		$this->depends = array();
-		$this->requiredby = array();
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Constants
 		$this->const = array();
@@ -81,5 +82,10 @@ class modSyslog extends DolibarrModules
 		// Permissions
 		$this->rights = array();
 		$this->rights_class = 'syslog';
+
+		// Cronjobs
+		$this->cronjobs = array(
+		    0=>array('label'=>'CompressSyslogs', 'jobtype'=>'method', 'class'=>'core/class/utils.class.php', 'objectname'=>'Utils', 'method'=>'compressSyslogs', 'parameters'=>'', 'comment'=>'Compress and archive log files', 'frequency'=>1, 'unitfrequency'=> 3600 * 24, 'priority'=>50, 'status'=>0, 'test'=>true),
+		);
 	}
 }

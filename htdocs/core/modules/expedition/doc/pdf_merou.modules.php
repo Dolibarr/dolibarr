@@ -33,11 +33,82 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 
 
 /**
- *	Classe permettant de generer les borderaux envoi au modele Merou
+ *	Class to build sending documents with model Merou 
  */
 class pdf_merou extends ModelePdfExpedition
 {
-	var $emetteur;	// Objet societe qui emet
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+	
+	/**
+     * @var string model name
+     */
+    public $name;
+	
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+	
+	/**
+     * @var string document type
+     */
+    public $type;
+
+	/**
+     * @var array() Minimum version of PHP required by module.
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
+     */
+	public $phpmin = array(5, 4); 
+	
+	/**
+     * Dolibarr version of the loaded document
+     * @public string
+     */
+	public $version = 'dolibarr';
+
+	/**
+     * @var int page_largeur
+     */
+    public $page_largeur;
+	
+	/**
+     * @var int page_hauteur
+     */
+    public $page_hauteur;
+	
+	/**
+     * @var array format
+     */
+    public $format;
+	
+	/**
+     * @var int marge_gauche
+     */
+	public $marge_gauche;
+	
+	/**
+     * @var int marge_droite
+     */
+	public $marge_droite;
+	
+	/**
+     * @var int marge_haute
+     */
+	public $marge_haute;
+	
+	/**
+     * @var int marge_basse
+     */
+	public $marge_basse;
+    
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
+	public $emetteur;
 
 
 	/**
@@ -65,7 +136,7 @@ class pdf_merou extends ModelePdfExpedition
 
 		$this->option_logo = 1;
 
-		// Recupere emmetteur
+		// Get source company
 		$this->emetteur=$mysoc;
 		if (! $this->emetteur->country_code) $this->emetteur->country_code=substr($langs->defaultlang,-2);    // By default if not defined
 	}
@@ -91,16 +162,9 @@ class pdf_merou extends ModelePdfExpedition
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-		$outputlangs->load("propal");
-		$outputlangs->load("deliveries");
-		$outputlangs->load("sendings");
-		$outputlangs->load("productbatch");
+		
+		// Translations
+		$outputlangs->loadLangs(array("main", "bills", "products", "dict", "companies", "propal", "deliveries", "sendings", "productbatch"));
 		
 		if ($conf->expedition->dir_output)
 		{
@@ -172,7 +236,7 @@ class pdf_merou extends ModelePdfExpedition
                 }
                 $pdf->SetFont(pdf_getPDFFont($outputlangs));
                 // Set path to the background PDF File
-                if (empty($conf->global->MAIN_DISABLE_FPDI) && ! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
+                if (! empty($conf->global->MAIN_ADD_PDF_BACKGROUND))
                 {
                     $pagecount = $pdf->setSourceFile($conf->mycompany->dir_output.'/'.$conf->global->MAIN_ADD_PDF_BACKGROUND);
                     $tplidx = $pdf->importPage(1);
@@ -392,9 +456,9 @@ class pdf_merou extends ModelePdfExpedition
 	{
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
-		$langs->load("main");
-		$langs->load("bills");
+		
+		// Translations
+		$langs->loadLangs(array("main", "bills"));
 
 		if (empty($hidetop))
 		{
@@ -542,7 +606,7 @@ class pdf_merou extends ModelePdfExpedition
 		$pdf->SetTextColor(0,0,0);
 
 		// Sender properties
-		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty);
+		$carac_emetteur = pdf_build_address($outputlangs, $this->emetteur, $object->thirdparty, '', 0, 'source', $object);
 
 		$pdf->SetFont('','', $default_font_size - 3);
 		$pdf->SetXY($blSocX,$blSocY+4);

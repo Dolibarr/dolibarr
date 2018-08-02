@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT .'/fichinter/class/fichinter.class.php';
 
 if (!$user->rights->ficheinter->lire) accessforbidden();
 
+// Load translation files required by the page
 $langs->load("interventions");
 
 // Security check
@@ -142,7 +143,6 @@ if ($resql)
 
         print '</td></tr>';
     }
-    $var=true;
     $bool=false;
     foreach ($listofstatus as $status)
     {
@@ -197,10 +197,8 @@ if (! empty($conf->ficheinter->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap">';
@@ -247,10 +245,8 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = true;
 		while ($i < $num)
 		{
-
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -318,10 +314,8 @@ if (! empty($conf->ficheinter->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = true;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven">';
 				print '<td class="nowrap" width="20%">';

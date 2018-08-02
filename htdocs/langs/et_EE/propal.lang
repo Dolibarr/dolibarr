@@ -33,6 +33,7 @@ PropalStatusSigned=Allkirjastatud (vaja arve esitada)
 PropalStatusNotSigned=Allkirjastamata (suletud)
 PropalStatusBilled=Arve esitatud
 PropalStatusDraftShort=Mustand
+PropalStatusValidatedShort=Kinnitatud
 PropalStatusClosedShort=Suletud
 PropalStatusSignedShort=Allkirjastatud
 PropalStatusNotSignedShort=Allkirjastamata
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 kuu
 TypeContact_propal_internal_SALESREPFOLL=Pakkumise järelkajaga tegelev müügiesindaja
 TypeContact_propal_external_BILLING=Müügiarve kontakt
 TypeContact_propal_external_CUSTOMER=Kliendi kontakt pakkumise järelkaja jaoks
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Pakkumise täielik mudel (logo jne)
 DefaultModelPropalCreate=Vaikimisi mudeli loomine

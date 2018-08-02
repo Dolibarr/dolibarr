@@ -24,21 +24,18 @@
  *	\brief      card of withdraw line
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load("banks");
-$langs->load("categories");
+// Load translation files required by the page
+$langs->loadlangs(array('banks', 'categories', 'bills', 'withdrawals'));
 
 // Security check
 if ($user->societe_id > 0) accessforbidden();
-
-$langs->load("bills");
-$langs->load("withdrawals");
 
 // Get supervariables
 $action = GETPOST('action','alpha');

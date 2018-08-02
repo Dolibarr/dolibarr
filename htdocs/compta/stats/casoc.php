@@ -34,10 +34,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
-$langs->load("companies");
-$langs->load("categories");
-$langs->load("bills");
-$langs->load("compta");
+// Load translation files required by the page
+$langs->loadLangs(array('companies', 'categories', 'bills', 'compta'));
 
 // Define modecompta ('CREANCES-DETTES' or 'RECETTES-DEPENSES')
 $modecompta = $conf->global->ACCOUNTING_MODE;
@@ -90,8 +88,8 @@ $date_end=dol_mktime(23,59,59,GETPOST("date_endmonth"),GETPOST("date_endday"),GE
 // Quarter
 if (empty($date_start) || empty($date_end)) // We define date_start and date_end
 {
-	$q=GETPOST("q")?GETPOST("q"):0;
-	if ($q==0)
+	$q=GETPOST("q","int")?GETPOST("q","int"):0;
+	if (empty($q))
 	{
 		// We define date_start and date_end
 		$month_start=GETPOST("month")?GETPOST("month"):($conf->global->SOCIETE_FISCAL_MONTH_START?($conf->global->SOCIETE_FISCAL_MONTH_START):1);
@@ -119,6 +117,13 @@ else
 {
 	// TODO We define q
 }
+
+// $date_start and $date_end are defined. We force $year_start and $nbofyear
+$tmps=dol_getdate($date_start);
+$year_start = $tmps['year'];
+$tmpe=dol_getdate($date_end);
+$year_end = $tmpe['year'];
+$nbofyear = ($year_end - $year_start) + 1;
 
 $commonparams=array();
 $commonparams['modecompta']=$modecompta;
@@ -162,30 +167,45 @@ $form=new Form($db);
 $thirdparty_static=new Societe($db);
 $formother = new FormOther($db);
 
+// TODO Report from bookkeeping not yet available, so we switch on report on business events
+if ($modecompta=="BOOKKEEPING") $modecompta="CREANCES-DETTES";
+if ($modecompta=="BOOKKEEPINGCOLLECTED") $modecompta="RECETTES-DEPENSES";
+
 // Show report header
 if ($modecompta=="CREANCES-DETTES")
 {
-	$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+	$name=$langs->trans("Turnover").', '.$langs->trans("ByThirdParties");
 	$calcmode=$langs->trans("CalcModeDebt");
-	$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
 	$description=$langs->trans("RulesCADue");
 	if (! empty($conf->global->FACTURE_DEPOSITS_ARE_JUST_PAYMENTS)) $description.= $langs->trans("DepositsAreNotIncluded");
 	else  $description.= $langs->trans("DepositsAreIncluded");
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
-} else {
-	$name=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+}
+else if ($modecompta=="RECETTES-DEPENSES")
+{
+	$name=$langs->trans("TurnoverCollected").', '.$langs->trans("ByThirdParties");
 	$calcmode=$langs->trans("CalcModeEngagement");
-	$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
-	$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
-	//$periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+	//$calcmode.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
 	$description=$langs->trans("RulesCAIn");
 	$description.= $langs->trans("DepositsAreIncluded");
 	$builddate=dol_now();
 	//$exportlink=$langs->trans("NotYetAvailable");
 }
+else if ($modecompta=="BOOKKEEPING")
+{
+
+
+}
+else if ($modecompta=="BOOKKEEPINGCOLLECTED")
+{
+
+
+}
+$period=$form->select_date($date_start,'date_start',0,0,0,'',1,0,1).' - '.$form->select_date($date_end,'date_end',0,0,0,'',1,0,1);
+if ($date_end == dol_time_plus_duree($date_start, 1, 'y') - 1) $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year_start+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+else $periodlink = '';
 
 report_header($name,$namelink,$period,$periodlink,$description,$builddate,$exportlink,$tableparams,$calcmode);
 
@@ -226,8 +246,8 @@ if ($modecompta == 'CREANCES-DETTES') {
 	    $sql.=" AND cs.fk_soc is null";
 	}
 	else if ($selected_cat) {	// Into a specific category
-	    $sql.= " AND (c.rowid = ".$selected_cat;
-	    if ($subcat) $sql.=" OR c.fk_parent = " . $selected_cat;
+	    $sql.= " AND (c.rowid = ".$db->escape($selected_cat);
+	    if ($subcat) $sql.=" OR c.fk_parent = " . $db->escape($selected_cat);
 	    $sql.= ")";
 		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
@@ -266,10 +286,10 @@ if ($modecompta == 'CREANCES-DETTES') {
 		$sql.= " AND cs.fk_categorie = c.rowid AND cs.fk_soc = s.rowid";
 	}
 }
-if(!empty($search_societe))  $sql.= ' AND s.nom LIKE "%'.$search_societe.'%"';
-if(!empty($search_zip))  $sql.= ' AND s.zip LIKE "%'.$search_zip.'%"';
-if(!empty($search_town))  $sql.= ' AND s.town LIKE "%'.$search_town.'%"';
-if($search_country > 0)  $sql.= ' AND s.fk_pays = '.$search_country.'';
+if (!empty($search_societe))  $sql.= natural_search('s.nom', $search_societe);
+if (!empty($search_zip))      $sql.= natural_search('s.zip', $search_zip);
+if (!empty($search_town))     $sql.= natural_search('s.town', $search_town);
+if ($search_country > 0)      $sql.= ' AND s.fk_pays = '.$search_country.'';
 $sql.= " AND f.entity = ".$conf->entity;
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 $sql.= " GROUP BY s.rowid, s.nom, s.zip, s.town, s.fk_pays";

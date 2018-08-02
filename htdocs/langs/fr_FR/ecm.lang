@@ -46,6 +46,5 @@ ECMSelectASection=Sélectionner un répertoire dans l'arborescence...
 DirNotSynchronizedSyncFirst=Ce répertoire a été crée ou modifié en dehors du module GED. Cliquer sur le bouton "Rafraîchir" afin de resyncroniser les informations sur disque et la base pour voir le contenu de ce répertoire.
 ReSyncListOfDir=Resynchroniser la liste des répertoires
 HashOfFileContent=Hash du contenu du fichier
-FileNotYetIndexedInDatabase=Fichier non indexé dans la base de données. Téléchargez le à nouveau
-FileSharedViaALink=Fichier partagé via un lien
 NoDirectoriesFound=Aucun répertoire trouvé
+FileNotYetIndexedInDatabase=Fichier non indexé dans la base de données. Téléchargez le à nouveau

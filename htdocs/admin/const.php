@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->load("admin");
 
 if (! $user->admin)
@@ -313,7 +314,6 @@ if ($conf->use_javascript_ajax)
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

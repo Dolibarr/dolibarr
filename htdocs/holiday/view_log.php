@@ -23,7 +23,7 @@
  *  \ingroup    holiday
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -41,6 +41,7 @@ if (empty($year))
 	$year=$tmpdate['year'];
 }
 
+// Load translation files required by the page
 $langs->load('users');
 
 

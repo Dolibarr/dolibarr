@@ -34,9 +34,8 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/facture/modules_facture.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
 if (! empty($conf->banque->enabled)) require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
-$langs->load('bills');
-$langs->load('banks');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('bills','banks','companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref', 'alpha');
@@ -222,57 +221,64 @@ print '<div class="underbanner clearboth"></div>';
 print '<table class="border centpercent">'."\n";
 
 // Date payment
-print '<tr><td class="titlefield">'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
+print '<tr><td class="titlefield">'.$form->editfieldkey("Date",'datep',$object->date,$object,$user->rights->facture->paiement).'</td><td>';
 print $form->editfieldval("Date",'datep',$object->date,$object,$user->rights->facture->paiement,'datepicker','',null,$langs->trans('PaymentDateUpdateSucceeded'));
 print '</td></tr>';
 
 // Payment type (VIR, LIQ, ...)
 $labeltype=$langs->trans("PaymentType".$object->type_code)!=("PaymentType".$object->type_code)?$langs->trans("PaymentType".$object->type_code):$object->type_libelle;
-print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="3">'.$labeltype.'</td></tr>';
-
-// Payment numero
-print '<tr><td>'.$form->editfieldkey("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td colspan="3">';
-print $form->editfieldval("Numero",'num_paiement',$object->numero,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
-print '</td></tr>';
-
-// Amount
-print '<tr><td>'.$langs->trans('Amount').'</td><td colspan="3">'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
-
-// Note
-print '<tr><td class="tdtop">'.$form->editfieldkey("Note",'note',$object->note,$object,$user->rights->facture->paiement).'</td><td colspan="3">';
-print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->facture->paiement,'textarea');
-print '</td></tr>';
+print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>'.$labeltype.'</td></tr>';
 
 $disable_delete = 0;
 // Bank account
 if (! empty($conf->banque->enabled))
 {
-    if ($object->fk_account > 0)
-    {
-    	$bankline=new AccountLine($db);
-    	$bankline->fetch($object->bank_line);
-        if ($bankline->rappro)
-        {
-            $disable_delete = 1;
-            $title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
-        }
+	if ($object->fk_account > 0)
+	{
+		$bankline=new AccountLine($db);
+		$bankline->fetch($object->bank_line);
+		if ($bankline->rappro)
+		{
+			$disable_delete = 1;
+			$title_button = dol_escape_htmltag($langs->transnoentitiesnoconv("CantRemoveConciliatedPayment"));
+		}
 
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
-		print '<td colspan="3">';
-		print $bankline->getNomUrl(1,0,'showconciliated');
-    	print '</td>';
-    	print '</tr>';
-
-    	print '<tr>';
-    	print '<td>'.$langs->trans('BankAccount').'</td>';
-		print '<td colspan="3">';
+		print '<tr>';
+		print '<td>'.$langs->trans('BankAccount').'</td>';
+		print '<td>';
 		$accountstatic=new Account($db);
 		$accountstatic->fetch($bankline->fk_account);
-        print $accountstatic->getNomUrl(1);
-    	print '</td>';
-    	print '</tr>';
+		print $accountstatic->getNomUrl(1);
+		print '</td>';
+		print '</tr>';
+	}
+}
 
+// Payment numero
+/*
+$titlefield=$langs->trans('Numero').' <em>('.$langs->trans("ChequeOrTransferNumber").')</em>';
+print '<tr><td>'.$form->editfieldkey($titlefield,'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td>';
+print $form->editfieldval($titlefield,'num_paiement',$object->num_paiement,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('PaymentNumberUpdateSucceeded'));
+print '</td></tr>';
+
+// Check transmitter
+$titlefield=$langs->trans('CheckTransmitter').' <em>('.$langs->trans("ChequeMaker").')</em>';
+print '<tr><td>'.$form->editfieldkey($titlefield,'chqemetteur',$object->,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td>';
+print $form->editfieldval($titlefield,'chqemetteur',$object->aaa,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('ChequeMakeUpdateSucceeded'));
+print '</td></tr>';
+
+// Bank name
+$titlefield=$langs->trans('Bank').' <em>('.$langs->trans("ChequeBank").')</em>';
+print '<tr><td>'.$form->editfieldkey($titlefield,'chqbank',$object->aaa,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer).'</td><td>';
+print $form->editfieldval($titlefield,'chqbank',$object->aaa,$object,$object->statut == 0 && $user->rights->fournisseur->facture->creer,'string','',null,$langs->trans('ChequeBankUpdateSucceeded'));
+print '</td></tr>';
+*/
+
+// Bank account
+if (! empty($conf->banque->enabled))
+{
+	if ($object->fk_account > 0)
+	{
 		if ($object->type_code == 'CHQ' && $bankline->fk_bordereau > 0)
 		{
 			dol_include_once('/compta/paiement/cheque/class/remisecheque.class.php');
@@ -280,14 +286,29 @@ if (! empty($conf->banque->enabled))
 			$bordereau->fetch($bankline->fk_bordereau);
 
 			print '<tr>';
-	    	print '<td>'.$langs->trans('CheckReceipt').'</td>';
-			print '<td colspan="3">';
+			print '<td>'.$langs->trans('CheckReceipt').'</td>';
+			print '<td>';
 			print $bordereau->getNomUrl(1);
-	    	print '</td>';
-	    	print '</tr>';
+			print '</td>';
+			print '</tr>';
 		}
-    }
+	}
+
+	print '<tr>';
+	print '<td>'.$langs->trans('BankTransactionLine').'</td>';
+	print '<td>';
+	print $bankline->getNomUrl(1,0,'showconciliated');
+	print '</td>';
+	print '</tr>';
 }
+
+// Comments
+print '<tr><td class="tdtop">'.$form->editfieldkey("Comments",'note',$object->note,$object,$user->rights->facture->paiement).'</td><td>';
+print $form->editfieldval("Note",'note',$object->note,$object,$user->rights->facture->paiement,'textarea:'.ROWS_3.':90%');
+print '</td></tr>';
+
+// Amount
+print '<tr><td>'.$langs->trans('Amount').'</td><td>'.price($object->amount,'',$langs,0,-1,-1,$conf->currency).'</td></tr>';
 
 print '</table>';
 
@@ -332,8 +353,6 @@ if ($resql)
 
 	if ($num > 0)
 	{
-		$var=True;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($resql);

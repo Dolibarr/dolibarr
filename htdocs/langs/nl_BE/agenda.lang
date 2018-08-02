@@ -8,6 +8,9 @@ NewCompanyToDolibarr=Derde %s aangemaakt
 ContractValidatedInDolibarr=Contract %s goedgekeurd
 MemberModifiedInDolibarr=Lid %s werd aangepast
 MemberResiliatedInDolibarr=Lid %s verwijderd
+MemberSubscriptionAddedInDolibarr=Abonnement %s voor lid %s toegevoegd
+MemberSubscriptionModifiedInDolibarr=Abonnement %s voor lid %s aangepast
+MemberSubscriptionDeletedInDolibarr=Abonnement %s voor lid %s verwijderd
 ShipmentValidatedInDolibarr=Shipment %s goedgekeurd
 ShipmentClassifyClosedInDolibarr=Verzending %s werd geclassificeerd als gefactureerd
 ShipmentUnClassifyCloseddInDolibarr=Verzending %s werd geclassificieerd als opnieuw geopend
@@ -23,8 +26,9 @@ PROJECT_MODIFYInDolibarr=Project %s gewijzigd
 AgendaModelModule=Document sjablonen voor een gebeurtenis
 AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> om de uitvoer van acties te beperken die niet werden toegewezen aan de gebruiker <b>%s</b>.
 AgendaUrlOptions4=<b>logint=%s</b> om de uitvoer van acties te beperken die aan de gebruiker <b>%s</b> is toegewezen. (eigenaar en anderen).
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> om de uitvoer te beperken tot acties die zijn gekoppeld aan project <b>__PROJECT_ID__</b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> om automatische gebeurtenis uit te sluiten.
 AgendaShowBirthdayEvents=Toon verjaardagen van contacten
 AgendaHideBirthdayEvents=Verberg verjaardagen van contacten
-AgendaExtNb=Calendar no. %s
+AgendaExtNb=Kalender nr. %s
 ConfirmCloneEvent=Weet u zeker als u event <b>%s</b> wilt klonen?

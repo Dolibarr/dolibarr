@@ -74,6 +74,7 @@ NoWidget=Sense widget
 GoToApiExplorer=Ves a l'explorador de l'API
 ListOfMenusEntries=Llista d'entrades de menú
 ListOfPermissionsDefined=Llista de permisos definits
+SeeExamples=Mira exemples aquí
 EnabledDesc=Condició per tenir activat aquest camp (Exemples: 1 ó $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=El camp és visible? (Exemples: 0=Mai visible, 1=Visible en llistes i en formularis de creació/actualització/visualització, 2=Visible només en llistes, 3=Visible només en formularis de creació/actualització/visualització. Si s'assigna un valor negatiu el camp no es mostra per defecte en llistes, però es pot seleccionar per visualitzar.
 IsAMeasureDesc=Es pot acumular el valor del camp per obtenir una suma total de la llista? (Exemples: 1 ó 0)
@@ -94,3 +95,7 @@ YouCanUseTranslationKey=Podeu utilitzar aquí una clau que és la clau de traduc
 DropTableIfEmpty=(Suprimeix la taula si està buida)
 TableDoesNotExists=La taula %s no existeix
 TableDropped=S'ha esborrat la taula %s
+InitStructureFromExistingTable=Creeu la cadena de la matriu d'estructura d'una taula existent
+UseAboutPage=Disallow the about page
+UseDocFolder=Disallow the documentation folder
+UseSpecificReadme=Use a specific ReadMe

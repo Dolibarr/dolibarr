@@ -561,7 +561,7 @@ IMG;
 	 * Convert the ODT file to PDF and export the file as attached file by HTTP
 	 * Note: you need to have JODConverter and OpenOffice or LibreOffice installed and executable on the same system as where this php script will be executed. You also need to chmod +x odt2pdf.sh
 	 *
-	 * @param string $name (optional)
+	 * @param 	string 	$name 	Name of ODT file to generate before generating PDF
 	 * @throws OdfException
 	 * @return void
 	 */
@@ -577,7 +577,16 @@ IMG;
 		$execmethod=(empty($conf->global->MAIN_EXEC_USE_POPEN)?1:2);	// 1 or 2
 		// Method 1 sometimes hang the server.
 
-		if (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
+
+		// Export to PDF using LibreOffice
+		if ($conf->global->MAIN_ODT_AS_PDF == 'libreoffice')
+		{
+			// using windows libreoffice that must be in path
+			// using linux/mac libreoffice that must be in path
+			// Note PHP Config "fastcgi.impersonate=0" must set to 0 - Default is 1
+			$command ='soffice -headless -convert-to pdf -outdir '. escapeshellarg(dirname($name)). " ".escapeshellarg($name);
+		}
+		elseif (preg_match('/unoconv/', $conf->global->MAIN_ODT_AS_PDF))
 		{
 			// If issue with unoconv, see https://github.com/dagwieers/unoconv/issues/87
 
@@ -599,8 +608,8 @@ IMG;
 			//DEBUG: Terminating LibreOffice instance.
 			//DEBUG: Waiting for LibreOffice instance to exit
 
-			// It fails:
-			// - set shel of user to bash instead of nologin.
+			// If it fails:
+			// - set shell of user to bash instead of nologin.
 			// - set permission to read/write to user on home directory /var/www so user can create the libreoffice , dconf and .cache dir and files then set permission back
 
 			$command = $conf->global->MAIN_ODT_AS_PDF.' '.escapeshellcmd($name);
@@ -609,16 +618,16 @@ IMG;
 		else
 		{
 			// deprecated old method
-			$name=preg_replace('/\.odt/i', '', $name);
+			$tmpname=preg_replace('/\.odt/i', '', $name);
 
 			if (!empty($conf->global->MAIN_DOL_SCRIPTS_ROOT))
 			{
-				$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
+				$command = $conf->global->MAIN_DOL_SCRIPTS_ROOT.'/scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($tmpname).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
 			}
 			else
 			{
 			    dol_syslog(get_class($this).'::exportAsAttachedPDF is used but the constant MAIN_DOL_SCRIPTS_ROOT with path to script directory was not defined.', LOG_WARNING);
-				$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($name).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
+				$command = '../../scripts/odt2pdf/odt2pdf.sh '.escapeshellcmd($tmpname).' '.(is_numeric($conf->global->MAIN_ODT_AS_PDF)?'jodconverter':$conf->global->MAIN_ODT_AS_PDF);
 			}
 		}
 
@@ -661,12 +670,15 @@ IMG;
 			}
 
 			if (!empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE)) {
+				$name=preg_replace('/\.od(x|t)/i', '', $name);
 				header('Content-type: application/pdf');
 				header('Content-Disposition: attachment; filename="'.$name.'.pdf"');
-				readfile("$name.pdf");
+				readfile($name.".pdf");
 			}
 			if (!empty($conf->global->MAIN_ODT_AS_PDF_DEL_SOURCE))
-				unlink("$name.odt");
+			{
+				unlink($name);
+			}
 		} else {
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $ret_val='.$retval, LOG_DEBUG);
 			dol_syslog(get_class($this).'::exportAsAttachedPDF $output_arr='.var_export($output_arr,true), LOG_DEBUG);

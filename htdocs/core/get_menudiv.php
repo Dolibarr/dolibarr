@@ -20,7 +20,7 @@
 
 /**
  *       \file       htdocs/core/get_menudiv.php
- *       \brief      File to return menu into a div tree
+ *       \brief      File to return menu into a div tree, to be used by other frontend
  */
 
 //if (! defined('NOREQUIREUSER'))   define('NOREQUIREUSER','1');	// Not disabled cause need to load personalized language
@@ -37,8 +37,6 @@ if (! defined('DISABLE_JQUERY_TABLEDND'))   define('DISABLE_JQUERY_TABLEDND',1);
 if (! defined('DISABLE_JQUERY_JNOTIFY'))    define('DISABLE_JQUERY_JNOTIFY',1);
 if (! defined('DISABLE_JQUERY_FLOT'))       define('DISABLE_JQUERY_FLOT',1);
 if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE',1);
-if (! defined('DISABLE_JQUERY_JEDITABLE'))  define('DISABLE_JQUERY_JEDITABLE',1);
-if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR',1);
 if (! defined('DISABLE_CKEDITOR'))          define('DISABLE_CKEDITOR',1);
 if (! defined('DISABLE_BROWSER_NOTIF'))     define('DISABLE_BROWSER_NOTIF',1);
 if (! defined('DISABLE_DATE_PICKER'))       define('DISABLE_DATE_PICKER',1);
@@ -205,7 +203,7 @@ if (! class_exists('MenuManager'))
 	}
 }
 $menumanager = new MenuManager($db, empty($user->societe_id)?0:1);
-$menumanager->loadMenu('all','all');
+$menumanager->loadMenu('all','all');	// Load this->tabMenu with sql menu entries
 //var_dump($menumanager);exit;
 $menumanager->showmenu('jmobile');
 

@@ -263,6 +263,20 @@ if ($action == 'sethideinactivethirdparty')
 		dol_print_error($db);
 	}
 }
+if($action=='setonsearchandlistgooncustomerorsuppliercard'){
+       $setonsearchandlistgooncustomerorsuppliercard = GETPOST('value','int');
+       $res = dolibarr_set_const($db, "SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD", $setonsearchandlistgooncustomerorsuppliercard,'yesno',0,'',$conf->entity);
+       if (! $res > 0) $error++;
+       if (! $error)
+       {
+               setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+       }
+       else
+       {
+               setEventMessages($langs->trans("Error"), null, 'errors');
+       }
+}
+
 
 /*
  * 	View
@@ -775,6 +789,24 @@ else
 print '</a></td>';
 print '</tr>';
 
+/*print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("OnSearchAndListGoOnCustomerOrSupplierCard").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->SOCIETE_ON_SEARCH_AND_LIST_GO_ON_CUSTOMER_OR_SUPPLIER_CARD))
+{
+       print '<a href="'.$_SERVER['PHP_SELF'].'?action=setonsearchandlistgooncustomerorsuppliercard&value=0">';
+       print img_picto($langs->trans("Activated"),'switch_on');
+
+}
+else
+{
+       print '<a href="'.$_SERVER['PHP_SELF'].'?action=setonsearchandlistgooncustomerorsuppliercard&value=1">';
+       print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+*/
 
 /*
 // COMPANY_USE_SEARCH_TO_SELECT

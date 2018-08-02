@@ -27,8 +27,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT .'/supplier_proposal/class/supplier_proposal.class.php';
 
-$langs->load("supplier_proposal");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('supplier_proposal', 'companies'));
 
 // Security check
 $socid=GETPOST('socid','int');
@@ -63,7 +63,6 @@ print '<div class="fichecenter"><div class="fichethirdleft">';
 
 if (! empty($conf->global->MAIN_SEARCH_FORM_ON_HOME_AREAS))     // This is useless due to the global search combo
 {
-    $var=false;
     print '<form method="post" action="'.DOL_URL_ROOT.'/supplier_proposal/list.php">';
     print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
     print '<table class="noborder nohover" width="100%">';
@@ -84,7 +83,7 @@ $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE p.fk_soc = s.rowid";
-$sql.= " AND p.entity = ".$conf->entity;
+$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
 if ($user->societe_id) $sql.=' AND p.fk_soc = '.$user->societe_id;
 if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql.= " AND p.fk_statut IN (0,1,2,3,4)";
@@ -118,14 +117,12 @@ if ($resql)
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th colspan="2">'.$langs->trans("Statistics").' - '.$langs->trans("CommRequests").'</th></tr>'."\n";
-    $var=true;
     $listofstatus=array(0,1,2,3,4);
     foreach ($listofstatus as $status)
     {
         $dataseries[]=array($supplier_proposalstatic->LibStatut($status,1), (isset($vals[$status])?(int) $vals[$status]:0));
         if (! $conf->use_javascript_ajax)
         {
-
             print '<tr class="oddeven">';
             print '<td>'.$supplier_proposalstatic->LibStatut($status,0).'</td>';
             print '<td align="right"><a href="list.php?statut='.$status.'">'.(isset($vals[$status])?$vals[$status]:0).'</a></td>';
@@ -184,13 +181,11 @@ if (! empty($conf->supplier_proposal->enabled))
 		if ($num)
 		{
 			$i = 0;
-			$var = True;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
-				print '<tr class="oddeven">';
 
+				print '<tr class="oddeven">';
 				$supplier_proposalstatic->id=$obj->rowid;
 				$supplier_proposalstatic->ref=$obj->ref;
 				print '<td class="nowrap">'.$supplier_proposalstatic->getNomUrl(1).'</td>';
@@ -242,10 +237,8 @@ if ($resql)
 	if ($num)
 	{
 		$i = 0;
-		$var = True;
 		while ($i < $num)
 		{
-
 			$obj = $db->fetch_object($resql);
 
 			print '<tr class="oddeven">';
@@ -303,7 +296,7 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 	$sql.= ", ".MAIN_DB_PREFIX."supplier_proposal as p";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= " WHERE p.fk_soc = s.rowid";
-	$sql.= " AND p.entity = ".$conf->entity;
+	$sql.= " AND p.entity IN (".getEntity('supplier_proposal').")";
 	$sql.= " AND p.fk_statut = 1";
 	if (!$user->rights->societe->client->voir && !$socid) $sql.= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql.= " AND s.rowid = ".$socid;
@@ -317,8 +310,6 @@ if (! empty($conf->supplier_proposal->enabled) && $user->rights->supplier_propos
 		$i = 0;
 		if ($num > 0)
 		{
-			$var=true;
-
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><th colspan="5">'.$langs->trans("RequestsOpened").' <a href="'.DOL_URL_ROOT.'/supplier_proposal/list.php?viewstatut=1"><span class="badge">'.$num.'</span></a></th></tr>';
 

@@ -146,17 +146,15 @@ if ($year)
         print '<td align="right">'.$langs->trans("Size").'</td>';
         print '<td align="right">'.$langs->trans("Date").'</td>';
         print '</tr>';
-        $var=true;
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)
             {
                 if (preg_match('/^supplier_payment/i',$file))
                 {
-
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
-                    print "<tr ".$bc[$var].">".'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+                    print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
                     print '<td align="right">'.dol_print_size(dol_filesize($tfile)).'</td>';
                     print '<td align="right">'.dol_print_date(dol_filemtime($tfile),"dayhour").'</td></tr>';
                 }

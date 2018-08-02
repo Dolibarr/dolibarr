@@ -1,4 +1,7 @@
 # Dolibarr language file - Source file is en_US - stocks
+Movements=Mutaties
+ListOfStockMovements=Voorraadmutatielijst
+SelectProductInAndOutWareHouse=Kies een product, een aantal, een van-magazijn, een naar-magazijn, en klik "%s".  Als alle nodige bewegingen zijn aangeduid, klik op "%s".
 inventoryDraft=Actief
 inventoryConfirmCreate=Aanmaken
 inventoryDeleteLine=Verwijder lijn

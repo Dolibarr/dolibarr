@@ -43,7 +43,11 @@ CronNoJobs=Sense treballs actualment
 CronPriority=Prioritat
 CronLabel=Etiqueta
 CronNbRun=Nº execucions
+<<<<<<< HEAD
+CronMaxRun=Max number launch
+=======
 CronMaxRun=Número màxim d'execucions
+>>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 CronEach=Tota (s)
 JobFinished=Tasques llançades i finalitzades
 #Page card

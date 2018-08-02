@@ -41,7 +41,7 @@ if (! isset($argv[1]) || ! $argv[1]) {
 }
 $modulename=$argv[1];
 
-require_once ($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formadmin.class.php';

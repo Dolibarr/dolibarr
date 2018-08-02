@@ -48,6 +48,23 @@ into
 	// initialize subsetchars
 	$subsetchars = array_fill(0, 256, true);
 
+* Replace the continue into switch with a break:
+
+case 're': {
+	// justify block
+	if (!TCPDF_STATIC::empty_string($this->lispacer)) {
+		$this->lispacer = '';
+		continue;
+	}
+
+into 
+case 're': {
+	// justify block
+	if (!TCPDF_STATIC::empty_string($this->lispacer)) {
+		$this->lispacer = '';
+		break;
+	}
+
 * Optionnaly, removed all fonts except 
     dejavusans* (used by greek, arab, persan, romanian, turkish), 
     freemono* (russian), 
@@ -90,6 +107,14 @@ var vTmpNode=this.newNode(vTmpCell, 'div', null, '');
 vTmpNode=this.newNode(vTmpNode, 'a', null, '', vLangs[vLang]['moreinfo']);
 vTmpNode.setAttribute('href',vTaskList[i].getLink());
                         
+* Replace '% Comp.' to have a smaller text column header
+'comp':'% Comp.'
+with
+'comp':'%'
+
+
+
+
 
 JCROP:
 ------

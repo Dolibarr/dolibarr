@@ -33,6 +33,7 @@ PropalStatusSigned=Pasirašyta (reikia pateikti sąskaitą-faktūrą)
 PropalStatusNotSigned=Nepasirašyta (uždarytas)
 PropalStatusBilled=Sąskaita-faktūra pateikta
 PropalStatusDraftShort=Projektas
+PropalStatusValidatedShort=Galiojantis
 PropalStatusClosedShort=Uždarytas
 PropalStatusSignedShort=Pasirašyta
 PropalStatusNotSignedShort=Nepasirašyta
@@ -74,6 +75,7 @@ AvailabilityTypeAV_1M=1 mėnuo
 TypeContact_propal_internal_SALESREPFOLL=Tipiškas tęstinis pasiūlymas
 TypeContact_propal_external_BILLING=Kliento sąskaitos-faktūros kontaktai
 TypeContact_propal_external_CUSTOMER=Kliento kontaktas tęstiniame pasiūlyme
+TypeContact_propal_external_SHIPPING=Customer contact for delivery
 # Document models
 DocModelAzurDescription=Išsamus užsakymo modelis (logo. ..)
 DefaultModelPropalCreate=Modelio sukūrimas pagal nutylėjimą
