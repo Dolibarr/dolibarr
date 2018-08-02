@@ -336,5 +336,6 @@ if ($action == 'create' || empty($action))
 	print "</form>\n";
 }
 
+// End of page
 llxFooter();
 $db->close();
