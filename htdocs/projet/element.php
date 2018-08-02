@@ -575,11 +575,12 @@ foreach ($listofreferent as $key => $value)
 	$datefieldname=$value['datefieldname'];
 	$qualified=$value['test'];
 	$margin = $value['margin'];
+	$project_field = $value['project_field'];
 	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
 	{
 		$element = new $classname($db);
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field)?$project_field:'fk_projet');
 
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
@@ -710,6 +711,7 @@ foreach ($listofreferent as $key => $value)
 	$urlnew=$value['urlnew'];
 	$buttonnew=$value['buttonnew'];
     $testnew=$value['testnew'];
+	$project_field=$value['project_field'];
 
 	if ($qualified)
 	{
@@ -732,7 +734,7 @@ foreach ($listofreferent as $key => $value)
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, array('payment_various')))
        	{
-			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
+			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300',-2,!empty($project_field)?$project_field:'fk_projet');
 			if (! $selectList || ($selectList<0))
 			{
 				setEventMessages($formproject->error,$formproject->errors,'errors');
@@ -800,7 +802,7 @@ foreach ($listofreferent as $key => $value)
 		else print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee,!empty($project_field)?$project_field:'fk_projet');
 		if (is_array($elementarray) && count($elementarray)>0)
 		{
 			$total_ht = 0;

@@ -310,7 +310,7 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
 if ($search_ref)         $sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('p.ref_client', $search_refcustomer);
-if ($search_refproject) $sql .= natural_search('pr.ref', $search_refprojet);
+if ($search_refproject) $sql .= natural_search('pr.ref', $search_refproject);
 if ($search_availability) $sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
 
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
@@ -432,7 +432,7 @@ if ($resql)
 	if ($search_year)        $param.='&search_year='.urlencode($search_year);
 	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
 	if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
-	if ($search_refprojet)   $param.='&search_refprojet='.urlencode($search_refprojet);
+	if ($search_refproject)  $param.='&search_refproject='.urlencode($search_refproject);
 	if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
 	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
 	if ($search_sale > 0)    $param.='&search_sale='.urlencode($search_sale);
