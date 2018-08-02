@@ -582,6 +582,7 @@ print "</tr>\n";
 print "<tr class=\"oddeven\">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->supplier_proposal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
+// End of page
 llxFooter();
 $db->close();
 

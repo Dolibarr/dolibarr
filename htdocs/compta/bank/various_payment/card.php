@@ -499,8 +499,6 @@ if ($id)
 	print "</div>";
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

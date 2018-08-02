@@ -206,6 +206,6 @@ print '<div class="center"><input type="submit" class="button" name="button" val
 
 print '</form>';
 
-
+// End of page
 llxFooter();
 $db->close();

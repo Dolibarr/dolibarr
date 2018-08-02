@@ -147,7 +147,6 @@ else {
     exit;
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

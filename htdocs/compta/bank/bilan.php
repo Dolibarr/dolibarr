@@ -92,5 +92,6 @@ print "<tr class=\"oddeven\"><td>".$langs->trans("BankBalance")."</td><td align=
 
 print "</table>";
 
+// End of page
 llxFooter();
 $db->close();

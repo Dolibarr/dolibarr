@@ -144,4 +144,6 @@ if ($action != 'edit')
 
 print '</table></form>';
 
+// End of page
 llxFooter();
+$db->close();

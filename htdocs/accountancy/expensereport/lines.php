@@ -349,6 +349,6 @@ if ($result) {
 	print $db->lasterror();
 }
 
-
+// End of page
 llxFooter();
 $db->close();
