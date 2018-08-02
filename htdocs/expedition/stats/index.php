@@ -358,6 +358,6 @@ print '</table>';
 print '<br>';
 print '<i>'.$langs->trans("StatsOnShipmentsOnlyValidated").'</i>';
 
+// End of page
 llxFooter();
-
 $db->close();
