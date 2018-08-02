@@ -65,6 +65,8 @@ class DolibarrApi
 
         $this->r->setBaseUrls($urlwithouturlroot, $urlwithouturlrootautodetect);
         $this->r->setAPIVersion(1);
+        //$this->r->setSupportedFormats('json');
+        //$this->r->setSupportedFormats('jsonFormat');
     }
 
     /**
