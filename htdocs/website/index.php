@@ -2439,8 +2439,6 @@ if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpa
 	}
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

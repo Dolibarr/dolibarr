@@ -773,7 +773,6 @@ if (! empty($id) || ! empty($ref))
 	// not found
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

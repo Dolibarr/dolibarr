@@ -151,4 +151,6 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 
 <?php
 
+// End of page
 llxFooter();
+$db->close();

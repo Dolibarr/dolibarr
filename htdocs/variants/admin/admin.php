@@ -71,7 +71,7 @@ print '</table>';
 print '<br><div style="text-align: center"><input type="submit" value="'.$langs->trans('Save').'" class="button"></div>';
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();
 

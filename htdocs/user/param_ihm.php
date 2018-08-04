@@ -374,5 +374,6 @@ if ($action == 'edit')
     print '</form>';
 }
 
+// End of page
 llxFooter();
 $db->close();
