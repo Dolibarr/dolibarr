@@ -425,19 +425,25 @@ class Stripe extends CommonObject
 					$fee = round($conf->global->STRIPE_APPLICATION_FEE_MINIMAL * 100);
 				}
 
-				$charge = \Stripe\Charge::create(array(
-					"amount" => "$stripeamount",
-					"currency" => "$currency",
-					// "statement_descriptor" => " ",
-					"description" => "$description",
-					"metadata" => $metadata,
-					"source" => "$source",
-					"customer" => "$customer",
-					"application_fee" => "$fee"
-					), array(
-					"idempotency_key" => "$ref",
-					"stripe_account" => "$account"
-				));
+        		$paymentarray = array(
+						"amount" => "$stripeamount",
+						"currency" => "$currency",
+						// "statement_descriptor" => " ",
+						"description" => "$description",
+						"metadata" => $metadata,
+						"source" => "$source",
+						"customer" => "$customer"
+					);
+					if ($conf->entity>1 && $fee>0)
+					{
+						$paymentarray["application_fee"] = $fee;
+					}
+					if ($societe->email && $usethirdpartyemailforreceiptemail)
+					{
+						$paymentarray["receipt_email"] = $societe->email;
+					}
+
+					$charge = \Stripe\Charge::create($paymentarray, array("idempotency_key" => "$ref","stripe_account" => "$account"));
 			}
 			if (isset($charge->id)) {}
 
