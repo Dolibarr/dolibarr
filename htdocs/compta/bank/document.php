@@ -105,7 +105,7 @@ if ($id > 0 || !empty($ref)) {
         dol_fiche_head($head, 'document', $langs->trans("FinancialAccount"), -1, 'account');
 
 
-        // Construit liste des fichiers
+        // Build file list
         $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$',
                 $sortfield,
                 (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
