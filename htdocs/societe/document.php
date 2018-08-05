@@ -169,6 +169,6 @@ else
 	accessforbidden('',0,0);
 }
 
-
+// End of page
 llxFooter();
 $db->close();
