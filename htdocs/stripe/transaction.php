@@ -203,5 +203,6 @@ if (! $rowid) {
 	print '</FORM>';
 } else {}
 
+// End of page
 llxFooter();
 $db->close();
