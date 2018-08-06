@@ -254,7 +254,8 @@ class DoliDBMysqli extends DoliDB
     	global $conf, $debugBar;
 
         $query = trim($query);
-        $debugBar['sql']->addMessage('Mysqli: ' . $query);
+        if (isset($debugBar))
+            $debugBar['sql']->addMessage('Mysqli: ' . $query);
 
         if (! in_array($query,array('BEGIN','COMMIT','ROLLBACK'))) dol_syslog('sql='.$query, LOG_DEBUG);
 

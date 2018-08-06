@@ -1029,7 +1029,8 @@ function dol_syslog($message, $level = LOG_INFO, $ident = 0, $suffixinfilename='
 
 	if (! empty($message))
 	{
-        $debugBar['messages']->addMessage($message);
+        if (isset($debugBar))
+            $debugBar['messages']->addMessage($message);
 
         // Test log level
 		$logLevels = array(LOG_EMERG, LOG_ALERT, LOG_CRIT, LOG_ERR, LOG_WARNING, LOG_NOTICE, LOG_INFO, LOG_DEBUG);

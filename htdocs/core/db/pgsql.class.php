@@ -484,7 +484,8 @@ class DoliDBPgsql extends DoliDB
 		global $conf, $debugBar;
 
         $query = trim($query);
-        $debugBar['sql']->addMessage('Pgsql: ' . $query);
+        if (isset($debugBar))
+            $debugBar['sql']->addMessage('Pgsql: ' . $query);
 
         // Convert MySQL syntax to PostgresSQL syntax
 		$query=$this->convertSQLFromMysql($query,$type,($this->unescapeslashquot && $this->standard_conforming_strings));

@@ -328,7 +328,8 @@ class DoliDBMssql extends DoliDB
         global $debugBar;
 
         $query = trim($query);
-        $debugBar['sql']->addMessage('Mssql: ' . $query);
+        if (isset($debugBar))
+            $debugBar['sql']->addMessage('Mssql: ' . $query);
 
         if (preg_match('/^--/',$query)) return true;
 

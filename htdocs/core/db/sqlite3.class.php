@@ -407,7 +407,8 @@ class DoliDBSqlite3 extends DoliDB
 
         $ret=null;
         $query = trim($query);
-        $debugBar['sql']->addMessage('sqlite3: ' . $query);
+        if (isset($debugBar))
+            $debugBar['sql']->addMessage('sqlite3: ' . $query);
         $this->error = 0;
 
         // Convert MySQL syntax to SQLite syntax
