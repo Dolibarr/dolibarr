@@ -157,6 +157,7 @@ if (empty($reshook))
 		$price_expression = GETPOST('eid', 'int') ? GETPOST('eid', 'int') : ''; // Discard expression if not in expression mode
 		$delivery_time_days = GETPOST('delivery_time_days', 'int') ? GETPOST('delivery_time_days', 'int') : '';
 		$supplier_reputation = GETPOST('supplier_reputation');
+		$supplier_description = GETPOST('supplier_description', 'alpha');
 
 		if ($tva_tx == '')
 		{
@@ -232,7 +233,7 @@ if (empty($reshook))
 				if (isset($_POST['ref_fourn_price_id']))
 					$object->fetch_product_fournisseur_price($_POST['ref_fourn_price_id']);
 
-				$ret=$object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation);
+					$ret=$object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, '', '', $supplier_description);
 				if ($ret < 0)
 				{
 
@@ -562,7 +563,24 @@ if ($id > 0 || $ref)
 						print '</tr>';
 					}
 				}
-
+				
+				// Product description of the supplier
+				if (! empty($conf->global->PRODUIT_FOURN_TEXTS))
+				{
+				    //WYSIWYG Editor
+				    require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+				    
+    				print '<tr>';
+    				print '<td>'.$langs->trans('ProductSupplierDescription').'</td>';
+    				print '<td>';
+    				
+    				$doleditor = new DolEditor('supplier_description', $object->desc_supplier, '', 160, 'dolibarr_details', '', false, true, $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC, ROWS_4, '90%');
+    				$doleditor->Create();
+    				
+    				print '</td>';
+    				print '</tr>';
+				}
+				
 				if (is_object($hookmanager))
 				{
 					$parameters=array('id_fourn'=>$id_fourn,'prod_id'=>$object->id);

@@ -291,7 +291,8 @@ ProductSheet=Product sheet
 ServiceSheet=Service sheet
 PossibleValues=Possible values
 GoOnMenuToCreateVairants=Go on menu %s - %s to prepare attribute variants (like colors, size, ...) 
-
+UseProductFournDesc=Use supplier descriptions of products in supplier documents
+ProductSupplierDescription=Supplier description for the product
 #Attributes
 VariantAttributes=Variant attributes
 ProductAttributes=Variant attributes for products

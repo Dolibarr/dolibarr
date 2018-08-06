@@ -143,6 +143,9 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value,'chaine',0,'',$conf->entity);
+	
+	$value = GETPOST('activate_useProdFournDesc', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value,'chaine',0,'',$conf->entity);
 }
 
 if ($action == 'specimen') // For products
@@ -544,6 +547,7 @@ $rowspan = 4;
 if (! empty($conf->global->PRODUIT_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
+if (! empty($conf->fournisseur->enabled)) $rowspan++;
 
 
 print '<tr class="oddeven">';
@@ -660,6 +664,15 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 	print '</tr>';
 }
 
+if (! empty($conf->fournisseur->enabled))
+{
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
+    print '<td width="60" align="right">';
+    print $form->selectyesno("activate_useProdFournDesc", (! empty($conf->global->PRODUIT_FOURN_TEXTS)?$conf->global->PRODUIT_FOURN_TEXTS:0), 1);
+    print '</td>';
+    print '</tr>';
+}
 
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {

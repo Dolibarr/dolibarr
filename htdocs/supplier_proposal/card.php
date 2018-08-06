@@ -613,7 +613,12 @@ if (empty($reshook))
 					$price_base_type = $productsupplier->fourn_price_base_type;
 					$type = $productsupplier->type;
 					$label = $productsupplier->label;
-					$desc = $productsupplier->description;
+					
+					// if we use supplier description of the products
+					if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+					    $desc = $productsupplier->desc_supplier;
+					} else $desc = $productsupplier->description;
+					
 					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 					$ref_supplier = $productsupplier->ref_supplier;
 
