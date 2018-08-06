@@ -367,18 +367,20 @@ class Stripe extends CommonObject
 			$order = new Commande($this->db);
 			$order->fetch($item);
 			$ref = $order->ref;
-			$description = "ORD=" . $ref . ".CUS=" . $societe->id;
+			$description = "ORD=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
 		} elseif ($origin == invoice) {
 			$invoice = new Facture($this->db);
 			$invoice->fetch($item);
 			$ref = $invoice->ref;
-			$description = "INV=" . $ref . ".CUS=" . $societe->id;
+			$description = "INV=" . $ref . ".CUS=" . $societe->id.".PM=stripe";
 		}
 
 		$metadata = array(
 			"dol_id" => "" . $item . "",
 			"dol_type" => "" . $origin . "",
 			"dol_thirdparty_id" => "" . $societe->id . "",
+      "FULLTAG" => $description,
+      'Recipient' => $societe->name, 
 			'dol_version'=>DOL_VERSION,
 			'dol_entity'=>$conf->entity,
 			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
@@ -396,7 +398,9 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
+            "capture"  => true,
 						// "statement_descriptor" => " ",
+ 					  "description" => "Stripe payment: ".$description,           
 						"metadata" => $metadata,
 						"source" => "$source"
 					));
@@ -404,8 +408,9 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
+            "capture"  => true,           
 						// "statement_descriptor" => " ",
-						"description" => "$description",
+					  "description" => "Stripe payment: ".$description,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"
@@ -428,8 +433,9 @@ class Stripe extends CommonObject
         		$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
+            "capture"  => true,            
 						// "statement_descriptor" => " ",
-						"description" => "$description",
+					  "description" => "Stripe payment: ".$description,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"
