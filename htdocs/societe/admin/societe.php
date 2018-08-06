@@ -182,6 +182,21 @@ if ($action=="setaddrefinlist") {
 	}
 }
 
+//Activate Set adress in list
+if ($action=="setaddadressinlist") {
+	$val = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Ask For Preferred Shipping Method
 if ($action=="setaskforshippingmet") {
 	$setaskforshippingmet = GETPOST('value','int');
