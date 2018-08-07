@@ -30,6 +30,7 @@
 
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
 ALTER TABLE llx_extrafields ADD COLUMN totalizable boolean DEFAULT FALSE after list;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_fourn;
 
 
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
