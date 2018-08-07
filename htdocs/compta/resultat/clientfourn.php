@@ -36,6 +36,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/accountancy/class/accountancycategory.class.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array('compta','bills','donation','salaries','accountancy'));
 
 $date_startmonth=GETPOST('date_startmonth','int');
@@ -822,7 +823,7 @@ else
 				$sql.= " FROM ".MAIN_DB_PREFIX."expensereport as p";
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."user as u ON u.rowid=p.fk_user_author";
 				$sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_expensereport as pe ON pe.fk_expensereport = p.rowid";
-				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 				$sql.= " WHERE p.entity IN (".getEntity('expensereport').")";
 				$sql.= " AND p.fk_statut>=5";
 
@@ -906,7 +907,7 @@ else
 			    $sql = "SELECT p.societe as nom, p.firstname, p.lastname, date_format(p.datedon,'%Y-%m') as dm, sum(p.amount) as amount";
 			    $sql.= " FROM ".MAIN_DB_PREFIX."don as p";
 			    $sql.= " INNER JOIN ".MAIN_DB_PREFIX."payment_donation as pe ON pe.fk_donation = p.rowid";
-			    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id AND c.entity IN (".getEntity('c_paiement').")";
+			    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as c ON pe.fk_typepayment = c.id";
 			    $sql.= " WHERE p.entity IN (".getEntity('donation').")";
 			    $sql.= " AND fk_statut >= 2";
 			}

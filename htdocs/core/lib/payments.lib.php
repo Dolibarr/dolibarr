@@ -87,6 +87,32 @@ function payment_supplier_prepare_head(Paiement $object) {
 	return $head;
 }
 
+/**
+ * Return array of valid payment mode
+ *
+ * @param	string	$paymentmethod		Filter on this payment method
+ * @return	array						Array of valid payment method
+ */
+function getValidOnlinePaymentMethods($paymentmethod='')
+{
+	global $conf;
+
+	$validpaymentmethod=array();
+
+	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
+	{
+		$validpaymentmethod['paypal']='valid';
+	}
+	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
+	{
+		$validpaymentmethod['paybox']='valid';
+	}
+	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
+	{
+		$validpaymentmethod['stripe']='valid';
+	}
+	return $validpaymentmethod;
+}
 
 /**
  * Return string with full Url
@@ -190,7 +216,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 			}
 		}
 	}
-	if ($type == 'membersubscription')
+	if ($type == 'member' || $type == 'membersubscription')
 	{
 		$out=DOL_MAIN_URL_ROOT.'/public/payment/newpayment.php?source=membersubscription&ref='.($mode?'<font color="#666666">':'');
 		if ($mode == 1) $out.='member_ref';
@@ -210,7 +236,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
 	}
 
 	// For multicompany
-	if (! empty($out)) $out.="&entity=".$conf->entity; // Check the entity because He may be the same reference in several entities
+	if (! empty($out) && ! empty($conf->multicompany->enabled)) $out.="&entity=".$conf->entity; // Check the entity because we may have the same reference in several entities
 
 	return $out;
 }
@@ -227,7 +253,7 @@ function getOnlinePaymentUrl($mode, $type, $ref='', $amount='9.99', $freetag='yo
  * @param	Object		$object			Object related to payment
  * @return	void
  */
-function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suffix='',$object=null)
+function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $suffix='', $object=null)
 {
     global $conf;
 

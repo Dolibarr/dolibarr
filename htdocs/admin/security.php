@@ -29,9 +29,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 
 $action=GETPOST('action','aZ09');
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("users","admin","other"));
 
 if (!$user->admin) accessforbidden();
 
@@ -127,7 +126,7 @@ if ($action == 'activate_encryptdbpassconf')
 	if ($result > 0)
 	{
 	    sleep(3);  // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
-	    
+
 	    // database value not required
 		//dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 		header("Location: security.php");
@@ -135,7 +134,7 @@ if ($action == 'activate_encryptdbpassconf')
 	}
 	else
 	{
-		setEventMessages($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)), null, 'warnings');	
+		setEventMessages($langs->trans('InstrucToEncodePass',dol_encode($dolibarr_main_db_pass)), null, 'warnings');
 	}
 }
 else if ($action == 'disable_encryptdbpassconf')
@@ -144,7 +143,7 @@ else if ($action == 'disable_encryptdbpassconf')
 	if ($result > 0)
 	{
 	    sleep(3);  // Don't know why but we need to wait file is completely saved before making the reload. Even with flush and clearstatcache, we need to wait.
-	    
+
 		// database value not required
 		//dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED",$conf->entity);
 		header("Location: security.php");
@@ -178,10 +177,6 @@ if ($action == 'maj_pattern')
 
 
 
-
-
-
-
 /*
  * View
  */
@@ -199,9 +194,6 @@ print "<br>\n";
 $head=security_prepare_head();
 
 dol_fiche_head($head, 'passwords', $langs->trans("Security"), -1);
-
-
-$var=false;
 
 
 // Choix du gestionnaire du generateur de mot de passe
@@ -233,6 +225,7 @@ if (is_resource($handle))
     }
     closedir($handle);
 }
+asort($arrayhandler);
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -249,7 +242,6 @@ foreach ($arrayhandler as $key => $module)
 
 	if ($module->isEnabled())
 	{
-        $var = !$var;
         print '<tr class="oddeven"><td width="100">';
         print ucfirst($key);
         print "</td><td>\n";
@@ -299,42 +291,42 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 	print '<td colspan="3"> '.$langs->trans("PasswordPatternDesc").'</td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("MinLength")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[0].'" id="minlenght" min="1"></td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("NbMajMin")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[1].'" id="NbMajMin" min="0"></td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("NbNumMin")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[2].'" id="NbNumMin" min="0"></td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("NbSpeMin")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[3].'" id="NbSpeMin" min="0"></td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("NbIteConsecutive")."</td>";
 	print '<td colspan="2"><input type="number" value="'.$tabConf[4].'" id="NbIteConsecutive" min="0"></td>';
 	print '</tr>';
 
-	
+
 	print '<tr class="oddeven">';
 	print '<td>' . $langs->trans("NoAmbiCaracAutoGeneration")."</td>";
 	print '<td colspan="2"><input type="checkbox" id="NoAmbiCaracAutoGeneration" '.($tabConf[5] ? "checked" : "").' min="0"> <span id="textcheckbox">'.($tabConf[5] ? $langs->trans("Activated") : $langs->trans("Disabled")).'</span></td>';
 	print '</tr>';
-	
+
 	print '</table>';
 
 	print '<br>';
@@ -394,7 +386,6 @@ if ($conf->global->USER_PASSWORD_GENERATED == "Perso"){
 
 // Cryptage mot de passe
 print '<br>';
-$var=true;
 print "<form method=\"post\" action=\"" . $_SERVER["PHP_SELF"] . "\">";
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";

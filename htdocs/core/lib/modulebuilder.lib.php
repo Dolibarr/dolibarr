@@ -127,15 +127,18 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
             {
                 $i++;
                 $texttoinsert.= "\t\t'".$key."' => array('type'=>'".$val['type']."', 'label'=>'".$val['label']."',";
-                $texttoinsert.= " 'visible'=>".($val['visible']!=''?$val['visible']:-1).",";
                 $texttoinsert.= " 'enabled'=>".($val['enabled']!=''?$val['enabled']:1).",";
+                $texttoinsert.= " 'visible'=>".($val['visible']!=''?$val['visible']:-1).",";
                 $texttoinsert.= " 'position'=>".($val['position']!=''?$val['position']:50).",";
                 $texttoinsert.= " 'notnull'=>".($val['notnull']!=''?$val['notnull']:-1).",";
-                if ($val['index']) $texttoinsert.= " 'index'=>".$val['index'].",";
-                if ($val['searchall']) $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
-                if ($val['comment']) $texttoinsert.= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\",";	// addslashes is escape for PHP
-                if ($val['isameasure']) $texttoinsert.= " 'isameasure'=>'".$val['isameasure']."',";
-                if ($val['help']) $texttoinsert.= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";			// addslashes is escape for PHP
+                if ($val['default'])        $texttoinsert.= " 'default'=>'".$val['default']."',";
+                if ($val['index'])          $texttoinsert.= " 'index'=>".$val['index'].",";
+                if ($val['searchall'])      $texttoinsert.= " 'searchall'=>".$val['searchall'].",";
+                if ($val['isameasure'])     $texttoinsert.= " 'isameasure'=>'".$val['isameasure']."',";
+                if ($val['foreignkey'])     $texttoinsert.= " 'foreignkey'=>'".$val['foreignkey']."',";
+                if ($val['help'])           $texttoinsert.= " 'help'=>\"".preg_replace('/"/', '', $val['help'])."\",";
+                if ($val['comment'])        $texttoinsert.= " 'comment'=>\"".preg_replace('/"/', '', $val['comment'])."\",";
+                if ($val['showoncombobox']) $texttoinsert.= " 'showoncombobox'=>'".$val['showoncombobox']."',";
                 if ($val['arrayofkeyval'])
                 {
                 	$texttoinsert.= " 'arrayofkeyval'=>array(";
@@ -302,10 +305,19 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
         foreach($object->fields as $key => $val)
         {
             $i++;
-            if ($val['index'])
+            if (! empty($val['index']))
             {
                 $texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD INDEX idx_".strtolower($module).'_'.strtolower($objectname)."_".$key." (".$key.");";
                 $texttoinsert.= "\n";
+            }
+            if (! empty($val['foreignkey']))
+            {
+            	$tmp=explode('.',$val['foreignkey']);
+            	if (! empty($tmp[0]) && ! empty($tmp[1]))
+            	{
+            		$texttoinsert.= "ALTER TABLE llx_".strtolower($module).'_'.strtolower($objectname)." ADD CONSTRAINT llx_".strtolower($module).'_'.strtolower($objectname)."_".$key." FOREIGN KEY (".$key.") REFERENCES ".$tmp[0]."(".$tmp[1].");";
+            		$texttoinsert.= "\n";
+            	}
             }
         }
     }

@@ -80,9 +80,9 @@ if (! empty($conf->contrat->enabled))
 	print '<strong>'.getOnlinePaymentUrl(1,'contractline')."</strong><br>\n";
 	if (! empty($conf->global->PAYMENT_SECURITY_TOKEN) && ! empty($conf->global->PAYMENT_SECURITY_TOKEN_UNIQUE))
 	{
-	    $langs->load("contract");
+	    $langs->load("contracts");
 	    print '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("Contract")).': ';
+	    print $langs->trans("EnterRefToBuildUrl",$langs->transnoentitiesnoconv("ContractLine")).': ';
         print '<input type="text class="flat" id="generate_contract_ref" name="generate_contract_ref" value="'.GETPOST('generate_contract_ref','alpha').'" size="10">';
         print '<input type="submit" class="none button" value="'.$langs->trans("GetSecuredUrl").'">';
         if (GETPOST('generate_contract_ref'))

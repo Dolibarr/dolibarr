@@ -359,24 +359,6 @@ function ajax_dialog($title,$message,$w=350,$h=150)
 
 
 /**
- * Make content of an input box selected when we click into input field.
- *
- * @param string	$htmlname	Id of html object
- * @param string	$addlink	Add a 'link to' after
- */
-function ajax_autoselect($htmlname, $addlink='')
-{
-	global $langs;
-	$out = '<script type="text/javascript">
-               jQuery(document).ready(function () {
-				    jQuery("#'.$htmlname.'").click(function() { jQuery(this).select(); } );
-				});
-		    </script>';
-	if ($addlink) $out.=' <a href="'.$addlink.'" target="_blank">'.$langs->trans("Link").'</a>';
-	return $out;
-}
-
-/**
  * Convert a html select field into an ajax combobox.
  * Use ajax_combobox() only for small combo list! If not, use instead ajax_autocompleter().
  * TODO: It is used when COMPANY_USE_SEARCH_TO_SELECT and CONTACT_USE_SEARCH_TO_SELECT are set by html.formcompany.class.php. Should use ajax_autocompleter instead like done by html.form.class.php for select_produits.

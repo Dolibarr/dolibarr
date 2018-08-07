@@ -32,8 +32,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/lib/date.lib.php';
 
-// Langs
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("accountancy"));
 
 $action = GETPOST('action', 'alpha');
 $search_mvt_num = GETPOST('search_mvt_num', 'int');
@@ -272,6 +272,7 @@ if (! empty($search_credit)) {
 	$param .= '&search_credit=' . urlencode($search_credit);
 }
 
+
 if ($action == 'delbookkeeping') {
 
 	$import_key = GETPOST('importkey', 'alpha');
@@ -437,10 +438,12 @@ else $button.= $langs->trans("ExportList");
 $button.= '</a>';
 
 
-$groupby = ' <a class="nohover" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
-$addbutton = '<a class="butAction" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt") . '</a>';
+$groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
+$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewAccountingMvt").'</span>';
+$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
+$newcardbutton.= '</a>';
 
-print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$addbutton, '', $limit);
+print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $button, $result, $nbtotalofrecords, 'title_accountancy', 0, $groupby.$newcardbutton, '', $limit);
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
 $selectedfields=$form->multiSelectArrayWithCheckbox('selectedfields', $arrayfields, $varpage);	// This also change content of $arrayfields
@@ -701,7 +704,7 @@ if ($num > 0)
 		}
 
 		// Action column
-		print '<td align="center">';
+		print '<td align="center" class="nowraponall">';
 		print '<a href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/card.php?piece_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_edit() . '</a>&nbsp;';
 		print '<a href="' . $_SERVER['PHP_SELF'] . '?action=delmouv&mvt_num=' . $line->piece_num . $param . '&page=' . $page . ($sortfield ? '&sortfield='.$sortfield : '') . ($sortorder ? '&sortorder='.$sortorder : '') . '">' . img_delete() . '</a>';
 		print '</td>';
@@ -739,7 +742,7 @@ print '</div>';
 
 // TODO Replace this with mass delete action
 print '<div class="tabsAction tabsActionNoBottom">' . "\n";
-print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DelBookKeeping") . '</a>';
+print '<a class="butActionDelete" name="button_delmvt" href="'.$_SERVER["PHP_SELF"].'?action=delbookkeepingyear'.($param?'&'.$param:'').'">' . $langs->trans("DeleteMvt") . '</a>';
 print '</div>';
 
 

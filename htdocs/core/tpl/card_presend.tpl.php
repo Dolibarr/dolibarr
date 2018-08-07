@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C)    2017 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C)    2017-2018 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * $modelmail
  * $defaulttopic
  * $diroutput
+ * $arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
  */
 
 // Protection to avoid direct call of template
@@ -108,6 +109,7 @@ if ($action == 'presend')
 	// Create form for email
 	include_once DOL_DOCUMENT_ROOT . '/core/class/html.formmail.class.php';
 	$formmail = new FormMail($db);
+
 	$formmail->param['langsmodels']=(empty($newlang)?$langs->defaultlang:$newlang);
 	$formmail->fromtype = (GETPOST('fromtype')?GETPOST('fromtype'):(!empty($conf->global->MAIN_MAIL_DEFAULT_FROMTYPE)?$conf->global->MAIN_MAIL_DEFAULT_FROMTYPE:'user'));
 
@@ -143,9 +145,30 @@ if ($action == 'presend')
 	}
 	else
 	{
-		foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
-			$liste[$key] = $value;
+		if (is_object($object->thirdparty))
+		{
+			foreach ($object->thirdparty->thirdparty_and_contact_email_array(1) as $key => $value) {
+				$liste[$key] = $value;
+			}
 		}
+	}
+	if (!empty($conf->global->MAIN_MAIL_ENABLED_USER_DEST_SELECT)) {
+		$listeuser=array();
+		$fuserdest = new User($db);
+
+		$result= $fuserdest->fetchAll('ASC', 't.lastname', 0, 0, array('customsql'=>'t.statut=1 AND t.employee=1 AND t.email IS NOT NULL AND t.email<>\'\''));
+		if ($result>0 && is_array($fuserdest->users) && count($fuserdest->users)>0) {
+			foreach($fuserdest->users as $uuserdest) {
+				$listeuser[$uuserdest->id] = $uuserdest->user_get_property($uuserdest->id,'email');
+			}
+		} elseif ($result<0) {
+			setEventMessages(null, $fuserdest->errors,'errors');
+		}
+		if (count($listeuser)>0) {
+			$formmail->withtouser = $listeuser;
+			$formmail->withtoccuser = $listeuser;
+		}
+
 	}
 
 	$formmail->withto = GETPOST('sendto') ? GETPOST('sendto') : $liste;
@@ -157,8 +180,11 @@ if ($action == 'presend')
 	$formmail->withdeliveryreceipt = 1;
 	$formmail->withcancel = 1;
 
+	//$arrayoffamiliestoexclude=array('system', 'mycompany', 'object', 'objectamount', 'date', 'user', ...);
+	if (! isset($arrayoffamiliestoexclude)) $arrayoffamiliestoexclude=null;
+
 	// Make substitution in email content
-	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
+	$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, $arrayoffamiliestoexclude, $object);
 	$substitutionarray['__CHECK_READ__'] = (is_object($object) && is_object($object->thirdparty)) ? '<img src="' . DOL_MAIN_URL_ROOT . '/public/emailing/mailing-read.php?tag=' . $object->thirdparty->tag . '&securitykey=' . urlencode($conf->global->MAILING_EMAIL_UNSUBSCRIBE_KEY) . '" width="1" height="1" style="width:1px;height:1px" border="0"/>' : '';
 	$substitutionarray['__PERSONALIZED__'] = '';	// deprecated
 	$substitutionarray['__CONTACTCIVNAME__'] = '';
@@ -166,6 +192,21 @@ if ($action == 'presend')
 		'mode' => 'formemail'
 	);
 	complete_substitutions_array($substitutionarray, $outputlangs, $object, $parameters);
+
+	// Find the good contact adress
+	$custcontact = '';
+	$contactarr = array();
+	$contactarr = $object->liste_contact(- 1, 'external');
+
+	if (is_array($contactarr) && count($contactarr) > 0) {
+		require_once DOL_DOCUMENT_ROOT . '/contact/class/contact.class.php';
+        $contactstatic = new Contact($db);
+
+		foreach ($contactarr as $contact) {
+            $contactstatic->fetch($contact['id']);
+            $substitutionarray['__CONTACT_NAME_'.$contact['code'].'__'] = $contactstatic->getFullName($langs, 1);
+		}
+	}
 
 	// Tableau des substitutions
 	$formmail->substit = $substitutionarray;
@@ -177,14 +218,6 @@ if ($action == 'presend')
 	$formmail->param['id'] = $object->id;
 	$formmail->param['returnurl'] = $_SERVER["PHP_SELF"] . '?id=' . $object->id;
 	$formmail->param['fileinit'] = array($file);
-
-	// Init list of files
-	/*if (GETPOST('mode','alpha') == 'init')
-	{
-		$formmail->clear_attached_files();
-
-		$formmail->add_attached_files($file, basename($file), dol_mimetype($file));
-	}*/
 
 	// Show form
 	print $formmail->get_form();

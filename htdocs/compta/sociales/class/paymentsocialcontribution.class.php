@@ -164,6 +164,9 @@ class PaymentSocialContribution extends CommonObject
 
 		}
 
+		$result = $this->call_trigger('PAYMENTSOCIALCONTRIBUTION_CREATE',$user);
+		if($result < 0) $error++;
+
 		if ($totalamount != 0 && ! $error)
 		{
 		    $this->amount=$totalamount;
@@ -203,7 +206,7 @@ class PaymentSocialContribution extends CommonObject
 		$sql.= " t.fk_user_modif,";
 		$sql.= " pt.code as type_code, pt.libelle as type_libelle,";
 		$sql.= ' b.fk_account';
-		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id AND pt.entity IN (" . getEntity('c_paiement') . ")";
+		$sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as t LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as pt ON t.fk_typepaiement = pt.id";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON t.fk_bank = b.rowid';
 		$sql.= " WHERE t.rowid = ".$id;
 		// TODO link on entity of tax;

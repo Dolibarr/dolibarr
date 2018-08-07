@@ -56,7 +56,6 @@ class modSupplierProposal extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto='supplier_proposal';
 
 		$this->dirs = array();
@@ -177,7 +176,7 @@ class modSupplierProposal extends DolibarrModules
             'position'=>302
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array(
 		    'fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=supplier_proposalsubmenu',
 		    'type'=>'left',
@@ -233,8 +232,8 @@ class modSupplierProposal extends DolibarrModules
 
 		return $this->_init($sql, $options);
 	}
-	
-	
+
+
 
 	/**
 	 * Function called when module is disabled.
@@ -247,10 +246,10 @@ class modSupplierProposal extends DolibarrModules
 	public function remove($options = '')
 	{
 	    $sql = array(
-	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"
+	        "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'askpricesupplier'"		// To delete/clean deprecated entries
 	    );
-	
+
 	    return $this->_remove($sql, $options);
-	}	
-	
+	}
+
 }

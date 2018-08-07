@@ -27,6 +27,7 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
+// Load translation files required by the page
 $langs->loadLangs(array("admin","workflow","propal","workflow","orders","supplier_proposals"));
 
 if (! $user->admin) accessforbidden();
@@ -38,7 +39,7 @@ $action = GETPOST('action', 'alpha');
  */
 if (preg_match('/set(.*)/',$action,$reg))
 {
-    if (! dolibarr_set_const($db, $reg[1], 1, 'chaine', 0, '', $conf->entity) > 0)
+    if (! dolibarr_set_const($db, $reg[1], '1', 'chaine', 0, '', $conf->entity) > 0)
     {
         dol_print_error($db);
     }
@@ -74,14 +75,12 @@ $workflowcodes=array(
     'WORKFLOW_PROPAL_AUTOCREATE_ORDER'=>array('family'=>'create', 'position'=>10, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
 	'WORKFLOW_ORDER_AUTOCREATE_INVOICE'=>array('family'=>'create', 'position'=>20, 'enabled'=>'! empty($conf->commande->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'bill'),
     'separator1'=>array('family'=>'separator', 'position'=>25),
-	// Automatic classification proposal
+	// Automatic classification of proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>30, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'propal','warning'=>''),
 	'WORKFLOW_INVOICE_CLASSIFY_BILLED_PROPAL'=>array('family'=>'classify_proposal', 'position'=>31, 'enabled'=>'! empty($conf->propal->enabled) && ! empty($conf->facture->enabled)', 'picto'=>'propal','warning'=>''),
-	// Automatic classification invoice
+	// Automatic classification of order
 	'WORKFLOW_ORDER_CLASSIFY_SHIPPED_SHIPPING'=>array('family'=>'classify_order', 'position'=>40, 'enabled'=>'! empty($conf->expedition->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order'),
-	// For the following 2 options, if module invoice is disabled, they does not exists, so "Classify billed" for order must be done manually from order card.
-	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>41, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>''),
-    //Moved as hidden feature: 'WORKFLOW_INVOICE_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>42, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>''),
+	'WORKFLOW_INVOICE_AMOUNT_CLASSIFY_BILLED_ORDER'=>array('family'=>'classify_order', 'position'=>41, 'enabled'=>'! empty($conf->facture->enabled) && ! empty($conf->commande->enabled)', 'picto'=>'order','warning'=>''),	// For this option, if module invoice is disabled, it does not exists, so "Classify billed" for order must be done manually from order card.
     'separator2'=>array('family'=>'separator', 'position'=>50),
 	// Automatic classification supplier proposal
 	'WORKFLOW_ORDER_CLASSIFY_BILLED_SUPPLIER_PROPOSAL'=>array('family'=>'classify_supplier_proposal', 'position'=>60, 'enabled'=>'! empty($conf->supplier_proposal->enabled) && ! empty($conf->fournisseur->enabled)', 'picto'=>'propal','warning'=>''),

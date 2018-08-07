@@ -1,9 +1,9 @@
 # Dolibarr language file - Source file is en_US - loan
-ModuleBuilderDesc=Esta ferramenta deve ser utilizada por utilizadores mais experientes ou desenvolvedores. Esta oferece os utilitários necessários para criar ou editar o seu próprio módulo (A documentação para criar manualmente um novo módulo encontra-se <a href="%s" target="_blank">aqui</a>).
+ModuleBuilderDesc=Esta ferramenta deve ser utilizada por utilizadores mais experientes ou programadores. Esta oferece utilitários para criar ou editar o seu próprio módulo (A documentação para o desenvolvimento manual alternativo encontra-se <a href="%s" target="_blank">aqui</a>).
 EnterNameOfModuleDesc=Introduza o nome do módulo/aplicação a criar, sem espaços. Use maiúsculas para separar palavras (Por exemplo: MyModule, EcommerceForShop, SyncWithMySystem ...)
 EnterNameOfObjectDesc=Enter name of the object to create with no spaces. Use uppercase to separate words (For example: MyObject, Student, Teacher...). The CRUD class file, but also API file, pages to list/add/edit/delete object and SQL files will be generated.
 ModuleBuilderDesc2=Caminho onde são gerados/editados os módulos (primeira diretoria alternativa definida em %s): <strong>%s</strong>
-ModuleBuilderDesc3=Generated/editable modules found: <strong>%s</strong>
+ModuleBuilderDesc3=Módulos gerados / editáveis ​​encontrados: <strong>%s</strong>
 ModuleBuilderDesc4=A module is detected as 'editable' when the file <strong>%s</strong> exists in root of module directory
 NewModule=Novo módulo
 NewObject=Novo objeto
@@ -43,6 +43,8 @@ PathToModulePackage=Caminho para o ficheiro pacote .zip do módulo/aplicação
 PathToModuleDocumentation=Caminho para o ficheiro de documentação do módulo/aplicação
 SpaceOrSpecialCharAreNotAllowed=Espaços ou caracteres especiais não são permitidos.
 FileNotYetGenerated=O ficheiro ainda não foi gerado
+RegenerateClassAndSql=Erase and regenerate class and sql files
+RegenerateMissingFiles=Generate missing files
 SpecificationFile=File with business rules
 LanguageFile=File for language
 ConfirmDeleteProperty=Are you sure you want to delete the property <strong>%s</strong> ? This will change code in PHP class but also remove column from table definition of object.
@@ -72,6 +74,7 @@ NoWidget=No widget
 GoToApiExplorer=Go to API explorer
 ListOfMenusEntries=List of menu entries
 ListOfPermissionsDefined=List of defined permissions
+SeeExamples=See examples here
 EnabledDesc=Condition to have this field active (Examples: 1 or $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Is the field visible ? (Examples: 0=Never visible, 1=Visible on list and create/update/view forms, 2=Visible on list only, 3=Visible on create/update/view form only. Using a negative value means field is not shown by default on list but can be selected for viewing)
 IsAMeasureDesc=Can the value of field be cumulated to get a total into list ? (Examples: 1 or 0)
@@ -92,3 +95,7 @@ YouCanUseTranslationKey=You can use here a key that is the translation key found
 DropTableIfEmpty=(Delete table if empty)
 TableDoesNotExists=The table %s does not exists
 TableDropped=Table %s deleted
+InitStructureFromExistingTable=Build the structure array string of an existing table
+UseAboutPage=Disallow the about page
+UseDocFolder=Disallow the documentation folder
+UseSpecificReadme=Use a specific ReadMe

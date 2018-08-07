@@ -28,10 +28,10 @@ UseDiscountAsService=Kao usluga
 UseDiscountOnTotal=Na međuzbroju
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definira ako je globalni rabat tretiran kao prozvod ili usluga, ili samo na međusumi za izračun marže.
 MARGIN_TYPE=Kupovno/troškovna cijena sugerirana za izračun marže
-MargeType1=Marža prema najboljoj cijeni dobavljača
+MargeType1=Margin on Best vendor price
 MargeType2=Marža prema Procjenjenoj prosječnoj cijeni (PPC)
 MargeType3=Marža po cijeni troškova
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Cijena troška
 UnitCharges=Troškovi jedinice
 Charges=Troškovi

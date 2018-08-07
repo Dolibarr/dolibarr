@@ -36,9 +36,8 @@ if (! empty($conf->projet->enabled)) {
 	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
-$langs->load('compta');
-$langs->load('other');
-$langs->load('companies');
+// Load translation files required by the page
+$langs->loadLangs(array('compta', 'other', 'companies'));
 
 $action		= GETPOST('action','alpha');
 $confirm	= GETPOST('confirm','alpha');
@@ -75,7 +74,7 @@ $object->fetch($id,$ref);
 if ($object->id > 0)
 {
     $object->fetch_thirdparty();
-    $upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
+    $upload_dir = $conf->propal->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
     include_once DOL_DOCUMENT_ROOT . '/core/actions_linkedfiles.inc.php';
 }
 
@@ -90,7 +89,7 @@ $form = new Form($db);
 
 if ($object->id > 0)
 {
-	$upload_dir = $conf->propal->dir_output.'/'.dol_sanitizeFileName($object->ref);
+	$upload_dir = $conf->propal->multidir_output[$object->entity].'/'.dol_sanitizeFileName($object->ref);
 
 	$head = propal_prepare_head($object);
 	dol_fiche_head($head, 'document', $langs->trans('Proposal'), -1, 'propal');
@@ -114,7 +113,7 @@ if ($object->id > 0)
 	$morehtmlref.=$form->editfieldkey("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("RefCustomer", 'ref_client', $object->ref_client, $object, 0, 'string', '', null, null, '', 1);
 	// Thirdparty
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1);
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . $object->thirdparty->getNomUrl(1,'customer');
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -160,7 +159,7 @@ if ($object->id > 0)
 
 	// Files infos
 	print '<tr><td class="titlefield">'.$langs->trans("NbOfAttachedFiles").'</td><td>'.count($filearray).'</td></tr>';
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td>'.dol_print_size($totalsize,1,1).'</td></tr>';
 
 	print "</table>\n";
 

@@ -25,8 +25,8 @@ require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 
-$langs->load("admin");
-$langs->load("hrm");
+// Load translation files required by the page
+$langs->loadLangs(array('admin', 'hrm'));
 
 // Security check
 if (! $user->admin) accessforbidden();
@@ -93,7 +93,7 @@ else if ($action == 'add')
 			$object->fk_user_author	= $user->id;
 			$object->datec			= dol_now();
 
-			
+
 
 			$id = $object->create($user);
 
@@ -123,7 +123,7 @@ else if ($action == 'add')
 else if ($action == 'update')
 {
 	$error = 0;
-	
+
 	if (! $cancel) {
 
 		$name = GETPOST('name', 'alpha');
@@ -132,7 +132,7 @@ else if ($action == 'update')
 			$error ++;
 		}
 
-		if (empty($error)) 
+		if (empty($error))
 		{
 			$object->name 			= GETPOST('name', 'alpha');
 			$object->address 		= GETPOST('address', 'alpha');
@@ -141,7 +141,7 @@ else if ($action == 'update')
 			$object->country_id     = GETPOST('country_id', 'int');
 			$object->fk_user_mod	= $user->id;
 			$object->status         = GETPOST('status','int');
-			
+
 			$result = $object->update($user);
 
             if ($result > 0)
@@ -201,18 +201,18 @@ if ($action == 'create')
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('zipcode', 'alpha'), 'zipcode', array (
 			'town',
-			'selectcountry_id' 
+			'selectcountry_id'
 	), 6);
 	print '</td>';
 	print '</tr>';
-	
+
 	// Town
 	print '<tr>';
 	print '<td>'.fieldLabel('Town','town',0).'</td>';
 	print '<td>';
 	print $formcompany->select_ziptown(GETPOST('town', 'alpha'), 'town', array (
 			'zipcode',
-			'selectcountry_id' 
+			'selectcountry_id'
 	));
 	print '</td>';
 	print '</tr>';
@@ -234,7 +234,7 @@ if ($action == 'create')
     print '</td></tr>';
 
     print '</table>';
-	
+
 	dol_fiche_end();
 
     print '<div class="center">';
@@ -286,12 +286,12 @@ if (($id || $ref) && $action == 'edit')
 			print '<tr><td>'.fieldLabel('Zip','zipcode',0).'</td><td>';
 			print $formcompany->select_ziptown($object->zip, 'zipcode', array (
 					'town',
-					'selectcountry_id' 
+					'selectcountry_id'
 			), 6) . '</tr>';
 			print '<tr><td>'.fieldLabel('Town','town',0).'</td><td>';
 			print $formcompany->select_ziptown($object->town, 'town', array (
 					'zipcode',
-					'selectcountry_id' 
+					'selectcountry_id'
 			)) . '</td></tr>';
 
 			// Country
@@ -300,7 +300,7 @@ if (($id || $ref) && $action == 'edit')
 			print $form->select_country($object->fk_country,'country_id');
 				if ($user->admin) print info_admin($langs->trans("YouCanChangeValuesForThisListFromDictionarySetup"),1);
 			print '</td>';
-			print '</tr>';			
+			print '</tr>';
 
 			// Status
 			print '<tr><td>'.fieldLabel('Status','status',1).'</td><td>';
@@ -325,11 +325,11 @@ if (($id || $ref) && $action == 'edit')
 
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals($object->id, $extralabels);
-    
+    $res = $object->fetch_optionals();
+
     $head = establishment_prepare_head($object);
     dol_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');
-    
+
     // Confirmation to delete
     if ($action == 'delete')
     {
@@ -337,22 +337,22 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     }
 
-	
+
 	// Object card
 	// ------------------------------------------------------------
-	
+
 	$linkback = '<a href="' . DOL_URL_ROOT . '/hrm/admin/admin_establishment.php' . (! empty($socid) ? '?socid=' . $socid : '') . '">' . $langs->trans("BackToList") . '</a>';
-	
+
 	$morehtmlref='<div class="refidno">';
     $morehtmlref.='</div>';
-	
+
     dol_banner_tab($object, 'id', $linkback, 1, 'rowid', 'id', $morehtmlref);
-    
-    
+
+
     print '<div class="fichecenter">';
     //print '<div class="fichehalfleft">';
     print '<div class="underbanner clearboth"></div>';
-    print '<table class="border centpercent">'."\n"; 
+    print '<table class="border centpercent">'."\n";
 
 	// Name
 	print '<tr>';
@@ -393,9 +393,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
     print '</table>';
     print '</div>';
-    
+
     print '<div class="clearboth"></div><br>';
-    
+
     dol_fiche_end();
 
     /*
@@ -407,6 +407,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?action=delete&id='.$id.'">'.$langs->trans('Delete').'</a>';
     print '</div>';
 }
- 
+
 llxFooter();
 $db->close();

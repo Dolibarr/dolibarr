@@ -28,13 +28,11 @@
  */
 require '../../main.inc.php';
 
-// Class
 require_once DOL_DOCUMENT_ROOT . '/fourn/class/fournisseur.facture.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formaccounting.class.php';
 
-// Langs
-$langs->load("bills");
-$langs->load("accountancy");
+// Load translation files required by the page
+$langs->loadLangs(array("bills","accountancy"));
 
 $action = GETPOST('action', 'alpha');
 $cancel = GETPOST('cancel', 'alpha');

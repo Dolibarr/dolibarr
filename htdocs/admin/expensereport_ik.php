@@ -30,11 +30,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/expensereport.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport_ik.class.php';
 
-$langs->load('admin');
-$langs->load('other');
-$langs->load('trips');
-$langs->load('errors');
-$langs->load('dict');
+// Load translation files required by the page
+$langs->loadLangs(array("admin","trips","errors","other","dict"));
 
 if (!$user->admin) accessforbidden();
 
@@ -58,12 +55,12 @@ if ($action == 'updateik')
 		$result = $expIk->fetch($id);
 		if ($result < 0) dol_print_error('', $expIk->error, $expIk->errors);
 	}
-	
+
 	$expIk->setValues($_POST);
 	$result = $expIk->create($user);
-	
+
 	if ($result > 0) setEventMessages('SetupSaved', null, 'mesgs');
-	
+
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit;
 }
@@ -74,11 +71,11 @@ elseif ($action == 'delete') // TODO add confirm
 	{
 		$result = $expIk->fetch($id);
 		if ($result < 0) dol_print_error('', $expIk->error, $expIk->errors);
-		
+
 		$expIk->delete($user);
 	}
-	
-	
+
+
 	header('Location: '.$_SERVER['PHP_SELF']);
 	exit;
 }
@@ -89,7 +86,7 @@ $rangesbycateg = ExpenseReportIk::getAllRanges();
  * View
  */
 
-llxHeader();
+llxHeader('',$langs->trans("ExpenseReportsSetup"));
 
 $form=new Form($db);
 
@@ -125,23 +122,23 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 	echo '<td>'.$langs->trans('expenseReportTotalForFive').'</td>';
 	echo '<td>&nbsp;</td>';
 	echo '</tr>';
-	
+
 	if ($Tab['active'] == 0) continue;
-	
+
 	$tranche=1;
-	$var = true;
+
 	foreach ($Tab['ranges'] as $k => $range)
 	{
 		if (isset($Tab['ranges'][$k+1])) $label = $langs->trans('expenseReportRangeFromTo', $range->range_ik, ($Tab['ranges'][$k+1]->range_ik-1));
 		else $label = $langs->trans('expenseReportRangeMoreThan', $range->range_ik);
-		
+
 		if ($range->range_active == 0) $label = $form->textwithpicto($label, $langs->trans('expenseReportRangeDisabled'), 1, 'help', '', 0, 3);
-			
-		echo '<tr '.$bc[$var].'>';
-		
+
+		echo '<tr class="oddeven">';
+
 		// Label
 		echo '<td width="20%"><b>['.$langs->trans('RangeNum', $tranche++).']</b> - '.$label.'</td>';
-		
+
 		// Offset
 		echo '<td width="20%">';
 		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" name="offset" value="'.$range->ik->offset.'" />';
@@ -152,10 +149,10 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 		if ($action == 'edit' && $range->ik->id == $id && $range->rowid == $fk_range && $range->fk_c_exp_tax_cat == $fk_c_exp_tax_cat) echo '<input type="text" name="coef" value="'.$range->ik->coef.'" />';
 		else echo ($range->ik->id > 0 ? $range->ik->coef : $langs->trans('expenseReportCoefUndefined'));
 		echo '</td>';
-		
+
 		// Total for one
 		echo '<td width="30%">'.$langs->trans('expenseReportPrintExample', price($range->ik->offset + 5 * $range->ik->coef)).'</td>';
-		
+
 		// Action
 		echo '<td align="right">';
 		if ($range->range_active == 1)
@@ -173,9 +170,8 @@ foreach ($rangesbycateg as $fk_c_exp_tax_cat => $Tab)
 			}
 		}
 		echo '</td>';
-		
+
 		echo '</tr>';
-		$var=!$var;
 	}
 }
 

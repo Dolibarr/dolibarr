@@ -33,8 +33,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/modules/project/task/modules_task.php';
 
-$langs->load("projects");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadlangs(array('projects', 'companies'));
 
 $id=GETPOST('id','int');
 $ref=GETPOST("ref",'alpha',1);          // task ref
@@ -210,7 +210,7 @@ if ($id > 0 || ! empty($ref))
 {
 	if ($object->fetch($id,$ref) > 0)
 	{
-		$res=$object->fetch_optionals($object->id,$extralabels);
+		$res=$object->fetch_optionals();
 
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
@@ -416,7 +416,7 @@ if ($id > 0 || ! empty($ref))
 			$parameters=array();
 			$reshook=$hookmanager->executeHooks('formObjectOptions',$parameters,$object,$action); // Note that $action and $object may have been modified by hook
             print $hookmanager->resPrint;
-			if (empty($reshook) && ! empty($extrafields->attribute_label))
+			if (empty($reshook))
 			{
 				print $object->showOptionals($extrafields,'edit');
 			}
@@ -589,7 +589,7 @@ if ($id > 0 || ! empty($ref))
 				    }
 				    else
 				    {
-				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("ProjecHasChild").'">'.$langs->trans('Delete').'</a>';
+				        print '<a class="butActionRefused" href="#" title="'.$langs->trans("TaskHasChild").'">'.$langs->trans('Delete').'</a>';
 				    }
 				}
 				else
@@ -611,8 +611,6 @@ if ($id > 0 || ! empty($ref))
 			$urlsource=$_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed=($user->rights->projet->lire);
 			$delallowed=($user->rights->projet->creer);
-
-			$var=true;
 
 			print $formfile->showdocuments('project_task',$filename,$filedir,$urlsource,$genallowed,$delallowed,$object->modelpdf);
 

@@ -74,24 +74,28 @@ NoWidget=Aucun widget
 GoToApiExplorer=Se rendre sur l'explorateur d'API
 ListOfMenusEntries=Liste des entrées du menu
 ListOfPermissionsDefined=Liste des permissions
+SeeExamples=Voir des exemples ici
 EnabledDesc=Condition pour que ce champ soit actif (Exemples: 1 ou $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Le champ est-il visible ? (Exemples: 0 = Jamais visible, 1 = Visible sur les listes et formulaires de création/mise à jour/visualisation, 2 = Visible uniquement sur la liste, 3 = Visible uniquement sur le formulaire de création/mise à jour/affichage. Utiliser une valeur négative signifie que le champ n'est pas affiché par défaut sur la liste mais peut être sélectionné pour l'affichage)
 IsAMeasureDesc=Peut-on cumuler la valeur du champ pour obtenir un total dans les listes ? (Exemples: 1 ou 0)
 SearchAllDesc=Le champ doit-il être utilisé pour effectuer une recherche à partir de l'outil de recherche rapide ? (Exemples: 1 ou 0)
 SpecDefDesc=Entrez ici toute la documentation que vous souhaitez joindre au module et qui n'a pas encore été définis dans d'autres onglets. Vous pouvez utiliser .md ou, mieux, la syntaxe enrichie .asciidoc.
 LanguageDefDesc=Entrez dans ces fichiers, toutes les clés et la traduction pour chaque fichier de langue.
-MenusDefDesc=Define here the menus provided by your module (once defined, they are visible into the menu editor %s)
+MenusDefDesc=Définissez ici les menus fournis par votre module (une fois définis, ils sont visibles dans l'éditeur de menu %s)
 PermissionsDefDesc=Définissez ici les nouvelles permissions fournies par votre module (une fois définies, elles sont visibles dans la configuration des permissions %s)
-HooksDefDesc=Define in the <b>module_parts['hooks']</b> property, in the module descriptor, the context of hooks you want to manage (list of contexts can be found by a search on '<b>initHooks(</b>' in core code).<br>Edit the hook file to add code of your hooked functions (hookable functions can be found by a search on '<b>executeHooks</b>' in core code).
+HooksDefDesc=Définissez dans la propriété <b> module_parts ['hooks'] </b>, dans le descripteur de module, le contexte des hooks à gérer (la liste des contextes peut être trouvée par une recherche sur '<b> initHooks (</b>' dans le code du noyau). <br> Editez le fichier hook pour ajouter le code de vos fonctions hookées (les fonctions hookables peuvent être trouvées par une recherche sur '<b> executeHooks </b>' dans le code core).
 TriggerDefDesc=Définissez dans le fichier trigger le code que vous souhaitez exécuter pour chaque événement métier exécuté.
 SeeIDsInUse=Voir les IDs utilisés dans votre installation
 SeeReservedIDsRangeHere=Voir la plage des ID réservés
 ToolkitForDevelopers=Boîte à outils pour développeurs Dolibarr
-TryToUseTheModuleBuilder=If you have knowledge in SQL and PHP, you can try to use the native module builder wizard. Just enable the module and use the wizard by clicking the <span class="fa fa-bug"></span> on the top right menu. Warning: This is a developer feature, bad use may breaks your application.
+TryToUseTheModuleBuilder=Si vous avez des connaissances en SQL et PHP, vous pouvez essayer d'utiliser l'assistant de création de module natif. Activez simplement le module et utilisez l'assistant en cliquant sur <span class="fa fa-bug"></span> dans le menu en haut à droite. Attention: Ceci est une fonctionnalité de développeur, une mauvaise utilisation peut casser votre application.
 SeeTopRightMenu=Voir<span class="fa fa-bug"></span> à droite de votre barre de menu principal
 AddLanguageFile=Ajouter le fichier de langue
 YouCanUseTranslationKey=Vous pouvez utiliser ici une clé qui est la clé de traduction trouvée dans le fichier de langue (voir l'onglet "Langues")
 DropTableIfEmpty=(Supprimer la table si vide)
 TableDoesNotExists=La table %s n'existe pas
 TableDropped=La table %s a été supprimée
-InitStructureFromExistingTable=Build the structure array string of an existing table
+InitStructureFromExistingTable=Construire la chaîne du tableau de structure d'une table existante
+UseAboutPage=Désactiver la page à propos de
+UseDocFolder=Désactiver le dossier de la documentation
+UseSpecificReadme=Utiliser un fichier ReadMe spécifique

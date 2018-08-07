@@ -16,30 +16,16 @@
  */
 
 /**
- *   	\file       htdocs/Website/websiteaccount_card.php
+ *   	\file       htdocs/website/websiteaccount_card.php
  *		\ingroup    website
- *		\brief      Page to create/edit/view websiteaccount
+ *		\brief      Page to create/edit/view thirdparty website account
  */
-
-//if (! defined('NOREQUIREUSER'))          define('NOREQUIREUSER','1');
-//if (! defined('NOREQUIREDB'))            define('NOREQUIREDB','1');
-//if (! defined('NOREQUIRESOC'))           define('NOREQUIRESOC','1');
-//if (! defined('NOREQUIRETRAN'))          define('NOREQUIRETRAN','1');
-//if (! defined('NOSCANGETFORINJECTION'))  define('NOSCANGETFORINJECTION','1');			// Do not check anti CSRF attack test
-//if (! defined('NOSCANPOSTFORINJECTION')) define('NOSCANPOSTFORINJECTION','1');		// Do not check anti CSRF attack test
-//if (! defined('NOCSRFCHECK'))            define('NOCSRFCHECK','1');			// Do not check anti CSRF attack test done when option MAIN_SECURITY_CSRF_WITH_TOKEN is on.
-//if (! defined('NOSTYLECHECK'))           define('NOSTYLECHECK','1');			// Do not check style html tag into posted data
-//if (! defined('NOTOKENRENEWAL'))         define('NOTOKENRENEWAL','1');		// Do not check anti POST attack test
-//if (! defined('NOREQUIREMENU'))          define('NOREQUIREMENU','1');			// If there is no need to load and show top and left menu
-//if (! defined('NOREQUIREHTML'))          define('NOREQUIREHTML','1');			// If we don't need to load the html.form.class.php
-//if (! defined('NOREQUIREAJAX'))          define('NOREQUIREAJAX','1');         // Do not load ajax.lib.php library
-//if (! defined("NOLOGIN"))                define("NOLOGIN",'1');				// If this page is public (can be called outside logged session)
 
 // Load Dolibarr environment
 $res=0;
 // Try main.inc.php into web root known defined into CONTEXT_DOCUMENT_ROOT (not always defined)
 if (! $res && ! empty($_SERVER["CONTEXT_DOCUMENT_ROOT"])) $res=@include($_SERVER["CONTEXT_DOCUMENT_ROOT"]."/main.inc.php");
-// Try main.inc.php into web root detected using web root caluclated from SCRIPT_FILENAME
+// Try main.inc.php into web root detected using web root calculated from SCRIPT_FILENAME
 $tmp=empty($_SERVER['SCRIPT_FILENAME'])?'':$_SERVER['SCRIPT_FILENAME'];$tmp2=realpath(__FILE__); $i=strlen($tmp)-1; $j=strlen($tmp2)-1;
 while($i > 0 && $j > 0 && isset($tmp[$i]) && isset($tmp2[$j]) && $tmp[$i]==$tmp2[$j]) { $i--; $j--; }
 if (! $res && $i > 0 && file_exists(substr($tmp, 0, ($i+1))."/main.inc.php")) $res=@include(substr($tmp, 0, ($i+1))."/main.inc.php");
@@ -52,26 +38,27 @@ if (! $res) die("Include of main fails");
 
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/website/class/websiteaccount.class.php');
+include_once(DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php');
 include_once(DOL_DOCUMENT_ROOT.'/website/lib/websiteaccount.lib.php');
 
-// Load traductions files requiredby by page
+// Load translation files required by the page
 $langs->loadLangs(array("website","other"));
 
 // Get parameters
 $id			= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
 $action		= GETPOST('action', 'alpha');
+$confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 // Initialize technical objects
-$object=new WebsiteAccount($db);
+$object=new SocieteAccount($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction=$conf->website->dir_output . '/temp/massgeneration/'.$user->id;
 $hookmanager->initHooks(array('websiteaccountcard'));     // Note that conf->hooks_modules contains array
 // Fetch optionals attributes and labels
-$extralabels = $extrafields->fetch_name_optionals_label('websiteaccount');
+$extralabels = $extrafields->fetch_name_optionals_label('societeaccount');
 $search_array_options=$extrafields->getOptionalsFromPost($extralabels,'','search_');
 
 // Initialize array of search criterias
@@ -120,8 +107,8 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name='MYOBJECT_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
+	$trigger_name='WEBSITEACCOUNT_SENTBYMAIL';
+	$autocopy='MAIN_MAIL_AUTOCOPY_WEBSITEACCOUNT_TO';
 	$trackid='websiteaccount'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }
@@ -221,7 +208,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 {
 	if ($object->fk_soc >0 && empty($socid)) $socid = $object->fk_soc;
 
-    $res = $object->fetch_optionals($object->id, $extralabels);
+    $res = $object->fetch_optionals();
 
 	$head = websiteaccountPrepareHead($object);
 	dol_fiche_head($head, 'card', $langs->trans("WebsiteAccount"), -1, 'websiteaccount@website');

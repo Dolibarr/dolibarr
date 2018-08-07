@@ -31,8 +31,8 @@ global $conf;
 
 if (!$user->admin) accessforbidden();
 
-$langs->load("admin");
-$langs->load("other");
+// Load translation files required by the page
+$langs->loadLangs(array("admin","other"));
 
 $error=0;
 $action = GETPOST('action','aZ09');
@@ -50,7 +50,6 @@ foreach ($dirsyslogs as $reldir) {
 		$handle = opendir($newdir);
 
 		if (is_resource($handle)) {
-			$var = true;
 
 			while (($file = readdir($handle)) !== false) {
 				if (substr($file, 0, 11) == 'mod_syslog_' && substr($file, dol_strlen($file) - 3, 3) == 'php') {
@@ -146,6 +145,16 @@ if ($action == 'setlevel')
 	dol_syslog("admin/syslog: level ".$level);
 
 	if (! $res > 0) $error++;
+
+	if (! $error)
+	{
+		$file_saves = GETPOST("file_saves");
+		$res = dolibarr_set_const($db,"SYSLOG_FILE_SAVES",$file_saves,'chaine',0,'',0);
+		dol_syslog("admin/syslog: file saves  ".$file_saves);
+
+		if (! $res > 0) $error++;
+	}
+
 	if (! $error)
 	{
 		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
@@ -270,7 +279,6 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td>';
 print '<td align="right"><input type="submit" class="button" '.$option.' value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
-$var=true;
 
 print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogLevel").'</td>';
 print '<td colspan="2"><select class="flat" name="level" '.$option.'>';
@@ -284,6 +292,13 @@ print '<option value="'.LOG_INFO.'" '.($conf->global->SYSLOG_LEVEL==LOG_INFO?'SE
 print '<option value="'.LOG_DEBUG.'" '.($conf->global->SYSLOG_LEVEL>=LOG_DEBUG?'SELECTED':'').'>LOG_DEBUG ('.LOG_DEBUG.')</option>';
 print '</select>';
 print '</td></tr>';
+
+if(! empty($conf->loghandlers['mod_syslog_file']) && ! empty($conf->cron->enabled)) {
+	print '<tr class="oddeven"><td width="140">'.$langs->trans("SyslogFileNumberOfSaves").'</td>';
+	print '<td colspan="2"><input type="number" name="file_saves" placeholder="14" min="0" step="1" value="'.$conf->global->SYSLOG_FILE_SAVES.'" />';
+	print ' (<a href="'.dol_buildpath('/cron/list.php', 1).'?search_label=CompressSyslogs&status=-1">'.$langs->trans('ConfigureCleaningCronjobToSetFrequencyOfSaves').'</a>)</td></tr>';
+}
+
 print '</table>';
 print "</form>\n";
 

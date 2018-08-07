@@ -26,10 +26,8 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("users");
-$langs->load("admin");
-$langs->load("other");
-
+// Load translation files required by the page
+$langs->loadLangs(array("other", "users", "admin"));
 
 if (!$user->admin) accessforbidden();
 
@@ -124,7 +122,6 @@ if ($conf->use_javascript_ajax)
 
 
 // Timeout
-$var=true;
 
 print '<table width="100%" class="noborder">';
 
@@ -163,7 +160,7 @@ print '</td>';
 print '</tr>';
 
 
-print '<tr '.$bcdd[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_HOST").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -172,7 +169,7 @@ print '</td>';
 print '</tr>';
 
 
-print '<tr '.$bcdd[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_PORT").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -181,7 +178,7 @@ print '</td>';
 print '</tr>';
 
 
-print '<tr '.$bcdd[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_USER").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';
@@ -190,7 +187,7 @@ print '</td>';
 print '</tr>';
 
 
-print '<tr '.$bcdd[$var].'>';
+print '<tr class="oddeven">';
 print '<td>'.$langs->trans("MAIN_PROXY_PASS").'</td><td align="right">';
 print '</td>';
 print '<td class="nowrap">';

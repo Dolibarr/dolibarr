@@ -23,6 +23,7 @@ CREATE TABLE llx_website_page
 	fk_website    integer NOT NULL,
 	type_container varchar(16) NOT NULL DEFAULT 'page',
 	pageurl       varchar(255) NOT NULL,
+	aliasalt      varchar(255),
 	title         varchar(255),						
 	description   varchar(255),						
 	keywords      varchar(255),

@@ -33,6 +33,7 @@ if (! empty($conf->projet->enabled)) {
     require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 
+// Load translation files required by the page
 $langs->load("commercial");
 
 $id = GETPOST('id','int');

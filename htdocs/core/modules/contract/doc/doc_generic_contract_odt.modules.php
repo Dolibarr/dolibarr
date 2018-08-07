@@ -276,6 +276,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				}
 
 				// Recipient name
+				$contactobject=null;
 				if (! empty($usecontact))
 				{
 					// On peut utiliser le nom de la societe du contact
@@ -296,24 +297,17 @@ class doc_generic_contract_odt extends ModelePDFContract
 
 				// Define substitution array
 				$substitutionarray = getCommonSubstitutionArray($outputlangs, 0, null, $object);
-				$substitutionarray['__FROM_NAME__'] = $this->emetteur->name;
-				$substitutionarray['__FROM_EMAIL__'] = $this->emetteur->email;
-				$substitutionarray['__TOTAL_TTC__'] = $object->total_ttc;
-				$substitutionarray['__TOTAL_HT__'] = $object->total_ht;
-				$substitutionarray['__TOTAL_VAT__'] = $object->total_vat;
-
-				// Make substitutions into ODT
-				$array_contract=$this->get_substitutionarray_each_var_object($object, $outputlangs);
+				$array_object_from_properties=$this->get_substitutionarray_each_var_object($object, $outputlangs);
+				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);		// complete with vars not set as properties by get_substitutionarray_each_var_object
 				$array_user=$this->get_substitutionarray_user($user,$outputlangs);
 				$array_soc=$this->get_substitutionarray_mysoc($mysoc,$outputlangs);
 				$array_thirdparty=$this->get_substitutionarray_thirdparty($socobject,$outputlangs);
-				$array_objet=$this->get_substitutionarray_object($object,$outputlangs);
 				$array_other=$this->get_substitutionarray_other($outputlangs);
 				// retrieve contact information for use in contract as contact_xxx tags
 				$array_thirdparty_contact = array();
-				if ($usecontact) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
+				if ($usecontact && is_object($contactobject)) $array_thirdparty_contact=$this->get_substitutionarray_contact($contactobject,$outputlangs,'contact');
 
-				$substitutionarray = array_merge($substitutionarray,$array_contract,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
+				$substitutionarray = array_merge($substitutionarray,$array_object_from_properties,$array_user,$array_soc,$array_thirdparty,$array_objet,$array_other,$array_thirdparty_contact);
 				complete_substitutions_array($substitutionarray, $outputlangs, $object);
 
 				$tmparray = $substitutionarray;
@@ -327,7 +321,7 @@ class doc_generic_contract_odt extends ModelePDFContract
 				$paramfreetext='CONTRACT_FREE_TEXT';
 				if (! empty($conf->global->$paramfreetext))
 				{
-					$newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
+					$newfreetext=make_substitutions($conf->global->$paramfreetext,$tmparray);
 				}
 
 

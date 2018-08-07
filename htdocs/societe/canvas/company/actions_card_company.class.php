@@ -68,23 +68,6 @@ class ActionsCardCompany extends ActionsCardCommon
 
 
 	/**
-     *  doActions of a canvas is not the doActions of the hook
-     *  @deprecated Use the doActions of hooks instead of this.
-	 *
-	 *  @param	string	$action    Type of action
-	 *  @param	int		$id			Id of object
-	 * 	@return	int					<0 if KO, >0 if OK
-	 */
-	function doActions(&$action, $id)
-	{
-		$ret = $this->getObject($id);
-
-		$return = parent::doActions($action);
-
-		return $return;
-	}
-
-	/**
 	 *    Assign custom values for canvas (for example into this->tpl to be used by templates)
 	 *
 	 *    @param	string	$action    Type of action

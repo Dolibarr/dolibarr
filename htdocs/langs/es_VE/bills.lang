@@ -1,20 +1,15 @@
 # Dolibarr language file - Source file is en_US - bills
 BillsCustomersUnpaid=Facturas a clientes pendientes de cobro
 BillsSuppliersUnpaid=Facturas de proveedores pendientes de pago
-HelpPaymentHigherThanReminderToPaySupplier=Attention, the payment amount of one or more bills is higher than the rest to pay. <br> Edit your entry, otherwise confirm and think about creating a credit note of the excess paid for each overpaid invoice.
 CreateCreditNote=Crear factura de abono
 BillShortStatusConverted=Pagada
 ErrorVATIntraNotConfigured=IVA aún no configurado
 SupplierBillsToPay=Facturas de proveedores pendientes de pago
 CustomerBillsUnpaid=Facturas a clientes pendientes de cobro
-DiscountFromExcessReceived=Payments in excess of invoice %s
-MaxPeriodNumber=Max number of invoice generation
-NbOfGenerationDone=Number of invoice generation already done
-NbOfGenerationDoneShort=Number of generation done
-MaxGenerationReached=Maximum number of generations reached
 Statut=Estatuto
 PaymentConditionShortPT_ORDER=Pedido
 PaymentTypeShortTRA=A validar
 IntracommunityVATNumber=Número de IVA
 VATIsNotUsedForInvoice=-
 LawApplicationPart1=-
+situationInvoiceShortcode_S=D

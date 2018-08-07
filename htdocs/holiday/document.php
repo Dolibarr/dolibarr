@@ -35,9 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/holiday.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
-$langs->load("other");
-$langs->load("holidays");
-$langs->load("companies");
+// Load translation files required by the page
+$langs->loadLangs(array('other', 'holidays', 'companies'));
 
 $id = GETPOST('id','int');
 $ref = GETPOST('ref', 'alpha');
@@ -59,7 +58,7 @@ $offset = $conf->liste_limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="name";
+if (! $sortfield) $sortfield="position_name";
 
 
 $object = new Holiday($db);
@@ -211,7 +210,7 @@ if ($object->id)
     }
 
     print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.count($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.dol_print_size($totalsize,1,1).'</td></tr>';
 
     print '</tbody>';
     print '</table>'."\n";

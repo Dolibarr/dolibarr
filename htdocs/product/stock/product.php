@@ -44,11 +44,8 @@ if (! empty($conf->projet->enabled))
 	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 }
 
-$langs->load("products");
-$langs->load("orders");
-$langs->load("bills");
-$langs->load("stocks");
-$langs->load("sendings");
+// Load translation files required by the page
+$langs->loadlangs(array('products', 'orders', 'bills', 'stocks', 'sendings'));
 if (! empty($conf->productbatch->enabled)) $langs->load("productbatch");
 
 $backtopage=GETPOST('backtopage','alpha');

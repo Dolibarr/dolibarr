@@ -54,7 +54,6 @@ class modCategorie extends DolibarrModules
 		$this->version = 'dolibarr';
 
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
-		$this->special = 0;
 		$this->picto = 'category';
 
 		// Data directories to create when module is enabled
@@ -107,12 +106,12 @@ class modCategorie extends DolibarrModules
 		$this->rights[$r][4] = 'supprimer';
 		$r++;
 
-		
+
 		// Menus
 		//-------
 		$this->menu = 1;        // This module add menu entries. They are coded into menu manager.
-		
-		
+
+
 		// Exports
 		//--------
 		$r=0;
@@ -123,11 +122,29 @@ class modCategorie extends DolibarrModules
 		$this->export_icon[$r]='category';
 		$this->export_enabled[$r]='$conf->fournisseur->enabled';
 		$this->export_permission[$r]=array(array("categorie","lire"),array("fournisseur","lire"));
-		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'s.rowid'=>'IdThirdParty','s.nom'=>'Name','s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'c.label'=>"Country",'c.code'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"ProfId1",'s.siren'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note_public'=>"NotePublic");
-		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'s.rowid'=>'List:societe:nom','s.nom'=>'Text','s.prefix_comm'=>"Text",'s.client'=>"Text",'s.datec'=>"Date",'s.tms'=>"Date",'s.code_client'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note_public'=>"Text");
-		$this->export_entities_array[$r]=array('s.rowid'=>'company','s.nom'=>'company','s.prefix_comm'=>"company",'s.client'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.address'=>"company",'s.zip'=>"company",'s.town'=>"company",'c.label'=>"company",'c.code'=>"company",'s.phone'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note_public'=>"company");	// We define here only fields that use another picto
+		$this->export_fields_array[$r]=array(
+			'u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'s.rowid'=>'IdThirdParty','s.nom'=>'Name','s.prefix_comm'=>"Prefix",
+			's.client'=>"Customer",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.address'=>"Address",
+			's.zip'=>"Zip",'s.town'=>"Town",'c.label'=>"Country",'c.code'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",
+			's.siret'=>"ProfId1",'s.siren'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",
+			's.note_public'=>"NotePublic"
+		);
+		$this->export_TypeFields_array[$r]=array(
+			'u.label'=>"Text",'u.description'=>"Text",'s.rowid'=>'List:societe:nom','s.nom'=>'Text','s.prefix_comm'=>"Text",'s.client'=>"Text",'s.datec'=>"Date",
+			's.tms'=>"Date",'s.code_client'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",'c.code'=>"Text",
+			's.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",
+			's.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note_public'=>"Text"
+		);
+		$this->export_entities_array[$r]=array(
+			's.rowid'=>'company','s.nom'=>'company','s.prefix_comm'=>"company",'s.client'=>"company",'s.datec'=>"company",'s.tms'=>"company",
+			's.code_client'=>"company",'s.address'=>"company",'s.zip'=>"company",'s.town'=>"company",'c.label'=>"company",'c.code'=>"company",
+			's.phone'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",
+			's.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note_public'=>"company"
+		);	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_fournisseur as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, ';
+		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'categorie_fournisseur as cf, ';
+		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .=' AND u.type = 1';	// Supplier categories
@@ -138,11 +155,31 @@ class modCategorie extends DolibarrModules
 		$this->export_icon[$r]='category';
         $this->export_enabled[$r]='$conf->societe->enabled';
 		$this->export_permission[$r]=array(array("categorie","lire"),array("societe","lire"));
-		$this->export_fields_array[$r]=array('u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'s.rowid'=>'IdThirdParty','s.nom'=>'Name','s.prefix_comm'=>"Prefix",'s.client'=>"Customer",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.address'=>"Address",'s.zip'=>"Zip",'s.town'=>"Town",'c.label'=>"Country",'c.code'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",'s.siret'=>"ProfId1",'s.siren'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",'s.note_public'=>"NotePublic",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus');
-		$this->export_TypeFields_array[$r]=array('u.label'=>"Text",'u.description'=>"Text",'s.rowid'=>'List:societe:nom','s.nom'=>'Text','s.prefix_comm'=>"Text",'s.client'=>"Text",'s.datec'=>"Date",'s.tms'=>"Date",'s.code_client'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",'s.idprof4'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note_public'=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code','s.fk_stcomm'=>'List:c_stcomm:libelle:code');
-		$this->export_entities_array[$r]=array('s.rowid'=>'company','s.nom'=>'company','s.prefix_comm'=>"company",'s.client'=>"company",'s.datec'=>"company",'s.tms'=>"company",'s.code_client'=>"company",'s.address'=>"company",'s.zip'=>"company",'s.town'=>"company",'c.label'=>"company",'c.code'=>"company",'s.phone'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",'s.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note_public'=>"company",'s.fk_prospectlevel'=>'company','s.fk_stcomm'=>'company');	// We define here only fields that use another picto
+		$this->export_fields_array[$r]=array(
+			'u.rowid'=>"CategId",'u.label'=>"Label",'u.description'=>"Description",'s.rowid'=>'IdThirdParty','s.nom'=>'Name','s.prefix_comm'=>"Prefix",
+			's.client'=>"Customer",'s.datec'=>"DateCreation",'s.tms'=>"DateLastModification",'s.code_client'=>"CustomerCode",'s.address'=>"Address",
+			's.zip'=>"Zip",'s.town'=>"Town",'c.label'=>"Country",'c.code'=>"CountryCode",'s.phone'=>"Phone",'s.fax'=>"Fax",'s.url'=>"Url",'s.email'=>"Email",
+			's.siret'=>"ProfId1",'s.siren'=>"ProfId2",'s.ape'=>"ProfId3",'s.idprof4'=>"ProfId4",'s.tva_intra'=>"VATIntraShort",'s.capital'=>"Capital",
+			's.note_public'=>"NotePublic",'s.fk_prospectlevel'=>'ProspectLevel','s.fk_stcomm'=>'ProspectStatus'
+		);
+		$this->export_TypeFields_array[$r]=array(
+			'u.label'=>"Text",'u.description'=>"Text",'s.rowid'=>'List:societe:nom','s.nom'=>'Text','s.prefix_comm'=>"Text",'s.client'=>"Text",
+			's.datec'=>"Date",'s.tms'=>"Date",'s.code_client'=>"Text",'s.address'=>"Text",'s.zip'=>"Text",'s.town'=>"Text",'c.label'=>"List:c_country:label:label",
+			'c.code'=>"Text",'s.phone'=>"Text",'s.fax'=>"Text",'s.url'=>"Text",'s.email'=>"Text",'s.siret'=>"Text",'s.siren'=>"Text",'s.ape'=>"Text",
+			's.idprof4'=>"Text",'s.tva_intra'=>"Text",'s.capital'=>"Numeric",'s.note_public'=>"Text",'s.fk_prospectlevel'=>'List:c_prospectlevel:label:code',
+			's.fk_stcomm'=>'List:c_stcomm:libelle:code'
+		);
+		$this->export_entities_array[$r]=array(
+			's.rowid'=>'company','s.nom'=>'company','s.prefix_comm'=>"company",'s.client'=>"company",'s.datec'=>"company",'s.tms'=>"company",
+			's.code_client'=>"company",'s.address'=>"company",'s.zip'=>"company",'s.town'=>"company",'c.label'=>"company",'c.code'=>"company",
+			's.phone'=>"company",'s.fax'=>"company",'s.url'=>"company",'s.email'=>"company",'s.siret'=>"company",'s.siren'=>"company",'s.ape'=>"company",
+			's.idprof4'=>"company",'s.tva_intra'=>"company",'s.capital'=>"company",'s.note_public'=>"company",'s.fk_prospectlevel'=>'company',
+			's.fk_stcomm'=>'company'
+		);	// We define here only fields that use another picto
 		$this->export_sql_start[$r]='SELECT DISTINCT ';
-		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, '.MAIN_DB_PREFIX.'categorie_societe as cf, '.MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object ';
+		$this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'categorie as u, ';
+		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'categorie_societe as cf, ';
+		$this->export_sql_end[$r] .= MAIN_DB_PREFIX.'societe as s LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as t ON s.fk_typent = t.id LEFT JOIN '.MAIN_DB_PREFIX.'c_country as c ON s.fk_pays = c.rowid LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as ce ON s.fk_effectif = ce.id LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as cfj ON s.fk_forme_juridique = cfj.code LEFT JOIN '.MAIN_DB_PREFIX.'societe_extrafields as extra ON s.rowid = extra.fk_object ';
 		$this->export_sql_end[$r] .=' WHERE u.rowid = cf.fk_categorie AND cf.fk_soc = s.rowid';
 		$this->export_sql_end[$r] .=' AND u.entity IN ('.getEntity('category').')';
 		$this->export_sql_end[$r] .=' AND u.type = 2';	// Customer/Prospect categories
@@ -308,7 +345,7 @@ class modCategorie extends DolibarrModules
 			's.url'=>"company",
 			's.email'=>"company"
 		); // We define here only fields that use another picto
-		
+
         // Add extra fields
         $sql="SELECT name, label, type, param FROM ".MAIN_DB_PREFIX."extrafields WHERE elementtype = 'socpeople'";
         $resql=$this->db->query($sql);
@@ -346,7 +383,7 @@ class modCategorie extends DolibarrModules
         	}
         }
         // End add axtra fields
-        
+
 		$this->export_sql_start[$r] = 'SELECT DISTINCT ';
 		$this->export_sql_end[$r]  = ' FROM ' . MAIN_DB_PREFIX . 'categorie as u, '.MAIN_DB_PREFIX . 'categorie_contact as cp, '.MAIN_DB_PREFIX . 'socpeople as p';
 		$this->export_sql_end[$r] .= ' LEFT JOIN ' . MAIN_DB_PREFIX . 'c_country as country ON p.fk_pays = country.rowid';

@@ -1,8 +1,8 @@
 # Dolibarr language file - Source file is en_US - withdrawals
 CustomersStandingOrdersArea=Direct debit payment orders area
 SuppliersStandingOrdersArea=Direct credit payment orders area
-StandingOrders=Direct debit payment orders
-StandingOrder=Direct debit payment order
+StandingOrdersPayment=Direct debit payment orders
+StandingOrderPayment=Direct debit payment order
 NewStandingOrder=New direct debit order
 StandingOrderToProcess=To process
 WithdrawalsReceipts=Direct debit orders
@@ -12,8 +12,8 @@ WithdrawalsLines=Direct debit order lines
 RequestStandingOrderToTreat=Request for direct debit payment order to process
 RequestStandingOrderTreated=Request for direct debit payment order processed
 NotPossibleForThisStatusOfWithdrawReceiptORLine=Not yet possible. Withdraw status must be set to 'credited' before declaring reject on specific lines.
-NbOfInvoiceToWithdraw=Nb. of qualified invoice with waiting direct debit order
-NbOfInvoiceToWithdrawWithInfo=Nb. of customer invoice with direct debit payment orders having defined bank account information
+NbOfInvoiceToWithdraw=No. of qualified invoice with waiting direct debit order
+NbOfInvoiceToWithdrawWithInfo=No. of customer invoice with direct debit payment orders having defined bank account information
 InvoiceWaitingWithdraw=Invoice waiting for direct debit
 AmountToWithdraw=Amount to withdraw
 WithdrawsRefused=Direct debit refused
@@ -78,7 +78,7 @@ ThisWillAlsoAddPaymentOnInvoice=This will also record payments to invoices and w
 StatisticsByLineStatus=Statistics by status of lines
 RUM=UMR
 RUMLong=Unique Mandate Reference
-RUMWillBeGenerated=UMR number will be generated once bank account information are saved
+RUMWillBeGenerated=If empty, UMR number will be generated once bank account information are saved
 WithdrawMode=Direct debit mode (FRST or RECUR)
 WithdrawRequestAmount=Amount of Direct debit request: 
 WithdrawRequestErrorNilAmount=Unable to create direct debit request for empty amount.
@@ -98,6 +98,10 @@ ModeFRST=One-off payment
 PleaseCheckOne=Please check one only
 DirectDebitOrderCreated=Direct debit order %s created
 AmountRequested=Amount requested
+SEPARCUR=SEPA CUR
+SEPAFRST=SEPA FRST
+ExecutionDate=Execution date
+CreateForSepa=Create direct debit file
 
 ### Notifications 
 InfoCreditSubject=Payment of direct debit payment order %s by the bank

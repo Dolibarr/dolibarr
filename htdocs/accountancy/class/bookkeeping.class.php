@@ -170,7 +170,7 @@ class BookKeeping extends CommonObject
 		// Check parameters
 		if (empty($this->numero_compte) || $this->numero_compte == '-1' || $this->numero_compte == 'NotDefined')
 		{
-			$langs->load("errors");
+			$langs->loadLangs(array("errors"));
 			if (in_array($this->doc_type, array('bank', 'expense_report')))
 			{
 				$this->errors[]=$langs->trans('ErrorFieldAccountNotDefinedForBankLine', $this->fk_docdet,  $this->doc_type);
@@ -246,9 +246,6 @@ class BookKeeping extends CommonObject
 				}
 
 				$now = dol_now();
-				if (empty($this->date_create)) {
-					$this->date_create = $now;
-				}
 
 				$sql = "INSERT INTO " . MAIN_DB_PREFIX . $this->table_element . " (";
 				$sql .= "doc_date";
@@ -291,7 +288,7 @@ class BookKeeping extends CommonObject
 				$sql .= "," . $this->montant;
 				$sql .= ",'" . $this->db->escape($this->sens) . "'";
 				$sql .= ",'" . $this->db->escape($this->fk_user_author) . "'";
-				$sql .= ",'" . $this->db->idate($this->date_create). "'";
+				$sql .= ",'" . $this->db->idate($now). "'";
 				$sql .= ",'" . $this->db->escape($this->code_journal) . "'";
 				$sql .= ",'" . $this->db->escape($this->journal_label) . "'";
 				$sql .= "," . $this->db->escape($this->piece_num);
@@ -496,9 +493,6 @@ class BookKeeping extends CommonObject
 		$this->credit = price2num($this->credit, 'MT');
 
 		$now = dol_now();
-		if (empty($this->date_create)) {
-		    $this->date_create = $now;
-		}
 
 		// Check parameters
 		// Put here code to add control on parameters values
@@ -545,7 +539,7 @@ class BookKeeping extends CommonObject
 		$sql .= ' ' . (! isset($this->montant) ? 'NULL' : $this->montant ). ',';
 		$sql .= ' ' . (! isset($this->sens) ? 'NULL' : "'" . $this->db->escape($this->sens) . "'") . ',';
 		$sql .= ' ' . $user->id . ',';
-		$sql .= ' ' . "'" . $this->db->idate($this->date_create) . "',";
+		$sql .= ' ' . "'" . $this->db->idate($now) . "',";
 		$sql .= ' ' . (empty($this->code_journal) ? 'NULL' : "'" . $this->db->escape($this->code_journal) . "'") . ',';
 		$sql .= ' ' . (empty($this->journal_label) ? 'NULL' : "'" . $this->db->escape($this->journal_label) . "'") . ',';
 		$sql .= ' ' . (empty($this->piece_num) ? 'NULL' : $this->db->escape($this->piece_num)).',';
@@ -737,12 +731,12 @@ class BookKeeping extends CommonObject
 					$sqlwhere[] = $key . '=' . $value;
 				} elseif ($key == 't.subledger_account' || $key == 't.numero_compte') {
 					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
-				} elseif ($key == 't.label_operation') {
-					$sqlwhere[] = $key . ' LIKE \'' . $this->db->escape($value) . '%\'';
 				} elseif ($key == 't.date_creation>=' || $key == 't.date_creation<=') {
 					$sqlwhere[] = $key . '\'' . $this->db->idate($value) . '\'';
+				} elseif ($key == 't.credit' || $key == 't.debit') {
+					$sqlwhere[] = natural_search($key, $value, 1, 1);
 				} else {
-					$sqlwhere[] = $key . ' LIKE \'%' . $this->db->escape($value) . '%\'';
+					$sqlwhere[] = natural_search($key, $value, 0, 1);
 				}
 			}
 		}
@@ -1163,7 +1157,7 @@ class BookKeeping extends CommonObject
 		$this->db->begin();
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX .  $this->table_element . $mode . " as ab";
-		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$value."'");
+		$sql .= ' SET ab.' . $field . '=' . (is_numeric($value)?$value:"'".$this->db->escape($value)."'");
 		$sql .= ' WHERE ab.piece_num=' . $piece_num ;
 		$resql = $this->db->query($sql);
 
@@ -1246,7 +1240,7 @@ class BookKeeping extends CommonObject
 		// first check if line not yet in bookkeeping
 		$sql = "DELETE";
 		$sql .= " FROM " . MAIN_DB_PREFIX . $this->table_element;
-		$sql .= " WHERE import_key = '" . $importkey . "'";
+		$sql .= " WHERE import_key = '" . $this->db->escape($importkey) . "'";
 
 		$resql = $this->db->query($sql);
 
@@ -1284,7 +1278,7 @@ class BookKeeping extends CommonObject
 		$sql.= " FROM " . MAIN_DB_PREFIX . $this->table_element.$mode;
 		$sql.= " WHERE 1 = 1";
 		if (! empty($delyear)) $sql.= " AND YEAR(doc_date) = " . $delyear;		 // FIXME Must use between
-		if (! empty($journal)) $sql.= " AND code_journal = '".$journal."'";
+		if (! empty($journal)) $sql.= " AND code_journal = '".$this->db->escape($journal)."'";
 		$sql .= " AND entity IN (" . getEntity('accountancy') . ")";
 		$resql = $this->db->query($sql);
 
