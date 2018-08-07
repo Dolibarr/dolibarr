@@ -160,6 +160,9 @@ class Facture extends CommonInvoice
 	public $tab_next_situation_invoice=array();
 
 	public $oldcopy;
+	
+	
+	public $retained_waranty;
 
     /**
      * Standard invoice
@@ -339,6 +342,8 @@ class Facture extends CommonInvoice
 			$this->note_public=trim($this->note_public);
 			$this->note_private=trim($this->note_private);
 		    $this->note_private=dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
+		    
+		    $this->retained_waranty = floatval($this->retained_waranty);
 
 		    $this->array_options=$_facrec->array_options;
 
@@ -426,6 +431,7 @@ class Facture extends CommonInvoice
         $sql.= ", fk_multicurrency";
         $sql.= ", multicurrency_code";
         $sql.= ", multicurrency_tx";
+        $sql.= ", retained_waranty";
 		$sql.= ")";
 		$sql.= " VALUES (";
 		$sql.= "'(PROV)'";
@@ -458,6 +464,8 @@ class Facture extends CommonInvoice
 		$sql.= ", ".(int) $this->fk_multicurrency;
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".(double) $this->multicurrency_tx;
+		$sql.= ", ".(empty($this->retained_waranty)?"0":$this->db->escape($this->retained_waranty));
+		
 		$sql.=")";
 
 		$resql=$this->db->query($sql);
@@ -1276,6 +1284,7 @@ class Facture extends CommonInvoice
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', f.fk_incoterms, f.location_incoterms';
         $sql.= ", i.libelle as libelle_incoterms";
+        $sql.= ", f.retained_waranty as retained_waranty";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
@@ -1343,9 +1352,9 @@ class Facture extends CommonInvoice
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
 				$this->situation_counter    = $obj->situation_counter;
 				$this->situation_final      = $obj->situation_final;
+				$this->retained_waranty     = $obj->retained_waranty;
 				$this->extraparams			= (array) json_decode($obj->extraparams, true);
-
-				//Incoterms
+				// Incoterms
 				$this->fk_incoterms = $obj->fk_incoterms;
 				$this->location_incoterms = $obj->location_incoterms;
 				$this->libelle_incoterms = $obj->libelle_incoterms;
@@ -1569,7 +1578,9 @@ class Facture extends CommonInvoice
 		if (isset($this->note_public)) $this->note_public=trim($this->note_public);
 		if (isset($this->modelpdf)) $this->modelpdf=trim($this->modelpdf);
 		if (isset($this->import_key)) $this->import_key=trim($this->import_key);
-
+		if (isset($this->retained_waranty)) $this->retained_waranty = floatval($this->retained_waranty);
+		
+		
 		// Check parameters
 		// Put here code to add control on parameters values
 
@@ -1610,6 +1621,7 @@ class Facture extends CommonInvoice
 		$sql.= " situation_cycle_ref=".(empty($this->situation_cycle_ref)?"null":$this->db->escape($this->situation_cycle_ref)).",";
 		$sql.= " situation_counter=".(empty($this->situation_counter)?"null":$this->db->escape($this->situation_counter)).",";
 		$sql.= " situation_final=".(empty($this->situation_counter)?"0":$this->db->escape($this->situation_counter));
+		$sql.= " retained_waranty=".(empty($this->retained_waranty)?"0":$this->db->escape($this->retained_waranty));
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
