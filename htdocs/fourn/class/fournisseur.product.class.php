@@ -308,11 +308,12 @@ class ProductFournisseur extends Product
             if ($resql) {
                 // Add price for this quantity to supplier
                 $sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price(";
-                $sql .= "datec, fk_product, fk_soc, ref_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation)";
+                $sql .= "datec, fk_product, fk_soc, ref_fourn, desc_fourn, fk_user, price, quantity, remise_percent, remise, unitprice, tva_tx, charges, unitcharges, fk_availability, default_vat_code, info_bits, entity, delivery_time_days, supplier_reputation)";
                 $sql .= " values('" . $this->db->idate($now) . "',";
                 $sql .= " " . $this->id . ",";
                 $sql .= " " . $fourn->id . ",";
                 $sql .= " '" . $this->db->escape($ref_fourn) . "',";
+                $sql .= " '" . $this->db->escape($desc_fourn) . "',";
                 $sql .= " " . $user->id . ",";
                 $sql .= " " . $buyprice . ",";
                 $sql .= " " . $qty . ",";
