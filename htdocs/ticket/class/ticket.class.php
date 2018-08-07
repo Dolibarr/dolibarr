@@ -1614,12 +1614,9 @@ class Ticket extends CommonObject
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $info_sendto['email'], $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
-                if ($mailfile->error || $mailfile->errors) 
-                {
+                if ($mailfile->error || $mailfile->errors) {
                     setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-                } 
-                else 
-                {
+                } else {
                     $result = $mailfile->sendfile();
                     if ($result > 0) {
                         $nb_sent++;
