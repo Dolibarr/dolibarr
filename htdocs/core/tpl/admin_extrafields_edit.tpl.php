@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2010-2012	Laurent Destailleur	<eldy@users.sourceforge.net>
  * Copyright (C) 2012		Regis Houssin		<regis.houssin@capnetworks.com>
+ * Copyright (C) 2018       Frédéric France     <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +52,7 @@ $langs->load("modulebuilder");
     		var required = jQuery("#required");
     		var alwayseditable = jQuery("#alwayseditable");
     		var list = jQuery("#list");
+            var totalizable = jQuery("#totalizable");
     		<?php
     		if((GETPOST('type','alpha') != "select") &&  (GETPOST('type','alpha') != "sellist"))
     		{
@@ -156,6 +158,7 @@ $param=$extrafields->attributes[$elementtype]['param'][$attrname];
 $perms=$extrafields->attributes[$elementtype]['perms'][$attrname];
 $langfile=$extrafields->attributes[$elementtype]['langfile'][$attrname];
 $list=$extrafields->attributes[$elementtype]['list'][$attrname];
+$totalizable = $extrafields->attributes[$elementtype]['totalizable'][$attrname];
 $help=$extrafields->attributes[$elementtype]['help'][$attrname];
 $entitycurrentorall=$extrafields->attributes[$elementtype]['entityid'][$attrname];
 
@@ -251,6 +254,7 @@ else
 <tr class="extra_alwayseditable"><td><?php echo $langs->trans("AlwaysEditable"); ?></td><td class="valeur"><input id="alwayseditable" type="checkbox" name="alwayseditable"<?php echo ($alwayseditable?' checked':''); ?>></td></tr>
 <tr><td class="extra_list"><?php echo $form->textwithpicto($langs->trans("Visibility"), $langs->trans("VisibleDesc")); ?>
 </td><td class="valeur"><input id="list" class="minwidth100" type="text" name="list" value="<?php echo ($list!=''?$list:'1'); ?>"></td></tr>
+<tr class="extra_totalizable"><td><?php echo $form->textwithpicto($langs->trans("Totalizable"), $langs->trans("TotalizableDesc")); ?></td><td class="valeur"><input id="totalizable" type="checkbox" name="totalizable"<?php echo ($totalizable?' checked':''); ?>></td></tr>
 <!-- Help tooltip -->
 <tr class="help"><td><?php echo $form->textwithpicto($langs->trans("HelpOnTooltip"), $langs->trans("HelpOnTooltipDesc")); ?></td><td class="valeur"><input id="help" class="quatrevingtpercent" type="text" name="help" value="<?php echo dol_escape_htmltag($help); ?>"></td></tr>
 <?php if ($conf->multicompany->enabled) { ?>

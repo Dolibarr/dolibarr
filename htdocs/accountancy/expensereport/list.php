@@ -180,8 +180,9 @@ llxHeader('', $langs->trans("ExpenseReportsVentilation"));
 if (empty($chartaccountcode))
 {
 	print $langs->trans("ErrorChartOfAccountSystemNotSelected");
-	llxFooter();
-	$db->close();
+	// End of page
+    llxFooter();
+    $db->close();
 	exit;
 }
 
@@ -422,5 +423,6 @@ jQuery(document).ready(function() {
 });
 </script>';
 
+// End of page
 llxFooter();
 $db->close();

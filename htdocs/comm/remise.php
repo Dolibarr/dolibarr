@@ -129,8 +129,9 @@ if ($socid > 0)
 
     	print '</form>';
 
-    	llxFooter();
-    	$db->close();
+    	// End of page
+        llxFooter();
+        $db->close();
     	exit;
     }
 
@@ -324,5 +325,6 @@ if ($socid > 0)
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

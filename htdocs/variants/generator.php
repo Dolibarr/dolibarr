@@ -115,18 +115,18 @@ if ($_POST) {
 
 			if ($res > 0) {
 				$db->commit();
-				setEventMessage($langs->trans('RecordSaved'));
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 				exit;
 			}
 		} else {
-			setEventMessage($langs->trans('ErrorDeletingGeneratedProducts'), 'errors');
+			setEventMessages($langs->trans('ErrorDeletingGeneratedProducts'), null, 'errors');
 		}
 
 		$db->rollback();
 
 	} else {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	}
 }
 

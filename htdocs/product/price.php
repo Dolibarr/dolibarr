@@ -6,7 +6,7 @@
  * Copyright (C) 2006		Andre Cianfarani			<acianfa@free.fr>
  * Copyright (C) 2014		Florian Henry			<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2016	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2014-2015 	Philippe Grand 		    <philippe.grand@atoo-net.com>
+ * Copyright (C) 2014-2018 	Philippe Grand 		    <philippe.grand@atoo-net.com>
  * Copyright (C) 2014		Ion agorria				<ion@agorria.com>
  * Copyright (C) 2015		Alexandre Spangaro		<aspangaro.dolibarr@gmail.com>
  * Copyright (C) 2015		Marcos García			<marcosgdf@gmail.com>
@@ -46,7 +46,7 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES)) {
 }
 
 // Load translation files required by the page
-$langs->loadLangs(array('products', 'bills', 'companies'));
+$langs->loadLangs(array('products', 'bills', 'companies', 'other'));
 
 $mesg=''; $error=0; $errors=array();
 
@@ -464,8 +464,10 @@ if (empty($reshook))
 			$sql .= " WHERE rowid = " . $rowid;
 
 			$result = $db->query($sql);
-		} else {
-			setEventMessage('delete_price_by_qty Missing Ids','errors');
+		} 
+		else 
+		{
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
 		}
 	}
 
@@ -477,8 +479,10 @@ if (empty($reshook))
 		$sql .= " WHERE fk_product_price = " . $priceid;
 
 		$result = $db->query($sql);
-		} else {
-			setEventMessage('delete_all_price_by_qty Missing Ids','errors');
+		} 
+		else 
+		{
+			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
 		}
 	}
 

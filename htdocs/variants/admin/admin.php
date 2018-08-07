@@ -31,15 +31,15 @@ if ($_POST) {
 	$value = GETPOST('PRODUIT_ATTRIBUTES_HIDECHILD');
 
 	if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_HIDECHILD', $value, 'chaine', 0, '', $conf->entity)) {
-		setEventMessage($langs->trans('RecordSaved'));
+		setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 	} else {
-		setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+		setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 	}
 
        if (dolibarr_set_const($db, 'PRODUIT_ATTRIBUTES_SEPARATOR', GETPOST('PRODUIT_ATTRIBUTES_SEPARATOR'), 'chaine', 0, '', $conf->entity)) {
-               setEventMessage($langs->trans('RecordSaved'));
+               setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
        } else {
-               setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+               setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
        }
 
 }

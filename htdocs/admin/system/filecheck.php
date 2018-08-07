@@ -433,11 +433,8 @@ if (! $error && $xml)
     print $out;
 }
 
-
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 exit($error);

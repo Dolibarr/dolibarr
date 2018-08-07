@@ -354,6 +354,7 @@ echo '<script type="text/javascript"> $(function() {
 }); </script>';
 
 dol_fiche_end();
-llxFooter();
 
+// End of page
+llxFooter();
 $db->close();

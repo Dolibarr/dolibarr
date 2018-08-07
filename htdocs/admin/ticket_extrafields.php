@@ -109,6 +109,6 @@ if ($action == 'edit' && !empty($attrname)) {
     include DOL_DOCUMENT_ROOT . '/core/tpl/admin_extrafields_edit.tpl.php';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

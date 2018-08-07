@@ -533,5 +533,6 @@ if (! empty($conf->global->MAIN_MODULE_NOTIFICATION))
 }
 */
 
+// End of page
 llxFooter();
 $db->close();

@@ -447,7 +447,7 @@ if ($mode == 'template' && $user->admin)
 //$printer->sendToPrinter($object, 1, 16);
 //setEventMessages($printer->error, $printer->errors, 'errors');
 
+// End of page
 llxFooter();
-
 $db->close();
 

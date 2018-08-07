@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2015 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2010 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2012-2016 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2015-2017 Alexandre Spangaro	<aspangaro@zendsi.com>
+ * Copyright (C) 2015-2018 Alexandre Spangaro   <aspangaro@zendsi.com>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Josep Lluís Amador   <joseplluis@lliuretic.cat>
  *
@@ -43,7 +43,7 @@ if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn
 if (! empty($conf->fournisseur->enabled))	require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
 if (! empty($conf->contrat->enabled))		require_once DOL_DOCUMENT_ROOT.'/contrat/class/contrat.class.php';
 if (! empty($conf->ficheinter->enabled))	require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
-if (! empty($conf->expedition->enabled))    require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
+if (! empty($conf->expedition->enabled))	require_once DOL_DOCUMENT_ROOT.'/expedition/class/expedition.class.php';
 if (! empty($conf->deplacement->enabled))	require_once DOL_DOCUMENT_ROOT.'/compta/deplacement/class/deplacement.class.php';
 if (! empty($conf->expensereport->enabled))	require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
 if (! empty($conf->agenda->enabled))		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
@@ -52,17 +52,19 @@ if (! empty($conf->loan->enabled))			require_once DOL_DOCUMENT_ROOT.'/loan/class
 if (! empty($conf->stock->enabled))			require_once DOL_DOCUMENT_ROOT.'/product/stock/class/mouvementstock.class.php';
 if (! empty($conf->tax->enabled))			require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
 if (! empty($conf->banque->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/paymentvarious.class.php';
+if (! empty($conf->salaries->enabled))		require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array('projects', 'companies', 'suppliers', 'compta'));
-if (! empty($conf->facture->enabled))  	    $langs->load("bills");
-if (! empty($conf->commande->enabled)) 	    $langs->load("orders");
-if (! empty($conf->propal->enabled))   	    $langs->load("propal");
+if (! empty($conf->facture->enabled))		$langs->load("bills");
+if (! empty($conf->commande->enabled))		$langs->load("orders");
+if (! empty($conf->propal->enabled))		$langs->load("propal");
 if (! empty($conf->ficheinter->enabled))	$langs->load("interventions");
 if (! empty($conf->deplacement->enabled))	$langs->load("trips");
 if (! empty($conf->expensereport->enabled)) $langs->load("trips");
 if (! empty($conf->don->enabled))			$langs->load("donations");
 if (! empty($conf->loan->enabled))			$langs->load("loan");
+if (! empty($conf->salaries->enabled))		$langs->load("salaries");
 
 $id=GETPOST('id','int');
 $ref=GETPOST('ref','alpha');
@@ -438,6 +440,19 @@ $listofreferent=array(
 	'datefieldname'=>'datem',
 	'disableamount'=>0,
 	'test'=>($conf->stock->enabled && $user->rights->stock->mouvement->lire && ! empty($conf->global->STOCK_MOVEMENT_INTO_PROJECT_OVERVIEW))),
+'salaries'=>array(
+	'name'=>"Salaries",
+	'title'=>"ListSalariesAssociatedProject",
+	'class'=>'PaymentSalary',
+	'table'=>'payment_salary',
+	'datefieldname'=>'datev',
+	'margin'=>'minus',
+	'disableamount'=>0,
+	'urlnew'=>DOL_URL_ROOT.'/compta/salaries/card.php?action=create&projectid='.$id,
+	'lang'=>'salaries',
+	'buttonnew'=>'AddSalariesPayment',
+	'testnew'=>$user->rights->salaries->write,
+	'test'=>$conf->salaries->enabled && $user->rights->salaries->read),
 'variouspayment'=>array(
 	'name'=>"VariousPayments",
 	'title'=>"ListVariousPaymentsAssociatedProject",
@@ -560,11 +575,12 @@ foreach ($listofreferent as $key => $value)
 	$datefieldname=$value['datefieldname'];
 	$qualified=$value['test'];
 	$margin = $value['margin'];
+	$project_field = $value['project_field'];
 	if ($qualified && isset($margin))		// If this element must be included into profit calculation ($margin is 'minus' or 'plus')
 	{
 		$element = new $classname($db);
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee, !empty($project_field)?$project_field:'fk_projet');
 
 		if (count($elementarray)>0 && is_array($elementarray))
 		{
@@ -695,6 +711,7 @@ foreach ($listofreferent as $key => $value)
 	$urlnew=$value['urlnew'];
 	$buttonnew=$value['buttonnew'];
     $testnew=$value['testnew'];
+	$project_field=$value['project_field'];
 
 	if ($qualified)
 	{
@@ -717,7 +734,7 @@ foreach ($listofreferent as $key => $value)
 
        	if (empty($conf->global->PROJECT_LINK_ON_OVERWIEW_DISABLED) && $idtofilterthirdparty && !in_array($tablename, array('payment_various')))
        	{
-			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300');
+			$selectList=$formproject->select_element($tablename, $idtofilterthirdparty, 'minwidth300',-2,!empty($project_field)?$project_field:'fk_projet');
 			if (! $selectList || ($selectList<0))
 			{
 				setEventMessages($formproject->error,$formproject->errors,'errors');
@@ -768,7 +785,7 @@ foreach ($listofreferent as $key => $value)
 		print '<td>';
 		if (in_array($tablename, array('projet_task')) && $key == 'project_task') print '';		// if $key == 'project_task', we don't want details per user
 		elseif (in_array($tablename, array('payment_various'))) print '';						// if $key == 'payment_various', we don't have any thirdparty
-		elseif (in_array($tablename, array('expensereport_det','don','projet_task','stock_mouvement'))) print $langs->trans("User");
+		elseif (in_array($tablename, array('expensereport_det','don','projet_task','stock_mouvement','payment_salary'))) print $langs->trans("User");
 		else print $langs->trans("ThirdParty");
 		print '</td>';
 		// Amount HT
@@ -785,7 +802,7 @@ foreach ($listofreferent as $key => $value)
 		else print '<td align="right" width="200">'.$langs->trans("Status").'</td>';
 		print '</tr>';
 
-		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee);
+		$elementarray = $object->get_element_list($key, $tablename, $datefieldname, $dates, $datee,!empty($project_field)?$project_field:'fk_projet');
 		if (is_array($elementarray) && count($elementarray)>0)
 		{
 			$total_ht = 0;
@@ -866,7 +883,7 @@ foreach ($listofreferent as $key => $value)
 				}
 				else
 				{
-				    // Show ref with link
+					// Show ref with link
 					if ($element instanceof Task)
 					{
 						print $element->getNomUrl(1,'withproject','time');
@@ -901,6 +918,7 @@ foreach ($listofreferent as $key => $value)
 				$date=''; $total_time_by_line = null;
 				if ($tablename == 'expensereport_det') $date = $element->date;      // No draft status on lines
 				elseif ($tablename == 'stock_mouvement') $date = $element->datem;
+				elseif ($tablename == 'payment_salary') $date = $element->datev;
 				elseif ($tablename == 'payment_various') $date = $element->datev;
 				elseif ($tablename == 'chargesociales') $date = $element->date_ech;
 				elseif (! empty($element->status) || ! empty($element->statut) || ! empty($element->fk_status))
@@ -946,6 +964,12 @@ foreach ($listofreferent as $key => $value)
                 	$tmpuser->fetch($expensereport->fk_user_author);
                 	print $tmpuser->getNomUrl(1,'',48);
                 }
+				else if ($tablename == 'payment_salary')
+				{
+					$tmpuser=new User($db);
+					$tmpuser->fetch($element->fk_user);
+					print $tmpuser->getNomUrl(1,'',48);
+				}
 				else if ($tablename == 'don' || $tablename == 'stock_mouvement')
                 {
                 	if ($element->fk_user_author > 0)
@@ -967,7 +991,7 @@ foreach ($listofreferent as $key => $value)
 				{
 				    $total_ht_by_line=null;
 				    $othermessage='';
-					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various') $total_ht_by_line=$element->amount;
+					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ht_by_line=$element->amount;
 					else if($tablename == 'fichinter') $total_ht_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ht_by_line=$element->price*abs($element->qty);
 					elseif (in_array($tablename, array('projet_task')))
@@ -1008,7 +1032,7 @@ foreach ($listofreferent as $key => $value)
 				if (empty($value['disableamount']))
 				{
 				    $total_ttc_by_line=null;
-					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various') $total_ttc_by_line=$element->amount;
+					if ($tablename == 'don' || $tablename == 'chargesociales' || $tablename == 'payment_various' || $tablename == 'payment_salary') $total_ttc_by_line=$element->amount;
 					else if($tablename == 'fichinter') $total_ttc_by_line=$element->getAmount();
 					elseif ($tablename == 'stock_mouvement') $total_ttc_by_line=$element->price*abs($element->qty);
 					elseif ($tablename == 'projet_task')
