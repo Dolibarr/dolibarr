@@ -252,7 +252,7 @@ if (empty($reshook))
                 if ($conf->multicurrency->enabled) {
                     $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', $_POST["multicurrency_price"], $_POST["multicurrency_price_base_type"], $_POST["multicurrency_tx"], $_POST["multicurrency_code"], $supplier_description);
                 } else {
-                    $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation);
+                    $ret = $object->update_buyprice($quantity, $_POST["price"], $user, $_POST["price_base_type"], $supplier, $_POST["oselDispo"], $ref_fourn, $tva_tx, $_POST["charges"], $remise_percent, 0, $npr, $delivery_time_days, $supplier_reputation, array(), '', 0, 'HT', 1, '', $supplier_description);
                 }
 				if ($ret < 0)
 				{
