@@ -2783,6 +2783,35 @@ function isValidEmail($address, $acceptsupervisorkey=0)
 }
 
 /**
+ *	Return if the domain name has a valid MX record.
+ *  WARNING: This need function idn_to_ascii, checkdnsrr and getmxrr
+ *
+ *	@param	    string		$domain	    			Domain name (Ex: "yahoo.com", "yhaoo.com", "dolibarr.fr")
+ *	@return     int     							-1 if error (function not available), 0=Not valid, 1=Valid
+ */
+function isValidMXRecord($domain)
+{
+	if (function_exists('idn_to_ascii') && function_exists('checkdnsrr'))
+	{
+		if (! checkdnsrr(idn_to_ascii($domain), 'MX'))
+		{
+			return 0;
+		}
+		if (function_exists('getmxrr'))
+		{
+			$mxhosts=array();
+			$weight=array();
+			getmxrr(idn_to_ascii($domain), $mxhosts, $weight);
+			if (count($mxhosts) > 1) return 1;
+			if (count($mxhosts) == 1 && ! empty($mxhosts[0])) return 1;
+
+			return 0;
+		}
+	}
+	return -1;
+}
+
+/**
  *  Return true if phone number syntax is ok
  *  TODO Decide what to do with this
  *
@@ -5125,7 +5154,7 @@ function get_default_tva(Societe $thirdparty_seller, Societe $thirdparty_buyer, 
 	$buyer_country_code = $thirdparty_buyer->country_code;
 	$buyer_in_cee = isInEEC($thirdparty_buyer);
 
-	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".$seller_in_cee.", buyer country=".$buyer_country_code.", buyer in cee=".$buyer_in_cee.", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
+	dol_syslog("get_default_tva: seller use vat=".$seller_use_vat.", seller country=".$seller_country_code.", seller in cee=".$seller_in_cee.", buyer vat number=".$thirdparty_buyer->tva_intra." buyer country=".$buyer_country_code.", buyer in cee=".$buyer_in_cee.", idprod=".$idprod.", idprodfournprice=".$idprodfournprice.", SERVICE_ARE_ECOMMERCE_200238EC=".(! empty($conf->global->SERVICES_ARE_ECOMMERCE_200238EC)?$conf->global->SERVICES_ARE_ECOMMERCE_200238EC:''));
 
 	// If services are eServices according to EU Council Directive 2002/38/EC (http://ec.europa.eu/taxation_customs/taxation/vat/traders/e-commerce/article_1610_en.htm)
 	// we use the buyer VAT.
@@ -6940,7 +6969,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				foreach($head as $key => $val)
 				{
 					$condition = (! empty($values[3]) ? verifCond($values[3]) : 1);
-					//var_dump($key.' - '.$tabname.' - '.$head[$key][2].' - '.$condition);
+					//var_dump($key.' - '.$tabname.' - '.$head[$key][2].' - '.$values[3].' - '.$condition);
 					if ($head[$key][2]==$tabname && $condition)
 					{
 						unset($head[$key]);
@@ -7548,7 +7577,7 @@ function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='
 	{
 		$dictvalues[$tablename] = array();
 		$sql = 'SELECT * FROM '.$tablename.' WHERE 1';
-		if ($checkentity) $sql.= ' entity IN (0,'.getEntity('').')';
+		if ($checkentity) $sql.= ' AND entity IN (0,'.getEntity('').')';
 
 		$resql = $db->query($sql);
 		if ($resql)

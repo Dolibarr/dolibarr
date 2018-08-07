@@ -7,7 +7,7 @@ English Dolibarr ChangeLog
 For Users:
 NEW: Experimental module: Ticket
 NEW: Experimental module: WebDAV
-NEW: Accept anonmymous events (no user assigned)
+NEW: Accept anonymous events (no user assigned)
 NEW: Accountancy - Add import on general ledger
 NEW: Accountancy - Show journal name on journal page and hide button draft export (Add an option in admin)
 NEW: Can create event from record card of a company and member
@@ -19,7 +19,7 @@ NEW: Add a tab to specify accountant/auditor of the company
 NEW: Add Date delivery and Availability on Propals List
 NEW: Add date in goods reception supplier order table
 NEW: Add delivery_time_days of suppliers in export profile
-NEW: Add Docments'tab to expedition module
+NEW: Add Documents'tab to expedition module
 NEW: Use dol_print_phone in thirdparty list page to format phone
 NEW: Add entry for the GDPR contact
 NEW: Add extrafield type "html"
@@ -101,7 +101,7 @@ NEW: Filter export model is now by user
 NEW: Finish implementation of option PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES
 NEW: generalize use of button to create new element from list
 NEW: hidden conf AGENDA_NB_WEEKS_IN_VIEW_PER_USER to set nb weeks to show into per user view
-NEW: hidden conf to assign category to thirparty that are not customer nor prospect nor supplier
+NEW: hidden conf to assign category to thirparty that are neither customer nor prospect or supplier
 NEW: hidden conf to set nb weeks to show into user view
 NEW: hidden option MAIN_DISABLE_FREE_LINES
 NEW: improve way of adding users/sales representative to thirdparty

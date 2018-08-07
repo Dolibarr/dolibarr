@@ -25,9 +25,8 @@
 require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
-$langs->load("admin");
-$langs->load("user");
-$langs->load("install");
+// Load translation files required by the page
+$langs->loadLangs(array("admin", "user", "install"));
 
 if (! $user->admin) accessforbidden();
 
@@ -114,6 +113,6 @@ print '<br>';
 //print "<br>\n";
 print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
+// End of page
 llxFooter();
-
 $db->close();

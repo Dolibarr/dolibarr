@@ -509,11 +509,11 @@ class DiscountAbsolute
     }
 
     /**
-     *  Return amount (with tax) of all credit notes and deposits invoices used by invoice as a payment
+     *  Return amount (with tax) of all credit notes invoices + excess received used by invoice as a payment
      *
      *	@param		CommonInvoice	  $invoice	    	Object invoice
 	 *	@param		int			      $multicurrency	Return multicurrency_amount instead of amount
-     *	@return		int					        		<0 if KO, Sum of credit notes and deposits amount otherwise
+     *	@return		int					        		<0 if KO, Sum of credit notes and excess received amount otherwise
      */
     function getSumCreditNotesUsed($invoice, $multicurrency=0)
     {

@@ -29,7 +29,7 @@
  *	\brief      List of bank transactions
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -1529,6 +1529,6 @@ if ($_POST["action"] == "search" && ! $num)
 	print '<div class="opacitymedium">'.$langs->trans("NoRecordFound").'</div>';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

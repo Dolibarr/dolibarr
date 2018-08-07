@@ -522,6 +522,6 @@ print $langs->trans("BackupDescX").'<br><br>';
 </form>
 <?php
 
+// End of page
 llxFooter();
-
 $db->close();

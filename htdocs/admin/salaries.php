@@ -127,5 +127,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
-$db->close();
+$db->close();;

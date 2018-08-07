@@ -1664,6 +1664,9 @@ div.mainmenu.menu {
 #mainmenutd_menu a.tmenuimage {
     display: unset;
 }
+a.tmenuimage {
+    display: block;
+}
 
 /* Do not load menu img for other if hidden to save bandwidth */
 
@@ -2930,6 +2933,11 @@ div.pagination li.paginationafterarrows {
 }
 .nohover:hover {
 	background: unset;
+}
+.nohoverborder:hover {
+	border: unset;
+	box-shadow: unset;
+	-webkit-box-shadow: unset;
 }
 .oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {

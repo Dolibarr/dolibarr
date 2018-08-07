@@ -105,6 +105,11 @@ function ticket_prepare_head($object)
     // History
     $head[$h][0] = DOL_URL_ROOT.'/ticket/history.php?track_id=' . $object->track_id;
     $head[$h][1] = $langs->trans('Events');
+    if (! empty($conf->agenda->enabled) && (!empty($user->rights->agenda->myactions->read) || !empty($user->rights->agenda->allactions->read) ))
+    {
+    	$head[$h][1].= '/';
+    	$head[$h][1].= $langs->trans("Agenda");
+    }
     $head[$h][2] = 'tabTicketLogs';
     $h++;
 

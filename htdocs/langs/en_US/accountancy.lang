@@ -36,7 +36,7 @@ AlreadyInGeneralLedger=Already journalized in ledgers
 NotYetInGeneralLedger=Not yet journalized in ledgers
 GroupIsEmptyCheckSetup=Group is empty, check setup of the personalized accounting group
 DetailByAccount=Show detail by account
-AccountWithNonZeroValues=Accounts with non zero values
+AccountWithNonZeroValues=Accounts with non-zero values
 ListOfAccounts=List of accounts
 
 MainAccountForCustomersNotDefined=Main accounting account for customers not defined in setup
@@ -58,7 +58,7 @@ AccountancyAreaDescVat=STEP %s: Define accounting accounts for each VAT Rates. F
 AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=STEP %s: Define default accounting accounts for payment of salaries. For this, use the menu entry %s.    
-AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expences (miscellaneous taxes). For this, use the menu entry %s.    
+AccountancyAreaDescContrib=STEP %s: Define default accounting accounts for special expenses (miscellaneous taxes). For this, use the menu entry %s.
 AccountancyAreaDescDonation=STEP %s: Define default accounting accounts for donation. For this, use the menu entry %s.
 AccountancyAreaDescMisc=STEP %s: Define mandatory default account and default accounting accounts for miscellaneous transactions. For this, use the menu entry %s.
 AccountancyAreaDescLoan=STEP %s: Define default accounting accounts for loans. For this, use the menu entry %s. 
@@ -198,13 +198,13 @@ PaymentsNotLinkedToProduct=Payment not linked to any product / service
 
 Pcgtype=Group of account
 Pcgsubtype=Subgroup of account
-PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criterias for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
+PcgtypeDesc=Group and subgroup of account are used as predefined 'filter' and 'grouping' criteria for some accounting reports. For example, 'INCOME' or 'EXPENSE' are used as groups for accounting accounts of products to build the expense/income report.
 
 TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
-DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still has some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".  
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
 ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
@@ -213,7 +213,7 @@ DescVentilSupplier=Consult here the list of vendor invoice lines bound or not ye
 DescVentilDoneSupplier=Consult here the list of the lines of invoices vendors and their accounting account
 DescVentilTodoExpenseReport=Bind expense report lines not already bound with a fee accounting account
 DescVentilExpenseReport=Consult here the list of expense report lines bound (or not) to a fee accounting account
-DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still has some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".  
+DescVentilExpenseReportMore=If you setup accounting account on type of expense report lines, the application will be able to make all the binding between your expense report lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on fees dictionary or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneExpenseReport=Consult here the list of the lines of expenses reports and their fees accounting account
 
 ValidateHistory=Bind Automatically
@@ -232,7 +232,7 @@ NotYetAccounted=Not yet accounted in ledger
 
 ## Admin
 ApplyMassCategories=Apply mass categories
-AddAccountFromBookKeepingWithNoCategories=Available acccount not yet in a personalized group
+AddAccountFromBookKeepingWithNoCategories=Available account not yet in a personalized group
 CategoryDeleted=Category for the accounting account has been removed
 AccountingJournals=Accounting journals
 AccountingJournal=Accounting journal
@@ -292,7 +292,7 @@ ErrorNoAccountingCategoryForThisCountry=No accounting account group available fo
 ErrorInvoiceContainsLinesNotYetBounded=You try to journalize some lines of the invoice <strong>%s</strong>, but some other lines are not yet bounded to accounting account. Journalization of all invoice lines for this invoice are refused.
 ErrorInvoiceContainsLinesNotYetBoundedShort=Some lines on invoice are not bound to accounting account.
 ExportNotSupported=The export format setuped is not supported into this page
-BookeppingLineAlreayExists=Lines already existing into bookeeping
+BookeppingLineAlreayExists=Lines already existing into bookkeeping
 NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
@@ -301,6 +301,6 @@ UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to 
 ## Import
 ImportAccountingEntries=Accounting entries
 
-WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manualy in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
+WarningReportNotReliable=Warning, this report is not based on the Ledger, so does not contains transaction modified manually in the Ledger. If your journalization is up to date, the bookkeeping view is more accurate.
 ExpenseReportJournal=Expense Report Journal
 InventoryJournal=Inventory Journal

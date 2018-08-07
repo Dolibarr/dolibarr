@@ -84,6 +84,7 @@ create table llx_user
   salary			double(24,8),				-- denormalized value coming from llx_user_employment
   salaryextra		double(24,8),				-- denormalized value coming from llx_user_employment
   dateemployment	date,						-- denormalized value coming from llx_user_employment
+  dateemploymentend	date,						-- denormalized value coming from llx_user_employment
   weeklyhours		double(16,8),				-- denormalized value coming from llx_user_employment
 
   import_key        varchar(14),				-- import key

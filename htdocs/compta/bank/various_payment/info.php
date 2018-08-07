@@ -58,6 +58,6 @@ print '</td></tr></table>';
 
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

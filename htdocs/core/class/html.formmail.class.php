@@ -934,7 +934,7 @@ class FormMail extends Form
 					$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
 					$paymenturl=$url;
 
-					$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
+					$validpaymentmethod = getValidOnlinePaymentMethods('');
 				}
 
 				if (count($validpaymentmethod) > 0 && $paymenturl)

@@ -1732,7 +1732,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		// Define $bookmarks
 		if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
 		{
-			include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
+			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
 			$langs->load("bookmarks");
 
 			$bookmarks=printBookmarksList($db, $langs);
