@@ -37,8 +37,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 // Include Dolibarr environment
-require_once($path.'../../htdocs/master.inc.php');
-require_once($path.'../../htdocs/core/lib/files.lib.php');
+require_once $path.'../../htdocs/master.inc.php';
+require_once $path.'../../htdocs/core/lib/files.lib.php';
 // After this $db is an opened handler to database. We close it at end of file.
 
 // Load main language strings
@@ -88,7 +88,7 @@ if ($argv[2] != 'all')
 	}
 }
 
-require_once(DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php");
+require_once DOL_DOCUMENT_ROOT."/../dev/translation/autotranslator.class.php";
 
 $langParser = new autoTranslator($argv[2],$argv[1],$dir,$file,$argv[3]);
 

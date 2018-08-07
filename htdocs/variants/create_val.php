@@ -67,7 +67,7 @@ if ($action == 'add')
 		$objectval->value = $value;
 
 		if ($objectval->create($user) > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null);
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
 			exit();
 		} else {

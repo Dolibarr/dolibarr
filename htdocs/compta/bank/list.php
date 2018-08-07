@@ -27,7 +27,7 @@ use Stripe\BankAccount;
  *       \brief      Home page of bank module
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/bank.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/tva/class/tva.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php';
@@ -604,7 +604,6 @@ print "</div>";
 
 print "</form>";
 
-
+// End of page
 llxFooter();
-
 $db->close();

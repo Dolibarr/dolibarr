@@ -140,5 +140,6 @@ if ($resql) {
 }
 print "</table>\n";
 
+// End of page
 llxFooter();
 $db->close();

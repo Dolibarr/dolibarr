@@ -39,7 +39,7 @@ if ($_POST) {
 
 		$resid = $prodattr->create($user);
 		if ($resid > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null);
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			if ($backtopage)
 			{
 				header('Location: '.$backtopage);

@@ -148,7 +148,7 @@ if ($_POST) {
 				$result = $prodcomb->createProductCombination($object, $sanit_features, array(), $price_impact_percent, $price_impact, $weight_impact);
 				if ($result > 0)
 				{
-					setEventMessages($langs->trans('RecordSaved'), null);
+					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 					unset($_SESSION['addvariant_'.$object->id]);
 
 					$db->commit();
@@ -215,7 +215,7 @@ if ($_POST) {
 
 		} else {
 			$db->commit();
-			setEventMessages($langs->trans('RecordSaved'), null);
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 		}
 
 	}
@@ -231,7 +231,7 @@ if ($_POST) {
 		$prodcomb->variation_weight = $weight_impact;
 
 		if ($prodcomb->update($user) > 0) {
-			setEventMessages($langs->trans('RecordSaved'), null);
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 			exit();
 		} else {
@@ -251,7 +251,7 @@ if ($action === 'confirm_deletecombination') {
 
 		if ($prodcomb->delete($user) > 0 && $prodstatic->fetch($prodcomb->fk_product_child) > 0 && $prodstatic->delete($user) > 0) {
 			$db->commit();
-			setEventMessages($langs->trans('RecordSaved'), null);
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/combinations.php?id='.$object->id, 2));
 			exit();
 		}
@@ -450,7 +450,7 @@ if (! empty($id) || ! empty($ref))
                 if($valueid > 0) {
                     print '<input type="hidden" name="valueid" value="' . $valueid .'">'."\n";
                 }
-                    
+
 		print dol_fiche_head();
 
 		?>

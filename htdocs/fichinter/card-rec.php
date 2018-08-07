@@ -29,12 +29,7 @@
  *	\brief	  Page to show predefined fichinter
  */
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) 
-	$res=@include("../../main.inc.php");		// For root directory
-if (! $res && file_exists("../../../main.inc.php")) 
-	$res=@include("../../../main.inc.php");	// For "custom" directory
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinter.class.php';
 require_once DOL_DOCUMENT_ROOT.'/fichinter/class/fichinterrec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/fichinter.lib.php';
@@ -409,8 +404,7 @@ if ($action == 'create') {
 			$var=true;
 			while ($i < $num) {
 				$objp = $db->fetch_object($result);
-				$var=!$var;
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 
 				// Show product and description
 
@@ -738,10 +732,8 @@ if ($action == 'create') {
 
 			$num = count($object->lines);
 			$i = 0;
-			$var=true;
 			while ($i < $num) {
-				$var=!$var;
-
+				
 				// Show product and description
 				if (isset($object->lines[$i]->product_type))
 					$type=$object->lines[$i]->product_type;
@@ -753,7 +745,7 @@ if ($action == 'create') {
 				if (! empty($objp->date_end)) $type=1;
 
 				// Show line
-				print "<tr ".$bc[$var].">";
+				print '<tr class="oddeven">';
 				print '<td>';
 				$text = img_object($langs->trans('Service'), 'service');
 				print $text.' '.nl2br($object->lines[$i]->desc);
@@ -884,12 +876,10 @@ if ($action == 'create') {
 // les filtres à faire ensuite
 
 			if ($num > 0) {
-				$var=true;
 				while ($i < min($num, $limit)) {
 					$objp = $db->fetch_object($resql);
-					$var=!$var;
 
-					print "<tr ".$bc[$var].">";
+					print '<tr class="oddeven">';
 					print '<td><a href="'.$_SERVER['PHP_SELF'].'?id='.$objp->fich_rec.'">';
 					print img_object($langs->trans("ShowIntervention"), "intervention").' '.$objp->titre;
 					print "</a></td>\n";
@@ -964,7 +954,7 @@ if ($action == 'create') {
 					}
 				}
 			} else 
-				print '<tr '.$bc[false].'><td colspan="6">'.$langs->trans("NoneF").'</td></tr>';
+				print '<tr class="oddeven"><td colspan="6">'.$langs->trans("NoneF").'</td></tr>';
 
 			print "</table>";
 			$db->free($resql);

@@ -545,7 +545,7 @@ class Paiement extends CommonObject
 
         	$this->fk_account=$accountid;
 
-        	require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+        	include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             dol_syslog("$user->id,$mode,$label,$this->fk_account,$emetteur_nom,$emetteur_banque");
 
@@ -1064,7 +1064,7 @@ class Paiement extends CommonObject
             $arraybill = $this->getBillsArray();
             if (is_array($arraybill) && count($arraybill) > 0)
             {
-            	require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+            	include_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
             	$facturestatic=new Facture($this->db);
             	foreach ($arraybill as $billid)
             	{
@@ -1170,7 +1170,7 @@ class Paiement extends CommonObject
 	 */
 	function fetch_thirdparty($force_thirdparty_id=0)
 	{
-		require_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
+		include_once DOL_DOCUMENT_ROOT . '/compta/facture/class/facture.class.php';
 
 		if (empty($force_thirdparty_id))
 		{

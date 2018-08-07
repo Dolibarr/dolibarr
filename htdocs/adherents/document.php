@@ -170,6 +170,6 @@ else
 	print $langs->trans("ErrorRecordNotFound");
 }
 
-
+// End of page
 llxFooter();
 $db->close();

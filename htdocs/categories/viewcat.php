@@ -697,6 +697,6 @@ if ($type == Categorie::TYPE_PROJECT)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

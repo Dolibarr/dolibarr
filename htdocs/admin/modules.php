@@ -672,7 +672,7 @@ if ($mode == 'common')
         print '<td class="center nowrap" width="120px">';
         print $versiontrans;
         if(!empty($conf->global->CHECKLASTVERSION_EXTERNALMODULE)){
-            require_once(DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php');            
+            require_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';            
             if (!empty($objMod->url_last_version)) {
                 $newversion = getURLContent($objMod->url_last_version);
                 if(isset($newversion['content'])){
@@ -1080,8 +1080,6 @@ if ($mode == 'develop')
 	dol_fiche_end();
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

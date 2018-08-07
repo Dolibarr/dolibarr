@@ -405,5 +405,6 @@ if ($conf->produit->enabled)
 
 print "<br>";
 
+// End of page
 llxFooter();
 $db->close();

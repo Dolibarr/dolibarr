@@ -1450,8 +1450,9 @@ else
 					print $langs->trans('NotUserRightToView');
 					print '</div>';
 
-					llxFooter();
-					$db->close();
+					// End of page
+                    llxFooter();
+                    $db->close();
 
 					exit;
 				}

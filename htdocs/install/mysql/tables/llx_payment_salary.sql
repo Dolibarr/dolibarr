@@ -26,11 +26,12 @@ create table llx_payment_salary
   datev           date,                       -- value date (this field should not be here, only into bank tables)
   salary          double(24,8),               -- salary of user when payment was done
   amount          double(24,8) NOT NULL DEFAULT 0,
+  fk_projet       integer DEFAULT NULL,
   fk_typepayment  integer NOT NULL,
   num_payment     varchar(50),                -- ref
   label           varchar(255),
   datesp          date,                       -- date start period
-  dateep          date,                       -- date end period    
+  dateep          date,                       -- date end period
   entity          integer DEFAULT 1 NOT NULL, -- multi company id
   note            text,
   fk_bank         integer,

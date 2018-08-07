@@ -181,7 +181,9 @@ if ($action == 'add')
 					GETPOST('help','alpha'),
                     GETPOST('computed_value','alpha'),
                 	(GETPOST('entitycurrentorall', 'alpha')?0:''),
-                	GETPOST('langfile', 'alpha')
+                    GETPOST('langfile', 'alpha'),
+                    1,
+                    (GETPOST('totalizable', 'alpha')?1:0)
                 );
     			if ($result > 0)
     			{
@@ -331,7 +333,7 @@ if ($action == 'update')
     			$visibility = GETPOST('list', 'alpha');
     			if ($type == 'separate') $visibility=3;
 
-    			$result=$extrafields->update(
+                $result=$extrafields->update(
     				GETPOST('attrname', 'alpha'),
     				GETPOST('label', 'alpha'),
     				$type,
@@ -348,7 +350,9 @@ if ($action == 'update')
     			    GETPOST('default_value','alpha'),
     				GETPOST('computed_value','alpha'),
     				(GETPOST('entitycurrentorall', 'alpha')?0:''),
-    				GETPOST('langfile')
+                    GETPOST('langfile'),
+                    1,
+                    (GETPOST('totalizable', 'alpha')?1:0)
     			);
     			if ($result > 0)
     			{

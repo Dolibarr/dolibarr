@@ -584,6 +584,6 @@ if (! empty($langcode))
 	dol_set_focus('#transvalue');
 }
 
+// End of page
 llxFooter();
-
 $db->close();
