@@ -633,6 +633,7 @@ class Project extends CommonObject
 		$this->getLinesArray($user);
 
 		// Delete tasks
+		usort($this->lines, array('Project', 'cmp_parent_tasks')); // to avoid foreign key error when delete project
 		foreach($this->lines as &$task) {
 			$task->delete($user);
 		}
@@ -710,6 +711,17 @@ class Project extends CommonObject
             $this->db->rollback();
             return -1;
         }
+    }
+
+    /**
+     * Comparison function to avoid errors when we delete a project with relashionship in tasks
+     * @param Object	Task	$a
+     * @param Object	Task	$b
+     * @return int	-1, 0, 1
+     */
+    function cmp_parent_tasks($a, $b) {
+    	if ($a->fk_task_parent == $b->fk_task_parent) return 0;
+        return ($a->fk_task_parent > $b->fk_task_parent) ? -1 : 1;
     }
 
     /**
