@@ -277,11 +277,14 @@ class Notify
 	 *  Check if notification are active for couple action/company.
 	 * 	If yes, send mail and save trace into llx_notify.
 	 *
-	 * 	@param	string	$notifcode		Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
-	 * 	@param	Object	$object			Object the notification deals on
-	 *	@return	int						<0 if KO, or number of changes if OK
+	 * 	@param	string	$notifcode			Code of action in llx_c_action_trigger (new usage) or Id of action in llx_c_action_trigger (old usage)
+	 * 	@param	Object	$object				Object the notification deals on
+	 *	@param 	array	$filename_list		List of files to attach (full path of filename on file system)
+	 *	@param 	array	$mimetype_list		List of MIME type of attached files
+	 *	@param 	array	$mimefilename_list	List of attached file name in message
+	 *	@return	int							<0 if KO, or number of changes if OK
 	 */
-	function send($notifcode, $object)
+	function send($notifcode, $object, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array())
 	{
 		global $user,$conf,$langs,$mysoc;
 		global $hookmanager;
@@ -310,8 +313,6 @@ class Notify
 		$application = 'Dolibarr';
 		if (! empty($conf->global->MAIN_APPLICATION_TITLE)) $application = $conf->global->MAIN_APPLICATION_TITLE;
 		$replyto = $conf->notification->email_from;
-		$filename = basename($file);
-		$mimefile = dol_mimetype($file);
 		$object_type = '';
 		$link = '';
 		$num = 0;
@@ -462,7 +463,7 @@ class Notify
 						$message.= $mesg;
 						if ($link) $message.= "\n" . $urlwithroot . $link;
 
-						$parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$file, 'mimefile'=>$mimefile, 'filename'=>$filename);
+						$parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
 						$reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 						if (empty($reshook))
 						{
@@ -475,9 +476,9 @@ class Notify
 							$sendto,
 							$replyto,
 							$message,
-							array($file),
-							array($mimefile),
-							array($filename[count($filename)-1]),
+							$filename_list,
+							$mimetype_list,
+							$mimefilename_list,
 							'',
 							'',
 							0,
@@ -573,13 +574,13 @@ class Notify
 						$mesg = $langs->transnoentitiesnoconv("EMailTextOrderValidated",$link);
 						break;
 					case 'PROPAL_VALIDATE':
-						$link='/comm/propal/card.php?id='.$object->id;
+						$link='<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalValidated",$link);
 						break;
 					case 'PROPAL_CLOSE_SIGNED':
-						$link='/comm/propal/card.php?id='.$object->id;
+						$link='<a href="' . $urlwithroot . '/comm/propal/card.php?id='.$object->id . '">' . $newref . '</a>';
 						$dir_output = $conf->propal->multidir_output[$object->entity];
 						$object_type = 'propal';
 						$mesg = $langs->transnoentitiesnoconv("EMailTextProposalClosedSigned",$link);
@@ -671,7 +672,7 @@ class Notify
 
 				if ($sendto)
 				{
-	   				$parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$file, 'mimefile'=>$mimefile, 'filename'=>$filename);
+					$parameters=array('notifcode'=>$notifcode, 'sendto'=>$sendto, 'replyto'=>$replyto, 'file'=>$filename_list, 'mimefile'=>$mimetype_list, 'filename'=>$mimefilename_list);
 					$reshook=$hookmanager->executeHooks('formatNotificationMessage',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 					if (empty($reshook))
 					{
@@ -683,9 +684,9 @@ class Notify
 						$sendto,
 						$replyto,
 						$message,
-						array($file),
-						array($mimefile),
-						array($filename[count($filename)-1]),
+						$filename_list,
+						$mimetype_list,
+						$mimefilename_list,
 						'',
 						'',
 						0,

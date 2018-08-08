@@ -44,9 +44,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("bills");
+        
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("main", "bills"));
 
 		$this->db = $db;
 		$this->name = "blochet";
@@ -91,12 +91,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
         $sav_charset_output=$outputlangs->charset_output;
         if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("products");
-        $outputlangs->load("compta");
+        
+        // Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "companies", "bills", "products", "compta"));
 
 		$dir = $_dir . "/".get_exdir($number,0,1,0,$object,'cheque').$number;
 
@@ -213,9 +210,9 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	{
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-
-		$outputlangs->load("compta");
-		$outputlangs->load("banks");
+        
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("compta", "banks"));
 
 		$title = $outputlangs->transnoentities("CheckReceipt");
 		$pdf->SetFont('','B', $default_font_size);
@@ -391,4 +388,3 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		return pdf_pagefoot($pdf,$outputlangs,$newfreetext,$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 }
-

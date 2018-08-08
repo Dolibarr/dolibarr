@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=Banka
-MenuBankCash=Banka/Novac
+MenuBankCash=Bank | Cash
 MenuVariousPayment=Razna plaćanja
 MenuNewVariousPayment=Novo ostalo plaćanje
 BankName=Naziv banke
@@ -132,7 +132,7 @@ PaymentDateUpdateSucceeded=Datum uplate uspješno ažuriran
 PaymentDateUpdateFailed=Datum uplate nije ažuriran
 Transactions=Transakcije
 BankTransactionLine=Bankovna transakcija
-AllAccounts=Svi bankovni/novčani računi
+AllAccounts=All bank and cash accounts
 BackToAccount=Nazad na račun
 ShowAllAccounts=Pokaži za sve račune
 FutureTransaction=Transakcija u budućnosti. Ne može se izmiriti.
@@ -160,5 +160,6 @@ VariousPayment=Razna plaćanja
 VariousPayments=Razna plaćanja
 ShowVariousPayment=Pokaži ostala plaćanja
 AddVariousPayment=Dodaj ostala plaćanja
+SEPAMandate=SEPA mandate
 YourSEPAMandate=Vaš SEPA mandat
 FindYourSEPAMandate=Ovo je vaš SEPA mandat za potvrđivanje vaše kompanije za izradu zahtjeva za direktno plaćanje vašoj banci. Vratite banci potpisan (skeniran potpisan dokument) ili ga pošaljite poštom

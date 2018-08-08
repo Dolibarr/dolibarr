@@ -592,7 +592,6 @@ dol_fiche_end();
 
 print '</div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

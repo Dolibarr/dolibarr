@@ -21,9 +21,7 @@ define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 $entity=(! empty($_GET['entity']) ? (int) $_GET['entity'] : (! empty($_POST['entity']) ? (int) $_POST['entity'] : 1));
 if (is_numeric($entity)) define("DOLENTITY", $entity);
 
-$res=0;
-if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");		// to work if your module directory is into a subdir of root htdocs directory
-if (! $res) die("Include of main fails");
+require '../../main.inc.php';
 
 if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
@@ -88,7 +86,7 @@ $user = new User($db);
 $user->fetch(5);
 $user->getrights();
 
-if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled)) {
+if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabled) && is_object($mc)) {
 	$sql = "SELECT entity";
 	$sql.= " FROM ".MAIN_DB_PREFIX."oauth_token";
 	$sql.= " WHERE service = '".$db->escape($service)."' and tokenstring = '%".$db->escape($event->account)."%'";
@@ -102,13 +100,15 @@ if (! empty($conf->multicompany->enabled) && ! empty($conf->stripeconnect->enabl
 			$obj = $db->fetch_object($result);
 			$key=$obj->entity;
 		}
-		else {$key=1;
+		else {
+			$key=1;
 		}
 	}
-	else {$key=1;
+	else {
+		$key=1;
 	}
 	$ret=$mc->switchEntity($key);
-	if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.php");
+	if (! $res && file_exists("../../main.inc.php")) $res=@include "../../main.inc.php";
 	if (! $res) die("Include of main fails");
 }
 
@@ -220,7 +220,6 @@ elseif ($event->type == 'charge.failed') {
 
 	$subject = 'Your payment has been received: '.$event->data->object->id.'';
 	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-	//mail('ptibogxiv@msn.com', $subject, 'test', $headers);
 
 }
 elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
@@ -319,7 +318,6 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 	$body = "";
 	$subject = 'Facture '.$invoice->ref;
 	$headers = 'From: "'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'" <'.$conf->global->MAIN_INFO_SOCIETE_MAIL.'>';
-	//mail('ptibogxiv@msn.com', $subject, $body, $headers); TODO  convert in dolibarr standard
 }
 elseif ($event->type == 'customer.deleted') {
 	$db->begin();

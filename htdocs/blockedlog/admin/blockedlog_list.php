@@ -138,7 +138,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		else
 		{
 			$error++;
-			setEventMessage($db->lasterror, 'errors');
+			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
 
@@ -243,7 +243,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		}
 		else
 		{
-			setEventMessage($db->lasterror, 'errors');
+			setEventMessages($db->lasterror, null, 'errors');
 		}
 	}
 }
@@ -587,5 +587,6 @@ if (GETPOST('withtab','alpha'))
 
 print '<br><br>';
 
+// End of page
 llxFooter();
 $db->close();

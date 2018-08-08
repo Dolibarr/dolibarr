@@ -148,7 +148,7 @@ NothingToDo=Nothing to do
 MigrationFixData=修正了非規範化數據
 MigrationOrder=數據遷移的客戶的訂單
 MigrationSupplierOrder=Data migration for vendor's orders
-MigrationProposal=數據遷移的商業建議
+MigrationProposal=商業提案/建議書的資料移轉
 MigrationInvoice=數據遷移的客戶的發票
 MigrationContract=數據遷移合同
 MigrationSuccessfullUpdate=Upgrade successfull
@@ -204,3 +204,7 @@ MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=顯示不可用的選項
 HideNotAvailableOptions= 隱藏不可用的選項
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.
+YouTryInstallDisabledByDirLock=The application try to sefl upgrade, but install/upgrade pages have been disabled for security reason (directory renamed with .lock suffix).<br>
+YouTryInstallDisabledByFileLock=The application try to sefl upgrade, but install/upgrade pages pages have been disabled for security reason (by lock file <strong>install.lock</strong> into dolibarr documents directory).<br>
+ClickHereToGoToApp=Click here to go to your application
+ClickOnLinkOrRemoveManualy=Click on following link and if you always reach this page, you must remove the file install.lock into documents directory manually

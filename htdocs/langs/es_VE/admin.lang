@@ -32,3 +32,4 @@ ExtraFieldHasWrongValue=El atributo %s tiene un valor no válido
 LDAPMemberObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPUserObjectClassListExample=Lista de ObjectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
 LDAPContactObjectClassListExample=Lista de objectClass que definen los atributos de un registro (ej: top,inetOrgPerson o top,user for active directory)
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language

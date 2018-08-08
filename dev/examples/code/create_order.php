@@ -40,7 +40,7 @@ $error=0;
 
 // -------------------- START OF YOUR CODE HERE --------------------
 // Include Dolibarr environment
-require_once($path."../../htdocs/master.inc.php");
+require_once $path."../../htdocs/master.inc.php";
 // After this $db, $mysoc, $langs and $conf->entity are defined. Opened handler to database will be closed at end of file.
 
 //$langs->setDefaultLang('en_US'); 	// To change default language of $langs
@@ -59,7 +59,7 @@ print "***** ".$script_file." (".$version.") *****\n";
 // Start of transaction
 $db->begin();
 
-require_once(DOL_DOCUMENT_ROOT."/commande/class/commande.class.php");
+require_once DOL_DOCUMENT_ROOT."/commande/class/commande.class.php";
 
 // Create order object
 $com = new Commande($db);

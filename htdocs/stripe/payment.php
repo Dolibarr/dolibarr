@@ -30,8 +30,7 @@
  */
 
 // Load Dolibarr environment
-$res=@include("../main.inc.php");                                // For root directory
-if (! $res) $res=@include("../../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -718,7 +717,7 @@ print '</tr>';
 //}
 
 	if (($account->type=='custom' or $account->type=='express') && $entity==1) {
-	print '<tr '.$bc[0].'>';
+	print '<tr class="oddeven">';
 
 	            print '<td align="center" width="20" ';
 	if ($action == 'add_paiement' && $stripe->getStripeCustomerAccount($facture->socid)!=$source) { print'class="opacitymedium"';}
@@ -831,7 +830,6 @@ print '</tr>';
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=true;
                 $total=0;
                 $totalrecu=0;
                 $totalrecucreditnote=0;
@@ -840,7 +838,6 @@ print '</tr>';
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($resql);
-                    $var=!$var;
 
 					$soc = new Societe($db);
 					$soc->fetch($objp->socid);
@@ -863,7 +860,7 @@ print '</tr>';
 	                    $multicurrency_remaintopay=price2num($invoice->multicurrency_total_ttc - $multicurrency_payment - $multicurrency_creditnotes - $multicurrency_deposits,'MT');
 					}
 
-                    print '<tr '.$bc[$var].'>';
+                    print '<tr class="oddeven">';
 
                     print '<td>';
                     print $invoice->getNomUrl(1,'');
@@ -1086,7 +1083,6 @@ if (! GETPOST('action'))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';
@@ -1101,8 +1097,7 @@ if (! GETPOST('action'))
         while ($i < min($num,$limit))
         {
             $objp = $db->fetch_object($resql);
-            $var=!$var;
-            print '<tr '.$bc[$var].'>';
+            print '<tr class="oddeven">';
             print '<td><a href="'.DOL_URL_ROOT.'compta/facture/card.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
             print '<td>'.dol_print_date($db->jdate($objp->dp))."</td>\n";
             print '<td>'.$objp->paiement_type.' '.$objp->num_paiement."</td>\n";

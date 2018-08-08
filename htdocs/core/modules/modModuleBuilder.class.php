@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2017   Laurent Destailleur  <eldy@users.sourcefore.net>
+ * Copyright (C) 2018   Nicolas ZABOURI   <info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,9 +60,9 @@ class modModuleBuilder extends DolibarrModules
 
         // Config pages
         //-------------
-        $this->config_page_url = array();
+        $this->config_page_url = array('setup@modulebuilder');
 
-        // Dependancies
+        // Dependencies
         //-------------
 	    $this->hidden = false;	// A condition to disable module
 	    $this->depends = array();		// List of modules id that must be enabled if this module is enabled
@@ -94,7 +95,7 @@ class modModuleBuilder extends DolibarrModules
             'langs'=>'modulebuilder',
             'position'=>100,
             'perms'=>'1',
-            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^admintools/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
+            'enabled'=>'$conf->modulebuilder->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu) && ($user->admin || $conf->global->MODULEBUILDER_FOREVERYONE)',
             'target'=>'_modulebuilder',
             'user'=>0);
 

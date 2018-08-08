@@ -628,6 +628,7 @@ class CMailFile
 
 					if (! $res)
 					{
+						$langs->load("errors");
 						$this->error="Failed to send mail with php mail";
 						$linuxlike=1;
 						if (preg_match('/^win/i',PHP_OS)) $linuxlike=0;
@@ -657,6 +658,12 @@ class CMailFile
 			}
 			else if ($this->sendmode == 'smtps')
 			{
+				if (! is_object($this->smtps))
+				{
+					$this->error="Failed to send mail with smtps lib to HOST=".$server.", PORT=".$conf->global->$keyforsmtpport."<br>Constructor of object CMailFile was not initialized without errors.";
+					dol_syslog("CMailFile::sendfile: mail end error=".$this->error, LOG_ERR);
+					return false;
+				}
 
 				// Use SMTPS library
 				// ------------------------------------------
@@ -1061,7 +1068,9 @@ class CMailFile
 		$strContentAltText = '';
 		if ($this->msgishtml)
 		{
-			$strContentAltText = html_entity_decode(strip_tags($strContent));
+			// Similar code to forge a text from html is also in CMailFile.class.php
+			$strContentAltText = preg_replace("/<br\s*[^>]*>/"," ", $strContent);
+			$strContentAltText = html_entity_decode(strip_tags($strContentAltText));
 			$strContentAltText = rtrim(wordwrap($strContentAltText, 75, empty($conf->global->MAIN_FIX_FOR_BUGGED_MTA)?"\r\n":"\n"));
 
 			// Check if html header already in message, if not complete the message

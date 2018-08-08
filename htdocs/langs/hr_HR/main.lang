@@ -507,6 +507,7 @@ NoneF=Niti jedan
 NoneOrSeveral=None or several
 Late=Kasni
 LateDesc=Kašnjenje za definiranje ako podatak kasni ili ne ovisno o vašim postavkama. Tražite administratora da promjeni kašnjenje iz izbornika Naslovna - Podešavanje - Obavijesti.
+NoItemLate=No late item
 Photo=Slika
 Photos=Slike
 AddPhoto=Dodaj sliku
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Dodjeljeno korisniku
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

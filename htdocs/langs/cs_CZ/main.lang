@@ -507,6 +507,7 @@ NoneF=Nikdo
 NoneOrSeveral=Žádný nebo několik
 Late=Pozdě
 LateDesc=Zpoždění se definovat, zda záznam je pozdě, nebo ne, závisí na vašem nastavení. Požádejte svého administrátora pro změnu zpoždění z menu Home - nastavení - Výstrahy.
+NoItemLate=No late item
 Photo=Obrázek
 Photos=Obrázky
 AddPhoto=Přidat obrázek
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Přiřazeno
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

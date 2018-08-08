@@ -166,12 +166,10 @@ if (! empty($conf->tax->enabled) && $user->rights->tax->charges->lire)
 		$total = 0;
 		$totalnb = 0;
 		$totalpaye = 0;
-		$var=true;
 
 		while ($i < min($num, $limit))
 		{
 			$obj = $db->fetch_object($resql);
-			$var = !$var;
 			print '<tr class="oddeven">';
 			// Date
 			$date=$obj->periode;
@@ -417,13 +415,12 @@ while($j<$numlt)
 			print_liste_field_titre("DatePayment",$_SERVER["PHP_SELF"],"pv.datep","",$param,'align="center"',$sortfield,$sortorder);
 			print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"pv.amount","",$param,'align="right"',$sortfield,$sortorder);
 			print "</tr>\n";
-			$var=1;
+
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($result);
 
 				$total = $total + $obj->amount;
-
 
 				print '<tr class="oddeven">';
 				print '<td align="left">'.dol_print_date($db->jdate($obj->dm),'day').'</td>'."\n";
@@ -501,7 +498,7 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 			if (! empty($conf->banque->enabled)) print_liste_field_titre("Account",$_SERVER["PHP_SELF"],"ba.label","",$param,"",$sortfield,$sortorder);
             print_liste_field_titre("PayedByThisPayment",$_SERVER["PHP_SELF"],"s.amount","",$param,'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
-            $var=1;
+
             while ($i < $num)
             {
                 $obj = $db->fetch_object($result);
@@ -571,7 +568,6 @@ if (! empty($conf->salaries->enabled) && $user->rights->salaries->read)
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

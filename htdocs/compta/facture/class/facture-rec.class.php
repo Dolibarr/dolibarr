@@ -443,7 +443,7 @@ class FactureRec extends CommonInvoice
 
 		// Retreive all extrafield for line
 		// fetch optionals attributes and labels
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline=new ExtraFields($this->db);
 		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec',true);
 
@@ -984,6 +984,7 @@ class FactureRec extends CommonInvoice
 		$error=0;
 
 		$langs->load("bills");
+		$langs->load('main');
 
 		$nb_create=0;
 
@@ -1060,6 +1061,8 @@ class FactureRec extends CommonInvoice
 				    }
 	                if (! $error && $facturerec->generate_pdf)
 	                {
+	                    // We refresh the object in order to have all necessary data (like date_lim_reglement)
+	                    $facture->fetch($facture->id);
 	                    $result = $facture->generateDocument($facturerec->modelpdf, $langs);
 	                    if ($result <= 0)
 	                    {
@@ -1118,7 +1121,21 @@ class FactureRec extends CommonInvoice
 		global $langs;
 
 		$result='';
-        $label=$langs->trans("ShowInvoice").': '.$this->ref;
+
+		$label = '<u>' . $langs->trans("ShowInvoice") . '</u>';
+		if (! empty($this->ref))
+			$label .= '<br><b>'.$langs->trans('Ref') . ':</b> ' . $this->ref;
+		if (! empty($this->date_last_gen))
+			$label .= '<br><b>'.$langs->trans('DateLastGeneration') . ':</b> ' . dol_print_date($this->date_last_gen, 'dayhour');
+		if ($this->frequency > 0)
+		{
+			if (! empty($this->date_when))
+			{
+				$label .= '<br><b>'.$langs->trans('NextDateToExecution') . ':</b> ';
+				$label .= (empty($this->suspended)?'':'<strike>'). dol_print_date($this->date_when, 'day').(empty($this->suspended)?'':'</strike>');	// No hour for this property
+				if (! empty($this->suspended)) $label .= ' ('.$langs->trans("Disabled").')';
+			}
+		}
 
         $url = DOL_URL_ROOT.'/compta/facture/fiche-rec.php?facid='.$this->id;
 

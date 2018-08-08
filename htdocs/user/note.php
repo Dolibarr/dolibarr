@@ -158,6 +158,6 @@ if ($id)
 	print "</form>\n";
 }
 
+// End of page
 llxFooter();
-
 $db->close();

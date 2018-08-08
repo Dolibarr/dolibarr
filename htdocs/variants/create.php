@@ -29,7 +29,7 @@ $backtopage = GETPOST('backtopage', 'alpha');
 
 if ($_POST) {
 	if (empty($ref) || empty($label)) {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
 
 		$prodattr = new ProductAttribute($db);
@@ -38,7 +38,7 @@ if ($_POST) {
 
 		$resid = $prodattr->create($user);
 		if ($resid > 0) {
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			if ($backtopage)
 			{
 				header('Location: '.$backtopage);
@@ -97,5 +97,6 @@ print '<div class="center"><input type="submit" class="button" value="'.$langs->
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

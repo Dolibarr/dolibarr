@@ -63,7 +63,9 @@ function rebuildObjectClass($destdir, $module, $objectname, $newmask, $readdir='
     		setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv("Label")), null, 'errors');
     		return -2;
     	}
-    	if (! preg_match('/^(integer|date|timestamp|varchar|double|html|price)/', $addfieldentry['type']))
+
+    	if (! preg_match('/^(price|boolean|sellist|integer|date|timestamp|varchar|double|text|html)/', $addfieldentry['type']))
+
     	{
     		setEventMessages($langs->trans('BadFormatForType', $objectname), null, 'errors');
     		return -2;
@@ -256,11 +258,13 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
         foreach($object->fields as $key => $val)
         {
             $i++;
-
-            $type = $val['type'];
+            
+            $type = $val['type']; 
             $type = preg_replace('/:.*$/', '', $type);		// For case type = 'integer:Societe:societe/class/societe.class.php'
+
             if ($type == 'html') $type = 'text';            // html modulebuilder type is a text type in database
-            if ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
+            else if ($type == 'price') $type = 'double';            // html modulebuilder type is a text type in database
+            else if ($type == 'link' || $type == 'sellist') $type = 'integer'; 
             $texttoinsert.= "\t".$key." ".$type;
             if ($key == 'rowid')  $texttoinsert.= ' AUTO_INCREMENT PRIMARY KEY';
             if ($key == 'entity') $texttoinsert.= ' DEFAULT 1';
@@ -269,7 +273,7 @@ function rebuildObjectSql($destdir, $module, $objectname, $newmask, $readdir='',
             	if ($val['default'] != '')
             	{
             		if (preg_match('/^null$/i', $val['default'])) $texttoinsert.= " DEFAULT NULL";
-            		else if (preg_match('/varchar/', $val['type'])) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
+            		else if (preg_match('/varchar/', $type )) $texttoinsert.= " DEFAULT '".$db->escape($val['default'])."'";
             		else $texttoinsert.= (($val['default'] > 0)?' DEFAULT '.$val['default']:'');
             	}
             }

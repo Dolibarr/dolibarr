@@ -227,37 +227,52 @@ class Users extends DolibarrApi
     }
 
     /**
-	 * add user to group
+	 * Add a user into a group
 	 *
 	 * @param   int     $id        User ID
 	 * @param   int     $group     Group ID
+	 * @param   int     $entity    Entity ID (valid only for superadmin in multicompany transverse mode)
 	 * @return  int                1 if success
      *
 	 * @url	GET {id}/setGroup/{group}
 	 */
-	function setGroup($id, $group) {
+	function setGroup($id, $group, $entity = 1) {
+
+		global $conf;
+
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
 		//}
-        $result = $this->useraccount->fetch($id);
-        if (!$result)
-        {
-          throw new RestException(404, 'User not found');
-        }
+		$result = $this->useraccount->fetch($id);
+		if (!$result)
+		{
+			throw new RestException(404, 'User not found');
+		}
 
-        if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
-        {
-          throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
-        }
+		if (!DolibarrApi::_checkAccessToResource('user', $this->useraccount->id, 'user'))
+		{
+			throw new RestException(401, 'Access not allowed for login ' . DolibarrApiAccess::$user->login);
+		}
 
-        $result = $this->useraccount->SetInGroup($group,1);
-        if (! ($result > 0))
-        {
-            throw new RestException(500, $this->useraccount->error);
-        }
+		if (! empty($conf->multicompany->enabled) && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE) && ! empty(DolibarrApiAccess::$user->admin) && empty(DolibarrApiAccess::$user->entity))
+		{
+			$entity = (! empty($entity) ? $entity : $conf->entity);
+		}
+		else
+		{
+			// When using API, action is done on entity of logged user because a user of entity X with permission to create user should not be able to
+			// hack the security by giving himself permissions on another entity.
+			$entity = (DolibarrApiAccess::$user->entity > 0 ? DolibarrApiAccess::$user->entity : $conf->entity);
+		}
 
-        return 1;
-    }
+		$result = $this->useraccount->SetInGroup($group, $entity);
+		if (! ($result > 0))
+		{
+			throw new RestException(500, $this->useraccount->error);
+		}
+
+		return 1;
+	}
 
 	/**
 	 * Delete account

@@ -112,8 +112,9 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         }
     }
 
-    if ($error) {
-        setEventMessage($object->errors, 'errors');
+    if ($error || $errors) 
+    {
+        setEventMessages($object->error, $object->errors, 'errors');
         $action = '';
     }
 }
@@ -133,7 +134,7 @@ $arrayofcss = array('/ticket/css/styles.css.php');
 
 llxHeaderTicket($langs->trans("Tickets"), "", 0, 0, $arrayofjs, $arrayofcss);
 
-if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
+if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
     print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
     $db->close();
     exit();

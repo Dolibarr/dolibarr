@@ -55,6 +55,7 @@ AccountancyAreaDescChartModel=KROK %s: Vytvorte si model schémy účtu z menu %
 AccountancyAreaDescChart=KROK %s: Vytvorenie alebo kontrola obsahu schémy účtu z menu %s
 
 AccountancyAreaDescVat=KROK %s: Definujte účty účtov pre každú sadzbu DPH. Na to použite položku ponuky %s.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=STEP %s: Define default accounting accounts for each type of expense report. For this, use the menu entry %s.
 AccountancyAreaDescSal=KROK %s: Definovanie predvolených účtovných účtov na platbu miezd. Na to použite položku ponuky %s.
 AccountancyAreaDescContrib=KROK %s: Definujte predvolené účtovné účty pre špeciálne výdavky (rôzne dane). Na to použite položku ponuky %s.
@@ -131,6 +132,7 @@ ACCOUNTING_LENGTH_GACCOUNT=Dĺžka všeobecných účtovných účtov (ak nastav
 ACCOUNTING_LENGTH_AACCOUNT=Dĺžka účtov účtov tretej strany (ak nastavíte hodnotu 6 tu, účet "401" sa zobrazí na obrazovke ako "401000")
 ACCOUNTING_MANAGE_ZERO=Umožňuje spravovať iný počet nuly na konci účtovného účtu. Niektoré krajiny potrebujú (napríklad švajčiarsko). Ak je vypnuté (predvolené), môžete nastaviť dva nasledujúce parametre a požiadať aplikáciu o pridanie virtuálnej nuly.
 BANK_DISABLE_DIRECT_INPUT=Zakázať priame zaznamenávanie transakcie na bankový účet
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Predaj denníka
 ACCOUNTING_PURCHASE_JOURNAL=Zakúpte denník

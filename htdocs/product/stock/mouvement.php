@@ -735,7 +735,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
     }
 
     $moreforfilter='';
@@ -1027,7 +1027,15 @@ if ($resql)
         if (! empty($arrayfields['m.inventorycode']['checked']))
         {
 	        // Inventory code
-	        print '<td>'.$objp->inventorycode.'</td>';
+	        print '<td>'.'<a href="'
+								.DOL_URL_ROOT.'/product/stock/mouvement.php'
+								.'?id='.$objp->entrepot_id
+								.'&amp;search_inventorycode='.$objp->inventorycode							   
+							    .'&amp;search_type_mouvement='.$objp->type_mouvement
+						.'">'
+							.$objp->inventorycode
+						.'</a>'
+					.'</td>';
         }
         if (! empty($arrayfields['m.label']['checked']))
         {

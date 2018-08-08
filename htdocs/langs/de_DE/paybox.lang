@@ -23,12 +23,12 @@ ToOfferALinkForOnlinePaymentOnMemberSubscription=URL um Ihren Mitgliedern eine %
 YouCanAddTagOnUrl=Sie können auch den URL-Parameter <b>&tag=<i>value</i></b> an eine beliebige dieser URLs anhängen (erforderlich nur bei der freien Zahlung) um einen eigenen Zahlungskommentar hinzuzufügen.
 SetupPayBoxToHavePaymentCreatedAutomatically=Richten Sie PayBox mit der URL <b>%s</b> ein, um nach Freigabe durch PayBox automatisch eine Zahlung anzulegen.
 YourPaymentHasBeenRecorded=Hiermit Bestätigen wir, dass die Zahlung ausgeführt wurde. Vielen Dank.
-YourPaymentHasNotBeenRecorded=Die Zahlung wurde nicht gespeichert und der Vorgang storniert. Vielen Dank.
+YourPaymentHasNotBeenRecorded=Ihre Zahlung wurde NICHT aufgezeichnet und die Transaktion wurde storniert. Vielen Dank.
 AccountParameter=Konto Parameter
 UsageParameter=Einsatzparameter
 InformationToFindParameters=Hilfe für das Finden der %s Kontoinformationen
 PAYBOX_CGI_URL_V2=URL für das Paybox Zahlungsmodul "CGI Modul"
-VendorName=Name des Anbieters
+VendorName=Name des Lieferanten
 CSSUrlForPaymentForm=CSS-Datei für das Zahlungsmodul
 NewPayboxPaymentReceived=Neue Paybox-Zahlung erhalten
 NewPayboxPaymentFailed=Neue Paybox-Zahlungen probiert, aber fehlgeschlagen

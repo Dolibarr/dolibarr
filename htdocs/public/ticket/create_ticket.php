@@ -102,7 +102,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         $contacts = $object->searchContactByEmail($origin_email);
 
         // Option to require email exists to create ticket
-        if (!empty($conf->global->TICKETS_EMAIL_MUST_EXISTS) && !$contacts[0]->socid) {
+        if (!empty($conf->global->TICKET_EMAIL_MUST_EXISTS) && !$contacts[0]->socid) {
             $error++;
             array_push($object->errors, $langs->trans("ErrorEmailMustExistToCreateTicket"));
             $action = '';
@@ -177,7 +177,7 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
         	$action = "infos_success";
         } else {
 	    	$object->db->rollback();
-	    	setEventMessage($object->errors, 'errors');
+	    	setEventMessages($object->error, $object->errors, 'errors');
 	    	$action = 'create_ticket';
 	    }
 
@@ -203,42 +203,45 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
                 // Send email to customer
 
                 $subject = '[' . $conf->global->MAIN_INFO_SOCIETE_NOM . '] ' . $langs->transnoentities('TicketNewEmailSubject');
-                $message .= ($conf->global->TICKETS_MESSAGE_MAIL_NEW ? $conf->global->TICKETS_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')) . "\n\n";
+                $message .= ($conf->global->TICKET_MESSAGE_MAIL_NEW ? $conf->global->TICKET_MESSAGE_MAIL_NEW : $langs->transnoentities('TicketNewEmailBody')) . "\n\n";
                 $message .= $langs->transnoentities('TicketNewEmailBodyInfosTicket') . "\n";
 
-                $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $object->track_id;
+                $url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $object->track_id;
                 $infos_new_ticket = $langs->transnoentities('TicketNewEmailBodyInfosTrackId', '<a href="' . $url_public_ticket . '">' . $object->track_id . '</a>') . "\n";
                 $infos_new_ticket .= $langs->transnoentities('TicketNewEmailBodyInfosTrackUrl') . "\n\n";
 
                 $message .= dol_nl2br($infos_new_ticket);
-                $message .= $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
+                $message .= $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE ? $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE : $langs->transnoentities('TicketMessageMailSignatureText');
 
                 $sendto = GETPOST('email','alpha');
 
-                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '>';
+                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
                 $replyto = $from;
 
                 $message = dol_nl2br($message);
 
-                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
                     $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-                if ($mailfile->error) {
-                    setEventMessage($mailfile->error, 'errors');
-                } else {
+                if ($mailfile->error || $mailfile->errors) 
+                {
+                    setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+                } 
+                else 
+                {
                     $result = $mailfile->sendfile();
                 }
-                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
                 }
 
 
-                // Send email to TICKETS_NOTIFICATION_EMAIL_TO
+                // Send email to TICKET_NOTIFICATION_EMAIL_TO
 
-                $sendto = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO;
+                $sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 
                 if ($sendto)
                 {
@@ -276,23 +279,26 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
 	                $message_admin .= '<p>' . $langs->trans('Message') . ' : <br>' . $object->message . '</p>';
 	                $message_admin .= '<p><a href="' . dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $object->track_id . '">' . $langs->trans('SeeThisTicketIntomanagementInterface') . '</a></p>';
 
-	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '>';
+	                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
 	                $replyto = $from;
 
 	                $message_admin = dol_nl2br($message_admin);
 
-	                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 	                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 	                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 	                }
 	                include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 	                $mailfile = new CMailFile($subject, $sendto, $from, $message_admin, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, -1);
-	                if ($mailfile->error) {
-	                    setEventMessage($mailfile->error, 'errors');
-	                } else {
+	                if ($mailfile->error || $mailfile->errors) 
+                    {
+                        setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+                    } 
+	                else 
+	                {
 	                    $result = $mailfile->sendfile();
 	                }
-	                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+	                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 	                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 	                }
                 }
@@ -308,10 +314,12 @@ if ($action == 'create_ticket' && GETPOST('add_ticket')) {
             	$formmail->remove_attached_files($i);
             }
 
-            setEventMessage($langs->trans('YourTicketSuccessfullySaved'));
+            setEventMessages($langs->trans('YourTicketSuccessfullySaved'), null, 'mesgs');
         }
-    } else {
-        setEventMessage($object->errors, 'errors');
+    } 
+    else 
+    {
+        setEventMessages($object->error, $object->errors, 'errors');
     }
 }
 
@@ -329,7 +337,7 @@ llxHeaderTicket($langs->trans("CreateTicket"), "", 0, 0, $arrayofjs, $arrayofcss
 $form = new Form($db);
 $formticket = new FormTicket($db);
 
-if (!$conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) {
+if (!$conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) {
     print '<div class="error">' . $langs->trans('TicketPublicInterfaceForbidden') . '</div>';
     $db->close();
     exit();

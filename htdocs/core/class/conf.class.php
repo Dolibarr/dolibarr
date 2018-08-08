@@ -39,6 +39,8 @@ class Conf
 	var $db;
 	//! To store properties found into database
 	var $global;
+	//! To store browser info
+	var $browser;
 
 	//! To store if javascript/ajax is enabked
 	public $use_javascript_ajax;
@@ -311,25 +313,25 @@ class Conf
 
 		// For user storage
 		$this->user->multidir_output	= array($this->entity => $rootfordata."/users");
-		$this->user->multidir_temp	= array($this->entity => $rootfordata."/users/temp");
+		$this->user->multidir_temp		= array($this->entity => $rootfordata."/users/temp");
 		// For backward compatibility
 		$this->user->dir_output=$rootforuser."/users";
 		$this->user->dir_temp=$rootforuser."/users/temp";
 
-		// UserGroup
+		// For usergroup storage
 		$this->usergroup->dir_output=$rootforuser."/usergroups";
 		$this->usergroup->dir_temp=$rootforuser."/usergroups/temp";
 
-		// For propal storage
+		// For proposal storage
 		$this->propal->multidir_output	= array($this->entity => $rootfordata."/propale");
-		$this->propal->multidir_temp		= array($this->entity => $rootfordata."/propale/temp");
+		$this->propal->multidir_temp	= array($this->entity => $rootfordata."/propale/temp");
 		// For backward compatibility
 		$this->propal->dir_output=$rootfordata."/propale";
 		$this->propal->dir_temp=$rootfordata."/propale/temp";
 
 		// For medias storage
 		$this->medias->multidir_output	= array($this->entity => $rootfordata."/medias");
-		$this->medias->multidir_temp		= array($this->entity => $rootfordata."/medias/temp");
+		$this->medias->multidir_temp	= array($this->entity => $rootfordata."/medias/temp");
 
 		// Exception: Some dir are not the name of module. So we keep exception here for backward compatibility.
 
@@ -399,7 +401,7 @@ class Conf
 
 
 		// Set some default values
-
+		//$this->global->MAIN_LIST_FILTER_ON_DAY=1;		// On filter that show date, we must show input field for day before or after month
 		$this->global->MAIN_ACTIVATE_HTML5=1;
         $this->global->MAIN_MAIL_USE_MULTI_PART=1;
 
@@ -506,7 +508,7 @@ class Conf
 		if (! isset($this->global->MAIN_SHOW_LOGO)) $this->global->MAIN_SHOW_LOGO=1;
 
 		// Default max file size for upload
-		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : $this->global->MAIN_UPLOAD_DOC * 1024);
+		$this->maxfilesize = (empty($this->global->MAIN_UPLOAD_DOC) ? 0 : (int) $this->global->MAIN_UPLOAD_DOC * 1024);
 
 		// By default, we propagate contacts
 		if (! isset($this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN)) $this->global->MAIN_PROPAGATE_CONTACTS_FROM_ORIGIN='*';  // Can be also '*' or '^(BILLING|SHIPPING|CUSTOMER|.*)$' (regex not yet implemented)
