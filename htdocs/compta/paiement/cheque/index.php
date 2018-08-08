@@ -151,6 +151,6 @@ else
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();
