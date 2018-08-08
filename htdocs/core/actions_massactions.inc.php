@@ -825,7 +825,7 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	}
 
 	$arrayofinclusion=array();
-	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf).'.pdf','/').'$';
+	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf),'/').'[a-zA-Z0-9-_]*\.pdf$';
 	$listoffiles = dol_dir_list($uploaddir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
 
 	// build list of files with full path
