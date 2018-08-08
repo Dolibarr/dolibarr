@@ -988,6 +988,7 @@ if ($action == 'create')
             if (! empty($conf->projet->enabled))
             {
                 $projectid = GETPOST('projectid','int')?GETPOST('projectid','int'):0;
+                if(empty($projectid) && ! empty($object->fk_project)) $projectid = $object->fk_project;
                 if ($origin == 'project') $projectid = ($originid ? $originid : 0);
 
                 $langs->load("projects");
