@@ -81,7 +81,7 @@ print '<table class="noborder" width="100%">';
 
 _print_on_off('INVOICE_USE_SITUATION',$langs->trans('UseSituationInvoices'));
 _print_on_off('INVOICE_USE_SITUATION_CREDIT_NOTE',$langs->trans('UseSituationInvoicesCreditNote'));
-_print_on_off('INVOICE_USE_SITUATION_RETAINED_WARANTY',$langs->trans('Retainedwarranty'));
+_print_on_off('INVOICE_USE_SITUATION_RETAINED_WARRANTY',$langs->trans('Retainedwarranty'));
 
 $metas = array(
     'type' => 'number',
@@ -89,7 +89,7 @@ $metas = array(
     'min' => 0,
     'max' => 100
 );
-_print_input_form_part('INVOICE_SITUATION_DEFAULT_RETAINED_WARANTY_PERCENT',$langs->trans('RetainedwarrantyDefaultPercent'),'',$metas);
+_print_input_form_part('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT',$langs->trans('RetainedwarrantyDefaultPercent'),'',$metas);
 
 
 

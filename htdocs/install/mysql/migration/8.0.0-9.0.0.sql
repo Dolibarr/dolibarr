@@ -51,7 +51,7 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 
 ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;
 
-ALTER TABLE llx_facture ADD COLUMN retained_waranty real DEFAULT NULL after situation_final;
-
+ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
+ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;
 
 

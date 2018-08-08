@@ -288,6 +288,23 @@ if (empty($reshook))
 		if ($result < 0)
 			dol_print_error($db, $object->error);
 	}
+	
+	else if ($action == 'setretainedwarranty' && $user->rights->facture->creer)
+	{
+	    $object->fetch($id);
+	    $result = $object->setRetainedWarranty(GETPOST('retained_warranty', 'float'));
+	    if ($result < 0)
+	        dol_print_error($db, $object->error);
+	}
+	
+	else if ($action == 'setretainedwarrantydatelimit' && $user->rights->facture->creer)
+	{
+	    $object->fetch($id);
+	    $result = $object->setRetainedWarrantyDateLimit(GETPOST('retained_warranty_date_limit', 'float'));
+	    if ($result < 0)
+	        dol_print_error($db, $object->error);
+	}
+	
 
 	// Multicurrency Code
 	else if ($action == 'setmulticurrencycode' && $user->rights->facture->creer) {
@@ -1152,6 +1169,7 @@ if (empty($reshook))
 					$object->situation_counter = 1;
 					$object->situation_final = 0;
 					$object->situation_cycle_ref = $object->newCycle();
+					$object->retained_warranty = !empty($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)?$conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY:0;
 				}
 
 				$object->fetch_thirdparty();
@@ -3919,6 +3937,70 @@ else if ($id > 0 || ! empty($ref))
 		print '</td></tr>';
 	}
 
+
+	if($object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)) )
+	{
+    	// Retained Warranty
+    	print '<tr><td>';
+    	print '<table class="nobordernopadding" width="100%"><tr><td>';
+    	print $langs->trans('RetainedWarranty');
+    	print '</td>';
+    	if ($action != 'editretainedwarranty' && $user->rights->facture->creer){
+    	    print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editretainedwarranty&amp;facid=' . $object->id . '">' . img_edit($langs->trans('setretainedwarranty'), 1) . '</a></td>';
+    	}
+    	    
+        print '</tr></table>';
+        print '</td><td>';
+        if ($action == 'editretainedwarranty')
+        {
+            print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+            print '<input type="hidden" name="action" value="setretainedwarranty">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input name="retained_warranty" type="number" step="0.01" min="0" max="100" value="'.$object->retained_warranty.'" >';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
+        }
+        else
+        {
+            print price($object->retained_warranty).'%';
+        }
+        print '</td></tr>'; 
+        
+        
+        // Retained Warranty payment date limit
+        print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans('RetainedWarrantyDateLimit');
+        print '</td>';
+        if ($action != 'editretainedwarrantydatelimit' && $user->rights->facture->creer){
+            print '<td align="right"><a href="' . $_SERVER["PHP_SELF"] . '?action=editretainedwarrantydatelimit&amp;facid=' . $object->id . '">' . img_edit($langs->trans('setretainedwarrantyDateLimit'), 1) . '</a></td>';
+        }
+        
+        print '</tr></table>';
+        print '</td><td>';
+        $defaultDate =  !empty($object->retained_warranty_date_limit)?$object->retained_warranty_date_limit:strtotime('-1 years', $object->date_lim_reglement);
+        if($object->date > $defaultDate){
+            $defaultDate = $object->date;
+        }
+        
+        if ($action == 'editretainedwarrantydatelimit')
+        {
+            //date('Y-m-d',$object->date_lim_reglement)
+            print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'">';
+            print '<input type="hidden" name="action" value="setretainedwarrantydatelimit">';
+            print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+            print '<input name="retained_warranty_date_limit" type="date" step="1" min="'.dol_print_date($object->date,'%Y-%m-%d' ).'" value="'.dol_print_date($defaultDate,'%Y-%m-%d' ).'" >';
+            print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+            print '</form>';
+        }
+        else
+        {
+            print dol_print_date($defaultDate);
+        }
+        print '</td></tr>'; 
+	}
+	
+	
 	// Other attributes
 	$cols = 2;
 	include DOL_DOCUMENT_ROOT . '/core/tpl/extrafields_view.tpl.php';
@@ -4360,6 +4442,20 @@ else if ($id > 0 || ! empty($ref))
 		// Billed
 		print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("Billed") . ' :</td><td align="right">' . price($object->total_ttc) . '</td><td>&nbsp;</td></tr>';
 
+		if(!empty($object->retained_warranty)){
+		    // Billed - retained warranty
+		    $retainedWarranty = $object->total_ttc * $object->retained_warranty / 100;
+		    $billedWithRetainedWarranty = $object->total_ttc - $retainedWarranty ;
+		    print '<tr><td colspan="' . $nbcols . '" align="right">' . $langs->trans("ToPayOn", dol_print_date($object->date_lim_reglement)) . ' :</td><td align="right">' . price($billedWithRetainedWarranty) . '</td><td>&nbsp;</td></tr>';
+		    
+		    // retained warranty
+		    print '<tr><td colspan="' . $nbcols . '" align="right">';
+		    print $langs->trans("RetainedWarranty") . ' ('.$object->retained_warranty.'%)';
+		    print !empty($object->retained_warranty_date_limit)?' '.$langs->trans("ToPayOn", dol_print_date($object->retained_warranty_date_limit)):'';
+		    print ' :</td><td align="right">' . price($retainedWarranty) . '</td><td>&nbsp;</td></tr>';
+		    
+		}
+		
 		// Remainder to pay
 		print '<tr><td colspan="' . $nbcols . '" align="right">';
 		if ($resteapayeraffiche >= 0)

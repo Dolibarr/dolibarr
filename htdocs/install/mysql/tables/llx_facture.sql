@@ -86,7 +86,8 @@ create table llx_facture
   situation_counter   smallint,  -- situation counter
   situation_final     smallint,  -- is the situation final ?
 
-  retained_waranty		real DEFAULT NULL,  -- % of retained warranty
+  retained_warranty		real DEFAULT NULL,  -- % of retained warranty
+  retained_warranty_date_limit	date DEFAULT NULL,
 
   import_key			varchar(14),
   extraparams			varchar(255),							-- for other parameters with json format
