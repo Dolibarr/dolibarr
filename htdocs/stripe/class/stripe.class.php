@@ -399,7 +399,7 @@ class Stripe extends CommonObject
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
             "capture"  => true,
-						// "statement_descriptor" => " ",
+						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($customer->name), 6, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
  					  "description" => "Stripe payment: ".$description,           
 						"metadata" => $metadata,
 						"source" => "$source"
@@ -409,7 +409,7 @@ class Stripe extends CommonObject
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
             "capture"  => true,           
-						// "statement_descriptor" => " ",
+					  "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($customer->name), 6, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
 					  "description" => "Stripe payment: ".$description,
 						"metadata" => $metadata,
 						"source" => "$source",
@@ -434,7 +434,7 @@ class Stripe extends CommonObject
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
             "capture"  => true,            
-						// "statement_descriptor" => " ",
+						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($customer->name), 6, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
 					  "description" => "Stripe payment: ".$description,
 						"metadata" => $metadata,
 						"source" => "$source",
