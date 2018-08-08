@@ -398,9 +398,9 @@ class Stripe extends CommonObject
 					$charge = \Stripe\Charge::create(array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-            "capture"  => true,
+                                                "capture"  => true,
 						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($customer->name), 6, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
- 					  "description" => "Stripe payment: ".$description,           
+ 					        "description" => "Stripe payment: ".$description,           
 						"metadata" => $metadata,
 						"source" => "$source"
 					));
@@ -408,9 +408,9 @@ class Stripe extends CommonObject
 					$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-            "capture"  => true,           
-					  "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($customer->name), 6, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
-					  "description" => "Stripe payment: ".$description,
+                                                "capture"  => true,           
+					        "statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($customer->name), 6, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
+					        "description" => "Stripe payment: ".$description,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"
@@ -433,9 +433,9 @@ class Stripe extends CommonObject
         		$paymentarray = array(
 						"amount" => "$stripeamount",
 						"currency" => "$currency",
-            "capture"  => true,            
+                                                "capture"  => true,            
 						"statement_descriptor" => dol_trunc(dol_trunc(dol_string_unaccent($customer->name), 6, 'right', 'UTF-8', 1).' '.$description, 22, 'right', 'UTF-8', 1),     // 22 chars that appears on bank receipt
-					  "description" => "Stripe payment: ".$description,
+					        "description" => "Stripe payment: ".$description,
 						"metadata" => $metadata,
 						"source" => "$source",
 						"customer" => "$customer"
