@@ -6361,7 +6361,7 @@ class Form
 
 		$disabled = ($disabled ? ' disabled' : '');
 
-		$resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		$resultyesno = '<select class="flat width75" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
 		if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
 		if (("$value" == 'yes') || ($value == 1))
 		{
