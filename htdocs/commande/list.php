@@ -75,6 +75,7 @@ $search_total_ht=GETPOST('search_total_ht','alpha');
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
+$search_project_ref=GETPOST('search_project_ref','alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));
