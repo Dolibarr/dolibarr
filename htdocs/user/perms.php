@@ -400,6 +400,6 @@ if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'e
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
-
 $db->close();

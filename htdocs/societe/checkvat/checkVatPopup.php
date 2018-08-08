@@ -174,6 +174,6 @@ if ($messagetoshow)
 	print nl2br($messagetoshow);
 }
 
-
+// End of page
 llxFooter();
-$db->close();
+$db->close();;

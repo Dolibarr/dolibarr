@@ -147,7 +147,6 @@ if ($socid)
 	$result=show_projects($conf, $langs, $db, $object, $_SERVER["PHP_SELF"].'?socid='.$object->id, 1, $addbutton);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();
