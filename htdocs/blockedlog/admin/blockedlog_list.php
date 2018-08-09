@@ -380,7 +380,7 @@ print '</td>';
 
 // User
 print '<td class="liste_titre">';
-print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth300');
+print $form->select_dolusers($search_fk_user, 'search_fk_user', 1, null, 0, '', '', 0, 0, 0, '', 0, '', 'maxwidth200');
 
 print '</td>';
 
@@ -393,6 +393,7 @@ print '</td>';
 // Ref
 print '<td class="liste_titre"><input type="text" class="maxwidth50" name="search_ref" value="'.dol_escape_htmltag($search_ref).'"></td>';
 
+// Link to ref
 print '<td class="liste_titre"></td>';
 
 // Amount
@@ -483,7 +484,6 @@ if (is_array($blocks))
 
 			// User
 		   	print '<td>';
-
 		   	//print $block->getUser()
 		   	print $block->user_fullname;
 		   	print '</td>';
@@ -495,7 +495,7 @@ if (is_array($blocks))
 		   	print '<td class="nowrap">'.$block->ref_object.'</td>';
 
 		   	// Link to source object
-		   	print '<td><!-- object_link -->'.$object_link.'</td>';
+		   	print '<td'.(preg_match('/<a/', $object_link) ? ' class="nowrap"' : '').'><!-- object_link -->'.$object_link.'</td>';
 
 		   	// Amount
 		   	print '<td align="right">'.price($block->amounts).'</td>';
@@ -504,8 +504,8 @@ if (is_array($blocks))
 		   	print '<td align="center"><a href="#" data-blockid="'.$block->id.'" rel="show-info">'.img_info($langs->trans('ShowDetails')).'</a></td>';
 
 		   	// Fingerprint
-		   	print '<td>';
-		   	print $form->textwithpicto(dol_trunc($block->signature, '12'), $block->signature, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
+		   	print '<td class="nowrap">';
+		   	print $form->textwithpicto(dol_trunc($block->signature, '8'), $block->signature, 1, 'help', '', 0, 2, 'fingerprint'.$block->id);
 		   	print '</td>';
 
 		   	// Status
