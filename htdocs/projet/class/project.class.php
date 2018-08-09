@@ -719,14 +719,12 @@ class Project extends CommonObject
     {
         global $user;
         
-        $arrParents = array();
         foreach($arr as $task)
         {
-            if($task->hasChildren() < 0) $task->delete($user);
-            else $arrParents[] = $task;
+            if($task->hasChildren() <= 0) $task->delete($user);
         }
-        
-        if (count($arrParents)) $this->deleteTasks($arrParents);
+        $this->getLinesArray($user);
+        if (count($this->lines)) $this->deleteTasks($this->lines);
     }
 
     /**
