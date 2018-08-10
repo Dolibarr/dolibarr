@@ -4079,7 +4079,7 @@ else if ($id > 0 || ! empty($ref))
         {
             print $form->form_conditions_reglement($_SERVER['PHP_SELF'] . '?facid=' . $object->id, $object->retained_warranty_fk_cond_reglement, 'none');
             if(!$displayWarranty){
-                print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle"'.($moreatt ? ($moreatt == '1' ? ' style="float: right"' : ' '.$moreatt): ''));
+                print img_picto($langs->trans('RetainedWarrantyNeed100Percent'), 'warning.png', 'class="pictowarning valignmiddle" ');
             }
         }
         print '</td></tr>'; 
