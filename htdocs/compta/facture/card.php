@@ -4001,14 +4001,12 @@ else if ($id > 0 || ! empty($ref))
 		}
 		print '</td></tr>';
 	}
-
+	
 	$displayWarranty = false;
-	if( !empty($object->situation_final) 
-	    &&  ( $object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)) )
-	  )
+	if( ( $object->type == Facture::TYPE_SITUATION && (!empty($object->retained_warranty) || !empty($conf->global->INVOICE_USE_SITUATION_RETAINED_WARRANTY)) ) )
 	{
 	    // Check if this situation invoice is 100% for real
-	    if(!empty($object->lines)){
+	    if(!empty($object->situation_final) &&  !empty($object->lines)){
 	        $displayWarranty = true;
 	        foreach( $object->lines as $i => $line ){
 	            if($line->product_type < 2 && $line->situation_percent < 100){
