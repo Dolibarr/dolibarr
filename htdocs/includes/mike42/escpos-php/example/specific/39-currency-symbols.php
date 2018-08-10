@@ -1,17 +1,11 @@
-<?php
-require __DIR__ . '/../../autoload.php';
-use Mike42\Escpos\Printer;
-use Mike42\Escpos\PrintConnectors\FilePrintConnector;
-use Mike42\Escpos\PrintBuffers\ImagePrintBuffer;
-use Mike42\Escpos\CapabilityProfiles\DefaultCapabilityProfile;
-use Mike42\Escpos\CapabilityProfiles\SimpleCapabilityProfile;
-
+<?php 
+require_once(dirname(__FILE__) . "/../../Escpos.php");
 $profile = DefaultCapabilityProfile::getInstance();
 // This is a quick demo of currency symbol issues in #39.
 
 /* Option 1: Native ESC/POS characters, depends on printer and is buggy. */
 $connector = new FilePrintConnector("php://stdout");
-$printer = new Printer($connector, $profile);
+$printer = new Escpos($connector, $profile);
 $printer -> text("€ 9,95\n");
 $printer -> text("£ 9.95\n");
 $printer -> text("$ 9.95\n");
@@ -22,7 +16,7 @@ $printer -> close();
 /* Option 2: Image-based output (formatting not available using this output). */
 $buffer = new ImagePrintBuffer();
 $connector = new FilePrintConnector("php://stdout");
-$printer = new Printer($connector, $profile);
+$printer = new Escpos($connector, $profile);
 $printer -> setPrintBuffer($buffer);
 $printer -> text("€ 9,95\n");
 $printer -> text("£ 9.95\n");
@@ -40,35 +34,32 @@ $printer -> close();
  are not available in CP437. CP858 has good printer support, but is not
  included in all iconv builds.
 */
-class CustomCapabilityProfile extends SimpleCapabilityProfile
-{
-    function getCustomCodePages()
-    {
-        /*
+class CustomCapabilityProfile extends SimpleCapabilityProfile {
+	function getCustomCodePages() {
+		/*
 		 * Example to print in a specific, user-defined character set
 		 * on a printer which has been configured to use i
 		 */
-        return array(
-        'CP858' => "ÇüéâäàåçêëèïîìÄÅ" .
-                "ÉæÆôöòûùÿÖÜø£Ø×ƒ" .
-                "áíóúñÑªº¿®¬½¼¡«»" .
-                "░▒▓│┤ÁÂÀ©╣║╗╝¢¥┐" .
-                "└┴┬├─┼ãÃ╚╔╩╦╠═╬¤" .
-                "ðÐÊËÈ€ÍÎÏ┘┌█▄¦Ì▀" .
-                "ÓßÔÒõÕµþÞÚÛÙýÝ¯´" .
-                " ±‗¾¶§÷¸°¨·¹³²■ ");
-    }
-    
-    function getSupportedCodePages()
-    {
-        return array(
-                0 => 'custom:CP858');
-    }
+		return array(
+		'CP858' => "ÇüéâäàåçêëèïîìÄÅ" .
+				"ÉæÆôöòûùÿÖÜø£Ø×ƒ" .
+				"áíóúñÑªº¿®¬½¼¡«»" .
+				"░▒▓│┤ÁÂÀ©╣║╗╝¢¥┐" .
+				"└┴┬├─┼ãÃ╚╔╩╦╠═╬¤" .
+				"ðÐÊËÈ€ÍÎÏ┘┌█▄¦Ì▀" .
+				"ÓßÔÒõÕµþÞÚÛÙýÝ¯´" .
+				" ±‗¾¶§÷¸°¨·¹³²■ ");
+	}
+	
+	function getSupportedCodePages() {
+		return array(
+				0 => 'custom:CP858');
+	}
 }
 
 $connector = new FilePrintConnector("php://stdout");
 $profile = CustomCapabilityProfile::getInstance();
-$printer = new Printer($connector, $profile);
+$printer = new Escpos($connector, $profile);
 $printer -> text("€ 9,95\n");
 $printer -> text("£ 9.95\n");
 $printer -> text("$ 9.95\n");

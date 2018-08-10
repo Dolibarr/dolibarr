@@ -1,9 +1,5 @@
 <?php
-require __DIR__ . '/../autoload.php';
-use Mike42\Escpos\Printer;
-use Mike42\Escpos\ImagickEscposImage;
-use Mike42\Escpos\PrintConnectors\FilePrintConnector;
-
+require_once(dirname(__FILE__) . '/../Escpos.php');
 /*
  * This is three examples in one:
  *  1: Print an entire PDF, normal quality.
@@ -13,22 +9,21 @@ use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 
 /* 1: Print an entire PDF, start-to-finish (shorter form of the example) */
 $pdf = 'resources/document.pdf';
-$connector = new FilePrintConnector("php://stdout");
-$printer = new Printer($connector);
 try {
-    $pages = ImagickEscposImage::loadPdf($pdf);
-    foreach ($pages as $page) {
-        $printer -> graphics($page);
-    }
-    $printer -> cut();
-} catch (Exception $e) {
-    /*
+	$pages = EscposImage::loadPdf($pdf);
+	$printer = new Escpos();
+	foreach($pages as $page) {
+		$printer -> graphics($page);
+	}
+	$printer -> cut();
+	$printer -> close();
+} catch(Exception $e) {
+	/* 
 	 * loadPdf() throws exceptions if files or not found, or you don't have the
 	 * imagick extension to read PDF's
 	 */
-    echo $e -> getMessage() . "\n";
-} finally {
-    $printer -> close();
+	echo $e -> getMessage() . "\n";
+	exit(0);
 }
 
 
@@ -38,12 +33,11 @@ try {
  * 
  * Reduce the page width further if necessary: if it extends past the printing area, your prints will be very slow.
  */
-$connector = new FilePrintConnector("php://stdout");
-$printer = new Printer($connector);
+$printer = new Escpos();
 $pdf = 'resources/document.pdf';
-$pages = ImagickEscposImage::loadPdf($pdf, 260);
-foreach ($pages as $page) {
-    $printer -> graphics($page, Printer::IMG_DOUBLE_HEIGHT | Printer::IMG_DOUBLE_WIDTH);
+$pages = EscposImage::loadPdf($pdf, 260);
+foreach($pages as $page) {
+	$printer -> graphics($page, Escpos::IMG_DOUBLE_HEIGHT | Escpos::IMG_DOUBLE_WIDTH);
 }
 $printer -> cut();
 $printer -> close();
@@ -57,22 +51,21 @@ $printer -> close();
  * 
  * [1]After printing, the pixels are loaded and formatted for the print command you used, so even a raspberry pi can print complex PDF's quickly.
  */
-$connector = new FilePrintConnector("php://stdout");
-$printer = new Printer($connector);
+$printer = new Escpos();
 $pdf = 'resources/document.pdf';
 $ser = 'resources/document.z';
-if (!file_exists($ser)) {
-    $pages = ImagickEscposImage::loadPdf($pdf);
+if(!file_exists($ser)) {
+	$pages = EscposImage::loadPdf($pdf);
 } else {
-    $pages = unserialize(gzuncompress(file_get_contents($ser)));
+	$pages = unserialize(gzuncompress(file_get_contents($ser)));
 }
 
-foreach ($pages as $page) {
-    $printer -> graphics($page);
+foreach($pages as $page) {
+	$printer -> graphics($page);
 }
 $printer -> cut();
 $printer -> close();
 
-if (!file_exists($ser)) {
-    file_put_contents($ser, gzcompress(serialize($pages)));
+if(!file_exists($ser)) {
+	file_put_contents($ser, gzcompress(serialize($pages)));
 }
