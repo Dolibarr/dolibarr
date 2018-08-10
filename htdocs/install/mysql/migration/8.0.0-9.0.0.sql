@@ -53,5 +53,6 @@ ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after a
 
 ALTER TABLE llx_facture ADD COLUMN retained_warranty real DEFAULT NULL after situation_final;
 ALTER TABLE llx_facture ADD COLUMN retained_warranty_date_limit	date DEFAULT NULL after retained_warranty;
+ALTER TABLE llx_facture ADD COLUMN retained_warranty_fk_cond_reglement	integer  DEFAULT NULL after retained_warranty_date_limit;
 
 

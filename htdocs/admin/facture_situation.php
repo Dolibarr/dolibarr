@@ -76,6 +76,12 @@ dol_fiche_head($head, 'situation', $langs->trans("InvoiceSituation"), -1, 'invoi
 
 print load_fiche_titre($langs->trans("InvoiceSituation"),'','');
 $var=0;
+
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+
+_updateBtn();
+
 print '<table class="noborder" width="100%">';
 
 
@@ -94,17 +100,40 @@ _print_input_form_part('INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_PERCENT',$la
 
 
 
+// Conditions paiements
+$inputCount = empty($inputCount)?1:($inputCount+1);
+print '<tr class="impair">';
+print '<td>'.$langs->trans('PaymentConditionsShortRetainedWarranty').'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<input type="hidden" name="param'.$inputCount.'" value="INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID">';
+$form->select_conditions_paiements($conf->global->INVOICE_SITUATION_DEFAULT_RETAINED_WARRANTY_COND_ID, 'value'.$inputCount, -1, 1);
+print '</td></tr>';
+
+
+print '</table>';
+
+_updateBtn();
+
+print '</form>';
+
 dol_fiche_end();
 
 // End of page
 llxFooter();
 $db->close();
 
+function _updateBtn(){
+    global $langs;
+    print '<div style="text-align: right;" >';
+    print '<input type="submit" class="butAction" value="'.$langs->trans("Save").'">';
+    print '</div>';
+}
+
 function _print_on_off($confkey, $title = false, $desc ='')
 {
-    global $var, $bc, $langs, $conf;
+    global $var, $bc, $langs;
     $var=!$var;
-    
     print '<tr '.$bc[$var].'>';
     print '<td>'.($title?$title:$langs->trans($confkey));
     if(!empty($desc))
@@ -113,25 +142,21 @@ function _print_on_off($confkey, $title = false, $desc ='')
     }
     print '</td>';
     print '<td align="center" width="20">&nbsp;</td>';
-    print '<td align="center" width="300">';
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="set_'.$confkey.'">';
+    print '<td align="right" width="300">';
     print ajax_constantonoff($confkey);
-    print '</form>';
     print '</td></tr>';
 }
 
 
 function _print_input_form_part($confkey, $title = false, $desc ='', $metas = array(), $type='input', $help = false)
 {
-    global $var, $bc, $langs, $conf, $db;
+    global $var, $bc, $langs, $conf, $db, $inputCount;
     $var=!$var;
-    
+    $inputCount = empty($inputCount)?1:($inputCount+1);
     $form=new Form($db);
     
     $defaultMetas = array(
-        'name' => $confkey
+        'name' => 'value'.$inputCount
     );
     
     if($type!='textarea'){
@@ -165,17 +190,14 @@ function _print_input_form_part($confkey, $title = false, $desc ='', $metas = ar
     print '</td>';
     print '<td align="center" width="20">&nbsp;</td>';
     print '<td align="right" width="300">';
-    print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-    print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-    print '<input type="hidden" name="action" value="set_'.$confkey.'">';
+    print '<input type="hidden" name="param'.$inputCount.'" value="'.$confkey.'">';
+    
+    print '<input type="hidden" name="action" value="setModuleOptions">';
     if($type=='textarea'){
         print '<textarea '.$metascompil.'  >'.dol_htmlentities($conf->global->{$confkey}).'</textarea>';
     }
     else {
         print '<input '.$metascompil.'  />';
     }
-    
-    print '<input type="submit" class="butAction" value="'.$langs->trans("Modify").'">';
-    print '</form>';
     print '</td></tr>';
 }

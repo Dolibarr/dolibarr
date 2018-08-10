@@ -165,6 +165,8 @@ class Facture extends CommonInvoice
 	public $retained_warranty;
 	
 	public $retained_warranty_date_limit;
+	
+	public $retained_warranty_fk_cond_reglement;
 
     /**
      * Standard invoice
@@ -345,8 +347,8 @@ class Facture extends CommonInvoice
 			$this->note_private=trim($this->note_private);
 		    $this->note_private=dol_concatdesc($this->note_private, $langs->trans("GeneratedFromRecurringInvoice", $_facrec->ref));
 		    
-		    $this->retained_warranty = floatval($this->retained_warranty);
 
+		    
 		    $this->array_options=$_facrec->array_options;
 
 			//if (! $this->remise) $this->remise = 0;
@@ -356,6 +358,7 @@ class Facture extends CommonInvoice
 			$this->linked_objects = $_facrec->linkedObjectsIds;
 
 			$forceduedate = $this->calculate_date_lim_reglement();
+			
 
 			// For recurring invoices, update date and number of last generation of recurring template invoice, before inserting new invoice
 			if ($_facrec->frequency > 0)
@@ -407,7 +410,7 @@ class Facture extends CommonInvoice
 
 		// Define due date if not already defined
 		$datelim=(empty($forceduedate)?$this->calculate_date_lim_reglement():$forceduedate);
-
+		
 		// Insert into database
 		$socid  = $this->socid;
 
@@ -435,6 +438,7 @@ class Facture extends CommonInvoice
         $sql.= ", multicurrency_tx";
         $sql.= ", retained_warranty";
         $sql.= ", retained_warranty_date_limit";
+        $sql.= ", retained_warranty_fk_cond_reglement";
 		$sql.= ")";
 		$sql.= " VALUES (";
 		$sql.= "'(PROV)'";
@@ -468,10 +472,11 @@ class Facture extends CommonInvoice
 		$sql.= ", '".$this->db->escape($this->multicurrency_code)."'";
 		$sql.= ", ".(double) $this->multicurrency_tx;
 		$sql.= ", ".(empty($this->retained_warranty)?"0":$this->db->escape($this->retained_warranty));
-		$sql.= ", '".$this->db->idate($this->retained_warranty_date_limit)."'";
+		$sql.= ", ".(!empty($this->retained_warranty_date_limit)?"'".$this->db->idate($this->retained_warranty_date_limit)."'":'NULL');
+		$sql.= ", ".(int) $this->retained_warranty_fk_cond_reglement;
 		
 		$sql.=")";
-
+		
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1288,7 +1293,7 @@ class Facture extends CommonInvoice
 		$sql.= ', c.code as cond_reglement_code, c.libelle as cond_reglement_libelle, c.libelle_facture as cond_reglement_libelle_doc';
         $sql.= ', f.fk_incoterms, f.location_incoterms';
         $sql.= ", i.libelle as libelle_incoterms";
-        $sql.= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit";
+        $sql.= ", f.retained_warranty as retained_warranty, f.retained_warranty_date_limit as retained_warranty_date_limit, f.retained_warranty_fk_cond_reglement as retained_warranty_fk_cond_reglement";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
@@ -1356,8 +1361,9 @@ class Facture extends CommonInvoice
 				$this->situation_cycle_ref  = $obj->situation_cycle_ref;
 				$this->situation_counter    = $obj->situation_counter;
 				$this->situation_final      = $obj->situation_final;
-				$this->retained_warranty     = $obj->retained_warranty;
-				$this->retained_warranty_date_limit = $this->db->jdate($obj->retained_warranty_date_limit);
+				$this->retained_warranty    = $obj->retained_warranty;
+				$this->retained_warranty_date_limit         = $this->db->jdate($obj->retained_warranty_date_limit);
+				$this->retained_warranty_fk_cond_reglement  = $obj->retained_warranty_fk_cond_reglement;
 				
 				$this->extraparams			= (array) json_decode($obj->extraparams, true);
 				// Incoterms
@@ -1628,7 +1634,8 @@ class Facture extends CommonInvoice
 		$sql.= " situation_counter=".(empty($this->situation_counter)?"null":$this->db->escape($this->situation_counter)).",";
 		$sql.= " situation_final=".(empty($this->situation_counter)?"0":$this->db->escape($this->situation_counter)).",";
 		$sql.= " retained_warranty=".(empty($this->retained_warranty)?"0":$this->db->escape($this->retained_warranty)).",";
-		$sql.= " retained_warranty_date_limit=".(strval($this->retained_warranty_date_limit)!='' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null');
+		$sql.= " retained_warranty_date_limit=".(strval($this->retained_warranty_date_limit)!='' ? "'".$this->db->idate($this->retained_warranty_date_limit)."'" : 'null').",";
+		$sql.= " retained_warranty_fk_cond_reglement=".(isset($this->retained_warranty_fk_cond_reglement)?intval($this->retained_warranty_fk_cond_reglement):"null");
 		$sql.= " WHERE rowid=".$this->id;
 
 		$this->db->begin();
