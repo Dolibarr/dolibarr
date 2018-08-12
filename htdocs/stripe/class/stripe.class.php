@@ -440,7 +440,7 @@ class Stripe extends CommonObject
 						"source" => "$source",
 						"customer" => "$customer"
 					);
-					if ($conf->entity>1 && $fee>0)
+					if ($conf->entity!=$conf->global->STRIPECONNECT_PRINCIPAL && $fee>0)
 					{
 						$paymentarray["application_fee"] = $fee;
 					}
