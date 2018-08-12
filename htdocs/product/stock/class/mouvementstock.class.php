@@ -777,8 +777,8 @@ class MouvementStock extends CommonObject
 	 * Create or update batch record (update table llx_product_batch). No check is done here, done by parent.
 	 *
 	 * @param	array|int	$dluo	      Could be either
-	 *                                     - int if row id of product_batch table
-	 *                                     - or complete array('fk_product_stock'=>, 'batchnumber'=>)
+	 *                                    - int if row id of product_batch table
+	 *                                    - or complete array('fk_product_stock'=>, 'batchnumber'=>)
 	 * @param	int			$qty	      Quantity of product with batch number. May be a negative amount.
 	 * @return 	int   				      <0 if KO, else return productbatch id
 	 */
@@ -1059,7 +1059,7 @@ class MouvementStock extends CommonObject
 	public function generateDocument($modele, $outputlangs='',$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $conf,$user,$langs;
-	
+
 		$langs->load("stocks");
 
 		if (! dol_strlen($modele)) {

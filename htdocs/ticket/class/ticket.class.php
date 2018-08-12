@@ -555,7 +555,7 @@ class Ticket extends CommonObject
      * @param  int    $offset    Offset for query
      * @param  int    $arch      archive or not (not used)
      * @param  array  $filter    Filter for query
-     *            output
+     *                           output
      * @return int <0 if KO, >0 if OK
      */
     public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
@@ -1614,11 +1614,11 @@ class Ticket extends CommonObject
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $info_sendto['email'], $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
-                if ($mailfile->error || $mailfile->errors) 
+                if ($mailfile->error || $mailfile->errors)
                 {
                     setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-                } 
-                else 
+                }
+                else
                 {
                     $result = $mailfile->sendfile();
                     if ($result > 0) {

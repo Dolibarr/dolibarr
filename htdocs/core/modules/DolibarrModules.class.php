@@ -377,8 +377,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @param   array  		$array_sql  SQL requests to be executed when enabling module
 	 * @param   string      $options    String with options when disabling module:
-	 *                                    'noboxes' = Do not insert boxes
-	 *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+	 *                                  - 'noboxes' = Do not insert boxes
+	 *                                  - 'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
 	 *
 	 * @return  int                         1 if OK, 0 if KO
 	 */
@@ -468,7 +468,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @param   string[]    $array_sql  SQL requests to be executed when module is disabled
 	 * @param   string      $options	Options when disabling module:
-	 *                                    'newboxdefonly|noboxes' = We don't remove boxes.
+	 *                                  - 'newboxdefonly|noboxes' = We don't remove boxes.
 	 *
 	 * @return  int                     1 if OK, 0 if KO
 	 */

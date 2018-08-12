@@ -803,7 +803,7 @@ class ProductFournisseur extends Product
      *  @param  int     $showsuptitle     Show "Supplier" into output string
      *  @param  int     $maxlen           Max length of name
      *  @param  integer $notooltip        1=Disable tooltip
-     *  @param  array   $productFournList  list of ProductFournisseur objects
+     *  @param  array   $productFournList list of ProductFournisseur objects
      *                                    to display in table format.
      *  @return string                    String with supplier price
      */
@@ -850,4 +850,3 @@ class ProductFournisseur extends Product
 	}
 
 }
-
