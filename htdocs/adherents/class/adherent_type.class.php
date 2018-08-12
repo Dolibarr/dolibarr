@@ -142,7 +142,7 @@ class AdherentType extends CommonObject
 	/**
 	 *  Met a jour en base donnees du type
 	 *
-	 *  	@param	User		$user			Object user making change
+	 *  @param	User	$user			Object user making change
 	 *  @param	int		$notrigger		1=do not execute triggers, 0 otherwise
 	 *  @return	int						>0 if OK, < 0 if KO
 	 */
@@ -172,7 +172,7 @@ class AdherentType extends CommonObject
 			$action='update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
