@@ -121,7 +121,7 @@ abstract class ActionsCardCommon
             {
                 $this->object->particulier		= GETPOST("private");
 
-                $this->object->name				= empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?trim($_POST["firstname"].' '.$_POST["lastname"]):trim($_POST["lastname"].' '.$_POST["firstname"]);
+                $this->object->name				= dolGetFirstLastname(GETPOST('firstname','alpha'),GETPOST('lastname','alpha'));
                 $this->object->civility_id		= $_POST["civility_id"];
                 // Add non official properties
                 $this->object->name_bis        	= $_POST["lastname"];
