@@ -1572,9 +1572,12 @@ class Form
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
 		if (! empty($morefilter)) $sql.=" ".$morefilter;
 
-		if(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)){
+		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+		{
 			$sql.= " ORDER BY u.firstname ASC";
-		}else{
+		}
+		else
+		{
 			$sql.= " ORDER BY u.lastname ASC";
 		}
 
@@ -1621,9 +1624,11 @@ class Form
 						$out.= '>';
 					}
 
-					$fullNameMode = 0; //Lastname + firstname
-					if(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)){
-						$fullNameMode = 1; //firstname + lastname
+					// $fullNameMode is 0=Lastname+Firstname (MAIN_FIRSTNAME_NAME_POSITION=1), 1=Firstname+Lastname (MAIN_FIRSTNAME_NAME_POSITION=0)
+					$fullNameMode = 0;
+					if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))
+					{
+						$fullNameMode = 1; //Firstname+lastname
 					}
 					$out.= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 
