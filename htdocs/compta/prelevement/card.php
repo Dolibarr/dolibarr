@@ -419,6 +419,6 @@ if ($id > 0 || $ref)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

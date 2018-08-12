@@ -2538,5 +2538,6 @@ if (! empty($conf->api->enabled) && ! empty($conf->use_javascript_ajax))
 	print '</script>';
 }
 
+// End of page
 llxFooter();
 $db->close();

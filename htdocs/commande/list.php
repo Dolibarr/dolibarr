@@ -78,6 +78,7 @@ $search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
 $optioncss = GETPOST('optioncss','alpha');
 $billed = GETPOST('billed','int');
 $viewstatut=GETPOST('viewstatut');
+$search_project_ref=GETPOST('search_project_ref','alpha');
 
 // Security check
 $id = (GETPOST('orderid')?GETPOST('orderid','int'):GETPOST('id','int'));

@@ -1179,6 +1179,7 @@ BrowserIsKO=You are using the %s web browser. This browser is known to be a bad 
 XDebugInstalled=XDebug is loaded.
 XCacheInstalled=XCache is loaded.
 AddRefInList=Display Customer/Supplier ref. info list (select list or combobox) and most of hyperlink.<br>Third Parties will appear with a name format of "CC12345 - SC45678 - The Big Company corp." instead of "The Big Company corp".
+AddAdressInList=Display Customer/Supplier adress info list (select list or combobox)<br>Third Parties will appear with a name format of "The Big Company corp. - 21 jump street 123456 Big town - USA" instead of "The Big Company corp".
 AskForPreferredShippingMethod=Ask for preferred sending method for Third Parties.
 FieldEdition=Edition of field %s
 FillThisOnlyIfRequired=Example: +2 (fill only if timezone offset problems are experienced)

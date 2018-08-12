@@ -587,5 +587,6 @@ pt($db, $sql, $langs->trans("Month"));
 
 print '</div></div>';
 
+// End of page
 llxFooter();
 $db->close();

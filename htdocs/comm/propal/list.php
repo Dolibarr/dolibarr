@@ -159,6 +159,7 @@ $arrayfields=array(
 	'p.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
 	'p.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
 	'u.login'=>array('label'=>$langs->trans("Author"), 'checked'=>1, 'position'=>10),
+	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -310,7 +311,7 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
 if ($search_ref)         $sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('p.ref_client', $search_refcustomer);
-if ($search_refproject) $sql .= natural_search('pr.ref', $search_refproject);
+if ($search_refproject)  $sql .= natural_search('pr.ref', $search_refproject);
 if ($search_availability) $sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
 
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
@@ -667,6 +668,10 @@ if ($resql)
 		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
 	}
+	if (! empty($arrayfields['sale_representative']['checked']))
+	{
+		print '<td class="liste_titre"></td>';
+	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
 
@@ -721,6 +726,7 @@ if ($resql)
 	if (! empty($arrayfields['p.total_vat']['checked']))      print_liste_field_titre($arrayfields['p.total_vat']['label'],$_SERVER["PHP_SELF"],'p.tva','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.total_ttc']['checked']))      print_liste_field_titre($arrayfields['p.total_ttc']['label'],$_SERVER["PHP_SELF"],'p.total','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'],$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "","","$param",'',$sortfield,$sortorder);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -941,6 +947,51 @@ if ($resql)
 			else print '&nbsp;';
 			print "</td>\n";
 			if (! $i) $totalarray['nbfield']++;
+		}
+
+		if (! empty($arrayfields['sale_representative']['checked']))
+		{
+			// Sales representatives
+			print '<td>';
+			if ($obj->socid > 0)
+			{
+				$listsalesrepresentatives=$companystatic->getSalesRepresentatives($user);
+				if ($listsalesrepresentatives < 0) dol_print_error($db);
+				$nbofsalesrepresentative=count($listsalesrepresentatives);
+				if ($nbofsalesrepresentative > 3)   // We print only number
+				{
+					print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$companystatic->id.'">';
+					print $nbofsalesrepresentative;
+					print '</a>';
+				}
+				else if ($nbofsalesrepresentative > 0)
+				{
+					$userstatic=new User($db);
+					$j=0;
+					foreach($listsalesrepresentatives as $val)
+					{
+						$userstatic->id=$val['id'];
+						$userstatic->lastname=$val['lastname'];
+						$userstatic->firstname=$val['firstname'];
+						$userstatic->email=$val['email'];
+						$userstatic->statut=$val['statut'];
+						$userstatic->entity=$val['entity'];
+						$userstatic->photo=$val['photo'];
+
+						//print '<div class="float">':
+						print $userstatic->getNomUrl(-2);
+						$j++;
+						if ($j < $nbofsalesrepresentative) print ' ';
+						//print '</div>';
+					}
+				}
+				//else print $langs->trans("NoSalesRepresentativeAffected");
+			}
+			else
+			{
+				print '&nbsp';
+			}
+			print '</td>';
 		}
 
 		// Extra fields

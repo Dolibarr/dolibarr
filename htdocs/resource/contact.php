@@ -162,6 +162,6 @@ if ($id > 0 || ! empty($ref))
 	include DOL_DOCUMENT_ROOT.'/core/tpl/contacts.tpl.php';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

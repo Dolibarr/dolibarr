@@ -28,6 +28,14 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
+-- Missing in 8.0 ?
+ALTER TABLE llx_accounting_account MODIFY COLUMN fk_pcg_version varchar(32) NOT NULL;
+ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
+
+-- For 9.0
+
+ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent varchar(32) DEFAULT NULL;
+
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
 ALTER TABLE llx_extrafields ADD COLUMN totalizable boolean DEFAULT FALSE after list;
 

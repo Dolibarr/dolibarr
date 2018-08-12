@@ -675,8 +675,8 @@ if ($user->admin && empty($conf->global->MAIN_REMOVE_INSTALL_WARNING))
 
 //print 'mem='.memory_get_usage().' - '.memory_get_peak_usage();
 
+// End of page
 llxFooter();
-
 $db->close();
 
 

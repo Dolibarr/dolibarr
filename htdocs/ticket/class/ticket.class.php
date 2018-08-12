@@ -555,7 +555,7 @@ class Ticket extends CommonObject
      * @param  int    $offset    Offset for query
      * @param  int    $arch      archive or not (not used)
      * @param  array  $filter    Filter for query
-     *            output
+     *                           output
      * @return int <0 if KO, >0 if OK
      */
     public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')

@@ -537,5 +537,6 @@ else if ($modecompta=="BOOKKEEPING")
 print "</table>";
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

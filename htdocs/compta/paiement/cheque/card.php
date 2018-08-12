@@ -806,8 +806,6 @@ if ($action != 'new')
 	}
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

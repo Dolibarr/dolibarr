@@ -97,7 +97,7 @@ if ($object->id)
     dol_fiche_head($head, 'documents', $title, -1, 'contact');
 
 
-    // Construit liste des fichiers
+    // Build file list
     $filearray=dol_dir_list($upload_dir,"files",0,'','(\.meta|_preview.*\.png)$',$sortfield,(strtolower($sortorder)=='desc'?SORT_DESC:SORT_ASC),1);
     $totalsize=0;
     foreach($filearray as $key => $file)

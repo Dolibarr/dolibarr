@@ -299,5 +299,6 @@ if ($action == 'edit') { ?>
 	<?php
 }
 
+// End of page
 llxFooter();
-$db->close();
+$db->close();;

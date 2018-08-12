@@ -487,6 +487,7 @@ abstract class CommonDocGenerator
 		$resarray= array(
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
+			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines
 			'line_product_label'=>$line->product_label,
 			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,

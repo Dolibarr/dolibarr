@@ -532,7 +532,6 @@ if ($result > 0)
 }
 else dol_print_error('','RecordNotFound');
 
-
+// End of page
 llxFooter();
-
 $db->close();
