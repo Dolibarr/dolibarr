@@ -47,7 +47,10 @@ $result = restrictedArea($user, 'prelevement', '', '', 'bons');
 $action = GETPOST('action','alpha');
 $mode = GETPOST('mode','alpha')?GETPOST('mode','alpha'):'real';
 $format = GETPOST('format','aZ09');
-
+$limit = GETPOST('limit')?GETPOST('limit','int'):$conf->liste_limit;
+$page = GETPOST("page",'int');
+if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+$offset = $limit * $page;
 
 /*
  * Actions
@@ -196,13 +199,33 @@ $sql.= " AND pfd.traite = 0";
 $sql.= " AND pfd.fk_facture = f.rowid";
 if ($socid) $sql.= " AND f.fk_soc = ".$socid;
 
+$nbtotalofrecords = '';
+if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
+{
+	$result = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($result);
+}
+
+$sql.= $db->plimit($limit+1,$offset);
+
 $resql=$db->query($sql);
 if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
 
-	print load_fiche_titre($langs->trans("InvoiceWaitingWithdraw").($num > 0?' ('.$num.')':''),'','');
+    $param='';
+	if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
+	if($socid) $param .= '&socid='.urlencode($socid);
+    if($option) $param .= "&option=".urlencode($option);
+
+    if(! empty($page) && $num <= $nbtotalofrecords) $page = 0;
+
+    print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+	print '<input type="hidden" name="page" value="'.$page.'">';
+
+    print_barre_liste($langs->trans("InvoiceWaitingWithdraw"),$page,$_SERVER['PHP_SELF'],$param,'','','',$num,$nbtotalofrecords,'title_accountancy.png',0,'','', $limit);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
@@ -219,7 +242,7 @@ if ($resql)
 		require_once DOL_DOCUMENT_ROOT . '/societe/class/companybankaccount.class.php';
 		$bac = new CompanyBankAccount($db);
 
-		while ($i < $num && $i < 20)
+		while ($i < $num && $i < $limit)
 		{
 			$obj = $db->fetch_object($resql);
 
@@ -260,6 +283,7 @@ if ($resql)
 	}
 	else print '<tr '.$bc[0].'><td colspan="5" class="opacitymedium">'.$langs->trans("None").'</td></tr>';
 	print "</table>";
+	print "</form>";
 	print "<br>\n";
 }
 else

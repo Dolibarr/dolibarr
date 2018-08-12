@@ -1070,7 +1070,11 @@ class Form
 		$outarray=array();
 
 		// Clean $filter that may contains sql conditions so sql code
-		if (function_exists('test_sql_and_script_inject')) $filter = test_sql_and_script_inject($filter, 3);
+		if (function_exists('test_sql_and_script_inject')) {
+			if (test_sql_and_script_inject($filter, 3)>0) {
+				$filter ='';
+			}
+		}
 
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
