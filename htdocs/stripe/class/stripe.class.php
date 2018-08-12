@@ -380,7 +380,7 @@ class Stripe extends CommonObject
 			"dol_type" => "" . $origin . "",
 			"dol_thirdparty_id" => "" . $societe->id . "",
       "FULLTAG" => $description,
-      'Recipient' => $societe->name, 
+			'dol_thirdparty_name' => $societe->name, 
 			'dol_version'=>DOL_VERSION,
 			'dol_entity'=>$conf->entity,
 			'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])
