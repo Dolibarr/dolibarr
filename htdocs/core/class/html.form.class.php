@@ -1091,8 +1091,18 @@ class Form
 
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
+
+		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+			$sql .= " ,s.address, s.zip, s.town";
+		 	$sql .= " , dictp.code as country_code";
+		}
+
+		$sql.= " FROM (".MAIN_DB_PREFIX ."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " )";
+		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+			$sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid=s.fk_pays";
+		}
 		$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 		if (! empty($user->socid)) $sql.= " AND s.rowid = ".$user->socid;
 		if ($filter) $sql.= " AND (".$filter.")";
@@ -1179,6 +1189,13 @@ class Form
 						if ($obj->client == 2 || $obj->client == 3) $label.=($obj->client==3?', ':'').$langs->trans("Prospect");
 						if ($obj->fournisseur) $label.=($obj->client?', ':'').$langs->trans("Supplier");
 						if ($obj->client || $obj->fournisseur) $label.=')';
+					}
+
+					if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+						$label.='-'.$obj->address.'-'. $obj->zip.' '. $obj->town;
+						if (!empty($obj->country_code)) {
+							$label.= ' '. $langs->trans('Country'.$obj->country_code);
+						}
 					}
 
 					if (empty($outputmode))

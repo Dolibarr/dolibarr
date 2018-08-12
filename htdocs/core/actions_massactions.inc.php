@@ -378,7 +378,7 @@ if (! $error && $massaction == 'confirm_presend')
 					//var_dump($filepath);
 
 					// Send mail (substitutionarray must be done just before this)
-					require_once(DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php');
+					require_once DOL_DOCUMENT_ROOT.'/core/class/CMailFile.class.php';
 					$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,$sendtobcc,$deliveryreceipt,-1);
 					if ($mailfile->error)
 					{
@@ -433,7 +433,7 @@ if (! $error && $massaction == 'confirm_presend')
 								if (! empty($triggername))
 								{
 									// Appel des triggers
-									include_once(DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php");
+									include_once DOL_DOCUMENT_ROOT . "/core/class/interfaces.class.php";
 									$interface=new Interfaces($db);
 									$result=$interface->run_triggers($triggername, $objectobj, $user, $langs, $conf);
 									if ($result < 0) { $error++; $errors=$interface->errors; }
@@ -703,7 +703,7 @@ if ($massaction == 'confirm_createbills')
 	if (! $error)
 	{
 		$db->commit();
-		setEventMessage($langs->trans('BillCreated', $nb_bills_created));
+		setEventMessages($langs->trans('BillCreated', $nb_bills_created), null, 'mesgs');
 
 		// Make a redirect to avoid to bill twice if we make a refresh or back
 		$param='';
@@ -825,7 +825,8 @@ if (! $error && $massaction == "builddoc" && $permtoread && ! GETPOST('button_se
 	}
 
 	$arrayofinclusion=array();
-	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf).'.pdf','/').'$';
+	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf),'/').'\.pdf$';
+	foreach($listofobjectref as $tmppdf) $arrayofinclusion[]='^'.preg_quote(dol_sanitizeFileName($tmppdf),'/').'_[a-zA-Z0-9-_]+\.pdf$';	// To include PDF generated from ODX files
 	$listoffiles = dol_dir_list($uploaddir,'all',1,implode('|',$arrayofinclusion),'\.meta$|\.png','date',SORT_DESC,0,true);
 
 	// build list of files with full path

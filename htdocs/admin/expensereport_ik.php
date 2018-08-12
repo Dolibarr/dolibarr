@@ -179,6 +179,7 @@ echo '</table>';
 echo '</form>';
 
 dol_fiche_end();
-llxFooter();
 
+// End of page
+llxFooter();
 $db->close();

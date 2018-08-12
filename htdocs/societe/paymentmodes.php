@@ -1610,7 +1610,6 @@ if ($socid && ($action == 'create' || $action == 'createcard') && $user->rights-
 	print '</form>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

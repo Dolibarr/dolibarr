@@ -50,9 +50,9 @@ if ($_POST) {
 		$object->label = $label;
 
 		if ($object->update($user) < 1) {
-			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+			setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 		} else {
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$id, 2));
 			exit();
 		}
@@ -77,9 +77,9 @@ if ($_POST) {
 			if (! $error)
 			{
 				if ($objectval->update($user) > 0) {
-					setEventMessage($langs->trans('RecordSaved'));
+					setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				} else {
-					setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+					setEventMessage($langs->trans('CoreErrorMessage'), null, 'errors');
 				}
 			}
 		}
@@ -99,11 +99,11 @@ if ($confirm == 'yes') {
 
 		if ($res < 1 || ($object->delete() < 1)) {
 			$db->rollback();
-			setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+			setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
 		} else {
 			$db->commit();
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.dol_buildpath('/variants/list.php', 2));
 		}
 		exit();
@@ -113,9 +113,9 @@ if ($confirm == 'yes') {
 		if ($objectval->fetch($valueid) > 0) {
 
 			if ($objectval->delete() < 1) {
-				setEventMessage($langs->trans('CoreErrorMessage'), 'errors');
+				setEventMessages($langs->trans('CoreErrorMessage'), null, 'errors');
 			} else {
-				setEventMessage($langs->trans('RecordSaved'));
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			}
 
 			header('Location: '.dol_buildpath('/variants/card.php?id='.$object->id, 2));
@@ -299,5 +299,6 @@ if ($action == 'edit') { ?>
 	<?php
 }
 
+// End of page
 llxFooter();
-$db->close();
+$db->close();;

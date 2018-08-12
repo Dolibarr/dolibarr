@@ -26,7 +26,7 @@
  *      \brief      Page ajout de categories bancaires
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/bankcateg.class.php';
 
@@ -144,4 +144,6 @@ if ($action != 'edit')
 
 print '</table></form>';
 
+// End of page
 llxFooter();
+$db->close();

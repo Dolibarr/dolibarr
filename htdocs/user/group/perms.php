@@ -349,5 +349,6 @@ if ($object->id > 0)
     dol_fiche_end();
 }
 
+// End of page
 llxFooter();
 $db->close();

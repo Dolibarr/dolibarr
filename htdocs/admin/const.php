@@ -314,7 +314,6 @@ if ($conf->use_javascript_ajax)
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

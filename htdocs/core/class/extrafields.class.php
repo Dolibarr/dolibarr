@@ -9,6 +9,7 @@
  * Copyright (C) 2015       Charles-Fr BENKE        <charles.fr@benke.fr>
  * Copyright (C) 2016       Raphaël Doursenaud      <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2017       Nicolas ZABOURI         <info@inovea-conseil.com>
+ * Copyright (C) 2018       Frédéric France         <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -516,14 +517,15 @@ class ExtraFields
 	 *  @param  string  $entity	            Entity of extrafields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
+     *  @param  int     $totalizable        Is extrafield totalizable on list
 	 * 	@return	int							>0 if OK, <=0 if KO
 	 */
-	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $help='', $default='', $computed='', $entity='', $langfile='', $enabled='1')
+	function update($attrname, $label, $type, $length, $elementtype, $unique=0, $required=0, $pos=0, $param='', $alwayseditable=0, $perms='', $list='', $help='', $default='', $computed='', $entity='', $langfile='', $enabled='1', $totalizable=0)
 	{
 		if ($elementtype == 'thirdparty') $elementtype='societe';
 		if ($elementtype == 'contact') $elementtype='socpeople';
 
-		$table=$elementtype.'_extrafields';
+        $table=$elementtype.'_extrafields';
 		if ($elementtype == 'categorie') $table='categories_extrafields';
 
 		if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-_]*$/",$attrname))
@@ -568,7 +570,7 @@ class ExtraFields
 			{
 				if ($label)
 				{
-					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$help,$default,$computed,$entity,$langfile,$enabled);
+					$result=$this->update_label($attrname,$label,$type,$length,$elementtype,$unique,$required,$pos,$param,$alwayseditable,$perms,$list,$help,$default,$computed,$entity,$langfile,$enabled, $totalizable);
 				}
 				if ($result > 0)
 				{
@@ -625,12 +627,13 @@ class ExtraFields
 	 *  @param  string  $entity     		Entity of extrafields
 	 *  @param	string	$langfile			Language file
 	 *  @param  string  $enabled  			Condition to have the field enabled or not
-	 *  @return	int							<=0 if KO, >0 if OK
+     *  @param  int     $totalizable        Is extrafield totalizable on list
+     *  @return	int							<=0 if KO, >0 if OK
 	 */
-	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list='0',$help='',$default='',$computed='',$entity='',$langfile='',$enabled='1')
+	private function update_label($attrname,$label,$type,$size,$elementtype,$unique=0,$required=0,$pos=0,$param='',$alwayseditable=0,$perms='',$list='0',$help='',$default='',$computed='',$entity='',$langfile='',$enabled='1', $totalizable=0)
 	{
 		global $conf, $user;
-		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled);
+		dol_syslog(get_class($this)."::update_label ".$attrname.", ".$label.", ".$type.", ".$size.", ".$elementtype.", ".$unique.", ".$required.", ".$pos.", ".$alwayseditable.", ".$perms.", ".$list.", ".$default.", ".$computed.", ".$entity.", ".$langfile.", ".$enabled.", ".$totalizable);
 
 		// Clean parameters
 		if ($elementtype == 'thirdparty') $elementtype='societe';
@@ -638,6 +641,9 @@ class ExtraFields
 
 		if (empty($pos)) $pos=0;
 		if (empty($list)) $list='0';
+        if (empty($totalizable)) {
+            $totalizable = 0;
+        }
 		if (empty($required)) $required=0;
 		if (empty($unique)) $unique=0;
 		if (empty($alwayseditable)) $alwayseditable=0;
@@ -681,6 +687,7 @@ class ExtraFields
 			$sql.= " alwayseditable,";
 			$sql.= " param,";
 			$sql.= " list,";
+            $sql.= " totalizable,";
 			$sql.= " fielddefault,";
 			$sql.= " fieldcomputed,";
 			$sql.= " fk_user_author,";
@@ -703,6 +710,7 @@ class ExtraFields
 			$sql.= " '".$this->db->escape($alwayseditable)."',";
 			$sql.= " '".$this->db->escape($params)."',";
 			$sql.= " '".$this->db->escape($list)."', ";
+            $sql.= " ".$totalizable.",";
 			$sql.= " ".(($default!='')?"'".$this->db->escape($default)."'":"null").",";
 			$sql.= " ".($computed?"'".$this->db->escape($computed)."'":"null").",";
 			$sql .= " " . $user->id . ",";
@@ -774,7 +782,7 @@ class ExtraFields
 		// We should not have several time this log. If we have, there is some optimization to do by calling a simple $object->fetch_optionals() that include cache management.
 		dol_syslog("fetch_name_optionals_label elementtype=".$elementtype);
 
-		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,fielddefault,fieldcomputed,entity,enabled,help";
+		$sql = "SELECT rowid,name,label,type,size,elementtype,fieldunique,fieldrequired,param,pos,alwayseditable,perms,langs,list,totalizable,fielddefault,fieldcomputed,entity,enabled,help";
 		$sql.= " FROM ".MAIN_DB_PREFIX."extrafields";
 		$sql.= " WHERE entity IN (0,".$conf->entity.")";
 		if ($elementtype) $sql.= " AND elementtype = '".$elementtype."'";	// Filed with object->table_element
@@ -808,6 +816,7 @@ class ExtraFields
 					$this->attribute_perms[$tab->name]=(strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attribute_langfile[$tab->name]=$tab->langs;
 					$this->attribute_list[$tab->name]=$tab->list;
+					$this->attribute_totalizable[$tab->name]=$tab->totalizable;
 					$this->attribute_entityid[$tab->name]=$tab->entity;
 					$this->attribute_entitylabel[$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 
@@ -826,6 +835,7 @@ class ExtraFields
 					$this->attributes[$tab->elementtype]['perms'][$tab->name]=(strlen($tab->perms) == 0 ? 1 : $tab->perms);
 					$this->attributes[$tab->elementtype]['langfile'][$tab->name]=$tab->langs;
 					$this->attributes[$tab->elementtype]['list'][$tab->name]=$tab->list;
+                    $this->attributes[$tab->elementtype]['totalizable'][$tab->name]=$tab->totalizable;
 					$this->attributes[$tab->elementtype]['entityid'][$tab->name]=$tab->entity;
 					$this->attributes[$tab->elementtype]['entitylabel'][$tab->name]=(empty($labelmulticompany[$tab->entity])?'Entity'.$tab->entity:$labelmulticompany[$tab->entity]);
 					$this->attributes[$tab->elementtype]['enabled'][$tab->name]=$tab->enabled;
@@ -887,6 +897,7 @@ class ExtraFields
 			$perms=dol_eval($this->attributes[$extrafieldsobjectkey]['perms'][$key], 1);
 			$langfile=$this->attributes[$extrafieldsobjectkey]['langfile'][$key];
 			$list=dol_eval($this->attributes[$extrafieldsobjectkey]['list'][$key], 1);
+			$totalizable=$this->attributes[$extrafieldsobjectkey]['totalizable'][$key];
 			$help=$this->attributes[$extrafieldsobjectkey]['help'][$key];
 			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
@@ -903,6 +914,7 @@ class ExtraFields
 			$param=$this->attribute_param[$key];
 			$langfile=$this->attribute_langfile[$key];
 			$list=$this->attribute_list[$key];
+			$totalizable=$this->attribute_totalizable[$key];
 			$hidden=(empty($list) ? 1 : 0);		// If empty, we are sure it is hidden, otherwise we show. If it depends on mode (view/create/edit form or list, this must be filtered by caller)
 		}
 
@@ -1754,7 +1766,7 @@ class ExtraFields
 
 		$align='';
 
-		if ($type == 'date')
+        if ($type == 'date')
 		{
 			$align="center";
 		}
@@ -1781,6 +1793,10 @@ class ExtraFields
 		elseif ($type == 'checkbox')
 		{
 			$align="center";
+		}
+		elseif ($type == 'price')
+		{
+			$align="right";
 		}
 
 		return $align;

@@ -336,7 +336,6 @@ if ($id > 0 && ! preg_match('/^add/i',$action))
 
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

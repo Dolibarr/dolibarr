@@ -354,7 +354,7 @@ if (! empty($conf->use_javascript_ajax))
 	print '</script>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();
 

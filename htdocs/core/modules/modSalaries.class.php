@@ -5,7 +5,7 @@
  * Copyright (C) 2004		Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2012	Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2014		Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro.dolibarr@gmail.com>
+ * Copyright (C) 2014		Alexandre Spangaro	 <aspangaro@zendsi.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,11 +23,11 @@
  */
 
 /**
- * 		\defgroup   salaries		Module salaries
- * 		\brief      Module to include salaries management
- *      \file       htdocs/core/modules/modSalaries.class.php
- *      \ingroup    salaries
- *      \brief      File to activate module salaries
+ *  \defgroup   salaries		Module salaries
+ *  \brief      Module to include salaries management
+ *  \file       htdocs/core/modules/modSalaries.class.php
+ *  \ingroup    salaries
+ *  \brief      File to activate module salaries
  */
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
@@ -184,7 +184,7 @@ class modSalaries extends DolibarrModules
 	 *		The init function add constants, boxes, permissions and menus (defined in constructor) into Dolibarr database.
 	 *		It also creates data directories
 	 *
-     *      @param      string	$options    Options when enabling module ('', 'noboxes')
+	 *      @param      string	$options    Options when enabling module ('', 'noboxes')
 	 *      @return     int             	1 if OK, 0 if KO
 	 */
 	function init($options='')

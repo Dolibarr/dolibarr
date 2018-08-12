@@ -1113,7 +1113,7 @@ class Expedition extends CommonObject
 		// Stock control
 		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
-			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
 

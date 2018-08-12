@@ -303,8 +303,6 @@ if ($object->fetch($id) >= 0)
 			// Sort $modulenames
 			sort($modulenames);
 
-			$var = true;
-
 			// Loop on each submodule
             foreach($modulenames as $modulename)
             {
@@ -330,16 +328,14 @@ if ($object->fetch($id) >= 0)
 				// Si le module mailing est qualifie
 				if ($qualified)
 				{
-					$var = ! $var;
-
 					if ($allowaddtarget)
 					{
-						print '<form '.$bctag[$var].' name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
+						print '<form class="oddeven tagtr" name="'.$modulename.'" action="'.$_SERVER['PHP_SELF'].'?action=add&id='.$object->id.'&module='.$modulename.'" method="POST" enctype="multipart/form-data">';
 						print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 					}
 					else
 					{
-					    print '<div '.$bctag[$var].'>';
+					    print '<div class="oddeven tagtr">';
 					}
 
 					print '<div class="tagtd">';
@@ -649,7 +645,6 @@ if ($object->fetch($id) >= 0)
 
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

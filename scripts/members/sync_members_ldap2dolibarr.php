@@ -34,11 +34,11 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 	exit(-1);
 }
 
-require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
+require_once DOL_DOCUMENT_ROOT."/adherents/class/adherent.class.php";
+require_once DOL_DOCUMENT_ROOT."/adherents/class/subscription.class.php";
 
 $langs->load("main");
 $langs->load("errors");

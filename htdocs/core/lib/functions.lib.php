@@ -253,19 +253,19 @@ function GETPOSTISSET($paramname)
  *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
- *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check
- *                                  ''=no check (deprecated)
- *                                  'none'=no check (only for param that should have very rich content)
- *                                  'int'=check it's numeric (integer or float)
- *                                  'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                                  'alpha'=check it's text and sign
- *                                  'aZ'=check it's a-z only
- *                                  'aZ09'=check it's simple alpha string (recommended for keys)
- *                                  'array'=check it's array
- *                                  'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                                  'nohtml', 'alphanohtml'=check there is no html content
- *                                  'custom'= custom filter specify $filter and $options)
+ *  @param  string  $paramname   Name of parameter to found
+ *  @param  string  $check	     Type of check
+ *                               ''=no check (deprecated)
+ *                               'none'=no check (only for param that should have very rich content)
+ *                               'int'=check it's numeric (integer or float)
+ *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
+ *                               'alpha'=check it's text and sign
+ *                               'aZ'=check it's a-z only
+ *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'array'=check it's array
+ *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                               'nohtml', 'alphanohtml'=check there is no html content
+ *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
@@ -7174,11 +7174,11 @@ function dol_getmypid()
 /**
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
- * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR). Example: array("p.field1","p.field2")
- * @param 	string 			$value 		The value to look for.
+ * @param   string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR). Example: array("p.field1","p.field2")
+ * @param   string 			$value 		The value to look for.
  *                          		    If param $mode is 0, can contains several keywords separated with a space or |
- *                                         like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
- *                                         or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
+ *                                      like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
+ *                                      or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"

@@ -1453,7 +1453,7 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0, $arrayofjs
  *  @param		string	$morequerystring	Query string to add to the link "print" to get same parameters (use only if autodetect fails)
  *  @param      string	$helppagename    	Name of wiki page for help ('' by default).
  * 				     		                Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- * 									                   For other external page: http://server/url
+ * 						                    For other external page: http://server/url
  *  @return		void
  */
 function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $arrayofjs='', $arrayofcss='', $morequerystring='', $helppagename='')
@@ -1653,7 +1653,7 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
  *  @param  array	$menu_array_before 	       	Table of menu entries to show before entries of menu handler. This param is deprectaed and must be provided to ''.
  *  @param  string	$helppagename    	       	Name of wiki page for help ('' by default).
  * 				     		                   	Syntax is: For a wiki page: EN:EnglishPage|FR:FrenchPage|ES:SpanishPage
- * 									         		       For other external page: http://server/url
+ * 									         	For other external page: http://server/url
  *  @param  string	$notused             		Deprecated. Used in past to add content into left menu. Hooks can be used now.
  *  @param  array	$menu_array_after           Table of menu entries to show after entries of menu handler
  *  @param  int		$leftmenuwithoutmainarea    Must be set to 1. 0 by default for backward compatibility with old modules.
@@ -1732,7 +1732,7 @@ function left_menu($menu_array_before, $helppagename='', $notused='', $menu_arra
 		// Define $bookmarks
 		if (! empty($conf->bookmark->enabled) && $user->rights->bookmark->lire)
 		{
-			include_once (DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php');
+			include_once DOL_DOCUMENT_ROOT.'/bookmarks/bookmarks.lib.php';
 			$langs->load("bookmarks");
 
 			$bookmarks=printBookmarksList($db, $langs);
@@ -2071,4 +2071,3 @@ if (! function_exists("llxFooter"))
 		print "</html>\n";
 	}
 }
-

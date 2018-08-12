@@ -32,11 +32,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/tax.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 if (! empty($conf->projet->enabled))
 {
-	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 }
 if (! empty($conf->accounting->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 }
 
 // Load translation files required by the page
@@ -750,7 +750,6 @@ if ($id > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

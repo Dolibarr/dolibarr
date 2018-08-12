@@ -181,5 +181,6 @@ if ($result) {
 	print $db->error();
 }
 
+// End of page
 llxFooter();
 $db->close();

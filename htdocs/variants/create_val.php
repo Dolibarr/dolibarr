@@ -58,7 +58,7 @@ if ($cancel)
 if ($action == 'add')
 {
 	if (empty($ref) || empty($value)) {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	} else {
 
 		$objectval->fk_product_attribute = $object->id;
@@ -66,11 +66,11 @@ if ($action == 'add')
 		$objectval->value = $value;
 
 		if ($objectval->create($user) > 0) {
-			setEventMessage($langs->trans('RecordSaved'));
+			setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 			header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
 			exit();
 		} else {
-			setEventMessage($langs->trans('ErrorCreatingProductAttributeValue'), 'errors');
+			setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), null, 'errors');
 		}
 	}
 }
@@ -144,5 +144,6 @@ print '</div>';
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

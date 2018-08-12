@@ -361,6 +361,6 @@ print '
 	</script>
 ';
 
+// End of page
 llxFooter();
-
 $db->close();

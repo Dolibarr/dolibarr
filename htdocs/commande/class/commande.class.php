@@ -3430,7 +3430,7 @@ class Commande extends CommonOrder
 
         if (!$user->rights->commande->lire)
             $option = 'nolink';
-        
+
         if ($option !== 'nolink')
         {
             // Add param to save lastsearch_values or not
@@ -3474,11 +3474,11 @@ class Commande extends CommonOrder
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($option == 'nolink') {
+        if ($option === 'nolink') {
             $linkstart = '';
             $linkend = '';
         }
-        
+
         $result .= $linkstart;
         if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
         if ($withpicto != 2) $result.= $this->ref;
@@ -3860,6 +3860,7 @@ class OrderLine extends CommonOrderLine
         {
             $objp = $this->db->fetch_object($result);
             $this->rowid            = $objp->rowid;
+            $this->id				= $objp->rowid;
             $this->fk_commande      = $objp->fk_commande;
             $this->fk_parent_line   = $objp->fk_parent_line;
             $this->label            = $objp->custom_label;

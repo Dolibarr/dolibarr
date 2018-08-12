@@ -23,7 +23,7 @@
  *	\brief      Prelevement statistics
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/prelevement.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
@@ -193,5 +193,6 @@ if ($prev_id > 0 || $ref)
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

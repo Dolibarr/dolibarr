@@ -135,7 +135,7 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 			// Update
 			$pse->seuil_stock_alerte = $seuil_stock_alerte;
 			$pse->desiredstock  	 = $desiredstock;
-			if($pse->update($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseUpdated'));
+			if($pse->update($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseUpdated'), null, 'mesgs');
 
 		} else {
 
@@ -144,7 +144,7 @@ if ($action == 'addlimitstockwarehouse' && !empty($user->rights->produit->creer)
 			$pse->fk_product  	 	 = $id;
 			$pse->seuil_stock_alerte = GETPOST('seuil_stock_alerte');
 			$pse->desiredstock  	 = GETPOST('desiredstock');
-			if($pse->create($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseCreated'));
+			if($pse->create($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseCreated'), null, 'mesgs');
 
 		}
 
@@ -160,7 +160,7 @@ if($action == 'delete_productstockwarehouse' && !empty($user->rights->produit->c
 
 	$pse = new ProductStockEntrepot($db);
 	$pse->fetch(GETPOST('fk_productstockwarehouse'));
-	if($pse->delete($user) > 0) setEventMessage($langs->trans('ProductStockWarehouseDeleted'));
+	if($pse->delete($user) > 0) setEventMessages($langs->trans('ProductStockWarehouseDeleted'), null, 'mesgs');
 
 	$action = '';
 
@@ -176,7 +176,7 @@ if ($action == 'setseuil_stock_alerte' && !empty($user->rights->produit->creer))
     if ($result < 0)
     	setEventMessages($object->error, $object->errors, 'errors');
     //else
-    //	setEventMessage($lans->trans("SavedRecordSuccessfully"));
+    //	setEventMessages($lans->trans("SavedRecordSuccessfully"), null, 'mesgs');
     $action='';
 }
 

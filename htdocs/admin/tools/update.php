@@ -142,7 +142,6 @@ print '<hr>';
 
 print $langs->trans("GoModuleSetupArea", DOL_URL_ROOT.'/admin/modules.php?mode=deploy', $langs->transnoentities("Home").' - '.$langs->transnoentities("Setup").' - '.$langs->transnoentities("Modules"));
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -415,6 +415,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -5,6 +5,7 @@ SALARIES_ACCOUNTING_ACCOUNT_CHARGE=Accounting account by default for wage paymen
 Salary=Salary
 Salaries=Salaries
 NewSalaryPayment=New salary payment
+AddSalaryPayment=Add salary payment
 SalaryPayment=Salary payment
 SalariesPayments=Salaries payments
 ShowSalaryPayment=Show salary payment

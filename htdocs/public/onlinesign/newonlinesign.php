@@ -147,6 +147,7 @@ if (! empty($source) && in_array($ref, array('member_ref', 'contractline_ref', '
 {
     $langs->load("errors");
     dol_print_error_email('BADREFINONLINESIGNFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
+    // End of page
     llxFooter();
     $db->close();
     exit;

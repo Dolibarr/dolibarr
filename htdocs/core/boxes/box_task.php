@@ -22,8 +22,8 @@
  *  \brief      Module to Task activity of the current year
  */
 
-include_once(DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/date.lib.php");
+include_once DOL_DOCUMENT_ROOT."/core/boxes/modules_boxes.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/date.lib.php";
 
 
 /**
@@ -75,7 +75,7 @@ class box_task extends ModeleBoxes
 		$totalMnt = 0;
 		$totalnb = 0;
 		$totalDuree=0;
-		include_once(DOL_DOCUMENT_ROOT."/projet/class/task.class.php");
+		include_once DOL_DOCUMENT_ROOT."/projet/class/task.class.php";
 		$taskstatic=new Task($db);
 
 
