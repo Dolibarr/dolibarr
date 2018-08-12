@@ -67,7 +67,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-        
+
 		// Load traductions files requiredby by page
 		$langs->loadLangs(array("companies", "main"));
 
@@ -130,12 +130,9 @@ class doc_generic_project_odt extends ModelePDFProjects
             $array_key.'_statut'=>$object->getLibStatut()
 		);
 
-		// Retrieve extrafields
-		$extrafieldkey=$object->element;
-
 		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
-		$extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey,true);
+		$extralabels = $extrafields->fetch_name_optionals_label($object->table_element,true);
 		$object->fetch_optionals();
 
 		$resarray = $this->fill_substitutionarray_with_extrafields($object,$resarray,$extrafields,$array_key,$outputlangs);
@@ -154,7 +151,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 	{
 		global $conf;
 
-		return array(
+		$resarray = array(
 		'task_ref'=>$task->ref,
 		'task_fk_project'=>$task->fk_project,
 		'task_projectref'=>$task->projectref,
@@ -170,6 +167,16 @@ class doc_generic_project_odt extends ModelePDFProjects
 		'task_note_private'=>$task->note_private,
 		'task_note_public'=>$task->note_public
 		);
+
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+		$extrafields = new ExtraFields($this->db);
+		$extralabels = $extrafields->fetch_name_optionals_label($task->table_element,true);
+		$task->fetch_optionals($task->id,$extralabels);
+
+		$resarray = $this->fill_substitutionarray_with_extrafields($task,$resarray,$extrafields,'task',$outputlangs);
+
+		return $resarray;
+
 	}
 
 	/**
@@ -452,7 +459,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$sav_charset_output=$outputlangs->charset_output;
 		$outputlangs->charset_output='UTF-8';
-        
+
 		// Load translation files required by the page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 

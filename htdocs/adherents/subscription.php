@@ -330,7 +330,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 
         if (! $error)
         {
-//            $db->commit();
+            $db->commit();
         }
         else
         {

@@ -78,13 +78,15 @@ $search_day=GETPOST("search_day","int");
 $search_month=GETPOST("search_month","int");
 $search_year=GETPOST("search_year","int");
 $search_dayfin=GETPOST("search_dayfin","int");
-$search_monthfin=GETPOST("search_monthfin","int");
+$search_month_end=GETPOST("search_month_end","int");
 $search_yearfin=GETPOST("search_yearfin","int");
 $search_daydelivery=GETPOST("search_daydelivery","int");
 $search_monthdelivery=GETPOST("search_monthdelivery","int");
 $search_yeardelivery=GETPOST("search_yeardelivery","int");
 $search_availability=GETPOST('search_availability','int');
 $search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $viewstatut=GETPOST('viewstatut','alpha');
 $optioncss = GETPOST('optioncss','alpha');
@@ -98,7 +100,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -214,7 +216,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_month='';
 	$search_day='';
 	$search_yearfin='';
-	$search_monthfin='';
+	$search_month_end='';
 	$search_dayfin='';
 	$search_yeardelivery='';
 	$search_monthdelivery='';
@@ -344,14 +346,14 @@ else if ($search_year > 0)
 {
 	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
-if ($search_monthfin > 0)
+if ($search_month_end > 0)
 {
 	if ($search_yearfin > 0 && empty($search_dayfin))
-		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_get_first_day($search_yearfin,$search_monthfin,false))."' AND '".$db->idate(dol_get_last_day($search_yearfin,$search_monthfin,false))."'";
+		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_get_first_day($search_yearfin,$search_month_end,false))."' AND '".$db->idate(dol_get_last_day($search_yearfin,$search_month_end,false))."'";
 	else if ($search_yearfin > 0 && ! empty($search_dayfin))
-		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_monthfin, $search_dayfin, $search_yearfin))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_monthfin, $search_dayfin, $search_yearfin))."'";
+		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_end, $search_dayfin, $search_yearfin))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_end, $search_dayfin, $search_yearfin))."'";
 	else
-		$sql.= " AND date_format(p.fin_validite, '%m') = '".$db->escape($search_monthfin)."'";
+		$sql.= " AND date_format(p.fin_validite, '%m') = '".$db->escape($search_month_end)."'";
 }
 else if ($search_yearfin > 0)
 {
@@ -616,7 +618,7 @@ if ($resql)
 		print '<td class="liste_titre nowraponall" align="center">';
 		//print $langs->trans('Month').': ';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25" type="text" maxlength="2" name="search_dayfin" value="'.dol_escape_htmltag($search_dayfin).'">';
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_monthfin" value="'.dol_escape_htmltag($search_monthfin).'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$formother->select_year($search_yearfin,'search_yearfin',1, 20, 5);
 		print '</td>';
