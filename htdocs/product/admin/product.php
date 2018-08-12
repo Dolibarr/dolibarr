@@ -144,6 +144,18 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value,'chaine',0,'',$conf->entity);
+	
+	$value = GETPOST('activate_useProdFournDesc', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value,'chaine',0,'',$conf->entity);
+	if ($value) {
+	    $sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
+	    $resql = $db->query($sql_test);
+	    if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') // if the field does not exist, we create it
+	    {
+	        $sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN desc_fourn text";
+	        $resql_new = $db->query($sql_new);
+	    }
+	}
 }
 
 if ($action == 'specimen') // For products
@@ -541,6 +553,7 @@ $rowspan = 4;
 if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
+if (! empty($conf->fournisseur->enabled)) $rowspan++;
 
 
 print '<tr class="oddeven">';
@@ -653,6 +666,15 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 	print '</tr>';
 }
 
+if (! empty($conf->fournisseur->enabled))
+{
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
+    print '<td width="60" align="right">';
+    print $form->selectyesno("activate_useProdFournDesc", (! empty($conf->global->PRODUIT_FOURN_TEXTS)?$conf->global->PRODUIT_FOURN_TEXTS:0), 1);
+    print '</td>';
+    print '</tr>';
+}
 
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
