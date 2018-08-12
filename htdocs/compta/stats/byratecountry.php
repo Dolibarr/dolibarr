@@ -414,7 +414,6 @@ print "</table>\n";
 	print '<br>'.$langs->trans("TurnoverPerSaleTaxRateInCommitmentAccountingNotRelevant") . '<br>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

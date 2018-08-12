@@ -334,6 +334,6 @@ if ($id)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();
