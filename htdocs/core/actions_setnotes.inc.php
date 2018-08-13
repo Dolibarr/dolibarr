@@ -32,8 +32,11 @@ if ($action == 'setnote_public' && ! empty($permissionnote) && ! GETPOST('cancel
 {
 	if (empty($action) || ! is_object($object) || empty($id)) dol_print_error('','Include of actions_setnotes.inc.php was done but required variable was not set before');
 	if (empty($object->id)) $object->fetch($id);	// Fetch may not be already done
+	
 	$result_update=$object->update_note(dol_html_entity_decode(GETPOST('note_public', 'none'), ENT_QUOTES),'_public');
-	if(in_array($object->table_element, array('commande_fournisseur', 'commande', 'propal', 'facture_fourn', 'facture' ))){
+
+	if (in_array($object->table_element, array('supplier_proposal', 'propal', 'commande_fournisseur', 'commande', 'facture_fourn', 'facture')))
+	{
 		// Define output language
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 		{
