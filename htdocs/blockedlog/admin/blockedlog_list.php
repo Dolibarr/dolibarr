@@ -131,7 +131,7 @@ else if (GETPOST('downloadcsv','alpha'))
 		{
 			// Make the first fetch to get first line
 			$obj = $db->fetch_object($res);
-			if ($obj) 
+			if ($obj)
 			{
 				$previoushash = $block_static->getPreviousHash(0, $obj->rowid);
 				$firstid = $obj->rowid;
