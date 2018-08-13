@@ -493,9 +493,10 @@ class Website extends CommonObject
 	 * @param	User	$user		User making the clone
 	 * @param 	int 	$fromid 	Id of object to clone
 	 * @param	string	$newref		New ref
+	 * @param	string	$newlang	New language
 	 * @return 	mixed 				New object created, <0 if KO
 	 */
-	public function createFromClone($user, $fromid, $newref)
+	public function createFromClone($user, $fromid, $newref, $newlang='')
 	{
         global $hookmanager, $langs;
 		global $dolibarr_main_data_root;
@@ -572,7 +573,7 @@ class Website extends CommonObject
 				dol_delete_file($filetplold);
 
 				// Create new file
-				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id);
+				$objectpagenew = $objectpageold->createFromClone($user, $pageid, $objectpageold->pageurl, '', 0, $object->id, 1);
 				//print $pageid.' = '.$objectpageold->pageurl.' -> '.$objectpagenew->id.' = '.$objectpagenew->pageurl.'<br>';
 				if (is_object($objectpagenew) && $objectpagenew->pageurl)
 				{
