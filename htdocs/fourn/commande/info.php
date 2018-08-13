@@ -221,7 +221,6 @@ if (!empty($object->id))
     show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters);
 }
 
-
-
+// End of page
 llxFooter();
 $db->close();
