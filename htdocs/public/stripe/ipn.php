@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2018
+/* Copyright (C) 2018 	Thibault FOUCART        <support@ptibogxiv.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ if (! $res && file_exists("../../main.inc.php")) $res=@include("../../main.inc.p
 if (! $res) die("Include of main fails");
 
 if (empty($conf->stripe->enabled)) accessforbidden('',0,0,1);
+require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/includes/stripe/init.php';
 require_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
@@ -123,7 +124,7 @@ $stripe=new Stripe($db);
 if ($event->type == 'payout.created') {
 	$error=0;
 
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
+	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0)
 	{
@@ -143,7 +144,7 @@ if ($event->type == 'payout.created') {
 elseif ($event->type == 'payout.paid') {
 	global $conf;
 	$error=0;
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
+	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
 	if ($result)
 	{
 		$langs->load("errors");
