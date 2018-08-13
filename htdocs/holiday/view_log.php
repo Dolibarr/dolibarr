@@ -138,6 +138,6 @@ print '</tbody>'."\n";
 print '</table>'."\n";
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

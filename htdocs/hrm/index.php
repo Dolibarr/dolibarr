@@ -397,8 +397,6 @@ if (! empty($conf->expensereport->enabled) && $user->rights->expensereport->lire
 
 print '</div></div></div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

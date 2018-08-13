@@ -685,9 +685,8 @@ if ($conn_id)
     }
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();
 
 

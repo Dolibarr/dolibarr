@@ -57,6 +57,6 @@ print '<table width="100%"><tr><td>';
 dol_print_object_info($object);
 print '</td></tr></table>';
 
+// End of page
 llxFooter();
-
 $db->close();

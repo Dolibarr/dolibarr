@@ -165,6 +165,6 @@ if ($year)
     }
 }
 
+// End of page
 llxFooter();
-
 $db->close();
