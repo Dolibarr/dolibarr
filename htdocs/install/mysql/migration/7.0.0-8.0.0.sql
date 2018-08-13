@@ -35,7 +35,7 @@
 -- Forgot in < 4.0
 
 ALTER TABLE llx_c_ziptown DROP FOREIGN KEY fk_c_ziptown_fk_pays;
-ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_pays   FOREIGN KEY (fk_pays)   REFERENCES llx_c_country(rowid);
+ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country(rowid);
 
 -- Forgot in 7.0
 
@@ -52,7 +52,6 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, ent
 
 UPDATE llx_const set name = __ENCRYPT('INVOICE_FREE_TEXT')__  where name = __ENCRYPT('FACTURE_FREE_TEXT')__;
 
-fk_c_ziptown_fk_pays
 
 
 -- drop very old table (bad name)
