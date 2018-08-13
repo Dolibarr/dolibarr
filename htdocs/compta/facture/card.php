@@ -4028,8 +4028,6 @@ else if ($id > 0 || ! empty($ref))
 	print '</table>';
 
 
-	// List of previous situation invoices
-
 	$sign = 1;
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = - 1;
 	$nbrows = 8;
@@ -4370,7 +4368,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 	else // Credit note
 	{
-		$cssforamountpaymentcomplete='';
+		$cssforamountpaymentcomplete='amountpaymentneutral';
 
 		// Total already paid back
 		print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -4385,7 +4383,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($resteapayeraffiche <= 0)
 			print $langs->trans('RemainderToPayBack');
 		else
-			print $langs->trans('ExcessPaydBack');
+			print $langs->trans('ExcessPaid');
 		print ' :</td>';
 		print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
