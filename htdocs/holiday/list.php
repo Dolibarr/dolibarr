@@ -630,8 +630,8 @@ print '</form>';
 	print '</div>';
 }*/
 
+// End of page
 llxFooter();
-
 $db->close();
 
 

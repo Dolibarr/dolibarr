@@ -194,6 +194,6 @@ else
 print '</table>';
 print '</div>';
 
-// Fin de page
-$db->close();
+// End of page
 llxFooter();
+$db->close();
