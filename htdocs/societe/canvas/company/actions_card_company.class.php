@@ -75,6 +75,7 @@ class ActionsCardCompany extends ActionsCardCommon
 	 *    @param	string	$ref		Ref of object
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action, $id=0, $ref='')
 	{
 		global $conf, $langs, $user, $mysoc;
@@ -220,4 +221,3 @@ class ActionsCardCompany extends ActionsCardCommon
 	}
 
 }
-

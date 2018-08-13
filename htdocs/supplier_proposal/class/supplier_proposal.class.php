@@ -207,6 +207,7 @@ class SupplierProposal extends CommonObject
      *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
      *			insere dans tableau $this->products
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_product($idproduct, $qty, $remise_percent=0)
     {
         global $conf, $mysoc;
@@ -256,6 +257,7 @@ class SupplierProposal extends CommonObject
      *	@param     int		$idremise			Id of fixed discount
      *  @return    int          				>0 if OK, <0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function insert_discount($idremise)
     {
         global $langs;
@@ -1071,6 +1073,7 @@ class SupplierProposal extends CommonObject
      *	@return    	int				Id of the new object if ok, <0 if ko
      *	@see       	create
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function create_from($user)
     {
         $this->products=$this->lines;
@@ -1500,6 +1503,7 @@ class SupplierProposal extends CommonObject
      *	@param      int			$date_livraison     Delivery date
      *	@return     int         					<0 if ko, >0 if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_date_livraison($user, $date_livraison)
     {
         if (! empty($user->rights->supplier_proposal->creer))
@@ -1529,6 +1533,7 @@ class SupplierProposal extends CommonObject
      *	@param      double	$remise      Amount discount
      *	@return     int         		<0 if ko, >0 if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_remise_percent($user, $remise)
     {
         $remise=trim($remise)?trim($remise):0;
@@ -1562,6 +1567,7 @@ class SupplierProposal extends CommonObject
      *	@param      double	$remise      Amount discount
      *	@return     int         		<0 if ko, >0 if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_remise_absolue($user, $remise)
     {
         $remise=trim($remise)?trim($remise):0;
@@ -1831,6 +1837,7 @@ class SupplierProposal extends CommonObject
      *	@param		User	$user		Object user that modify
      *	@return		int					<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_draft($user)
     {
         global $conf,$langs;
@@ -1864,6 +1871,7 @@ class SupplierProposal extends CommonObject
      *    @param    string	$sortorder			Sort order
      *    @return	int		       				-1 if KO, array with result if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datec', $sortorder='DESC')
     {
         global $conf,$user;
@@ -2120,8 +2128,9 @@ class SupplierProposal extends CommonObject
      *
      *    	@param      int			$statut		id statut
      *    	@param      int			$mode      	0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
-     *    	@return     string		Label
+     *    	@return     string      Label
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=1)
     {
     	// Init/load array of translation of status
@@ -2163,8 +2172,9 @@ class SupplierProposal extends CommonObject
      *
      *      @param          User	$user   Object user
      *      @param          int		$mode   "opened" for askprice to close, "signed" for proposal to invoice
-     *      @return         int     		<0 if KO, >0 if OK
+     *      @return         int             <0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user,$mode)
     {
         global $conf, $user, $langs;
@@ -2323,6 +2333,7 @@ class SupplierProposal extends CommonObject
      *
      *      @return     int         <0 if ko, >0 if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_state_board()
     {
         global $conf, $user;
@@ -3152,6 +3163,7 @@ class SupplierProposalLine extends CommonObjectLine
      *
      *	@return		int		<0 if ko, >0 if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_total()
     {
         $this->db->begin();
@@ -3180,4 +3192,3 @@ class SupplierProposalLine extends CommonObjectLine
     }
 
 }
-

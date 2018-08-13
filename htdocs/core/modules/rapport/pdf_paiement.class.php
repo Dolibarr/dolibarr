@@ -93,6 +93,7 @@ class pdf_paiement
 	 *	@param	string	$outputlangs	Lang output object
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($_dir, $month, $year, $outputlangs)
 	{
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -415,6 +416,7 @@ class pdf_paiement
 	 *	@param	Translate	$outputlangs	Object langs
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Body(&$pdf, $page, $lines, $outputlangs)
 	{
 		global $langs;
@@ -495,4 +497,3 @@ class pdf_paiement
 		$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->posxpaymentamount, $this->line_height, $langs->transnoentities('Total')." : ".price($total), 0, 'R', 0);
 	}
 }
-

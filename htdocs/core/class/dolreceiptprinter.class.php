@@ -45,7 +45,7 @@
  * <dol_cut_paper_partial>                          Cut ticket partially
  * <dol_open_drawer>                                Open cash drawer
  * <dol_activate_buzzer>                            Activate buzzer
- * 
+ *
  * Code which can be placed everywhere
  * <dol_print_qrcode>                               Print QR Code
  * <dol_print_date>                                 Print date AAAA-MM-DD
@@ -94,7 +94,7 @@
 
 require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/Escpos.php';
 
- 
+
 /**
  * Class to manage Receipt Printers
  */
@@ -300,16 +300,16 @@ class dolReceiptPrinter extends Escpos
     function selectTypePrinter($selected='', $htmlname='printertypeid')
     {
         global $langs;
-        
+
         $options = array(
             1 => $langs->trans('CONNECTOR_DUMMY'),
             2 => $langs->trans('CONNECTOR_FILE_PRINT'),
             3 => $langs->trans('CONNECTOR_NETWORK_PRINT'),
             4 => $langs->trans('CONNECTOR_WINDOWS_PRINT')
         );
-        
+
         $this->resprint = Form::selectarray($htmlname, $options, $selected);
-        
+
         return 0;
     }
 
@@ -324,7 +324,7 @@ class dolReceiptPrinter extends Escpos
     function selectProfilePrinter($selected='', $htmlname='printerprofileid')
     {
         global $langs;
-        
+
         $options = array(
             0 => $langs->trans('PROFILE_DEFAULT'),
             1 => $langs->trans('PROFILE_SIMPLE'),
@@ -332,7 +332,7 @@ class dolReceiptPrinter extends Escpos
             3 => $langs->trans('PROFILE_P822D'),
             4 => $langs->trans('PROFILE_STAR')
         );
-        
+
         $this->profileresprint = Form::selectarray($htmlname, $options, $selected);
         return 0;
     }
@@ -347,6 +347,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    string    $parameter      Printer parameter
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function AddPrinter($name, $type, $profile, $parameter)
     {
         global $conf;
@@ -372,6 +373,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function UpdatePrinter($name, $type, $profile, $parameter, $printerid)
     {
         global $conf;
@@ -396,6 +398,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function DeletePrinter($printerid)
     {
         global $conf;
@@ -418,6 +421,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $templateid     Template id
      *  @return   int                       0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function UpdateTemplate($name, $template, $templateid)
     {
         global $conf;
@@ -441,6 +445,7 @@ class dolReceiptPrinter extends Escpos
      *  @param    int       $printerid      Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SendTestToPrinter($printerid)
     {
         global $conf;
@@ -477,6 +482,7 @@ class dolReceiptPrinter extends Escpos
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SendToPrinter($object, $templateid, $printerid)
     {
         global $conf;
@@ -520,11 +526,11 @@ class dolReceiptPrinter extends Escpos
         $ret = $this->InitPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
-        } 
-        else 
+        }
+        else
         {
             $nboflines = count($vals);
-            for ($line=0; $line < $nboflines; $line++) 
+            for ($line=0; $line < $nboflines; $line++)
             {
                 switch ($vals[$line]['tag']) {
                     case 'DOL_ALIGN_CENTER':
@@ -638,6 +644,7 @@ class dolReceiptPrinter extends Escpos
      *  @param   int       $printerid       Printer id
      *  @return  int                        0 if OK; >0 if KO
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function InitPrinter($printerid)
     {
         global $conf;

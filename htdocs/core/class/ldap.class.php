@@ -147,6 +147,7 @@ class Ldap
 	 *
 	 *	@return		int		<0 if KO, 1 if bind anonymous, 2 if bind auth
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function connect_bind()
 	{
 		global $langs, $conf;
@@ -650,6 +651,7 @@ class Ldap
 	 *	@param	array		$info		Attributes array
 	 *	@return	string					Content of file
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dump_content($dn, $info)
 	{
 		$content='';
@@ -1429,6 +1431,7 @@ class Ldap
 	 *	@param	string	$value		AD time to convert
 	 *	@return	integer				Unix timestamp
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function convert_time($value)
 	{
 		$dateLargeInt=$value; // nano secondes depuis 1601 !!!!

@@ -688,13 +688,14 @@ class Product extends CommonObject
     /**
      *  Check barcode
      *
-     *	@param	string	$valuetotest	Value to test
+     *  @param	string	$valuetotest	Value to test
      *  @param	string	$typefortest	Type of barcode (ISBN, EAN, ...)
      *  @return int						0 if OK
      * 									-1 ErrorBadBarCodeSyntax
      * 									-2 ErrorBarCodeRequired
      * 									-3 ErrorBarCodeAlreadyUsed
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function check_barcode($valuetotest,$typefortest)
     {
         global $conf;
@@ -1445,6 +1446,7 @@ class Product extends CommonObject
 	 *	@param		int		$level		price level to change
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _log_price($user,$level=0)
 	{
 		global $conf;
@@ -1483,6 +1485,7 @@ class Product extends CommonObject
 	 * 	@param		int		$rowid	Line id to delete
 	 * 	@return		int				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function log_price_delete($user, $rowid)
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price_by_qty";
@@ -1516,6 +1519,7 @@ class Product extends CommonObject
 	 *  @param      int     $fk_soc             If of supplier
 	 *  @return    	int 						<-1 if KO, -1 if qty not enough, 0 if OK but nothing found, id_product if OK and found. May also initialize some properties like (->ref_supplier, buyprice, fourn_pu, vatrate_supplier...)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_buyprice($prodfournprice, $qty, $product_id=0, $fourn_ref='', $fk_soc=0)
 	{
 		global $conf;
@@ -2211,6 +2215,7 @@ class Product extends CommonObject
 	 *  @param    int	$socid      Id societe
 	 *  @return   array       		Tableau des stats
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_propale($socid=0)
 	{
 		global $conf;
@@ -2254,6 +2259,7 @@ class Product extends CommonObject
 	 *  @param    int	$socid      Id thirdparty
 	 *  @return   array       		Tableau des stats
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_proposal_supplier($socid=0)
 	{
 		global $conf;
@@ -2299,6 +2305,7 @@ class Product extends CommonObject
 	 *  @param    int    $forVirtualStock Ignore rights filter for virtual stock calculation.
 	 *  @return   array                  Array of stats (nb=nb of order, qty=qty ordered)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_commande($socid=0,$filtrestatut='', $forVirtualStock = 0)
 	{
 		global $conf,$user;
@@ -2395,6 +2402,7 @@ class Product extends CommonObject
 	 *  @param    int      $forVirtualStock Ignore rights filter for virtual stock calculation.
 	 *  @return   array                     Tableau des stats
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_commande_fournisseur($socid=0,$filtrestatut='', $forVirtualStock = 0)
 	{
 		global $conf,$user;
@@ -2438,6 +2446,7 @@ class Product extends CommonObject
 	 *  @param    int    $forVirtualStock Ignore rights filter for virtual stock calculation.
 	 *  @return   array                   Tableau des stats
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_sending($socid=0,$filtrestatut='', $forVirtualStock = 0)
 	{
 		global $conf,$user;
@@ -2485,6 +2494,7 @@ class Product extends CommonObject
 	 *  @param    int    $forVirtualStock Ignore rights filter for virtual stock calculation.
 	 *  @return   array                   Tableau des stats
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_reception($socid=0,$filtrestatut='', $forVirtualStock = 0)
 	{
 		global $conf,$user;
@@ -2526,6 +2536,7 @@ class Product extends CommonObject
 	 *  @param    int	$socid      Id societe
 	 *  @return   array       		Tableau des stats
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_contrat($socid=0)
 	{
 		global $conf;
@@ -2568,6 +2579,7 @@ class Product extends CommonObject
 	 *  @param    int		$socid      Id societe
 	 *  @return   array       			Tableau des stats
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_facture($socid=0)
 	{
 		global $conf;
@@ -2610,6 +2622,7 @@ class Product extends CommonObject
 	 *  @param    int		$socid      Id societe
 	 *  @return   array       			Tableau des stats
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stats_facture_fournisseur($socid=0)
 	{
 		global $conf;
@@ -2654,6 +2667,7 @@ class Product extends CommonObject
 	 *  @param      int     $year       Year (0=current year)
 	 *  @return   	array       		<0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _get_stats($sql, $mode, $year=0)
 	{
 		$resql = $this->db->query($sql);
@@ -2720,6 +2734,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_nb_vente($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf;
@@ -2756,6 +2771,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_nb_achat($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf;
@@ -2791,6 +2807,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_nb_propal($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf;
@@ -2826,6 +2843,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_nb_propalsupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf;
@@ -2861,6 +2879,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_nb_order($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf, $user;
@@ -2895,6 +2914,7 @@ class Product extends CommonObject
 	 *  @param      string  $morefilter              More sql filters
 	 * 	@return   	array       		             <0 if KO, result[month]=array(valuex,valuey) where month is 0 to 11
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_nb_ordersupplier($socid, $mode, $filteronproducttype=-1, $year=0, $morefilter='')
 	{
 		global $conf, $user;
@@ -2928,6 +2948,7 @@ class Product extends CommonObject
 	 *  @param		int	$incdec		1=Increase/decrease stock of child when parent stock increase/decrease
 	 *  @return     int        		< 0 if KO, > 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_sousproduit($id_pere, $id_fils, $qty, $incdec=1)
 	{
 		// Clean parameters
@@ -2984,6 +3005,7 @@ class Product extends CommonObject
 	 *  @param		int	$incdec		1=Increase/decrease stock of child when parent stock increase/decrease
 	 * 	@return     int        		< 0 if KO, > 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_sousproduit($id_pere, $id_fils, $qty, $incdec=1)
 	{
 		// Clean parameters
@@ -3016,6 +3038,7 @@ class Product extends CommonObject
 	 *  @param      int	$fk_child		Id du produit a ne plus lie
 	 *  @return     int			    	< 0 if KO, > 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function del_sousproduit($fk_parent, $fk_child)
 	{
 		if (! is_numeric($fk_parent)) $fk_parent=0;
@@ -3042,6 +3065,7 @@ class Product extends CommonObject
 	 *  @param      int	$fk_child		Id du produit lie
 	 *  @return     int			    	< 0 si erreur, > 0 si ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function is_sousproduit($fk_parent, $fk_child)
 	{
 		$sql = "SELECT fk_product_pere, qty, incdec";
@@ -3085,6 +3109,7 @@ class Product extends CommonObject
 	 *  @param		float	$quantity	Quantity minimum for price
 	 *  @return     int         		< 0 if KO, 0 if link already exists for this product, > 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_fournisseur($user, $id_fourn, $ref_fourn, $quantity)
 	{
 		global $conf;
@@ -3184,6 +3209,7 @@ class Product extends CommonObject
 	 *
 	 *  @return 	array		Tableau des id de fournisseur
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_suppliers()
 	{
 		global $conf;
@@ -3218,6 +3244,7 @@ class Product extends CommonObject
 	 *  @param  int		$toId       Id product target
 	 *  @return nt         			< 0 if KO, > 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function clone_price($fromId, $toId)
 	{
 		$this->db->begin();
@@ -3246,6 +3273,7 @@ class Product extends CommonObject
 	 * @param  int		$toId		Product id
 	 * @return int                  <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function clone_associations($fromId, $toId)
 	{
 		$this->db->begin();
@@ -3272,6 +3300,7 @@ class Product extends CommonObject
 	 *  @param    int	$toId        Id produit cible
 	 *  @return   int    		     < 0 si erreur, > 0 si ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function clone_fournisseurs($fromId, $toId)
 	{
 		$this->db->begin();
@@ -3323,6 +3352,7 @@ class Product extends CommonObject
 	 *  @param		int			$id_parent		Id parent
 	 *  @return 	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_prod_arbo($prod, $compl_path="", $multiply=1, $level=1, $id_parent=0)
 	{
 		global $conf,$langs;
@@ -3378,6 +3408,7 @@ class Product extends CommonObject
 	 *	@param		int		$multiply		Because each sublevel must be multiplicated by parent nb
 	 *  @return 	array 					$this->res
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_arbo_each_prod($multiply=1)
 	{
 		$this->res = array();
@@ -3527,6 +3558,7 @@ class Product extends CommonObject
 	 *
 	 *  @return    	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_sousproduits_arbo()
 	{
 	    $parent=array();
@@ -3730,6 +3762,7 @@ class Product extends CommonObject
 	 *	@param      int		$type       0=Status "to sell", 1=Status "to buy", 2=Status "to Batch"
 	 *	@return     string      		Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($status,$mode=0,$type=0)
 	{
 		global $conf, $langs;
@@ -3830,6 +3863,7 @@ class Product extends CommonObject
 	 *  @param  	int		$origin_id      Origin id of element
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function correct_stock($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $inventorycode='', $origin_element='', $origin_id=null)
 	{
 		if ($id_entrepot)
@@ -3878,6 +3912,7 @@ class Product extends CommonObject
 	 *  @param  	int		$origin_id      Origin id of element
 	 * 	@return     int     				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function correct_stock_batch($user, $id_entrepot, $nbpiece, $movement, $label='', $price=0, $dlc='', $dluo='',$lot='', $inventorycode='', $origin_element='', $origin_id=null)
 	{
 		if ($id_entrepot)
@@ -3923,6 +3958,7 @@ class Product extends CommonObject
 	 *    @return     int                   < 0 if KO, > 0 if OK
 	 *    @see		  load_virtual_stock, getBatchInfo
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_stock($option='')
 	{
 		global $conf;
@@ -3996,6 +4032,7 @@ class Product extends CommonObject
 	 *    @return   int             < 0 if KO, > 0 if OK
 	 *    @see		load_stock, getBatchInfo
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_virtual_stock()
     {
         global $conf;
@@ -4095,6 +4132,7 @@ class Product extends CommonObject
 	 *  @param  string	$file       Array of file info of file to upload: array('name'=>..., 'tmp_name'=>...)
 	 *  @return	int					<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_photo($sdir, $file)
 	{
 		global $conf;
@@ -4135,6 +4173,7 @@ class Product extends CommonObject
 	 *  @param      string		$sdir       Directory to scan
 	 *  @return     boolean     			True if at least one photo is available, False if not
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function is_photo_available($sdir)
 	{
 	    include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
@@ -4172,6 +4211,7 @@ class Product extends CommonObject
 	 *  @param      int			$nbmax      Nombre maximum de photos (0=pas de max)
 	 *  @return     array       			Tableau de photos
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_photos($dir,$nbmax=0)
 	{
 	    include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -4226,6 +4266,7 @@ class Product extends CommonObject
 	 *  @param  string		$file        Chemin de l'image
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_photo($file)
 	{
 	    require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -4261,6 +4302,7 @@ class Product extends CommonObject
 	 *  @param  string	$file        Path to file
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_image_size($file)
 	{
 		$file_osencoded=dol_osencode($file);
@@ -4274,6 +4316,7 @@ class Product extends CommonObject
 	 *
 	 *  @return    int                 <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $conf, $user, $hookmanager;
@@ -4339,6 +4382,7 @@ class Product extends CommonObject
      *	@param	string		$type		Barcode type (ean, isbn, ...)
      *  @return void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_barcode($object,$type='')
     {
         global $conf;
@@ -4466,6 +4510,7 @@ class Product extends CommonObject
      *
 	 * @return	int			Minimum recommanded price that is higher price among all suppliers * PRODUCT_MINIMUM_RECOMMENDED_PRICE
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function min_recommended_price()
 	{
 		global $conf;

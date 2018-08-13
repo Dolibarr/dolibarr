@@ -72,6 +72,7 @@ class html_cerfafr extends ModeleDon
 	 *  @param	string		$currency		Currency code
 	 *	@return	int             			>0 if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($don,$outputlangs,$currency='')
 	{
 		global $user,$conf,$langs,$mysoc;
@@ -278,6 +279,7 @@ class html_cerfafr extends ModeleDon
 	}
 }
 
+// phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 function chiffre_en_lettre($montant, $devise1='', $devise2='')
 {
 	if(empty($devise1)) $dev1='euros';

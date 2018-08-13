@@ -239,6 +239,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	int		$id    Id object
 	 *  @return int          	<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_by_mailing($id=0)
 	{
 		global $langs;
@@ -305,6 +306,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  @param	string	$type_element	Type target
 	 *  @return int          			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_by_element($id=0, $type_element='mailing')
 	{
 		global $langs;
@@ -529,6 +531,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * 	@param		array		$arrayquery	All element to Query
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function query_thirdparty($arrayquery)
 	{
 		global $langs,$conf;
@@ -621,16 +624,16 @@ class AdvanceTargetingMailing extends CommonObject
 						if (!empty($arrayquery['options_'.$key.'_max'])) {
 							$sqlwhere[]= " (te.".$key." >= ".$arrayquery['options_'.$key.'_max']." AND te.".$key." <= ".$arrayquery['options_'.$key.'_min'].")";
 						}
-					} else if (($extrafields->attribute_type[$key] == 'date') ||
+					} elseif (($extrafields->attribute_type[$key] == 'date') ||
 						($extrafields->attribute_type[$key] == 'datetime')) {
 						if (!empty($arrayquery['options_'.$key.'_end_dt'])){
 							$sqlwhere[]= " (te.".$key." >= '".$this->db->idate($arrayquery['options_'.$key.'_st_dt'])."' AND te.".$key." <= '".$this->db->idate($arrayquery['options_'.$key.'_end_dt'])."')";
 						}
-					}else if ($extrafields->attribute_type[$key] == 'boolean') {
+					} elseif ($extrafields->attribute_type[$key] == 'boolean') {
 						if ($arrayquery['options_'.$key]!=''){
 							$sqlwhere[]= " (te.".$key." = ".$arrayquery['options_'.$key].")";
 						}
-					}else{
+					} else {
 						if (is_array($arrayquery['options_'.$key])) {
 							$sqlwhere[]= " (te.".$key." IN ('".implode("','",$arrayquery['options_'.$key])."'))";
 						} elseif (!empty($arrayquery['options_'.$key])) {
@@ -683,6 +686,7 @@ class AdvanceTargetingMailing extends CommonObject
 	 * 	@param		int			$withThirdpartyFilter	add contact with tridparty filter
 	 * 	@return		int			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function query_contact($arrayquery, $withThirdpartyFilter = 0)
 	{
 		global $langs,$conf;
@@ -948,6 +952,5 @@ class AdvanceTargetingMailing extends CommonObject
 
 		return $return_sql_criteria;
 	}
-
 
 }

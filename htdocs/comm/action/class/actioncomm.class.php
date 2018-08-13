@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -688,6 +688,7 @@ class ActionComm extends CommonObject
      *
      *    @return	int				<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_userassigned()
     {
         $sql ="SELECT fk_actioncomm, element_type, fk_element, answer_status, mandatory, transparency";
@@ -1012,6 +1013,7 @@ class ActionComm extends CommonObject
      * @param	int		$load_state_board	Charge indicateurs this->nb de tableau de bord
      * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user, $load_state_board=0)
     {
     	global $conf, $langs;
@@ -1138,6 +1140,7 @@ class ActionComm extends CommonObject
      *      @param  int     $datestart      Date start of event
      *    	@return string		    		Label
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($percent,$mode,$hidenastatus=0,$datestart='')
     {
         global $langs;
@@ -1223,7 +1226,7 @@ class ActionComm extends CommonObject
 
                 if ((!$user->rights->agenda->allactions->read && $this->author->id != $user->id) || (!$user->rights->agenda->myactions->read && $this->author->id == $user->id))
                     $option = 'nolink';
-		
+
                 $label = $this->label;
 		if (empty($label)) $label=$this->libelle;   // For backward compatibility
 
@@ -1347,6 +1350,7 @@ class ActionComm extends CommonObject
      *		@param	array		$filters		Array of filters. Exemple array('notolderthan'=>99, 'year'=>..., 'idfrom'=>..., 'notactiontype'=>'systemauto', 'project'=>123, ...)
      *		@return int     					<0 if error, nb of events in new file if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function build_exportfile($format,$type,$cachedelay,$filename,$filters)
     {
         global $conf,$langs,$dolibarr_main_url_root,$mysoc;
@@ -1667,8 +1671,6 @@ class ActionComm extends CommonObject
 
 		// TODO Scan events of type 'email' into table llx_actioncomm_reminder with status todo, send email, then set status to done
 
-
-
     	// Delete also very old past events (we do not keep more than 1 month record in past)
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm_reminder WHERE dateremind < '".$this->db->jdate($now - (3600 * 24 * 32))."'";
 		$this->db->query($sql);
@@ -1679,4 +1681,3 @@ class ActionComm extends CommonObject
     }
 
 }
-

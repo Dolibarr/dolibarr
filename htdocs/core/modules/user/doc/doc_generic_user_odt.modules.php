@@ -201,6 +201,7 @@ class doc_generic_user_odt extends ModelePDFUser
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager;
@@ -409,7 +410,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else
@@ -422,7 +423,8 @@ class doc_generic_user_odt extends ModelePDFUser
 		return -1;
 	}
 
-	function get_substitutionarray_object($object,$outputlangs,$array_key='object') {
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+	function get_substitutionarray_object($object,$outputlangs, $array_key='object') {
 		$array_other=array();
 		foreach($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
@@ -433,4 +435,3 @@ class doc_generic_user_odt extends ModelePDFUser
 	}
 
 }
-

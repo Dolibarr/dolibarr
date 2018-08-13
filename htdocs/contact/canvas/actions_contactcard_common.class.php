@@ -72,6 +72,7 @@ abstract class ActionsContactCardCommon
      *  @param	int			$id			Id
      *  @return	string					HTML output
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function assign_values(&$action, $id)
     {
         global $conf, $langs, $user, $canvas;
@@ -307,4 +308,3 @@ abstract class ActionsContactCardCommon
     }
 
 }
-

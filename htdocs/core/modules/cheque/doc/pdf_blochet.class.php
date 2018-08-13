@@ -44,7 +44,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-        
+
 		// Load traductions files requiredby by page
 		$langs->loadLangs(array("main", "bills"));
 
@@ -77,12 +77,13 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	/**
 	 *	Fonction to generate document on disk
 	 *
-	 *	@param	RemiseCheque	$object			Object RemiseCheque			
+	 *	@param	RemiseCheque	$object			Object RemiseCheque
 	 *	@param	string			$_dir			Directory
 	 *	@param	string			$number			Number
 	 *	@param	Translate		$outputlangs	Lang output object
      *	@return	int     						1=ok, 0=ko
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object, $_dir, $number, $outputlangs)
 	{
 		global $user,$conf,$langs,$hookmanager;
@@ -91,7 +92,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
         // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
         $sav_charset_output=$outputlangs->charset_output;
         if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-        
+
         // Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "companies", "bills", "products", "compta"));
 
@@ -191,7 +192,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 			@chmod($file, octdec($conf->global->MAIN_UMASK));
 
 		$this->result = array('fullpath'=>$file);
-		
+
         $outputlangs->charset_output=$sav_charset_output;
 	    return 1;   // Pas d'erreur
 	}
@@ -206,11 +207,12 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object language for output
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Header(&$pdf, $page, $pages, $outputlangs)
 	{
 		global $langs;
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
-        
+
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("compta", "banks"));
 
@@ -312,6 +314,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 	 *	@param	Translate	$outputlangs	Object lang
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function Body(&$pdf, $pagenb, $pages, $outputlangs)
 	{
 		// x=10 - Num
@@ -384,7 +387,7 @@ class BordereauChequeBlochet extends ModeleChequeReceipts
 		{
 		    $newfreetext=make_substitutions($conf->global->$paramfreetext,$substitutionarray);
 		}
-		
+
 		return pdf_pagefoot($pdf,$outputlangs,$newfreetext,$this->emetteur,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
 }

@@ -74,6 +74,7 @@ class Export
 	 *    @param  	string		$filter    	Load a particular dataset only
 	 *    @return	int						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_arrays($user,$filter='')
 	{
 		global $langs,$conf,$mysoc;
@@ -213,6 +214,7 @@ class Export
 	 *      @param      array	$array_filterValue  Filter records on array of value for fields
 	 *      @return		string						SQL String. Example "select s.rowid as r_rowid, s.status as s_status from ..."
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_sql($indice, $array_selected, $array_filterValue)
 	{
 		// Build the sql request
@@ -274,6 +276,7 @@ class Export
 	 *      @param		string	$ValueField		Value of the field for filter. Must not be ''
 	 *      @return		string					sql string of then field ex : "field='xxx'>"
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_filterQuery($TypeField, $NameField, $ValueField)
 	{
 		//print $TypeField." ".$NameField." ".$ValueField;
@@ -367,6 +370,7 @@ class Export
 	 *      @param		string	$ValueField		Initial value of the field to filter
 	 *      @return		string					html string of the input field ex : "<input type=text name=... value=...>"
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_filterField($TypeField, $NameField, $ValueField)
 	{
 		global $conf,$langs;
@@ -520,6 +524,7 @@ class Export
 	 *      @param		string		$sqlquery			If set, transmit the sql request for select (otherwise, sql request is generated from arrays)
 	 *      @return		int								<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_file($user, $model, $datatoexport, $array_selected, $array_filterValue, $sqlquery = '')
  	{
 		global $conf,$langs;
@@ -823,6 +828,7 @@ class Export
 	 *
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_export_model()
 	{
 		global $conf, $langs;
@@ -873,4 +879,3 @@ class Export
 	}
 
 }
-

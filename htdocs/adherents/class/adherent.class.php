@@ -139,6 +139,7 @@ class Adherent extends CommonObject
 	 *  @param	string	$errors_to			erros to
 	 *  @return	int							<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function send_an_email($text, $subject, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array(), $addr_cc="", $addr_bcc="", $deliveryreceipt=0, $msgishtml=-1, $errors_to='')
 	{
 		global $conf,$langs;
@@ -629,6 +630,7 @@ class Adherent extends CommonObject
 	 *	@param	User	$user			User making change
 	 *	@return	int						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_end_date($user)
 	{
 		$this->db->begin();
@@ -983,6 +985,7 @@ class Adherent extends CommonObject
 	 *	@param	string	$login		login of member
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_login($login)
 	{
 		global $conf;
@@ -1013,6 +1016,7 @@ class Adherent extends CommonObject
 	 *	@param	string	$lastname	Lastname
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_name($firstname,$lastname)
 	{
 		global $conf;
@@ -1186,6 +1190,7 @@ class Adherent extends CommonObject
 	 *
 	 *	@return		int			<0 si KO, >0 si OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_subscriptions()
 	{
 		global $langs;
@@ -1736,6 +1741,7 @@ class Adherent extends CommonObject
 	 *
 	 *  @return		int		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_abo()
 	{
 		global $conf,$langs;
@@ -1793,6 +1799,7 @@ class Adherent extends CommonObject
 	 *
 	 *  @return     int     <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function del_to_abo()
 	{
 		global $conf,$langs;
@@ -1976,6 +1983,7 @@ class Adherent extends CommonObject
 	 *  @param  int			$mode        			0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return string      						Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
 	{
 		global $langs;
@@ -2065,6 +2073,7 @@ class Adherent extends CommonObject
 	 *
 	 *      @return     int         <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $conf;
@@ -2101,6 +2110,7 @@ class Adherent extends CommonObject
 	 *      @param	User	$user   		Objet user
 	 *      @return WorkboardResponse|int 	<0 if KO, WorkboardResponse if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user)
 	{
 		global $conf, $langs;
@@ -2246,6 +2256,7 @@ class Adherent extends CommonObject
 	 *								2=Return key only (uid=qqq)
 	 *	@return	string				DN
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_dn($info,$mode=0)
 	{
 		global $conf;
@@ -2262,6 +2273,7 @@ class Adherent extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_info()
 	{
 		global $conf,$langs;

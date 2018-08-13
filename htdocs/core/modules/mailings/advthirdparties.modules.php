@@ -57,6 +57,7 @@ class mailing_advthirdparties extends MailingTargets
 	 *    @param	array	$contactid 		Array of contact id to add
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_target_spec($mailing_id,$socid,$type_of_target, $contactid)
 	{
 		global $conf, $langs;

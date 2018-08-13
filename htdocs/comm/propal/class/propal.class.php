@@ -234,6 +234,7 @@ class Propal extends CommonObject
 	 *	TODO	Replace calls to this function by generation objet Ligne
 	 *			inserted into table $this->products
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_product($idproduct, $qty, $remise_percent=0)
 	{
 		global $conf, $mysoc;
@@ -288,6 +289,7 @@ class Propal extends CommonObject
 	 *	@param     int		$idremise			Id of fixed discount
 	 *  @return    int          				>0 if OK, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_discount($idremise)
 	{
 		global $langs;
@@ -1167,6 +1169,7 @@ class Propal extends CommonObject
 	 *	@return    	int				Id of the new object if ok, <0 if ko
 	 *	@see       	create
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_from($user)
 	{
 		// i love this function because $this->products is not used in create function...
@@ -1556,6 +1559,7 @@ class Propal extends CommonObject
 	 * @param		int		$only_product	Return only physical products
 	 * @return		int						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines($only_product=0)
 	{
 		$this->lines=array();
@@ -1795,6 +1799,7 @@ class Propal extends CommonObject
 	 *  @param  int			$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return	int         			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date($user, $date, $notrigger=0)
 	{
 		if (empty($date))
@@ -1862,6 +1867,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_echeance($user, $date_fin_validite, $notrigger=0)
 	{
 		if (! empty($user->rights->propal->creer))
@@ -1922,6 +1928,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger			1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         				<0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_livraison($user, $date_livraison, $notrigger=0)
 	{
 		if (! empty($user->rights->propal->creer))
@@ -1982,6 +1989,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *  @return     int           			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_availability($user, $id, $notrigger=0)
 	{
 		if (! empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
@@ -2051,6 +2059,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *  @return     int           		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_demand_reason($user, $id, $notrigger=0)
 	{
 		if (! empty($user->rights->propal->creer) && $this->statut >= self::STATUS_DRAFT)
@@ -2122,6 +2131,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger		1=Does not execute triggers, 0= execute triggers
 	 *  @return     int						<0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_ref_client($user, $ref_client, $notrigger=0)
 	{
 		if (! empty($user->rights->propal->creer))
@@ -2185,6 +2195,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_remise_percent($user, $remise, $notrigger=0)
 	{
 		$remise=trim($remise)?trim($remise):0;
@@ -2250,6 +2261,7 @@ class Propal extends CommonObject
 	 *  @param  	int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return     int         		<0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_remise_absolue($user, $remise, $notrigger=0)
 	{
 		$remise=trim($remise)?trim($remise):0;
@@ -2533,6 +2545,7 @@ class Propal extends CommonObject
 	 *  @param		int		$notrigger	1=Does not execute triggers, 0= execute triggers
 	 *	@return		int					<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_draft($user, $notrigger=0)
 	{
 		$error=0;
@@ -2596,6 +2609,7 @@ class Propal extends CommonObject
 	 *    @param    string	$sortorder			Sort order
 	 *    @return	int		       				-1 if KO, array with result if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_array($shortlist=0, $draft=0, $notcurrentuser=0, $socid=0, $limit=0, $offset=0, $sortfield='p.datep', $sortorder='DESC')
 	{
 		global $user;
@@ -2675,6 +2689,7 @@ class Propal extends CommonObject
 	 *	@param		int		$id			Id propal
 	 *	@return		array				Array of invoices id
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function InvoiceArrayList($id)
 	{
 		$ga = array();
@@ -2955,6 +2970,7 @@ class Propal extends CommonObject
 	 *	@return int						>0 si ok, <0 si ko
 	 *	@deprecated use set_demand_reason
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function demand_reason($demand_reason_id, $notrigger=0)
 	{
 		global $user;
@@ -3094,6 +3110,7 @@ class Propal extends CommonObject
 	 *    	@param      int			$mode      	0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto, 6=Long label + Picto
 	 *    	@return     string		Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode=1)
 	{
 		global $conf;
@@ -3139,6 +3156,7 @@ class Propal extends CommonObject
 	 *      @param          int		$mode   "opened" for proposal to close, "signed" for proposal to invoice
 	 *      @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_board($user,$mode)
 	{
 		global $conf, $langs;
@@ -3309,6 +3327,7 @@ class Propal extends CommonObject
 	 *
 	 *      @return     int         <0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $user;
@@ -4189,6 +4208,7 @@ class PropaleLigne extends CommonObjectLine
 	 *
 	 *	@return		int		<0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_total()
 	{
 		$this->db->begin();
@@ -4217,4 +4237,3 @@ class PropaleLigne extends CommonObjectLine
 	}
 
 }
-

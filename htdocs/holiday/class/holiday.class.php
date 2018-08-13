@@ -418,7 +418,7 @@ class Holiday extends CommonObject
 		}
 		else
 		{
-			// SQL Error 
+			// SQL Error
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -542,7 +542,7 @@ class Holiday extends CommonObject
 		}
 		else
 		{
-			// SQL Error 
+			// SQL Error
 			$this->error="Error ".$this->db->lasterror();
 			return -1;
 		}
@@ -921,6 +921,7 @@ class Holiday extends CommonObject
 	 *  @param		date	$startdate	Date holiday should start
 	 *	@return     string      		Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut, $mode=0, $startdate='')
 	{
 		global $langs;
@@ -1576,6 +1577,7 @@ class Holiday extends CommonObject
 	 *
 	 * @return  array       Array of user ids
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_users_approver_holiday()
 	{
 		$users_validator=array();

@@ -150,9 +150,9 @@ class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 	 *  @param  Object	    $object		Object
      *  @return string      			Texte descripif
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function commande_get_num($objsoc=0,$object='')
     {
         return $this->getNextValue($objsoc,$object);
     }
 }
-

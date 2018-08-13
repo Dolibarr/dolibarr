@@ -144,4 +144,3 @@ class mod_pacific extends ModeleNumRefFicheinter
 	}
 
 }
-

@@ -428,6 +428,7 @@ class Commande extends CommonOrder
      *	@param	int		$idwarehouse	Warehouse ID to use for stock change (Used only if option STOCK_CALCULATE_ON_VALIDATE_ORDER is on)
      *	@return	int						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_draft($user, $idwarehouse=-1)
     {
         global $conf,$langs;
@@ -509,6 +510,7 @@ class Commande extends CommonOrder
      *	@param      User	$user       Object user that change status
      *	@return     int         		<0 if KO, 0 if nothing is done, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_reopen($user)
     {
         $error=0;
@@ -1480,6 +1482,7 @@ class Commande extends CommonOrder
      *	TODO	Remplacer les appels a cette fonction par generation objet Ligne
      *			insere dans tableau $this->products
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function add_product($idproduct, $qty, $remise_percent=0.0, $date_start='', $date_end='')
     {
         global $conf, $mysoc;
@@ -1709,6 +1712,7 @@ class Commande extends CommonOrder
      *	@param     int	$idremise			Id de la remise fixe
      *	@return    int          			>0 si ok, <0 si ko
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function insert_discount($idremise)
     {
         global $langs;
@@ -1786,6 +1790,7 @@ class Commande extends CommonOrder
      *	@param		int		$only_product	Return only physical products
      *	@return		int						<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_lines($only_product=0)
     {
         $this->lines=array();
@@ -2012,6 +2017,7 @@ class Commande extends CommonOrder
      *
      * TODO deprecate, move to Shipping class
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function nb_expedition()
     {
         $sql = 'SELECT count(*)';
@@ -2038,6 +2044,7 @@ class Commande extends CommonOrder
      *
      *	TODO		FONCTION NON FINIE A FINIR
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function stock_array($filtre_statut=self::STATUS_CANCELED)
     {
         $this->stocks = array();
@@ -2154,6 +2161,7 @@ class Commande extends CommonOrder
      * 	@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return		int 					<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_remise($user, $remise, $notrigger=0)
     {
         $remise=trim($remise)?trim($remise):0;
@@ -2220,6 +2228,7 @@ class Commande extends CommonOrder
      * 		@param     	int			$notrigger	1=Does not execute triggers, 0= execute triggers
      *		@return		int 					<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_remise_absolue($user, $remise, $notrigger=0)
     {
         $remise=trim($remise)?trim($remise):0;
@@ -2286,6 +2295,7 @@ class Commande extends CommonOrder
      * 	@param     	int		$notrigger	1=Does not execute triggers, 0= execute triggers
      *	@return     int         		<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_date($user, $date, $notrigger=0)
     {
         if ($user->rights->commande->creer)
@@ -2348,8 +2358,9 @@ class Commande extends CommonOrder
      *	@param      User	$user        		Objet utilisateur qui modifie
      *	@param      int		$date_livraison     Date de livraison
      *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
-     *	@return     int         				<0 si ko, >0 si ok
+     *  @return     int         				<0 si ko, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_date_livraison($user, $date_livraison, $notrigger=0)
     {
         if ($user->rights->commande->creer)
@@ -2419,6 +2430,7 @@ class Commande extends CommonOrder
      *  @param    	string	$sortorder		Sort order
      *  @return     int             		-1 if KO, array with result if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function liste_array($shortlist=0, $draft=0, $excluser='', $socid=0, $limit=0, $offset=0, $sortfield='c.date_commande', $sortorder='DESC')
     {
         global $user;
@@ -2556,6 +2568,7 @@ class Commande extends CommonOrder
      *  @param     	int		$notrigger			1=Does not execute triggers, 0= execute triggers
      *  @return     int        			 		>0 if ok, <0 if ko
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function demand_reason($demand_reason_id, $notrigger=0)
     {
         global $user;
@@ -2627,6 +2640,7 @@ class Commande extends CommonOrder
      *  @param     	int		$notrigger		1=Does not execute triggers, 0= execute triggers
      *	@return     int             		<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_ref_client($user, $ref_client, $notrigger=0)
     {
         if ($user->rights->commande->creer)
@@ -3237,6 +3251,7 @@ class Commande extends CommonOrder
      *	@param		User	$user   Object user
      *	@return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user)
     {
         global $conf, $langs;
@@ -3324,6 +3339,7 @@ class Commande extends CommonOrder
      *  @param      int     $donotshowbilled  Do not show billed status after order status
      *  @return     string					  Label of status
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut,$billed,$mode,$donotshowbilled=0)
     {
         global $langs, $conf;
@@ -3640,6 +3656,7 @@ class Commande extends CommonOrder
      *
      *	@return     int         <0 si ko, >0 si ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_state_board()
     {
         global $user;
@@ -4266,6 +4283,7 @@ class OrderLine extends CommonOrderLine
      *
      *	@return		int		<0 if ko, >0 if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_total()
     {
         $this->db->begin();
@@ -4299,4 +4317,3 @@ class OrderLine extends CommonOrderLine
         }
     }
 }
-

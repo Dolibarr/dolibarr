@@ -346,9 +346,9 @@
         <severity>0</severity>
 	</rule>
 
-	<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
+    <!--<rule ref="PEAR.NamingConventions.ValidFunctionName.NotCamelCaps">
         <severity>0</severity>
-	</rule>
+    </rule>-->
 	<rule ref="PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps">
         <severity>0</severity>
 	</rule>

@@ -223,6 +223,7 @@ class Propalmergepdfproduct extends CommonObject
      *  @param	string	$lang  			Lang string code
      *  @return int          	<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_by_product($product_id, $lang='')
     {
     	global $langs,$conf;
@@ -312,9 +313,6 @@ class Propalmergepdfproduct extends CommonObject
 		if (isset($this->file_name)) $this->file_name=trim($this->file_name);
 		if (isset($this->fk_user_mod)) $this->fk_user_mod=trim($this->fk_user_mod);
 		if (isset($this->lang)) $this->lang=trim($this->lang);
-
-
-
 
 		// Check parameters
 		// Put here code to add a control on parameters values
@@ -440,6 +438,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *  @param  int		$notrigger	 0=launch triggers after, 1=disable triggers
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_by_product($user, $product_id, $lang_id='',  $notrigger=0)
 	{
 		global $conf, $langs;
@@ -501,6 +500,7 @@ class Propalmergepdfproduct extends CommonObject
 	 *	@param  User	$user        User that deletes
 	 *  @return	int					 <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_by_file($user)
 	{
 		global $conf, $langs;

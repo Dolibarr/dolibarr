@@ -142,6 +142,7 @@ class Contact extends CommonObject
 	 *
 	 *  @return     int         <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 		global $user;
@@ -475,6 +476,7 @@ class Contact extends CommonObject
 	 *									2=Return key only (uid=qqq)
 	 *	@return		string				DN
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_dn($info,$mode=0)
 	{
 		global $conf;
@@ -491,6 +493,7 @@ class Contact extends CommonObject
 	 *
 	 *	@return		array		Tableau info des attributs
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_ldap_info()
 	{
 		global $conf,$langs;
@@ -567,6 +570,7 @@ class Contact extends CommonObject
 	 *  @param      int		    $notrigger	0=no, 1=yes
      *  @return     int         			<0 if KO, >=0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_perso($id, $user=null, $notrigger=0)
 	{
 	    $error=0;
@@ -845,6 +849,7 @@ class Contact extends CommonObject
 	 *
      *  @return     int             					<0 if KO, >=0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_ref_elements()
 	{
 		// Compte les elements pour lesquels il est contact
@@ -1184,6 +1189,7 @@ class Contact extends CommonObject
 	 *  @param      int			$mode       0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
 	 *  @return     string					Libelle
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode)
 	{
 		global $langs;
@@ -1228,6 +1234,7 @@ class Contact extends CommonObject
 	 * 	@param      int			$statut		Type (0 = public, 1 = private)
 	 *  @return     string					Label translated
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibPubPriv($statut)
 	{
 		global $langs;

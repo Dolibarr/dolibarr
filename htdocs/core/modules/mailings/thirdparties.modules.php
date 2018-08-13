@@ -55,6 +55,7 @@ class mailing_thirdparties extends MailingTargets
 	 *    @param	array	$filtersarray   If you used the formFilter function. Empty otherwise.
 	 *    @return   int 					<0 if error, number of emails added if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		global $conf, $langs;
@@ -321,4 +322,3 @@ class mailing_thirdparties extends MailingTargets
 	}
 
 }
-

@@ -480,6 +480,7 @@ class Project extends CommonObject
      * 	@param		int		$socid		To filter on a particular third party
      * 	@return		array				List of projects
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function liste_array($socid='')
     {
         global $conf;
@@ -526,6 +527,7 @@ class Project extends CommonObject
 	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
      * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='', $projectkey='fk_projet')
     {
         $elements = array();
@@ -877,6 +879,7 @@ class Project extends CommonObject
      *  @param  int		$mode       0=long label, 1=short label, 2=Picto + short label, 3=Picto, 4=Picto + long label, 5=Short label + Picto
      * 	@return string				Label
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut, $mode=0)
     {
         global $langs;
@@ -1548,7 +1551,8 @@ class Project extends CommonObject
 	  *    @param	string	$tableName			Table of the element to update
 	  *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
 	  *    @return	int							1 if OK or < 0 if KO
-	  */
+      */
+      // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_element($tableName, $elementSelectId)
 	{
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
@@ -1582,6 +1586,7 @@ class Project extends CommonObject
 	 *    @param	int		$elementSelectId	Key-rowid of the line of the element to update
 	 *    @return	int							1 if OK or < 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function remove_element($tableName, $elementSelectId)
 	{
 		$sql="UPDATE ".MAIN_DB_PREFIX.$tableName;
@@ -1712,6 +1717,7 @@ class Project extends CommonObject
      * @param	User	$user   Objet user
      * @return WorkboardResponse|int <0 if KO, WorkboardResponse if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_board($user)
     {
         global $conf, $langs;
@@ -1795,6 +1801,7 @@ class Project extends CommonObject
 	 *
 	 *      @return     int         <0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_state_board()
 	{
 	    global $user;
@@ -1972,4 +1979,3 @@ class Project extends CommonObject
 	}
 
 }
-

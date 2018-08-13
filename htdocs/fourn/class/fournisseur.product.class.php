@@ -99,6 +99,7 @@ class ProductFournisseur extends Product
      *    @param	int		$id_fourn   Supplier Id
      *    @return   int         		< 0 if error, > 0 if ok
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function remove_fournisseur($id_fourn)
     {
         $ok=1;
@@ -135,6 +136,7 @@ class ProductFournisseur extends Product
      * 	@param	int		$rowid		Line id of price
      *	@return	int					<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function remove_product_fournisseur_price($rowid)
     {
         global $conf, $user;
@@ -163,10 +165,10 @@ class ProductFournisseur extends Product
             }
         }
 
-        if (empty($error)){
+        if (empty($error)) {
             $this->db->commit();
             return 1;
-        }else{
+        } else {
             $this->db->rollback();
             return -1;
         }
@@ -200,6 +202,7 @@ class ProductFournisseur extends Product
      *    @param  	string		$desc_fourn     	            Custom description for product_fourn_price
      *    @return	int								<0 if KO, >=0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function update_buyprice($qty, $buyprice, $user, $price_base_type, $fourn, $availability, $ref_fourn, $tva_tx, $charges=0, $remise_percent=0, $remise=0, $newnpr=0, $delivery_time_days=0, $supplier_reputation='', $localtaxes_array=array(), $newdefaultvatcode='', $multicurrency_buyprice=0, $multicurrency_price_base_type='HT',$multicurrency_tx=1,$multicurrency_code='', $desc_fourn='')
     {
         global $conf, $langs;
@@ -435,6 +438,7 @@ class ProductFournisseur extends Product
      *    @param    int     $ignore_expression  Ignores the math expression for calculating price and uses the db value instead
      *    @return   int 					    < 0 if KO, 0 if OK but not found, > 0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
         global $conf;
@@ -525,6 +529,7 @@ class ProductFournisseur extends Product
      *    @param	int		$offset		Offset
      *    @return	array				Array of Products with new properties to define supplier price
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function list_product_fournisseur_price($prodid, $sortfield='', $sortorder='', $limit=0, $offset=0)
     {
         global $conf;
@@ -623,6 +628,7 @@ class ProductFournisseur extends Product
      *  @param	int		$socid		get min price for specific supplier
      *  @return int					<0 if KO, 0=Not found of no product id provided, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function find_min_price_product_fournisseur($prodid, $qty=0, $socid=0)
     {
         global $conf;
@@ -813,6 +819,7 @@ class ProductFournisseur extends Product
      *                                    to display in table format.
      *  @return string                    String with supplier price
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function display_price_product_fournisseur($showunitprice=1,$showsuptitle=1,$maxlen=0,$notooltip=0, $productFournList=array())
     {
         global $langs;

@@ -380,6 +380,7 @@ class Expedition extends CommonObject
 	 * @param	array	$array_options		extrafields array
 	 * @return	int							<0 if KO, line_id if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_line($entrepot_id, $origin_line_id, $qty,$array_options=0)
 	{
 		$expeditionline = new ExpeditionLigne($this->db);
@@ -404,6 +405,7 @@ class Expedition extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int							<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_line_batch($line_ext,$array_options=0)
 	{
 		$error = 0;
@@ -799,6 +801,7 @@ class Expedition extends CommonObject
 	 *	@param	User	$user       User
 	 *  @return int  				<0 if KO, >=0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_delivery($user)
 	{
 		global $conf;
@@ -907,6 +910,7 @@ class Expedition extends CommonObject
 	 * @param	array		$array_options		extrafields array
 	 * @return	int						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function addline_batch($dbatch,$array_options=0)
 	{
 		global $conf,$langs;
@@ -1293,6 +1297,7 @@ class Expedition extends CommonObject
 	 *
 	 *	@return	int		>0 if OK, Otherwise if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_lines()
 	{
 		global $conf, $mysoc;
@@ -1581,6 +1586,7 @@ class Expedition extends CommonObject
 	 * @param      int		$mode       0=Long label, 1=Short label, 2=Picto + Short label, 3=Picto, 4=Picto + Long label, 5=Short label + Picto
 	 * @return     string				Label of status
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut,$mode)
 	{
 		global $langs;
@@ -1704,6 +1710,7 @@ class Expedition extends CommonObject
 	 *	@param      timestamp		$date_livraison     Date de livraison
 	 *	@return     int         						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_date_livraison($user, $date_livraison)
 	{
 		if ($user->rights->expedition->creer)
@@ -1736,6 +1743,7 @@ class Expedition extends CommonObject
 	 *
 	 * 	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_delivery_methods()
 	{
 		global $langs;
@@ -1763,6 +1771,7 @@ class Expedition extends CommonObject
 	 *  @param  id      $id     only this carrier, all if none
 	 *  @return void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function list_delivery_methods($id='')
 	{
 		global $langs;
@@ -1798,6 +1807,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function update_delivery_method($id='')
 	{
 		if ($id=='')
@@ -1826,6 +1836,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function activ_delivery_method($id)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=1';
@@ -1842,6 +1853,7 @@ class Expedition extends CommonObject
 	 *
 	 *  @return void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function disable_delivery_method($id)
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'c_shipment_mode SET active=0';
@@ -1858,6 +1870,7 @@ class Expedition extends CommonObject
 	 * @param	string	$value		Value
 	 * @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function GetUrlTrackingStatus($value='')
 	{
 		if (! empty($this->shipping_method_id))
@@ -2042,6 +2055,7 @@ class Expedition extends CommonObject
 	 *
 	 *	@return     int     <0 if ko, >0 if ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function set_billed()
 	{
 		global $user;
@@ -2728,4 +2742,3 @@ class ExpeditionLigne extends CommonObjectLine
 		}
 	}
 }
-

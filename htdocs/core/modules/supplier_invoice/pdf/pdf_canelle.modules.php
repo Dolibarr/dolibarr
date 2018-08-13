@@ -40,75 +40,75 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
      * @var DoliDb Database handler
      */
     public $db;
-    
+
 	/**
      * @var string model name
      */
     public $name;
-    
+
 	/**
      * @var string model description (short text)
      */
     public $description;
-    
+
 /**
      * @var string document type
      */
     public $type;
-    
+
     /**
      * @var array() Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
-	
+
 	/**
      * Dolibarr version of the loaded document
      * @public string
      */
 	public $version = 'dolibarr';
-	
+
 	/**
      * @var int page_largeur
      */
     public $page_largeur;
-	
+
 	/**
      * @var int page_hauteur
      */
     public $page_hauteur;
-	
+
 	/**
      * @var array format
      */
     public $format;
-	
+
 	/**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
 	public $marge_basse;
-    
+
 	/**
 	 * Issuer
 	 * @var Objet societe qui emet
 	 */
-	public $emetteur;	 
-    
+	public $emetteur;
+
 
 
 	/**
@@ -192,7 +192,8 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
      *  @param		int					$hidedesc			Do not show desc
      *  @param		int					$hideref			Do not show ref
      *  @return		int										1=OK, 0=KO
-	 */
+     */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object, $outputlangs='', $srctemplatepath='', $hidedetails=0, $hidedesc=0, $hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager,$nblignes;
@@ -615,6 +616,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	@param	Translate	$outputlangs	Objet langs
 	 *	@return int							Position pour suite
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_tot(&$pdf, $object, $deja_regle, $posy, $outputlangs)
 	{
 		global $conf,$mysoc;
@@ -935,6 +937,7 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	 *	@param	Translate	$outputlangs	Object langs for output
 	 *	@return int							<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _tableau_versements(&$pdf, $object, $posy, $outputlangs)
 	{
 		global $conf;
@@ -1249,4 +1252,3 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 }
-

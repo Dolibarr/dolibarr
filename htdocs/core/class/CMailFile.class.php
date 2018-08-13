@@ -834,6 +834,7 @@ class CMailFile
 	 * @param	string	$sourcefile		Path to file to encode
 	 * @return 	int					    <0 if KO, encoded string if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _encode_file($sourcefile)
 	{
 		$newsourcefile=dol_osencode($sourcefile);
@@ -860,6 +861,7 @@ class CMailFile
 	 *
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function dump_mail()
 	{
 		global $conf,$dolibarr_main_data_root;
@@ -951,6 +953,7 @@ class CMailFile
 	 *
 	 * @return	string headers
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_smtpheaders()
 	{
 		global $conf;
@@ -1015,6 +1018,7 @@ class CMailFile
 	 * @param 	array	$mimefilename_list		Array of mime types
 	 * @return	string							mime headers
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_mimeheaders($filename_list, $mimefilename_list)
 	{
 		$mimedone=0;
@@ -1043,6 +1047,7 @@ class CMailFile
 	 * @param	string		$msgtext		Message string
 	 * @return	string						String content
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_body($msgtext)
 	{
 		global $conf;
@@ -1145,6 +1150,7 @@ class CMailFile
 	 * @param 	array	$mimefilename_list	Tableau
 	 * @return	string						Chaine fichiers encodes
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_files($filename_list,$mimetype_list,$mimefilename_list)
 	{
 		$out = '';
@@ -1190,6 +1196,7 @@ class CMailFile
 	 * @param	array	$images_list	Tableau
 	 * @return	string					Chaine images encodees
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_images($images_list)
 	{
 		$out = '';
@@ -1222,6 +1229,7 @@ class CMailFile
 	 * @param 	int			$port		Example: 25, 465
 	 * @return	int						Socket id if ok, 0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function check_server_port($host,$port)
 	{
 		global $conf;
@@ -1286,6 +1294,7 @@ class CMailFile
 	 * @param   string	$response		Response string
 	 * @return  boolean					true if success
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function server_parse($socket, $response)
 	{
 		$_retVal = true;	// Indicates if Object was created or not
@@ -1512,4 +1521,3 @@ class CMailFile
 		return $ret;
 	}
 }
-

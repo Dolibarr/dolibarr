@@ -658,6 +658,7 @@ class Form
 	 *  @param	int		$disablefavorites	Disable favorites
 	 *  @return string           			HTML string with select
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_country($selected='', $htmlname='country_id', $htmloption='', $maxlength=0, $morecss='minwidth300', $usecodeaskey='', $showempty=1, $disablefavorites=0)
 	{
 		global $conf,$langs;
@@ -753,6 +754,7 @@ class Form
 	 *  @param	array	$events					Event options to run on change. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @return string           				HTML string with select and input
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_incoterms($selected='', $location_incoterms='', $page='', $htmlname='incoterm_id', $htmloption='', $forcecombo=1, $events=array())
 	{
 		global $conf,$langs;
@@ -844,6 +846,7 @@ class Form
 	 * 	@param	integer	$forceall		1=Force to show products and services in combo list, whatever are activated modules, 0=No force, -1=Force none (and set hidden field to 'service')
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_type_of_lines($selected='',$htmlname='type',$showempty=0,$hidetext=0,$forceall=0)
 	{
 		global $db,$langs,$user,$conf;
@@ -893,6 +896,7 @@ class Form
 	 *
 	 *	@return     int             Nb of lines loaded, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_cache_types_fees()
 	{
 		global $langs;
@@ -943,6 +947,7 @@ class Form
 	 * 	@param	int			$showempty		Add an empty field
 	 * 	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_type_fees($selected='',$htmlname='type',$showempty=0)
 	{
 		global $user, $langs;
@@ -985,6 +990,7 @@ class Form
 	 *  @return		string								Return select box for thirdparty.
 	 *  @deprecated	3.8 Use select_company instead. For exemple $form->select_thirdparty(GETPOST('socid'),'socid','',0) => $form->select_company(GETPOST('socid'),'socid','',1,0,0,array(),0)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_thirdparty($selected='', $htmlname='socid', $filter='', $limit=20, $ajaxoptions=array(), $forcecombo=0)
 	{
    		return $this->select_thirdparty_list($selected,$htmlname,$filter,1,0,$forcecombo,array(),'',0, $limit);
@@ -1009,6 +1015,7 @@ class Form
 	 * 	@param  bool	$multiple				add [] in the name of element and add 'multiple' attribut (not working with ajax_autocompleter)
 	 * 	@return	string							HTML string with select box for thirdparty.
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_company($selected='', $htmlname='socid', $filter='', $showempty='', $showtype=0, $forcecombo=0, $events=array(), $limit=0, $morecss='minwidth100', $moreparam='', $selected_input_value='', $hidelabel=1, $ajaxoptions=array(), $multiple=false)
 	{
 		global $conf,$user,$langs;
@@ -1071,6 +1078,7 @@ class Form
 	 *	@param  bool	$multiple       add [] in the name of element and add 'multiple' attribut
 	 * 	@return	string					HTML string with
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_thirdparty_list($selected='',$htmlname='socid',$filter='',$showempty='', $showtype=0, $forcecombo=0, $events=array(), $filterkey='', $outputmode=0, $limit=0, $morecss='minwidth100', $moreparam='', $multiple=false)
 	{
 		global $conf,$user,$langs;
@@ -1242,6 +1250,7 @@ class Form
 	 * 		@param	int		$maxvalue		Max value for lines that can be selected
 	 * 		@return	int						Return number of qualifed lines in list
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_remises($selected, $htmlname, $filter, $socid, $maxvalue=0)
 	{
 		global $langs,$conf;
@@ -1327,6 +1336,7 @@ class Form
 	 *	@return	int						<0 if KO, Nb of contact in list if OK
 	 *  @deprected						You can use selectcontacts directly (warning order of param was changed)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='',$limitto='',$showfunction=0, $moreclass='', $showsoc=0, $forcecombo=0, $events=array(), $options_only=false, $moreparam='', $htmlid='')
 	{
 		print $this->selectcontacts($socid,$selected,$htmlname,$showempty,$exclude,$limitto,$showfunction, $moreclass, $options_only, $showsoc, $forcecombo, $events, $moreparam, $htmlid);
@@ -1481,6 +1491,7 @@ class Form
 	 *  @deprecated		Use select_dolusers instead
 	 *  @see select_dolusers()
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude=null,$disabled=0,$include='',$enableonly='',$force_entity='0')
 	{
 		print $this->select_dolusers($selected,$htmlname,$show_empty,$exclude,$disabled,$include,$enableonly,$force_entity);
@@ -1509,6 +1520,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity='0', $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0, $outputmode=0, $multiple=false)
 	{
 		global $conf,$user,$langs;
@@ -1715,6 +1727,7 @@ class Form
 	 * 	@return	string					HTML select string
 	 *  @see select_dolgroups
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_dolusers_forevent($action='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity='0', $maxlength=0, $showstatus=0, $morefilter='', $showproperties=0, $listofuserid=array(), $listofcontactid=array(), $listofotherid=array())
 	{
 		global $conf, $user, $langs;
@@ -1806,6 +1819,7 @@ class Form
 	 *  @param 		array 		$selected_combinations 	Selected combinations. Format: array([attrid] => attrval, [...])
 	 *  @return		void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_produits($selected='', $htmlname='productid', $filtertype='', $limit=20, $price_level=0, $status=1, $finished=2, $selected_input_value='', $hidelabel=0, $ajaxoptions=array(), $socid=0, $showempty='1', $forcecombo=0, $morecss='', $hidepriceinlabel=0, $warehouseStatus='', $selected_combinations = array())
 	{
 		global $langs,$conf;
@@ -1946,6 +1960,7 @@ class Form
 	 *										    'warehouseinternal' = select products from warehouses for internal correct/transfer only
 	 *  @return     array    				    Array of keys for json
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_produits_list($selected='',$htmlname='productid',$filtertype='',$limit=20,$price_level=0,$filterkey='',$status=1,$finished=2,$outputmode=0,$socid=0,$showempty='1',$forcecombo=0,$morecss='',$hidepriceinlabel=0, $warehouseStatus='')
 	{
 		global $langs,$conf,$user,$db;
@@ -2422,6 +2437,7 @@ class Form
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_produits_fournisseurs($socid, $selected='', $htmlname='productid', $filtertype='', $filtre='', $ajaxoptions=array(), $hidelabel=0, $alsoproductwithnosupplierprice=0)
 	{
 		global $langs,$conf;
@@ -2465,6 +2481,7 @@ class Form
 	 *  @param  int     $alsoproductwithnosupplierprice    1=Add also product without supplier prices
 	 *  @return array           		Array of keys for json
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_produits_fournisseurs_list($socid,$selected='',$htmlname='productid',$filtertype='',$filtre='',$filterkey='',$statut=-1,$outputmode=0,$limit=100,$alsoproductwithnosupplierprice=0)
 	{
 		global $langs,$conf,$db;
@@ -2687,6 +2704,7 @@ class Form
 	 *  @param      int		$selected_supplier  Pre-selected supplier if more than 1 result
 	 *  @return	    void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_product_fourn_price($productid, $htmlname='productfournpriceid', $selected_supplier='')
 	{
 		global $langs,$conf;
@@ -2799,6 +2817,7 @@ class Form
 	 *    @param    int		$showempty         	Add an empty field
 	 *    @return	integer|null
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_address($selected, $socid, $htmlname='address_id',$showempty=0)
 	{
 		// On recherche les utilisateurs
@@ -2847,6 +2866,7 @@ class Form
 	 *
 	 *      @return     int             Nb of lines loaded, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_cache_conditions_paiements()
 	{
 		global $langs;
@@ -2894,6 +2914,7 @@ class Form
 	 *
 	 *      @return     int             Nb of lines loaded, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_cache_availability()
 	{
 		global $langs;
@@ -3060,6 +3081,7 @@ class Form
 	 *
 	 *      @return     int                 Nb of lines loaded, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_cache_types_paiements()
 	{
 		global $langs;
@@ -3120,6 +3142,7 @@ class Form
 	 * 		@param	string	$morecss			Add more CSS on select tag
 	 *		@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_conditions_paiements($selected=0, $htmlname='condid', $filtertype=-1, $addempty=0, $noinfoadmin=0, $morecss='')
 	{
 		global $langs, $user, $conf;
@@ -3165,6 +3188,7 @@ class Form
 	 *      @param  string  $morecss        Add more CSS on select tag
 	 * 		@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_types_paiements($selected='', $htmlname='paiementtype', $filtertype='', $format=0, $empty=1, $noadmininfo=0, $maxlength=0, $active=1, $morecss='')
 	{
 		global $langs,$user;
@@ -3438,6 +3462,7 @@ class Form
 	 *  @param	int		$showcurrency		Show currency in label
 	 * 	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_comptes($selected='',$htmlname='accountid',$statut=0,$filtre='',$useempty=0,$moreattrib='',$showcurrency=0)
 	{
 		global $langs, $conf;
@@ -3541,6 +3566,7 @@ class Form
 	 *    @return	string
 	 *    @see select_categories
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_all_categories($type, $selected='', $htmlname="parent", $maxlength=64, $excludeafterid=0, $outputmode=0)
 	{
 		global $conf, $langs;
@@ -3630,6 +3656,7 @@ class Form
 	 *     @deprecated
 	 *     @see formconfirm()
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_confirm($page, $title, $question, $action, $formquestion='', $selectedchoice="", $useajax=0, $height=170, $width=500)
 	{
 		print $this->formconfirm($page, $title, $question, $action, $formquestion, $selectedchoice, $useajax, $height, $width);
@@ -3940,6 +3967,7 @@ class Form
 	 *    @param    int     $nooutput           No print is done. String is returned.
 	 *    @return	string                      Return html content
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_project($page, $socid, $selected='', $htmlname='projectid', $discard_closed=0, $maxlength=20, $forcefocus=0, $nooutput=0)
 	{
 		global $langs;
@@ -3994,6 +4022,7 @@ class Form
 	 *	@param	int		$addempty		Add empty entry
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)
 	{
 		global $langs;
@@ -4027,6 +4056,7 @@ class Form
 	 *	@param	int		$addempty		Ajoute entree vide
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_availability($page, $selected='', $htmlname='availability', $addempty=0)
 	{
 		global $langs;
@@ -4104,6 +4134,7 @@ class Form
 	 *    @return	string
 	 *    @see		select_date
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_date($page, $selected, $htmlname, $displayhour=0, $displaymin=0, $nooutput=0)
 	{
 		global $langs;
@@ -4143,6 +4174,7 @@ class Form
 	 *  @param  array	$include        List of users id to include
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_users($page, $selected='', $htmlname='userid', $exclude='', $include='')
 	{
 		global $langs;
@@ -4181,6 +4213,7 @@ class Form
 	 *    @param    int     $active         Active or not, -1 = all
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id', $filtertype='', $active=1)
 	{
 		global $langs;
@@ -4213,6 +4246,7 @@ class Form
 	 *    @param    string	$htmlname    	Name of select html field
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_multicurrency_code($page, $selected='', $htmlname='multicurrency_code')
 	{
 		global $langs;
@@ -4241,6 +4275,7 @@ class Form
 	 *    @param    string  $currency       Currency code to explain the rate
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_multicurrency_rate($page, $rate='', $htmlname='multicurrency_tx', $currency='')
 	{
 		global $langs, $mysoc, $conf;
@@ -4288,6 +4323,7 @@ class Form
 	 *  @param	int		$discount_type	0 => customer discount, 1 => supplier discount
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_remise_dispo($page, $selected, $htmlname, $socid, $amount, $filter='', $maxvalue=0, $more='', $hidelist=0, $discount_type=0)
 	{
 		global $conf,$langs;
@@ -4377,6 +4413,7 @@ class Form
 	 *    @param    string		$htmlname    	Name of HTML select. If 'none', we just show contact link.
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_contacts($page, $societe, $selected='', $htmlname='contactid')
 	{
 		global $langs, $conf;
@@ -4425,6 +4462,7 @@ class Form
 	 *  @param	array	$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function form_thirdparty($page, $selected='', $htmlname='socid', $filter='',$showempty=0, $showtype=0, $forcecombo=0, $events=array())
 	{
 		global $langs;
@@ -4461,6 +4499,7 @@ class Form
 	 *    @param    string	$htmlname    name of HTML select list
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_currency($selected='',$htmlname='currency_id')
 	{
 		print $this->selectCurrency($selected,$htmlname);
@@ -4571,6 +4610,7 @@ class Form
 	 *	@param	string	$country_code		Country code with quotes ("'CA'", or "'CA,IN,...'")
 	 *	@return	int							Nb of loaded lines, 0 if already loaded, <0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_cache_vatrates($country_code)
 	{
 		global $langs;
@@ -4651,6 +4691,7 @@ class Form
 	 *  @param  int          $mode                0=Use vat rate as key in combo list, 1=Add VAT code after vat rate into key, -1=Use id of vat line as key
 	 *  @return	string
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_tva($htmlname='tauxtva', $selectedrate='', $societe_vendeuse='', $societe_acheteuse='', $idprod=0, $info_bits=0, $type='', $options_only=false, $mode=0)
 	{
 		global $langs,$conf,$mysoc;
@@ -4840,6 +4881,7 @@ class Form
 	 * 	@return	string|null						Nothing or string if nooutput is 1
 	 *  @see	form_date, select_month, select_year, select_dayofweek
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1, $addnowlink=0, $nooutput=0, $disabled=0, $fullday='', $addplusone='', $adddateof='')
 	{
 		global $conf,$langs;
@@ -5206,6 +5248,7 @@ class Form
 	 * 	@param	int	$nooutput		    Do not output html string but return it
 	 *  @return	string|null
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_duration($prefix, $iSecond='', $disabled=0, $typehour='select', $minunderhours=0, $nooutput=0)
 	{
 		global $langs;
@@ -6400,6 +6443,7 @@ class Form
 	 *  @param  int		$useempty          Affiche valeur vide dans liste
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
 	{
 
@@ -6780,6 +6824,7 @@ class Form
 	 *  @return	string
 	 *  @see select_dolusers
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_dolgroups($selected='', $htmlname='groupid', $show_empty=0, $exclude='', $disabled=0, $include='', $enableonly='', $force_entity='0', $multiple=false)
 	{
 		global $conf,$user,$langs;
@@ -7109,4 +7154,3 @@ class Form
 	}
 
 }
-

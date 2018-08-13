@@ -73,6 +73,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  @param	int			$id				Id
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action, $id)
 	{
 		global $limit, $offset, $sortfield, $sortorder;
@@ -129,6 +130,7 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
 		global $conf, $langs;
@@ -138,4 +140,3 @@ class ActionsContactCardDefault extends ActionsContactCardCommon
         $this->list_datas = array();
 	}
 }
-

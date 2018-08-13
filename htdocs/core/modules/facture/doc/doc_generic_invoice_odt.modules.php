@@ -187,6 +187,7 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$hookmanager;
@@ -504,4 +505,3 @@ class doc_generic_invoice_odt extends ModelePDFFactures
 	}
 
 }
-

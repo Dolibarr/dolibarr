@@ -361,6 +361,7 @@ class Subscription extends CommonObject
 	 *  @param	int			$statut      			Id statut
 	 *  @return string      						Label
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LibStatut($statut)
 	{
 	    global $langs;

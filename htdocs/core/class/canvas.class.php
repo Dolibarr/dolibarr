@@ -130,6 +130,7 @@ class Canvas
 	 * 	@param		string		$ref		Object ref (if id not provided)
 	 * 	@return		void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action='view', $id=0, $ref='')
 	{
 		if (method_exists($this->control,'assign_values')) $this->control->assign_values($action, $id, $ref);
@@ -156,6 +157,7 @@ class Canvas
 	 *	@param	string	$action		Action code
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function display_canvas($action)
 	{
 		global $db, $conf, $langs, $user, $canvas;

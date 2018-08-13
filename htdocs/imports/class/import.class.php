@@ -65,6 +65,7 @@ class Import
 	 *  @param  	string	$filter		Load a particular dataset only. Index will start to 0.
  	 *  @return		int					<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_arrays($user,$filter='')
 	{
 		global $langs,$conf;
@@ -186,6 +187,7 @@ class Import
 	 *  @param		string	$datatoimport		Dataset to import
 	 *  @return		string						<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_example_file($model, $headerlinefields, $contentlinevalues,$datatoimport)
 	{
 		global $conf,$langs;

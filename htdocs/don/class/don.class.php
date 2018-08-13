@@ -95,6 +95,7 @@ class Don extends CommonObject
      *  @param  int		$mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
      *  @return string 			       	Libelle du statut
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function LibStatut($statut,$mode=0)
     {
     	if (empty($this->labelstatut) || empty($this->labelstatushort))
@@ -694,6 +695,7 @@ class Don extends CommonObject
      *    @param	int		$notrigger	Disable triggers
      *    @return   int     			<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function valid_promesse($id, $userid, $notrigger=0)
     {
 		global $langs, $user;
@@ -743,6 +745,7 @@ class Don extends CommonObject
      *    @param    int		$modepayment   	    mode of payment
      *    @return   int      					<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_paid($id, $modepayment=0)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
@@ -777,6 +780,7 @@ class Don extends CommonObject
      *    @param	int		$id   	    id of donation
      *    @return   int     			<0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function set_cancel($id)
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = -1 WHERE rowid = ".$id;
@@ -806,6 +810,7 @@ class Don extends CommonObject
      *	@param	string	$param	1=promesses de dons validees , 2=xxx, 3=encaisses
      *	@return	int				Summ of donations
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function sum_donations($param)
     {
         global $conf;
@@ -832,6 +837,7 @@ class Don extends CommonObject
      *
      *	@return     int         <0 if KO, >0 if OK
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function load_state_board()
     {
         global $conf;

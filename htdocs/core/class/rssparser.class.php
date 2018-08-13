@@ -462,6 +462,7 @@ class RssParser
      *  @param	array		$attrs		Attributes of tags
      *  @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function feed_start_element($p, $element, &$attrs)
     {
         $el = $element = strtolower($element);
@@ -581,6 +582,7 @@ class RssParser
      *  @param	string	$text	Tag
      *  @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function feed_cdata($p, $text)
     {
         if ($this->_format == 'atom' and $this->incontent)
@@ -601,6 +603,7 @@ class RssParser
      *  @param	string		$el		Tag
      *  @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function feed_end_element($p, $el)
     {
         $el = strtolower($el);
@@ -669,6 +672,7 @@ class RssParser
      * @param	string	$text		Text
      * @return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function append_content($text)
     {
         if ( $this->initem ) {
@@ -781,4 +785,3 @@ function xml2php($xml)
     return $array;
 
 }
-

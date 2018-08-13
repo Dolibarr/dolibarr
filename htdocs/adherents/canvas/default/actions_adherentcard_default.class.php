@@ -74,6 +74,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 *  @param	int			$id				Id
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function assign_values(&$action, $id)
 	{
 		global $limit, $offset, $sortfield, $sortorder;
@@ -130,6 +131,7 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
 	 *  @param	string	$sortorder	Sort order ('ASC' or 'DESC')
 	 *  @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function LoadListDatas($limit, $offset, $sortfield, $sortorder)
 	{
 		global $conf, $langs;
@@ -139,4 +141,3 @@ class ActionsAdherentCardDefault extends ActionsAdherentCardCommon
         $this->list_datas = array();
 	}
 }
-

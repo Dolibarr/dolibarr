@@ -635,6 +635,7 @@ class Categorie extends CommonObject
 	 * @param   string     		$type 	Type of category ('product', ...)
 	 * @return  int                		1 : OK, -1 : erreur SQL, -2 : id not defined, -3 : Already linked
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_type($obj, $type)
 	{
 		global $user,$langs,$conf;
@@ -737,6 +738,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  int          1 if OK, -1 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function del_type($obj,$type)
 	{
 		global $user,$langs,$conf;
@@ -957,6 +959,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return	array|int   <0 KO, array ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_filles()
 	{
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie";
@@ -986,6 +989,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	private function load_motherof()
 	{
 		global $conf;
@@ -1030,6 +1034,7 @@ class Categorie extends CommonObject
 	 *
 	 * @return  array               	Array of categories. this->cats and this->motherof are set.
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_full_arbo($type, $markafterid=0)
 	{
 	    global $conf, $langs;
@@ -1113,6 +1118,7 @@ class Categorie extends CommonObject
 	 * 	@param		int		$protection		Deep counter to avoid infinite loop
 	 *	@return		void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function build_path_from_id_categ($id_categ,$protection=1000)
 	{
 		dol_syslog(get_class($this)."::build_path_from_id_categ id_categ=".$id_categ." protection=".$protection, LOG_DEBUG);
@@ -1153,6 +1159,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function debug_cats()
 	{
 		// Display $this->cats
@@ -1176,6 +1183,7 @@ class Categorie extends CommonObject
 	 *	@param	boolean		$parent		Just parent categories if true
 	 *	@return	array					Table of Object Category
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_all_categories($type=null, $parent=false)
 	{
 		if (! is_numeric($type)) $type = $this->MAP_ID[$type];
@@ -1211,6 +1219,7 @@ class Categorie extends CommonObject
 	 *
 	 * 	@return		integer		1 if already exist, 0 otherwise, -1 if error
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function already_exists()
 	{
 		$type=$this->type;
@@ -1261,6 +1270,7 @@ class Categorie extends CommonObject
 	 *	@param		int		$type		Type of category (0, 1, ...)
 	 *	@return		array
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_main_categories($type=null)
 	{
 		return $this->get_all_categories($type, true);
@@ -1275,6 +1285,7 @@ class Categorie extends CommonObject
 	 * @param   int     $nocolor     0
 	 * @return	array
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function print_all_ways($sep = " &gt;&gt; ", $url='', $nocolor=0)
 	{
 		$ways = array();
@@ -1328,6 +1339,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@return	int|array <0 KO, array OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_meres()
 	{
 		$parents = array();
@@ -1363,6 +1375,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@return	array
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_all_ways()
 	{
 		$ways = array();
@@ -1578,6 +1591,7 @@ class Categorie extends CommonObject
 	 *  @param      string	$file		Nom du fichier uploade
 	 *	@return		void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_photo($sdir, $file)
 	{
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1627,6 +1641,7 @@ class Categorie extends CommonObject
 	 *    @param      int		$nbmax      Nombre maximum de photos (0=pas de max)
 	 *    @return     array       			Tableau de photos
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function liste_photos($dir,$nbmax=0)
 	{
 		include_once DOL_DOCUMENT_ROOT .'/core/lib/files.lib.php';
@@ -1681,6 +1696,7 @@ class Categorie extends CommonObject
 	 *    @param	string		$file		Path to file
 	 *    @return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_photo($file)
 	{
         require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -1709,6 +1725,7 @@ class Categorie extends CommonObject
 	 *  @param    	string	$file        Path to file
 	 *  @return		void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function get_image_size($file)
 	{
 		$infoImg = getimagesize($file); // Recuperation des infos de l'image

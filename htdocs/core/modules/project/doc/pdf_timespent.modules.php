@@ -47,7 +47,7 @@ class pdf_timespent extends ModelePDFProjects
 	function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-		
+
 		// Translations
 		$langs->loadLangs(array("main", "projects", "companies"));
 
@@ -100,6 +100,7 @@ class pdf_timespent extends ModelePDFProjects
 	 *	@param	Translate	$outputlangs	Lang output object
 	 *	@return	int         				1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs)
 	{
 		global $conf, $hookmanager, $langs, $user;
@@ -107,7 +108,7 @@ class pdf_timespent extends ModelePDFProjects
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-        
+
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "projects"));
 
@@ -602,4 +603,3 @@ class pdf_timespent extends ModelePDFProjects
 	}
 
 }
-

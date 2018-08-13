@@ -89,6 +89,7 @@ class FormSms
      *  @param  int     $showform       Show form tags and submit button (recommanded is to use with value 0)
      *	@return	void
      */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function show_form($morecss='titlefield', $showform=1)
     {
         global $conf, $langs, $user, $form;
@@ -356,4 +357,3 @@ function limitChars(textarea, limit, infodiv)
     }
 
 }
-

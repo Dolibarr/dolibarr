@@ -88,7 +88,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-        
+
 		// Load traductions files requiredby by page
 		$langs->loadLangs(array("main", "companies"));
 
@@ -160,6 +160,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	 *  @param		int			$hideref			Do not show ref
 	 *	@return		int         					1 if OK, <=0 if KO
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function write_file($object,$outputlangs,$srctemplatepath,$hidedetails=0,$hidedesc=0,$hideref=0)
 	{
 		global $user,$langs,$conf,$mysoc,$db,$hookmanager;
@@ -167,7 +168,7 @@ class pdf_stdmovement extends ModelePDFMovement
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-        
+
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
@@ -916,7 +917,7 @@ class pdf_stdmovement extends ModelePDFMovement
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="")
 	{
 	    global $conf,$langs,$db,$hookmanager;
-        
+
 	    // Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
 
@@ -1149,4 +1150,3 @@ class pdf_stdmovement extends ModelePDFMovement
 	}
 
 }
-

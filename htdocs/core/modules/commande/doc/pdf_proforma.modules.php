@@ -75,4 +75,3 @@ class pdf_proforma extends pdf_einstein
 	}
 
 }
-

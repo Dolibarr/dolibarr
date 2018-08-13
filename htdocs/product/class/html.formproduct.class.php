@@ -167,6 +167,7 @@ class FormProduct
 	 * @param	String	$final_label	full label with all parents, separated by ' >> ' (completed on each call)
 	 * @return	String					full label with all parents, separated by ' >> '
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	private function get_parent_path($tab, $final_label='') {
 
 		if(empty($final_label)) $final_label = $tab['label'];
@@ -284,6 +285,7 @@ class FormProduct
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 * 	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
 		print $this->load_measuring_units($name, $measuring_style, $default, $adddefault);
@@ -299,6 +301,7 @@ class FormProduct
 	 * 	@param	int			$adddefault			Add empty unit called "Default"
 	 * 	@return	string
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function load_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
 	{
 		global $langs,$conf,$mysoc;

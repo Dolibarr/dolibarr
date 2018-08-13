@@ -304,6 +304,7 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for select
 	 * @return 	int 				<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_all($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, $filter = array())
 	{
 		global $langs;
@@ -342,7 +343,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (" . getEntity('product') . ")";
 		$sql .= " AND t.entity IN (" . getEntity('productprice') . ")";
-		
+
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ( $filter as $key => $value ) {
@@ -417,6 +418,7 @@ class Productcustomerprice extends CommonObject
 	 * @param 	array 	$filter 	Filter for sql request
 	 * @return 	int 			<0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function fetch_all_log($sortorder, $sortfield, $limit, $offset, $filter = array())
 	{
 		global $langs;

@@ -1007,6 +1007,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 * @param   string  $reldir Relative directory where to scan files
 	 * @return  int             <=0 if KO, >0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _load_tables($reldir)
 	{
 		global $conf;
@@ -1123,6 +1124,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int             Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_boxes($option='')
 	{
 		require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
@@ -1220,6 +1222,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_boxes()
 	{
 		global $conf;
@@ -1295,6 +1298,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int             Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_cronjobs()
 	{
 		require_once DOL_DOCUMENT_ROOT . '/core/class/infobox.class.php';
@@ -1405,6 +1409,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_cronjobs()
 	{
 		global $conf;
@@ -1434,6 +1439,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_tabs()
 	{
 		global $conf;
@@ -1459,6 +1465,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return int  Error count (0 if ok)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_tabs()
 	{
 		global $conf;
@@ -1526,6 +1533,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_const()
 	{
 		global $conf;
@@ -1595,6 +1603,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int <0 if KO, 0 if OK
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_const()
 	{
 		global $conf;
@@ -1633,6 +1642,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 * @param   int	$notrigger			1=Does not execute triggers, 0= execute triggers
 	 * @return  int                     Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_permissions($reinitadminperms=0, $force_entity=null, $notrigger=0)
 	{
 		global $conf,$user;
@@ -1785,6 +1795,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int                     Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_permissions()
 	{
 		global $conf;
@@ -1810,6 +1821,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int     Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_menus()
 	{
 		global $user;
@@ -1919,6 +1931,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_menus()
 	{
 		global $conf;
@@ -1948,6 +1961,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function create_dirs()
 	{
 		global $langs, $conf;
@@ -2009,6 +2023,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int             Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_dirs($name,$dir)
 	{
 		global $conf;
@@ -2050,6 +2065,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_dirs()
 	{
 		global $conf;
@@ -2075,6 +2091,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function insert_module_parts()
 	{
 		global $conf;
@@ -2153,6 +2170,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @return  int Error count (0 if OK)
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function delete_module_parts()
 	{
 		global $conf;

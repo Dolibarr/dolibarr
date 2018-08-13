@@ -200,6 +200,7 @@ class RejetPrelevement
 	 * 	@param	Facture		$fac			Invoice object
 	 * 	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function _send_email($fac)
 	{
 		global $langs;
@@ -366,4 +367,3 @@ class RejetPrelevement
 	}
 
 }
-

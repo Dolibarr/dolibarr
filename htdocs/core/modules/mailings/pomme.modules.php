@@ -118,7 +118,7 @@ class mailing_pomme extends MailingTargets
 		$s.='<option value="1">'.$langs->trans("Enabled").'</option>';
 		$s.='<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s.='</select>';
-		
+
 		$s.=' ';
 		$s.=$langs->trans("Employee").': ';
 		$s.='<select name="filteremployee" class="flat">';
@@ -126,7 +126,7 @@ class mailing_pomme extends MailingTargets
 		$s.='<option value="1">'.$langs->trans("Yes").'</option>';
 		$s.='<option value="0">'.$langs->trans("No").'</option>';
 		$s.='</select>';
-		
+
 		return $s;
 	}
 
@@ -150,13 +150,14 @@ class mailing_pomme extends MailingTargets
 	 *  @param  array	$filtersarray   Requete sql de selection des destinataires
 	 *  @return int           			< 0 si erreur, nb ajout si ok
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
 	function add_to_target($mailing_id,$filtersarray=array())
 	{
 		// Deprecation warning
 	    if ($filtersarray) {
 		    dol_syslog(__METHOD__ . ": filtersarray parameter is deprecated", LOG_WARNING);
 	    }
-	    
+
 	    global $conf, $langs;
 		$langs->load("companies");
 
@@ -169,10 +170,10 @@ class mailing_pomme extends MailingTargets
 		$sql.= " WHERE u.email <> ''"; // u.email IS NOT NULL est implicite dans ce test
 		$sql.= " AND u.entity IN (0,".$conf->entity.")";
 		$sql.= " AND u.email NOT IN (SELECT email FROM ".MAIN_DB_PREFIX."mailing_cibles WHERE fk_mailing=".$mailing_id.")";
-		if (isset($_POST["filter"]) && $_POST["filter"] == '1') $sql.= " AND u.statut=1"; 
-		if (isset($_POST["filter"]) && $_POST["filter"] == '0') $sql.= " AND u.statut=0"; 
-		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '1') $sql.= " AND u.employee=1"; 
-		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '0') $sql.= " AND u.employee=0"; 
+		if (isset($_POST["filter"]) && $_POST["filter"] == '1') $sql.= " AND u.statut=1";
+		if (isset($_POST["filter"]) && $_POST["filter"] == '0') $sql.= " AND u.statut=0";
+		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '1') $sql.= " AND u.employee=1";
+		if (isset($_POST["filteremployee"]) && $_POST["filteremployee"] == '0') $sql.= " AND u.employee=0";
 		$sql.= " ORDER BY u.email";
 
 		// Stocke destinataires dans cibles
@@ -222,4 +223,3 @@ class mailing_pomme extends MailingTargets
 	}
 
 }
-
