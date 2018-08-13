@@ -1915,9 +1915,8 @@ if ($step == 6 && $datatoimport)
 
 print '<br>';
 
-
+// End of page
 llxFooter();
-
 $db->close();
 
 

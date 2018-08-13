@@ -292,8 +292,6 @@ if (empty($action) && ! empty($user->rights->loan->delete))
 
 print '</div>';
 
-
-
+// End of page
 llxFooter();
-
 $db->close();
