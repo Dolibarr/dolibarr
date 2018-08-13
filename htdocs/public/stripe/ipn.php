@@ -124,7 +124,7 @@ $stripe=new Stripe($db);
 if ($event->type == 'payout.created') {
 	$error=0;
 
-	$result=dolibarr_set_const($db, $service."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
+	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT", date('Y-m-d H:i:s',$event->data->object->arrival_date), 'chaine', 0, '', $conf->entity);
 
 	if ($result > 0)
 	{
@@ -144,7 +144,7 @@ if ($event->type == 'payout.created') {
 elseif ($event->type == 'payout.paid') {
 	global $conf;
 	$error=0;
-	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT",null,'chaine',0,'',1);
+	$result=dolibarr_set_const($db, $servicestatus."_NEXTPAYOUT",null,'chaine',0,'',$conf->entity);
 	if ($result)
 	{
 		$langs->load("errors");
