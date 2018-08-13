@@ -35,7 +35,8 @@ if ($action == 'setnote_public' && ! empty($permissionnote) && ! GETPOST('cancel
 	
 	$result_update=$object->update_note(dol_html_entity_decode(GETPOST('note_public', 'none'), ENT_QUOTES),'_public');
 
-	if (in_array($object->table_element, array('supplier_proposal', 'propal', 'commande_fournisseur', 'commande', 'facture_fourn', 'facture')))
+	if ($result_update < 0) setEventMessages($object->error, $object->errors, 'errors');
+	elseif (in_array($object->table_element, array('supplier_proposal', 'propal', 'commande_fournisseur', 'commande', 'facture_fourn', 'facture')))
 	{
 		// Define output language
 		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
@@ -57,7 +58,6 @@ if ($action == 'setnote_public' && ! empty($permissionnote) && ! GETPOST('cancel
 			if ($result < 0) dol_print_error($db,$result);
 		}
 	}
-	if ($result_update < 0) setEventMessages($object->error, $object->errors, 'errors');
 }
 // Set public note
 else if ($action == 'setnote_private' && ! empty($permissionnote) && ! GETPOST('cancel','alpha'))
