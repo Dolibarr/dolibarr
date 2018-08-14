@@ -188,6 +188,7 @@ class Setup extends DolibarrApi
      * @param int       $id        ID of country
      * @param string    $lang      Code of the language the name of the
      *                             country must be translated to
+     * @return array 			   Array of cleaned object properties
      *
      * @url     GET dictionary/countries/{id}
      *
@@ -293,6 +294,7 @@ class Setup extends DolibarrApi
      * @param Ccountry $country   Country
      * @param string   $lang      Code of the language the name of the
      *                            country must be translated to
+     * @return void
      */
     private function translateLabel($country, $lang)
     {

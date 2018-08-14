@@ -910,6 +910,7 @@ class User extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{
@@ -2304,13 +2305,13 @@ class User extends CommonObject
 
                 //Check user's rights to see an other user
                 if((!$user->rights->user->user->lire && $this->id !=$user->id)) $option='nolink';
-                
+
 		if ($option == 'xxx')
 		{
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 		}
-                
+
                 if ($option == 'nolink')
 		{
 			$linkstart = '';
@@ -3147,4 +3148,3 @@ class User extends CommonObject
 	}
 
 }
-

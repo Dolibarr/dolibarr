@@ -18,9 +18,6 @@
  * See https://medium.com/@lhartikk/a-blockchain-in-200-lines-of-code-963cc1cc0e54
  */
 
-
-
-
 /*ini_set('unserialize_callback_func', 'mycallback');
 
 function mycallback($classname)
@@ -171,6 +168,7 @@ class BlockedLog
 
 	/**
 	 *  Try to retrieve source object (it it still exists)
+     * @return string
 	 */
 	public function getObjectLink()
 	{
@@ -286,6 +284,7 @@ class BlockedLog
 
 	/**
 	 *      try to retrieve user author
+     * @return string
 	 */
 	public function getUser()
 	{
@@ -1029,6 +1028,7 @@ class BlockedLog
 	 * Check if module was already used or not for at least one recording.
 	 *
 	 * @param	int		$ignoresystem		Ignore system events for the test
+     * @return bool
 	 */
 	function alreadyUsed($ignoresystem=0)
 	{
@@ -1055,4 +1055,3 @@ class BlockedLog
 	}
 
 }
-
