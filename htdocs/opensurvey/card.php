@@ -430,6 +430,6 @@ if ($object->allow_comments) {
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();
