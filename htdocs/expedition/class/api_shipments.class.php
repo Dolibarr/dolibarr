@@ -192,13 +192,13 @@ class Shipments extends DolibarrApi
         foreach($request_data as $field => $value) {
             $this->shipment->$field = $value;
         }
-        /*if (isset($request_data["lines"])) {
+        if (isset($request_data["lines"])) {
           $lines = array();
           foreach ($request_data["lines"] as $line) {
             array_push($lines, (object) $line);
           }
           $this->shipment->lines = $lines;
-        }*/
+        }
 
         if ($this->shipment->create(DolibarrApiAccess::$user) < 0) {
             throw new RestException(500, "Error creating shipment", array_merge(array($this->shipment->error), $this->shipment->errors));

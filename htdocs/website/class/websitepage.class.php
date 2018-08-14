@@ -362,10 +362,11 @@ class WebsitePage extends CommonObject
 	 * @param	string	$newref				New ref/alias of page
 	 * @param	string	$newlang			New language
 	 * @param	int		$istranslation		1=New page is a translation of the cloned page.
-	 * @param	int		$newwebsite			0=Same web site, 1=New web site
+	 * @param	int		$newwebsite			0=Same web site, >0=Id of new website
+	 * @param	int		$keeptitleunchanged	1=Keep title unchanged
 	 * @return 	mixed 						New object created, <0 if KO
 	 */
-	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0)
+	public function createFromClone(User $user, $fromid, $newref, $newlang='', $istranslation=0, $newwebsite=0, $keeptitleunchanged=0)
 	{
 		global $hookmanager, $langs;
 		$error = 0;
@@ -385,7 +386,7 @@ class WebsitePage extends CommonObject
 		$object->ref = $newref;
 		$object->pageurl = $newref;
 		$object->aliasalt = '';
-		$object->title = $langs->trans("CopyOf").' '.$object->title;
+		$object->title = ($keeptitleunchanged ? '' : $langs->trans("CopyOf").' ').$object->title;
 		if (! empty($newlang)) $object->lang=$newlang;
 		if ($istranslation) $object->fk_page = $fromid;
 		else $object->fk_page = 0;

@@ -278,5 +278,6 @@ dol_fiche_end();
 
 print '<br>';
 
+// End of page
 llxFooter();
 $db->close();

@@ -941,5 +941,6 @@ if (empty($action))
     }
 }
 
+// End of page
 llxFooter();
 $db->close();

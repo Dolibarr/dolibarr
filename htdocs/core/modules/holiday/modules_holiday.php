@@ -34,7 +34,7 @@
 
 
 /**
- *	Parent class to manage intervention document templates
+ *	Parent class to manage holidays document templates
  */
 abstract class ModelePDFHoliday extends CommonDocGenerator
 {
@@ -44,16 +44,16 @@ abstract class ModelePDFHoliday extends CommonDocGenerator
 	/**
 	 *	Return list of active generation modules
 	 *
-     *  @param	DoliDB	$db     			Database handler
+     *  @param	DoliDB  $db     			Database handler
      *  @param  integer	$maxfilenamelength  Max length of value to show
      *  @return	array						List of templates
-	 */
+     */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	static function liste_modeles($db,$maxfilenamelength=0)
+	static function liste_modeles($db, $maxfilenamelength=0)
 	{
 		global $conf;
 
-		$type = 'contract';
+		$type = 'holiday';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -65,7 +65,7 @@ abstract class ModelePDFHoliday extends CommonDocGenerator
 
 
 /**
- * Parent class for all contract numbering modules
+ * Parent class for all holidays numbering modules
  */
 class ModelNumRefHolidays
 {
