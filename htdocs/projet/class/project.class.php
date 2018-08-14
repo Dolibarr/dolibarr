@@ -633,7 +633,8 @@ class Project extends CommonObject
 		$this->getLinesArray($user);
 
 		// Delete tasks
-		$this->deleteTasks($this->lines);
+		$ret = $this->deleteTasks($user);
+		if ($ret < 0) $error++;
 
         // Delete project
         if (! $error)
@@ -715,16 +716,31 @@ class Project extends CommonObject
      *  
      *  	@param     array   $arr       Array of tasks
      */
-    function deleteTasks($arr)
+    function deleteTasks($user)
     {
-        global $user;
-        
-        foreach($arr as $task)
-        {
-            if($task->hasChildren() <= 0) $task->delete($user);
+        $countTasks = count($this->lines);
+        $deleted = false;
+        if ($countTasks){
+            foreach($this->lines as $task)
+            {
+                if($task->hasChildren() <= 0) {
+                    $deleted = true;
+                    $ret = $task->delete($user);
+                    if ($ret < 1)
+                    {
+                        $this->errors[] = $this->db->lasterror();
+                        return -1;
+                    }
+                }
+            }
         }
         $this->getLinesArray($user);
-        if (count($this->lines)) $this->deleteTasks($this->lines);
+        if($deleted && count($this->lines) < $countTasks)
+        {
+            if (count($this->lines)) $this->deleteTasks($this->lines);
+        }
+        
+        return 1;
     }
 
     /**
