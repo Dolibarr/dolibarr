@@ -34,7 +34,7 @@
 
 
 /**
- *	Parent class to manage intervention document templates
+ *	Parent class to manage holidays document templates
  */
 abstract class ModelePDFHoliday extends CommonDocGenerator
 {
@@ -52,7 +52,7 @@ abstract class ModelePDFHoliday extends CommonDocGenerator
 	{
 		global $conf;
 
-		$type='contract';
+		$type = 'holiday';
 		$liste=array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
@@ -64,7 +64,7 @@ abstract class ModelePDFHoliday extends CommonDocGenerator
 
 
 /**
- * Parent class for all contract numbering modules
+ * Parent class for all holidays numbering modules
  */
 class ModelNumRefHolidays
 {

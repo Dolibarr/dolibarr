@@ -145,5 +145,6 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="../establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

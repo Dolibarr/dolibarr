@@ -268,6 +268,7 @@ $(document).ready(function() {
 });
 </script>'."\n";
 
+// End of page
 llxFooter();
 $db->close();
 

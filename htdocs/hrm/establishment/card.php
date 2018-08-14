@@ -408,5 +408,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     print '</div>';
 }
 
+// End of page
 llxFooter();
 $db->close();

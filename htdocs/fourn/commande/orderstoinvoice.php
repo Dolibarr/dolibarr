@@ -617,5 +617,6 @@ if (($action != 'create' && $action != 'add') && !$error) {
 
 dol_htmloutput_mesg($mesg, $mesgs);
 
+// End of page
 llxFooter();
 $db->close();
