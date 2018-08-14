@@ -232,7 +232,7 @@ abstract class ActionsAdherentCardCommon
      *
      *  @return		string					HTML output
      */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
     private function assign_post()
     {
         global $langs, $mysoc;

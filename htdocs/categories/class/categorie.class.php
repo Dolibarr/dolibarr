@@ -989,7 +989,7 @@ class Categorie extends CommonObject
 	 *
 	 *	@return		int		<0 if KO, >0 if OK
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	private function load_motherof()
 	{
 		global $conf;

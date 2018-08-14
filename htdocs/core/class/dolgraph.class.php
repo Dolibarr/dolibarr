@@ -655,7 +655,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk
 	 * @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	private function draw_artichow($file,$fileurl)
 	{
 		global $artichow_defaultfont;
@@ -844,7 +844,7 @@ class DolGraph
 	 * @param	string	$fileurl	Url path to show image if saved onto disk. Never used here.
 	 * @return	void
 	 */
-    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	private function draw_jflot($file,$fileurl)
 	{
 		global $artichow_defaultfont;

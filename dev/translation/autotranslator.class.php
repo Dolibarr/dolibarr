@@ -73,6 +73,7 @@ class autoTranslator
 	 *
 	 * 	@return	void
 	 */
+    // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
 	private function parse_refLangTranslationFiles()
 	{
 
