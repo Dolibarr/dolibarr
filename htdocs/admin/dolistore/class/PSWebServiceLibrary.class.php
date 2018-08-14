@@ -70,8 +70,9 @@ class PrestaShopWebservice
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
 	*/
 	function __construct($url, $key, $debug = true) {
-		if (!extension_loaded('curl'))
-		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
+		if (!extension_loaded('curl')) {
+            throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
+        }
 		$this->url = $url;
 		$this->key = $key;
 		$this->debug = $debug;
@@ -383,7 +384,7 @@ class PrestaShopWebservice
 		else
 			throw new PrestaShopWebserviceException('Bad parameters given');
 
-		$request = self::executeRequest($url,  array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
+		$request = self::executeRequest($url, array(CURLOPT_CUSTOMREQUEST => 'PUT', CURLOPT_POSTFIELDS => $xml));
 		self::checkStatusCode($request['status_code']);// check the response validity
 		return self::parseXML($request['response']);
 	}
