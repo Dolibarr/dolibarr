@@ -1338,7 +1338,7 @@ class Propal extends CommonObject
 
 		if ($ref) {
 			$sql.= " AND p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
-			$sql.= " AND p.ref='".$ref."'";
+			$sql.= " AND p.ref='".$this->db->escape($ref)."'";
 		}
 		else $sql.= " AND p.rowid=".$rowid;
 
