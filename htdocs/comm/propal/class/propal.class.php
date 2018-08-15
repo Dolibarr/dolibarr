@@ -1335,7 +1335,6 @@ class Propal extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
-		$sql.= " WHERE p.fk_statut = c.id";
 
 		if ($ref) {
 			$sql.= " AND p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
