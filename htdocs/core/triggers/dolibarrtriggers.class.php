@@ -80,11 +80,12 @@ abstract class DolibarrTriggers
 	 *
 	 * @param DoliDB $db Database handler
 	 */
-	public function __construct(DoliDB $db) {
+    public function __construct(DoliDB $db)
+    {
 
 		$this->db = $db;
 
-		if (empty($this->name)) 
+		if (empty($this->name))
 		{
 			$this->name = preg_replace('/^Interface/i', '', get_class($this));
 		}

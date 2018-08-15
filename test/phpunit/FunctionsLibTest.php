@@ -1118,7 +1118,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testDolNl2Br() {
+    public function testDolNl2Br()
+    {
 
 		//String to encode
 		$string = "a\na";
