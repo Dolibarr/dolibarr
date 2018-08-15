@@ -1181,10 +1181,8 @@ if ($conf->use_javascript_ajax)
 	print $comboenhancement;
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();
 
 
