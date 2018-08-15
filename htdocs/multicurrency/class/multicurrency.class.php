@@ -397,8 +397,8 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @return int -1 if KO, 1 if OK
 	 */
-	 public function addRate($rate)
-	 {
+	public function addRate($rate)
+	{
 	 	$currencyRate = new CurrencyRate($this->db);
 		$currencyRate->rate = $rate;
 
@@ -419,7 +419,6 @@ class MultiCurrency extends CommonObject
 	  *
 	  * @param	string	$code	currency code
 	  * @param	double	$rate	new rate
-	  *
 	  * @return int -1 if KO, 1 if OK, 2 if label found and OK
 	  */
 	function addRateFromDolibarr($code, $rate)
@@ -450,25 +449,25 @@ class MultiCurrency extends CommonObject
 		return -1;
 	}
 
-	 /**
+	/**
 	 * Add new entry into llx_multicurrency_rate to historise
 	 *
 	 * @param double	$rate	rate value
 	  *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	 public function updateRate($rate)
-	 {
+	public function updateRate($rate)
+	{
 	 	return $this->addRate($rate);
-	 }
+	}
 
 	/**
 	 * Fetch CurrencyRate object in $this->rate
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	 public function getRate()
-	 {
+	public function getRate()
+	{
 	 	$sql = 'SELECT cr.rowid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.$this->table_element_line.' as cr';
 		$sql.= ' WHERE cr.fk_multicurrency = '.$this->id;
@@ -481,9 +480,9 @@ class MultiCurrency extends CommonObject
 			return $this->rate->fetch($obj->rowid);
 		}
 
-	 }
+	}
 
-	 /**
+	/**
 	 * Get id of currency from code
 	 *
 	 * @param DoliDB	$db		object db
@@ -491,8 +490,8 @@ class MultiCurrency extends CommonObject
 	 *
 	 * @return 0 if not found, >0 if OK
 	 */
-	 public static function getIdFromCode(&$db, $code)
-	 {
+	public static function getIdFromCode(&$db, $code)
+	{
 	 	global $conf;
 
 	 	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'multicurrency WHERE code = \''.$db->escape($code).'\' AND entity = '.$conf->entity;
@@ -501,9 +500,9 @@ class MultiCurrency extends CommonObject
 		$resql = $db->query($sql);
 		if ($resql && $obj = $db->fetch_object($resql)) return $obj->rowid;
 		else return 0;
-	 }
+	}
 
-	 /**
+	/**
 	 * Get id and rate of currency from code
 	 *
 	 * @param DoliDB	$db		object db
@@ -513,8 +512,8 @@ class MultiCurrency extends CommonObject
 	 * @return 	array	[0] => id currency
 	 *					[1] => rate
 	 */
-	 public static function getIdAndTxFromCode(&$db, $code, $date_document='')
-	 {
+	public static function getIdAndTxFromCode(&$db, $code, $date_document='')
+	{
 		global $conf;
 
 	 	$sql1 = 'SELECT m.rowid, mc.rate FROM '.MAIN_DB_PREFIX.'multicurrency m';
@@ -548,7 +547,6 @@ class MultiCurrency extends CommonObject
 	  * @param	double	$amount			amount to convert
 	  * @param	string	$way			dolibarr mean the amount is in dolibarr currency
 	  * @param	string	$table			facture or facture_fourn
-	  *
 	  * @return	double					amount converted
 	  */
 	  public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way='dolibarr', $table='facture')
@@ -570,6 +568,7 @@ class MultiCurrency extends CommonObject
 	   *
 	   *  @param	int 	$fk_facture 	id of facture
 	   *  @param 	string 	$table 			facture or facture_fourn
+     *  @return bool
 	   */
 	   public static function getInvoiceRate($fk_facture, $table='facture')
 	   {
@@ -586,6 +585,7 @@ class MultiCurrency extends CommonObject
 
 		 return false;
 	   }
+
 
 	/**
 	 * With free account we can't set source then recalcul all rates to force another source
@@ -621,19 +621,20 @@ class MultiCurrency extends CommonObject
 	 *  Sync rates from api
 	 *
 	 *  @param 	array 	$response 	array of reponse from api to sync dolibarr rates
+     * @return void
 	 */
 	public static function syncRates($response)
 	{
 		global $db,$conf;
 
 		$ch = curl_init('http://apilayer.net/api/live?access_key='.$key.'');
-                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                $response = curl_exec($ch);
-                curl_close($ch);
-                $response = json_decode($response);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $response = json_decode($response);
 
-                if ($response->success)
-                {
+        if ($response->success)
+        {
 
 			$TRate = $response->quotes;
 			$timestamp = $response->timestamp;
@@ -667,14 +668,14 @@ class MultiCurrency extends CommonObject
 	 * @param	string	$code 	current code to search
 	 * @return	boolean         True if exists, false if not exists
 	 */
-	 public static function checkCodeAlreadyExists($code)
-	 {
+	public static function checkCodeAlreadyExists($code)
+	{
 	 	global $db;
 
 	 	$currency = new MultiCurrency($db);
 		if ($currency->fetch('', $code) > 0) return true;
 		else return false;
-	 }
+	}
 }
 
 /**

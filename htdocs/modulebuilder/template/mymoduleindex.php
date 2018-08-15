@@ -233,6 +233,6 @@ if (! empty($conf->mymodule->enabled) && $user->rights->mymodule->read)
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

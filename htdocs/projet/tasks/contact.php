@@ -531,7 +531,6 @@ if (is_object($hookmanager))
 	$reshook=$hookmanager->executeHooks('formContactTpl',$parameters,$object,$action);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

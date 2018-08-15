@@ -2187,6 +2187,6 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete')
     print '</div></div></div>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();

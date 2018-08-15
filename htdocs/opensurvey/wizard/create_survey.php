@@ -204,6 +204,6 @@ else
 print '<br><br><br>'."\n";
 print '</form>'."\n";
 
+// End of page
 llxFooter();
-
 $db->close();

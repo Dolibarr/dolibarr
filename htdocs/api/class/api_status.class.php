@@ -28,6 +28,8 @@ class Status
 {
     /**
      * Get status (Dolibarr version)
+     *
+     * @return array
      */
     function index()
     {

@@ -189,6 +189,7 @@ class AccountancyExport
 	 * Function who chose which export to use with the default config
 	 *
 	 * @param unknown $TData data
+     * @return void
 	 */
     public function export(&$TData)
     {
@@ -617,6 +618,7 @@ class AccountancyExport
 	 *
 	 * @param unknown $str data
 	 * @param integer $size data
+     * @return string
 	 */
     public static function trunc($str, $size)
     {

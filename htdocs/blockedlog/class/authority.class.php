@@ -109,7 +109,8 @@ class BlockedLogAuthority
 	/**
 	 *	Add a new block to the chain
 	 *
-	 *	@param      string		$block		new block to chain
+     *	@param      string		$block		new block to chain
+     *  @return void
 	 */
     public function addBlock($block)
     {
