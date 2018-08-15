@@ -722,7 +722,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerOrderToBill',$parameters);
 	$sql.=$hookmanager->resPrint;
 
-	$sql.= " GROUP BY s.nom, s.rowid, s.email, s.code_client, s.code_compta, c.rowid, c.ref, c.facture, c.fk_statut, c.tva, c.total_ht, c.total_ttc";
+	$sql.= " GROUP BY s.nom, s.email, s.rowid, s.code_client, s.code_compta, c.rowid, c.ref, c.facture, c.fk_statut, c.total_ht, c.tva, c.total_ttc, cc.rowid, cc.code";
 
 	$resql = $db->query($sql);
 	if ( $resql )
