@@ -564,6 +564,6 @@ print '</form>'."\n";
 print '<br><br><br><br>'."\n";
 print '</div></div>'."\n";
 
+// End of page
 llxFooter();
-
 $db->close();

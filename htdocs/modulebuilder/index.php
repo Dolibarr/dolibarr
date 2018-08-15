@@ -2487,8 +2487,6 @@ elseif (! empty($module))
 
 dol_fiche_end(); // End modules
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

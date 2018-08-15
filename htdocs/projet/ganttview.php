@@ -364,7 +364,6 @@ else
 	print '<div class="opacitymedium">'.$langs->trans("NoTasks").'</div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -57,6 +57,6 @@ print '<div style="clear:both;"></div>';
 print '</div>';
 print '</div></form>';
 
+// End of page
 llxFooter();
-
 $db->close();
