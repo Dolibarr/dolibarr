@@ -1301,8 +1301,29 @@ if ($action == 'exportsite')
 // Import site
 if ($action == 'importsiteconfirm')
 {
-	$object->importWebSite($fileofzip);
+	$fileofzip = GETPOST('userfile');
+	if (empty($fileofzip))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		$action = 'importsite';
+	}
+	else
+	{
+		// TODO
 
+
+		$result = $object->importWebSite($fileofzip);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'importsite';
+		}
+		else
+		{
+			header("Location: aaaaa");
+			exit();
+		}
+	}
 }
 
 
@@ -2086,8 +2107,24 @@ if ($action == 'createsite')
 
 if ($action == 'importsite')
 {
+	print '<div class="fiche">';
 
+	print '<br>';
 
+	print_fiche_titre($langs->trans("ImportSite"));
+
+	dol_fiche_head(array(), '0', '', -1);
+
+	print $langs->trans("ZipOfWebsitePackageToImport").'<br><br>';
+
+	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
+	print '<input type="submit" class="button" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
+
+	dol_fiche_end();
+
+	print '</div>';
+
+	print '<br>';
 }
 
 if ($action == 'editmeta' || $action == 'createcontainer')
