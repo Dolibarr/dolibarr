@@ -609,7 +609,8 @@ class BlockedLog
 	 *	@param      int		$id       	Id of object to load
 	 *	@return     int         			>0 if OK, <0 if KO, 0 if not found
 	 */
-	public function fetch($id) {
+    public function fetch($id)
+    {
 
 		global $langs;
 
@@ -705,7 +706,8 @@ class BlockedLog
 	 *
 	 *	@return	boolean
 	 */
-	public function setCertified() {
+    public function setCertified()
+    {
 
 		$res = $this->db->query("UPDATE ".MAIN_DB_PREFIX."blockedlog SET certified=1 WHERE rowid=".$this->id);
 		if($res===false) return false;
@@ -722,7 +724,8 @@ class BlockedLog
 	 *  @param	int		$forcesignature		Force signature (for example '0000000000' when we disabled the module)
 	 *	@return	int							<0 if KO, >0 if OK
 	 */
-	public function create($user, $forcesignature='') {
+    public function create($user, $forcesignature='')
+    {
 
 		global $conf,$langs,$hookmanager;
 
@@ -1055,4 +1058,3 @@ class BlockedLog
 	}
 
 }
-
