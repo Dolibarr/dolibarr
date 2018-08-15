@@ -171,6 +171,8 @@ class CoreObject extends CommonObject
 
     /**
      * Function to fetch children objects
+     *
+     * @return void
      */
     public function fetchChild()
     {
@@ -207,6 +209,7 @@ class CoreObject extends CommonObject
      * Function to update children data
      *
      * @param   User    $user   user object
+     * @return void
      */
 	public function saveChild(User &$user)
     {

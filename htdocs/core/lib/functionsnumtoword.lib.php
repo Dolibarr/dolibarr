@@ -233,6 +233,7 @@ function dolNumberToWord($numero, $langs, $numorcurrency='number')
  * @param integer $hundreds     Hundreds
  * @param integer $tens         Tens
  * @param integer $units        Units
+ * @return string
  */
 function hundreds2text($hundreds, $tens, $units)
 {

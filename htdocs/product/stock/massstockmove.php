@@ -462,7 +462,6 @@ print '<div class="center"><input class="button" type="submit" name="valid" valu
 
 print '</form>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

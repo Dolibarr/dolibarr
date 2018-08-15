@@ -2193,6 +2193,6 @@ if (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

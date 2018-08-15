@@ -1173,6 +1173,6 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete' && $id>0)
 }
 */
 
+// End of page
 llxFooter();
-
 $db->close();

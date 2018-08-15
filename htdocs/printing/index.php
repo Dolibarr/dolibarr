@@ -68,6 +68,6 @@ foreach ($result as $driver)
     }
 }
 
+// End of page
 llxFooter();
-
 $db->close();

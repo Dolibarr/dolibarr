@@ -994,6 +994,6 @@ if (!empty($conf->global->STOCK_ALLOW_ADD_LIMIT_STOCK_BY_WAREHOUSE))
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

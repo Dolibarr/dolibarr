@@ -1594,6 +1594,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
  * @param	string	$langkey		Translation key
  * @param 	string	$fieldkey		Key of the html select field the text refers to
  * @param	int		$fieldrequired	1=Field is mandatory
+ * @return string
  * @deprecated Form::editfieldkey
  */
 function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
@@ -7431,6 +7432,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
  *
  * @param string	$htmlname	Id of html object
  * @param string	$addlink	Add a 'link to' after
+ * @return string
  */
 function ajax_autoselect($htmlname, $addlink='')
 {
@@ -7568,6 +7570,7 @@ function dol_mimetype($file, $default='application/octet-stream', $mode=0)
  * @param int		$id				id of line
  * @param bool		$checkentity	add filter on entity
  * @param string	$rowidfield		name of the column rowid
+ * @return string
  */
 function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='rowid')
 {

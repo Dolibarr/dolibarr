@@ -6810,6 +6810,7 @@ abstract class CommonObject
 	 * Function to load data from a SQL pointer into properties of current object $this
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
+     * @return void
 	 */
 	protected function setVarsFromFetchObj(&$obj)
 	{

@@ -200,6 +200,6 @@ print '<div style="text-align: center">
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();
