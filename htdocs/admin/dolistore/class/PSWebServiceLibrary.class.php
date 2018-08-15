@@ -82,6 +82,7 @@ class PrestaShopWebservice
 	 * Take the status code and throw an exception if the server didn't return 200 or 201 code
 	 *
 	 * @param int $status_code Status code of an HTTP return
+     * @return void
 	 */
 	protected function checkStatusCode($status_code)
 	{
