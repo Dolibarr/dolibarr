@@ -620,7 +620,7 @@ class ActionComm extends CommonObject
                 $this->contact->id			= $obj->fk_contact;		// deprecated
 
                 $this->fk_element			= $obj->elementid;
-		$this->elementid			= $obj->elementid;
+                $this->elementid			= $obj->elementid;
                 $this->elementtype			= $obj->elementtype;
 
                 $this->fetchResources();
