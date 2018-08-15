@@ -32,7 +32,7 @@ class Invoices extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'socid'
+        'socid',
     );
 
     /**
@@ -104,7 +104,8 @@ class Invoices extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids='', $status='', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -245,7 +246,8 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function createInvoiceFromOrder($orderid) {
+    function createInvoiceFromOrder($orderid)
+    {
 
         require_once DOL_DOCUMENT_ROOT . '/commande/class/commande.class.php';
 
@@ -282,7 +284,8 @@ class Invoices extends DolibarrApi
      *
      * @return int
      */
-    function getLines($id) {
+    function getLines($id)
+    {
     	if(! DolibarrApiAccess::$user->rights->facture->lire) {
     		throw new RestException(401);
     	}
@@ -319,7 +322,8 @@ class Invoices extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function putLine($id, $lineid, $request_data = null) {
+    function putLine($id, $lineid, $request_data = null)
+    {
     	if(! DolibarrApiAccess::$user->rights->facture->creer) {
     		throw new RestException(401);
     	}
@@ -383,7 +387,8 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function deleteLine($id, $lineid) {
+    function deleteLine($id, $lineid)
+    {
 
     	if(! DolibarrApiAccess::$user->rights->facture->creer) {
     		throw new RestException(401);
@@ -511,7 +516,8 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 400
      */
-    function postLine($id, $request_data = null) {
+    function postLine($id, $request_data = null)
+    {
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
         }
@@ -849,7 +855,8 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function useDiscount($id, $discountid) {
+    function useDiscount($id, $discountid)
+    {
 
         if(! DolibarrApiAccess::$user->rights->facture->creer) {
             throw new RestException(401);
@@ -894,7 +901,8 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function useCreditNote($id, $discountid) {
+    function useCreditNote($id, $discountid)
+    {
 
         require_once DOL_DOCUMENT_ROOT . '/core/class/discount.class.php';
 
@@ -938,7 +946,8 @@ class Invoices extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function getPayments($id) {
+    function getPayments($id)
+    {
 
         if(! DolibarrApiAccess::$user->rights->facture->lire) {
             throw new RestException(401);
@@ -985,8 +994,9 @@ class Invoices extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement='', $comment='', $chqemetteur='', $chqbank='') {
-    	global $conf;
+    function addPayment($id, $datepaye, $paiementid, $closepaidinvoices, $accountid, $num_paiement='', $comment='', $chqemetteur='', $chqbank='')
+    {
+        global $conf;
 
     	require_once DOL_DOCUMENT_ROOT . '/compta/paiement/class/paiement.class.php';
 
@@ -1215,18 +1225,19 @@ class Invoices extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
-    	$object = parent::_cleanObjectDatas($object);
+        $object = parent::_cleanObjectDatas($object);
 
         unset($object->note);
-    	unset($object->address);
-    	unset($object->barcode_type);
-    	unset($object->barcode_type_code);
-    	unset($object->barcode_type_label);
-    	unset($object->barcode_type_coder);
+        unset($object->address);
+        unset($object->barcode_type);
+        unset($object->barcode_type_code);
+        unset($object->barcode_type_label);
+        unset($object->barcode_type_coder);
 
-    	return $object;
+        return $object;
     }
 
     /**
@@ -1241,8 +1252,9 @@ class Invoices extends DolibarrApi
     {
         $invoice = array();
         foreach (Invoices::$FIELDS as $field) {
-            if (!isset($data[$field]))
+            if (!isset($data[$field])) {
                 throw new RestException(400, "$field field missing");
+            }
             $invoice[$field] = $data[$field];
         }
         return $invoice;

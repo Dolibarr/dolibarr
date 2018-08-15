@@ -34,13 +34,17 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -204,4 +208,3 @@ print '<!-- Page content '.$original_file.' rendered with DOLIBARR SERVER : Html
 include_once $original_file_osencoded;		// Note: The pageXXX.tpl.php showed here contains a formatage with dolWebsiteOutput() at end of page.
 
 if (is_object($db)) $db->close();
-

@@ -32,7 +32,7 @@ class Users extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
-		'login'
+		'login',
 	);
 
 	/**
@@ -43,7 +43,8 @@ class Users extends DolibarrApi
 	/**
 	 * Constructor
 	 */
-	function __construct() {
+    function __construct()
+    {
 		global $db, $conf;
 		$this->db = $db;
 		$this->useraccount = new User($this->db);
@@ -63,7 +64,8 @@ class Users extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of User objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+    {
 	    global $db, $conf;
 
 	    $obj_ret = array();
@@ -136,7 +138,8 @@ class Users extends DolibarrApi
 	 *
 	 * @throws 	RestException
 	 */
-	function get($id) {
+    function get($id)
+    {
 		//if (!DolibarrApiAccess::$user->rights->user->user->lire) {
 			//throw new RestException(401);
 		//}
@@ -162,7 +165,8 @@ class Users extends DolibarrApi
 	 * @param array $request_data New user data
 	 * @return int
 	 */
-	function post($request_data = null) {
+    function post($request_data = null)
+    {
 	    // check user authorization
 	    //if(! DolibarrApiAccess::$user->rights->user->creer) {
 	    //   throw new RestException(401, "User creation not allowed");
@@ -194,7 +198,8 @@ class Users extends DolibarrApi
 	 * @param array $request_data   Datas
 	 * @return int
 	 */
-	function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
 		//if (!DolibarrApiAccess::$user->rights->user->user->creer) {
 			//throw new RestException(401);
 		//}
@@ -236,7 +241,8 @@ class Users extends DolibarrApi
      *
 	 * @url	GET {id}/setGroup/{group}
 	 */
-	function setGroup($id, $group, $entity = 1) {
+    function setGroup($id, $group, $entity = 1)
+    {
 
 		global $conf;
 
@@ -280,7 +286,8 @@ class Users extends DolibarrApi
 	 * @param   int     $id Account ID
 	 * @return  array
 	 */
-	function delete($id) {
+    function delete($id)
+    {
 		//if (!DolibarrApiAccess::$user->rights->user->user->supprimer) {
 			//throw new RestException(401);
 		//}
@@ -363,7 +370,8 @@ class Users extends DolibarrApi
 	 * @return  array
 	 * @throws RestException
 	 */
-	function _validate($data) {
+    function _validate($data)
+    {
 		$account = array();
 		foreach (Users::$FIELDS as $field)
 		{
