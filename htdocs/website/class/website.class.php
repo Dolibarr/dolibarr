@@ -802,13 +802,13 @@ class Website extends CommonObject
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
 
 		$srcdir = DOL_DATA_ROOT.'/medias/image/'.$website->ref;
-		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/image/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
 
 		$srcdir = DOL_DATA_ROOT.'/medias/js/'.$website->ref;
-		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/'.$website->ref;
+		$destdir = $conf->website->dir_temp.'/'.$website->ref.'/medias/js/websitekey';
 
 		dol_syslog("Copy content from ".$srcdir." into ".$destdir);
 		dolCopyDir($srcdir, $destdir, 0, 1, $arrayreplacement);
@@ -853,23 +853,33 @@ class Website extends CommonObject
 		}
 		foreach($listofpages as $pageid => $objectpageold)
 		{
+			$allaliases = $objectpageold->pageurl;
+			$allaliases.= ($objectpageold->aliasalt ? ','.$objectpageold->aliasalt : '');
+
+			$line = '-- Page ID '.$objectpageold->id.' -> '.$objectpageold->newid.'__+MAX_llx_website_page__ - Aliases '.$allaliases.' --;';
+			$line.= "\n";
+			fputs($fp, $line);
+
 			// Warning: We must keep llx_ here. It is a generic SQL.
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, title, description, keywords, status, date_creation, tms, lang, import_key, grabbed_from, content)';
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, aliasalt, title, description, keywords, status, date_creation, tms, lang, import_key, grabbed_from, type_container, htmlheader, content)';
 			$line.= " VALUES(";
 			$line.= $objectpageold->newid."__+MAX_llx_website_page__, ";
 			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."__+MAX_llx_website_page__" : "null").", ";
 			$line.= "__WEBSITE_ID__, ";
 			$line.= "'".$this->db->escape($objectpageold->pageurl)."', ";
+			$line.= "'".$this->db->escape($objectpageold->aliasalt)."', ";
 			$line.= "'".$this->db->escape($objectpageold->title)."', ";
 			$line.= "'".$this->db->escape($objectpageold->description)."', ";
-			$line.= "'".$this->db->escape($objectpageold->keyword)."', ";
+			$line.= "'".$this->db->escape($objectpageold->keywords)."', ";
 			$line.= "'".$this->db->escape($objectpageold->status)."', ";
 			$line.= "'".$this->db->idate($objectpageold->date_creation)."', ";
 			$line.= "'".$this->db->idate($objectpageold->date_modification)."', ";
 			$line.= "'".$this->db->escape($objectpageold->lang)."', ";
 			$line.= ($objectpageold->import_key ? "'".$this->db->escape($objectpageold->import_key)."'" : "null").", ";
 			$line.= "'".$this->db->escape($objectpageold->grabbed_from)."', ";
-			$line.= "'".$this->db->escape($objectpageold->content)."'";
+			$line.= "'".$this->db->escape($objectpageold->type_container)."', ";
+			$line.= "'".$this->db->escape(str_replace(array("\r\n","\r","\n"), " ", $objectpageold->htmlheader))."', ";	// Replace \r \n to have record on 1 line
+			$line.= "'".$this->db->escape(str_replace(array("\r\n","\r","\n"), " ", $objectpageold->content))."'";		// Replace \r \n to have record on 1 line
 			$line.= ");";
 			$line.= "\n";
 			fputs($fp, $line);
@@ -930,7 +940,8 @@ class Website extends CommonObject
 
 		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1);	// Overwrite if exists
 
-		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias', $conf->website->dir_output.'/'.$object->ref.'/medias', 0, 1);	// Medias can be shared, do not overwrite if exists
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/image/websitekey', $conf->website->dir_output.'/'.$object->ref.'/medias/image/'.$object->ref, 0, 1);	// Medias can be shared, do not overwrite if exists
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias/js/websitekey',    $conf->website->dir_output.'/'.$object->ref.'/medias/js/'.$object->ref, 0, 1);	    // Medias can be shared, do not overwrite if exists
 
 		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
 
@@ -939,6 +950,14 @@ class Website extends CommonObject
 
 		$this->db->begin();
 
+		$sqlgetrowid='SELECT MAX(rowid) as max from '.MAIN_DB_PREFIX.'website_page';
+		$resql=$this->db->query($sqlgetrowid);
+		if ($resql)
+		{
+			$obj=$this->db->fetch_object($resql);
+			$maxrowid=$obj->max;
+		}
+
 		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);
 		if ($runsql <= 0)
 		{
@@ -946,6 +965,35 @@ class Website extends CommonObject
 			$error++;
 		}
 
+		$objectpagestatic = new WebsitePage($this->db);
+
+		// Make replacement of IDs
+		$fp = fopen($sqlfile,"r");
+		if ($fp)
+		{
+			while (! feof($fp))
+			{
+				// Warning fgets with second parameter that is null or 0 hang.
+				$buf = fgets($fp, 65000);
+				if (preg_match('/^-- Page ID (\d+)\s[^\s]+\s(\d+).*Aliases\s(.*)\s--;/i', $buf, $reg))
+				{
+					$oldid = $reg[1];
+					$newid = ($reg[2] + $maxrowid);
+					$aliasesarray = explode(',', $reg[3]);
+
+					dol_syslog("Found ID ".$oldid." to replace with ID ".$newid." and shortcut aliases to create: ".$reg[3]);
+
+					dol_move($conf->website->dir_output.'/'.$object->ref.'/page'.$oldid.'.tpl.php', $conf->website->dir_output.'/'.$object->ref.'/page'.$newid.'.tpl.php', 0, 1, 0, 0);
+
+					foreach($aliasesarray as $aliasshortcuttocreate)
+					{
+						$objectpagestatic->id = $newid;
+						$filealias=$conf->website->dir_output.'/'.$object->ref.'/'.$aliasshortcuttocreate.'.php';
+						dolSavePageAlias($filealias, $object, $objectpagestatic);
+					}
+				}
+			}
+		}
 
 		if ($error)
 		{
