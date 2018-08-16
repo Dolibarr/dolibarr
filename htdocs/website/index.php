@@ -1276,7 +1276,11 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 	}
 	else
 	{
-		if (! $error) setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
+		if (! $error)
+		{
+			setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
+			setEventMessages($langs->trans("YouCanCreatePageOrImportTemplate"), null, 'warnings');
+		}
 	}
 }
 
@@ -1301,28 +1305,63 @@ if ($action == 'exportsite')
 // Import site
 if ($action == 'importsiteconfirm')
 {
-	$fileofzip = GETPOST('userfile');
-	if (empty($fileofzip))
+	if (empty($_FILES))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 		$action = 'importsite';
 	}
 	else
 	{
-		// TODO
-
-
-		$result = $object->importWebSite($fileofzip);
-		if ($result < 0)
+		if (! empty($_FILES))
 		{
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'importsite';
+			if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
+			else $userfiles=array($_FILES['userfile']['tmp_name']);
+
+			foreach($userfiles as $key => $userfile)
+			{
+				if (empty($_FILES['userfile']['tmp_name'][$key]))
+				{
+					$error++;
+					if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
+						setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+						$action = 'importsite';
+					}
+					else {
+						setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+						$action = 'importsite';
+					}
+				}
+			}
+
+			if (! $error)
+			{
+				$upload_dir = $conf->website->dir_temp;
+				$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
+
+				// Get name of file (take last one if several name provided)
+				$fileofzip = $upload_dir.'/unknown';
+				foreach($_FILES as $key => $ifile)
+				{
+					foreach($ifile['name'] as $key2 => $ifile2)
+					{
+						$fileofzip = $upload_dir . '/' .$ifile2;
+					}
+				}
+
+				$result = $object->importWebSite($fileofzip);
+				if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'importsite';
+				}
+				else
+				{
+					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
+					exit();
+				}
+			}
 		}
-		else
-		{
-			header("Location: aaaaa");
-			exit();
-		}
+
 	}
 }
 

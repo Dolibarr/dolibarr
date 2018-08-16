@@ -853,10 +853,11 @@ class Website extends CommonObject
 		}
 		foreach($listofpages as $pageid => $objectpageold)
 		{
-			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, title, description, keyword, status, date_creation, tms, lang, import_key, grabbed_from, content)';
+			// Warning: We must keep llx_ here. It is a generic SQL.
+			$line = 'INSERT INTO llx_website_page(rowid, fk_page, fk_website, pageurl, title, description, keywords, status, date_creation, tms, lang, import_key, grabbed_from, content)';
 			$line.= " VALUES(";
-			$line.= $objectpageold->newid."+__MAXROWID__, ";
-			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."+__MAXROWID__" : "null").", ";
+			$line.= $objectpageold->newid."__+MAX_llx_website_page__, ";
+			$line.= ($objectpageold->newfk_page ? $this->db->escape($objectpageold->newfk_page)."__+MAX_llx_website_page__" : "null").", ";
 			$line.= "__WEBSITE_ID__, ";
 			$line.= "'".$this->db->escape($objectpageold->pageurl)."', ";
 			$line.= "'".$this->db->escape($objectpageold->title)."', ";
@@ -879,7 +880,7 @@ class Website extends CommonObject
 			@chmod($filesql, octdec($conf->global->MAIN_UMASK));
 
 		// Build zip file
-		$filedir  = $conf->website->dir_temp.'/'.$website->ref;
+		$filedir  = $conf->website->dir_temp.'/'.$website->ref.'/.';
 		$fileglob = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-*.zip';
 		$filename = $conf->website->dir_temp.'/'.$website->ref.'/website_'.$website->ref.'-'.dol_print_date(dol_now(),'dayhourlog').'.zip';
 
@@ -900,9 +901,17 @@ class Website extends CommonObject
 	{
 		global $conf;
 
-		$result = 0;
+		$error = 0;
 
-		$object = new Website($this->db);
+		$object = $this;
+		if (empty($object->ref))
+		{
+			$this->error = 'Function importWebSite called on object not loaded (object->ref is empty)';
+			return -1;
+		}
+
+		dol_delete_dir_recursive(dirname($pathtofile).'/'.$object->ref);
+		dol_mkdir(dirname($pathtofile).'/'.$object->ref);
 
 		$filename = basename($pathtofile);
 		if (! preg_match('/^website_(.*)-(.*)$/', $filename, $reg))
@@ -911,13 +920,43 @@ class Website extends CommonObject
 			return -1;
 		}
 
-		$websitecode = $reg[1];
+		$result = dol_uncompress($pathtofile, $conf->website->dir_temp.'/'.$object->ref);
+		if (! empty($result['error']))
+		{
+			$this->errors[]='Failed to unzip file '.$pathtofile.'.';
+			return -1;
+		}
 
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."website(ref, entity, description, status) values('".$websitecode."', ".$conf->entity.", 'Portal to sell your SaaS. Do not remove this entry.', 1)";
-		$resql = $this->db->query($sql);
+
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/containers', $conf->website->dir_output.'/'.$object->ref, 0, 1);	// Overwrite if exists
+
+		dolCopyDir($conf->website->dir_temp.'/'.$object->ref.'/medias', $conf->website->dir_output.'/'.$object->ref.'/medias', 0, 1);	// Medias can be shared, do not overwrite if exists
+
+		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
+
+		$arrayreplacement = array('__WEBSITE_ID__' => $object->id);
+		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
+
+		$this->db->begin();
+
+		$runsql = run_sql($sqlfile, 1, '', 0, '', 'none', 0, 1);
+		if ($runsql <= 0)
+		{
+			$this->errors[]='Failed to load sql file '.$sqlfile.'.';
+			$error++;
+		}
 
 
-		return $result;
+		if ($error)
+		{
+			$this->db->rollback();
+			return -1;
+		}
+		else
+		{
+			$this->db->commit();
+			return $object->id;
+		}
 	}
 
 }
