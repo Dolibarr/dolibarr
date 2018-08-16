@@ -1439,7 +1439,7 @@ else
 	{
 		$result = $object->fetch($id, $ref);
 
-		$res = $object->fetch_optionals($object->id, $extralabels);
+		$res = $object->fetch_optionals($object->id);
 
 		if ($result > 0)
 		{

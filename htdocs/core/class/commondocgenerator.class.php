@@ -274,7 +274,7 @@ abstract class CommonDocGenerator
 		require_once DOL_DOCUMENT_ROOT . '/core/class/extrafields.class.php';
 		$extrafields = new ExtraFields($this->db);
 		$extralabels = $extrafields->fetch_name_optionals_label('socpeople', true);
-		$object->fetch_optionals($object->id, $extralabels);
+		$object->fetch_optionals($object->id);
 
 		foreach($extrafields->attribute_label as $key => $label)
 		{

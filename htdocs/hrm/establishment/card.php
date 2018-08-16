@@ -325,7 +325,7 @@ if (($id || $ref) && $action == 'edit')
 
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals($object->id, $extralabels);
+    $res = $object->fetch_optionals($object->id);
     
     $head = establishment_prepare_head($object);
     dol_fiche_head($head, 'card', $langs->trans("Establishment"), -1, 'building');

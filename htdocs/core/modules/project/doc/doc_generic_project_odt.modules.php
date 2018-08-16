@@ -217,7 +217,7 @@ class doc_generic_project_odt extends ModelePDFProjects
 			require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
 			$extrafields=new ExtraFields($this->db);
 			$extralabels=$extrafields->fetch_name_optionals_label($ct->table_element, true);
-			$extrafields_num = $ct->fetch_optionals($ct->id, $extralabels);
+			$extrafields_num = $ct->fetch_optionals($ct->id);
 			//dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: ===== Number of Extrafields found: ".$extrafields_num, LOG_DEBUG);
 			foreach($ct->array_options as $efkey => $efval) {
 				dol_syslog(get_class($this)."::get_substitutionarray_project_contacts: +++++ Extrafield ".$efkey." => ".$efval, LOG_DEBUG);

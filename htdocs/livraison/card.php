@@ -571,7 +571,7 @@ else
 				// copy from expedition
 				$expeditionExtrafields = new Extrafields($db);
 				$expeditionExtrafieldLabels = $expeditionExtrafields->fetch_name_optionals_label($expedition->table_element);
-				if ($expedition->fetch_optionals($object->origin_id, $expeditionExtrafieldLabels) > 0) {
+				if ($expedition->fetch_optionals($object->origin_id) > 0) {
 					$object->array_options = array_merge($object->array_options, $expedition->array_options);
 				}
 			}
