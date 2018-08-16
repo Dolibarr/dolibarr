@@ -1297,6 +1297,7 @@ class ExpenseReport extends CommonObject
      * @param User      $fuser      User
      * @param Details   $details    Details
 	 * @param int       $notrigger  Disable triggers
+     * @return int
      */
     function setDeny($fuser,$details,$notrigger=0)
     {
