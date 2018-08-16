@@ -579,6 +579,7 @@ class ActionsTicket
      *
      * @param User $user        User for action
      * @param string $action    Action string
+     * @return int
      */
     private function newMessage($user, &$action)
     {
@@ -792,6 +793,7 @@ class ActionsTicket
      *
      * @param User $user        User for action
      * @param string $action    Action string
+     * @return void
      */
     private function newMessagePublic($user, &$action)
     {
@@ -962,6 +964,7 @@ class ActionsTicket
      * Get ticket info
      *
      * @param  int $id    Object id
+     * @return void
      */
     public function getInfo($id)
     {
@@ -976,6 +979,7 @@ class ActionsTicket
      * Get action title
      *
      * @param string $action    Type of action
+     * @return string
      */
     public function getTitle($action = '')
     {
@@ -998,6 +1002,7 @@ class ActionsTicket
      * View html list of logs
      *
      * @param boolean $show_user Show user who make action
+     * @return void
      */
     public function viewTicketLogs($show_user = true)
     {
@@ -1058,6 +1063,7 @@ class ActionsTicket
      *
      * @param 	boolean 	$show_user 	Show user who make action
      * @param	Ticket	$object		Object
+     * @return void
      */
     public function viewTimelineTicketLogs($show_user = true, $object = true)
     {
@@ -1165,6 +1171,7 @@ class ActionsTicket
      *
      * @param boolean $show_private Show private messages
      * @param boolean $show_user    Show user who make action
+     * @return void
      */
     public function viewTicketMessages($show_private, $show_user = true)
     {
@@ -1237,6 +1244,7 @@ class ActionsTicket
      * @param 	boolean 	$show_private Show private messages
      * @param 	boolean 	$show_user    Show user who make action
      * @param	Ticket	$object		 Object ticket
+     * @return void
      */
     public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
     {
@@ -1309,6 +1317,7 @@ class ActionsTicket
      * @param string $message          Email message
      * @param int    $send_internal_cc Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
      * @param array  $array_receiver   Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+     * @return void
      */
     public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array())
     {

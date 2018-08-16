@@ -373,6 +373,6 @@ print $stringtoshow;
 print '</div></div></div>';
 print '<div style="clear:both"></div>';
 
-
+// End of page
 llxFooter();
 $db->close();

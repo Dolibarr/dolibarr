@@ -158,6 +158,6 @@ else
 	dol_print_error('','NoRecordFound');
 }
 
+// End of page
 llxFooter();
-
 $db->close();

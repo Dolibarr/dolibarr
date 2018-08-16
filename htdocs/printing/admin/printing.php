@@ -361,6 +361,6 @@ if ($mode == 'userconf' && $user->admin)
 
 }
 
+// End of page
 llxFooter();
-
 $db->close();

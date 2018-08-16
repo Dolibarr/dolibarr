@@ -161,6 +161,6 @@ print '<a name=bas></a>'."\n";
 print '<br><br><br>'."\n";
 print '</div>'."\n";
 
+// End of page
 llxFooter();
-
 $db->close();

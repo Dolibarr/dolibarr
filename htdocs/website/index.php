@@ -68,6 +68,8 @@ if (GETPOST('setashome','alpha')) { $action='setashome'; }
 if (GETPOST('editmeta','alpha')) { $action='editmeta'; }
 if (GETPOST('editsource','alpha')) { $action='editsource'; }
 if (GETPOST('editcontent','alpha')) { $action='editcontent'; }
+if (GETPOST('exportsite','alpha')) { $action='exportsite'; }
+if (GETPOST('importsite','alpha')) { $action='importsite'; }
 if (GETPOST('createfromclone','alpha')) { $action='createfromclone'; }
 if (GETPOST('createpagefromclone','alpha')) { $action='createpagefromclone'; }
 if (empty($action) && $file_manager) $action='file_manager';
@@ -1279,7 +1281,7 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 }
 
 // Export site
-if (GETPOST('exportsite','alpha'))
+if ($action == 'exportsite')
 {
 	$fileofzip = $object->exportWebSite();
 
@@ -1295,6 +1297,35 @@ if (GETPOST('exportsite','alpha'))
 		exit;
 	}
 }
+
+// Import site
+if ($action == 'importsiteconfirm')
+{
+	$fileofzip = GETPOST('userfile');
+	if (empty($fileofzip))
+	{
+		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+		$action = 'importsite';
+	}
+	else
+	{
+		// TODO
+
+
+		$result = $object->importWebSite($fileofzip);
+		if ($result < 0)
+		{
+			setEventMessages($object->error, $object->errors, 'errors');
+			$action = 'importsite';
+		}
+		else
+		{
+			header("Location: aaaaa");
+			exit();
+		}
+	}
+}
+
 
 
 
@@ -1370,6 +1401,10 @@ if ($action == 'edit')
 {
 	print '<input type="hidden" name="action" value="update">';
 }
+if ($action == 'importsite')
+{
+	print '<input type="hidden" name="action" value="importsiteconfirm">';
+}
 if ($action == 'file_manager')
 {
 	print '<input type="hidden" name="action" value="file_manager">';
@@ -1431,6 +1466,11 @@ if (count($object->records) > 0)
 		if (! empty($object->virtualhost)) $virtualurl=$object->virtualhost;
 	}
 
+
+	$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
+	if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
+	$atleastonepage=(is_array($array) && count($array) > 0);
+
 	if ($websitekey && ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone'))
 	{
 		$disabled='';
@@ -1442,6 +1482,14 @@ if (count($object->records) > 0)
 		//print '<input type="submit" class="button"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("EditMenu")).'" name="editmenu">';
 		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("CloneSite")).'" name="createfromclone">';
 		print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ExportSite")).'" name="exportsite">';
+		if (! $atleastonepage)
+		{
+			print '<input type="submit" class="button nobordertransp"'.$disabled.' value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
+		}
+		else
+		{
+			print '<input type="submit" class="button nobordertransp" disabled="disabled" value="'.dol_escape_htmltag($langs->trans("ImportSite")).'" name="importsite">';
+		}
 
 		print ' &nbsp; ';
 
@@ -1467,7 +1515,8 @@ if (count($object->records) > 0)
 
 	print '</div>';
 
-	// Button for website
+
+	// Toolbar for website
 	print '<div class="websitetools">';
 
 	if ($action == 'preview' || $action == 'createfromclone' || $action == 'createpagefromclone')
@@ -1527,15 +1576,11 @@ if (count($object->records) > 0)
 	print '</div>';
 
 
-	// ***** Part for pages
+	// Toolbar for pages
 
-	if ($websitekey && ! in_array($action, array('editcss','editmenu')))
+	if ($websitekey && ! in_array($action, array('editcss','editmenu','importsite')))
 	{
 		print '</div>';	// Close current websitebar to open a new one
-
-		$array=$objectpage->fetchAll($object->id, 'ASC,ASC', 'type_container,pageurl');
-		if (! is_array($array) && $array < 0) dol_print_error('', $objectpage->error, $objectpage->errors);
-		$atleastonepage=(is_array($array) && count($array) > 0);
 
 		print '<div class="centpercent websitebar"'.($style?' style="'.$style.'"':'').'">';
 
@@ -2060,6 +2105,27 @@ if ($action == 'createsite')
 	print '<br>';
 }
 
+if ($action == 'importsite')
+{
+	print '<div class="fiche">';
+
+	print '<br>';
+
+	print_fiche_titre($langs->trans("ImportSite"));
+
+	dol_fiche_head(array(), '0', '', -1);
+
+	print $langs->trans("ZipOfWebsitePackageToImport").'<br><br>';
+
+	print '<input class="flat minwidth400" type="file" name="userfile[]" accept=".zip">';
+	print '<input type="submit" class="button" name="buttonsubmitimportfile" value="'.dol_escape_htmltag($langs->trans("Upload")).'">';
+
+	dol_fiche_end();
+
+	print '</div>';
+
+	print '<br>';
+}
 
 if ($action == 'editmeta' || $action == 'createcontainer')
 {

@@ -576,7 +576,6 @@ if (empty($conf->global->PROJECT_HIDE_TASKS) && ! empty($conf->global->PROJECT_S
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

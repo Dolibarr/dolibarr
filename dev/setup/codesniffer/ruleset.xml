@@ -218,9 +218,9 @@
         <severity>5</severity>
     </rule>
 
-	<rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
+	<!--<rule ref="PEAR.Commenting.FunctionComment.MissingReturn">
         <severity>0</severity>
-    </rule>
+    </rule>-->
     <rule ref="PEAR.Commenting.FunctionComment.Missing">
         <severity>0</severity>
     </rule>
