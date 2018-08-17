@@ -46,8 +46,18 @@ class AccountingAccount extends CommonObject
 	public $restrictiononfksoc = 1;
 
 	var $db;
-	var $error;
-	var $errors;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+	/**
+	 *
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array ();
+	
 	var $id;
 	var $rowid;
 	var $datec; // Creation date

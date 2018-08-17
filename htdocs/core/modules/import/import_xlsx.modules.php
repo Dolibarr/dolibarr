@@ -40,7 +40,12 @@ class ImportXlsx extends ModeleImports
 	 * @var string Error code (or message)
 	 */
 	public $error='';
-	var $errors=array();
+	
+	/**
+	 *
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array ();
 
     var $id;           // Id of driver
 	var $label;        // Label of driver

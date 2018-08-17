@@ -39,8 +39,11 @@ abstract class ActionsCardCommon
 	var $object;
 	//! Error string
 	var $error;
-	//! Error array
-	var $errors=array();
+	/**
+	 *
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array ();
 
 
 	/**
