@@ -1025,30 +1025,33 @@ class FactureRec extends CommonInvoice
 		$sql.= ' AND (nb_gen_done < nb_gen_max OR nb_gen_max = 0)';
 		$sql.= ' AND suspended = 0';
 		$sql.= ' AND entity = '.$conf->entity;	// MUST STAY = $conf->entity here
-		if ($restictoninvoiceid > 0) $sql.=' AND rowid = '.$restictoninvoiceid;
+		if ($restictoninvoiceid > 0)
+			$sql.=' AND rowid = '.$restictoninvoiceid;
 		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
 
 		$resql = $db->query($sql);
 		if ($resql)
 		{
-		    $i=0;
-		    $num = $db->num_rows($resql);
+			$i=0;
+			$num = $db->num_rows($resql);
 
-		    if ($num) $this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
-		    else $this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
+			if ($num)
+				$this->output.=$langs->trans("FoundXQualifiedRecurringInvoiceTemplate", $num)."\n";
+			else
+				$this->output.=$langs->trans("NoQualifiedRecurringInvoiceTemplateFound");
 
-		    $saventity = $conf->entity;
+			$saventity = $conf->entity;
 
-		    while ($i < $num)     // Loop on each template invoice. If $num = 0, test is false at first pass.
+			while ($i < $num)     // Loop on each template invoice. If $num = 0, test is false at first pass.
 			{
 				$line = $db->fetch_object($resql);
 
-			    $db->begin();
+				$db->begin();
 
-			    $invoiceidgenerated = 0;
+				$invoiceidgenerated = 0;
 
-			    $facturerec = new FactureRec($db);
+				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
 
 				if ($facturerec->id > 0)
@@ -1058,44 +1061,44 @@ class FactureRec extends CommonInvoice
 
 					dol_syslog("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref.", entity=".$facturerec->entity);
 
-				    $facture = new Facture($db);
+					$facture = new Facture($db);
 					$facture->fac_rec = $facturerec->id;    // We will create $facture from this recurring invoice
 					$facture->fk_fac_rec_source = $facturerec->id;    // We will create $facture from this recurring invoice
 
-				    $facture->type = self::TYPE_STANDARD;
-				    $facture->brouillon = 1;
-				    $facture->date = (empty($facturerec->date_when)?$now:$facturerec->date_when);	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
-				    $facture->socid = $facturerec->socid;
+					$facture->type = self::TYPE_STANDARD;
+					$facture->brouillon = 1;
+					$facture->date = (empty($facturerec->date_when)?$now:$facturerec->date_when);	// We could also use dol_now here but we prefer date_when so invoice has real date when we would like even if we generate later.
+					$facture->socid = $facturerec->socid;
 
-				    $invoiceidgenerated = $facture->create($user);
-				    if ($invoiceidgenerated <= 0)
-				    {
-				        $this->errors = $facture->errors;
-				        $this->error = $facture->error;
-				        $error++;
-				    }
-				    if (! $error && ($facturerec->auto_validate || $forcevalidation))
-				    {
-				        $result = $facture->validate($user);
-				        if ($result <= 0)
-				        {
-	    			        $this->errors = $facture->errors;
-	    			        $this->error = $facture->error;
-				            $error++;
-	                    }
-				    }
-	                if (! $error && $facturerec->generate_pdf)
-	                {
-	                    // We refresh the object in order to have all necessary data (like date_lim_reglement)
-	                    $facture->fetch($facture->id);
-	                    $result = $facture->generateDocument($facturerec->modelpdf, $langs);
-	                    if ($result <= 0)
-	                    {
-	                        $this->errors = $facture->errors;
-	                        $this->error = $facture->error;
-	                        $error++;
-	                    }
-	                }
+					$invoiceidgenerated = $facture->create($user);
+					if ($invoiceidgenerated <= 0)
+					{
+						$this->errors = $facture->errors;
+						$this->error = $facture->error;
+						$error++;
+					}
+					if (! $error && ($facturerec->auto_validate || $forcevalidation))
+					{
+						$result = $facture->validate($user);
+						if ($result <= 0)
+						{
+							$this->errors = $facture->errors;
+							$this->error = $facture->error;
+							$error++;
+						}
+					}
+					if (! $error && $facturerec->generate_pdf)
+					{
+						// We refresh the object in order to have all necessary data (like date_lim_reglement)
+						$facture->fetch($facture->id);
+						$result = $facture->generateDocument($facturerec->modelpdf, $langs);
+						if ($result <= 0)
+						{
+							$this->errors = $facture->errors;
+							$this->error = $facture->error;
+							$error++;
+						}
+					}
 				}
 				else
 				{
@@ -1114,7 +1117,7 @@ class FactureRec extends CommonInvoice
 				}
 				else
 				{
-				    $db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
+					$db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
 
 				$i++;
