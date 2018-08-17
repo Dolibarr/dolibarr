@@ -37,8 +37,12 @@ abstract class ActionsCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	//! Error string
-	var $error;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
 	/**
 	 *
 	 * @var string[] Error codes (or messages)
