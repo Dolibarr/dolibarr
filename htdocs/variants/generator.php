@@ -374,5 +374,7 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-	llxFooter();
+	// End of page
+    llxFooter();
+    $db->close();
 }
