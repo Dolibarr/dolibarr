@@ -29,7 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 abstract class ModeleBarCode
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -50,7 +53,10 @@ abstract class ModeleBarCode
  */
 abstract class ModeleNumRefBarCode
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**     Return default description of numbering model
      *
