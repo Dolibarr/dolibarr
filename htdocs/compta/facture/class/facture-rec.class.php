@@ -32,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/notify.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
+require_once(DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php');
 
 
 /**
@@ -1004,14 +1005,16 @@ class FactureRec extends CommonInvoice
 	 */
 	function createRecurringInvoices($restrictioninvoiceid=0, $forcevalidation=0)
 	{
-		global $conf, $langs, $db, $user;
+		global $conf, $langs, $db, $user, $hookmanager;
+
 
 		$error=0;
+		$nb_create=0;
 
 		// Load translation files required by the page
-        $langs->loadLangs(array("main","bills"));
+		$langs->loadLangs(array("main","bills"));
 
-		$nb_create=0;
+		$hookmanager->initHooks(array('createrecurringinvoices'));
 
 		$now = dol_now();
 		$tmparray=dol_getdate($now);
@@ -1029,6 +1032,12 @@ class FactureRec extends CommonInvoice
 			$sql.=' AND rowid = '.$restrictioninvoiceid;
 		$sql.= $db->order('entity', 'ASC');
 		//print $sql;exit;
+		$parameters = array(
+			'entity' => $conf->entity,
+			'restrictioninvoiceid' => $restrictioninvoiceid,
+			'forcevalidation' => $forcevalidation,
+			);
+		$reshook = $hookmanager->executeHooks('writeSQL', $parameters, $sql); // note that $sql might be modified by hooks
 
 		$resql = $db->query($sql);
 		if ($resql)
@@ -1051,6 +1060,7 @@ class FactureRec extends CommonInvoice
 
 				$invoiceidgenerated = 0;
 
+				$facture = null;
 				$facturerec = new FactureRec($db);
 				$facturerec->fetch($line->rowid);
 
@@ -1073,7 +1083,7 @@ class FactureRec extends CommonInvoice
 					$invoiceidgenerated = $facture->create($user);
 					if ($invoiceidgenerated <= 0)
 					{
-						$this->errors = $facture->errors;
+						$this->errors[] = $facture->errors;
 						$this->error = $facture->error;
 						$error++;
 					}
@@ -1082,7 +1092,7 @@ class FactureRec extends CommonInvoice
 						$result = $facture->validate($user);
 						if ($result <= 0)
 						{
-							$this->errors = $facture->errors;
+							$this->errors[] = $facture->errors;
 							$this->error = $facture->error;
 							$error++;
 						}
@@ -1094,7 +1104,7 @@ class FactureRec extends CommonInvoice
 						$result = $facture->generateDocument($facturerec->modelpdf, $langs);
 						if ($result <= 0)
 						{
-							$this->errors = $facture->errors;
+							$this->errors[] = $facture->errors;
 							$this->error = $facture->error;
 							$error++;
 						}
@@ -1119,6 +1129,16 @@ class FactureRec extends CommonInvoice
 				{
 					$db->rollback("createRecurringInvoices Process invoice template id=".$facturerec->id.", ref=".$facturerec->ref);
 				}
+
+				$parameters = array(
+					'cpt'        => $i,
+					'total'      => $num,
+					'errorCount' => $error,
+					'invoiceidgenerated' => $invoiceidgenerated,
+					'facturerec' => $facturerec,	// it's an object which PHP passes by "reference", so modifiable by hooks.
+					'this'       => $this,		// it's an object which PHP passes by "reference", so modifiable by hooks.
+					);
+				$reshook = $hookmanager->executeHooks('generatedInvoice', $parameters, $facture);  // note: $facture can be modified by hooks (warning: $facture can be null)
 
 				$i++;
 			}
