@@ -36,7 +36,10 @@ class ImportCsv extends ModeleImports
     var $db;
     var $datatoimport;
 
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $errors=array();
 
     var $id;           // Id of driver

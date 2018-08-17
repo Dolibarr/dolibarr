@@ -31,7 +31,10 @@ class mod_holiday_madonna extends ModelNumRefHolidays
 {
 	var $version='dolibarr';
 	var $prefix='HL';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Madonna';
 	var $code_auto=1;
 
