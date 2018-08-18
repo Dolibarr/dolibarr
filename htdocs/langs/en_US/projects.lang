@@ -167,8 +167,9 @@ TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 SelectElement=Select element
 AddElement=Link to element
 # Documents models
-DocumentModelBeluga=Project template for linked objects overview
-DocumentModelBaleine=Project report template for tasks
+DocumentModelBeluga=Project document template for linked objects overview
+DocumentModelBaleine=Project document template for tasks
+DocumentModelTimeSpent=Project report template for time spent
 PlannedWorkload=Planned workload
 PlannedWorkloadShort=Workload
 ProjectReferers=Related items
