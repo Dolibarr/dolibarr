@@ -172,7 +172,7 @@ if (! empty($force_install_message))
 		?>
 		<ul>
 			<li>/var/lib/dolibarr/documents</li>
-			<li>C:/My Documents/dolibarr/</li>
+			<li>C:/My Documents/dolibarr/documents</li>
 		</ul>
 		</td>
 	</tr>
@@ -200,7 +200,7 @@ if (! empty($force_install_message))
 		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
 		<ul>
 			<li>http://localhost/</li>
-			<li>http://www.myserver.com:8180/dolibarr</li>
+			<li>https://www.myserver.com:8180/dolibarr</li>
 		</ul>
 		</td>
 	</tr>
@@ -382,7 +382,7 @@ if (! empty($force_install_message))
 				} ?>
 			>
 		</td>
-		<td class="comment"><?php echo $langs->trans("DatabasePrefix"); ?></td>
+		<td class="comment"><?php echo $langs->trans("DatabasePrefixDescription"); ?></td>
 	</tr>
 
 	<tr class="hidesqlite">
