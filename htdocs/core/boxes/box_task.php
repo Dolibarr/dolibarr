@@ -35,7 +35,11 @@ class box_task extends ModeleBoxes
     var $boximg="object_projecttask";
     var $boxlabel;
     //var $depends = array("projet");
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
     var $param;
     var $enabled = 0;		// Disabled because bugged.
 

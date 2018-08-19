@@ -31,7 +31,11 @@
 class RejetPrelevement
 {
 	var $id;
-	var $db;
+	
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
 
 	/**

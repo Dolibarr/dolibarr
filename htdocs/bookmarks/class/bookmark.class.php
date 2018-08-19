@@ -33,7 +33,10 @@ class Bookmark extends CommonObject
     public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'bookmark';
 
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
     var $id;
     var $fk_user;

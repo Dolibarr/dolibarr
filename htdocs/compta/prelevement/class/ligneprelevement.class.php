@@ -32,7 +32,11 @@
 class LignePrelevement
 {
 	var $id;
-	var $db;
+	
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
 	var $statuts = array();
 

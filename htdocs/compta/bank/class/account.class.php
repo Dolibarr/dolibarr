@@ -1633,7 +1633,12 @@ class Account extends CommonObject
 class AccountLine extends CommonObject
 {
 	var $error;
-	var $db;
+	
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
 	var $element='bank';
 	var $table_element='bank';
 	var $picto = 'generic';

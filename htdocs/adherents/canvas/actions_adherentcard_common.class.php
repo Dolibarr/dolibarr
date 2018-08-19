@@ -28,10 +28,10 @@
 abstract class ActionsAdherentCardCommon
 {
     /**
-     * Database handler
-     * @var DoliDB
+     * @var DoliDb Database handler
      */
-    var $db;
+    public $db;
+    
     var $dirmodule;
     var $targetmodule;
     var $canvas;
