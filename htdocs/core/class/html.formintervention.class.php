@@ -27,7 +27,11 @@
  */
 class FormIntervention
 {
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
     var $error;
 
 

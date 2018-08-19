@@ -35,7 +35,11 @@ class FormAccounting extends Form
 
 	private $options_cache = array();
 
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
 	var $error;
 
 	/**

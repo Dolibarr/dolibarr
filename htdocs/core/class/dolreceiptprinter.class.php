@@ -105,7 +105,11 @@ class dolReceiptPrinter extends Escpos
     const CONNECTOR_NETWORK_PRINT = 3;
     const CONNECTOR_WINDOWS_PRINT = 4;
     //const CONNECTOR_JAVA = 5;
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
     var $tags;
     var $printer;
     var $template;

@@ -32,7 +32,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormSms
 {
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
     var $fromname;
     var $fromsms;

@@ -26,7 +26,11 @@
  */
 class RssParser
 {
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
     var $error;
 
     private $_format='';

@@ -38,7 +38,10 @@ class Events // extends CommonObject
 	public $table_element='events';		//!< Name of table without prefix where object is stored
 
 	var $id;
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
 	var $error;
 

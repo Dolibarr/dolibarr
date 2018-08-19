@@ -34,7 +34,11 @@ class AntiVir
 	var $error;
 	var $errors;
 	var $output;
-	var $db;
+	
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
 	/**
 	 *  Constructor
