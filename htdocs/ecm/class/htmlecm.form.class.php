@@ -27,7 +27,11 @@ require_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmdirectory.class.php';
  */
 class FormEcm
 {
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
 	var $error;
 
 

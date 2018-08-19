@@ -29,7 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
  */
 class FormProduct
 {
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
 	var $error;
 
 	// Cache arrays

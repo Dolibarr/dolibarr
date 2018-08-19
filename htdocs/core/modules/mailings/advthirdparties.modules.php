@@ -32,7 +32,10 @@ class mailing_advthirdparties extends MailingTargets
 
 	var $require_module=array("none");	// This module should not be displayed as Selector in mailling
 	var $picto='company';
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
 
 	/**

@@ -2378,7 +2378,11 @@ class ExpenseReport extends CommonObject
  */
 class ExpenseReportLine
 {
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
     var $error;
 
     var $rowid;

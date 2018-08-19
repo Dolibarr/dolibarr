@@ -2278,7 +2278,10 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $fk_expedition;
 
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
 	// From llx_expeditiondet
 	var $qty;

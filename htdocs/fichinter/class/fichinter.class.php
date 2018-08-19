@@ -1308,7 +1308,11 @@ class Fichinter extends CommonObject
  */
 class FichinterLigne extends CommonObjectLine
 {
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
 	var $error;
 
 	// From llx_fichinterdet

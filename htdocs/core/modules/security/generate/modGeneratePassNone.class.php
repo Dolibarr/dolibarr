@@ -34,7 +34,11 @@ class modGeneratePassNone extends ModeleGenPassword
 	var $id;
 	var $length;
 
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
 	var $conf;
 	var $lang;
 	var $user;

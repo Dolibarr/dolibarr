@@ -29,7 +29,11 @@ class mailing_thirdparties_services_expired extends MailingTargets
 
     var $require_module=array('contrat');
     var $picto='company';
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
     var $arrayofproducts=array();
 
 

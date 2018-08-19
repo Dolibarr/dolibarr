@@ -37,7 +37,10 @@ class mailing_pomme extends MailingTargets
 	var $require_admin=1;                           // Module mailing actif pour user admin ou non
 	var $picto='user';
 
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
 
 	/**

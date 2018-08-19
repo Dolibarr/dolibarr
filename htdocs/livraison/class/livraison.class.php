@@ -1057,7 +1057,10 @@ class Livraison extends CommonObject
  */
 class LivraisonLigne extends CommonObjectLine
 {
-	var $db;
+	/**
+     * @var DoliDb Database handler
+     */
+    public $db;
 
 	// From llx_expeditiondet
 	var $qty;
