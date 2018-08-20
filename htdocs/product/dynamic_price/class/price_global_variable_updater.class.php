@@ -38,7 +38,11 @@ class PriceGlobalVariableUpdater
     var $errors=array();				//!< To return several error codes (or messages)
     var $types=array(0, 1);				//!< Updater types
     var $update_min = 5;				//!< Minimal update rate
-    var $id;
+    /**
+	 * @var string ID 
+	 */
+	public $id;
+	
     var $type;
     var $description;
     var $parameters;

@@ -31,7 +31,10 @@
  */
 class LignePrelevement
 {
-	var $id;
+	/**
+	 * @var string ID 
+	 */
+	public $id;
 	
 	/**
      * @var DoliDb Database handler

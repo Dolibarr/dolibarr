@@ -35,7 +35,10 @@ class CActionComm
      */
     public $db;
 
-    var $id;
+    /**
+	 * @var string ID 
+	 */
+	public $id;
 
     var $code;
     var $type;

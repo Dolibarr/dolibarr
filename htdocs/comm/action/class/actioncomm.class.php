@@ -53,7 +53,7 @@ class ActionComm extends CommonObject
      * Id of the event
      * @var int
      */
-    var $id;
+    public $id;
 
     /**
      * Id of the event. Use $id as possible

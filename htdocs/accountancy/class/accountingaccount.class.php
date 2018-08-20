@@ -52,7 +52,12 @@ class AccountingAccount extends CommonObject
     
 	var $error;
 	var $errors;
-	var $id;
+	
+	/**
+	 * @var string ID 
+	 */
+	public $id;
+	
 	var $rowid;
 	var $datec; // Creation date
 	var $fk_pcg_version;

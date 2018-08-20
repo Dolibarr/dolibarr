@@ -39,7 +39,10 @@ class PaymentTerm // extends CommonObject
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
 	var $context =array();
 
-    var $id;
+    /**
+	 * @var string ID 
+	 */
+	public $id;
 
 	var $code;
 	var $sortorder;

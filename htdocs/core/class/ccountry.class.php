@@ -42,7 +42,11 @@ class Ccountry // extends CommonObject
 	//var $element='ccountry';			//!< Id that identify managed objects
 	//var $table_element='ccountry';	//!< Name of table without prefix where object is stored
 
-    var $id;
+    /**
+	 * @var string ID 
+	 */
+	public $id;
+	
 	var $code;
 	var $code_iso;
 	var $label;

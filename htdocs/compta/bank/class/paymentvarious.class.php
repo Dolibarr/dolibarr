@@ -34,7 +34,11 @@ class PaymentVarious extends CommonObject
 	public $table_element='payment_various';	//!< Name of table without prefix where object is stored
 	public $picto = 'bill';
 
-	var $id;
+	/**
+	 * @var string ID 
+	 */
+	public $id;
+	
 	var $ref;
 	var $tms;
 	var $datep;

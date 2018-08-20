@@ -36,7 +36,11 @@ class PriceExpression
     
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
-    var $id;
+    /**
+	 * @var string ID 
+	 */
+	public $id;
+	
     var $title;
 	var $expression;
     public $table_element = "c_price_expression";

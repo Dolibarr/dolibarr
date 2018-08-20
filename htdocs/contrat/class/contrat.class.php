@@ -2453,7 +2453,11 @@ class ContratLigne extends CommonObjectLine
     public $element='contratdet';
     public $table_element='contratdet';
 
-	var $id;
+	/**
+	 * @var string ID 
+	 */
+	public $id;
+	
 	var $ref;
 	var $tms;
 

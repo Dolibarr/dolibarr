@@ -43,7 +43,11 @@ class ImportCsv extends ModeleImports
 	var $error='';
 	var $errors=array();
 
-    var $id;           // Id of driver
+    /**
+	 * @var string ID of driver
+	 */
+	public $id;
+	
 	var $label;        // Label of driver
 	var $extension;    // Extension of files imported by driver
 	var $version;      // Version of driver
