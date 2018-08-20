@@ -2634,7 +2634,11 @@ class SupplierProposal extends CommonObject
  */
 class SupplierProposalLine extends CommonObjectLine
 {
-    var $db;
+    /**
+     * @var DoliDb Database handler
+     */
+    public $db;
+    
     var $error;
 
     public $element='supplier_proposaldet';
