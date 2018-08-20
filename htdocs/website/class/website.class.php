@@ -878,8 +878,22 @@ class Website extends CommonObject
 			$line.= ($objectpageold->import_key ? "'".$this->db->escape($objectpageold->import_key)."'" : "null").", ";
 			$line.= "'".$this->db->escape($objectpageold->grabbed_from)."', ";
 			$line.= "'".$this->db->escape($objectpageold->type_container)."', ";
-			$line.= "'".$this->db->escape(str_replace(array("\r\n","\r","\n"), " ", $objectpageold->htmlheader))."', ";	// Replace \r \n to have record on 1 line
-			$line.= "'".$this->db->escape(str_replace(array("\r\n","\r","\n"), " ", $objectpageold->content))."'";		// Replace \r \n to have record on 1 line
+
+			$stringtoexport = $objectpageold->htmlheader;
+			$stringtoexport = str_replace(array("\r\n","\r","\n"), "__N__", $stringtoexport);
+			$stringtoexport = str_replace('file=image/'.$website->ref.'/', "file=image/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('file=js/'.$website->ref.'/', "file=js/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('medias/image/'.$website->ref.'/', "medias/image/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('medias/js/'.$website->ref.'/', "medias/js/__WEBSITE_KEY__/", $stringtoexport);
+			$line.= "'".$this->db->escape(str_replace(array("\r\n","\r","\n"), "__N__", $stringtoexport))."', ";	// Replace \r \n to have record on 1 line
+
+			$stringtoexport = $objectpageold->content;
+			$stringtoexport = str_replace(array("\r\n","\r","\n"), "__N__", $stringtoexport);
+			$stringtoexport = str_replace('file=image/'.$website->ref.'/', "file=image/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('file=js/'.$website->ref.'/', "file=js/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('medias/image/'.$website->ref.'/', "medias/image/__WEBSITE_KEY__/", $stringtoexport);
+			$stringtoexport = str_replace('medias/js/'.$website->ref.'/', "medias/js/__WEBSITE_KEY__/", $stringtoexport);
+			$line.= "'".$this->db->escape($stringtoexport)."'";		// Replace \r \n to have record on 1 line
 			$line.= ");";
 			$line.= "\n";
 			fputs($fp, $line);
@@ -945,7 +959,10 @@ class Website extends CommonObject
 
 		$sqlfile = $conf->website->dir_temp.'/'.$object->ref.'/website_pages.sql';
 
-		$arrayreplacement = array('__WEBSITE_ID__' => $object->id);
+		$arrayreplacement = array();
+		$arrayreplacement['__WEBSITE_ID__'] = $object->id;
+		$arrayreplacement['__WEBSITE_KEY__'] = $object->ref;
+		$arrayreplacement['__N__'] = $this->db->escape("\n");			// Restore \n
 		$result = dolReplaceInFile($sqlfile, $arrayreplacement);
 
 		$this->db->begin();
