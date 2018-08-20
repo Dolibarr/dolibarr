@@ -17,7 +17,7 @@
  */
 
 /**
- *      \file       htdocs/compta/salaries/class/paymentsalary.class.php
+ *      \file       htdocs/salaries/class/paymentsalary.class.php
  *      \ingroup    salaries
  *      \brief		Class for salaries module payment
  */
@@ -410,7 +410,7 @@ class PaymentSalary extends CommonObject
 					if (! $error)
 					{
 						// Add link 'payment_salary' in bank_url between payment and bank transaction
-						$url=DOL_URL_ROOT.'/compta/salaries/card.php?id=';
+						$url=DOL_URL_ROOT.'/salaries/card.php?id=';
 
 						$result=$acc->add_url_line($bank_line_id, $this->id, $url, "(SalaryPayment)", "payment_salary");
 						if ($result <= 0)
@@ -504,7 +504,7 @@ class PaymentSalary extends CommonObject
 		$result='';
         $label=$langs->trans("ShowSalaryPayment").': '.$this->ref;
 
-        $linkstart = '<a href="'.DOL_URL_ROOT.'/compta/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
+        $linkstart = '<a href="'.DOL_URL_ROOT.'/salaries/card.php?id='.$this->id.'" title="'.dol_escape_htmltag($label, 1).'" class="classfortooltip">';
 		$linkend='</a>';
 
 		$picto='payment';

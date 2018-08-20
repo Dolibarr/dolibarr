@@ -18,13 +18,13 @@
  */
 
 /**
- *	\file       htdocs/compta/salaries/info.php
+ *	\file       htdocs/salaries/info.php
  *	\ingroup    salaries
  *	\brief      Page with info about salaries contribution
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/salaries.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
@@ -54,7 +54,7 @@ $head = salaries_prepare_head($object);
 
 dol_fiche_head($head, 'info', $langs->trans("SalaryPayment"), -1, 'payment');
 
-$linkback = '<a href="'.DOL_URL_ROOT.'/compta/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
+$linkback = '<a href="'.DOL_URL_ROOT.'/salaries/index.php'.(! empty($socid)?'?socid='.$socid:'').'">'.$langs->trans("BackToList").'</a>';
 
 $morehtmlref='<div class="refidno">';
 

@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2011-2016	Alexandre Spangaro	<aspangaro.dolibarr@gmail.com>
- * Copyright (C) 2015-2016	Laurent Destailleur	<eldy@users.sourceforge.net>
- * Copyright (C) 2015		Jean-François Ferry	<jfefe@aternatik.fr>
+/* Copyright (C) 2011-2018  Alexandre Spangaro  <aspangaro@zendsi.com>
+ * Copyright (C) 2015-2016  Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2015       Jean-François Ferry <jfefe@aternatik.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,13 +18,13 @@
  */
 
 /**
- *	    \file       htdocs/compta/salaries/index.php
- *      \ingroup    salaries
- *		\brief     	List of salaries payments
+ *  \file       htdocs/salaries/index.php
+ *  \ingroup    salaries
+ *  \brief      List of salaries payments
  */
 
 require '../../main.inc.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/paymentsalary.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/paymentsalary.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT . '/accountancy/class/accountingjournal.class.php';
 
@@ -150,7 +150,7 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->salaries->payment->write)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/salaries/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewSalaryPayment').'</span>';
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/salaries/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewSalaryPayment').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}

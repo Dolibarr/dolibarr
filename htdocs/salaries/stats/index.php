@@ -17,14 +17,14 @@
  */
 
 /**
- *  \file       htdocs/compta/salaries/stats/index.php
+ *  \file       htdocs/salaries/stats/index.php
  *  \ingroup    salaries
  *  \brief      Page for statistics of module salaries
  */
 
 require '../../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/dolgraph.class.php';
-require_once DOL_DOCUMENT_ROOT.'/compta/salaries/class/salariesstats.class.php';
+require_once DOL_DOCUMENT_ROOT.'/salaries/class/salariesstats.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("salaries","companies"));
@@ -199,7 +199,7 @@ if (! count($arrayyears)) $arrayyears[$nowyear]=$nowyear;
 
 $h=0;
 $head = array();
-$head[$h][0] = DOL_URL_ROOT . '/compta/salaries/stats/index.php';
+$head[$h][0] = DOL_URL_ROOT . '/salaries/stats/index.php';
 $head[$h][1] = $langs->trans("ByMonthYear");
 $head[$h][2] = 'byyear';
 $h++;
