@@ -55,11 +55,11 @@ class AccountancyExport
 	public static $EXPORT_TYPE_AGIRIS = 9;
 	public static $EXPORT_TYPE_CONFIGURABLE = 10;
 
+
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 
 	/**
 	 *

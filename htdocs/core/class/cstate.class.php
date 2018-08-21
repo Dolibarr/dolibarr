@@ -34,11 +34,11 @@ class Cstate // extends CommonObject
 {
 	var $db;							//!< To store db handler
 	var $error;							//!< To return error code (or message)
+
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 	
 	//var $element='cstate';			//!< Id that identify managed objects
 	//var $table_element='cstate';	    //!< Name of table without prefix where object is stored

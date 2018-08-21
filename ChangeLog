@@ -3,11 +3,12 @@ English Dolibarr ChangeLog
 --------------------------------------------------------------
 
 
-***** ChangeLog for 8.0.0 compared to 8.0.0 *****
+***** ChangeLog for 9.0.0 compared to 8.0.0 *****
 
 For Users:
 NEW: Stable module: Website
 NEW: Stable module: WebDAV
+NEW: Stable module: Module Builder
 NEW: Dolibarr can provide information in page title when multicompany is enabled of not, making
  Android application like DoliDroid able to provide native features for multicompany module
 

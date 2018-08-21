@@ -52,11 +52,11 @@ class AccountingAccount extends CommonObject
 	 */
 	public $error='';
 	
+
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 	
 	var $id;
 	var $rowid;

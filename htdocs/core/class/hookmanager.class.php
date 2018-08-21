@@ -31,11 +31,11 @@ class HookManager
 {
 	var $db;
 	var $error;
+
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 
     // Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
     var $contextarray=array();
