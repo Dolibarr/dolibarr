@@ -1775,7 +1775,8 @@ class SupplierProposal extends CommonObject
 	 *	@param      User	$user					Object user
      *	@return     int         					<0 if KO, >0 if OK
      */
-     function updatePriceFournisseur($idProductFournPrice, $product, $user) {
+    function updatePriceFournisseur($idProductFournPrice, $product, $user)
+    {
 		$price=price2num($product->subprice*$product->qty,'MU');
 		$unitPrice = price2num($product->subprice,'MU');
 
@@ -1787,7 +1788,7 @@ class SupplierProposal extends CommonObject
             $this->db->rollback();
             return -1;
 		}
-	 }
+	}
 
 	 /**
      *	Create ProductFournisseur
@@ -1796,7 +1797,8 @@ class SupplierProposal extends CommonObject
 	 *	@param      User		$user		Object user
      *	@return     int         			<0 if KO, >0 if OK
      */
-	 function createPriceFournisseur($product, $user) {
+    function createPriceFournisseur($product, $user)
+    {
 	 	$price=price2num($product->subprice*$product->qty,'MU');
 	    $qty=price2num($product->qty);
 		$unitPrice = price2num($product->subprice,'MU');
@@ -1823,7 +1825,7 @@ class SupplierProposal extends CommonObject
             $this->db->rollback();
             return -1;
 		}
-	 }
+	}
 
     /**
      *	Set draft status
@@ -3180,4 +3182,3 @@ class SupplierProposalLine extends CommonObjectLine
     }
 
 }
-

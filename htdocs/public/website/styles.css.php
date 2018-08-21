@@ -33,13 +33,17 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 require '../../master.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -145,4 +149,3 @@ require_once $original_file_osencoded;
 
 
 if (is_object($db)) $db->close();
-

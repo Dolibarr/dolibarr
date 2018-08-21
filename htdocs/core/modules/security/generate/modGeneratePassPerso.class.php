@@ -72,7 +72,7 @@ class modGeneratePassPerso extends ModeleGenPassword
 		$this->langs=$langs;
 		$this->user=$user;
 
-		if(empty($conf->global->USER_PASSWORD_PATTERN)){
+		if (empty($conf->global->USER_PASSWORD_PATTERN)) {
 			// default value (8carac, 1maj, 1digit, 1spe,  3 repeat, no ambi at auto generation.
 			dolibarr_set_const($db, "USER_PASSWORD_PATTERN", '8;1;1;1;3;1','chaine',0,'',$conf->entity);
 		}
@@ -201,7 +201,8 @@ class modGeneratePassPerso extends ModeleGenPassword
 	 *		@param		string	$password	Password to check
 	 *      @return     int					0 if KO, >0 if OK
 	 */
-	function consecutiveInterationSameCharacter($password){
+    function consecutiveInterationSameCharacter($password)
+    {
 		$last = "";
 		$count = 0;
 		$char = str_split($password);
@@ -220,4 +221,3 @@ class modGeneratePassPerso extends ModeleGenPassword
 		return 1;
 	}
 }
-

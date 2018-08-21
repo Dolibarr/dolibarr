@@ -97,9 +97,10 @@ class Orders extends DolibarrApi
      * @param string           $sqlfilters          Other criteria to filter answers separated by a comma. Syntax example "(t.ref:like:'SO-%') and (t.date_creation:<:'20160101')"
      * @return  array                               Array of order objects
      *
-	 * @throws RestException
+     * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -218,7 +219,8 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function getLines($id) {
+    function getLines($id)
+    {
         if(! DolibarrApiAccess::$user->rights->commande->lire) {
 			throw new RestException(401);
 		}
@@ -249,7 +251,8 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function postLine($id, $request_data = null) {
+    function postLine($id, $request_data = null)
+    {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
 		}
@@ -311,7 +314,8 @@ class Orders extends DolibarrApi
      *
      * @return object
      */
-    function putLine($id, $lineid, $request_data = null) {
+    function putLine($id, $lineid, $request_data = null)
+    {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
 		}
@@ -371,7 +375,8 @@ class Orders extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function deleteLine($id, $lineid) {
+    function deleteLine($id, $lineid)
+    {
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
 		}
@@ -403,7 +408,8 @@ class Orders extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
         if (! DolibarrApiAccess::$user->rights->commande->creer) {
 			throw new RestException(401);
 		}
@@ -544,7 +550,8 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function reopen($id) {
+    function reopen($id)
+    {
 
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
             throw new RestException(401);
@@ -581,7 +588,8 @@ class Orders extends DolibarrApi
      * @throws 404
      * @throws 405
      */
-    function setinvoiced($id) {
+    function setinvoiced($id)
+    {
 
         if(! DolibarrApiAccess::$user->rights->commande->creer) {
             throw new RestException(401);
@@ -706,21 +714,22 @@ class Orders extends DolibarrApi
     }
 
 
-     /**
-      * Create an order using an existing proposal.
-      *
-      *
-      * @param int   $proposalid       Id of the proposal
-      *
-      * @url     POST /createfromproposal/{proposalid}
-      *
-      * @return int
-      * @throws 400
-      * @throws 401
-      * @throws 404
-      * @throws 405
-      */
-     function createOrderFromProposal($proposalid) {
+    /**
+     * Create an order using an existing proposal.
+     *
+     *
+     * @param int   $proposalid       Id of the proposal
+     *
+     * @url     POST /createfromproposal/{proposalid}
+     *
+     * @return int
+     * @throws 400
+     * @throws 401
+     * @throws 404
+     * @throws 405
+     */
+    function createOrderFromProposal($proposalid)
+    {
 
         require_once DOL_DOCUMENT_ROOT . '/comm/propal/class/propal.class.php';
 
@@ -756,7 +765,8 @@ class Orders extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 

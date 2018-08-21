@@ -690,7 +690,8 @@ class Entrepot extends CommonObject
 	 * @param	array()	$TChildWarehouses	array which will contain all children (param by reference)
 	 * @return	array()	$TChildWarehouses	array which will contain all children
 	 */
-	function get_children_warehouses($id, &$TChildWarehouses) {
+    function get_children_warehouses($id, &$TChildWarehouses)
+    {
 
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot
@@ -707,7 +708,7 @@ class Entrepot extends CommonObject
 		return $TChildWarehouses;
 
 	}
-	
+
 	/**
 	 *	Create object on disk
 	 *

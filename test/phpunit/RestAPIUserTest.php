@@ -173,7 +173,8 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $this->assertEquals(1, $object['statut']);
     }
 
-    public function testRestCreateUser() {
+    public function testRestCreateUser()
+    {
 
       // attemp to create without mandatory fields :
       $url = $this->api_url.'/users?api_key='.$this->api_key;

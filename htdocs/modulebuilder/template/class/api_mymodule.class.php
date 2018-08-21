@@ -41,7 +41,7 @@ class MyModuleApi extends DolibarrApi
      * @var array   $FIELDS     Mandatory fields, checked when create and update object
      */
     static $FIELDS = array(
-        'name'
+        'name',
     );
 
 
@@ -109,7 +109,8 @@ class MyModuleApi extends DolibarrApi
      *
      * @url	GET /myobjects/
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -127,7 +128,7 @@ class MyModuleApi extends DolibarrApi
         $sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
         $sql.= " WHERE s.fk_stcomm = st.id";
 
-		// Example of use $mode
+        // Example of use $mode
         //if ($mode == 1) $sql.= " AND s.client IN (1, 3)";
         //if ($mode == 2) $sql.= " AND s.client IN (2, 3)";
 
@@ -195,8 +196,8 @@ class MyModuleApi extends DolibarrApi
     function post($request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->myobject->create) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
         // Check mandatory fields
         $result = $this->_validate($request_data);
 
@@ -221,8 +222,8 @@ class MyModuleApi extends DolibarrApi
     function put($id, $request_data = null)
     {
         if(! DolibarrApiAccess::$user->rights->myobject->create) {
-			throw new RestException(401);
-		}
+            throw new RestException(401);
+        }
 
         $result = $this->myobject->fetch($id);
         if( ! $result ) {
@@ -261,9 +262,9 @@ class MyModuleApi extends DolibarrApi
             throw new RestException(404, 'MyObject not found');
         }
 
-		if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
-			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
-		}
+        if( ! DolibarrApi::_checkAccessToResource('myobject',$this->myobject->id)) {
+            throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+        }
 
         if( !$this->myobject->delete($id))
         {

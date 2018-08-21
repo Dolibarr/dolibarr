@@ -370,7 +370,8 @@ class Ldap
 	 *
 	 * @return	boolean					version
 	 */
-	function setVersion() {
+    function setVersion()
+    {
 		// LDAP_OPT_PROTOCOL_VERSION est une constante qui vaut 17
 		$ldapsetversion = ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
 		return $ldapsetversion;
@@ -381,7 +382,8 @@ class Ldap
 	 *
 	 * @return	boolean					referrals
 	 */
-	function setReferrals() {
+    function setReferrals()
+    {
 		// LDAP_OPT_REFERRALS est une constante qui vaut ?
 		$ldapreferrals = ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
 		return $ldapreferrals;

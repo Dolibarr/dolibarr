@@ -925,7 +925,8 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  									For exemple  jean;joe;jim%%;!jimo;!jima%> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
 	 * 	@return		string		Sql to use for the where condition
 	 */
-	public function transformToSQL($column_to_test,$criteria) {
+    public function transformToSQL($column_to_test,$criteria)
+    {
 		$return_sql_criteria = '(';
 
 		//This is a multiple value test
