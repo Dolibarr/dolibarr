@@ -30,7 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/cron/class/cronjob.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array("admin","cron","bills"));
+$langs->loadLangs(array("admin","cron","bills","members"));
 
 if (!$user->rights->cron->read) accessforbidden();
 
