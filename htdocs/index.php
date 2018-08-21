@@ -568,7 +568,7 @@ if (! empty($valid_dashboardlines))
         if ($board->total > 0 && ! empty($conf->global->MAIN_WORKBOARD_SHOW_TOTAL_WO_TAX))
 	{
 		$boxwork .= '&nbsp;/&nbsp;<a class="valignmiddle dashboardlineindicator" href="'.$board->url.'"><span class="dashboardlineindicator'.(($board->nbtodo == 0)?' dashboardlineok':'').'">'.price($board->total)	.'</span></a>';
-	}	    
+	}
         $boxwork .= '</div>';
         if ($board->nbtodolate > 0)
         {
