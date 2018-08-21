@@ -31,7 +31,10 @@ class mod_commande_marbre extends ModeleNumRefCommandes
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='CO';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Marbre';
 
 
