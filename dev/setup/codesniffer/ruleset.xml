@@ -12,6 +12,7 @@
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">*.min.css</exclude-pattern>
+	<exclude-pattern type="relative">*.js</exclude-pattern>
 
 		<!-- List of all tests -->
 
@@ -172,6 +173,9 @@
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
         <severity>0</severity>
     </rule>
+
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
+
     <!-- Rules from PEAR Standard -->
 
     <rule ref="PEAR.Classes.ClassDeclaration" />

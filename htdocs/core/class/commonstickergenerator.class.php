@@ -216,7 +216,7 @@ abstract class CommonStickerGenerator
 	 * @param string    $dest   to
 	 * @return float    value   value after conversion
 	 */
-	function _Convert_Metric ($value, $src, $dest)
+	function _Convert_Metric($value, $src, $dest)
 	{
 		if ($src != $dest) {
 			$tab['in'] = 39.37008;

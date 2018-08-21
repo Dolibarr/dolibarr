@@ -399,7 +399,7 @@ EOF;
  * @param   string  $customMsg      customMsg
  * @return  void
  */
-function SendCKEditorResults ($callback, $sFileUrl, $customMsg = '')
+function SendCKEditorResults($callback, $sFileUrl, $customMsg = '')
 {
   echo '<script type="text/javascript">';
 

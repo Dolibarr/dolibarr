@@ -54,7 +54,8 @@ class Productcustomerprice extends CommonObject
 	 *
 	 * @param DoliDb $db handler
 	 */
-	function __construct($db) {
+    function __construct($db)
+    {
 
 		$this->db = $db;
 		return 1;
@@ -68,7 +69,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, Id of created object if OK
 	 */
-	function create($user, $notrigger = 0, $forceupdateaffiliate = 0) {
+    function create($user, $notrigger = 0, $forceupdateaffiliate = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -342,7 +344,7 @@ class Productcustomerprice extends CommonObject
 		$sql .= " AND prod.rowid=t.fk_product ";
 		$sql .= " AND prod.entity IN (" . getEntity('product') . ")";
 		$sql .= " AND t.entity IN (" . getEntity('productprice') . ")";
-		
+
 		// Manage filter
 		if (count($filter) > 0) {
 			foreach ( $filter as $key => $value ) {
@@ -522,7 +524,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0) {
+    function update($user = 0, $notrigger = 0, $forceupdateaffiliate = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -719,7 +722,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $forceupdateaffiliate update price on each soc child
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate) {
+    function setPriceOnAffiliateThirdparty($user, $forceupdateaffiliate)
+    {
 
 		$error = 0;
 
@@ -811,7 +815,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $notrigger triggers after, 1=disable triggers
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function delete($user, $notrigger = 0) {
+    function delete($user, $notrigger = 0)
+    {
 
 		global $conf, $langs;
 		$error = 0;
@@ -864,7 +869,8 @@ class Productcustomerprice extends CommonObject
 	 * @param int $fromid of object to clone
 	 * @return int id of clone
 	 */
-	function createFromClone($fromid) {
+    function createFromClone($fromid)
+    {
 
 		global $user, $langs;
 
@@ -914,7 +920,8 @@ class Productcustomerprice extends CommonObject
 	 *
 	 * @return void
 	 */
-	function initAsSpecimen() {
+    function initAsSpecimen()
+    {
 
 		$this->id = 0;
 

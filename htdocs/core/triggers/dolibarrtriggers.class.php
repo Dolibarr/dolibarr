@@ -80,7 +80,8 @@ abstract class DolibarrTriggers
 	 *
 	 * @param DoliDB $db Database handler
 	 */
-	public function __construct(DoliDB $db) {
+    public function __construct(DoliDB $db)
+    {
 
 		$this->db = $db;
 

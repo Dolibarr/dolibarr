@@ -24,7 +24,8 @@
  * @param Paiement $object Current salaries object
  * @return array Tabs for the salaries section
  */
-function salaries_prepare_head($object) {
+function salaries_prepare_head($object)
+{
 
 	global $db, $langs, $conf;
 

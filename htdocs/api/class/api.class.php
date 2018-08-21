@@ -94,7 +94,8 @@ class DolibarrApi
      * @param   object  $object	Object to clean
      * @return	array	Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         // Remove $db object property for object
         unset($object->db);
@@ -220,7 +221,8 @@ class DolibarrApi
      * @return bool
 	 * @throws RestException
 	 */
-	static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid') {
+    static function _checkAccessToResource($resource, $resource_id=0, $dbtablename='', $feature2='', $dbt_keyfield='fk_soc', $dbt_select='rowid')
+    {
 
 		// Features/modules to check
 		$featuresarray = array($resource);

@@ -47,7 +47,8 @@ class AccountancySystem
 	 *
 	 * @param DoliDB $db handler
 	 */
-	function __construct($db) {
+    function __construct($db)
+    {
 		$this->db = $db;
 	}
 
@@ -106,7 +107,8 @@ class AccountancySystem
 	 * @param User $user making insert
 	 * @return int if KO, Id of line if OK
 	 */
-	function create($user) {
+    function create($user)
+    {
 		$now = dol_now();
 
 		$sql = "INSERT INTO " . MAIN_DB_PREFIX . "accounting_system";

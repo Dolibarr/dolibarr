@@ -100,7 +100,8 @@ class Contracts extends DolibarrApi
      *
 	 * @throws RestException
      */
-    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $thirdparty_ids = '', $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
@@ -216,7 +217,8 @@ class Contracts extends DolibarrApi
      *
      * @return int
      */
-    function getLines($id) {
+    function getLines($id)
+    {
       if(! DolibarrApiAccess::$user->rights->contrat->lire) {
 		  	throw new RestException(401);
 		  }
@@ -247,7 +249,8 @@ class Contracts extends DolibarrApi
      *
      * @return int
      */
-    function postLine($id, $request_data = null) {
+    function postLine($id, $request_data = null)
+    {
         if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 			throw new RestException(401);
 		}
@@ -300,7 +303,8 @@ class Contracts extends DolibarrApi
      *
      * @return object
      */
-    function putLine($id, $lineid, $request_data = null) {
+    function putLine($id, $lineid, $request_data = null)
+    {
         if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 			throw new RestException(401);
 		}
@@ -359,7 +363,8 @@ class Contracts extends DolibarrApi
      *
      * @return object
      */
-    function activateLine($id, $lineid, $datestart, $dateend = null, $comment = null) {
+    function activateLine($id, $lineid, $datestart, $dateend = null, $comment = null)
+    {
     	if(! DolibarrApiAccess::$user->rights->contrat->creer) {
     		throw new RestException(401);
     	}
@@ -396,7 +401,8 @@ class Contracts extends DolibarrApi
      *
      * @return object
      */
-    function unactivateLine($id, $lineid, $datestart, $comment = null) {
+    function unactivateLine($id, $lineid, $datestart, $comment = null)
+    {
     	if(! DolibarrApiAccess::$user->rights->contrat->creer) {
     		throw new RestException(401);
     	}
@@ -436,7 +442,8 @@ class Contracts extends DolibarrApi
      * @throws 401
      * @throws 404
      */
-    function deleteLine($id, $lineid) {
+    function deleteLine($id, $lineid)
+    {
         if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 			throw new RestException(401);
 		}
@@ -470,7 +477,8 @@ class Contracts extends DolibarrApi
      *
      * @return int
      */
-    function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
         if(! DolibarrApiAccess::$user->rights->contrat->creer) {
 			throw new RestException(401);
 		}
@@ -632,7 +640,8 @@ class Contracts extends DolibarrApi
      * @param   object  $object    Object to clean
      * @return    array    Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
         $object = parent::_cleanObjectDatas($object);
 

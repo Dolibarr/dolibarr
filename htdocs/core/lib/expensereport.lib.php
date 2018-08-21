@@ -85,7 +85,8 @@ function expensereport_prepare_head($object)
  * @param	Paiement	$object		Current payment object
  * @return	array					Tabs for the payment section
  */
-function payment_expensereport_prepare_head(PaymentExpenseReport $object) {
+function payment_expensereport_prepare_head(PaymentExpenseReport $object)
+{
 
 	global $langs, $conf;
 
@@ -168,5 +169,5 @@ function expensereport_admin_prepare_head()
 
 	complete_head_from_modules($conf,$langs,null,$head,$h,'expensereport_admin','remove');
 
-	return $head;
+    return $head;
 }
