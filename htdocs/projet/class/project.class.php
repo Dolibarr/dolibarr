@@ -447,18 +447,12 @@ class Project extends CommonObject
                 // Retreive all extrafield for thirdparty
                 $this->fetch_optionals();
 
-                if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
-                {
-                	$this->fetchComments();
-                }
-
                 return 1;
             }
 
             $this->db->free($resql);
 
-            if ($num_rows) return 1;
-            else return 0;
+            return 0;
         }
         else
         {
