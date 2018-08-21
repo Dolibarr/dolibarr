@@ -1113,6 +1113,6 @@ if (! GETPOST('action'))
     }
 }
 
+// End of page
 llxFooter();
-
 $db->close();

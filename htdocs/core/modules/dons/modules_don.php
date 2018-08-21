@@ -34,7 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/don/class/don.class.php';
  */
 abstract class ModeleDon extends CommonDocGenerator
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**
      *  Return list of active generation modules
@@ -63,7 +66,10 @@ abstract class ModeleDon extends CommonDocGenerator
  */
 abstract class ModeleNumRefDons
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**
      * 	Return if a module can be used or not

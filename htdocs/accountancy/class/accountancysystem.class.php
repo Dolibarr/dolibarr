@@ -29,7 +29,11 @@
 class AccountancySystem
 {
 	var $db;
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
 	var $rowid;
 	var $fk_pcg_version;
 	var $pcg_type;

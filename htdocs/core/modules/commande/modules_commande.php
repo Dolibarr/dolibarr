@@ -39,7 +39,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
  */
 abstract class ModelePDFCommandes extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *  Return list of active generation modules
@@ -71,7 +74,10 @@ abstract class ModelePDFCommandes extends CommonDocGenerator
 
 abstract class ModeleNumRefCommandes
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not
