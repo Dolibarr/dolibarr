@@ -33,7 +33,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/barcode.lib.php';    // This is to inc
 class modPhpbarcode extends ModeleBarCode
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
-	var $error='';
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**

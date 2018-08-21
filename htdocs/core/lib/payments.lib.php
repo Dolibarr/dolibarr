@@ -24,7 +24,8 @@
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_prepare_head(Paiement $object) {
+function payment_prepare_head(Paiement $object)
+{
 
 	global $langs, $conf;
 
@@ -59,7 +60,8 @@ function payment_prepare_head(Paiement $object) {
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_supplier_prepare_head(Paiement $object) {
+function payment_supplier_prepare_head(Paiement $object)
+{
 
 	global $langs, $conf;
 

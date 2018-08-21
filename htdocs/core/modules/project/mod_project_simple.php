@@ -33,7 +33,10 @@ class mod_project_simple extends ModeleNumRefProjects
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PJ';
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom = "Simple";
 	var $name = "Simple";
 

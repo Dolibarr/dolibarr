@@ -692,11 +692,12 @@ class Entrepot extends CommonObject
 	 * Return array of children warehouses ids from $id warehouse (recursive function)
 	 *
 	 * @param	int		$id					id parent warehouse
-	 * @param	array()	$TChildWarehouses	array which will contain all children (param by reference)
-	 * @return	array()	$TChildWarehouses	array which will contain all children
+	 * @param	array	$TChildWarehouses	array which will contain all children (param by reference)
+	 * @return	array	$TChildWarehouses	array which will contain all children
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function get_children_warehouses($id, &$TChildWarehouses) {
+    function get_children_warehouses($id, &$TChildWarehouses)
+    {
 
 		$sql = 'SELECT rowid
 				FROM '.MAIN_DB_PREFIX.'entrepot

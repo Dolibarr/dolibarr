@@ -31,7 +31,10 @@ class mod_supplier_payment_bronan extends ModeleNumRefSupplierPayments
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='SPAY';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Bronan';
 
 

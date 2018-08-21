@@ -30,8 +30,8 @@ class SimpleOpenID
     var $URLs = array();
     var $error = array();
     var $fields = array(
-		'required'	 => array(),
-		'optional'	 => array(),
+		'required' => array(),
+		'optional' => array(),
     );
 
     /**
@@ -133,7 +133,8 @@ class SimpleOpenID
      */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function SetIdentity($a)
-    { 	// Set Identity URL
+    {
+        // Set Identity URL
         if ((stripos($a, 'http://') === false)
         && (stripos($a, 'https://') === false)) {
             $a = 'http://'.$a;
@@ -162,6 +163,7 @@ class SimpleOpenID
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetIdentity()
     {
+        // Get Identity
         return $this->openid_url_identity;
     }
 
@@ -266,7 +268,8 @@ class SimpleOpenID
      * @return false|string		false if KO, string of url if OK
      */
     function array2url($arr)
-    { // converts associated array to URL Query String
+    {
+        // converts associated array to URL Query String
         if (!is_array($arr)){
             return false;
         }
@@ -320,7 +323,8 @@ class SimpleOpenID
      */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function CURL_Request($url, $method="GET", $params = "")
-    { // Remember, SSL MUST BE SUPPORTED
+    {
+        // Remember, SSL MUST BE SUPPORTED
         if (is_array($params)) $params = $this->array2url($params);
 
         $curl = curl_init($url . ($method == "GET" && $params != "" ? "?" . $params : ""));
@@ -377,7 +381,7 @@ class SimpleOpenID
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
     function GetOpenIDServer($url='')
     {
-    	global $conf;
+        global $conf;
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/geturl.lib.php';
 		if (empty($url)) $url=$conf->global->MAIN_AUTHENTICATION_OPENID_URL;

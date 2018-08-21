@@ -6905,7 +6905,8 @@ abstract class CommonObject
 	 * @param	array		$fieldsentry	Properties of field
 	 * @return 	string
 	 */
-	protected function quote($value, $fieldsentry) {
+    protected function quote($value, $fieldsentry)
+    {
 		if (is_null($value)) return 'NULL';
 		else if (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
 		else return "'".$this->db->escape($value)."'";

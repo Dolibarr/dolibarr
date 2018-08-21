@@ -1157,7 +1157,8 @@ class DoliDBMssql extends DoliDB
 	 * @return     string              field's name escaped
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function EscapeFieldName($fieldname) {
+    function EscapeFieldName($fieldname)
+    {
 	    return "[".$fieldname."]";
 	}
 
@@ -1170,7 +1171,8 @@ class DoliDBMssql extends DoliDB
 	 * @return false|object
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function GetFieldInformation($table,$fields) {
+    function GetFieldInformation($table,$fields)
+    {
 	    $sql="SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$this->escape($table)."' AND COLUMN_NAME";
 	    if (is_array($fields))
 	    {

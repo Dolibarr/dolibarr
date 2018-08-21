@@ -31,7 +31,10 @@ class mod_payment_cicada extends ModeleNumRefPayments
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='PAY';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Cicada';
 
 

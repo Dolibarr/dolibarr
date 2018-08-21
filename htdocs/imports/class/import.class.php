@@ -44,7 +44,11 @@ class Import
 	var $array_import_run_sql_after;
 
 	var $error;
-	var $errors;
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**

@@ -3258,7 +3258,7 @@ class Commande extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut, c.total_ht";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -3285,6 +3285,7 @@ class Commande extends CommonOrder
             while ($obj=$this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
+		$response->total+= $obj->total_ht;
 
                 $generic_commande->statut = $obj->fk_statut;
                 $generic_commande->date_commande = $this->db->jdate($obj->date_commande);

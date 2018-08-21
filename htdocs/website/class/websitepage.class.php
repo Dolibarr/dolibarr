@@ -125,7 +125,9 @@ class WebsitePage extends CommonObject
 	/**
 	 * Load object in memory from the database
 	 *
-	 * @param int		$id         	Id object. If this is 0, the value into $page will be used. If not found of $page not defined, the default page of website_id will be used or the first page found if not set.
+	 * @param int		$id				Id object.
+	 * 									If this is 0, the value into $page will be used. If not found of $page not defined, the default page of website_id will be used or the first page found if not set.
+	 * 									If value is < 0, we must exclude this ID.
 	 * @param string	$website_id 	Web site id (page name must also be filled if this parameter is used)
 	 * @param string	$page       	Page name (website id must also be filled if this parameter is used)
 	 * @param string	$aliasalt		Alternative alias to search page (slow)
@@ -162,6 +164,7 @@ class WebsitePage extends CommonObject
 		}
 		else
 		{
+			if ($id < 0) $sql .= ' AND t.rowid <> ' . abs($id);
 			if (null !== $website_id) {
 			    $sql .= " AND t.fk_website = '" . $this->db->escape($website_id) . "'";
 			    if ($page)		$sql .= " AND t.pageurl = '" . $this->db->escape($page) . "'";

@@ -219,7 +219,8 @@ class FormAccounting extends Form
 	 * @return string HTML edit field
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '') {
+    function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
+    {
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
@@ -344,7 +345,8 @@ class FormAccounting extends Form
 	 * @return string                  String with HTML select
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200') {
+    function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200')
+    {
 
 		$aux_account = array();
 

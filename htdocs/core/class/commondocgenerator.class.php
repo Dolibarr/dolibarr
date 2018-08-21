@@ -42,9 +42,10 @@ abstract class CommonDocGenerator
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	*/
-	public function __construct($db) {
-		$this->db = $db;
-	}
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
 
     /**
@@ -663,7 +664,8 @@ abstract class CommonDocGenerator
      * @return	array						Array of substitution key->code
      */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
+    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true)
+    {
         $array_other = array();
         if(!empty($object)) {
             foreach($object as $key => $value) {
@@ -781,9 +783,9 @@ abstract class CommonDocGenerator
 	 */
     function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
     {
-	    if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
-	    $pdf->line($x+$l, $y, $x+$l, $y+$h);
-	    if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
-	    $pdf->line($x, $y+$h, $x, $y);
+        if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
+        $pdf->line($x+$l, $y, $x+$l, $y+$h);
+        if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
+        $pdf->line($x, $y+$h, $x, $y);
     }
 }

@@ -923,6 +923,9 @@ if ($resql)
 			$facturestatic->id=$obj->id;
 			$facturestatic->ref=$obj->ref;
 			$facturestatic->type=$obj->type;
+            $facturestatic->total_ht=$obj->total_ht;
+            $facturestatic->total_tva=$obj->total_vat;
+            $facturestatic->total_ttc=$obj->total_ttc;
 			$facturestatic->statut=$obj->fk_statut;
 			$facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
 			$facturestatic->note_public=$obj->note_public;

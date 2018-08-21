@@ -42,7 +42,8 @@ class pdf_standard extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-	function addSticker(&$pdf,$outputlangs,$param) {
+    function addSticker(&$pdf,$outputlangs,$param)
+    {
 		// use this method in future refactoring
 	}
 

@@ -46,7 +46,8 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @param DoliDB $db Database handle
 	 */
-	function __construct($db) {
+    function __construct($db)
+    {
 		$this->db = $db;
 	}
 
@@ -117,7 +118,8 @@ class AccountingJournal extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND') {
+    function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+    {
 		$sql = "SELECT rowid, code, label, nature, active";
 		$sql .= ' FROM ' . MAIN_DB_PREFIX . $this->table_element . ' as t';
 		// Manage filter

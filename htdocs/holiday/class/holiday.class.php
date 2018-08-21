@@ -986,7 +986,8 @@ class Holiday extends CommonObject
 	 *   @param		string	$htmlname		Name of HTML select field
 	 *   @return    string					Show select of status
 	 */
-	function selectStatutCP($selected='', $htmlname='select_statut') {
+    function selectStatutCP($selected='', $htmlname='select_statut')
+    {
 
 		global $langs;
 
@@ -1020,7 +1021,8 @@ class Holiday extends CommonObject
 	 *  @param	string	$value      vrai si mise à jour OK sinon faux
 	 *  @return boolean				ok or ko
 	 */
-	function updateConfCP($name,$value) {
+    function updateConfCP($name,$value)
+    {
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."holiday_config SET";
 		$sql.= " value = '".$value."'";
@@ -1248,7 +1250,8 @@ class Holiday extends CommonObject
 	 *  @param	string	$name       name du paramètre de configuration
 	 *  @return string      		retourne checked si > 0
 	 */
-	function getCheckOption($name) {
+    function getCheckOption($name)
+    {
 
 		$sql = "SELECT value";
 		$sql.= " FROM ".MAIN_DB_PREFIX."holiday_config";
@@ -1309,7 +1312,8 @@ class Holiday extends CommonObject
 	 *  @param	int		$user_id        ID de l'utilisateur à supprimer
 	 *  @return boolean      			Vrai si pas d'erreur, faut si Erreur
 	 */
-	function deleteCPuser($user_id) {
+    function deleteCPuser($user_id)
+    {
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."holiday_users";
 		$sql.= " WHERE fk_user = '".$user_id."'";
@@ -1634,7 +1638,8 @@ class Holiday extends CommonObject
 	 *
 	 *  @return     int      retourne le nombre d'utilisateur
 	 */
-	function countActiveUsersWithoutCP() {
+    function countActiveUsersWithoutCP()
+    {
 
 		$sql = "SELECT count(u.rowid) as compteur";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u LEFT OUTER JOIN ".MAIN_DB_PREFIX."holiday_users hu ON (hu.fk_user=u.rowid)";

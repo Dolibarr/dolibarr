@@ -412,16 +412,15 @@ class MultiCurrency extends CommonObject
 			$this->rate = null;
 			return -1;
 		}
-	}
+	 }
 
-	/**
-	 * Try get label of code in llx_currency then add rate
-	 *
-	 * @param	string	$code	currency code
-	 * @param	double	$rate	new rate
-	 *
-	 * @return int -1 if KO, 1 if OK, 2 if label found and OK
-	 */
+	 /**
+	  * Try get label of code in llx_currency then add rate
+	  *
+	  * @param	string	$code	currency code
+	  * @param	double	$rate	new rate
+	  * @return int -1 if KO, 1 if OK, 2 if label found and OK
+	  */
 	function addRateFromDolibarr($code, $rate)
 	{
 	 	global $db, $user;
@@ -539,62 +538,62 @@ class MultiCurrency extends CommonObject
 
 			return array(0, 1);
 		}
-	}
+	 }
 
-	/**
-	 * Get the conversion of amount with invoice rate
-	 *
-	 * @param	int		$fk_facture		id of facture
-	 * @param	double	$amount			amount to convert
-	 * @param	string	$way			dolibarr mean the amount is in dolibarr currency
-	 * @param	string	$table			facture or facture_fourn
-	 *
-	 * @return	double					amount converted
-	 */
-	public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way='dolibarr', $table='facture')
-	{
-		global $db;
+	 /**
+	  * Get the conversion of amount with invoice rate
+	  *
+	  * @param	int		$fk_facture		id of facture
+	  * @param	double	$amount			amount to convert
+	  * @param	string	$way			dolibarr mean the amount is in dolibarr currency
+	  * @param	string	$table			facture or facture_fourn
+	  * @return	double					amount converted
+	  */
+	  public static function getAmountConversionFromInvoiceRate($fk_facture, $amount, $way='dolibarr', $table='facture')
+	  {
+		 global $db;
 
-		$multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
+		 $multicurrency_tx = self::getInvoiceRate($fk_facture, $table);
 
-		if ($multicurrency_tx)
-		{
+		 if ($multicurrency_tx)
+		 {
 		 	if ($way == 'dolibarr') return $amount * $multicurrency_tx;
 			else return $amount / $multicurrency_tx;
-		}
-		else return $amount;
-	}
+		 }
+		 else return $amount;
+	  }
 
-	/**
-	 *  Get current invoite rate
-	 *
-	 *  @param	int 	$fk_facture 	id of facture
-	 *  @param 	string 	$table 			facture or facture_fourn
+	  /**
+	   *  Get current invoite rate
+	   *
+	   *  @param	int 	$fk_facture 	id of facture
+	   *  @param 	string 	$table 			facture or facture_fourn
      *  @return bool
-	 */
-	public static function getInvoiceRate($fk_facture, $table='facture')
-	{
-		global $db;
+	   */
+	   public static function getInvoiceRate($fk_facture, $table='facture')
+	   {
+		 global $db;
 
-		$sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.$fk_facture;
+		 $sql = 'SELECT multicurrency_tx FROM '.MAIN_DB_PREFIX.$table.' WHERE rowid = '.$fk_facture;
 
-		dol_syslog(__METHOD__,LOG_DEBUG);
-		$resql = $db->query($sql);
-		if ($resql && ($line = $db->fetch_object($resql)))
-		{
+		 dol_syslog(__METHOD__,LOG_DEBUG);
+		 $resql = $db->query($sql);
+		 if ($resql && ($line = $db->fetch_object($resql)))
+		 {
 		 	return $line->multicurrency_tx;
-		}
+		 }
 
-		return false;
-	}
+		 return false;
+	   }
+
 
 	/**
 	 * With free account we can't set source then recalcul all rates to force another source
 	 *
-	 * @param	stdClass	$TRate	Object containing all currencies rates
+	 * @param   stdClass	$TRate	Object containing all currencies rates
 	 * @return	-1 if KO, 0 if nothing, 1 if OK
 	 */
-	public static function  recalculRates(&$TRate)
+	public static function recalculRates(&$TRate)
 	{
 		global $conf;
 

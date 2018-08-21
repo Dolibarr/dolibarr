@@ -1655,7 +1655,7 @@ class SMTPs
 	 * @param 	integer 	$_value 	Message Priority
 	 * @return 	void
 	 */
-	function setPriority ( $_value = 3 )
+	function setPriority( $_value = 3 )
 	{
 		if ( ( is_numeric($_value) ) &&
 		( ( $_value >= 0 ) && ( $_value <= 5 ) ) )
@@ -1821,12 +1821,14 @@ class SMTPs
 	 * @param  int    $_errNum  Error Code Number
 	 * @param  string $_errMsg  Error Message
 	 * @return void
-	 */
-	function _setErr ( $_errNum, $_errMsg )
-	{
-		$this->_smtpsErrors[] = array( 'num' => $_errNum,
-                                       'msg' => $_errMsg );
-	}
+     */
+    function _setErr( $_errNum, $_errMsg )
+    {
+        $this->_smtpsErrors[] = array(
+            'num' => $_errNum,
+            'msg' => $_errMsg,
+        );
+    }
 
 	/**
 	 * Returns errors codes and messages for Class

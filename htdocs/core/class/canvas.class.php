@@ -30,7 +30,11 @@ class Canvas
 {
 	var $db;
 	var $error;
-	var $errors=array();
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 	var $actiontype;
 

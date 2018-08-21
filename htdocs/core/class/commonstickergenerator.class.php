@@ -221,7 +221,7 @@ abstract class CommonStickerGenerator
 	 * @return float    value   value after conversion
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.NotCamelCaps
-	function _Convert_Metric ($value, $src, $dest)
+	function _Convert_Metric($value, $src, $dest)
 	{
 		if ($src != $dest) {
 			$tab['in'] = 39.37008;

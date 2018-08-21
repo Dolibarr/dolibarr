@@ -168,7 +168,8 @@ class FormProduct
 	 * @return	String					full label with all parents, separated by ' >> '
 	 */
     // phpcs:ignore PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	private function get_parent_path($tab, $final_label='') {
+    private function get_parent_path($tab, $final_label='')
+    {
 
 		if(empty($final_label)) $final_label = $tab['label'];
 

@@ -12,6 +12,7 @@
 	<exclude-pattern type="relative">*/nltechno*</exclude-pattern>
 	<exclude-pattern type="relative">*/htdocs/includes</exclude-pattern>
 	<exclude-pattern type="relative">*.min.css</exclude-pattern>
+	<exclude-pattern type="relative">*.js</exclude-pattern>
 
 		<!-- List of all tests -->
 
@@ -157,7 +158,7 @@
 	<!-- Disabled as this does not support tab -->
 	<!-- <rule ref="Generic.WhiteSpace.ScopeIndent" /> -->
 
-
+    <rule ref="Squiz.Functions.MultiLineFunctionDeclaration" />
 
     <!-- Rules from PEAR Standard -->
 

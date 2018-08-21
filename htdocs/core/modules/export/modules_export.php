@@ -30,7 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 class ModeleExports extends CommonDocGenerator    // This class can't be abstract as there is instance propreties loaded by liste_modeles
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $driverlabel=array();
 	var $driverversion=array();

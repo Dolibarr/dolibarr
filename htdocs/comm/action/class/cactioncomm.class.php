@@ -28,7 +28,11 @@
  */
 class CActionComm
 {
-    var $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
     var $db;
 
     var $id;

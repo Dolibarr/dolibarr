@@ -229,6 +229,7 @@ if ($action == 'addsite')
 	if (! $error && ! GETPOST('WEBSITE_REF','alpha'))
 	{
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	}
 	if (! $error && ! preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST('WEBSITE_REF','alpha')))
@@ -962,7 +963,7 @@ if ($action == 'updatemeta')
 {
 	$db->begin();
 
-	$object->fetch(0, $websitekey);
+	$result = $object->fetch(0, $websitekey);
 	$website = $object;
 
 	$objectpage->fk_website = $object->id;
@@ -976,11 +977,57 @@ if ($action == 'updatemeta')
 		$action='editmeta';
 	}
 
-	$res = $objectpage->fetch($pageid, $object->fk_website);
+	$res = $objectpage->fetch($pageid, $object->id);
 	if ($res <= 0)
 	{
 		$error++;
 		setEventMessages('Page not found '.$objectpage->error, $objectpage->errors, 'errors');
+	}
+
+	// Check alias not exists
+	if (! $error && GETPOST('WEBSITE_PAGENAME', 'alpha'))
+	{
+		$websitepagetemp=new WebsitePage($db);
+		$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, GETPOST('WEBSITE_PAGENAME', 'alpha'));
+		if ($result < 0)
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+			$action = 'editmeta';
+		}
+		if ($result > 0)
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+			$action = 'editmeta';
+		}
+	}
+	if (! $error && GETPOST('WEBSITE_ALIASALT', 'alpha'))
+	{
+		$arrayofaliastotest=explode(',', GETPOST('WEBSITE_ALIASALT', 'alpha'));
+		$websitepagetemp=new WebsitePage($db);
+		foreach($arrayofaliastotest as $aliastotest)
+		{
+			$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, $aliastotest);
+			if ($result < 0)
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+				$action = 'editmeta';
+				break;
+			}
+			if ($result > 0)
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+				$action = 'editmeta';
+				break;
+			}
+		}
 	}
 
 	if (! $error)
@@ -997,10 +1044,23 @@ if ($action == 'updatemeta')
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 
 		$res = $objectpage->update($user);
-		if (! $res > 0)
+		if (! ($res > 0))
 		{
-			$error++;
-			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+			$langs->load("errors");
+			if ($db->lasterrno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists"), null, 'errors');
+				$action = 'editmeta';
+			}
+			else
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+				$action = 'editmeta';
+			}
 		}
 	}
 
@@ -1276,7 +1336,11 @@ if (($action == 'updatesource' || $action == 'updatecontent' || $action == 'conf
 	}
 	else
 	{
-		if (! $error) setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
+		if (! $error)
+		{
+			setEventMessages($langs->trans("NoPageYet"), null, 'warnings');
+			setEventMessages($langs->trans("YouCanCreatePageOrImportTemplate"), null, 'warnings');
+		}
 	}
 }
 
@@ -1301,28 +1365,63 @@ if ($action == 'exportsite')
 // Import site
 if ($action == 'importsiteconfirm')
 {
-	$fileofzip = GETPOST('userfile');
-	if (empty($fileofzip))
+	if (empty($_FILES))
 	{
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
 		$action = 'importsite';
 	}
 	else
 	{
-		// TODO
-
-
-		$result = $object->importWebSite($fileofzip);
-		if ($result < 0)
+		if (! empty($_FILES))
 		{
-			setEventMessages($object->error, $object->errors, 'errors');
-			$action = 'importsite';
+			if (is_array($_FILES['userfile']['tmp_name'])) $userfiles=$_FILES['userfile']['tmp_name'];
+			else $userfiles=array($_FILES['userfile']['tmp_name']);
+
+			foreach($userfiles as $key => $userfile)
+			{
+				if (empty($_FILES['userfile']['tmp_name'][$key]))
+				{
+					$error++;
+					if ($_FILES['userfile']['error'][$key] == 1 || $_FILES['userfile']['error'][$key] == 2){
+						setEventMessages($langs->trans('ErrorFileSizeTooLarge'), null, 'errors');
+						$action = 'importsite';
+					}
+					else {
+						setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("File")), null, 'errors');
+						$action = 'importsite';
+					}
+				}
+			}
+
+			if (! $error)
+			{
+				$upload_dir = $conf->website->dir_temp;
+				$result = dol_add_file_process($upload_dir, 1, -1, 'userfile', '');
+
+				// Get name of file (take last one if several name provided)
+				$fileofzip = $upload_dir.'/unknown';
+				foreach($_FILES as $key => $ifile)
+				{
+					foreach($ifile['name'] as $key2 => $ifile2)
+					{
+						$fileofzip = $upload_dir . '/' .$ifile2;
+					}
+				}
+
+				$result = $object->importWebSite($fileofzip);
+				if ($result < 0)
+				{
+					setEventMessages($object->error, $object->errors, 'errors');
+					$action = 'importsite';
+				}
+				else
+				{
+					header("Location: ".$_SERVER["PHP_SELF"].'?website='.$object->ref);
+					exit();
+				}
+			}
 		}
-		else
-		{
-			header("Location: aaaaa");
-			exit();
-		}
+
 	}
 }
 

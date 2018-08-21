@@ -33,7 +33,10 @@ class mod_task_simple extends ModeleNumRefTask
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='TK';
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom = "Simple";
 	var $name = "Simple";
 

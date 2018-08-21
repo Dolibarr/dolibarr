@@ -30,7 +30,10 @@ class mod_expedition_safor extends ModelNumRefExpedition
 {
 	var $version='dolibarr';
 	var $prefix='SH';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Safor';
 
 

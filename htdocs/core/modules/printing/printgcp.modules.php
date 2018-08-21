@@ -43,7 +43,12 @@ class printing_printgcp extends PrintingDriver
     var $google_id = '';
     var $google_secret = '';
     var $error;
-    var $errors = array();
+    /**
+	 *
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array ();
+	
     var $db;
 
     private $OAUTH_SERVICENAME_GOOGLE = 'Google';

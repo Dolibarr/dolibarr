@@ -1,6 +1,6 @@
 <?php
-
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,9 +62,9 @@ print '<tr class="oddeven"><td>'.$langs->trans('HideProductCombinations').'</td>
 print $form->selectyesno("PRODUIT_ATTRIBUTES_HIDECHILD",$conf->global->PRODUIT_ATTRIBUTES_HIDECHILD,1).'</td></tr>';
 print '<tr class="oddeven"><td>'.$langs->trans('CombinationsSeparator').'</td>';
 if(isset($conf->global->PRODUIT_ATTRIBUTES_SEPARATOR)) {
-       $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
+    $separator = $conf->global->PRODUIT_ATTRIBUTES_SEPARATOR;
 } else {
-       $separator = "_";
+    $separator = "_";
 }
 print '<td align="right"><input size="3" type="text" class="flat" name="PRODUIT_ATTRIBUTES_SEPARATOR" value="'.$separator.'"></td></tr>';
 print '</table>';
@@ -74,4 +74,3 @@ print '</form>';
 // End of page
 llxFooter();
 $db->close();
-

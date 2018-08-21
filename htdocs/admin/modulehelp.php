@@ -313,7 +313,9 @@ if ($mode == 'desc')
     {
         $textexternal.='<br><strong>'.$langs->trans("Origin").':</strong> '.$langs->trans("ExternalModule",$dirofmodule);
         if ($objMod->editor_name != 'dolibarr') $textexternal.='<br><strong>'.$langs->trans("Publisher").':</strong> '.(empty($objMod->editor_name)?$langs->trans("Unknown"):$objMod->editor_name);
-        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$objMod->editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
+        $editor_url = $objMod->editor_url;
+        if (! preg_match('/^http/', $editor_url)) $editor_url = 'http://'.$editor_url;
+        if (! empty($objMod->editor_url) && ! preg_match('/dolibarr\.org/i',$objMod->editor_url)) $textexternal.='<br><strong>'.$langs->trans("Url").':</strong> <a href="'.$editor_url.'" target="_blank">'.$objMod->editor_url.'</a>';
         $text.=$textexternal;
         $text.='<br>';
     }
