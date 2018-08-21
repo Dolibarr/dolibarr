@@ -278,6 +278,7 @@ class Fichinter extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
+		global $conf;
 	 	if (! is_numeric($this->duration)) {
 	 		$this->duration = 0;
 	 	}

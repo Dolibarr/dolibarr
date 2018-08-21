@@ -1514,7 +1514,7 @@ else
 			// Date employment
 			print '<tr><td>'.$langs->trans("DateEmployment").'</td>';
 			print '<td>';
-			print dol_print_date($object->dateemployment);
+			print dol_print_date($object->dateemployment, 'day');
 			print '</td>';
 			print "</tr>\n";
 
