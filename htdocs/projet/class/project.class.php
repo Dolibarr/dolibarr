@@ -633,9 +633,8 @@ class Project extends CommonObject
 		$this->getLinesArray($user);
 
 		// Delete tasks
-		foreach($this->lines as &$task) {
-			$task->delete($user);
-		}
+		$ret = $this->deleteTasks($user);
+		if ($ret < 0) $error++;
 
         // Delete project
         if (! $error)
@@ -710,6 +709,40 @@ class Project extends CommonObject
             $this->db->rollback();
             return -1;
         }
+    }
+    
+    /**
+     * 		Delete tasks with no children first, then task with children recursively
+     *  
+     *  	@param     	User		$user		User
+     *		@return		int				<0 if KO, 1 if OK
+     */
+    function deleteTasks($user)
+    {
+        $countTasks = count($this->lines);
+        $deleted = false;
+        if ($countTasks)
+        {
+            foreach($this->lines as $task)
+            {
+                if ($task->hasChildren() <= 0) {		// If there is no children (or error to detect them)
+                    $deleted = true;
+                    $ret = $task->delete($user);
+                    if ($ret <= 0)
+                    {
+                        $this->errors[] = $this->db->lasterror();
+                        return -1;
+                    }
+                }
+            }
+        }
+        $this->getLinesArray($user);
+        if ($deleted && count($this->lines) < $countTasks)
+        {
+            if (count($this->lines)) $this->deleteTasks($this->lines);
+        }
+        
+        return 1;
     }
 
     /**
