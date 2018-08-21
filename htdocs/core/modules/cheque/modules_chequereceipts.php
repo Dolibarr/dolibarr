@@ -36,7 +36,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';   // Requ
  */
 abstract class ModeleNumRefChequeReceipts
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not
@@ -119,7 +122,10 @@ abstract class ModeleNumRefChequeReceipts
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *  Return list of active generation modules

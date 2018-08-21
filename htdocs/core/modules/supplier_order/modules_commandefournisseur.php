@@ -37,7 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';	// requir
  */
 abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -69,7 +72,10 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
  */
 abstract class ModeleNumRefSuppliersOrders
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**  Return if a model can be used or not
 	 *

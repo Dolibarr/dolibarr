@@ -31,7 +31,12 @@ class PriceGlobalVariable
 {
     var $db;							//!< To store db handler
     var $error;							//!< To return error code (or message)
-    var $errors=array();				//!< To return several error codes (or messages)
+    /**
+	 *
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array ();
+	
     var $id;
     var $code;
     var $description;

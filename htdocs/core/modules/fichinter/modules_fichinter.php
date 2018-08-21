@@ -34,7 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFFicheinter extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -64,7 +67,10 @@ abstract class ModelePDFFicheinter extends CommonDocGenerator
  */
 abstract class ModeleNumRefFicheinter
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * 	Return if a module can be used or not

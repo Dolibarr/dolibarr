@@ -197,7 +197,7 @@ $now=dol_now();
 $form=new Form($db);
 
 $sql = "SELECT c.rowid as cid, c.ref, c.statut as cstatut,";
-$sql.= " s.rowid as socid, s.nom as name,";
+$sql.= " s.rowid as socid, s.nom as name, s.email, s.client, s.fournisseur,";
 $sql.= " cd.rowid, cd.description, cd.statut,";
 $sql.= " p.rowid as pid, p.ref as pref, p.label as label, p.fk_product_type as ptype, p.entity as pentity,";
 if (!$user->rights->societe->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
@@ -540,6 +540,11 @@ while ($i < min($num,$limit))
 	$contractstatic->id=$obj->cid;
 	$contractstatic->ref=$obj->ref?$obj->ref:$obj->cid;
 
+	$companystatic->id=$obj->socid;
+	$companystatic->name=$obj->name;
+	$companystatic->email=$obj->email;
+	$companystatic->client=$obj->client;
+	$companystatic->fournisseur=$obj->fournisseur;
 
 	print '<tr class="oddeven">';
 
@@ -555,7 +560,7 @@ while ($i < min($num,$limit))
 	if (! empty($arrayfields['p.description']['checked']))
 	{
 		print '<td>';
-		if ($obj->pid)
+		if ($obj->pid > 0)
 		{
 			$productstatic->id=$obj->pid;
 			$productstatic->type=$obj->ptype;
@@ -625,9 +630,6 @@ while ($i < min($num,$limit))
 	if (! empty($arrayfields['s.nom']['checked']))
 	{
 		print '<td>';
-		$companystatic->id=$obj->socid;
-		$companystatic->name=$obj->name;
-		$companystatic->client=1;
 		print $companystatic->getNomUrl(1,'customer',28);
 		print '</td>';
         if (! $i) $totalarray['nbfield']++;

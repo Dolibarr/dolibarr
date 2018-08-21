@@ -110,7 +110,11 @@ class dolReceiptPrinter extends Escpos
     var $printer;
     var $template;
     var $error;
-    var $errors;
+    /**
+	 *
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array ();
 
 
 
