@@ -26,8 +26,7 @@
  */
 
 /**
- *      \class      AntiVir
- *      \brief      Class to scan for virus
+ *      Class to scan for virus
  */
 class AntiVir
 {
@@ -36,8 +35,8 @@ class AntiVir
 	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();;
-	
+	public $errors = array ();
+
 	var $output;
 	var $db;
 
