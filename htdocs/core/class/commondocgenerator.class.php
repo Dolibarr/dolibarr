@@ -42,9 +42,10 @@ abstract class CommonDocGenerator
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	*/
-	public function __construct($db) {
-		$this->db = $db;
-	}
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
 
     /**
@@ -228,7 +229,8 @@ abstract class CommonDocGenerator
 	 * @param   array_key	$array_key	    Name of the key for return array
 	 * @return	array of substitution key->code
 	 */
-	function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object') {
+    function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
+    {
 		global $conf;
 
 		if(empty($object->country) && ! empty($object->country_code))
@@ -652,7 +654,8 @@ abstract class CommonDocGenerator
      * @param   boolean		$recursive    	Want to fetch child array or child object
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
+    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true)
+    {
         $array_other = array();
         if(!empty($object)) {
             foreach($object as $key => $value) {
@@ -769,10 +772,9 @@ abstract class CommonDocGenerator
 	 */
     function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
     {
-	    if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
-	    $pdf->line($x+$l, $y, $x+$l, $y+$h);
-	    if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
-	    $pdf->line($x, $y+$h, $x, $y);
+        if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
+        $pdf->line($x+$l, $y, $x+$l, $y+$h);
+        if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
+        $pdf->line($x, $y+$h, $x, $y);
     }
 }
-

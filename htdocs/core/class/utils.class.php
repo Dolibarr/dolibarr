@@ -677,7 +677,8 @@ class Utils
 	 *
 	 * @return	int						0 if OK, < 0 if KO
 	 */
-	function compressSyslogs() {
+    function compressSyslogs()
+    {
 		global $conf;
 
 		if(empty($conf->loghandlers['mod_syslog_file'])) { // File Syslog disabled

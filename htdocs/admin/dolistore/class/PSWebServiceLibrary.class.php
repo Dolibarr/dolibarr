@@ -69,7 +69,8 @@ class PrestaShopWebservice
 	 * @param string $key Authentification key
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
 	*/
-	function __construct($url, $key, $debug = true) {
+    function __construct($url, $key, $debug = true)
+    {
 		if (!extension_loaded('curl'))
 		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
 		$this->url = $url;

@@ -647,7 +647,8 @@ class PropalmergepdfproductLine
 	var $tms='';
 	var $import_key;
 
-	function __construct() {
-		return 1;
-	}
+    function __construct()
+    {
+        return 1;
+    }
 }

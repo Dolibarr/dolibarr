@@ -58,8 +58,7 @@ $tmpDir = $conf->dav->dir_temp;
 //var_dump($tmpDir);exit;
 
 // Authentication callback function
-$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password)
-{
+$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
 	global $user;
 	global $conf;
 	global $dolibarr_main_authentication;

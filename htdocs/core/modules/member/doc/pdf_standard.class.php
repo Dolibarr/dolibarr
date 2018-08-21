@@ -42,7 +42,8 @@ class pdf_standard extends CommonStickerGenerator
 	 * @param	array		$param			Associative array containing label content and optional parameters
 	 * @return	void
 	 */
-	function addSticker(&$pdf,$outputlangs,$param) {
+    function addSticker(&$pdf,$outputlangs,$param)
+    {
 		// use this method in future refactoring
 	}
 
@@ -323,7 +324,7 @@ class pdf_standard extends CommonStickerGenerator
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-        
+
 		// Load traductions files requiredby by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "admin", "members"));
 

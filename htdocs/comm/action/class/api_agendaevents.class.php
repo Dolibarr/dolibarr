@@ -46,8 +46,8 @@ class AgendaEvents extends DolibarrApi
      */
     function __construct()
     {
-		global $db, $conf;
-		$this->db = $db;
+        global $db, $conf;
+        $this->db = $db;
         $this->actioncomm = new ActionComm($this->db);
     }
 
@@ -99,13 +99,14 @@ class AgendaEvents extends DolibarrApi
      * @param string    $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.label:like:'%dol%') and (t.datec:<:'20160101')"
      * @return  array               Array of Agenda Events objects
      */
-    function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '') {
+    function index($sortfield = "t.id", $sortorder = 'ASC', $limit = 100, $page = 0, $user_ids = 0, $sqlfilters = '')
+    {
         global $db, $conf;
 
         $obj_ret = array();
 
         if (! DolibarrApiAccess::$user->rights->agenda->myactions->read) {
-        	throw new RestException(401, "Insuffisant rights to read events");
+            throw new RestException(401, "Insuffisant rights to read events");
         }
 
         // case of external user
@@ -226,7 +227,8 @@ class AgendaEvents extends DolibarrApi
      * @return int
      */
     /*
-    function put($id, $request_data = null) {
+    function put($id, $request_data = null)
+    {
       if (! DolibarrApiAccess::$user->rights->agenda->myactions->create) {
 			  throw new RestException(401, "Insuffisant rights to create your Agenda Event");
 		  }
@@ -319,7 +321,8 @@ class AgendaEvents extends DolibarrApi
      * @param	object	$object		Object to clean
      * @return	array				Array of cleaned object properties
      */
-    function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
     	$object = parent::_cleanObjectDatas($object);
 
