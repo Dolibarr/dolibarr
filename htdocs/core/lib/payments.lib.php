@@ -303,7 +303,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany,$langs,$addformmessage=0,$suf
     print '<font style="font-size: 10px;"><br><hr>'."\n";
     print $fromcompany->name.'<br>';
     print $line1;
-    if (strlen($line1+$line2) > 50) print '<br>';
+    if (strlen($line1.$line2) > 50) print '<br>';
     else print ' - ';
     print $line2;
     print '</font></div>'."\n";
