@@ -714,14 +714,15 @@ class Project extends CommonObject
     /**
      * 		Delete tasks with no children first, then task with children recursively
      *  
-     *  	@param     int		<0 if KO, 1 if OK
+     *  	@param     	User		$user		User
+     *		@return		int				<0 if KO, 1 if OK
      */
     function deleteTasks($user)
     {
         $countTasks = count($this->lines);
         $deleted = false;
         if ($countTasks)
-	{
+        {
             foreach($this->lines as $task)
             {
                 if ($task->hasChildren() <= 0) {		// If there is no children (or error to detect them)
