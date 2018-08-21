@@ -252,18 +252,41 @@ class DoliDBPgsql extends DoliDB
                     $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
                 }
 
-                // Translate order to modify field format
-                if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+MODIFY(?: COLUMN)? ([a-z0-9_]+) (.*)$/i',$line,$reg))
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+MODIFY(?: COLUMN)? ([a-z0-9_]+) ([a-zA-Z0-9\(\)]+) (.*)$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
-                    $newreg3=$reg[3];
-                    $newreg3=preg_replace('/ DEFAULT NULL/i','',$newreg3);
-                    $newreg3=preg_replace('/ NOT NULL/i','',$newreg3);
-                    $newreg3=preg_replace('/ NULL/i','',$newreg3);
-                    $newreg3=preg_replace('/ DEFAULT 0/i','',$newreg3);
-                    $newreg3=preg_replace('/ DEFAULT \'?[0-9a-zA-Z_@]*\'?/i','',$newreg3);
-                    $line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newreg3;
-                    // TODO Add alter to set default value or null/not null if there is this in $reg[3]
+					
+					$newType = $reg[3];
+					$defaultValue = $reg[4];
+					
+					if (!empty($newType))
+					{
+						$line.= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." TYPE ".$newType.";\n";
+					}
+					
+					if (!empty($defaultValue))
+					{
+						if (preg_match('/DEFAULT NULL/i', $defaultValue))
+						{
+							$defaultValue = preg_replace('/DEFAULT NULL/i', '', $defaultValue);
+							$line .= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." SET DEFAULT NULL;";
+						}
+						else if (preg_match('/NOT NULL/i', $defaultValue))
+						{
+							$defaultValue = preg_replace('/NOT NULL/i', '', $defaultValue);
+							$line .= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." SET NOT NULL;";
+						}
+						else if (preg_match('/NULL/i', $defaultValue))
+						{
+							$defaultValue = preg_replace('/NULL/i', 'DROP NOT NULL', $defaultValue);
+							$line .= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." DROP NOT NULL;";
+						}
+						else if (preg_match('/DEFAULT (\'?[0-9a-zA-Z_@]*\'?)/i', $defaultValue, $matches))
+						{
+							$defaultValue = preg_replace('/DEFAULT \'?[0-9a-zA-Z_@]*\'?/i', 'SET DEFAULT '.$matches[1], $defaultValue);
+							$line .= "ALTER TABLE ".$reg[1]." ALTER COLUMN ".$reg[2]." ".$defaultValue;
+						}
+					}
                 }
 
                 // alter table add primary key (field1, field2 ...) -> We remove the primary key name not accepted by PostGreSQL
