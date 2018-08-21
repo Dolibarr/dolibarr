@@ -40,11 +40,11 @@ abstract class ActionsContactCardCommon
 	//! Error string
 	var $error;
 	
+
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 
 
 	/**

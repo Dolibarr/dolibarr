@@ -43,11 +43,11 @@ abstract class ActionsCardCommon
 	 */
 	public $error='';
 	
+
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 
 
 	/**
