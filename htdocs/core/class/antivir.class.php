@@ -31,8 +31,8 @@
 class AntiVir
 {
 	var $error;
+
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array ();
