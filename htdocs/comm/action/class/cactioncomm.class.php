@@ -33,7 +33,10 @@ class CActionComm
 	 */
 	public $error='';
 	
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     var $id;
 

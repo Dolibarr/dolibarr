@@ -1638,7 +1638,11 @@ class AccountLine extends CommonObject
 	 */
 	public $error='';
 	
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $element='bank';
 	var $table_element='bank';
 	var $picto = 'generic';

@@ -45,7 +45,10 @@ class AccountingAccount extends CommonObject
 	 */
 	public $restrictiononfksoc = 1;
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 	
 	/**
 	 * @var string Error code (or message)

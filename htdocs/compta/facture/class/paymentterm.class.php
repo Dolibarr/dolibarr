@@ -28,7 +28,10 @@
  */
 class PaymentTerm // extends CommonObject
 {
-	var $db;							//!< To store db handler
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 	
 	/**
 	 * @var string Error code (or message)
