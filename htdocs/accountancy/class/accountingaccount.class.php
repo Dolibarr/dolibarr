@@ -51,9 +51,9 @@ class AccountingAccount extends CommonObject
 	public $restrictiononfksoc = 1;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 	
 	/**
 	 * @var string Error code (or message)
@@ -80,9 +80,9 @@ class AccountingAccount extends CommonObject
 	var $account_category;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+         * @var string proper name for given parameter
+         */
+        public $label;
     
 	var $fk_user_author;
 	var $fk_user_modif;
