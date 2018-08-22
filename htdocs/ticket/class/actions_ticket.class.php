@@ -951,7 +951,7 @@ class ActionsTicket
      * Print statut
      *
      * @param		int		$mode		Display mode
-     * @return 		void
+     * @return 		string
      */
     public function getLibStatut($mode = 0)
     {
