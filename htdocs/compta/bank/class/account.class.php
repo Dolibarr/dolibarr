@@ -1661,7 +1661,12 @@ class AccountLine extends CommonObject
 	 */
 	var $datev;
 	var $amount;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $note;
 	var $fk_user_author;
 	var $fk_user_rappro;

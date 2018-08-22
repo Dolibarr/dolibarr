@@ -3801,7 +3801,12 @@ class OrderLine extends CommonOrderLine
     // From llx_commandedet
     var $fk_parent_line;
     var $fk_facture;
-    var $label;
+    
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
     var $fk_remise_except;
     var $rang = 0;
 	var $fk_fournprice;

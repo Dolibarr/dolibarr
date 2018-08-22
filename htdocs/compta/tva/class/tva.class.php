@@ -43,7 +43,12 @@ class Tva extends CommonObject
 	var $amount;
 	var $type_payment;
 	var $num_payment;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

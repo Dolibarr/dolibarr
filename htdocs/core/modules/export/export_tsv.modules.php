@@ -36,7 +36,11 @@ class ExportTsv extends ModeleExports
 	 */
 	public $id;
 	
-    var $label;
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
     var $extension;
     var $version;
 

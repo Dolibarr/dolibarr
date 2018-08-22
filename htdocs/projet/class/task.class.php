@@ -38,7 +38,12 @@ class Task extends CommonObject
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
 	var $fk_task_parent;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $description;
 	var $duration_effective;		// total of time spent on this task
 	var $planned_workload;

@@ -38,7 +38,11 @@ class ExportExcel2007 extends ExportExcel
 	 */
 	public $id;
 	
-	var $label;
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $extension;
 	var $version;
 

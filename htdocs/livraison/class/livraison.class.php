@@ -1069,7 +1069,12 @@ class LivraisonLigne extends CommonObjectLine
 	var $price;
 	var $fk_product;
 	var $origin_id;
-	var $label;       // Label produit
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $description;  // Description produit
 	/**
 	 * @deprecated

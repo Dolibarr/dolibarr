@@ -69,7 +69,10 @@ class ActionComm extends CommonObject
     var $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
     var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
 
-    var $label;
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
 
     /**
      * @var string

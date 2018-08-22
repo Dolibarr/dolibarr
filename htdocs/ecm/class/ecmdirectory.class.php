@@ -36,7 +36,11 @@ class EcmDirectory // extends CommonObject
 	 */
 	public $id;
 
-	var $label;
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $fk_parent;
 	var $description;
 	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'

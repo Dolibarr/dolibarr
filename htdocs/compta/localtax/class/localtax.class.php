@@ -38,7 +38,12 @@ class Localtax extends CommonObject
 	var $datep;
 	var $datev;
 	var $amount;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

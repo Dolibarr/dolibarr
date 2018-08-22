@@ -57,7 +57,12 @@ class Ccountry // extends CommonObject
 	
 	var $code;
 	var $code_iso;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $active;
 
 

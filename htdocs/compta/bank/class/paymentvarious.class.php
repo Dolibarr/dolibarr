@@ -47,7 +47,12 @@ class PaymentVarious extends CommonObject
 	var $amount;
 	var $type_payment;
 	var $num_payment;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $accountancy_code;
 	var $fk_project;
 	var $fk_bank;

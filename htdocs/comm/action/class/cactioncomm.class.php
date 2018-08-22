@@ -46,7 +46,12 @@ class CActionComm
     var $code;
     var $type;
     var $libelle;       // deprecated
-    var $label;
+    
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
     var $active;
     var $color;
     var $picto;

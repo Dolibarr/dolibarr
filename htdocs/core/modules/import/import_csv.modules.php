@@ -56,7 +56,11 @@ class ImportCsv extends ModeleImports
 	 */
 	public $id;
 	
-	var $label;        // Label of driver
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $extension;    // Extension of files imported by driver
 	var $version;      // Version of driver
 
