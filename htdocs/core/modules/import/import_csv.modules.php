@@ -33,7 +33,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/import/modules_import.php';
  */
 class ImportCsv extends ModeleImports
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $datatoimport;
 
 	/**

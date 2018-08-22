@@ -27,7 +27,10 @@
  */
 class FormIntervention
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
     
     /**
 	 * @var string Error code (or message)

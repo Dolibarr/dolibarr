@@ -31,7 +31,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/CMailFile.class.php';
 class Notify
 {
 	var $id;
-	var $db;
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 	
 	/**
 	 * @var string Error code (or message)

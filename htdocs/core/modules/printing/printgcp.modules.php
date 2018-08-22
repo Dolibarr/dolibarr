@@ -53,7 +53,10 @@ class printing_printgcp extends PrintingDriver
 	 */
 	public $errors = array();
 	
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     private $OAUTH_SERVICENAME_GOOGLE = 'Google';
 

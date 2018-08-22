@@ -41,7 +41,10 @@ class mailing_fraise extends MailingTargets
     var $require_module=array('adherent');
     var $picto='user';
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
     /**
      *    Constructor

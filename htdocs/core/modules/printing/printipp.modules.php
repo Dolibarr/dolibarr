@@ -51,7 +51,10 @@ class printing_printipp extends PrintingDriver
 	 */
 	public $errors = array();
 	
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
     /**
