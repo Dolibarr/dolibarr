@@ -38,7 +38,12 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 class Contact extends CommonObject
 {
 	public $element='contact';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='socpeople';
+	
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'contact';
 

@@ -34,7 +34,12 @@ class ChargeSociales extends CommonObject
 {
     public $element='chargesociales';
     public $table='chargesociales';
-    public $table_element='chargesociales';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='chargesociales';
+	
     public $picto = 'bill';
 
     /**

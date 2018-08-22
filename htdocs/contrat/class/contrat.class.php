@@ -42,15 +42,22 @@ require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
 class Contrat extends CommonObject
 {
 	public $element='contrat';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='contrat';
+	
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
     public $picto='contract';
+    
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+    
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -2452,7 +2459,11 @@ class Contrat extends CommonObject
 class ContratLigne extends CommonObjectLine
 {
     public $element='contratdet';
-    public $table_element='contratdet';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='contratdet';
 
 	/**
 	 * @var int ID

@@ -34,7 +34,12 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 class RemiseCheque extends CommonObject
 {
 	public $element='chequereceipt';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='bordereau_cheque';
+	
 	public $picto = 'payment';
 
 	var $num;

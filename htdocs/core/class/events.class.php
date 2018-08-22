@@ -35,7 +35,11 @@
 class Events // extends CommonObject
 {
 	public $element='events';				//!< Id that identify managed objects
-	public $table_element='events';		//!< Name of table without prefix where object is stored
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='events';	
 
 	/**
 	 * @var int ID

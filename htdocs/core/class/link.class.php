@@ -29,7 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class Link extends CommonObject
 {
     public $element = 'link';
-    public $table_element = 'links';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'links';
 
     public $entity;
     public $datea;

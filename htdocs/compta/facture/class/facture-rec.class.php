@@ -40,7 +40,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class FactureRec extends CommonInvoice
 {
 	public $element='facturerec';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='facture_rec';
+	
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
 	public $picto='bill';
@@ -1640,6 +1645,10 @@ class FactureRec extends CommonInvoice
 class FactureLigneRec extends CommonInvoiceLine
 {
 	public $element='facturedetrec';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='facturedet_rec';
 
 	var $date_start_fill;
