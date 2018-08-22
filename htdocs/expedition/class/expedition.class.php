@@ -46,7 +46,12 @@ class Expedition extends CommonObject
 {
 	public $element="shipping";
 	public $fk_element="fk_expedition";
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element="expedition";
+	
 	public $table_element_line="expeditiondet";
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'sending';
@@ -2268,6 +2273,10 @@ class Expedition extends CommonObject
 class ExpeditionLigne extends CommonObjectLine
 {
 	public $element='expeditiondet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='expeditiondet';
 
 	public $fk_origin_line;

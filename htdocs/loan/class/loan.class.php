@@ -31,6 +31,10 @@ class Loan extends CommonObject
 {
 	public $element='loan';
 	public $table='loan';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='loan';
 
 	public $picto = 'bill';

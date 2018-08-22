@@ -36,7 +36,12 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
 class PaiementFourn extends Paiement
 {
 	public $element='payment_supplier';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='paiementfourn';
+	
 	public $picto = 'payment';
 
 	var $statut;        //Status of payment. 0 = unvalidated; 1 = validated

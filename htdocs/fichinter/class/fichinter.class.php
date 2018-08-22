@@ -36,7 +36,12 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
 class Fichinter extends CommonObject
 {
 	public $element='fichinter';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='fichinter';
+	
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 	public $picto = 'intervention';
@@ -1327,7 +1332,12 @@ class FichinterLigne extends CommonObjectLine
 	var $rang = 0;
 
 	public $element='fichinterdet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='fichinterdet';
+	
 	public $fk_element='fk_fichinter';
 
 	/**

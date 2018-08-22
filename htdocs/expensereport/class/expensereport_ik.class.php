@@ -30,7 +30,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
 class ExpenseReportIk extends CoreObject
 {
 	public $element='expenseik';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='expensereport_ik';
+	
 	public $fk_element='fk_expense_ik';
 
 	/**

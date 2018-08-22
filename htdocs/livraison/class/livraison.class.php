@@ -41,7 +41,12 @@ class Livraison extends CommonObject
 {
 	public $element="delivery";
 	public $fk_element="fk_livraison";
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element="livraison";
+	
 	public $table_element_line="livraisondet";
 
 	var $brouillon;
@@ -1091,6 +1096,10 @@ class LivraisonLigne extends CommonObjectLine
 	public $product_label;
 
 	public $element='livraisondet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='livraisondet';
 
 	/**
