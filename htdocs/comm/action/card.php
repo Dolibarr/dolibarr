@@ -1245,7 +1245,11 @@ if ($id > 0)
 		if (! empty($object->fk_element) && ! empty($object->elementtype))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
-			print '<tr><td>'.$langs->trans("LinkedObject").'</td>';
+            print '<tr><td>';
+            print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+            print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+            print '</td>';
+			print '<td>'.$langs->trans("LinkedObject").'</td>';
 			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td></tr>';
 		}
 
