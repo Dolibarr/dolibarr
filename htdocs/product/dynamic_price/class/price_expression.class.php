@@ -51,7 +51,11 @@ class PriceExpression
 	
     var $title;
 	var $expression;
-    public $table_element = "c_price_expression";
+	
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = "c_price_expression";
 
     /**
      *  Constructor

@@ -31,7 +31,12 @@ require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 class Dolresource extends CommonObject
 {
 	public $element='dolresource';			//!< Id that identify managed objects
-	public $table_element='resource';	//!< Name of table without prefix where object is stored
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='resource';	
+	
     public $picto = 'resource';
 
 	public $resource_id;

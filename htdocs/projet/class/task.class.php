@@ -32,7 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class Task extends CommonObject
 {
 	public $element='project_task';		//!< Id that identify managed objects
-	public $table_element='projet_task';	//!< Name of table without prefix where object is stored
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='projet_task';	
+	
 	public $fk_element='fk_task';
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object

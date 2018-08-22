@@ -34,7 +34,12 @@ class Project extends CommonObject
 {
 
     public $element = 'project';    //!< Id that identify managed objects
-    public $table_element = 'projet';  //!< Name of table without prefix where object is stored
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'projet';  
+	
     public $table_element_line = 'projet_task';
     public $fk_element = 'fk_projet';
     public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe

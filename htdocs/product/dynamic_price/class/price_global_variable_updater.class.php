@@ -59,7 +59,11 @@ class PriceGlobalVariableUpdater
     var $update_interval;				//!< Interval in mins
     var $next_update;					//!< Next update timestamp
     var $last_status;
-    public $table_element = "c_price_global_variable_updater";
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = "c_price_global_variable_updater";
 
     /**
      *  Constructor

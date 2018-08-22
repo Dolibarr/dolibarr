@@ -46,7 +46,12 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
 class SupplierProposal extends CommonObject
 {
     public $element='supplier_proposal';
-    public $table_element='supplier_proposal';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='supplier_proposal';
+	
     public $table_element_line='supplier_proposaldet';
     public $fk_element='fk_supplier_proposal';
     public $picto='propal';
@@ -2647,7 +2652,11 @@ class SupplierProposalLine extends CommonObjectLine
 	public $error='';
 
     public $element='supplier_proposaldet';
-    public $table_element='supplier_proposaldet';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='supplier_proposaldet';
 
     var $oldline;
 

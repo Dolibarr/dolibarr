@@ -52,7 +52,11 @@ class PriceGlobalVariable
     var $code;
     var $description;
     var $value;
-    public $table_element = "c_price_global_variable";
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = "c_price_global_variable";
 
     /**
      *  Constructor

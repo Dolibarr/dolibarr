@@ -35,8 +35,12 @@ class Ticketlogs// extends CommonObject
     public $db; //!< To store db handler
     public $error; //!< To return error code (or message)
     public $errors = array(); //!< To return several error codes (or messages)
+    
     public $element = 'ticketlogs'; //!< Id that identify managed objects
-    public $table_element = 'ticketlogs'; //!< Name of table without prefix where object is stored
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'ticketlogs'; //!< Name of table without prefix where object is stored
 
     public $id;
 
