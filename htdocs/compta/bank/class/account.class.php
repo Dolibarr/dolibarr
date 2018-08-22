@@ -1647,7 +1647,11 @@ class AccountLine extends CommonObject
 	var $table_element='bank';
 	var $picto = 'generic';
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $ref;
 	var $datec;
 	var $dateo;

@@ -50,7 +50,11 @@ class ImportXlsx extends ModeleImports
 	 */
 	public $errors = array();
 
-    var $id;           // Id of driver
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $label;        // Label of driver
 	var $extension;    // Extension of files imported by driver
 	var $version;      // Version of driver

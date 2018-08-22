@@ -38,7 +38,11 @@ class Bookmark extends CommonObject
      */
     public $db;
 
-    var $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $fk_user;
     var $datec;
     var $url;

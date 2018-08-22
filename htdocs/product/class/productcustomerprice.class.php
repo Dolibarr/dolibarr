@@ -950,7 +950,11 @@ class Productcustomerprice extends CommonObject
  */
 class PriceByCustomerLine
 {
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $entity;
 	var $datec = '';
 	var $tms = '';

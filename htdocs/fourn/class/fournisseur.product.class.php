@@ -49,7 +49,11 @@ class ProductFournisseur extends Product
 
     var $product_fourn_price_id;  // id of ligne product-supplier
 
-    var $id;                      // product id
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
 	/**
 	 * @deprecated
 	 * @see ref_supplier

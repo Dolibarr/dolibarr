@@ -31,7 +31,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpass
  */
 class modGeneratePassStandard extends ModeleGenPassword
 {
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $length;
 
 	/**

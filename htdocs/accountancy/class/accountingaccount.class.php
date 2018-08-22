@@ -53,15 +53,18 @@ class AccountingAccount extends CommonObject
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
-	
+	public $error='';	
 
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
 	
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $rowid;
 	var $datec; // Creation date
 	var $fk_pcg_version;

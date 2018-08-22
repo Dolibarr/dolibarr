@@ -46,7 +46,10 @@ class AdvanceTargetingMailing extends CommonObject
 	var $element='advtargetemailing';			//!< Id that identify managed objects
 	var $table_element='advtargetemailing';	//!< Name of table without prefix where object is stored
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
 	var $name;
 	var $entity;

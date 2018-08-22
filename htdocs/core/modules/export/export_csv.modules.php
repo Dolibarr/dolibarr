@@ -30,7 +30,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
  */
 class ExportCsv extends ModeleExports
 {
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $label;
 	var $extension;
 	var $version;

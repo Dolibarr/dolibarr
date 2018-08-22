@@ -46,7 +46,12 @@ class PriceGlobalVariableUpdater
 	
     var $types=array(0, 1);				//!< Updater types
     var $update_min = 5;				//!< Minimal update rate
-    var $id;
+    
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $type;
     var $description;
     var $parameters;

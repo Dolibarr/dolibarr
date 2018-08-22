@@ -44,7 +44,11 @@ class PriceExpression
 	 */
 	public $errors = array();
 	
-    var $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $title;
 	var $expression;
     public $table_element = "c_price_expression";

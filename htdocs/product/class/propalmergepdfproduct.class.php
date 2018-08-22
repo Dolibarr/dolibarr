@@ -636,7 +636,10 @@ class Propalmergepdfproduct extends CommonObject
  */
 class PropalmergepdfproductLine
 {
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
 	var $fk_product;
 	var $file_name;

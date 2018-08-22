@@ -31,7 +31,10 @@ class EcmDirectory // extends CommonObject
 	//public $table_element='ecm_directories';	//!< Name of table without prefix where object is stored
 	var $picto = 'dir';
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
 	var $label;
 	var $fk_parent;

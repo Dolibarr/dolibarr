@@ -2653,7 +2653,12 @@ class SupplierProposalLine extends CommonObjectLine
 
     // From llx_supplier_proposaldet
     var $rowid; // deprecated
-    var $id;
+    
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $fk_supplier_proposal;
     var $fk_parent_line;
     var $desc;          	// Description ligne

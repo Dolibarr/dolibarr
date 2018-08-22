@@ -44,7 +44,11 @@ class PriceGlobalVariable
 	 */
 	public $errors = array();
 	
-    var $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $code;
     var $description;
     var $value;
