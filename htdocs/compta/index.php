@@ -722,7 +722,7 @@ if (! empty($conf->facture->enabled) && ! empty($conf->commande->enabled) && $us
 	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerOrderToBill',$parameters);
 	$sql.=$hookmanager->resPrint;
 
-	$sql.= " GROUP BY s.nom, s.rowid, s.email, s.code_client, s.code_compta, c.rowid, c.ref, c.facture, c.fk_statut, c.tva, c.total_ht, c.total_ttc";
+	$sql.= " GROUP BY s.nom, s.email, s.rowid, s.code_client, s.code_compta, c.rowid, c.ref, c.facture, c.fk_statut, c.total_ht, c.tva, c.total_ttc, cc.rowid, cc.code";
 
 	$resql = $db->query($sql);
 	if ( $resql )
@@ -838,7 +838,7 @@ if (! empty($conf->facture->enabled) && $user->rights->facture->lire)
 	$reshook=$hookmanager->executeHooks('printFieldListWhereCustomerUnpaid',$parameters);
 	$sql.=$hookmanager->resPrint;
 
-	$sql.= " GROUP BY f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
+	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.datef, f.type, f.total, f.tva, f.total_ttc, f.paye, f.tms, f.date_lim_reglement,";
 	$sql.= " s.nom, s.rowid, s.email, s.code_client, s.code_compta, cc.rowid, cc.code";
 	$sql.= " ORDER BY f.datef ASC, f.facnumber ASC";
 

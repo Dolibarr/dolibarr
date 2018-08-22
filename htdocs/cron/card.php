@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'cron'));
+$langs->loadLangs(array('admin', 'cron', 'members'));
 
 if (!$user->rights->cron->create) accessforbidden();
 
