@@ -33,7 +33,11 @@ class Productcustomerprice extends CommonObject
 	 */
 	public $element = 'product_customer_price'; 
 	
-	var $table_element = 'product_customer_price'; // !< Name of table without prefix where object is stored
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'product_customer_price'; 
+	
 	var $entity;
 	var $datec = '';
 	var $tms = '';

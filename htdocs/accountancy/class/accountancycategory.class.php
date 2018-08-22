@@ -34,7 +34,11 @@ class AccountancyCategory 	// extends CommonObject
 	public $error;							//!< To return error code (or message)
 	public $errors=array();				//!< To return several error codes (or messages)
 	public $element='c_accounting_category';			//!< Id that identify managed objects
-	public $table_element='c_accounting_category';	//!< Name of table without prefix where object is stored
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='c_accounting_category';	
 
 	public $id;
 	public $code;

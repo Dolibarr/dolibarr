@@ -38,7 +38,11 @@ class ExpenseReport extends CommonObject
 	 */
 	public $element='expensereport';
 	
-    var $table_element='expensereport';
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='expensereport';
+	
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';

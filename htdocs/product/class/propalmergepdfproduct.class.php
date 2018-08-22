@@ -36,7 +36,10 @@ class Propalmergepdfproduct extends CommonObject
 	 */
 	public $element='propal_merge_pdf_product';			
 	
-	var $table_element='propal_merge_pdf_product';		//!< Name of table without prefix where object is stored
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='propal_merge_pdf_product';	
 
 	var $fk_product;
 	var $file_name;

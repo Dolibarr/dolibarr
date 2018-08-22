@@ -31,7 +31,12 @@
 class AccountingAccount extends CommonObject
 {
 	public $element='accounting_account';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='accounting_account';
+	
 	public $picto = 'billr';
 
 	/**
