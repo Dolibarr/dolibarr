@@ -33,7 +33,11 @@ require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport_rule.class.p
  */
 class ExpenseReport extends CommonObject
 {
-    var $element='expensereport';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expensereport';
+	
     var $table_element='expensereport';
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';

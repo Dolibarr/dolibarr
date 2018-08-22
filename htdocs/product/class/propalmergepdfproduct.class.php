@@ -31,7 +31,11 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
  */
 class Propalmergepdfproduct extends CommonObject
 {
-	var $element='propal_merge_pdf_product';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='propal_merge_pdf_product';			
+	
 	var $table_element='propal_merge_pdf_product';		//!< Name of table without prefix where object is stored
 
 	var $fk_product;

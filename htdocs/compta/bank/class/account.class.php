@@ -1643,7 +1643,11 @@ class AccountLine extends CommonObject
      */
     public $db;
     
-	var $element='bank';
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='bank';
+	
 	var $table_element='bank';
 	var $picto = 'generic';
 
