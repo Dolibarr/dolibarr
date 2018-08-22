@@ -40,7 +40,10 @@ class Events // extends CommonObject
 	var $id;
 	var $db;
 
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $tms;
 	var $type;

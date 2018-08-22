@@ -1310,7 +1310,11 @@ class Fichinter extends CommonObject
 class FichinterLigne extends CommonObjectLine
 {
 	var $db;
-	var $error;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	// From llx_fichinterdet
 	var $fk_fichinter;

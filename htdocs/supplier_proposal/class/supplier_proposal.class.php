@@ -2637,7 +2637,11 @@ class SupplierProposal extends CommonObject
 class SupplierProposalLine extends CommonObjectLine
 {
     var $db;
-    var $error;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     public $element='supplier_proposaldet';
     public $table_element='supplier_proposaldet';

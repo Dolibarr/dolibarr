@@ -88,7 +88,11 @@ class ExtraFields
 	// New array to store extrafields definition
 	var $attributes;
 
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
 	var $errno;
 
 

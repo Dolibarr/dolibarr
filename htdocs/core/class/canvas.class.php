@@ -29,7 +29,11 @@
 class Canvas
 {
 	var $db;
-	var $error;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * @var string[] Error codes (or messages)

@@ -40,12 +40,16 @@ class printing_printipp extends PrintingDriver
     var $userid;    /* user login */
     var $user;
     var $password;
-    var $error;
+    
     /**
-	 *
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+    /**
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 	
     var $db;
 

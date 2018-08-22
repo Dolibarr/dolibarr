@@ -27,7 +27,11 @@
 class RssParser
 {
     var $db;
-    var $error;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     private $_format='';
     private $_urlRSS;

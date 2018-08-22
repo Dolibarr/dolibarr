@@ -27,7 +27,11 @@
 class GoogleAPI
 {
 	var $db;
-	var $error;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $key;
 

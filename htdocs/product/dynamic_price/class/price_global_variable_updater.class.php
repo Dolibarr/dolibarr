@@ -30,12 +30,16 @@
 class PriceGlobalVariableUpdater
 {
     var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
+    
     /**
-	 *
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+    /**
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 	
     var $types=array(0, 1);				//!< Updater types
     var $update_min = 5;				//!< Minimal update rate

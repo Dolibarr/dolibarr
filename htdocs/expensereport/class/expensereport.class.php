@@ -2379,7 +2379,11 @@ class ExpenseReport extends CommonObject
 class ExpenseReportLine
 {
     var $db;
-    var $error;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     var $rowid;
     var $comments;

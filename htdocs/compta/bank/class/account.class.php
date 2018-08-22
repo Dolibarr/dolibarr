@@ -1633,7 +1633,11 @@ class Account extends CommonObject
  */
 class AccountLine extends CommonObject
 {
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
 	var $db;
 	var $element='bank';
 	var $table_element='bank';

@@ -85,7 +85,10 @@ class FormMail extends Form
 	public $withtouser=array();
 	public $withtoccuser=array();
 
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	public $lines_model;
 

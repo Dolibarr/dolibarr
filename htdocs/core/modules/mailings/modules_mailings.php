@@ -32,7 +32,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 class MailingTargets    // This can't be abstract as it is used for some method
 {
     var $db;
-    var $error;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
     var $tooltip='';
     
 

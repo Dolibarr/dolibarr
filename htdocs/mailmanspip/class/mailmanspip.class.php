@@ -39,7 +39,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 class MailmanSpip
 {
     var $db;
-    var $error;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     var $mladded_ok;
     var $mladded_ko;
