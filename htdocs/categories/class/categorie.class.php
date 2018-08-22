@@ -149,6 +149,10 @@ class Categorie extends CommonObject
 	);
 
 	public $element='category';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='categorie';
 
 	public $fk_parent;

@@ -32,7 +32,12 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
 class Mailing extends CommonObject
 {
 	public $element='mailing';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='mailing';
+	
 	public $picto='email';
 
 	var $titre;

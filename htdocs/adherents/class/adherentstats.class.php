@@ -32,7 +32,10 @@ include_once DOL_DOCUMENT_ROOT . '/adherents/class/subscription.class.php';
  */
 class AdherentStats extends Stats
 {
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
     var $socid;
     var $userid;

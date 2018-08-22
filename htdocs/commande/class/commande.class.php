@@ -43,7 +43,12 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
 class Commande extends CommonOrder
 {
     public $element='commande';
-    public $table_element='commande';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='commande';
+	
     public $table_element_line = 'commandedet';
     public $class_element_line = 'OrderLine';
     public $fk_element = 'fk_commande';

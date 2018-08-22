@@ -33,7 +33,12 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 class Subscription extends CommonObject
 {
 	public $element='subscription';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='subscription';
+	
     public $picto='payment';
 
 	var $datec;				// Date creation
