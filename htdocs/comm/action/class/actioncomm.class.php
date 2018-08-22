@@ -37,9 +37,9 @@ class ActionComm extends CommonObject
     public $element='action';
     
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element = 'actioncomm';
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element = 'actioncomm';
 	
     public $table_rowid = 'id';
     public $picto='action';
