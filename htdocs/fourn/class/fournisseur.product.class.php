@@ -37,7 +37,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
  */
 class ProductFournisseur extends Product
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
     
     /**
 	 * @var string Error code (or message)

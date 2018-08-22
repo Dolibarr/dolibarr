@@ -29,7 +29,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
  */
 class FormProduct
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 	
 	/**
 	 * @var string Error code (or message)
