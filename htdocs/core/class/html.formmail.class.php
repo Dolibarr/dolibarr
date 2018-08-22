@@ -286,7 +286,7 @@ class FormMail extends Form
 
 			$disablebademails=1;
 
-	   		// Define output language
+			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->param['langsmodels'];
