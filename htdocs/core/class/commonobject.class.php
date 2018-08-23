@@ -71,7 +71,7 @@ abstract class CommonObject
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element
+	public $table_element;
 	
 	/**
 	 * @var
