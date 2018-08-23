@@ -44,9 +44,9 @@ class FactureFournisseur extends CommonInvoice
     public $element='invoice_supplier';
     
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element='facture_fourn';
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='facture_fourn';
 	
     public $table_element_line='facture_fourn_det';
     public $fk_element='fk_facture_fourn';
