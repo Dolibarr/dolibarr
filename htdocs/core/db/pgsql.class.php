@@ -252,6 +252,33 @@ class DoliDBPgsql extends DoliDB
                     $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
                 }
 
+				if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+ADD COLUMN ([a-z0-9_]+) ([a-z0-9\(\)]+)\s*(NULL|NOT NULL)?\s*(DEFAULT [a-z0-9\(\)]+)?\s*;$/i',$line,$reg))
+				{
+					$tablename = $reg[1];
+					$column = $reg[2];
+					$column_type = $reg[3];
+					$constraint = $reg[4];
+					$default_value = $reg[5];
+					
+					if (empty($default_value) && preg_match('/DEFAULT [a-z0-9\(\)]+/i', $constraint))
+					{
+						$default_value = $constraint;
+						$constraint = null;
+					}
+					
+					$line = "-- ".$line." replaced by --\n";
+					$line.= "ALTER TABLE ".$tablename." ADD COLUMN ".$column." ".$column_type;
+					if (!empty($constraint)) $line.= " ".$constraint;
+					$line.= ";";
+					
+					if (!empty($default_value))
+					{
+						$line.= "\n";
+						$line.= "ALTER TABLE ".$tablename." ALTER COLUMN ".$column." SET ".$default_value.";";
+					}
+				}
+				
+				
                 if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+MODIFY(?: COLUMN)? ([a-z0-9_]+) ([a-zA-Z0-9\(\)]+)\s*(.*)?$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
