@@ -302,10 +302,12 @@ if ($result)
 		print '<div class="div-table-responsive-no-min">';
 		print '<table class="noborder" width="100%">';
 
-		$colnb=5;
+		$colnb=4;
 		if (empty($conf->global->PRODUIT_MULTIPRICES)) $colnb++;
 
-		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th></tr>';
+		print '<tr class="liste_titre"><th colspan="'.$colnb.'">'.$transRecordedType.'</th>';
+		print '<th class="right"><a href="'.DOL_URL_ROOT.'/product/list.php?sortfield=p.tms&sortorder=DESC">'.$langs->trans("FullList").'</td>';
+		print '</tr>';
 
 		while ($i < $num)
 		{
@@ -395,8 +397,8 @@ if (! empty($conf->global->MAIN_SHOW_PRODUCT_ACTIVITY_TRIM))
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();
 
 
@@ -455,8 +457,6 @@ function activitytrim($product_type)
 		}
 		$i = 0;
 
-		$var=true;
-
 		while ($i < $num)
 		{
 			$objp = $db->fetch_object($result);
@@ -464,7 +464,6 @@ function activitytrim($product_type)
 			{
 				if ($trim1+$trim2+$trim3+$trim4 > 0)
 				{
-
 					print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 					print '<td align=right>'.price($trim1).'</td>';
 					print '<td align=right>'.price($trim2).'</td>';
@@ -498,7 +497,6 @@ function activitytrim($product_type)
 		}
 		if ($trim1+$trim2+$trim3+$trim4 > 0)
 		{
-
 			print '<tr class="oddeven"><td align=left>'.$tmpyear.'</td>';
 			print '<td align=right>'.price($trim1).'</td>';
 			print '<td align=right>'.price($trim2).'</td>';

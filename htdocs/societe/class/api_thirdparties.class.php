@@ -32,7 +32,7 @@ class Thirdparties extends DolibarrApi
 	 * @var array   $FIELDS     Mandatory fields, checked when create and update object
 	 */
 	static $FIELDS = array(
-	'name'
+	'name',
 	);
 
 	/**
@@ -114,7 +114,8 @@ class Thirdparties extends DolibarrApi
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $sqlfilters = '') {
+    function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $sqlfilters = '')
+    {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -129,6 +130,7 @@ class Thirdparties extends DolibarrApi
 		$sql = "SELECT t.rowid";
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql .= ", sc.fk_soc, sc.fk_user"; // We need these fields in order to filter by sale (including the case where the user can only see his prospects)
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as t";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX . "societe_extrafields as te ON te.fk_object = t.rowid";
 
 		if ((!DolibarrApiAccess::$user->rights->societe->client->voir && !$socids) || $search_sale > 0) $sql.= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc"; // We need this table joined to the select in order to filter by sale
 		$sql.= ", ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -928,7 +930,8 @@ class Thirdparties extends DolibarrApi
 	 * @throws 404
 	 * @throws 405
 	 */
-	function getInvoicesQualifiedForReplacement($id) {
+    function getInvoicesQualifiedForReplacement($id)
+    {
 
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
@@ -970,7 +973,8 @@ class Thirdparties extends DolibarrApi
 	 * @throws 404
 	 * @throws 405
 	 */
-	function getInvoicesQualifiedForCreditNote($id) {
+    function getInvoicesQualifiedForCreditNote($id)
+    {
 
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
@@ -996,6 +1000,180 @@ class Thirdparties extends DolibarrApi
 
 		return $result;
 	}
+	/**
+	 * Get CompanyBankAccount objects for thirdparty
+	 *
+	 * @param int $socid Thirdparty id
+	 *
+	 * @return array
+	 */
+    function getCompanyBankAccount($socid)
+    {
+
+		global $db, $conf;
+
+		if(! DolibarrApiAccess::$user->rights->facture->lire) {
+			throw new RestException(401);
+		}
+		if(empty($socid)) {
+			throw new RestException(400, 'Thirdparty ID is mandatory');
+		}
+
+		if( ! DolibarrApi::_checkAccessToResource('societe',$socid)) {
+			throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
+		}
+
+		/**
+		 * We select all the records that match the socid
+		 */
+
+		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
+		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
+		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." ";
+
+
+		$result = $db->query($sql);
+
+		if($result->num_rows == 0 ){
+			throw new RestException(404, 'Account not found');
+		}
+
+		$i=0;
+
+		$accounts =[];
+
+		if ($result)
+		{
+			$num = $db->num_rows($result);
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($result);
+				$account = new CompanyBankAccount($db);
+				if($account->fetch($obj->rowid)) {
+					$accounts[] = $account;
+				}
+				$i++;
+			}
+		}
+		else{
+			throw new RestException(404, 'Account not found');
+		}
+
+
+		$fields = ['socid', 'default_rib', 'frstrecur', '1000110000001', 'datec', 'datem', 'label', 'bank', 'bic', 'iban', 'id'];
+
+		$returnAccounts = [];
+
+		foreach($accounts as $account){
+			$object= [];
+			foreach($account as $key => $value)
+			if(in_array($key, $fields)){
+				$object[$key] = $value;
+
+			}
+			$returnAccounts[] = $object;
+		}
+
+		return $returnAccounts;
+	}
+
+
+	/**
+	 * Create CompanyBankAccount object for thirdparty
+	 * @param int  $socid thirdparty id
+	 * @param array $request_data   Request datas
+	 *
+	 * @return object  ID of thirdparty
+	 *
+	 * @url POST {socid}/CompanyBankAccount
+	 */
+	function createCompanyBankAccount($socid, $request_data = null)
+	{
+		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+			throw new RestException(401);
+		}
+
+		$account = new CompanyBankAccount($this->db);
+
+		$account->socid = $socid;
+
+		foreach($request_data as $field => $value) {
+			$account->$field = $value;
+		}
+
+		if ($account->create(DolibarrApiAccess::$user) < 0)
+			throw new RestException(500, 'Error creating Company Bank account');
+
+
+		if ($account->update(DolibarrApiAccess::$user) < 0)
+			throw new RestException(500, 'Error updating values');
+
+			return $account;
+	}
+
+
+	/**
+	 * Update CompanyBankAccount object for thirdparty
+	 *
+	 * @param int $socid Thirdparty id
+	 * @param int  $id CompanyBankAccount's id
+	 * @param array $request_data   Request datas
+	 *
+	 * @return object  ID of thirdparty
+	 *
+	 * @url PUT {socid}/CompanyBankAccount/{id}
+	 */
+	function updateCompanyBankAccount($socid, $id, $request_data = null)
+	{
+		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+			throw new RestException(401);
+		}
+
+		$account = new CompanyBankAccount($this->db);
+
+		$account->fetch($id, $socid, -1, '');
+
+
+		if($account->socid != $socid){
+			throw new RestException(401);
+		}
+
+
+		foreach($request_data as $field => $value) {
+			$account->$field = $value;
+		}
+
+		if ($account->update(DolibarrApiAccess::$user) < 0)
+			throw new RestException(500, 'Error updating values');
+
+		return $account;
+	}
+
+	/**
+	 * @param int $id CompanyBankAccount's id
+	 * @param int $socid Thirdparty id
+	 *
+	 * @return int -1 if error 1 if correct deletion
+	 *
+	 * @url DELETE {socid}/CompanyBankAccount/{id}
+	 */
+    function deleteCompanyBankAccount($id, $socid)
+    {
+
+		if(! DolibarrApiAccess::$user->rights->societe->creer) {
+			throw new RestException(401);
+		}
+
+		$account = new CompanyBankAccount($this->db);
+
+		$account->fetch($id);
+
+		if(!$account->socid == $socid)
+			throw new RestException(401);
+
+		return $account->delete(DolibarrApiAccess::$user);
+	}
 
 
 	/**
@@ -1004,7 +1182,8 @@ class Thirdparties extends DolibarrApi
 	 * @param   object  $object    Object to clean
 	 * @return    array    Array of cleaned object properties
 	 */
-	function _cleanObjectDatas($object) {
+    function _cleanObjectDatas($object)
+    {
 
 		$object = parent::_cleanObjectDatas($object);
 

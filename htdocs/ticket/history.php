@@ -3,7 +3,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -90,7 +90,7 @@ if ($action == 'view') {
             accessforbidden('', 0);
         }
         // or for unauthorized internals users
-        if (!$user->societe_id && ($conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
+        if (!$user->societe_id && ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && $object->fk_user_assign != $user->id) && !$user->rights->ticket->manage) {
             accessforbidden('', 0);
         }
 
@@ -102,7 +102,7 @@ if ($action == 'view') {
             dol_fiche_end();
         }
 
-        if (!$user->societe_id && $conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY) {
+        if (!$user->societe_id && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
             $object->next_prev_filter = "te.fk_user_assign = '" . $user->id . "'";
         } elseif ($user->societe_id > 0) {
             $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";

@@ -407,7 +407,10 @@ class Contrat extends CommonObject
 		$this->fetch_thirdparty();
 
 		// A contract is validated so we can move thirdparty to status customer
-		$result=$this->thirdparty->set_as_client();
+		if (empty($conf->global->CONTRACT_DISABLE_AUTOSET_AS_CLIENT_ON_CONTRACT_VALIDATION))
+		{
+			$result=$this->thirdparty->set_as_client();
+		}
 
 		// Define new ref
 		if ($force_number)
@@ -675,14 +678,14 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				dol_syslog(get_class($this)."::Fetch Erreur contrat non trouve");
+				dol_syslog(get_class($this)."::fetch Contract not found");
 				$this->error="Contract not found";
 				return 0;
 			}
 		}
 		else
 		{
-			dol_syslog(get_class($this)."::Fetch Erreur lecture contrat");
+			dol_syslog(get_class($this)."::fetch Error searching contract");
 			$this->error=$this->db->error();
 			return -1;
 		}
@@ -922,16 +925,13 @@ class Contrat extends CommonObject
 				}
 			}
 
-			if (! $error)
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
-			    if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
-			    {
-			    	$result=$this->insertExtraFields();
-			    	if ($result < 0)
-			        {
-			            $error++;
-			        }
-			    }
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
 			}
 
 			// Insert contacts commerciaux ('SALESREPSIGN','contrat')
@@ -1280,24 +1280,21 @@ class Contrat extends CommonObject
 		$resql = $this->db->query($sql);
 		if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 
-		if (! $error)
-		{
-			if (! $notrigger)
-			{
-				// Call triggers
-				$result=$this->call_trigger('CONTRACT_MODIFY',$user);
-				if ($result < 0) { $error++; }
-				// End call triggers
-			}
-		}
-
-		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0) // For avoid conflicts if trigger used
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
 			$result=$this->insertExtraFields();
 			if ($result < 0)
 			{
 				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call triggers
+			$result=$this->call_trigger('CONTRACT_MODIFY',$user);
+			if ($result < 0) { $error++; }
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -2353,7 +2350,8 @@ class Contrat extends CommonObject
 	 * @param int $notrigger	1=Does not execute triggers, 0= execute triggers
 	 * @return int New id of clone
 	 */
-	function createFromClone($socid = 0, $notrigger=0) {
+    function createFromClone($socid = 0, $notrigger=0)
+    {
 		global $db, $user, $langs, $conf, $hookmanager;
 
 		dol_include_once('/projet/class/project.class.php');

@@ -44,9 +44,9 @@ $id=$argv[1];
 if (isset($argv[2]) || !empty($argv[2])) $login = $argv[2];
 else $login = '';
 
-require_once ($path."../../htdocs/master.inc.php");
-require_once (DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php");
-require_once (DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/CMailFile.class.php";
+require_once DOL_DOCUMENT_ROOT."/comm/mailing/class/mailing.class.php";
 
 
 // Global variables

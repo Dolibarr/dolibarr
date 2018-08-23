@@ -20,7 +20,7 @@
  * \ingroup HRM
  * \brief 	HRM module setup page
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
@@ -108,5 +108,6 @@ print '<div class="center"><input type="submit" class="button" value="' . $langs
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

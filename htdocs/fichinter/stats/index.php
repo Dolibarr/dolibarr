@@ -285,7 +285,6 @@ print '<td align="right">%</td>';
 print '</tr>';
 
 $oldyear=0;
-
 foreach ($data as $val)
 {
 	$year = $val['year'];

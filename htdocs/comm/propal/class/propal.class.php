@@ -1328,16 +1328,19 @@ class Propal extends CommonObject
 		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
 		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_propalst as c ON p.fk_statut = c.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
-		$sql.= " WHERE p.fk_statut = c.id";
-		$sql.= " AND p.entity IN (".getEntity('propal').")";
-		if ($ref) $sql.= " AND p.ref='".$ref."'";
-		else $sql.= " AND p.rowid=".$rowid;
+
+		if ($ref) {
+			$sql.= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
+			$sql.= " AND p.ref='".$this->db->escape($ref)."'";
+		}
+		else $sql.= " WHERE p.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -1460,6 +1463,8 @@ class Propal extends CommonObject
 	 */
 	function update(User $user, $notrigger=0)
 	{
+		global $conf;
+
 		$error=0;
 
 		// Clean parameters
@@ -1508,15 +1513,21 @@ class Propal extends CommonObject
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (! $notrigger)
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY', $user);
-				if ($result < 0) $error++;
-				// End call triggers
+				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('PROPAL_MODIFY', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -3133,7 +3144,7 @@ class Propal extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
+		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3177,6 +3188,8 @@ class Propal extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
+				$response->total+=$obj->total_ht;
+				
 				if ($mode == 'opened')
 				{
 					$datelimit = $this->db->jdate($obj->datefin);
@@ -3347,12 +3360,19 @@ class Propal extends CommonObject
 		global $conf,$langs;
 		$langs->load("propal");
 
-		if (! empty($conf->global->PROPALE_ADDON))
+		$constant = 'PROPALE_ADDON_'.$this->entity;
+
+		if (! empty($conf->global->$constant)) {
+			$classname = $conf->global->$constant; // for multicompany proposal sharing
+		} else {
+			$classname = $conf->global->PROPALE_ADDON;
+		}
+
+		if (! empty($classname))
 		{
 			$mybool=false;
 
-			$file = $conf->global->PROPALE_ADDON.".php";
-			$classname = $conf->global->PROPALE_ADDON;
+			$file = $classname.".php";
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -3919,7 +3939,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
+		$sql.= " ".(price2num($this->subprice)!==''?price2num($this->subprice):"null").",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".(isset($this->info_bits)?"'".$this->db->escape($this->info_bits)."'":"null").",";
 		$sql.= " ".price2num($this->total_ht).",";

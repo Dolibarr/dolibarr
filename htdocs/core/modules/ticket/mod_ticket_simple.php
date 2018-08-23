@@ -23,7 +23,7 @@
  *    \brief      File with class to manage the numbering module Simple for ticket references
  */
 
-require_once DOL_DOCUMENT_ROOT.'/core/modules/modules_ticket.php';
+require_once DOL_DOCUMENT_ROOT.'/core/modules/ticket/modules_ticket.php';
 
 /**
  *     Class to manage the numbering module Simple for ticket references

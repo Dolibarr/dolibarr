@@ -182,6 +182,21 @@ if ($action=="setaddrefinlist") {
 	}
 }
 
+//Activate Set adress in list
+if ($action=="setaddadressinlist") {
+	$val = GETPOST('value','int');
+	$res = dolibarr_set_const($db, "COMPANY_SHOW_ADDRESS_SELECTLIST", $val,'yesno',0,'',$conf->entity);
+	if (! $res > 0) $error++;
+	if (! $error)
+	{
+		setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
+	}
+	else
+	{
+		setEventMessages($langs->trans("Error"), null, 'errors');
+	}
+}
+
 //Activate Ask For Preferred Shipping Method
 if ($action=="setaskforshippingmet") {
 	$setaskforshippingmet = GETPOST('value','int');
@@ -769,6 +784,24 @@ else
 print '</a></td>';
 print '</tr>';
 
+print '<tr class="oddeven">';
+print '<td width="80%">'.$langs->trans("AddAdressInList").'</td>';
+print '<td>&nbsp</td>';
+print '<td align="center">';
+if (!empty($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST))
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=0">';
+	print img_picto($langs->trans("Activated"),'switch_on');
+
+}
+else
+{
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=setaddadressinlist&value=1">';
+	print img_picto($langs->trans("Disabled"),'switch_off');
+}
+print '</a></td>';
+print '</tr>';
+
 
 
 print '<tr class="oddeven">';
@@ -835,7 +868,6 @@ print '</form>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

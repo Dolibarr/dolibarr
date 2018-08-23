@@ -144,6 +144,18 @@ if ($action == 'other')
 
 	$value = GETPOST('activate_usesearchtoselectproduct','alpha');
 	$res = dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $value,'chaine',0,'',$conf->entity);
+	
+	$value = GETPOST('activate_useProdFournDesc', 'alpha');
+	$res = dolibarr_set_const($db, "PRODUIT_FOURN_TEXTS", $value,'chaine',0,'',$conf->entity);
+	if ($value) {
+	    $sql_test = "SELECT count(desc_fourn) as cpt FROM ".MAIN_DB_PREFIX."product_fournisseur_price WHERE 1";
+	    $resql = $db->query($sql_test);
+	    if (!$resql && $db->lasterrno == 'DB_ERROR_NOSUCHFIELD') // if the field does not exist, we create it
+	    {
+	        $sql_new = "ALTER TABLE ".MAIN_DB_PREFIX."product_fournisseur_price ADD COLUMN desc_fourn text";
+	        $resql_new = $db->query($sql_new);
+	    }
+	}
 }
 
 if ($action == 'specimen') // For products
@@ -180,13 +192,13 @@ if ($action == 'specimen') // For products
 		}
 		else
 		{
-			setEventMessage($obj->error,'errors');
+			setEventMessages($obj->error, $obj->errors, 'errors');
 			dol_syslog($obj->error, LOG_ERR);
 		}
 	}
 	else
 	{
-		setEventMessage($langs->trans("ErrorModuleNotFound"),'errors');
+		setEventMessages($langs->trans("ErrorModuleNotFound"), null, 'errors');
 		dol_syslog($langs->trans("ErrorModuleNotFound"), LOG_ERR);
 	}
 }
@@ -401,7 +413,6 @@ print "</tr>\n";
 
 clearstatcache();
 
-$var=true;
 foreach ($dirmodels as $reldir)
 {
     foreach (array('','/doc') as $valdir)
@@ -438,7 +449,6 @@ foreach ($dirmodels as $reldir)
 
 	                        if ($modulequalified)
 	                        {
-	                            $var = !$var;
 	                            print '<tr class="oddeven"><td width="100">';
 	                            print (empty($module->name)?$name:$module->name);
 	                            print "</td><td>\n";
@@ -524,12 +534,10 @@ print "<br>";
 print load_fiche_titre($langs->trans("ProductOtherConf"), '', '');
 
 
-
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="other">';
 
-$var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameters").'</td>'."\n";
@@ -545,6 +553,7 @@ $rowspan = 4;
 if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES)) $rowspan++;
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)) $rowspan++;
 if (! empty($conf->global->MAIN_MULTILANGS)) $rowspan++;
+if (! empty($conf->fournisseur->enabled)) $rowspan++;
 
 
 print '<tr class="oddeven">';
@@ -569,7 +578,6 @@ print '</tr>';
 // multiprix nombre de prix a proposer
 if (! empty($conf->global->PRODUIT_MULTIPRICES) || ! empty($conf->global->PRODUIT_CUSTOMER_PRICES_BY_QTY_MULTIPRICES))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_MULTIPRICES_LIMIT" value="'.$conf->global->PRODUIT_MULTIPRICES_LIMIT.'"></td>';
@@ -611,7 +619,6 @@ print '</tr>';
 
 if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("NumberOfProductShowInSelect").'</td>';
 	print '<td align="right"><input size="3" type="text" class="flat" name="value_PRODUIT_LIMIT_SIZE" value="'.$conf->global->PRODUIT_LIMIT_SIZE.'"></td>';
@@ -619,7 +626,6 @@ if (empty($conf->global->PRODUIT_USE_SEARCH_TO_SELECT))
 }
 
 // Visualiser description produit dans les formulaires activation/desactivation
-
 print '<tr class="oddeven">';
 print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
@@ -652,7 +658,6 @@ print '</tr>';
 // View product description in thirdparty language
 if (! empty($conf->global->MAIN_MULTILANGS))
 {
-
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("ViewProductDescInThirdpartyLanguageAbility").'</td>';
 	print '<td width="60" align="right">';
@@ -661,12 +666,20 @@ if (! empty($conf->global->MAIN_MULTILANGS))
 	print '</tr>';
 }
 
+if (! empty($conf->fournisseur->enabled))
+{
+    print '<tr class="oddeven">';
+    print '<td>'.$langs->trans("UseProductFournDesc").'</td>';
+    print '<td width="60" align="right">';
+    print $form->selectyesno("activate_useProdFournDesc", (! empty($conf->global->PRODUIT_FOURN_TEXTS)?$conf->global->PRODUIT_FOURN_TEXTS:0), 1);
+    print '</td>';
+    print '</tr>';
+}
 
 if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 {
 	// Add canvas feature
 	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
-	$var = false;
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("ProductSpecial").'</td>'."\n";
@@ -694,8 +707,7 @@ if (! empty($conf->global->PRODUCT_CANVAS_ABILITY))
 
     				if ($conf->$module->enabled)
     				{
-
-    					print "<tr ".$bc[$var]."><td>";
+    					print '<tr class="oddeven"><td>';
 
     					print $object->description;
 
@@ -732,7 +744,7 @@ print '</table>';
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();
 

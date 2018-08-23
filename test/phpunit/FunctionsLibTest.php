@@ -123,6 +123,31 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 
     /**
+     * testIsValidMXRecord
+     *
+     * @return void
+     */
+    public function testIsValidMXRecord()
+    {
+    	// Nb of line is same than entry text
+
+    	$input="yahoo.com";
+    	$result=isValidMXRecord($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(1, $result);
+
+    	$input="yhaoo.com";
+    	$result=isValidMXRecord($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(0, $result);
+
+    	$input="dolibarr.fr";
+    	$result=isValidMXRecord($input);
+    	print __METHOD__." result=".$result."\n";
+    	$this->assertEquals(0, $result);
+    }
+
+    /**
      * testDolGetFirstLineOfText
      *
      * @return void
@@ -1093,7 +1118,8 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	public function testDolNl2Br() {
+    public function testDolNl2Br()
+    {
 
 		//String to encode
 		$string = "a\na";

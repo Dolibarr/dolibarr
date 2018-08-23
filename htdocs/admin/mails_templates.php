@@ -556,7 +556,7 @@ foreach ($fieldsforcontent as $tmpfieldlist)
 		print '<input type="text" class="flat minwidth500" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
 	}
 	else if ($tmpfieldlist == 'joinfiles') {
-		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="' . (! empty($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '') . '">';
+		print '<input type="text" class="flat maxwidth50" name="'.$tmpfieldlist.'" value="' . (isset($obj->{$tmpfieldlist}) ? $obj->{$tmpfieldlist} : '1') . '">';
 	}
 	else
 	{
@@ -925,6 +925,7 @@ print '</form>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();
 

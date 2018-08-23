@@ -146,14 +146,13 @@ if ($year)
         print '<td align="right">'.$langs->trans("Size").'</td>';
         print '<td align="right">'.$langs->trans("Date").'</td>';
         print '</tr>';
-        
+
         if (is_resource($handle))
         {
             while (($file = readdir($handle))!==false)
             {
                 if (preg_match('/^supplier_payment/i',$file))
                 {
-
                     $tfile = $dir . '/'.$year.'/'.$file;
                     $relativepath = $year.'/'.$file;
                     print '<tr class="oddeven">'.'<td><a data-ajax="false" href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_fournisseur&amp;file=payments/'.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
@@ -167,6 +166,6 @@ if ($year)
     }
 }
 
+// End of page
 llxFooter();
-
 $db->close();

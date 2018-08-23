@@ -337,7 +337,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
 	 */
 	public $phpmin;
 
@@ -377,8 +377,8 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	 *
 	 * @param   array  		$array_sql  SQL requests to be executed when enabling module
 	 * @param   string      $options    String with options when disabling module:
-	 *                                    'noboxes' = Do not insert boxes
-	 *                                    'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
+	 *                                  - 'noboxes' = Do not insert boxes
+	 *                                  - 'newboxdefonly' = For boxes, insert def of boxes only and not boxes activation
 	 *
 	 * @return  int                         1 if OK, 0 if KO
 	 */
@@ -464,11 +464,11 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 	}
 
 	/**
-	 * Disable function. Deletes the module constant and boxes from the database.
+	 * Disable function. Deletes the module constants and boxes from the database.
 	 *
 	 * @param   string[]    $array_sql  SQL requests to be executed when module is disabled
 	 * @param   string      $options	Options when disabling module:
-	 *                                    'newboxdefonly|noboxes' = We don't remove boxes.
+	 *                                  - 'newboxdefonly|noboxes' = We don't remove boxes.
 	 *
 	 * @return  int                     1 if OK, 0 if KO
 	 */
@@ -553,7 +553,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		}
 		else
 		{
-			// If module name translation using it's unique id does not exists, we try to use its name to find translation
+			// If module name translation using it's unique id does not exist, we try to use its name to find translation
 			if (is_array($this->langfiles))
 			{
 				foreach($this->langfiles as $val)
@@ -613,9 +613,9 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 
 	/**
 	 * Gives the long description of a module. First check README-la_LA.md then README.md
-	 * If not markdown files found, it return translated value of the key ->descriptionlong.
+	 * If no markdown files found, it returns translated value of the key ->descriptionlong.
 	 *
-	 * @return  string                  Long description of a module from README.md of from property.
+	 * @return  string     Long description of a module from README.md of from property.
 	 */
 	function getDescLong()
 	{
@@ -953,7 +953,7 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 		$sql.= " WHERE ".$this->db->decrypt('name')." = '".$this->db->escape($this->const_name)."'";
 		$sql.= " AND entity IN (0, ".$entity.")";
 
-		dol_syslog(get_class($this)."::_active delect activation constant", LOG_DEBUG);
+		dol_syslog(get_class($this)."::_active delete activation constant", LOG_DEBUG);
 		$resql=$this->db->query($sql);
 		if (! $resql) $err++;
 
@@ -1671,54 +1671,57 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 					// Search if perm already present
 					$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."rights_def";
 					$sql.= " WHERE id = ".$r_id." AND entity = ".$entity;
-					$resqlselect=$this->db->query($sql);
 
-					$obj = $this->db->fetch_object($resqlselect);
-					if ($obj->nb == 0)
+					$resqlselect=$this->db->query($sql);
+					if ($resqlselect)
 					{
-						if (dol_strlen($r_perms) )
+						$objcount = $this->db->fetch_object($resqlselect);
+						if ($objcount && $objcount->nb == 0)
 						{
-							if (dol_strlen($r_subperms) )
+							if (dol_strlen($r_perms) )
 							{
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-								$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
-								$sql.= " VALUES ";
-								$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+								if (dol_strlen($r_subperms) )
+								{
+									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+									$sql.= " (id, entity, libelle, module, type, bydefault, perms, subperms)";
+									$sql.= " VALUES ";
+									$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."')";
+								}
+								else
+								{
+									$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
+									$sql.= " (id, entity, libelle, module, type, bydefault, perms)";
+									$sql.= " VALUES ";
+									$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+								}
 							}
 							else
 							{
-								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def";
-								$sql.= " (id, entity, libelle, module, type, bydefault, perms)";
-								$sql.= " VALUES ";
-								$sql.= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."')";
+								$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+								$sql .= " (id, entity, libelle, module, type, bydefault)";
+								$sql .= " VALUES ";
+								$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
 							}
-						}
-						else
-						{
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
-							$sql .= " (id, entity, libelle, module, type, bydefault)";
-							$sql .= " VALUES ";
-							$sql .= "(".$r_id.",".$entity.",'".$this->db->escape($r_desc)."','".$r_modul."','".$r_type."',".$r_def.")";
-						}
 
-						$resqlinsert=$this->db->query($sql,1);
+							$resqlinsert=$this->db->query($sql,1);
 
-						if (! $resqlinsert)
-						{
-							if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+							if (! $resqlinsert)
 							{
-								$this->error=$this->db->lasterror();
-								$err++;
-								break;
-							}
-							else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
+								if ($this->db->errno() != "DB_ERROR_RECORD_ALREADY_EXISTS")
+								{
+									$this->error=$this->db->lasterror();
+									$err++;
+									break;
+								}
+								else dol_syslog(get_class($this)."::insert_permissions record already exists", LOG_INFO);
 
+							}
+
+							$this->db->free($resqlinsert);
 						}
 
-						$this->db->free($resqlinsert);
+						$this->db->free($resqlselect);
 					}
-
-					$this->db->free($resqlselect);
 
 					// If we want to init permissions on admin users
 					if ($reinitadminperms)
@@ -1737,23 +1740,33 @@ class DolibarrModules           // Can not be abstract, because we need to insta
 							{
 								$obj2=$this->db->fetch_object($resqlseladmin);
 								dol_syslog(get_class($this)."::insert_permissions Add permission to user id=".$obj2->rowid);
+
 								$tmpuser=new User($this->db);
-								$tmpuser->fetch($obj2->rowid);
-								if (!empty($tmpuser->id)) {
+								$result = $tmpuser->fetch($obj2->rowid);
+								if ($result > 0) {
 									$tmpuser->addrights($r_id, '', '', 0, 1);
+								}
+								else
+								{
+									dol_syslog(get_class($this)."::insert_permissions Failed to add the permission to user because fetch return an error", LOG_ERR);
 								}
 								$i++;
 							}
-							if (! empty($user->admin))  // Reload permission for current user if defined
-							{
-								// We reload permissions
-								$user->clearrights();
-								$user->getrights();
-							}
 						}
-						else dol_print_error($this->db);
+						else
+						{
+							dol_print_error($this->db);
+						}
 					}
 				}
+
+				if ($reinitadminperms && ! empty($user->admin))  // Reload permission for current user if defined
+				{
+					// We reload permissions
+					$user->clearrights();
+					$user->getrights();
+				}
+
 			}
 			$this->db->free($resql);
 		}

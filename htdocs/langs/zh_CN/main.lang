@@ -507,6 +507,7 @@ NoneF=无
 NoneOrSeveral=None or several
 Late=逾期
 LateDesc=延迟的定义假如一条记录逾期或者取决于你的配置设定。请向管理员询问并从首页菜单->设置->警告菜单下修改相应设置。
+NoItemLate=No late item
 Photo=图片
 Photos=图片
 AddPhoto=添加图片
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=分配给
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

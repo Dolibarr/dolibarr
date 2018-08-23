@@ -574,7 +574,7 @@ function dol_filemtime($pathoffile)
  * @param	array	$arrayreplacement	Array with strings to replace. Example: array('valuebefore'=>'valueafter', ...)
  * @param	string	$destfile			Destination file (can't be a directory). If empty, will be same than source file.
  * @param	int		$newmask			Mask for new file (0 by default means $conf->global->MAIN_UMASK). Example: '0666'
- * @param	int		$indexdatabase		Index new file into database.
+ * @param	int		$indexdatabase		1=index new file into database.
  * @return	int							<0 if error, 0 if nothing done (dest file already exists), >0 if OK
  * @see		dol_copy dolReplaceRegExInFile
  */
@@ -611,7 +611,7 @@ function dolReplaceInFile($srcfile, $arrayreplacement, $destfile='', $newmask=0,
 	dol_delete_file($tmpdestfile);
 
 	// Create $newpathoftmpdestfile from $newpathofsrcfile
-	$content=file_get_contents($newpathofsrcfile, 'r');
+	$content = file_get_contents($newpathofsrcfile, 'r');
 
 	$content = make_substitutions($content, $arrayreplacement, null);
 
@@ -1133,10 +1133,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
+ *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null,$allowdotdot=false)
 {
 	global $db, $conf, $user, $langs;
 	global $hookmanager;
@@ -1148,7 +1149,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
-	if (preg_match('/\.\./',$file) || preg_match('/[<>|]/',$file))
+	if ((! $allowdotdot && preg_match('/\.\./',$file)) || preg_match('/[<>|]/',$file))
 	{
 		dol_syslog("Refused to delete file ".$file, LOG_WARNING);
 		return false;
@@ -1219,7 +1220,7 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 					}
 					else dol_syslog("Failed to remove file ".$filename, LOG_WARNING);
 					// TODO Failure to remove can be because file was already removed or because of permission
-					// If error because of not exists, we must should return true and we should return false if this is a permission problem
+					// If error because it does not exists, we should return true, and we should return false if this is a permission problem
 				}
 			}
 			else dol_syslog("No files to delete found", LOG_DEBUG);
@@ -1508,7 +1509,7 @@ function dol_init_file_process($pathtoscan='', $trackid='')
  *
  * @param	string	$upload_dir				Directory where to store uploaded file (note: used to forge $destpath = $upload_dir + filename)
  * @param	int		$allowoverwrite			1=Allow overwrite existing file
- * @param	int		$donotupdatesession		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index.
+ * @param	int		$donotupdatesession		1=Do no edit _SESSION variable but update database index. 0=Update _SESSION and not database index. -1=Do not update SESSION neither db.
  * @param	string	$varfiles				_FILES var name
  * @param	string	$savingdocmask			Mask to use to define output filename. For example 'XXXXX-__YYYYMMDD__-__file__'
  * @param	string	$link					Link to add (to add a link instead of a file)
@@ -1590,7 +1591,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
 					}
 
 					// Update table of files
-					if ($donotupdatesession)
+					if ($donotupdatesession == 1)
 					{
 						$result = addFileIntoDatabaseIndex($upload_dir, basename($destfile), $TFile['name'][$i], 'uploaded', 0);
 						if ($result < 0)
@@ -1655,7 +1656,7 @@ function dol_add_file_process($upload_dir, $allowoverwrite=0, $donotupdatesessio
  * All information used are in db, conf, langs, user and _FILES.
  *
  * @param	int		$filenb					File nb to delete
- * @param	int		$donotupdatesession		1=Do not edit _SESSION variable
+ * @param	int		$donotupdatesession		-1 or 1 = Do not update _SESSION variable
  * @param   int		$donotdeletefile        1=Do not delete physically file
  * @param   string  $trackid                Track id (used to prefix name of session vars to avoid conflict)
  * @return	void

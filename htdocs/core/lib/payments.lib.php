@@ -24,7 +24,8 @@
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_prepare_head(Paiement $object) {
+function payment_prepare_head(Paiement $object)
+{
 
 	global $langs, $conf;
 
@@ -59,7 +60,8 @@ function payment_prepare_head(Paiement $object) {
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_supplier_prepare_head(Paiement $object) {
+function payment_supplier_prepare_head(Paiement $object)
+{
 
 	global $langs, $conf;
 
@@ -87,6 +89,32 @@ function payment_supplier_prepare_head(Paiement $object) {
 	return $head;
 }
 
+/**
+ * Return array of valid payment mode
+ *
+ * @param	string	$paymentmethod		Filter on this payment method (''=none, 'paypal', ...)
+ * @return	array						Array of valid payment method
+ */
+function getValidOnlinePaymentMethods($paymentmethod='')
+{
+	global $conf;
+
+	$validpaymentmethod=array();
+
+	if ((empty($paymentmethod) || $paymentmethod == 'paypal') && ! empty($conf->paypal->enabled))
+	{
+		$validpaymentmethod['paypal']='valid';
+	}
+	if ((empty($paymentmethod) || $paymentmethod == 'paybox') && ! empty($conf->paybox->enabled))
+	{
+		$validpaymentmethod['paybox']='valid';
+	}
+	if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stripe->enabled))
+	{
+		$validpaymentmethod['stripe']='valid';
+	}
+	return $validpaymentmethod;
+}
 
 /**
  * Return string with full Url

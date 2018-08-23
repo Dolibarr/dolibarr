@@ -34,7 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
  */
 class ModelePDFLabels
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**

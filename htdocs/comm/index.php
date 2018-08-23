@@ -884,6 +884,6 @@ if (! empty($conf->commande->enabled) && $user->rights->commande->lire)
 
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

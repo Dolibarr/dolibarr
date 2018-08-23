@@ -656,7 +656,7 @@ class SMTPs
 		{
 			// If the path is not valid, this will NOT generate an error,
 			// it will simply return false.
-			if ( ! @include ( $_strConfigPath ) )
+			if ( ! @include $_strConfigPath)
 			{
 				$this->_setErr(110, '"' . $_strConfigPath . '" is not a valid path.');
 				$_retVal = false;
@@ -1650,7 +1650,7 @@ class SMTPs
 	 * @param 	integer 	$_value 	Message Priority
 	 * @return 	void
 	 */
-	function setPriority ( $_value = 3 )
+	function setPriority( $_value = 3 )
 	{
 		if ( ( is_numeric($_value) ) &&
 		( ( $_value >= 0 ) && ( $_value <= 5 ) ) )
@@ -1814,12 +1814,14 @@ class SMTPs
 	 * @param  int    $_errNum  Error Code Number
 	 * @param  string $_errMsg  Error Message
 	 * @return void
-	 */
-	function _setErr ( $_errNum, $_errMsg )
-	{
-		$this->_smtpsErrors[] = array( 'num' => $_errNum,
-                                       'msg' => $_errMsg );
-	}
+     */
+    function _setErr( $_errNum, $_errMsg )
+    {
+        $this->_smtpsErrors[] = array(
+            'num' => $_errNum,
+            'msg' => $_errMsg,
+        );
+    }
 
 	/**
 	 * Returns errors codes and messages for Class
@@ -2049,4 +2051,3 @@ class SMTPs
  *  - basic shell with some commets
  *
  */
-

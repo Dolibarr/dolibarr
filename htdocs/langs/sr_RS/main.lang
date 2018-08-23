@@ -507,6 +507,7 @@ NoneF=Ništa
 NoneOrSeveral=None or several
 Late=Kasni
 LateDesc=Odloži definisanje da li je zapis zakasneo ili ne zavisi od vašeg podešenja. Zamolite Vašeg administratora da promeni odlaganje u Naslovna-Podešenja-Upozorenja
+NoItemLate=No late item
 Photo=Slika
 Photos=Slike
 AddPhoto=Dodaj sliku
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Dodeljeno
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

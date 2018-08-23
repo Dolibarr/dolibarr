@@ -35,13 +35,17 @@ if (! defined('NOREQUIREMENU'))  define('NOREQUIREMENU','1');	// If there is no 
  *
  * @return	void
  */
-function llxHeader() { }
+function llxHeader()
+{
+}
 /**
  * Footer empty
  *
  * @return	void
  */
-function llxFooter() { }
+function llxFooter()
+{
+}
 
 
 require '../../main.inc.php';

@@ -480,10 +480,10 @@ class Societe extends CommonObject
 
 		if ($result >= 0)
 		{
-			$entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+			$this->entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, name_alias, entity, datec, fk_user_creat, canvas, status, ref_int, ref_ext, fk_stcomm, fk_incoterms, location_incoterms ,import_key, fk_multicurrency, multicurrency_code)";
-			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$entity.", '".$this->db->idate($now)."'";
+			$sql.= " VALUES ('".$this->db->escape($this->name)."', '".$this->db->escape($this->name_alias)."', ".$this->db->escape($this->entity).", '".$this->db->idate($now)."'";
 			$sql.= ", ".(! empty($user->id) ? "'".$user->id."'":"null");
 			$sql.= ", ".(! empty($this->canvas) ? "'".$this->db->escape($this->canvas)."'":"null");
 			$sql.= ", ".$this->status;
@@ -754,6 +754,7 @@ class Societe extends CommonObject
 	function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update', $nosyncmember=1)
 	{
 		global $langs,$conf,$hookmanager;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (empty($id)) $id = $this->id;
@@ -891,7 +892,7 @@ class Societe extends CommonObject
 			dol_syslog(get_class($this)."::update verify ok or not done");
 
 			$sql  = "UPDATE ".MAIN_DB_PREFIX."societe SET ";
-			$sql .= "entity = " . $this->entity;
+			$sql .= "entity = " . $this->db->escape($this->entity);
 			$sql .= ",nom = '" . $this->db->escape($this->name) ."'"; // Required
 			$sql .= ",name_alias = '" . $this->db->escape($this->name_alias) ."'";
 			$sql .= ",ref_ext = " .(! empty($this->ref_ext)?"'".$this->db->escape($this->ref_ext) ."'":"null");
@@ -1053,7 +1054,7 @@ class Societe extends CommonObject
 				$action='update';
 
 				// Actions on extra fields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
 					$result=$this->insertExtraFields();
 					if ($result < 0)
@@ -1911,6 +1912,11 @@ class Societe extends CommonObject
 	 */
 	function add_commercial(User $user, $commid)
 	{
+		$error=0;
+		
+		
+		
+		
 		if ($this->id > 0 && $commid > 0)
 		{
 			$sql = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux";
@@ -1926,6 +1932,12 @@ class Societe extends CommonObject
 			{
 				dol_syslog(get_class($this)."::add_commercial Erreur");
 			}
+			else {
+				$this->context=array('commercial_modified'=>$commid);
+				
+				$result=$this->call_trigger('COMPANY_LINK_SALE_REPRESENTATIVE',$user);
+                if ($result < 0) $error++;
+			}
 		}
 	}
 
@@ -1938,6 +1950,12 @@ class Societe extends CommonObject
 	 */
 	function del_commercial(User $user, $commid)
 	{
+		$error=0;
+		$this->context=array('commercial_modified'=>$commid);
+				
+		$result=$this->call_trigger('COMPANY_UNLINK_SALE_REPRESENTATIVE',$user);
+        if ($result < 0) $error++;
+		
 		if ($this->id > 0 && $commid > 0)
 		{
 			$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_commerciaux ";

@@ -89,7 +89,7 @@ if ($action == 'clean' || $action == 'validatehistory')
 	if (! $resql1) {
 		$error ++;
 		$db->rollback();
-		setEventMessage($db->lasterror(), 'errors');
+		setEventMessages($db->lasterror(), null, 'errors');
 	} else {
 		$db->commit();
 	}
@@ -415,6 +415,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL > 0) // This part of code looks strange. 
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

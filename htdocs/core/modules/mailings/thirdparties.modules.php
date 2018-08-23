@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2018-2018 Andre Schild        <a.schild@aarboard.ch>
+ * Copyright (C) 2005-2010 Laurent Destailleur <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2009 Regis Houssin       <regis.houssin@capnetworks.com>
  *
  * This file is an example to follow to add your own email selector inside
@@ -40,7 +41,8 @@ class mailing_thirdparties extends MailingTargets
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $langs;
+        $langs->load("companies");
 
 		$this->db=$db;
 	}
@@ -88,6 +90,51 @@ class mailing_thirdparties extends MailingTargets
 		    $sql.= " AND c.rowid = cs.fk_categorie";
 		    $sql.= " AND c.rowid='".$this->db->escape($_POST['filter'])."'";
 		}
+
+                $addDescription= "";
+                if (isset($_POST["filter_client"]) && $_POST["filter_client"] <> '-1')
+                {
+                    $sql.= " AND s.client=" . $_POST["filter_client"];
+                    $addDescription= $langs->trans('ProspectCustomer')."=";
+                    if ($_POST["filter_client"] == 0)
+                    {
+                        $addDescription.= $langs->trans('NorProspectNorCustomer');
+                    }
+                    else if ($_POST["filter_client"] == 1)
+                    {
+                        $addDescription.= $langs->trans('Customer');
+                    }
+                    else if ($_POST["filter_client"] == 2)
+                    {
+                        $addDescription.= $langs->trans('Prospect');
+                    }
+                    else if ($_POST["filter_client"] == 3)
+                    {
+                        $addDescription.= $langs->trans('ProspectCustomer');
+                    }
+                    else
+                    {
+                        $addDescription.= "Unknown status ".$_POST["filter_client"];
+                    }
+                }
+                if (isset($_POST["filter_status"]))
+                {
+                    if (strlen($addDescription) > 0)
+                    {
+                        $addDescription.= ";";
+                    }
+                    $addDescription.= $langs->trans("Status")."=";
+                    if ($_POST["filter_status"] == '1')
+                    {
+                        $sql.= " AND s.status=1";
+                        $addDescription.= $langs->trans("Enabled");
+                    }
+                    else
+                    {
+                        $sql.= " AND s.status=0";
+                        $addDescription.= $langs->trans("Disabled");
+                    }
+                }
 		$sql.= " ORDER BY email";
 
 		// Stock recipients emails into targets table
@@ -106,12 +153,18 @@ class mailing_thirdparties extends MailingTargets
 				$obj = $this->db->fetch_object($result);
 				if ($old <> $obj->email)
 				{
+					$otherTxt= ($obj->label?$langs->transnoentities("Category").'='.$obj->label:'');
+					if (strlen($addDescription) > 0 && strlen($otherTxt) > 0)
+					{
+						$otherTxt.= ";";
+					}
+					$otherTxt.= $addDescription;
 					$cibles[$j] = array(
                     			'email' => $obj->email,
                     			'fk_contact' => $obj->fk_contact,
                     			'lastname' => $obj->name,	// For a thirdparty, we must use name
                     			'firstname' => '',			// For a thirdparty, lastname is ''
-                    			'other' => ($obj->label?$langs->transnoentities("Category").'='.$obj->label:''),
+                    			'other' => $otherTxt,
                                 'source_url' => $this->url($obj->id),
                                 'source_id' => $obj->id,
                                 'source_type' => 'thirdparty'
@@ -186,7 +239,7 @@ class mailing_thirdparties extends MailingTargets
 
 		$langs->load("companies");
 
-		$s='';
+		$s=$langs->trans("Categories").': ';
 		$s.='<select name="filter" class="flat">';
 
 		// Show categories
@@ -227,6 +280,29 @@ class mailing_thirdparties extends MailingTargets
 			dol_print_error($this->db);
 		}
 
+		$s.='</select> ';
+                $s.= $langs->trans('ProspectCustomer');
+                $s.=': <select name="filter_client" class="flat">';
+                $s.= '<option value="-1">&nbsp;</option>';
+                if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS))
+                {
+                    $s.= '<option value="2">'.$langs->trans('Prospect').'</option>';
+                }
+                if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && empty($conf->global->SOCIETE_DISABLE_PROSPECTSCUSTOMERS)) {
+                    $s.= '<option value="3">'.$langs->trans('ProspectCustomer').'</option>';
+                }
+                if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS)) {
+                    $s.= '<option value="1">'.$langs->trans('Customer').'</option>';
+                }
+                $s.= '<option value="0">'.$langs->trans('NorProspectNorCustomer').'</option>';
+
+                $s.='</select> ';
+
+                $s.=$langs->trans("Status");
+                $s.=': <select name="filter_status" class="flat">';
+                $s.='<option value="-1">&nbsp;</option>';
+                $s.='<option value="1" selected>'.$langs->trans("Enabled").'</option>';
+                $s.='<option value="0">'.$langs->trans("Disabled").'</option>';
 		$s.='</select>';
 		return $s;
 

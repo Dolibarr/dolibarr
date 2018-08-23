@@ -76,7 +76,7 @@ if ($conf->accounting->enabled)
 	print "<br>\n";
 
 	$step++;
-	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescProd", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
+	print img_picto('', 'puce').' '.$langs->trans("AccountancyAreaDescDefault", $step, '<strong>'.$langs->transnoentitiesnoconv("MenuAccountancy").'-'.$langs->transnoentitiesnoconv("Setup")."-".$langs->transnoentitiesnoconv("MenuDefaultAccounts").'</strong>');
 	print "<br>\n";
 
 	$step++;
@@ -163,5 +163,6 @@ else
 	print $langs->trans("Module10Desc")."<br>\n";
 }
 
+// End of page
 llxFooter();
 $db->close();

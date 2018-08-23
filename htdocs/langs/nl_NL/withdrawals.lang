@@ -110,5 +110,5 @@ InfoTransSubject=Verzenden betalingsopdracht order %s naar bank
 InfoTransMessage=Incasso-opdracht %s is verzonden naar bank door %s%s.<br><br>
 InfoTransData=Bedrag: %s<br>Wijze: %s<br>Datum: %s
 InfoRejectSubject=Direct debit payment order refused
-InfoRejectMessage=Hello,<br><br>the direct debit payment order of invoice %s related to the company %s, with an amount of %s has been refused by the bank.<br><br>--<br>%s
+InfoRejectMessage=M,<br><br>de incasso van factuur %s voor bedrijf %s, met een bedrag van %s is geweigerd door de bank.<br><br>--<br>%s
 ModeWarning=Optie voor echte modus was niet ingesteld, we stoppen na deze simulatie

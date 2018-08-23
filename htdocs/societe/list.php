@@ -90,10 +90,12 @@ $search_level_from = GETPOST("search_level_from","alpha");
 $search_level_to   = GETPOST("search_level_to","alpha");
 $search_stcomm=GETPOST('search_stcomm','int');
 $search_import_key  = GETPOST("search_import_key","alpha");
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
-$type=GETPOST('type');
+$type=GETPOST('type','alpha');
 $optioncss=GETPOST('optioncss','alpha');
-$mode=GETPOST("mode");
+$mode=GETPOST("mode",'');
 
 $diroutputmassaction=$conf->societe->dir_output . '/temp/massgeneration/'.$user->id;
 
@@ -103,14 +105,14 @@ $sortorder=GETPOST("sortorder",'alpha');
 $page=GETPOST("page",'int');
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="s.nom";
-if (empty($page) || $page == -1) { $page = 0; }
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if ($type == 'c') { $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
-if ($type == 'p') { $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
-if ($type == 'f') { $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
+if ($type == 'c') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='customerlist'; if ($search_type=='') $search_type='1,3'; }
+if ($type == 'p') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='prospectlist'; if ($search_type=='') $search_type='2,3'; }
+if ($type == 'f') { if (empty($contextpage) || $contextpage == 'thirdpartylist') $contextpage='supplierlist'; if ($search_type=='') $search_type='4'; }
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 $object = new Societe($db);
@@ -533,20 +535,20 @@ $help_url='EN:Module_Third_Parties|FR:Module_Tiers|ES:Empresas';
 llxHeader('',$langs->trans("ThirdParty"),$help_url);
 
 $param='';
-if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.$contextpage;
-if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.$limit;
+if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
+if ($limit > 0 && $limit != $conf->liste_limit) $param.='&limit='.urlencode($limit);
 if ($search_all != '')     $param = "&sall=".urlencode($search_all);
 if ($sall != '')           $param.= "&sall=".urlencode($sall);
-if ($search_categ_cus > 0) $param.='&search_categ_cus='.urlencode($search_categ_cus);
-if ($search_categ_sup > 0) $param.='&search_categ_sup='.urlencode($search_categ_sup);
-if ($search_sale > 0)	   $param.='&search_sale='.urlencode($search_sale);
+if ($search_categ_cus > 0) $param.= '&search_categ_cus='.urlencode($search_categ_cus);
+if ($search_categ_sup > 0) $param.= '&search_categ_sup='.urlencode($search_categ_sup);
+if ($search_sale > 0)	   $param.= '&search_sale='.urlencode($search_sale);
 if ($search_id > 0)        $param.= "&search_id=".urlencode($search_id);
 if ($search_nom != '')     $param.= "&search_nom=".urlencode($search_nom);
 if ($search_alias != '')   $param.= "&search_alias=".urlencode($search_alias);
 if ($search_town != '')    $param.= "&search_town=".urlencode($search_town);
 if ($search_zip != '')     $param.= "&search_zip=".urlencode($search_zip);
 if ($search_phone != '')   $param.= "&search_phone=".urlencode($search_phone);
-if ($search_fax != '') $param.= "&search_fax=".urlencode($search_fax);
+if ($search_fax != '')     $param.= "&search_fax=".urlencode($search_fax);
 if ($search_email != '')   $param.= "&search_email=".urlencode($search_email);
 if ($search_url != '')     $param.= "&search_url=".urlencode($search_url);
 if ($search_state != '')   $param.= "&search_state=".urlencode($search_state);
@@ -642,7 +644,7 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/massactions_pre.tpl.php';
 if ($search_all)
 {
 	foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	print $langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall);
+	print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $search_all) . join(', ',$fieldstosearchall).'</div>';
 }
 
 // Filter on categories
@@ -1203,7 +1205,7 @@ while ($i < min($num, $limit))
 	  		$companystatic->name_alias='';
 			$s.=$companystatic->getNomUrl(0,'prospect',0,1);
 		}
-		if (! empty($conf->fournisseur->enabled) && $obj->fournisseur)
+		if ((! empty($conf->fournisseur->enabled) || ! empty($conf->supplier_proposal->enabled)) && $obj->fournisseur)
 		{
 			if ($s) $s.=" / ";
 			$companystatic->name=$langs->trans("Supplier");
@@ -1301,5 +1303,6 @@ print "</div>";
 
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

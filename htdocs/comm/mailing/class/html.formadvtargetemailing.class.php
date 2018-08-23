@@ -27,14 +27,18 @@
 class FormAdvTargetEmailing extends Form
 {
 	var $db;
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * Constructor
 	 *
 	 * @param DoliDB $db handler
 	 */
-	function __construct($db) {
+    function __construct($db)
+    {
 		global $langs;
 
 		$this->db = $db;
@@ -47,7 +51,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param string $htmlname select field
 	 * @return string select field
 	 */
-	function multiselectProspectionStatus($selected_array = array(), $htmlname = 'cust_prospect_status') {
+    function multiselectProspectionStatus($selected_array = array(), $htmlname = 'cust_prospect_status')
+    {
 		global $conf, $langs;
 		$options_array = array();
 
@@ -83,7 +88,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array or Code or Label of preselected country
 	 * @return string HTML string with select
 	 */
-	function multiselectCountry($htmlname = 'country_id', $selected_array=array()) {
+    function multiselectCountry($htmlname = 'country_id', $selected_array=array())
+    {
 		global $conf, $langs;
 
 		$langs->load("dict");
@@ -143,7 +149,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param User $user User action
 	 * @return string combo list code
 	 */
-	function multiselectselectSalesRepresentatives($htmlname, $selected_array, $user) {
+    function multiselectselectSalesRepresentatives($htmlname, $selected_array, $user)
+    {
 
 		global $conf;
 
@@ -184,7 +191,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param array $selected_array selected array
 	 * @return string combo list code
 	 */
-	function multiselectselectLanguage($htmlname='', $selected_array=array()) {
+    function multiselectselectLanguage($htmlname='', $selected_array=array())
+    {
 
 		global $conf,$langs;
 
@@ -330,7 +338,8 @@ class FormAdvTargetEmailing extends Form
 	 * @param int $showempty show empty
 	 * @return string HTML combo
 	 */
-	function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0) {
+    function advMultiselectarray($htmlname, $options_array = array(), $selected_array = array(), $showempty = 0)
+    {
 		global $conf, $langs;
 
 		$form=new Form($this->db);
@@ -409,21 +418,23 @@ class FormAdvTargetEmailing extends Form
 	}
 
 	/**
-	 * selectAdvtargetemailingTemplate
+	 * Return a combo list to select emailing target selector
 	 *
-	 * @param string $htmlname control name
-	 * @param integer $selected  defaut selected
-	 * @param integer $showempty empty lines
-	 *
-	 * @return	string HTML combo
+	 * @param	string 		$htmlname 		control name
+	 * @param	integer 	$selected  		defaut selected
+	 * @param	integer 	$showempty 		empty lines
+	 * @param	string		$type_element	Type element. Example: 'mailing'
+	 * @return	string 						HTML combo
 	 */
-	public function selectAdvtargetemailingTemplate($htmlname='template_id',$selected=0,$showempty=0) {
+    public function selectAdvtargetemailingTemplate($htmlname='template_id', $selected=0, $showempty=0, $type_element='mailing')
+    {
 		global $conf, $user, $langs;
 
 		$out = '';
 
-		$sql = "SELECT c.rowid, c.name, c.fk_mailing";
+		$sql = "SELECT c.rowid, c.name, c.fk_element";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "advtargetemailing as c";
+		$sql .= " WHERE type_element='$type_element'";
 		$sql .= " ORDER BY c.name";
 
 		dol_syslog ( get_class ( $this ) . "::".__METHOD__, LOG_DEBUG );
@@ -441,7 +452,7 @@ class FormAdvTargetEmailing extends Form
 					$obj = $this->db->fetch_object ( $resql );
 					$label = $obj->name;
 					if (empty($label)) {
-						$label=$obj->fk_mailing;
+						$label=$obj->fk_element;
 					}
 
 					if ($selected > 0 && $selected == $obj->rowid) {

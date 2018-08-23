@@ -492,7 +492,7 @@ if ($id > 0 || ! empty($ref)) {
 			$db->free($resql);
 		}
 
-		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, SUM(l.qty) as qty,";
+		$sql = "SELECT l.rowid, l.fk_product, l.subprice, l.remise_percent, l.ref AS sref, SUM(l.qty) as qty,";
 		$sql .= " p.ref, p.label, p.tobatch, p.fk_default_warehouse";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "commande_fournisseurdet as l";
 		$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON l.fk_product=p.rowid";
@@ -514,6 +514,7 @@ if ($id > 0 || ! empty($ref)) {
 				print '<td></td>';
 				print '<td></td>';
 				print '<td></td>';
+				print '<td align="right">' . $langs->trans("SupplierRef") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyOrdered") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyDispatchedShort") . '</td>';
 				print '<td align="right">' . $langs->trans("QtyToDispatchShort") . '</td>';
@@ -590,6 +591,9 @@ if ($id > 0 || ! empty($ref)) {
 						if (! empty($objp->remise_percent) && empty($conf->global->STOCK_EXCLUDE_DISCOUNT_FOR_PMP))
 							$up_ht_disc = price2num($up_ht_disc * (100 - $objp->remise_percent) / 100, 'MU');
 
+						// Supplier ref
+						print '<td align="right">'.$objp->sref.'</td>';
+						
 						// Qty ordered
 						print '<td align="right">' . $objp->qty . '</td>';
 
@@ -869,6 +873,6 @@ if ($id > 0 || ! empty($ref)) {
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

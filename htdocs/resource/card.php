@@ -22,12 +22,7 @@
  */
 
 
-// Change this following line to use the correct relative path (../, ../../, etc)
-$res=0;
-$res=@include("../main.inc.php");				// For root directory
-if (! $res) $res=@include("../../main.inc.php");	// For "custom" directory
-if (! $res) die("Include of main fails");
-
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
@@ -405,8 +400,6 @@ if ($action == 'create' || $object->fetch($id) > 0)
 else {
 	dol_print_error();
 }
-
-
 
 // End of page
 llxFooter();

@@ -555,8 +555,9 @@ if ($action == 'create')
 		*/
 		print "</table>\n";
 
-		print '</div></div>';
-		print '</div>';
+		print '</div></div><!-ee-->';
+
+		dol_fiche_end();
 
 		print '<div style="clear:both"></div>';
 
@@ -712,5 +713,7 @@ if ($action == 'create')
 }
 
 dol_fiche_end();
+
+// End of page
 llxFooter();
 $db->close();

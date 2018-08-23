@@ -30,8 +30,7 @@
  */
 
 // Load Dolibarr environment
-$res=@include("../main.inc.php");                                // For root directory
-if (! $res) $res=@include("../../main.inc.php");
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
@@ -1114,6 +1113,6 @@ if (! GETPOST('action'))
     }
 }
 
+// End of page
 llxFooter();
-
 $db->close();

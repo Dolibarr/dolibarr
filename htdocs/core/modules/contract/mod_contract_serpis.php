@@ -30,7 +30,10 @@ class mod_contract_serpis extends ModelNumRefContracts
 {
 	var $version='dolibarr';
 	var $prefix='CT';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Serpis';
 	var $code_auto=1;
 

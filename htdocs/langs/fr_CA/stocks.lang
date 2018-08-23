@@ -36,7 +36,6 @@ DeStockOnValidateOrder=Diminuer les stocks réels sur la validation des commande
 DeStockOnShipment=Diminuer les stocks réels lors de la validation de l'expédition
 DeStockOnShipmentOnClosing=Diminuer les stocks réels sur la classification de l'expédition fermée
 ReStockOnBill=Augmenter les stocks réels sur les factures des fournisseurs / validation des notes de crédit
-ReStockOnValidateOrder=Augmenter les stocks réels sur l'approbation des commandes des fournisseurs
 ReStockOnDispatchOrder=Augmenter les stocks réels lors de l'expédition manuelle dans les entrepôts, après réception de la facture fournisseur des marchandises
 OrderStatusNotReadyToDispatch=L'ordre n'a pas encore ou pas plus un statut qui permet l'envoi de produits dans des entrepôts de stock.
 StockDiffPhysicTeoric=Explication de la différence entre le stock physique et le stock virtuel
