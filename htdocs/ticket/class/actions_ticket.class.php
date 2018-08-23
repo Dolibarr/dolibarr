@@ -43,7 +43,12 @@ class ActionsTicket
     public $dao;
 
     public $mesg;
-    public $error;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
+	
     public $errors = array();
     //! Numero de l'erreur
     public $errno = 0;

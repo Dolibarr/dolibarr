@@ -33,7 +33,10 @@ class DiscountAbsolute
      */
     public $db;
     
-    public $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
 
     public $id;					// Id discount
     public $fk_soc;

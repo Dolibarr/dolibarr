@@ -63,7 +63,11 @@ class EcmDirectory // extends CommonObject
 
 	public $full_arbo_loaded;
 
+	/**
+	 * @var string Error code (or message)
+	 */
 	public $error;
+	
 	public $errors;
 
 
