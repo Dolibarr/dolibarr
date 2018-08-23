@@ -45,7 +45,10 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class SupplierProposal extends CommonObject
 {
-    public $element='supplier_proposal';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='supplier_proposal';
     
     /**
 	 * @var string Name of table without prefix where object is stored
@@ -2651,7 +2654,10 @@ class SupplierProposalLine extends CommonObjectLine
 	 */
 	public $error='';
 
-    public $element='supplier_proposaldet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='supplier_proposaldet';
     
     /**
 	 * @var string Name of table without prefix where object is stored

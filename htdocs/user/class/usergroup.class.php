@@ -35,6 +35,9 @@ if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT."/core/class/l
  */
 class UserGroup extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='usergroup';
 	
 	/**

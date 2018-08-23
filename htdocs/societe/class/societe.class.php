@@ -41,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class Societe extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='societe';
 	
 	/**

@@ -47,7 +47,11 @@ class Ticketlogs// extends CommonObject
 	 */
 	public $errors = array();
     
-    public $element = 'ticketlogs'; //!< Id that identify managed objects
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'ticketlogs'; 
+	
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */

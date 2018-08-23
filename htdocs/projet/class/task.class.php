@@ -31,7 +31,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Task extends CommonObject
 {
-	public $element='project_task';		//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='project_task';	
 	
 	/**
 	 * @var string Name of table without prefix where object is stored
