@@ -30,7 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class PaymentExpenseReport extends CommonObject
 {
-	public $element='payment_expensereport';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment_expensereport';
 	
 	/**
 	 * @var string Name of table without prefix where object is stored

@@ -29,7 +29,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Loan extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='loan';
+	
 	public $table='loan';
 	
 	/**

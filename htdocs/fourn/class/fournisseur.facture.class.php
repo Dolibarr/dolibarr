@@ -41,7 +41,10 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class FactureFournisseur extends CommonInvoice
 {
-    public $element='invoice_supplier';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='invoice_supplier';
     
     /**
      * @var string Name of table without prefix where object is stored
@@ -2565,6 +2568,9 @@ class FactureFournisseur extends CommonInvoice
  */
 class SupplierInvoiceLine extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facture_fourn_det';
 	
 	/**

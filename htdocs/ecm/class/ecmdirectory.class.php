@@ -27,7 +27,10 @@
  */
 class EcmDirectory // extends CommonObject
 {
-	public $element='ecm_directories';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='ecm_directories';
 	
 	/**
 	 * @var string Name of table without prefix where object is stored

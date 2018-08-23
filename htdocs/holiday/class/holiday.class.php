@@ -32,6 +32,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Holiday extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='holiday';
 	
 	/**

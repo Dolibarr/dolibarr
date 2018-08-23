@@ -44,7 +44,11 @@ if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/expe
  */
 class Expedition extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element="shipping";
+	
 	public $fk_element="fk_expedition";
 	
 	/**
@@ -2272,6 +2276,9 @@ class Expedition extends CommonObject
  */
 class ExpeditionLigne extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='expeditiondet';
 	
 	/**

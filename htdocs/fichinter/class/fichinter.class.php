@@ -35,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
  */
 class Fichinter extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='fichinter';
 	
 	/**
@@ -1331,6 +1334,9 @@ class FichinterLigne extends CommonObjectLine
 	var $duration;        // Duree de l'intervention
 	var $rang = 0;
 
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='fichinterdet';
 	
 	/**

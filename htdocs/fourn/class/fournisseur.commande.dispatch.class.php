@@ -49,7 +49,10 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public $errors = array();
 	
-	public $element='commandefournisseurdispatch';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='commandefournisseurdispatch';
 	
 	/**
 	 * @var string Name of table without prefix where object is stored

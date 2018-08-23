@@ -43,6 +43,9 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
  */
 class Product extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='product';
 	
 	/**

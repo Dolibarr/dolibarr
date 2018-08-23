@@ -39,7 +39,11 @@ if (! empty($conf->commande->enabled)) require_once DOL_DOCUMENT_ROOT.'/commande
  */
 class Livraison extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element="delivery";
+	
 	public $fk_element="fk_livraison";
 	
 	/**
@@ -1095,6 +1099,9 @@ class LivraisonLigne extends CommonObjectLine
 	public $product_ref;
 	public $product_label;
 
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='livraisondet';
 	
 	/**

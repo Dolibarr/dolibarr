@@ -34,7 +34,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Don extends CommonObject
 {
-    public $element='don'; 					// Id that identify managed objects
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='don';
     
     /**
 	 * @var string Name of table without prefix where object is stored

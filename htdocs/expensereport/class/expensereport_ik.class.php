@@ -29,6 +29,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/coreobject.class.php';
  */
 class ExpenseReportIk extends CoreObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='expenseik';
 	
 	/**

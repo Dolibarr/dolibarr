@@ -35,6 +35,9 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class PaiementFourn extends Paiement
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='payment_supplier';
 	
 	/**
