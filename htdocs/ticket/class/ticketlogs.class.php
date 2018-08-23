@@ -42,7 +42,10 @@ class Ticketlogs// extends CommonObject
 	 */
 	public $error; 
 	
-    public $errors = array(); //!< To return several error codes (or messages)
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
     
     public $element = 'ticketlogs'; //!< Id that identify managed objects
     /**

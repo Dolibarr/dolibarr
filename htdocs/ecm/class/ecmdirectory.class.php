@@ -68,7 +68,10 @@ class EcmDirectory // extends CommonObject
 	 */
 	public $error;
 	
-	public $errors;
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**

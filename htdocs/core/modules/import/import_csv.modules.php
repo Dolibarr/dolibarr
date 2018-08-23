@@ -46,10 +46,9 @@ class ImportCsv extends ModeleImports
 	public $error='';
 	
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 
     /**
 	 * @var int ID

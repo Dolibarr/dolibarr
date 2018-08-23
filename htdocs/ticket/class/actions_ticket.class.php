@@ -49,7 +49,11 @@ class ActionsTicket
 	 */
 	public $error;
 	
-    public $errors = array();
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+	
     //! Numero de l'erreur
     public $errno = 0;
 

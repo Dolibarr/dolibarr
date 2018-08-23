@@ -44,7 +44,11 @@ class CommandeFournisseurDispatch extends CommonObject
 	 */
 	public $error;
 	
-	public $errors=array();				//!< To return several error codes (or messages)
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+	
 	public $element='commandefournisseurdispatch';			//!< Id that identify managed objects
 	
 	/**
