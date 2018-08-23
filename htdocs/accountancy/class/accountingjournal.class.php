@@ -26,6 +26,9 @@
  */
 class AccountingJournal extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='accounting_journal';
 	
 	/**

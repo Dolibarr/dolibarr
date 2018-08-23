@@ -53,6 +53,9 @@ if (! empty($conf->accounting->enabled)) require_once DOL_DOCUMENT_ROOT.'/accoun
  */
 class Facture extends CommonInvoice
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facture';
 	
 	/**
@@ -4236,7 +4239,10 @@ class Facture extends CommonInvoice
  */
 class FactureLigne extends CommonInvoiceLine
 {
-    public $element='facturedet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='facturedet';
     
     /**
 	 * @var string Name of table without prefix where object is stored

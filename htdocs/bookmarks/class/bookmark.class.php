@@ -28,7 +28,10 @@
  */
 class Bookmark extends CommonObject
 {
-    public $element='bookmark';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='bookmark';
     
     /**
      * @var string Name of table without prefix where object is stored

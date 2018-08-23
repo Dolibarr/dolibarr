@@ -42,7 +42,10 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Commande extends CommonOrder
 {
-    public $element='commande';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='commande';
     
     /**
 	 * @var string Name of table without prefix where object is stored
@@ -3784,7 +3787,11 @@ class Commande extends CommonOrder
  */
 class OrderLine extends CommonOrderLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='commandedet';
+	
 	public $table_element='commandedet';
 
     var $oldline;

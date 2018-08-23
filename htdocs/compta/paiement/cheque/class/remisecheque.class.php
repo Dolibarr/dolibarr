@@ -33,6 +33,9 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
  */
 class RemiseCheque extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='chequereceipt';
 	
 	/**

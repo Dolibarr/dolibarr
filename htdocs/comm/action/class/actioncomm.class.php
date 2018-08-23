@@ -34,7 +34,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class ActionComm extends CommonObject
 {
-    public $element='action';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='action';
     
     /**
      * @var string Name of table without prefix where object is stored

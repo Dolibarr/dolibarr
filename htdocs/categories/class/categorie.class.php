@@ -148,6 +148,9 @@ class Categorie extends CommonObject
         'project'  => 'projet',
 	);
 
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='category';
 	
 	/**

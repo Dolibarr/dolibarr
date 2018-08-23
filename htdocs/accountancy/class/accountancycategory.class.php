@@ -46,7 +46,10 @@ class AccountancyCategory 	// extends CommonObject
 	 */
 	public $errors = array();
 	
-	public $element='c_accounting_category';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='c_accounting_category';			
 	
 	/**
 	 * @var string Name of table without prefix where object is stored

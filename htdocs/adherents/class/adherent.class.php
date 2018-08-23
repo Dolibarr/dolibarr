@@ -41,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  */
 class Adherent extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='member';
 	
 	/**

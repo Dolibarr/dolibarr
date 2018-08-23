@@ -45,6 +45,9 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Propal extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='propal';
 	
 	/**
@@ -3656,6 +3659,9 @@ class Propal extends CommonObject
  */
 class PropaleLigne extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='propaldet';
 	
 	/**

@@ -39,6 +39,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureRec extends CommonInvoice
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facturerec';
 	
 	/**
@@ -1644,6 +1647,9 @@ class FactureRec extends CommonInvoice
  */
 class FactureLigneRec extends CommonInvoiceLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facturedetrec';
 	
 	/**

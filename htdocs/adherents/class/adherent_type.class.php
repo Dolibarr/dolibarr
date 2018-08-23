@@ -37,7 +37,11 @@ class AdherentType extends CommonObject
 	 */
 	public $table_element = 'adherent_type';
 	
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element = 'adherent_type';
+	
 	public $picto = 'group';
 	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 

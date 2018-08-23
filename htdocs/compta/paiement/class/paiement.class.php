@@ -36,7 +36,10 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Paiement extends CommonObject
 {
-    public $element='payment';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='payment';
     
     /**
 	 * @var string Name of table without prefix where object is stored
