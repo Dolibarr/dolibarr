@@ -64,7 +64,7 @@ abstract class CommonObject
 	public $errors=array();
 	
 	/**
-	 * @var string
+	 * @var string ID to identify managed object
 	 */
 	public $element;
 	

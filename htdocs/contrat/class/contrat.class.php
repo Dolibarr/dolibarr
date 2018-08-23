@@ -41,6 +41,9 @@ require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
  */
 class Contrat extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='contrat';
 	
 	/**
@@ -2458,7 +2461,10 @@ class Contrat extends CommonObject
  */
 class ContratLigne extends CommonObjectLine
 {
-    public $element='contratdet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='contratdet';
     
     /**
 	 * @var string Name of table without prefix where object is stored

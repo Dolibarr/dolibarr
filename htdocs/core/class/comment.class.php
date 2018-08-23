@@ -4,7 +4,10 @@
  */
 class Comment extends CommonObject
 {
-	public $element='comment';		//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='comment';
 	
 	/**
 	 * @var string Name of table without prefix where object is stored

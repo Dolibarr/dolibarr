@@ -30,7 +30,10 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
  */
 class Cronjob extends CommonObject
 {
-	public $element='cronjob';			//!< Id that identify managed objects
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='cronjob';
 	
 	/**
 	 * @var string Name of table without prefix where object is stored
