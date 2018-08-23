@@ -170,7 +170,7 @@ class MyModuleApi extends DolibarrApi
                 $obj = $db->fetch_object($result);
                 $myobject_static = new MyObject($db);
                 if($myobject_static->fetch($obj->rowid)) {
-                    $obj_ret[] = parent::_cleanObjectDatas($myobject_static);
+                    $obj_ret[] = $this->_cleanObjectDatas($myobject_static);
                 }
                 $i++;
             }
@@ -277,6 +277,27 @@ class MyModuleApi extends DolibarrApi
             )
         );
 
+    }
+
+
+    /**
+     * Clean sensible object datas
+     *
+     * @param   object  $object    Object to clean
+     * @return    array    Array of cleaned object properties
+     */
+    function _cleanObjectDatas($object)
+    {
+    	$object = parent::_cleanObjectDatas($object);
+
+    	/*unset($object->note);
+    	unset($object->address);
+    	unset($object->barcode_type);
+    	unset($object->barcode_type_code);
+    	unset($object->barcode_type_label);
+    	unset($object->barcode_type_coder);*/
+
+    	return $object;
     }
 
     /**
