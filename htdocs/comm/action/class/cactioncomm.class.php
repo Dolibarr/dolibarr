@@ -29,9 +29,9 @@
 class CActionComm
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 	
     /**
      * @var DoliDB Database handler.
@@ -39,9 +39,9 @@ class CActionComm
     public $db;
 
     /**
-	 * @var int ID
-	 */
-	public $id;
+     * @var int ID
+     */
+    public $id;
 
     var $code;
     var $type;

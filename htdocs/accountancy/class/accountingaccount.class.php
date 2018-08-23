@@ -44,6 +44,7 @@ class AccountingAccount extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+	
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -51,9 +52,9 @@ class AccountingAccount extends CommonObject
 	public $restrictiononfksoc = 1;
 
 	/**
-     * @var DoliDB Database handler.
-     */
-    public $db;
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 	
 	/**
 	 * @var string Error code (or message)
@@ -80,9 +81,9 @@ class AccountingAccount extends CommonObject
 	var $account_category;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+         * @var string proper name for given parameter
+         */
+        public $label;
     
 	var $fk_user_author;
 	var $fk_user_modif;

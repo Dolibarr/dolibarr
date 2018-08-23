@@ -28,7 +28,7 @@
  */
 class AccountancySystem
 {
-	/**
+    /**
      * @var DoliDB Database handler.
      */
     public $db;
@@ -43,7 +43,7 @@ class AccountancySystem
 	var $pcg_type;
 	var $pcg_subtype;
 	
-	/**
+    /**
      * @var string proper name for given parameter
      */
     public $label;

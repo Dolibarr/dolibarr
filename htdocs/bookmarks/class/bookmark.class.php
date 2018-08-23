@@ -31,9 +31,9 @@ class Bookmark extends CommonObject
     public $element='bookmark';
     
     /**
-	 * @var string Name of table without prefix where object is stored
-	 */
-	public $table_element='bookmark';
+     * @var string Name of table without prefix where object is stored
+     */
+    public $table_element='bookmark';
 	
     public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto = 'bookmark';
@@ -44,9 +44,9 @@ class Bookmark extends CommonObject
     public $db;
 
     /**
-	 * @var int ID
-	 */
-	public $id;
+     * @var int ID
+     */
+    public $id;
 	
     var $fk_user;
     var $datec;
