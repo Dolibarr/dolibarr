@@ -28,7 +28,11 @@
  */
 class Menubase
 {
-    public $db;							// To store db handler
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;	
+    
     public $error;							// To return error code (or message)
     public $errors=array();				// To return several error codes (or messages)
 

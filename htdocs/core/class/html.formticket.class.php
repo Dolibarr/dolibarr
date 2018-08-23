@@ -39,6 +39,9 @@ if (!class_exists('FormCompany')) {
  */
 class FormTicket
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     public $track_id;

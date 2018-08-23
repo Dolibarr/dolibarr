@@ -28,7 +28,11 @@
  */
 class DiscountAbsolute
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
+    
     public $error;
 
     public $id;					// Id discount

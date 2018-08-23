@@ -35,7 +35,11 @@ require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
  */
 class ActionsTicket
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
+    
     public $dao;
 
     public $mesg;

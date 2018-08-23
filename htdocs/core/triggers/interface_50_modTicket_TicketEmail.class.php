@@ -30,6 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceTicketEmail extends DolibarrTriggers
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     /**
