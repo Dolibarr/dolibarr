@@ -281,7 +281,7 @@ class Notify
 	 * 	@param	Object	$object			Object the notification deals on
 	 *	@return	int						<0 if KO, or number of changes if OK
 	 */
-	function send($notifcode, $object)
+	function send($notifcode, $object, $filename_list=array(), $mimetype_list=array(), $mimefilename_list=array())
 	{
 		global $user,$conf,$langs,$mysoc;
 		global $hookmanager;
