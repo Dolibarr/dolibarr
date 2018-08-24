@@ -34,9 +34,9 @@ class box_graph_invoices_permonth extends ModeleBoxes
 	var $depends = array("facture");
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
