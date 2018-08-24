@@ -91,7 +91,7 @@ Licenses
 
 GPLv3 or (at your option) any later version.
 
-See [COPYING](COPYING) for more information.
+See file COPYING for more information.
 
 #### Documentation
 
