@@ -22,6 +22,8 @@
  * 		\brief      This script create a xml checksum file
  */
 
+if (! defined('NOREQUIREDB')) define('NOREQUIREDB','1');	// Do not create database handler $db
+
 $sapi_type = php_sapi_name();
 $script_file = basename(__FILE__);
 $path=dirname(__FILE__).'/';
@@ -32,8 +34,8 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-require_once($path."../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
+require_once $path."../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
 
 
 /*

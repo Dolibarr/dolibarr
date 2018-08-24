@@ -12,6 +12,7 @@
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014      Marcos García            <marcosgdf@gmail.com>
  * Copyright (C) 2016      Ferran Marcet            <fmarcet@2byte.es>
+ * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1012,7 +1013,7 @@ class SupplierProposal extends CommonObject
                     	$action='update';
 
                     	// Actions on extra fields
-                   		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                   		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
                    		{
                    			$result=$this->insertExtraFields();
                    			if ($result < 0)
@@ -1021,7 +1022,7 @@ class SupplierProposal extends CommonObject
                    			}
                     	}
 
-                        if (! $erro && ! $notrigger)
+                        if (! $error && ! $notrigger)
                         {
                             // Call trigger
                             $result=$this->call_trigger('PROPAL_SUPPLIER_CREATE',$user);
@@ -1774,7 +1775,8 @@ class SupplierProposal extends CommonObject
 	 *	@param      User	$user					Object user
      *	@return     int         					<0 if KO, >0 if OK
      */
-     function updatePriceFournisseur($idProductFournPrice, $product, $user) {
+    function updatePriceFournisseur($idProductFournPrice, $product, $user)
+    {
 		$price=price2num($product->subprice*$product->qty,'MU');
 		$unitPrice = price2num($product->subprice,'MU');
 
@@ -1786,7 +1788,7 @@ class SupplierProposal extends CommonObject
             $this->db->rollback();
             return -1;
 		}
-	 }
+	}
 
 	 /**
      *	Create ProductFournisseur
@@ -1795,7 +1797,8 @@ class SupplierProposal extends CommonObject
 	 *	@param      User		$user		Object user
      *	@return     int         			<0 if KO, >0 if OK
      */
-	 function createPriceFournisseur($product, $user) {
+    function createPriceFournisseur($product, $user)
+    {
 	 	$price=price2num($product->subprice*$product->qty,'MU');
 	    $qty=price2num($product->qty);
 		$unitPrice = price2num($product->subprice,'MU');
@@ -1822,7 +1825,7 @@ class SupplierProposal extends CommonObject
             $this->db->rollback();
             return -1;
 		}
-	 }
+	}
 
     /**
      *	Set draft status
@@ -2582,9 +2585,10 @@ class SupplierProposal extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf, $langs;
 
@@ -2603,7 +2607,7 @@ class SupplierProposal extends CommonObject
 
 		$modelpath = "core/modules/supplier_proposal/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 
@@ -3178,4 +3182,3 @@ class SupplierProposalLine extends CommonObjectLine
     }
 
 }
-

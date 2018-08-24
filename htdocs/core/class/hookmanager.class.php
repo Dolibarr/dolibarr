@@ -31,7 +31,11 @@ class HookManager
 {
 	var $db;
 	var $error;
-	var $errors=array();
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
     // Context hookmanager was created for ('thirdpartycard', 'thirdpartydao', ...)
     var $contextarray=array();
@@ -186,7 +190,8 @@ class HookManager
 				'sendMail',
 				'sendMailAfter',
 				'showLinkToObjectBlock',
-				'setContentSecurityPolicy'
+				'setContentSecurityPolicy',
+				'setHtmlTitle'
 				)
 			)) $hooktype='addreplace';
 

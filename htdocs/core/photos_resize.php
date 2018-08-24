@@ -83,10 +83,10 @@ elseif ($modulepart == 'societe')
 	if (! $user->rights->societe->lire) accessforbidden();
 	$accessallowed=1;
 }
-elseif ($modulepart == 'ticketsup')
+elseif ($modulepart == 'ticket')
 {
-	$result=restrictedArea($user,'ticketsup',$id,'ticketsup');
-	if (! $user->rights->ticketsup->read) accessforbidden();
+	$result=restrictedArea($user,'ticket',$id,'ticket');
+	if (! $user->rights->ticket->read) accessforbidden();
 	$accessallowed=1;
 }
 
@@ -177,15 +177,15 @@ elseif ($modulepart == 'expensereport')
         $dir=$conf->expensereport->dir_output;	// By default
     }
 }
-elseif ($modulepart == 'ticketsup')
+elseif ($modulepart == 'ticket')
 {
-	require_once DOL_DOCUMENT_ROOT.'/ticketsup/class/ticketsup.class.php';
-	$object = new Ticketsup($db);
+	require_once DOL_DOCUMENT_ROOT.'/ticket/class/ticket.class.php';
+	$object = new Ticket($db);
 	if ($id > 0)
 	{
 		$result = $object->fetch($id);
 		if ($result <= 0) dol_print_error($db,'Failed to load object');
-		$dir=$conf->ticketsup->dir_output;	// By default
+		$dir=$conf->ticket->dir_output;	// By default
 	}
 }
 else {
@@ -200,7 +200,7 @@ if (empty($backtourl))
     else if (in_array($modulepart, array('member')))        $backtourl=DOL_URL_ROOT."/adherents/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('project')))       $backtourl=DOL_URL_ROOT."/projet/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('societe')))       $backtourl=DOL_URL_ROOT."/societe/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
-    else if (in_array($modulepart, array('ticketsup')))     $backtourl=DOL_URL_ROOT."/ticketsup/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
+    else if (in_array($modulepart, array('ticket')))     $backtourl=DOL_URL_ROOT."/ticket/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
     else if (in_array($modulepart, array('user')))          $backtourl=DOL_URL_ROOT."/user/document.php?id=".$id.'&file='.urldecode($_POST["file"]);
 }
 

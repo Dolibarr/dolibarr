@@ -778,7 +778,8 @@ class FormFile
 						$out.= '<td class="right nowraponall">';
 						if ($delallowed)
 						{
-							$out.= '<a href="'.$urlsource.(strpos($urlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
+							$tmpurlsource = preg_replace('/#[a-zA-Z0-9_]*$/', '', $urlsource);
+							$out.= '<a href="'.$tmpurlsource.(strpos($tmpurlsource,'?')?'&amp;':'?').'action=remove_file&amp;file='.urlencode($relativepath);
 							$out.= ($param?'&amp;'.$param:'');
 							//$out.= '&modulepart='.$modulepart; // TODO obsolete ?
 							//$out.= '&urlsource='.urlencode($urlsource); // TODO obsolete ?
@@ -814,7 +815,7 @@ class FormFile
 
 				$this->numoffiles++;
 			}
-			// Loop on each file found
+			// Loop on each link found
 			if (is_array($link_list))
 			{
 				$colspan=2;
@@ -1011,7 +1012,7 @@ class FormFile
 		global $form;
 
 		$disablecrop=1;
-		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticketsup','user'))) $disablecrop=0;
+		if (in_array($modulepart, array('societe','product','produit','service','expensereport','holiday','member','project','ticket','user'))) $disablecrop=0;
 
 		// Define relative path used to store the file
 		if (empty($relativepath))
@@ -1200,7 +1201,7 @@ class FormFile
 					print '</td>';
 
 					// Date
-					print '<td align="center" width="130px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';
+					print '<td align="center" width="140px">'.dol_print_date($file['date'],"dayhour","tzuser").'</td>';	// 140px = width for date with PM format
 
 					// Preview
 					if (empty($useinecm))
@@ -1271,7 +1272,7 @@ class FormFile
 						print '<td class="valignmiddle right actionbuttons"><!-- action on files -->';
 						if ($useinecm == 1)
 						{
-							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_view('default', 0, 'class="paddingrightonly"').'</a>';
+							print '<a href="'.DOL_URL_ROOT.'/ecm/file_card.php?urlfile='.urlencode($file['name']).$param.'" class="editfilelink" rel="'.urlencode($file['name']).'">'.img_edit('default', 0, 'class="paddingrightonly"').'</a>';
 						}
 						if (! $useinecm || $useinecm == 2)
 						{
@@ -1304,8 +1305,7 @@ class FormFile
 							if (! empty($conf->dol_use_jmobile)) $useajax=0;
 							if (empty($conf->use_javascript_ajax)) $useajax=0;
 							if (! empty($conf->global->MAIN_ECM_DISABLE_JS)) $useajax=0;
-
-							print '<a href="'.(($useinecm && $useajax)?'#':$url.'?action=delete&urlfile='.urlencode($filepath).$param).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
+							print '<a href="'.(($useinecm && $useajax)?'#':($url.'?action=delete&urlfile='.urlencode($filepath).$param)).'" class="deletefilelink" rel="'.$filepath.'">'.img_delete().'</a>';
 						}
 						print "</td>";
 

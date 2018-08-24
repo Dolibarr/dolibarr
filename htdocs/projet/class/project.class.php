@@ -454,18 +454,12 @@ class Project extends CommonObject
                 // fetch optionals attributes and labels
                 $this->fetch_optionals();
 
-                if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT))
-                {
-                	$this->fetchComments();
-                }
-
                 return 1;
             }
 
             $this->db->free($resql);
 
-            if ($num_rows) return 1;
-            else return 0;
+            return 0;
         }
         else
         {
@@ -523,9 +517,10 @@ class Project extends CommonObject
      * 	@param		string		$datefieldname	name of date field for filter
      *  @param		int			$dates			Start date
      *  @param		int			$datee			End date
+	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
      * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
-    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
+    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='', $projectkey='fk_projet')
     {
         $elements = array();
 
@@ -555,7 +550,7 @@ class Project extends CommonObject
 		}
         else
 		{
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet IN (". $ids .")";
+            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE ".$projectkey." IN (". $ids .")";
 		}
 
 		if ($dates > 0)
@@ -652,9 +647,8 @@ class Project extends CommonObject
 		$this->getLinesArray($user);
 
 		// Delete tasks
-		foreach($this->lines as &$task) {
-			$task->delete($user);
-		}
+		$ret = $this->deleteTasks($user);
+		if ($ret < 0) $error++;
 
         // Delete project
         if (! $error)
@@ -729,6 +723,40 @@ class Project extends CommonObject
             $this->db->rollback();
             return -1;
         }
+    }
+    
+    /**
+     * 		Delete tasks with no children first, then task with children recursively
+     *  
+     *  	@param     	User		$user		User
+     *		@return		int				<0 if KO, 1 if OK
+     */
+    function deleteTasks($user)
+    {
+        $countTasks = count($this->lines);
+        $deleted = false;
+        if ($countTasks)
+        {
+            foreach($this->lines as $task)
+            {
+                if ($task->hasChildren() <= 0) {		// If there is no children (or error to detect them)
+                    $deleted = true;
+                    $ret = $task->delete($user);
+                    if ($ret <= 0)
+                    {
+                        $this->errors[] = $this->db->lasterror();
+                        return -1;
+                    }
+                }
+            }
+        }
+        $this->getLinesArray($user);
+        if ($deleted && count($this->lines) < $countTasks)
+        {
+            if (count($this->lines)) $this->deleteTasks($this->lines);
+        }
+        
+        return 1;
     }
 
     /**
@@ -940,7 +968,7 @@ class Project extends CommonObject
      */
     function getNomUrl($withpicto=0, $option='', $addlabel=0, $moreinpopup='', $sep=' - ', $notooltip=0, $save_lastsearch_value=-1)
     {
-        global $conf, $langs, $user;
+        global $conf, $langs, $user, $hookmanager;
 
         if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
@@ -989,10 +1017,7 @@ class Project extends CommonObject
             $linkclose.=' title="'.dol_escape_htmltag($label, 1).'"';
             $linkclose.=' class="classfortooltip"';
 
-			/*if (! is_object($hookmanager)) {
-				include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-				$hookmanager=new HookManager($this->db);
-			}
+			/*
 			$hookmanager->initHooks(array('projectdao'));
 			$parameters=array('id'=>$this->id);
 			// Note that $action and $object may have been modified by some hooks
@@ -1016,11 +1041,6 @@ class Project extends CommonObject
         if ($withpicto != 2) $result.=(($addlabel && $this->title) ? $sep . dol_trunc($this->title, ($addlabel > 1 ? $addlabel : 0)) : '');
 
         global $action;
-        if (! is_object($hookmanager))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        	$hookmanager=new HookManager($this->db);
-        }
         $hookmanager->initHooks(array('projectdao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
         $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1727,7 +1747,7 @@ class Project extends CommonObject
         //$socid=$user->societe_id;
 
         if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user,0,1,$socid);
-        
+
         $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
         $sql.= " FROM (".MAIN_DB_PREFIX."projet as p";
         $sql.= ")";
@@ -1735,13 +1755,13 @@ class Project extends CommonObject
         // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
         //if (! $user->rights->societe->client->voir && ! $socid) $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON sc.fk_soc = s.rowid";
         $sql.= " WHERE p.fk_statut = 1";
-        $sql.= " AND p.entity IN (".getEntity('project', 0).')';
+        $sql.= " AND p.entity IN (".getEntity('project').')';
         if (! $user->rights->projet->all->lire) $sql.= " AND p.rowid IN (".$projectsListId.")";
         // No need to check company, as filtering of projects must be done by getProjectsAuthorizedForUser
         //if ($socid || ! $user->rights->societe->client->voir)	$sql.= "  AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$socid.")";
         // For external user, no check is done on company permission because readability is managed by public status of project and assignement.
         //if (! $user->rights->societe->client->voir && ! $socid) $sql.= " AND ((s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id.") OR (s.rowid IS NULL))";
-        
+
         //print $sql;
         $resql=$this->db->query($sql);
         if ($resql)
@@ -1811,7 +1831,7 @@ class Project extends CommonObject
 	    $sql = "SELECT count(p.rowid) as nb";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
 	    $sql.= " WHERE";
-	    $sql.= " p.entity IN (".getEntity('projet').")";
+	    $sql.= " p.entity IN (".getEntity('project').")";
 		if (! $user->rights->projet->all->lire)
 		{
 			$projectsListId = $this->getProjectsAuthorizedForUser($user,0,1);
@@ -1911,6 +1931,7 @@ class Project extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{
@@ -1979,4 +2000,3 @@ class Project extends CommonObject
 	}
 
 }
-

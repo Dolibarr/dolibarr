@@ -5,6 +5,7 @@
  * Copyright (C) 2011-2013 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2015      Charlie Benke        <charlie@patas-monkey.com>
+ * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -221,7 +222,7 @@ class Fichinter extends CommonObject
 				if (! $resql) $error++;
 			}
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
@@ -277,12 +278,15 @@ class Fichinter extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
+		global $conf;
 	 	if (! is_numeric($this->duration)) {
 	 		$this->duration = 0;
 	 	}
 	 	if (! dol_strlen($this->fk_project)) {
 	 		$this->fk_project = 0;
 	 	}
+
+	 	$error = 0;
 
 		$this->db->begin();
 
@@ -298,8 +302,16 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('FICHINTER_MODIFY',$user);
@@ -371,8 +383,7 @@ class Fichinter extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
+				// Retreive extrafields
 				$this->fetch_optionals();
 
 				/*
@@ -575,9 +586,10 @@ class Fichinter extends CommonObject
 	 *  @param      int                     $hidedetails    Hide details of lines
 	 *  @param      int                     $hidedesc       Hide description
 	 *  @param      int                     $hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int                                     0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -596,7 +608,7 @@ class Fichinter extends CommonObject
 
 		$modelpath = "core/modules/fichinter/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
 	}
 
 	/**
@@ -668,7 +680,7 @@ class Fichinter extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $save_lastsearch_value=-1)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $hookmanager;
 
 		$result='';
 
@@ -696,6 +708,13 @@ class Fichinter extends CommonObject
 			}
 			$linkclose.= ' title="'.dol_escape_htmltag($label, 1).'"';
 			$linkclose.=' class="classfortooltip"';
+
+			/*
+			$hookmanager->initHooks(array('fichinterdao'));
+			$parameters=array('id'=>$this->id);
+			$reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+			if ($reshook > 0) $linkclose = $hookmanager->resPrint;
+			*/
 		}
 
 		$linkstart = '<a href="'.$url.'"';
@@ -706,6 +725,13 @@ class Fichinter extends CommonObject
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
 		if ($withpicto != 2) $result.= $this->ref;
 		$result .= $linkend;
+
+		global $action;
+		$hookmanager->initHooks(array('intervnetiondao'));
+		$parameters=array('id'=>$this->id, 'getnomurl'=>$result);
+		$reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
+		if ($reshook > 0) $result = $hookmanager->resPrint;
+		else $result .= $hookmanager->resPrint;
 
 		return $result;
 	}
@@ -1392,11 +1418,11 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->rowid=$this->id;
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->id;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -1467,7 +1493,6 @@ class FichinterLigne extends CommonObjectLine
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->id;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{

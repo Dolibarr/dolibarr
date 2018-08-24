@@ -129,8 +129,11 @@ function pdf_getInstance($format='',$metric='mm',$pagetype='P')
 	//$format=array($arrayformat['width'],$arrayformat['height']);
 	//$metric=$arrayformat['unit'];
 
-	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format);
-	else $pdf = new TCPDF($pagetype,$metric,$format);
+	$pdfa=false;											// PDF-1.3
+	if (! empty($conf->global->PDF_USE_1A)) $pdfa=true;		// PDF1/A
+
+	if (class_exists('TCPDI')) $pdf = new TCPDI($pagetype,$metric,$format,true,'UTF-8',false,$pdfa);
+	else $pdf = new TCPDF($pagetype,$metric,$format,true,'UTF-8',false,$pdfa);
 
 	// Protection and encryption of pdf
 	if (! empty($conf->global->PDF_SECURITY_ENCRYPTION))
@@ -260,6 +263,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  *
  * @param TCPDF     $pdf            PDF initialized object
  * @param string    $htmlcontent    HTML Contect
+ * @return number
  * @see getStringHeight
  */
 function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
@@ -1228,7 +1232,17 @@ function pdf_getlinedesc($object,$i,$outputlangs,$hideref=0,$hidedesc=0,$issuppl
 		{
 			if ($idprod)
 			{
-				if (empty($hidedesc)) $libelleproduitservice.=$desc;
+				if (empty($hidedesc))
+				{
+					if (!empty($conf->global->MAIN_DOCUMENTS_DESCRIPTION_FIRST))
+					{
+						$libelleproduitservice=$desc."\n".$libelleproduitservice;
+					}
+					else
+					{
+						$libelleproduitservice.=$desc;
+					}
+				}
 			}
 			else
 			{
@@ -1872,13 +1886,13 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
         	{
         		$prev_progress = 0;
         		$progress = 1;
-        		if (method_exists($object, 'get_prev_progress'))
+        		if (method_exists($object->lines[$i], 'get_prev_progress'))
         		{
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
         		}
 				$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
-			}
+        	}
         	else
 			$result.=price($sign * $total_ht, 0, $outputlangs);
 	}
@@ -2107,4 +2121,3 @@ function pdf_getSizeForImage($realpath)
 	}
 	return array('width'=>$width,'height'=>$height);
 }
-

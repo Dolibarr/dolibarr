@@ -38,8 +38,8 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 $langs->loadLangs(array("accountancy"));
 
 $page = GETPOST("page");
-$sortorder = GETPOST("sortorder");
-$sortfield = GETPOST("sortfield");
+$sortorder = GETPOST("sortorder", 'alpha');
+$sortfield = GETPOST("sortfield", 'alpha');
 $action = GETPOST('action', 'alpha');
 $search_date_start = dol_mktime(0, 0, 0, GETPOST('date_startmonth', 'int'), GETPOST('date_startday', 'int'), GETPOST('date_startyear', 'int'));
 $search_date_end = dol_mktime(0, 0, 0, GETPOST('date_endmonth', 'int'), GETPOST('date_endday', 'int'), GETPOST('date_endyear', 'int'));
@@ -53,7 +53,7 @@ if ($search_accountancy_code_end == - 1) {
 	$search_accountancy_code_end = '';
 }
 
-if (GETPOST("exportcsv")) $action = 'export_csv';
+if (GETPOST("exportcsv",'alpha')) $action = 'export_csv';
 
 
 $limit = GETPOST('limit','int')?GETPOST('limit', 'int'):$conf->liste_limit;
@@ -186,8 +186,8 @@ else {
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="page" value="'.$page.'">';
 
-	$button = '<input type="submit" name="exportcsv" class="butActionNew" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
-	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, '', $result, $result, 'title_accountancy', 0, $button);
+	$button = '<input type="submit" name="exportcsv" class="butAction" value="' . $langs->trans("Export") . ' ('.$conf->global->ACCOUNTING_EXPORT_FORMAT.')" />';
+	print_barre_liste($title_page, $page, $_SERVER["PHP_SELF"], $options, $sortfield, $sortorder, $button, $result, $result, 'title_accountancy', 0);
 
 	$moreforfilter = '';
 
@@ -298,7 +298,8 @@ else {
 	print "</table>";
 	print '</form>';
 
-	llxFooter();
 }
 
+// End of page
+llxFooter();
 $db->close();

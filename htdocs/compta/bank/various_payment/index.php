@@ -138,7 +138,6 @@ if ($result)
 	$num = $db->num_rows($result);
 	$i = 0;
 	$total = 0 ;
-	$var=true;
 
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -157,7 +156,7 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->banque->modifier)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create">'.$langs->trans('MenuNewVariousPayment');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/bank/various_payment/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuNewVariousPayment').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -345,5 +344,6 @@ else
 }
 
 
+// End of page
 llxFooter();
 $db->close();

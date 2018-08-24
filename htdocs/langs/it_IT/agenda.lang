@@ -35,7 +35,7 @@ AgendaAutoActionDesc= Definire qui gli eventi per i quali si desidera che Doliba
 AgendaSetupOtherDesc= Questa pagina consente di configurare gli altri parametri del modulo calendario.
 AgendaExtSitesDesc=Questa pagina consente di configurare i calendari esterni da includere nell'agenda di dolibarr.
 ActionsEvents=Eventi per i quali creare un'azione
-EventRemindersByEmailNotEnabled=Event reminders by email was not enabled into Agenda module setup.
+EventRemindersByEmailNotEnabled=I promemoria degli eventi via e-mail non sono stati abilitati nell'impostazione del modulo Agenda.
 ##### Agenda event labels #####
 NewCompanyToDolibarr=Soggetto terzo %s creato
 ContractValidatedInDolibarr=Contratto %s convalidato
@@ -53,9 +53,9 @@ MemberValidatedInDolibarr=Membro %s convalidato
 MemberModifiedInDolibarr=Membro %s modificato
 MemberResiliatedInDolibarr=Membro %s terminato
 MemberDeletedInDolibarr=Membro %s eliminato
-MemberSubscriptionAddedInDolibarr=Subscription %s for member %s added
-MemberSubscriptionModifiedInDolibarr=Subscription %s for member %s modified
-MemberSubscriptionDeletedInDolibarr=Subscription %s for member %s deleted
+MemberSubscriptionAddedInDolibarr=Adesione %s per membro %s aggiunta
+MemberSubscriptionModifiedInDolibarr=Adesione %s per membro %s modificata
+MemberSubscriptionDeletedInDolibarr=Adesione %s per membro %s eliminata
 ShipmentValidatedInDolibarr=Spedizione %s convalidata
 ShipmentClassifyClosedInDolibarr=Spedizione %s classificata come fatturata
 ShipmentUnClassifyCloseddInDolibarr=Spedizione %s classificata come riaperta
@@ -97,10 +97,10 @@ DateActionStart=Data di inizio
 DateActionEnd=Data di fine
 AgendaUrlOptions1=È inoltre possibile aggiungere i seguenti parametri ai filtri di output:
 AgendaUrlOptions3=<b>logina = %s</b> per limitare l'output alle azioni amministrate dall'utente<b>%s</b>
-AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> to restrict output to actions not owned by user <b>%s</b>.
-AgendaUrlOptions4=<b>logint=%s</b> to restrict output to actions assigned to user <b>%s</b> (owner and others).
-AgendaUrlOptionsProject=<b>project=__PROJECT_ID__</b> to restrict output to actions linked to project <b>__PROJECT_ID__</b>.
-AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> to exclude automatic event.
+AgendaUrlOptionsNotAdmin=<b>logina=!%s</b> per limitare l'output alle azioni non di proprietà dell'utente <b>%s</b>.
+AgendaUrlOptions4=<b>logint=%s</b> per limitare l'output alle azioni assegnate all'utente <b>%s</b> (proprietario e altri).
+AgendaUrlOptionsProject=<b>project= __PROJECT_ID__</b> per limitare l'output alle azioni collegate al progetto <b>__PROJECT_ID__ </b>.
+AgendaUrlOptionsNotAutoEvent=<b>notactiontype=systemauto</b> per escludere l'evento automatico.
 AgendaShowBirthdayEvents=Visualizza i compleanni dei contatti
 AgendaHideBirthdayEvents=Nascondi i compleanni dei contatti
 Busy=Occupato
@@ -112,7 +112,7 @@ ExportCal=Esporta calendario
 ExtSites=Calendari esterni
 ExtSitesEnableThisTool=Mostra calendari esterni (definiti nelle impostazioni generali) nell'agenda. Questo non influisce sui calendari esterni definiti dall'utente.
 ExtSitesNbOfAgenda=Numero di calendari
-AgendaExtNb=Calendar no. %s
+AgendaExtNb=Calendario n. %s
 ExtSiteUrlAgenda=URL per accedere al file ICal
 ExtSiteNoLabel=Nessuna descrizione
 VisibleTimeRange=Filtro orari visibili

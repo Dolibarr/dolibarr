@@ -108,26 +108,35 @@ function versiondolibarrarray()
 
 
 /**
- *	Launch a sql file. Function used by:
+ *	Launch a sql file. Function is used by:
  *  - Migrate process (dolibarr-xyz-abc.sql)
  *  - Loading sql menus (auguria)
  *  - Running specific Sql by a module init
+ *  - Loading sql file of website import package
  *  Install process however does not use it.
- *  Note that Sql files must have all comments at start of line.
+ *  Note that Sql files must have all comments at start of line. Also this function take ';' as the char to detect end of sql request
  *
- *	@param		string	$sqlfile		Full path to sql file
- * 	@param		int		$silent			1=Do not output anything, 0=Output line for update page
- * 	@param		int		$entity			Entity targeted for multicompany module
- *	@param		int		$usesavepoint	1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
- *	@param		string	$handler		Handler targeted for menu
- *	@param 		string	$okerror		Family of errors we accept ('default', 'none')
- * 	@return		int						<=0 if KO, >0 if OK
+ *	@param		string	$sqlfile			Full path to sql file
+ * 	@param		int		$silent				1=Do not output anything, 0=Output line for update page
+ * 	@param		int		$entity				Entity targeted for multicompany module
+ *	@param		int		$usesavepoint		1=Run a savepoint before each request and a rollback to savepoint if error (this allow to have some request with errors inside global transactions).
+ *	@param		string	$handler			Handler targeted for menu (replace __HANDLER__ with this value)
+ *	@param 		string	$okerror			Family of errors we accept ('default', 'none')
+ *  @param		int		$linelengthlimit	Limit for length of each line (Use 0 if unknown, may be faster if defined)
+ *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
+ * 	@return		int							<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$okerror='default')
+function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $linelengthlimit=32768, $nocommentremoval=0)
 {
     global $db, $conf, $langs, $user;
 
     dol_syslog("Admin.lib::run_sql run sql file ".$sqlfile." silent=".$silent." entity=".$entity." usesavepoint=".$usesavepoint." handler=".$handler." okerror=".$okerror, LOG_DEBUG);
+
+    if (! is_numeric($linelengthlimit))
+    {
+    	dol_syslog("Admin.lib::run_sql param linelengthlimit is not a numeric", LOG_ERR);
+    	return -1;
+    }
 
     $ok=0;
     $error=0;
@@ -143,7 +152,9 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
     {
         while (! feof($fp))
         {
-            $buf = fgets($fp, 32768);
+        	// Warning fgets with second parameter that is null or 0 hang.
+        	if ($linelengthlimit > 0) $buf = fgets($fp, $linelengthlimit);
+        	else $buf = fgets($fp);
 
             // Test if request must be ran only for particular database or version (if yes, we must remove the -- comment)
             if (preg_match('/^--\sV(MYSQL|PGSQL)([^\s]*)/i',$buf,$reg))
@@ -191,13 +202,13 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             }
 
             // Add line buf to buffer if not a comment
-            if (! preg_match('/^\s*--/',$buf))
+            if ($nocommentremoval || ! preg_match('/^\s*--/',$buf))
             {
-                $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
+            	if (empty($nocommentremoval)) $buf=preg_replace('/([,;ERLT\)])\s*--.*$/i','\1',$buf); //remove comment from a line that not start with -- before add it to the buffer
                 $buffer .= trim($buf);
             }
 
-            //          print $buf.'<br>';
+            //print $buf.'<br>';exit;
 
             if (preg_match('/;/',$buffer))	// If string contains ';', it's end of a request string, we save it in arraysql.
             {
@@ -229,7 +240,7 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
             if (! isset($listofmaxrowid[$table]))
             {
                 //var_dump($db);
-                $sqlgetrowid='SELECT MAX(rowid) as max from '.$table;
+                $sqlgetrowid='SELECT MAX(rowid) as max from '.preg_replace('/^llx_/', MAIN_DB_PREFIX, $table);
                 $resql=$db->query($sqlgetrowid);
                 if ($resql)
                 {
@@ -246,9 +257,10 @@ function run_sql($sqlfile,$silent=1,$entity='',$usesavepoint=1,$handler='',$oker
                     break;
                 }
             }
+            // Replace __+MAX_llx_table__ with +999
             $from='__+MAX_'.$table.'__';
             $to='+'.$listofmaxrowid[$table];
-            $newsql=str_replace($from,$to,$newsql);
+            $newsql=str_replace($from, $to, $newsql);
             dol_syslog('Admin.lib::run_sql New Request '.($i+1).' (replacing '.$from.' to '.$to.')', LOG_DEBUG);
 
             $arraysql[$i]=$newsql;
@@ -749,7 +761,9 @@ function listOfSessions()
                 {
                     $sessValues = file_get_contents($fullpath);	// get raw session data
                     // Example of possible value
-                    //$sessValues = 'newtoken|s:32:"1239f7a0c4b899200fe9ca5ea394f307";dol_loginmesg|s:0:"";newtoken|s:32:"1236457104f7ae0f328c2928973f3cb5";dol_loginmesg|s:0:"";token|s:32:"123615ad8d650c5cc4199b9a1a76783f";dol_login|s:5:"admin";dol_authmode|s:8:"dolibarr";dol_tz|s:1:"1";dol_tz_string|s:13:"Europe/Berlin";dol_dst|i:0;dol_dst_observed|s:1:"1";dol_dst_first|s:0:"";dol_dst_second|s:0:"";dol_screenwidth|s:4:"1920";dol_screenheight|s:3:"971";dol_company|s:12:"MyBigCompany";dol_entity|i:1;mainmenu|s:4:"home";leftmenuopened|s:10:"admintools";idmenu|s:0:"";leftmenu|s:10:"admintools";';
+					//$sessValues = 'newtoken|s:32:"1239f7a0c4b899200fe9ca5ea394f307";dol_loginmesg|s:0:"";newtoken|s:32:"1236457104f7ae0f328c2928973f3cb5";dol_loginmesg|s:0:"";token|s:32:"123615ad8d650c5cc4199b9a1a76783f";
+					// dol_login|s:5:"admin";dol_authmode|s:8:"dolibarr";dol_tz|s:1:"1";dol_tz_string|s:13:"Europe/Berlin";dol_dst|i:0;dol_dst_observed|s:1:"1";dol_dst_first|s:0:"";dol_dst_second|s:0:"";dol_screenwidth|s:4:"1920";
+					// dol_screenheight|s:3:"971";dol_company|s:12:"MyBigCompany";dol_entity|i:1;mainmenu|s:4:"home";leftmenuopened|s:10:"admintools";idmenu|s:0:"";leftmenu|s:10:"admintools";';
 
                     if (preg_match('/dol_login/i',$sessValues) && // limit to dolibarr session
                         (preg_match('/dol_entity\|i:'.$conf->entity.';/i',$sessValues) || preg_match('/dol_entity\|s:([0-9]+):"'.$conf->entity.'"/i',$sessValues)) && // limit to current entity
@@ -1199,7 +1213,7 @@ function activateModulesRequiredByCountry($country_code)
 							{
 								activateModule($modName);
 
-								setEventMessage($objMod->automatic_activation[$country_code],'warnings');
+								setEventMessages($objMod->automatic_activation[$country_code], null, 'warnings');
 							}
 
 						}

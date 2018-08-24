@@ -356,7 +356,15 @@ if (empty($reshook))
 										$array_options = $lines[$i]->array_options;
 									}
 
-									$result = $object->addline($desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx, $lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx, $lines[$i]->fk_product, $lines[$i]->remise_percent, 'HT', 0, $lines[$i]->info_bits, $product_type, $lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line, $lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options, $lines[$i]->ref_supplier, $lines[$i]->fk_unit);
+									$result = $object->addline(
+										$desc, $lines[$i]->subprice, $lines[$i]->qty, $lines[$i]->tva_tx,
+										$lines[$i]->localtax1_tx, $lines[$i]->localtax2_tx,
+										$lines[$i]->fk_product, $lines[$i]->remise_percent,
+										'HT', 0, $lines[$i]->info_bits, $product_type,
+										$lines[$i]->rang, $lines[$i]->special_code, $fk_parent_line,
+										$lines[$i]->fk_fournprice, $lines[$i]->pa_ht, $label, $array_options,
+										$lines[$i]->ref_supplier, $lines[$i]->fk_unit
+									);
 
 									if ($result > 0) {
 										$lineid = $result;
@@ -581,21 +589,34 @@ if (empty($reshook))
 				$productsupplier = new ProductFournisseur($db);
 
 				$idprod=0;
-				if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
+				if (GETPOST('idprodfournprice','alpha') == -1 || GETPOST('idprodfournprice','alpha') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
 
-				if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice'), $reg))
+				if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice','alpha'), $reg))
 				{
 					$idprod=$reg[1];
 					$res=$productsupplier->fetch($idprod);
-					// Call to init properties of $productsupplier
+					// Call to init some price properties of $productsupplier
 					// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-					$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+					if (! empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER))
+					{
+						$fksoctosearch = 0;
+						$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+						if ($productsupplier->fourn_socid != $socid)	// The price we found is for another supplier, so we clear supplier price
+						{
+							$productsupplier->ref_supplier = '';
+						}
+					}
+					else
+					{
+						$fksoctosearch = $object->thirdparty->id;
+						$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+					}
 				}
-				elseif (GETPOST('idprodfournprice') > 0)
+				elseif (GETPOST('idprodfournprice','alpha') > 0)
 				{
 					//$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
 					$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
-					$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+					$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice','alpha'), $qtytosearch);
 					$res=$productsupplier->fetch($idprod);
 				}
 
@@ -603,7 +624,11 @@ if (empty($reshook))
 				{
 					$label = $productsupplier->label;
 
-					$desc = $productsupplier->description;
+					// if we use supplier description of the products
+					if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+					    $desc = $productsupplier->desc_supplier;
+					} else $desc = $productsupplier->description;
+					
 					if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 					$pu_ht = $productsupplier->fourn_pu;
@@ -613,8 +638,8 @@ if (empty($reshook))
 
 					$ref_supplier = $productsupplier->ref_supplier;
 
-					$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
-					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+					$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
+					$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 					if (empty($tva_tx)) $tva_npr=0;
 					$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 					$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);

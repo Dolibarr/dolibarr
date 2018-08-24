@@ -851,7 +851,6 @@ if ($rowid > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

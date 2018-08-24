@@ -4,7 +4,8 @@
  * Copyright (C) 2005-2012 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
- *
+ * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -310,7 +311,8 @@ class ActionComm extends CommonObject
         $sql.= "transparency,";
         $sql.= "fk_element,";
         $sql.= "elementtype,";
-        $sql.= "entity";
+        $sql.= "entity,";
+        $sql.= "extraparams";
         $sql.= ") VALUES (";
         $sql.= "'".$this->db->idate($now)."', ";
         $sql.= (strval($this->datep)!=''?"'".$this->db->idate($this->datep)."'":"null").", ";
@@ -329,7 +331,8 @@ class ActionComm extends CommonObject
         $sql.= "'".$this->db->escape($this->transparency)."', ";
         $sql.= (! empty($this->fk_element)?$this->fk_element:"null").", ";
         $sql.= (! empty($this->elementtype)?"'".$this->db->escape($this->elementtype)."'":"null").", ";
-        $sql.= $conf->entity;
+        $sql.= $conf->entity.",";
+        $sql.= (! empty($this->extraparams)?"'".$this->db->escape($this->extraparams)."'":"null");
         $sql.= ")";
 
         dol_syslog(get_class($this)."::add", LOG_DEBUG);
@@ -618,7 +621,7 @@ class ActionComm extends CommonObject
                 $this->contact->id			= $obj->fk_contact;		// deprecated
 
                 $this->fk_element			= $obj->elementid;
-		$this->elementid			= $obj->elementid;
+                $this->elementid			= $obj->elementid;
                 $this->elementtype			= $obj->elementtype;
 
                 $this->fetchResources();
@@ -1218,7 +1221,10 @@ class ActionComm extends CommonObject
 
 		if (! empty($conf->dol_no_mouse_hover)) $notooltip=1;   // Force disable tooltips
 
-		$label = $this->label;
+                if ((!$user->rights->agenda->allactions->read && $this->author->id != $user->id) || (!$user->rights->agenda->myactions->read && $this->author->id == $user->id))
+                    $option = 'nolink';
+		
+                $label = $this->label;
 		if (empty($label)) $label=$this->libelle;   // For backward compatibility
 
 		$result='';
@@ -1258,11 +1264,7 @@ class ActionComm extends CommonObject
 		    $linkclose.=' title="'.dol_escape_htmltag($tooltip, 1).'"';
 		    $linkclose.=' class="'.$classname.' classfortooltip"';
 
-		    /*if (! is_object($hookmanager))
-		    {
-		        include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-		        $hookmanager=new HookManager($this->db);
-		    }
+		    /*
 		    $hookmanager->initHooks(array('actiondao'));
 		    $parameters=array('id'=>$this->id);
 		    $reshook=$hookmanager->executeHooks('getnomurltooltip',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1288,6 +1290,10 @@ class ActionComm extends CommonObject
 		$linkstart.=$linkclose.'>';
 		$linkend='</a>';
 
+                if ($option == 'nolink') {
+                    $linkstart = '';
+                    $linkend = '';
+                }
 		//print 'rrr'.$this->libelle.'rrr'.$this->label.'rrr'.$withpicto;
 
         if ($withpicto == 2)
@@ -1321,11 +1327,6 @@ class ActionComm extends CommonObject
         $result.=$linkend;
 
         global $action;
-        if (! is_object($hookmanager))
-        {
-        	include_once DOL_DOCUMENT_ROOT.'/core/class/hookmanager.class.php';
-        	$hookmanager=new HookManager($this->db);
-        }
         $hookmanager->initHooks(array('actiondao'));
         $parameters=array('id'=>$this->id, 'getnomurl'=>$result);
         $reshook=$hookmanager->executeHooks('getNomUrl',$parameters,$this,$action);    // Note that $action and $object may have been modified by some hooks
@@ -1350,9 +1351,9 @@ class ActionComm extends CommonObject
     {
         global $conf,$langs,$dolibarr_main_url_root,$mysoc;
 
-        require_once (DOL_DOCUMENT_ROOT ."/core/lib/xcal.lib.php");
-        require_once (DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php");
-        require_once (DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT ."/core/lib/xcal.lib.php";
+        require_once DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php";
+        require_once DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php";
 
         dol_syslog(get_class($this)."::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 

@@ -23,7 +23,7 @@
  *  \ingroup    holiday
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/common.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -138,6 +138,6 @@ print '</tbody>'."\n";
 print '</table>'."\n";
 print '</div>';
 
+// End of page
 llxFooter();
-
 $db->close();

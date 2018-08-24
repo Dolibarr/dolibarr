@@ -74,6 +74,7 @@ NoWidget=Ingen widget
 GoToApiExplorer=Gå til API-utforsker
 ListOfMenusEntries=Liste over menyoppføringer
 ListOfPermissionsDefined=Liste over definerte tillatelser
+SeeExamples=Se eksempler her
 EnabledDesc=Betingelse for å ha dette feltet aktivt (Eksempler: 1 eller $conf->global->MYMODULE_MYOPTION)
 VisibleDesc=Er feltet synlig? (Eksempler: 0=Aldri synlig, 1=Synlig på liste og opprett/oppdater/vis skjemaer, 2=Bare synlig på listen, 3=Synlig på opprett/oppdater/vis kun skjema. Bruk av negativ verdi betyr at feltet ikke vises som standard på listen, men kan velges for visning)
 IsAMeasureDesc=Kan verdien av feltet bli kumulert for å få en total i listen? (Eksempler: 1 eller 0)
@@ -95,3 +96,6 @@ DropTableIfEmpty=(Slett tabell hvis tom)
 TableDoesNotExists=Tabellen %s finnes ikke
 TableDropped=Tabell %s slettet
 InitStructureFromExistingTable=Bygg struktur-matrisestrengen fra en eksisterende tabell
+UseAboutPage=Ikke tillat "om" siden
+UseDocFolder=Ikke tillat dokumentasjonsmappen
+UseSpecificReadme=Bruk en bestemt Les-meg

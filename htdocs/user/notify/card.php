@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2014 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2010-2014 Juanjo Menent	<jmenent@2byte.es>
+ * Copyright (C) 2010-2014 Juanjo Menent	    <jmenent@2byte.es>
  * Copyright (C) 2015      Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016      Abbes Bahfir         <contact@dolibarrpar.com>
  *
@@ -67,7 +67,7 @@ if ($action == 'add')
 
     if ($actionid <= 0)
     {
-	    setEventMessage($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), 'errors');
+	    setEventMessages($langs->trans("ErrorFieldRequired",$langs->transnoentitiesnoconv("Action")), null, 'errors');
         $error++;
     }
 
@@ -205,7 +205,7 @@ if ($result > 0)
     print_liste_field_titre('');
 	print "</tr>\n";
 
-    $var=false;
+
 //    $listofemails=$object->thirdparty_and_contact_email_array();
     if ($object->email)
     {
@@ -277,7 +277,6 @@ if ($result > 0)
 
     // List of active notifications
     print_fiche_titre($langs->trans("ListOfActiveNotifications").' ('.$num.')','','');
-    $var=true;
 
     // Line with titles
     print '<table width="100%" class="noborder">';
@@ -299,7 +298,6 @@ if ($result > 0)
 
         while ($i < $num)
         {
-            $var = !$var;
 
             $obj = $db->fetch_object($resql);
 
@@ -509,7 +507,6 @@ if ($result > 0)
 }
 else dol_print_error('','RecordNotFound');
 
-
+// End of page
 llxFooter();
-
 $db->close();

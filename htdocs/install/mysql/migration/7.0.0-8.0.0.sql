@@ -32,9 +32,14 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- Forgot in < 4.0
+
+ALTER TABLE llx_c_ziptown DROP FOREIGN KEY fk_c_ziptown_fk_pays;
+ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country(rowid);
 
 -- Forgot in 7.0
 
+-- VMYSQL4.1 DROP INDEX nom on llx_societe;
 -- VMYSQL4.1 ALTER TABLE llx_c_regions drop FOREIGN KEY fk_c_regions_fk_pays;
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 
@@ -42,9 +47,19 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
+ALTER TABLE llx_ecm_files DROP INDEX uk_ecm_files;
+ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, entity);
+
+UPDATE llx_const set name = __ENCRYPT('INVOICE_FREE_TEXT')__  where name = __ENCRYPT('FACTURE_FREE_TEXT')__;
+
+
+
 -- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
+
+-- drop old postgresql unique key
+-- VPGSQL8.2 DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;
 
@@ -81,6 +96,9 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- For 8.0
 
+DROP TABLE llx_website_account;
+DROP TABLE llx_website_account_extrafields;
+
 ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
 -- delete old permission no more used
@@ -94,7 +112,10 @@ delete from llx_usergroup_rights where fk_id not in (select id from llx_rights_d
 ALTER TABLE llx_inventory ADD COLUMN fk_product integer DEFAULT NULL;
 ALTER TABLE llx_inventory MODIFY COLUMN fk_warehouse integer DEFAULT NULL;
 
-ALTER TABLE llx_c_type_fees ADD COLUMN llx_c_type_fees integer DEFAULT 0;
+ALTER TABLE llx_c_type_fees DROP COLUMN llx_c_type_fees;
+ALTER TABLE llx_c_type_fees ADD COLUMN type integer DEFAULT 0;
+
+ALTER TABLE llx_c_ecotaxe CHANGE COLUMN libelle label varchar(255);
 
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 
@@ -177,7 +198,7 @@ ALTER TABLE llx_oauth_token ADD COLUMN tokenstring text;
 ALTER TABLE llx_societe_rib ADD COLUMN type varchar(32) DEFAULT 'ban' after rowid;
 ALTER TABLE llx_societe_rib ADD COLUMN last_four varchar(4);
 ALTER TABLE llx_societe_rib ADD COLUMN card_type varchar(255);
-ALTER TABLE llx_societe_rib ADD COLUMN cvn varchar(255);										
+ALTER TABLE llx_societe_rib ADD COLUMN cvn varchar(255);
 ALTER TABLE llx_societe_rib ADD COLUMN exp_date_month INTEGER;
 ALTER TABLE llx_societe_rib ADD COLUMN exp_date_year INTEGER;
 ALTER TABLE llx_societe_rib ADD COLUMN country_code varchar(10);
@@ -195,7 +216,9 @@ UPDATE llx_societe_rib set type = 'ban' where type = '' OR type IS NULL;
 -- VMYSQL4.3 ALTER TABLE llx_societe_rib MODIFY COLUMN type varchar(32) NOT NULL;
 -- VPGSQL8.2 ALTER TABLE llx_societe_rib ALTER COLUMN type SET NOT NULL;
    
-CREATE TABLE llx_ticketsup
+   
+-- Module ticket
+CREATE TABLE llx_ticket
 (
 	rowid       integer AUTO_INCREMENT PRIMARY KEY,
 	entity		integer DEFAULT 1,
@@ -222,11 +245,11 @@ CREATE TABLE llx_ticketsup
 	tms timestamp
 )ENGINE=innodb;
 
-ALTER TABLE llx_ticketsup ADD COLUMN notify_tiers_at_create integer;
-ALTER TABLE llx_ticketsup DROP INDEX uk_ticketsup_rowid_track_id;
-ALTER TABLE llx_ticketsup ADD UNIQUE uk_ticketsup_track_id (track_id);
+ALTER TABLE llx_ticket ADD COLUMN notify_tiers_at_create integer;
+ALTER TABLE llx_ticket DROP INDEX uk_ticket_rowid_track_id;
+ALTER TABLE llx_ticket ADD UNIQUE uk_ticket_track_id (track_id);
 
-CREATE TABLE llx_ticketsup_msg
+CREATE TABLE llx_ticket_msg
 (
 	rowid       integer AUTO_INCREMENT PRIMARY KEY,
 	entity		integer DEFAULT 1,
@@ -238,9 +261,9 @@ CREATE TABLE llx_ticketsup_msg
 )ENGINE=innodb;
 
 
-ALTER TABLE llx_ticketsup_msg ADD CONSTRAINT fk_ticketsup_msg_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticketsup (track_id);
+ALTER TABLE llx_ticket_msg ADD CONSTRAINT fk_ticket_msg_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
-CREATE TABLE llx_ticketsup_logs
+CREATE TABLE llx_ticket_logs
 (
 	rowid       integer AUTO_INCREMENT PRIMARY KEY,
 	entity		integer DEFAULT 1,
@@ -250,9 +273,9 @@ CREATE TABLE llx_ticketsup_logs
 	message	text
 )ENGINE=innodb;
 
-ALTER TABLE llx_ticketsup_logs ADD CONSTRAINT fk_ticketsup_logs_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticketsup (track_id);
+ALTER TABLE llx_ticket_logs ADD CONSTRAINT fk_ticket_logs_fk_track_id FOREIGN KEY (fk_track_id) REFERENCES llx_ticket (track_id);
 
-CREATE TABLE llx_ticketsup_extrafields
+CREATE TABLE llx_ticket_extrafields
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
@@ -263,7 +286,7 @@ CREATE TABLE llx_ticketsup_extrafields
 
 
 -- Create dictionaries tables for ticket
-create table llx_c_ticketsup_severity
+create table llx_c_ticket_severity
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,
@@ -276,7 +299,7 @@ create table llx_c_ticketsup_severity
   description	varchar(255)
 )ENGINE=innodb;
 
-create table llx_c_ticketsup_type
+create table llx_c_ticket_type
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,
@@ -288,7 +311,7 @@ create table llx_c_ticketsup_type
   description	varchar(255)
 )ENGINE=innodb;
 
-create table llx_c_ticketsup_category
+create table llx_c_ticket_category
 (
   rowid			integer AUTO_INCREMENT PRIMARY KEY,
   entity		integer DEFAULT 1,
@@ -300,27 +323,30 @@ create table llx_c_ticketsup_category
   description	varchar(255)
 )ENGINE=innodb;
 
-ALTER TABLE llx_c_ticketsup_category ADD UNIQUE INDEX uk_code (code, entity);
-ALTER TABLE llx_c_ticketsup_severity ADD UNIQUE INDEX uk_code (code, entity);
-ALTER TABLE llx_c_ticketsup_type     ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticket_category ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticket_severity ADD UNIQUE INDEX uk_code (code, entity);
+ALTER TABLE llx_c_ticket_type     ADD UNIQUE INDEX uk_code (code, entity);
 
 
 
 -- Load data
-INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('LOW',      '10', 'Low',                 '', 1, 0, NULL);
-INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('NORMAL',   '20', 'Normal',              '', 1, 1, NULL);
-INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('HIGH',     '30', 'High',                '', 1, 0, NULL);
-INSERT INTO llx_c_ticketsup_severity (code, pos, label, color, active, use_default, description) VALUES('BLOCKING', '40', 'Critical / blocking', '', 1, 0, NULL);
+INSERT INTO llx_c_ticket_severity (code, pos, label, color, active, use_default, description) VALUES('LOW',      '10', 'Low',                 '', 1, 0, NULL);
+INSERT INTO llx_c_ticket_severity (code, pos, label, color, active, use_default, description) VALUES('NORMAL',   '20', 'Normal',              '', 1, 1, NULL);
+INSERT INTO llx_c_ticket_severity (code, pos, label, color, active, use_default, description) VALUES('HIGH',     '30', 'High',                '', 1, 0, NULL);
+INSERT INTO llx_c_ticket_severity (code, pos, label, color, active, use_default, description) VALUES('BLOCKING', '40', 'Critical / blocking', '', 1, 0, NULL);
 
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('COM',     '10', 'Commercial question',           1, 1, NULL);
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('ISSUE',   '20', 'Issue or problem'  ,            1, 0, NULL);
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('REQUEST', '25', 'Change or enhancement request', 1, 0, NULL);
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('PROJECT', '30', 'Project', 0, 0, NULL);
-INSERT INTO llx_c_ticketsup_type (code, pos, label, active, use_default, description) VALUES('OTHER',   '40', 'Other',   1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('COM',     '10', 'Commercial question',           1, 1, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('ISSUE',   '20', 'Issue or problem'  ,            1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('REQUEST', '25', 'Change or enhancement request', 1, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('PROJECT', '30', 'Project', 0, 0, NULL);
+INSERT INTO llx_c_ticket_type (code, pos, label, active, use_default, description) VALUES('OTHER',   '40', 'Other',   1, 0, NULL);
 
-INSERT INTO llx_c_ticketsup_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);
+INSERT INTO llx_c_ticket_category (code, pos, label, active, use_default, description) VALUES('OTHER', '10', 'Other',           1, 1, NULL);
 
-
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(155, 'ticket', 'internal', 'SUPPORTTEC', 'Utilisateur contact support', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(156, 'ticket', 'internal', 'CONTRIBUTOR', 'Intervenant', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(157, 'ticket', 'external', 'SUPPORTCLI', 'Contact client suivi incident', 1, NULL);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active, module) VALUES(158, 'ticket', 'external', 'CONTRIBUTOR', 'Intervenant', 1, NULL);
 
 
 
@@ -520,4 +546,16 @@ INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, nc
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SB', 11801, NULL, 0, 'SB', 'Sumatera Barat', 1);    
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SS', 11801, NULL, 0, 'SS', 'Sumatera Selatan', 1);    
 INSERT INTO llx_c_departements ( code_departement, fk_region, cheflieu, tncc, ncc, nom, active) VALUES ('SU', 11801, NULL, 0, 'SU', 'Sumatera Utara	', 1);
+
+-- New available chart of accounts
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (188, 'RO-BASE', 'Plan de conturi romanesc',    1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR03', 'Standardkontenrahmen SKR 03', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR04', 'Standardkontenrahmen SKR 04', 1);
+
+
+-- advtargetmailing
+ALTER TABLE llx_advtargetemailing ADD COLUMN fk_element integer NOT NULL;
+ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
+UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing';
+ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 

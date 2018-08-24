@@ -1210,6 +1210,6 @@ if ($mysoc->tva_assuj != 'franchise')	// Assujetti
 print "</table>";
 print '<br>';
 
+// End of page
 llxFooter();
-
 $db->close();

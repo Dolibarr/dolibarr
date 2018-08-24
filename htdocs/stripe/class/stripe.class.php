@@ -228,7 +228,7 @@ class Stripe extends CommonObject
 		//$sql.= " AND sa.entity IN (".getEntity('societe').")";
 		$sql.= " AND sa.type = 'card'";
 
-		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc, LOG_DEBUG);
+		dol_syslog(get_class($this) . "::fetch search stripe card id for paymentmode id=".$object->id.", stripeacc=".$stripeacc.", status=".$status.", createifnotlinkedtostripe=".$createifnotlinkedtostripe, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
@@ -236,7 +236,7 @@ class Stripe extends CommonObject
 			{
 				$obj = $this->db->fetch_object($resql);
 				$cardref = $obj->stripe_card_ref;
-				dol_syslog("*************".$cardref);
+				dol_syslog("************* cardref=".$cardref);
 				if ($cardref)
 				{
 					try {
@@ -269,6 +269,7 @@ class Stripe extends CommonObject
 
 					//$a = \Stripe\Stripe::getApiKey();
 					//var_dump($a);var_dump($stripeacc);exit;
+					dol_syslog("Try to create card dataforcard = ".dol_json_encode($dataforcard));
 					try {
 						if (empty($stripeacc)) {				// If the Stripe connect account not set, we use common API usage
 							$card = $cu->sources->create($dataforcard);

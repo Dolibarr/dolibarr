@@ -172,13 +172,9 @@ if ($resql)
 	print '</td>';
 	print "</tr>\n";
 
-	$var=true;
-
 	while ($i < min($num,$conf->liste_limit))
 	{
 		$obj = $db->fetch_object($resql);
-
-
 
 		print '<tr class="oddeven">';
 		print '<td>';

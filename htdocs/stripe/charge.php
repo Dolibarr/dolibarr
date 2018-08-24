@@ -207,5 +207,6 @@ if (!$rowid)
 
 }
 
+// End of page
 llxFooter();
 $db->close();

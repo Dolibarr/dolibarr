@@ -286,7 +286,7 @@ class FormMail extends Form
 
 			$disablebademails=1;
 
-	   		// Define output language
+			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->param['langsmodels'];
@@ -917,7 +917,7 @@ class FormMail extends Form
 				}
 
 				// Complete substitution array with the url to make online payment
-				$paymenturl='';
+				$paymenturl=''; $validpaymentmethod=array();
 				if (empty($this->substit['__REF__']))
 				{
 					$paymenturl='';
@@ -926,16 +926,27 @@ class FormMail extends Form
 				{
 					// Set the online payment url link into __ONLINE_PAYMENT_URL__ key
 					require_once DOL_DOCUMENT_ROOT.'/core/lib/payments.lib.php';
-					$langs->load('paypal');
+					$langs->loadLangs(array('paypal','other'));
 					$typeforonlinepayment='free';
 					if ($this->param["models"]=='order'   || $this->param["models"]=='order_send')   $typeforonlinepayment='order';		// TODO use detection on something else than template
 					if ($this->param["models"]=='invoice' || $this->param["models"]=='facture_send') $typeforonlinepayment='invoice';	// TODO use detection on something else than template
 					if ($this->param["models"]=='member') $typeforonlinepayment='member';												// TODO use detection on something else than template
 					$url=getOnlinePaymentUrl(0, $typeforonlinepayment, $this->substit['__REF__']);
 					$paymenturl=$url;
+
+					$validpaymentmethod = getValidOnlinePaymentMethods('');
 				}
-				$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=($paymenturl?$langs->trans("PredefinedMailContentLink", $paymenturl):'');
-				$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
+
+				if (count($validpaymentmethod) > 0 && $paymenturl)
+				{
+					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']=str_replace('\n',"\n",$langs->transnoentities("PredefinedMailContentLink", $paymenturl));
+					$this->substit['__ONLINE_PAYMENT_URL__']=$paymenturl;
+				}
+				else
+				{
+					$this->substit['__ONLINE_PAYMENT_TEXT_AND_URL__']='';
+					$this->substit['__ONLINE_PAYMENT_URL__']='';
+				}
 
 				//Add lines substitution key from each line
 				$lines = '';
@@ -952,7 +963,7 @@ class FormMail extends Form
 				$defaultmessage=str_replace('\n',"\n",$defaultmessage);
 
 				// Deal with format differences between message and signature (text / HTML)
-				if(dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
+				if (dol_textishtml($defaultmessage) && !dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 					$this->substit['__USER_SIGNATURE__'] = dol_nl2br($this->substit['__USER_SIGNATURE__']);
 				} else if(!dol_textishtml($defaultmessage) && dol_textishtml($this->substit['__USER_SIGNATURE__'])) {
 					$defaultmessage = dol_nl2br($defaultmessage);
@@ -1046,7 +1057,7 @@ class FormMail extends Form
 	 *      This search into table c_email_templates. Used by the get_form function.
 	 *
 	 * 		@param	DoliDB		$db				Database handler
-	 * 		@param	string		$type_template	Get message for type=$type_template, type='all' also included.
+	 * 		@param	string		$type_template	Get message for model/type=$type_template, type='all' also included.
 	 *      @param	string		$user			Get template public or limited to this user
 	 *      @param	Translate	$outputlangs	Output lang object
 	 *      @param	int			$id				Id of template to find, or -1 for first found with position 0, or 0 for first found whatever is position (priority order depends on lang provided or not) or -2 for exact match with label (no answer if not found)
@@ -1071,7 +1082,7 @@ class FormMail extends Form
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if ($label) $sql.=" AND label ='".$db->escape($label)."'";
-		if (is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
+		if (! ($id > 0) && is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
 		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label","ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''
@@ -1100,7 +1111,8 @@ class FormMail extends Form
 			}
 			else {	// If there is no template at all
 				$defaultmessage='';
-				if     ($type_template=='facture_send')	            { $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
+				if ($type_template=='body')							{ $defaultmessage=$this->withbody; }		// Special case to use this->withbody as content
+				elseif ($type_template=='facture_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoice"); }
 				elseif ($type_template=='facture_relance')			{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendInvoiceReminder"); }
 				elseif ($type_template=='propal_send')				{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendProposal"); }
 				elseif ($type_template=='supplier_proposal_send')	{ $defaultmessage=$outputlangs->transnoentities("PredefinedMailContentSendSupplierProposal"); }

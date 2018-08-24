@@ -289,8 +289,13 @@ textarea.cke_source:focus
 .liste_titre input[name=search_smonth], .liste_titre input[name=search_month], .liste_titre input[name=search_emonth], .liste_titre input[name=smonth], .liste_titre input[name=month],
 .liste_titre input[name=month_lim], .liste_titre input[name=month_start], .liste_titre input[name=month_end], .liste_titre input[name=month_create],
 .liste_titre input[name=search_month_lim], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end], .liste_titre input[name=search_month_create],
+.liste_titre input[name=search_month_create], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end],
+.liste_titre input[name=day_date_when], .liste_titre input[name=dayvalid], .liste_titre input[name=search_orderday], .liste_titre input[name=search_deliveryday],
+.liste_titre input[name=search_sday], .liste_titre input[name=search_day], .liste_titre input[name=search_eday], .liste_titre input[name=sday], .liste_titre input[name=day], .liste_titre select[name=day],
+.liste_titre input[name=day_lim], .liste_titre input[name=day_start], .liste_titre input[name=day_end], .liste_titre input[name=day_create],
+.liste_titre input[name=search_day_lim], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end], .liste_titre input[name=search_day_create],
+.liste_titre input[name=search_day_create], .liste_titre input[name=search_day_start], .liste_titre input[name=search_day_end],
 .liste_titre input[name=search_day_date_when], .liste_titre input[name=search_month_date_when], .liste_titre input[name=search_year_date_when],
-.liste_titre input[name=search_month_create], .liste_titre input[name=search_month_start], .liste_titre input[name=search_month_end]
 .liste_titre input[name=search_dtstartday], .liste_titre input[name=search_dtendday], .liste_titre input[name=search_dtstartmonth], .liste_titre input[name=search_dtendmonth]
 {
 	margin-right: 4px;
@@ -578,6 +583,9 @@ th .button {
 .soixantepercent {
 	width: 60%;
 }
+.quatrevingtquinzepercent {
+	width: 95%;
+}
 textarea.centpercent {
 	width: 96%;
 }
@@ -602,6 +610,9 @@ textarea.centpercent {
 }
 .nowraponall {	/* no wrap on all devices */
 	white-space: nowrap;
+}
+.wrapimp {
+	white-space: normal !important;
 }
 .wordwrap {
 	word-wrap: break-word;
@@ -678,6 +689,13 @@ div.divsearchfield {
 	margin-top: 4px;
     margin-bottom: 4px;
   	padding-left: 2px;
+}
+.divsearchfieldfilter {
+    text-overflow: clip;
+    overflow: auto;
+    white-space: nowrap;
+    padding-bottom: 5px;
+    opacity: 0.6;
 }
 div.confirmmessage {
 	padding-top: 6px;
@@ -789,6 +807,10 @@ select.flat.selectlimit {
 .amountremaintopayback {
 	font-weight: bold;
 }
+.amountpaymentneutral {
+	font-weight: bold;
+	font-size: 1.4em;
+}
 .savingdocmask {
 	margin-top: 6px;
 	margin-bottom: 12px;
@@ -850,11 +872,10 @@ div.fiche>form>div.div-table-responsive {
 	flex: 1 1 150px;
 }
 .thumbstat, .thumbstat150 {
-    /* flex-grow: 1; */
-    /* flex-shrink: 1; */
+    flex-grow: 1;
+    flex-shrink: 1;
     /* flex-basis: 140px; */
-	display: inline;
-    width: 100%;
+    min-width: 150px;
     justify-content: flex-start;
     align-self: flex-start;
 }
@@ -1707,8 +1728,8 @@ div.mainmenu.project {
 	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/project.png',1) ?>);
 }
 
-div.mainmenu.ticketsup {
-	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticketsup.png',1) ?>);
+div.mainmenu.ticket {
+	background-image: url(<?php echo dol_buildpath($path.'/theme/'.$theme.'/img/menus/ticket.png',1) ?>);
 }
 
 div.mainmenu.tools {
@@ -1725,7 +1746,7 @@ div.mainmenu.website {
 $moduletomainmenu=array('user'=>'','syslog'=>'','societe'=>'companies','projet'=>'project','propale'=>'commercial','commande'=>'commercial',
 	'produit'=>'products','service'=>'products','stock'=>'products',
 	'don'=>'accountancy','tax'=>'accountancy','banque'=>'accountancy','facture'=>'accountancy','compta'=>'accountancy','accounting'=>'accountancy','adherent'=>'members','import'=>'tools','export'=>'tools','mailing'=>'tools',
-	'contrat'=>'commercial','ficheinter'=>'commercial','ticketsup'=>'ticketsup','deplacement'=>'commercial',
+	'contrat'=>'commercial','ficheinter'=>'commercial','ticket'=>'ticket','deplacement'=>'commercial',
 	'fournisseur'=>'companies',
 	'barcode'=>'','fckeditor'=>'','categorie'=>'',
 );
@@ -1741,7 +1762,7 @@ $generic=1;
 // Put here list of menu entries when the div.mainmenu.menuentry was previously defined
 $divalreadydefined=array('home','companies','products','commercial','externalsite','accountancy','project','tools','members','agenda','ftp','holiday','hrm','bookmark','cashdesk','ecm','geoipmaxmind','gravatar','clicktodial','paypal','stripe','webservices','website');
 // Put here list of menu entries we are sure we don't want
-$divnotrequired=array('multicurrency','salaries','ticketsup','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
+$divnotrequired=array('multicurrency','salaries','ticket','margin','opensurvey','paybox','expensereport','incoterm','prelevement','propal','workflow','notification','supplier_proposal','cron','product','productbatch','expedition');
 foreach($mainmenuusedarray as $val)
 {
 	if (empty($val) || in_array($val,$divalreadydefined)) continue;
@@ -1788,7 +1809,9 @@ foreach($mainmenuusedarray as $val)
     	display: none;
     <?php } ?>
 }
-
+a.tmenuimage {
+    display: block;
+}
 
 
 /* Login */
@@ -2387,7 +2410,7 @@ span.butAction, span.butActionDelete {
     padding: 0.2em <?php echo ($dol_optimize_smallscreen?'0.4':'0.7'); ?>em;
     margin: 0em <?php echo ($dol_optimize_smallscreen?'0.7':'0.9'); ?>em;
 	line-height: 20px;
-	text-align: center;
+	/* text-align: center;  New button are on right of screen */
 	vertical-align: middle;
 	cursor: pointer;
 	/* color: #ffffff !important; */
@@ -2713,7 +2736,7 @@ div.refidpadding  {
 }
 div.refid  {
 	font-weight: bold;
-  	color: #766;
+	color: rgb(<?php print $colortexttitlenotab; ?>);
   	font-size: 160%;
 }
 div.refidno  {
@@ -2871,6 +2894,12 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 
 
 /* Set the color for hover lines */
+
+.nohoverborder:hover {
+	border: unset;
+	box-shadow: unset;
+	-webkit-box-shadow: unset;
+}
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
 <?php if ($colorbacklinepairhover) { ?>
@@ -3714,6 +3743,8 @@ tr.visible {
     border: 0px;
     background-color: transparent;
     background-image: none;
+    color: #000 !important;
+    text-shadow: none;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;

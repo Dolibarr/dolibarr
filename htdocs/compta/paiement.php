@@ -589,7 +589,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 print '<td align="right">&nbsp;</td>';
                 print "</tr>\n";
 
-                $var=true;
                 $total=0;
                 $totalrecu=0;
                 $totalrecucreditnote=0;
@@ -598,7 +597,6 @@ if ($action == 'create' || $action == 'confirm_paiement' || $action == 'add_paie
                 while ($i < $num)
                 {
                     $objp = $db->fetch_object($resql);
-
 
 					$soc = new Societe($db);
 					$soc->fetch($objp->socid);
@@ -842,7 +840,6 @@ if (! GETPOST('action','aZ09'))
     {
         $num = $db->num_rows($resql);
         $i = 0;
-        $var=true;
 
         print_barre_liste($langs->trans('Payments'), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
         print '<table class="noborder" width="100%">';

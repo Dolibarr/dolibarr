@@ -22,10 +22,10 @@
  *	\brief      Page to list surveys
  */
 
-require_once('../main.inc.php');
-require_once(DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/core/lib/files.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php");
+require '../main.inc.php';
+require_once DOL_DOCUMENT_ROOT."/core/lib/admin.lib.php";
+require_once DOL_DOCUMENT_ROOT."/core/lib/files.lib.php";
+require_once DOL_DOCUMENT_ROOT."/opensurvey/class/opensurveysondage.class.php";
 
 // Security check
 if (!$user->rights->opensurvey->read) accessforbidden();
@@ -100,7 +100,7 @@ $fieldtosortuser=empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?'firstname':
 $newcardbutton='';
 if (!$user->rights->opensurvey->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php">'.$langs->trans('NewSurvey');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/opensurvey/wizard/index.php"><span class="valignmiddle">'.$langs->trans('NewSurvey').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -296,6 +296,6 @@ print '</table>'."\n";
 print '</div>';
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -53,7 +53,7 @@ class PrestaShopWebservice
 	 * PrestaShopWebservice constructor. Throw an exception when CURL is not installed/activated
 	 * <code>
 	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
+	 * require_once './PrestaShopWebservice.php';
 	 * try
 	 * {
 	 * 	$ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);
@@ -69,7 +69,8 @@ class PrestaShopWebservice
 	 * @param string $key Authentification key
 	 * @param mixed $debug Debug mode Activated (true) or deactivated (false)
 	*/
-	function __construct($url, $key, $debug = true) {
+    function __construct($url, $key, $debug = true)
+    {
 		if (!extension_loaded('curl'))
 		  throw new PrestaShopWebserviceException('Please activate the PHP extension \'curl\' to allow use of PrestaShop webservice library');
 		$this->url = $url;
@@ -82,6 +83,7 @@ class PrestaShopWebservice
 	 * Take the status code and throw an exception if the server didn't return 200 or 201 code
 	 *
 	 * @param int $status_code Status code of an HTTP return
+     * @return void
 	 */
 	protected function checkStatusCode($status_code)
 	{
@@ -279,7 +281,7 @@ class PrestaShopWebservice
 	 * </p>
 	 * <code>
 	 * <?php
-	 * require_once('./PrestaShopWebservice.php');
+	 * require_once './PrestaShopWebservice.php';
 	 * try
 	 * {
 	 * $ws = new PrestaShopWebservice('http://mystore.com/', 'ZQ88PRJX5VWQHCWE4EE7SQ7HPNX00RAJ', false);

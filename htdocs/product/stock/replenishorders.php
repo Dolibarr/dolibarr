@@ -199,72 +199,72 @@ if ($resql)
          '</td>'.
          '<td class="liste_titre" align="right">';
          $searchpicto=$form->showFilterAndCheckAddButtons(0);
-         print $searchpicto;
-         '</td>'.
-         '</tr>';
+    print $searchpicto;
+    print '</td>';
+    print '</tr>';
 
-         print '<tr class="liste_titre">';
-         print_liste_field_titre(
-             'Ref',
-             $_SERVER['PHP_SELF'],
-             'cf.ref',
-             '',
-             $param,
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'Company',
-             $_SERVER['PHP_SELF'],
-             's.nom',
-             '',
-             $param,
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'Author',
-             $_SERVER['PHP_SELF'],
-             'u.login',
-             '',
-             '',
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'AmountTTC',
-             $_SERVER['PHP_SELF'],
-             'cf.total_ttc',
-             '',
-             $param,
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'OrderCreation',
-             $_SERVER['PHP_SELF'],
-             'cf.date_creation',
-             '',
-             $param,
-             '',
-             $sortfield,
-             $sortorder
-             );
-         print_liste_field_titre(
-             'Status',
-             $_SERVER['PHP_SELF'],
-             'cf.fk_statut',
-             '',
-             $param,
-             'align="right"',
-             $sortfield,
-             $sortorder
-             );
-         print '</tr>';
+    print '<tr class="liste_titre">';
+    print_liste_field_titre(
+        'Ref',
+        $_SERVER['PHP_SELF'],
+        'cf.ref',
+        '',
+        $param,
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'Company',
+        $_SERVER['PHP_SELF'],
+        's.nom',
+        '',
+        $param,
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'Author',
+        $_SERVER['PHP_SELF'],
+        'u.login',
+        '',
+        '',
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'AmountTTC',
+        $_SERVER['PHP_SELF'],
+        'cf.total_ttc',
+        '',
+        $param,
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'OrderCreation',
+        $_SERVER['PHP_SELF'],
+        'cf.date_creation',
+        '',
+        $param,
+        '',
+        $sortfield,
+        $sortorder
+    );
+    print_liste_field_titre(
+        'Status',
+        $_SERVER['PHP_SELF'],
+        'cf.fk_statut',
+        '',
+        $param,
+        'align="right"',
+        $sortfield,
+        $sortorder
+    );
+    print '</tr>';
 
     $userstatic = new User($db);
 
@@ -324,8 +324,8 @@ if ($resql)
         }
         $i++;
     }
-    print '</table>'.
-         '</form>';
+    print '</table>';
+    print '</form>';
 
     $db->free($resql);
 
@@ -336,6 +336,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

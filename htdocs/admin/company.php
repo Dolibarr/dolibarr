@@ -300,7 +300,7 @@ $head = company_admin_prepare_head();
 
 dol_fiche_head($head, 'company', $langs->trans("Company"), -1, 'company');
 
-print $langs->trans("CompanyFundationDesc")."<br>\n";
+print '<span class="opacitymedium">'.$langs->trans("CompanyFundationDesc", $langs->transnoentities("Modify"), $langs->transnoentities("Save"))."</span><br>\n";
 print "<br>\n";
 
 if ($action == 'edit' || $action == 'updateedit')
@@ -1153,7 +1153,6 @@ else
 	print '</div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

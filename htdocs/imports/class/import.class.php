@@ -44,7 +44,11 @@ class Import
 	var $array_import_run_sql_after;
 
 	var $error;
-	var $errors;
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**
@@ -71,7 +75,6 @@ class Import
 
 		dol_syslog(get_class($this)."::load_arrays user=".$user->id." filter=".$filter);
 
-        $var=true;
         $i=0;
 
         require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

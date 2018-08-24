@@ -66,7 +66,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 ?>
 <?php $coldisplay=0; ?>
 <!-- BEGIN PHP TEMPLATE objectline_view.tpl.php -->
-<tr <?php echo 'id="row-'.$line->id.'" '.$bcdd[$var]; echo $domData; ?> >
+<tr  id="row-<?php echo $line->id?> class="drag drop oddeven" <?php echo $domData; ?> >
 	<?php if (! empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
 	<td class="linecolnum" align="center"><?php $coldisplay++; ?><?php echo ($i+1); ?></td>
 	<?php } ?>
@@ -321,7 +321,7 @@ $domData .= ' data-product_type="'.$line->product_type.'"';
 //Line extrafield
 if (!empty($extrafieldsline))
 {
-	print $line->showOptionals($extrafieldsline, 'view', array('style'=>$bcdd[$var],'colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
+	print $line->showOptionals($extrafieldsline, 'view', array('style'=>'class="drag drop oddeven"','colspan'=>$coldisplay), '', '', empty($conf->global->MAIN_EXTRAFIELDS_IN_ONE_TD)?0:1);
 }
 ?>
 

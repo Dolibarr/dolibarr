@@ -265,7 +265,6 @@ if ($socid)	$sql.= " AND (p.fk_soc IS NULL OR p.fk_soc = 0 OR p.fk_soc = ".$soci
 $sql.= " GROUP BY s.nom, s.rowid";
 $sql.= $db->order($sortfield, $sortorder);
 
-$var=true;
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -319,7 +318,6 @@ if (! empty($conf->global->PROJECT_SHOW_PROJECT_LIST_ON_PROJECT_AREA))
 
 print '</div></div></div>';
 
-
+// End of page
 llxFooter();
-
 $db->close();

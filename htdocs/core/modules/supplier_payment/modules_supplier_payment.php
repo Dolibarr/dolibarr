@@ -22,7 +22,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commondocgenerator.class.php';
  */
 abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -54,7 +57,10 @@ abstract class ModelePDFSuppliersPayments extends CommonDocGenerator
 
 abstract class ModeleNumRefSupplierPayments
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not

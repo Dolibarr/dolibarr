@@ -276,7 +276,7 @@ if (empty($reshook))
 			            // We try to set an amount
     			        // Case we dont use the list of available qty for each warehouse/lot
     			        // GUI does not allow this yet
-    			        setEventMessage('StockIsRequiredToChooseWhichLotToUse', 'errors');
+    			        setEventMessages($langs->trans("StockIsRequiredToChooseWhichLotToUse"), null, 'errors');
 			        }
 			    }
 			}
@@ -503,12 +503,16 @@ if (empty($reshook))
 	}
 
 	// Action update
-	else if ($action == 'settracking_number' || $action == 'settracking_url'
-	|| $action == 'settrueWeight'
-	|| $action == 'settrueWidth'
-	|| $action == 'settrueHeight'
-	|| $action == 'settrueDepth'
-	|| $action == 'setshipping_method_id')
+	else if (
+		($action == 'settracking_number'
+		|| $action == 'settracking_url'
+		|| $action == 'settrueWeight'
+		|| $action == 'settrueWidth'
+		|| $action == 'settrueHeight'
+		|| $action == 'settrueDepth'
+		|| $action == 'setshipping_method_id')
+		&& $user->rights->expedition->creer
+		)
 	{
 	    $error=0;
 
@@ -953,6 +957,7 @@ if ($action == 'create')
             if (! empty($conf->projet->enabled))
             {
                 $projectid = GETPOST('projectid','int')?GETPOST('projectid','int'):0;
+                if(empty($projectid) && ! empty($object->fk_project)) $projectid = $object->fk_project;
                 if ($origin == 'project') $projectid = ($originid ? $originid : 0);
 
                 $langs->load("projects");
@@ -1128,7 +1133,6 @@ if ($action == 'create')
                 print "</tr>\n";
             }
 
-            $var=true;
             $indiceAsked = 0;
             while ($indiceAsked < $numAsked)
             {
@@ -2591,7 +2595,6 @@ else if ($id || $ref)
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

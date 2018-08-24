@@ -273,7 +273,7 @@ else if ($action == 'remove_file' && $user->rights->banque->cheque)
 {
 	if ($object->fetch($id) > 0)
 	{
-		require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
 
 		$langs->load("other");
 
@@ -806,8 +806,6 @@ if ($action != 'new')
 	}
 }
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

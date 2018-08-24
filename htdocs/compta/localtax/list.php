@@ -45,7 +45,7 @@ $localtax_static = new Localtax($db);
 $newcardbutton='';
 if ($user->rights->tax->charges->creer)
 {
-	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt.'">'.$langs->trans('NewVATPayment');
+	$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/compta/localtax/card.php?action=create&localTaxType='.$ltt.'"><span class="valignmiddle">'.$langs->trans('NewLocalTaxPayment', ($ltt+1)).'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -103,5 +103,6 @@ else
     dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -439,7 +439,7 @@ $button.= '</a>';
 
 
 $groupby = ' <a class="nohover marginrightonly" href="'.DOL_URL_ROOT.'/accountancy/bookkeeping/listbyaccount.php?'.$param.'">' . $langs->trans("GroupByAccountAccounting") . '</a>';
-$newcardbutton = '<a class="butActionNew" href="./card.php?action=create">' . $langs->trans("NewAccountingMvt");
+$newcardbutton = '<a class="butActionNew" href="./card.php?action=create"><span class="valignmiddle">' . $langs->trans("NewAccountingMvt").'</span>';
 $newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 $newcardbutton.= '</a>';
 
@@ -748,6 +748,6 @@ print '</div>';
 
 print '</form>';
 
+// End of page
 llxFooter();
-
 $db->close();

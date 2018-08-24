@@ -585,12 +585,10 @@ if ($step == 2 && $datatoexport)
 	//    $this->array_export_entities[0]=$module->export_fields_entities[$r];
 	//    $this->array_export_alias[0]=$module->export_fields_alias[$r];
 
-    $var=true;
     $i = 0;
 
     foreach($fieldsarray as $code=>$label)
     {
-
         print '<tr class="oddeven">';
 
         $i++;
@@ -779,7 +777,6 @@ if ($step == 3 && $datatoexport)
 	// Select request if all fields are selected
 	$sqlmaxforexport=$objexport->build_sql(0, array(), array());
 
-	$var=true;
 	$i = 0;
 	// on boucle sur les champs
 	foreach($fieldsarray as $code => $label)
@@ -977,7 +974,6 @@ if ($step == 4 && $datatoexport)
     //print '<td>'.$langs->trans("FieldsTitle").'</td>';
     print '</tr>';
 
-    $var=true;
     foreach($array_selected as $code=>$value)
     {
         print '<tr class="oddeven">';
@@ -1074,7 +1070,7 @@ if ($step == 4 && $datatoexport)
 		print '<td>'.$langs->trans("ExportModelName").'</td>';
 		print '<td>&nbsp;</td>';
 		print '</tr>';
-		$var=false;
+
 		print '<tr class="oddeven">';
 		print '<td><input name="export_name" size="32" value=""></td><td align="right">';
         print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
@@ -1091,10 +1087,8 @@ if ($step == 4 && $datatoexport)
 		{
 			$num = $db->num_rows($resql);
 			$i = 0;
-			$var=false;
 			while ($i < $num)
 			{
-
 				$obj = $db->fetch_object($resql);
 				print '<tr class="oddeven"><td>';
 				print $obj->label;
@@ -1229,8 +1223,7 @@ if ($step == 5 && $datatoexport)
 
     print $langs->trans("NowClickToGenerateToBuildExportFile").'<br>';
 
-    // Liste des formats d'exports disponibles
-    $var=true;
+    // List of available export formats
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print '<td class="titlefield">'.$langs->trans("AvailableFormats").'</td>';
@@ -1247,7 +1240,6 @@ if ($step == 5 && $datatoexport)
     		$listeall[$key]=preg_replace('/__\(Disabled\)__/','('.$langs->transnoentitiesnoconv("Disabled").')',$listeall[$key]);
     		unset($liste[$key]);
     	}
-
 
         print '<tr class="oddeven">';
         print '<td width="16">'.img_picto_common($key,$objmodelexport->getPictoForKey($key)).' ';

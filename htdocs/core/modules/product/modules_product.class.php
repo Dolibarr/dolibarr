@@ -33,7 +33,10 @@
  */
 abstract class ModelePDFProduct extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -58,7 +61,10 @@ abstract class ModelePDFProduct extends CommonDocGenerator
 
 abstract class ModeleProductCode
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**     Renvoi la description par defaut du modele de numerotation
      *

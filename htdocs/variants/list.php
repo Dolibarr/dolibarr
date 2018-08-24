@@ -50,7 +50,6 @@ if ($action == 'up') {
 
 $langs->load('products');
 
-$var = false;
 $title = $langs->trans($langs->trans('ProductAttributes'));
 
 $variants = $object->fetchAll();
@@ -60,7 +59,7 @@ llxHeader('', $title);
 $newcardbutton='';
 if ($user->rights->produit->creer)
 {
-	$newcardbutton='<a href="'.DOL_URL_ROOT.'/variants/create.php" class="butActionNew">'.$langs->trans('Create');
+	$newcardbutton='<a href="'.DOL_URL_ROOT.'/variants/create.php" class="butActionNew"><span class="valignmiddle">'.$langs->trans('Create').'</span>';
 	$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 	$newcardbutton.= '</a>';
 }
@@ -122,7 +121,7 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 			<th class="liste_titre" colspan="2"></th>
 		</tr>
 		<?php foreach ($variants as $key => $attribute): ?>
-		<tr id="row-<?php echo $attribute->id ?>" <?php echo $bcdd[$var] ?>>
+		<tr id="row-<?php echo $attribute->id ?>" class="drag drop oddeven">
 			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->ref) ?></a></td>
 			<td><a href="card.php?id=<?php echo $attribute->id ?>"><?php echo dol_htmlentities($attribute->label) ?></a></td>
 			<td align="right"><?php echo $attribute->countChildValues() ?></td>
@@ -143,7 +142,6 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 			</td>
 		</tr>
 		<?php
-			$var = !$var;
 			endforeach
 		?>
 
@@ -151,4 +149,6 @@ $forcereloadpage=empty($conf->global->MAIN_FORCE_RELOAD_PAGE)?0:1;
 
 <?php
 
+// End of page
 llxFooter();
+$db->close();

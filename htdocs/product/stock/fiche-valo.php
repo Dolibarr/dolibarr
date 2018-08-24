@@ -140,5 +140,6 @@ if ($_GET["id"])
 	print "</div>";
 }
 
+// End of page
 llxFooter();
 $db->close();

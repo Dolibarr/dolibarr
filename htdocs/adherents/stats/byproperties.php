@@ -143,7 +143,6 @@ print '</table>';
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

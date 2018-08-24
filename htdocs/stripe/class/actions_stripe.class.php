@@ -63,6 +63,7 @@ class ActionsStripeconnect
 	 * @param	array	$parameters		Parameters
 	 * @param	Object	$object			Object
 	 * @param	string	$action			Action
+     * @return bool
 	 */
 	function formObjectOptions($parameters, &$object, &$action)
 	{

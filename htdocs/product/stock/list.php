@@ -134,7 +134,7 @@ if ($result)
 	$newcardbutton='';
 	if ($user->rights->stock->creer)
 	{
-		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create">'.$langs->trans('MenuNewWarehouse');
+		$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/product/stock/card.php?action=create"><span class="valignmiddle">'.$langs->trans('MenuNewWarehouse').'</span>';
 		$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 		$newcardbutton.= '</a>';
 	}
@@ -151,7 +151,7 @@ if ($result)
 	if ($sall)
 	{
 	    foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-	    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+	    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
 	$moreforfilter='';
@@ -271,7 +271,6 @@ else
   dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

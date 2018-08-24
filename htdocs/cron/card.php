@@ -33,7 +33,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/html.formcron.class.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/cron.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'cron'));
+$langs->loadLangs(array('admin', 'cron', 'members'));
 
 if (!$user->rights->cron->create) accessforbidden();
 
@@ -250,7 +250,7 @@ if ($action=='inactive')
 $form = new Form($db);
 $formCron = new FormCron($db);
 
-llxHeader('',$langs->trans("CronAdd"));
+llxHeader('',$langs->trans("CronTask"));
 
 if ($action=='edit' || empty($action) || $action=='delete' || $action=='execute')
 {

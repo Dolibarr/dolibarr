@@ -841,9 +841,13 @@ if (! empty($conf->accounting->enabled) && ($modecompta == 'BOOKKEEPING'))
 				$obj = $db->fetch_object($result);
 
 				if (! isset($encaiss[$obj->dm])) $encaiss[$obj->dm]=0;
-				$encaiss[$obj->dm] += $obj->debit;
+				if (! isset($decaiss[$obj->dm])) $decaiss[$obj->dm]=0;
+				$encaiss[$obj->dm] += $obj->credit;
+				$decaiss[$obj->dm] += $obj->debit;
 				if (! isset($encaiss_ttc[$obj->dm])) $encaiss_ttc[$obj->dm]=0;
+				if (! isset($decaiss_ttc[$obj->dm])) $decaiss_ttc[$obj->dm]=0;
 				$encaiss_ttc[$obj->dm] += 0;
+				$decaiss_ttc[$obj->dm] += 0;
 
 				$i++;
 			}
@@ -1005,5 +1009,6 @@ print "</tr>\n";
 print "</table>";
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

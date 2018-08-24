@@ -26,7 +26,7 @@
  *		\brief      list of expense reports
  */
 
-require "../main.inc.php";
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/expensereport/class/expensereport.class.php';
@@ -309,8 +309,7 @@ if ($search_status != '' && $search_status >= 0) $sql.=" AND d.fk_statut IN (".$
 if (empty($user->rights->expensereport->readall) && empty($user->rights->expensereport->lire_tous)
     && (empty($conf->global->MAIN_USE_ADVANCED_PERMS) || empty($user->rights->expensereport->writeall_advance)))
 {
-	$childids = $user->getAllChildIds();
-	$childids[]=$user->id;
+	$childids = $user->getAllChildIds(1);
 	$sql.= " AND d.fk_user_author IN (".join(',',$childids).")\n";
 }
 // Add where from extra fields
@@ -447,12 +446,15 @@ if ($resql)
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=edit&id='.$user_id.'" class="butAction">'.$langs->trans("Modify").'</a>';
 			}
 
-			$canedit=(($user->id == $user_id && $user->rights->expensereport->creer) || ($user->id != $user_id));
+			$childids = $user->getAllChildIds(1);
+
+			$canedit=((in_array($user_id, $childids) && $user->rights->expensereport->creer)
+				|| ($conf->global->MAIN_USE_ADVANCED_PERMS && $user->rights->expensereport->writeall_advance));
 
 			// Boutons d'actions
 			if ($canedit)
 			{
-				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=request&id='.$user_id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
+				print '<a href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create&fk_user_author='.$fuser->id.'" class="butAction">'.$langs->trans("AddTrip").'</a>';
 			}
 
 			print '</div>';
@@ -471,7 +473,7 @@ if ($resql)
 		$newcardbutton='';
 		if ($user->rights->expensereport->creer)
 		{
-			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create">'.$langs->trans('NewTrip');
+			$newcardbutton='<a class="butActionNew" href="'.DOL_URL_ROOT.'/expensereport/card.php?action=create"><span class="valignmiddle">'.$langs->trans('NewTrip').'</span>';
 			$newcardbutton.= '<span class="fa fa-plus-circle valignmiddle"></span>';
 			$newcardbutton.= '</a>';
 		}
@@ -488,7 +490,7 @@ if ($resql)
 	if ($sall)
     {
         foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-        print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+        print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
     }
 
 	$moreforfilter='';
@@ -536,7 +538,7 @@ if ($resql)
 	if (! empty($arrayfields['d.date_debut']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
+    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_start" value="'.$month_start.'">';
     	$formother->select_year($year_start,'year_start',1, $min_year, $max_year);
     	print '</td>';
 	}
@@ -544,7 +546,7 @@ if ($resql)
 	if (! empty($arrayfields['d.date_fin']['checked']))
 	{
     	print '<td class="liste_titre" align="center">';
-    	print '<input class="flat" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
+    	print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="month_end" value="'.$month_end.'">';
     	$formother->select_year($year_end,'year_end',1, $min_year, $max_year);
     	print '</td>';
     }
@@ -644,7 +646,6 @@ if ($resql)
 	if ($num > 0)
 	{
         $i=0;
-    	$var=true;
     	$totalarray=array();
  	    while ($i < min($num,$limit))
 		{
@@ -860,7 +861,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

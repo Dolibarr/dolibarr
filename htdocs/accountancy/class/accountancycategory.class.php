@@ -359,7 +359,8 @@ class AccountancyCategory 	// extends CommonObject
 	 * @param int $id Id
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function display($id) {
+    public function display($id)
+    {
 		global $conf;
 		$sql = "SELECT t.rowid, t.account_number, t.label";
 		$sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as t";
@@ -394,7 +395,8 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function getCptBK($id) {
+    public function getCptBK($id)
+    {
 		global $conf;
 
 		$sql = "SELECT t.numero_compte, t.label_operation, t.doc_ref";
@@ -442,8 +444,9 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return int <0 if KO, 0 if not found, >0 if OK
 	 */
-	public function getAccountsWithNoCategory($id) {
-	    global $conf;
+    public function getAccountsWithNoCategory($id)
+    {
+        global $conf;
 
 	    $sql = "SELECT aa.account_number as numero_compte, aa.label as label_compte";
 	    $sql .= " FROM " . MAIN_DB_PREFIX . "accounting_account as aa";
@@ -485,7 +488,8 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function updateAccAcc($id_cat, $cpts = array()) {
+    public function updateAccAcc($id_cat, $cpts = array())
+    {
 		global $conf;
 		$error = 0;
 
@@ -548,7 +552,8 @@ class AccountancyCategory 	// extends CommonObject
 	 *
 	 * @return int <0 if KO, >0 if OK
 	 */
-	public function deleteCptCat($cpt_id) {
+    public function deleteCptCat($cpt_id)
+    {
 		$error = 0;
 
 		$sql = "UPDATE " . MAIN_DB_PREFIX . "accounting_account as aa";

@@ -40,10 +40,8 @@ INSERT INTO llx_accounting_journal (code, label, nature, active, entity) VALUES 
 
 -- Description of chart of account FR PCG99-ABREGE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG99-ABREGE', 'The simple accountancy french plan', 1);
-
 -- Description of chart of account FR PCG99-BASE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG99-BASE', 'The base accountancy french plan', 1);
-
 -- Description of chart of account FR PCG14-DEV
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  1, 'PCG14-DEV', 'The developed accountancy french plan 2014', 1);
 
@@ -52,6 +50,10 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- Description of chart of account ES PCG08-PYME
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  4, 'PCG08-PYME', 'The PYME accountancy spanish plan', 1);
+
+-- Description of chart of account DE SKR03
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR03', 'Standardkontenrahmen SKR 03', 1);
+INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5, 'SKR04', 'Standardkontenrahmen SKR 04', 1);
 
 -- Description of chart of account CH PCG_SUISSE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  6, 'PCG_SUISSE', 'Switzerland plan', 1);

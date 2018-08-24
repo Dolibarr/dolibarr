@@ -41,7 +41,7 @@ if (empty($permtoedit)) $permtoedit=-1;
 // If you enable the move up/down of files here, check that page that include template set its sortorder on 'position_name' instead of 'name'
 // Also the object->fk_element must be defined.
 $disablemove=1;
-if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticketsup', 'holiday', 'expensereport'))) $disablemove=0;
+if (in_array($modulepart, array('product', 'produit', 'societe', 'user', 'ticket', 'holiday', 'expensereport'))) $disablemove=0;
 
 
 

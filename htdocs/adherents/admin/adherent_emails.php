@@ -160,7 +160,6 @@ form_constantes($constantes, 0, $helptext);
 
 dol_fiche_end();
 
-
+// End of page
 llxFooter();
-
 $db->close();

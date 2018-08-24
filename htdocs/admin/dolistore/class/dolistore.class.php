@@ -42,19 +42,21 @@ class Dolistore
 
 	/**
 	 * Constructor
+	 *
+	 * @param	boolean		$debug		Enable debug of request on screen
 	 */
-	function __construct()
+	function __construct($debug=false)
 	{
 		global $conf, $langs;
 
 		$this->url       = DOL_URL_ROOT.'/admin/modules.php?mode=marketplace';
 		$this->shop_url  = 'https://www.dolistore.com/index.php?controller=product&id_product=';
 		$this->vat_rate  = 1.2; // 20% de TVA
-		$this->debug_api = false;
+		$this->debug_api = $debug;
 
 		$langtmp    = explode('_', $langs->defaultlang);
 		$lang       = $langtmp[0];
-		$lang_array = array('en'=>0, 'fr'=>1, 'es'=>2, 'it'=>3, 'de'=>4);	// Into table ps_lang of Prestashop - 1
+		$lang_array = array('en'=>1, 'fr'=>2, 'es'=>3, 'it'=>4, 'de'=>5);	// Into table ps_lang of Prestashop - 1
 		if (! in_array($lang, array_keys($lang_array))) $lang = 'en';
 		$this->lang = $lang_array[$lang];
 	}
@@ -81,18 +83,25 @@ class Dolistore
 		}
 
 		try {
-			$this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV,
-				$conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
+			$this->api = new PrestaShopWebservice($conf->global->MAIN_MODULE_DOLISTORE_API_SRV, $conf->global->MAIN_MODULE_DOLISTORE_API_KEY, $this->debug_api);
+			dol_syslog("Call API with MAIN_MODULE_DOLISTORE_API_SRV = ".$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+			// $conf->global->MAIN_MODULE_DOLISTORE_API_KEY is for the login of basic auth. There is no password as it is public data.
 
 			// Here we set the option array for the Webservice : we want products resources
 			$opt             = array();
 			$opt['resource'] = 'products';
+			$opt2            = array();
 
 			// make a search to limit the id returned.
 			if ($this->search != '') {
-				$opt2        = array();
 				$opt2['url'] = $conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'/api/search?query='.$this->search.'&language='.$this->lang;
+
 				// Call
+				//var_dump($this->api);
+
+				dol_syslog("Call API with opt = ".var_export($opt, true));
+				dol_syslog("Call API with opt2 = ".var_export($opt2, true));
+
 				$xml         = $this->api->get($opt2);
 				$products    = array();
 				foreach ($xml->products->children() as $product) {
@@ -100,7 +109,6 @@ class Dolistore
 				}
 				$opt['filter[id]'] = '['.implode('|', $products).']';
 			} elseif ($this->categorie != 0) {
-				$opt2             = array();
 				$opt2['resource'] = 'categories';
 				$opt2['id']       = $this->categorie;
 				// Call
@@ -117,7 +125,10 @@ class Dolistore
 			$opt['limit']          = "$this->start,$this->end";
 			// $opt['filter[id]'] contais list of product id that are result of search
 
+
 			// Call API to get the detail
+			dol_syslog("Call API with opt = ".var_export($opt, true));
+			dol_syslog("Call API with opt2 = ".var_export($opt2, true));
 			$xml                   = $this->api->get($opt);
 			$this->products        = $xml->products->children();
 
@@ -135,7 +146,11 @@ class Dolistore
 			$trace = $e->getTrace();
 			if ($trace[0]['args'][0] == 404) die('Bad ID');
 			else if ($trace[0]['args'][0] == 401) die('Bad auth key');
-			else die('Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV);
+			else
+			{
+				print 'Can not access to '.$conf->global->MAIN_MODULE_DOLISTORE_API_SRV.'<br>';
+				print $e->getMessage();
+			}
 		}
 	}
 

@@ -87,7 +87,7 @@ else
 
 	if (! $searchkey) return;
 
-	$form = new Form($db);
+	if (! is_object($form)) $form = new Form($db);
 	$arrayresult=$form->select_thirdparty_list(0, $htmlname, $filter, 1, $showtype, 0, null, $searchkey, $outjson);
 
 	$db->close();

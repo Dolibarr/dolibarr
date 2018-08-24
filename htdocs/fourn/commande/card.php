@@ -4,7 +4,7 @@
  * Copyright (C) 2005      Eric	Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2016 Regis Houssin        <regis.houssin@capnetworks.com>
  * Copyright (C) 2010-2015 Juanjo Menent        <jmenent@2byte.es>
- * Copyright (C) 2011-2015 Philippe Grand       <philippe.grand@atoo-net.com>
+ * Copyright (C) 2011-2018 Philippe Grand       <philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2016 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2013      Florian Henry        <florian.henry@open-concept.pro>
  * Copyright (C) 2014      Ion Agorria          <ion@agorria.com>
@@ -350,8 +350,10 @@ if (empty($reshook))
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} else {
-					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+				} 
+				else 
+				{
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error ++;
 				}
 			}
@@ -365,20 +367,33 @@ if (empty($reshook))
 			$productsupplier = new ProductFournisseur($db);
 
 			$idprod=0;
-			if (GETPOST('idprodfournprice') == -1 || GETPOST('idprodfournprice') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
-			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice'), $reg))
+			if (GETPOST('idprodfournprice','alpha') == -1 || GETPOST('idprodfournprice','alpha') == '') $idprod=-99;	// Same behaviour than with combolist. When not select idprodfournprice is now -99 (to avoid conflict with next action that may return -1, -2, ...)
+			if (preg_match('/^idprod_([0-9]+)$/', GETPOST('idprodfournprice','alpha'), $reg))
 			{
 				$idprod=$reg[1];
-				$res=$productsupplier->fetch($idprod);
-				// Call to init properties of $productsupplier
+				$res=$productsupplier->fetch($idprod);	// Load product from its ID
+				// Call to init some price properties of $productsupplier
 				// So if a supplier price already exists for another thirdparty (first one found), we use it as reference price
-				$productsupplier->get_buyprice(0, -1, $idprod, 'none');        // We force qty to -1 to be sure to find if a supplier price exist
+				if (! empty($conf->global->SUPPLIER_TAKE_FIRST_PRICE_IF_NO_PRICE_FOR_CURRENT_SUPPLIER))
+				{
+					$fksoctosearch = 0;
+					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+					if ($productsupplier->fourn_socid != $socid)	// The price we found is for another supplier, so we clear supplier price
+					{
+						$productsupplier->ref_supplier = '';
+					}
+				}
+				else
+				{
+					$fksoctosearch = $object->thirdparty->id;
+					$productsupplier->get_buyprice(0, -1, $idprod, 'none', $fksoctosearch);        // We force qty to -1 to be sure to find if a supplier price exist
+				}
 			}
-			elseif (GETPOST('idprodfournprice') > 0)
+			elseif (GETPOST('idprodfournprice','alpha') > 0)
 			{
 				$qtytosearch=$qty; 	   // Just to see if a price exists for the quantity. Not used to found vat.
 				//$qtytosearch=-1;	       // We force qty to -1 to be sure to find if a supplier price exist
-				$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice'), $qtytosearch);
+				$idprod=$productsupplier->get_buyprice(GETPOST('idprodfournprice','alpha'), $qtytosearch);
 				$res=$productsupplier->fetch($idprod);
 			}
 
@@ -386,7 +401,11 @@ if (empty($reshook))
 			{
 				$label = $productsupplier->label;
 
-				$desc = $productsupplier->description;
+				// if we use supplier description of the products
+				if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				    $desc = $productsupplier->desc_supplier;
+				} else $desc = $productsupplier->description;
+				
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 				$type = $productsupplier->type;
@@ -394,15 +413,18 @@ if (empty($reshook))
 
 				$ref_supplier = $productsupplier->ref_supplier;
 
-				$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
-				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice'));
+				$tva_tx	= get_default_tva($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
+				$tva_npr = get_default_npr($object->thirdparty, $mysoc, $productsupplier->id, GETPOST('idprodfournprice','alpha'));
 				if (empty($tva_tx)) $tva_npr=0;
 				$localtax1_tx= get_localtax($tva_tx, 1, $mysoc, $object->thirdparty, $tva_npr);
 				$localtax2_tx= get_localtax($tva_tx, 2, $mysoc, $object->thirdparty, $tva_npr);
 
+				$pu = $productsupplier->fourn_pu;
+				if (empty($pu)) $pu = 0;	// If pu is '' or null, we force to have a numeric value
+
 				$result=$object->addline(
 					$desc,
-					$productsupplier->fourn_pu,
+					$pu,
 					$qty,
 					$tva_tx,
 					$localtax1_tx,
@@ -964,6 +986,7 @@ if (empty($reshook))
 				if ($result < 0)
 				{
 					$error++;
+					setEventMessages($object->error,$object->errors,'errors');
 				}
 			}
 		}
@@ -1744,11 +1767,13 @@ elseif (! empty($object->id))
 			$langs->load("stocks");
 			require_once DOL_DOCUMENT_ROOT.'/product/class/html.formproduct.class.php';
 			$formproduct=new FormProduct($db);
+			$forcecombo=0;
+			if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 			$formquestion=array(
-					//'text' => $langs->trans("ConfirmClone"),
-					//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
-					//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
-					array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse'),'idwarehouse','',1))
+				//'text' => $langs->trans("ConfirmClone"),
+				//array('type' => 'checkbox', 'name' => 'clone_content',   'label' => $langs->trans("CloneMainAttributes"),   'value' => 1),
+				//array('type' => 'checkbox', 'name' => 'update_prices',   'label' => $langs->trans("PuttingPricesUpToDate"),   'value' => 1),
+				array('type' => 'other', 'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockIncrease"),   'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse','int'), 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 			);
 		}
 		$text=$langs->trans("ConfirmApproveThisOrder",$object->ref);
@@ -2443,7 +2468,8 @@ elseif (! empty($object->id))
 			print '<table class="noborder" width="100%">';
 			//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("ToOrder").'</td></tr>';
 			print '<tr><td>'.$langs->trans("OrderDate").'</td><td>';
-			$date_com = dol_mktime(0, 0, 0, GETPOST('remonth'), GETPOST('reday'), GETPOST('reyear'));
+			$date_com = dol_mktime(GETPOST('rehour','int'), GETPOST('remin','int'), GETPOST('resec','int'), GETPOST('remonth','int'), GETPOST('reday','int'), GETPOST('reyear','int'));
+			if (empty($date_com)) $date_com=dol_now();
 			print $form->select_date($date_com,'',1,1,'',"commande",1,1,1);
 			print '</td></tr>';
 
@@ -2499,7 +2525,8 @@ elseif (! empty($object->id))
 				print '<table class="noborder" width="100%">';
 				//print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Receive").'</td></tr>';
 				print '<tr><td>'.$langs->trans("DeliveryDate").'</td><td>';
-				print $form->select_date('','',1,1,'',"commande",1,1,1);
+				$datepreselected = dol_now();
+				print $form->select_date($datepreselected,'',1,1,'',"commande",1,1,1);
 				print "</td></tr>\n";
 
 				print "<tr><td class=\"fieldrequired\">".$langs->trans("Delivery")."</td><td>\n";
@@ -2755,5 +2782,4 @@ elseif (! empty($object->id))
 
 // End of page
 llxFooter();
-
 $db->close();

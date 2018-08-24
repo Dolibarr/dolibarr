@@ -46,7 +46,7 @@ require_once DOL_DOCUMENT_ROOT.'/societe/class/societeaccount.class.php';
 // Security check
 // No check on module enabled. Done later according to $validpaymentmethod
 
-$langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox","paypal"));     // File with generic data
+$langs->loadLangs(array("main","other","dict","bills","companies","errors","paybox","paypal","stripe"));     // File with generic data
 
 $action=GETPOST('action','aZ09');
 
@@ -208,6 +208,8 @@ if ((empty($paymentmethod) || $paymentmethod == 'stripe') && ! empty($conf->stri
 	$validpaymentmethod['stripe']='valid';
 }
 
+// TODO Replace previous set of $validpaymentmethod with this line:
+//$validpaymentmethod = getValidOnlinePaymentMethods($paymentmethod);
 
 
 // Check security token
@@ -439,15 +441,18 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				$service = 'StripeLive';
 				$servicestatus = 1;
 			}
-			$stripeacc = null;	// No Oauth/connect use for public pages
+			
 
 			$thirdparty = new Societe($db);
 			$thirdparty->fetch($thirdparty_id);
 
+			// Create Stripe customer
 			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-			$stripe = new Stripe($db);
+			$stripe = new Stripe($db);  
+      $stripeacc = $stripe->getStripeAccount($service);
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
+			// Create Stripe card from Token
 			$card = $customer->sources->create(array("source" => $stripeToken, "metadata" => $metadata));
 
 			if (empty($card))
@@ -469,7 +474,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					'customer' => $customer->id,
 					'source' => $card,
 					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-				));
+				),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -503,7 +508,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'description' => 'Stripe payment: '.$FULLTAG,
 				'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])),
 				'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-			));
+			),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
 			{
@@ -613,8 +618,9 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 {
 	$langs->load("errors");
 	dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
-	llxFooter();
-	$db->close();
+	// End of page
+    llxFooter();
+    $db->close();;
 	exit;
 }
 
@@ -1117,7 +1123,8 @@ if ($source == 'contractline')
 	$text='<b>'.$langs->trans("PaymentRenewContractId",$contract->ref,$contractline->ref).'</b>';
 	if ($contractline->fk_product)
 	{
-		$text.='<br>'.$product->ref.($product->label?' - '.$product->label:'');
+		$contractline->fetch_product();
+		$text.='<br>'.$contractline->product->ref.($contractline->product->label?' - '.$contractline->product->label:'');
 	}
 	if ($contractline->description) $text.='<br>'.dol_htmlentitiesbr($contractline->description);
 	//if ($contractline->date_fin_validite) {
@@ -1148,12 +1155,12 @@ if ($source == 'contractline')
 	$duration='';
 	if ($contractline->fk_product)
 	{
-		if ($product->isService() && $product->duration_value > 0)
+		if ($contractline->product->isService() && $contractline->product->duration_value > 0)
 		{
 			$label=$langs->trans("Duration");
 
 			// TODO Put this in a global method
-			if ($product->duration_value > 1)
+			if ($contractline->product->duration_value > 1)
 			{
 				$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("DurationDays"),"w"=>$langs->trans("DurationWeeks"),"m"=>$langs->trans("DurationMonths"),"y"=>$langs->trans("DurationYears"));
 			}
@@ -1161,7 +1168,7 @@ if ($source == 'contractline')
 			{
 				$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("DurationDay"),"w"=>$langs->trans("DurationWeek"),"m"=>$langs->trans("DurationMonth"),"y"=>$langs->trans("DurationYear"));
 			}
-			$duration=$product->duration_value.' '.$dur[$product->duration_unit];
+			$duration=$contractline->product->duration_value.' '.$dur[$contractline->product->duration_unit];
 		}
 	}
 	print '<tr class="CTableRow'.($var?'1':'2').'"><td class="CTableRow'.($var?'1':'2').'">'.$label.'</td>';
@@ -1555,9 +1562,10 @@ if (preg_match('/^dopayment/',$action))
 	    <script src="https://js.stripe.com/v3/"></script>
 
 	    <script type="text/javascript" language="javascript">';
+
 		?>
 
-	    // Create a Stripe client
+	    // Create a Stripe client.
 	    var stripe = Stripe('<?php echo $stripearrayofkeys['publishable_key']; // Defined into config.php ?>');
 
 	    // Create an instance of Elements
@@ -1603,19 +1611,44 @@ if (preg_match('/^dopayment/',$action))
 	    console.log(form);
 	    form.addEventListener('submit', function(event) {
 	      event.preventDefault();
-
-	      stripe.createToken(card).then(function(result) {
-	        if (result.error) {
-	          // Inform the user if there was an error
-	          var errorElement = document.getElementById('card-errors');
-	          errorElement.textContent = result.error.message;
-	        } else {
-	          // Send the token to your server
-	          stripeTokenHandler(result.token);
-	        }
-	      });
+			<?php
+			if (empty($conf->global->STRIPE_USE_3DSECURE))	// Ask credit card directly, no 3DS test
+			{
+			?>
+				/* Use token */
+				stripe.createToken(card).then(function(result) {
+			        if (result.error) {
+			          // Inform the user if there was an error
+			          var errorElement = document.getElementById('card-errors');
+			          errorElement.textContent = result.error.message;
+			        } else {
+			          // Send the token to your server
+			          stripeTokenHandler(result.token);
+			        }
+				});
+			<?php
+			}
+			else											// Ask credit card with 3DS test
+			{
+			?>
+				/* Use 3DS source */
+				stripe.createSource(card).then(function(result) {
+				    if (result.error) {
+				      // Inform the user if there was an error
+				      var errorElement = document.getElementById('card-errors');
+				      errorElement.textContent = result.error.message;
+				    } else {
+				      // Send the source to your server
+				      stripeSourceHandler(result.source);
+				    }
+				});
+			<?php
+			}
+			?>
 	    });
 
+
+		/* Insert the Token into the form so it gets submitted to the server */
 	    function stripeTokenHandler(token) {
 	      // Insert the token ID into the form so it gets submitted to the server
 	      var form = document.getElementById('payment-form');
@@ -1628,9 +1661,27 @@ if (preg_match('/^dopayment/',$action))
 	      // Submit the form
 	      jQuery('#buttontopay').hide();
 	      jQuery('#hourglasstopay').show();
-	      console.log("submit");
+	      console.log("submit token");
 	      form.submit();
 	    }
+
+		/* Insert the Source into the form so it gets submitted to the server */
+		function stripeSourceHandler(source) {
+		  // Insert the source ID into the form so it gets submitted to the server
+		  var form = document.getElementById('payment-form');
+		  var hiddenInput = document.createElement('input');
+		  hiddenInput.setAttribute('type', 'hidden');
+		  hiddenInput.setAttribute('name', 'stripeSource');
+		  hiddenInput.setAttribute('value', source.id);
+		  form.appendChild(hiddenInput);
+
+		  // Submit the form
+	      jQuery('#buttontopay').hide();
+	      jQuery('#hourglasstopay').show();
+	      console.log("submit source");
+		  form.submit();
+		}
+
 
 	    <?php
 		print '</script>';

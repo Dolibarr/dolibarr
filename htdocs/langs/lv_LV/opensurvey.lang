@@ -58,3 +58,4 @@ MoreChoices=Enter more choices for the voters
 SurveyExpiredInfo=The poll has been closed or voting delay has expired.
 EmailSomeoneVoted=%s has filled a line.\nYou can find your poll at the link:\n%s
 ShowSurvey=Show survey
+UserMustBeSameThanUserUsedToVote=You must have voted and use the same user name that the one used to vote, to post a comment

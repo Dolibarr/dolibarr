@@ -75,7 +75,7 @@ if ($action == 'setvalue' && $user->admin)
 		$error ++;
   $result = dolibarr_set_const($db, "STRIPE_MINIMAL_3DSECURE", GETPOST('STRIPE_MINIMAL_3DSECURE', 'int'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
-		$error ++;  
+		$error ++;
 	$result = dolibarr_set_const($db, "ONLINE_PAYMENT_CSS_URL", GETPOST('ONLINE_PAYMENT_CSS_URL', 'alpha'), 'chaine', 0, '', $conf->entity);
 	if (! $result > 0)
 		$error ++;
@@ -265,13 +265,16 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 }
 
 // Minimal amount for force 3Dsecure if it's optionnal
-print '<tr class="oddeven"><td>';
-print $langs->trans("STRIPE_MINIMAL_3DSECURE").'</td><td>';
-print '<input class="flat" name="STRIPE_MINIMAL_3DSECURE" size="3" value="' .$conf->global->STRIPE_MINIMAL_3DSECURE . '">'.$langs->getCurrencySymbol($conf->currency).'</td></tr>';
+if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// TODO Not used by current code
+{
+	print '<tr class="oddeven"><td>';
+	print $langs->trans("STRIPE_MINIMAL_3DSECURE").'</td><td>';
+	print '<input class="flat" name="STRIPE_MINIMAL_3DSECURE" size="3" value="' .$conf->global->STRIPE_MINIMAL_3DSECURE . '">'.$langs->getCurrencySymbol($conf->currency).'</td></tr>';
+}
 
+// Warehouse for automatic decrement
 if ($conf->global->MAIN_FEATURES_LEVEL >= 2)	// What is this for ?
 {
-	// Stock for automatic decrement
 	print '<tr class="oddeven"><td>';
 	print $langs->trans("ONLINE_PAYMENT_WAREHOUSE").'</td><td>';
 	print $formproduct->selectWarehouses($conf->global->ONLINE_PAYMENT_WAREHOUSE,'ONLINE_PAYMENT_WAREHOUSE','',1,$disabled);
@@ -351,7 +354,7 @@ if (! empty($conf->use_javascript_ajax))
 	print '</script>';
 }
 
-
+// End of page
 llxFooter();
 $db->close();
 

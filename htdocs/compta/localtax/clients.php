@@ -181,12 +181,11 @@ if($calc ==0 || $calc == 2)
 
 	if (is_array($coll_list))
 	{
-		$var=true;
 		$total = 0;  $totalamount = 0;
 		$i = 1;
 		foreach($coll_list as $coll)
 		{
-			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
+			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) !=0)
 			{
 
 				$intra = str_replace($find,$replace,$coll->tva_intra);
@@ -256,12 +255,11 @@ if($calc ==0 || $calc == 1){
 	$reshook=$hookmanager->executeHooks('addVatLine',$parameters,$object,$action);    // Note that $action and $object may have been modified by some hooks
 	if (is_array($coll_list))
 	{
-		$var=true;
 		$total = 0;  $totalamount = 0;
 		$i = 1;
 		foreach($coll_list as $coll)
 		{
-			if(($min == 0 or ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
+			if(($min == 0 || ($min > 0 && $coll->amount > $min)) && ($local==1?$coll->localtax1:$coll->localtax2) != 0)
 			{
 
 				$intra = str_replace($find,$replace,$coll->tva_intra);
@@ -327,5 +325,6 @@ if($calc ==0){
 }
 print '</table>';
 
+// End of page
 llxFooter();
 $db->close();

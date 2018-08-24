@@ -28,10 +28,10 @@ UseDiscountAsService=Als een dienst
 UseDiscountOnTotal=Op subtotaal
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Definieert als een globale discount wordt behandelt als een training, een dienst, of alleen een subtotaal voor marge berekening.
 MARGIN_TYPE=Inkoop/kostprijs voorgesteld al standaard bij margeberekening
-MargeType1=Marge op gunstigste inkoopprijs
-MargeType2=Marge op gewogen inkoopprijs 
+MargeType1=Margin on Best vendor price
+MargeType2=Marge op gewogen inkoopprijs (GIP)
 MargeType3=Marge inkoopprijs
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Kostprijs
 UnitCharges=Unit toeslag
 Charges=Toeslag

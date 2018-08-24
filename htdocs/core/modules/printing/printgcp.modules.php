@@ -43,7 +43,12 @@ class printing_printgcp extends PrintingDriver
     var $google_id = '';
     var $google_secret = '';
     var $error;
-    var $errors = array();
+    /**
+	 *
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array ();
+	
     var $db;
 
     private $OAUTH_SERVICENAME_GOOGLE = 'Google';
@@ -70,7 +75,11 @@ class printing_printgcp extends PrintingDriver
         $this->db = $db;
 
         if (!$conf->oauth->enabled) {
-            $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"), 'type'=>'info');
+            $this->conf[] = array(
+                'varname'=>'PRINTGCP_INFO',
+                'info'=>$langs->transnoentitiesnoconv("WarningModuleNotActive", "OAuth"),
+                'type'=>'info'
+            );
         } else {
 
         	$this->google_id = $conf->global->OAUTH_GOOGLE_ID;
@@ -116,7 +125,13 @@ class printing_printgcp extends PrintingDriver
         	}
             if ($this->google_id != '' && $this->google_secret != '') {
                 $this->conf[] = array('varname'=>'PRINTGCP_INFO', 'info'=>'GoogleAuthConfigured', 'type'=>'info');
-                $this->conf[] = array('varname'=>'PRINTGCP_TOKEN_ACCESS', 'info'=>$access, 'type'=>'info', 'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'), 'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):''));
+                $this->conf[] = array(
+                    'varname'=>'PRINTGCP_TOKEN_ACCESS',
+                    'info'=>$access,
+                    'type'=>'info',
+                    'renew'=>$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?state=userinfo_email,userinfo_profile,cloud_print&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'),
+                    'delete'=>($storage->hasAccessToken($this->OAUTH_SERVICENAME_GOOGLE)?$urlwithroot.'/core/modules/oauth/google_oauthcallback.php?action=delete&backtourl='.urlencode(DOL_URL_ROOT.'/printing/admin/printing.php?mode=setup&driver=printgcp'):'')
+                );
                 if ($token_ok) {
                     $expiredat='';
 
@@ -166,7 +181,6 @@ class printing_printgcp extends PrintingDriver
         global $bc, $conf, $langs;
         $error = 0;
         $langs->load('printing');
-        $var=true;
 
         $html = '<tr class="liste_titre">';
         $html.= '<td>'.$langs->trans('GCP_Name').'</td>';
@@ -180,11 +194,9 @@ class printing_printgcp extends PrintingDriver
         $html.= '</tr>'."\n";
         $list = $this->getlist_available_printers();
         //$html.= '<td><pre>'.print_r($list,true).'</pre></td>';
-        $var = true;
         foreach ($list['available'] as $printer_det)
         {
-            $var = !$var;
-            $html.= "<tr ".$bc[$var].">";
+            $html.= '<tr class="oddeven">';
             $html.= '<td>'.$printer_det['name'].'</td>';
             $html.= '<td>'.$printer_det['displayName'].'</td>';
             $html.= '<td>'.$printer_det['id'].'</td>';  // id to identify printer to use

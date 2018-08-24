@@ -45,11 +45,16 @@ function regexEvent(objet,evt,type)
           case 'hours':
               var regex= /^[0-9]{1,2}:[0-9]{2}$/;
               var regex2=/^[0-9]{1,2}$/;
+              var regex3= /^[0-9]{1}([.,]{1}[0-9]{1,2})?$/;
               if(!regex.test(objet.value))
               { 
                   if(regex2.test(objet.value))
                     objet.value=objet.value+':00';
-                  else
+                  else if(regex3.test(objet.value)) {
+                    var tmp=parseFloat(objet.value.replace(',','.'));
+                    var rnd=Math.trunc(tmp);
+                    objet.value=rnd+':'+ Math.round(60*(tmp-rnd));
+                  } else
                     objet.value='';
               }
               /* alert(jQuery("#"+id).val()); */

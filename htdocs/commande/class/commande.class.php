@@ -10,6 +10,7 @@
  * Copyright (C) 2013      Florian Henry		<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García        <marcosgdf@gmail.com>
  * Copyright (C) 2016-2017 Ferran Marcet        <fmarcet@2byte.es>
+ * Copyright (C) 2018      Nicolas ZABOURI	<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1257,7 +1258,10 @@ class Commande extends CommonOrder
     {
     	global $mysoc, $conf, $langs, $user;
 
-        dol_syslog(get_class($this)."::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start, date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit, origin=$origin, origin_id=$origin_id, pu_ht_devise=$pu_ht_devise", LOG_DEBUG);
+		$logtext = "::addline commandeid=$this->id, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent";
+		$logtext.= ", info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc, date_start=$date_start";
+		$logtext.= ", date_end=$date_end, type=$type special_code=$special_code, fk_unit=$fk_unit, origin=$origin, origin_id=$origin_id, pu_ht_devise=$pu_ht_devise";
+        dol_syslog(get_class($this).$logtext, LOG_DEBUG);
 
         include_once DOL_DOCUMENT_ROOT.'/core/lib/price.lib.php';
 
@@ -1275,6 +1279,7 @@ class Commande extends CommonOrder
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
+        $pu_ht_devise=price2num($pu_ht_devise);
         $pu_ttc=price2num($pu_ttc);
     	$pa_ht=price2num($pa_ht);
         $txtva = price2num($txtva);
@@ -1586,8 +1591,10 @@ class Commande extends CommonOrder
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON c.fk_availability = ca.rowid';
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON c.fk_input_reason = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON c.fk_incoterms = i.rowid';
-        $sql.= " WHERE c.entity IN (".getEntity('commande').")";
-        if ($id)   	  $sql.= " AND c.rowid=".$id;
+
+		if ($id) $sql.= " WHERE c.rowid=".$id;
+		else $sql.= " WHERE c.entity IN (".getEntity('commande').")"; // Dont't use entity if you use rowid
+
         if ($ref)     $sql.= " AND c.ref='".$this->db->escape($ref)."'";
         if ($ref_ext) $sql.= " AND c.ref_ext='".$this->db->escape($ref_ext)."'";
         if ($ref_int) $sql.= " AND c.ref_int='".$this->db->escape($ref_int)."'";
@@ -2841,6 +2848,7 @@ class Commande extends CommonOrder
             $qty=price2num($qty);
             $pu = price2num($pu);
       		$pa_ht=price2num($pa_ht);
+        	$pu_ht_devise=price2num($pu_ht_devise);
             $txtva=price2num($txtva);
             $txlocaltax1=price2num($txlocaltax1);
             $txlocaltax2=price2num($txlocaltax2);
@@ -3059,15 +3067,21 @@ class Commande extends CommonOrder
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (! $notrigger)
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-	            // Call trigger
-	            $result=$this->call_trigger('ORDER_MODIFY', $user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('ORDER_MODIFY', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -3229,7 +3243,7 @@ class Commande extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut, c.total_ht";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -3256,6 +3270,7 @@ class Commande extends CommonOrder
             while ($obj=$this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
+		$response->total+= $obj->total_ht;
 
                 $generic_commande->statut = $obj->fk_statut;
                 $generic_commande->date_commande = $this->db->jdate($obj->date_commande);
@@ -3414,6 +3429,9 @@ class Commande extends CommonOrder
         if (! empty($conf->expedition->enabled) && ($option == '1' || $option == '2')) $url = DOL_URL_ROOT.'/expedition/shipment.php?id='.$this->id;
         else $url = DOL_URL_ROOT.'/commande/card.php?id='.$this->id;
 
+        if (!$user->rights->commande->lire)
+            $option = 'nolink';
+
         if ($option !== 'nolink')
         {
             // Add param to save lastsearch_values or not
@@ -3456,6 +3474,11 @@ class Commande extends CommonOrder
         $linkstart = '<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
+
+        if ($option === 'nolink') {
+            $linkstart = '';
+            $linkend = '';
+        }
 
         $result .= $linkstart;
         if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -3672,9 +3695,10 @@ class Commande extends CommonOrder
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 *  @return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -3693,7 +3717,7 @@ class Commande extends CommonOrder
 
 		$modelpath = "core/modules/commande/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 	}
 
 
@@ -3837,6 +3861,7 @@ class OrderLine extends CommonOrderLine
         {
             $objp = $this->db->fetch_object($result);
             $this->rowid            = $objp->rowid;
+            $this->id				= $objp->rowid;
             $this->fk_commande      = $objp->fk_commande;
             $this->fk_parent_line   = $objp->fk_parent_line;
             $this->label            = $objp->custom_label;
@@ -4033,7 +4058,7 @@ class OrderLine extends CommonOrderLine
         $sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
         $sql.= " '".$this->db->escape($this->product_type)."',";
         $sql.= " '".price2num($this->remise_percent)."',";
-        $sql.= " ".($this->subprice!=''?"'".price2num($this->subprice)."'":"null").",";
+        $sql.= " ".(price2num($this->subprice)!==''?price2num($this->subprice):"null").",";
         $sql.= " ".($this->price!=''?"'".price2num($this->price)."'":"null").",";
         $sql.= " '".price2num($this->remise)."',";
         $sql.= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';
@@ -4042,11 +4067,11 @@ class OrderLine extends CommonOrderLine
 		$sql.= ' '.(! empty($this->fk_fournprice)?$this->fk_fournprice:"null").',';
 		$sql.= ' '.price2num($this->pa_ht).',';
         $sql.= " '".$this->db->escape($this->info_bits)."',";
-        $sql.= " '".price2num($this->total_ht)."',";
-        $sql.= " '".price2num($this->total_tva)."',";
-        $sql.= " '".price2num($this->total_localtax1)."',";
-        $sql.= " '".price2num($this->total_localtax2)."',";
-        $sql.= " '".price2num($this->total_ttc)."',";
+        $sql.= " ".price2num($this->total_ht).",";
+        $sql.= " ".price2num($this->total_tva).",";
+        $sql.= " ".price2num($this->total_localtax1).",";
+        $sql.= " ".price2num($this->total_localtax2).",";
+        $sql.= " ".price2num($this->total_ttc).",";
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").',';
 	    $sql.= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit);

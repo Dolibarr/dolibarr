@@ -46,12 +46,13 @@ $stripearrayofkeysbyenv = array(
 $stripearrayofkeys = array();
 if (empty($conf->global->STRIPE_LIVE) || GETPOST('forcesandbox','alpha'))
 {
-	$stripearrayofkeys = $stripearrayofkeysbyenv[0];
+	$stripearrayofkeys = $stripearrayofkeysbyenv[0];	// Test
 }
 else
 {
-	$stripearrayofkeys = $stripearrayofkeysbyenv[1];
+	$stripearrayofkeys = $stripearrayofkeysbyenv[1];	// Live
 }
 
 \Stripe\Stripe::setApiKey($stripearrayofkeys['secret_key']);
-\Stripe\Stripe::setAppInfo("Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
+\Stripe\Stripe::setAppInfo("Dolibarr Stripe", DOL_VERSION, "https://www.dolibarr.org"); // add dolibarr version
+\Stripe\Stripe::setApiVersion("2018-07-27"); // force version API

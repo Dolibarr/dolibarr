@@ -1138,7 +1138,8 @@ class DoliDBMssql extends DoliDB
 	 * @param      string $fieldname   Field's name to escape
 	 * @return     string              field's name escaped
 	 */
-	function EscapeFieldName($fieldname) {
+    function EscapeFieldName($fieldname)
+    {
 	    return "[".$fieldname."]";
 	}
 
@@ -1150,7 +1151,8 @@ class DoliDBMssql extends DoliDB
 	 * @param      mixed   $fields     String for one field or array of string for multiple field
 	 * @return false|object
 	 */
-	function GetFieldInformation($table,$fields) {
+    function GetFieldInformation($table,$fields)
+    {
 	    $sql="SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME='".$this->escape($table)."' AND COLUMN_NAME";
 	    if (is_array($fields))
 	    {
@@ -1176,4 +1178,3 @@ class DoliDBMssql extends DoliDB
 	}
 
 }
-

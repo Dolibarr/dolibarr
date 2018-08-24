@@ -35,10 +35,10 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 }
 
 
-require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact/class/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/user/class/user.class.php");
-require_once(DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
+require_once $path."../../htdocs/master.inc.php";
+require_once DOL_DOCUMENT_ROOT."/contact/class/contact.class.php";
+require_once DOL_DOCUMENT_ROOT."/user/class/user.class.php";
+require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 
 // Global variables
 $version=DOL_VERSION;

@@ -24,7 +24,7 @@
  *	\brief      List activities of tasks (per day entry)
  */
 
-require ("../../main.inc.php");
+require "../../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -331,7 +331,7 @@ if ($id)
 $onlyopenedproject=1;	// or -1
 $morewherefilter='';
 
-if ($search_project_ref) $morewherefilter.=natural_search("p.ref", $search_project_ref);
+if ($search_project_ref) $morewherefilter.=natural_search(array("p.ref", "p.title"), $search_project_ref);
 if ($search_task_ref)    $morewherefilter.=natural_search("t.ref", $search_task_ref);
 if ($search_task_label)  $morewherefilter.=natural_search(array("t.ref", "t.label"), $search_task_label);
 if ($search_thirdparty)  $morewherefilter.=natural_search("s.nom", $search_thirdparty);
@@ -516,7 +516,7 @@ if (! empty($conf->global->MAIN_DEFAULT_WORKING_DAYS))
 }
 
 $statusofholidaytocheck = '3';
-$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholiday);	// $daytoparse is a date with hours = 0
+$isavailablefordayanduser = $holiday->verifDateHolidayForTimestamp($usertoprocess->id, $daytoparse, $statusofholidaytocheck);	// $daytoparse is a date with hours = 0
 $isavailable[$daytoparse]=$isavailablefordayanduser;			// in projectLinesPerWeek later, we are using $firstdaytoshow and dol_time_plus_duree to loop on each day
 
 $tmparray = dol_getdate($daytoparse,true);	// detail of current day
@@ -710,6 +710,6 @@ if ($conf->use_javascript_ajax)
 	print '</script>';
 }
 
+// End of page
 llxFooter();
-
 $db->close();

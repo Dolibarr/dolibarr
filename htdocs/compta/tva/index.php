@@ -87,7 +87,7 @@ $result = restrictedArea($user, 'tax', '', '', 'charges');
  * @param		string	$date	Date
  * @return		void
  */
-function pt ($db, $sql, $date)
+function pt($db, $sql, $date)
 {
     global $conf, $bc,$langs;
 
@@ -104,6 +104,8 @@ function pt ($db, $sql, $date)
         print '<td align="right">'.$langs->trans("PaidDuringThisPeriod").'</td>';
         print "</tr>\n";
 
+        $totalclaimed = 0;
+        $totalpaid = 0;
         $amountclaimed = 0;
         $amountpaid = 0;
         $previousmonth = '';

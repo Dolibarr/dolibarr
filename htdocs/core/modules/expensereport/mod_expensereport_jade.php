@@ -30,7 +30,10 @@ class mod_expensereport_jade extends ModeleNumRefExpenseReport
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='ER';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $nom='Jade';
 
 

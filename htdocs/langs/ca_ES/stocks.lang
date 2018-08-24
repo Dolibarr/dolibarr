@@ -8,17 +8,9 @@ WarehouseEdit=Edició magatzem
 MenuNewWarehouse=Nou magatzem
 WarehouseSource=Magatzem origen
 WarehouseSourceNotDefined=Sense magatzems definits,
-<<<<<<< HEAD
-AddWarehouse=Create warehouse
-=======
 AddWarehouse=Crea un magatzem
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 AddOne=Afegir un
-<<<<<<< HEAD
-DefaultWarehouse=Default warehouse
-=======
 DefaultWarehouse=Magatzem predeterminat
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 WarehouseTarget=Magatzem destinació
 ValidateSending=Elimina l'enviament
 CancelSending=Cancel·la l'enviament
@@ -32,11 +24,7 @@ Movements=Moviments
 ErrorWarehouseRefRequired=El nom de referència del magatzem és obligatori
 ListOfWarehouses=Llistat de magatzems
 ListOfStockMovements=Llistat de moviments de estoc
-<<<<<<< HEAD
-ListOfInventories=List of inventories
-=======
 ListOfInventories=Llista d'inventaris
->>>>>>> branch '7.0' of git@github.com:Dolibarr/dolibarr.git
 MovementId=ID del moviment
 StockMovementForId=ID de moviment %d
 ListMouvementStockProject=Llista de moviments d'estoc associats al projecte
@@ -79,7 +67,7 @@ DeStockOnValidateOrder=Decrementar els estocs físics sobre les comandes de clie
 DeStockOnShipment=Disminueix l'estoc real al validar l'enviament
 DeStockOnShipmentOnClosing=Disminueix els estocs reals en tancar l'expedició
 ReStockOnBill=Incrementar els estocs físics sobre les factures/abonaments de proveïdors
-ReStockOnValidateOrder=Incrementar els estocs físics sobre les comandes a proveïdors
+ReStockOnValidateOrder=Augmenta els estocs reals en l'aprovació de les comandes de compra
 ReStockOnDispatchOrder=Augmenta els estocs reals en l'entrega manual als magatzems, després de la recepció dels productes de la comanda proveïdor
 OrderStatusNotReadyToDispatch=La comanda encara no està o no té un estat que permeti un desglossament d'estoc.
 StockDiffPhysicTeoric=Motiu de la diferència entre l'estoc físic i virtual
@@ -215,3 +203,4 @@ RegulateStock=Regula l'estoc
 ListInventory=Llistat
 StockSupportServices=Serveis de suport a la gestió d'estoc
 StockSupportServicesDesc=De manera predeterminada, només es pot assignar estoc als productes del tipus "producte". Si està activat i si el mòdul Serveis està activat, també podeu assignar estoc als productes del tipus "servei"
+ReceiveProducts=Rebre articles

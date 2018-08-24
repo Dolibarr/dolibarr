@@ -98,6 +98,7 @@ if ($id > 0 || ! empty($ref))
 {
     $object->fetch($id, $ref);
     $object->fetch_thirdparty();
+	if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
     $object->info($object->id);
 }
 
@@ -163,7 +164,9 @@ if (! empty($conf->agenda->enabled))
 {
     if (! empty($user->rights->agenda->myactions->create) || ! empty($user->rights->agenda->allactions->create))
     {
-        $morehtmlcenter.='<a class="butAction" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'">'.$langs->trans("AddAction").'</a>';
+        $morehtmlcenter.='<a class="butActionNew" href="'.DOL_URL_ROOT.'/comm/action/card.php?action=create'.$out.'&backtopage='.urlencode($_SERVER["PHP_SELF"].'?id='.$object->id).'"><span class="valignmiddle">'.$langs->trans("AddAction").'</span>';
+        $morehtmlcenter.='<span class="fa fa-plus-circle valignmiddle"></span>';
+        $morehtmlcenter.='</a>';
     }
     else
     {
@@ -189,6 +192,6 @@ if (!empty($object->id))
     show_actions_done($conf,$langs,$db,$object,null,0,$actioncode, '', $filters, $sortfield, $sortorder);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

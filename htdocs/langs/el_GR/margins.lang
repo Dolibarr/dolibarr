@@ -28,10 +28,10 @@ UseDiscountAsService=Ως υπηρεσία
 UseDiscountOnTotal=Στο υποσύνολο
 MARGIN_METHODE_FOR_DISCOUNT_DETAILS=Καθορίζει αν η συνολική έκπτωση που θεωρείται ως ένα προϊόν, μια υπηρεσία, ή μόνον επί του υποσυνόλου για τον υπολογισμό του περιθωρίου κέρδους.
 MARGIN_TYPE=Buying/Cost price suggested by default for margin calculation
-MargeType1=Margin on Best supplier price
+MargeType1=Margin on Best vendor price
 MargeType2=Margin on Weighted Average Price (WAP)
 MargeType3=Περιθώριο στην τιμή κόστους
-MarginTypeDesc=* Margin on best buying price = Selling price - Best supplier price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
+MarginTypeDesc=* Margin on best buying price = Selling price - Best vendor price defined on product card<br>* Margin on Weighted Average Price (WAP) = Selling price - Product Weighted Average Price (WAP) or best supplier price if WAP not yet defined<br>* Margin on Cost price = Selling price - Cost price defined on product card or WAP if cost price not defined, or best supplier price if WAP not yet defined
 CostPrice=Τιμή κόστους
 UnitCharges=Χρεώσεων
 Charges=Επιβαρύνσεις

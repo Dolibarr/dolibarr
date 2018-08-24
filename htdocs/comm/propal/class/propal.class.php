@@ -12,6 +12,7 @@
  * Copyright (C) 2012      Cedric Salvador          <csalvador@gpcsolutions.fr>
  * Copyright (C) 2013      Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2014-2015 Marcos García            <marcosgdf@gmail.com>
+ * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -414,6 +415,7 @@ class Propal extends CommonObject
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
+		$pu_ht_devise=price2num($pu_ht_devise);
 		$pu_ttc=price2num($pu_ttc);
 		$txtva=price2num($txtva);               // $txtva can have format '5.0(XXX)' or '5'
 		$txlocaltax1=price2num($txlocaltax1);
@@ -635,6 +637,7 @@ class Propal extends CommonObject
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu = price2num($pu);
+		$pu_ht_devise=price2num($pu_ht_devise);
 		$txtva = price2num($txtva);
 		$txlocaltax1=price2num($txlocaltax1);
 		$txlocaltax2=price2num($txlocaltax2);
@@ -1325,16 +1328,19 @@ class Propal extends CommonObject
 		$sql.= ", dr.code as demand_reason_code, dr.label as demand_reason";
 		$sql.= ", cr.code as cond_reglement_code, cr.libelle as cond_reglement, cr.libelle_facture as cond_reglement_libelle_doc";
 		$sql.= ", cp.code as mode_reglement_code, cp.libelle as mode_reglement";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid';
+		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_propalst as c ON p.fk_statut = c.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id AND cp.entity IN ('.getEntity('c_paiement').')';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as cr ON p.fk_cond_reglement = cr.rowid AND cr.entity IN ('.getEntity('c_payment_term').')';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
-		$sql.= " WHERE p.fk_statut = c.id";
-		$sql.= " AND p.entity IN (".getEntity('propal').")";
-		if ($ref) $sql.= " AND p.ref='".$ref."'";
-		else $sql.= " AND p.rowid=".$rowid;
+
+		if ($ref) {
+			$sql.= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
+			$sql.= " AND p.ref='".$this->db->escape($ref)."'";
+		}
+		else $sql.= " WHERE p.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -1457,6 +1463,8 @@ class Propal extends CommonObject
 	 */
 	function update(User $user, $notrigger=0)
 	{
+		global $conf;
+
 		$error=0;
 
 		// Clean parameters
@@ -1505,15 +1513,21 @@ class Propal extends CommonObject
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (! $notrigger)
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY', $user);
-				if ($result < 0) $error++;
-				// End call triggers
+				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('PROPAL_MODIFY', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -3130,7 +3144,7 @@ class Propal extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
+		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3174,6 +3188,8 @@ class Propal extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
+				$response->total+=$obj->total_ht;
+				
 				if ($mode == 'opened')
 				{
 					$datelimit = $this->db->jdate($obj->datefin);
@@ -3344,12 +3360,19 @@ class Propal extends CommonObject
 		global $conf,$langs;
 		$langs->load("propal");
 
-		if (! empty($conf->global->PROPALE_ADDON))
+		$constant = 'PROPALE_ADDON_'.$this->entity;
+
+		if (! empty($conf->global->$constant)) {
+			$classname = $conf->global->$constant; // for multicompany proposal sharing
+		} else {
+			$classname = $conf->global->PROPALE_ADDON;
+		}
+
+		if (! empty($classname))
 		{
 			$mybool=false;
 
-			$file = $conf->global->PROPALE_ADDON.".php";
-			$classname = $conf->global->PROPALE_ADDON;
+			$file = $classname.".php";
 
 			// Include file with class
 			$dirmodels = array_merge(array('/'), (array) $conf->modules_parts['models']);
@@ -3577,9 +3600,10 @@ class Propal extends CommonObject
 	 *  @param      int			$hidedetails    Hide details of lines
 	 *  @param      int			$hidedesc       Hide description
 	 *  @param      int			$hideref        Hide ref
+         *  @param   null|array  $moreparams     Array to provide more information
 	 * 	@return     int         				0 if KO, 1 if OK
 	 */
-	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0)
+	public function generateDocument($modele, $outputlangs, $hidedetails=0, $hidedesc=0, $hideref=0, $moreparams=null)
 	{
 		global $conf,$langs;
 
@@ -3598,7 +3622,7 @@ class Propal extends CommonObject
 
 		$modelpath = "core/modules/propale/doc/";
 
-		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
+		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref,$moreparams);
 	}
 
 	/**
@@ -3915,7 +3939,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
+		$sql.= " ".(price2num($this->subprice)!==''?price2num($this->subprice):"null").",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".(isset($this->info_bits)?"'".$this->db->escape($this->info_bits)."'":"null").",";
 		$sql.= " ".price2num($this->total_ht).",";
