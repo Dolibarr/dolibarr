@@ -38,9 +38,9 @@ class box_members extends ModeleBoxes
 	var $depends = array("adherent");
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $param;
 	var $enabled = 1;
