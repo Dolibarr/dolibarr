@@ -4,7 +4,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -195,14 +195,14 @@ class ActionsTicket
                     }
 
                     // Auto assign user
-                    if ($conf->global->TICKETS_AUTO_ASSIGN_USER_CREATE) {
+                    if ($conf->global->TICKET_AUTO_ASSIGN_USER_CREATE) {
                         $result = $object->assignUser($user, $user->id, 1);
                         $object->add_contact($user->id, "SUPPORTTEC", 'internal');
                     }
 
                     // Auto assign contrat
                     $contractid = 0;
-                    if ($conf->global->TICKETS_AUTO_ASSIGN_CONTRACT_CREATE) {
+                    if ($conf->global->TICKET_AUTO_ASSIGN_CONTRACT_CREATE) {
                         $contrat = new Contrat($this->db);
                         $contrat->socid = $object->fk_soc;
                         $list = $contrat->getListOfContracts();
@@ -217,7 +217,7 @@ class ActionsTicket
                     }
 
                     // Auto create fiche intervention
-                    if ($conf->global->TICKETS_AUTO_CREATE_FICHINTER_CREATE)
+                    if ($conf->global->TICKET_AUTO_CREATE_FICHINTER_CREATE)
                     {
                         $fichinter = new Fichinter($this->db);
                         $fichinter->socid = $object->fk_soc;
@@ -579,6 +579,7 @@ class ActionsTicket
      *
      * @param User $user        User for action
      * @param string $action    Action string
+     * @return int
      */
     private function newMessage($user, &$action)
     {
@@ -637,7 +638,7 @@ class ActionsTicket
                         $subject = GETPOST('subject') ? GETPOST('subject') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
 
                         $message_intro = $langs->trans('TicketNotificationEmailBody', "#" . $object->id);
-                        $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE;
+                        $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
                         $message = $langs->trans('TicketMessageMailIntroText');
                         $message .= "\n\n";
@@ -673,9 +674,9 @@ class ActionsTicket
                         $message .= "\n" . $langs->trans('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : ' . '<a href="' . $url_internal_ticket . '">' . $object->track_id . '</a>' . "\n";
 
                         // Add global email address recipient
-                        // altairis: use new TICKETS_NOTIFICATION_EMAIL_TO configuration variable
-                        if ($conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKETS_NOTIFICATION_EMAIL_TO, $sendto)) {
-                            if(!empty($conf->global->TICKETS_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO;
+                        // altairis: use new TICKET_NOTIFICATION_EMAIL_TO configuration variable
+                        if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+                            if(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
                         }
 
                         // altairis: dont try to send email if no recipient
@@ -709,8 +710,8 @@ class ActionsTicket
                             $label_title = empty($conf->global->MAIN_APPLICATION_TITLE) ? $mysoc->name : $conf->global->MAIN_APPLICATION_TITLE;
                             $subject = GETPOST('subject') ? GETPOST('subject') : '[' . $label_title . '- ticket #' . $object->track_id . '] ' . $langs->trans('TicketNewMessage');
 
-                            $message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKETS_MESSAGE_MAIL_INTRO;
-                            $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE;
+                            $message_intro = GETPOST('mail_intro') ? GETPOST('mail_intro') : $conf->global->TICKET_MESSAGE_MAIL_INTRO;
+                            $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
                             // We put intro after
                             $message = GETPOST('message');
@@ -731,9 +732,9 @@ class ActionsTicket
                             }
 
                             // If public interface is not enable, use link to internal page into mail
-                            $url_public_ticket = (!empty($conf->global->TICKETS_ENABLE_PUBLIC_INTERFACE) ?
-                            		(!empty($conf->global->TICKETS_URL_PUBLIC_INTERFACE) ?
-                            			$conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/view.php' :
+                            $url_public_ticket = (!empty($conf->global->TICKET_ENABLE_PUBLIC_INTERFACE) ?
+                            		(!empty($conf->global->TICKET_URL_PUBLIC_INTERFACE) ?
+                            			$conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' :
                             			dol_buildpath('/public/ticket/view.php', 2)
                             		) :
                             		dol_buildpath('/ticket/card.php', 2)
@@ -757,8 +758,8 @@ class ActionsTicket
                             }
 
                             // altairis: Add global email address reciepient
-                            if ($conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKETS_NOTIFICATION_EMAIL_TO, $sendto)) {
-                                if(!empty($conf->global->TICKETS_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO;
+                            if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_TO, $sendto)) {
+                                if(!empty($conf->global->TICKET_NOTIFICATION_EMAIL_TO)) $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
                             }
 
                             // altairis: dont try to send email when no recipient
@@ -792,6 +793,7 @@ class ActionsTicket
      *
      * @param User $user        User for action
      * @param string $action    Action string
+     * @return void
      */
     private function newMessagePublic($user, &$action)
     {
@@ -867,11 +869,11 @@ class ActionsTicket
 
                     $message .= "\n\n";
 
-                    $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE;
+                    $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
 
                     // Add global email address reciepient
-                    if ($conf->global->TICKETS_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKETS_NOTIFICATION_EMAIL_FROM, $sendto)) {
-                        $sendto[] = $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM;
+                    if ($conf->global->TICKET_NOTIFICATION_ALSO_MAIN_ADDRESS && !in_array($conf->global->TICKET_NOTIFICATION_EMAIL_FROM, $sendto)) {
+                        $sendto[] = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
                     }
 
                     $this->sendTicketMessageByEmail($subject, $message, '', $sendto);
@@ -893,7 +895,7 @@ class ActionsTicket
                     $message .= GETPOST('message');
                     $message .= "\n\n";
 
-                    $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKETS_MESSAGE_MAIL_SIGNATURE;
+                    $message_signature = GETPOST('mail_signature') ? GETPOST('mail_signature') : $conf->global->TICKET_MESSAGE_MAIL_SIGNATURE;
                     foreach ($external_contacts as $key => $info_sendto) {
                         if ($info_sendto['email'] != '') {
                             $sendto[] = trim($info_sendto['firstname'] . " " . $info_sendto['lastname']) . " <" . $info_sendto['email'] . ">";
@@ -903,7 +905,7 @@ class ActionsTicket
                         $message .= (!empty($recipient) ? $langs->trans('TicketNotificationRecipient') . ' : ' . $recipient . "\n" : '');
                     }
 
-                    $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $object->track_id;
+                    $url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/view.php' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $object->track_id;
                     $message .= "\n\n" . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . $url_public_ticket . "\n";
 
                     // Add signature
@@ -962,6 +964,7 @@ class ActionsTicket
      * Get ticket info
      *
      * @param  int $id    Object id
+     * @return void
      */
     public function getInfo($id)
     {
@@ -976,6 +979,7 @@ class ActionsTicket
      * Get action title
      *
      * @param string $action    Type of action
+     * @return string
      */
     public function getTitle($action = '')
     {
@@ -998,10 +1002,11 @@ class ActionsTicket
      * View html list of logs
      *
      * @param boolean $show_user Show user who make action
+     * @return void
      */
     public function viewTicketLogs($show_user = true)
     {
-        global $conf, $langs, $bc;
+        global $conf, $langs;
 
         // Load logs in cache
         $ret = $this->dao->loadCacheLogsTicket();
@@ -1021,11 +1026,8 @@ class ActionsTicket
                 print '</th>';
             }
 
-            $var = true;
-
             foreach ($this->dao->cache_logs_ticket as $id => $arraylogs) {
-                $var = !$var;
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td><strong>';
                 print dol_print_date($arraylogs['datec'], 'dayhour');
                 print '</strong></td>';
@@ -1042,7 +1044,7 @@ class ActionsTicket
                     print '</td>';
                 }
                 print '</tr>';
-                print "<tr " . $bc[$var] . ">";
+                print '<tr class="oddeven">';
                 print '<td colspan="2">';
                 print dol_nl2br($arraylogs['message']);
 
@@ -1061,10 +1063,11 @@ class ActionsTicket
      *
      * @param 	boolean 	$show_user 	Show user who make action
      * @param	Ticket	$object		Object
+     * @return void
      */
     public function viewTimelineTicketLogs($show_user = true, $object = true)
     {
-    	global $conf, $langs, $bc;
+    	global $conf, $langs;
 
     	// Load logs in cache
     	$ret = $object->loadCacheLogsTicket();
@@ -1168,10 +1171,11 @@ class ActionsTicket
      *
      * @param boolean $show_private Show private messages
      * @param boolean $show_user    Show user who make action
+     * @return void
      */
     public function viewTicketMessages($show_private, $show_user = true)
     {
-        global $conf, $langs, $user, $bc;
+        global $conf, $langs, $user;
 		global $object;
 
         // Load logs in cache
@@ -1202,8 +1206,7 @@ class ActionsTicket
                     || ($arraymsgs['private'] == "1" && $show_private)
                 ) {
                     //print '<tr>';
-                    $var = !$var;
-                    print "<tr " . $bc[$var] . ">";
+                    print '<tr class="oddeven">';
                     print '<td><strong>';
                     print dol_print_date($arraymsgs['datec'], 'dayhour');
                     print '<strong></td>';
@@ -1221,7 +1224,7 @@ class ActionsTicket
                         print '</td>';
                     }
                     print '</td>';
-                    print "<tr " . $bc[$var] . ">";
+                    print '<tr class="oddeven">';
                     print '<td colspan="2">';
                     print $arraymsgs['message'];
                     print '</td>';
@@ -1241,10 +1244,11 @@ class ActionsTicket
      * @param 	boolean 	$show_private Show private messages
      * @param 	boolean 	$show_user    Show user who make action
      * @param	Ticket	$object		 Object ticket
+     * @return void
      */
     public function viewTicketTimelineMessages($show_private, $show_user, Ticket $object)
     {
-    	global $conf, $langs, $user, $bc;
+    	global $conf, $langs, $user;
 
     	// Load logs in cache
     	$ret = $object->loadCacheMsgsTicket();
@@ -1310,14 +1314,15 @@ class ActionsTicket
      *
      * @param string $subject          Email subject
      * @param string $message          Email message
-     * @param int    $send_internal_cc Receive a copy on internal email ($conf->global->TICKETS_NOTIFICATION_EMAIL_FROM)
+     * @param int    $send_internal_cc Receive a copy on internal email ($conf->global->TICKET_NOTIFICATION_EMAIL_FROM)
      * @param array  $array_receiver   Array of receiver. exemple array('name' => 'John Doe', 'email' => 'john@doe.com', etc...)
+     * @return void
      */
     public function sendTicketMessageByEmail($subject, $message, $send_internal_cc = 0, $array_receiver = array())
     {
         global $conf, $langs;
 
-        if ($conf->global->TICKETS_DISABLE_ALL_MAILS) {
+        if ($conf->global->TICKET_DISABLE_ALL_MAILS) {
             dol_syslog(get_class($this) . '::sendTicketMessageByEmail: Emails are disable into ticket setup by option TICKETSUP_DISABLE_ALL_MAILS', LOG_WARNING);
             return '';
         }
@@ -1337,10 +1342,10 @@ class ActionsTicket
         }
 
         if ($send_internal_cc) {
-            $sendtocc = $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM;
+            $sendtocc = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
         }
 
-        $from = $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM;
+        $from = $conf->global->TICKET_NOTIFICATION_EMAIL_FROM;
         if (is_array($array_receiver) && count($array_receiver) > 0) {
             foreach ($array_receiver as $key => $receiver) {
                 // Create form object
@@ -1355,7 +1360,7 @@ class ActionsTicket
                 $message_to_send = dol_nl2br($message);
 
                 // Envoi du mail
-                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
                     $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
                 }
@@ -1377,7 +1382,7 @@ class ActionsTicket
                         }
                     }
                 }
-                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
                 }
             }

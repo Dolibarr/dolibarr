@@ -193,7 +193,12 @@ class Form
 						$morealt=' style="width: '.$cols.'"';
 						$cols='';
 					}
-					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1]?$tmp[1]:'20').'"'.($cols?' cols="'.$cols.'"':'class="quatrevingtpercent"').$morealt.'">'.($editvalue?$editvalue:$value).'</textarea>';
+
+					$valuetoshow = ($editvalue?$editvalue:$value);
+
+					$ret.='<textarea id="'.$htmlname.'" name="'.$htmlname.'" wrap="soft" rows="'.($tmp[1]?$tmp[1]:'20').'"'.($cols?' cols="'.$cols.'"':'class="quatrevingtpercent"').$morealt.'">';
+					$ret.=dol_string_neverthesehtmltags($valuetoshow, array('textarea'));
+					$ret.='</textarea>';
 				}
 				else if ($typeofdata == 'day' || $typeofdata == 'datepicker')
 				{
@@ -291,7 +296,7 @@ class Form
 		$out='';
 
 		// Check parameters
-		if ($inputType == 'textarea') $value = dol_nl2br($value);
+		if (preg_match('/^text/',$inputType)) $value = dol_nl2br($value);
 		else if (preg_match('/^numeric/',$inputType)) $value = price($value);
 		else if ($inputType == 'day' || $inputType == 'datepicker') $value = dol_print_date($value, 'day');
 
@@ -1073,17 +1078,31 @@ class Form
 		$out='';
 		$num=0;
 		$outarray=array();
-		
+
 		if ($selected === '') $selected = array();
 		else if (!is_array($selected)) $selected = array($selected);
-		
+
 		// Clean $filter that may contains sql conditions so sql code
-		if (function_exists('test_sql_and_script_inject')) $filter = test_sql_and_script_inject($filter, 3);
+		if (function_exists('test_sql_and_script_inject')) {
+			if (test_sql_and_script_inject($filter, 3)>0) {
+				$filter ='';
+			}
+		}
 
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
+
+		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+			$sql .= " ,s.address, s.zip, s.town";
+		 	$sql .= " , dictp.code as country_code";
+		}
+
+		$sql.= " FROM (".MAIN_DB_PREFIX ."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " )";
+		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+			$sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid=s.fk_pays";
+		}
 		$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 		if (! empty($user->socid)) $sql.= " AND s.rowid = ".$user->socid;
 		if ($filter) $sql.= " AND (".$filter.")";
@@ -1170,6 +1189,13 @@ class Form
 						if ($obj->client == 2 || $obj->client == 3) $label.=($obj->client==3?', ':'').$langs->trans("Prospect");
 						if ($obj->fournisseur) $label.=($obj->client?', ':'').$langs->trans("Supplier");
 						if ($obj->client || $obj->fournisseur) $label.=')';
+					}
+
+					if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+						$label.='-'.$obj->address.'-'. $obj->zip.' '. $obj->town;
+						if (!empty($obj->country_code)) {
+							$label.= ' '. $langs->trans('Country'.$obj->country_code);
+						}
 					}
 
 					if (empty($outputmode))
@@ -1287,7 +1313,7 @@ class Form
 	 *	@param	int		$socid      	Id ot third party or 0 for all
 	 *	@param  string	$selected   	Id contact pre-selectionne
 	 *	@param  string	$htmlname  	    Name of HTML field ('none' for a not editable field)
-	 *	@param  int		$showempty      0=no empty value, 1=add an empty value
+	 *	@param  int		$showempty      0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 *	@param  string	$exclude        List of contacts id to exclude
 	 *	@param	string	$limitto		Disable answers that are not id in this array list
 	 *	@param	integer	$showfunction   Add function into label
@@ -1311,10 +1337,10 @@ class Form
 	 *	Return HTML code of the SELECT of list of all contacts (for a third party or all).
 	 *  This also set the number of contacts found into $this->num
 	 *
-	 *	@param	int			$socid      	Id ot third party or 0 for all
+	 *	@param	int			$socid      	Id ot third party or 0 for all or -1 for empty list
 	 *	@param  array|int	$selected   	Array of ID of pre-selected contact id
 	 *	@param  string		$htmlname  	    Name of HTML field ('none' for a not editable field)
-	 *	@param  int			$showempty     	0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit)
+	 *	@param  int			$showempty     	0=no empty value, 1=add an empty value, 2=add line 'Internal' (used by user edit), 3=add an empty value only if more than one record into list
 	 *	@param  string		$exclude        List of contacts id to exclude
 	 *	@param	string		$limitto		Disable answers that are not id in this array list
 	 *	@param	integer		$showfunction   Add function into label
@@ -1335,7 +1361,7 @@ class Form
 		$langs->load('companies');
 
 		if (empty($htmlid)) $htmlid = $htmlname;
-		
+
 		if ($selected === '') $selected = array();
 		else if (!is_array($selected)) $selected = array($selected);
         $out='';
@@ -1346,7 +1372,7 @@ class Form
 		$sql.= " FROM ".MAIN_DB_PREFIX ."socpeople as sp";
 		if ($showsoc > 0) $sql.= " LEFT OUTER JOIN  ".MAIN_DB_PREFIX ."societe as s ON s.rowid=sp.fk_soc";
 		$sql.= " WHERE sp.entity IN (".getEntity('socpeople').")";
-		if ($socid > 0) $sql.= " AND sp.fk_soc=".$socid;
+		if ($socid > 0 || $socid == -1) $sql.= " AND sp.fk_soc=".$socid;
 		if (! empty($conf->global->CONTACT_HIDE_INACTIVE_IN_COMBOBOX)) $sql.= " AND sp.statut <> 0";
 		$sql.= " ORDER BY sp.lastname ASC";
 
@@ -1363,7 +1389,7 @@ class Form
 			}
 
 			if ($htmlname != 'none' || $options_only) $out.= '<select class="flat'.($moreclass?' '.$moreclass:'').'" id="'.$htmlid.'" name="'.$htmlname.($multiple ? '[]' : '').'" '.($multiple ? 'multiple' : '').' '.(!empty($moreparam) ? $moreparam : '').'>';
-			if ($showempty == 1 && !$multiple) $out.= '<option value="0"'.(in_array(0,$selected)?' selected':'').'>&nbsp;</option>';
+			if (($showempty == 1 || ($showempty == 3 && $num > 1)) && !$multiple) $out.= '<option value="0"'.(in_array(0,$selected)?' selected':'').'>&nbsp;</option>';
 			if ($showempty == 2) $out.= '<option value="0"'.(in_array(0,$selected)?' selected':'').'>'.$langs->trans("Internal").'</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
@@ -1421,7 +1447,9 @@ class Form
 			}
 			else
 			{
-				$out.= '<option value="-1"'.($showempty==2 || $multiple?'':' selected').' disabled>'.$langs->trans($socid?"NoContactDefinedForThirdParty":"NoContactDefined").'</option>';
+				$out.= '<option value="-1"'.(($showempty==2 || $multiple) ? '' : ' selected').' disabled>';
+				$out.= ($socid != -1) ? ($langs->trans($socid?"NoContactDefinedForThirdParty":"NoContactDefined")) : $langs->trans('SelectAThirdPartyFirst');
+				$out.= '</option>';
 			}
 			if ($htmlname != 'none' || $options_only)
 			{
@@ -1484,13 +1512,13 @@ class Form
 	function select_dolusers($selected='', $htmlname='userid', $show_empty=0, $exclude=null, $disabled=0, $include='', $enableonly='', $force_entity='0', $maxlength=0, $showstatus=0, $morefilter='', $show_every=0, $enableonlytext='', $morecss='', $noactive=0, $outputmode=0, $multiple=false)
 	{
 		global $conf,$user,$langs;
-		
+
 		// If no preselected user defined, we take current user
 		if ((is_numeric($selected) && ($selected < -2 || empty($selected))) && empty($conf->global->SOCIETE_DISABLE_DEFAULT_SALESREPRESENTATIVE)) $selected=$user->id;
 
 		if ($selected === '') $selected = array();
 		else if (!is_array($selected)) $selected = array($selected);
-		
+
 		$excludeUsers=null;
 		$includeUsers=null;
 
@@ -1544,9 +1572,12 @@ class Form
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
 		if (! empty($morefilter)) $sql.=" ".$morefilter;
 
-		if(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)){
+		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+		{
 			$sql.= " ORDER BY u.firstname ASC";
-		}else{
+		}
+		else
+		{
 			$sql.= " ORDER BY u.lastname ASC";
 		}
 
@@ -1568,7 +1599,7 @@ class Form
 				if ($show_every) $out.= '<option value="-2"'.((in_array(-2,$selected))?' selected':'').'>-- '.$langs->trans("Everybody").' --</option>'."\n";
 
 				$userstatic=new User($this->db);
-				
+
 				while ($i < $num)
 				{
 					$obj = $this->db->fetch_object($resql);
@@ -1593,9 +1624,11 @@ class Form
 						$out.= '>';
 					}
 
-					$fullNameMode = 0; //Lastname + firstname
-					if(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)){
-						$fullNameMode = 1; //firstname + lastname
+					// $fullNameMode is 0=Lastname+Firstname (MAIN_FIRSTNAME_NAME_POSITION=1), 1=Firstname+Lastname (MAIN_FIRSTNAME_NAME_POSITION=0)
+					$fullNameMode = 0;
+					if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))
+					{
+						$fullNameMode = 1; //Firstname+lastname
 					}
 					$out.= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 
@@ -2666,7 +2699,7 @@ class Form
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON pfp.fk_soc = s.rowid";
-		$sql.= " WHERE pfp.entity IN (".getEntity('productprice').")";
+		$sql.= " WHERE pfp.entity IN (".getEntity('productsupplierprice').")";
 		$sql.= " AND p.tobuy = 1";
 		$sql.= " AND s.fournisseur = 1";
 		$sql.= " AND p.rowid = ".$productid;
@@ -3320,21 +3353,21 @@ class Form
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			// Last seen cycle
 			$ref = 0;
-			while ($res = $this->db->fetch_array($resql, MYSQL_NUM)) {
+			while ($obj = $this->db->fetch_object($resql)){
 				//Same company ?
-				if ($socid == $res[5]) {
+			    if ($socid == $obj->fk_soc) {
 					//Same cycle ?
-					if ($res[2] != $ref) {
+			        if ($obj->situation_cycle_ref != $ref) {
 						// Just seen this cycle
-						$ref = $res[2];
+			            $ref = $obj->situation_cycle_ref;
 						//not final ?
-						if ($res[4] != 1) {
+			            if ($obj->situation_final != 1) {
 							//Not prov?
-							if (substr($res[1], 1, 4) != 'PROV') {
-								if ($selected == $res[0]) {
-									$opt .= '<option value="' . $res[0] . '" selected>' . $res[1] . '</option>';
+			                if (substr($obj->facnumber, 1, 4) != 'PROV') {
+			                    if ($selected == $obj->situation_final) {
+			                        $opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->facnumber . '</option>';
 								} else {
-									$opt .= '<option value="' . $res[0] . '">' . $res[1] . '</option>';
+								    $opt .= '<option value="' . $obj->rowid . '">' . $obj->facnumber . '</option>';
 								}
 							}
 						}
@@ -4948,6 +4981,7 @@ class Form
 					}
 
 					// Zone de saisie manuelle de la date
+					$retstring.='<div class="nowrap inline-block">';
 					$retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidth75" maxlength="11" value="'.$formated_date.'"';
 					$retstring.=($disabled?' disabled':'');
 					$retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "';  // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
@@ -4971,6 +5005,7 @@ class Form
 						$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"),'calendarday','class="datecallink"').'</button>';
 					}
 
+					$retstring.='</div>';
 					$retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
 					$retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
 					$retstring.='<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
@@ -6024,6 +6059,7 @@ class Form
 		// Bypass the default method
 		$hookmanager->initHooks(array('commonobject'));
 		$parameters=array(
+			'morehtmlright' => $morehtmlright,
 		    'compatibleImportElementsList' =>& $compatibleImportElementsList,
 		);
 		$reshook=$hookmanager->executeHooks('showLinkedObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
@@ -6164,6 +6200,7 @@ class Form
 
 		$linktoelem='';
 		$linktoelemlist='';
+		$listofidcompanytoscan='';
 
 		if (! is_object($object->thirdparty)) $object->fetch_thirdparty();
 
@@ -6197,7 +6234,7 @@ class Form
 
 		// Can complete the possiblelink array
 		$hookmanager->initHooks(array('commonobject'));
-		$parameters=array();
+		$parameters=array('listofidcompanytoscan' => $listofidcompanytoscan);
 		$reshook=$hookmanager->executeHooks('showLinkToObjectBlock',$parameters,$object,$action);    // Note that $action and $object may have been modified by hook
 		if (empty($reshook))
 		{
@@ -6245,7 +6282,7 @@ class Form
 					print '</tr>';
 					while ($i < $num)
 					{
-						$objp = $this->db->fetch_object($resqlorderlist);
+						$objp = $this->db->fetch_object($resqllist);
 
 						$var = ! $var;
 						print '<tr ' . $bc [$var] . '>';
@@ -6335,7 +6372,7 @@ class Form
 
 		$disabled = ($disabled ? ' disabled' : '');
 
-		$resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		$resultyesno = '<select class="flat width75" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
 		if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
 		if (("$value" == 'yes') || ($value == 1))
 		{
@@ -6753,7 +6790,7 @@ class Form
 		if (is_array($include))	$includeGroups = implode("','",$include);
 
 		if (!is_array($selected)) $selected = array($selected);
-		
+
 		$out='';
 
 		// On recherche les groupes

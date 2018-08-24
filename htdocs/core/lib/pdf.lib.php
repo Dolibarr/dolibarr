@@ -263,6 +263,7 @@ function pdf_getHeightForLogo($logo, $url = false)
  *
  * @param TCPDF     $pdf            PDF initialized object
  * @param string    $htmlcontent    HTML Contect
+ * @return number
  * @see getStringHeight
  */
 function pdfGetHeightForHtmlContent(&$pdf, $htmlcontent)
@@ -1885,13 +1886,13 @@ function pdf_getlinetotalexcltax($object,$i,$outputlangs,$hidedetails=0)
         	{
         		$prev_progress = 0;
         		$progress = 1;
-        		if (method_exists($object, 'get_prev_progress'))
+        		if (method_exists($object->lines[$i], 'get_prev_progress'))
         		{
 					$prev_progress = $object->lines[$i]->get_prev_progress($object->id);
 					$progress = ($object->lines[$i]->situation_percent - $prev_progress) / 100;
         		}
 				$result.=price($sign * ($total_ht/($object->lines[$i]->situation_percent/100)) * $progress, 0, $outputlangs);
-			}
+        	}
         	else
 			$result.=price($sign * $total_ht, 0, $outputlangs);
 	}
@@ -2120,4 +2121,3 @@ function pdf_getSizeForImage($realpath)
 	}
 	return array('width'=>$width,'height'=>$height);
 }
-

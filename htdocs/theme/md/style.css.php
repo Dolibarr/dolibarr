@@ -1809,7 +1809,9 @@ foreach($mainmenuusedarray as $val)
     	display: none;
     <?php } ?>
 }
-
+a.tmenuimage {
+    display: block;
+}
 
 
 /* Login */
@@ -2892,6 +2894,12 @@ ul.noborder li:nth-child(odd):not(.liste_titre) {
 
 
 /* Set the color for hover lines */
+
+.nohoverborder:hover {
+	border: unset;
+	box-shadow: unset;
+	-webkit-box-shadow: unset;
+}
 .oddeven:hover, .evenodd:hover, .impair:hover, .pair:hover
 {
 <?php if ($colorbacklinepairhover) { ?>
@@ -3735,6 +3743,8 @@ tr.visible {
     border: 0px;
     background-color: transparent;
     background-image: none;
+    color: #000 !important;
+    text-shadow: none;
 }
 .websitebar {
 	border-bottom: 1px solid #ccc;

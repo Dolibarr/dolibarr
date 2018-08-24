@@ -29,7 +29,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/discount.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/invoice.lib.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
 }
 
 // Load translation files required by the page
@@ -122,5 +122,6 @@ print '</div>';
 
 dol_fiche_end();
 
+// End of page
 llxFooter();
 $db->close();

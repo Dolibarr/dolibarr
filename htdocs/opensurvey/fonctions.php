@@ -29,7 +29,8 @@
  * @param Opensurveysondage $object Current viewing poll
  * @return array Tabs for the opensurvey section
  */
-function opensurvey_prepare_head(Opensurveysondage $object) {
+function opensurvey_prepare_head(Opensurveysondage $object)
+{
 
 	global $langs, $conf;
 

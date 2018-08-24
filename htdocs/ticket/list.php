@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -20,6 +20,7 @@
 /**
  *    \file     htdocs/ticket/list.php
  *    \ingroup	ticket
+ *    \brief    List page for tickets
  */
 
 require '../main.inc.php';
@@ -90,7 +91,6 @@ foreach($object->fields as $key => $val)
 	if (GETPOST('search_'.$key,'alpha')) $search[$key]=GETPOST('search_'.$key,'alpha');
 }
 
-
 // List of fields to search into when doing a "search in all"
 $fieldstosearchall = array();
 foreach($object->fields as $key => $val)
@@ -106,7 +106,7 @@ foreach($object->fields as $key => $val)
 	if (! empty($val['visible'])) $arrayfields['t.'.$key]=array('label'=>$val['label'], 'checked'=>(($val['visible']<0)?0:1), 'enabled'=>$val['enabled'], 'position'=>$val['position']);
 }
 // Extra fields
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']))
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label']) > 0)
 {
 	foreach($extrafields->attributes[$object->table_element]['label'] as $key => $val)
 	{
@@ -177,15 +177,20 @@ if (empty($reshook))
  * View
  */
 
-$help_url = 'FR:DocumentationModuleTicket';
-llxHeader('', $langs->trans('TicketList'), $help_url);
-
-$form = new Form($db);
+$form=new Form($db);
 $formTicket = new FormTicket($db);
+
+$now=dol_now();
 
 $user_assign = new User($db);
 $user_create = new User($db);
 $socstatic = new Societe($db);
+
+$help_url = 'FR:DocumentationModuleTicket';
+$title = $langs->trans('TicketList');
+
+llxHeader('', $title, $help_url);
+
 
 
 // Build and execute select
@@ -204,8 +209,8 @@ $reshook=$hookmanager->executeHooks('printFieldListSelect', $parameters, $object
 $sql.=$hookmanager->resPrint;
 $sql=preg_replace('/, $/','', $sql);
 $sql.= " FROM ".MAIN_DB_PREFIX.$object->table_element." as t";
-if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."ticket_extrafields as ef on (t.rowid = ef.fk_object)";
-if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity('ticket').")";
+if (is_array($extrafields->attributes[$object->table_element]['label']) && count($extrafields->attributes[$object->table_element]['label'])) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX.$object->table_element."_extrafields as ef on (t.rowid = ef.fk_object)";
+if ($object->ismultientitymanaged == 1) $sql.= " WHERE t.entity IN (".getEntity($object->element).")";
 else $sql.=" WHERE 1 = 1";
 foreach($search as $key => $val)
 {
@@ -216,7 +221,7 @@ foreach($search as $key => $val)
 if ($search_all) $sql.= natural_search(array_keys($fieldstosearchall), $search_all);
 if ($search_fk_soc)     $sql.= natural_search('fk_soc', $search_fk_soc);
 if ($search_fk_project) $sql.= natural_search('fk_project', $search_fk_project);
-if (!$user->societe_id && ($mode == "my_assign" || (!$user->admin && $conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY))) {
+if (!$user->societe_id && ($mode == "my_assign" || (!$user->admin && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY))) {
     $sql.= " AND t.fk_user_assign=".$user->id;
 }
 
@@ -245,6 +250,7 @@ if (! empty($extrafields->attributes[$object->table_element]['label'])) {
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldListGroupBy',$parameters);    // Note that $action and $object may have been modified by hook
 $sql.=$hookmanager->resPrint;
+$sql=preg_replace('/, $/','', $sql);
 */
 
 $sql.=$db->order($sortfield,$sortorder);
@@ -253,18 +259,17 @@ $sql.=$db->order($sortfield,$sortorder);
 $nbtotalofrecords = '';
 if (empty($conf->global->MAIN_DISABLE_FULL_SCANLIST))
 {
-	$result = $db->query($sql);
-	$nbtotalofrecords = $db->num_rows($result);
-	if (($page * $limit) > $nbtotalofrecords)	// if total resultset is smaller then paging size (filtering), goto and load page 0
+	$resql = $db->query($sql);
+	$nbtotalofrecords = $db->num_rows($resql);
+	if (($page * $limit) > $nbtotalofrecords)	// if total of record found is smaller than page * limit, goto and load page 0
 	{
 		$page = 0;
 		$offset = 0;
 	}
 }
-// if total resultset is smaller the limit, no need to do paging.
+// if total of record found is smaller than limit, no need to do paging and to restart another select with limits set.
 if (is_numeric($nbtotalofrecords) && $limit > $nbtotalofrecords)
 {
-	$resql = $result;
 	$num = $nbtotalofrecords;
 }
 else
@@ -434,7 +439,6 @@ if ($user->rights->ticket->delete) $arrayofmassactions['predelete']=$langs->tran
 if (in_array($massaction, array('presend','predelete'))) $arrayofmassactions=array();
 $massactionbutton=$form->selectMassAction('', $arrayofmassactions);
 
-
 print '<form method="POST" id="searchFormList" action="'.$_SERVER["PHP_SELF"].'">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
@@ -456,7 +460,7 @@ if ($user->rights->ticket->write)
 	$newcardbutton.= '</a>';
 }
 
-print_barre_liste($langs->trans('TicketList'), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, '', $num, $nbtotalofrecords, 'title_ticket', 0, $newcardbutton, '', $limit);
+print_barre_liste($title, $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder, $massactionbutton, $num, $nbtotalofrecords, 'title_ticket', 0, $newcardbutton, '', $limit);
 
 if ($mode == 'my_assign') {
     print '<div class="opacitymedium">' . $langs->trans('TicketAssignedToMeInfos') . '</div><br>';
@@ -513,7 +517,6 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 // Fields title search
 // --------------------------------------------------------------------
 print '<tr class="liste_titre">';
-
 foreach($object->fields as $key => $val)
 {
 	$align='';
@@ -581,12 +584,14 @@ print '</tr>'."\n";
 
 // Detect if we need a fetch on each output line
 $needToFetchEachLine=0;
-if (! empty($extrafields->attributes[$object->table_element]['computed'])) {
+if (is_array($extrafields->attributes[$object->table_element]['computed']) && count($extrafields->attributes[$object->table_element]['computed']) > 0)
+{
 	foreach ($extrafields->attributes[$object->table_element]['computed'] as $key => $val)
 	{
 		if (preg_match('/\$object/',$val)) $needToFetchEachLine++;  // There is at least one compute field that use $object
 	}
 }
+
 
 // Loop on record
 // --------------------------------------------------------------------

@@ -116,7 +116,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                $res = $userstat->fetch($object->fk_user_assign);
 	                if ($res > 0)
 	                {
-	                	if (empty($conf->global->TICKETS_DISABLE_ALL_MAILS))
+	                	if (empty($conf->global->TICKET_DISABLE_ALL_MAILS))
 	                	{
 	                		// Init to avoid errors
 	                		$filepath = array();
@@ -146,18 +146,21 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 	                        $message = dol_nl2br($message);
 
-	                        if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+	                        if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 	                            $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 	                            $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 	                        }
 	                        include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 		                    $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
-		                    if ($mailfile->error) {
-	                            setEventMessage($mailfile->error, 'errors');
-		                    } else {
+		                    if ($mailfile->error) 
+		                    {
+	                            setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+		                    } 
+		                    else 
+		                    {
 		                        $result = $mailfile->sendfile();
 		                    }
-	                        if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+	                        if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 	                            $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 	                        }
 	                	}
@@ -182,9 +185,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 	            // Send email to notification email
 
-	            if (empty($conf->global->TICKETS_DISABLE_ALL_MAILS) && empty($object->context['disableticketemail']))
+	            if (empty($conf->global->TICKET_DISABLE_ALL_MAILS) && empty($object->context['disableticketemail']))
 	            {
-		            $sendto = $conf->global->TICKETS_NOTIFICATION_EMAIL_TO;
+		            $sendto = $conf->global->TICKET_NOTIFICATION_EMAIL_TO;
 
 		            if ($sendto)
 					{
@@ -217,12 +220,12 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			            $message_admin.='<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
 			            $message_admin.='<p><a href="'.dol_buildpath('/ticket/card.php', 2).'?track_id='.$object->track_id.'">'.$langs->trans('SeeThisTicketIntomanagementInterface').'</a></p>';
 
-			            $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKETS_NOTIFICATION_EMAIL_FROM.'>';
+			            $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 			            $replyto = $from;
 
 		                $message_admin = dol_nl2br($message_admin);
 
-		                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+		                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 		                    $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 		                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 		                }
@@ -233,7 +236,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			            } else {
 			                     $result=$mailfile->sendfile();
 			            }
-		                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+		                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 		                    $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 		                }
 					}
@@ -241,7 +244,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 				// Send email to customer
 
-				if (empty($conf->global->TICKETS_DISABLE_ALL_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create)
+				if (empty($conf->global->TICKET_DISABLE_ALL_MAILS) && empty($object->context['disableticketemail']) && $object->notify_tiers_at_create)
 	            {
 		            $sendto = '';
 		            if (empty($user->socid) && empty($user->email)) {
@@ -287,16 +290,16 @@ class InterfaceTicketEmail extends DolibarrTriggers
 
 			            $message_customer.='</ul>';
 			            $message_customer.='<p>'.$langs->trans('Message').' : <br>'.$object->message.'</p>';
-			            $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE?$conf->global->TICKETS_URL_PUBLIC_INTERFACE.'/':dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
+			            $url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE?$conf->global->TICKET_URL_PUBLIC_INTERFACE.'/':dol_buildpath('/public/ticket/view.php', 2)).'?track_id='.$object->track_id;
 			            $message_customer.='<p>' . $langs->trans('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : <a href="'.$url_public_ticket.'">'.$url_public_ticket.'</a></p>';
 			            $message_customer.='<p>'.$langs->trans('TicketEmailPleaseDoNotReplyToThisEmail').'</p>';
 
-			            $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKETS_NOTIFICATION_EMAIL_FROM.'>';
+			            $from = $conf->global->MAIN_INFO_SOCIETE_NOM.'<'.$conf->global->TICKET_NOTIFICATION_EMAIL_FROM.'>';
 			            $replyto = $from;
 
 	                    $message_customer = dol_nl2br($message_customer);
 
-	                    if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+	                    if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 	                        $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
 	                        $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
 	                    }
@@ -307,7 +310,7 @@ class InterfaceTicketEmail extends DolibarrTriggers
 			            } else {
 			                      $result=$mailfile->sendfile();
 			            }
-	                    if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+	                    if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
 	                        $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
 	                    }
 	                }

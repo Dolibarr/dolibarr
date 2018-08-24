@@ -739,5 +739,6 @@ if (($action != 'create' && $action != 'add') || ($action == 'create' && $error)
 
 }
 
+// End of page
 llxFooter();
 $db->close();

@@ -905,12 +905,11 @@ if ($step == 4 && $datatoimport)
 	$height=24;
 	$i = 0;
 	$mandatoryfieldshavesource=true;
-	$var=true;
+
 	print '<table width="100%" class="nobordernopadding">';
 	foreach($fieldstarget as $code=>$label)
 	{
-		$var = !$var;
-		print '<tr '.$bc[$var].' height="'.$height.'">';
+		print '<tr class="oddeven" height="'.$height.'">';
 
 		$i++;
 		$entity=(! empty($objimport->array_import_entities[0][$code])?$objimport->array_import_entities[0][$code]:$objimport->array_import_icon[0]);
@@ -1916,9 +1915,8 @@ if ($step == 6 && $datatoimport)
 
 print '<br>';
 
-
+// End of page
 llxFooter();
-
 $db->close();
 
 

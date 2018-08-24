@@ -163,5 +163,6 @@ else
 	print $langs->trans("Module10Desc")."<br>\n";
 }
 
+// End of page
 llxFooter();
 $db->close();

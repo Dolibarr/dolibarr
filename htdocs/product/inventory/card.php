@@ -409,7 +409,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	*/
 }
 
-
 // End of page
 llxFooter();
 $db->close();

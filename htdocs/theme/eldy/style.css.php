@@ -700,10 +700,17 @@ div.divsearchfield {
 .divsearchfieldfilter {
     text-overflow: clip;
     overflow: auto;
-    white-space: nowrap;
     padding-bottom: 5px;
     opacity: 0.6;
 }
+<?php
+// Add a nowrap on smartphone, so long list of field used for filter are overflowed with clip
+if ($conf->browser->layout == 'phone') {
+?>
+.divsearchfieldfilter {
+   	white-space: nowrap;
+}
+<?php } ?>
 div.confirmmessage {
 	padding-top: 6px;
 }
@@ -1656,6 +1663,9 @@ div.mainmenu.menu {
 }
 #mainmenutd_menu a.tmenuimage {
     display: unset;
+}
+a.tmenuimage {
+    display: block;
 }
 
 /* Do not load menu img for other if hidden to save bandwidth */
@@ -2923,6 +2933,11 @@ div.pagination li.paginationafterarrows {
 }
 .nohover:hover {
 	background: unset;
+}
+.nohoverborder:hover {
+	border: unset;
+	box-shadow: unset;
+	-webkit-box-shadow: unset;
 }
 .oddeven, .evenodd, .impair, .nohover .impair:hover, tr.impair td.nohover
 {

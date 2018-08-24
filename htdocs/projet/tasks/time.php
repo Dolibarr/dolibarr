@@ -71,7 +71,7 @@ $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 if (! $sortfield) $sortfield='t.task_date,t.task_datehour,t.rowid';
-if (! $sortorder) $sortorder='DESC';
+if (! $sortorder) $sortorder='DESC,DESC,DESC';
 
 // Initialize technical object to manage hooks of page. Note that conf->hooks_modules contains array of hook context
 //$object = new TaskTime($db);
@@ -158,9 +158,9 @@ if ($action == 'addtimespent' && $user->rights->projet->lire)
 		else
 		{
 			$object->timespent_note = $_POST["timespent_note"];
-			$object->progress = GETPOST('progress', 'int');
+			if (GETPOST('progress', 'int') > 0) $object->progress = GETPOST('progress', 'int');		// If progress is -1 (not defined), we do not change value
 			$object->timespent_duration = $_POST["timespent_durationhour"]*60*60;	// We store duration in seconds
-			$object->timespent_duration+= $_POST["timespent_durationmin"]*60;		// We store duration in seconds
+			$object->timespent_duration+= ($_POST["timespent_durationmin"]?$_POST["timespent_durationmin"]:0)*60;   // We store duration in seconds
 	        if (GETPOST("timehour") != '' && GETPOST("timehour") >= 0)	// If hour was entered
 	        {
 				$object->timespent_date = dol_mktime(GETPOST("timehour"),GETPOST("timemin"),0,GETPOST("timemonth"),GETPOST("timeday"),GETPOST("timeyear"));
@@ -307,7 +307,9 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     }
     elseif ($object->fetch($id, $ref) >= 0)
 	{
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_TASK) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 		$result=$projectstatic->fetch($object->fk_project);
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
 		$res=$projectstatic->fetch_optionals();
 
@@ -422,7 +424,16 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
     			{
     				if ($projectstatic->public || $userWrite > 0)
     			    {
-    			    	$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?withproject=1'.($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($_SERVER['PHP_SELF'].'?id='.$object->id).'">'.$langs->trans('AddTimeSpent').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+    			    	if (! empty($projectidforalltimes))		// We are on tab 'Time Spent' of project
+    			    	{
+    			    		$backtourl = $_SERVER['PHP_SELF'].'?projectid='.$projectstatic->id.($withproject?'&withproject=1':'');
+    			    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?withproject=1&projectid='.$projectstatic->id.'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'">'.$langs->trans('AddTimeSpent').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+    			    	}
+    			    	else									// We are on tab 'Time Spent' of task
+    			    	{
+    			    		$backtourl = $_SERVER['PHP_SELF'].'?id='.$object->id.($withproject?'&withproject=1':'');
+    			    		$linktocreatetime = '<a class="butActionNew" href="'.$_SERVER['PHP_SELF'].'?withproject=1'.($object->id > 0 ? '&id='.$object->id : '&projectid='.$projectstatic->id).'&action=createtime'.$param.'&backtopage='.urlencode($backtourl).'">'.$langs->trans('AddTimeSpent').'<span class="fa fa-plus-circle valignmiddle"></span></a>';
+    			    	}
     			    }
     			    else
     			    {
@@ -600,7 +611,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			// Progress declared
 			print '<td class="nowrap">';
-			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress,'progress');
+			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress, 'progress', 0, 5, 0, 100, 1);
 			print '</td>';
 
 			print '<td align="center">';
@@ -785,7 +796,7 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 
 			// Progress declared
 			print '<td class="nowrap">';
-			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress,'progress');
+			print $formother->select_percent(GETPOST('progress')?GETPOST('progress'):$object->progress, 'progress', 0, 5, 0, 100, 1);
 			print '</td>';
 
 			print '<td align="center">';
@@ -1153,6 +1164,6 @@ if (($id > 0 || ! empty($ref)) || $projectidforalltimes > 0)
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

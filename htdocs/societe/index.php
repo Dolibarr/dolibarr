@@ -365,6 +365,6 @@ else
 //print '</td></tr></table>';
 print '</div></div></div>';
 
+// End of page
 llxFooter();
-
 $db->close();

@@ -1302,7 +1302,8 @@ class DoliDBSqlite3 extends DoliDB
      * @param	int     $day 		Day
      * @return int Formatted date
      */
-    private static function calc_daynr($year, $month, $day) {
+    private static function calc_daynr($year, $month, $day)
+    {
         $y = $year;
         if ($y == 0 && $month == 0) return 0;
         $num = (365* $y + 31 * ($month - 1) + $day);
@@ -1322,7 +1323,8 @@ class DoliDBSqlite3 extends DoliDB
      * @param bool	$sunday_first_day_of_week		???
      * @return int
      */
-    private static function calc_weekday($daynr, $sunday_first_day_of_week) {
+    private static function calc_weekday($daynr, $sunday_first_day_of_week)
+    {
       $ret = floor(($daynr + 5 + ($sunday_first_day_of_week ? 1 : 0)) % 7);
       return $ret;
     }
@@ -1348,7 +1350,8 @@ class DoliDBSqlite3 extends DoliDB
 	 * @param 	string	$calc_year			???
 	 * @return	string						???
 	 */
-    private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year) {
+    private static function calc_week($year, $month, $day, $week_behaviour, &$calc_year)
+    {
         $daynr=self::calc_daynr($year,$month,$day);
         $first_daynr=self::calc_daynr($year,1,1);
         $monday_first= ($week_behaviour & self::WEEK_MONDAY_FIRST) ? 1 : 0;
@@ -1388,4 +1391,3 @@ class DoliDBSqlite3 extends DoliDB
     }
 
 }
-

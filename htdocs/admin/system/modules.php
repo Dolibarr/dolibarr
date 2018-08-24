@@ -159,5 +159,6 @@ foreach($rights_ids as $right_id)
 	$old = $right_id;
 }
 
+// End of page
 llxFooter();
 $db->close();

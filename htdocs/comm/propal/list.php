@@ -78,13 +78,15 @@ $search_day=GETPOST("search_day","int");
 $search_month=GETPOST("search_month","int");
 $search_year=GETPOST("search_year","int");
 $search_dayfin=GETPOST("search_dayfin","int");
-$search_monthfin=GETPOST("search_monthfin","int");
+$search_month_end=GETPOST("search_month_end","int");
 $search_yearfin=GETPOST("search_yearfin","int");
 $search_daydelivery=GETPOST("search_daydelivery","int");
 $search_monthdelivery=GETPOST("search_monthdelivery","int");
 $search_yeardelivery=GETPOST("search_yeardelivery","int");
 $search_availability=GETPOST('search_availability','int');
 $search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $viewstatut=GETPOST('viewstatut','alpha');
 $optioncss = GETPOST('optioncss','alpha');
@@ -98,7 +100,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -159,6 +161,7 @@ $arrayfields=array(
 	'p.total_vat'=>array('label'=>$langs->trans("AmountVAT"), 'checked'=>0),
 	'p.total_ttc'=>array('label'=>$langs->trans("AmountTTC"), 'checked'=>0),
 	'u.login'=>array('label'=>$langs->trans("Author"), 'checked'=>1, 'position'=>10),
+	'sale_representative'=>array('label'=>$langs->trans("SaleRepresentativesOfThirdParty"), 'checked'=>1),
 	'p.datec'=>array('label'=>$langs->trans("DateCreation"), 'checked'=>0, 'position'=>500),
 	'p.tms'=>array('label'=>$langs->trans("DateModificationShort"), 'checked'=>0, 'position'=>500),
 	'p.fk_statut'=>array('label'=>$langs->trans("Status"), 'checked'=>1, 'position'=>1000),
@@ -213,7 +216,7 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 	$search_month='';
 	$search_day='';
 	$search_yearfin='';
-	$search_monthfin='';
+	$search_month_end='';
 	$search_dayfin='';
 	$search_yeardelivery='';
 	$search_monthdelivery='';
@@ -310,7 +313,7 @@ if ($search_country) $sql .= " AND s.fk_pays IN (".$db->escape($search_country).
 if ($search_type_thirdparty) $sql .= " AND s.fk_typent IN (".$db->escape($search_type_thirdparty).')';
 if ($search_ref)         $sql .= natural_search('p.ref', $search_ref);
 if ($search_refcustomer) $sql .= natural_search('p.ref_client', $search_refcustomer);
-if ($search_refproject) $sql .= natural_search('pr.ref', $search_refprojet);
+if ($search_refproject)  $sql .= natural_search('pr.ref', $search_refproject);
 if ($search_availability) $sql .= " AND p.fk_availability IN (".$db->escape($search_availability).')';
 
 if ($search_societe)     $sql .= natural_search('s.nom', $search_societe);
@@ -343,14 +346,14 @@ else if ($search_year > 0)
 {
 	$sql.= " AND p.datep BETWEEN '".$db->idate(dol_get_first_day($search_year,1,false))."' AND '".$db->idate(dol_get_last_day($search_year,12,false))."'";
 }
-if ($search_monthfin > 0)
+if ($search_month_end > 0)
 {
 	if ($search_yearfin > 0 && empty($search_dayfin))
-		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_get_first_day($search_yearfin,$search_monthfin,false))."' AND '".$db->idate(dol_get_last_day($search_yearfin,$search_monthfin,false))."'";
+		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_get_first_day($search_yearfin,$search_month_end,false))."' AND '".$db->idate(dol_get_last_day($search_yearfin,$search_month_end,false))."'";
 	else if ($search_yearfin > 0 && ! empty($search_dayfin))
-		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_monthfin, $search_dayfin, $search_yearfin))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_monthfin, $search_dayfin, $search_yearfin))."'";
+		$sql.= " AND p.fin_validite BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month_end, $search_dayfin, $search_yearfin))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month_end, $search_dayfin, $search_yearfin))."'";
 	else
-		$sql.= " AND date_format(p.fin_validite, '%m') = '".$db->escape($search_monthfin)."'";
+		$sql.= " AND date_format(p.fin_validite, '%m') = '".$db->escape($search_month_end)."'";
 }
 else if ($search_yearfin > 0)
 {
@@ -432,7 +435,7 @@ if ($resql)
 	if ($search_year)        $param.='&search_year='.urlencode($search_year);
 	if ($search_ref)         $param.='&search_ref='.urlencode($search_ref);
 	if ($search_refcustomer) $param.='&search_refcustomer='.urlencode($search_refcustomer);
-	if ($search_refprojet)   $param.='&search_refprojet='.urlencode($search_refprojet);
+	if ($search_refproject)  $param.='&search_refproject='.urlencode($search_refproject);
 	if ($search_societe)     $param.='&search_societe='.urlencode($search_societe);
 	if ($search_user > 0)    $param.='&search_user='.urlencode($search_user);
 	if ($search_sale > 0)    $param.='&search_sale='.urlencode($search_sale);
@@ -615,7 +618,7 @@ if ($resql)
 		print '<td class="liste_titre nowraponall" align="center">';
 		//print $langs->trans('Month').': ';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat width25" type="text" maxlength="2" name="search_dayfin" value="'.dol_escape_htmltag($search_dayfin).'">';
-		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_monthfin" value="'.dol_escape_htmltag($search_monthfin).'">';
+		print '<input class="flat width25 valignmiddle" type="text" maxlength="2" name="search_month_end" value="'.dol_escape_htmltag($search_month_end).'">';
 		//print '&nbsp;'.$langs->trans('Year').': ';
 		$formother->select_year($search_yearfin,'search_yearfin',1, 20, 5);
 		print '</td>';
@@ -666,6 +669,10 @@ if ($resql)
 		print '<td class="liste_titre" align="center">';
 		print '<input class="flat" size="4" type="text" name="search_login" value="'.dol_escape_htmltag($search_login).'">';
 		print '</td>';
+	}
+	if (! empty($arrayfields['sale_representative']['checked']))
+	{
+		print '<td class="liste_titre"></td>';
 	}
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_input.tpl.php';
@@ -721,6 +728,7 @@ if ($resql)
 	if (! empty($arrayfields['p.total_vat']['checked']))      print_liste_field_titre($arrayfields['p.total_vat']['label'],$_SERVER["PHP_SELF"],'p.tva','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['p.total_ttc']['checked']))      print_liste_field_titre($arrayfields['p.total_ttc']['label'],$_SERVER["PHP_SELF"],'p.total','',$param, 'align="right"',$sortfield,$sortorder);
 	if (! empty($arrayfields['u.login']['checked']))       	  print_liste_field_titre($arrayfields['u.login']['label'],$_SERVER["PHP_SELF"],'u.login','',$param,'align="center"',$sortfield,$sortorder);
+	if (! empty($arrayfields['sale_representative']['checked'])) print_liste_field_titre($arrayfields['sale_representative']['label'], $_SERVER["PHP_SELF"], "","","$param",'',$sortfield,$sortorder);
 	// Extra fields
 	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_title.tpl.php';
 	// Hook fields
@@ -943,6 +951,51 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
+		if (! empty($arrayfields['sale_representative']['checked']))
+		{
+			// Sales representatives
+			print '<td>';
+			if ($obj->socid > 0)
+			{
+				$listsalesrepresentatives=$companystatic->getSalesRepresentatives($user);
+				if ($listsalesrepresentatives < 0) dol_print_error($db);
+				$nbofsalesrepresentative=count($listsalesrepresentatives);
+				if ($nbofsalesrepresentative > 3)   // We print only number
+				{
+					print '<a href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$companystatic->id.'">';
+					print $nbofsalesrepresentative;
+					print '</a>';
+				}
+				else if ($nbofsalesrepresentative > 0)
+				{
+					$userstatic=new User($db);
+					$j=0;
+					foreach($listsalesrepresentatives as $val)
+					{
+						$userstatic->id=$val['id'];
+						$userstatic->lastname=$val['lastname'];
+						$userstatic->firstname=$val['firstname'];
+						$userstatic->email=$val['email'];
+						$userstatic->statut=$val['statut'];
+						$userstatic->entity=$val['entity'];
+						$userstatic->photo=$val['photo'];
+
+						//print '<div class="float">':
+						print $userstatic->getNomUrl(-2);
+						$j++;
+						if ($j < $nbofsalesrepresentative) print ' ';
+						//print '</div>';
+					}
+				}
+				//else print $langs->trans("NoSalesRepresentativeAffected");
+			}
+			else
+			{
+				print '&nbsp';
+			}
+			print '</td>';
+		}
+
 		// Extra fields
 		include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_print_fields.tpl.php';
 		// Fields from hook
@@ -988,27 +1041,40 @@ if ($resql)
 	}
 
 	// Show total line
-		if (isset($totalarray['totalhtfield'])
+	if (isset($totalarray['totalhtfield'])
  	   || isset($totalarray['totalvatfield'])
  	   || isset($totalarray['totalttcfield'])
  	   || isset($totalarray['totalamfield'])
  	   || isset($totalarray['totalrtpfield'])
+ 	   || isset($totalarray['totalizable'])
  	   )
 	{
 		print '<tr class="liste_total">';
 		$i=0;
 		while ($i < $totalarray['nbfield'])
 		{
-		   $i++;
-		   if ($i == 1)
-		   {
+		    $i++;
+		    if ($i == 1)
+		    {
 				if ($num < $limit && empty($offset)) print '<td align="left">'.$langs->trans("Total").'</td>';
 				else print '<td align="left">'.$langs->trans("Totalforthispage").'</td>';
-		   }
-		   elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
-		   elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
-		   elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
-		   else print '<td></td>';
+		    }
+		    elseif ($totalarray['totalhtfield'] == $i) print '<td align="right">'.price($totalarray['totalht']).'</td>';
+		    elseif ($totalarray['totalvatfield'] == $i) print '<td align="right">'.price($totalarray['totalvat']).'</td>';
+		    elseif ($totalarray['totalttcfield'] == $i) print '<td align="right">'.price($totalarray['totalttc']).'</td>';
+		    elseif ($totalarray['totalizable']) {
+                $printed = false;
+                foreach ($totalarray['totalizable'] as $totalizable) {
+                    if ($totalizable['pos']==$i && ! $printed) {
+                        print '<td align="right">'.price($totalizable['total']).'</td>';
+                        $printed = true;
+                    }
+                }
+                if (! $printed) {
+                    print '<td></td>';
+                }
+            }
+		    else print '<td></td>';
 		}
 		print '</tr>';
 	}

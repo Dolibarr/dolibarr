@@ -366,7 +366,7 @@ if ($action == 'edit')
 	{
 
 		$mainstmpid=(! empty($conf->global->MAIN_MAIL_SMTPS_ID)?$conf->global->MAIN_MAIL_SMTPS_ID:'');
-		print '<tr '.$bcdd[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
+		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_ID").'</td><td>';
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
@@ -386,7 +386,7 @@ if ($action == 'edit')
 	{
 
 		$mainsmtppw=(! empty($conf->global->MAIN_MAIL_SMTPS_PW)?$conf->global->MAIN_MAIL_SMTPS_PW:'');
-		print '<tr '.$bcdd[$var].'><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
+		print '<tr class="drag drop oddeven"><td>'.$langs->trans("MAIN_MAIL_SMTPS_PW").'</td><td>';
 		// SuperAdministrator access only
 		if (empty($conf->multicompany->enabled) || ($user->admin && !$user->entity))
 		{
@@ -854,7 +854,6 @@ else
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

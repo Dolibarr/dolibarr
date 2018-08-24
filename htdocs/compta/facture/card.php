@@ -1290,7 +1290,7 @@ if (empty($reshook))
 							{
 								$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
 								$descline = $langs->trans('Deposit');
-								$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
+								//$descline.= ' - '.$langs->trans($arraylist[$typeamount]);
 								if ($typeamount=='amount') {
 									$descline.= ' ('. price($valuedeposit, '', $langs, 0, - 1, - 1, (!empty($object->multicurrency_code) ? $object->multicurrency_code : $conf->currency)).')';
 								} elseif ($typeamount=='variable') {
@@ -1705,8 +1705,10 @@ if (empty($reshook))
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} else {
-					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+				}
+				else
+				{
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error ++;
 				}
 			}
@@ -2430,7 +2432,7 @@ if (empty($reshook))
 
 	        if($error)
 	        {
-	            setEventMessage($langs->trans('ErrorsOnXLines',$error), 'errors');
+	            setEventMessages($langs->trans('ErrorsOnXLines',$error), null, 'errors');
 	        }
 	    }
 	}
@@ -2873,7 +2875,7 @@ if ($action == 'create')
 			if (($origin == 'propal') || ($origin == 'commande'))
 			{
 				print '<td class="nowrap" style="padding-left: 5px">';
-				$arraylist = array('amount' => 'FixAmount','variable' => 'VarAmount');
+				$arraylist = array('amount' => $langs->transnoentitiesnoconv('FixAmount'), 'variable' => $langs->transnoentitiesnoconv('VarAmountOneLine', $langs->transnoentitiesnoconv('Deposit')));
 				print $form->selectarray('typedeposit', $arraylist, GETPOST('typedeposit'), 0, 0, 0, '', 1);
 				print '</td>';
 				print '<td class="nowrap" style="padding-left: 5px">' . $langs->trans('Value') . ':<input type="text" id="valuedeposit" name="valuedeposit" size="3" value="' . GETPOST('valuedeposit', 'int') . '"/>';
@@ -3200,7 +3202,7 @@ if ($action == 'create')
 		print '<input type="hidden" name="origin"         value="' . $objectsrc->element . '">';
 		print '<input type="hidden" name="originid"       value="' . $objectsrc->id . '">';
 
-		switch ($classname) {
+		switch (get_class($objectsrc)) {
 			case 'Propal':
 				$newclassname = 'CommercialProposal';
 				break;
@@ -3217,7 +3219,7 @@ if ($action == 'create')
 				$newclassname = 'Intervention';
 				break;
 			default:
-				$newclassname = $classname;
+				$newclassname = get_class($objectsrc);
 		}
 
 		print '<tr><td>' . $langs->trans($newclassname) . '</td><td colspan="2">' . $objectsrc->getNomUrl(1);
@@ -4028,8 +4030,6 @@ else if ($id > 0 || ! empty($ref))
 	print '</table>';
 
 
-	// List of previous situation invoices
-
 	$sign = 1;
 	if ($object->type == Facture::TYPE_CREDIT_NOTE) $sign = - 1;
 	$nbrows = 8;
@@ -4370,7 +4370,7 @@ else if ($id > 0 || ! empty($ref))
 	}
 	else // Credit note
 	{
-		$cssforamountpaymentcomplete='';
+		$cssforamountpaymentcomplete='amountpaymentneutral';
 
 		// Total already paid back
 		print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -4385,7 +4385,7 @@ else if ($id > 0 || ! empty($ref))
 		if ($resteapayeraffiche <= 0)
 			print $langs->trans('RemainderToPayBack');
 		else
-			print $langs->trans('ExcessPaydBack');
+			print $langs->trans('ExcessPaid');
 		print ' :</td>';
 		print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopayback"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 		print '<td class="nowrap">&nbsp;</td></tr>';
@@ -4633,7 +4633,7 @@ else if ($id > 0 || ! empty($ref))
 				if ($objectidnext) {
 					print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseReplacedInvoice") . '">' . $langs->trans('DoPayment') . '</span></div>';
 				} else {
-					//if ($resteapayer == 0) {
+					//if ($resteapayer == 0) {		// Sometimes we can receive more, so we accept to enter more and will offer a button to convert into discount (but it is not a credit note, just a prepayment done)
 					//	print '<div class="inline-block divButAction"><span class="butActionRefused" title="' . $langs->trans("DisabledBecauseRemainderToPayIsZero") . '">' . $langs->trans('DoPayment') . '</span></div>';
 					//} else {
 						print '<div class="inline-block divButAction"><a class="butAction" href="'. DOL_URL_ROOT .'/compta/paiement.php?facid=' . $object->id . '&amp;action=create&amp;accountid='.$object->fk_account.'">' . $langs->trans('DoPayment') . '</a></div>';
@@ -4730,7 +4730,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// For situation invoice with excess received
-			if ($object->statut == Facture::STATUS_VALIDATED
+			if ($object->statut > Facture::STATUS_DRAFT
 			    && ($object->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits) > 0
 			    && $user->rights->facture->creer
 			    && !$objectidnext
@@ -4748,7 +4748,7 @@ else if ($id > 0 || ! empty($ref))
 			}
 
 			// remove situation from cycle
-			if ($object->statut == Facture::STATUS_VALIDATED
+			if ($object->statut > Facture::STATUS_DRAFT
 			    && $object->type == Facture::TYPE_SITUATION
 			    && $user->rights->facture->creer
 			    && !$objectidnext
@@ -4884,5 +4884,6 @@ else if ($id > 0 || ! empty($ref))
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 }
 
+// End of page
 llxFooter();
 $db->close();

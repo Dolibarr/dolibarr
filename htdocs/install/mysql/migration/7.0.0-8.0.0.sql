@@ -32,6 +32,10 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- Forgot in < 4.0
+
+ALTER TABLE llx_c_ziptown DROP FOREIGN KEY fk_c_ziptown_fk_pays;
+ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country(rowid);
 
 -- Forgot in 7.0
 
@@ -43,11 +47,19 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
+ALTER TABLE llx_ecm_files DROP INDEX uk_ecm_files;
+ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, entity);
+
+UPDATE llx_const set name = __ENCRYPT('INVOICE_FREE_TEXT')__  where name = __ENCRYPT('FACTURE_FREE_TEXT')__;
+
 
 
 -- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
+
+-- drop old postgresql unique key
+-- VPGSQL8.2 DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;
 
@@ -83,6 +95,9 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES ( 15,'SYSCOHADA-TG', 'Plan comptable Ouest-Africain', 1);
 
 -- For 8.0
+
+DROP TABLE llx_website_account;
+DROP TABLE llx_website_account_extrafields;
 
 ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 

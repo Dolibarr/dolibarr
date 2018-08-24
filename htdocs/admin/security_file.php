@@ -178,7 +178,6 @@ print '<div class="center"><input type="submit" class="button" name="button" val
 print '</form>';
 
 
-
 // Form to test upload
 print '<br>';
 $formfile=new FormFile($db);
@@ -188,5 +187,6 @@ $formfile->form_attach_new_file($_SERVER['PHP_SELF'], $langs->trans("FormToTestF
 $filearray=dol_dir_list($upload_dir, "files", 0, '', '', 'name', SORT_ASC, 1);
 $formfile->list_of_documents($filearray, null, 'admin_temp', '');
 
+// End of page
 llxFooter();
 $db->close();

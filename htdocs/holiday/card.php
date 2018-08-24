@@ -26,7 +26,7 @@
  *		\brief      Form and file creation of paid holiday.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/usergroup.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -452,10 +452,15 @@ if ($action == 'confirm_valid')
             $newSolde = $soldeActuel - ($nbopenedday * $object->getConfCP('nbHolidayDeducted'));
 
             // On ajoute la modification dans le LOG
-            $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
-
+            $result=$object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
+            if ($result<0) {
+            	setEventMessages(null, $object->errors,'errors');
+            }
             // Mise à jour du solde
-            $object->updateSoldeCP($object->fk_user, $newSolde, $object->fk_type);
+            $result=$object->updateSoldeCP($object->fk_user, $newSolde, $object->fk_type);
+            if ($result<0) {
+            	setEventMessages(null, $object->errors,'errors');
+            }
 
             // To
             $destinataire = new User($db);

@@ -20,7 +20,7 @@
  * \ingroup HRM
  * \brief 	HRM Establishment module setup page
  */
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/hrm.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/hrm/class/establishment.class.php';
 
@@ -145,5 +145,6 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="../establishment/card.php?action=create">'.$langs->trans("NewEstablishment").'</a>';
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

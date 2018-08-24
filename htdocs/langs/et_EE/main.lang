@@ -507,6 +507,7 @@ NoneF=Puudub
 NoneOrSeveral=None or several
 Late=Hilja
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
+NoItemLate=No late item
 Photo=Pilt
 Photos=Pildid
 AddPhoto=Lisa pilt
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Mõjutatud isik
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

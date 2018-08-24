@@ -26,7 +26,7 @@ require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT."/core/lib/functions2.lib.php";
 
 /**
- *	DAO Resource object
+ *  DAO Resource object
  */
 class Dolresource extends CommonObject
 {
@@ -60,14 +60,14 @@ class Dolresource extends CommonObject
     /**
      *  Create object into database
      *
-     *  @param	User	$user        User that creates
+     *  @param	User    $user        User that creates
      *  @param  int		$notrigger   0=launch triggers after, 1=disable triggers
      *  @return int      		   	 <0 if KO, Id of created object if OK
      */
     function create($user, $notrigger=0)
     {
-    	global $conf, $langs, $hookmanager;
-    	$error=0;
+        global $conf, $langs, $hookmanager;
+        $error=0;
 
     	// Clean parameters
 
@@ -491,7 +491,7 @@ class Dolresource extends CommonObject
     	$sql.= " t.fk_code_type_resource,";
     	$sql.= " t.tms,";
 
-    	require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+    	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     	$extrafields=new ExtraFields($this->db);
     	$extralabels=$extrafields->fetch_name_optionals_label($this->table_element,true);
     	if (is_array($extralabels) && count($extralabels)>0) {
@@ -730,7 +730,8 @@ class Dolresource extends CommonObject
      * @deprecated, remplaced by hook getElementResources
      * @see getElementResources()
      */
-    function fetch_all_available() {
+    function fetch_all_available()
+    {
     	global $conf;
 
     	if (! empty($conf->modules_parts['resources']))

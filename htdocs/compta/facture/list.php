@@ -88,13 +88,15 @@ $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_user = GETPOST('search_user','int');
 $search_sale = GETPOST('search_sale','int');
-$search_day	= GETPOST('search_day','int');
+$search_day		= GETPOST('search_day','int');
 $search_month	= GETPOST('search_month','int');
 $search_year	= GETPOST('search_year','int');
-$search_day_lim	= GETPOST('search_day_lim','int');
+$search_day_lim		= GETPOST('search_day_lim','int');
 $search_month_lim	= GETPOST('search_month_lim','int');
 $search_year_lim	= GETPOST('search_year_lim','int');
 $search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -106,7 +108,7 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
 if (! $sortorder && ! empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == '1') $sortorder=$conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (! $sortorder) $sortorder='DESC';
@@ -268,7 +270,6 @@ if ($massaction == 'withdrawrequest')
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
-				$listofbills[] = $objecttmp;
 				if($objecttmp->paye || $objecttmp->resteapayer==0){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
@@ -300,18 +301,21 @@ if ($massaction == 'withdrawrequest')
 
 				if ($numprlv>0){
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
+					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 				}
-				if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
+				else if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+				}
+				else {
+					$listofbills[] = $objecttmp;    // $listofbills will only contains invoices with good payment method and no request already done
 				}
 
 			}
 		}
 
-		//Massive withdraw request
-		if(!empty($listofbills) && empty($error))
+		//Massive withdraw request for request with no errors
+		if(!empty($listofbills))
 		{
 			$nbwithdrawrequestok=0;
 			foreach($listofbills as $aBill)
@@ -442,7 +446,7 @@ if ($search_montant_localtax2 != '') $sql.= natural_search('f.localtax2', $searc
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
-if ($search_status != '')
+if ($search_status != '-1' && $search_status != '')
 {
 	if (is_numeric($search_status) && $search_status >= 0)
 	{
@@ -919,6 +923,9 @@ if ($resql)
 			$facturestatic->id=$obj->id;
 			$facturestatic->ref=$obj->ref;
 			$facturestatic->type=$obj->type;
+            $facturestatic->total_ht=$obj->total_ht;
+            $facturestatic->total_tva=$obj->total_vat;
+            $facturestatic->total_ttc=$obj->total_ttc;
 			$facturestatic->statut=$obj->fk_statut;
 			$facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
 			$facturestatic->note_public=$obj->note_public;
@@ -1245,5 +1252,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

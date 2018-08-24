@@ -81,7 +81,7 @@ if ($filtre) {
 	$filtre=str_replace(":","=",$filtre);
 	$sql .= " AND ".$filtre;
 }
-$sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
+$sql.= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = '';
@@ -202,6 +202,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

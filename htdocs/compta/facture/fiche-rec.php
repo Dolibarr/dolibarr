@@ -35,8 +35,8 @@ require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture-rec.class.php';
 require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 if (! empty($conf->projet->enabled)) {
-	require_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
-	//require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
+	include_once DOL_DOCUMENT_ROOT . '/projet/class/project.class.php';
+	//include_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 }
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formprojet.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/doleditor.class.php';
@@ -546,7 +546,7 @@ if (empty($reshook))
 			}
 			elseif (! empty($conf->global->PRODUIT_CUSTOMER_PRICES))
 			{
-				require_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
+				include_once DOL_DOCUMENT_ROOT . '/product/class/productcustomerprice.class.php';
 
 				$prodcustprice = new Productcustomerprice($db);
 
@@ -1513,7 +1513,7 @@ else
 		//var_dump(dol_print_date($object->date_when+60, 'dayhour').' - '.dol_print_date($now, 'dayhour'));
 		if (! $object->isMaxNbGenReached())
 		{
-			if ($action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
+			if (! $object->suspended && $action != 'editdate_when' && $object->frequency > 0 && $object->date_when && $object->date_when < $now) print img_warning($langs->trans("Late"));
 		}
 		else
 		{
@@ -1734,6 +1734,6 @@ else
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

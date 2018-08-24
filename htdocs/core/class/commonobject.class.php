@@ -1500,7 +1500,7 @@ abstract class CommonObject
 	 */
 	function load_previous_next_ref($filter, $fieldid, $nodbprefix=0)
 	{
-		global $user;
+		global $conf, $user;
 
 		if (! $this->table_element)
 		{
@@ -1520,6 +1520,9 @@ abstract class CommonObject
 
 		$sql = "SELECT MAX(te.".$fieldid.")";
 		$sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
+		if ($this->element == 'user' && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
 		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
 		else if ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
@@ -1534,7 +1537,18 @@ abstract class CommonObject
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element).')';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			if ($this->element == 'user' && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+					$sql.= " AND te.entity IS NOT NULL"; // Show all users
+				} else {
+					$sql.= " AND ug.fk_user = te.rowid";
+					$sql.= " AND ug.entity IN (".getEntity($this->element).")";
+				}
+			} else {
+				$sql.= ' AND te.entity IN ('.getEntity($this->element).')';
+			}
+		}
 		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql.= ' AND te.fk_soc = ' . $socid;
 		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql.= ' AND (te.fk_soc = ' . $socid.' OR te.fk_soc IS NULL)';
 		if ($this->restrictiononfksoc && $socid && $this->element == 'societe') $sql.= ' AND te.rowid = ' . $socid;
@@ -1552,6 +1566,9 @@ abstract class CommonObject
 
 		$sql = "SELECT MIN(te.".$fieldid.")";
 		$sql.= " FROM ".(empty($nodbprefix)?MAIN_DB_PREFIX:'').$this->table_element." as te";
+		if ($this->element == 'user' && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+			$sql.= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to entity
 		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ", ".MAIN_DB_PREFIX."societe as s";	// If we need to link to societe to limit select to socid
 		else if ($this->restrictiononfksoc == 2 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON te.fk_soc = s.rowid";	// If we need to link to societe to limit select to socid
@@ -1566,7 +1583,18 @@ abstract class CommonObject
 		}
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 2) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to entity
 		else if ($this->restrictiononfksoc == 1 && $this->element != 'societe' && !$user->rights->societe->client->voir && !$socid) $sql.= ' AND te.fk_soc = s.rowid';			// If we need to link to societe to limit select to socid
-		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql.= ' AND te.entity IN ('.getEntity($this->element).')';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) {
+			if ($this->element == 'user' && ! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE)) {
+				if (! empty($user->admin) && empty($user->entity) && $conf->entity == 1) {
+					$sql.= " AND te.entity IS NOT NULL"; // Show all users
+				} else {
+					$sql.= " AND ug.fk_user = te.rowid";
+					$sql.= " AND ug.entity IN (".getEntity($this->element).")";
+				}
+			} else {
+				$sql.= ' AND te.entity IN ('.getEntity($this->element).')';
+			}
+		}
 		if ($this->restrictiononfksoc == 1 && $socid && $this->element != 'societe') $sql.= ' AND te.fk_soc = ' . $socid;
 		if ($this->restrictiononfksoc == 2 && $socid && $this->element != 'societe') $sql.= ' AND (te.fk_soc = ' . $socid.' OR te.fk_soc IS NULL)';
 		if ($this->restrictiononfksoc && $socid && $this->element == 'societe') $sql.= ' AND te.rowid = ' . $socid;
@@ -2545,7 +2573,7 @@ abstract class CommonObject
 	 */
 	function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller=null)
 	{
-		global $conf;
+		global $conf, $hookmanager, $action;
 
 		// Some external module want no update price after a trigger because they have another method to calculate the total (ex: with an extrafield)
 		$MODULE = "";
@@ -2636,7 +2664,10 @@ abstract class CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
-				if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
+				$parameters=array('fk_element' => $obj->rowid);
+				$reshook = $hookmanager->executeHooks('changeRoundingMode', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+				if (empty($reshook) && $forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
 				{
 					$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
 					$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
@@ -3838,7 +3869,7 @@ abstract class CommonObject
 	{
 		global $conf,$langs,$user,$object,$hookmanager;
 		global $form,$bc,$bcdd;
-		global $object_rights, $disableedit, $disablemove;   // TODO We should not use global var for this !
+		global $object_rights, $disableedit, $disablemove, $disableremove;   // TODO We should not use global var for this !
 
 		$object_rights = $this->getRights();
 
@@ -5094,7 +5125,7 @@ abstract class CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form=new Form($this->db);
 		}
-		
+
 		$val=$this->fields[$key];
 
 		$out='';
@@ -5109,20 +5140,20 @@ abstract class CommonObject
                     $param['options']=array($reg[1].':'.$reg[2]=>'N');
                     $type ='link';
                 }else if(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)){
-                   
+
                     $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
                     $type ='sellist';
                 }else if(preg_match('/varchar\((\d+)\)/', $val['type'],$reg)){
-                   
+
                     $param['options']=array();
                     $type ='varchar';
                     $size=$reg[1];
                 }else if(preg_match('/varchar/', $val['type'])){
-                   
+
                     $param['options']=array();
                     $type ='varchar';
                 }else if(is_array($this->fields[$key]['arrayofkeyval'])){
-                   
+
                     $param['options']=$this->fields[$key]['arrayofkeyval'];
                     $type ='select';
                 }else {
@@ -5136,7 +5167,7 @@ abstract class CommonObject
 		$computed=$this->fields[$key]['computed'];
 		$unique=$this->fields[$key]['unique'];
 		$required=$this->fields[$key]['required'];
-		
+
 		$langfile=$this->fields[$key]['langfile'];
 		$list=$this->fields[$key]['list'];
 		$hidden=abs($this->fields[$key]['visible'])!=1?1:0;
@@ -5679,7 +5710,7 @@ abstract class CommonObject
 		 */
 		return $out;
 	}
-        
+
 	/**
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
@@ -6779,6 +6810,7 @@ abstract class CommonObject
 	 * Function to load data from a SQL pointer into properties of current object $this
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
+     * @return void
 	 */
 	protected function setVarsFromFetchObj(&$obj)
 	{
@@ -6842,7 +6874,8 @@ abstract class CommonObject
 	 * @param	array		$fieldsentry	Properties of field
 	 * @return 	string
 	 */
-	protected function quote($value, $fieldsentry) {
+    protected function quote($value, $fieldsentry)
+    {
 		if (is_null($value)) return 'NULL';
 		else if (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
 		else return "'".$this->db->escape($value)."'";
@@ -6885,7 +6918,7 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
+			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
@@ -7046,15 +7079,12 @@ abstract class CommonObject
 		}
 
 		// Update extrafield
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
 		}
 

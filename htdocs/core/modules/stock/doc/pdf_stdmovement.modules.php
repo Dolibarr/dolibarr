@@ -88,9 +88,9 @@ class pdf_stdmovement extends ModelePDFMovement
 	public function __construct($db)
 	{
 		global $conf,$langs,$mysoc;
-
-		$langs->load("main");
-		$langs->load("companies");
+        
+		// Load traductions files requiredby by page
+		$langs->loadLangs(array("main", "companies"));
 
 		$this->db = $db;
 		$this->name = "stdmouvement";
@@ -167,14 +167,9 @@ class pdf_stdmovement extends ModelePDFMovement
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-
-		$outputlangs->load("main");
-		$outputlangs->load("dict");
-		$outputlangs->load("companies");
-		$outputlangs->load("bills");
-		$outputlangs->load("stocks");
-		$outputlangs->load("orders");
-		$outputlangs->load("deliveries");
+        
+		// Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
 	/**
 	 * TODO: get from object
@@ -921,13 +916,10 @@ class pdf_stdmovement extends ModelePDFMovement
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs, $titlekey="")
 	{
 	    global $conf,$langs,$db,$hookmanager;
+        
+	    // Load traductions files requiredby by page
+		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
 
-	    $outputlangs->load("main");
-	    $outputlangs->load("bills");
-	    $outputlangs->load("propal");
-	    $outputlangs->load("companies");
-	    $outputlangs->load("orders");
-	    $outputlangs->load("stocks");
 	    $default_font_size = pdf_getPDFFontSize($outputlangs);
 
 	    if ($object->type == 1) $titlekey='ServiceSheet';

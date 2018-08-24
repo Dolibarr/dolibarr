@@ -25,8 +25,8 @@
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT . "/core/class/commonobject.class.php";
 require_once DOL_DOCUMENT_ROOT . '/fichinter/class/fichinter.class.php';
-//require_once(DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product/class/product.class.php");
+//require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
+//require_once DOL_DOCUMENT_ROOT."/product/class/product.class.php";
 
 
 /**
@@ -188,7 +188,7 @@ class Ticket extends CommonObject
     	'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php', 'label'=>'Project', 'visible'=>1, 'enabled'=>1, 'position'=>52, 'notnull'=>-1, 'index'=>1, 'searchall'=>1, 'help'=>"LinkToProject"),
         'fk_user_assign' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'AssignedTo', 'visible'=>1, 'enabled'=>1, 'position'=>510, 'notnull'=>1),
         'message' => array('type'=>'text', 'label'=>'Message', 'visible'=>-2, 'enabled'=>1, 'position'=>60, 'notnull'=>-1,),
-        'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
+        'progress' => array('type'=>'varchar(100)', 'label'=>'Progression', 'visible'=>1, 'enabled'=>1, 'position'=>41, 'notnull'=>-1, 'searchall'=>1, 'css'=>'right', 'help'=>""),
         'timing' => array('type'=>'varchar(20)', 'label'=>'Timing', 'visible'=>-1, 'enabled'=>1, 'position'=>42, 'notnull'=>-1, 'searchall'=>1, 'help'=>""),
         'datec' => array('type'=>'datetime', 'label'=>'DateCreation', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
         'date_read' => array('type'=>'datetime', 'label'=>'TicketReadOn', 'visible'=>-2, 'enabled'=>1, 'position'=>500, 'notnull'=>1),
@@ -555,7 +555,7 @@ class Ticket extends CommonObject
      * @param  int    $offset    Offset for query
      * @param  int    $arch      archive or not (not used)
      * @param  array  $filter    Filter for query
-     *            output
+     *                           output
      * @return int <0 if KO, >0 if OK
      */
     public function fetchAll($user, $sortorder = 'ASC', $sortfield = 't.datec', $limit = '', $offset = 0, $arch = '', $filter = '')
@@ -1525,7 +1525,7 @@ class Ticket extends CommonObject
         dol_syslog(get_class($this) . "::create_ticket_log sql=" . $sql, LOG_DEBUG);
         $resql = $this->db->query($sql);
         if ($resql) {
-            if ($conf->global->TICKETS_ACTIVATE_LOG_BY_EMAIL && !$noemail) {
+            if ($conf->global->TICKET_ACTIVATE_LOG_BY_EMAIL && !$noemail) {
                 $this->sendLogByEmail($user, $message);
             }
 
@@ -1591,14 +1591,14 @@ class Ticket extends CommonObject
                     $url_internal_ticket = dol_buildpath('/ticket/card.php', 2) . '?track_id=' . $this->track_id;
                     $message .= "\n" . $langs->transnoentities('TicketNotificationEmailBodyInfosTrackUrlinternal') . ' : ' . '<a href="' . $url_internal_ticket . '">' . $this->track_id . '</a>' . "\n";
                 } else {
-                    $url_public_ticket = ($conf->global->TICKETS_URL_PUBLIC_INTERFACE ? $conf->global->TICKETS_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $this->track_id;
+                    $url_public_ticket = ($conf->global->TICKET_URL_PUBLIC_INTERFACE ? $conf->global->TICKET_URL_PUBLIC_INTERFACE . '/' : dol_buildpath('/public/ticket/view.php', 2)) . '?track_id=' . $this->track_id;
                     $message .= "\n" . $langs->transnoentities('TicketNewEmailBodyInfosTrackUrlCustomer') . ' : ' . '<a href="' . $url_public_ticket . '">' . $this->track_id . '</a>' . "\n";
                 }
 
                 $message .= "\n";
                 $message .= $langs->transnoentities('TicketEmailPleaseDoNotReplyToThisEmail') . "\n";
 
-                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKETS_NOTIFICATION_EMAIL_FROM . '>';
+                $from = $conf->global->MAIN_INFO_SOCIETE_NOM . '<' . $conf->global->TICKET_NOTIFICATION_EMAIL_FROM . '>';
                 $replyto = $from;
 
                 // Init to avoid errors
@@ -1608,26 +1608,29 @@ class Ticket extends CommonObject
 
                 $message = dol_nl2br($message);
 
-                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
                     $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
                 }
                 include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
                 $mailfile = new CMailFile($subject, $info_sendto['email'], $from, $message, $filepath, $mimetype, $filename, $sendtocc, '', $deliveryreceipt, 0);
-                if ($mailfile->error) {
-                    setEventMessage($mailfile->error, 'errors');
-                } else {
+                if ($mailfile->error || $mailfile->errors)
+                {
+                    setEventMessages($mailfile->error, $mailfile->errors, 'errors');
+                }
+                else
+                {
                     $result = $mailfile->sendfile();
                     if ($result > 0) {
                         $nb_sent++;
                     }
                 }
-                if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+                if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
                     $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
                 }
             }
 
-            setEventMessage($langs->trans('TicketNotificationNumberEmailSent', $nb_sent));
+            setEventMessages($langs->trans('TicketNotificationNumberEmailSent', $nb_sent), null, 'mesgs');
         }
 
         return $nb_sent;
@@ -2244,7 +2247,7 @@ class Ticket extends CommonObject
 
                     $message = dol_nl2br($message);
 
-                    if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+                    if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
                         $old_MAIN_MAIL_AUTOCOPY_TO = $conf->global->MAIN_MAIL_AUTOCOPY_TO;
                         $conf->global->MAIN_MAIL_AUTOCOPY_TO = '';
                     }
@@ -2276,7 +2279,7 @@ class Ticket extends CommonObject
                         $this->error = $mailfile->error;
                         //dol_syslog("Notify::send ".$this->error, LOG_ERR);
                     }
-                    if (!empty($conf->global->TICKETS_DISABLE_MAIL_AUTOCOPY_TO)) {
+                    if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
                         $conf->global->MAIN_MAIL_AUTOCOPY_TO = $old_MAIN_MAIL_AUTOCOPY_TO;
                     }
                 }

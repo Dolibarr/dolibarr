@@ -212,6 +212,6 @@ else if (in_array($type, array('pgsql')))
 </fieldset>
 
 <?php
+// End of page
 llxFooter();
-
 $db->close();

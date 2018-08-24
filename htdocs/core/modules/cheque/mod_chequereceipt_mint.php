@@ -31,7 +31,10 @@ class mod_chequereceipt_mint extends ModeleNumRefChequeReceipts
 {
 	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefix='CHK';
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 	var $name='Mint';
 
 

@@ -60,9 +60,9 @@ class pdf_aurore extends ModelePDFSupplierProposal
 
 	/**
      * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2); 
+	public $phpmin = array(5, 4); 
 	
 	/**
      * Dolibarr version of the loaded document

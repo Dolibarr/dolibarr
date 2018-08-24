@@ -335,7 +335,6 @@ if (function_exists('eaccelerator_get')) {
 
 print "<br><br>";
 
-
+// End of page
 llxFooter();
-
 $db->close();

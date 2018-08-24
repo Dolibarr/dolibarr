@@ -50,26 +50,38 @@ function societe_prepare_head(Societe $object)
     $head[$h][2] = 'card';
     $h++;
 
-	if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
-	{
-	    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
-		$nbContact = 0;	// TODO
-
-		$sql = "SELECT COUNT(p.rowid) as nb";
-		$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-		$sql .= " WHERE p.fk_soc = ".$object->id;
-		$resql = $db->query($sql);
-		if ($resql)
+    if (empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
+    {
+	    if (empty($conf->global->MAIN_DISABLE_CONTACTS_TAB))
 		{
-			$obj = $db->fetch_object($resql);
-			if ($obj) $nbContact = $obj->nb;
-		}
+		    //$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+			$nbContact = 0;	// TODO
 
-	    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
-	    $head[$h][1] = $langs->trans('ContactsAddresses');
-	    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
-	    $head[$h][2] = 'contact';
-	    $h++;
+			$sql = "SELECT COUNT(p.rowid) as nb";
+			$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
+			$sql .= " WHERE p.fk_soc = ".$object->id;
+			$resql = $db->query($sql);
+			if ($resql)
+			{
+				$obj = $db->fetch_object($resql);
+				if ($obj) $nbContact = $obj->nb;
+			}
+
+		    $head[$h][0] = DOL_URL_ROOT.'/societe/contact.php?socid='.$object->id;
+		    $head[$h][1] = $langs->trans('ContactsAddresses');
+		    if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		    $head[$h][2] = 'contact';
+		    $h++;
+		}
+    }
+    else
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
+		$nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
+		$head[$h][1] = $langs->trans("ContactsAddresses");
+		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
+		$head[$h][2] = 'contact';
+		$h++;
 	}
 
     if ($object->client==1 || $object->client==2 || $object->client==3)
@@ -77,7 +89,7 @@ function societe_prepare_head(Societe $object)
         $head[$h][0] = DOL_URL_ROOT.'/comm/card.php?socid='.$object->id;
         $head[$h][1] = '';
         if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && ($object->client==2 || $object->client==3)) $head[$h][1] .= $langs->trans("Prospect");
-        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client==3) $head[$h][1] .= '/';
+        if (empty($conf->global->SOCIETE_DISABLE_PROSPECTS) && empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && $object->client==3) $head[$h][1] .= ' | ';
         if (empty($conf->global->SOCIETE_DISABLE_CUSTOMERS) && ($object->client==1 || $object->client==3)) $head[$h][1] .= $langs->trans("Customer");
         $head[$h][2] = 'customer';
         $h++;
@@ -97,16 +109,6 @@ function societe_prepare_head(Societe $object)
         $head[$h][0] = DOL_URL_ROOT.'/fourn/card.php?socid='.$object->id;
         $head[$h][1] = $langs->trans("Supplier");
         $head[$h][2] = 'supplier';
-        $h++;
-    }
-
-    if (! empty($conf->global->MAIN_SUPPORT_SHARED_CONTACT_BETWEEN_THIRDPARTIES))
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/societe/societecontact.php?socid='.$object->id;
-	    $nbContact = count($object->liste_contact(-1,'internal')) + count($object->liste_contact(-1,'external'));
-        $head[$h][1] = $langs->trans("ContactsAddresses");
-		if ($nbContact > 0) $head[$h][1].= ' <span class="badge">'.$nbContact.'</span>';
-        $head[$h][2] = 'contact';
         $h++;
     }
 
@@ -234,8 +236,8 @@ function societe_prepare_head(Societe $object)
     	$head[$h][1] = $langs->trans("WebSiteAccounts");
     	$nbNote = 0;
     	$sql = "SELECT COUNT(n.rowid) as nb";
-    	$sql.= " FROM ".MAIN_DB_PREFIX."website_account as n";
-    	$sql.= " WHERE fk_soc = ".$object->id;
+    	$sql.= " FROM ".MAIN_DB_PREFIX."societe_account as n";
+    	$sql.= " WHERE fk_soc = ".$object->id.' AND fk_website > 0';
     	$resql=$db->query($sql);
     	if ($resql)
     	{
@@ -1484,10 +1486,7 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
         $delay_warning=$conf->global->MAIN_DELAY_ACTIONS_TODO*24*60*60;
 
         require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/commande/class/commande.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/fourn/class/fournisseur.commande.class.php';
-        require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+        include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 	    require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 
 	    $formactions=new FormActions($db);
@@ -1495,12 +1494,6 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
 	    $actionstatic=new ActionComm($db);
         $userstatic=new User($db);
         $contactstatic = new Contact($db);
-
-        // TODO mutualize/uniformize
-        $propalstatic=new Propal($db);
-        $orderstatic=new Commande($db);
-        $supplierorderstatic=new CommandeFournisseur($db);
-        $facturestatic=new Facture($db);
 
         $out.='<form name="listactionsfilter" class="listactionsfilter" action="' . $_SERVER["PHP_SELF"] . '" method="POST">';
         if ($objcon && get_class($objcon) == 'Contact' && $filterobj && get_class($filterobj) == 'Societe')
@@ -1662,45 +1655,10 @@ function show_actions_done($conf, $langs, $db, $filterobj, $objcon='', $noprint=
             //$out.='<td>'.dol_trunc($histo[$key]['note'], 40).'</td>';
 
             // Objet lie
-            // TODO mutualize/uniformize
             $out.='<td>';
-            //var_dump($histo[$key]['elementtype']);
-            if (isset($histo[$key]['elementtype']))
+            if (isset($histo[$key]['elementtype']) && !empty($histo[$key]['fk_element']))
             {
-            	if ($histo[$key]['elementtype'] == 'propal' && ! empty($conf->propal->enabled))
-            	{
-            		//$propalstatic->ref=$langs->trans("ProposalShort");
-            		//$propalstatic->id=$histo[$key]['fk_element'];
-                    if ($propalstatic->fetch($histo[$key]['fk_element'])>0) {
-                        $propalstatic->type=$histo[$key]['ftype'];
-                        $out.=$propalstatic->getNomUrl(1);
-                    } else {
-                        //$out.= '<span class="opacitymedium">'.$langs->trans("ProposalDeleted").'</span>';
-                    }
-             	}
-            	elseif (($histo[$key]['elementtype'] == 'order' || $histo[$key]['elementtype'] == 'commande') && ! empty($conf->commande->enabled))
-            	{
-            		//$orderstatic->ref=$langs->trans("Order");
-            		//$orderstatic->id=$histo[$key]['fk_element'];
-                    if ($orderstatic->fetch($histo[$key]['fk_element'])>0) {
-                        $orderstatic->type=$histo[$key]['ftype'];
-                        $out.=$orderstatic->getNomUrl(1);
-                    } else {
-                    	//$out.= '<span class="opacitymedium">'.$langs->trans("OrderDeleted").'<span>';
-                    }
-             	}
-            	elseif (($histo[$key]['elementtype'] == 'invoice' || $histo[$key]['elementtype'] == 'facture') && ! empty($conf->facture->enabled))
-            	{
-            		//$facturestatic->ref=$langs->trans("Invoice");
-            		//$facturestatic->id=$histo[$key]['fk_element'];
-                    if ($facturestatic->fetch($histo[$key]['fk_element'])>0) {
-                        $facturestatic->type=$histo[$key]['ftype'];
-                        $out.=$facturestatic->getNomUrl(1,'compta');
-                    } else {
-                    	//$out.= '<span class="opacitymedium">'.$langs->trans("InvoiceDeleted").'</span>';
-                    }
-            	}
-            	else $out.='&nbsp;';
+            	$out.=dolGetElementUrl($histo[$key]['fk_element'],$histo[$key]['elementtype'],1);
             }
             else $out.='&nbsp;';
             $out.='</td>';

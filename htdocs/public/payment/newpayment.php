@@ -441,14 +441,15 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				$service = 'StripeLive';
 				$servicestatus = 1;
 			}
-			$stripeacc = null;	// No Oauth/connect use for public pages
+			
 
 			$thirdparty = new Societe($db);
 			$thirdparty->fetch($thirdparty_id);
 
 			// Create Stripe customer
 			include_once DOL_DOCUMENT_ROOT.'/stripe/class/stripe.class.php';
-			$stripe = new Stripe($db);
+			$stripe = new Stripe($db);  
+      $stripeacc = $stripe->getStripeAccount($service);
 			$customer = $stripe->customerStripe($thirdparty, $stripeacc, $servicestatus, 1);
 
 			// Create Stripe card from Token
@@ -473,7 +474,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 					'customer' => $customer->id,
 					'source' => $card,
 					'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-				));
+				),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
 				// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 				if (empty($charge))
 				{
@@ -507,7 +508,7 @@ if ($action == 'charge' && ! empty($conf->stripe->enabled))
 				'description' => 'Stripe payment: '.$FULLTAG,
 				'metadata' => array("FULLTAG" => $FULLTAG, 'Recipient' => $mysoc->name, 'dol_version'=>DOL_VERSION, 'dol_entity'=>$conf->entity, 'ipaddress'=>(empty($_SERVER['REMOTE_ADDR'])?'':$_SERVER['REMOTE_ADDR'])),
 				'statement_descriptor' => dol_trunc(dol_trunc(dol_string_unaccent($mysoc->name), 6, 'right', 'UTF-8', 1).' '.$FULLTAG, 22, 'right', 'UTF-8', 1)     // 22 chars that appears on bank receipt
-			));
+			),array("idempotency_key" => "$ref","stripe_account" => "$stripeacc"));
 			// Return $charge = array('id'=>'ch_XXXX', 'status'=>'succeeded|pending|failed', 'failure_code'=>, 'failure_message'=>...)
 			if (empty($charge))
 			{
@@ -617,8 +618,9 @@ if ($source && in_array($ref, array('member_ref', 'contractline_ref', 'invoice_r
 {
 	$langs->load("errors");
 	dol_print_error_email('BADREFINPAYMENTFORM', $langs->trans("ErrorBadLinkSourceSetButBadValueForRef", $source, $ref));
-	llxFooter();
-	$db->close();
+	// End of page
+    llxFooter();
+    $db->close();;
 	exit;
 }
 

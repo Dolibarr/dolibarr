@@ -505,7 +505,7 @@ class PaymentExpenseReport extends CommonObject
 
         if (! empty($conf->banque->enabled))
         {
-            require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
+            include_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 
             $acc = new Account($this->db);
             $acc->fetch($accountid);

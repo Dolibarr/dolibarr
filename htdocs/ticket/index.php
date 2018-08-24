@@ -3,7 +3,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -139,7 +139,7 @@ if ($user->societe_id > 0) {
     $sql .= " AND t.fk_soc='" . $user->societe_id . "'";
 } else {
     // For internals users,
-    if (!empty($conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
+    if (!empty($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) && !$user->rights->ticket->manage) {
         $sql .= " AND t.fk_user_assign=" . $user->id;
     }
 }
@@ -283,7 +283,7 @@ if ($user->societe_id > 0) {
     $sql .= " AND t.fk_soc='" . $user->societe_id . "'";
 } else {
     // Restricted to assigned user only
-    if ($conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
+    if ($conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY && !$user->rights->ticket->manage) {
         $sql .= " AND t.fk_user_assign=" . $user->id;
     }
 }
@@ -302,7 +302,7 @@ if ($result) {
     print '<div class="div-table-responsive-no-min">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><th>' . $transRecordedType . '</th>';
-    print '<th>' . $langs->trans('Ref') . '</th>';
+    print '<th>' . $langs->trans('Date') . '</th>';
     print '<th>' . $langs->trans('Subject') . '</th>';
     print '<th>' . $langs->trans('Type') . '</th>';
     print '<th>' . $langs->trans('Category') . '</th>';
@@ -322,15 +322,16 @@ if ($result) {
             $tickesupstatic->subject = $objp->subject;
 
             print '<tr class="oddeven">';
-            // Creation date
-            print '<td align="left">';
-            print dol_print_date($db->jdate($objp->datec), 'dayhour');
-            print "</td>";
 
             // Ref
             print '<td class="nowrap">';
             print $tickesupstatic->getNomUrl(1);
             print "</td>\n";
+
+            // Creation date
+            print '<td align="left">';
+            print dol_print_date($db->jdate($objp->datec), 'dayhour');
+            print "</td>";
 
             // Subject
             print '<td class="nowrap">';

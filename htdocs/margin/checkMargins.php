@@ -321,5 +321,6 @@ print '</form>';
 
 $db->free($result);
 
+// End of page
 llxFooter();
 $db->close();

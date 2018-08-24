@@ -7,7 +7,7 @@
  * Copyright (C) 2012		Cédric Salvador		<csalvador@gpcsolutions.fr>
  * Copyright (C) 2012-2014	Raphaël Doursenaud	<rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2015		Marcos García		<marcosgdf@gmail.com>
- * Copyright (C) 2017		Ferran Marcet		<fmarcet@2byte.es>
+ * Copyright (C) 2017-2018	Ferran Marcet		<fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,24 +69,55 @@ class pdf_crabe extends ModelePDFFactures
 
 	/**
      * @var array() Minimum version of PHP required by module.
-	 * e.g.: PHP ≥ 5.3 = array(5, 3)
+	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 2);
-
+	public $phpmin = array(5, 4); 
+	
 	/**
      * Dolibarr version of the loaded document
      * @public string
      */
 	public $version = 'dolibarr';
 
+	/**
+     * @var int page_largeur
+     */
     public $page_largeur;
+	
+	/**
+     * @var int page_hauteur
+     */
     public $page_hauteur;
+	
+	/**
+     * @var array format
+     */
     public $format;
+	
+	/**
+     * @var int marge_gauche
+     */
 	public $marge_gauche;
+	
+	/**
+     * @var int marge_droite
+     */
 	public $marge_droite;
+	
+	/**
+     * @var int marge_haute
+     */
 	public $marge_haute;
+	
+	/**
+     * @var int marge_basse
+     */
 	public $marge_basse;
-
+    
+	/**
+	 * Issuer
+	 * @var Societe
+	 */
 	public $emetteur;	// Objet societe qui emet
 
 	/**
@@ -405,7 +436,7 @@ class pdf_crabe extends ModelePDFFactures
 				{
 					$tab_top -= 2;
 
-          $substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
+					$substitutionarray=pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
 
@@ -795,7 +826,7 @@ class pdf_crabe extends ModelePDFFactures
 		$pdf->SetFont('','', $default_font_size - 4);
 
 
-		// Loop on each deposits and credit notes included
+		// Loop on each discount available (deposits and credit notes and excess of payment included)
 		$sql = "SELECT re.rowid, re.amount_ht, re.multicurrency_amount_ht, re.amount_tva, re.multicurrency_amount_tva,  re.amount_ttc, re.multicurrency_amount_ttc,";
 		$sql.= " re.description, re.fk_facture_source,";
 		$sql.= " f.type, f.datef";
@@ -812,9 +843,10 @@ class pdf_crabe extends ModelePDFFactures
 				$y+=3;
 				$obj = $this->db->fetch_object($resql);
 
-				if ($obj->type == 2) $text=$outputlangs->trans("CreditNote");
-				elseif ($obj->type == 3) $text=$outputlangs->trans("Deposit");
-				else $text=$outputlangs->trans("UnknownType");
+				if ($obj->type == 2) $text=$outputlangs->transnoentities("CreditNote");
+				elseif ($obj->type == 3) $text=$outputlangs->transnoentities("Deposit");
+				elseif ($obj->type == 0) $text=$outputlangs->transnoentities("ExcessReceived");
+				else $text=$outputlangs->transnoentities("UnknownType");
 
 				$invoice->fetch($obj->fk_facture_source);
 
@@ -1304,7 +1336,7 @@ class pdf_crabe extends ModelePDFFactures
 
 		$pdf->SetTextColor(0,0,0);
 
-		$creditnoteamount=$object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
+		$creditnoteamount=$object->getSumCreditNotesUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);	// Warning, this also include excess received
 		$depositsamount=$object->getSumDepositsUsed(($conf->multicurrency->enabled && $object->multicurrency_tx != 1) ? 1 : 0);
 		//print "x".$creditnoteamount."-".$depositsamount;exit;
 		$resteapayer = price2num($total_ttc - $deja_regle - $creditnoteamount - $depositsamount, 'MT');
@@ -1322,9 +1354,10 @@ class pdf_crabe extends ModelePDFFactures
 			// Credit note
 			if ($creditnoteamount)
 			{
+				$labeltouse = ($outputlangs->transnoentities("CreditNotesOrExcessReceived") != "CreditNotesOrExcessReceived") ? $outputlangs->transnoentities("CreditNotesOrExcessReceived") : $outputlangs->transnoentities("CreditNotes");
 				$index++;
 				$pdf->SetXY($col1x, $tab2_top + $tab2_hl * $index);
-				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("CreditNotes"), 0, 'L', 0);
+				$pdf->MultiCell($col2x-$col1x, $tab2_hl, $labeltouse, 0, 'L', 0);
 				$pdf->SetXY($col2x, $tab2_top + $tab2_hl * $index);
 				$pdf->MultiCell($largcol2, $tab2_hl, price($creditnoteamount, 0, $outputlangs), 0, 'R', 0);
 			}

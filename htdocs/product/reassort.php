@@ -135,7 +135,7 @@ if (dol_strlen($type))
         $sql.= " AND p.fk_product_type <> '1'";
     }
 }
-if ($sref)     $sql.= natural_search('p.ref', $ref);
+if ($sref)     $sql.= natural_search('p.ref', $sref);
 if ($search_barcode) $sql.= natural_search('p.barcode', $search_barcode);
 if ($snom)     $sql.= natural_search('p.label', $snom);
 if (! empty($tosell)) $sql.= " AND p.tosell = ".$tosell;
@@ -248,6 +248,8 @@ if ($resql)
 	if ($fourn_id)	$param.="&fourn_id=".$fourn_id;
 	if ($snom)		$param.="&snom=".$snom;
 	if ($sref)		$param.="&sref=".$sref;
+	if ($toolowstock)		$param.="&toolowstock=".$toolowstock;
+	if ($search_categ)		$param.="&search_categ=".$search_categ;
 
 	$formProduct = new FormProduct($db);
 	$formProduct->loadWarehouses();
@@ -389,6 +391,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

@@ -99,6 +99,7 @@ WatermarkOnDraftOrders=Wasserzeichen zu den Entwürfen von Aufträgen (alle, wen
 InterventionsSetup=Eingriffsmoduleinstellungen
 FreeLegalTextOnInterventions=Freier Rechtstext für Eingriffe
 WatermarkOnDraftInterventionCards=Wasserzeichen auf Intervention Karte Dokumente (alle, wenn leer)
+ViewProductDescInThirdpartyLanguageAbility=Visualization of products descriptions in the third party language
 ClickToDialSetup=Click-to-Dial-Moduleinstellungen
 PathToGeoIPMaxmindCountryDataFile=Pfad zur Datei mit Maxmind IP to Country Übersetzung. <br> Beispiel: / usr / local / share / GeoIP / GeoIP.dat
 MailToSendShipment=Sendungen

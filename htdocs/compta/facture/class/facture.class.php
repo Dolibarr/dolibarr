@@ -1159,7 +1159,8 @@ class Facture extends CommonInvoice
 		if ($option == 'withdraw') $url = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$this->id;
 		else $url = DOL_URL_ROOT.'/compta/facture/card.php?facid='.$this->id;
 
-		if ($short) return $url;
+        if (!$user->rights->facture->lire)
+            $option = 'nolink';
 
 		if ($option !== 'nolink')
 		{
@@ -1213,6 +1214,11 @@ class Facture extends CommonInvoice
         $linkstart='<a href="'.$url.'"';
         $linkstart.=$linkclose.'>';
 		$linkend='</a>';
+
+        if ($option == 'nolink') {
+            $linkstart = '';
+            $linkend = '';
+        }
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -1274,8 +1280,10 @@ class Facture extends CommonInvoice
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_payment_term as c ON f.fk_cond_reglement = c.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON f.fk_mode_reglement = p.id';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON f.fk_incoterms = i.rowid';
-		$sql.= ' WHERE f.entity IN ('.getEntity('facture').')';
-		if ($rowid)   $sql.= " AND f.rowid=".$rowid;
+
+		if ($rowid)   $sql.= " WHERE f.rowid=".$rowid;
+		else $sql.= ' WHERE f.entity IN ('.getEntity('facture').')'; // Dont't use entity if you use rowid
+
 		if ($ref)     $sql.= " AND f.facnumber='".$this->db->escape($ref)."'";
 		if ($ref_ext) $sql.= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
 		if ($ref_int) $sql.= " AND f.ref_int='".$this->db->escape($ref_int)."'";
@@ -1547,6 +1555,8 @@ class Facture extends CommonInvoice
 	 */
 	function update(User $user, $notrigger=0)
 	{
+		global $conf;
+
 		$error=0;
 
 		// Clean parameters
@@ -1612,15 +1622,21 @@ class Facture extends CommonInvoice
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (! $notrigger)
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-	            // Call trigger
-	            $result=$this->call_trigger('BILL_MODIFY',$user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('BILL_MODIFY',$user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -3019,7 +3035,7 @@ class Facture extends CommonInvoice
 	{
 	    global $mysoc,$user;
 
-		include_once(DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php');
+		include_once DOL_DOCUMENT_ROOT . '/core/lib/price.lib.php';
 
 		// Cap percentages to 100
 		if ($percent > 100) $percent = 100;
@@ -3710,7 +3726,7 @@ class Facture extends CommonInvoice
 
 		$clause = " WHERE";
 
-		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut";
+		$sql = "SELECT f.rowid, f.date_lim_reglement as datefin,f.fk_statut, f.total";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3743,6 +3759,7 @@ class Facture extends CommonInvoice
 				$generic_facture->statut = $obj->fk_statut;
 
 				$response->nbtodo++;
+				$response->total += $obj->total;
 
 				if ($generic_facture->hasDelay()) {
 					$response->nbtodolate++;
@@ -4323,6 +4340,7 @@ class FactureLigne extends CommonInvoiceLine
 			$objp = $this->db->fetch_object($result);
 
 			$this->rowid				= $objp->rowid;
+			$this->id					= $objp->rowid;
 			$this->fk_facture			= $objp->fk_facture;
 			$this->fk_parent_line		= $objp->fk_parent_line;
 			$this->label				= $objp->custom_label;
@@ -4834,7 +4852,7 @@ class FactureLigne extends CommonInvoiceLine
 			$resql = $this->db->query($sql);
 			if ($resql && $resql->num_rows > 0) {
 				$res = $this->db->fetch_array($resql);
-				return $res['situation_percent'];
+				return floatval($res['situation_percent']);
 			} else {
 				$this->error = $this->db->error();
 				dol_syslog(get_class($this) . "::select Error " . $this->error, LOG_ERR);

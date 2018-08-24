@@ -25,8 +25,8 @@
 require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/asset.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/asset/class/asset.class.php';
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php');
-include_once(DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php');
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
 
 // Load translation files required by the page
 $langs->loadLangs(array("asset"));
@@ -95,8 +95,8 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Actions to send emails
-	$trigger_name='MYOBJECT_SENTBYMAIL';
-	$autocopy='MAIN_MAIL_AUTOCOPY_MYOBJECT_TO';
+	$trigger_name='ASSET_SENTBYMAIL';
+	$autocopy='MAIN_MAIL_AUTOCOPY_ASSET_TO';
 	$trackid='asset'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 }

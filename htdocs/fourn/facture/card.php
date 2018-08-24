@@ -1160,8 +1160,10 @@ if (empty($reshook))
 
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
-				} else {
-					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+				} 
+				else 
+				{
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error ++;
 				}
 			}
@@ -1207,7 +1209,11 @@ if (empty($reshook))
 			{
 				$label = $productsupplier->label;
 
-				$desc = $productsupplier->description;
+				// if we use supplier description of the products
+				if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				    $desc = $productsupplier->desc_supplier;
+				} else $desc = $productsupplier->description;
+				
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 				$type = $productsupplier->type;
@@ -2898,7 +2904,7 @@ else
 			if ($resteapayeraffiche <= 0)
 				print $langs->trans('RemainderToPayBack');
 			else
-				print $langs->trans('ExcessPaydBack');
+				print $langs->trans('ExcessPaid');
 			print ' :</td>';
 			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
@@ -3195,7 +3201,6 @@ else
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
-
 
 // End of page
 llxFooter();

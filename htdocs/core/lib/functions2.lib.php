@@ -708,9 +708,10 @@ function array2table($data,$tableMarkup=1,$tableoptions='',$troptions='',$tdopti
  * @param   string		$mode			'next' for next value or 'last' for last value
  * @param   bool		$bentityon		Activate the entity filter. Default is true (for modules not compatible with multicompany)
  * @param	User		$objuser		Object user we need data from.
+ * @param	int			$forceentity	Entity id to force
  * @return 	string						New value (numeric) or error message
  */
-function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true, $objuser=null)
+function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$mode='next', $bentityon=true, $objuser=null, $forceentity=null)
 {
     global $conf,$user;
 
@@ -987,7 +988,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
 	$sql.= " AND ".$field." NOT LIKE '(PROV%)'";
     if ($bentityon) // only if entity enable
     	$sql.= " AND entity IN (".getEntity($sharetable).")";
-
+    else if (! empty($forceentity))
+    	$sql.= " AND entity = ".(int) $forceentity;
     if ($where) $sql.=$where;
     if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -1035,6 +1037,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     	$sql.= " AND ".$field." NOT LIKE '%PROV%'";
     	if ($bentityon) // only if entity enable
         	$sql.= " AND entity IN (".getEntity($sharetable).")";
+        else if (! empty($forceentity))
+        	$sql.= " AND entity = ".(int) $forceentity;
         if ($where) $sql.=$where;
         if ($sqlwhere) $sql.=' AND '.$sqlwhere;
 
@@ -1089,6 +1093,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
             $maskrefclient_sql.= " WHERE ".$field." LIKE '".$maskrefclient_maskLike."'";
             if ($bentityon) // only if entity enable
             	$maskrefclient_sql.= " AND entity IN (".getEntity($sharetable).")";
+            else if (! empty($forceentity))
+            	$sql.= " AND entity = ".(int) $forceentity;
             if ($where) $maskrefclient_sql.=$where; //use the same optional where as general mask
             if ($sqlwhere) $maskrefclient_sql.=' AND '.$sqlwhere; //use the same sqlwhere as general mask
             $maskrefclient_sql.=' AND (SUBSTRING('.$field.', '.(strpos($maskwithnocode,$maskrefclient)+1).', '.dol_strlen($maskrefclient_maskclientcode).")='".$maskrefclient_clientcode."')";
@@ -1161,7 +1167,8 @@ function get_next_value($db,$mask,$table,$field,$where='',$objsoc='',$date='',$m
     return $numFinal;
 }
 
-function get_string_between($string, $start, $end){
+function get_string_between($string, $start, $end)
+{
     $string = " ".$string;
      $ini = strpos($string,$start);
      if ($ini == 0) return "";
@@ -1754,7 +1761,7 @@ function getSoapParams()
 
 
 /**
- * List urls of element
+ * Return link url to an object
  *
  * @param 	int		$objectid		Id of record
  * @param 	string	$objecttype		Type of object ('invoice', 'order', 'expedition_bon', ...)
@@ -1865,7 +1872,11 @@ function dolGetElementUrl($objectid,$objecttype,$withpicto=0,$option='')
 			{
 				$object = new $classname($db);
 				$res=$object->fetch($objectid);
-				if ($res > 0) $ret=$object->getNomUrl($withpicto,$option);
+				if ($res > 0) {
+					$ret=$object->getNomUrl($withpicto,$option);
+				} elseif($res==0) {
+					$ret=$langs->trans('Deleted');
+				}
 				unset($object);
 			}
 			else dol_syslog("Class with classname ".$classname." is unknown even after the include", LOG_ERR);
@@ -2187,7 +2198,8 @@ function colorStringToArray($stringcolor,$colorifnotfound=array(88,88,88))
  * @param   array $input    Array of products
  * @return  array           Array of combinations
  */
-function cartesianArray(array $input) {
+function cartesianArray(array $input)
+{
     // filter out empty values
     $input = array_filter($input);
 
@@ -2295,8 +2307,9 @@ function getModuleDirForApiClass($module)
  * @param	$max	int	Between 0 and 255
  * @return String
  */
-function random_color_part($min=0,$max=255) {
-	return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
+function random_color_part($min=0,$max=255)
+{
+    return str_pad( dechex( mt_rand( $min, $max) ), 2, '0', STR_PAD_LEFT);
 }
 
 /*
@@ -2306,6 +2319,7 @@ function random_color_part($min=0,$max=255) {
  * @param	$max	int	Between 0 and 255
  * @return String
  */
-function random_color($min=0, $max=255) {
-	return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
+function random_color($min=0, $max=255)
+{
+    return random_color_part($min, $max) . random_color_part($min, $max) . random_color_part($min, $max);
 }

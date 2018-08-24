@@ -27,7 +27,7 @@
  */
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-if (! empty($conf->ldap->enabled)) require_once (DOL_DOCUMENT_ROOT."/core/class/ldap.class.php");
+if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT."/core/class/ldap.class.php";
 
 
 /**
@@ -308,8 +308,18 @@ class UserGroup extends CommonObject
 		}
 		else {
 			// Where pour la liste des droits a ajouter
-			if (! empty($allmodule)) $whereforadd="module='".$this->db->escape($allmodule)."'";
-			if (! empty($allperms))  $whereforadd=" AND perms='".$this->db->escape($allperms)."'";
+			if (! empty($allmodule))
+			{
+				if ($allmodule == 'allmodules')
+				{
+					$whereforadd='allmodules';
+				}
+				else
+				{
+					$whereforadd="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
+			}
 		}
 
 		// Ajout des droits de la liste whereforadd
@@ -318,8 +328,10 @@ class UserGroup extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE $whereforadd";
-			$sql.= " AND entity = ".$entity;
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($whereforadd) && $whereforadd != 'allmodules') {
+				$sql.= " AND ".$whereforadd;
+			}
 
 			$result=$this->db->query($sql);
 			if ($result)
@@ -422,8 +434,18 @@ class UserGroup extends CommonObject
 		}
 		else {
 			// Where pour la liste des droits a supprimer
-			if (! empty($allmodule)) $wherefordel="module='".$this->db->escape($allmodule)."'";
-			if (! empty($allperms))  $wherefordel=" AND perms='".$this->db->escape($allperms)."'";
+			if (! empty($allmodule))
+			{
+				if ($allmodule == 'allmodules')
+				{
+					$wherefordel='allmodules';
+				}
+				else
+				{
+					$wherefordel="module='".$this->db->escape($allmodule)."'";
+					if (! empty($allperms))  $whereforadd.=" AND perms='".$this->db->escape($allperms)."'";
+				}
+			}
 		}
 
 		// Suppression des droits de la liste wherefordel
@@ -432,8 +454,10 @@ class UserGroup extends CommonObject
 			//print "$module-$perms-$subperms";
 			$sql = "SELECT id";
 			$sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-			$sql.= " WHERE $wherefordel";
-			$sql.= " AND entity = ".$entity;
+			$sql.= " WHERE entity = ".$entity;
+			if (! empty($wherefordel) && $wherefordel != 'allmodules') {
+				$sql.= " AND ".$wherefordel;
+			}
 
 			$result=$this->db->query($sql);
 			if ($result)

@@ -379,7 +379,7 @@ $tabrowid[9] = "code_iso";
 $tabrowid[10]= "";
 $tabrowid[11]= "rowid";
 $tabrowid[12]= "";
-$tabrowid[13]= "";
+$tabrowid[13]= "id";
 $tabrowid[14]= "";
 $tabrowid[15]= "";
 $tabrowid[16]= "code";
@@ -1735,7 +1735,7 @@ else
 
 print '<br>';
 
-
+// End of page
 llxFooter();
 $db->close();
 

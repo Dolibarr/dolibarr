@@ -409,7 +409,7 @@ class doc_generic_user_odt extends ModelePDFUser
 				$odfHandler=null;	// Destroy object
 
 				$this->result = array('fullpath'=>$file);
-				
+
 				return 1;   // Success
 			}
 			else
@@ -422,7 +422,8 @@ class doc_generic_user_odt extends ModelePDFUser
 		return -1;
 	}
 
-	function get_substitutionarray_object($object,$outputlangs,$array_key='object') {
+    function get_substitutionarray_object($object,$outputlangs,$array_key='object')
+    {
 		$array_other=array();
 		foreach($object as $key => $value) {
 			if (!is_array($value) && !is_object($value)) {
@@ -433,4 +434,3 @@ class doc_generic_user_odt extends ModelePDFUser
 	}
 
 }
-
