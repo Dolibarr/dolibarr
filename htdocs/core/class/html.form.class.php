@@ -3689,7 +3689,7 @@ class Form
 
 			// Now add questions
 			$more.='<table class="paddingtopbottomonly" width="100%">'."\n";
-			$more.='<tr><td colspan="3">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
+			if (! empty($formquestion['text'])) $more.='<tr><td colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			foreach ($formquestion as $key => $input)
 			{
 				if (is_array($input) && ! empty($input))
@@ -3700,16 +3700,16 @@ class Form
 
 					if ($input['type'] == 'text')
 					{
-						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<tr><td>'.$input['label'].'</td><td align="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					else if ($input['type'] == 'password')
 					{
-						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<tr><td>'.$input['label'].'</td><td align="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					else if ($input['type'] == 'select')
 					{
 						$more.='<tr><td>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop" align="left">';
 						$more.=$this->selectarray($input['name'],$input['values'],$input['default'],1,0,0,$moreattr,0,0,0,'',$morecss);
 						$more.='</td></tr>'."\n";
 					}
@@ -3722,7 +3722,6 @@ class Form
 						if (is_bool($input['value']) && $input['value']) $more.=' checked';
 						if (isset($input['disabled'])) $more.=' disabled';
 						$more.=' /></td>';
-						$more.='<td align="left">&nbsp;</td>';
 						$more.='</tr>'."\n";
 					}
 					else if ($input['type'] == 'radio')
@@ -3733,10 +3732,9 @@ class Form
 							$more.='<tr>';
 							if ($i==0) $more.='<td class="tdtop">'.$input['label'].'</td>';
 							else $more.='<td>&nbsp;</td>';
-							$more.='<td width="20"><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
+							$more.='<td><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) $more.=' disabled';
-							$more.=' /></td>';
-							$more.='<td align="left">';
+							$more.=' /> '
 							$more.=$selval;
 							$more.='</td></tr>'."\n";
 							$i++;
@@ -3745,7 +3743,7 @@ class Form
 					else if ($input['type'] == 'date')
 					{
 						$more.='<tr><td>'.$input['label'].'</td>';
-						$more.='<td colspan="2" align="left">';
+						$more.='<td align="left">';
 						$more.=$this->select_date($input['value'],$input['name'],0,0,0,'',1,0,1);
 						$more.='</td></tr>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
@@ -3757,14 +3755,14 @@ class Form
 					else if ($input['type'] == 'other')
 					{
 						$more.='<tr><td>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td colspan="2" align="left">';
+						if (! empty($input['label'])) $more.=$input['label'].'</td><td align="left">';
 						$more.=$input['value'];
 						$more.='</td></tr>'."\n";
 					}
 
 					else if ($input['type'] == 'onecolumn')
 					{
-						$more.='<tr><td colspan="3" align="left">';
+						$more.='<tr><td colspan="2" align="left">';
 						$more.=$input['value'];
 						$more.='</td></tr>'."\n";
 					}
@@ -3818,14 +3816,14 @@ class Form
             	$( "#'.$dialogconfirm.'" ).dialog(
             	{
                     autoOpen: '.($autoOpen ? "true" : "false").',';
-					if ($newselectedchoice == 'no')
-					{
-						$formconfirm.='
+			if ($newselectedchoice == 'no')
+			{
+				$formconfirm.='
 						open: function() {
             				$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
-					}
-					$formconfirm.='
+			}
+			$formconfirm.='
                     resizable: false,
                     height: "'.$height.'",
                     width: "'.$width.'",
