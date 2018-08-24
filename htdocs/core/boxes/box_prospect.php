@@ -40,9 +40,9 @@ class box_prospect extends ModeleBoxes
 	var $depends = array("societe");
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $enabled = 1;
 
