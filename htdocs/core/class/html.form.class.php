@@ -3704,11 +3704,11 @@ class Form
 					}
 					else if ($input['type'] == 'password')
 					{
-						$more.='<tr><td>'.$input['label'].'</td><td align="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td align="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					else if ($input['type'] == 'select')
 					{
-						$more.='<tr><td>';
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
 						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop" align="left">';
 						$more.=$this->selectarray($input['name'],$input['values'],$input['default'],1,0,0,$moreattr,0,0,0,'',$morecss);
 						$more.='</td></tr>'."\n";
@@ -3730,8 +3730,8 @@ class Form
 						foreach($input['values'] as $selkey => $selval)
 						{
 							$more.='<tr>';
-							if ($i==0) $more.='<td class="tdtop">'.$input['label'].'</td>';
-							else $more.='<td>&nbsp;</td>';
+							if ($i==0) $more.='<td'.(empty($input['tdclass'])?' class="tdtop"':(' class="tdtop '.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
+							else $more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>&nbsp;</td>';
 							$more.='<td><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) $more.=' disabled';
 							$more.=' /> ';
@@ -3742,7 +3742,7 @@ class Form
 					}
 					else if ($input['type'] == 'date')
 					{
-						$more.='<tr><td>'.$input['label'].'</td>';
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
 						$more.='<td align="left">';
 						$more.=$this->select_date($input['value'],$input['name'],0,0,0,'',1,0,1);
 						$more.='</td></tr>'."\n";
@@ -3754,7 +3754,7 @@ class Form
 					}
 					else if ($input['type'] == 'other')
 					{
-						$more.='<tr><td>';
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
 						if (! empty($input['label'])) $more.=$input['label'].'</td><td align="left">';
 						$more.=$input['value'];
 						$more.='</td></tr>'."\n";
