@@ -1347,7 +1347,7 @@ class Form
 	 *	@param	string		$moreclass		Add more class to class style
 	 *	@param	bool		$options_only	Return options only (for ajax treatment)
 	 *	@param	integer		$showsoc	    Add company into label
-	 * 	@param	int			$forcecombo		Force to use combo box
+	 * 	@param	int			$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *  @param	array		$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	string		$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *  @param	string		$htmlid			Html id to use instead of htmlname
@@ -1554,7 +1554,7 @@ class Form
 			else $sql.= " WHERE u.entity IS NOT NULL";
 		}
 		else
-	   {
+		{
 			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
