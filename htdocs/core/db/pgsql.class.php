@@ -252,7 +252,7 @@ class DoliDBPgsql extends DoliDB
                     $line.= "ALTER TABLE ".$reg[1]." RENAME COLUMN ".$reg[2]." TO ".$reg[3];
                 }
 
-				if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+ADD COLUMN ([a-z0-9_]+)\s+([a-z0-9\(\)]+)\s*(NULL|NOT NULL)?\s*(DEFAULT [a-z0-9\(\)]+)?\s*;$/i',$line,$reg))
+				if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+ADD COLUMN ([a-z0-9_]+)\s+([a-z0-9\(\),]+)\s*(NULL|NOT NULL)?\s*(DEFAULT [a-z0-9\(\)]+)?\s*;$/i',$line,$reg))
 				{
 					$tablename = $reg[1];
 					$column = $reg[2];
