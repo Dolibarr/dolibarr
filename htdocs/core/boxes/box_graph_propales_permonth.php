@@ -34,9 +34,9 @@ class box_graph_propales_permonth extends ModeleBoxes
 	var $depends = array("propal");
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();
