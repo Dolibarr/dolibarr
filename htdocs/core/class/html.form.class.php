@@ -3734,7 +3734,7 @@ class Form
 							else $more.='<td>&nbsp;</td>';
 							$more.='<td><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) $more.=' disabled';
-							$more.=' /> '
+							$more.=' /> ';
 							$more.=$selval;
 							$more.='</td></tr>'."\n";
 							$i++;
