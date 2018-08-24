@@ -36,7 +36,7 @@ class box_fournisseurs extends ModeleBoxes
     var $boxlabel="BoxLastSuppliers";
     var $depends = array("fournisseur");
 
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
