@@ -34,9 +34,9 @@ class box_graph_product_distribution extends ModeleBoxes
 	var $depends = array("product|service","facture|propal|commande");
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $param;
 
