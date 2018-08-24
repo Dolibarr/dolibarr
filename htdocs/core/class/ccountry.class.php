@@ -33,16 +33,16 @@
 class Ccountry // extends CommonObject
 {
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $error;							//!< To return error code (or message)
 	var $errors=array();				//!< To return several error codes (or messages)
 	//var $element='ccountry';			//!< Id that identify managed objects
 	//var $table_element='ccountry';	//!< Name of table without prefix where object is stored
 
-    /**
+    	/**
 	 * @var string ID 
 	 */
 	public $id;
