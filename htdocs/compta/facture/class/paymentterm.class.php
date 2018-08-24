@@ -28,7 +28,7 @@
  */
 class PaymentTerm // extends CommonObject
 {
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
@@ -40,9 +40,9 @@ class PaymentTerm // extends CommonObject
 	var $context =array();
 
     /**
-	 * @var string ID 
-	 */
-	public $id;
+     * @var string ID 
+     */
+    public $id;
 
 	var $code;
 	var $sortorder;
