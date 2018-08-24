@@ -29,9 +29,9 @@
 class FormCron extends Form
 {
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $error;
 
