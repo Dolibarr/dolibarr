@@ -121,13 +121,13 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			}
 		}
 
-		// Delete some files
+		// Delete some files related to object (because to previous dolCopyDir has copied everything)
 		dol_delete_file($destdir.'/myobject_card.php');
 		dol_delete_file($destdir.'/myobject_note.php');
 		dol_delete_file($destdir.'/myobject_document.php');
 		dol_delete_file($destdir.'/myobject_agenda.php');
 		dol_delete_file($destdir.'/myobject_list.php');
-		dol_delete_file($destdir.'/lib/myobject.lib.php');
+		dol_delete_file($destdir.'/lib/mymodule_myobject.lib.php');
 		dol_delete_file($destdir.'/test/phpunit/MyObjectTest.php');
 		dol_delete_file($destdir.'/sql/llx_mymodule_myobject.sql');
 		dol_delete_file($destdir.'/sql/llx_mymodule_myobject_extrafields.sql');
@@ -279,14 +279,14 @@ if ($dirins && $action == 'initobject' && $module && $objectname)
 
 	if (! $error)
 	{
-		// Delete some files
+		// Copy some files
 		$filetogenerate = array(
 		'myobject_card.php'=>strtolower($objectname).'_card.php',
 		'myobject_note.php'=>strtolower($objectname).'_note.php',
 		'myobject_document.php'=>strtolower($objectname).'_document.php',
 		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 		'myobject_list.php'=>strtolower($objectname).'_list.php',
-		'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
 		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
@@ -648,7 +648,8 @@ if ($dirins && $action == 'confirm_deleteobject' && $objectname)
 		'myobject_document.php'=>strtolower($objectname).'_document.php',
 		'myobject_agenda.php'=>strtolower($objectname).'_agenda.php',
 		'myobject_list.php'=>strtolower($objectname).'_list.php',
-		'lib/myobject.lib.php'=>'lib/'.strtolower($objectname).'.lib.php',
+		'lib/mymodule.lib.php'=>'lib/'.strtolower($module).'.lib.php',
+		'lib/mymodule_myobject.lib.php'=>'lib/'.strtolower($module).'_'.strtolower($objectname).'.lib.php',
 		'test/phpunit/MyObjectTest.php'=>'test/phpunit/'.$objectname.'Test.php',
 		'sql/llx_mymodule_myobject.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'.sql',
 		'sql/llx_mymodule_myobject_extrafields.sql'=>'sql/llx_'.strtolower($module).'_'.strtolower($objectname).'_extrafields.sql',
