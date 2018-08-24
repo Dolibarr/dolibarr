@@ -43,9 +43,9 @@ class Events // extends CommonObject
 	public $id;
 	
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
 
 	var $error;
 
