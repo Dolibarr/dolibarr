@@ -39,7 +39,7 @@ class box_external_rss extends ModeleBoxes
     var $boxlabel="BoxLastRssInfos";
     var $depends = array("externalrss");
 
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
