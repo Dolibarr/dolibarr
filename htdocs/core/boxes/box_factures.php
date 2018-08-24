@@ -36,9 +36,9 @@ class box_factures extends ModeleBoxes
 	var $depends = array("facture");
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $param;
 
