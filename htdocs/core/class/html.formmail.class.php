@@ -36,9 +36,9 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
 class FormMail extends Form
 {
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
 
 	var $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
 
