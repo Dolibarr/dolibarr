@@ -37,9 +37,9 @@ class Conf
 	var $file;
 	
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	//! To store properties found into database
 	var $global;
