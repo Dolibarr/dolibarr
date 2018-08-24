@@ -3600,7 +3600,7 @@ else if ($id > 0 || ! empty($ref))
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?facid=' . $object->id, $langs->trans('CloneInvoice'), $langs->trans('ConfirmCloneInvoice', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	if (! $formconfirm)
+	if (!empty($formconfirm))
 	{
 		$parameters = array('lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook

@@ -298,7 +298,7 @@ else
 				$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"]."?id=".$object->id,$langs->trans("DeleteAWarehouse"),$langs->trans("ConfirmDeleteWarehouse",$object->libelle),"confirm_delete",'',0,2);
 			}
 
-			if (! $formconfirm) {
+			if (!empty($formconfirm)) {
 			    $parameters = array();
 			    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;

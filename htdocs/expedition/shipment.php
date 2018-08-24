@@ -258,7 +258,7 @@ if ($id > 0 || ! empty($ref))
 
 		}
 
-		if (! $formconfirm) {
+		if (!empty($formconfirm)) {
 		    $parameters = array();
 		    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;

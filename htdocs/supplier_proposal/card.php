@@ -1372,7 +1372,7 @@ if ($action == 'create')
 			$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('ValidateAsk'), $text, 'confirm_validate', '', 0, 1);
 	}
 
-	if (! $formconfirm) {
+	if (!empty($formconfirm)) {
 		$parameters = array('lineid' => $lineid);
 		$reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 		if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;

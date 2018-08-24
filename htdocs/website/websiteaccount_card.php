@@ -207,7 +207,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	    $formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?id=' . $object->id, $langs->trans('DeleteWebsiteAccount'), $langs->trans('ConfirmDeleteWebsiteAccount'), 'confirm_delete', '', 0, 1);
 	}
 
-	if (! $formconfirm) {
+	if (!empty($formconfirm)) {
 	    $parameters = array('lineid' => $lineid);
 	    $reshook = $hookmanager->executeHooks('formConfirm', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 	    if (empty($reshook)) $formconfirm.=$hookmanager->resPrint;
