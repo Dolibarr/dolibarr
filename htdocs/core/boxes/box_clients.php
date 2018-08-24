@@ -37,10 +37,10 @@ class box_clients extends ModeleBoxes
 	var $boxlabel="BoxLastCustomers";
 	var $depends = array("societe");
 
-	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+    	/**
+     	* @var DoliDb Database handler
+     	*/
+    	public $db;
     
 	var $enabled = 1;
 
@@ -52,7 +52,7 @@ class box_clients extends ModeleBoxes
 	 *  Constructor
 	 *
 	 *  @param  DoliDB	$db      	Database handler
-     *  @param	string	$param		More parameters
+     	 *  @param	string	$param		More parameters
 	 */
 	function __construct($db,$param='')
 	{
