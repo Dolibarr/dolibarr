@@ -40,9 +40,9 @@ class box_contacts extends ModeleBoxes
 	var $depends = array("societe");
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $param;
 
