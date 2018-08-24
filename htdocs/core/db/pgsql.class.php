@@ -282,7 +282,7 @@ class DoliDBPgsql extends DoliDB
 				}
 				
 				
-                if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+MODIFY(?: COLUMN)? ([a-z0-9_]+) ([a-zA-Z0-9\(\)]+)\s*(.*)?$/i',$line,$reg))
+                if (preg_match('/ALTER TABLE ([a-z0-9_]+)\s+MODIFY(?: COLUMN)? ([a-z0-9_]+) ([a-zA-Z0-9\(\),]+)\s*(.*)?$/i',$line,$reg))
                 {
                     $line = "-- ".$line." replaced by --\n";
 					
