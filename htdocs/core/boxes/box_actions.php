@@ -37,7 +37,7 @@ class box_actions extends ModeleBoxes
 	var $boxlabel="BoxLastActions";
 	var $depends = array("agenda");
 
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
