@@ -37,7 +37,7 @@ class box_clients extends ModeleBoxes
 	var $boxlabel="BoxLastCustomers";
 	var $depends = array("societe");
 
-    	/**
+       /**
      	* @var DoliDb Database handler
      	*/
     	public $db;
