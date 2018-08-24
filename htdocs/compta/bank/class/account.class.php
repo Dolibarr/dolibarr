@@ -1634,7 +1634,7 @@ class AccountLine extends CommonObject
 {
 	var $error;
 	
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
