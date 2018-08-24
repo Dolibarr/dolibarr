@@ -38,9 +38,9 @@
 class ExtraFields
 {
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
 
 	// type of element (for what object is the extrafield)
 	// @deprecated
