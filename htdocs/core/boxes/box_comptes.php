@@ -39,9 +39,9 @@ class box_comptes extends ModeleBoxes
 	var $depends = array("banque");     // Box active if module banque active
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $param;
 	var $enabled = 1;
