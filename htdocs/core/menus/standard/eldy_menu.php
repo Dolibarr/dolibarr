@@ -27,7 +27,7 @@
  */
 class MenuManager
 {
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
