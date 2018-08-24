@@ -36,9 +36,9 @@ require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 class CommActionRapport
 {
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $description;
 	var $date_edition;
