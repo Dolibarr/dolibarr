@@ -256,7 +256,7 @@ class MyModuleApi extends DolibarrApi
      */
     function delete($id)
     {
-        if(! DolibarrApiAccess::$user->rights->myobject->supprimer) {
+    	if(! DolibarrApiAccess::$user->rights->myobject->delete) {
 			throw new RestException(401);
 		}
         $result = $this->myobject->fetch($id);
@@ -268,7 +268,7 @@ class MyModuleApi extends DolibarrApi
             throw new RestException(401, 'Access not allowed for login '.DolibarrApiAccess::$user->login);
         }
 
-        if( !$this->myobject->delete($id))
+		if( !$this->myobject->delete(DolibarrApiAccess::$user, 0))
         {
             throw new RestException(500);
         }
