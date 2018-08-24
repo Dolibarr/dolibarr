@@ -28,7 +28,7 @@
  */
 class Canvas
 {
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
