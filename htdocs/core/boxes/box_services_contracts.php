@@ -38,9 +38,9 @@ class box_services_contracts extends ModeleBoxes
 	var $depends = array("service","contrat");
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $param;
 
