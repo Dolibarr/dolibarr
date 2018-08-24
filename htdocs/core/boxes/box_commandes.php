@@ -37,7 +37,7 @@ class box_commandes extends ModeleBoxes
     var $boxlabel="BoxLastCustomerOrders";
     var $depends = array("commande");
 
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
