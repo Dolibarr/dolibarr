@@ -28,7 +28,7 @@
  */
 class AccountancySystem
 {
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
