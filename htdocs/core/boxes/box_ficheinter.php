@@ -37,9 +37,9 @@ class box_ficheinter extends ModeleBoxes
 	var $depends = array("ficheinter");	// conf->contrat->enabled
 
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $param;
 
