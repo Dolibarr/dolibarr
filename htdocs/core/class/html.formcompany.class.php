@@ -32,9 +32,9 @@
 class FormCompany
 {
 	/**
-     * @var DoliDb Database handler
-     */
-    public $db;
+     	 * @var DoliDb Database handler
+     	 */
+    	public $db;
     
 	var $error;
 
