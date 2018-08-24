@@ -28,7 +28,7 @@
  */
 class AdvanceTargetingMailing extends CommonObject
 {
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
