@@ -33,7 +33,7 @@ class box_bookmarks extends ModeleBoxes
 	var $boxlabel="BoxMyLastBookmarks";
 	var $depends = array("bookmark");
 
-	/**
+    /**
      * @var DoliDb Database handler
      */
     public $db;
