@@ -1131,7 +1131,7 @@ class Thirdparties extends DolibarrApi
 		$account->fetchFromApi($bankaccount_id, $id);
 
 
-		if($account->socid != $bankaccount_id){
+		if($account->socid != $id){
 			throw new RestException(401);
 		}
 
