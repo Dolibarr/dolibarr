@@ -1079,7 +1079,7 @@ class Thirdparties extends DolibarrApi
 	/**
 	 * Create CompanyBankAccount object for thirdparty
 	 * @param int  $id ID of thirdparty
-	 * @param array $request_data
+	 * @param array $request_data Request data
 	 *
 	 * @return object  ID of thirdparty
 	 *
@@ -1114,7 +1114,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int $id ID of thirdparty
 	 * @param int  $bankaccount_id ID of CompanyBankAccount
-	 * @param array $request_data
+	 * @param array $request_data Request data
 	 *
 	 * @return object  ID of thirdparty
 	 *
@@ -1250,7 +1250,7 @@ class Thirdparties extends DolibarrApi
 	 * <u>Example body payload :</u> <pre>{"key_account": "cus_DAVkLSs1LYyYI", "site": "stripe"}</pre>
 	 *
 	 * @param int $id ID of thirdparty
-	 * @param array $request_data
+	 * @param array $request_data Request data
 	 *
 	 * @return SocieteAccount
 	 * @throws 401 Unauthorized: User does not have permission to read thirdparties
@@ -1310,7 +1310,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int $id ID of thirdparty
 	 * @param string $site Site key
-	 * @param array $request_data
+	 * @param array $request_data Request data
 	 *
 	 * @return SocieteAccount
 	 * @throws 401 Unauthorized: User does not have permission to read thirdparties
@@ -1391,7 +1391,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @param int $id Id of thirdparty
 	 * @param string  $site Site key
-	 * @param array $request_data
+	 * @param array $request_data Request data
 	 *
 	 * @return SocieteAccount
 	 * @throws 401 Unauthorized: User does not have permission to read thirdparties
@@ -1455,7 +1455,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/gateways/{site}
 	 */
-	function deleteSocieteAccount($site, $id)
+	function deleteSocieteAccount($id, $site)
     {
 		global /** @var Database $db */
 		$db;
