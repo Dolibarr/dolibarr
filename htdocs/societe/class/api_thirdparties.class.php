@@ -115,7 +115,8 @@ class Thirdparties extends DolibarrApi
 	 * @param   string  $sqlfilters Other criteria to filter answers separated by a comma. Syntax example "(t.nom:like:'TheCompany%') and (t.date_creation:<:'20160101')"
 	 * @return  array               Array of thirdparty objects
 	 */
-	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $sqlfilters = '') {
+	function index($sortfield = "t.rowid", $sortorder = 'ASC', $limit = 100, $page = 0, $mode=0, $sqlfilters = '')
+    {
 		global $db, $conf;
 
 		$obj_ret = array();
@@ -852,8 +853,6 @@ class Thirdparties extends DolibarrApi
 		return $result;
 	}
 
-
-
 	/**
 	 * Get fixed amount discount of a thirdparty (all sources: deposit, credit note, commercial offers...)
 	 *
@@ -929,8 +928,8 @@ class Thirdparties extends DolibarrApi
 	 * @throws 404
 	 * @throws 405
 	 */
-	function getInvoicesQualifiedForReplacement($id) {
-
+	function getInvoicesQualifiedForReplacement($id)
+    {
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
@@ -971,8 +970,8 @@ class Thirdparties extends DolibarrApi
 	 * @throws 404
 	 * @throws 405
 	 */
-	function getInvoicesQualifiedForCreditNote($id) {
-
+	function getInvoicesQualifiedForCreditNote($id)
+    {
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
 			throw new RestException(401);
 		}
@@ -997,6 +996,7 @@ class Thirdparties extends DolibarrApi
 
 		return $result;
 	}
+
 	/**
 	 * Get CompanyBankAccount objects for thirdparty
 	 *
@@ -1006,8 +1006,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/bankaccounts
 	 */
-	function getCompanyBankAccount($id){
-
+	function getCompanyBankAccount($id)
+    {
 		global $db, $conf;
 
 		if(! DolibarrApiAccess::$user->rights->facture->lire) {
@@ -1076,7 +1076,6 @@ class Thirdparties extends DolibarrApi
 		return $returnAccounts;
 	}
 
-
 	/**
 	 * Create CompanyBankAccount object for thirdparty
 	 * @param int  $id ID of thirdparty
@@ -1109,7 +1108,6 @@ class Thirdparties extends DolibarrApi
 
 		return $account;
 	}
-
 
 	/**
 	 * Update CompanyBankAccount object for thirdparty
@@ -1158,8 +1156,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/bankaccounts/{bankaccount_id}
 	 */
-	function deleteCompanyBankAccount($bankaccount_id, $id){
-
+	function deleteCompanyBankAccount($bankaccount_id, $id)
+    {
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
 		}
@@ -1186,8 +1184,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url GET {id}/gateways/
 	 */
-	function getSocieteAccounts($id, $site=null){
-
+	function getSocieteAccounts($id, $site=null)
+    {
 		global $db, $conf;
 
 		if(!DolibarrApiAccess::$user->rights->societe->lire) {
@@ -1324,7 +1322,6 @@ class Thirdparties extends DolibarrApi
 	 */
 	function putSocieteAccount($id, $site, $request_data = null)
 	{
-
 		global $db;
 
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
@@ -1458,8 +1455,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/gateways/{site}
 	 */
-	function deleteSocieteAccount($site, $id){
-
+	function deleteSocieteAccount($site, $id)
+    {
 		global /** @var Database $db */
 		$db;
 
@@ -1495,8 +1492,8 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/gateways
 	 */
-	function deleteSocieteAccounts($id){
-
+	function deleteSocieteAccounts($id)
+    {
 		global /** @var Database $db */
 		$db;
 
@@ -1540,8 +1537,8 @@ class Thirdparties extends DolibarrApi
 	 * @param   object  $object    Object to clean
 	 * @return    array    Array of cleaned object properties
 	 */
-	function _cleanObjectDatas($object) {
-
+	function _cleanObjectDatas($object)
+    {
 		$object = parent::_cleanObjectDatas($object);
 
 		unset($object->nom);	// ->name already defined and nom deprecated
