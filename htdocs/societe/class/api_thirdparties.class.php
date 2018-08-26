@@ -1156,7 +1156,7 @@ class Thirdparties extends DolibarrApi
 	 *
 	 * @url DELETE {id}/bankaccounts/{bankaccount_id}
 	 */
-	function deleteCompanyBankAccount($bankaccount_id, $id)
+	function deleteCompanyBankAccount($id, $bankaccount_id)
     {
 		if(! DolibarrApiAccess::$user->rights->societe->creer) {
 			throw new RestException(401);
