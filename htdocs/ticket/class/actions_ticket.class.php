@@ -951,7 +951,7 @@ class ActionsTicket
      * Print statut
      *
      * @param		int		$mode		Display mode
-     * @return 		string
+     * @return 		string				Label of status
      */
     public function getLibStatut($mode = 0)
     {
@@ -978,8 +978,8 @@ class ActionsTicket
     /**
      * Get action title
      *
-     * @param string $action    Type of action
-     * @return string
+     * @param string 	$action    	Type of action
+     * @return string			Title of action
      */
     public function getTitle($action = '')
     {
