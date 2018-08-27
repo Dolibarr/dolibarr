@@ -76,12 +76,12 @@ class box_propales extends ModeleBoxes
     	$propalstatic=new Propal($db);
         $societestatic = new Societe($db);
 
+        $langs->load("propal");
+
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."Propals",$max));
 
     	if ($user->rights->propale->lire)
     	{
-    		$langs->load("propal");
-
     		$sql = "SELECT s.nom as name, s.rowid as socid, s.code_client, s.logo,";
     		$sql.= " p.rowid, p.ref, p.fk_statut, p.datep as dp, p.datec, p.fin_validite, p.date_cloture, p.total_ht, p.tva as total_tva, p.total as total_ttc, p.tms";
     		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
