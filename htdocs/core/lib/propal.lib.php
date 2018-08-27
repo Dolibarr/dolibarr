@@ -32,9 +32,7 @@
 function propal_prepare_head($object)
 {
 	global $db, $langs, $conf, $user;
-	$langs->load("propal");
-	$langs->load("compta");
-	$langs->load("companies");
+	$langs->loadLangs(array('propal', 'compta', 'companies'));
 
 	$h = 0;
 	$head = array();
