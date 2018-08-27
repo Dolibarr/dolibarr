@@ -697,9 +697,10 @@ foreach ($listofreferent as $key => $value)
 	$urlnew=$value['urlnew'];
 	$buttonnew=$value['buttonnew'];
     $testnew=$value['testnew'];
-	$exclude_select_element=array('payment_various',$value['exclude_select_element']);
+	$exclude_select_element = array('payment_various');
+	if (!empty($value['exclude_select_element'])) $exclude_select_element[] = $value['exclude_select_element'];
 
-	
+
 	if ($qualified)
 	{
 		// If we want the project task array to have details of users
