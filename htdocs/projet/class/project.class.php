@@ -510,9 +510,10 @@ class Project extends CommonObject
      * 	@param		string		$datefieldname	name of date field for filter
      *  @param		int			$dates			Start date
      *  @param		int			$datee			End date
+	 *	@param		string		$projectkey		Equivalent key  to fk_projet for actual type
      * 	@return		mixed						Array list of object ids linked to project, < 0 or string if error
      */
-    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='')
+    function get_element_list($type, $tablename, $datefieldname='', $dates='', $datee='', $projectkey='fk_projet')
     {
         $elements = array();
 
@@ -542,7 +543,7 @@ class Project extends CommonObject
 		}
         else
 		{
-            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE fk_projet IN (". $ids .")";
+            $sql = "SELECT rowid FROM " . MAIN_DB_PREFIX . $tablename." WHERE ".$projectkey." IN (". $ids .")";
 		}
 
 		if ($dates > 0)
@@ -1731,8 +1732,8 @@ class Project extends CommonObject
         global $conf, $langs;
 
         // For external user, no check is done on company because readability is managed by public status of project and assignement.
-        //$socid=$user->societe_id;
-
+        // $socid=$user->societe_id;
+        
         if (! $user->rights->projet->all->lire) $projectsListId = $this->getProjectsAuthorizedForUser($user,0,1,$socid);
         
         $sql = "SELECT p.rowid, p.fk_statut as status, p.fk_opp_status, p.datee as datee";
