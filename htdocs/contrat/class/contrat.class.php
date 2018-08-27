@@ -1045,7 +1045,7 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				$this->error="Failed to add contact";
+				$this->error="Failed to add contract";
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
