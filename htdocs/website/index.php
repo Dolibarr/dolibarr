@@ -229,6 +229,7 @@ if ($action == 'addsite')
 	if (! $error && ! GETPOST('WEBSITE_REF','alpha'))
 	{
 		$error++;
+		$langs->load("errors");
 		setEventMessages($langs->transnoentities("ErrorFieldRequired", $langs->transnoentities("Ref")), null, 'errors');
 	}
 	if (! $error && ! preg_match('/^[a-z0-9_\-\.]+$/i', GETPOST('WEBSITE_REF','alpha')))
@@ -962,7 +963,7 @@ if ($action == 'updatemeta')
 {
 	$db->begin();
 
-	$object->fetch(0, $websitekey);
+	$result = $object->fetch(0, $websitekey);
 	$website = $object;
 
 	$objectpage->fk_website = $object->id;
@@ -976,11 +977,57 @@ if ($action == 'updatemeta')
 		$action='editmeta';
 	}
 
-	$res = $objectpage->fetch($pageid, $object->fk_website);
+	$res = $objectpage->fetch($pageid, $object->id);
 	if ($res <= 0)
 	{
 		$error++;
 		setEventMessages('Page not found '.$objectpage->error, $objectpage->errors, 'errors');
+	}
+
+	// Check alias not exists
+	if (! $error && GETPOST('WEBSITE_PAGENAME', 'alpha'))
+	{
+		$websitepagetemp=new WebsitePage($db);
+		$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, GETPOST('WEBSITE_PAGENAME', 'alpha'));
+		if ($result < 0)
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+			$action = 'editmeta';
+		}
+		if ($result > 0)
+		{
+			$error++;
+			$langs->load("errors");
+			setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+			$action = 'editmeta';
+		}
+	}
+	if (! $error && GETPOST('WEBSITE_ALIASALT', 'alpha'))
+	{
+		$arrayofaliastotest=explode(',', GETPOST('WEBSITE_ALIASALT', 'alpha'));
+		$websitepagetemp=new WebsitePage($db);
+		foreach($arrayofaliastotest as $aliastotest)
+		{
+			$result = $websitepagetemp->fetch(-1 * $objectpage->id, $object->id, $aliastotest);
+			if ($result < 0)
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($websitepagetemp->error, $websitepagetemp->errors, 'errors');
+				$action = 'editmeta';
+				break;
+			}
+			if ($result > 0)
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists", $websitepagetemp->pageurl), null, 'errors');
+				$action = 'editmeta';
+				break;
+			}
+		}
 	}
 
 	if (! $error)
@@ -997,10 +1044,23 @@ if ($action == 'updatemeta')
 		$objectpage->htmlheader = trim(GETPOST('htmlheader', 'none'));
 
 		$res = $objectpage->update($user);
-		if (! $res > 0)
+		if (! ($res > 0))
 		{
-			$error++;
-			setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+			$langs->load("errors");
+			if ($db->lasterrno == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($langs->trans("ErrorAPageWithThisNameOrAliasAlreadyExists"), null, 'errors');
+				$action = 'editmeta';
+			}
+			else
+			{
+				$error++;
+				$langs->load("errors");
+				setEventMessages($objectpage->error, $objectpage->errors, 'errors');
+				$action = 'editmeta';
+			}
 		}
 	}
 
@@ -1740,11 +1800,12 @@ if (count($object->records) > 0)
 				// Confirmation to clone
 				if ($action == 'createpagefromclone') {
 					// Create an array for form
+					$preselectedlanguage = GETPOST('newlang', 'az09') ? GETPOST('newlang', 'az09') : ($objectpage->lang ? $objectpage->lang : $langs->defaultlang);
 					$formquestion = array(
-						array('type' => 'text', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME")  ,'value'=> 'copy_of_'.$objectpage->pageurl),
-						array('type' => 'checkbox', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
-						array('type' => 'other','name' => 'newlang','label' => $langs->trans("Language"), 'value' => $formadmin->select_language(GETPOST('newlang', 'az09')?GETPOST('newlang', 'az09'):$langs->defaultlang, 'newlang', 0, null, 1, 0, 0, 'minwidth200')),
-						array('type' => 'other','name' => 'newwebsite','label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
+						array('type' => 'text', 'tdclass'=>'maxwidth200', 'name' => 'pageurl', 'label'=> $langs->trans("WEBSITE_PAGENAME"), 'value'=> 'copy_of_'.$objectpage->pageurl),
+						array('type' => 'checkbox', 'tdclass'=>'maxwidth200', 'name' => 'is_a_translation', 'label' => $langs->trans("PageIsANewTranslation"), 'value' => 0),
+						array('type' => 'other','name' => 'newlang', 'label' => $langs->trans("Language"), 'value' => $formadmin->select_language($preselectedlanguage, 'newlang', 0, null, 1, 0, 0, 'minwidth200', 0, 1)),
+						array('type' => 'other','name' => 'newwebsite', 'label' => $langs->trans("WebSite"), 'value' => $formwebsite->selectWebsite($object->id, 'newwebsite', 0)),
 					);
 
 				   	$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"] . '?website='.$object->ref.'&pageid=' . $pageid, $langs->trans('ClonePage'), '', 'confirm_createpagefromclone', $formquestion, 0, 1, 300, 550);

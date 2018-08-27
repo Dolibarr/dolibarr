@@ -30,8 +30,17 @@ class AdvanceTargetingMailing extends CommonObject
 {
 
 	var $db; //!< To store db handler
-	var $error; //!< To return error code (or message)
-	var $errors = array(); //!< To return several error codes (or messages)
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+	
 	var $element='advtargetemailing';			//!< Id that identify managed objects
 	var $table_element='advtargetemailing';	//!< Name of table without prefix where object is stored
 
@@ -916,7 +925,8 @@ class AdvanceTargetingMailing extends CommonObject
 	 *  									For exemple  jean;joe;jim%%;!jimo;!jima%> will target all jean, joe, start with jim but not jimo and not everythnig taht start by jima
 	 * 	@return		string		Sql to use for the where condition
 	 */
-	public function transformToSQL($column_to_test,$criteria) {
+    public function transformToSQL($column_to_test,$criteria)
+    {
 		$return_sql_criteria = '(';
 
 		//This is a multiple value test

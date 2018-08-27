@@ -1337,10 +1337,10 @@ class Propal extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
 
 		if ($ref) {
-			$sql.= " AND p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
+			$sql.= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
 			$sql.= " AND p.ref='".$this->db->escape($ref)."'";
 		}
-		else $sql.= " AND p.rowid=".$rowid;
+		else $sql.= " WHERE p.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -3144,7 +3144,7 @@ class Propal extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
+		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3188,6 +3188,8 @@ class Propal extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
+				$response->total+=$obj->total_ht;
+				
 				if ($mode == 'opened')
 				{
 					$datelimit = $this->db->jdate($obj->datefin);

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,7 +71,7 @@ if ($action == 'add')
 			header('Location: '.DOL_URL_ROOT.'/variants/card.php?id='.$object->id);
 			exit();
 		} else {
-			setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), null, 'errors');
+			setEventMessages($langs->trans('ErrorCreatingProductAttributeValue'), $objectval->errors, 'errors');
 		}
 	}
 }

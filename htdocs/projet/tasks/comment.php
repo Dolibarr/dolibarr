@@ -106,6 +106,7 @@ if ($id > 0 || ! empty($ref))
 
 		$result=$projectstatic->fetch($object->fk_project);
 		if (! empty($projectstatic->socid)) $projectstatic->fetch_thirdparty();
+		if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($projectstatic, 'fetchComments') && empty($projectstatic->comments)) $projectstatic->fetchComments();
 
 		$object->project = clone $projectstatic;
 
@@ -278,6 +279,6 @@ if ($id > 0 || ! empty($ref))
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

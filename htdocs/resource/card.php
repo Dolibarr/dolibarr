@@ -401,8 +401,6 @@ else {
 	dol_print_error();
 }
 
-
-
 // End of page
 llxFooter();
 $db->close();

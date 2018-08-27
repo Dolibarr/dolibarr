@@ -37,7 +37,10 @@
  */
 abstract class ModelePDFContract extends CommonDocGenerator
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -67,7 +70,10 @@ abstract class ModelePDFContract extends CommonDocGenerator
  */
 class ModelNumRefContracts
 {
-	var $error='';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 *	Return if a module can be used or not

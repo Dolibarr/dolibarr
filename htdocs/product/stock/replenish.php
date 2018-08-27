@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2013		Cédric Salvador		<csalvador@gpcsolutions.fr>
- * Copyright (C) 2013-2016	Laurent Destaileur	<ely@users.sourceforge.net>
+ * Copyright (C) 2013-2018	Laurent Destaileur	<ely@users.sourceforge.net>
  * Copyright (C) 2014		Regis Houssin		<regis.houssin@capnetworks.com>
  * Copyright (C) 2016		Juanjo Menent		<jmenent@2byte.es>
  * Copyright (C) 2016		ATM Consulting		<support@atm-consulting.fr>

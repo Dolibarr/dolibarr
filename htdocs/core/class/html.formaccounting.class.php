@@ -216,7 +216,8 @@ class FormAccounting extends Form
 	 * @param string $selectedkey Value
 	 * @return string HTML edit field
 	 */
-	function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '') {
+    function select_bookkeeping_importkey($htmlname = 'importkey', $selectedkey = '')
+    {
 		$options = array();
 
 		$sql = 'SELECT DISTINCT import_key from ' . MAIN_DB_PREFIX . 'accounting_bookkeeping';
@@ -339,7 +340,8 @@ class FormAccounting extends Form
 	 * @param string   $morecss        More css
 	 * @return string                  String with HTML select
 	 */
-	function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200') {
+    function select_auxaccount($selectid, $htmlname='account_num_aux', $showempty=0, $morecss='maxwidth200')
+    {
 
 		$aux_account = array();
 
@@ -428,4 +430,3 @@ class FormAccounting extends Form
 		}
 	}
 }
-

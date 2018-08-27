@@ -607,7 +607,7 @@ if ($resql)
 				print ($objp->frequency ? ($invoicerectmp->isMaxNbGenReached()?'<strike>':'').dol_print_date($db->jdate($objp->date_when),'day').($invoicerectmp->isMaxNbGenReached()?'</strike>':'') : '<span class="opacitymedium">'.$langs->trans('NA').'</span>');
 				if (! $invoicerectmp->isMaxNbGenReached())
 				{
-					if ($objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
+					if (! $objp->suspended && $objp->frequency > 0 && $db->jdate($objp->date_when) && $db->jdate($objp->date_when) < $now) print img_warning($langs->trans("Late"));
 				}
 				else
 				{

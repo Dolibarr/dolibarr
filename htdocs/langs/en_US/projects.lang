@@ -168,8 +168,9 @@ TypeContact_project_task_external_TASKCONTRIBUTOR=Contributor
 SelectElement=Select element
 AddElement=Link to element
 # Documents models
-DocumentModelBeluga=Project template for linked objects overview
-DocumentModelBaleine=Project report template for tasks
+DocumentModelBeluga=Project document template for linked objects overview
+DocumentModelBaleine=Project document template for tasks
+DocumentModelTimeSpent=Project report template for time spent
 PlannedWorkload=Planned workload
 PlannedWorkloadShort=Workload
 ProjectReferers=Related items
@@ -229,3 +230,4 @@ DontHavePermissionForCloseProject=You do not have permissions to close the proje
 DontHaveTheValidateStatus=The project %s must be open to be closed
 RecordsClosed=%s project(s) closed
 SendProjectRef=Information project %s
+ModuleSalaryToDefineHourlyRateMustBeEnabled=Module 'Payment of employee wages' must be enabled to define employee hourly rate to have time spent valorized
