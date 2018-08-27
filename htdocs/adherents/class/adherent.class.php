@@ -531,6 +531,13 @@ class Adherent extends CommonObject
 						$luser->pass=$this->pass;
 						$luser->societe_id=$this->societe;
 
+						$luser->birth=$this->birth;
+                                                $luser->address=$this->address;
+                                                $luser->zip=$this->zip;
+                                                $luser->town=$this->town; 
+                                                $luser->country_id=$this->country_id; 
+                                                $luser->state_id=$this->state_id;
+						
 						$luser->email=$this->email;
 						$luser->skype=$this->skype;
 						$luser->office_phone=$this->phone;
