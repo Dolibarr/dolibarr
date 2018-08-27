@@ -71,6 +71,8 @@ class box_graph_propales_permonth extends ModeleBoxes
 		//include_once DOL_DOCUMENT_ROOT.'/comm/propal/class/propal.class.php';
 		//$propalstatic=new Propal($db);
 
+		$langs->load("propal");
+
 		$text = $langs->trans("BoxProposalsPerMonth",$max);
 		$this->info_box_head = array(
 				'text' => $text,

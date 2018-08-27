@@ -76,8 +76,6 @@ class box_propales extends ModeleBoxes
     	$propalstatic=new Propal($db);
         $societestatic = new Societe($db);
 
-        $langs->load("propal");
-
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLast".($conf->global->MAIN_LASTBOX_ON_OBJECT_DATE?"":"Modified")."Propals",$max));
 
     	if ($user->rights->propale->lire)
