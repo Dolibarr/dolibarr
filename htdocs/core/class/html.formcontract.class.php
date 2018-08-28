@@ -27,8 +27,15 @@
  */
 class FormContract
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -167,10 +174,10 @@ class FormContract
 	 *	@param  string	$htmlname   Nom de la zone html
 	 *	@param	int		$maxlength	Maximum length of label
 	 *	@param	int		$showempty	Show empty line
-	 *	@return int         		Nbr of project if OK, <0 if KO
+	 *	@return int                 Nbr of project if OK, <0 if KO
 	 */
-    function formSelectContract($page, $socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
-    {
+	function formSelectContract($page, $socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
+	{
         global $langs;
 
         print "\n";

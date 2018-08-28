@@ -23,23 +23,23 @@
 /**
  * addDispatchLine
  * Adds new table row for dispatching to multiple stock locations
- * 
+ *
  * @param	index	int		index of product line. 0 = first product line
  * @param	type	string	type of dispatch (batch = batch dispatch, dispatch = non batch dispatch)
  * @param	mode	string	'qtymissing' will create new line with qty missing, 'lessone' will keep 1 in old line and the rest in new one
  */
-function addDispatchLine(index, type, mode) 
+function addDispatchLine(index, type, mode)
 {
 	mode = mode || 'qtymissing'
-	
+
 	console.log("fourn/js/lib_dispatch.js Split line type="+type+" index="+index+" mode="+mode);
 	var $row = $("tr[name='"+type+'_0_'+index+"']").clone(true), 		// clone first batch line to jQuery object
 		nbrTrs = $("tr[name^='"+type+"_'][name$='_"+index+"']").length, // position of line for batch
 		qtyOrdered = parseFloat($("#qty_ordered_0_"+index).val()), 		// Qty ordered is same for all rows
 		qty = parseFloat($("#qty_"+(nbrTrs - 1)+"_"+index).val()),
 		qtyDispatched;
-			
-	if (mode === 'lessone') 
+
+	if (mode === 'lessone')
 	{
 		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()) + 1;
 	}
@@ -47,7 +47,7 @@ function addDispatchLine(index, type, mode)
 	{
 		qtyDispatched = parseFloat($("#qty_dispatched_0_"+index).val()) + qty;
 	}
-	
+
 	if (qtyDispatched < qtyOrdered)
 	{
 		//replace tr suffix nbr
@@ -62,19 +62,19 @@ function addDispatchLine(index, type, mode)
 		$row.attr('name',type+'_'+nbrTrs+'_'+index);
 		//insert new row before last row
 		$("tr[name^='"+type+"_'][name$='_"+index+"']:last").after($row);
-		
+
 		//remove cloned select2 with duplicate id.
 		$("#s2id_entrepot_"+nbrTrs+'_'+index).detach();			// old way to find duplicated select2 component
 		$(".csswarehouse_"+nbrTrs+"_"+index+":first-child").parent("span.selection").parent(".select2").detach();
-		
+
 		/*  Suffix of lines are:  _ trs.length _ index  */
 		$("#qty_"+nbrTrs+"_"+index).focus();
 		$("#qty_dispatched_0_"+index).val(qtyDispatched);
-		
+
 		//hide all buttons then show only the last one
 		$("tr[name^='"+type+"_'][name$='_"+index+"'] .splitbutton").hide();
 		$("tr[name^='"+type+"_'][name$='_"+index+"']:last .splitbutton").show();
-		
+
 		if (mode === 'lessone')
 		{
 			qty = 1; // keep 1 in old line
@@ -94,11 +94,11 @@ function addDispatchLine(index, type, mode)
 
 /**
  * onChangeDispatchLineQty
- * 
- * Change event handler for dispatch qty input field, 
+ *
+ * Change event handler for dispatch qty input field,
  * recalculate qty dispatched when qty input has changed.
  * If qty is more then qty ordered reset input qty to max qty to dispatch.
- * 
+ *
  * element requires arbitrary data qty (value before change), type (type of dispatch) and index (index of product line)
  */
 

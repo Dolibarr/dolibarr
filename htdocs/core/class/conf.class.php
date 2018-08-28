@@ -35,8 +35,12 @@ class Conf
 	/** \public */
 	//! To store properties found in conf file
 	var $file;
-	//! Object with database handler
-	var $db;
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	//! To store properties found into database
 	var $global;
 	//! To store browser info

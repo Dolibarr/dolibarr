@@ -26,8 +26,15 @@
  */
 class RssParser
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     private $_format='';
     private $_urlRSS;

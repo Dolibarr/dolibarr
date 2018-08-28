@@ -34,14 +34,17 @@ class ActionCommReminder extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'actioncomm_reminder';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'actioncomm_reminder';
+	
 	/**
 	 * @var array  Does actioncommreminder support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+	
 	/**
 	 * @var string String with name of icon for actioncommreminder. Must be the part after the 'object_' into object_actioncommreminder.png
 	 */

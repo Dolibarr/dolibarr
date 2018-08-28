@@ -27,7 +27,11 @@
  */
 abstract class ActionsCardCommon
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $dirmodule;
     var $targetmodule;
     var $canvas;

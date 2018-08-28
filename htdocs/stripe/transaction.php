@@ -118,14 +118,14 @@ if (! $rowid) {
 		$txn = \Stripe\BalanceTransaction::all(array("limit" => $limit));
 	}
 
-	foreach ($txn->data as $txn) 
+	foreach ($txn->data as $txn)
 	{
 		//$charge = $txn;
 		//var_dump($txn);
-		
+
 		// The metadata FULLTAG is defined by the online payment page
 		/*$FULLTAG=$charge->metadata->FULLTAG;
-		
+
 		// Save into $tmparray all metadata
 		$tmparray = dolExplodeIntoArray($FULLTAG,'.','=');
 		// Load origin object according to metadata
@@ -145,7 +145,7 @@ if (! $rowid) {
 		{
 			$memberstatic->id = 0;
 		}*/
-		
+
 		$societestatic->fetch($charge->metadata->idcustomer);
 		$societestatic->id = $charge->metadata->idcustomer;
 		$societestatic->lastname = $obj->lastname;
@@ -156,7 +156,7 @@ if (! $rowid) {
 		$societestatic->societe_id = $obj->fk_soc;
 
 		print '<TR class="oddeven">';
-		
+
 		// Ref
 		print "<TD><A href='" . DOL_URL_ROOT . "/stripe/transaction.php?rowid=" . $txn->source . "'>" . $txn->source . "</A></TD>\n";
 		// Stripe customer

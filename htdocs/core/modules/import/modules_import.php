@@ -30,7 +30,11 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 class ModeleImports
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
+    
     public $datatoimport;
 
     public $error='';

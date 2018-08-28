@@ -38,7 +38,11 @@
 class FormOther
 {
     private $db;
-    public $error;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
 
 
     /**

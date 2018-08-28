@@ -29,18 +29,33 @@
  */
 class PriceExpression
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
 	
-    var $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $title;
 	var $expression;
-    public $table_element = "c_price_expression";
+	
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = "c_price_expression";
 
     /**
      *  Constructor

@@ -39,6 +39,9 @@ if (!class_exists('FormCompany')) {
  */
 class FormTicket
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     public $track_id;
@@ -80,7 +83,10 @@ class FormTicket
     public $substit = array();
     public $param = array();
 
-    public $error;
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error;
 
 
     /**

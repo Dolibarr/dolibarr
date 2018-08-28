@@ -33,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Entrepot extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='stock';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='entrepot';
+	
 	public $picto='stock';
 
 	/**

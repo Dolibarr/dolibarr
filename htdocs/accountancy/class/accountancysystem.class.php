@@ -28,7 +28,11 @@
  */
 class AccountancySystem
 {
-	var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -38,7 +42,12 @@ class AccountancySystem
 	var $fk_pcg_version;
 	var $pcg_type;
 	var $pcg_subtype;
-	var $label;
+	
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $account_number;
 	var $account_parent;
 

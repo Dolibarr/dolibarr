@@ -113,7 +113,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param  string	 	$encoding		  Mode of encoding
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error 
+	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
      */
 	function buildBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
@@ -154,7 +154,7 @@ class modPhpbarcode extends ModeleBarCode
 	 *	@param	string   	$encoding		  Mode of encoding
 	 *	@param  string	 	$readable		  Code can be read
 	 *	@param	integer		$scale			  Scale
-	 *  @param  integer     $nooutputiferror  No output if error 
+	 *  @param  integer     $nooutputiferror  No output if error
 	 *	@return	int							  <0 if KO, >0 if OK
 	 */
 	function writeBarCode($code,$encoding,$readable='Y',$scale=1,$nooutputiferror=0)
@@ -173,4 +173,3 @@ class modPhpbarcode extends ModeleBarCode
 	}
 
 }
-

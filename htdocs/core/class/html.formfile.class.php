@@ -36,7 +36,11 @@ class FormFile
 {
 	private $db;
 
+	/**
+	 * @var string Error code (or message)
+	 */
 	public $error;
+	
 	public $numoffiles;
 	public $infofiles;			// Used to return informations by function getDocumentsLink
 

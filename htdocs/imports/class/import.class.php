@@ -43,7 +43,10 @@ class Import
 	var $array_import_convertvalue;
 	var $array_import_run_sql_after;
 
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * @var string[] Error codes (or messages)

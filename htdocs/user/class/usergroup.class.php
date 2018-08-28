@@ -35,8 +35,16 @@ if (! empty($conf->ldap->enabled)) require_once DOL_DOCUMENT_ROOT."/core/class/l
  */
 class UserGroup extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='usergroup';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='usergroup';
+	
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='group';
 	public $entity;		// Entity of group

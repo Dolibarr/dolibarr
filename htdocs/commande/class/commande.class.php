@@ -42,8 +42,16 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Commande extends CommonOrder
 {
-    public $element='commande';
-    public $table_element='commande';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='commande';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='commande';
+	
     public $table_element_line = 'commandedet';
     public $class_element_line = 'OrderLine';
     public $fk_element = 'fk_commande';
@@ -3796,7 +3804,11 @@ class Commande extends CommonOrder
  */
 class OrderLine extends CommonOrderLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='commandedet';
+	
 	public $table_element='commandedet';
 
     var $oldline;
@@ -3818,7 +3830,12 @@ class OrderLine extends CommonOrderLine
     // From llx_commandedet
     var $fk_parent_line;
     var $fk_facture;
-    var $label;
+    
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
     var $fk_remise_except;
     var $rang = 0;
 	var $fk_fournprice;

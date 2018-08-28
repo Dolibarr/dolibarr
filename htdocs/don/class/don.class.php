@@ -34,8 +34,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Don extends CommonObject
 {
-    public $element='don'; 					// Id that identify managed objects
-    public $table_element='don';			// Name of table without prefix where object is stored
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='don';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='don';
+	
 	public $fk_element = 'fk_donation';
 	public $ismultientitymanaged = 1;  	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     var $picto = 'generic';

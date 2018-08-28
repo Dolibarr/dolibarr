@@ -82,7 +82,7 @@ $socid = GETPOST("socid", 'int');
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
-if ($result < 0) 
+if ($result < 0)
 {
 	setEventMessages($object->error, $object->errors, 'errors');
 }

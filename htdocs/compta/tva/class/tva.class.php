@@ -33,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Tva extends CommonObject
 {
-	public $element='tva';			//!< Id that identify managed objects
-	public $table_element='tva';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='tva';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='tva';
+	
 	public $picto='payment';
 
 	var $tms;
@@ -43,7 +51,12 @@ class Tva extends CommonObject
 	var $amount;
 	var $type_payment;
 	var $num_payment;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;

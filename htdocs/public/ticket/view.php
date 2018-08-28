@@ -112,8 +112,7 @@ if ($action == "view_ticket" || $action == "add_message" || $action == "close" |
         }
     }
 
-    if ($error || $errors) 
-    {
+    if ($error || $errors) {
         setEventMessages($object->error, $object->errors, 'errors');
         $action = '';
     }

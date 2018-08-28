@@ -31,8 +31,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Deplacement extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='deplacement';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='deplacement';
+	
 	public $table_element_line = '';
 	public $fk_element = '';
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe

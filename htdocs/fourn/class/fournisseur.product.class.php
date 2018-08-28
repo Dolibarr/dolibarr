@@ -37,16 +37,27 @@ require_once DOL_DOCUMENT_ROOT.'/product/dynamic_price/class/price_parser.class.
  */
 class ProductFournisseur extends Product
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+     * @var string Error code (or message)
+     */
+    public $error='';
 
     var $product_fourn_price_id;  // id of ligne product-supplier
 
-    var $id;                      // product id
-	/**
-	 * @deprecated
-	 * @see ref_supplier
-	 */
+    /**
+     * @var int ID
+     */
+    public $id;
+	
+    /**
+     * @deprecated
+     * @see ref_supplier
+     */
     var $fourn_ref;
     var $delivery_time_days;
     var $ref_supplier;			  // ref supplier (can be set by get_buyprice)
@@ -78,9 +89,9 @@ class ProductFournisseur extends Product
     var $fourn_multicurrency_unitprice;
 
     /**
-	 *	Constructor
-	 *
-	 *  @param		DoliDB		$db      Database handler
+     *	Constructor
+     *
+     *  @param		DoliDB		$db      Database handler
      */
     function __construct($db)
     {

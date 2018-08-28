@@ -39,6 +39,7 @@ class Productlot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'productlot';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */

@@ -251,7 +251,7 @@ function barcode_encode_genbarcode($code,$encoding)
     $command=escapeshellarg($genbarcode_loc);
     //$paramclear=" \"".str_replace("\"", "\\\"",$code)."\" \"".str_replace("\"", "\\\"",strtoupper($encoding))."\"";
     $paramclear=" ".escapeshellarg($code)." ".escapeshellarg(strtoupper($encoding));
-    
+
     $fullcommandclear=$command." ".$paramclear." 2>&1";
     //print $fullcommandclear."<br>\n";exit;
 
@@ -277,8 +277,8 @@ function barcode_encode_genbarcode($code,$encoding)
     	"error" => ""
     );
     //var_dump($ret);
-    if (preg_match('/permission denied/i',$ret['bars'])) 
-    { 
+    if (preg_match('/permission denied/i',$ret['bars']))
+    {
     	$ret['error']=$ret['bars']; $ret['bars']='';
     	return $ret;
     }

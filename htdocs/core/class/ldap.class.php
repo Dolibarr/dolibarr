@@ -29,7 +29,10 @@
  */
 class Ldap
 {
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * Tableau des serveurs (IP addresses ou nom d'hotes)

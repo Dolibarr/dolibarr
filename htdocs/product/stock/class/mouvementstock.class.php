@@ -34,6 +34,7 @@ class MouvementStock extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'stockmouvement';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */

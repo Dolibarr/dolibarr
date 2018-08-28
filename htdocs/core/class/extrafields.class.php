@@ -37,7 +37,10 @@
  */
 class ExtraFields
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	// type of element (for what object is the extrafield)
 	// @deprecated
@@ -88,7 +91,11 @@ class ExtraFields
 	// New array to store extrafields definition
 	var $attributes;
 
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
 	var $errno;
 
 

@@ -6146,7 +6146,12 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 		$substitutionarray=array_merge($substitutionarray, array(
 			'__DAY__' => (string) $tmp['mday'],
+			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']),
+			'__DAY_TEXT_SHORT__' => $outputlangs->trans('Short'.$tmp['weekday']),
+			'__DAY_TEXT_MIN__' => $outputlangs->trans($tmp['weekday'].'Min'),
 			'__MONTH__' => (string) $tmp['mon'],
+			'__MONTH_TEXT__' => $outputlangs->trans($tmp['month']),
+			'__MONTH_TEXT_MIN__' => $outputlangs->trans($tmp['month'].'Min'),
 			'__YEAR__' => (string) $tmp['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],

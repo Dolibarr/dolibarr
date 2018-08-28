@@ -31,8 +31,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/export/modules_export.php';
  */
 class ExportTsv extends ModeleExports
 {
-    var $id;
-    var $label;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
     var $extension;
     var $version;
 

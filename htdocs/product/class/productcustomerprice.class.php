@@ -28,8 +28,16 @@ require_once DOL_DOCUMENT_ROOT . '/core/class/commonobject.class.php';
  */
 class Productcustomerprice extends CommonObject
 {
-	var $element = 'product_customer_price'; // !< Id that identify managed objects
-	var $table_element = 'product_customer_price'; // !< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element = 'product_customer_price'; 
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = 'product_customer_price'; 
+	
 	var $entity;
 	var $datec = '';
 	var $tms = '';
@@ -952,7 +960,11 @@ class Productcustomerprice extends CommonObject
  */
 class PriceByCustomerLine
 {
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $entity;
 	var $datec = '';
 	var $tms = '';

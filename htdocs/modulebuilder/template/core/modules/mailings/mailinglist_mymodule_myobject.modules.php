@@ -27,7 +27,11 @@ class mailing_mailinglist_mymodule_myobject extends MailingTargets
 	var $enabled=0;
 	var $require_module=array();
 	var $picto='mymodule@mymodule';
-	var $db;
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**

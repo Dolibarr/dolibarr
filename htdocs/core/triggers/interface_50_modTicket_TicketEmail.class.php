@@ -30,6 +30,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/triggers/dolibarrtriggers.class.php';
  */
 class InterfaceTicketEmail extends DolibarrTriggers
 {
+    /**
+     * @var DoliDB Database handler.
+     */
     public $db;
 
     /**
@@ -152,12 +155,9 @@ class InterfaceTicketEmail extends DolibarrTriggers
 	                        }
 	                        include_once DOL_DOCUMENT_ROOT . '/core/class/CMailFile.class.php';
 		                    $mailfile = new CMailFile($subject, $sendto, $from, $message, $filepath, $mimetype, $filename, '', '', 0, -1);
-		                    if ($mailfile->error) 
-		                    {
+		                    if ($mailfile->error) {
 	                            setEventMessages($mailfile->error, $mailfile->errors, 'errors');
-		                    } 
-		                    else 
-		                    {
+		                    } else {
 		                        $result = $mailfile->sendfile();
 		                    }
 	                        if (!empty($conf->global->TICKET_DISABLE_MAIL_AUTOCOPY_TO)) {
