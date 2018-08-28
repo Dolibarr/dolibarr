@@ -60,7 +60,11 @@ class ActionsTicket
     public $template_dir;
     public $template;
 
+    /**
+     * @var string proper name for given parameter
+     */
     public $label;
+    
     public $description;
 
     public $fk_statut;

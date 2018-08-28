@@ -35,7 +35,12 @@ class Address
 
 	public $id;
 	public $type;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $socid;
 	public $name;
 	public $address;
@@ -499,7 +504,12 @@ class AddressLine
 	public $id;
 	public $date_creation;
 	public $date_modification;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $name;
 	public $address;
 	public $zip;

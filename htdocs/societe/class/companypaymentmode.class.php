@@ -120,7 +120,12 @@ class CompanyPaymentMode extends CommonObject
 	);
 	public $rowid;
 	public $fk_soc;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $bank;
 	public $code_banque;
 	public $code_guichet;
