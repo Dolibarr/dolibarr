@@ -27,7 +27,10 @@
  */
 class Utils
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $output;   // Used by Cron method to return message
 	var $result;   // Used by Cron method to return data

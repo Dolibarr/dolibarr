@@ -54,29 +54,29 @@ if ($cancel) {
 
 if ($action == 'update')
 {
-	dolibarr_set_const($db, "MAIN_PDF_FORMAT",    $_POST["MAIN_PDF_FORMAT"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_FORMAT", $_POST["MAIN_PDF_FORMAT"],'chaine',0,'', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT",    $_POST["MAIN_PDF_MARGIN_LEFT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT",   $_POST["MAIN_PDF_MARGIN_RIGHT"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP",     $_POST["MAIN_PDF_MARGIN_TOP"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM",  $_POST["MAIN_PDF_MARGIN_BOTTOM"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_LEFT", $_POST["MAIN_PDF_MARGIN_LEFT"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_RIGHT", $_POST["MAIN_PDF_MARGIN_RIGHT"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_TOP", $_POST["MAIN_PDF_MARGIN_TOP"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_MARGIN_BOTTOM", $_POST["MAIN_PDF_MARGIN_BOTTOM"],'chaine',0,'', $conf->entity);
 
-    dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS",    $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS",    $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS",    $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS",    $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT",    $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_PROFID1_IN_ADDRESS", $_POST["MAIN_PROFID1_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID2_IN_ADDRESS", $_POST["MAIN_PROFID2_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID3_IN_ADDRESS", $_POST["MAIN_PROFID3_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PROFID4_IN_ADDRESS", $_POST["MAIN_PROFID4_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT", $_POST["MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT"],'chaine',0,'', $conf->entity);
 
-	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS",    $_POST["MAIN_TVAINTRA_NOT_IN_ADDRESS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC",    $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF",     $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION",     $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'',$conf->entity);
-	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS",     $_POST["MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"],'chaine',0,'',$conf->entity);
+	dolibarr_set_const($db, "MAIN_TVAINTRA_NOT_IN_ADDRESS", $_POST["MAIN_TVAINTRA_NOT_IN_ADDRESS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DETAILS"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_DESC", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_DESC"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_HIDE_REF", $_POST["MAIN_GENERATE_DOCUMENTS_HIDE_REF"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_PDF_USE_ISO_LOCATION", $_POST["MAIN_PDF_USE_ISO_LOCATION"],'chaine',0,'', $conf->entity);
+	dolibarr_set_const($db, "MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS", $_POST["MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS"],'chaine',0,'', $conf->entity);
 
 
-    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX",    $_POST["MAIN_PDF_MAIN_HIDE_SECOND_TAX"],'chaine',0,'',$conf->entity);
-    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX",     $_POST["MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'',$conf->entity);
+    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_SECOND_TAX", $_POST["MAIN_PDF_MAIN_HIDE_SECOND_TAX"],'chaine',0,'', $conf->entity);
+    dolibarr_set_const($db, "MAIN_PDF_MAIN_HIDE_THIRD_TAX", $_POST["MAIN_PDF_MAIN_HIDE_THIRD_TAX"],'chaine',0,'', $conf->entity);
 
 	header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;

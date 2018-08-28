@@ -45,16 +45,26 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Propal extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='propal';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='propal';
+	
 	public $table_element_line='propaldet';
 	public $fk_element='fk_propal';
 	public $picto='propal';
+	
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+	
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -1322,6 +1332,7 @@ class Propal extends CommonObject
 		$sql.= ", p.fk_shipping_method";
 		$sql.= ", p.fk_incoterms, p.location_incoterms";
 		$sql.= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
+		$sql.= ", p.tms as date_modification";
 		$sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ", c.label as statut_label";
 		$sql.= ", ca.code as availability_code, ca.label as availability";
@@ -1378,6 +1389,7 @@ class Propal extends CommonObject
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation		= $this->db->jdate($obj->datec); //Creation date
 				$this->date_validation		= $this->db->jdate($obj->datev); //Validation date
+				$this->date_modification	= $this->db->jdate($obj->date_modification); // tms
 				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
 				$this->datep                = $this->db->jdate($obj->dp);    // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
@@ -3649,7 +3661,14 @@ class Propal extends CommonObject
  */
 class PropaleLigne extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='propaldet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='propaldet';
 
 	var $oldline;

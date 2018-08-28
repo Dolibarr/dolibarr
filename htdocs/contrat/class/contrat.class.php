@@ -41,16 +41,26 @@ require_once DOL_DOCUMENT_ROOT . '/margin/lib/margins.lib.php';
  */
 class Contrat extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='contrat';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='contrat';
+	
 	public $table_element_line='contratdet';
 	public $fk_element='fk_contrat';
     public $picto='contract';
+    
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+    
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -1045,7 +1055,7 @@ class Contrat extends CommonObject
 			}
 			else
 			{
-				$this->error="Failed to add contact";
+				$this->error="Failed to add contract";
 				dol_syslog(get_class($this)."::create - 20 - ".$this->error, LOG_ERR);
 				$this->db->rollback();
 				return -2;
@@ -2451,10 +2461,21 @@ class Contrat extends CommonObject
  */
 class ContratLigne extends CommonObjectLine
 {
-    public $element='contratdet';
-    public $table_element='contratdet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='contratdet';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='contratdet';
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $ref;
 	var $tms;
 

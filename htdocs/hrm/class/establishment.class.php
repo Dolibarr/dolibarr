@@ -28,13 +28,21 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Establishment extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='establishment';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='establishment';
+	
 	public $table_element_line = '';
 	public $fk_element = 'fk_establishment';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='building';
-    
+
     public $id;
     public $ref;
 	public $rowid;
@@ -208,7 +216,7 @@ class Establishment extends CommonObject
 
             $this->country_id   = $obj->country_id;
             $this->country_code = $obj->country_code;
-            $this->country      = $obj->country;			
+            $this->country      = $obj->country;
 
 			return 1;
 		}
@@ -386,7 +394,7 @@ class Establishment extends CommonObject
 
         return '';
     }
-    
+
     /**
      * Initialise object with example values
      * Id must be 0 if object instance is a specimen
@@ -397,5 +405,5 @@ class Establishment extends CommonObject
     {
         $this->id = 0;
         $this->ref = 'DEAAA';
-    }    
+    }
 }

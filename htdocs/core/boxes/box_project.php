@@ -34,7 +34,12 @@ class box_project extends ModeleBoxes
 	var $boximg="object_projectpub";
 	var $boxlabel;
 	//var $depends = array("projet");
-	var $db;
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();

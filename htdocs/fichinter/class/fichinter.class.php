@@ -35,8 +35,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
  */
 class Fichinter extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='fichinter';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='fichinter';
+	
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 	public $picto = 'intervention';
@@ -1309,8 +1317,15 @@ class Fichinter extends CommonObject
  */
 class FichinterLigne extends CommonObjectLine
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	// From llx_fichinterdet
 	var $fk_fichinter;
@@ -1319,8 +1334,16 @@ class FichinterLigne extends CommonObjectLine
 	var $duration;        // Duree de l'intervention
 	var $rang = 0;
 
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='fichinterdet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='fichinterdet';
+	
 	public $fk_element='fk_fichinter';
 
 	/**

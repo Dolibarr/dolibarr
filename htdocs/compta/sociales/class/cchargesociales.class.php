@@ -38,14 +38,12 @@ class Cchargesociales
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'cchargesociales';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'c_chargesociales';
 
-	/**
-	 */
-	
 	public $libelle;
 	public $deductible;
 	public $active;
@@ -53,9 +51,6 @@ class Cchargesociales
 	public $fk_pays;
 	public $module;
 	public $accountancy_code;
-
-	/**
-	 */
 	
 
 	/**

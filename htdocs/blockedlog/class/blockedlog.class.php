@@ -46,6 +46,10 @@ class BlockedLog
 	public $entity;
 
 	public $error = '';
+	
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
 	public $errors = array();
 
 	/**

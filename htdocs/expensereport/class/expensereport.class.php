@@ -33,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport_rule.class.p
  */
 class ExpenseReport extends CommonObject
 {
-    var $element='expensereport';
-    var $table_element='expensereport';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expensereport';
+	
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='expensereport';
+	
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
@@ -2378,8 +2386,15 @@ class ExpenseReport extends CommonObject
  */
 class ExpenseReportLine
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     var $rowid;
     var $comments;

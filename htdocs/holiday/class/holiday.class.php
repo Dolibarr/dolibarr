@@ -32,8 +32,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Holiday extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='holiday';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='holiday';
+	
 	public $ismultientitymanaged = 0;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	var $fk_element = 'fk_holiday';
 	public $picto = 'holiday';

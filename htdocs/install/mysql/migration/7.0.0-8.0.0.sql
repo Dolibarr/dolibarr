@@ -52,6 +52,7 @@ ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, ent
 
 UPDATE llx_const set name = __ENCRYPT('INVOICE_FREE_TEXT')__  where name = __ENCRYPT('FACTURE_FREE_TEXT')__;
 
+ALTER TABLE llx_chargesociales MODIFY COLUMN amount double(24,8);
 
 
 -- drop very old table (bad name)

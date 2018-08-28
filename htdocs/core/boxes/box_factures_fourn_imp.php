@@ -35,7 +35,11 @@ class box_factures_fourn_imp extends ModeleBoxes
 	var $boxlabel = "BoxOldestUnpaidSupplierBills";
 	var $depends = array("facture","fournisseur");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();

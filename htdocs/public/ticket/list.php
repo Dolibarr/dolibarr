@@ -121,8 +121,7 @@ if ($action == "view_ticketlist") {
         }
     }
 
-    if ($error || $errors) 
-    {
+    if ($error || $errors) {
         setEventMessages($object->error, $object->errors, 'errors');
         $action = '';
     }

@@ -31,7 +31,11 @@ class mailing_thirdparties extends MailingTargets
 
 	var $require_module=array("societe");	// This module allows to select by categories must be also enabled if category module is not activated
 	var $picto='company';
-	var $db;
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**

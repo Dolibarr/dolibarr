@@ -43,8 +43,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
  */
 class Product extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='product';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='product';
+	
 	public $fk_element='fk_product';
 	protected $childtables=array('supplier_proposaldet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -3649,7 +3657,7 @@ class Product extends CommonObject
         $result.=$linkstart;
 		if ($withpicto) {
 			if ($this->type == Product::TYPE_PRODUCT) $result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
-			if ($this->type == Product::TYPE_SERVICE) $result.=(img_object(($notooltip?'':$label), 'service',  ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
+			if ($this->type == Product::TYPE_SERVICE) $result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
 		}
 		$result.= $newref;
 		$result.= $linkend;
@@ -4424,7 +4432,7 @@ class Product extends CommonObject
 
 		$langs->load('products');
 
-		$this->db->begin();
+		//$this->db->begin();
 
 		$label_type = 'label';
 

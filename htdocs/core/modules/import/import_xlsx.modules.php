@@ -33,7 +33,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/import/modules_import.php';
  */
 class ImportXlsx extends ModeleImports
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $datatoimport;
 
 	/**
@@ -42,13 +46,20 @@ class ImportXlsx extends ModeleImports
 	public $error='';
 	
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 
-    var $id;           // Id of driver
-	var $label;        // Label of driver
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $extension;    // Extension of files imported by driver
 	var $version;      // Version of driver
 
@@ -661,8 +672,8 @@ class ImportXlsx extends ModeleImports
 								}
 							} else {
 								// We have a last INSERT ID. Check if we have a row referencing this foreign key.
-								// This is required when updating table with some extrafields. When inserting a record in parent table, we can make 
-								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record 
+								// This is required when updating table with some extrafields. When inserting a record in parent table, we can make
+								// a direct insert into subtable extrafields, but when me wake an update, the insertid is defined and the child record
 								// may already exists. So we rescan the extrafield table to be know if record exists or not for the rowid.
 								$sqlSelect = 'SELECT rowid FROM '.$tablename;
 

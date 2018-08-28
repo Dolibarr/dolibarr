@@ -29,18 +29,29 @@
 class CActionComm
 {
     /**
-	 * @var string Error code (or message)
-	 */
-	public $error='';
+     * @var string Error code (or message)
+     */
+    public $error='';
 	
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
-    var $id;
+    /**
+     * @var int ID
+     */
+    public $id;
 
     var $code;
     var $type;
     var $libelle;       // deprecated
-    var $label;
+    
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
     var $active;
     var $color;
     var $picto;

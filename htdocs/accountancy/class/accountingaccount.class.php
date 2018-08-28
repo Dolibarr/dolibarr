@@ -31,7 +31,12 @@
 class AccountingAccount extends CommonObject
 {
 	public $element='accounting_account';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='accounting_account';
+	
 	public $picto = 'billr';
 
 	/**
@@ -39,26 +44,33 @@ class AccountingAccount extends CommonObject
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+	
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
 	 */
 	public $restrictiononfksoc = 1;
 
-	var $db;
+	/**
+	 * @var DoliDB Database handler.
+	 */
+	public $db;
 	
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
-	
+	public $error='';	
 
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
 	
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $rowid;
 	var $datec; // Creation date
 	var $fk_pcg_version;
@@ -67,7 +79,12 @@ class AccountingAccount extends CommonObject
 	var $account_number;
 	var $account_parent;
 	var $account_category;
-	var $label;
+	
+	/**
+         * @var string proper name for given parameter
+         */
+        public $label;
+    
 	var $fk_user_author;
 	var $fk_user_modif;
 	var $active;       // duplicate with status

@@ -38,7 +38,11 @@ class box_produits extends ModeleBoxes
 	var $boxlabel="BoxLastProducts";
 	var $depends = array("produit");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();

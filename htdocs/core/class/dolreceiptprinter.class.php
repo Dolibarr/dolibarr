@@ -45,7 +45,7 @@
  * <dol_cut_paper_partial>                          Cut ticket partially
  * <dol_open_drawer>                                Open cash drawer
  * <dol_activate_buzzer>                            Activate buzzer
- * 
+ *
  * Code which can be placed everywhere
  * <dol_print_qrcode>                               Print QR Code
  * <dol_print_date>                                 Print date AAAA-MM-DD
@@ -94,7 +94,7 @@
 
 require_once DOL_DOCUMENT_ROOT .'/includes/mike42/escpos-php/Escpos.php';
 
- 
+
 /**
  * Class to manage Receipt Printers
  */
@@ -105,16 +105,25 @@ class dolReceiptPrinter extends Escpos
     const CONNECTOR_NETWORK_PRINT = 3;
     const CONNECTOR_WINDOWS_PRINT = 4;
     //const CONNECTOR_JAVA = 5;
-    var $db;
+    
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $tags;
     var $printer;
     var $template;
-    var $error;
+    
     /**
-	 *
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+    /**
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 
 
 
@@ -304,16 +313,16 @@ class dolReceiptPrinter extends Escpos
     function selectTypePrinter($selected='', $htmlname='printertypeid')
     {
         global $langs;
-        
+
         $options = array(
             1 => $langs->trans('CONNECTOR_DUMMY'),
             2 => $langs->trans('CONNECTOR_FILE_PRINT'),
             3 => $langs->trans('CONNECTOR_NETWORK_PRINT'),
             4 => $langs->trans('CONNECTOR_WINDOWS_PRINT')
         );
-        
+
         $this->resprint = Form::selectarray($htmlname, $options, $selected);
-        
+
         return 0;
     }
 
@@ -328,7 +337,7 @@ class dolReceiptPrinter extends Escpos
     function selectProfilePrinter($selected='', $htmlname='printerprofileid')
     {
         global $langs;
-        
+
         $options = array(
             0 => $langs->trans('PROFILE_DEFAULT'),
             1 => $langs->trans('PROFILE_SIMPLE'),
@@ -336,7 +345,7 @@ class dolReceiptPrinter extends Escpos
             3 => $langs->trans('PROFILE_P822D'),
             4 => $langs->trans('PROFILE_STAR')
         );
-        
+
         $this->profileresprint = Form::selectarray($htmlname, $options, $selected);
         return 0;
     }
@@ -524,11 +533,11 @@ class dolReceiptPrinter extends Escpos
         $ret = $this->InitPrinter($printerid);
         if ($ret>0) {
             setEventMessages($this->error, $this->errors, 'errors');
-        } 
-        else 
+        }
+        else
         {
             $nboflines = count($vals);
-            for ($line=0; $line < $nboflines; $line++) 
+            for ($line=0; $line < $nboflines; $line++)
             {
                 switch ($vals[$line]['tag']) {
                     case 'DOL_ALIGN_CENTER':

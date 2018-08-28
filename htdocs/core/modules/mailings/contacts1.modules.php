@@ -39,7 +39,10 @@ class mailing_contacts1 extends MailingTargets
 	var $require_admin=0;                               // Module mailing actif pour user admin ou non
 	var $picto='contact';
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
 	/**
