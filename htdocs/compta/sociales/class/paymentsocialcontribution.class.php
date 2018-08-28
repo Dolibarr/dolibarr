@@ -31,8 +31,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/sociales/class/chargesociales.class.php'
  */
 class PaymentSocialContribution extends CommonObject
 {
-	public $element='paiementcharge';			//!< Id that identify managed objects
-	public $table_element='paiementcharge';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='paiementcharge';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='paiementcharge';	
+	
 	public $picto = 'payment';
 
 	var $fk_charge;

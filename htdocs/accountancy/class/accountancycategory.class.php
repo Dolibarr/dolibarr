@@ -30,11 +30,31 @@ require_once DOL_DOCUMENT_ROOT . '/core/lib/accounting.lib.php';
  */
 class AccountancyCategory 	// extends CommonObject
 {
-	public $db;							//!< To store db handler
-	public $error;							//!< To return error code (or message)
-	public $errors=array();				//!< To return several error codes (or messages)
-	public $element='c_accounting_category';			//!< Id that identify managed objects
-	public $table_element='c_accounting_category';	//!< Name of table without prefix where object is stored
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+	/**
+	 * @var string 		Error string
+	 * @see             errors
+	 */
+	public $error;
+	
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+	
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='c_accounting_category';			
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='c_accounting_category';	
 
 	public $id;
 	public $code;

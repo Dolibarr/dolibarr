@@ -28,23 +28,35 @@
  */
 class AdvanceTargetingMailing extends CommonObject
 {
-
-	var $db; //!< To store db handler
+	/**
+         * @var DoliDB Database handler.
+         */
+        public $db;
+    
 	/**
 	 * @var string Error code (or message)
 	 */
-	public $error='';
-	
+	public $error='';	
 
 	/**
 	 * @var string[] Error codes (or messages)
 	 */
 	public $errors = array();
 	
-	var $element='advtargetemailing';			//!< Id that identify managed objects
-	var $table_element='advtargetemailing';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='advtargetemailing';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='advtargetemailing';	
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
 	var $name;
 	var $entity;

@@ -36,7 +36,11 @@ class box_contracts extends ModeleBoxes
     var $boxlabel="BoxLastContracts";
     var $depends = array("contrat");	// conf->contrat->enabled
 
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $param;
 
     var $info_box_head = array();

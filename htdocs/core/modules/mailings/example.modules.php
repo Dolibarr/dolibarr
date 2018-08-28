@@ -37,7 +37,11 @@ class mailing_example extends MailingTargets
     
     var $require_module=array();
     var $picto='';
-    var $db;
+    
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 
     // CHANGE THIS: Constructor name must be called mailing_xxx with xxx=name of your selector

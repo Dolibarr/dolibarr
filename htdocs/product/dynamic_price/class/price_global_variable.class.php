@@ -29,19 +29,34 @@
  */
 class PriceGlobalVariable
 {
-    var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
     /**
-	 *
+     * @var DoliDB Database handler.
+     */
+    public $db;
+   
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+    /**
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 	
-    var $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $code;
     var $description;
     var $value;
-    public $table_element = "c_price_global_variable";
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = "c_price_global_variable";
 
     /**
      *  Constructor

@@ -39,7 +39,11 @@ class box_prospect extends ModeleBoxes
 	var $boxlabel="BoxLastProspects";
 	var $depends = array("societe");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $enabled = 1;
 
 	var $info_box_head = array();

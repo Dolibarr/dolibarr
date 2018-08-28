@@ -33,7 +33,11 @@ require_once DOL_DOCUMENT_ROOT .'/core/modules/security/generate/modules_genpass
  */
 class modGeneratePassPerso extends ModeleGenPassword
 {
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $length;
 	var $length2; // didn't overright display
 	var $NbMaj;
@@ -42,7 +46,11 @@ class modGeneratePassPerso extends ModeleGenPassword
 	var $NbRepeat;
 	var $WithoutAmbi;
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $conf;
 	var $lang;
 	var $user;

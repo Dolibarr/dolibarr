@@ -30,7 +30,10 @@ require_once DOL_DOCUMENT_ROOT . '/expensereport/class/expensereport.class.php';
  */
 class ExpenseReportStats extends Stats
 {
-    public $table_element;
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element;
 
     var $socid;
     var $userid;

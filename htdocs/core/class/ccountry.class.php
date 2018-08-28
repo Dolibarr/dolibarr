@@ -32,8 +32,15 @@
  */
 class Ccountry // extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -43,10 +50,19 @@ class Ccountry // extends CommonObject
 	//var $element='ccountry';			//!< Id that identify managed objects
 	//var $table_element='ccountry';	//!< Name of table without prefix where object is stored
 
-    var $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $code;
 	var $code_iso;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $active;
 
 

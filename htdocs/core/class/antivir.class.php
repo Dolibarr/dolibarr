@@ -30,7 +30,10 @@
  */
 class AntiVir
 {
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	/**
 	 * @var string[] Error codes (or messages)
@@ -38,7 +41,11 @@ class AntiVir
 	public $errors = array();
 
 	var $output;
-	var $db;
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	/**
 	 *  Constructor

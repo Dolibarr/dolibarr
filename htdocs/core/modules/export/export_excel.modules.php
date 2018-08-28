@@ -32,8 +32,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class ExportExcel extends ModeleExports
 {
-	var $id;
-	var $label;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $extension;
 	var $version;
 

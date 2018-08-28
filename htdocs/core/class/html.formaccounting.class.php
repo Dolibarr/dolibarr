@@ -35,10 +35,17 @@ class FormAccounting extends Form
 
 	private $options_cache = array();
 
-	var $db;
-	var $error;
-
 	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+   /**
 	* Constructor
 	*
 	* @param		DoliDB		$db      Database handler

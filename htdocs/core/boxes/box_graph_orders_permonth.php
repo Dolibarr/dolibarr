@@ -33,7 +33,10 @@ class box_graph_orders_permonth extends ModeleBoxes
 	var $boxlabel="BoxCustomersOrdersPerMonth";
 	var $depends = array("commande");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $info_box_head = array();
 	var $info_box_contents = array();

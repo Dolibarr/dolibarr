@@ -45,8 +45,16 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class SupplierProposal extends CommonObject
 {
-    public $element='supplier_proposal';
-    public $table_element='supplier_proposal';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='supplier_proposal';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='supplier_proposal';
+	
     public $table_element_line='supplier_proposaldet';
     public $fk_element='fk_supplier_proposal';
     public $picto='propal';
@@ -2636,17 +2644,36 @@ class SupplierProposal extends CommonObject
  */
 class SupplierProposalLine extends CommonObjectLine
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-    public $element='supplier_proposaldet';
-    public $table_element='supplier_proposaldet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='supplier_proposaldet';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='supplier_proposaldet';
 
     var $oldline;
 
     // From llx_supplier_proposaldet
     var $rowid; // deprecated
-    var $id;
+    
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $fk_supplier_proposal;
     var $fk_parent_line;
     var $desc;          	// Description ligne
