@@ -33,13 +33,17 @@ class Address
 {
 	protected $db;
 
-	public $id;
+	/**
+     * @var int ID
+     */
+    public $id;
+    
 	public $type;
 	
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
+     * @var string proper name for given parameter
+     */
+    public $label;
     
 	public $socid;
 	public $name;
@@ -53,7 +57,7 @@ class Address
 	public $note;
 
 	/**
-	 * Adresses liees a la societe
+	 * Addresses linked to company
 	 * @var array
 	 */
 	public $lines;
@@ -501,14 +505,19 @@ class Address
 class AddressLine
 {
 	protected $db;
-	public $id;
+	
+	/**
+     * @var int ID
+     */
+    public $id;
+    
 	public $date_creation;
 	public $date_modification;
 	
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
+     * @var string proper name for given parameter
+     */
+    public $label;
     
 	public $name;
 	public $address;

@@ -60,6 +60,9 @@ class CommandeFournisseurDispatch extends CommonObject
 	public $table_element='commande_fournisseur_dispatch';		//!< Name of table without prefix where object is stored
 	public $lines=array();
 
+    /**
+     * @var int ID
+     */
     public $id;
 
 	public $fk_commande;

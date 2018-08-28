@@ -2482,6 +2482,9 @@ class Ticket extends CommonObject
  */
 class TicketsLine
 {
+    /**
+     * @var int ID
+     */
     public $id;
 
     /**

@@ -43,7 +43,11 @@ class Establishment extends CommonObject
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
     public $picto='building';
 
+    /**
+     * @var int ID
+     */
     public $id;
+    
     public $ref;
 	public $rowid;
 
