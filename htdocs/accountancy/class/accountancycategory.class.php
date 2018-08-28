@@ -60,9 +60,9 @@ class AccountancyCategory 	// extends CommonObject
 	public $code;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+     	 * @var string proper name for given parameter
+     	 */
+    	public $label;
     
 	public $range_account;
 	public $sens;
