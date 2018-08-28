@@ -28,10 +28,10 @@
 abstract class ActionsAdherentCardCommon
 {
     /**
-     * Database handler
-     * @var DoliDB
+     * @var DoliDB Database handler.
      */
-    var $db;
+    public $db;
+    
     var $dirmodule;
     var $targetmodule;
     var $canvas;
@@ -41,10 +41,16 @@ abstract class ActionsAdherentCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	//! Error string
-	var $error;
-	//! Error array
-	var $errors=array();
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';	
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**

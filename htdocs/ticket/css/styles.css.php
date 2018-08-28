@@ -50,7 +50,7 @@ html {
 
 html {
 <?php
-if (! empty($conf->global->TICKETS_SHOW_MODULE_LOGO)) {
+if (! empty($conf->global->TICKET_SHOW_MODULE_LOGO)) {
     print 'background: url("../public/img/bg_ticket.png") no-repeat 95% 90%;';
 }
 ?>

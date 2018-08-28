@@ -250,7 +250,6 @@ if (! empty($conf->global->MEMBER_ENABLE_PUBLIC))
 	print '<a target="_blank" href="'.$urlwithroot.'/public/members/new.php'.$entity_qr.'">'.$urlwithroot.'/public/members/new.php'.$entity_qr.'</a>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

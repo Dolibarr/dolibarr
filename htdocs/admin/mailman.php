@@ -238,7 +238,6 @@ if (! empty($conf->global->ADHERENT_USE_MAILMAN))
     print '</form>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

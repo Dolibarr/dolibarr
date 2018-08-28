@@ -41,16 +41,26 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class FactureFournisseur extends CommonInvoice
 {
-    public $element='invoice_supplier';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='invoice_supplier';
+    
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element='facture_fourn';
+	
     public $table_element_line='facture_fourn_det';
     public $fk_element='fk_facture_fourn';
     public $picto='bill';
+    
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+    
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
      * @var integer
@@ -100,11 +110,13 @@ class FactureFournisseur extends CommonInvoice
     public $total_localtax1=0;
     public $total_localtax2=0;
     public $total_ttc=0;
+    
 	/**
 	 * @deprecated
 	 * @see note_private, note_public
 	 */
     public $note;
+    
     public $note_private;
     public $note_public;
     public $propalid;
@@ -2556,7 +2568,14 @@ class FactureFournisseur extends CommonInvoice
  */
 class SupplierInvoiceLine extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facture_fourn_det';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='facture_fourn_det';
 
 	public $oldline;
@@ -2566,6 +2585,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see product_ref
 	 */
 	public $ref;
+	
 	/**
 	 * Internal ref
 	 * @var string
@@ -2584,6 +2604,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see label
 	 */
 	public $libelle;
+	
 	/**
 	 * Product description
 	 * @var string
@@ -2597,6 +2618,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see subprice
 	 */
 	public $pu_ht;
+	
 	public $subprice;
 
 	/**
@@ -2612,6 +2634,7 @@ class SupplierInvoiceLine extends CommonObjectLine
 	 * @see total_tva
 	 */
 	public $tva;
+	
 	public $total_tva;
 
 	/**

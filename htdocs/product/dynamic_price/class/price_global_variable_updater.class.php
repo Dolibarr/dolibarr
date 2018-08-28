@@ -29,12 +29,29 @@
  */
 class PriceGlobalVariableUpdater
 {
-    var $db;							//!< To store db handler
-    var $error;							//!< To return error code (or message)
-    var $errors=array();				//!< To return several error codes (or messages)
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+    /**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+	
     var $types=array(0, 1);				//!< Updater types
     var $update_min = 5;				//!< Minimal update rate
-    var $id;
+    
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $type;
     var $description;
     var $parameters;
@@ -42,7 +59,11 @@ class PriceGlobalVariableUpdater
     var $update_interval;				//!< Interval in mins
     var $next_update;					//!< Next update timestamp
     var $last_status;
-    public $table_element = "c_price_global_variable_updater";
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element = "c_price_global_variable_updater";
 
     /**
      *  Constructor

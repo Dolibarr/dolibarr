@@ -1161,7 +1161,7 @@ if (empty($reshook))
 				if ($res = $prodcomb->fetchByProductCombination2ValuePairs($idprod, $combinations)) {
 					$idprod = $res->fk_product_child;
 				} else {
-					setEventMessage($langs->trans('ErrorProductCombinationNotFound'), 'errors');
+					setEventMessages($langs->trans('ErrorProductCombinationNotFound'), null, 'errors');
 					$error ++;
 				}
 			}
@@ -1207,7 +1207,11 @@ if (empty($reshook))
 			{
 				$label = $productsupplier->label;
 
-				$desc = $productsupplier->description;
+				// if we use supplier description of the products
+				if(!empty($productsupplier->desc_supplier) && !empty($conf->global->PRODUIT_FOURN_TEXTS)) {
+				    $desc = $productsupplier->desc_supplier;
+				} else $desc = $productsupplier->description;
+				
 				if (trim($product_desc) != trim($desc)) $desc = dol_concatdesc($desc, $product_desc);
 
 				$type = $productsupplier->type;
@@ -2838,7 +2842,7 @@ else
 				print $form->textwithpicto($langs->trans("Discount") . ':', $langs->trans("HelpEscompte"), - 1);
 				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
-				$cssforamountpaymentcomplete = '';
+				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 			// Paye partiellement ou Abandon 'badsupplier'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'badsupplier') {
@@ -2846,7 +2850,7 @@ else
 				print $form->textwithpicto($langs->trans("Abandoned") . ':', $langs->trans("HelpAbandonBadCustomer"), - 1);
 				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 				// $resteapayeraffiche=0;
-				$cssforamountpaymentcomplete = '';
+				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 			// Paye partiellement ou Abandon 'product_returned'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'product_returned') {
@@ -2854,7 +2858,7 @@ else
 				print $form->textwithpicto($langs->trans("ProductReturned") . ':', $langs->trans("HelpAbandonProductReturned"), - 1);
 				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
-				$cssforamountpaymentcomplete = '';
+				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 			// Paye partiellement ou Abandon 'abandon'
 			if (($object->statut == FactureFournisseur::STATUS_CLOSED || $object->statut == FactureFournisseur::STATUS_ABANDONED) && $object->close_code == 'abandon') {
@@ -2865,7 +2869,7 @@ else
 				print $form->textwithpicto($langs->trans("Abandoned") . ':', $text, - 1);
 				print '</td><td align="right">' . price($object->total_ttc - $creditnoteamount - $depositamount - $totalpaye) . '</td><td>&nbsp;</td></tr>';
 				$resteapayeraffiche = 0;
-				$cssforamountpaymentcomplete = '';
+				$cssforamountpaymentcomplete = 'amountpaymentneutral';
 			}
 
 			// Billed
@@ -2878,12 +2882,12 @@ else
 			else
 				print $langs->trans('ExcessPaid');
 			print ' :</td>';
-			print '<td align="right" class="'.($resteapayeraffiche?'amountremaintopay':$cssforamountpaymentcomplete).'">' . price($resteapayeraffiche) . '</td>';
+			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 		}
 		else // Credit note
 		{
-			$cssforamountpaymentcomplete='';
+			$cssforamountpaymentcomplete='amountpaymentneutral';
 
 			// Total already paid back
 			print '<tr><td colspan="' . $nbcols . '" align="right">';
@@ -2898,9 +2902,9 @@ else
 			if ($resteapayeraffiche <= 0)
 				print $langs->trans('RemainderToPayBack');
 			else
-				print $langs->trans('ExcessPaydBack');
+				print $langs->trans('ExcessPaid');
 			print ' :</td>';
-			print '<td align="right" class="'.($resteapayeraffiche?'amountremaintopay':$cssforamountpaymentcomplete).'">' . price($sign * $resteapayeraffiche) . '</td>';
+			print '<td align="right"'.($resteapayeraffiche?' class="amountremaintopay"':(' class="'.$cssforamountpaymentcomplete.'"')).'>' . price($sign * $resteapayeraffiche) . '</td>';
 			print '<td class="nowrap">&nbsp;</td></tr>';
 
 			// Sold credit note
@@ -3195,7 +3199,6 @@ else
 		include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
 	}
 }
-
 
 // End of page
 llxFooter();

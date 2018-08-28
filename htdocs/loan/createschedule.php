@@ -210,6 +210,7 @@ print '</br>';
 print '<div align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'"></div>';
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();
 

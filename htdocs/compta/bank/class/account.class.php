@@ -36,8 +36,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Account extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element = 'bank_account';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element = 'bank_account';
+	
 	public $picto = 'account';
 
 	/**
@@ -943,8 +951,10 @@ class Account extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
-	public function setCategories($categories) {
+    public function setCategories($categories)
+    {
 		// Handle single category
 		if (! is_array($categories)) {
 			$categories = array($categories);
@@ -1301,13 +1311,19 @@ class Account extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $mode='', $option='', $save_lastsearch_value=-1, $notooltip=0)
 	{
-		global $conf, $langs;
+		global $conf, $langs, $user;
 
 		$result='';
 		$label = '<u>' . $langs->trans("ShowAccount") . '</u>';
 		$label .= '<br><b>' . $langs->trans('BankAccount') . ':</b> ' . $this->label;
 		$label .= '<br><b>' . $langs->trans('AccountNumber') . ':</b> ' . $this->number;
 		$label .= '<br><b>' . $langs->trans("AccountCurrency") . ':</b> ' . $this->currency_code;
+
+		if (empty($user->rights->banque->lire) || !empty($user->socid))
+		{
+			$option = 'nolink';
+		}
+
 		if (! empty($conf->accounting->enabled))
 		{
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/accounting.lib.php';
@@ -1337,6 +1353,11 @@ class Account extends CommonObject
 
 		$linkstart = '<a href="'.$url.$linkclose;
 		$linkend = '</a>';
+
+                if ($option == 'nolink') {
+                    $linkstart = '';
+                    $linkend = '';
+                }
 
 		$result .= $linkstart;
 		if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
@@ -1620,13 +1641,33 @@ class Account extends CommonObject
  */
 class AccountLine extends CommonObject
 {
-	var $error;
-	var $db;
-	var $element='bank';
-	var $table_element='bank';
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='bank';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='bank';
+	
 	var $picto = 'generic';
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $ref;
 	var $datec;
 	var $dateo;
@@ -1636,7 +1677,12 @@ class AccountLine extends CommonObject
 	 */
 	var $datev;
 	var $amount;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $note;
 	var $fk_user_author;
 	var $fk_user_rappro;
@@ -2271,4 +2317,3 @@ class AccountLine extends CommonObject
 	}
 
 }
-

@@ -55,6 +55,7 @@ AccountancyAreaDescChartModel=PASSO %s: Crie um modelo de gráfico de conta no m
 AccountancyAreaDescChart=PASSO %s: Criar or verificar conteúdo do seu gráfico de conta no menu %s
 
 AccountancyAreaDescVat=PASSO %s: Defina a conta contabilística para cada taxa de IVA. Para tal pode usar a entrada %s do menu.
+AccountancyAreaDescDefault=STEP %s: Define default accounting accounts. For this, use the menu entry %s.
 AccountancyAreaDescExpenseReport=PASSO %s: Defina a conta contabilística para o relatório de despesa. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescSal=PASSO %s: Defina a conta contabilística para o pagamento de salários. Para tal pode usar a entrada do menu %s.
 AccountancyAreaDescContrib=PASSO %s: Defina a conta contabilística para despesas especiais (outros impostos). Para tal pode usar a entrada do menu %s.
@@ -131,6 +132,7 @@ ACCOUNTING_LENGTH_GACCOUNT=Tamanho das contas contabilísticas gerais (se defini
 ACCOUNTING_LENGTH_AACCOUNT=Tamanho das contas contabilísticas de terceiros (se definir o valor deste campo a 6, então a conta '401' irá ser mostrada como '401000')
 ACCOUNTING_MANAGE_ZERO=Permitir a gestão do número de zeros no fim da designação da conta contabilística. Isto é necessário em alguns países (como a Suíça). Se desativada (por defeito), você poderá definir os 2 seguintes parâmetros de forma a que a aplicação adicione zeros virtualmente.
 BANK_DISABLE_DIRECT_INPUT=Desactivar a gravação direta de transação na conta bancária
+ACCOUNTING_ENABLE_EXPORT_DRAFT_JOURNAL=Enable draft export on journal
 
 ACCOUNTING_SELL_JOURNAL=Diário de vendas
 ACCOUNTING_PURCHASE_JOURNAL=Diário de compras
@@ -179,7 +181,7 @@ ThirdpartyAccountNotDefined=Conta para terceiros não definido
 ProductAccountNotDefined=Conta para o produto não definido
 FeeAccountNotDefined=Conta para o honorário não definida
 BankAccountNotDefined=Conta de banco não definida
-CustomerInvoicePayment=Pagamento de fatura de cliente
+CustomerInvoicePayment=Pagamento de fatura a cliente
 ThirdPartyAccount=Third party account
 NewAccountingMvt=Nova transação
 NumMvts=Número da transação

@@ -35,18 +35,22 @@ class Asset extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'asset';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'asset';
+	
 	/**
 	 * @var int  Does module support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+	
 	/**
 	 * @var int  Does asset support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
+	
 	/**
 	 * @var string String with name of icon for asset. Must be the part after the 'object_' into object_asset.png
 	 */

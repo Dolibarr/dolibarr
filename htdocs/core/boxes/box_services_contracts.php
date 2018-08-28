@@ -37,7 +37,11 @@ class box_services_contracts extends ModeleBoxes
 	var $boxlabel="BoxLastProductsInContract";
 	var $depends = array("service","contrat");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 
 	var $info_box_head = array();

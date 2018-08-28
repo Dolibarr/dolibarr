@@ -44,13 +44,11 @@ class ProductStockEntrepot extends CommonObject
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ProductStockEntrepot';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'product_warehouse_properties';
-
-	/**
-	 */
 
 	public $tms = '';
 	public $fk_product;
@@ -58,9 +56,6 @@ class ProductStockEntrepot extends CommonObject
 	public $seuil_stock_alerte;
 	public $desiredstock;
 	public $import_key;
-
-	/**
-	 */
 
 
 	/**

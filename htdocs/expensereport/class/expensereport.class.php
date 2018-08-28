@@ -33,8 +33,16 @@ require_once DOL_DOCUMENT_ROOT .'/expensereport/class/expensereport_rule.class.p
  */
 class ExpenseReport extends CommonObject
 {
-    var $element='expensereport';
-    var $table_element='expensereport';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='expensereport';
+	
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='expensereport';
+	
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
@@ -1297,6 +1305,7 @@ class ExpenseReport extends CommonObject
      * @param User      $fuser      User
      * @param Details   $details    Details
 	 * @param int       $notrigger  Disable triggers
+     * @return int
      */
     function setDeny($fuser,$details,$notrigger=0)
     {
@@ -2377,8 +2386,15 @@ class ExpenseReport extends CommonObject
  */
 class ExpenseReportLine
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     var $rowid;
     var $comments;
@@ -2425,7 +2441,7 @@ class ExpenseReportLine
         $sql.= ' ctf.code as type_fees_code, ctf.label as type_fees_libelle,';
         $sql.= ' pjt.rowid as projet_id, pjt.title as projet_title, pjt.ref as projet_ref';
         $sql.= ' FROM '.MAIN_DB_PREFIX.'expensereport_det as fde';
-        $sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';
+        $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_type_fees as ctf ON fde.fk_c_type_fees=ctf.id';	// Sometimes type of expense report has been removed, so we use a left join here.
         $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'projet as pjt ON fde.fk_projet=pjt.rowid';
         $sql.= ' WHERE fde.rowid = '.$rowid;
 

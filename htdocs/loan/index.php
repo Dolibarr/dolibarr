@@ -81,7 +81,7 @@ if ($filtre) {
 	$filtre=str_replace(":","=",$filtre);
 	$sql .= " AND ".$filtre;
 }
-$sql.= " GROUP BY l.rowid, l.label, l.capital, l.datestart, l.dateend";
+$sql.= " GROUP BY l.rowid, l.label, l.capital, l.paid, l.datestart, l.dateend";
 $sql.= $db->order($sortfield,$sortorder);
 
 $nbtotalofrecords = '';
@@ -104,7 +104,6 @@ if ($resql)
 {
 	$num = $db->num_rows($resql);
 	$i = 0;
-	$var=true;
 
 	$param='';
 	if (! empty($contextpage) && $contextpage != $_SERVER["PHP_SELF"]) $param.='&contextpage='.urlencode($contextpage);
@@ -167,7 +166,6 @@ if ($resql)
 		$loan_static->ref = $obj->rowid;
 		$loan_static->label = $obj->label;
 
-		$var = !$var;
 		print '<tr class="oddeven">';
 
 		// Ref
@@ -204,6 +202,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
-
 $db->close();

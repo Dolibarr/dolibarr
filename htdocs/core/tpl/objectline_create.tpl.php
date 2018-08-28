@@ -107,7 +107,7 @@ if ($nolinesbefore) {
 	if ($object->element == 'supplier_proposal' || $object->element == 'order_supplier' || $object->element == 'invoice_supplier')	// We must have same test in printObjectLines
 	{
 	?>
-		<td class="linecolrefsupplier" align="right"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
+		<td class="linecolrefsupplier"><span id="title_fourn_ref"><?php echo $langs->trans('SupplierRef'); ?></span></td>
 	<?php } ?>
 	<td class="linecolvat" align="right"><span id="title_vat"><?php echo $langs->trans('VAT'); ?></span></td>
 	<td class="linecoluht" align="right"><span id="title_up_ht"><?php echo $langs->trans('PriceUHT'); ?></span></td>

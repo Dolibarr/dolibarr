@@ -45,8 +45,16 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class SupplierProposal extends CommonObject
 {
-    public $element='supplier_proposal';
-    public $table_element='supplier_proposal';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='supplier_proposal';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='supplier_proposal';
+	
     public $table_element_line='supplier_proposaldet';
     public $fk_element='fk_supplier_proposal';
     public $picto='propal';
@@ -1013,7 +1021,7 @@ class SupplierProposal extends CommonObject
                     	$action='update';
 
                     	// Actions on extra fields
-                   		if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+                   		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
                    		{
                    			$result=$this->insertExtraFields();
                    			if ($result < 0)
@@ -1022,7 +1030,7 @@ class SupplierProposal extends CommonObject
                    			}
                     	}
 
-                        if (! $erro && ! $notrigger)
+                        if (! $error && ! $notrigger)
                         {
                             // Call trigger
                             $result=$this->call_trigger('PROPAL_SUPPLIER_CREATE',$user);
@@ -1775,7 +1783,8 @@ class SupplierProposal extends CommonObject
 	 *	@param      User	$user					Object user
      *	@return     int         					<0 if KO, >0 if OK
      */
-     function updatePriceFournisseur($idProductFournPrice, $product, $user) {
+    function updatePriceFournisseur($idProductFournPrice, $product, $user)
+    {
 		$price=price2num($product->subprice*$product->qty,'MU');
 		$unitPrice = price2num($product->subprice,'MU');
 
@@ -1787,7 +1796,7 @@ class SupplierProposal extends CommonObject
             $this->db->rollback();
             return -1;
 		}
-	 }
+	}
 
 	 /**
      *	Create ProductFournisseur
@@ -1796,7 +1805,8 @@ class SupplierProposal extends CommonObject
 	 *	@param      User		$user		Object user
      *	@return     int         			<0 if KO, >0 if OK
      */
-	 function createPriceFournisseur($product, $user) {
+    function createPriceFournisseur($product, $user)
+    {
 	 	$price=price2num($product->subprice*$product->qty,'MU');
 	    $qty=price2num($product->qty);
 		$unitPrice = price2num($product->subprice,'MU');
@@ -1823,7 +1833,7 @@ class SupplierProposal extends CommonObject
             $this->db->rollback();
             return -1;
 		}
-	 }
+	}
 
     /**
      *	Set draft status
@@ -2634,17 +2644,36 @@ class SupplierProposal extends CommonObject
  */
 class SupplierProposalLine extends CommonObjectLine
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
-    public $element='supplier_proposaldet';
-    public $table_element='supplier_proposaldet';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='supplier_proposaldet';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='supplier_proposaldet';
 
     var $oldline;
 
     // From llx_supplier_proposaldet
     var $rowid; // deprecated
-    var $id;
+    
+    /**
+	 * @var int ID
+	 */
+	public $id;
+	
     var $fk_supplier_proposal;
     var $fk_parent_line;
     var $desc;          	// Description ligne
@@ -3180,4 +3209,3 @@ class SupplierProposalLine extends CommonObjectLine
     }
 
 }
-

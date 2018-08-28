@@ -14,7 +14,6 @@ PaypalModeOnlyPaypal=Apenas Paypal
 ONLINE_PAYMENT_CSS_URL=URL opcional da folha de estilo CSS na página de pagamento online
 ThisIsTransactionId=Esta é id. da transação: <b>%s</b>
 PAYPAL_ADD_PAYMENT_URL=Adicionar o url de pagamento Paypal quando enviar um documento por correio eletrónico
-PredefinedMailContentLink=You can click on the link below to make your payment if it is not already done.<br><br>%s<br><br>
 YouAreCurrentlyInSandboxMode=Você está atualmente no modo %s "sandbox"
 NewOnlinePaymentReceived=Novo pagamento online recebido
 NewOnlinePaymentFailed=Novo pagamento em linha tentado, mas falhado

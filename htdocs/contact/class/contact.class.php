@@ -37,8 +37,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='contact';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='socpeople';
+	
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'contact';
 
@@ -204,7 +212,7 @@ class Contact extends CommonObject
 		if (empty($this->priv)) $this->priv = 0;
 		if (empty($this->statut)) $this->statut = 0; // This is to convert '' into '0' to avoid bad sql request
 
-		$entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (";
 		$sql.= " datec";
@@ -228,7 +236,7 @@ class Contact extends CommonObject
 		$sql.= " ".$this->db->escape($this->priv).",";
 		$sql.= " ".$this->db->escape($this->statut).",";
         $sql.= " ".(! empty($this->canvas)?"'".$this->db->escape($this->canvas)."'":"null").",";
-        $sql.= " ".$this->db->escape($entity).",";
+        $sql.= " ".$this->db->escape($this->entity).",";
         $sql.= "'".$this->db->escape($this->ref_ext)."',";
         $sql.= " ".(! empty($this->import_key)?"'".$this->db->escape($this->import_key)."'":"null");
 		$sql.= ")";
@@ -307,6 +315,8 @@ class Contact extends CommonObject
 
 		$this->id = $id;
 
+		$this->entity = ((isset($this->entity) && is_numeric($this->entity))?$this->entity:$conf->entity);
+
 		// Clean parameters
 		$this->lastname=trim($this->lastname)?trim($this->lastname):trim($this->lastname);
 		$this->firstname=trim($this->firstname);
@@ -354,6 +364,7 @@ class Contact extends CommonObject
 		$sql .= ", fk_user_modif=".($user->id > 0 ? "'".$this->db->escape($user->id)."'":"NULL");
 		$sql .= ", default_lang=".($this->default_lang?"'".$this->db->escape($this->default_lang)."'":"NULL");
 		$sql .= ", no_email=".($this->no_email?"'".$this->db->escape($this->no_email)."'":"0");
+		$sql .= ", entity = " . $this->db->escape($this->entity);
 		$sql .= " WHERE rowid=".$this->db->escape($id);
 
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
@@ -368,15 +379,12 @@ class Contact extends CommonObject
 		    $action='update';
 
 		    // Actions on extra fields
-		    if (! $error)
+		    if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 		    {
-		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		    	$result=$this->insertExtraFields();
+		    	if ($result < 0)
 		    	{
-		    		$result=$this->insertExtraFields();
-		    		if ($result < 0)
-		    		{
-		    			$error++;
-		    		}
+		    		$error++;
 		    	}
 		    }
 
@@ -677,6 +685,7 @@ class Contact extends CommonObject
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
+		$sql.= " c.datec as date_creation, c.tms as date_modification,";
 		$sql.= " co.label as country, co.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
@@ -711,6 +720,9 @@ class Contact extends CommonObject
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
 
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
 				$this->departement_code	= $obj->state_code;	       // deprecated
@@ -1334,6 +1346,7 @@ class Contact extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{

@@ -367,5 +367,6 @@ $(document).ready(function() {
 </script>
 ';
 
+// End of page
 llxFooter();
 $db->close();

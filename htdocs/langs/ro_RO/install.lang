@@ -204,3 +204,7 @@ MigrationResetBlockedLog=Reset module BlockedLog for v7 algorithm
 ShowNotAvailableOptions=Afişează opţiunile nedisponibile
 HideNotAvailableOptions=Acunde opţiunile nedisponibile
 ErrorFoundDuringMigration=Error were reported during migration process so next step is not available. To ignore errors, you can <a href="%s">click here</a>, but application or some features may not work correctly until fixed.
+YouTryInstallDisabledByDirLock=The application try to sefl upgrade, but install/upgrade pages have been disabled for security reason (directory renamed with .lock suffix).<br>
+YouTryInstallDisabledByFileLock=The application try to sefl upgrade, but install/upgrade pages pages have been disabled for security reason (by lock file <strong>install.lock</strong> into dolibarr documents directory).<br>
+ClickHereToGoToApp=Click here to go to your application
+ClickOnLinkOrRemoveManualy=Click on following link and if you always reach this page, you must remove the file install.lock into documents directory manually

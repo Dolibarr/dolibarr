@@ -32,9 +32,14 @@
 -- -- VMYSQL4.1 DELETE FROM llx_usergroup_user      WHERE fk_usergroup NOT IN (SELECT rowid from llx_usergroup);
 
 
+-- Forgot in < 4.0
+
+ALTER TABLE llx_c_ziptown DROP FOREIGN KEY fk_c_ziptown_fk_pays;
+ALTER TABLE llx_c_ziptown ADD CONSTRAINT fk_c_ziptown_fk_pays FOREIGN KEY (fk_pays) REFERENCES llx_c_country(rowid);
 
 -- Forgot in 7.0
 
+-- VMYSQL4.1 DROP INDEX nom on llx_societe;
 -- VMYSQL4.1 ALTER TABLE llx_c_regions drop FOREIGN KEY fk_c_regions_fk_pays;
 -- VMYSQL4.1 ALTER TABLE llx_product_association ADD COLUMN rowid integer AUTO_INCREMENT PRIMARY KEY;
 
@@ -42,9 +47,20 @@ ALTER TABLE llx_website_page ADD COLUMN fk_user_create integer;
 ALTER TABLE llx_website_page ADD COLUMN fk_user_modif integer; 
 ALTER TABLE llx_website_page ADD COLUMN type_container varchar(16) NOT NULL DEFAULT 'page';
 
+ALTER TABLE llx_ecm_files DROP INDEX uk_ecm_files;
+ALTER TABLE llx_ecm_files ADD UNIQUE INDEX uk_ecm_files (filepath, filename, entity);
+
+UPDATE llx_const set name = __ENCRYPT('INVOICE_FREE_TEXT')__  where name = __ENCRYPT('FACTURE_FREE_TEXT')__;
+
+ALTER TABLE llx_chargesociales MODIFY COLUMN amount double(24,8);
+
+
 -- drop very old table (bad name)
 DROP TABLE llx_c_accountancy_category;
 DROP TABLE llx_c_accountingaccount;
+
+-- drop old postgresql unique key
+-- VPGSQL8.2 DROP INDEX llx_usergroup_rights_fk_usergroup_fk_id_key
 
 update llx_propal set fk_statut = 1 where fk_statut = -1;
 
@@ -81,6 +97,9 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 
 -- For 8.0
 
+DROP TABLE llx_website_account;
+DROP TABLE llx_website_account_extrafields;
+
 ALTER TABLE llx_paiementfourn ADD COLUMN fk_user_modif integer AFTER fk_user_author;
 
 -- delete old permission no more used
@@ -94,7 +113,10 @@ delete from llx_usergroup_rights where fk_id not in (select id from llx_rights_d
 ALTER TABLE llx_inventory ADD COLUMN fk_product integer DEFAULT NULL;
 ALTER TABLE llx_inventory MODIFY COLUMN fk_warehouse integer DEFAULT NULL;
 
-ALTER TABLE llx_c_type_fees ADD COLUMN llx_c_type_fees integer DEFAULT 0;
+ALTER TABLE llx_c_type_fees DROP COLUMN llx_c_type_fees;
+ALTER TABLE llx_c_type_fees ADD COLUMN type integer DEFAULT 0;
+
+ALTER TABLE llx_c_ecotaxe CHANGE COLUMN libelle label varchar(255);
 
 ALTER TABLE llx_product_fournisseur_price DROP COLUMN unitcharges;
 
@@ -531,4 +553,10 @@ INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUE
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR03', 'Standardkontenrahmen SKR 03', 1);
 INSERT INTO llx_accounting_system (fk_country, pcg_version, label, active) VALUES (  5,   'SKR04', 'Standardkontenrahmen SKR 04', 1);
 
+
+-- advtargetmailing
+ALTER TABLE llx_advtargetemailing ADD COLUMN fk_element integer NOT NULL;
+ALTER TABLE llx_advtargetemailing ADD COLUMN type_element varchar(180) NOT NULL;
+UPDATE llx_advtargetemailing SET fk_element = fk_mailing, type_element='mailing';
+ALTER TABLE llx_advtargetemailing DROP COLUMN fk_mailing;
 

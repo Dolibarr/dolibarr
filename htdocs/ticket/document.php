@@ -105,7 +105,7 @@ if ($object->id)
         dol_fiche_end();
     }
 
-    if (!$user->societe_id && $conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY) {
+    if (!$user->societe_id && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
         $object->next_prev_filter = "te.fk_user_assign = '" . $user->id . "'";
     } elseif ($user->societe_id > 0) {
         $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";
@@ -138,7 +138,7 @@ if ($object->id)
 
     dol_fiche_end();
 
-    // Construit liste des fichiers
+    // Build file list
     $filearray = dol_dir_list($upload_dir, "files", 0, '', '\.meta$', $sortfield, (strtolower($sortorder) == 'desc' ? SORT_DESC : SORT_ASC), 1);
     $totalsize = 0;
     foreach ($filearray as $key => $file) {
@@ -158,5 +158,6 @@ else
     accessforbidden('', 0, 0);
 }
 
+// End of page
 llxFooter();
 $db->close();

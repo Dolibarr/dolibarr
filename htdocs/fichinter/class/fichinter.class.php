@@ -35,8 +35,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobjectline.class.php';
  */
 class Fichinter extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='fichinter';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='fichinter';
+	
 	public $fk_element='fk_fichinter';
 	public $table_element_line='fichinterdet';
 	public $picto = 'intervention';
@@ -222,7 +230,7 @@ class Fichinter extends CommonObject
 				if (! $resql) $error++;
 			}
 
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
@@ -278,12 +286,15 @@ class Fichinter extends CommonObject
 	 */
 	function update($user, $notrigger=0)
 	{
+		global $conf;
 	 	if (! is_numeric($this->duration)) {
 	 		$this->duration = 0;
 	 	}
 	 	if (! dol_strlen($this->fk_project)) {
 	 		$this->fk_project = 0;
 	 	}
+
+	 	$error = 0;
 
 		$this->db->begin();
 
@@ -299,8 +310,16 @@ class Fichinter extends CommonObject
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		if ($this->db->query($sql))
 		{
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			{
+				$result=$this->insertExtraFields();
+				if ($result < 0)
+				{
+					$error++;
+				}
+			}
 
-			if (! $notrigger)
+			if (! $error && ! $notrigger)
 			{
 				// Call trigger
 				$result=$this->call_trigger('FICHINTER_MODIFY',$user);
@@ -372,8 +391,7 @@ class Fichinter extends CommonObject
 
 				if ($this->statut == 0) $this->brouillon = 1;
 
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
+				// Retreive extrafields
 				$this->fetch_optionals();
 
 				/*
@@ -1299,8 +1317,15 @@ class Fichinter extends CommonObject
  */
 class FichinterLigne extends CommonObjectLine
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	// From llx_fichinterdet
 	var $fk_fichinter;
@@ -1309,8 +1334,16 @@ class FichinterLigne extends CommonObjectLine
 	var $duration;        // Duree de l'intervention
 	var $rang = 0;
 
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='fichinterdet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='fichinterdet';
+	
 	public $fk_element='fk_fichinter';
 
 	/**

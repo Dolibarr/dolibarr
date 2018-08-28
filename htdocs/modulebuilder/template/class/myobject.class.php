@@ -36,18 +36,22 @@ class MyObject extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element = 'myobject';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element = 'mymodule_myobject';
+	
 	/**
 	 * @var int  Does myobject support multicompany module ? 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 */
 	public $ismultientitymanaged = 0;
+	
 	/**
 	 * @var int  Does myobject support extrafields ? 0=No, 1=Yes
 	 */
 	public $isextrafieldmanaged = 1;
+	
 	/**
 	 * @var string String with name of icon for myobject. Must be the part after the 'object_' into object_myobject.png
 	 */
@@ -66,6 +70,7 @@ class MyObject extends CommonObject
 	 *  'position' is the sort order of field.
 	 *  'searchall' is 1 if we want to search in this field when making a search from the quick search button.
 	 *  'isameasure' must be set to 1 if you want to have a total on list for this field. Field type must be summable like integer or double(24,8).
+	 *  'css' is the CSS style to use on field. For example: 'maxwidth200'
 	 *  'help' is a string visible as a tooltip on field
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
@@ -83,7 +88,7 @@ class MyObject extends CommonObject
 	    'label'         =>array('type'=>'varchar(255)', 'label'=>'Label',            'enabled'=>1, 'visible'=>1,  'position'=>30,  'searchall'=>1, 'css'=>'minwidth200', 'help'=>'Help text', 'showoncombobox'=>1),
 	    'amount'        =>array('type'=>'double(24,8)', 'label'=>'Amount',           'enabled'=>1, 'visible'=>1,  'default'=>'null', 'position'=>40,  'searchall'=>0, 'isameasure'=>1, 'help'=>'Help text'),
 		'fk_soc' 		=>array('type'=>'integer:Societe:societe/class/societe.class.php', 'label'=>'ThirdParty', 'visible'=>1, 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'index'=>1, 'help'=>'LinkToThirparty'),
-		'description'   =>array('type'=>'text',			'label'=>'Descrption',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
+		'description'   =>array('type'=>'text',			'label'=>'Description',		 'enabled'=>1, 'visible'=>0,  'position'=>60),
 		'note_public'   =>array('type'=>'html',			'label'=>'NotePublic',		 'enabled'=>1, 'visible'=>0,  'position'=>61),
 		'note_private'  =>array('type'=>'html',			'label'=>'NotePrivate',		 'enabled'=>1, 'visible'=>0,  'position'=>62),
 		'date_creation' =>array('type'=>'datetime',     'label'=>'DateCreation',     'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'position'=>500),
@@ -117,18 +122,22 @@ class MyObject extends CommonObject
 	 * @var int    Name of subtable line
 	 */
 	//public $table_element_line = 'myobjectdet';
+	
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
 	//public $fk_element = 'fk_myobject';
+	
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
 	//public $class_element_line = 'MyObjectline';
+	
 	/**
 	 * @var array  Array of child tables (child tables to delete before deleting a record)
 	 */
 	//protected $childtables=array('myobjectdet');
+	
 	/**
 	 * @var MyObjectLine[]     Array of subtable lines
 	 */
@@ -285,7 +294,7 @@ class MyObject extends CommonObject
 	 */
 	function getNomUrl($withpicto=0, $option='', $notooltip=0, $morecss='', $save_lastsearch_value=-1)
 	{
-		global $db, $conf, $langs, $hoomanager;
+		global $db, $conf, $langs, $hookmanager;
         global $dolibarr_main_authentication, $dolibarr_main_demo;
         global $menumanager;
 

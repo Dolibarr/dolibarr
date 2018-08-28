@@ -5,7 +5,7 @@
  * Copyright (C) 2005-2014	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
- * Copyright (C) 2015			  Claudio Aschieri		<c.aschieri@19.coop>
+ * Copyright (C) 2015	    Claudio Aschieri		<c.aschieri@19.coop>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -586,7 +586,7 @@ else
 			print '</div>';
 
 			/*
-			 * Lignes produits
+			 * Products lines
 			 */
 
 			$num_prod = count($object->lines);
@@ -604,11 +604,8 @@ else
 				print '<td align="center">'.$langs->trans("QtyReceived").'</td>';
 				print "</tr>\n";
 			}
-			$var=true;
 			while ($i < $num_prod)
 			{
-
-
 				print '<tr class="oddeven">';
 				if ($object->lines[$i]->fk_product > 0)
 				{
@@ -686,7 +683,7 @@ else
 						$line->array_options = array_merge($line->array_options, $srcLine->array_options);
 					}
 					print '<tr class="oddeven">';
-					print $line->showOptionals($extrafieldsline, $mode, array('style'=>$bc[$var], 'colspan'=>$colspan),$i);
+					print $line->showOptionals($extrafieldsline, $mode, array('style'=>'class="oddeven"', 'colspan'=>$colspan),$i);
 					print '</tr>';
 				}
 
@@ -784,6 +781,6 @@ else
 	}
 }
 
-
+// End of page
 llxFooter();
 $db->close();

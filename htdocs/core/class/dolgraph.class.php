@@ -69,7 +69,11 @@ class DolGraph
 	var $showpercent=0;
 	var $combine=0;				// 0.05 if you want to combine records < 5% into "other"
 	var $graph;     			// Objet Graph (Artichow, Phplot...)
-	var $error;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	var $bordercolor;			// array(R,G,B)
 	var $bgcolor;				// array(R,G,B)

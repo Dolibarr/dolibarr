@@ -23,7 +23,7 @@
  *		\brief      List of holiday
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
@@ -399,7 +399,7 @@ else
 if ($sall)
 {
     foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-    print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+    print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 }
 
 $varpage=empty($contextpage)?$_SERVER["PHP_SELF"]:$contextpage;
@@ -630,8 +630,8 @@ print '</form>';
 	print '</div>';
 }*/
 
+// End of page
 llxFooter();
-
 $db->close();
 
 

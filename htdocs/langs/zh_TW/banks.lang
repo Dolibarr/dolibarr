@@ -1,6 +1,6 @@
 # Dolibarr language file - Source file is en_US - banks
 Bank=銀行
-MenuBankCash=銀行/現金
+MenuBankCash=Bank | Cash
 MenuVariousPayment=雜項付款
 MenuNewVariousPayment=新的雜項付款
 BankName=銀行名稱
@@ -132,7 +132,7 @@ PaymentDateUpdateSucceeded=付款日期更新成功
 PaymentDateUpdateFailed=付款日期可能無法更新
 Transactions=交易
 BankTransactionLine=銀行項目
-AllAccounts=所有銀行/現金帳戶
+AllAccounts=All bank and cash accounts
 BackToAccount=回到帳戶
 ShowAllAccounts=顯示所有帳戶
 FutureTransaction=未來的交易。沒有其他方式調節。
@@ -160,5 +160,6 @@ VariousPayment=雜項付款
 VariousPayments=雜項付款
 ShowVariousPayment=顯示雜項付款
 AddVariousPayment=新增雜項付款
+SEPAMandate=SEPA mandate
 YourSEPAMandate=Your SEPA mandate
 FindYourSEPAMandate=This is your SEPA mandate to authorize our company to make direct debit order to your bank. Thanks to return it signed (scan of the signed document) or sent it by mail to

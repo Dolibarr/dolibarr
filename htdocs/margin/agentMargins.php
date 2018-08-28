@@ -208,7 +208,6 @@ if ($result)
 
 	if ($num > 0)
 	{
-		$var=true;
 
 		while ($i < $num /*&& $i < $conf->liste_limit*/)
 		{
@@ -228,8 +227,6 @@ if ($result)
 				$marginRate = ($pa != 0)?(100 * $marge / $pa):'' ;
 				$markRate = ($pv != 0)?(100 * $marge / $pv):'' ;
 			}
-
-
 
 			print '<tr class="oddeven">';
 			if ($agentid > 0) {
@@ -271,6 +268,7 @@ $(document).ready(function() {
 });
 </script>'."\n";
 
+// End of page
 llxFooter();
 $db->close();
 

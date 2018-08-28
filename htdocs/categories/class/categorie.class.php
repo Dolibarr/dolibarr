@@ -148,7 +148,14 @@ class Categorie extends CommonObject
         'project'  => 'projet',
 	);
 
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='category';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='categorie';
 
 	public $fk_parent;

@@ -79,7 +79,7 @@ $search_montant_vat=GETPOST('search_montant_vat','alpha');
 $search_montant_localtax1=GETPOST('search_montant_localtax1','alpha');
 $search_montant_localtax2=GETPOST('search_montant_localtax2','alpha');
 $search_montant_ttc=GETPOST('search_montant_ttc','alpha');
-$search_status=GETPOST('search_status','int');
+$search_status=GETPOST('search_status','intcomma');
 $search_paymentmode=GETPOST('search_paymentmode','int');
 $search_town=GETPOST('search_town','alpha');
 $search_zip=GETPOST('search_zip','alpha');
@@ -88,13 +88,15 @@ $search_country=GETPOST("search_country",'int');
 $search_type_thirdparty=GETPOST("search_type_thirdparty",'int');
 $search_user = GETPOST('search_user','int');
 $search_sale = GETPOST('search_sale','int');
-$search_day	= GETPOST('search_day','int');
+$search_day		= GETPOST('search_day','int');
 $search_month	= GETPOST('search_month','int');
 $search_year	= GETPOST('search_year','int');
-$search_day_lim	= GETPOST('search_day_lim','int');
+$search_day_lim		= GETPOST('search_day_lim','int');
 $search_month_lim	= GETPOST('search_month_lim','int');
 $search_year_lim	= GETPOST('search_year_lim','int');
 $search_categ_cus=trim(GETPOST("search_categ_cus",'int'));
+$search_btn=GETPOST('button_search','alpha');
+$search_remove_btn=GETPOST('button_removefilter','alpha');
 
 $option = GETPOST('search_option');
 if ($option == 'late') {
@@ -106,9 +108,9 @@ $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
 $sortorder = GETPOST("sortorder",'alpha');
 $page = GETPOST("page",'int');
-if (empty($page) || $page == -1) { $page = 0; }     // If $page is not defined, or '' or -1
+if (empty($page) || $page == -1 || !empty($search_btn) || !empty($search_remove_btn) || (empty($toselect) && $massaction === '0')) { $page = 0; }     // If $page is not defined, or '' or -1
 $offset = $limit * $page;
-if (! $sortorder && ! empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == 1) $sortorder=$conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
+if (! $sortorder && ! empty($conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER) && $search_status == '1') $sortorder=$conf->global->INVOICE_DEFAULT_UNPAYED_SORT_ORDER;
 if (! $sortorder) $sortorder='DESC';
 if (! $sortfield) $sortfield='f.datef';
 $pageprev = $page - 1;
@@ -268,7 +270,6 @@ if ($massaction == 'withdrawrequest')
 				$totalcreditnotes = $objecttmp->getSumCreditNotesUsed();
 				$totaldeposits = $objecttmp->getSumDepositsUsed();
 				$objecttmp->resteapayer = price2num($objecttmp->total_ttc - $totalpaye - $totalcreditnotes - $totaldeposits,'MT');
-				$listofbills[] = $objecttmp;
 				if($objecttmp->paye || $objecttmp->resteapayer==0){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("AlreadyPaid"), $objecttmp->errors, 'errors');
@@ -300,18 +301,21 @@ if ($massaction == 'withdrawrequest')
 
 				if ($numprlv>0){
 					$error++;
-					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'errors');
+					setEventMessages($objecttmp->ref.' '.$langs->trans("RequestAlreadyDone"), $objecttmp->errors, 'warnings');
 				}
-				if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
+				else if (!empty($objecttmp->mode_reglement_code ) && $objecttmp->mode_reglement_code != 'PRE'){
 					$error++;
 					setEventMessages($objecttmp->ref.' '.$langs->trans("BadPaymentMethod"), $objecttmp->errors, 'errors');
+				}
+				else {
+					$listofbills[] = $objecttmp;    // $listofbills will only contains invoices with good payment method and no request already done
 				}
 
 			}
 		}
 
-		//Massive withdraw request
-		if(!empty($listofbills) && empty($error))
+		//Massive withdraw request for request with no errors
+		if(!empty($listofbills))
 		{
 			$nbwithdrawrequestok=0;
 			foreach($listofbills as $aBill)
@@ -442,12 +446,19 @@ if ($search_montant_localtax2 != '') $sql.= natural_search('f.localtax2', $searc
 if ($search_montant_ttc != '') $sql.= natural_search('f.total_ttc', $search_montant_ttc, 1);
 if ($search_categ_cus > 0) $sql.= " AND cc.fk_categorie = ".$db->escape($search_categ_cus);
 if ($search_categ_cus == -2)   $sql.= " AND cc.fk_categorie IS NULL";
-if ($search_status != '' && $search_status >= 0)
+if ($search_status != '-1' && $search_status != '')
 {
-	if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
-	if ($search_status == '1') $sql.=" AND f.fk_statut = 1";  // unpayed
-	if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
-	if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
+	if (is_numeric($search_status) && $search_status >= 0)
+	{
+		if ($search_status == '0') $sql.=" AND f.fk_statut = 0";  // draft
+		if ($search_status == '1') $sql.=" AND f.fk_statut = 1";  // unpayed
+		if ($search_status == '2') $sql.=" AND f.fk_statut = 2";  // payed     Not that some corrupted data may contains f.fk_statut = 1 AND f.paye = 1 (it means payed too but should not happend. If yes, reopen and reclassify billed)
+		if ($search_status == '3') $sql.=" AND f.fk_statut = 3";  // abandonned
+	}
+	else
+	{
+		$sql.= " AND f.fk_statut IN (".$search_status.")";	// When search_status is '1,2' for example
+	}
 }
 if ($search_paymentmode > 0) $sql .= " AND f.fk_mode_reglement = ".$db->escape($search_paymentmode);
 if ($search_month > 0)
@@ -457,7 +468,7 @@ if ($search_month > 0)
 	else if ($search_year > 0 && ! empty($search_day))
 	$sql.= " AND f.datef BETWEEN '".$db->idate(dol_mktime(0, 0, 0, $search_month, $search_day, $search_year))."' AND '".$db->idate(dol_mktime(23, 59, 59, $search_month, $search_day, $serch_year))."'";
 	else
-	$sql.= " AND date_format(f.datef, '%m') = '".$month."'";
+	$sql.= " AND date_format(f.datef, '%m') = '".$search_month."'";
 }
 else if ($search_year > 0)
 {
@@ -633,7 +644,7 @@ if ($resql)
 	if ($sall)
 	{
 		foreach($fieldstosearchall as $key => $val) $fieldstosearchall[$key]=$langs->trans($val);
-		print $langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall);
+		print '<div class="divsearchfieldfilter">'.$langs->trans("FilterOnInto", $sall) . join(', ',$fieldstosearchall).'</div>';
 	}
 
  	// If the user can view prospects other than his'
@@ -730,7 +741,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre nowraponall" align="center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day" value="'.dol_escape_htmltag($search_day).'">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
+		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month" value="'.dol_escape_htmltag($search_month).'">';
 		$formother->select_year($search_year?$search_year:-1,'search_year',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '</td>';
 	}
@@ -739,7 +750,7 @@ if ($resql)
 	{
 		print '<td class="liste_titre nowraponall" align="center">';
 		if (! empty($conf->global->MAIN_LIST_FILTER_ON_DAY)) print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_day_lim" value="'.dol_escape_htmltag($search_day_lim).'">';
-		print '<input class="flat valignmiddle" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
+		print '<input class="flat valignmiddle width25" type="text" size="1" maxlength="2" name="search_month_lim" value="'.dol_escape_htmltag($search_month_lim).'">';
 		$formother->select_year($search_year_lim?$search_year_lim:-1,'search_year_lim',1, 20, 5, 0, 0, '', 'widthauto valignmiddle');
 		print '<br><input type="checkbox" name="search_option" value="late"'.($option == 'late'?' checked':'').'> '.$langs->trans("Late");
 		print '</td>';
@@ -854,7 +865,7 @@ if ($resql)
 	if (! empty($arrayfields['f.fk_statut']['checked']))
 	{
 		print '<td class="liste_titre maxwidthonsmartphone" align="right">';
-		$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
+		$liststatus=array('0'=>$langs->trans("BillShortStatusDraft"), '1'=>$langs->trans("BillShortStatusNotPaid"), '2'=>$langs->trans("BillShortStatusPaid"), '1,2'=>$langs->trans("BillShortStatusNotPaid").'+'.$langs->trans("BillShortStatusPaid"), '3'=>$langs->trans("BillShortStatusCanceled"));
 		print $form->selectarray('search_status', $liststatus, $search_status, 1);
 		print '</td>';
 	}
@@ -912,6 +923,9 @@ if ($resql)
 			$facturestatic->id=$obj->id;
 			$facturestatic->ref=$obj->ref;
 			$facturestatic->type=$obj->type;
+            $facturestatic->total_ht=$obj->total_ht;
+            $facturestatic->total_tva=$obj->total_vat;
+            $facturestatic->total_ttc=$obj->total_ttc;
 			$facturestatic->statut=$obj->fk_statut;
 			$facturestatic->date_lim_reglement=$db->jdate($obj->datelimite);
 			$facturestatic->note_public=$obj->note_public;
@@ -1238,5 +1252,6 @@ else
 	dol_print_error($db);
 }
 
+// End of page
 llxFooter();
 $db->close();

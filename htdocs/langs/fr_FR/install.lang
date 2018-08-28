@@ -204,3 +204,7 @@ MigrationResetBlockedLog=Réinitialiser le module BlockedLog pour l'algorithme v
 ShowNotAvailableOptions=Afficher les choix non disponibles
 HideNotAvailableOptions=Cacher les choix non disponibles
 ErrorFoundDuringMigration=Une erreur est survenu lors du processus de migration, aussi l'étape suivante ne peut pas être réalisée. Pour ignorer les erreurs, vous pouvez <a href="%s">cliquer ici</a>, mais l'application ou certaines fonctionnalités risquent de présenter des dysfonctionnements jusqu'à la résolution de la ou des erreurs
+YouTryInstallDisabledByDirLock=L'application essaie de se mettre à jour, mais les pages d'installation / mise à jour ont été désactivées pour des raisons de sécurité (répertoire renommé avec le suffixe .lock). <br>
+YouTryInstallDisabledByFileLock=L'application essaie de se mettre à jour, mais les pages d'installation / mise à jour ont été désactivées pour des raisons de sécurité (par le fichier de verrouillage <strong> install.lock </strong> dans le répertoire de documents dolibarr). <br>
+ClickHereToGoToApp=Cliquez ici pour aller sur votre application
+ClickOnLinkOrRemoveManualy=Cliquez sur le lien suivant et si vous atteignez toujours cette page, vous devez supprimer manuellement le fichier install.lock dans le répertoire documents

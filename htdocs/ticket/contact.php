@@ -5,7 +5,7 @@
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * the Free Software Foundation; either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
@@ -138,7 +138,7 @@ if ($id > 0 || !empty($track_id) || !empty($ref)) {
             dol_fiche_end();
         }
 
-        if (!$user->societe_id && $conf->global->TICKETS_LIMIT_VIEW_ASSIGNED_ONLY) {
+        if (!$user->societe_id && $conf->global->TICKET_LIMIT_VIEW_ASSIGNED_ONLY) {
             $object->next_prev_filter = "te.fk_user_assign = '" . $user->id . "'";
         } elseif ($user->societe_id > 0) {
             $object->next_prev_filter = "te.fk_soc = '" . $user->societe_id . "'";

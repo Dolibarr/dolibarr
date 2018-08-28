@@ -42,9 +42,10 @@ abstract class CommonDocGenerator
 	 *
 	 *  @param		DoliDB		$db      Database handler
 	*/
-	public function __construct($db) {
-		$this->db = $db;
-	}
+    public function __construct($db)
+    {
+        $this->db = $db;
+    }
 
 
     /**
@@ -228,7 +229,8 @@ abstract class CommonDocGenerator
 	 * @param   array_key	$array_key	    Name of the key for return array
 	 * @return	array of substitution key->code
 	 */
-	function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object') {
+    function get_substitutionarray_contact($object, $outputlangs, $array_key = 'object')
+    {
 		global $conf;
 
 		if(empty($object->country) && ! empty($object->country_code))
@@ -487,6 +489,7 @@ abstract class CommonDocGenerator
 		$resarray= array(
 			'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 			'line_product_ref'=>$line->product_ref,
+			'line_product_ref_fourn'=>$line->ref_fourn, // for supplier doc lines
 			'line_product_label'=>$line->product_label,
 			'line_product_type'=>$line->product_type,
 			'line_desc'=>$line->desc,
@@ -543,7 +546,7 @@ abstract class CommonDocGenerator
 			$tmpproduct = new Product($this->db);
 			$result = $tmpproduct->fetch($line->fk_product);
 			foreach($tmpproduct->array_options as $key=>$label)
-				$resarray["line_".$key] = $label;
+				$resarray["line_product_".$key] = $label;
 		}
 
 		return $resarray;
@@ -596,15 +599,16 @@ abstract class CommonDocGenerator
     	}
 
     	// Retrieve extrafields
-    	/*if(is_array($object->array_options) && count($object->array_options))
+    	if (is_array($object->array_options) && count($object->array_options))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
-    		$extralabels = $extrafields->fetch_name_optionals_label('shipment',true);
+    		$extralabels = $extrafields->fetch_name_optionals_label('expedition',true);
     		$object->fetch_optionals();
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object,$array_shipment,$extrafields,$array_key,$outputlangs);
-    	}*/
+    	}
+
     	return $array_shipment;
     }
 
@@ -612,16 +616,16 @@ abstract class CommonDocGenerator
     /**
      *	Define array with couple substitution key => substitution value
      *
-     *	@param  array			$line				Array of lines
+     *	@param  ExpeditionLigne	$line				Object line
      *	@param  Translate		$outputlangs        Lang object to use for output
      *	@return	array								Substitution array
      */
-    function get_substitutionarray_shipment_lines($line,$outputlangs)
+    function get_substitutionarray_shipment_lines($line, $outputlangs)
     {
     	global $conf;
 		dol_include_once('/core/lib/product.lib.php');
 
-    	return array(
+        $resarray = array(
 	    	'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 	    	'line_product_ref'=>$line->product_ref,
 	    	'line_product_label'=>$line->product_label,
@@ -640,6 +644,18 @@ abstract class CommonDocGenerator
 	    	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuring_units_string($line->surface_units, 'surface'),
 	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
     	);
+
+		// Retrieve extrafields
+        $extrafieldkey = $line->element;
+        $array_key = "line";
+        require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+        $extrafields = new ExtraFields($this->db);
+        $extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+        $line->fetch_optionals();
+
+        $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+
+        return $resarray;
     }
 
 
@@ -651,7 +667,8 @@ abstract class CommonDocGenerator
      * @param   boolean		$recursive    	Want to fetch child array or child object
      * @return	array						Array of substitution key->code
      */
-    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true) {
+    function get_substitutionarray_each_var_object(&$object,$outputlangs,$recursive=true)
+    {
         $array_other = array();
         if(!empty($object)) {
             foreach($object as $key => $value) {
@@ -722,6 +739,30 @@ abstract class CommonDocGenerator
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_locale' => $object->array_options['options_'.$key.'_locale']));
 				$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key.'_rfc' => $object->array_options['options_'.$key.'_rfc']));
 			}
+			else if($extrafields->attribute_type[$key] == 'link')
+			{
+				$id = $object->array_options['options_'.$key];
+				if ($id != "")
+				{
+					$param = $extrafields->attribute_param[$key];
+					$param_list=array_keys($param['options']);              // $param_list='ObjectName:classPath'
+					$InfoFieldList = explode(":", $param_list[0]);
+					$classname=$InfoFieldList[0];
+					$classpath=$InfoFieldList[1];
+					if (! empty($classpath))
+					{
+						dol_include_once($InfoFieldList[1]);
+						if ($classname && class_exists($classname))
+						{
+							$tmpobject = new $classname($this->db);
+							$tmpobject->fetch($id);
+							// completely replace the id with the linked object name
+							$object->array_options['options_'.$key] = $tmpobject->name;
+						}
+					}
+				}
+			}
+
 			$array_to_fill=array_merge($array_to_fill,array($array_key.'_options_'.$key => $object->array_options['options_'.$key]));
 		}
 
@@ -744,10 +785,9 @@ abstract class CommonDocGenerator
 	 */
     function printRect($pdf, $x, $y, $l, $h, $hidetop=0, $hidebottom=0)
     {
-	    if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
-	    $pdf->line($x+$l, $y, $x+$l, $y+$h);
-	    if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
-	    $pdf->line($x, $y+$h, $x, $y);
+        if (empty($hidetop) || $hidetop==-1) $pdf->line($x, $y, $x+$l, $y);
+        $pdf->line($x+$l, $y, $x+$l, $y+$h);
+        if (empty($hidebottom)) $pdf->line($x+$l, $y+$h, $x, $y+$h);
+        $pdf->line($x, $y+$h, $x, $y);
     }
 }
-

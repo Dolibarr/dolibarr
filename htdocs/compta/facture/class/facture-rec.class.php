@@ -39,8 +39,16 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
  */
 class FactureRec extends CommonInvoice
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facturerec';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='facture_rec';
+	
 	public $table_element_line='facturedet_rec';
 	public $fk_element='fk_facture';
 	public $picto='bill';
@@ -443,7 +451,7 @@ class FactureRec extends CommonInvoice
 
 		// Retreive all extrafield for line
 		// fetch optionals attributes and labels
-		require_once(DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php');
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		$extrafieldsline=new ExtraFields($this->db);
 		$extrafieldsline=$extrafieldsline->fetch_name_optionals_label('facturedet_rec',true);
 
@@ -984,6 +992,7 @@ class FactureRec extends CommonInvoice
 		$error=0;
 
 		$langs->load("bills");
+		$langs->load('main');
 
 		$nb_create=0;
 
@@ -1060,6 +1069,8 @@ class FactureRec extends CommonInvoice
 				    }
 	                if (! $error && $facturerec->generate_pdf)
 	                {
+	                    // We refresh the object in order to have all necessary data (like date_lim_reglement)
+	                    $facture->fetch($facture->id);
 	                    $result = $facture->generateDocument($facturerec->modelpdf, $langs);
 	                    if ($result <= 0)
 	                    {
@@ -1636,7 +1647,14 @@ class FactureRec extends CommonInvoice
  */
 class FactureLigneRec extends CommonInvoiceLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='facturedetrec';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='facturedet_rec';
 
 	var $date_start_fill;

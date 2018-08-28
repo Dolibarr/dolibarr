@@ -42,7 +42,7 @@ class modService extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$this->db = $db;
 		$this->numero = 53;
@@ -62,9 +62,12 @@ class modService extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array("/product/temp");
 
-		// Dependancies
-		$this->depends = array();
-		$this->requiredby = array();
+		// Dependencies
+		$this->hidden = false;			// A condition to hide module
+		$this->depends = array();		// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
 
 		// Config pages
 		$this->config_page_url = array("product.php@product");
@@ -121,7 +124,7 @@ class modService extends DolibarrModules
 								'url'=>'/product/admin/product_tools.php?mainmenu=home&leftmenu=admintools',
 								'langs'=>'products',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 								'position'=>300,
-								'enabled'=>'$conf->product->enabled && $leftmenu=="admintools"',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+								'enabled'=>'$conf->product->enabled && preg_match(\'/^(admintools|all)/\',$leftmenu)',   // Define condition to show or hide menu entry. Use '$conf->mymodule->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 								'perms'=>'1',			                // Use 'perms'=>'$user->rights->mymodule->level1->level2' if you want your menu with a permission rules
 								'target'=>'',
 								'user'=>0);				                // 0=Menu for internal users, 1=external users, 2=both

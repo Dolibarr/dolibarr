@@ -114,7 +114,6 @@ if (empty($reshook))
 	print '<div class="center"><div class="logo_setup"></div></div>';
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

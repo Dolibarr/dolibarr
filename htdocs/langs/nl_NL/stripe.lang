@@ -1,7 +1,7 @@
 # Dolibarr language file - Source file is en_US - stripe
 StripeSetup=Stripe-module instellen
 StripeDesc=Module to offer an online payment page accepting payments with Credit/Debit card via <a href="http://www.stripe.com" target="_blank">Stripe</a>. This can be used to allow your customers to make free payments or for a payment on a particular Dolibarr object (invoice, order, ...)
-StripeOrCBDoPayment=Pay with credit card or Stripe
+StripeOrCBDoPayment=Betaal met creditcard of Stripe
 FollowingUrlAreAvailableToMakePayments=De volgende URL's zijn beschikbaar om een pagina te bieden aan afnemers voor het doen van een betaling van Dolibarr objecten
 PaymentForm=Betalingsformulier
 WelcomeOnPaymentPage=Welkom bij onze online betalingsdienst
@@ -23,8 +23,6 @@ ToOfferALinkForOnlinePaymentOnFreeAmount=URL om een %s online betalingsgebruiker
 ToOfferALinkForOnlinePaymentOnMemberSubscription=URL om een %s online betalingsgebruikersinterface aan te bieden voor een ledenabonnement
 YouCanAddTagOnUrl=U kunt ook een URL (GET) parameter <b>&tag=<i>waarde</i></b> toevoegen aan elk van deze URL's (enkel nodig voor een donatie) om deze van uw eigen betalingscommentaar te voorzien
 SetupStripeToHavePaymentCreatedAutomatically=Setup your Stripe with url <b>%s</b> to have payment created automatically when validated by Stripe.
-YourPaymentHasBeenRecorded=Deze pagina bevestigd dat uw betaling succesvol in geregistreerd. Dank u.
-YourPaymentHasNotBeenRecorded=Uw betaling is niet geregistreerd en de transactie is geannuleerd. Dank u.
 AccountParameter=Accountwaarden
 UsageParameter=Met gebruik van de waarden
 InformationToFindParameters=Hulp om uw %s accountinformatie te vinden

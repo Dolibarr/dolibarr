@@ -143,7 +143,10 @@ function user_prepare_head($object)
 	complete_head_from_modules($conf,$langs,$object,$head,$h,'user');
 
 	if ((! empty($conf->salaries->enabled) && ! empty($user->rights->salaries->read))
-	   || (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read)))
+		|| (! empty($conf->hrm->enabled) && ! empty($user->rights->hrm->employee->read))
+		|| (! empty($conf->expensereport->enabled) && ! empty($user->rights->expensereport->lire) && $user->id == $object->id)
+		|| (! empty($conf->holiday->enabled) && ! empty($user->rights->holiday->read) && $user->id == $object->id )
+		)
 	{
 		// Bank
 		$head[$h][0] = DOL_URL_ROOT.'/user/bank.php?id='.$object->id;

@@ -37,7 +37,11 @@ class box_members extends ModeleBoxes
 	var $boxlabel="BoxLastMembers";
 	var $depends = array("adherent");
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
 	var $param;
 	var $enabled = 1;
 

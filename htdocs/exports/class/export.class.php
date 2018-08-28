@@ -30,7 +30,10 @@
  */
 class Export
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $array_export_code=array();             // Tableau de "idmodule_numlot"
 	var $array_export_module=array();           // Tableau de "nom de modules"

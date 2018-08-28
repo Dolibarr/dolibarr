@@ -507,6 +507,7 @@ NoneF=None
 NoneOrSeveral=None or several
 Late=Καθυστερ.
 LateDesc=Delay to define if a record is late or not depends on your setup. Ask your admin to change delay from menu Home - Setup - Alerts.
+NoItemLate=No late item
 Photo=Φωτογραφία
 Photos=Φωτογραφίες
 AddPhoto=Προσθήκη Φωτογραφίας
@@ -945,3 +946,5 @@ KeyboardShortcut=Keyboard shortcut
 AssignedTo=Ανάθεση σε
 Deletedraft=Delete draft
 ConfirmMassDraftDeletion=Draft Bulk delete confirmation
+FileSharedViaALink=File shared via a link
+

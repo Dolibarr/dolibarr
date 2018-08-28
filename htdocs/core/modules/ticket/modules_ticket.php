@@ -18,7 +18,7 @@
  */
 
 /**
- *        \file       htdocs/core/modules/project/modules_project.php
+ *        \file       htdocs/core/modules/ticket/modules_ticket.php
  *      \ingroup    project
  *      \brief      File that contain parent class for projects models
  *                  and parent class for projects numbering models

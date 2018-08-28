@@ -92,8 +92,6 @@ print "<td>".$langs->trans("Value")."</td>";
 print "<td>".$langs->trans("Examples")."</td>";
 print "</tr>";
 
-$var=true;
-
 
 print '<tr class="oddeven">';
 print '<td class="fieldrequired">'.$langs->trans("Label")."</td>";

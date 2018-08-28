@@ -197,10 +197,12 @@ class CompanyBankAccount extends Account
 	 * 	Load record from database
 	 *
 	 *	@param	int		$id			Id of record
-	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first default RIB of company
+	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first entry found (matching $default and $type)
+	 *  @param	int		$default	If id of company filled, we say if we want first record among all (-1), default record (1) or non default record (0)
+	 *  @param	int		$type		If id of company filled, we say if we want record of this type only
 	 * 	@return	int					<0 if KO, >0 if OK
 	 */
-	function fetch($id, $socid=0)
+	function fetch($id, $socid=0, $default=1, $type='ban')
 	{
 		if (empty($id) && empty($socid)) return -1;
 
@@ -208,64 +210,12 @@ class CompanyBankAccount extends Account
 		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
 		if ($id)    $sql.= " WHERE rowid = ".$id;
-		if ($socid) $sql.= " WHERE fk_soc  = ".$socid." AND default_rib = 1 AND type ='ban'";
-
-		$resql = $this->db->query($sql);
-		if ($resql)
+		if ($socid)
 		{
-			if ($this->db->num_rows($resql))
-			{
-				$obj = $this->db->fetch_object($resql);
-
-				$this->ref             = $obj->fk_soc.'-'.$obj->label;      // Generate an artificial ref
-
-				$this->id			   = $obj->rowid;
-				$this->type			   = $obj->type;
-				$this->socid           = $obj->fk_soc;
-				$this->bank            = $obj->bank;
-				$this->code_banque     = $obj->code_banque;
-				$this->code_guichet    = $obj->code_guichet;
-				$this->number          = $obj->number;
-				$this->cle_rib         = $obj->cle_rib;
-				$this->bic             = $obj->bic;
-				$this->iban		       = $obj->iban;
-				$this->domiciliation   = $obj->domiciliation;
-				$this->proprio         = $obj->proprio;
-				$this->owner_address   = $obj->owner_address;
-				$this->label           = $obj->label;
-				$this->default_rib     = $obj->default_rib;
-				$this->datec           = $this->db->jdate($obj->datec);
-				$this->datem           = $this->db->jdate($obj->datem);
-				$this->rum             = $obj->rum;
-				$this->frstrecur       = $obj->frstrecur;
-			}
-			$this->db->free($resql);
-
-			return 1;
+			$sql.= " WHERE fk_soc  = ".$socid;
+			if ($default > -1) $sql.=" AND default_rib = ".$this->db->escape($default);
+			if ($type) $sql.= " AND type ='".$this->db->escape($type)."'";
 		}
-		else
-		{
-			dol_print_error($this->db);
-			return -1;
-		}
-	}
-
-	/**
-	 * 	Load record from database for the API
-	 *
-	 *	@param	int		$id			Id of record
-	 * 	@param	int		$socid		Id of company. If this is filled, function will return the first default RIB of company
-	 * 	@return	int					<0 if KO, >0 if OK
-	 */
-	function fetchFromApi($id, $socid=0)
-	{
-		if (empty($id) && empty($socid)) return -1;
-
-		$sql = "SELECT rowid, fk_soc, bank, number, code_banque, code_guichet, cle_rib, bic, iban_prefix as iban, domiciliation, proprio,";
-		$sql.= " owner_address, default_rib, label, datec, tms as datem, rum, frstrecur";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_rib";
-		if ($id)    $sql.= " WHERE rowid = ".$id;
-		if ($socid) $sql.= "  AND fk_soc  = ".$socid;
 
 		$resql = $this->db->query($sql);
 		if ($resql)

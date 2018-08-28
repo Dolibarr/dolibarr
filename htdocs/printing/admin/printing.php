@@ -127,7 +127,6 @@ if ($mode == 'setup' && $user->admin)
     print $langs->trans("PrintingDriverDesc".$driver)."<br><br>\n";
 
     print '<table class="noborder" width="100%">'."\n";
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Parameters").'</th>';
     print '<th>'.$langs->trans("Value").'</th>';
@@ -146,7 +145,6 @@ if ($mode == 'setup' && $user->admin)
         $submit_enabled=0;
         foreach ($printer->conf as $key)
         {
-
             switch ($key['type']) {
                 case "text":
                 case "password":
@@ -248,7 +246,6 @@ if ($mode == 'config' && $user->admin)
 
     print '<table class="noborder" width="100%">'."\n";
 
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("Description").'</th>';
     print '<th class="center">'.$langs->trans("Active").'</th>';
@@ -333,7 +330,6 @@ if ($mode == 'userconf' && $user->admin)
     print $langs->trans('PrintUserConfDesc'.$driver)."<br><br>\n";
 
     print '<table class="noborder" width="100%">';
-    $var=true;
     print '<tr class="liste_titre">';
     print '<th>'.$langs->trans("User").'</th>';
     print '<th>'.$langs->trans("PrintModule").'</th>';
@@ -365,6 +361,6 @@ if ($mode == 'userconf' && $user->admin)
 
 }
 
+// End of page
 llxFooter();
-
 $db->close();

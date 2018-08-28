@@ -470,5 +470,6 @@ if (function_exists("ldap_connect"))
 	}
 }
 
+// End of page
 llxFooter();
 $db->close();

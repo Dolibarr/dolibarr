@@ -310,7 +310,7 @@ class Facturation
      * @return	string			Ref
      */
     public function ref($aRef=null)
-     {
+    {
 
         if (is_null($aRef))
         {
@@ -652,7 +652,7 @@ class Facturation
         {
             return $this->prix_total_ttc;
         }
-        else if ( $aTotalTtc == 'RESET' )
+        elseif ( $aTotalTtc == 'RESET' )
         {
             $this->prix_total_ttc = null;
         }
@@ -663,4 +663,3 @@ class Facturation
     }
 
 }
-

@@ -36,6 +36,7 @@ class Ctyperesource
 	 * @var string Id to identify managed objects
 	 */
 	public $element = 'ctyperesource';
+	
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
@@ -46,15 +47,9 @@ class Ctyperesource
 	 */
 	public $lines = array();
 
-	/**
-	 */
-
 	public $code;
 	public $label;
 	public $active;
-
-	/**
-	 */
 
 
 	/**

@@ -238,7 +238,6 @@ print '</div>';
 
 print "</form>\n";
 
-
+// End of page
 llxFooter();
-
 $db->close();

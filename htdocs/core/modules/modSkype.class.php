@@ -25,7 +25,7 @@
 include_once DOL_DOCUMENT_ROOT .'/core/modules/DolibarrModules.class.php';
 
 /**
- *	Class to describe a Cron module
+ *	Class to describe a Skype module
  */
 class modSkype extends DolibarrModules
 {
@@ -59,31 +59,26 @@ class modSkype extends DolibarrModules
         $this->dirs = array();
 
         // Config pages
-        //-------------
         $this->config_page_url = array();
 
-        // Dependancies
-        //-------------
-	    $this->hidden = ! empty($conf->global->MODULE_SKYPE_DISABLED);	// A condition to disable module
-	    $this->depends = array('modSociete');		// List of modules id that must be enabled if this module is enabled
-        $this->requiredby = array();	// List of modules id to disable if this one is disabled
-	    $this->conflictwith = array();	// List of modules id this module is in conflict with
+        // Dependencies
+        $this->hidden = ! empty($conf->global->MODULE_SKYPE_DISABLED);	// A condition to hide module
+		$this->depends = array('modSociete');	// List of module class names as string that must be enabled if this module is enabled
+		$this->requiredby = array();	// List of module ids to disable if this one is disabled
+		$this->conflictwith = array();	// List of module class names as string this module is in conflict with
+		$this->phpmin = array(5,4);		// Minimum version of PHP required by module
         $this->langfiles = array();
 
         // Constants
-        //-----------
 
 
         // New pages on tabs
-        // -----------------
         $this->tabs = array();
 
         // Boxes
-        //------
         $this->boxes = array();
 
         // Main menu entries
-        //------------------
         $this->menu = array();
     }
 }
