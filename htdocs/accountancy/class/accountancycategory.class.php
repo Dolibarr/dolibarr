@@ -57,16 +57,16 @@ class AccountancyCategory 	// extends CommonObject
 	public $table_element='c_accounting_category';	
 
 	/**
-     	 * @var int ID
-     	 */
-    	public $id;
+     * @var int ID
+     */
+    public $id;
     
 	public $code;
 	
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
+     * @var string proper name for given parameter
+     */
+    public $label;
     
 	public $range_account;
 	public $sens;
