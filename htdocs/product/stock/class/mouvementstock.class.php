@@ -52,9 +52,9 @@ class MouvementStock extends CommonObject
 	public $fk_user_author;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+     	 * @var string proper name for given parameter
+     	 */
+    	public $label;
     
 	public $fk_origin;
 	public $origintype;

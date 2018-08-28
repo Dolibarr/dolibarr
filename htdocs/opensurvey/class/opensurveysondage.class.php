@@ -54,9 +54,9 @@ class Opensurveysondage extends CommonObject
 	public $commentaires;
 	
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+     	 * @var string model description (short text)
+     	 */
+    	public $description;
 
 	public $mail_admin;
 	public $nom_admin;
