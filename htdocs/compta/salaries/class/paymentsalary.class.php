@@ -51,7 +51,12 @@ class PaymentSalary extends CommonObject
 	public $fk_project;
 	public $type_payment;
 	public $num_payment;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $datesp;
 	public $dateep;
 	public $fk_bank;

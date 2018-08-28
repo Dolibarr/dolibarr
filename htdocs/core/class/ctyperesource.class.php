@@ -48,7 +48,12 @@ class Ctyperesource
 	public $lines = array();
 
 	public $code;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $active;
 
 
@@ -480,7 +485,12 @@ class CtyperesourceLine
 	 */
 
 	public $code;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $active;
 
 	/**

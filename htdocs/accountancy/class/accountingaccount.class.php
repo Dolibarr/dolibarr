@@ -81,9 +81,9 @@ class AccountingAccount extends CommonObject
 	var $account_category;
 	
 	/**
-         * @var string proper name for given parameter
-         */
-        public $label;
+     * @var string proper name for given parameter
+     */
+    public $label;
     
 	var $fk_user_author;
 	var $fk_user_modif;

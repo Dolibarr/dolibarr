@@ -159,7 +159,12 @@ class Categorie extends CommonObject
 	public $table_element='categorie';
 
 	public $fk_parent;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $description;
 	/**
 	 * @var string     Color

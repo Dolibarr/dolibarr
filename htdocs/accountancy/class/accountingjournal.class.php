@@ -43,7 +43,12 @@ class AccountingJournal extends CommonObject
 	var $rowid;
 
 	public $code;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $nature;		// 1:various operations, 2:sale, 3:purchase, 4:bank, 5:expense-report, 8:inventory, 9: has-new
 	public $active;
 

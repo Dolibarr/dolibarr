@@ -40,7 +40,12 @@ class ModeleImports
     public $error='';
 
     public $id;           // Id of driver
-	public $label;        // Label of driver
+    
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $extension;    // Extension of files imported by driver
 	public $version;      // Version of driver
 
