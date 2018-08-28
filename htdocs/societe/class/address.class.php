@@ -506,9 +506,9 @@ class AddressLine
 	public $date_modification;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+     	 * @var string proper name for given parameter
+     	 */
+    	public $label;
     
 	public $name;
 	public $address;
