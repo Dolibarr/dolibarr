@@ -100,17 +100,17 @@ class Asset extends CommonObject
 	public $entity;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+     	 * @var string proper name for given parameter
+     	 */
+    	public $label;
     
 	public $amount;
 	public $fk_soc;
 	
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+     	 * @var string model description (short text)
+     	 */
+    	public $description;
     
 	public $note_public;
 	public $note_private;
