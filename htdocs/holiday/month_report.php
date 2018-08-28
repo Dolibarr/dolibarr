@@ -22,7 +22,7 @@
  *      \brief      Monthly report of leave requests.
  */
 
-require('../main.inc.php');
+require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/holiday/class/holiday.class.php';
 require_once DOL_DOCUMENT_ROOT.'/user/class/user.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/files.lib.php';
@@ -194,6 +194,6 @@ else
 print '</table>';
 print '</div>';
 
-// Fin de page
-$db->close();
+// End of page
 llxFooter();
+$db->close();

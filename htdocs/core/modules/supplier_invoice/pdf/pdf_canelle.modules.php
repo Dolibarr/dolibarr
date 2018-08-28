@@ -40,75 +40,75 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
      * @var DoliDb Database handler
      */
     public $db;
-    
+
 	/**
      * @var string model name
      */
     public $name;
-    
+
 	/**
      * @var string model description (short text)
      */
     public $description;
-    
+
 /**
      * @var string document type
      */
     public $type;
-    
+
     /**
      * @var array() Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
 	public $phpmin = array(5, 4);
-	
+
 	/**
      * Dolibarr version of the loaded document
      * @public string
      */
 	public $version = 'dolibarr';
-	
+
 	/**
      * @var int page_largeur
      */
     public $page_largeur;
-	
+
 	/**
      * @var int page_hauteur
      */
     public $page_hauteur;
-	
+
 	/**
      * @var array format
      */
     public $format;
-	
+
 	/**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
 	public $marge_basse;
-    
+
 	/**
 	 * Issuer
 	 * @var Objet societe qui emet
 	 */
-	public $emetteur;	 
-    
+	public $emetteur;
+
 
 
 	/**
@@ -1249,4 +1249,3 @@ class pdf_canelle extends ModelePDFSuppliersInvoices
 	}
 
 }
-

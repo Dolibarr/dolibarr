@@ -42,8 +42,16 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Commande extends CommonOrder
 {
-    public $element='commande';
-    public $table_element='commande';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='commande';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='commande';
+	
     public $table_element_line = 'commandedet';
     public $class_element_line = 'OrderLine';
     public $fk_element = 'fk_commande';
@@ -3067,15 +3075,21 @@ class Commande extends CommonOrder
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (! $notrigger)
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-	            // Call trigger
-	            $result=$this->call_trigger('ORDER_MODIFY', $user);
-	            if ($result < 0) $error++;
-	            // End call triggers
+				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('ORDER_MODIFY', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -3237,7 +3251,7 @@ class Commande extends CommonOrder
 
         $clause = " WHERE";
 
-        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut";
+        $sql = "SELECT c.rowid, c.date_creation as datec, c.date_commande, c.date_livraison as delivery_date, c.fk_statut, c.total_ht";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande as c";
         if (!$user->rights->societe->client->voir && !$user->societe_id)
         {
@@ -3264,6 +3278,7 @@ class Commande extends CommonOrder
             while ($obj=$this->db->fetch_object($resql))
             {
                 $response->nbtodo++;
+		$response->total+= $obj->total_ht;
 
                 $generic_commande->statut = $obj->fk_statut;
                 $generic_commande->date_commande = $this->db->jdate($obj->date_commande);
@@ -3424,7 +3439,7 @@ class Commande extends CommonOrder
 
         if (!$user->rights->commande->lire)
             $option = 'nolink';
-        
+
         if ($option !== 'nolink')
         {
             // Add param to save lastsearch_values or not
@@ -3468,11 +3483,11 @@ class Commande extends CommonOrder
         $linkstart.=$linkclose.'>';
         $linkend='</a>';
 
-        if ($option == 'nolink') {
+        if ($option === 'nolink') {
             $linkstart = '';
             $linkend = '';
         }
-        
+
         $result .= $linkstart;
         if ($withpicto) $result.=img_object(($notooltip?'':$label), $this->picto, ($notooltip?(($withpicto != 2) ? 'class="paddingright"' : ''):'class="'.(($withpicto != 2) ? 'paddingright ' : '').'classfortooltip"'), 0, 0, $notooltip?0:1);
         if ($withpicto != 2) $result.= $this->ref;
@@ -3772,7 +3787,11 @@ class Commande extends CommonOrder
  */
 class OrderLine extends CommonOrderLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='commandedet';
+	
 	public $table_element='commandedet';
 
     var $oldline;
@@ -3794,7 +3813,12 @@ class OrderLine extends CommonOrderLine
     // From llx_commandedet
     var $fk_parent_line;
     var $fk_facture;
-    var $label;
+    
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
     var $fk_remise_except;
     var $rang = 0;
 	var $fk_fournprice;
@@ -3854,6 +3878,7 @@ class OrderLine extends CommonOrderLine
         {
             $objp = $this->db->fetch_object($result);
             $this->rowid            = $objp->rowid;
+            $this->id				= $objp->rowid;
             $this->fk_commande      = $objp->fk_commande;
             $this->fk_parent_line   = $objp->fk_parent_line;
             $this->label            = $objp->custom_label;

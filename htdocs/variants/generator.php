@@ -1,6 +1,6 @@
 <?php
-
-/* Copyright (C) 2016	Marcos García	<marcosgdf@gmail.com>
+/* Copyright (C) 2016   Marcos García   <marcosgdf@gmail.com>
+ * Copyright (C) 2018   Frédéric France <frederic.france@netlogic.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ if ($_POST) {
 
 			$res = 1;
 
-			foreach (cartesianArray($adapted_values) as $currcomb) 
+			foreach (cartesianArray($adapted_values) as $currcomb)
 			{
 				$res = $combination->createProductCombination($product, $currcomb, $sanitized_values, $price_var_percent);
 				if ($res < 0) {
@@ -115,18 +115,18 @@ if ($_POST) {
 
 			if ($res > 0) {
 				$db->commit();
-				setEventMessage($langs->trans('RecordSaved'));
+				setEventMessages($langs->trans('RecordSaved'), null, 'mesgs');
 				header('Location: '.dol_buildpath('/variants/combinations.php?id='.$id, 2));
 				exit;
 			}
 		} else {
-			setEventMessage($langs->trans('ErrorDeletingGeneratedProducts'), 'errors');
+			setEventMessages($langs->trans('ErrorDeletingGeneratedProducts'), null, 'errors');
 		}
 
 		$db->rollback();
 
 	} else {
-		setEventMessage($langs->trans('ErrorFieldsRequired'), 'errors');
+		setEventMessages($langs->trans('ErrorFieldsRequired'), null, 'errors');
 	}
 }
 
@@ -146,17 +146,17 @@ if (! empty($id) || ! empty($ref)) {
 	{
 		$showbarcode=empty($conf->barcode->enabled)?0:1;
 		if (! empty($conf->global->MAIN_USE_ADVANCED_PERMS) && empty($user->rights->barcode->lire_advance)) $showbarcode=0;
-		 
+
 		$head=product_prepare_head($object);
 		$titre=$langs->trans("CardProduct".$object->type);
 		$picto=($object->type== Product::TYPE_SERVICE?'service':'product');
 		dol_fiche_head($head, 'combinations', $titre, 0, $picto);
-		 
+
 		$linkback = '<a href="'.DOL_URL_ROOT.'/product/list.php?type='.$object->type.'">'.$langs->trans("BackToList").'</a>';
 		$object->next_prev_filter=" fk_product_type = ".$object->type;
-		 
+
 		dol_banner_tab($object, 'ref', $linkback, ($user->societe_id?0:1), 'ref', '', '', '', 0, '', '', 1);
-		
+
 		dol_fiche_end();
 	}
 
@@ -374,5 +374,8 @@ if (! empty($id) || ! empty($ref)) {
 
 	<?php
 
-	llxFooter();
+  // End of page
+  llxFooter();
 }
+
+$db->close();

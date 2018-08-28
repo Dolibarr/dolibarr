@@ -24,7 +24,7 @@
  *	\brief      card of withdraw line
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/bonprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/ligneprelevement.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/prelevement/class/rejetprelevement.class.php';
@@ -334,6 +334,6 @@ if ($id)
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

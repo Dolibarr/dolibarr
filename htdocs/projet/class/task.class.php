@@ -31,14 +31,27 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class Task extends CommonObject
 {
-	public $element='project_task';		//!< Id that identify managed objects
-	public $table_element='projet_task';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='project_task';	
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='projet_task';	
+	
 	public $fk_element='fk_task';
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
 	var $fk_task_parent;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $description;
 	var $duration_effective;		// total of time spent on this task
 	var $planned_workload;
@@ -194,7 +207,7 @@ class Task extends CommonObject
 	 */
 	function fetch($id, $ref='', $loadparentdata=0)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -267,7 +280,6 @@ class Task extends CommonObject
 				}
 
 				// Retreive all extrafield
-				// fetch optionals attributes and labels
 				$this->fetch_optionals();
 			}
 

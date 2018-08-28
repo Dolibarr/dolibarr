@@ -49,25 +49,25 @@ print $langs->trans("DirectPrintingJobsDesc").'<br><br>';
 // List Jobs from printing modules
 $object = new PrintingDriver($db);
 $result = $object->listDrivers($db, 10);
-foreach ($result as $driver) 
+foreach ($result as $driver)
 {
     require_once DOL_DOCUMENT_ROOT.'/core/modules/printing/'.$driver.'.modules.php';
     $classname = 'printing_'.$driver;
     $langs->load($driver);
     $printer = new $classname($db);
-    if ($conf->global->{$printer->active}) 
+    if ($conf->global->{$printer->active})
     {
         //$printer->list_jobs('commande');
         $result = $printer->list_jobs();
         print $printer->resprint;
-        
-        if ($result > 0) 
+
+        if ($result > 0)
         {
             setEventMessages($printer->error, $printer->errors, 'errors');
         }
     }
 }
 
+// End of page
 llxFooter();
-
 $db->close();

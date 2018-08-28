@@ -23,7 +23,7 @@
  *	\brief      List all tasks of a project
  */
 
-require ("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
 require_once DOL_DOCUMENT_ROOT.'/projet/class/task.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/project.lib.php';
@@ -64,6 +64,7 @@ $extrafields_project = new ExtraFields($db);
 $extrafields_task = new ExtraFields($db);
 
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php';  // Must be include, not include_once
+if(! empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
 
 if ($id > 0 || ! empty($ref))
 {
@@ -724,6 +725,6 @@ else if ($id > 0 || ! empty($ref))
 	}
 }
 
+// End of page
 llxFooter();
-
 $db->close();

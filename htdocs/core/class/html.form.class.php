@@ -47,8 +47,16 @@
  */
 class Form
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
 	var $num;
 
 	// Cache arrays
@@ -1083,12 +1091,26 @@ class Form
 		else if (!is_array($selected)) $selected = array($selected);
 
 		// Clean $filter that may contains sql conditions so sql code
-		if (function_exists('test_sql_and_script_inject')) $filter = test_sql_and_script_inject($filter, 3);
+		if (function_exists('test_sql_and_script_inject')) {
+			if (test_sql_and_script_inject($filter, 3)>0) {
+				$filter ='';
+			}
+		}
 
 		// On recherche les societes
 		$sql = "SELECT s.rowid, s.nom as name, s.name_alias, s.client, s.fournisseur, s.code_client, s.code_fournisseur";
-		$sql.= " FROM ".MAIN_DB_PREFIX ."societe as s";
+
+		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+			$sql .= " ,s.address, s.zip, s.town";
+		 	$sql .= " , dictp.code as country_code";
+		}
+
+		$sql.= " FROM (".MAIN_DB_PREFIX ."societe as s";
 		if (!$user->rights->societe->client->voir && !$user->socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+		$sql.= " )";
+		if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+			$sql.= " LEFT OUTER JOIN ".MAIN_DB_PREFIX."c_country as dictp ON dictp.rowid=s.fk_pays";
+		}
 		$sql.= " WHERE s.entity IN (".getEntity('societe').")";
 		if (! empty($user->socid)) $sql.= " AND s.rowid = ".$user->socid;
 		if ($filter) $sql.= " AND (".$filter.")";
@@ -1175,6 +1197,13 @@ class Form
 						if ($obj->client == 2 || $obj->client == 3) $label.=($obj->client==3?', ':'').$langs->trans("Prospect");
 						if ($obj->fournisseur) $label.=($obj->client?', ':'').$langs->trans("Supplier");
 						if ($obj->client || $obj->fournisseur) $label.=')';
+					}
+
+					if ($conf->global->COMPANY_SHOW_ADDRESS_SELECTLIST) {
+						$label.='-'.$obj->address.'-'. $obj->zip.' '. $obj->town;
+						if (!empty($obj->country_code)) {
+							$label.= ' '. $langs->trans('Country'.$obj->country_code);
+						}
 					}
 
 					if (empty($outputmode))
@@ -1326,7 +1355,7 @@ class Form
 	 *	@param	string		$moreclass		Add more class to class style
 	 *	@param	bool		$options_only	Return options only (for ajax treatment)
 	 *	@param	integer		$showsoc	    Add company into label
-	 * 	@param	int			$forcecombo		Force to use combo box
+	 * 	@param	int			$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *  @param	array		$events			Event options. Example: array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')))
 	 *  @param	string		$moreparam		Add more parameters onto the select tag. For example 'style="width: 95%"' to avoid select2 component to go over parent container
 	 *  @param	string		$htmlid			Html id to use instead of htmlname
@@ -1533,7 +1562,7 @@ class Form
 			else $sql.= " WHERE u.entity IS NOT NULL";
 		}
 		else
-	   {
+		{
 			if (! empty($conf->global->MULTICOMPANY_TRANSVERSE_MODE))
 			{
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."usergroup_user as ug";
@@ -1551,9 +1580,12 @@ class Form
 		if (! empty($conf->global->USER_HIDE_INACTIVE_IN_COMBOBOX) || $noactive) $sql.= " AND u.statut <> 0";
 		if (! empty($morefilter)) $sql.=" ".$morefilter;
 
-		if(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)){
+		if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))	// MAIN_FIRSTNAME_NAME_POSITION is 0 means firstname+lastname
+		{
 			$sql.= " ORDER BY u.firstname ASC";
-		}else{
+		}
+		else
+		{
 			$sql.= " ORDER BY u.lastname ASC";
 		}
 
@@ -1600,9 +1632,11 @@ class Form
 						$out.= '>';
 					}
 
-					$fullNameMode = 0; //Lastname + firstname
-					if(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)){
-						$fullNameMode = 1; //firstname + lastname
+					// $fullNameMode is 0=Lastname+Firstname (MAIN_FIRSTNAME_NAME_POSITION=1), 1=Firstname+Lastname (MAIN_FIRSTNAME_NAME_POSITION=0)
+					$fullNameMode = 0;
+					if (empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION))
+					{
+						$fullNameMode = 1; //Firstname+lastname
 					}
 					$out.= $userstatic->getFullName($langs, $fullNameMode, -1, $maxlength);
 
@@ -3327,21 +3361,21 @@ class Form
 		if ($resql && $this->db->num_rows($resql) > 0) {
 			// Last seen cycle
 			$ref = 0;
-			while ($res = $this->db->fetch_array($resql, MYSQL_NUM)) {
+			while ($obj = $this->db->fetch_object($resql)){
 				//Same company ?
-				if ($socid == $res[5]) {
+			    if ($socid == $obj->fk_soc) {
 					//Same cycle ?
-					if ($res[2] != $ref) {
+			        if ($obj->situation_cycle_ref != $ref) {
 						// Just seen this cycle
-						$ref = $res[2];
+			            $ref = $obj->situation_cycle_ref;
 						//not final ?
-						if ($res[4] != 1) {
+			            if ($obj->situation_final != 1) {
 							//Not prov?
-							if (substr($res[1], 1, 4) != 'PROV') {
-								if ($selected == $res[0]) {
-									$opt .= '<option value="' . $res[0] . '" selected>' . $res[1] . '</option>';
+			                if (substr($obj->facnumber, 1, 4) != 'PROV') {
+			                    if ($selected == $obj->situation_final) {
+			                        $opt .= '<option value="' . $obj->rowid . '" selected>' . $obj->facnumber . '</option>';
 								} else {
-									$opt .= '<option value="' . $res[0] . '">' . $res[1] . '</option>';
+								    $opt .= '<option value="' . $obj->rowid . '">' . $obj->facnumber . '</option>';
 								}
 							}
 						}
@@ -3663,7 +3697,7 @@ class Form
 
 			// Now add questions
 			$more.='<table class="paddingtopbottomonly" width="100%">'."\n";
-			$more.='<tr><td colspan="3">'.(! empty($formquestion['text'])?$formquestion['text']:'').'</td></tr>'."\n";
+			if (! empty($formquestion['text'])) $more.='<tr><td colspan="2">'.$formquestion['text'].'</td></tr>'."\n";
 			foreach ($formquestion as $key => $input)
 			{
 				if (is_array($input) && ! empty($input))
@@ -3674,29 +3708,28 @@ class Form
 
 					if ($input['type'] == 'text')
 					{
-						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td align="left"><input type="text" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					else if ($input['type'] == 'password')
 					{
-						$more.='<tr><td>'.$input['label'].'</td><td colspan="2" align="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td><td align="left"><input type="password" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$size.' value="'.$input['value'].'"'.$moreattr.' /></td></tr>'."\n";
 					}
 					else if ($input['type'] == 'select')
 					{
-						$more.='<tr><td>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td valign="top" colspan="2" align="left">';
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
+						if (! empty($input['label'])) $more.=$input['label'].'</td><td class="tdtop" align="left">';
 						$more.=$this->selectarray($input['name'],$input['values'],$input['default'],1,0,0,$moreattr,0,0,0,'',$morecss);
 						$more.='</td></tr>'."\n";
 					}
 					else if ($input['type'] == 'checkbox')
 					{
 						$more.='<tr>';
-						$more.='<td>'.$input['label'].' </td><td align="left">';
+						$more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].' </td><td align="left">';
 						$more.='<input type="checkbox" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'"'.$moreattr;
 						if (! is_bool($input['value']) && $input['value'] != 'false' && $input['value'] != '0') $more.=' checked';
 						if (is_bool($input['value']) && $input['value']) $more.=' checked';
 						if (isset($input['disabled'])) $more.=' disabled';
 						$more.=' /></td>';
-						$more.='<td align="left">&nbsp;</td>';
 						$more.='</tr>'."\n";
 					}
 					else if ($input['type'] == 'radio')
@@ -3705,12 +3738,11 @@ class Form
 						foreach($input['values'] as $selkey => $selval)
 						{
 							$more.='<tr>';
-							if ($i==0) $more.='<td class="tdtop">'.$input['label'].'</td>';
-							else $more.='<td>&nbsp;</td>';
-							$more.='<td width="20"><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
+							if ($i==0) $more.='<td'.(empty($input['tdclass'])?' class="tdtop"':(' class="tdtop '.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
+							else $more.='<td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>&nbsp;</td>';
+							$more.='<td><input type="radio" class="flat'.$morecss.'" id="'.$input['name'].'" name="'.$input['name'].'" value="'.$selkey.'"'.$moreattr;
 							if ($input['disabled']) $more.=' disabled';
-							$more.=' /></td>';
-							$more.='<td align="left">';
+							$more.=' /> ';
 							$more.=$selval;
 							$more.='</td></tr>'."\n";
 							$i++;
@@ -3718,8 +3750,8 @@ class Form
 					}
 					else if ($input['type'] == 'date')
 					{
-						$more.='<tr><td>'.$input['label'].'</td>';
-						$more.='<td colspan="2" align="left">';
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>'.$input['label'].'</td>';
+						$more.='<td align="left">';
 						$more.=$this->select_date($input['value'],$input['name'],0,0,0,'',1,0,1);
 						$more.='</td></tr>'."\n";
 						$formquestion[] = array('name'=>$input['name'].'day');
@@ -3730,15 +3762,15 @@ class Form
 					}
 					else if ($input['type'] == 'other')
 					{
-						$more.='<tr><td>';
-						if (! empty($input['label'])) $more.=$input['label'].'</td><td colspan="2" align="left">';
+						$more.='<tr><td'.(empty($input['tdclass'])?'':(' class="'.$input['tdclass'].'"')).'>';
+						if (! empty($input['label'])) $more.=$input['label'].'</td><td align="left">';
 						$more.=$input['value'];
 						$more.='</td></tr>'."\n";
 					}
 
 					else if ($input['type'] == 'onecolumn')
 					{
-						$more.='<tr><td colspan="3" align="left">';
+						$more.='<tr><td colspan="2" align="left">';
 						$more.=$input['value'];
 						$more.='</td></tr>'."\n";
 					}
@@ -3792,14 +3824,14 @@ class Form
             	$( "#'.$dialogconfirm.'" ).dialog(
             	{
                     autoOpen: '.($autoOpen ? "true" : "false").',';
-					if ($newselectedchoice == 'no')
-					{
-						$formconfirm.='
+			if ($newselectedchoice == 'no')
+			{
+				$formconfirm.='
 						open: function() {
             				$(this).parent().find("button.ui-button:eq(2)").focus();
 						},';
-					}
-					$formconfirm.='
+			}
+			$formconfirm.='
                     resizable: false,
                     height: "'.$height.'",
                     width: "'.$width.'",
@@ -4955,6 +4987,7 @@ class Form
 					}
 
 					// Zone de saisie manuelle de la date
+					$retstring.='<div class="nowrap inline-block">';
 					$retstring.='<input id="'.$prefix.'" name="'.$prefix.'" type="text" class="maxwidth75" maxlength="11" value="'.$formated_date.'"';
 					$retstring.=($disabled?' disabled':'');
 					$retstring.=' onChange="dpChangeDay(\''.$prefix.'\',\''.$langs->trans("FormatDateShortJavaInput").'\'); "';  // FormatDateShortInput for dol_print_date / FormatDateShortJavaInput that is same for javascript
@@ -4978,6 +5011,7 @@ class Form
 						$retstring.='<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons">'.img_object($langs->trans("Disabled"),'calendarday','class="datecallink"').'</button>';
 					}
 
+					$retstring.='</div>';
 					$retstring.='<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
 					$retstring.='<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
 					$retstring.='<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
@@ -6344,7 +6378,7 @@ class Form
 
 		$disabled = ($disabled ? ' disabled' : '');
 
-		$resultyesno = '<select class="flat" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
+		$resultyesno = '<select class="flat width75" id="'.$htmlname.'" name="'.$htmlname.'"'.$disabled.'>'."\n";
 		if ($useempty) $resultyesno .= '<option value="-1"'.(($value < 0)?' selected':'').'>&nbsp;</option>'."\n";
 		if (("$value" == 'yes') || ($value == 1))
 		{

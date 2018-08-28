@@ -707,7 +707,6 @@ if ($conf->global->MAIN_FEATURES_LEVEL >= 2)
 	}
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

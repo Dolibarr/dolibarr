@@ -251,8 +251,6 @@ foreach ($tabfac as $key => $val)
 
 print "</table>";
 
-
 // End of page
 llxFooter();
-
 $db->close();

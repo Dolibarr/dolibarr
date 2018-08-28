@@ -45,16 +45,26 @@ require_once DOL_DOCUMENT_ROOT .'/multicurrency/class/multicurrency.class.php';
  */
 class Propal extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='propal';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='propal';
+	
 	public $table_element_line='propaldet';
 	public $fk_element='fk_propal';
 	public $picto='propal';
+	
 	/**
 	 * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	 * @var int
 	 */
 	public $ismultientitymanaged = 1;
+	
 	/**
 	 * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user
 	 * @var integer
@@ -1335,13 +1345,12 @@ class Propal extends CommonObject
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_availability as ca ON p.fk_availability = ca.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_input_reason as dr ON p.fk_input_reason = dr.rowid';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_incoterms as i ON p.fk_incoterms = i.rowid';
-		$sql.= " WHERE p.fk_statut = c.id";
 
 		if ($ref) {
-			$sql.= " AND p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
-			$sql.= " AND p.ref='".$ref."'";
+			$sql.= " WHERE p.entity IN (".getEntity('propal').")"; // Dont't use entity if you use rowid
+			$sql.= " AND p.ref='".$this->db->escape($ref)."'";
 		}
-		else $sql.= " AND p.rowid=".$rowid;
+		else $sql.= " WHERE p.rowid=".$rowid;
 
 		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
 		$resql=$this->db->query($sql);
@@ -1464,6 +1473,8 @@ class Propal extends CommonObject
 	 */
 	function update(User $user, $notrigger=0)
 	{
+		global $conf;
+
 		$error=0;
 
 		// Clean parameters
@@ -1512,15 +1523,21 @@ class Propal extends CommonObject
 			$error++; $this->errors[]="Error ".$this->db->lasterror();
 		}
 
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (! $notrigger)
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-				// Call trigger
-				$result=$this->call_trigger('PROPAL_MODIFY', $user);
-				if ($result < 0) $error++;
-				// End call triggers
+				$error++;
 			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Call trigger
+			$result=$this->call_trigger('PROPAL_MODIFY', $user);
+			if ($result < 0) $error++;
+			// End call triggers
 		}
 
 		// Commit or rollback
@@ -3137,7 +3154,7 @@ class Propal extends CommonObject
 
 		$clause = " WHERE";
 
-		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin";
+		$sql = "SELECT p.rowid, p.ref, p.datec as datec, p.fin_validite as datefin, p.total_ht";
 		$sql.= " FROM ".MAIN_DB_PREFIX."propal as p";
 		if (!$user->rights->societe->client->voir && !$user->societe_id)
 		{
@@ -3181,6 +3198,8 @@ class Propal extends CommonObject
 			while ($obj=$this->db->fetch_object($resql))
 			{
 				$response->nbtodo++;
+				$response->total+=$obj->total_ht;
+				
 				if ($mode == 'opened')
 				{
 					$datelimit = $this->db->jdate($obj->datefin);
@@ -3640,7 +3659,14 @@ class Propal extends CommonObject
  */
 class PropaleLigne extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='propaldet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='propaldet';
 
 	var $oldline;

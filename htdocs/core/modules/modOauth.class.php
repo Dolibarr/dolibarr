@@ -40,7 +40,7 @@ class modOauth extends DolibarrModules
      *
      *  @param      DoliDB      $db      Database handler
      */
-    function  __construct($db)
+    function __construct($db)
     {
         $this->db = $db ;
         $this->numero = 66000;
@@ -52,7 +52,7 @@ class modOauth extends DolibarrModules
         $this->name = preg_replace('/^mod/i','',get_class($this));
         // Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
         $this->description = "Enable OAuth authentication";
-		// Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
+        // Possible values for version are: 'development', 'experimental', 'dolibarr' or 'dolibarr_deprecated' or version
         $this->version = 'dolibarr';
         $this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
         // Name of image file used for this module.

@@ -1640,7 +1640,7 @@ elseif (! empty($module))
 						}
 						else
 						{
-							$result = @include_once($dirread.'/'.$pathtoclass);
+							$result = @include_once $dirread.'/'.$pathtoclass;
 						}
 						if (class_exists($tabobj))
 						{
@@ -2487,8 +2487,6 @@ elseif (! empty($module))
 
 dol_fiche_end(); // End modules
 
-
-
+// End of page
 llxFooter();
-
 $db->close();

@@ -41,8 +41,16 @@ require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
  */
 class Adherent extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='member';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='adherent';
+	
 	public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
 	var $mesgs;
@@ -464,7 +472,7 @@ class Adherent extends CommonObject
 			$action='update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
@@ -531,6 +539,13 @@ class Adherent extends CommonObject
 						$luser->pass=$this->pass;
 						$luser->societe_id=$this->societe;
 
+						$luser->birth=$this->birth;
+                                                $luser->address=$this->address;
+                                                $luser->zip=$this->zip;
+                                                $luser->town=$this->town; 
+                                                $luser->country_id=$this->country_id; 
+                                                $luser->state_id=$this->state_id;
+						
 						$luser->email=$this->email;
 						$luser->skype=$this->skype;
 						$luser->office_phone=$this->phone;
@@ -2454,6 +2469,7 @@ class Adherent extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{

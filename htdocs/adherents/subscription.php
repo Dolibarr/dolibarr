@@ -330,7 +330,7 @@ if ($user->rights->adherent->cotisation->creer && $action == 'subscription' && !
 
         if (! $error)
         {
-//            $db->commit();
+            $db->commit();
         }
         else
         {
@@ -1108,7 +1108,6 @@ else
     print $langs->trans("ErrorRecordNotFound");
 }
 
-
+// End of page
 llxFooter();
-
 $db->close();

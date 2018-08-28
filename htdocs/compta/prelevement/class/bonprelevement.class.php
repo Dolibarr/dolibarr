@@ -39,8 +39,16 @@ require_once DOL_DOCUMENT_ROOT.'/compta/paiement/class/paiement.class.php';
  */
 class BonPrelevement extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='widthdraw';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='prelevement_bons';
+	
 	public $picto = 'payment';
 
 	var $date_echeance;
@@ -762,16 +770,16 @@ class BonPrelevement extends CommonObject
 
 		dol_syslog(__METHOD__."::Bank=".$banque." Office=".$agence." mode=".$mode." format=".$format, LOG_DEBUG);
 
-		require_once (DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php");
-		require_once (DOL_DOCUMENT_ROOT."/societe/class/societe.class.php");
+		require_once DOL_DOCUMENT_ROOT."/compta/facture/class/facture.class.php";
+		require_once DOL_DOCUMENT_ROOT."/societe/class/societe.class.php";
 
 		if (empty($format)) return 'ErrorBadParametersForDirectDebitFileCreate';
 
 		$error = 0;
 
 		$datetimeprev = time();
-                //Choice the date of the execution direct debit
-                if(!empty($executiondate)) $datetimeprev = $executiondate;
+        //Choice the date of the execution direct debit
+        if(!empty($executiondate)) $datetimeprev = $executiondate;
 
 		$month = strftime("%m", $datetimeprev);
 		$year = strftime("%Y", $datetimeprev);

@@ -28,14 +28,29 @@
  */
 class PaymentTerm // extends CommonObject
 {
-	var $db;							//!< To store db handler
-	var $error;							//!< To return error code (or message)
-	var $errors=array();				//!< To return several error codes (or messages)
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
+	
 	//public  $element='c_payment_term';			//!< Id that identify managed objects
 	//public  $table_element='c_payment_term';	//!< Name of table without prefix where object is stored
 	var $context =array();
 
-    var $id;
+    /**
+	 * @var int ID
+	 */
+	public $id;
 
 	var $code;
 	var $sortorder;

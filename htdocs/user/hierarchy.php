@@ -64,7 +64,9 @@ $arrayofcss=array('/includes/jquery/plugins/jquerytreeview/jquery.treeview.css')
 
 llxHeader('',$langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')','','',0,0,$arrayofjs,$arrayofcss);
 
-print load_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', '<form action="'.DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'" method="POST"><input type="submit" class="button" style="width:120px" name="viewcal" value="'.dol_escape_htmltag($langs->trans("ViewList")).'"></form>');
+$morehtmlright = '<a class="nohover" href="'.DOL_URL_ROOT.'/user/list.php'.(($search_statut != '' && $search_statut >= 0) ?'?search_statut='.$search_statut:'').'">'.$langs->trans("ViewList").'</a>';
+
+print load_fiche_titre($langs->trans("ListOfUsers"). ' ('.$langs->trans("HierarchicView").')', $morehtmlright);
 
 
 
@@ -204,6 +206,6 @@ jQuery(document).ready(function() {
 </script>';
 */
 
+// End of page
 llxFooter();
-
 $db->close();

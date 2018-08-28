@@ -30,11 +30,23 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class PaymentVarious extends CommonObject
 {
-	public $element='variouspayment';		//!< Id that identify managed objects
-	public $table_element='payment_various';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='variouspayment';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='payment_various';
+	
 	public $picto = 'bill';
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
+	
 	var $ref;
 	var $tms;
 	var $datep;
@@ -43,7 +55,12 @@ class PaymentVarious extends CommonObject
 	var $amount;
 	var $type_payment;
 	var $num_payment;
-	var $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $accountancy_code;
 	var $fk_project;
 	var $fk_bank;

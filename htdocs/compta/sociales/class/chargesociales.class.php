@@ -32,9 +32,18 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class ChargeSociales extends CommonObject
 {
-    public $element='chargesociales';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='chargesociales';
+	
     public $table='chargesociales';
-    public $table_element='chargesociales';
+    
+    /**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	public $table_element='chargesociales';
+	
     public $picto = 'bill';
 
     /**

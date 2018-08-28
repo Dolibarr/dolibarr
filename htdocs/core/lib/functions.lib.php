@@ -253,19 +253,19 @@ function GETPOSTISSET($paramname)
  *  Use the property $user->default_values[path]['creatform'] and/or $user->default_values[path]['filters'] and/or $user->default_values[path]['sortorder']
  *  Note: The property $user->default_values is loaded by main.php when loading the user.
  *
- *  @param	string	$paramname   Name of parameter to found
- *  @param	string	$check	     Type of check
- *                                  ''=no check (deprecated)
- *                                  'none'=no check (only for param that should have very rich content)
- *                                  'int'=check it's numeric (integer or float)
- *                                  'intcomma'=check it's integer+comma ('1,2,3,4...')
- *                                  'alpha'=check it's text and sign
- *                                  'aZ'=check it's a-z only
- *                                  'aZ09'=check it's simple alpha string (recommended for keys)
- *                                  'array'=check it's array
- *                                  'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
- *                                  'nohtml', 'alphanohtml'=check there is no html content
- *                                  'custom'= custom filter specify $filter and $options)
+ *  @param  string  $paramname   Name of parameter to found
+ *  @param  string  $check	     Type of check
+ *                               ''=no check (deprecated)
+ *                               'none'=no check (only for param that should have very rich content)
+ *                               'int'=check it's numeric (integer or float)
+ *                               'intcomma'=check it's integer+comma ('1,2,3,4...')
+ *                               'alpha'=check it's text and sign
+ *                               'aZ'=check it's a-z only
+ *                               'aZ09'=check it's simple alpha string (recommended for keys)
+ *                               'array'=check it's array
+ *                               'san_alpha'=Use filter_var with FILTER_SANITIZE_STRING (do not use this for free text string)
+ *                               'nohtml', 'alphanohtml'=check there is no html content
+ *                               'custom'= custom filter specify $filter and $options)
  *  @param	int		$method	     Type of method (0 = get then post, 1 = only get, 2 = only post, 3 = post then get, 4 = post then get then cookie)
  *  @param  int     $filter      Filter to apply when $check is set to 'custom'. (See http://php.net/manual/en/filter.filters.php for détails)
  *  @param  mixed   $options     Options to pass to filter_var when $check is set to 'custom'
@@ -487,10 +487,10 @@ function GETPOST($paramname, $check='none', $method=0, $filter=null, $options=nu
 				elseif ($reg[1] == 'MONTH')          { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['mon'];  }
 				elseif ($reg[1] == 'YEAR')           { $tmp=dol_getdate(dol_now(), true); $newout = $tmp['year']; }
 				elseif ($reg[1] == 'PREVIOUS_DAY')   { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
-				elseif ($reg[1] == 'PREVIOUS_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+				elseif ($reg[1] == 'PREVIOUS_MONTH') { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_prev_month($tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
 				elseif ($reg[1] == 'PREVIOUS_YEAR')  { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] - 1); }
 				elseif ($reg[1] == 'NEXT_DAY')       { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['day']; }
-				elseif ($reg[1] == 'NEXT_MONTH')     { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
+				elseif ($reg[1] == 'NEXT_MONTH')     { $tmp=dol_getdate(dol_now(), true); $tmp2=dol_get_next_month($tmp['mon'], $tmp['year']); $newout = $tmp2['month']; }
 				elseif ($reg[1] == 'NEXT_YEAR')      { $tmp=dol_getdate(dol_now(), true); $newout = ($tmp['year'] + 1); }
 				elseif ($reg[1] == 'MYCOMPANY_COUNTRY_ID' || $reg[1] == 'MYCOUNTRY_ID' || $reg[1] == 'MYCOUNTRYID')
 				{
@@ -1594,6 +1594,7 @@ function dol_banner_tab($object, $paramid, $morehtml='', $shownav=1, $fieldid='r
  * @param	string	$langkey		Translation key
  * @param 	string	$fieldkey		Key of the html select field the text refers to
  * @param	int		$fieldrequired	1=Field is mandatory
+ * @return string
  * @deprecated Form::editfieldkey
  */
 function fieldLabel($langkey, $fieldkey, $fieldrequired=0)
@@ -3124,8 +3125,8 @@ function dol_trunc($string,$size=40,$trunc='right',$stringencoding='UTF-8',$nodo
  *	@param		boolean|int	$pictoisfullpath	If true or 1, image path is a full path
  *	@param		int			$srconly			Return only content of the src attribute of img.
  *  @param		int			$notitle			1=Disable tag title. Use it if you add js tooltip, to avoid duplicate tooltip.
- *  @param		string		$alt				Force alt for bind peoplae
- *  @param		string		$morecss			Add more class css on img tag (For example 'myclascss')
+ *  @param		string		$alt				Force alt for bind people
+ *  @param		string		$morecss			Add more class css on img tag (For example 'myclascss'). Work only if $moreatt is empty.
  *  @return     string       				    Return img tag
  *  @see        #img_object, #img_picto_common
  */
@@ -3281,7 +3282,7 @@ function img_picto($titlealt, $picto, $moreatt = '', $pictoisfullpath = false, $
 		//$title=$tmparray[0];
 		//$alt=empty($tmparray[1])?'':$tmparray[1];
 		$title = $titlealt;
-		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block"').'>';	// Alt is used for accessibility, title for popup
+		return '<img src="'.$fullpathpicto.'" alt="'.dol_escape_htmltag($alt).'"'.(($notitle || empty($title))?'':' title="'.dol_escape_htmltag($title).'"').($moreatt?' '.$moreatt:' class="inline-block'.($morecss?' '.$morecss:'').'"').'>';	// Alt is used for accessibility, title for popup
 	}
 }
 
@@ -5520,7 +5521,7 @@ function dol_string_nohtmltag($stringtoclean, $removelinefeed=1, $pagecodeto='UT
 function dol_string_onlythesehtmltags($stringtoclean)
 {
 	$allowed_tags = array(
-		"html", "head", "meta", "body", "b", "br", "div", "em", "font", "img", "hr", "i", "li", "link",
+		"html", "head", "meta", "body", "article", "a", "b", "br", "div", "em", "font", "img", "ins", "hr", "i", "li", "link",
 		"ol", "p", "s", "section", "span", "strong", "title",
 		"table", "tr", "th", "td", "u", "ul"
 	);
@@ -6139,13 +6140,18 @@ function getCommonSubstitutionArray($outputlangs, $onlykey=0, $exclude=null, $ob
 
 		$tmp=dol_getdate(dol_now(), true);
 		$tmp2=dol_get_prev_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-		$tmp3=dol_get_prev_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+		$tmp3=dol_get_prev_month($tmp['mon'], $tmp['year']);
 		$tmp4=dol_get_next_day($tmp['mday'], $tmp['mon'], $tmp['year']);
-		$tmp5=dol_get_next_month($tmp['mday'], $tmp['mon'], $tmp['year']);
+		$tmp5=dol_get_next_month($tmp['mon'], $tmp['year']);
 
 		$substitutionarray=array_merge($substitutionarray, array(
 			'__DAY__' => (string) $tmp['mday'],
+			'__DAY_TEXT__' => $outputlangs->trans('Day'.$tmp['wday']),
+			'__DAY_TEXT_SHORT__' => $outputlangs->trans('Short'.$tmp['weekday']),
+			'__DAY_TEXT_MIN__' => $outputlangs->trans($tmp['weekday'].'Min'),
 			'__MONTH__' => (string) $tmp['mon'],
+			'__MONTH_TEXT__' => $outputlangs->trans($tmp['month']),
+			'__MONTH_TEXT_MIN__' => $outputlangs->trans($tmp['month'].'Min'),
 			'__YEAR__' => (string) $tmp['year'],
 			'__PREVIOUS_DAY__' => (string) $tmp2['day'],
 			'__PREVIOUS_MONTH__' => (string) $tmp3['month'],
@@ -6354,7 +6360,7 @@ function dolGetFirstLastname($firstname,$lastname,$nameorder=-1)
 
 	$ret='';
 	// If order not defined, we use the setup
-	if ($nameorder < 0) $nameorder=$conf->global->MAIN_FIRSTNAME_NAME_POSITION;
+	if ($nameorder < 0) $nameorder=(empty($conf->global->MAIN_FIRSTNAME_NAME_POSITION)?1:0);
 	if ($nameorder && ((string) $nameorder != '2'))
 	{
 		$ret.=$firstname;
@@ -6969,6 +6975,7 @@ function complete_head_from_modules($conf,$langs,$object,&$head,&$h,$type,$mode=
 				foreach($head as $key => $val)
 				{
 					$condition = (! empty($values[3]) ? verifCond($values[3]) : 1);
+					//var_dump($key.' - '.$tabname.' - '.$head[$key][2].' - '.$values[3].' - '.$condition);
 					if ($head[$key][2]==$tabname && $condition)
 					{
 						unset($head[$key]);
@@ -7173,11 +7180,11 @@ function dol_getmypid()
 /**
  * Generate natural SQL search string for a criteria (this criteria can be tested on one or several fields)
  *
- * @param 	string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR). Example: array("p.field1","p.field2")
- * @param 	string 			$value 		The value to look for.
+ * @param   string|string[]	$fields 	String or array of strings, filled with the name of all fields in the SQL query we must check (combined with a OR). Example: array("p.field1","p.field2")
+ * @param   string 			$value 		The value to look for.
  *                          		    If param $mode is 0, can contains several keywords separated with a space or |
- *                                         like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
- *                                         or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
+ *                                      like "keyword1 keyword2" = We want record field like keyword1 AND field like keyword2
+ *                                      or like "keyword1|keyword2" = We want record field like keyword1 OR field like keyword2
  *                             			If param $mode is 1, can contains an operator <, > or = like "<10" or ">=100.5 < 1000"
  *                             			If param $mode is 2, can contains a list of int id separated by comma like "1,3,4"
  *                             			If param $mode is 3, can contains a list of string separated by comma like "a,b,c"
@@ -7430,6 +7437,7 @@ function getAdvancedPreviewUrl($modulepart, $relativepath, $alldata=0, $param=''
  *
  * @param string	$htmlname	Id of html object
  * @param string	$addlink	Add a 'link to' after
+ * @return string
  */
 function ajax_autoselect($htmlname, $addlink='')
 {
@@ -7567,6 +7575,7 @@ function dol_mimetype($file, $default='application/octet-stream', $mode=0)
  * @param int		$id				id of line
  * @param bool		$checkentity	add filter on entity
  * @param string	$rowidfield		name of the column rowid
+ * @return string
  */
 function getDictvalue($tablename, $field, $id, $checkentity=false, $rowidfield='rowid')
 {

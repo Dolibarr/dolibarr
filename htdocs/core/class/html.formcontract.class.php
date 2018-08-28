@@ -27,8 +27,15 @@
  */
 class FormContract
 {
-    var $db;
-    var $error;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
     /**
@@ -67,14 +74,14 @@ class FormContract
 		if ($socid > 0)
 		{
 			// CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY is 'all' or a list of ids separated by coma.
-		    	if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))  
+		    	if (empty($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY))
 			    $sql.= " AND (c.fk_soc=".$socid." OR c.fk_soc IS NULL)";
 		    	else if ($conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY != 'all')
 			{
 		        	$sql.= " AND (c.fk_soc IN (".$socid.", ".$conf->global->CONTRACT_ALLOW_TO_LINK_FROM_OTHER_COMPANY.") ";
 				$sql.= " OR c.fk_soc IS NULL)";
 		    	}
-		}	
+		}
 		if ($socid == 0) $sql.= " AND (c.fk_soc = 0 OR c.fk_soc IS NULL)";
 		$sql.= " ORDER BY c.ref ";
 
@@ -140,14 +147,14 @@ class FormContract
 			}
 			print '</select>';
 			$db->free($resql);
-			
+
 			if (!empty($conf->use_javascript_ajax))
 			{
 				// Make select dynamic
 				include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
 				print ajax_combobox($htmlname);
 			}
-			
+
 			return $num;
 		}
 		else
@@ -156,7 +163,7 @@ class FormContract
 			return -1;
 		}
 	}
-	
+
 	/**
 	 *	Show a form to select a contract
 	 *
@@ -171,7 +178,7 @@ class FormContract
 	function formSelectContract($page, $socid=-1, $selected='', $htmlname='contrattid', $maxlength=16, $showempty=1)
 	{
 	    global $langs;
-	
+
         print "\n";
         print '<form method="post" action="'.$page.'">';
         print '<input type="hidden" name="action" value="setcontract">';
@@ -179,6 +186,6 @@ class FormContract
         $this->select_contract($socid, $selected, $htmlname, $maxlength, $showempty);
         print '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
         print '</form>';
-	}	
-	
+	}
+
 }

@@ -35,7 +35,10 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/html.form.class.php';
  */
 class FormMail extends Form
 {
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	var $withform;				// 1=Include HTML form tag and show submit button, 0=Do not include form tag and submit button, -1=Do not include form tag but include submit button
 
@@ -85,7 +88,10 @@ class FormMail extends Form
 	public $withtouser=array();
 	public $withtoccuser=array();
 
-	var $error;
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 	public $lines_model;
 
@@ -286,7 +292,7 @@ class FormMail extends Form
 
 			$disablebademails=1;
 
-	   		// Define output language
+			// Define output language
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->param['langsmodels'];
@@ -1082,7 +1088,7 @@ class FormMail extends Form
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
 		if ($label) $sql.=" AND label ='".$db->escape($label)."'";
-		if (is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
+		if (! ($id > 0) && is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
 		if (is_object($outputlangs)) $sql.= $db->order("position,lang,label","ASC,DESC,ASC");		// We want line with lang set first, then with lang null or ''

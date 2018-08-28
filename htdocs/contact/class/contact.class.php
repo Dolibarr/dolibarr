@@ -37,8 +37,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class Contact extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='contact';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='socpeople';
+	
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'contact';
 
@@ -371,15 +379,12 @@ class Contact extends CommonObject
 		    $action='update';
 
 		    // Actions on extra fields
-		    if (! $error)
+		    if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 		    {
-		    	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+		    	$result=$this->insertExtraFields();
+		    	if ($result < 0)
 		    	{
-		    		$result=$this->insertExtraFields();
-		    		if ($result < 0)
-		    		{
-		    			$error++;
-		    		}
+		    		$error++;
 		    	}
 		    }
 
@@ -1337,6 +1342,7 @@ class Contact extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{

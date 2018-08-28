@@ -5,7 +5,7 @@
  * Copyright (C) 2011-2017 Juanjo Menent        <jmenent@2byte.es>
  * Copyright (C) 2015	   Marcos García		<marcosgdf@gmail.com>
  * Copyright (C) 2018	   Nicolas ZABOURI	<info@inovea-conseil.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 3 of the License, or
@@ -34,15 +34,25 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
  */
 class ActionComm extends CommonObject
 {
-    public $element='action';
+    /**
+	 * @var string ID to identify managed object
+	 */
+	public $element='action';
+    
+    /**
+     * @var string Name of table without prefix where object is stored
+     */
     public $table_element = 'actioncomm';
+	
     public $table_rowid = 'id';
     public $picto='action';
+    
     /**
      * 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
      * @var int
      */
     public $ismultientitymanaged = 1;
+    
     /**
      * 0=Default, 1=View may be restricted to sales representative only if no permission to see all or to company of external user if external user, 2=Same than 1 but accept record if fksoc is empty
      * @var integer
@@ -53,7 +63,7 @@ class ActionComm extends CommonObject
      * Id of the event
      * @var int
      */
-    var $id;
+	public $id;
 
     /**
      * Id of the event. Use $id as possible
@@ -67,7 +77,10 @@ class ActionComm extends CommonObject
     var $type_color;	// Color into parent table llx_c_actioncomm (used only if option to use type is set)
     var $code;			// Free code to identify action. Ie: Agenda trigger add here AC_TRIGGERNAME ('AC_COMPANY_CREATE', 'AC_PROPAL_VALIDATE', ...)
 
-    var $label;
+    /**
+     * @var string proper name for given parameter
+     */
+    public $label;
 
     /**
      * @var string
@@ -621,7 +634,7 @@ class ActionComm extends CommonObject
                 $this->contact->id			= $obj->fk_contact;		// deprecated
 
                 $this->fk_element			= $obj->elementid;
-		$this->elementid			= $obj->elementid;
+                $this->elementid			= $obj->elementid;
                 $this->elementtype			= $obj->elementtype;
 
                 $this->fetchResources();
@@ -1223,7 +1236,7 @@ class ActionComm extends CommonObject
 
                 if ((!$user->rights->agenda->allactions->read && $this->author->id != $user->id) || (!$user->rights->agenda->myactions->read && $this->author->id == $user->id))
                     $option = 'nolink';
-		
+
                 $label = $this->label;
 		if (empty($label)) $label=$this->libelle;   // For backward compatibility
 
@@ -1351,9 +1364,9 @@ class ActionComm extends CommonObject
     {
         global $conf,$langs,$dolibarr_main_url_root,$mysoc;
 
-        require_once (DOL_DOCUMENT_ROOT ."/core/lib/xcal.lib.php");
-        require_once (DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php");
-        require_once (DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php");
+        require_once DOL_DOCUMENT_ROOT ."/core/lib/xcal.lib.php";
+        require_once DOL_DOCUMENT_ROOT ."/core/lib/date.lib.php";
+        require_once DOL_DOCUMENT_ROOT ."/core/lib/files.lib.php";
 
         dol_syslog(get_class($this)."::build_exportfile Build export file format=".$format.", type=".$type.", cachedelay=".$cachedelay.", filename=".$filename.", filters size=".count($filters), LOG_DEBUG);
 
@@ -1679,4 +1692,3 @@ class ActionComm extends CommonObject
     }
 
 }
-

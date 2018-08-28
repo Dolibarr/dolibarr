@@ -503,19 +503,19 @@ if (! empty($force_install_message))
 			       name="db_pass_root"
 			       class="needroot"
 			       value="<?php
-			       // If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
-			       $autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : @$db_pass_root);
-			       if (!empty($dolibarr_main_prod)) {
-				       $autofill = '';
-			       }
-				   // Do not autofill password if instance is a production instance
-			       if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
-					       array('127.0.0.1', 'localhost', 'localhostgit'))
-			       ) {
-				       $autofill = '';
-			       }    // Do not autofill password for remote access
-			       print dol_escape_htmltag($autofill);
-			       ?>"
+			        // If $force_install_databaserootpass is on, we don't want to set password here, we just show '***'. Real value will be extracted from the forced install file at step1.
+			        $autofill = ((!empty($force_install_databaserootpass)) ? str_pad('', strlen($force_install_databaserootpass), '*') : @$db_pass_root);
+			        if (!empty($dolibarr_main_prod)) {
+				        $autofill = '';
+			        }
+				    // Do not autofill password if instance is a production instance
+			        if (!empty($_SERVER["SERVER_NAME"]) && !in_array($_SERVER["SERVER_NAME"],
+					    array('127.0.0.1', 'localhost', 'localhostgit'))
+			        ) {
+				        $autofill = '';
+			        }    // Do not autofill password for remote access
+			        print dol_escape_htmltag($autofill);
+			        ?>"
 				<?php if ($force_install_noedit > 0 && ! empty($force_install_databaserootpass)) {
 					print ' disabled';     // May be removed by javascript
 				} ?>

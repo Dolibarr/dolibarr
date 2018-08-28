@@ -28,7 +28,7 @@ if (! defined('NOREQUIREAJAX'))  define('NOREQUIREAJAX','1');
 if (! defined('NOLOGIN'))  		 define("NOLOGIN",1);		// This means this output page does not require to be logged.
 if (! defined('NOCSRFCHECK'))  	 define("NOCSRFCHECK",1);	// We accept to go on this page from external web site.
 
-require ("../main.inc.php");
+require "../main.inc.php";
 require_once DOL_DOCUMENT_ROOT.'/core/lib/security2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/dav/dav.class.php';
@@ -58,8 +58,7 @@ $tmpDir = $conf->dav->dir_temp;
 //var_dump($tmpDir);exit;
 
 // Authentication callback function
-$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password)
-{
+$authBackend = new \Sabre\DAV\Auth\Backend\BasicCallBack(function ($username, $password) {
 	global $user;
 	global $conf;
 	global $dolibarr_main_authentication;

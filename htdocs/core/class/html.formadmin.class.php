@@ -29,8 +29,15 @@
  */
 class FormAdmin
 {
-	var $db;
-	var $error;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
 
 	/**
@@ -56,9 +63,10 @@ class FormAdmin
 	 *      @param		int			$disabled		Disable edit of select
 	 *      @param		string		$morecss		Add more css styles
 	 *      @param      int         $showcode       Add language code into label
+	 *      @param		int			$forcecombo		Force to use combo box (so no ajax beautify effect)
 	 *      @return		string						Return HTML select string with list of languages
 	 */
-	function select_language($selected='', $htmlname='lang_id', $showauto=0, $filter=null, $showempty='', $showwarning=0, $disabled=0, $morecss='', $showcode=0)
+	function select_language($selected='', $htmlname='lang_id', $showauto=0, $filter=null, $showempty='', $showwarning=0, $disabled=0, $morecss='', $showcode=0, $forcecombo=0)
 	{
 		global $langs;
 
@@ -109,8 +117,11 @@ class FormAdmin
 		$out.= '</select>';
 
 		// Make select dynamic
-        include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
-        $out.= ajax_combobox($htmlname);
+		if (! $forcecombo)
+		{
+			include_once DOL_DOCUMENT_ROOT . '/core/lib/ajax.lib.php';
+			$out.= ajax_combobox($htmlname);
+		}
 
 		return $out;
 	}

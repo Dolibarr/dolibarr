@@ -1009,5 +1009,6 @@ print "</tr>\n";
 print "</table>";
 print '</div>';
 
+// End of page
 llxFooter();
 $db->close();

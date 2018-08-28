@@ -27,13 +27,28 @@
  */
 class EcmDirectory // extends CommonObject
 {
-	public $element='ecm_directories';			//!< Id that identify managed objects
-	//public $table_element='ecm_directories';	//!< Name of table without prefix where object is stored
+	/**
+	 * @var string ID to identify managed object
+	 */
+	public $element='ecm_directories';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
+	//public $table_element='ecm_directories';
+	
 	var $picto = 'dir';
 
-	var $id;
+	/**
+	 * @var int ID
+	 */
+	public $id;
 
-	var $label;
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	var $fk_parent;
 	var $description;
 	var $cachenbofdoc=-1;	// By default cache initialized with value 'not calculated'
@@ -51,8 +66,15 @@ class EcmDirectory // extends CommonObject
 
 	public $full_arbo_loaded;
 
+	/**
+	 * @var string Error code (or message)
+	 */
 	public $error;
-	public $errors;
+	
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**

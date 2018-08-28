@@ -28,12 +28,12 @@
  *	\brief      Page to edit a bank transaction record
  */
 
-require('../../main.inc.php');
+require '../../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/bank/class/account.class.php';
 require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('banks', 'categories', 'compta', 'bills'));
+$langs->loadLangs(array('banks', 'categories', 'compta', 'bills', 'other'));
 if (! empty($conf->adherent->enabled)) $langs->load("members");
 if (! empty($conf->don->enabled)) $langs->load("donations");
 if (! empty($conf->loan->enabled)) $langs->load("loan");
@@ -98,8 +98,10 @@ if ($action == 'confirm_delete_categ' && $confirm == "yes" && $user->rights->ban
     	{
         	dol_print_error($db);
     	}
-	} else {
-		setEventMessage('Missing ids','errors');
+	}
+	else
+	{
+		setEventMessages($langs->trans("MissingIds"), null, 'errors');
 	}
 }
 
@@ -686,6 +688,6 @@ if ($result)
 }
 else dol_print_error($db);
 
+// End of page
 llxFooter();
-
 $db->close();

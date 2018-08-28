@@ -46,47 +46,58 @@ abstract class CommonObject
 	 * @var DoliDb		Database handler (result of a new DoliDB)
 	 */
 	public $db;
+	
 	/**
 	 * @var int The object identifier
 	 */
 	public $id;
+	
 	/**
 	 * @var string 		Error string
 	 * @see             errors
 	 */
 	public $error;
+	
 	/**
 	 * @var string[]	Array of error strings
 	 */
 	public $errors=array();
+	
 	/**
-	 * @var string
+	 * @var string ID to identify managed object
 	 */
 	public $element;
+	
 	/**
-	 * @var string
+	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element;
+	
 	/**
 	 * @var
 	 */
 	public $table_element_line;
+	
 	/**
 	 * @var string		Key value used to track if data is coming from import wizard
 	 */
 	public $import_key;
+	
 	/**
 	 * @var mixed		Contains data to manage extrafields
 	 */
 	public $array_options=array();
+	
 	/**
 	 * @var int[][]		Array of linked objects ids. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjectsIds;
+	
 	/**
 	 * @var mixed		Array of linked objects. Loaded by ->fetchObjectLinked
 	 */
 	public $linkedObjects;
+	
 	/**
 	 * @var Object      To store a cloned copy of object before to edit it and keep track of old properties
 	 */
@@ -116,11 +127,13 @@ abstract class CommonObject
 	 * @see fetch_projet()
 	 */
 	public $project;
+	
 	/**
 	 * @var int The related project ID
 	 * @see setProject(), project
 	 */
 	public $fk_project;
+	
 	/**
 	 * @deprecated
 	 * @see project
@@ -132,6 +145,7 @@ abstract class CommonObject
 	 * @see fetch_contact()
 	 */
 	public $contact;
+	
 	/**
 	 * @var int The related contact ID
 	 * @see fetch_contact()
@@ -165,14 +179,17 @@ abstract class CommonObject
 	 * @var string The object's reference
 	 */
 	public $ref;
+	
 	/**
 	 * @var string The object's previous reference
 	 */
 	public $ref_previous;
+	
 	/**
 	 * @var string The object's next reference
 	 */
 	public $ref_next;
+	
 	/**
 	 * @var string An external reference for the object
 	 */
@@ -189,36 +206,43 @@ abstract class CommonObject
 	 * @see getFullAddress()
 	 */
 	public $country;
+	
 	/**
 	 * @var int
 	 * @see getFullAddress(), country
 	 */
 	public $country_id;
+	
 	/**
 	 * @var string
 	 * @see getFullAddress(), isInEEC(), country
 	 */
     public $country_code;
+    
     /**
 	 * @var string
 	 * @see getFullAddress()
 	 */
 	public $state;
+	
 	/**
 	 * @var int
 	 * @see getFullAddress(), state
 	 */
 	public $state_id;
+	
 	/**
 	 * @var string
 	 * @see getFullAddress(), state
 	 */
     public $state_code;
+    
     /**
 	 * @var string
 	 * @see getFullAddress(), region
 	 */
 	public $region;
+	
 	/**
 	 * @var string
 	 * @see getFullAddress(), region
@@ -230,16 +254,19 @@ abstract class CommonObject
 	 * @see fetch_barcode()
 	 */
 	public $barcode_type;
+	
 	/**
 	 * @var string
 	 * @see fetch_barcode(), barcode_type
 	 */
 	public $barcode_type_code;
+	
 	/**
 	 * @var string
 	 * @see fetch_barcode(), barcode_type
 	 */
 	public $barcode_type_label;
+	
 	/**
 	 * @var string
 	 * @see fetch_barcode(), barcode_type
@@ -257,6 +284,7 @@ abstract class CommonObject
 	 * @see setPaymentTerms()
 	 */
 	public $cond_reglement_id;
+	
 	/**
 	 * @var int Payment terms ID
 	 * @deprecated Kept for compatibility
@@ -294,11 +322,13 @@ abstract class CommonObject
 	 * @see update_note()
 	 */
 	public $note_public;
+	
 	/**
 	 * @var string Private note
 	 * @see update_note()
 	 */
 	public $note_private;
+	
 	/**
 	 * @deprecated
 	 * @see note_public
@@ -310,21 +340,25 @@ abstract class CommonObject
 	 * @see update_price()
 	 */
 	public $total_ht;
+	
 	/**
 	 * @var float Total VAT amount
 	 * @see update_price()
 	 */
 	public $total_tva;
+	
 	/**
 	 * @var float Total local tax 1 amount
 	 * @see update_price()
 	 */
 	public $total_localtax1;
+	
 	/**
 	 * @var float Total local tax 2 amount
 	 * @see update_price()
 	 */
 	public $total_localtax2;
+	
 	/**
 	 * @var float Total amount with taxes
 	 * @see update_price()
@@ -347,11 +381,13 @@ abstract class CommonObject
 	 * @see setIncoterms()
 	 */
 	public $fk_incoterms;
+	
 	/**
 	 * @var string
 	 * @see SetIncoterms()
 	 */
 	public $libelle_incoterms;
+	
 	/**
 	 * @var string
 	 * @see display_incoterms()
@@ -1828,7 +1864,7 @@ abstract class CommonObject
 							case 'order_supplier':
 								$this->updateline(
 									$line->id, ($line->description?$line->description:$line->desc), $line->subprice, $line->qty, $line->remise_percent,
-									$line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits,  $line->product_type, false,
+									$line->tva_tx, $line->localtax1_tx, $line->localtax2_tx, 'HT', $line->info_bits, $line->product_type, false,
 									$line->date_start, $line->date_end, $line->array_options, $line->fk_unit, $line->multicurrency_subprice
 								);
 								break;
@@ -2573,7 +2609,7 @@ abstract class CommonObject
 	 */
 	function update_price($exclspec=0,$roundingadjust='none',$nodatabaseupdate=0,$seller=null)
 	{
-		global $conf;
+		global $conf, $hookmanager, $action;
 
 		// Some external module want no update price after a trigger because they have another method to calculate the total (ex: with an extrafield)
 		$MODULE = "";
@@ -2664,7 +2700,10 @@ abstract class CommonObject
 				$obj = $this->db->fetch_object($resql);
 
 				// Note: There is no check on detail line and no check on total, if $forcedroundingmode = 'none'
-				if ($forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
+				$parameters=array('fk_element' => $obj->rowid);
+				$reshook = $hookmanager->executeHooks('changeRoundingMode', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+
+				if (empty($reshook) && $forcedroundingmode == '0')	// Check if data on line are consistent. This may solve lines that were not consistent because set with $forcedroundingmode='auto'
 				{
 					$localtax_array=array($obj->localtax1_type,$obj->localtax1_tx,$obj->localtax2_type,$obj->localtax2_tx);
 					$tmpcal=calcul_price_total($obj->qty, $obj->up, $obj->remise_percent, $obj->vatrate, $obj->localtax1_tx, $obj->localtax2_tx, 0, 'HT', $obj->info_bits, $obj->product_type, $seller, $localtax_array, (isset($obj->situation_percent) ? $obj->situation_percent : 100), $multicurrency_tx);
@@ -5122,7 +5161,7 @@ abstract class CommonObject
 			require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 			$form=new Form($this->db);
 		}
-		
+
 		$val=$this->fields[$key];
 
 		$out='';
@@ -5137,20 +5176,20 @@ abstract class CommonObject
                     $param['options']=array($reg[1].':'.$reg[2]=>'N');
                     $type ='link';
                 }else if(preg_match('/^sellist:(.*):(.*):(.*):(.*)/i', $val['type'], $reg)){
-                   
+
                     $param['options']=array($reg[1].':'.$reg[2].':'.$reg[3].':'.$reg[4]=>'N');
                     $type ='sellist';
                 }else if(preg_match('/varchar\((\d+)\)/', $val['type'],$reg)){
-                   
+
                     $param['options']=array();
                     $type ='varchar';
                     $size=$reg[1];
                 }else if(preg_match('/varchar/', $val['type'])){
-                   
+
                     $param['options']=array();
                     $type ='varchar';
                 }else if(is_array($this->fields[$key]['arrayofkeyval'])){
-                   
+
                     $param['options']=$this->fields[$key]['arrayofkeyval'];
                     $type ='select';
                 }else {
@@ -5164,7 +5203,7 @@ abstract class CommonObject
 		$computed=$this->fields[$key]['computed'];
 		$unique=$this->fields[$key]['unique'];
 		$required=$this->fields[$key]['required'];
-		
+
 		$langfile=$this->fields[$key]['langfile'];
 		$list=$this->fields[$key]['list'];
 		$hidden=abs($this->fields[$key]['visible'])!=1?1:0;
@@ -5707,7 +5746,7 @@ abstract class CommonObject
 		 */
 		return $out;
 	}
-        
+
 	/**
 	 * Return HTML string to show a field into a page
 	 * Code very similar with showOutputField of extra fields
@@ -6807,6 +6846,7 @@ abstract class CommonObject
 	 * Function to load data from a SQL pointer into properties of current object $this
 	 *
 	 * @param   stdClass    $obj    Contain data of object from database
+     * @return void
 	 */
 	protected function setVarsFromFetchObj(&$obj)
 	{
@@ -6870,7 +6910,8 @@ abstract class CommonObject
 	 * @param	array		$fieldsentry	Properties of field
 	 * @return 	string
 	 */
-	protected function quote($value, $fieldsentry) {
+    protected function quote($value, $fieldsentry)
+    {
 		if (is_null($value)) return 'NULL';
 		else if (preg_match('/^(int|double|real)/i', $fieldsentry['type'])) return $this->db->escape("$value");
 		else return "'".$this->db->escape($value)."'";
@@ -6913,7 +6954,7 @@ abstract class CommonObject
 			if (! empty($this->fields[$key]['foreignkey']) && $values[$key] == '-1') $values[$key]='';
 
 			//var_dump($key.'-'.$values[$key].'-'.($this->fields[$key]['notnull'] == 1));
-			if ($this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
+			if (isset($this->fields[$key]['notnull']) && $this->fields[$key]['notnull'] == 1 && ! isset($values[$key]) && is_null($val['default']))
 			{
 				$error++;
 				$this->errors[]=$langs->trans("ErrorFieldRequired", $this->fields[$key]['label']);
@@ -7074,15 +7115,12 @@ abstract class CommonObject
 		}
 
 		// Update extrafield
-		if (! $error)
+		if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED) && is_array($this->array_options) && count($this->array_options)>0)
 		{
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			$result=$this->insertExtraFields();
+			if ($result < 0)
 			{
-				$result=$this->insertExtraFields();
-				if ($result < 0)
-				{
-					$error++;
-				}
+				$error++;
 			}
 		}
 

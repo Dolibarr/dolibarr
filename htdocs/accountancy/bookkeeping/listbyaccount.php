@@ -421,5 +421,6 @@ print '</tr>';
 print "</table>";
 print '</form>';
 
+// End of page
 llxFooter();
 $db->close();

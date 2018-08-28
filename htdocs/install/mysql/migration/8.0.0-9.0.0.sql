@@ -1,7 +1,7 @@
 --
 -- Be carefull to requests order.
 -- This file must be loaded by calling /install/index.php page
--- when current version is 8.0.0 or higher.
+-- when current version is 9.0.0 or higher.
 --
 -- To restrict request to Mysql version x.y minimum use -- VMYSQLx.y
 -- To restrict request to Pgsql version x.y minimum use -- VPGSQLx.y
@@ -28,8 +28,21 @@
 -- Note: fields with type BLOB/TEXT can't have default value.
 
 
+-- Missing in 8.0 ?
+ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
+ALTER TABLE llx_accounting_account MODIFY COLUMN fk_pcg_version varchar(32) NOT NULL;
+ALTER TABLE llx_accounting_system MODIFY COLUMN pcg_version varchar(32) NOT NULL;
+ALTER TABLE llx_accounting_account ADD CONSTRAINT fk_accounting_account_fk_pcg_version    FOREIGN KEY (fk_pcg_version)    REFERENCES llx_accounting_system (pcg_version);
+
+ALTER TABLE llx_accounting_account MODIFY COLUMN account_number varchar(32) NOT NULL;
+
+-- For 9.0
+
+ALTER TABLE llx_accounting_account MODIFY COLUMN account_parent varchar(32) DEFAULT NULL;
 
 ALTER TABLE llx_extrafields ADD COLUMN help text NULL;
+ALTER TABLE llx_extrafields ADD COLUMN totalizable boolean DEFAULT FALSE after list;
+ALTER TABLE llx_product_fournisseur_price ADD COLUMN desc_fourn text after ref_fourn;
 
 
 ALTER TABLE llx_user ADD COLUMN dateemploymentend date after dateemployment;
@@ -49,3 +62,4 @@ insert into llx_c_action_trigger (code,label,description,elementtype,rang) value
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('FICHINTER_DELETE','Intervention is deleted','Executed when a intervention is deleted','ficheinter',35);
 insert into llx_c_action_trigger (code,label,description,elementtype,rang) values ('EXPENSE_DELETE','Expense report deleted','Executed when an expense report is deleted','expensereport',204);
 
+ALTER TABLE llx_payment_salary ADD COLUMN fk_projet integer DEFAULT NULL after amount;

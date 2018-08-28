@@ -32,9 +32,7 @@ require '../main.inc.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/admin.lib.php';
 
 // Load translation files required by the page
-$langs->loadLangs(array('admin', 'exports'));
-
-$langs->load('other');
+$langs->loadLangs(array('admin', 'exports', 'other'));
 
 if (! $user->admin)
 	accessforbidden();
@@ -93,9 +91,8 @@ echo ajax_constantonoff('EXPORTS_SHARE_MODELS');
 print '</form>';
 print '</td></tr>';
 
-
 print '</table>';
 
+// End of page
 llxFooter();
-
 $db->close();

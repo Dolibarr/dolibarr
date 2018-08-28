@@ -330,5 +330,6 @@ else
 	print $langs->trans("ErrorBankAccountNotFound");
 }
 
+// End of page
 llxFooter();
 $db->close();

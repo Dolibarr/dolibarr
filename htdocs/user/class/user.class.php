@@ -40,8 +40,16 @@ require_once DOL_DOCUMENT_ROOT .'/core/class/commonobject.class.php';
  */
 class User extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='user';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='user';
+	
 	public $fk_element='fk_user';
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 
@@ -910,6 +918,7 @@ class User extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
 	public function setCategories($categories)
 	{
@@ -1527,6 +1536,12 @@ class User extends CommonObject
 
 						$adh->societe=(empty($adh->societe) && $this->societe_id ? $this->societe_id : $adh->societe);
 
+						$adh->address=$this->address;
+						$adh->town=$this->town;
+						$adh->zip=$this->zip;
+						$adh->state_id=$this->state_id;
+						$adh->country_id=$this->country_id;
+						
 						$adh->email=$this->email;
 						$adh->skype=$this->skype;
 						$adh->phone=$this->office_phone;
@@ -1611,7 +1626,7 @@ class User extends CommonObject
 			$action='update';
 
 			// Actions on extra fields
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)
@@ -2304,13 +2319,13 @@ class User extends CommonObject
 
                 //Check user's rights to see an other user
                 if((!$user->rights->user->user->lire && $this->id !=$user->id)) $option='nolink';
-                
+
 		if ($option == 'xxx')
 		{
 			$linkstart = '<a href="'.DOL_URL_ROOT.'/user/card.php?id='.$this->id.'">';
 			$linkend='</a>';
 		}
-                
+
                 if ($option == 'nolink')
 		{
 			$linkstart = '';
@@ -3147,4 +3162,3 @@ class User extends CommonObject
 	}
 
 }
-

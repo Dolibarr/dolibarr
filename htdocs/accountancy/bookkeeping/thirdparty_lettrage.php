@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2013      Olivier Geffroy      <jeff@jeffinfo.com>
- * Copyright (C) 2013      Florian Henry	      <florian.henry@open-concept.pro>
+ * Copyright (C) 2013      Florian Henry	    <florian.henry@open-concept.pro>
  * Copyright (C) 2013      Alexandre Spangaro   <alexandre.spangaro@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  */
 
 /**
- * \file accounting/bookkeeping/thirdparty_lettrage.php
+ * \file accountancy/bookkeeping/thirdparty_lettrage.php
  * \ingroup Advanced accountancy
  * \brief Onglet de gestion de parametrages des ventilations
  */
@@ -82,8 +82,9 @@ $socid = GETPOST("socid", 'int');
 $object = new Societe($db);
 $object->id = $socid;
 $result = $object->fetch($socid);
-if ($result < 0) {
-	setEventMessage($object->error, 'errors');
+if ($result < 0)
+{
+	setEventMessages($object->error, $object->errors, 'errors');
 }
 
 $form = new Form($db);

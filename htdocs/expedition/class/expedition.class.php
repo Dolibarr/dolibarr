@@ -44,9 +44,18 @@ if (! empty($conf->productbatch->enabled)) require_once DOL_DOCUMENT_ROOT.'/expe
  */
 class Expedition extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element="shipping";
+	
 	public $fk_element="fk_expedition";
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element="expedition";
+	
 	public $table_element_line="expeditiondet";
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
 	public $picto = 'sending';
@@ -313,7 +322,7 @@ class Expedition extends CommonObject
 				}
 
 				// Actions on extra fields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 				{
 					$result=$this->insertExtraFields();
 					if ($result < 0)
@@ -541,8 +550,7 @@ class Expedition extends CommonObject
 				 */
 				$result=$this->fetch_thirdparty();
 
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
+				// Retreive extrafields
 				$this->fetch_optionals();
 
 				/*
@@ -1114,7 +1122,7 @@ class Expedition extends CommonObject
 		// Stock control
 		if (! $error && $conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_SHIPMENT && $this->statut > 0)
 		{
-			require_once(DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php");
+			require_once DOL_DOCUMENT_ROOT."/product/stock/class/mouvementstock.class.php";
 
 			$langs->load("agenda");
 
@@ -2268,7 +2276,14 @@ class Expedition extends CommonObject
  */
 class ExpeditionLigne extends CommonObjectLine
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='expeditiondet';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='expeditiondet';
 
 	public $fk_origin_line;
@@ -2279,7 +2294,10 @@ class ExpeditionLigne extends CommonObjectLine
 	 */
 	public $fk_expedition;
 
-	var $db;
+	/**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	// From llx_expeditiondet
 	var $qty;
@@ -2412,7 +2430,8 @@ class ExpeditionLigne extends CommonObjectLine
 		if ($resql)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expeditiondet");
-			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+
+			if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 			{
 				$result=$this->insertExtraFields();
 				if ($result < 0)

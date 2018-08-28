@@ -21,7 +21,7 @@
 
 /**
  *      \file       dev/initdata/import-thirdparties.php
- *		\brief      Script example to insert thirdparties from a csv file. 
+ *		\brief      Script example to insert thirdparties from a csv file.
  *                  To purge data, you can have a look at purge-data.php
  */
 
@@ -36,7 +36,7 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Recupere root dolibarr
 $path=preg_replace('/import-users.php/i','',$_SERVER["PHP_SELF"]);
-require ($path."../../htdocs/master.inc.php");
+require $path."../../htdocs/master.inc.php";
 include_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
 include_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 
@@ -118,15 +118,15 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
 {
     $i++;
     $errorrecord=0;
-    
+
     if ($startlinenb && $i < $startlinenb) continue;
     if ($endlinenb && $i > $endlinenb) continue;
-    
+
     $nboflines++;
-    
+
     $object = new User($db);
     $object->statut = 1;
-    
+
     $tmp=explode(' ',$fields[3],2);
     $object->firstname = trim($tmp[0]);
     $object->lastname = trim($tmp[1]);
@@ -134,23 +134,23 @@ while ($fields=fgetcsv($fhandle, $linelength, $delimiter, $enclosure, $escape))
     else $object->login=strtolower($object->firstname);
     $object->login=preg_replace('/ /','',$object->login);
     $object->password = 'init';
-    
+
     print "Process line nb ".$i.", login ".$object->login;
-    
+
     $ret=$object->create($user);
     if ($ret < 0)
     {
         print " - Error in create result code = ".$ret." - ".$object->errorsToString();
         $errorrecord++;
     }
-	else 
+	else
 	{
 	    print " - Creation OK with login ".$object->login." - id = ".$ret;
 	}
 
 	print "\n";
-	
-	if ($errorrecord) 
+
+	if ($errorrecord)
 	{
 	    fwrite($fhandleerr, 'Error on record nb '.$i." - ".$object->errorsToString()."\n");
 	    $error++;    // $errorrecord will be reset

@@ -24,7 +24,8 @@
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_prepare_head(Paiement $object) {
+function payment_prepare_head(Paiement $object)
+{
 
 	global $langs, $conf;
 
@@ -59,7 +60,8 @@ function payment_prepare_head(Paiement $object) {
  * @param Paiement $object Current payment object
  * @return array Tabs for the payment section
  */
-function payment_supplier_prepare_head(Paiement $object) {
+function payment_supplier_prepare_head(Paiement $object)
+{
 
 	global $langs, $conf;
 
@@ -329,7 +331,7 @@ function htmlPrintOnlinePaymentFooter($fromcompany, $langs, $addformmessage=0, $
     print '<font style="font-size: 10px;"><br><hr>'."\n";
     print $fromcompany->name.'<br>';
     print $line1;
-    if (strlen($line1+$line2) > 50) print '<br>';
+    if (strlen($line1.$line2) > 50) print '<br>';
     else print ' - ';
     print $line2;
     print '</font></div>'."\n";

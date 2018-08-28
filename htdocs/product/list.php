@@ -744,22 +744,34 @@ if ($resql)
 			if (! $i) $totalarray['nbfield']++;
 		}
 
-		// Duration
-		if (! empty($arrayfields['p.duration']['checked']))
-		{
-			print '<td align="center">';
-			if (preg_match('/([^a-z]+)[a-z]/i',$obj->duration))
+			// Duration
+			if (! empty($arrayfields['p.duration']['checked']))
 			{
-				if (preg_match('/([^a-z]+)y/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");
-				elseif (preg_match('/([^a-z]+)m/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationMonth");
-				elseif (preg_match('/([^a-z]+)w/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationWeek");
-				elseif (preg_match('/([^a-z]+)d/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationDay");
-				//elseif (preg_match('/([^a-z]+)h/i',$obj->duration,$regs)) print $regs[1].' '.$langs->trans("DurationHour");
-				else print $obj->duration;
+				print '<td align="center">';
+
+				if (preg_match('/([^a-z]+)[a-z]$/i',$obj->duration))
+				{
+					$duration_value	= substr($obj->duration,0,dol_strlen($obj->duration)-1);
+					$duration_unit	= substr($obj->duration,-1);
+
+					if ((float) $duration_value > 1)
+					{
+					    $dur=array("i"=>$langs->trans("Minutes"),"h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+					}
+					else if ((float) $duration_value > 0)
+					{
+					    $dur=array("i"=>$langs->trans("Minute"),"h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+					}
+					print $duration_value;
+					print (! empty($duration_unit) && isset($dur[$duration_unit]) ? ' '.$langs->trans($dur[$duration_unit]) : '');
+				}
+				else
+				{
+					print $obj->duration;
+				}
+				print '</td>';
+				if (! $i) $totalarray['nbfield']++;
 			}
-			print '</td>';
-			if (! $i) $totalarray['nbfield']++;
-		}
 
 		// Sell price
 		if (! empty($arrayfields['p.sellprice']['checked']))
@@ -960,6 +972,6 @@ else
 	dol_print_error($db);
 }
 
-
+// End of page
 llxFooter();
 $db->close();

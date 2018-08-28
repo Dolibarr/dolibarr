@@ -204,7 +204,7 @@ TotalVente=Total turnover before tax
 TotalMarge=Total sales margin
 
 DescVentilCustomer=Consult here the list of customer invoice lines bound (or not) to a product accounting account
-DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to any account, you will have to make a manual binding from the menu "<strong>%s</strong>".
+DescVentilMore=In most cases, if you use predefined products or services and you set the account number on the product/service card, the application will be able to make all the binding between your invoice lines and the accounting account of your chart of accounts, just in one click with the button <strong>"%s"</strong>. If account was not set on product/service cards or if you still have some lines not bound to an account, you will have to make a manual binding from the menu "<strong>%s</strong>".
 DescVentilDoneCustomer=Consult here the list of the lines of invoices customers and their product accounting account
 DescVentilTodoCustomer=Bind invoice lines not already bound with a product accounting account
 ChangeAccount=Change the product/service accounting account for selected lines with the following accounting account:
@@ -296,7 +296,7 @@ BookeppingLineAlreayExists=Lines already existing into bookkeeping
 NoJournalDefined=No journal defined
 Binded=Lines bound
 ToBind=Lines to bind
-UseMenuToSetBindindManualy=Autodetection not possible, use menu <a href="%s">%s</a> to make the binding manually
+UseMenuToSetBindindManualy=Lines not yet bound, use menu <a href="%s">%s</a> to make the binding manually
 
 ## Import
 ImportAccountingEntries=Accounting entries

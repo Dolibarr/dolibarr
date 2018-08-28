@@ -41,8 +41,16 @@ require_once DOL_DOCUMENT_ROOT.'/multicurrency/class/multicurrency.class.php';
  */
 class Societe extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='societe';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element = 'societe';
+	
 	public $fk_element='fk_soc';
 	public $fieldsforcombobox='nom,name_alias';
 	protected $childtables=array("supplier_proposal"=>'SupplierProposal',"propal"=>'Proposal',"commande"=>'Order',"facture"=>'Invoice',"facture_rec"=>'RecurringInvoiceTemplate',"contrat"=>'Contract',"fichinter"=>'Fichinter',"facture_fourn"=>'SupplierInvoice',"commande_fournisseur"=>'SupplierOrder',"projet"=>'Project',"expedition"=>'Shipment',"prelevement_lignes"=>'DirectDebitRecord');    // To test if we can delete object
@@ -754,6 +762,7 @@ class Societe extends CommonObject
 	function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0, $action='update', $nosyncmember=1)
 	{
 		global $langs,$conf,$hookmanager;
+
 		require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 		if (empty($id)) $id = $this->id;
@@ -1053,7 +1062,7 @@ class Societe extends CommonObject
 				$action='update';
 
 				// Actions on extra fields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 				{
 					$result=$this->insertExtraFields();
 					if ($result < 0)

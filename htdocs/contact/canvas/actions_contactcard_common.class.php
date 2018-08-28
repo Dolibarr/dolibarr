@@ -27,7 +27,11 @@
  */
 abstract class ActionsContactCardCommon
 {
-    var $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
+    
     var $dirmodule;
     var $targetmodule;
     var $canvas;
@@ -37,10 +41,17 @@ abstract class ActionsContactCardCommon
 	var $tpl = array();
 	//! Object container
 	var $object;
-	//! Error string
-	var $error;
-	//! Error array
-	var $errors=array();
+	
+	/**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
+	
+
+	/**
+	 * @var string[] Error codes (or messages)
+	 */
+	public $errors = array();
 
 
 	/**

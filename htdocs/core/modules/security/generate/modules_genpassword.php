@@ -30,7 +30,10 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
  */
 abstract class ModeleGenPassword
 {
-    var $error='';
+    /**
+	 * @var string Error code (or message)
+	 */
+	public $error='';
 
     /**
      * 		Return if a module can be used or not

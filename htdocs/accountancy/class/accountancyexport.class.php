@@ -55,11 +55,11 @@ class AccountancyExport
 	public static $EXPORT_TYPE_AGIRIS = 9;
 	public static $EXPORT_TYPE_CONFIGURABLE = 10;
 
+
 	/**
-	 *
 	 * @var string[] Error codes (or messages)
 	 */
-	public $errors = array ();
+	public $errors = array();
 
 	/**
 	 *
@@ -78,7 +78,8 @@ class AccountancyExport
 	 *
 	 * @param DoliDb $db Database handler
 	 */
-	public function __construct(DoliDB &$db) {
+    public function __construct(DoliDB &$db)
+    {
 		global $conf;
 
 		$this->db = &$db;
@@ -91,7 +92,8 @@ class AccountancyExport
 	 *
 	 * @return array of type
 	 */
-	public static function getType() {
+    public static function getType()
+    {
 		global $langs;
 
 		return array (
@@ -113,7 +115,8 @@ class AccountancyExport
 	 *
 	 * @return array of type
 	 */
-	public static function getTypeConfig() {
+    public static function getTypeConfig()
+    {
 		global $conf, $langs;
 
 		return array (
@@ -175,7 +178,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public static function downloadFile() {
+    public static function downloadFile()
+    {
 		global $conf;
 		$filename = 'general_ledger';
 		include DOL_DOCUMENT_ROOT . '/accountancy/tpl/export_journal.tpl.php';
@@ -185,8 +189,10 @@ class AccountancyExport
 	 * Function who chose which export to use with the default config
 	 *
 	 * @param unknown $TData data
+     * @return void
 	 */
-	public function export(&$TData) {
+    public function export(&$TData)
+    {
 		global $conf, $langs;
 
 		self::downloadFile();
@@ -235,7 +241,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportNormal($objectLines) {
+    public function exportNormal($objectLines)
+    {
 		global $conf;
 
 		foreach ( $objectLines as $line ) {
@@ -259,7 +266,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportCegid($objectLines) {
+    public function exportCegid($objectLines)
+    {
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 			$separator = ";";
@@ -284,7 +292,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportCogilog($objectLines) {
+    public function exportCogilog($objectLines)
+    {
 		foreach ( $objectLines as $line ) {
 			$date = dol_print_date($line->doc_date, '%d%m%Y');
 			$separator = ";";
@@ -317,7 +326,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportCoala($objectLines) {
+    public function exportCoala($objectLines)
+    {
 		// Coala export
 		$separator = ";";
 		$end_line = "\n";
@@ -344,7 +354,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportBob50($objectLines) {
+    public function exportBob50($objectLines)
+    {
 
 		// Bob50
 		$separator = ";";
@@ -382,7 +393,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportCiel(&$TData) {
+    public function exportCiel(&$TData)
+    {
 		global $conf;
 
 		$end_line ="\r\n";
@@ -422,7 +434,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportQuadratus(&$TData) {
+    public function exportQuadratus(&$TData)
+    {
 		global $conf;
 
 		$end_line ="\r\n";
@@ -505,7 +518,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportEbp($objectLines) {
+    public function exportEbp($objectLines)
+    {
 
 		$separator = ',';
 		$end_line = "\n";
@@ -537,7 +551,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportAgiris($objectLines) {
+    public function exportAgiris($objectLines)
+    {
 
 		$separator = ';';
 		$end_line = "\n";
@@ -574,7 +589,8 @@ class AccountancyExport
 	 *
 	 * @return void
 	 */
-	public function exportConfigurable($objectLines) {
+    public function exportConfigurable($objectLines)
+    {
 		global $conf;
 
 		foreach ($objectLines as $line) {
@@ -602,8 +618,10 @@ class AccountancyExport
 	 *
 	 * @param unknown $str data
 	 * @param integer $size data
+     * @return string
 	 */
-	public static function trunc($str, $size) {
+    public static function trunc($str, $size)
+    {
 		return dol_trunc($str, $size, 'right', 'UTF-8', 1);
 	}
 }

@@ -546,7 +546,7 @@ if (empty($conf->global->MEMBER_NEWFORM_FORCETYPE))
     $isempty=1;
     if (count($listoftype)==1) { $defaulttype=$tmp[0]; $isempty=0; }
     print '<tr><td class="titlefield">'.$langs->trans("Type").' <FONT COLOR="red">*</FONT></td><td>';
-    print $form->selectarray("type",  $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
+    print $form->selectarray("type", $adht->liste_array(), GETPOST('type')?GETPOST('type'):$defaulttype, $isempty);
     print '</td></tr>'."\n";
 }
 else
@@ -561,7 +561,7 @@ $morphys["mor"] = $langs->trans("Moral");
 if (empty($conf->global->MEMBER_NEWFORM_FORCEMORPHY))
 {
     print '<tr class="morphy"><td class="titlefield">'.$langs->trans('Nature').' <FONT COLOR="red">*</FONT></td><td>'."\n";
-    print $form->selectarray("morphy",  $morphys, GETPOST('morphy'), 1);
+    print $form->selectarray("morphy", $morphys, GETPOST('morphy'), 1);
     print '</td></tr>'."\n";
 }
 else

@@ -43,8 +43,16 @@ require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
  */
 class Product extends CommonObject
 {
+	/**
+	 * @var string ID to identify managed object
+	 */
 	public $element='product';
+	
+	/**
+	 * @var string Name of table without prefix where object is stored
+	 */
 	public $table_element='product';
+	
 	public $fk_element='fk_product';
 	protected $childtables=array('supplier_proposaldet', 'propaldet','commandedet','facturedet','contratdet','facture_fourn_det','commande_fournisseurdet');    // To test if we can delete object
 	public $ismultientitymanaged = 1;	// 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -933,7 +941,7 @@ class Product extends CommonObject
 				$action='update';
 
 				// Actions on extra fields
-				if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+				if (! $error && empty($conf->global->MAIN_EXTRAFIELDS_DISABLED))
 				{
 					$result=$this->insertExtraFields();
 					if ($result < 0)
@@ -1523,7 +1531,7 @@ class Product extends CommonObject
 
 		// We do a first seach with a select by searching with couple prodfournprice and qty only (later we will search on triplet qty/product_id/fourn_ref)
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.remise_percent,";
-		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
+		$sql.= " pfp.fk_product, pfp.ref_fourn, pfp.desc_fourn, pfp.fk_soc, pfp.tva_tx, pfp.fk_supplier_price_expression";
 		$sql.= " ,pfp.default_vat_code";
         $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -1560,6 +1568,7 @@ class Product extends CommonObject
 				$this->fourn_socid = $obj->fk_soc;                  // Company that offer this price
 				$this->ref_fourn = $obj->ref_fourn;                 // deprecated
 				$this->ref_supplier = $obj->ref_fourn;              // Ref supplier
+				$this->desc_supplier = $obj->desc_fourn;            // desc supplier
 				$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 				$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 				$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
@@ -1575,7 +1584,7 @@ class Product extends CommonObject
 			{
 				// We do a second search by doing a select again but searching with less reliable criteria: couple qty/id product, and if set fourn_ref or fk_soc.
 				$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pfp.fk_soc,";
-				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
+				$sql.= " pfp.fk_product, pfp.ref_fourn as ref_supplier, pfp.desc_fourn as desc_supplier, pfp.tva_tx, pfp.fk_supplier_price_expression";
 				$sql.= " ,pfp.default_vat_code";
                 $sql.= " ,pfp.multicurrency_price, pfp.multicurrency_unitprice, pfp.multicurrency_tx, pfp.fk_multicurrency, pfp.multicurrency_code";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
@@ -1616,6 +1625,7 @@ class Product extends CommonObject
 						$this->fourn_socid = $obj->fk_soc;                  // Company that offer this price
 						$this->ref_fourn = $obj->ref_supplier;              // deprecated
 						$this->ref_supplier = $obj->ref_supplier;           // Ref supplier
+						$this->desc_supplier = $obj->desc_supplier;         // desc supplier
 						$this->remise_percent = $obj->remise_percent;       // remise percent if present and not typed
 						$this->vatrate_supplier = $obj->tva_tx;             // Vat ref supplier
 						$this->default_vat_code = $obj->default_vat_code;   // Vat code supplier
@@ -3647,7 +3657,7 @@ class Product extends CommonObject
         $result.=$linkstart;
 		if ($withpicto) {
 			if ($this->type == Product::TYPE_PRODUCT) $result.=(img_object(($notooltip?'':$label), 'product', ($notooltip?'class="paddingright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
-			if ($this->type == Product::TYPE_SERVICE) $result.=(img_object(($notooltip?'':$label), 'service',  ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
+			if ($this->type == Product::TYPE_SERVICE) $result.=(img_object(($notooltip?'':$label), 'service', ($notooltip?'class="paddinright"':'class="paddingright classfortooltip"'), 0, 0, $notooltip?0:1));
 		}
 		$result.= $newref;
 		$result.= $linkend;
@@ -4422,7 +4432,7 @@ class Product extends CommonObject
 
 		$langs->load('products');
 
-		$this->db->begin();
+		//$this->db->begin();
 
 		$label_type = 'label';
 
@@ -4502,8 +4512,10 @@ class Product extends CommonObject
 	 * Existing categories are left untouch.
 	 *
 	 * @param int[]|int $categories Category or categories IDs
+     * @return void
 	 */
-	public function setCategories($categories) {
+    public function setCategories($categories)
+    {
 		// Handle single category
 		if (! is_array($categories)) {
 			$categories = array($categories);
