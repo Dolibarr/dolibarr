@@ -37,9 +37,9 @@ class Address
 	public $type;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+     	 * @var string proper name for given parameter
+     	 */
+    	public $label;
     
 	public $socid;
 	public $name;
