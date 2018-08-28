@@ -1397,9 +1397,9 @@ class ModelMail
 	public $id;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+     	 * @var string proper name for given parameter
+     	 */
+    	public $label;
     
 	public $topic;
 	public $content;
