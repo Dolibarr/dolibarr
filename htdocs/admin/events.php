@@ -94,7 +94,7 @@ print "</tr>\n";
 foreach ($eventstolog as $key => $arr)
 {
 	if ($arr['id'])
-	{		
+	{
 		print '<tr class="oddeven">';
 		print '<td>'.$arr['id'].'</td>';
 		print '<td>';

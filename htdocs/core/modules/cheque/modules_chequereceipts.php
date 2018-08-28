@@ -118,7 +118,7 @@ abstract class ModeleNumRefChequeReceipts
 
 /**
  *	\class      ModeleChequeReceipts
- *	\brief      Classe mere des modeles de 
+ *	\brief      Classe mere des modeles de
  */
 abstract class ModeleChequeReceipts extends CommonDocGenerator
 {
@@ -215,4 +215,3 @@ function chequereceipt_pdf_create($db, $id, $message, $modele, $outputlangs)
 		return -1;
 	}
 }
-

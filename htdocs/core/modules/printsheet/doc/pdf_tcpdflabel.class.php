@@ -77,7 +77,7 @@ class pdf_tcpdflabel extends CommonStickerGenerator
 	 * @param int	  $y		   y position in user units
 	 * @param int	  $w		   width in user units
 	 * @param int	  $h		   height in user units
-     * @return void
+	 * @return void
 	 */
 	private function writeBarcode(&$pdf, $code, $encoding, $is2d, $x, $y, $w, $h)
 	{

@@ -54,11 +54,11 @@ if ($action == 'updateMask') {
         $error++;
     }
 
-    if (!$error) 
+    if (!$error)
     {
         setEventMessages($langs->trans("SetupSaved"), null, 'mesgs');
-    } 
-    else 
+    }
+    else
     {
         setEventMessages($langs->trans("Error"), null, 'errors');
     }

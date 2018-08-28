@@ -41,13 +41,13 @@ if (isset($_GET['connect'])){
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeTest';
-    $servicestatus = 0;
+        $servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_CONNECT_KEY;
 		$service = 'StripeLive';
-    $servicestatus = 1;    
+        $servicestatus = 1;
 	}
 }
 else {
@@ -55,13 +55,13 @@ else {
 	{
 		$endpoint_secret =  $conf->global->STRIPE_TEST_WEBHOOK_KEY;
 		$service = 'StripeTest';
-    $servicestatus = 0;
+        $servicestatus = 0;
 	}
 	else
 	{
 		$endpoint_secret =  $conf->global->STRIPE_LIVE_WEBHOOK_KEY;
 		$service = 'StripeLive';
-    $servicestatus = 1;
+        $servicestatus = 1;
 	}
 }
 $payload = @file_get_contents("php://input");
@@ -229,35 +229,35 @@ elseif ($event->type == 'charge.failed') {
 }
 elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 'three_d_secure') && ($event->data->object->three_d_secure->authenticated==true)) {
 
-  $fulltag=$event->data->object->metadata->FULLTAG;
+    $fulltag=$event->data->object->metadata->FULLTAG;
 	// Save into $tmptag all metadata
 	$tmptag=dolExplodeIntoArray($fulltag,'.','=');
-  
-  if (! empty($tmptag['ORD'])){
-  $order=new Commande($db);
-	$order->fetch('',$tmptag['ORD']);
-  $origin='order';
-  $item=$order->id;
-  } elseif (! empty($tmptag['INV'])) {
-  $invoice = new Facture($db);
-	$invoice->fetch('',$tmptag['INV']);
-  $origin='invoice';
-  $item=$invoice->id;
-  }
 
-  $stripe=new Stripe($db); 
-  $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
-  $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
+    if (! empty($tmptag['ORD'])) {
+        $order=new Commande($db);
+	    $order->fetch('',$tmptag['ORD']);
+        $origin='order';
+        $item=$order->id;
+    } elseif (! empty($tmptag['INV'])) {
+        $invoice = new Facture($db);
+	    $invoice->fetch('',$tmptag['INV']);
+        $origin='invoice';
+        $item=$invoice->id;
+    }
+
+    $stripe=new Stripe($db);
+    $stripeacc = $stripe->getStripeAccount($service);								// Stripe OAuth connect account of dolibarr user (no network access here)
+    $stripecu = $stripe->getStripeCustomerAccount($tmptag['CUS'], $servicestatus);		// Get thirdparty cu_...
 	$charge=$stripe->createPaymentStripe($event->data->object->amount/100,$event->data->object->currency,$origin,$item,$event->data->object->id,$stripecu,$stripeacc,$servicestatus);
-  
-	if (isset($charge->id) && $charge->statut=='error'){
+
+	if (isset($charge->id) && $charge->statut=='error') {
 		$msg=$charge->message;
 		$code=$charge->code;
 		$error++;
-	}              
+	}
 	elseif (isset($charge->id) && $charge->statut=='success' && (! empty($tmptag['ORD']))) {
-    //$order=new Commande($db);
-	  //$order->fetch('',$tmptag['ORD']);
+        //$order=new Commande($db);
+	    //$order->fetch('',$tmptag['ORD']);
 		$invoice = new Facture($db);
 		$idinv=$invoice->createFromOrder($order,$user);
 
@@ -273,17 +273,17 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 				$ifverif=$invoice->socid;
 				$currency=$invoice->multicurrency_code;
 				$total=price2num($invoice->total_ttc - $paiement - $creditnotes - $deposits,'MT');
-			}else{
+			} else {
 				$msg=$invoice->error;
 				$error++;
 			}
-		}else{
+		} else {
 			$msg=$invoice->error;
 			$error++;
 		}
 	}
 
-	if (!$error){
+	if (!$error) {
 		$datepaye = dol_now();
 		$paymentType ="CB";
 		$amounts=array();
@@ -299,10 +299,10 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 		$paiement->note         = '';
 	}
 
-	if (! $error){
+	if (! $error) {
 		$paiement_id=$paiement->create($user, 0);
 
-		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($invoice->lines)){
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE) && count($invoice->lines)) {
 			$outputlangs = $langs;
 			$newlang = '';
 			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id','aZ09')) $newlang = GETPOST('lang_id','aZ09');
@@ -316,17 +316,17 @@ elseif (($event->type == 'source.chargeable') && ($event->data->object->type == 
 
 			$invoice->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 		}
-		if ($paiement_id < 0){
+		if ($paiement_id < 0) {
 			$msg=$paiement->errors;
 			$error++;
-		}else{
+		} else {
 			if ($event->data->object->metadata->source=='order') {
 				$order->classifyBilled($user);
 			}
 		}
 	}
 
-	if (! $error){
+	if (! $error) {
 		$label='(CustomerInvoicePayment)';
 		if (GETPOST('type') == 2) $label='(CustomerInvoicePaymentBack)';
 		$paiement->addPaymentToBank($user,'payment',$label,$conf->global->STRIPE_BANK_ACCOUNT_FOR_PAYMENTS,'','');
@@ -349,4 +349,3 @@ elseif ($event->type == 'customer.deleted') {
 	$db->query($sql);
 	$db->commit();
 }
-

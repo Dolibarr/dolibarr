@@ -84,11 +84,11 @@ if (empty($template_id)) {
 	$result = $advTarget->fetch($template_id);
 }
 
-if ($result < 0) 
+if ($result < 0)
 {
 	setEventMessages($advTarget->error, $advTarget->errors, 'errors');
-} 
-else 
+}
+else
 {
 	if (! empty($advTarget->id)) {
 		$array_query = json_decode($advTarget->filtervalue, true);
@@ -225,7 +225,7 @@ if ($action == 'add') {
 	} else {
 		$advTarget->contact_lines = array ();
 	}
-	
+
 	if ((count($advTarget->thirdparty_lines) > 0) || (count($advTarget->contact_lines) > 0)) {
 		// Add targets into database
 		$obj = new mailing_advthirdparties($db);
@@ -359,7 +359,7 @@ if ($action == 'savefilter' || $action == 'createfilter') {
 				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
 			}
 		} elseif ($action == 'savefilter') {
-			
+
 			$result = $advTarget->update($user);
 			if ($result < 0) {
 				setEventMessages($advTarget->error, $advTarget->errors, 'errors');
@@ -465,9 +465,9 @@ if ($object->fetch($id) >= 0) {
 
 	// Show email selectors
 	if ($object->statut == 0 && $user->rights->mailing->creer) {
-		
+
 		include DOL_DOCUMENT_ROOT . '/core/tpl/advtarget.tpl.php';
-		
+
 	}
 }
 

@@ -117,7 +117,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupCreate
-     * 
+     *
      * @return	void
      */
     public function testUserGroupCreate()
@@ -139,7 +139,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupFetch
-     * 
+     *
      * @param   int $id             Id of group
      * @return  void
      * @depends testUserGroupCreate
@@ -163,7 +163,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupUpdate
-     * 
+     *
      * @param   Object $localobject Group
      * @return  void
      * @depends testUserGroupFetch
@@ -187,7 +187,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupAddRight
-     * 
+     *
      * @param   Object $localobject Object to show
      * @return  void
      * @depends testUserGroupUpdate
@@ -210,7 +210,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupDelRight
-     * 
+     *
      * @param   Object $localobject Object
      * @return  void
      * @depends testUserGroupAddRight
@@ -233,7 +233,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupOther
-     * 
+     *
      * @param   Object $localobject Object
      * @return  void
      * @depends testUserGroupDelRight
@@ -261,7 +261,7 @@ class UserGroupTest extends PHPUnit_Framework_TestCase
 
     /**
      * testUserGroupDelete
-     * 
+     *
      * @param   int $id             Id of object
      * @return  void
      * @depends testUserGroupOther

@@ -79,17 +79,17 @@ foreach($modulesdir as $dir)
 						{
 							try {
 	    						$objMod = new $modName($db);
-						
+
 			    				$modules[$objMod->numero]=$objMod;
 			    				$modules_names[$objMod->numero]=$objMod->name;
 	    						$modules_files[$objMod->numero]=$file;
 	    						$modules_fullpath[$file]=$dir.$file;
 	    						$picto[$objMod->numero]=(isset($objMod->picto) && $objMod->picto)?$objMod->picto:'generic';
-							} 
+							}
 							catch(Exception $e)
 							{
 								dol_syslog("Failed to load ".$dir.$file." ".$e->getMessage(), LOG_ERR);
-							}	
+							}
 						}
 						else
 						{

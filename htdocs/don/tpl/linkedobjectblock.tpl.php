@@ -36,7 +36,7 @@ $total=0; $ilink=0;
 foreach($linkedObjectBlock as $key => $objectlink)
 {
     $ilink++;
-    
+
     $trclass='oddeven';
     if ($ilink == count($linkedObjectBlock) && empty($noMoreLinkedObjectBlockAfter) && count($linkedObjectBlock) <= 1) $trclass.=' liste_sub_total';
 ?>
@@ -66,7 +66,7 @@ if (count($linkedObjectBlock) > 1)
     	<td align="right"></td>
     	<td align="right"></td>
     </tr>
-    <?php  
+    <?php
 }
 ?>
 
