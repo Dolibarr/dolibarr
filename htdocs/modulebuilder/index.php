@@ -175,10 +175,11 @@ if ($dirins && $action == 'initmodule' && $modulename)
 			}
 		}
 
-                if(!empty($conf->global->MODULEBUILDER_SPECIFIC_README)){
-                    dol_delete_file($destdir.'/README.md');
-                    file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
-                }
+		if (!empty($conf->global->MODULEBUILDER_SPECIFIC_README))
+		{
+			dol_delete_file($destdir.'/README.md');
+			file_put_contents($destdir.'/README.md', $conf->global->MODULEBUILDER_SPECIFIC_README);
+		}
 	}
 
 	if (! $error)
