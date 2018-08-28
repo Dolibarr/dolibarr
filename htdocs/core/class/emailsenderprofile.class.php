@@ -90,7 +90,12 @@ class EmailSenderProfile extends CommonObject
 	);
 	public $rowid;
 	public $entity;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $email;
 	public $date_creation;
 	public $tms;
