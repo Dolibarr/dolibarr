@@ -1247,11 +1247,10 @@ if ($id > 0)
 			include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
             print '<tr>';
 			print '<td>'.$langs->trans("LinkedObject").'</td>';
-			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1).'</td>';
-			print '<td>';
-            print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
-            print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
-            print '</td>';
+			print '<td>'.dolGetElementUrl($object->fk_element,$object->elementtype,1);
+			print '<input type="hidden" name="fk_element" value="'.$object->fk_element.'">';
+			print '<input type="hidden" name="elementtype" value="'.$object->elementtype.'">';
+			print '</td>';
 			print '</tr>';
 		}
 
