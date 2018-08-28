@@ -51,9 +51,9 @@ class EcmFiles extends CommonObject
 	public $ref;					// hash of file path
 	
 	/**
-     * @var string proper name for given parameter: hash of file content (md5_file(dol_osencode($destfull))
-     */
-    public $label;
+     	 * @var string proper name for given parameter: hash of file content (md5_file(dol_osencode($destfull))
+     	 */
+    	public $label;
     
 	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 	public $entity;
@@ -62,9 +62,9 @@ class EcmFiles extends CommonObject
 	public $fullpath_orig;
 	
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+     	 * @var string model description (short text)
+     	 */
+    	public $description;
     
 	public $keywords;
 	public $cover;
