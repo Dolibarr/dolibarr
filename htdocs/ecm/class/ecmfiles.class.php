@@ -840,9 +840,9 @@ class EcmFiles extends CommonObject
 class EcmfilesLine
 {
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+     	 * @var string proper name for given parameter
+     	 */
+    	public $label;
     
 	public $entity;
 	public $filename;
@@ -850,9 +850,9 @@ class EcmfilesLine
 	public $fullpath_orig;
 	
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+     	 * @var string model description (short text)
+     	 */
+    	public $description;
     
 	public $keywords;
 	public $cover;
