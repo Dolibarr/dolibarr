@@ -57,9 +57,9 @@ class WebsitePage extends CommonObject
 	public $title;
 	
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+     	 * @var string model description (short text)
+     	 */
+    	public $description;
     
 	public $keywords;
 	public $htmlheader;
