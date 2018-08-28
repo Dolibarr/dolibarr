@@ -1640,7 +1640,7 @@ ChequeReceiptsNumberingModule=Cheque Receipts Numbering module
 MultiCompanySetup=Multi-company module setup
 ##### Suppliers #####
 SuppliersSetup=Supplier module setup
-SuppliersCommandModel=Complete template of prchase order (logo...)
+SuppliersCommandModel=Complete template of purchase order (logo...)
 SuppliersInvoiceModel=Complete template of vendor invoice (logo...)
 SuppliersInvoiceNumberingModel=Supplier invoices numbering models
 IfSetToYesDontForgetPermission=If set to yes, don't forget to provide permissions to groups or users allowed for the second approval
