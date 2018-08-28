@@ -18,9 +18,9 @@ class Comment extends CommonObject
 	public $element_type;
 
 	/**
-     * @var string model description (short text)
-     */
-    public $description;
+     	 * @var string model description (short text)
+     	 */
+    	public $description;
 
 	public $tms;
 
