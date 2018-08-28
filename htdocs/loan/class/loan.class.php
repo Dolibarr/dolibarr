@@ -48,9 +48,9 @@ class Loan extends CommonObject
 	public $dateend;
 	
 	/**
-     * @var string proper name for given parameter
-     */
-    public $label;
+     	 * @var string proper name for given parameter
+     	 */
+    	public $label;
     
 	public $capital;
 	public $nbterm;
