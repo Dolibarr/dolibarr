@@ -39,12 +39,15 @@ class ModeleImports
 
     public $error='';
 
-    public $id;           // Id of driver
+    /**
+     * @var int ID of driver
+     */
+    public $id;     
     
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
+     * @var string proper name for given parameter
+     */
+    public $label;
     
 	public $extension;    // Extension of files imported by driver
 	public $version;      // Version of driver

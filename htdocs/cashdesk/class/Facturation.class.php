@@ -37,7 +37,12 @@ class Facturation
      * int $prix		=> Prix HT du produit en cours
      * int $tva			=> 'rowid' du taux de tva dans llx_c_tva
      */
+    
+    /**
+     * @var int ID
+     */
     public $id;
+    
     protected $ref;
     protected $qte;
     protected $stock;

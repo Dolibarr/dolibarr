@@ -480,16 +480,16 @@ class CtyperesourceLine
 	 * @var int ID
 	 */
 	public $id;
+	
 	/**
 	 * @var mixed Sample line property 1
 	 */
-
 	public $code;
 	
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
+     * @var string proper name for given parameter
+     */
+    public $label;
     
 	public $active;
 

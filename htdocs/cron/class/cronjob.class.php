@@ -1333,17 +1333,20 @@ class Cronjob extends CommonObject
  */
 class Cronjobline
 {
-
-	public $id;
+	/**
+     * @var int ID
+     */
+    public $id;
+    
 	public $ref;
 
 	public $tms='';
 	public $datec='';
 	
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
+     * @var string proper name for given parameter
+     */
+    public $label;
     
 	public $jobtype;
 	public $command;

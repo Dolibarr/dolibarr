@@ -43,6 +43,9 @@ class Menubase
 	 */
 	public $errors = array();
 
+    /**
+     * @var int ID
+     */
     public $id;
 
     public $menu_handler;

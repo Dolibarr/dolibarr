@@ -1394,12 +1394,15 @@ class FormMail extends Form
  */
 class ModelMail
 {
-	public $id;
+	/**
+     * @var int ID
+     */
+    public $id;
 	
 	/**
-     	 * @var string proper name for given parameter
-     	 */
-    	public $label;
+     * @var string proper name for given parameter
+     */
+    public $label;
     
 	public $topic;
 	public $content;
