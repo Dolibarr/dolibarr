@@ -17,7 +17,10 @@ class Comment extends CommonObject
 	public $fk_element;
 	public $element_type;
 
-	public $description;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
 
 	public $tms;
 

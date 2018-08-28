@@ -65,6 +65,9 @@ class ActionsTicket
      */
     public $label;
     
+    /**
+     * @var string model description (short text)
+     */
     public $description;
 
     public $fk_statut;

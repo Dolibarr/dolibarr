@@ -66,9 +66,9 @@ class Website extends CommonObject
 	public $ref;
 	
 	/**
-	 * @var string
-	 */
-	public $description;
+     * @var string model description (short text)
+     */
+    public $description;
 	
 	/**
 	 * @var int

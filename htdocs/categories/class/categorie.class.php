@@ -165,7 +165,11 @@ class Categorie extends CommonObject
      */
     public $label;
     
-	public $description;
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+    
 	/**
 	 * @var string     Color
 	 */

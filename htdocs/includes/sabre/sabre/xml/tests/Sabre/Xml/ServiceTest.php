@@ -312,7 +312,12 @@ XML;
 class Order {
     public $id;
     public $amount;
+    
+    /**
+     * @var string model description (short text)
+     */
     public $description;
+    
     public $status;
     public $empty;
     public $link = [];

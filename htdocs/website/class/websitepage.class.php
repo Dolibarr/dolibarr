@@ -55,7 +55,12 @@ class WebsitePage extends CommonObject
 	public $aliasalt;
 	public $type_container;
 	public $title;
-	public $description;
+	
+	/**
+     * @var string model description (short text)
+     */
+    public $description;
+    
 	public $keywords;
 	public $htmlheader;
 	public $content;

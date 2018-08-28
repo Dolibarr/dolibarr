@@ -46,7 +46,12 @@ class DiscountAbsolute
     public $amount_ttc;			//
     public $tva_tx;				// Vat rate
     public $fk_user;				// Id utilisateur qui accorde la remise
-    public $description;			// Description libre
+    
+    /**
+     * @var string model description (short text)
+     */
+    public $description;
+    
     public $datec;					// Date creation
     public $fk_facture_line;  		// Id invoice line when a discount is used into an invoice line (for absolute discounts)
     public $fk_facture;			    // Id invoice when a discount line is used into an invoice (for credit note)
