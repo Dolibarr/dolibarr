@@ -104,7 +104,12 @@ class MyObject extends CommonObject
 	public $rowid;
 	public $ref;
 	public $entity;
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $amount;
 	public $status;
 	public $date_creation;

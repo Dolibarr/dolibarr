@@ -46,7 +46,12 @@ class Cronjob extends CommonObject
     public $jobtype;
 	public $tms='';
 	public $datec='';
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $command;
 	public $classesname;
 	public $objectname;
@@ -1334,7 +1339,12 @@ class Cronjobline
 
 	public $tms='';
 	public $datec='';
-	public $label;
+	
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $jobtype;
 	public $command;
 	public $classesname;

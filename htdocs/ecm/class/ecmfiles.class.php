@@ -49,7 +49,12 @@ class EcmFiles extends CommonObject
 	public $picto = 'generic';
 
 	public $ref;					// hash of file path
-	public $label;					// hash of file content (md5_file(dol_osencode($destfull))
+	
+	/**
+     * @var string proper name for given parameter: hash of file content (md5_file(dol_osencode($destfull))
+     */
+    public $label;
+    
 	public $share;					// hash for file sharing, empty by default (example: getRandomPassword(true))
 	public $entity;
 	public $filename;
@@ -829,7 +834,11 @@ class EcmFiles extends CommonObject
 
 class EcmfilesLine
 {
-	public $label;
+	/**
+     * @var string proper name for given parameter
+     */
+    public $label;
+    
 	public $entity;
 	public $filename;
 	public $filepath;

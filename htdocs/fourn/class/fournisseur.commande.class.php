@@ -4,11 +4,11 @@
  * Copyright (C) 2005-2012	Regis Houssin			<regis.houssin@capnetworks.com>
  * Copyright (C) 2007		Franky Van Liedekerke	<franky.van.liedekerke@telenet.be>
  * Copyright (C) 2010-2014	Juanjo Menent			<jmenent@2byte.es>
- * Copyright (C) 2010-2016	Philippe Grand			<philippe.grand@atoo-net.com>
+ * Copyright (C) 2010-2018	Philippe Grand			<philippe.grand@atoo-net.com>
  * Copyright (C) 2012-2015  Marcos García           <marcosgdf@gmail.com>
  * Copyright (C) 2013       Florian Henry		  	<florian.henry@open-concept.pro>
  * Copyright (C) 2013       Cédric Salvador         <csalvador@gpcsolutions.fr>
- * Copyright (C) 2018      Nicolas ZABOURI			<info@inovea-conseil.com>
+ * Copyright (C) 2018       Nicolas ZABOURI			<info@inovea-conseil.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3116,7 +3116,12 @@ class CommandeFournisseurLigne extends CommonOrderLine
     // From llx_commande_fournisseurdet
     public $fk_parent_line;
     public $fk_facture;
+    
+    /**
+     * @var string proper name for given parameter
+     */
     public $label;
+    
     public $rang = 0;
     public $special_code = 0;
 
