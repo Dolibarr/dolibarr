@@ -464,9 +464,7 @@ if (empty($reshook))
 			$sql .= " WHERE rowid = " . $rowid;
 
 			$result = $db->query($sql);
-		} 
-		else 
-		{
+		} else {
 			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
 		}
 	}
@@ -479,9 +477,7 @@ if (empty($reshook))
 		$sql .= " WHERE fk_product_price = " . $priceid;
 
 		$result = $db->query($sql);
-		} 
-		else 
-		{
+		} else {
 			setEventMessages(('delete_price_by_qty'.$langs->transnoentities(MissingIds)), null,'errors');
 		}
 	}

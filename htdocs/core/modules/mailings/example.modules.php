@@ -32,9 +32,9 @@ class mailing_example extends MailingTargets
     var $desc='Put here a description';
 	// CHANGE THIS: Set to 1 if selector is available for admin users only
     var $require_admin=0;
-    // CHANGE THIS: Add a tooltip language key to add a tooltip help icon after the email target selector 
+    // CHANGE THIS: Add a tooltip language key to add a tooltip help icon after the email target selector
     var $tooltip='MyTooltipLangKey';
-    
+
     var $require_module=array();
     var $picto='';
     
@@ -148,4 +148,3 @@ class mailing_example extends MailingTargets
     }
 
 }
-

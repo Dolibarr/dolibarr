@@ -373,7 +373,7 @@ if($conf->invoice->enabled)
 	print "</tr>\n";
 }
 
-if($conf->order->enabled) 
+if($conf->order->enabled)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForOrder").'</td>';
@@ -388,7 +388,7 @@ if($conf->order->enabled)
 	print "</tr>\n";
 }
 
-if($conf->expedition->enabled) 
+if($conf->expedition->enabled)
 {
 	print '<tr class="oddeven">';
 	print '<td>'.$langs->trans("StockMustBeEnoughForShipment").'</td>';

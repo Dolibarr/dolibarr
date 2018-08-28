@@ -52,7 +52,7 @@ class pdf_standard extends ModeleExpenseReport
      * @var string model description (short text)
      */
     public $description;
-    
+
 	/**
      * @var string document type
      */
@@ -62,8 +62,8 @@ class pdf_standard extends ModeleExpenseReport
      * @var array() Minimum version of PHP required by module.
 	 * e.g.: PHP ≥ 5.4 = array(5, 4)
      */
-	public $phpmin = array(5, 4); 
-	
+	public $phpmin = array(5, 4);
+
 	/**
      * Dolibarr version of the loaded document
      * @public string
@@ -74,37 +74,37 @@ class pdf_standard extends ModeleExpenseReport
      * @var int page_largeur
      */
     public $page_largeur;
-	
+
 	/**
      * @var int page_hauteur
      */
     public $page_hauteur;
-	
+
 	/**
      * @var array format
      */
     public $format;
-	
+
 	/**
      * @var int marge_gauche
      */
 	public $marge_gauche;
-	
+
 	/**
      * @var int marge_droite
      */
 	public $marge_droite;
-	
+
 	/**
      * @var int marge_haute
      */
 	public $marge_haute;
-	
+
 	/**
      * @var int marge_basse
      */
 	public $marge_basse;
-    
+
 	/**
 	 * Issuer
 	 * @var Societe
@@ -120,7 +120,7 @@ class pdf_standard extends ModeleExpenseReport
 	function __construct($db)
 	{
 		global $conf, $langs, $mysoc;
-		
+
 		// Translations
 		$langs->loadLangs(array("main", "trips", "projects"));
 
@@ -208,7 +208,7 @@ class pdf_standard extends ModeleExpenseReport
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (! empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output='ISO-8859-1';
-		
+
 		// Translations
 		$outputlangs->loadLangs(array("main", "trips", "projects", "dict"));
 
@@ -567,7 +567,7 @@ class pdf_standard extends ModeleExpenseReport
 	function _pagehead(&$pdf, $object, $showaddress, $outputlangs)
 	{
 		global $conf,$langs,$hookmanager;
-		
+
 		// Translations
 		$outputlangs->loadLangs(array("main", "trips", "companies"));
 
@@ -919,4 +919,3 @@ class pdf_standard extends ModeleExpenseReport
 	}
 
 }
-

@@ -748,8 +748,8 @@ if ($resql)
 			if (! empty($arrayfields['p.duration']['checked']))
 			{
 				print '<td align="center">';
-        			
-				if (preg_match('/([^a-z]+)[a-z]$/i',$obj->duration))	
+
+				if (preg_match('/([^a-z]+)[a-z]$/i',$obj->duration))
 				{
 					$duration_value	= substr($obj->duration,0,dol_strlen($obj->duration)-1);
 					$duration_unit	= substr($obj->duration,-1);

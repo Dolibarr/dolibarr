@@ -15,14 +15,14 @@ else return 0;
 
 
 function highlightTOC(str) {
-    
-	
-		
-		 
-	
+
+
+
+
+
     if (StopProcess()) return;
     try {
-		
+
     str = str || parent.BODY.document.location.href;
     uri = last(str);
     list = parent.TOC.document.getElementsByTagName("a");
@@ -33,7 +33,7 @@ function highlightTOC(str) {
         list[i].style.backgroundColor = "#6697cc";
         list[i].style.padding = "2px";
         list[i].style.color = "#ffffff";
-		
+
 	} else {
 		list[i].style.backgroundColor = "#ffffff";
         list[i].style.color = "#003380";

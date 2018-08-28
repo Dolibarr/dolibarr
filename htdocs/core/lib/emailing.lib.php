@@ -48,8 +48,8 @@ function emailing_prepare_head(Mailing $object)
     	$h++;
 
 	}
-	
-	if (! empty($conf->global->EMAILING_USE_ADVANCED_SELECTOR)) 
+
+	if (! empty($conf->global->EMAILING_USE_ADVANCED_SELECTOR))
 	{
 		$head[$h][0] = DOL_URL_ROOT."/comm/mailing/advtargetemailing.php?id=".$object->id;
 		$head[$h][1] = $langs->trans("MailAdvTargetRecipients");
