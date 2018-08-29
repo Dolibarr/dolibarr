@@ -66,7 +66,6 @@ $modulesdir = dolGetModulesDirs('/mailings');
 $object = new Mailing($db);
 
 
-
 /*
  * Actions
  */
