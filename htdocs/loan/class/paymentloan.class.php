@@ -34,11 +34,11 @@ class PaymentLoan extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='payment_loan';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='payment_loan';	
+	public $table_element='payment_loan';
 
 	var $fk_loan;
 	var $datec='';

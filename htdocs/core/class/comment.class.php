@@ -8,11 +8,11 @@ class Comment extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='comment';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='comment';	
+	public $table_element='comment';
 
 	public $fk_element;
 	public $element_type;

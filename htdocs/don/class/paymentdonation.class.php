@@ -32,13 +32,13 @@ class PaymentDonation extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='payment_donation';	
-	
+	public $element='payment_donation';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='payment_donation';
-	
+
     public $picto = 'payment';
 
 	public $rowid;

@@ -34,12 +34,12 @@ class Propalmergepdfproduct extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='propal_merge_pdf_product';			
-	
+	public $element='propal_merge_pdf_product';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='propal_merge_pdf_product';	
+	public $table_element='propal_merge_pdf_product';
 
 	var $fk_product;
 	var $file_name;

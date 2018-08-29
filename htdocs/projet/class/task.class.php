@@ -34,24 +34,24 @@ class Task extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='project_task';	
-	
+	public $element='project_task';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='projet_task';	
-	
+	public $table_element='projet_task';
+
 	public $fk_element='fk_task';
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
 	var $fk_task_parent;
-	
+
 	/**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	var $description;
 	var $duration_effective;		// total of time spent on this task
 	var $planned_workload;

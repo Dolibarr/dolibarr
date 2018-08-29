@@ -19,7 +19,6 @@
  *  \file      	resource/class/resource.class.php
  *  \ingroup    resource
  *  \brief      Class file for resource object
-
  */
 
 require_once DOL_DOCUMENT_ROOT."/core/class/commonobject.class.php";
@@ -33,13 +32,13 @@ class Dolresource extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='dolresource';	
-	
+	public $element='dolresource';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='resource';	
-	
+	public $table_element='resource';
+
     public $picto = 'resource';
 
 	public $resource_id;

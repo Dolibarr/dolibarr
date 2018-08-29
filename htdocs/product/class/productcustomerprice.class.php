@@ -31,13 +31,13 @@ class Productcustomerprice extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'product_customer_price'; 
-	
+	public $element = 'product_customer_price';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'product_customer_price'; 
-	
+	public $table_element = 'product_customer_price';
+
 	var $entity;
 	var $datec = '';
 	var $tms = '';
@@ -962,7 +962,7 @@ class PriceByCustomerLine
 	 * @var int ID
 	 */
 	public $id;
-	
+
 	var $entity;
 	var $datec = '';
 	var $tms = '';
