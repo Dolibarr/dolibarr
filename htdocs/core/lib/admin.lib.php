@@ -126,7 +126,7 @@ function versiondolibarrarray()
  *  @param		int		$nocommentremoval	Do no try to remove comments (in such a case, we consider that each line is a request, so use also $linelengthlimit=0)
  * 	@return		int							<=0 if KO, >0 if OK
  */
-function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $linelengthlimit=32768, $nocommentremoval=0)
+function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', $okerror='default', $linelengthlimit=32768, $nocommentremoval=0,$returnonfirsterror=false)
 {
     global $db, $conf, $langs, $user;
 
@@ -386,7 +386,7 @@ function run_sql($sqlfile, $silent=1, $entity='', $usesavepoint=1, $handler='', 
 				    dol_syslog('Admin.lib::run_sql Request '.($i+1)." Error ".$db->errno()." ".$newsql."<br>".$db->error(), LOG_ERR);
 				    $error++;
 				}
-				return 0;
+				if ($returnonfirsterror) return 0;
             }
 
             if (! $silent) print '</tr>'."\n";
