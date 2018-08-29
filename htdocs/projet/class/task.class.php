@@ -45,10 +45,10 @@ class Task extends CommonObject
 	public $picto = 'task';
 	protected $childtables=array('projet_task_time');    // To test if we can delete object
 
-	var $fk_task_parent;
+    public $fk_task_parent;
 
     /**
-     * @var string proper name for given parameter
+     * @var string Label of task
      */
     public $label;
 

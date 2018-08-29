@@ -30,7 +30,7 @@ class FormAdvTargetEmailing extends Form
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -378,10 +378,10 @@ class FormAdvTargetEmailing extends Form
 	/**
 	 *  Return combo list of categories
 	 *
-	 *  @param  string	$htmlname   Name of categorie
-	 * 	@param	array	$selected_array	value selected
-	 * 	@param	int	$type	type
-	 *  @return	string HTML combo
+	 *  @param  string	$htmlname  		Name of categorie
+	 * 	@param	array	$selected_array	Value selected
+	 * 	@param	int		$type			Type
+	 *  @return	string 					HTML combo
 	 */
 	public function multiselectCategories($htmlname='',$selected_array = array(), $type=0)
 	{
