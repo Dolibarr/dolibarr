@@ -89,7 +89,7 @@ if ($id > 0 || ! empty($ref))
 	$result = $object->fetch($id, $ref, '', 1);
 	$object->getrights();
 	$entitytouseforuserdir = $object->entity;
-	if (empty($entitytouseforuserdir)) $entitytouseforuserdir=1;
+	if (empty($entitytouseforuserdir)) $object->entity=$entitytouseforuserdir=$conf->entity;
 	$upload_dir = $conf->user->multidir_output[$entitytouseforuserdir] . "/" . $object->id ;
 }
 
