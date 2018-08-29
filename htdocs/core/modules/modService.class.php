@@ -42,7 +42,7 @@ class modService extends DolibarrModules
 	 */
 	function __construct($db)
 	{
-		global $conf;
+		global $conf, $mysoc;
 
 		$this->db = $db;
 		$this->numero = 53;

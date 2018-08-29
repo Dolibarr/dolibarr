@@ -599,14 +599,14 @@ class Adherent extends CommonObject
 						$error++;
 					}
 				}
+			}
 
-				if (! $error && ! $notrigger)
-				{
-					// Call trigger
-					$result=$this->call_trigger('MEMBER_MODIFY',$user);
-					if ($result < 0) { $error++; }
-					// End call triggers
-				}
+			if (! $error && ! $notrigger)
+			{
+				// Call trigger
+				$result=$this->call_trigger('MEMBER_MODIFY',$user);
+				if ($result < 0) { $error++; }
+				// End call triggers
 			}
 
 			if (! $error)

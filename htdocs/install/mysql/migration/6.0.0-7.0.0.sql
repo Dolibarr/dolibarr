@@ -36,6 +36,11 @@ ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accountingaccount_fk_pcg_
 -- Drop foreign key, so next alter will be a success
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account DROP FOREIGN KEY fk_accounting_account_fk_pcg_version;
 
+-- VMYSQL4.1 SET sql_mode = 'ALLOW_INVALID_DATES';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+-- VMYSQL4.1 SET sql_mode = 'NO_ZERO_DATE';
+-- VMYSQL4.1 update llx_accounting_account set tms = datec where DATE(STR_TO_DATE(tms, '%Y-%m-%d')) IS NULL;
+
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY fk_pcg_version VARCHAR(20) CHARACTER SET utf8;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_account MODIFY fk_pcg_version VARCHAR(20) COLLATE utf8_unicode_ci;
 -- VMYSQLUTF8UNICODECI ALTER TABLE llx_accounting_system MODIFY pcg_version VARCHAR(20) CHARACTER SET utf8;
@@ -293,6 +298,7 @@ ALTER TABLE llx_website_account ADD INDEX idx_website_account_login (login);
 ALTER TABLE llx_website_account ADD INDEX idx_website_account_import_key (import_key);
 ALTER TABLE llx_website_account ADD INDEX idx_website_account_status (status);
 ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_soc (fk_soc);
+ALTER TABLE llx_website_account ADD INDEX idx_website_account_fk_website (fk_website);
 
 ALTER TABLE llx_website_account ADD UNIQUE INDEX uk_website_account_login_website_soc(login, fk_website, fk_soc);
 
@@ -469,7 +475,7 @@ ALTER TABLE llx_extrafields MODIFY COLUMN list integer DEFAULT 1;
 
 ALTER TABLE llx_extrafields MODIFY COLUMN langs varchar(64);
 
-ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128);
+ALTER TABLE llx_holiday_config MODIFY COLUMN name varchar(128) NOT NULL;
 ALTER TABLE llx_holiday_config ADD UNIQUE INDEX idx_holiday_config (name);
 
 ALTER TABLE llx_societe MODIFY COLUMN ref_ext varchar(255);
@@ -665,9 +671,9 @@ ALTER TABLE llx_blockedlog ADD COLUMN user_fullname	varchar(255);
 ALTER TABLE llx_blockedlog MODIFY COLUMN ref_object varchar(255);
 
 -- SPEC : use database type 'double' to store monetary values
-ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8);
-ALTER TABLE llx_chargessociales MODIFY COLUMN amount double(24,8);
-ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8);
+ALTER TABLE llx_blockedlog MODIFY COLUMN amounts double(24,8) NOT NULL;
+ALTER TABLE llx_chargesociales MODIFY COLUMN amount double(24,8);
+ALTER TABLE llx_commande MODIFY COLUMN amount_ht double(24,8) default 0;
 ALTER TABLE llx_commande_fournisseur MODIFY COLUMN amount_ht double(24,8);
 ALTER TABLE llx_don MODIFY COLUMN amount double(24,8);
 ALTER TABLE llx_expensereport_rules MODIFY COLUMN amount double(24,8);

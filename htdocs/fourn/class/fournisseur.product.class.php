@@ -392,8 +392,8 @@ class ProductFournisseur extends Product
     function fetch_product_fournisseur_price($rowid, $ignore_expression = 0)
     {
         global $conf;
-        $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.fk_availability,";
-        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,"; // , pfp.recuperableonly as fourn_tva_npr";  FIXME this field not exist in llx_product_fournisseur_price
+        $sql = "SELECT pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice, pfp.remise_percent, pfp.remise, pfp.tva_tx, pfp.default_vat_code, pfp.info_bits as fourn_tva_npr, pfp.fk_availability,";
+        $sql.= " pfp.fk_soc, pfp.ref_fourn, pfp.fk_product, pfp.charges, pfp.unitcharges, pfp.fk_supplier_price_expression, pfp.delivery_time_days,";
         $sql.= " pfp.supplier_reputation";
         $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
         $sql.= " WHERE pfp.rowid = ".$rowid;
@@ -420,8 +420,7 @@ class ProductFournisseur extends Product
             	$this->fourn_unitprice          = $obj->unitprice;
             	$this->fourn_unitcharges        = $obj->unitcharges;	// deprecated
             	$this->fourn_tva_tx				= $obj->tva_tx;
-            	// TODO
-            	// $this->fourn_tva_npr			= $obj->fourn_tva_npr; // TODO this field not exist in llx_product_fournisseur_price. We should add it ?
+            	$this->fourn_tva_npr			= $obj->fourn_tva_npr;
             	// Add also localtaxes
             	$this->fk_availability			= $obj->fk_availability;
 				$this->delivery_time_days		= $obj->delivery_time_days;

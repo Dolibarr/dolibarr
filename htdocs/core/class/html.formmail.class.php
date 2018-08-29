@@ -1003,7 +1003,7 @@ class FormMail extends Form
 		$sql.= " AND entity IN (".getEntity('c_email_templates').")";
 		$sql.= " AND (private = 0 OR fk_user = ".$user->id.")";				// Get all public or private owned
 		if ($active >= 0) $sql.=" AND active = ".$active;
-		if (is_object($outputlangs)) $sql.= " AND (lang = '".$outputlangs->defaultlang."' OR lang IS NULL OR lang = '')";
+		if (! ($id > 0) && is_object($outputlangs)) $sql.= " AND (lang = '".$db->escape($outputlangs->defaultlang)."' OR lang IS NULL OR lang = '')";
 		if ($id > 0)   $sql.= " AND rowid=".$id;
 		if ($id == -1) $sql.= " AND position=0";
 		$sql.= $db->order("position,lang,label","ASC");

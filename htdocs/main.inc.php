@@ -72,24 +72,30 @@ if (function_exists('get_magic_quotes_gpc'))	// magic_quotes_* deprecated in PHP
  * Security: SQL Injection and XSS Injection (scripts) protection (Filters on GET, POST, PHP_SELF).
  *
  * @param		string		$val		Value
- * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF
+ * @param		string		$type		1=GET, 0=POST, 2=PHP_SELF, 3=GET without sql reserved keywords (the less tolerant test)
  * @return		int						>0 if there is an injection, 0 if none
  */
 function test_sql_and_script_inject($val, $type)
 {
 	$inj = 0;
 	// For SQL Injection (only GET are used to be included into bad escaped SQL requests)
-	if ($type == 1)
+	if ($type == 1 || $type == 3)
 	{
-		$inj += preg_match('/updatexml\(/i',	 $val);
 		$inj += preg_match('/delete\s+from/i',	 $val);
 		$inj += preg_match('/create\s+table/i',	 $val);
 		$inj += preg_match('/insert\s+into/i', 	 $val);
 		$inj += preg_match('/select\s+from/i', 	 $val);
 		$inj += preg_match('/into\s+(outfile|dumpfile)/i',  $val);
+		$inj += preg_match('/user\s*\(/i',  $val);						// avoid to use function user() that return current database login
+		$inj += preg_match('/information_schema/i',  $val);				// avoid to use request that read information_schema database
 	}
-	if ($type != 2)	// Not common, we can check on POST
+	if ($type == 3)
 	{
+		$inj += preg_match('/select|update|delete|replace|group\s+by|concat|count|from/i',	 $val);
+	}
+	if ($type != 2)	// Not common key strings, so we can check them both on GET and POST
+	{
+		$inj += preg_match('/updatexml\(/i', 	 $val);
 		$inj += preg_match('/update.+set.+=/i',  $val);
 		$inj += preg_match('/union.+select/i', 	 $val);
 		$inj += preg_match('/(\.\.%2f)+/i',		 $val);
@@ -1557,8 +1563,6 @@ function top_menu($head, $title='', $target='', $disablejs=0, $disablehead=0, $a
 
 		print "</div>\n";
 		print '</div></div>';
-
-		//unset($form);
 
 		print '<div style="clear: both;"></div>';
 		print "<!-- End top horizontal menu -->\n\n";

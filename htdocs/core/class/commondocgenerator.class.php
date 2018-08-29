@@ -578,15 +578,15 @@ abstract class CommonDocGenerator
     	}
 
     	// Retrieve extrafields
-    	/*if(is_array($object->array_options) && count($object->array_options))
+    	if(is_array($object->array_options) && count($object->array_options))
     	{
     		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
     		$extrafields = new ExtraFields($this->db);
-    		$extralabels = $extrafields->fetch_name_optionals_label('shipment',true);
+    		$extralabels = $extrafields->fetch_name_optionals_label('expedition',true);
     		$object->fetch_optionals($object->id,$extralabels);
 
     		$array_shipment = $this->fill_substitutionarray_with_extrafields($object,$array_shipment,$extrafields,$array_key,$outputlangs);
-    	}*/
+    	}
     	return $array_shipment;
     }
 
@@ -603,7 +603,7 @@ abstract class CommonDocGenerator
     	global $conf;
 		dol_include_once('/core/lib/product.lib.php');
 
-    	return array(
+        $resarray = array(
 	    	'line_fulldesc'=>doc_getlinedesc($line,$outputlangs),
 	    	'line_product_ref'=>$line->product_ref,
 	    	'line_product_label'=>$line->product_label,
@@ -622,6 +622,18 @@ abstract class CommonDocGenerator
 	    	'line_surface'=>empty($line->surface) ? '' : $line->surface*$line->qty_shipped.' '.measuring_units_string($line->surface_units, 'surface'),
 	    	'line_volume'=>empty($line->volume) ? '' : $line->volume*$line->qty_shipped.' '.measuring_units_string($line->volume_units, 'volume'),
     	);
+
+		// Retrieve extrafields
+        $extrafieldkey = $line->element;
+        $array_key = "line";
+        require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+        $extrafields = new ExtraFields($this->db);
+        $extralabels = $extrafields->fetch_name_optionals_label($extrafieldkey, true);
+        $line->fetch_optionals($line->rowid, $extralabels);
+
+        $resarray = $this->fill_substitutionarray_with_extrafields($line, $resarray, $extrafields, $array_key, $outputlangs);
+
+        return $resarray;
     }
 
 

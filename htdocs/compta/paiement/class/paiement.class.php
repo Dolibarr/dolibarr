@@ -6,6 +6,7 @@
  * Copyright (C) 2014      Raphaël Doursenaud    <rdoursenaud@gpcsolutions.fr>
  * Copyright (C) 2014      Marcos García 		 <marcosgdf@gmail.com>
  * Copyright (C) 2015      Juanjo Menent		 <jmenent@2byte.es>
+ * Copyright (C) 2018      Ferran Marcet		 <fmarcet@2byte.es>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -288,39 +289,40 @@ class Paiement extends CommonObject
                                 {
 			                        $amount_ht = $amount_tva = $amount_ttc = array();
 
-                                    // Loop on each vat rate
-                                    $i = 0;
-                                    foreach ($invoice->lines as $line)
-                                    {
-                                        if ($line->total_ht!=0)
-                                        { 	// no need to create discount if amount is null
-                                            $amount_ht[$line->tva_tx] += $line->total_ht;
-                                            $amount_tva[$line->tva_tx] += $line->total_tva;
-                                            $amount_ttc[$line->tva_tx] += $line->total_ttc;
-                                            $i ++;
-                                        }
-                                    }
+									// Insert one discount by VAT rate category
+									$discount = new DiscountAbsolute($this->db);
+									$discount->fetch('',$invoice->id);
+									if (empty($discount->id)) {	// If the invoice was not yet converted into a discount (this may have been done manually before we come here)
 
-                                    // Insert one discount by VAT rate category
-                                    $discount = new DiscountAbsolute($this->db);
-                                    $discount->description = '(DEPOSIT)';
-                                    $discount->fk_soc = $invoice->socid;
-                                    $discount->fk_facture_source = $invoice->id;
 
-                                    foreach ($amount_ht as $tva_tx => $xxx)
-                                    {
-                                        $discount->amount_ht = abs($amount_ht[$tva_tx]);
-                                        $discount->amount_tva = abs($amount_tva[$tva_tx]);
-                                        $discount->amount_ttc = abs($amount_ttc[$tva_tx]);
-                                        $discount->tva_tx = abs($tva_tx);
+										$discount->description = '(DEPOSIT)';
+										$discount->fk_soc = $invoice->socid;
+										$discount->fk_facture_source = $invoice->id;
 
-                                        $result = $discount->create($user);
-                                        if ($result < 0)
-                                        {
-                                            $error++;
-                                            break;
-                                        }
-                                    }
+										// Loop on each vat rate
+										$i = 0;
+										foreach ($invoice->lines as $line) {
+											if ($line->total_ht != 0) {    // no need to create discount if amount is null
+												$amount_ht[$line->tva_tx] += $line->total_ht;
+												$amount_tva[$line->tva_tx] += $line->total_tva;
+												$amount_ttc[$line->tva_tx] += $line->total_ttc;
+												$i++;
+											}
+										}
+
+										foreach ($amount_ht as $tva_tx => $xxx) {
+											$discount->amount_ht = abs($amount_ht[$tva_tx]);
+											$discount->amount_tva = abs($amount_tva[$tva_tx]);
+											$discount->amount_ttc = abs($amount_ttc[$tva_tx]);
+											$discount->tva_tx = abs($tva_tx);
+
+											$result = $discount->create($user);
+											if ($result < 0) {
+												$error++;
+												break;
+											}
+										}
+									}
 
                                     if ($error)
                                     {

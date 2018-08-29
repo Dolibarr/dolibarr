@@ -116,10 +116,10 @@ if (is_array($changeaccount) && count($changeaccount) > 0) {
 		setEventMessages($langs->trans("ErrorFieldRequired", $langs->transnoentitiesnoconv("Account")), null, 'errors');
 	}
 
-	$db->begin();
-
 	if (! $error)
 	{
+		$db->begin();
+
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "facturedet as l";
 		$sql1 .= " SET l.fk_code_ventilation=" . (GETPOST('account_parent','int') > 0 ? GETPOST('account_parent','int') : '0');
 		$sql1 .= ' WHERE l.rowid IN (' . implode(',', $changeaccount) . ')';
@@ -174,13 +174,13 @@ print '<script type="text/javascript">
  * Customer Invoice lines
  */
 $sql = "SELECT f.rowid as facid, f.facnumber, f.type, f.datef, f.ref_client,";
-$sql .= " fd.rowid, fd.description, fd.product_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
+$sql .= " fd.rowid, fd.description, fd.product_type as line_type, fd.total_ht, fd.total_tva, fd.tva_tx, fd.vat_src_code, fd.total_ttc,";
 $sql .= " s.rowid as socid, s.nom as name, s.code_compta, s.code_client,";
-$sql .= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
+$sql .= " p.rowid as product_id, p.fk_product_type as product_type, p.ref as product_ref, p.label as product_label, p.accountancy_code_sell, aa.rowid as fk_compte, aa.account_number, aa.label as label_compte,";
 $sql .= " fd.situation_percent, co.label as country, s.tva_intra";
 $sql .= " FROM " . MAIN_DB_PREFIX . "facturedet as fd";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = fd.fk_product";
-$sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
+$sql .= " INNER JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON aa.rowid = fd.fk_code_ventilation";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "facture as f ON f.rowid = fd.fk_facture";
 $sql .= " INNER JOIN " . MAIN_DB_PREFIX . "societe as s ON s.rowid = f.fk_soc";
 $sql .= " LEFT JOIN " . MAIN_DB_PREFIX . "c_country as co ON co.rowid = s.fk_pays ";
@@ -338,8 +338,8 @@ if ($result) {
 
 		$product_static->ref = $objp->product_ref;
 		$product_static->id = $objp->product_id;
-		$product_static->type = $objp->product_type;
 		$product_static->label = $objp->product_label;
+		$product_static->type = $objp->line_type;
 
 		print '<tr class="oddeven">';
 

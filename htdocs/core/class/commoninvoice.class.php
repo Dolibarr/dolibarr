@@ -173,7 +173,7 @@ abstract class CommonInvoice extends CommonObject
 	}
 
 	/**
-	 *    	Return amount (with tax) of all credit notes and deposits invoices used by invoice
+	 *    	Return amount (with tax) of all credit notes invoices + excess received used by invoice
 	 *
 	 * 		@param 		int 	$multicurrency 	Return multicurrency_amount instead of amount
 	 *		@return		int						<0 if KO, Sum of credit notes and deposits amount otherwise

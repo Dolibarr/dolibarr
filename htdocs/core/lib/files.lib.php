@@ -1118,10 +1118,11 @@ function dol_move_uploaded_file($src_file, $dest_file, $allowoverwrite, $disable
  *  @param  int		$nophperrors    Disable all PHP output errors
  *  @param	int		$nohook			Disable all hooks
  *  @param	object	$object			Current object in use
+ *  @param	boolean	$allowdotdot	Allow to delete file path with .. inside. Never use this, it is reserved for migration purpose.
  *  @return boolean         		True if no error (file is deleted or if glob is used and there's nothing to delete), False if error
  *  @see dol_delete_dir
  */
-function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null)
+function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=null,$allowdotdot=false)
 {
 	global $db, $conf, $user, $langs;
 	global $hookmanager;
@@ -1133,10 +1134,10 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 
 	// Security:
 	// We refuse transversal using .. and pipes into filenames.
-	if (preg_match('/\.\./',$file) || preg_match('/[<>|]/',$file))
+	if ((! $allowdotdot && preg_match('/\.\./',$file)) || preg_match('/[<>|]/',$file))
 	{
 		dol_syslog("Refused to delete file ".$file, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	if (empty($nohook))
@@ -1185,17 +1186,20 @@ function dol_delete_file($file,$disableglob=0,$nophperrors=0,$nohook=0,$object=n
 						{
 							$rel_filetodelete = preg_replace('/^[\\/]/', '', $rel_filetodelete);
 
-							dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
-							include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
-							$ecmfile=new EcmFiles($db);
-							$result = $ecmfile->fetch(0, '', $rel_filetodelete);
-							if ($result >= 0 && $ecmfile->id > 0)
+							if (is_object($db))		// $db may not be defined when lib is in a context with define('NOREQUIREDB',1)
 							{
-								$result = $ecmfile->delete($user);
-							}
-							if ($result < 0)
-							{
-								setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+								dol_syslog("Try to remove also entries in database for full relative path = ".$rel_filetodelete, LOG_DEBUG);
+								include_once DOL_DOCUMENT_ROOT.'/ecm/class/ecmfiles.class.php';
+								$ecmfile=new EcmFiles($db);
+								$result = $ecmfile->fetch(0, '', $rel_filetodelete);
+								if ($result >= 0 && $ecmfile->id > 0)
+								{
+									$result = $ecmfile->delete($user);
+								}
+								if ($result < 0)
+								{
+									setEventMessages($ecmfile->error, $ecmfile->errors, 'warnings');
+								}
 							}
 						}
 					}
@@ -1235,7 +1239,7 @@ function dol_delete_dir($dir,$nophperrors=0)
 	if (preg_match('/\.\./',$dir) || preg_match('/[<>|]/',$dir))
 	{
 		dol_syslog("Refused to delete dir ".$dir, LOG_WARNING);
-		return False;
+		return false;
 	}
 
 	$dir_osencoded=dol_osencode($dir);
@@ -1854,7 +1858,7 @@ function dol_uncompress($inputfile,$outputdir)
 		dol_syslog("Class ZipArchive is set so we unzip using ZipArchive to unzip into ".$outputdir);
 		$zip = new ZipArchive;
 		$res = $zip->open($inputfile);
-		if ($res === TRUE)
+		if ($res === true)
 		{
 			$zip->extractTo($outputdir.'/');
 			$zip->close();
@@ -2253,7 +2257,7 @@ function dol_check_secure_access_document($modulepart, $original_file, $entity, 
 		{
 			$accessallowed=1;
 		}
-		$original_file=$conf->user->dir_output.'/'.$original_file;
+		$original_file=$conf->user->multidir_output[$entity].'/'.$original_file;
 	}
 
 	// Wrapping for third parties

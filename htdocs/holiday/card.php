@@ -452,10 +452,15 @@ if ($action == 'confirm_valid')
             $newSolde = $soldeActuel - ($nbopenedday * $object->getConfCP('nbHolidayDeducted'));
 
             // On ajoute la modification dans le LOG
-            $object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
-
+            $result=$object->addLogCP($user->id, $object->fk_user, $langs->transnoentitiesnoconv("Holidays"), $newSolde, $object->fk_type);
+            if ($result<0) {
+            	setEventMessages(null, $object->errors,'errors');
+            }
             // Mise à jour du solde
-            $object->updateSoldeCP($object->fk_user, $newSolde, $object->fk_type);
+            $result=$object->updateSoldeCP($object->fk_user, $newSolde, $object->fk_type);
+            if ($result<0) {
+            	setEventMessages(null, $object->errors,'errors');
+            }
 
             // To
             $destinataire = new User($db);
@@ -868,12 +873,13 @@ if (empty($id) || $action == 'add' || $action == 'request' || $action == 'create
         print '<tr>';
         print '<td class="titlefield fieldrequired">'.$langs->trans("User").'</td>';
         print '<td>';
+
         if (empty($user->rights->holiday->write_all))
         {
-        	print $form->select_dolusers(($fuserid?$fuserid:$user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth300');
+        	print $form->select_dolusers(($fuserid?$fuserid:$user->id), 'fuserid', 0, '', 0, 'hierarchyme', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         	//print '<input type="hidden" name="fuserid" value="'.($fuserid?$fuserid:$user->id).'">';
         }
-        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id, 'fuserid', 0, '', 0, '', '', 0, 0, 0, $morefilter, 0, '', 'maxwidth300');
+        else print $form->select_dolusers(GETPOST('fuserid','int')?GETPOST('fuserid','int'):$user->id, 'fuserid', 0, '', 0, '', '', '0,'.$conf->entity, 0, 0, $morefilter, 0, '', 'maxwidth300');
         print '</td>';
         print '</tr>';
 

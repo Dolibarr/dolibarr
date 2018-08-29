@@ -681,6 +681,7 @@ class Contact extends CommonObject
         $sql.= " c.photo,";
 		$sql.= " c.priv, c.note_private, c.note_public, c.default_lang, c.no_email, c.canvas,";
 		$sql.= " c.import_key,";
+		$sql.= " c.datec as date_creation, c.tms as date_modification,";
 		$sql.= " co.label as country, co.code as country_code,";
 		$sql.= " d.nom as state, d.code_departement as state_code,";
 		$sql.= " u.rowid as user_id, u.login as user_login,";
@@ -712,6 +713,9 @@ class Contact extends CommonObject
 				$this->zip				= $obj->zip;
 				$this->town				= $obj->town;
 
+				$this->date_creation     = $this->db->jdate($obj->date_creation);
+				$this->date_modification = $this->db->jdate($obj->date_modification);
+				
 				$this->fk_departement	= $obj->fk_departement;    // deprecated
 				$this->state_id			= $obj->fk_departement;
 				$this->departement_code	= $obj->state_code;	       // deprecated

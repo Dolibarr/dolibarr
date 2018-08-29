@@ -134,6 +134,12 @@ class User extends CommonObject
 
 	public $default_c_exp_tax_cat;
 	public $default_range;
+	
+	public $fields=array(
+        	'rowid'=>array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'visible'=>-2, 'notnull'=>1,  'index'=>1, 'position'=>1, 'comment'=>'Id'),
+        	'lastname'=>array('type'=>'varchar(50)', 'label'=>'Name', 'enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>20, 'searchall'=>1, 'comment'=>'Reference of object'),
+        	'firstname'=>array('type'=>'varchar(50)', 'label'=>'Name','enabled'=>1, 'visible'=>1,  'notnull'=>1,  'showoncombobox'=>1, 'index'=>1, 'position'=>10, 'searchall'=>1, 'comment'=>'Reference of object'),
+    	);
 
 	/**
 	 *    Constructor de la classe
@@ -798,7 +804,8 @@ class User extends CommonObject
 					else
 					{
 						if(empty($this->rights->$module->$perms)) $this->nb_rights++;
-						$this->rights->$module->$perms = 1;
+						// if we have already define a subperm like this $this->rights->$module->level1->level2 with llx_user_rights, we don't want override level1 because the level2 can be not define on user group
+						if (!is_object($this->rights->$module->$perms)) $this->rights->$module->$perms = 1;
 					}
 
 				}

@@ -335,7 +335,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 						$pdf->SetDrawColor(192,192,192);
 						$pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_incoterms+1);
 
-						$tab_top = $nexY+6+$height_incoterms;
+						$tab_top = $nexY+6;
 					}
 				}
 
@@ -495,7 +495,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 					if ($object->lines[$i]->remise_percent)
 					{
 					    $remise_percent = pdf_getlineremisepercent($object, $i, $outputlangs, $hidedetails);
-						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent."%", 0, 'R');
+						$pdf->MultiCell($this->postotalht-$this->posxdiscount-1, 3, $remise_percent, 0, 'R');
 					}
 
 					// Total HT line

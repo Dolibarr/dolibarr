@@ -1395,11 +1395,11 @@ class FichinterLigne extends CommonObjectLine
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX.'fichinterdet');
+			$this->rowid=$this->id;
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->id;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{
@@ -1470,7 +1470,6 @@ class FichinterLigne extends CommonObjectLine
 
 			if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
 			{
-				$this->id=$this->id;
 				$result=$this->insertExtraFields();
 				if ($result < 0)
 				{

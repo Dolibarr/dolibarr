@@ -194,7 +194,7 @@ class Task extends CommonObject
 	 */
 	function fetch($id, $ref='', $loadparentdata=0)
 	{
-		global $langs;
+		global $langs, $conf;
 
 		$sql = "SELECT";
 		$sql.= " t.rowid,";
@@ -267,7 +267,7 @@ class Task extends CommonObject
 				}
 
 				// Retreive all extrafield data
-			   	$this->fetch_optionals();
+				$this->fetch_optionals();
 			}
 
 			$this->db->free($resql);

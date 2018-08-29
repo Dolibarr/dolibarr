@@ -426,6 +426,7 @@ class Propal extends CommonObject
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu_ht=price2num($pu_ht);
+		$pu_ht_devise=price2num($pu_ht_devise);
 		$pu_ttc=price2num($pu_ttc);
 		$txtva=price2num($txtva);               // $txtva can have format '5.0(XXX)' or '5'
 		$txlocaltax1=price2num($txlocaltax1);
@@ -647,6 +648,7 @@ class Propal extends CommonObject
 		$remise_percent=price2num($remise_percent);
 		$qty=price2num($qty);
 		$pu = price2num($pu);
+		$pu_ht_devise=price2num($pu_ht_devise);
 		$txtva = price2num($txtva);
 		$txlocaltax1=price2num($txlocaltax1);
 		$txlocaltax2=price2num($txlocaltax2);
@@ -1341,6 +1343,7 @@ class Propal extends CommonObject
 		$sql.= ", p.fk_shipping_method";
 		$sql.= ", p.fk_incoterms, p.location_incoterms";
 		$sql.= ", p.fk_multicurrency, p.multicurrency_code, p.multicurrency_tx, p.multicurrency_total_ht, p.multicurrency_total_tva, p.multicurrency_total_ttc";
+		$sql.= ", p.tms as date_modification";
 		$sql.= ", i.libelle as libelle_incoterms";
 		$sql.= ", c.label as statut_label";
 		$sql.= ", ca.code as availability_code, ca.label as availability";
@@ -1394,6 +1397,7 @@ class Propal extends CommonObject
 				$this->datev                = $this->db->jdate($obj->datev); // TODO deprecated
 				$this->date_creation		= $this->db->jdate($obj->datec); //Creation date
 				$this->date_validation		= $this->db->jdate($obj->datev); //Validation date
+				$this->date_modification	= $this->db->jdate($obj->date_modification); // tms
 				$this->date                 = $this->db->jdate($obj->dp);	// Proposal date
 				$this->datep                = $this->db->jdate($obj->dp);    // deprecated
 				$this->fin_validite         = $this->db->jdate($obj->dfv);
@@ -3937,7 +3941,7 @@ class PropaleLigne extends CommonObjectLine
 		$sql.= " ".price2num($this->localtax2_tx).",";
 		$sql.= " '".$this->db->escape($this->localtax1_type)."',";
 		$sql.= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql.= " ".($this->subprice?price2num($this->subprice):"null").",";
+		$sql.= " ".(price2num($this->subprice)!==''?price2num($this->subprice):"null").",";
 		$sql.= " ".price2num($this->remise_percent).",";
 		$sql.= " ".(isset($this->info_bits)?"'".$this->db->escape($this->info_bits)."'":"null").",";
 		$sql.= " ".price2num($this->total_ht).",";

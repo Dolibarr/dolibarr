@@ -72,33 +72,48 @@ $action = GETPOST('action','aZ09');
  * Actions
  */
 
+if ($action == 'clean' || $action == 'validatehistory')
+{
+	// Clean database
+	$db->begin();
+	$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
+	$sql1 .= " SET fk_code_ventilation = 0";
+	$sql1 .= ' WHERE erd.fk_code_ventilation NOT IN';
+	$sql1 .= '	(SELECT accnt.rowid ';
+	$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
+	$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
+	$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ' AND accnt.entity = '.$conf->entity.')';
+	$sql1 .= ' AND erd.fk_expensereport IN (SELECT rowid FROM ' . MAIN_DB_PREFIX . 'expensereport WHERE entity = '.$conf->entity.')';
+	$sql1 .= ' AND fk_code_ventilation <> 0';
+	dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
+	$resql1 = $db->query($sql1);
+	if (! $resql1) {
+		$error ++;
+		$db->rollback();
+		setEventMessage($db->lasterror(), 'errors');
+	} else {
+		$db->commit();
+	}
+	// End clean database
+}
+
 if ($action == 'validatehistory') {
 
 	$error = 0;
 	$db->begin();
-
-	// First clean corrupted data
-	$sqlclean = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-	$sqlclean .= " SET fk_code_ventilation = 0";
-	$sqlclean .= ' WHERE erd.fk_code_ventilation NOT IN ';
-	$sqlclean .= '	(SELECT accnt.rowid ';
-	$sqlclean .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
-	$sqlclean .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-	$sqlclean .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
-	$resql = $db->query($sqlclean);
 
 	// Now make the binding
 	if ($db->type == 'pgsql') {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det";
 		$sql1 .= " SET fk_code_ventilation = accnt.rowid";
 		$sql1 .= " FROM " . MAIN_DB_PREFIX . "c_type_fees as t, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
-		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
+		$sql1 .= " WHERE " . MAIN_DB_PREFIX . "expensereport_det.fk_c_type_fees = t.id  AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code = accnt.account_number";
 		$sql1 .= " AND " . MAIN_DB_PREFIX . "expensereport_det.fk_code_ventilation = 0";
 	} else {
 		$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd, " . MAIN_DB_PREFIX . "c_type_fees as t, " . MAIN_DB_PREFIX . "accounting_account as accnt , " . MAIN_DB_PREFIX . "accounting_system as syst";
 		$sql1 .= " SET erd.fk_code_ventilation = accnt.rowid";
-		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS;
+		$sql1 .= " WHERE erd.fk_c_type_fees = t.id AND accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=" . $conf->global->CHARTOFACCOUNTS.' AND accnt.entity = '.$conf->entity;
 		$sql1 .= " AND accnt.active = 1 AND t.accountancy_code=accnt.account_number";
 		$sql1 .= " AND erd.fk_code_ventilation = 0";
 	}
@@ -127,26 +142,6 @@ $textprevyear = '<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current -
 $textnextyear = '&nbsp;<a href="' . $_SERVER["PHP_SELF"] . '?year=' . ($year_current + 1) . '">' . img_next() . '</a>';
 
 print load_fiche_titre($langs->trans("ExpenseReportsVentilation") . "&nbsp;" . $textprevyear . "&nbsp;" . $langs->trans("Year") . "&nbsp;" . $year_start . "&nbsp;" . $textnextyear, '', 'title_accountancy');
-
-// Clean database
-$db->begin();
-$sql1 = "UPDATE " . MAIN_DB_PREFIX . "expensereport_det as erd";
-$sql1 .= " SET fk_code_ventilation = 0";
-$sql1 .= ' WHERE erd.fk_code_ventilation NOT IN ';
-$sql1 .= '	(SELECT accnt.rowid ';
-$sql1 .= '	FROM ' . MAIN_DB_PREFIX . 'accounting_account as accnt';
-$sql1 .= '	INNER JOIN ' . MAIN_DB_PREFIX . 'accounting_system as syst';
-$sql1 .= '	ON accnt.fk_pcg_version = syst.pcg_version AND syst.rowid=' . $conf->global->CHARTOFACCOUNTS . ')';
-dol_syslog("htdocs/accountancy/customer/index.php fixaccountancycode", LOG_DEBUG);
-$resql1 = $db->query($sql1);
-if (! $resql1) {
-	$error ++;
-	$db->rollback();
-	setEventMessage($db->lasterror(), 'errors');
-} else {
-	$db->commit();
-}
-// End clean database
 
 print $langs->trans("DescVentilExpenseReport") . '<br>';
 print $langs->trans("DescVentilExpenseReportMore", $langs->transnoentitiesnoconv("ValidateHistory"), $langs->transnoentitiesnoconv("ToBind")) . '<br>';

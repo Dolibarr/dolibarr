@@ -1282,6 +1282,7 @@ class Commande extends CommonOrder
         $remise_percent=price2num($remise_percent);
         $qty=price2num($qty);
         $pu_ht=price2num($pu_ht);
+        $pu_ht_devise=price2num($pu_ht_devise);
         $pu_ttc=price2num($pu_ttc);
     	$pa_ht=price2num($pa_ht);
         $txtva = price2num($txtva);
@@ -2870,6 +2871,7 @@ class Commande extends CommonOrder
             $qty=price2num($qty);
             $pu = price2num($pu);
       		$pa_ht=price2num($pa_ht);
+        	$pu_ht_devise=price2num($pu_ht_devise);
             $txtva=price2num($txtva);
             $txlocaltax1=price2num($txlocaltax1);
             $txlocaltax2=price2num($txlocaltax2);
@@ -3867,6 +3869,7 @@ class OrderLine extends CommonOrderLine
         {
             $objp = $this->db->fetch_object($result);
             $this->rowid            = $objp->rowid;
+            $this->id				= $objp->rowid;
             $this->fk_commande      = $objp->fk_commande;
             $this->fk_parent_line   = $objp->fk_parent_line;
             $this->label            = $objp->custom_label;
@@ -4063,7 +4066,7 @@ class OrderLine extends CommonOrderLine
         $sql.= ' '.(! empty($this->fk_product)?$this->fk_product:"null").',';
         $sql.= " '".$this->db->escape($this->product_type)."',";
         $sql.= " '".price2num($this->remise_percent)."',";
-        $sql.= " ".($this->subprice!=''?"'".price2num($this->subprice)."'":"null").",";
+        $sql.= " ".(price2num($this->subprice)!==''?price2num($this->subprice):"null").",";
         $sql.= " ".($this->price!=''?"'".price2num($this->price)."'":"null").",";
         $sql.= " '".price2num($this->remise)."',";
         $sql.= ' '.(! empty($this->fk_remise_except)?$this->fk_remise_except:"null").',';
@@ -4072,11 +4075,11 @@ class OrderLine extends CommonOrderLine
 		$sql.= ' '.(! empty($this->fk_fournprice)?$this->fk_fournprice:"null").',';
 		$sql.= ' '.price2num($this->pa_ht).',';
         $sql.= " '".$this->db->escape($this->info_bits)."',";
-        $sql.= " '".price2num($this->total_ht)."',";
-        $sql.= " '".price2num($this->total_tva)."',";
-        $sql.= " '".price2num($this->total_localtax1)."',";
-        $sql.= " '".price2num($this->total_localtax2)."',";
-        $sql.= " '".price2num($this->total_ttc)."',";
+        $sql.= " ".price2num($this->total_ht).",";
+        $sql.= " ".price2num($this->total_tva).",";
+        $sql.= " ".price2num($this->total_localtax1).",";
+        $sql.= " ".price2num($this->total_localtax2).",";
+        $sql.= " ".price2num($this->total_ttc).",";
         $sql.= " ".(! empty($this->date_start)?"'".$this->db->idate($this->date_start)."'":"null").',';
         $sql.= " ".(! empty($this->date_end)?"'".$this->db->idate($this->date_end)."'":"null").',';
 	    $sql.= ' '.(!$this->fk_unit ? 'NULL' : $this->fk_unit);

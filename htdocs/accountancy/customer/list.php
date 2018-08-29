@@ -219,9 +219,9 @@ $sql.=$hookmanager->resPrint;
 $sql.= " FROM " . MAIN_DB_PREFIX . "facture as f";
 $sql.= " INNER JOIN " . MAIN_DB_PREFIX . "facturedet as l ON f.rowid = l.fk_facture";
 $sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "product as p ON p.rowid = l.fk_product";
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."'";
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa2 ON p.accountancy_code_sell_intra = aa2.account_number AND aa2.fk_pcg_version = '" . $chartaccountcode."'";
-$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa3 ON p.accountancy_code_sell_export = aa3.account_number AND aa3.fk_pcg_version = '" . $chartaccountcode."'";
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa ON p.accountancy_code_sell = aa.account_number AND aa.fk_pcg_version = '" . $chartaccountcode."' AND aa.entity = " . $conf->entity;
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa2 ON p.accountancy_code_sell_intra = aa2.account_number AND aa2.fk_pcg_version = '" . $chartaccountcode."' AND aa2.entity = " . $conf->entity;
+$sql.= " LEFT JOIN " . MAIN_DB_PREFIX . "accounting_account as aa3 ON p.accountancy_code_sell_export = aa3.account_number AND aa3.fk_pcg_version = '" . $chartaccountcode."' AND aa3.entity = " . $conf->entity;
 $sql.= " WHERE f.fk_statut > 0 AND l.fk_code_ventilation <= 0";
 $sql.= " AND l.product_type <= 2";
 // Add search filter like
