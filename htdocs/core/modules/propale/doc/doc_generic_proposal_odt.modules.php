@@ -523,6 +523,5 @@ class doc_generic_proposal_odt extends ModelePDFPropales
 
 		return -1;
 	}
-
 }
 

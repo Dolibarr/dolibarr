@@ -1937,6 +1937,5 @@ class BonPrelevement extends CommonObject
 			if ($statut==2) return $this->labelstatut[$statut].' '.img_picto($this->labelstatut[$statut],'statut6');
 		}
 	}
-
 }
 

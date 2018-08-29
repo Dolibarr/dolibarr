@@ -223,5 +223,4 @@ class mailing_pomme extends MailingTargets
 
 		return parent::add_to_target($mailing_id, $cibles);
 	}
-
 }

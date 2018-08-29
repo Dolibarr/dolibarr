@@ -729,7 +729,6 @@ class RssParser
 
         }
     }
-
 }
 
 

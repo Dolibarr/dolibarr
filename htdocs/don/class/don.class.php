@@ -1045,5 +1045,4 @@ class Don extends CommonObject
 			return 0;
 		}
 	}
-
 }

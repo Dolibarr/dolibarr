@@ -463,7 +463,6 @@ class Ctyperesource
 		$this->label = '';
 		$this->active = '';
 	}
-
 }
 
 /**
@@ -486,5 +485,4 @@ class CtyperesourceLine
 	/**
 	 * @var mixed Sample line property 2
 	 */
-
 }

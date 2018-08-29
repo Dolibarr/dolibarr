@@ -435,5 +435,4 @@ class CoreObject extends CommonObject
 
 		return 1;
 	}
-
 }

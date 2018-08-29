@@ -939,5 +939,4 @@ class CurrencyRate extends CommonObjectLine
 			return 1;
 		}
 	}
-
 }

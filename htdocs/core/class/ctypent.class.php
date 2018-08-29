@@ -333,5 +333,4 @@ class Ctypent // extends CommonObject
 			return 1;
 		}
 	}
-
 }

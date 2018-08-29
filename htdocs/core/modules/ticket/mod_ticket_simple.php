@@ -140,5 +140,4 @@ class mod_ticket_simple extends ModeleNumRefTicket
         dol_syslog("mod_ticket_simple::getNextValue return " . $this->prefix . $yymm . "-" . $num);
         return $this->prefix . $yymm . "-" . $num;
     }
-
 }

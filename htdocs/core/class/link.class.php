@@ -386,5 +386,4 @@ class Link extends CommonObject
             return -1;
         }
     }
-
 }

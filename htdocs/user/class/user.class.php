@@ -3155,5 +3155,4 @@ class User extends CommonObject
 			return -1;
 		}
 	}
-
 }

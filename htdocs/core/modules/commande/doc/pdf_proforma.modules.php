@@ -73,6 +73,5 @@ class pdf_proforma extends pdf_einstein
 
 		parent::_pagehead($pdf, $object, $showaddress, $outputlangs, $titlekey);
 	}
-
 }
 

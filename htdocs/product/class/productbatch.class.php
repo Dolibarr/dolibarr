@@ -541,5 +541,4 @@ class Productbatch extends CommonObject
             return -1;
         }
     }
-
 }

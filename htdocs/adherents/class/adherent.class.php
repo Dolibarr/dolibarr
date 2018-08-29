@@ -2669,5 +2669,4 @@ class Adherent extends CommonObject
 
 		return 0;
 	}
-
 }

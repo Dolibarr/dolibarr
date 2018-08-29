@@ -864,5 +864,4 @@ class ProductFournisseur extends Product
 
 		return CommonObject::commonReplaceThirdparty($db, $origin_id, $dest_id, $tables);
 	}
-
 }

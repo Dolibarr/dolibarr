@@ -224,5 +224,4 @@ class RestAPIUserTest extends PHPUnit_Framework_TestCase
       $this->assertNotNull($object, "Parsing of json result must no be null");
       $this->assertEquals(500, $object['error']['code'], $object['error']['code'].' '.$object['error']['message']);
     }
-
 }

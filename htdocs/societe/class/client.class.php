@@ -113,5 +113,4 @@ class Client extends Societe
 		}
 		return 1;
     }
-
 }

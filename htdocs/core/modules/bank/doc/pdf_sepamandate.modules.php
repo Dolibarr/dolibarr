@@ -608,6 +608,5 @@ class pdf_sepamandate extends ModeleBankAccountDoc
 		$showdetails=$conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf,$outputlangs,'PAYMENTORDER_FREE_TEXT',null,$this->marge_basse,$this->marge_gauche,$this->page_hauteur,$object,$showdetails,$hidefreetext);
 	}
-
 }
 

@@ -206,6 +206,5 @@ class Fournisseur extends Societe
 		}
 		return $arr;
 	}
-
 }
 

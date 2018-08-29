@@ -62,7 +62,6 @@ abstract class ModelePDFSuppliersOrders extends CommonDocGenerator
 
 		return $liste;
 	}
-
 }
 
 

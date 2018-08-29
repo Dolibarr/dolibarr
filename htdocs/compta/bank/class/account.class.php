@@ -1629,7 +1629,6 @@ class Account extends CommonObject
 		$this->owner_address   = 'Owner address';
 		$this->country_id      = 1;
 	}
-
 }
 
 
@@ -2312,5 +2311,4 @@ class AccountLine extends CommonObject
 		}
 		return 0;
 	}
-
 }

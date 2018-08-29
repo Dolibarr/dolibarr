@@ -524,5 +524,4 @@ class Cchargesociales
 		$this->module = '';
 		$this->accountancy_code = '';
 	}
-
 }

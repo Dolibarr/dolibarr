@@ -430,6 +430,5 @@ class ActionsCardProduct
 			dol_print_error($this->db);
 		}
 	}
-
 }
 

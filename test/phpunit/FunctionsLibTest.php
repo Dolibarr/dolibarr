@@ -1207,5 +1207,4 @@ class FunctionsLibTest extends PHPUnit_Framework_TestCase
 
 		return true;
 	}
-
 }

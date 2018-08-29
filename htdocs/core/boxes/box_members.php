@@ -182,6 +182,5 @@ class box_members extends ModeleBoxes
     {
 		return parent::showBox($this->info_box_head, $this->info_box_contents, $nooutput);
 	}
-
 }
 

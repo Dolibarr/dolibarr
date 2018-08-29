@@ -644,5 +644,4 @@ class CommandeFournisseurDispatch extends CommonObject
 			return - 1;
 		}
 	}
-
 }

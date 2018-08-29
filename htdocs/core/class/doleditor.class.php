@@ -344,6 +344,5 @@ class DolEditor
         if ($noprint) return $out;
         else print $out;
     }
-
 }
 

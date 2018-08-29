@@ -464,5 +464,4 @@ interface Database
 	 * @return  boolean            true if OK, false if KO
 	 */
 	function select_db($database);
-
 }

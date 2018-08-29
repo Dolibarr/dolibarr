@@ -744,5 +744,4 @@ class Entrepot extends CommonObject
 
 		return $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref);
 	}
-
 }

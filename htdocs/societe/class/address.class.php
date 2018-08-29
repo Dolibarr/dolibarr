@@ -485,7 +485,6 @@ class Address
 			dol_print_error($this->db);
 		}
 	}
-
 }
 
 

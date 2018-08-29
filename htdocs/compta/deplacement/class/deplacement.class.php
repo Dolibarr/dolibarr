@@ -452,6 +452,5 @@ class Deplacement extends CommonObject
 			dol_print_error($this->db);
 		}
 	}
-
 }
 

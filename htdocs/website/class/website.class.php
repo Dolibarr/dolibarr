@@ -1031,6 +1031,5 @@ class Website extends CommonObject
 			return $object->id;
 		}
 	}
-
 }
 

@@ -1056,5 +1056,4 @@ class BlockedLog
 
 		return $result;
 	}
-
 }

@@ -799,5 +799,4 @@ class InterfaceLdapsynchro extends DolibarrTriggers
 
 		return $result;
 	}
-
 }

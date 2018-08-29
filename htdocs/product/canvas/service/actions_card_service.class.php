@@ -362,6 +362,5 @@ class ActionsCardService
 			print $sql;
 		}
 	}
-
 }
 

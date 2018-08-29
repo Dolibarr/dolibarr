@@ -255,5 +255,4 @@ class Bookmark extends CommonObject
 	{
 	    return '';
 	}
-
 }

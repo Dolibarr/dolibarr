@@ -322,6 +322,5 @@ class mailing_thirdparties extends MailingTargets
 	{
 		return '<a href="'.DOL_URL_ROOT.'/societe/card.php?socid='.$id.'">'.img_object('',"company").'</a>';
 	}
-
 }
 

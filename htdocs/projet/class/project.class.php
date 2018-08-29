@@ -2004,5 +2004,4 @@ class Project extends CommonObject
 
 	    $this->lines = $taskstatic->getTasksArray(0, $user, $this->id, 0, 0);
 	}
-
 }

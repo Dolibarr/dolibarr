@@ -573,5 +573,4 @@ class ProductStockEntrepot extends CommonObject
 		$this->desiredstock = '';
 		$this->import_key = '';
 	}
-
 }

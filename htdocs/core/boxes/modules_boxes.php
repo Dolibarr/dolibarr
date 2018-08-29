@@ -31,7 +31,7 @@
  *
  * Boxes parent class
  */
-class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" boxes
+class ModeleBoxes // Can't be abtract as it is instantiated to build "empty" boxes
 {
 	/**
 	 * @var DoliDB Database handler
@@ -503,8 +503,6 @@ class ModeleBoxes    // Can't be abtract as it is instantiated to build "empty" 
 		}
 		return $widget;
 	}
-
-
 }
 
 

@@ -643,6 +643,5 @@ class Mailing extends CommonObject
 		    if ($statut==3) return $langs->trans("MailingStatusNotContact").' '.img_picto($langs->trans("MailingStatusNotContact"),'statut3');
 		}
 	}
-
 }
 

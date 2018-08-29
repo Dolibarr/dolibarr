@@ -368,6 +368,5 @@ class RejetPrelevement
 			return -2;
 		}
 	}
-
 }
 

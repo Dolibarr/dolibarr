@@ -1688,5 +1688,4 @@ class ActionComm extends CommonObject
 
     	return $error;
     }
-
 }

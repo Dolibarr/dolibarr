@@ -648,5 +648,4 @@ class Facturation
             $this->prix_total_ttc = $aTotalTtc;
         }
     }
-
 }

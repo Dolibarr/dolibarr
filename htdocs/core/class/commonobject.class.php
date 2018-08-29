@@ -7240,5 +7240,4 @@ abstract class CommonObject
 	{
 		return count($this->comments);
 	}
-
 }

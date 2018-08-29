@@ -1841,8 +1841,6 @@ class SMTPs
 
 		return implode("\n", $_errMsg);
 	}
-
-
 }
 
 

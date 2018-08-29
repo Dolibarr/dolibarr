@@ -500,5 +500,4 @@ class Stripe extends CommonObject
 		}
 		return $return;
 	}
-
 }

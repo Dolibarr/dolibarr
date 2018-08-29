@@ -1181,5 +1181,4 @@ class doc_generic_project_odt extends ModelePDFProjects
 
 		return -1;
 	}
-
 }

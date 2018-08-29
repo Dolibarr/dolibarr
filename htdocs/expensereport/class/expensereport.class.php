@@ -2374,7 +2374,6 @@ class ExpenseReport extends CommonObject
     	}
     	return 0;
     }
-
 }
 
 

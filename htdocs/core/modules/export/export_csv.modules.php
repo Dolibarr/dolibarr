@@ -344,6 +344,5 @@ class ExportCsv extends ModeleExports
 
 		return ($addquote?'"':'').$newvalue.($addquote?'"':'');
 	}
-
 }
 

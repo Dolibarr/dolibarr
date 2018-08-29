@@ -277,5 +277,4 @@ abstract class ActionsAdherentCardCommon
             }
         }
     }
-
 }

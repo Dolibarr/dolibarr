@@ -294,5 +294,4 @@ class CdavLib
 		}
 		return $calevents;
 	}
-
 }

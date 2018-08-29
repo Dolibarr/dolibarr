@@ -1829,6 +1829,5 @@ class FormFile
 		}
 		return $out;
 	}
-
 }
 

@@ -135,6 +135,5 @@ class mod_supplier_payment_brodator extends ModeleNumRefSupplierPayments
     {
         return $this->getNextValue($objsoc,$objforref);
     }
-
 }
 

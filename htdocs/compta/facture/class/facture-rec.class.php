@@ -1859,5 +1859,4 @@ class FactureLigneRec extends CommonInvoiceLine
     		return -2;
     	}
     }
-
 }

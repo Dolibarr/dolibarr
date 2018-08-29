@@ -1878,5 +1878,4 @@ class Holiday extends CommonObject
 		$this->halfday=0;
 		$this->fk_type=1;
 	}
-
 }

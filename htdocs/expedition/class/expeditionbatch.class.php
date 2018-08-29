@@ -236,5 +236,4 @@ class ExpeditionLineBatch extends CommonObject
 			return -1;
 		}
 	}
-
 }

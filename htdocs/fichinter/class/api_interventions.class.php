@@ -455,6 +455,4 @@ class Interventions extends DolibarrApi
         }
         return $fichinter;
     }
-
-
 }
