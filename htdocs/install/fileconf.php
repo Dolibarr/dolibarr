@@ -200,7 +200,8 @@ if (! empty($force_install_message))
 		<td class="comment"><?php print $langs->trans("Examples").":<br>"; ?>
 		<ul>
 			<li>http://localhost/</li>
-			<li>https://www.myserver.com:8180/dolibarr</li>
+			<li>http://www.myserver.com:8180/dolibarr</li>
+			<li>https://www.myvirtualfordolibarr.com/</li>
 		</ul>
 		</td>
 	</tr>
