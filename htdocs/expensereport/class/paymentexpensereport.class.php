@@ -34,12 +34,12 @@ class PaymentExpenseReport extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='payment_expensereport';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='payment_expensereport';	
-	
+	public $table_element='payment_expensereport';
+
     public $picto = 'payment';
 
 	var $rowid;

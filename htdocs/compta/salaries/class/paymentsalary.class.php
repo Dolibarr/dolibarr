@@ -35,12 +35,12 @@ class PaymentSalary extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='payment_salary';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='payment_salary';	
-	
+	public $table_element='payment_salary';
+
 	public $picto='payment';
 
 	public $tms;

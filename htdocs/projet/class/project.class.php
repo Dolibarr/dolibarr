@@ -36,13 +36,13 @@ class Project extends CommonObject
     /**
 	 * @var string ID to identify managed object
 	 */
-	public $element = 'project'; 
-    
+	public $element = 'project';
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element = 'projet';  
-	
+	public $table_element = 'projet';
+
     public $table_element_line = 'projet_task';
     public $fk_element = 'fk_projet';
     public $ismultientitymanaged = 1;  // 0=No test on entity, 1=Test with field entity, 2=Test with link by societe
@@ -734,10 +734,10 @@ class Project extends CommonObject
             return -1;
         }
     }
-    
+
     /**
      * 		Delete tasks with no children first, then task with children recursively
-     *  
+     *
      *  	@param     	User		$user		User
      *		@return		int				<0 if KO, 1 if OK
      */
@@ -765,7 +765,7 @@ class Project extends CommonObject
         {
             if (count($this->lines)) $this->deleteTasks($this->lines);
         }
-        
+
         return 1;
     }
 

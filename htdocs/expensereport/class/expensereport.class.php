@@ -37,12 +37,12 @@ class ExpenseReport extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='expensereport';
-	
+
     /**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='expensereport';
-	
+
     var $table_element_line = 'expensereport_det';
     var $fk_element = 'fk_expensereport';
     var $picto = 'trip';
@@ -2403,7 +2403,7 @@ class ExpenseReportLine
      * @var DoliDB Database handler.
      */
     public $db;
-    
+
     /**
 	 * @var string Error code (or message)
 	 */

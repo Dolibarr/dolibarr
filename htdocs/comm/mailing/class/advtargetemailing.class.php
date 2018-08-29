@@ -28,10 +28,10 @@
  */
 class AdvanceTargetingMailing extends CommonObject
 {
-	/**
-         * @var DoliDB Database handler.
-         */
-        public $db;
+    /**
+     * @var DoliDB Database handler.
+     */
+    public $db;
 
 	/**
 	 * @var string Error code (or message)
@@ -75,9 +75,9 @@ class AdvanceTargetingMailing extends CommonObject
 
 
 	/**
-	 * Constructor
+	 *  Constructor
 	 *
-	 * 	@param	DoliDb		$db		Database handler
+	 *  @param  DoliDb		$db		Database handler
 	 */
 	function __construct($db)
 	{

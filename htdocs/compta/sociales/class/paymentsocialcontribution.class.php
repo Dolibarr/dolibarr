@@ -35,12 +35,12 @@ class PaymentSocialContribution extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='paiementcharge';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='paiementcharge';	
-	
+	public $table_element='paiementcharge';
+
 	public $picto = 'payment';
 
 	var $fk_charge;

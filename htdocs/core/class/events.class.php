@@ -30,7 +30,7 @@
 
 
 /**
- *	Events class
+ *  Events class
  */
 class Events // extends CommonObject
 {
@@ -38,18 +38,18 @@ class Events // extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='events';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='events';	
+	public $table_element='events';
 
 	/**
 	 * @var int ID
 	 */
 	public $id;
-	
-	/**
+
+    /**
      * @var DoliDB Database handler.
      */
     public $db;

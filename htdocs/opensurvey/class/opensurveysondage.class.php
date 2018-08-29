@@ -38,12 +38,12 @@ class Opensurveysondage extends CommonObject
 	 * @var string ID to identify managed object
 	 */
 	public $element='opensurvey_sondage';
-	
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
-	public $table_element='opensurvey_sondage';	
-	
+	public $table_element='opensurvey_sondage';
+
     public $picto = 'opensurvey';
 
 	public $id_sondage;

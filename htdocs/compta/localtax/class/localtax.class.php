@@ -32,13 +32,13 @@ class Localtax extends CommonObject
 	/**
 	 * @var string ID to identify managed object
 	 */
-	public $element='localtax';	
-	
+	public $element='localtax';
+
 	/**
 	 * @var string Name of table without prefix where object is stored
 	 */
 	public $table_element='localtax';
-	
+
 	public $picto='payment';
 
 	var $ltt;
@@ -46,12 +46,12 @@ class Localtax extends CommonObject
 	var $datep;
 	var $datev;
 	var $amount;
-	
+
 	/**
      * @var string proper name for given parameter
      */
     public $label;
-    
+
 	var $fk_bank;
 	var $fk_user_creat;
 	var $fk_user_modif;
